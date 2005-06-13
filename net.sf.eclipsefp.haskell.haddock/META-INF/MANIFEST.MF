@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-Name: Haddock support
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.haddock; singleton=true
+Bundle-Version: 0.9.0
+Bundle-ClassPath: haddock.jar
+Bundle-Activator: net.sf.eclipsefp.haskell.haddock.HaddockPlugin
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ net.sf.eclipsefp.common.ui,
+ de.leiffrenzel.fp.haskell.core,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ de.leiffrenzel.fp.haskell.ui,
+ org.eclipse.ui.ide,
+ net.sf.eclipsefp.common.core
+Eclipse-AutoStart: true

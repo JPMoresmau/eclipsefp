@@ -1,0 +1,4 @@
+# Turn on tracing for the HUGS plugin
+# if switched on, it will write all command lines of the calls to HUGS into
+# the standard out stream
+net.sf.eclipsefp.haskell.hugs/trace/calls = false

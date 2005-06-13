@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.sf.eclipsefp.haskell.hugs.core.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page name="Hugs 98"
+            category="de.leiffrenzel.fp.haskell.ui.preferences.HaskellInterpreterPP"
+            class="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage"
+            id="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="Hugs 98 session"
+            icon="icons/full/etool16/hugs16.gif"
+            class="net.sf.eclipsefp.haskell.hugs.ui.launch.HugsLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.hugs.ui.launch.HugsLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="*">
+                  </count>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="Run Hugs 98 session"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+         <perspective
+               id="de.leiffrenzel.fp.haskell.ui.HaskellPerspective">
+         </perspective>
+      </shortcut>
+   </extension>
+   <!-- configurator page to simplify setting the ghc executable -->   
+   <extension point="net.sf.eclipsefp.common.ui.configuratorPages">
+     <configuratorPage id="net.sf.eclipsefp.haskell.hugs.ui.configuratorpage.HugsConfiguratorPage"
+                       title="%configuratorPage.title"
+                       description="%configuratorPage.description"
+                       bannerImage="icons/full/wizban/hugs.png"
+                       class="net.sf.eclipsefp.haskell.hugs.ui.configuratorpage.HugsConfiguratorPage" />
+   </extension>
+</plugin>

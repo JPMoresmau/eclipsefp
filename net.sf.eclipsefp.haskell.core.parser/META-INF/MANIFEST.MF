@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-Name: Haskell Parser
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.parser; singleton=true
+Bundle-Version: 0.9.0
+Bundle-ClassPath: haskellparser.jar
+Bundle-Activator: net.sf.eclipsefp.haskell.core.parser.ParserPlugin
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ de.leiffrenzel.fp.haskell.core,
+ org.eclipse.core.resources
+Eclipse-AutoStart: true
+Provide-Package: net.sf.eclipsefp.haskell.core.parser
