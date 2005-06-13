@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-Name: Haskell Core Plug-in
+Bundle-SymbolicName: de.leiffrenzel.fp.haskell.core; singleton=true
+Bundle-Version: 0.9.0
+Bundle-ClassPath: haskellcore.jar
+Bundle-Activator: de.leiffrenzel.fp.haskell.core.HaskellCorePlugin
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.debug.core,
+ org.eclipse.core.expressions,
+ org.eclipse.core.runtime,
+ net.sf.eclipsefp.common.core
+Eclipse-AutoStart: true
+Provide-Package: de.leiffrenzel.fp.haskell.core,
+ de.leiffrenzel.fp.haskell.core.builder,
+ de.leiffrenzel.fp.haskell.core.compiler,
+ de.leiffrenzel.fp.haskell.core.compiler.defaultcompiler,
+ de.leiffrenzel.fp.haskell.core.expressions,
+ de.leiffrenzel.fp.haskell.core.halamo,
+ de.leiffrenzel.fp.haskell.core.launch,
+ de.leiffrenzel.fp.haskell.core.parser,
+ de.leiffrenzel.fp.haskell.core.preferences,
+ de.leiffrenzel.fp.haskell.core.project,
+ de.leiffrenzel.fp.haskell.core.util

@@ -1,0 +1,2 @@
+# Turn on tracing for the ghccompiler plugin
+de.leiffrenzel.fp.haskell.ghccompiler/trace/compiling = false

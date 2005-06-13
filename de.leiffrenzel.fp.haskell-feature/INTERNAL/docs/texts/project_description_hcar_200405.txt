@@ -1,0 +1,52 @@
+Project description for the Haskell Communities and Activities Report (HCAR)
+
+May 2004:
+
+Haskell support for the Eclipse IDE
+
+Leif Frenzel (himself@leiffrenzel.de)
+
+The Eclipse platform is an extremly extensible framework for IDEs
+(implemented in Java), developed by an Open Source Project. This project
+extends it with tools to support Haskell development.
+
+The aim is to develop an IDE for Haskell that provides the set of features
+and the user experience known from the Eclipse Java IDE (the flagship of the
+Eclipse project), and integrates a broad range of compilers, interpreters,
+debuggers, documentation generators and other Haskell development tools.
+Long-term goals include a language model with support for intentional
+programming, refactoring and structural search.
+
+The project has just started (the initial contribution was in March 2004).
+It follows the example and design principles of the Eclipse project. Every
+help is very welcome, be it in the form of code contributions (please
+contact me), docs or tutorials, or just any feedback if you use the IDE. A
+project site at sourceforge.net has just been created.
+
+Status:
+There is a working version 0.2 (considered 'alpha') that features a project
+model, a configurable source code editor (with syntax coloring and Code
+Assist), compiler support for ghc and launching from the IDE.
+
+Further reading:
+http://eclipse.org
+http://leiffrenzel.de/eclipse/eclipsefp.html
+http://eclipsefp.sourceforge.net
+
+================================================================================
+
+Haskell support for the Eclipse IDE
+
+Leif Frenzel (himself@leiffrenzel.de)
+
+
+Sketch:
+
+Tools support has improved: compiler (GHC), interpreter (Hugs, GHCi), and 
+documentation (Haddock) support are included, and the required external tools
+can be configured conveniently from the IDE. Work has started on the features
+that make the IDE semantics-aware.
+
+Further reading:
+http://eclipse.org
+http://eclipsefp.sourceforge.net

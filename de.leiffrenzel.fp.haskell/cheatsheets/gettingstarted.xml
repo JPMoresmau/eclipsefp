@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Haskell in Eclipse">
+
+<intro 
+	href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
+	<description>
+		Welcome to the basic tutorial for Haskell development in Eclipse.
+		It will make you familiar with the first steps and the tools in the
+		IDE that can be used for Haskell development. We will create a Haskell 
+		project, implement the infamous 'Hello World' application and run it.
+	</description>
+</intro>
+
+<item
+	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/compilersInterpreters.html"
+	title="Configure commands"
+	skip="true">
+	<action
+		pluginId="net.sf.eclipsefp.common.ui"
+		class="net.sf.eclipsefp.common.internal.ui.actions.RunConfigurator" />
+	<description>
+	  The IDE must know about the location of some commands on your system
+	  (like the compiler executable). To configure these, you can use the
+	  configurator wizard.
+	</description>
+</item>
+
+<item
+	href="/org.eclipse.platform.doc.user/concepts/concepts-4.htm"
+	title="Open the Haskell Perspective">
+	<action
+		pluginId="org.eclipse.ui.cheatsheets"
+		class="org.eclipse.ui.internal.cheatsheets.actions.OpenPerspective"
+		param1="de.leiffrenzel.fp.haskell.ui.HaskellPerspective"/>
+	<description>
+		Select Window &gt; Open Perspective &gt; Haskell in the menubar at
+		the top of the workbench. This step changes the perspective to
+		set up the Eclipse workbench for Haskell development. You can
+		click the "Click to Perform" button to have the Haskell
+		perspective opened automatically.
+	</description>
+</item>
+
+<item
+	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/wizards.html#newProject"
+	title="Create a Haskell project"
+	skip="true">
+	<action
+		pluginId="de.leiffrenzel.fp.haskell.ui"
+		class="de.leiffrenzel.fp.haskell.ui.actions.OpenNewProjectWizard"/>
+	<description>
+		The first thing you will need is a Haskell Project. (If you already 
+		have one in your workspace that you would like to use, you may skip 
+		this step with the "Click to Skip" button.) Select File &gt; New &gt; 
+		Project.. and choose Haskell Project in the list. The 
+		"New Haskell Project" wizard is automatically displayed when you 
+		click the "Click to Perform" button.
+	</description>
+</item>
+
+<item
+	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/wizards.html#newModule"
+	title="Create a Main module"
+	skip="true">
+	<action
+		pluginId="de.leiffrenzel.fp.haskell.ui"
+		class="de.leiffrenzel.fp.haskell.ui.actions.OpenNewModuleWizard"/>
+	<description>
+		We create now a Main module in the Haskell project. You may do this by 
+		either clicking the "Click to Perform" button below to launch the
+		New Haskell Module wizard, or you may use the Eclipse tools to
+		do it, by using the File &gt; New &gt; Haskell module action. 
+		Enter "Main" as module name. If you do not use the "Click to Perform" 
+		button below, click the "Click to Skip" button to advance to the next 
+		step in building your application.
+	</description>
+</item>
+
+<item
+	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/gettingStarted.html#createSource"
+	title="Write some code">
+	<description>
+		In the source of the module, write the following line right below
+		the already generated code: main = putStrLn "Hello world!" Once you 
+		save the file, it is automatically compiled and linked. Click the 
+		"Click to Complete" button below when finished.
+	</description>
+</item>
+
+<item
+	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/gettingStarted.html#run"
+	title="Launch the executable">
+	<description>
+	    The executable is located in the bin/ folder of the project.
+	    Select it, right-click it and choose Run &gt; Haskell application
+	    from the context menu. 'Hello world!' should be printed in your 
+	    "Console" view.
+	</description>
+</item>
+
+<item
+	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/haddock.html"
+	title="Generate documentation (Haddock)">
+	<description>
+	  If you want to use Haddock to generate documentation from your sources,
+	  you can run it from the Haddock Export Wizard. You have to annotate your
+	  sources first. See the Help for more details.
+	</description>
+</item>
+	
+</cheatsheet>

@@ -1,0 +1,293 @@
+<h2>What's new</h2>
+
+<p>This document contains changes and new features for every version.</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.9.0</h4>
+
+<p>2005-05-xx TODO</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>TODO</li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>TODO</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.8.0</h4>
+
+<p>2005-05-16 Eclipse 3.1M7 compatibility, more language model work</p>
+
+<p>Note: the ltk has now moved to the Platform feature, which means that
+you don't need the JDK feature anymore; the Haskell plugins will run on
+the Platform.</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>Completed the language model (imports, exports, declarations), 
+        both with respect to modeling and parsing.</li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>The complete language model is displayed in the Outline View.</li>
+        <li>Added code folding to the Haskell editor (top-level declarations
+        that span multiple lines can be folded).</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.7.0</h4>
+
+<p>2005-05-12 Eclipse 3.1M6 compatibility, native parser integration, 
+              prototypical refactoring support</p>
+
+<p>Note: Eclipse 3.1 M6 is now required! If you need an Eclipse 3.0.x or 3.1
+M1-M5a for some reason, it is probably better to keep using the former 
+version, 0.6. And you need the Eclipse SDK (or at least the Platform Runtime
+<i>plus</i> the JDT Runtime). The Platform runtime is not sufficient, because
+the language toolkit, which I use for the Refactoring support, is still part
+of JDT. (I think this will change soon, so this in only temporarily.)</p>
+
+<p>Note: Although the code is still platform-independent, there are now
+different binaries for different platforms. I have only built a version for
+win32. It will run on other platforms, but the native parser support is missing 
+there.</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>There is now an integration for a <i><b>native parser</b></i>, 
+        accessed via JNI. (The parser is from the <code>language-src</code> 
+        package.) This means there are now platform-specific fragments with 
+        the native libraries.</li>
+        <li>Started to extend the language model interfaces. The model is
+        quite aligned with that in <code>Language.Haskell.Syntax</code>. It
+        is filled using the native parser.</li>
+        <li>Fix: error in property tester killed run context menu</li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>Started to fill the <i><b>Outline View</b></i> with information 
+        from the language model.</li>
+        <li><p>A first prototypical <i><b>refactoring</b></i>: Rename Module 
+        (changes the module name in the module declaration and in import 
+        statements in other files, and renames the source file of the 
+        module).</p>
+        <p><i>Please keep in mind</i> that this is still experimental and that 
+        not every possible problem case is checked for (or even known to 
+        me ;-).</p>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.6.0</h4>
+
+<p>2004-11-23 Configurator wizard, improved stability and usability</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>Several small fixes to improve stability (exceptions with closed 
+        projects in the log, problems with source folder determination ...)</li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>There is now a wizard called configurator that can be used to
+        configure external commands like compilers etc. used in the IDE. 
+        (Available from the main toolbar, the one with the 'FP' icon.) The
+        idea is to make it possible for the user to conveniently set up the
+        external stuff from one single dialog. I have also added some 
+        rudimentary probing for the needed commands (but it needs some 
+        optimization still). The architecture is extensible and resides in 
+        the common plugins, so it can be used from all over eclipsefp. I 
+        implemented it for GHC, HUGS and Haddock.</li>
+        <li>Editor: Markers in the vertical ruler on the left show now the 
+        message as tooltip.</li>
+        <li>Launches: The interactive launches have now the project directory
+        as working directory. (This is only the most simple thing to be done
+        with the interactive console support, more will follow - thanks to Rod 
+        Price for alerting me about this)</li>
+        <li>Fix: NPE when creating a new launch configuration in the dialog</li>
+        <li>Fix: problems with UI component disposal on the import libraries
+        property page</li>
+        <li>Fix: wrap file names in quotes for HUGS launch (in case there are
+        spaces in the path) - thanks to Michael Osipov for the report</li>
+        <li>Fix: project executable did not show up in the Module Browser
+        when the project itself was the source folder</li>
+      </ul>
+    </li>
+    <li><b>Documentation</b>
+      <ul>
+        <li>Added shortcut list to editor docs</li>
+        <li>Added a cheatsheet for getting started with the Haskell 
+        environment</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+
+<h4>de.leiffrenzel.fp.haskell_0.5.0</h4>
+
+<p>2004-11-04 Haddock and HUGS support, and improved GHC options support 
+              and editor.</p>
+
+<p>The license has been changed from CPL 1.0 to EPL 1.0.</p>
+
+<p>All plugins have been updated to the new Eclipse 3 runtime model. 
+Development is now done on the latest Eclipse 3.1 Milestones (but it should 
+work fine with Eclipse 3.0.x). The common.* plugins have been renamed. (You may 
+have to remove plugins from older versions, if problems occur.)</p>
+
+<p>
+  <ul>
+    <li><b>UI</b>
+      <ul>
+        <li>You can now start HUGS sessions from the Run menu.</li>
+        <li>There is a new Export wizard for Haddock documentation, which can 
+        be used to run Haddock over a set of files from a Haskell project.</li>
+        <li>There is a field to specify extra GHC options on the GHC Preference 
+        Page.</li>
+        <li>The editor has now shortcuts for commenting / uncommenting
+        lines of code and navigating to the first (non-whitespace) character
+        of the line (thanks to Andriy Palamarchuk :-)</li>
+      </ul>
+    </li>
+    <li><b>Documentation</b>
+      <ul>
+        <li>Added documentation for the Haddock Export wizard.</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.4.0</h4>
+
+<p>2004-07-19 Interpreter support (GCHi) and more bugfixes.</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>Before building it is now checked that the output and binary 
+        folders for the Haskell project exist (they may not, for instance 
+        if the project was just checked out from a code repository).</li>
+        <li>Fixed two bugs in creating the command line and the external
+        process for the compiler 
+        (ghc-6.2.1: can't apply -o to multiple source files). 
+        <br>Thanks to Andrei for the fix :-)</li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>You can now start an interactive GHCi session from the Run menu, 
+        with either a single source file or all source files in a project or 
+        source folder loaded. This is especially useful when you don't want 
+        to build an entire application but are working in a more scripting-like 
+        manner.</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+
+<h4>de.leiffrenzel.fp.haskell_0.3.0</h4>
+
+<p>2004-06-12 Mainly bugfixes and improved ghc compiler support.</p>
+
+<p>Note: Eclipse 3.0 M9/RC1/RC2 is now required!</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>Made the extensions of Haskell source files (.hs, .lhs) known to 
+          the Team plugins as text-type files.
+        </li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>Bugfix: Module browser crashed when project with no path settings 
+        was created.</li>
+        <li>Added preference page for ghc compiler options.</li>
+        <li>Added a 'New Haskell Module' wizard with some support for qualified
+          modules.
+        </li>
+        <li>Put an action bar contributor in the Editor, so that some standard
+          actions (encoding etc.) in the menu and some standard informations
+          (insert mode, current cursor position ...) in the status bar are 
+          available.
+        </li>
+      </ul>
+    </li>
+    <li><b>Documentation</b>
+      <ul>
+        <li>Added compiler settings documentation.</li>
+        <li>Updated overview page with the changed project page etc.</li>        
+        <li>fixed TOC structure in the Help</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.2.0</h4>
+
+<p>2004-04-28 Started to make the user interface more convenient.</p>
+
+<p>
+  <ul>
+    <li><b>Core</b>
+      <ul>
+        <li>
+          Bugfix: ghc build not triggered when the ghc executable was not on 
+          the PATH.
+        </li>
+      </ul>
+    </li>
+    <li><b>UI</b>
+      <ul>
+        <li>
+          Import libraries are now properties of projects (they are no longer 
+          set globally in the preferences). They can be found by right-clicking 
+          a Haskell project in the workspace and then selecting 
+          <b>Properties > Import Libraries</b>.
+        </li>
+        <li>
+          New View: Module Browser (for browsing workspace projects in a more
+          Haskell-aware way).
+        </li>
+        <li>
+          Made the Haskell editor more configurable (syntax colors etc.).
+        </li>
+      </ul>
+    </li>
+    <li><b>Documentation</b>
+      <ul>
+        <li>Continued to add some basic user documentation (included texts 
+        for UI elements like views, editor).</li>
+      </ul>
+    </li>
+  </ul>
+</p>
+
+<h4>de.leiffrenzel.fp.haskell_0.1.0</h4>
+
+<p>2004-03-10 This is the initial version.</p>

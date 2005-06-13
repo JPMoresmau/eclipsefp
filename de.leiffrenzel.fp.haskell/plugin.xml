@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatsheet
+            category="net.sf.eclipsefp.common.ui.fpCheatSheets"
+            contentFile="cheatsheets/gettingstarted.xml"
+            name="Getting Started with Haskell in Eclipse"
+            id="de.leiffrenzel.fp.haskell.cheatsheets.GettingStarted"/>
+   </extension>
+
+</plugin>

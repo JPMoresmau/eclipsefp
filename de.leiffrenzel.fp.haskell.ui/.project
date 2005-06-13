@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>de.leiffrenzel.fp.haskell.ui</name>
+	<comment></comment>
+	<projects>
+		<project>de.leiffrenzel.fp.common.core</project>
+		<project>de.leiffrenzel.fp.common.ui</project>
+		<project>de.leiffrenzel.fp.haskell.core</project>
+		<project>org.eclipse.jface.text</project>
+		<project>org.eclipse.osgi</project>
+		<project>org.eclipse.osgi.services</project>
+		<project>org.eclipse.osgi.util</project>
+		<project>org.eclipse.ui</project>
+		<project>org.eclipse.ui.editors</project>
+		<project>org.eclipse.ui.ide</project>
+		<project>org.eclipse.ui.views</project>
+		<project>org.eclipse.ui.workbench.texteditor</project>
+		<project>org.eclipse.update.configurator</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.pde.ManifestBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.pde.SchemaBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.pde.PluginNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+	</natures>
+</projectDescription>

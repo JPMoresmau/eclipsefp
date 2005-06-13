@@ -1,0 +1,180 @@
+<h2>A quick start guide to Haskell programming with Eclipse</h2>
+
+<p>This document shows how you would create and run the 'Hello World'
+application in Eclipse with Haskell support. It also explains some of the
+main user interface elements in Eclipse. The focus is on helping
+developers who are not familiar with Eclipse to quickly get started 
+with it as an IDE that supports Haskell development.</p>
+
+<p>
+  <ul><li>
+  More information about how to use Eclipse can be found in the 
+  <b>Workbench User Guide</b> which is included in the Eclipse
+  Help.
+  </li><li>
+  For more information about Haskell go to <a href="http://haskell.org">
+  http://haskell.org</a>.
+  </li><li>
+  Note that you need an installation of the Glasgow Haskell Compiler (GHC)
+  on your system. (See 
+  <a href="http://haskell.org/ghc">http://haskell.org/ghc</a>.) If you don't,
+  you can still work with Haskell sources (and run them in HUGS), but you
+  won't see any syntax errors etc., and there will be no executable 
+  automatically built from the sources.
+  </li></ul>
+</p>
+
+<p><b>Note:</b> This is work in progress, which means that some of the features
+described here may not yet be in place. Have a look at the <a 
+href="plannedFeatures.txt">feature plan</a> for information about what is 
+already contained and what is planned.</p>
+
+
+<h3><a name="preparations">Preparations</a></h3>
+
+<ul>
+  <li><p><b>Open the Haskell Perspective</b>
+    <p>
+      Eclipse makes use of a concept called <b><i>Perspectives</i></b>.
+      Everything in the workspace is seen from such a Perspective. When you 
+      start Eclipse for the first time, the most basic of all Perspectives is 
+      open: the <i>Resource Perspective</i>, which handles just some basic 
+      file management and text editing. By openening the Haskell perspective, 
+      you activate everything that is Haskell-aware.
+    </p>
+    <ul><li><p>
+      Select from the menu: <b>Window &gt; Open Perspective &gt; Haskell</b>. 
+      (You can also open the Haskell Perspective from a link on the 
+      <b>Welcome</b> page.)
+    </p></li></ul>
+    <p>
+      Seen from the Haskell Perspective, a file is not just a file, but (if it 
+      has the correct extension) a Haskell source file, which means that you 
+      can open it with the Haskell source editor, you can compile it and run 
+      it with a Haskell interpreter (like HUGS) or as (e.g. with GHC) 
+      compiled and linked executable. The Perspective  contains also some 
+      <b><i>Views</i></b>, which provide Haskell-specific information about 
+      the file which is currently opened in the editor (<b>Outline View</b>) 
+      or about the last build process (<b>Compiler Output View</b>).
+    </p>
+    <p>
+      You can switch and close Perspectives at any time from the vertical 
+      toolbar at the left of the workbench. If you have closed a Perspective 
+      or a View, you can re-open it from the menu <b>Window &gt; Open 
+      Perspective</b> or <b>Show View</b>.
+    </p>
+  </li>
+  <li><p><b><a name="haskellProject">Create a new Haskell project</a></b></p>
+    <p>
+      The workspace is organized into <i><b>Projects</b></i> (roughly:
+      directories within the workspace directory).
+    </p>
+  
+    <ul><li><p>
+      Create a new project by selecting <b>File &gt; New &gt; Project</b> from 
+      the menu, expanding the <b>Functional programming</b> icon, then choosing 
+      <b>Haskell Project</b>. Specify a project name and hit <b>OK</b>.
+    </p></li></ul>
+  
+    <p>
+      A Haskell project has some properties:
+      <ul>
+	    <li><b>source folder</b> (where the compiler expects the sources)</li>
+		<li><b>output folder</b> (used by the compiler for object files)</li>
+		<li><b>binaries folder</b> (where the target executable is put)</li>
+		<li><b>target binary name</b> (the name of the executable produced 
+		by the compiler and linker).</li>
+      </ul>
+    </p>
+    <p>
+      When the project has been created, you will see the respective folders, 
+      which are created by the <b>New Project</b> wizard. You can configure 
+      these settings on the <b>Preference Page</b> for that wizard.
+    </p>
+  </li>
+</ul>
+
+<h3><a name="createSource">Create and edit source files</a></h3>
+
+  <p>
+    Add source files to the project source folder.
+  </p>
+
+  <ul><li><p>
+    Files can be created either from the menu (<b>File &gt; New</b>), or from 
+    the context menu you get when you right-click the project in the 
+    <i>Navigator</i> View).
+  </p></li>
+
+  <li><p>
+    For the 'Hello world' program, create a new file named 
+    <code>Main.hs</code>.
+  </p></li></ul>
+
+  <p>
+    If you give the files a Haskell-specific extension (like <code>.hs</code>
+    or <code>.lhs</code> (for literate Haskell), you can open the files with
+    the <i><b>Haskell source code editor</b></i> from the Navigator View.</p>
+  </p>
+
+  <ul><li><p>
+    Right-click the file and choose <b>Open with &gt;Haskell editor</b>. 
+    Type some code.
+  </p></li></ul>
+
+  <p>You can configure the editor in the main <i><b>Preferences Dialog</b></i>:
+  Select <b>Window &gt; Preferences</b> from the menu and choose the 
+  <b>Functional Programming</b> section.</p>
+
+<ul>  
+  <li><p>
+  Enter the code for your 'Hello world', e.g.
+  <table width="50%"><tr><td bgcolor="#d0d0d0"><pre><code>
+  <b>module</b> Main <b>where</b>
+  
+  main = putStr "Hello world!"
+  <code></pre><td><tr></table>
+  </p></li>
+
+  <li><p>
+    <b>Save</b>. This will trigger the auto building, and you will see compiler 
+    errors (if there were errors in the build) in the <b><i>Problems 
+    View</i></b>. If no errors have occured, the compiled object files and 
+    the linked executable should be in their respective folders. Auto building
+    works incrementally, that is, only changed resources are built when you 
+    save again.
+  </p></li>
+</ul>
+
+<h3><a name="run">Run the application</a></h3>
+
+  <p>
+    You can launch the compiled executable of your Haskell programs from within
+    the IDE.
+  </p>
+
+  <ul><li>
+    Select <b>Run As &gt; Haskell Application</b> from the menu <b>Run</b> (or
+    from the lauching icon that looks like a white triangle in a green circle).
+    You can also right-click the executable in the Module Browser or Navigator
+    and choose <b>Run &gt; Haskell Application</b> from the popup menu.
+  </li></ul>
+  
+  <p>
+    Running a program creates a new <b>Launch configuration</b> for that
+    program. You can re-run a lauch configuration from the <b>Run</b> menu.
+    Clicking the Run-icon re-launches always the last launched configuration.
+  </p>
+  
+  <p>
+    If you choose <b>Run ...</b> from the menu, you get a dialog where you 
+    can edit launch configurations. For example, you may want to add parameters
+    to the program launch.
+  </p>
+  
+  <p>
+    Console input and output are handled by the <b>Console View</b> (at the 
+    bottom left of the workbench). You should see the 'Hello world' output 
+    appear there, and if your program takes console input, the Console View 
+    is where you can type in while developing.
+  </p>

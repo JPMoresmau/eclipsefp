@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Haskell" link_to="../net.sf.eclipsefp.common.doc/book.xml#1">
+  <topic label="Haskell" href="html/haskell/haskell.html" >
+    <topic label="Getting Started" href="html/haskell/gettingStarted.html"/>
+    <topic label="User Guide" href="html/haskell/userGuide/userGuide.html">
+      <topic label="Haskell Editor" 
+             href="html/haskell/userGuide/editor.html"/>      
+      <topic label="Compiler Output View" 
+             href="html/haskell/userGuide/coview.html"/>
+      <topic label="Module Browser" 
+             href="html/haskell/userGuide/mbview.html"/>
+      <topic label="Compilers and Interpreters" 
+             href="html/haskell/userGuide/compilersInterpreters.html"/>
+      <!--topic label="Module Dependencies View" 
+                href="html/haskell/userGuide/mdepview.html"/-->
+      <topic label="Generating documentation (Haddock)" 
+             href="html/haskell/userGuide/haddock.html"/>
+    </topic>
+    <topic label="Tips and tricks" href="html/haskell/tips/tips.html"/>
+    <topic label="What's new" href="html/haskell/whatsnew/whatsnew.html"/>
+  </topic>
+</toc>

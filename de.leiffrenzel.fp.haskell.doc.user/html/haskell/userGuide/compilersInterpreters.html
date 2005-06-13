@@ -1,0 +1,49 @@
+<h2>Compilers and Interpreters</h2>
+
+<p>Please note that this IDE does not come with any Haskell language 
+implementations (compilers or interpreters). You need one of the supported 
+implementations installed on your system. Depending on your setup, the 
+executable of the compiler or interpreter can be on the PATH or not. If it is 
+not, you need also to specify its path from the preferences
+(<b>Window &gt; Preferences &gt; Functional Programming &gt; Compiler</b>, 
+then select the preference page of that particular compiler, e.g. 
+<b>GHC Settings</b>).</p>
+
+<p><i><b>Compilers</b></i> are used by the plugin to build Haskell projects 
+(on changes of the source files in that project). Usually you won't have to
+trigger compilation by hand. Options for compilers can be set on their 
+preference pages.</p>
+
+<p>Running sessions in an <i><b>interpreter</b></i> works like running 
+compiled applications: select one or more source file(s) and choose 
+<b>Run &gt; Run As</b> from the menu, then select the interpreter you want to 
+use.</p>
+
+<h4>Currently supported compilers</h4>
+
+<p><ul>
+  <li>Glasgow Haskell Compiler (ghc):<br> <a href="http://haskell.org/ghc">
+  http://haskell.org/ghc</a></li>
+</ul></p>
+
+
+<h4>Currently supported interpreters</h4>
+
+<p><ul>
+  <li>GHC interactive (GHCi):<br> <a href="http://haskell.org/ghc">
+  http://haskell.org/ghc</a></li>
+  <li>HUGS 98:<br> <a href="http://haskell.org/hugs">
+  http://haskell.org/hugs</a></li>  
+</ul></p>
+
+
+<!--
+<h4>Project specific compiler settings</h4>
+
+<p>Compiler settings in the preferences apply to every Haskell project in the
+workspace. If you want specific settings for a project, you can override the
+global settings for that project. Open the properties of the project (right-
+click the project and select <b>Properties</b>), and then choose 
+<b>Compiler</b>. Here you can change the compiler settings for the selected 
+project only.</p>
+-->

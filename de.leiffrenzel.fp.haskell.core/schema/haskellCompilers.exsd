@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="de.leiffrenzel.fp.haskell.core.de.leiffrenzel.fp.haskell.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="de.leiffrenzel.fp.haskell.core.de.leiffrenzel.fp.haskell.core" id="haskellCompilers" name="Haskell Compilers"/>
+      </appInfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="compiler" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="compiler">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="de.leiffrenzel.fp.haskell.core.IHaskellCompiler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="outputParser" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="de.leiffrenzel.fp.haskell.core.compiler.IHaskellCompilerOutputParser"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="mode" use="required">
+            <annotation>
+               <documentation>
+                  The compiler mode describes whether the compiler can start with a given (usually &apos;main&apos;) file and find out dependencies automatically (&apos;make&apos; mode) or whether it compiles input files one-by-one (&apos;batch&apos; mode), which means that the correct build order has to be determined before compiling and the files have to be provided accordingly.
+
+If a compiler supports a &apos;make&apos; mode (like ghc, the Glasgow Haskell Compiler, with its &apos;-make&apos; option), it should specify this here, in order to take advantage of the compilers dependency tracking mechanism and to avoid additional overhead when invoking the compiler only once per run.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="batch">
+                  </enumeration>
+                  <enumeration value="make">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

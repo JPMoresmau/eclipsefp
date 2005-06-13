@@ -1,0 +1,49 @@
+The project develops a set of extensions (plugins) for the Eclipse IDE 
+(http://eclipse.org) to support development in the functional programming 
+language Haskell (http://haskell.org). It aims at integrating a wide range 
+of commonly used tools as 
+
+- compilers (GHC, NHC), 
+- interpreters (HUGS, GHCi), 
+- debuggers (investigation is still needed into which debugging model for 
+  functional languages can be supported from Eclipse, this is probably a 
+  conceptually challenging task)
+- documentation generators
+- code analysis and manipulation (structural search, refactoring - needs 
+  also conceptual work)
+
+It provides also a set of UI elements for convenient and effective development, 
+especially coding (source editor) and source navigation. It has a project model 
+for managing sets of Haskell sources.
+
+The resulting Haskell IDE will benefit from the functionality inherited by the 
+Eclipse IDE (CVS integration, Help system and more) and from the extensibility 
+of the Eclipse platform, which allows combination with third-party extensions.
+
+It is developed in Java, on the Eclipse platform, and requires a JVM 1.4 or 
+higher and Eclipse 3.0. Development is always based on the latest milestone 
+versions of Eclipse. Additional Java libraries will be included if needed 
+(for instance probably ANTLR in the next future).
+
+There is an initial code contribution of a working version, currently 
+considered in 'alpha' stage. This version contains already a source code 
+editor (syntax coloring, code assist), GHC compiler support and launching 
+from the IDE. It is currently available at 
+http://leiffrenzel.de/eclipse/eclipsefp.html and is installed from the 
+Eclipse IDE using the built-in 'Update Manager'. It has been used already 
+on the Win32, Linux and MacOS X versions of Eclipse.
+
+Design principles and coding standards are as close as possible to those in 
+the Eclipse project, with a special accent on platform independence and best 
+practices concerning modularity and extensibility (Eclipse-specific). As a 
+long-term goal, compliance to the Eclipse UI guidelines should be achieved.
+
+The Eclipse community (users of Eclipse) will gain because of the availability 
+of language support for one more language (Haskell). There is no Haskell 
+support so far in Eclipse (and not much for functional languages in general). 
+The Haskell community may benefit from the awareness of the language in the 
+Eclipse community (which is relatively large, given the popularity of Eclipse 
+in the Java-world).
+
+It is planned to change the license from the CPL to the EPL 
+(Eclipse Public License) when the Eclipse projec	t has done the same transition.
