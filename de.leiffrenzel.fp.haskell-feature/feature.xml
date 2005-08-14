@@ -21,7 +21,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
    </license>
 
    <url>
-      <update label="eclipsefp update site" url="http://leiffrenzel.de/eclipse/site.xml"/>
+      <update label="eclipsefp update site" url="http://eclipsefp.sf.net/updates/site.xml"/>
    </url>
 
    <requires>
