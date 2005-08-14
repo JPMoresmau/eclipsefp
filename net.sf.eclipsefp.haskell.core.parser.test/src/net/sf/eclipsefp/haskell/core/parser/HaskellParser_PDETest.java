@@ -64,7 +64,7 @@ public class HaskellParser_PDETest extends HaskellProjectTestCase {
     IHaskellParser parser = ParserManager.getInstance().getParser();
     boolean exceptionOccured = false;
     try {
-      ICompilationUnit cu = parser.parse( file );
+      parser.parse( file );
     } catch( CoreException cex ) {
       exceptionOccured = true;
     }
