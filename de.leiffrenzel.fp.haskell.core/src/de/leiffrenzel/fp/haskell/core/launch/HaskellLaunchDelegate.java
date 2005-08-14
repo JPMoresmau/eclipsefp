@@ -5,12 +5,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.eclipsefp.common.core.util.Assert;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+
+import de.leiffrenzel.fp.haskell.core.HaskellCorePlugin;
 
 
 
@@ -133,8 +133,19 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     String defaultValue = null;
     String location = config.getAttribute( ILaunchAttributes.EXECUTABLE,
                                            defaultValue );
-    Assert.isNotNull( location );
+    if( isExistingFile( location ) ) {
+      String msg = "Could not locate the project's executable.";
+      String pluginId = HaskellCorePlugin.getPluginId();
+      IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
+      throw new CoreException( status );
+    }
     return new Path( location );
+  }
+
+  private boolean isExistingFile( final String location ) {
+    return    location == null 
+           || location.trim().length() == 0 
+           || !( new File( location ).exists() );
   }
 
   private boolean isBackground( final ILaunchConfiguration config ) 
