@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="configuratorPages" name="Tool Configurator Pages" schema="schema/configuratorPages.exsd"/>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Command configurator"
+            description="Runs a wizard that helps to adjusts paths to commands used by the eclipsefp tolls (such as compilers, interpreters and other tools."
+            visible="true"
+            id="net.sf.eclipsefp.common.ui.configurator.actionSet">
+         <action
+               disabledIcon="icons/full/dtool16/configurator.gif"
+               toolbarPath="eclipsefpConfigurator"
+               label="Run Configurator"
+               class="net.sf.eclipsefp.common.internal.ui.actions.RunConfiguratorDelegate"
+               tooltip="Run the configurator wizard that helps with adjusting executable paths for compilers, tools etc. on the system"
+               icon="icons/full/etool16/configurator.gif"
+               style="push"
+               id="net.sf.eclipsefp.common.internal.ui.actions.RunConfiguratorDelegate"/>
+      </actionSet>
+   </extension>   
+   
+   <!-- some common categories for eclipsefp subprojects to dock on -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Functional Programming"
+            id="net.sf.eclipsefp.common.ui.newWizardCategory">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Functional Programming"
+            class="net.sf.eclipsefp.common.ui.preferences.FPPreferencePage"
+            id="net.sf.eclipsefp.common.ui.preferences.FPPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Functional Programming"
+            id="net.sf.eclipsefp.common.ui.fpViews">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <category
+            name="Functional Programming"
+            id="net.sf.eclipsefp.common.ui.fpCheatSheets"/>
+   </extension>
+</plugin>

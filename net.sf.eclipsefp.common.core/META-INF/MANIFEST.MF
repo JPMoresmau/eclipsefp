@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-Name: FP Common Core
+Bundle-SymbolicName: net.sf.eclipsefp.common.core
+Bundle-Version: 0.9.0
+Bundle-ClassPath: commoncore.jar
+Bundle-Activator: net.sf.eclipsefp.common.core.CommonCorePlugin
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources
+Eclipse-AutoStart: true
+Provide-Package: net.sf.eclipsefp.common.core.project,
+ net.sf.eclipsefp.common.core.util
