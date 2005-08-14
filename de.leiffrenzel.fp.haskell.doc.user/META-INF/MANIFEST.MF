@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: Haskell User Documentation
 Bundle-SymbolicName: de.leiffrenzel.fp.haskell.doc.user; singleton=true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.10.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
 Eclipse-AutoStart: true

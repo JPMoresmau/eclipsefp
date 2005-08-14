@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: Haskell Core Plug-in
 Bundle-SymbolicName: de.leiffrenzel.fp.haskell.core; singleton=true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.10.0
 Bundle-ClassPath: haskellcore.jar
 Bundle-Activator: de.leiffrenzel.fp.haskell.core.HaskellCorePlugin
 Bundle-Vendor: eclipsefp.sourceforge.net
