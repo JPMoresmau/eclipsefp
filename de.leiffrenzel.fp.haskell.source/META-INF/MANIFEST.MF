@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Name: FP Haskell Sources
-Bundle-SymbolicName: de.leiffrenzel.fp.haskell.source; singleton=true
-Bundle-Version: 0.9.0
-Bundle-Vendor: eclipsefp.sourceforge.net
-Bundle-Localization: plugin
-Eclipse-AutoStart: true
