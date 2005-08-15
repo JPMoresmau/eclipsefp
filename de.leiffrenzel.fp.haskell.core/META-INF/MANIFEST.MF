@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.core.resources,
 Eclipse-AutoStart: true
 Provide-Package: de.leiffrenzel.fp.haskell.core,
  de.leiffrenzel.fp.haskell.core.builder,
+ de.leiffrenzel.fp.haskell.core.code,
  de.leiffrenzel.fp.haskell.core.compiler,
  de.leiffrenzel.fp.haskell.core.compiler.defaultcompiler,
  de.leiffrenzel.fp.haskell.core.expressions,

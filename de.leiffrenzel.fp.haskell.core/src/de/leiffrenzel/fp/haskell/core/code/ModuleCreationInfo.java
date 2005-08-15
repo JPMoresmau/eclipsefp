@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package de.leiffrenzel.fp.haskell.ui.wizards;
+package de.leiffrenzel.fp.haskell.core.code;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.IPath;
   * 
   * @author Leif Frenzel
   */
-class ModuleCreationInfo {
+public class ModuleCreationInfo {
 
   private String moduleName = "";
   private IPath folders;
@@ -20,27 +20,27 @@ class ModuleCreationInfo {
   // attribute setters and getters
   ////////////////////////////////
   
-  IPath getFolders() {
+  public IPath getFolders() {
     return folders;
   }
 
-  void setFolders( final IPath folders ) {
+  public void setFolders( final IPath folders ) {
     this.folders = folders;
   }
 
-  String getModuleName() {
+  public String getModuleName() {
     return this.moduleName;
   }
 
-  void setModuleName( final String moduleName ) {
+  public void setModuleName( final String moduleName ) {
     this.moduleName = moduleName;
   }
   
-  IContainer getSourceContainer() {
+  public IContainer getSourceContainer() {
     return sourceContainer;
   }
  
-  void setSourceContainer( final IContainer sourceContainer ) {
+  public void setSourceContainer( final IContainer sourceContainer ) {
     this.sourceContainer = sourceContainer;
   }
 }

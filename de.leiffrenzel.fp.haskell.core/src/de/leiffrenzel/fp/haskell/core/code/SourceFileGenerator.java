@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package de.leiffrenzel.fp.haskell.ui.wizards;
+package de.leiffrenzel.fp.haskell.core.code;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
   * 
   * @author Leif Frenzel
   */
-class CodeGenerator {
+public class SourceFileGenerator {
 
   /** Creates the new type using the specified information values. */
   public static IFile createFile( final IProgressMonitor monitor,
@@ -68,8 +68,10 @@ class CodeGenerator {
                                    final IProgressMonitor monitor ) 
                                                           throws CoreException {
     String[] segments = getPathSegments( info );
-    String fileContent = createFileContent( segments, info.getModuleName() );
-    String fileName = createFileName( info.getModuleName() );
+    String moduleName = info.getModuleName();
+    String fileContent = CodeGenerator.createModuleContent( segments, 
+                                                            moduleName );
+    String fileName = createFileName( moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
     InputStream isContent = new ByteArrayInputStream( fileContent.getBytes() ); 
     SubProgressMonitor subMon = new SubProgressMonitor( monitor, 4 );
@@ -82,28 +84,7 @@ class CodeGenerator {
     return ( path == null ) ? new String[ 0 ] : path.segments();
   }
 
-
   private static String createFileName( final String moduleName ) {
     return moduleName + "." + ResourceUtil.EXTENSION_HS;
-   }
-
-
-  private static String createFileContent( final String[] folderNames, 
-                                           final String name ) {
-    StringBuffer sb = new StringBuffer();
-    sb.append( getLineDelimiter() );
-    sb.append( "module " ); 
-    for( int i = 0; i < folderNames.length; i++ ) {
-      sb.append( folderNames[ i ] );
-      sb.append( "." );
-    }
-    sb.append( name );
-    sb.append( " where" );
-    sb.append( getLineDelimiter() );
-    return sb.toString();
-  }
-  
-  private static String getLineDelimiter() {
-    return System.getProperty( "line.separator", "\n" );    
   }
 }

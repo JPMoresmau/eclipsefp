@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 
+import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
 import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
 import de.leiffrenzel.fp.haskell.ui.util.DefaultStatus;
 

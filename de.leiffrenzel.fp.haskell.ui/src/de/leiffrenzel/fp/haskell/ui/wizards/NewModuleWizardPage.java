@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
+import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
 import de.leiffrenzel.fp.haskell.ui.dialog.FolderSelectionDialog;
 import de.leiffrenzel.fp.haskell.ui.dialog.SourceFolderSelectionDialog;
 import de.leiffrenzel.fp.haskell.ui.dialog.dialogfields.*;

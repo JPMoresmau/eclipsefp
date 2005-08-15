@@ -9,6 +9,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 
+import de.leiffrenzel.fp.haskell.core.code.SourceFileGenerator;
+import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
+
 
 /** <p>the operation that creates a new module in a Haskell project.</p>
   * 
@@ -38,7 +41,7 @@ class ModuleCreationOperation implements IRunnableWithProgress {
                                                      InterruptedException {
     Assert.isNotNull( info );
     try {
-      generatedFile = CodeGenerator.createFile( monitor, info );
+      generatedFile = SourceFileGenerator.createFile( monitor, info );
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );
     }
