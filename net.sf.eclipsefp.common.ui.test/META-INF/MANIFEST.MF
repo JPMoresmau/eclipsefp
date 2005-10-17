@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EclipseFP Common UI Tests Fragment
+Bundle-SymbolicName: net.sf.eclipsefp.common.ui.test
+Bundle-Version: 0.10.0
+Bundle-Vendor: EclipseFP Team
+Fragment-Host: net.sf.eclipsefp.common.ui;bundle-version="[0.10.0,1.0.0)"
+Bundle-Localization: plugin
+Require-Bundle: org.junit
