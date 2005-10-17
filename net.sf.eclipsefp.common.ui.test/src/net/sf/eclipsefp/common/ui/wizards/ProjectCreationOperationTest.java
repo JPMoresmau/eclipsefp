@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 
 import junit.framework.TestCase;
 
@@ -42,7 +43,18 @@ public class ProjectCreationOperationTest extends TestCase {
 		prj = fWorkspaceRoot.getProject(PROJECT_NAME);
 		assertValid(prj);
 		
-		prj.delete(true, true, null);
+	}
+	
+	public void testPlatformDefaultLocation() throws InvocationTargetException, InterruptedException {
+		final String defaultLocation = Platform.getLocation().toString() + '/' + PROJECT_NAME;
+		fInfo.setProjectLocation(Platform.getLocation().toString());
+		
+		runOperation(new ProjectCreationOperation(fInfo));
+		
+		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		assertValid(prj);
+		
+		assertEquals("Incorrect project location", defaultLocation, prj.getLocation().toString());
 	}
 
 	public void testCustomLocation() throws InvocationTargetException, InterruptedException {
@@ -56,6 +68,12 @@ public class ProjectCreationOperationTest extends TestCase {
 		
 		assertEquals("Incorrect project location", customLocation, prj.getLocation().toString());
 	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		deleteCreatedProject();
+	}
+
 
 	private void runOperation(ProjectCreationOperation op) throws InvocationTargetException, InterruptedException {
 		op.run(new NullProgressMonitor());
@@ -66,4 +84,9 @@ public class ProjectCreationOperationTest extends TestCase {
 		assertTrue("Project is closed", prj.isOpen());
 	}
 	
+	private void deleteCreatedProject() throws CoreException {
+		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		prj.delete(true, true, null);
+	}
+
 }

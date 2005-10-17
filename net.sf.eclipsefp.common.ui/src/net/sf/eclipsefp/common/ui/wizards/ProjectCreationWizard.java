@@ -48,7 +48,9 @@ public class ProjectCreationWizard extends Wizard
   }
 
   public boolean performFinish() {
-    info.setProjectName( page.getName() );
+    info.setProjectName( page.getProjectName() );
+    info.setProjectLocation(page.getLocationPath().toString());
+    
     ProjectCreationOperation runnable = new ProjectCreationOperation( info );
     IRunnableWithProgress op 
       = new WorkspaceModifyDelegatingOperation( runnable );

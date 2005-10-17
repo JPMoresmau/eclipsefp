@@ -70,7 +70,9 @@ class ProjectCreationOperation implements IRunnableWithProgress {
     IProject result = root.getProject( projectName );
     IProjectDescription desc = null;
     
-    if(null != projectLocation && !"".equals(projectLocation)) {
+    if(isDefaultLocation( projectLocation )) {
+      desc = null;
+    } else {
       desc = result.getWorkspace().newProjectDescription(projectName);
       desc.setLocation(new Path(projectLocation));
     }
@@ -82,6 +84,12 @@ class ProjectCreationOperation implements IRunnableWithProgress {
       result.open( null );
     }
     return result;
+  }
+
+  private boolean isDefaultLocation( final String projectLocation ) {
+    return null == projectLocation
+        || "".equals(projectLocation)
+        || Platform.getLocation().toString().equals(projectLocation);
   }
   
   private void addNatures( final IProgressMonitor mon, 
