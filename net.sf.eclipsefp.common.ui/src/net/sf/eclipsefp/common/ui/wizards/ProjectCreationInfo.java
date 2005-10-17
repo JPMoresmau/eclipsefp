@@ -18,6 +18,8 @@ public class ProjectCreationInfo {
   private String pageTitle;
   private String pageDescription;
   
+  /** The project location path, where the project specific files will reside */
+  private String projectLocation;
   /** the project natures that the creates project will have. */
   private String[] projectNatures;
   /** the name for the project that is created. */
@@ -85,5 +87,13 @@ public class ProjectCreationInfo {
 
   protected void setDescFileInfo( final DescriptorFileInfo descFileInfo ) {
     this.descFileInfo = descFileInfo;
+  }
+
+  void setProjectLocation(String location) {
+    this.projectLocation = location;
+  }
+
+  String getProjectLocation() {
+    return projectLocation;
   }
 }

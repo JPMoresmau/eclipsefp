@@ -64,9 +64,19 @@ class ProjectCreationOperation implements IRunnableWithProgress {
   
   private IProject createProjectResource() throws CoreException {
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    IProject result = root.getProject( info.getProjectName() );
+    final String projectName = info.getProjectName();
+    final String projectLocation = info.getProjectLocation();
+    
+    IProject result = root.getProject( projectName );
+    IProjectDescription desc = null;
+    
+    if(null != projectLocation && !"".equals(projectLocation)) {
+      desc = result.getWorkspace().newProjectDescription(projectName);
+      desc.setLocation(new Path(projectLocation));
+    }
+    
     if( !result.exists() ) {
-      result.create( null );
+      result.create( desc, null );
     }
     if( !result.isOpen() ) {
       result.open( null );
