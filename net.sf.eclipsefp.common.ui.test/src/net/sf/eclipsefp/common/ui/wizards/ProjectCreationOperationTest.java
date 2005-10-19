@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 
 public class ProjectCreationOperationTest extends TestCase {
 	
-	private static final String TMP_DIR = System.getenv("TEMP");
+	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 	private static final String PROJECT_NAME = "hello.haskell.world";
 
 	private ProjectCreationInfo fInfo;
@@ -25,7 +25,6 @@ public class ProjectCreationOperationTest extends TestCase {
 	@Override
 	protected void setUp() {
 		fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-
 		fInfo = new DumbProjectCreationInfo();
 		fInfo.setProjectName(PROJECT_NAME);
 	}
