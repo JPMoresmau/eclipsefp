@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 public class ParserTest extends TestCase {
 	
 	public void testModule() {
-		ICompilationUnit unit = parse("module ParserTest where");
+		ICompilationUnit unit = parse("module ParserTest where {}");
 		assertNotNull(unit);
 
 		IModule[] mods = unit.getModules();
