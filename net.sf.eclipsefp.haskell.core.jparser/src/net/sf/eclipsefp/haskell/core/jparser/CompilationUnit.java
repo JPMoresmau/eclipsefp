@@ -9,8 +9,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 public class CompilationUnit implements ICompilationUnit {
 
 	public IModule[] getModules() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IModule[1];
 	}
 
 	public ISourceLocation getNextLocation(ISourceLocation srcLoc) {
