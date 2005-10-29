@@ -1,0 +1,41 @@
+\begin{hcarentry}[updated]{Haskell support for the Eclipse IDE}
+\label{eclipsefp}
+\report{Leif Frenzel}
+\status{working, though alpha}
+\entry{updated}% done, 30.10.2005
+\makeheader
+
+The Eclipse platform is an extremely extensible framework for IDEs,
+developed by an Open Source Project. Our project extends it with tools
+to support Haskell development.
+
+The aim is to develop an IDE for Haskell that provides the set of features and
+the user experience known from the Eclipse Java IDE (the flagship of the
+Eclipse project), and integrates a broad range of compilers, interpreters,
+debuggers, documentation generators and other Haskell development tools.
+Long-term goals include a language model with support for language-aware IDE
+features, like refactoring and structural search.
+
+The current version is 0.9 (considered 'alpha'). It features a project model,
+a configurable source code editor (with syntax coloring and code assist),
+compiler support for GHC, interpreter support for GHCi and HUGS, documentation
+generation with Haddock~\cref{haddock}, and launching from the IDE. In the
+time between the last HC\&A report and now we have experimented in a number of
+different directions, including Debugging support using the Eclipse Debug 
+framework and the possibility to write part of the Haskell plugins in Haskell
+itself. So far we are doing this with lots of handcoding using JNI and FFI. We
+are trying to find a way to simplify and generalize this so that Eclipse plugins
+can partly be written in Haskell. We have also started to add some design 
+documents about this to the project homepage.
+
+Every help is very welcome, be it in the form of code contributions, docs or
+tutorials, or just any feedback if you use the IDE. If you want to
+participate, please subscribe to the development mailing list (see below).
+
+\FurtherReading
+\begin{compactitem}
+\item \url{http://eclipse.org}
+\item \url{http://lists.sourceforge.net/lists/listinfo/eclipsefp-develop}
+\item Project homepage: \url{http://eclipsefp.sf.net}
+\end{compactitem}
+\end{hcarentry}
