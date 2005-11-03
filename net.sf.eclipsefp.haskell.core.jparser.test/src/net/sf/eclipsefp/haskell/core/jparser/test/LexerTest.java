@@ -12,7 +12,18 @@ import junit.framework.TestCase;
 
 public class LexerTest extends TestCase {
 	
+	// The sample for these tests was taken from then Haskell Report
+	// and is available at
+	// http://www.haskell.org/onlinereport/lexemes.html#layout-before
+
 	private HaskellLexer fLexer;
+
+	protected void setUp() {
+		final String inStr = "module Simple where\n" +
+				             "data Stack = Empty\n";
+		
+		fLexer = new HaskellLexer(new StringReader(inStr));
+	}
 
 	public void testRecognition() throws TokenStreamException {
 		Token t = fLexer.nextToken();
@@ -69,10 +80,4 @@ public class LexerTest extends TestCase {
 		assertEquals(2, t.getLine());
 	}
 	
-	protected void setUp() {
-		final String inStr = "module Simple where\n" +
-				             "data Stack = Empty\n";
-		
-		fLexer = new HaskellLexer(new StringReader(inStr));
-	}
 }

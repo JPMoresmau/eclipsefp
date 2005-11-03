@@ -23,6 +23,9 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;
 
+LEFT_CURLY : '{' ;
+
+RIGHT_CURLY : '}' ;
 
 protected
 UPPER_CASE : 'A'..'Z';
