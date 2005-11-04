@@ -42,62 +42,17 @@ public class FormatterTest extends TestCase {
 		assertEquals(HaskellLexerTokenTypes.LEFT_CURLY, t.getType());
 		
 		t = formatter.nextToken(); //data
+		assertEquals("data", t.getText());
+		
 		t = formatter.nextToken(); //Stack
 		t = formatter.nextToken(); //=
 		t = formatter.nextToken(); //Empty
 
 		t = formatter.nextToken(); // }
 		assertEquals(HaskellLexerTokenTypes.RIGHT_CURLY, t.getType());
-	}
-	
-	public void testFormatWhere() {
-		final String inStr = "module AStack( Stack, push, pop, top, size ) where\n" +
-				             "data Stack a = Empty\n" +
-				             "             | MkStack a (Stack a)";
-		final String outStr = "module AStack( Stack, push, pop, top, size ) where\n" +
-                              "{data Stack a = Empty\n" +
-                              "              | MkStack a (Stack a)}";
 		
-		HaskellFormattedReader formatter = new HaskellFormattedReader(
-				                               new StringReader(inStr));
+		t = formatter.nextToken(); // EOF
 
-		assertOutput(outStr, formatter);
+		assertEquals(HaskellLexerTokenTypes.EOF, t.getType());
 	}
-	
-	private static void assertOutput(final String expectedOutput, final Reader producer) {
-		// setup the tokenizer to break the expectedOutput in lines
-		StringTokenizer expected = new StringTokenizer(expectedOutput, "\n\r");
-		BufferedReader lineReader = new BufferedReader(producer);
-		try {
-			int lineCounter = 0;
-			while (expected.hasMoreTokens()) {
-				lineCounter++;
-				final String expectedLine = expected.nextToken();
-				final String actualLine = lineReader.readLine();
-
-				if (actualLine == null) {
-					throw new AssertionFailedError(
-							"Actual output is longer shorter than expected");
-				}
-
-				if (!expectedLine.equals(actualLine)) {
-					throw new AssertionFailedError("Error at line "
-							+ lineCounter + ". Expected '" + expectedLine
-							+ "' but read '" + actualLine + "'");
-				}
-			}
-
-			// maybe the actual output is longer than the expected...
-			if (lineReader.readLine() != null) {
-				throw new AssertionFailedError(
-						"Actual output is longer than expected");
-			}
-		} catch (IOException e) {
-			// this should not happen, since we are using an in-memory
-			// reader
-			throw new AssertionError(
-					"Unexpected I/O error with in-memory reader");
-		}
-	}
-	
 }
