@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Stack;
 
 import antlr.Token;
 import antlr.TokenStream;
@@ -11,8 +10,8 @@ public class HaskellFormatter implements TokenStream {
 
 	private static final Token INVALID_TOKEN = new Token(Token.INVALID_TYPE);
 	
-	private Token lastToken = INVALID_TOKEN;
-	private Token openingToken = INVALID_TOKEN;
+	private Token fLastToken = INVALID_TOKEN;
+	private Stack<Token> fOpeningTokenStack = new Stack<Token>();
 	private LookaheadTokenStream fInput;
 	
 	public HaskellFormatter(TokenStream in) {
@@ -20,26 +19,27 @@ public class HaskellFormatter implements TokenStream {
 	}
 
 	public Token nextToken() throws TokenStreamException {
-		if ( lastToken.getType() == HaskellLexerTokenTypes.WHERE ) {
-			lastToken = new Token(HaskellLexerTokenTypes.LEFT_CURLY);
-			openingToken = fInput.peekToken();
+		if ( fLastToken.getType() == HaskellLexerTokenTypes.WHERE ) {
+			fLastToken = new Token(HaskellLexerTokenTypes.LEFT_CURLY);
+			fOpeningTokenStack.push(fInput.peekToken());
 		} else {
 			Token nextToken = fInput.peekToken();
 			if (isInsideBraces()) {
+				Token openingToken = fOpeningTokenStack.peek();
 				if ( nextToken.getType() == HaskellLexerTokenTypes.EOF ||
 				nextToken.getColumn() < openingToken.getColumn()) {
-					openingToken = null;
+					fOpeningTokenStack.pop();
 					return new Token(HaskellLexerTokenTypes.RIGHT_CURLY);
 				}
 			}
 			
-			lastToken = fInput.nextToken();
+			fLastToken = fInput.nextToken();
 		}
-		return lastToken;
+		return fLastToken;
 	}
 
 	private boolean isInsideBraces() {
-		return openingToken != null;
+		return !fOpeningTokenStack.empty();
 	}
 
 }

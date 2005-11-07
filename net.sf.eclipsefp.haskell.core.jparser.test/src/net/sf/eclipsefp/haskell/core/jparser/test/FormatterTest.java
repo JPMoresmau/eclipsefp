@@ -1,24 +1,18 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
-import java.util.StringTokenizer;
 
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
-import net.sf.eclipsefp.haskell.core.jparser.HaskellFormattedReader;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellFormatter;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-public class FormatterTest extends TestCase {
+public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	private static TokenStream createFormatter(final String input) {
 		final TokenStream lexer = new HaskellLexer(new StringReader(input));
@@ -37,13 +31,13 @@ public class FormatterTest extends TestCase {
 		final TokenStream formatter = createFormatter(inStr);
 		
 		Token t = formatter.nextToken();
-		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
+		assertEquals(MODULE, t.getType());
 		assertEquals("module", t.getText());
 		
 		t = formatter.nextToken(); //Simple
 		t = formatter.nextToken(); //where
 		t = formatter.nextToken(); // {
-		assertEquals(HaskellLexerTokenTypes.LEFT_CURLY, t.getType());
+		assertEquals(LEFT_CURLY, t.getType());
 		
 		t = formatter.nextToken(); //data
 		assertEquals("data", t.getText());
@@ -53,11 +47,31 @@ public class FormatterTest extends TestCase {
 		t = formatter.nextToken(); //Empty
 
 		t = formatter.nextToken(); // }
-		assertEquals(HaskellLexerTokenTypes.RIGHT_CURLY, t.getType());
+		assertEquals(RIGHT_CURLY, t.getType());
 		
 		t = formatter.nextToken(); // EOF
 
-		assertEquals(HaskellLexerTokenTypes.EOF, t.getType());
+		assertEquals(EOF, t.getType());
+	}
+	
+	public void testNestedWhere() throws TokenStreamException {
+		final String inStr = "module Simple where\n" +
+		                     "    id x = a where a = x\n";
+
+		final TokenStream formatter = createFormatter(inStr);
+		
+		//consume 'module Simple where'
+		consumeTokens(formatter, 3);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+
+		//consume 'id x = a where'
+		consumeTokens(formatter, 5);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		
+		//consume 'a = x'
+		consumeTokens(formatter, 3);
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 	}
 
 	/**
