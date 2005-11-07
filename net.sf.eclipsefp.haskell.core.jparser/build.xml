@@ -41,11 +41,19 @@
     	    depends="java-build"
     	    description="Build the Java binaries for the parser and its components" />
 
-    <target name="java-build" depends="antlr-build">
-    </target>
+    <target name="java-build" depends="parser-build" />
 	
-	<target name="antlr-build">
+	<target name="lexer-build">
 		<antlr target="${basedir}/antlr-src/haskell-lexer.g"
+			   outputdirectory="${basedir}/src/net/sf/eclipsefp/haskell/core/jparser">
+			<classpath>
+			    <pathelement location="${env.ANTLR_HOME}/lib/antlr.jar"/>
+			</classpath>
+		</antlr>
+	</target>
+	
+	<target name="parser-build" depends="lexer-build">
+		<antlr target="${basedir}/antlr-src/haskell-parser.g"
 			   outputdirectory="${basedir}/src/net/sf/eclipsefp/haskell/core/jparser">
 			<classpath>
 			    <pathelement location="${env.ANTLR_HOME}/lib/antlr.jar"/>
