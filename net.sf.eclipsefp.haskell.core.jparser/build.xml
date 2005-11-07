@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     31/10/2005 11:29:37                                                        
+
+     Builder script for the EclipseFP JParser sub-plugin.
+     
+     This script controls the build process for the parser, that starts
+     with the translation from the parser-definition language to Java.
+     
+     Tools needed:
+     
+     - ANTLR: The script was originally designed for version 2.7.5,
+     using later versions should be no big deal.
+     
+ 	 ANTLR is available at http://www.antlr.org
+ 	 
+ 	 In order to use the script, the ANTLR library (antlr.jar) should be
+ 	 available on the classpath or, optionally, there should be an
+ 	 ANTLR_HOME defined on the environment pointing to the ANTLR
+ 	 installation home. This is usually the antlr-X.Y.Z dir.
+ 	 
+ 	 
+ 	 - Java Software Development Kit (JDK): The script was designed and
+ 	 tested with JDK1.5 (or JDK5.0, if you'd like), but any version
+ 	 from 1.3 should work
+ 	 
+     Thiago Arrais
+     ====================================================================== -->
+<project name="eclipsefp.haskell.core.jparser " default="default">
+    <description>
+        This script controls the build process for the parser, that starts
+        with the translation from the parser-definition language to Java.
+    </description>
+	
+	<property environment="env" />
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default"
+    	    depends="java-build"
+    	    description="Build the Java binaries for the parser and its components" />
+
+    <target name="java-build" depends="antlr-build">
+    </target>
+	
+	<target name="antlr-build">
+		<antlr target="${basedir}/antlr-src/haskell-lexer.g"
+			   outputdirectory="${basedir}/src/net/sf/eclipsefp/haskell/core/jparser">
+			<classpath>
+			    <pathelement location="${env.ANTLR_HOME}/lib/antlr.jar"/>
+			</classpath>
+		</antlr>
+	</target>
+
+</project>
+

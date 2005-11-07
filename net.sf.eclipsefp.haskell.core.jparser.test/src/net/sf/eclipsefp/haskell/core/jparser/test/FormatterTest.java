@@ -20,17 +20,21 @@ import junit.framework.TestCase;
 
 public class FormatterTest extends TestCase {
 	
+	private static TokenStream createFormatter(final String input) {
+		final TokenStream lexer = new HaskellLexer(new StringReader(input));
+
+		return new HaskellFormatter(lexer);
+	}
+	
 	// The sample for these tests was taken from then Haskell Report
 	// and is available at
 	// http://www.haskell.org/onlinereport/lexemes.html#layout-before
 
-	public void testFormat() throws TokenStreamException {
+	public void testSimpleInput() throws TokenStreamException {
 		final String inStr = "module Simple where\n" +
         					 "data Stack = Empty\n";
 		
-		final TokenStream lexer = new HaskellLexer(new StringReader(inStr));
-
-		final TokenStream formatter = new HaskellFormatter(lexer);
+		final TokenStream formatter = createFormatter(inStr);
 		
 		Token t = formatter.nextToken();
 		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
@@ -55,4 +59,19 @@ public class FormatterTest extends TestCase {
 
 		assertEquals(HaskellLexerTokenTypes.EOF, t.getType());
 	}
+
+	/**
+	 *  Consume <code>num</code> tokens from <code>stream</code>.
+	 *  
+	 * @param stream The token stream to be consumed
+	 * @param num    The number of tokens to consume
+	 * @throws TokenStreamException
+	 */
+	private void consumeTokens(final TokenStream stream, int num) throws TokenStreamException {
+		for(int i = 0; i < num; ++i) {
+			stream.nextToken(); 
+		}
+	}
+	
+	
 }
