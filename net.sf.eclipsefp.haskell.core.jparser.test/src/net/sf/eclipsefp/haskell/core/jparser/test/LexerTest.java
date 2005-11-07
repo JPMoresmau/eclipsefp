@@ -58,6 +58,27 @@ public class LexerTest extends TestCase {
 		t = fLexer.nextToken();
 		assertEquals(HaskellLexerTokenTypes.EOF, t.getType());
 	}
+	
+	public void testCommonPrefixes() throws TokenStreamException {
+		fLexer = new HaskellLexer(new StringReader("main whomp modula whery"));
+		
+		Token t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals("main", t.getText());
+		
+		t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals("whomp", t.getText());
+
+		t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals("modula", t.getText());
+
+		t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals("whery", t.getText());
+
+	}
 
 	public void testPosition() throws TokenStreamException {
 		Token t = fLexer.nextToken(); //module
@@ -81,7 +102,4 @@ public class LexerTest extends TestCase {
 	}
 	
 	//TODO scan literate haskell
-	//TODO scan unformatted haskell (with '{', '}' and ';')
-	
-	
 }

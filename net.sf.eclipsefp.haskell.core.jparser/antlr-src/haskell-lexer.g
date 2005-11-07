@@ -4,6 +4,10 @@ header {
 
 class HaskellLexer extends Lexer;
 
+options	{
+    k = 6;
+}
+
 WS	:	(' '
     |    '\t'
     |    '\n' { newline(); }

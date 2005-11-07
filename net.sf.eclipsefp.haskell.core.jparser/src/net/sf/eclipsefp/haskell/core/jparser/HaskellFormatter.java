@@ -19,7 +19,8 @@ public class HaskellFormatter implements TokenStream {
 	}
 
 	public Token nextToken() throws TokenStreamException {
-		if ( fLastToken.getType() == HaskellLexerTokenTypes.WHERE ) {
+		if ( fLastToken.getType() == HaskellLexerTokenTypes.WHERE &&
+		fInput.peekToken().getType() != HaskellLexerTokenTypes.LEFT_CURLY) {
 			fLastToken = new Token(HaskellLexerTokenTypes.LEFT_CURLY);
 			fOpeningTokenStack.push(fInput.peekToken());
 		} else {

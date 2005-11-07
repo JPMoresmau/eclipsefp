@@ -31,7 +31,7 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		final TokenStream formatter = createFormatter(inStr);
 		
 		Token t = formatter.nextToken();
-		assertEquals(MODULE, t.getType());
+		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
 		assertEquals("module", t.getText());
 		
 		t = formatter.nextToken(); //Simple
@@ -94,6 +94,26 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		consumeTokens(formatter, 4);
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		
+		assertEquals(EOF, formatter.nextToken().getType());
+	}
+	
+	public void testLayoutIndependentCode() throws TokenStreamException {
+		final String inStr = "module Main where { id x = x; main = id 3 }";
+		final TokenStream formatter = createFormatter(inStr);
+		
+		//consume 'module Main where'
+		consumeTokens(formatter, 3);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		assertEquals("id", formatter.nextToken().getText());
+		
+		//consume 'x = x'
+		consumeTokens(formatter, 3);
+		assertEquals(SEMICOLON, formatter.nextToken().getType());
+		assertEquals("main", formatter.nextToken().getText());
+		
+		//consume '= id 3'
+		consumeTokens(formatter, 3);
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		assertEquals(EOF, formatter.nextToken().getType());
 	}
 	
