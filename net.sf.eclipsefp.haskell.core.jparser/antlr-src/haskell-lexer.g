@@ -23,9 +23,13 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;
 
+DECIMAL : '0' | ('1'..'9') (DIGIT)* ;
+
 LEFT_CURLY : '{' ;
 
 RIGHT_CURLY : '}' ;
+
+SEMICOLON : ';' ;
 
 protected
 UPPER_CASE : 'A'..'Z';

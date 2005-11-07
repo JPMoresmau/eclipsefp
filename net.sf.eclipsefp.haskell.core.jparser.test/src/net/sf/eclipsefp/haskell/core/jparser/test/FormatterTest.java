@@ -73,7 +73,30 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 	}
-
+	
+	public void testPlaceSemicolon() throws TokenStreamException {
+		final String inStr = "module Simple where\n" +
+                             "    fat 0 = 1\n" +
+                             "    fat x = x * fat (x - 1)\n" +
+                             "    id x = x";
+		final TokenStream formatter = createFormatter(inStr);
+		
+		//consume 'module Simple where { fat 0 = 1'
+		consumeTokens(formatter, 8);
+		assertEquals(SEMICOLON, formatter.nextToken().getType());
+		assertEquals("fat", formatter.nextToken().getText());
+		
+		//consume 'x = x * fat ( x - 1 )'		
+		consumeTokens(formatter, 10);
+		assertEquals(SEMICOLON, formatter.nextToken().getType());
+		
+		//consume 'id x = x'
+		consumeTokens(formatter, 4);
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		
+		assertEquals(EOF, formatter.nextToken().getType());
+	}
+	
 	/**
 	 *  Consume <code>num</code> tokens from <code>stream</code>.
 	 *  

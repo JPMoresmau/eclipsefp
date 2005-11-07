@@ -80,4 +80,8 @@ public class LexerTest extends TestCase {
 		assertEquals(2, t.getLine());
 	}
 	
+	//TODO scan literate haskell
+	//TODO scan unformatted haskell (with '{', '}' and ';')
+	
+	
 }

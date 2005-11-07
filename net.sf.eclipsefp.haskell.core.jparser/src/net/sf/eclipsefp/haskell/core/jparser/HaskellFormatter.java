@@ -30,6 +30,10 @@ public class HaskellFormatter implements TokenStream {
 				nextToken.getColumn() < openingToken.getColumn()) {
 					fOpeningTokenStack.pop();
 					return new Token(HaskellLexerTokenTypes.RIGHT_CURLY);
+				} else if ( nextToken != openingToken &&
+				fLastToken.getType() != HaskellLexerTokenTypes.SEMICOLON &&
+				nextToken.getColumn() == openingToken.getColumn()) {
+					return fLastToken = new Token(HaskellLexerTokenTypes.SEMICOLON);
 				}
 			}
 			
