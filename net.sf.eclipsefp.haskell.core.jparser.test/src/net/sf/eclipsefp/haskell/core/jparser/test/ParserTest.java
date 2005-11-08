@@ -2,29 +2,25 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
-import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
+import antlr.RecognitionException;
+import antlr.TokenStream;
+import antlr.TokenStreamException;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
+import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
 import junit.framework.TestCase;
 
 public class ParserTest extends TestCase {
 	
-	public void testModule() {
-		ICompilationUnit unit = parse("module ParserTest where {}");
-		assertNotNull(unit);
-
-		IModule[] mods = unit.getModules();
-		
-		assertNotNull(mods);
-		assertEquals(1, mods.length);
-		assertEquals("ParserTest", mods[0].getName());
+	public void testEmptyModule() throws RecognitionException, TokenStreamException {
+		parse("module ParserTest where {}");
 	}
 	
-	private ICompilationUnit parse(String contents) {
-		HaskellParser parser = new HaskellParser();
+	private void parse(String contents) throws RecognitionException, TokenStreamException {
+		TokenStream input = new HaskellLexer(new StringReader(contents));
+		HaskellParser parser = new HaskellParser(input);
 		
-		return parser.parse(new StringReader(contents));
+		parser.parseModule();
 	}
 }

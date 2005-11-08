@@ -1,3 +1,14 @@
+/*
+ * File haskell-lexer.g
+ * 
+ * This file is an ANTLR grammar file that describes a lexer (scanner)
+ * for Haskell.
+ *
+ * ANTLR is needed to translate this grammar to executable code. It is
+ * freely available at http://www.antlr.org
+ *
+ * Author: Thiago Arrais - thiago.arrais@gmail.com
+ */
 header {
 	package net.sf.eclipsefp.haskell.core.jparser;
 }
