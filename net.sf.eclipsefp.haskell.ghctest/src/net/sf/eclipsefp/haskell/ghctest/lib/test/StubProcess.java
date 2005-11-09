@@ -1,15 +1,35 @@
 package net.sf.eclipsefp.haskell.ghctest.lib.test;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringBufferInputStream;
 
 public class StubProcess extends Process {
 
+	private static class FailureInputStream extends InputStream {
+
+		private IOException fException;
+
+		public FailureInputStream(IOException exception) {
+			fException = exception;
+		}
+
+		@Override
+		public int read() throws IOException {
+			throw fException;
+		}
+
+	}
+
 	private InputStream fInputStream;
 
 	public StubProcess(String processOutput) {
 		fInputStream = new StringBufferInputStream(processOutput);
+	}
+
+	public StubProcess(IOException exception) {
+		fInputStream = new FailureInputStream(exception);
 	}
 
 	@Override

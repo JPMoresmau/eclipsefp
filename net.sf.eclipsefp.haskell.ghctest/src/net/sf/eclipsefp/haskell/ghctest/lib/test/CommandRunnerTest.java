@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class CommandRunnerTest {
 	
-	@Test public void shouldCaptureOutput() throws IOException, InterruptedException {
+	@Test public void shouldCaptureOutput() {
 		final String expectedOutput =
 			"The Glorious Glasgow Haskell Compilation System, version 6.4.2\r\n";
 		final RunnerRuntime stubRuntime = new StubRuntime(expectedOutput);
@@ -23,6 +23,18 @@ public class CommandRunnerTest {
 		assertEquals(expectedOutput, actualOutput);
 	}
 	
-	//TODO decide what to do with exception thrown by Runtime.exec
+	@Test public void shouldReturnEmptyOutputOnProcessCreationError() {
+		final StubRuntime stubRuntime = new StubRuntime("uninmportant");
+		stubRuntime.throwException(new IOException("No privilege"));
 
+		assertEquals("", new CommandRunner(stubRuntime).run("ghc --version"));
+	}
+	
+	@Test public void shoudlReturnEmptyOutputOnProcessReadingError() {
+		final StubRuntime stubRuntime = new StubRuntime(new IOException(
+				"Read error"));
+		
+		assertEquals("", new CommandRunner(stubRuntime).run("ghc --version"));
+	}
+	
 }
