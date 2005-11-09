@@ -9,6 +9,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.jparser.test");
 		//$JUnit-BEGIN$
+		suite.addTestSuite(ParserTest.class);
 		suite.addTestSuite(LookaheadTokenStreamTest.class);
 		suite.addTestSuite(LexerTest.class);
 		suite.addTestSuite(FormatterTest.class);

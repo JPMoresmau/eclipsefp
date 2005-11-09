@@ -2,6 +2,11 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
+import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+
 import antlr.RecognitionException;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
@@ -14,13 +19,48 @@ import junit.framework.TestCase;
 public class ParserTest extends TestCase {
 	
 	public void testEmptyModule() throws RecognitionException, TokenStreamException {
-		parse("module ParserTest where {}");
+		IModule module = parse("module ParserTest where {}");
+
+		assertNotNull(module);
+		assertEquals("ParserTest", module.getName());
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEmpty(exports);
+		
+		IImport[] imports = module.getImports();
+		assertNotNull(imports);
+		assertEmpty(imports);
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertNotNull(decls);
+		assertEmpty(decls);
+	}
+
+	public void testModuleWithExports() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest(f1, f2) where {}");
+
+		assertNotNull(module);
+		assertEquals("ParserTest", module.getName());
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(2, exports.length);
+		
+		assertEquals("f1", exports[0].getName());
+		assertEquals("f2", exports[1].getName());
+	}
+
+	private static void assertEmpty(Object[] exports) {
+		assertEquals(0, exports.length);
 	}
 	
-	private void parse(String contents) throws RecognitionException, TokenStreamException {
+	private IModule parse(String contents) throws RecognitionException, TokenStreamException {
 		TokenStream input = new HaskellLexer(new StringReader(contents));
 		HaskellParser parser = new HaskellParser(input);
 		
-		parser.parseModule();
+		return parser.parseModule();
 	}
+	
+	//TODO should keep token location info
 }

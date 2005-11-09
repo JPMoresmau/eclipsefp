@@ -10,7 +10,7 @@
  * Author: Thiago Arrais - thiago.arrais@gmail.com
  */
 header {
-	package net.sf.eclipsefp.haskell.core.jparser;
+package net.sf.eclipsefp.haskell.core.jparser;
 }
 
 class HaskellLexer extends Lexer;
@@ -45,6 +45,12 @@ LEFT_CURLY : '{' ;
 RIGHT_CURLY : '}' ;
 
 SEMICOLON : ';' ;
+
+LEFT_PAREN : '(' ;
+
+RIGHT_PAREN : ')' ;
+
+COMMA : ',' ;
 
 protected
 UPPER_CASE : 'A'..'Z';
