@@ -9,6 +9,10 @@ public class CommandRunner {
 	private static final int BUFFER_SIZE = 255;
 	private RunnerRuntime fRuntime;
 
+	public CommandRunner() {
+		this(new RunnerRuntime());
+	}
+
 	public CommandRunner(RunnerRuntime runtime) {
 		fRuntime = runtime;
 	}

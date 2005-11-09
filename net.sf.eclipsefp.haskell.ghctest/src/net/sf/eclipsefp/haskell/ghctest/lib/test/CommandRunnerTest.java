@@ -30,9 +30,9 @@ public class CommandRunnerTest {
 		assertEquals("", new CommandRunner(stubRuntime).run("ghc --version"));
 	}
 	
-	@Test public void shoudlReturnEmptyOutputOnProcessReadingError() {
-		final StubRuntime stubRuntime = new StubRuntime(new IOException(
-				"Read error"));
+	@Test public void shouldReturnEmptyOutputOnProcessReadingError() {
+		final StubRuntime stubRuntime = new StubRuntime(
+				                            new IOException("Read error"));
 		
 		assertEquals("", new CommandRunner(stubRuntime).run("ghc --version"));
 	}
