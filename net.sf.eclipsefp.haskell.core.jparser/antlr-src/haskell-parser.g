@@ -42,13 +42,11 @@ module returns [IModule result]
     }
     :
       ( MODULE
-        name:CONSTRUCTOR_ID
+        name:CONSTRUCTOR_ID { aModule.setName(name.getText()); }
         ( someExports=exports { aModule.addExports(someExports); } )?
         WHERE body
     | body )
     {
-        aModule.setName(name.getText());
-        
         result = aModule;
     }
     ;

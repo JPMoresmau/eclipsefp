@@ -50,6 +50,42 @@ public class ParserTest extends TestCase {
 		assertEquals("f1", exports[0].getName());
 		assertEquals("f2", exports[1].getName());
 	}
+	
+	public void testModuleWithNestedBlocks() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest() where {" +
+				               "    f = b where { b = 3 } }");
+
+		assertNotNull(module);
+		assertEquals("ParserTest", module.getName());
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(0, exports.length);
+	}
+	
+	public void testUntitledModule() throws RecognitionException, TokenStreamException {
+		IModule module = parse("{\n" +
+				               "fat 0 = 1\n" +
+				               "fat n = n * fat (n - 1)\n" +
+				               "}");
+		
+		assertEquals("", module.getName());
+	}
+	
+
+// TODO should recognize a function declaration inside a module
+//	public void testOneTopDeclarations() throws RecognitionException, TokenStreamException {
+//		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
+//		
+//		IDeclaration[] decls = module.getDeclarations();
+//		assertNotNull(decls);
+//		assertEquals(1, decls.length);
+//		
+//		assertEquals("main", decls[0].getName());
+//	}
+
+// TODO should recognize more than one declaration
+// TODO should recognize import declarations
 
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
