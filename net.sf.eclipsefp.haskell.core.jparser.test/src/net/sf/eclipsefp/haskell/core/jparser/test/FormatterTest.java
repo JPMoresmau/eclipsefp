@@ -12,6 +12,9 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 
 import junit.framework.TestCase;
 
+/**
+ * @author Thiago Arrais - thiago.arrais@gmail.com
+ */
 public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	private static TokenStream createFormatter(final String input) {

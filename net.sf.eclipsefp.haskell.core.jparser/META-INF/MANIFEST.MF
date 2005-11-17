@@ -1,9 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Jparser
+Bundle-Name: EclipseFP Haskell JParser
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.jparser
-Bundle-Version: 1.0.0
+Bundle-Version: 0.10.0
 Bundle-Localization: plugin
 Require-Bundle: de.leiffrenzel.fp.haskell.core,
  org.eclipse.core.runtime,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.antlr
+Bundle-Vendor: eclipsefp.sourceforge.net

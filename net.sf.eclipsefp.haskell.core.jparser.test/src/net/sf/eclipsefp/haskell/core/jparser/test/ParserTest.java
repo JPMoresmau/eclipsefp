@@ -16,6 +16,14 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
 import junit.framework.TestCase;
 
+/**
+ * Tests for the parser componenent.
+ * 
+ * These tests depend on the HaskellLexer class, it would be good not
+ * to do so (although it doesn't hurt too much to do).
+ * 
+ * @author Thiago Arrais - thiago.arrais@gmail.com
+ */
 public class ParserTest extends TestCase {
 	
 	public void testEmptyModule() throws RecognitionException, TokenStreamException {

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Plugin Fragment for testing EclipseFP Haskell JParser
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.jparser.test
+Bundle-Version: 0.10.0
+Bundle-Vendor: eclipsefp.sourceforge.net
+Fragment-Host: net.sf.eclipsefp.haskell.core.jparser;bundle-version="[0.10.0,1.0.0)"
+Bundle-Localization: plugin
+Require-Bundle: org.junit
