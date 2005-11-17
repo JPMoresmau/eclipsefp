@@ -12,6 +12,7 @@ public class AllTests {
 		suite.addTestSuite(ParserTest.class);
 		suite.addTestSuite(LookaheadTokenStreamTest.class);
 		suite.addTestSuite(LexerTest.class);
+		suite.addTestSuite(PluginTest.class);
 		suite.addTestSuite(FormatterTest.class);
 		//$JUnit-END$
 		return suite;

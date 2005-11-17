@@ -13,6 +13,8 @@ header
 {
 package net.sf.eclipsefp.haskell.core.jparser;
 	
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 import java.util.Vector;
 
@@ -27,6 +29,14 @@ class HaskellParser extends Parser;
 
 options {
 	importVocab = HaskellLexer;
+}
+
+//extra code for HaskellParser class
+{
+    public HaskellParser(InputStream in) {
+        this(new HaskellFormatter(new HaskellLexer(in)));
+    }
+    
 }
 
 parseModule returns [IModule result]

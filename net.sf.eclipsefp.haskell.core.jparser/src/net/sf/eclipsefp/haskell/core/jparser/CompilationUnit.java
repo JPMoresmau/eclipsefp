@@ -8,8 +8,14 @@ import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 
 public class CompilationUnit implements ICompilationUnit {
 
+	private IModule fModule;
+
+	public CompilationUnit(IModule module) {
+		fModule = module;
+	}
+
 	public IModule[] getModules() {
-		return new IModule[1];
+		return new IModule[] { fModule };
 	}
 
 	public ISourceLocation getNextLocation(ISourceLocation srcLoc) {
