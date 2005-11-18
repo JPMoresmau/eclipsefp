@@ -60,6 +60,19 @@
 			</classpath>
 		</antlr>
 	</target>
+	
+	<target name="clean">
+		<delete>
+			<fileset dir="${basedir}/src/net/sf/eclipsefp/haskell/core/jparser">
+			    <include name="HaskellLexer.java"/>
+			    <include name="HaskellLexerTokenTypes.java"/>
+			    <include name="HaskellLexerTokenTypes.txt"/>
+			    <include name="HaskellParser.java"/>
+			    <include name="HaskellParserTokenTypes.java"/>
+			    <include name="HaskellParserTokenTypes.txt"/>
+			</fileset>
+		</delete>
+	</target>
 
 </project>
 
