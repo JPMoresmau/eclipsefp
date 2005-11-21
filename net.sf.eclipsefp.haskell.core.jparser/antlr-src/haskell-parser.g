@@ -69,10 +69,21 @@ module returns [IModule result]
 
 modid returns [String result]
 	{
+		StringBuffer buf = new StringBuffer();
 		result = null;
 	}
 	:
-		id:CONSTRUCTOR_ID { result = id.getText(); }
+		id:CONSTRUCTOR_ID { buf.append(id.getText()); }
+		(
+			DOT t:CONSTRUCTOR_ID
+			{
+				buf.append('.');
+				buf.append(t.getText());
+			}
+		)*
+		{
+			result = buf.toString();
+		}
 	;
 
 exports returns [List<IExportSpecification> result]

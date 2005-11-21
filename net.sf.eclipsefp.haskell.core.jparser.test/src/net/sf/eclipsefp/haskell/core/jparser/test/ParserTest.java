@@ -79,7 +79,13 @@ public class ParserTest extends TestCase {
 		assertEquals(0, exports.length);
 	}
 	
-	//TODO should recognize qualified modules
+	public void testQualifiedModuleName() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Parser.Test() where {}");
+
+		assertNotNull(module);
+		assertEquals("Parser.Test", module.getName());
+	}
+	
 	
 	public void testUntitledModule() throws RecognitionException, TokenStreamException {
 		IModule module = parse("{\n" +

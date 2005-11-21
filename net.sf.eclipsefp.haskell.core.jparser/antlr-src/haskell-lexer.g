@@ -56,6 +56,8 @@ RIGHT_PAREN : ')' ;
 
 COMMA : ',' ;
 
+DOT : '.' ;
+
 protected
 UPPER_CASE : 'A'..'Z';
 
