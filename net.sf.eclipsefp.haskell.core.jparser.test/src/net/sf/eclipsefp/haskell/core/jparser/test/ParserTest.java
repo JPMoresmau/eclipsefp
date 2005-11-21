@@ -44,6 +44,14 @@ public class ParserTest extends TestCase {
 		assertNotNull(decls);
 		assertEmpty(decls);
 	}
+	
+	public void testUnderlinedModuleName() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Under_lined where {}");
+		
+		assertNotNull(module);
+		
+		assertEquals("Under_lined", module.getName());
+	}
 
 	public void testModuleWithExports() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest(f1, f2) where {}");

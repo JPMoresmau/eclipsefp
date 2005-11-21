@@ -20,7 +20,7 @@ public class LexerTest extends TestCase {
 
 	protected void setUp() {
 		final String inStr = "module Simple where\n" +
-				             "data Stack = Empty\n";
+				             "data Underlined_stack = Empty\n";
 		
 		fLexer = new HaskellLexer(new StringReader(inStr));
 	}
@@ -45,7 +45,7 @@ public class LexerTest extends TestCase {
 		
 		t = fLexer.nextToken();
 		assertEquals(HaskellLexerTokenTypes.CONSTRUCTOR_ID, t.getType());
-		assertEquals("Stack", t.getText());
+		assertEquals("Underlined_stack", t.getText());
 		
 		t = fLexer.nextToken();
 		assertEquals(HaskellLexerTokenTypes.SYMBOL, t.getType());

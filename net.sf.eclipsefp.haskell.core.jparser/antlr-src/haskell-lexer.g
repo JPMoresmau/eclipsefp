@@ -60,7 +60,7 @@ protected
 UPPER_CASE : 'A'..'Z';
 
 protected
-LOWER_CASE : 'a'..'z';
+LOWER_CASE : ('a'..'z'|'_');
 
 protected
 LETTER : UPPER_CASE | LOWER_CASE;

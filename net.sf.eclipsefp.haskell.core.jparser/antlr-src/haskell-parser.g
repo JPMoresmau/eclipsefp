@@ -49,13 +49,15 @@ parseModule returns [IModule result]
 module returns [IModule result]
     {
         Module aModule = new Module();
+        
+        String name = null;
         IModule aBody = null;
         List<IExportSpecification> someExports = null;
         result = null;
     }
     :
       ( MODULE
-        name:CONSTRUCTOR_ID { aModule.setName(name.getText()); }
+        name=modid { aModule.setName(name); }
         ( someExports=exports { aModule.addExports(someExports); } )?
         WHERE aBody=body
     | aBody=body )
@@ -64,7 +66,14 @@ module returns [IModule result]
         result = aModule;
     }
     ;
-    
+
+modid returns [String result]
+	{
+		result = null;
+	}
+	:
+		id:CONSTRUCTOR_ID { result = id.getText(); }
+	;
 
 exports returns [List<IExportSpecification> result]
     {
@@ -138,12 +147,14 @@ impdecls returns [List<IImport> result]
 impdecl returns [IImport result]
 	{
 		Import anImport = new Import();
+		
+		String name = null;
 		result = null;
 	}
 	:
-		(IMPORT (QUALIFIED)? id:CONSTRUCTOR_ID)
+		(IMPORT (QUALIFIED)? name=modid)
 		{
-			anImport.setElementName(id.getText());
+			anImport.setElementName(name);
 			result = anImport;
 		}
 	;
