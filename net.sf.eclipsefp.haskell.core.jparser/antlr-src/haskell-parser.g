@@ -19,9 +19,11 @@ import java.util.List;
 import java.util.Vector;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
+import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
+import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 }
 
@@ -47,6 +49,7 @@ parseModule returns [IModule result]
 module returns [IModule result]
     {
         Module aModule = new Module();
+        IModule aBody = null;
         List<IExportSpecification> someExports = null;
         result = null;
     }
@@ -54,9 +57,10 @@ module returns [IModule result]
       ( MODULE
         name:CONSTRUCTOR_ID { aModule.setName(name.getText()); }
         ( someExports=exports { aModule.addExports(someExports); } )?
-        WHERE body
-    | body )
+        WHERE aBody=body
+    | aBody=body )
     {
+    	aModule.addImports(aBody.getImports());
         result = aModule;
     }
     ;
@@ -95,6 +99,60 @@ export returns [IExportSpecification result]
     	}
     ;
           
-body : LEFT_CURLY (~( LEFT_CURLY | RIGHT_CURLY ) | body )* RIGHT_CURLY
+body returns [IModule result]
+	{
+	    Module aModule = new Module();
+	    List<IImport> imports;
+	    result = null;
+	}
+	:
+		(
+		LEFT_CURLY
+			(
+				imports=impdecls { aModule.addImports(imports); }
+				SEMICOLON
+				topdecls
+			|
+				imports=impdecls { aModule.addImports(imports); }
+			|
+				topdecls
+			)
+		RIGHT_CURLY
+		)
+		{
+			result = aModule;
+		}
+	;
+	
+impdecls returns [List<IImport> result]
+	{
+		IImport anImport;
+		result = new Vector<IImport>();
+	}
+	:
+		anImport=impdecl { result.add(anImport); }
+		( (SEMICOLON IMPORT) =>
+		SEMICOLON anImport=impdecl { result.add(anImport); } )*
+	;
+
+impdecl returns [IImport result]
+	{
+		Import anImport = new Import();
+		result = null;
+	}
+	:
+		(IMPORT (QUALIFIED)? id:CONSTRUCTOR_ID)
+		{
+			anImport.setElementName(id.getText());
+			result = anImport;
+		}
+	;
+	
+topdecls
+	:
+		( ~(LEFT_CURLY | RIGHT_CURLY) | block )*
+	;
+
+block : LEFT_CURLY (~( LEFT_CURLY | RIGHT_CURLY ) | block )* RIGHT_CURLY
      ;
 

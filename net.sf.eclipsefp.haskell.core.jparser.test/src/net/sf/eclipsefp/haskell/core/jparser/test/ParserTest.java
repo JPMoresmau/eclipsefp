@@ -71,6 +71,8 @@ public class ParserTest extends TestCase {
 		assertEquals(0, exports.length);
 	}
 	
+	//TODO should recognize qualified modules
+	
 	public void testUntitledModule() throws RecognitionException, TokenStreamException {
 		IModule module = parse("{\n" +
 				               "fat 0 = 1\n" +
@@ -80,9 +82,22 @@ public class ParserTest extends TestCase {
 		assertEquals("", module.getName());
 	}
 	
+	public void testOneImport() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where {\n" +
+				               "import Library\n" +
+				               ";main = putStr 'Hello world!'\n" +
+				               "} ");
+		
+		IImport[] imports = module.getImports();
+		assertNotNull(imports);
+		assertEquals(1, imports.length);
+		
+		assertEquals("Library", imports[0].getImportedElement());
+	}
+	
 
-// TODO should recognize a function declaration inside a module
-//	public void testOneTopDeclarations() throws RecognitionException, TokenStreamException {
+//TODO should recognize a top level declaration
+//	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
 //		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
 //		
 //		IDeclaration[] decls = module.getDeclarations();
@@ -91,6 +106,8 @@ public class ParserTest extends TestCase {
 //		
 //		assertEquals("main", decls[0].getName());
 //	}
+	
+//TODO should recognize functions with nested blocks
 
 // TODO should recognize more than one declaration
 // TODO should recognize import declarations

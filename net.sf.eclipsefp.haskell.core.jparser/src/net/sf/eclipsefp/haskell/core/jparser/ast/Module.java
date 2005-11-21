@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -8,6 +9,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 
@@ -15,13 +17,13 @@ public class Module implements IModule {
 
 	private String fName;
 	private List<IExportSpecification> fExports;
-	private IImport[] fImports;
+	private List<IImport> fImports;
 	private IDeclaration[] fDecls;
 
 	public Module() {
 		fName = "";
 		fExports = new Vector<IExportSpecification>();
-		fImports = new IImport[0];
+		fImports = new Vector<IImport>();
 		fDecls = new IDeclaration[0];
 	}
 	
@@ -30,7 +32,7 @@ public class Module implements IModule {
 	}
 
 	public IImport[] getImports() {
-		return fImports;
+		return fImports.toArray(new IImport[fImports.size()]);
 	}
 
 	public IDeclaration[] getDeclarations() {
@@ -62,6 +64,19 @@ public class Module implements IModule {
 
 	public void addExports(List<IExportSpecification> someExports) {
 		fExports.addAll(someExports);
+	}
+
+	public void addImports(List<IImport> someImports) {
+		fImports.addAll(someImports);
+	}
+
+	/**
+	 * Adds a list of imports to the module. This is a convenience method.
+	 * 
+	 * @param imports the imports to be added
+	 */
+	public void addImports(IImport[] imports) {
+		addImports(Arrays.asList(imports));
 	}
 
 }

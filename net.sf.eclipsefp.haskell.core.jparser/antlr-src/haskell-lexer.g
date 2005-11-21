@@ -30,6 +30,10 @@ MODULE : "module" ;
        
 WHERE : "where" ;
 
+IMPORT : "import" ;
+
+QUALIFIED : "qualified" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;
