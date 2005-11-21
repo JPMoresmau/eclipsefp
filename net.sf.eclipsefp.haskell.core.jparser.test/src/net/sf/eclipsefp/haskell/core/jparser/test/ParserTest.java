@@ -109,6 +109,21 @@ public class ParserTest extends TestCase {
 		assertEquals("Library", imports[0].getImportedElement());
 	}
 	
+	public void testMultipleImports() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where {\n" +
+	               "import LibraryA;\n" +
+	               "import LibraryB.ModuleM;\n" +
+	               "main = putStr 'Hello world!'\n" +
+	               "} ");
+
+		IImport[] imports = module.getImports();
+		assertNotNull(imports);
+		assertEquals(2, imports.length);
+		
+		assertEquals("LibraryA", imports[0].getImportedElement());
+		assertEquals("LibraryB.ModuleM", imports[1].getImportedElement());
+	}
+	
 
 //TODO should recognize a top level declaration
 //	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
@@ -124,7 +139,6 @@ public class ParserTest extends TestCase {
 //TODO should recognize functions with nested blocks
 
 // TODO should recognize more than one declaration
-// TODO should recognize import declarations
 
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
