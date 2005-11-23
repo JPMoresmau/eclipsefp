@@ -10,6 +10,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 public class Import implements IImport {
 
 	private String fImportedElementName;
+	private SourceLocation fLocation = new SourceLocation();
 
 	public IModule getModule() {
 		// TODO Auto-generated method stub
@@ -31,8 +32,7 @@ public class Import implements IImport {
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return fImportedElementName;
 	}
 
 	public ICompilationUnit getCompilationUnit() {
@@ -46,12 +46,15 @@ public class Import implements IImport {
 	}
 
 	public ISourceLocation getSourceLocation() {
-		// TODO Auto-generated method stub
-		return null;
+		return fLocation;
 	}
 
 	public void setElementName(String name) {
 		fImportedElementName = name;
+	}
+
+	public void setLocation(int line, int column) {
+		fLocation.setPoint(line, column);
 	}
 
 }

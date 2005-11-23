@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
+import java.io.StringBufferInputStream;
 import java.io.StringReader;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
@@ -11,6 +12,7 @@ import antlr.RecognitionException;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
+import net.sf.eclipsefp.haskell.core.jparser.HaskellFormatter;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
@@ -124,7 +126,29 @@ public class ParserTest extends TestCase {
 		assertEquals("LibraryB.ModuleM", imports[1].getImportedElement());
 	}
 	
+	public void testImportLocationRecording() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where {\n" +
+				               "import LibraryA;\n" +
+				               "import LibraryB.ModuleM;\n" +
+				               "\n" +
+				               "import LibraryC.ModuleN;\n" +
+				               "main = putStr 'Hello world!'\n" +
+				               "} ");
 
+		IImport[] imports = module.getImports();
+		assertNotNull(imports);
+		assertEquals(3, imports.length);
+		
+		assertNotNull(imports[0].getSourceLocation());
+		assertEquals(2, imports[0].getSourceLocation().getLine());
+		
+		assertNotNull(imports[1].getSourceLocation());
+		assertEquals(3, imports[1].getSourceLocation().getLine());
+
+		assertNotNull(imports[2].getSourceLocation());
+		assertEquals(5, imports[2].getSourceLocation().getLine());
+	}
+	
 //TODO should recognize a top level declaration
 //	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
 //		IModule module = parse("module Main where { main = putStr 'Hello world!' }");

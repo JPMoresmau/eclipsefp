@@ -163,9 +163,10 @@ impdecl returns [IImport result]
 		result = null;
 	}
 	:
-		(IMPORT (QUALIFIED)? name=modid)
+		(t:IMPORT (QUALIFIED)? name=modid)
 		{
 			anImport.setElementName(name);
+			anImport.setLocation(t.getLine(), t.getColumn());
 			result = anImport;
 		}
 	;
