@@ -146,5 +146,8 @@ public class LexerTest extends TestCase {
 		assertEquals(34, t.getColumn());
 	}
 	
+	//TODO maybe we need to recognize more comment formats. the report
+	//specifies a return char as the end of a line comment too 
+
 	//TODO scan literate haskell
 }

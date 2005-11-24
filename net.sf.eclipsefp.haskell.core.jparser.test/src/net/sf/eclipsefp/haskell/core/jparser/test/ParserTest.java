@@ -8,10 +8,8 @@ import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import antlr.RecognitionException;
-import antlr.TokenStream;
 import antlr.TokenStreamException;
 
-import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
 import junit.framework.TestCase;
@@ -147,6 +145,17 @@ public class ParserTest extends TestCase {
 		assertEquals(4, imports[2].getSourceLocation().getLine());
 	}
 	
+	public void testOnlyImports() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+							   "\n" +
+				               "    import LibraryL.ModuleM\n" +
+				               "    import LibraryL.ModuleN\n");
+		
+		IImport[] imports = module.getImports();
+		assertNotNull(imports);
+		assertEquals(2, imports.length);
+	}
+	
 	public void testWithComments() throws RecognitionException, TokenStreamException {
 		IModule module = parse( "--this is the main module for the app\n" +
 						        "module Main where\n" +
@@ -185,5 +194,7 @@ public class ParserTest extends TestCase {
 		return parser.parseModule();
 	}
 	
-	//TODO should keep token location info
+	//TODO should be able to build a tree with a partial parse, not just
+	//with valid inputs
+	
 }

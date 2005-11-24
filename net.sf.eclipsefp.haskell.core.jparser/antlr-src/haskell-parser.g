@@ -139,10 +139,10 @@ body returns [IModule result]
 		LEFT_CURLY
 			(
 				imports=impdecls { aModule.addImports(imports); }
-				SEMICOLON
-				topdecls
-			|
-				imports=impdecls { aModule.addImports(imports); }
+				(
+					SEMICOLON
+					topdecls
+				)?
 			|
 				topdecls
 			)
