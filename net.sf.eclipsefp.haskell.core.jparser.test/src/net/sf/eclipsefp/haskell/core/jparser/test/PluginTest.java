@@ -28,15 +28,7 @@ public class PluginTest extends TestCase {
 	}
 	
 	public void testParseFileResource() throws CoreException {
-	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	    
-	    IProject project = root.getProject("foo");
-	    project.create(null);
-	    project.open(null);
-	    
-	    IFile file = project.getFile("bar.hs");
-	    
-	    file.create(new StringBufferInputStream("module Empty where {}"), true, null);
+	    IFile file = new MockFile("module Empty where {}");
 	    
 		IHaskellParser parser = ParserManager.getInstance().getParser();
 		
