@@ -33,11 +33,11 @@ options	{
 
 WS	:	(' '
     |    '\t'
-    |    '\n' { newline(); }
+    |    NEWLINE
     |    '\r')+
     	{ $setType(Token.SKIP); }
     ;
-    
+
 MODULE : "module" ;
        
 WHERE : "where" ;
@@ -69,6 +69,17 @@ RIGHT_PAREN : ')' ;
 COMMA : ',' ;
 
 DOT : '.' ;
+
+COMMENT : LINE_COMMENT | BLOCK_COMMENT ;
+
+protected
+LINE_COMMENT : "--" (~'\n')* NEWLINE ;
+
+protected
+BLOCK_COMMENT : "{-" (options {greedy=false;} : (NEWLINE | .))* "-}" ;
+
+protected
+NEWLINE : '\n' { newline(); } ;
 
 protected
 UPPER_CASE : 'A'..'Z';

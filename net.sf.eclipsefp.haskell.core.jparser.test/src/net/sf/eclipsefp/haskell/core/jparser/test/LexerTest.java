@@ -16,13 +16,13 @@ public class LexerTest extends TestCase {
 	// and is available at
 	// http://www.haskell.org/onlinereport/lexemes.html#layout-before
 
-	private HaskellLexer fLexer;
+	private TestTokenStream fLexer;
 
 	protected void setUp() {
 		final String inStr = "module Simple where\n" +
 				             "data Underlined_stack = Empty\n";
 		
-		fLexer = new HaskellLexer(new StringReader(inStr));
+		fLexer = new TestTokenStream(new HaskellLexer(new StringReader(inStr)));
 	}
 
 	public void testRecognition() throws TokenStreamException {
@@ -59,8 +59,12 @@ public class LexerTest extends TestCase {
 		assertEquals(HaskellLexerTokenTypes.EOF, t.getType());
 	}
 	
+	private TestTokenStream createLexer(String input) {
+		return new TestTokenStream(new HaskellLexer(new StringReader(input)));
+	}
+	
 	public void testCommonPrefixes() throws TokenStreamException {
-		fLexer = new HaskellLexer(new StringReader("main whomp modula whery"));
+		fLexer = createLexer("main whomp modula whery");
 		
 		Token t = fLexer.nextToken();
 		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
@@ -79,7 +83,7 @@ public class LexerTest extends TestCase {
 		assertEquals("whery", t.getText());
 
 	}
-
+	
 	public void testPosition() throws TokenStreamException {
 		Token t = fLexer.nextToken(); //module
 		assertEquals(0, t.getColumn());
@@ -99,6 +103,47 @@ public class LexerTest extends TestCase {
 		t = fLexer.nextToken();
 		assertEquals(5, t.getColumn());
 		assertEquals(1, t.getLine());
+	}
+	
+	public void testCodeWithComments() throws TokenStreamException {
+		fLexer = createLexer("--this is the main module for the app\n" +
+				             "module Main where\n" +
+				             "{- We actually need to import those\n" +
+				             "   modules here for using the network\n" +
+				             "   connection capabilities -}\n" +
+				             "import Network\n" +
+				             "\n" +
+				             "main = {- block comment inside -} putStr 'hello'\n"
+				             );
+		Token t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.COMMENT, t.getType());
+		assertEquals("--this is the main module for the app\n", t.getText());
+		
+		t = fLexer.nextToken(); //module
+		assertEquals(0, t.getColumn());
+		assertEquals(1, t.getLine());
+		
+		fLexer.skipTokens(2); //Main where
+		
+		t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.COMMENT, t.getType());
+		assertEquals("{- We actually need to import those\n" +
+	                 "   modules here for using the network\n" +
+	                 "   connection capabilities -}",
+	                 t.getText());
+		
+		t = fLexer.nextToken(); //import
+		assertEquals(5, t.getLine());
+		
+		fLexer.skipTokens(3); //Network main = 
+		
+		t = fLexer.nextToken(); // {- block comment inside -}
+		assertEquals(HaskellLexerTokenTypes.COMMENT, t.getType());
+		assertEquals("{- block comment inside -}", t.getText());
+		
+		t = fLexer.nextToken(); //putStr
+		assertEquals("putStr", t.getText());
+		assertEquals(34, t.getColumn());
 	}
 	
 	//TODO scan literate haskell

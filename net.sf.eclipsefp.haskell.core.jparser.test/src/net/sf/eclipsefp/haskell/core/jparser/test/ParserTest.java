@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
@@ -12,7 +11,6 @@ import antlr.RecognitionException;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
-import net.sf.eclipsefp.haskell.core.jparser.HaskellFormatter;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 

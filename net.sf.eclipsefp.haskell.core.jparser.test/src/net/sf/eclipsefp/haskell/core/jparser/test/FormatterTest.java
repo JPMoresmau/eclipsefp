@@ -17,10 +17,10 @@ import junit.framework.TestCase;
  */
 public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	
-	private static TokenStream createFormatter(final String input) {
+	private static TestTokenStream createFormatter(final String input) {
 		final TokenStream lexer = new HaskellLexer(new StringReader(input));
 
-		return new HaskellFormatter(lexer);
+		return new TestTokenStream(new HaskellFormatter(lexer));
 	}
 	
 	// The sample for these tests was taken from then Haskell Report
@@ -31,7 +31,7 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		final String inStr = "module Simple where\n" +
         					 "data Stack = Empty\n";
 		
-		final TokenStream formatter = createFormatter(inStr);
+		final TestTokenStream formatter = createFormatter(inStr);
 		
 		Token t = formatter.nextToken();
 		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
@@ -61,18 +61,18 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		final String inStr = "module Simple where\n" +
 		                     "    id x = a where a = x\n";
 
-		final TokenStream formatter = createFormatter(inStr);
+		final TestTokenStream formatter = createFormatter(inStr);
 		
 		//consume 'module Simple where'
-		consumeTokens(formatter, 3);
+		formatter.skipTokens(3);
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 
 		//consume 'id x = a where'
-		consumeTokens(formatter, 5);
+		formatter.skipTokens(5);
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 		
 		//consume 'a = x'
-		consumeTokens(formatter, 3);
+		formatter.skipTokens(3);
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 	}
@@ -82,19 +82,19 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
                              "    fat 0 = 1\n" +
                              "    fat x = x * fat (x - 1)\n" +
                              "    id x = x";
-		final TokenStream formatter = createFormatter(inStr);
+		final TestTokenStream formatter = createFormatter(inStr);
 		
 		//consume 'module Simple where { fat 0 = 1'
-		consumeTokens(formatter, 8);
+		formatter.skipTokens(8);
 		assertEquals(SEMICOLON, formatter.nextToken().getType());
 		assertEquals("fat", formatter.nextToken().getText());
 		
 		//consume 'x = x * fat ( x - 1 )'		
-		consumeTokens(formatter, 10);
+		formatter.skipTokens(10);
 		assertEquals(SEMICOLON, formatter.nextToken().getType());
 		
 		//consume 'id x = x'
-		consumeTokens(formatter, 4);
+		formatter.skipTokens(4);
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		
 		assertEquals(EOF, formatter.nextToken().getType());
@@ -102,35 +102,22 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	public void testLayoutIndependentCode() throws TokenStreamException {
 		final String inStr = "module Main where { id x = x; main = id 3 }";
-		final TokenStream formatter = createFormatter(inStr);
+		final TestTokenStream formatter = createFormatter(inStr);
 		
 		//consume 'module Main where'
-		consumeTokens(formatter, 3);
+		formatter.skipTokens(3);
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 		assertEquals("id", formatter.nextToken().getText());
 		
 		//consume 'x = x'
-		consumeTokens(formatter, 3);
+		formatter.skipTokens(3);
 		assertEquals(SEMICOLON, formatter.nextToken().getType());
 		assertEquals("main", formatter.nextToken().getText());
 		
 		//consume '= id 3'
-		consumeTokens(formatter, 3);
+		formatter.skipTokens(3);
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		assertEquals(EOF, formatter.nextToken().getType());
-	}
-	
-	/**
-	 *  Consume <code>num</code> tokens from <code>stream</code>.
-	 *  
-	 * @param stream The token stream to be consumed
-	 * @param num    The number of tokens to consume
-	 * @throws TokenStreamException
-	 */
-	private void consumeTokens(final TokenStream stream, int num) throws TokenStreamException {
-		for(int i = 0; i < num; ++i) {
-			stream.nextToken(); 
-		}
 	}
 	
 	
