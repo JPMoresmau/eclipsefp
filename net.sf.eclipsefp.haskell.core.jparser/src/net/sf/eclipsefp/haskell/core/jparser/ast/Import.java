@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast;
 
+import java.util.List;
+import java.util.Vector;
+
 import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
@@ -11,6 +14,7 @@ public class Import implements IImport {
 
 	private String fImportedElementName;
 	private SourceLocation fLocation = new SourceLocation();
+	private List<IImportSpecification> fSpecifications = new Vector<IImportSpecification>();
 
 	public IModule getModule() {
 		// TODO Auto-generated method stub
@@ -22,8 +26,7 @@ public class Import implements IImport {
 	}
 
 	public IImportSpecification[] getImportSpecifications() {
-		// TODO Auto-generated method stub
-		return null;
+		return fSpecifications.toArray(new IImportSpecification[fSpecifications.size()]);
 	}
 
 	public boolean isHiding() {
@@ -55,6 +58,10 @@ public class Import implements IImport {
 
 	public void setLocation(int line, int column) {
 		fLocation.setPoint(line, column);
+	}
+
+	public void addSpecifications(List<IImportSpecification> specs) {
+		fSpecifications.addAll(specs);
 	}
 
 }

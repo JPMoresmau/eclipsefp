@@ -48,6 +48,8 @@ QUALIFIED : "qualified" ;
 
 AS : "as" ;
 
+HIDING : "hiding" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

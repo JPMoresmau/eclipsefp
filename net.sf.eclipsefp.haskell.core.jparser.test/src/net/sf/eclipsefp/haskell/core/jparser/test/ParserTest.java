@@ -65,6 +65,12 @@ public class ParserTest extends TestCase {
 		assertEquals("f2", exports[1].getName());
 	}
 	
+	//TODO export specs may be qualified vars
+	//TODO export specs can be one of below
+	// qtycon [(..) | ( cname1 , ... , cnamen )] 	 (n>=0)
+	// qtycls [(..) | ( qvar1 , ... , qvarn )] 	(n>=0)
+	// module modid
+	
 	public void testModuleWithNestedBlocks() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest() where {" +
 				               "    f = b where { b = 3 } }");
@@ -152,6 +158,24 @@ public class ParserTest extends TestCase {
 		
 		assertEquals("ModuleM", module.getImports()[0].getName());
 	}
+	
+	public void testSelectiveImports() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+							   "\n" +
+				               "    import ModuleM ( funF, funG )\n" +
+				               "    import ModuleN hiding ( funA , )");
+		
+		IImport[] imports = module.getImports();
+		assertNotNull(imports);
+		assertEquals(2, imports.length);
+		
+		assertNotNull(imports[0].getImportSpecifications());
+	}
+	
+	//TODO import selections may be one of the below
+	//var
+	//| 	tycon [ (..) | ( cname1 , ... , cnamen )] 	(n>=0)
+	//| 	tycls [(..) | ( var1 , ... , varn )] 	(n>=0)
 	
 	public void testOnlyImports() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +

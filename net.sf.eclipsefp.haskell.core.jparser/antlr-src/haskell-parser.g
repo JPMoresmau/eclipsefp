@@ -25,10 +25,12 @@ import java.util.Vector;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ImportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 }
 
@@ -169,15 +171,57 @@ impdecl returns [IImport result]
 		Import anImport = new Import();
 		
 		String name = null;
+		List<IImportSpecification> someSpecs = null;
 		result = null;
 	}
 	:
-		(t:IMPORT (QUALIFIED)? name=modid (AS modid)?)
+		(
+			t:IMPORT
+			(QUALIFIED)?
+			name=modid
+			(AS modid)?
+			(someSpecs=impspec { anImport.addSpecifications(someSpecs); } )?
+		)
 		{
 			anImport.setElementName(name);
 			anImport.setLocation(t.getLine(), t.getColumn());
 			result = anImport;
 		}
+	;
+
+impspec returns [List<IImportSpecification> result]
+	{
+		result = new Vector<IImportSpecification>(0);
+	}
+	:
+	    (HIDING)?
+	    LEFT_PAREN
+	    (result=impspeclist)?
+	    RIGHT_PAREN
+	;
+
+impspeclist returns [List<IImportSpecification> result]
+	{
+		result = new Vector<IImportSpecification>();
+		IImportSpecification anImport = null;
+	}
+	:
+		anImport=imp { result.add(anImport); }
+		((COMMA imp) => COMMA  anImport=imp { result.add(anImport); } )*
+		(COMMA)?
+	;
+	
+imp returns [IImportSpecification result]
+	{
+		ImportSpecification anImport = new ImportSpecification();
+		result = null;
+	}
+	:
+    	( id:VARIABLE_ID )
+    	{
+    	    anImport.setName(id.getText());
+    	    result = anImport;
+    	}
 	;
 	
 topdecls
