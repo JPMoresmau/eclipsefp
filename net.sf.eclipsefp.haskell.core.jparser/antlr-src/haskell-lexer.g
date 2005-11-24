@@ -16,7 +16,7 @@ package net.sf.eclipsefp.haskell.core.jparser;
 class HaskellLexer extends Lexer;
 
 options	{
-    k = 6;
+    k = 9;
 }
 {
 	/* workaround for starting token coordinates from 0
