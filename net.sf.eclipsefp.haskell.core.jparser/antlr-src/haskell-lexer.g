@@ -46,6 +46,8 @@ IMPORT : "import" ;
 
 QUALIFIED : "qualified" ;
 
+AS : "as" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

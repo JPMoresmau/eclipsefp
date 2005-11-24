@@ -81,7 +81,18 @@ public class LexerTest extends TestCase {
 		t = fLexer.nextToken();
 		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
 		assertEquals("whery", t.getText());
-
+	}
+	
+	public void testKeyworkPreffixInsideIdentifier() throws TokenStreamException {
+		fLexer = createLexer("Pwho imodule");
+		
+		Token t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.CONSTRUCTOR_ID, t.getType());
+		assertEquals("Pwho", t.getText());
+		
+		t = fLexer.nextToken();
+		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals("imodule", t.getText());
 	}
 	
 	public void testPosition() throws TokenStreamException {

@@ -145,6 +145,14 @@ public class ParserTest extends TestCase {
 		assertEquals(4, imports[2].getSourceLocation().getLine());
 	}
 	
+	public void testAliasedImport() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+							   "\n" +
+				               "    import ModuleM as M");
+		
+		assertEquals("ModuleM", module.getImports()[0].getName());
+	}
+	
 	public void testOnlyImports() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
 							   "\n" +
