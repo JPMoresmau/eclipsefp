@@ -147,6 +147,19 @@ public class ParserTest extends TestCase {
 		assertEquals(4, imports[2].getSourceLocation().getLine());
 	}
 	
+	public void testWithComments() throws RecognitionException, TokenStreamException {
+		IModule module = parse( "--this is the main module for the app\n" +
+						        "module Main where\n" +
+						        "{- We actually need to import those\n" +
+						        "   modules here for using the network\n" +
+						        "   connection capabilities -}\n" +
+						        "import Network\n" +
+						        "\n" +
+						        "main = {- block comment inside -} putStr 'hello'\n");
+		
+		assertEquals(5, module.getImports()[0].getSourceLocation().getLine());
+	}
+	
 //TODO should recognize a top level declaration
 //	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
 //		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
@@ -167,8 +180,7 @@ public class ParserTest extends TestCase {
 	}
 	
 	private IModule parse(String contents) throws RecognitionException, TokenStreamException {
-		TokenStream input = new HaskellLexer(new StringReader(contents));
-		HaskellParser parser = new HaskellParser(input);
+		HaskellParser parser = new HaskellParser(new StringReader(contents));
 		
 		return parser.parseModule();
 	}

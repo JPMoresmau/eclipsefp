@@ -11,9 +11,14 @@
  */
 header 
 {
+//This HaskellParser.java file is automatically generated
+//DO NOT CHANGE THIS FILE DIRECTLY
+//Change the haskell.parser.g file and re-generate it instead
+
 package net.sf.eclipsefp.haskell.core.jparser;
 	
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 import java.util.Vector;
@@ -36,9 +41,13 @@ options {
 //extra code for HaskellParser class
 {
     public HaskellParser(InputStream in) {
-        this(new HaskellFormatter(new HaskellLexer(in)));
+        this(new InputStreamReader(in));
     }
     
+    public HaskellParser(Reader in) {
+    	this(new HaskellFormatter(new HaskellCommentFilter(new HaskellLexer(in))));	
+		
+    }
 }
 
 parseModule returns [IModule result]
