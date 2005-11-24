@@ -82,23 +82,23 @@ public class LexerTest extends TestCase {
 
 	public void testPosition() throws TokenStreamException {
 		Token t = fLexer.nextToken(); //module
-		assertEquals(1, t.getColumn());
-		assertEquals(1, t.getLine());
+		assertEquals(0, t.getColumn());
+		assertEquals(0, t.getLine());
 		
 		t = fLexer.nextToken();
-		assertEquals(8, t.getColumn());
-		assertEquals(1, t.getLine());
+		assertEquals(7, t.getColumn());
+		assertEquals(0, t.getLine());
 		
 		t = fLexer.nextToken();
-		assertEquals(1, t.getLine());
+		assertEquals(0, t.getLine());
 	
 		t = fLexer.nextToken();
-		assertEquals(1, t.getColumn());
-		assertEquals(2, t.getLine());
+		assertEquals(0, t.getColumn());
+		assertEquals(1, t.getLine());
 
 		t = fLexer.nextToken();
-		assertEquals(6, t.getColumn());
-		assertEquals(2, t.getLine());
+		assertEquals(5, t.getColumn());
+		assertEquals(1, t.getLine());
 	}
 	
 	//TODO scan literate haskell

@@ -140,13 +140,13 @@ public class ParserTest extends TestCase {
 		assertEquals(3, imports.length);
 		
 		assertNotNull(imports[0].getSourceLocation());
-		assertEquals(2, imports[0].getSourceLocation().getLine());
+		assertEquals(1, imports[0].getSourceLocation().getLine());
 		
 		assertNotNull(imports[1].getSourceLocation());
-		assertEquals(3, imports[1].getSourceLocation().getLine());
+		assertEquals(2, imports[1].getSourceLocation().getLine());
 
 		assertNotNull(imports[2].getSourceLocation());
-		assertEquals(5, imports[2].getSourceLocation().getLine());
+		assertEquals(4, imports[2].getSourceLocation().getLine());
 	}
 	
 //TODO should recognize a top level declaration

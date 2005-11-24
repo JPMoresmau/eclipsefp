@@ -18,6 +18,18 @@ class HaskellLexer extends Lexer;
 options	{
     k = 6;
 }
+{
+	/* workaround for starting token coordinates from 0
+	 * as eclipse expects them to */
+    protected Token makeToken(int t) {
+    	Token result = super.makeToken(t);
+    	
+    	result.setLine(result.getLine() - 1);
+    	result.setColumn(result.getColumn() - 1);
+    	
+    	return result;
+    }
+}
 
 WS	:	(' '
     |    '\t'
