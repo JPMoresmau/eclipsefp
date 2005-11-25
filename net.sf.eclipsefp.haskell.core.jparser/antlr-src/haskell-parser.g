@@ -120,15 +120,74 @@ exportlist returns [List<IExportSpecification> result]
 export returns [IExportSpecification result]
     {
     	ExportSpecification anExport = new ExportSpecification();
+    	String name = null;
     	result = null;
     }
     :
-    	( id:VARIABLE_ID )
-    	{
-    	    anExport.setName(id.getText());
-    	    result = anExport;
-    	}
+    (
+    	name = qvar
+    |
+    	name=qtycon ( LEFT_PAREN
+    	              ( DOT DOT | cnamelist )
+    	              RIGHT_PAREN
+    	            )?
+    )
+    {
+   		anExport.setName(name);
+   	    result = anExport;
+    }
     ;
+    
+cnamelist
+	:
+		cname (COMMA cname)*
+	;
+	
+cname
+	:
+		VARIABLE_ID | CONSTRUCTOR_ID
+	;
+    
+qvar returns [String result] 
+	{
+		StringBuffer buf = new StringBuffer();
+		result = null;
+	}
+	:
+		id:VARIABLE_ID { buf.append(id.getText()); }
+		(
+			DOT t:VARIABLE_ID
+			{
+				buf.append('.');
+				buf.append(t.getText());
+			}
+		)*
+		{
+			result = buf.toString();
+		}
+	;
+	
+qtycon returns [String result]
+	{
+		StringBuffer buf = new StringBuffer();
+		String id = null;
+		result = null;
+	}
+	: 
+		((modid DOR) => id=modid DOT { buf.append(id); } )?
+		id=tycon {
+				     buf.append(id);
+				     result = buf.toString();
+				 }
+	;
+
+tycon returns [String result]
+	{
+		result = null;
+	}
+	:
+		t:CONSTRUCTOR_ID { result = t.getText(); }
+	;
           
 body returns [IModule result]
 	{
@@ -196,7 +255,7 @@ impspec returns [List<IImportSpecification> result]
 	:
 	    (HIDING)?
 	    LEFT_PAREN
-	    (result=impspeclist)?
+	    (result=impspeclist)? (COMMA)?
 	    RIGHT_PAREN
 	;
 
@@ -208,7 +267,6 @@ impspeclist returns [List<IImportSpecification> result]
 	:
 		anImport=imp { result.add(anImport); }
 		((COMMA imp) => COMMA  anImport=imp { result.add(anImport); } )*
-		(COMMA)?
 	;
 	
 imp returns [IImportSpecification result]

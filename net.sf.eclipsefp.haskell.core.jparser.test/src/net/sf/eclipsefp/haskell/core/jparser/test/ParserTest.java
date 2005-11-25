@@ -52,23 +52,44 @@ public class ParserTest extends TestCase {
 	}
 
 	public void testModuleWithExports() throws RecognitionException, TokenStreamException {
-		IModule module = parse("module ParserTest(f1, f2) where {}");
+		IModule module = parse("module ParserTest(f1, f2, f3.f4) where {}");
 
 		assertNotNull(module);
 		assertEquals("ParserTest", module.getName());
 		
 		IExportSpecification[] exports = module.getExportSpecifications();
 		assertNotNull(exports);
-		assertEquals(2, exports.length);
+		assertEquals(3, exports.length);
 		
 		assertEquals("f1", exports[0].getName());
 		assertEquals("f2", exports[1].getName());
+		assertEquals("f3.f4", exports[2].getName());
 	}
 	
-	//TODO export specs may be qualified vars
+	public void testExportingTypeConstructors() throws RecognitionException, TokenStreamException {
+		//module declaration borrowed from darcs source code
+		IModule module = parse("module Curl ( copyUrl, " +
+				                             "Cachable(Cachable, " +
+				                                      "Uncachable, " +
+				                                      "MaxAge) )" +
+				               "where {}");
+		
+		assertNotNull(module);
+		assertEquals("Curl", module.getName());
+
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(2, exports.length);
+		
+		assertEquals("copyUrl", exports[0].getName());
+		assertEquals("Cachable", exports[1].getName());
+	}
+	
 	//TODO export specs can be one of below
 	// qtycon [(..) | ( cname1 , ... , cnamen )] 	 (n>=0)
 	// qtycls [(..) | ( qvar1 , ... , qvarn )] 	(n>=0)
+//	public void testModuleExportingTypeClasses() {
+//	}
 	// module modid
 	
 	public void testModuleWithNestedBlocks() throws RecognitionException, TokenStreamException {
