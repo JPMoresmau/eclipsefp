@@ -85,6 +85,32 @@ public class ParserTest extends TestCase {
 		assertEquals("Cachable", exports[1].getName());
 	}
 	
+	public void testExportingTypesWithAllConstructors() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest ( Stack(..) ) where {}");
+		
+		assertNotNull(module);
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(1, exports.length);
+		
+		assertNotNull(exports[0]);
+		assertEquals("Stack", exports[0].getName());
+	}
+	
+	public void testExportingTypesWithoutConstructors() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest ( Stack ) where {}");
+		
+		assertNotNull(module);
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(1, exports.length);
+		
+		assertNotNull(exports[0]);
+		assertEquals("Stack", exports[0].getName());
+	}
+
 	//TODO export specs can be one of below
 	// qtycon [(..) | ( cname1 , ... , cnamen )] 	 (n>=0)
 	// qtycls [(..) | ( qvar1 , ... , qvarn )] 	(n>=0)
