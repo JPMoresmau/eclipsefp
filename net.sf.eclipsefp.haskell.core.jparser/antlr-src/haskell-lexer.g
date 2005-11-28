@@ -50,6 +50,8 @@ AS : "as" ;
 
 HIDING : "hiding" ;
 
+TYPE : "type" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

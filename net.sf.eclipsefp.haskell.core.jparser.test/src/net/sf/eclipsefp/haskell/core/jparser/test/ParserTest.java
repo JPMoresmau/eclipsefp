@@ -348,6 +348,17 @@ public class ParserTest extends TestCase {
 		assertEquals("fat", decls[2].getName());
 	}
 	
+	public void testTypeDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+   							   "    type Name = [Char]\n" +
+			                   "    main = putStr 'Hello, world!'\n");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		
+		assertEquals("Name", decls[0].getName());
+		assertEquals("main", decls[1].getName());
+	}
+	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
 	}

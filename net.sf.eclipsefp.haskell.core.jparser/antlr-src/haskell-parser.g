@@ -282,7 +282,31 @@ topdecl returns [IDeclaration result]
 
 	}
 	:
+		result=typedecl
+	|
 		result=decl
+	;
+	
+typedecl returns [IDeclaration result]
+	{
+		Declaration aDeclaration =new Declaration();
+		result = aDeclaration;
+		
+		String name = null;
+	}
+	:
+		TYPE
+		name=simpletype { aDeclaration.setName(name); }
+		declrhs
+	;
+	
+simpletype returns [String result]
+	{
+		result = null;
+	}
+	:
+		id:CONSTRUCTOR_ID { result = id.getText(); }
+		(~(EQUALS))*
 	;
 	
 decl returns [IDeclaration result]
@@ -294,7 +318,7 @@ decl returns [IDeclaration result]
 	}
 	:
 		name=funlhs { decl.setName(name); }
-		rhs
+		declrhs
 	;
 
 funlhs returns [String result]
@@ -305,7 +329,7 @@ funlhs returns [String result]
 		id:VARIABLE_ID { result=id.getText(); } (~(EQUALS))*
 	;
 	
-rhs :
+declrhs :
 		EQUALS (block | ~(SEMICOLON | RIGHT_CURLY))*
 	;
 
