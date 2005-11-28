@@ -292,7 +292,7 @@ public class ParserTest extends TestCase {
 		assertEquals(5, module.getImports()[0].getSourceLocation().getLine());
 	}
 	
-	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
+	public void testOneFunctionDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
 		
 		IDeclaration[] decls = module.getDeclarations();
@@ -302,9 +302,16 @@ public class ParserTest extends TestCase {
 		assertEquals("main", decls[0].getName());
 	}
 	
+	public void testMultipleFunctionDeclarations() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where { main = writeout ; writeout = putStr 'Hello world!' }");
+	
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("main", decls[0].getName());
+		assertEquals("writeout", decls[1].getName());
+	}
+	
 //TODO should recognize functions with nested blocks
 
-// TODO should recognize more than one declaration
 
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);

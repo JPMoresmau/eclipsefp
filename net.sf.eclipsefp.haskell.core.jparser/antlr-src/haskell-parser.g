@@ -270,7 +270,10 @@ topdecls returns [List<IDeclaration> result]
 		IDeclaration aDeclaration = null;
 	}
 	:
-		(aDeclaration=topdecl { result.add(aDeclaration); })*
+		(		
+			aDeclaration=topdecl { result.add(aDeclaration); }
+			( SEMICOLON aDeclaration=topdecl { result.add(aDeclaration); })*
+		)?
 	;
 
 topdecl returns [IDeclaration result]
