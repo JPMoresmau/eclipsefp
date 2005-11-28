@@ -310,6 +310,30 @@ public class ParserTest extends TestCase {
 		assertEquals("writeout", decls[1].getName());
 	}
 	
+	public void testFunctionWithWhereBlock() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+				               "    main = writeout\n" +
+				               "      where writeout = putStr 'Hello world!'");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		
+		assertEquals(1, decls.length);
+		assertEquals("main", decls[0].getName());
+	}
+	
+	public void testFunctionWithLetBlock() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+					           "    main = let writeout = putStr 'Hello world!' in\n" +
+		                       "      writeout\n" +
+		                       "    fun = 3");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		
+		assertEquals(2, decls.length);
+		assertEquals("main", decls[0].getName());
+		assertEquals("fun", decls[1].getName());
+	}
+	
 //TODO should recognize functions with nested blocks
 
 
