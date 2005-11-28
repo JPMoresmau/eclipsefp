@@ -74,6 +74,8 @@ COMMA : ',' ;
 
 DOT : '.' ;
 
+EQUALS : '=' ;
+
 COMMENT : LINE_COMMENT | BLOCK_COMMENT ;
 
 protected

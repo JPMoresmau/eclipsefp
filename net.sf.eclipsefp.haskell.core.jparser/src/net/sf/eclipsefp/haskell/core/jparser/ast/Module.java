@@ -18,13 +18,13 @@ public class Module implements IModule {
 	private String fName;
 	private List<IExportSpecification> fExports;
 	private List<IImport> fImports;
-	private IDeclaration[] fDecls;
+	private List<IDeclaration> fDecls;
 
 	public Module() {
 		fName = "";
 		fExports = new Vector<IExportSpecification>();
 		fImports = new Vector<IImport>();
-		fDecls = new IDeclaration[0];
+		fDecls = new Vector<IDeclaration>();
 	}
 	
 	public IExportSpecification[] getExportSpecifications() {
@@ -36,7 +36,7 @@ public class Module implements IModule {
 	}
 
 	public IDeclaration[] getDeclarations() {
-		return fDecls;
+		return fDecls.toArray(new IDeclaration[fDecls.size()]);
 	}
 
 	public ICompilationUnit getCompilationUnit() {
@@ -77,6 +77,14 @@ public class Module implements IModule {
 	 */
 	public void addImports(IImport[] imports) {
 		addImports(Arrays.asList(imports));
+	}
+
+	public void addDeclarations(List<IDeclaration> someDecls) {
+		fDecls.addAll(someDecls);
+	}
+
+	public void addDeclarations(IDeclaration[] someDecls) {
+		addDeclarations(Arrays.asList(someDecls));
 	}
 
 }

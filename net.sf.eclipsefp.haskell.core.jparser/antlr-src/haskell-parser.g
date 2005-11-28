@@ -23,11 +23,13 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Vector;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
+import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ImportSpecification;
@@ -74,6 +76,7 @@ module returns [IModule result]
     | aBody=body )
     {
     	aModule.addImports(aBody.getImports());
+    	aModule.addDeclarations(aBody.getDeclarations());
         result = aModule;
     }
     ;
@@ -194,29 +197,27 @@ conid returns [String result]
 		t:CONSTRUCTOR_ID { result = t.getText(); }
 	;
           
-body returns [IModule result]
+body returns [Module result]
 	{
-	    Module aModule = new Module();
+	    result = new Module();
+
 	    List<IImport> imports;
-	    result = null;
+	    List<IDeclaration> decls;
 	}
 	:
 		(
 		LEFT_CURLY
 			(
-				imports=impdecls { aModule.addImports(imports); }
+				imports=impdecls { result.addImports(imports); }
 				(
 					SEMICOLON
-					topdecls
+					decls=topdecls { result.addDeclarations(decls); }
 				)?
 			|
-				topdecls
+				decls=topdecls { result.addDeclarations(decls); }
 			)
 		RIGHT_CURLY
 		)
-		{
-			result = aModule;
-		}
 	;
 	
 impdecls returns [List<IImport> result]
@@ -262,9 +263,47 @@ impspec returns [List<IImportSpecification> result]
 	    list
 	;
 
-topdecls
+topdecls returns [List<IDeclaration> result]
+	{
+		result = new Vector<IDeclaration>();
+		
+		IDeclaration aDeclaration = null;
+	}
 	:
-		( ~(LEFT_CURLY | RIGHT_CURLY) | block )*
+		(aDeclaration=topdecl { result.add(aDeclaration); })*
+	;
+
+topdecl returns [IDeclaration result]
+	{
+		result = null;
+
+	}
+	:
+		result=decl
+	;
+	
+decl returns [IDeclaration result]
+	{
+		Declaration decl = new Declaration();
+		result = decl;
+
+		String name = null;
+	}
+	:
+		name=funlhs { decl.setName(name); }
+		rhs
+	;
+
+funlhs returns [String result]
+	{
+		result = null;
+	}
+	:
+		id:VARIABLE_ID { result=id.getText(); } (~(EQUALS))*
+	;
+	
+rhs :
+		EQUALS (block | ~(SEMICOLON | RIGHT_CURLY))*
 	;
 
 block : LEFT_CURLY (~( LEFT_CURLY | RIGHT_CURLY ) | block )* RIGHT_CURLY

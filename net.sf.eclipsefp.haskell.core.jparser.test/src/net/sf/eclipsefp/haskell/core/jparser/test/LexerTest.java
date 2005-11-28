@@ -48,7 +48,7 @@ public class LexerTest extends TestCase {
 		assertEquals("Underlined_stack", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.SYMBOL, t.getType());
+		assertEquals(HaskellLexerTokenTypes.EQUALS, t.getType());
 		assertEquals("=", t.getText());
 		
 		t = fLexer.nextToken();

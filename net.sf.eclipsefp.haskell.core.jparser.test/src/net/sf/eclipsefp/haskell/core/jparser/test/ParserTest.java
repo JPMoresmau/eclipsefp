@@ -292,16 +292,15 @@ public class ParserTest extends TestCase {
 		assertEquals(5, module.getImports()[0].getSourceLocation().getLine());
 	}
 	
-//TODO should recognize a top level declaration
-//	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
-//		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
-//		
-//		IDeclaration[] decls = module.getDeclarations();
-//		assertNotNull(decls);
-//		assertEquals(1, decls.length);
-//		
-//		assertEquals("main", decls[0].getName());
-//	}
+	public void testOneTopDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertNotNull(decls);
+		assertEquals(1, decls.length);
+		
+		assertEquals("main", decls[0].getName());
+	}
 	
 //TODO should recognize functions with nested blocks
 
