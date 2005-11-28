@@ -282,20 +282,35 @@ topdecl returns [IDeclaration result]
 
 	}
 	:
-		result=typedecl
+		result=typesymdecl
+	|
+		result=datadecl
 	|
 		result=decl
 	;
 	
-typedecl returns [IDeclaration result]
+typesymdecl returns [IDeclaration result]
 	{
-		Declaration aDeclaration =new Declaration();
+		Declaration aDeclaration = new Declaration();
 		result = aDeclaration;
 		
 		String name = null;
 	}
 	:
 		TYPE
+		name=simpletype { aDeclaration.setName(name); }
+		declrhs
+	;
+	
+datadecl returns [IDeclaration result]
+	{
+		Declaration aDeclaration = new Declaration();
+		result = aDeclaration;
+		
+		String name = null;
+	}
+	:
+		DATA
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
 	;

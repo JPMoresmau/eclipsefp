@@ -52,6 +52,8 @@ HIDING : "hiding" ;
 
 TYPE : "type" ;
 
+DATA : "data" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

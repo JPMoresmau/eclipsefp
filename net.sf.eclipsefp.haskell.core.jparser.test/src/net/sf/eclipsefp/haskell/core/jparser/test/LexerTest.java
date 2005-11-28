@@ -40,7 +40,7 @@ public class LexerTest extends TestCase {
 		assertEquals("where", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals(HaskellLexerTokenTypes.DATA, t.getType());
 		assertEquals("data", t.getText());
 		
 		t = fLexer.nextToken();

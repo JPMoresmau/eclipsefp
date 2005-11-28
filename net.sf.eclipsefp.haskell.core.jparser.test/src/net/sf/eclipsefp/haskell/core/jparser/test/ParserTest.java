@@ -359,6 +359,16 @@ public class ParserTest extends TestCase {
 		assertEquals("main", decls[1].getName());
 	}
 	
+	public void testDatatypeDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+				                "    data DataType = ConC | ConD\n" +
+				                "    c = ConC");
+		
+		assertEquals("ParserTest", module.getName());
+		
+		assertEquals("DataType", module.getDeclarations()[0].getName());
+	}
+	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
 	}
