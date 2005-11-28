@@ -98,6 +98,7 @@ public class ParserTest extends TestCase {
 		assertEquals("Stack", exports[0].getName());
 	}
 	
+	
 	public void testExportingTypesWithoutConstructors() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest ( Stack ) where {}");
 		
@@ -110,9 +111,25 @@ public class ParserTest extends TestCase {
 		assertNotNull(exports[0]);
 		assertEquals("Stack", exports[0].getName());
 	}
+	
+	public void testExportingTypeClasses() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest ( TypeClass (these, are, " +
+				                                              "some, class, " +
+				                                              "operations ))" +
+				               "where {}");
+		
+		assertNotNull(module);
+		assertEquals("ParserTest", module.getName());
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(1, exports.length);
+		
+		assertNotNull(exports[0]);
+		assertEquals("TypeClass", exports[0].getName());
+	}
 
 	//TODO export specs can be one of below
-	// qtycon [(..) | ( cname1 , ... , cnamen )] 	 (n>=0)
 	// qtycls [(..) | ( qvar1 , ... , qvarn )] 	(n>=0)
 //	public void testModuleExportingTypeClasses() {
 //	}
@@ -275,5 +292,8 @@ public class ParserTest extends TestCase {
 	
 	//TODO should be able to build a tree with a partial parse, not just
 	//with valid inputs
+	
+	//TODO pay attention to the varsym rules (they can appear anywhere a
+	//normal var appears)
 	
 }

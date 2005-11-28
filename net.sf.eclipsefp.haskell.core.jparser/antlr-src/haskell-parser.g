@@ -127,8 +127,8 @@ export returns [IExportSpecification result]
     (
     	name = qvar
     |
-    	name=qtycon ( LEFT_PAREN
-    	              ( DOT DOT | cnamelist )
+    	name=qconid ( LEFT_PAREN
+    	              ((~(RIGHT_PAREN))*)
     	              RIGHT_PAREN
     	            )?
     )
@@ -167,7 +167,7 @@ qvar returns [String result]
 		}
 	;
 	
-qtycon returns [String result]
+qconid returns [String result]
 	{
 		StringBuffer buf = new StringBuffer();
 		String id = null;
@@ -175,13 +175,13 @@ qtycon returns [String result]
 	}
 	: 
 		((modid DOR) => id=modid DOT { buf.append(id); } )?
-		id=tycon {
+		id=conid {
 				     buf.append(id);
 				     result = buf.toString();
 				 }
 	;
 
-tycon returns [String result]
+conid returns [String result]
 	{
 		result = null;
 	}

@@ -120,5 +120,8 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(EOF, formatter.nextToken().getType());
 	}
 	
+	//TODO fix the formatter according to the syntax rules (Haskell Report
+	//Ch. 9) Current version implements just the most basic rules
+	
 	
 }
