@@ -54,6 +54,8 @@ TYPE : "type" ;
 
 DATA : "data" ;
 
+NEWTYPE : "newtype" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

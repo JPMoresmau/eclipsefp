@@ -348,7 +348,7 @@ public class ParserTest extends TestCase {
 		assertEquals("fat", decls[2].getName());
 	}
 	
-	public void testTypeDeclaration() throws RecognitionException, TokenStreamException {
+	public void testTypeSynonymDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
    							   "    type Name = [Char]\n" +
 			                   "    main = putStr 'Hello, world!'\n");
@@ -359,7 +359,7 @@ public class ParserTest extends TestCase {
 		assertEquals("main", decls[1].getName());
 	}
 	
-	public void testDatatypeDeclaration() throws RecognitionException, TokenStreamException {
+	public void testAlgebraicDatatypeDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
 				                "    data DataType = ConC | ConD\n" +
 				                "    c = ConC");
@@ -367,6 +367,15 @@ public class ParserTest extends TestCase {
 		assertEquals("ParserTest", module.getName());
 		
 		assertEquals("DataType", module.getDeclarations()[0].getName());
+	}
+	
+	public void testRenamedDatatypeDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+                			   "    newtype Name = Name [Char]\n");
+		
+		assertEquals("ParserTest", module.getName());
+
+		assertEquals("Name", module.getDeclarations()[0].getName());
 	}
 	
 	private static void assertEmpty(Object[] exports) {

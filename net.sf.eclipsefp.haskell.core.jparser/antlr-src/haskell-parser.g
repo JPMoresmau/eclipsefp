@@ -284,7 +284,7 @@ topdecl returns [IDeclaration result]
 	:
 		result=typesymdecl
 	|
-		result=datadecl
+		result=data_or_rnmdtypedecl
 	|
 		result=decl
 	;
@@ -302,7 +302,7 @@ typesymdecl returns [IDeclaration result]
 		declrhs
 	;
 	
-datadecl returns [IDeclaration result]
+data_or_rnmdtypedecl returns [IDeclaration result]
 	{
 		Declaration aDeclaration = new Declaration();
 		result = aDeclaration;
@@ -310,7 +310,7 @@ datadecl returns [IDeclaration result]
 		String name = null;
 	}
 	:
-		DATA
+		(DATA | NEWTYPE)
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
 	;
