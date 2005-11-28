@@ -56,6 +56,8 @@ DATA : "data" ;
 
 NEWTYPE : "newtype" ;
 
+CONTEXT_ARROW : "=>" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

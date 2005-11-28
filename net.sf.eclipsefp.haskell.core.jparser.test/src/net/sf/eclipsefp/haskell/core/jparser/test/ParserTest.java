@@ -378,6 +378,18 @@ public class ParserTest extends TestCase {
 		assertEquals("Name", module.getDeclarations()[0].getName());
 	}
 	
+	public void testDatatypeWithContextDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+                               "    data Eq t => Algebraic = ConC t | ConD\n" +
+		                       "    newtype Eq t => Renamed = Name [Char]\n");
+		
+		assertEquals("ParserTest", module.getName());
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("Algebraic", decls[0].getName());
+		assertEquals("Renamed", decls[1].getName());
+	}
+	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
 	}

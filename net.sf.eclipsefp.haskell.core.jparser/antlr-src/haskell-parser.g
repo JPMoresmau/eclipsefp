@@ -311,8 +311,14 @@ data_or_rnmdtypedecl returns [IDeclaration result]
 	}
 	:
 		(DATA | NEWTYPE)
+		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
+	;
+
+context
+	:
+		(~(CONTEXT_ARROW))*
 	;
 	
 simpletype returns [String result]
