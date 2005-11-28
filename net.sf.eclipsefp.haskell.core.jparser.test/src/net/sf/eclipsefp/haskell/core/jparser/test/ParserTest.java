@@ -334,9 +334,20 @@ public class ParserTest extends TestCase {
 		assertEquals("fun", decls[1].getName());
 	}
 	
-//TODO should recognize functions with nested blocks
+	public void testFunctionWithParameters() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+		                       "    main = fat 3\n" +
+                               "    fat 0 = 1\n" +
+                               "    fat n = n * (fat (n - 1))");
 
-
+		IDeclaration[] decls = module.getDeclarations();
+		
+		assertEquals(3, decls.length);
+		assertEquals("main", decls[0].getName());
+		assertEquals("fat", decls[1].getName());
+		assertEquals("fat", decls[2].getName());
+	}
+	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
 	}
