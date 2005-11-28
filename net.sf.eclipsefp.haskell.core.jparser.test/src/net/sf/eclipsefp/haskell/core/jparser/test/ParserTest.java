@@ -98,6 +98,11 @@ public class ParserTest extends TestCase {
 		assertEquals("Stack", exports[0].getName());
 	}
 	
+	public void testExportingQualifiedTypes() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest ( ModuleM.TypeT ) where {}");
+		
+		assertEquals("ModuleM.TypeT", module.getExportSpecifications()[0].getName());
+	}
 	
 	public void testExportingTypesWithoutConstructors() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest ( Stack ) where {}");

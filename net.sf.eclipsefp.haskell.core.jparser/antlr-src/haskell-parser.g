@@ -78,7 +78,7 @@ module returns [IModule result]
     }
     ;
 
-modid returns [String result]
+qconid returns [String result]
 	{
 		StringBuffer buf = new StringBuffer();
 		result = null;
@@ -167,18 +167,13 @@ qvar returns [String result]
 		}
 	;
 	
-qconid returns [String result]
+modid returns [String result]
 	{
-		StringBuffer buf = new StringBuffer();
-		String id = null;
 		result = null;
 	}
 	: 
-		((modid DOR) => id=modid DOT { buf.append(id); } )?
-		id=conid {
-				     buf.append(id);
-				     result = buf.toString();
-				 }
+	    result = qconid
+	    { return result; }
 	;
 
 conid returns [String result]
