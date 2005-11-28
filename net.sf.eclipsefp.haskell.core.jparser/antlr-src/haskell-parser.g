@@ -259,34 +259,9 @@ impspec returns [List<IImportSpecification> result]
 	}
 	:
 	    (HIDING)?
-	    LEFT_PAREN
-	    (result=impspeclist)? (COMMA)?
-	    RIGHT_PAREN
+	    list
 	;
 
-impspeclist returns [List<IImportSpecification> result]
-	{
-		result = new Vector<IImportSpecification>();
-		IImportSpecification anImport = null;
-	}
-	:
-		anImport=imp { result.add(anImport); }
-		((COMMA imp) => COMMA  anImport=imp { result.add(anImport); } )*
-	;
-	
-imp returns [IImportSpecification result]
-	{
-		ImportSpecification anImport = new ImportSpecification();
-		result = null;
-	}
-	:
-    	( id:VARIABLE_ID )
-    	{
-    	    anImport.setName(id.getText());
-    	    result = anImport;
-    	}
-	;
-	
 topdecls
 	:
 		( ~(LEFT_CURLY | RIGHT_CURLY) | block )*
@@ -294,4 +269,6 @@ topdecls
 
 block : LEFT_CURLY (~( LEFT_CURLY | RIGHT_CURLY ) | block )* RIGHT_CURLY
      ;
+     
+list : LEFT_PAREN (~( LEFT_PAREN | RIGHT_PAREN ) | list)* RIGHT_PAREN ;
 

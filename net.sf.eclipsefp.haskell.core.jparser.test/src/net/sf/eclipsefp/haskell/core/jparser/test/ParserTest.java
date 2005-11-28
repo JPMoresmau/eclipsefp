@@ -5,6 +5,7 @@ import java.io.StringReader;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import antlr.RecognitionException;
@@ -243,13 +244,29 @@ public class ParserTest extends TestCase {
 		assertNotNull(imports);
 		assertEquals(2, imports.length);
 		
-		assertNotNull(imports[0].getImportSpecifications());
+		assertEquals("ModuleM", imports[0].getName());
+		assertEquals("ModuleN", imports[1].getName());
 	}
 	
-	//TODO import selections may be one of the below
-	//var
-	//| 	tycon [ (..) | ( cname1 , ... , cnamen )] 	(n>=0)
-	//| 	tycls [(..) | ( var1 , ... , varn )] 	(n>=0)
+	public void testImportingTypeConstructors() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+				   "\n" +
+	               "    import ModuleM ( TypeT(..), TypeU( ConC, ConD ), TypeV )\n");
+		
+		assertEquals("Main", module.getName());
+		
+		assertEquals("ModuleM", module.getImports()[0].getName());
+	}
+	
+	public void testImportingTypeClasses() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+				   "\n" +
+	               "    import ModuleM ( TypeC(..), TypeU( funF, funG ), TypeV )\n");
+		
+		assertEquals("Main", module.getName());
+		
+		assertEquals("ModuleM", module.getImports()[0].getName());
+	}
 	
 	public void testOnlyImports() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
