@@ -134,11 +134,16 @@ public class ParserTest extends TestCase {
 		assertEquals("TypeClass", exports[0].getName());
 	}
 
-	//TODO export specs can be one of below
-	// qtycls [(..) | ( qvar1 , ... , qvarn )] 	(n>=0)
-//	public void testModuleExportingTypeClasses() {
-//	}
-	// module modid
+	public void testExportingModule() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest( module M ) where {" +
+        					   "    f = b where { b = 3 } }");
+		
+		assertEquals("ParserTest", module.getName());
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertEquals(1, exports.length);
+		assertEquals("M", exports[0].getName());
+	}
 	
 	public void testModuleWithNestedBlocks() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest() where {" +

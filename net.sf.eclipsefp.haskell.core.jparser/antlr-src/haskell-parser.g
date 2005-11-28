@@ -127,16 +127,26 @@ export returns [IExportSpecification result]
     (
     	name = qvar
     |
-    	name=qconid ( LEFT_PAREN
-    	              ((~(RIGHT_PAREN))*)
-    	              RIGHT_PAREN
-    	            )?
+    	name=qtyconorcls ( LEFT_PAREN
+    	                   ((~(RIGHT_PAREN))*)
+    	                   RIGHT_PAREN
+    	                 )?
+   	|
+   		MODULE name=modid
     )
     {
    		anExport.setName(name);
    	    result = anExport;
     }
     ;
+    
+qtyconorcls returns [String result]
+	{
+		result = null;
+	}
+	:
+		result=qconid
+	;
     
 cnamelist
 	:
