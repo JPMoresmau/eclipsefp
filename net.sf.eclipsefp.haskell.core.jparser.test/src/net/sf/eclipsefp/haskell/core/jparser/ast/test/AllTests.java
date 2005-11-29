@@ -10,6 +10,7 @@ public class AllTests {
 				"Test for net.sf.eclipsefp.haskell.core.jparser.ast.test");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(FunctionBindingTest.class);
+		suite.addTestSuite(DataDeclarationTest.class);
 		//$JUnit-END$
 		return suite;
 	}

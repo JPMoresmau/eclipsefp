@@ -6,8 +6,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
 public class DataDeclaration extends Declaration implements IDataDeclaration {
 
 	public IConstructor[] getConstructors() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IConstructor[0];
 	}
 
 }
