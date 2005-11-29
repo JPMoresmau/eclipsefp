@@ -29,12 +29,13 @@ import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
+import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
-import net.sf.eclipsefp.haskell.core.jparser.ast.ImportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
+import net.sf.eclipsefp.haskell.core.jparser.ast.NewtypeDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSynonymDeclaration;
 
 }
@@ -308,15 +309,22 @@ typesymdecl returns [IDeclaration result]
 data_or_rnmdtypedecl returns [IDeclaration result]
 	{
 		Declaration aDeclaration = new Declaration();
-		result = aDeclaration;
 		
+		result = null;
 		String name = null;
 	}
 	:
-		(DATA | NEWTYPE)
+		(
+			DATA { aDeclaration = new DataDeclaration(); }
+		|
+			NEWTYPE { aDeclaration = new NewtypeDeclaration(); }
+		)
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
+		{
+			result = aDeclaration;
+		}
 	;
 
 context

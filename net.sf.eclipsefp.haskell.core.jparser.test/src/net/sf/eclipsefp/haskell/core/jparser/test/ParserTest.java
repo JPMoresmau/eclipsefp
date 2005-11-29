@@ -2,11 +2,13 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeDeclaration;
 
 import antlr.RecognitionException;
@@ -374,7 +376,10 @@ public class ParserTest extends TestCase {
 		
 		assertEquals("ParserTest", module.getName());
 		
-		assertEquals("DataType", module.getDeclarations()[0].getName());
+		IDeclaration[] decls = module.getDeclarations();
+		
+		assertTrue(decls[0] instanceof IDataDeclaration);
+		assertEquals("DataType", decls[0].getName());
 	}
 	
 	public void testRenamedDatatypeDeclaration() throws RecognitionException, TokenStreamException {
@@ -383,7 +388,10 @@ public class ParserTest extends TestCase {
 		
 		assertEquals("ParserTest", module.getName());
 
-		assertEquals("Name", module.getDeclarations()[0].getName());
+		IDeclaration[] decls = module.getDeclarations();
+		
+		assertTrue(decls[0] instanceof INewTypeDeclaration);
+		assertEquals("Name", decls[0].getName());
 	}
 	
 	public void testDatatypeWithContextDeclaration() throws RecognitionException, TokenStreamException {
