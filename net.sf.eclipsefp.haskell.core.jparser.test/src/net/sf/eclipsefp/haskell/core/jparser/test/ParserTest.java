@@ -4,6 +4,7 @@ import java.io.StringReader;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
+import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
@@ -300,12 +301,17 @@ public class ParserTest extends TestCase {
 		assertEquals(1, decls.length);
 		
 		assertEquals("main", decls[0].getName());
+		assertTrue(decls[0] instanceof IFunctionBinding);
 	}
 	
 	public void testMultipleFunctionDeclarations() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where { main = writeout ; writeout = putStr 'Hello world!' }");
 	
 		IDeclaration[] decls = module.getDeclarations();
+		
+		assertTrue(decls[0] instanceof IFunctionBinding);
+		assertTrue(decls[1] instanceof IFunctionBinding);
+		
 		assertEquals("main", decls[0].getName());
 		assertEquals("writeout", decls[1].getName());
 	}

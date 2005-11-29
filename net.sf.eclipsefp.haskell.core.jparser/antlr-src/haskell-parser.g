@@ -332,7 +332,7 @@ simpletype returns [String result]
 	
 decl returns [IDeclaration result]
 	{
-		Declaration decl = new Declaration();
+		FunctionBinding decl = new FunctionBinding();
 		result = decl;
 
 		String name = null;
