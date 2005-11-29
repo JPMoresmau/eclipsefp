@@ -406,6 +406,12 @@ public class ParserTest extends TestCase {
 		assertEquals("Renamed", decls[1].getName());
 	}
 	
+//TODO a topdecl can be one of the following
+//	| 	class [scontext =>] tycls tyvar [where cdecls]
+//	| 	instance [scontext =>] qtycls inst [where idecls]
+//	| 	default (type1 , ... , typen) 	(n>=0)
+//	| 	decl
+	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
 	}
