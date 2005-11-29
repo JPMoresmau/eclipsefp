@@ -6,8 +6,8 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import de.leiffrenzel.fp.haskell.core.halamo.ITypeDeclaration;
 
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
@@ -361,7 +361,9 @@ public class ParserTest extends TestCase {
 		
 		IDeclaration[] decls = module.getDeclarations();
 		
+		assertTrue(decls[0] instanceof ITypeDeclaration);
 		assertEquals("Name", decls[0].getName());
+		
 		assertEquals("main", decls[1].getName());
 	}
 	

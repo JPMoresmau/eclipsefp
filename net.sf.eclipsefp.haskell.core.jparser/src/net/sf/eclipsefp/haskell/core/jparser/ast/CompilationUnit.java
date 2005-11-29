@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.jparser;
+package net.sf.eclipsefp.haskell.core.jparser.ast;
 
 import org.eclipse.core.resources.IFile;
 

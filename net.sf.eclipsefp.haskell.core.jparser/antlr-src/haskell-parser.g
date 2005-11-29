@@ -31,9 +31,12 @@ import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
+import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ImportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
+import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSynonymDeclaration;
+
 }
 
 class HaskellParser extends Parser;
@@ -291,7 +294,7 @@ topdecl returns [IDeclaration result]
 	
 typesymdecl returns [IDeclaration result]
 	{
-		Declaration aDeclaration = new Declaration();
+		Declaration aDeclaration = new TypeSynonymDeclaration();
 		result = aDeclaration;
 		
 		String name = null;
