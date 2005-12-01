@@ -12,6 +12,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeDeclaration;
 
 import antlr.RecognitionException;
@@ -299,14 +300,18 @@ public class ParserTest extends TestCase {
 	}
 	
 	public void testOneFunctionDeclaration() throws RecognitionException, TokenStreamException {
-		IModule module = parse("module Main where { main = putStr 'Hello world!' }");
-		
+		IModule module = parse("module Main where {\n" +
+				               "    main = putStr 'Hello world!' }");
 		IDeclaration[] decls = module.getDeclarations();
 		assertNotNull(decls);
 		assertEquals(1, decls.length);
 		
 		assertEquals("main", decls[0].getName());
 		assertTrue(decls[0] instanceof IFunctionBinding);
+		
+		ISourceLocation srcLoc = decls[0].getSourceLocation();
+		assertEquals(1, srcLoc.getLine());
+		assertEquals(4, srcLoc.getColumn());
 	}
 	
 	public void testMultipleFunctionDeclarations() throws RecognitionException, TokenStreamException {
@@ -457,6 +462,8 @@ public class ParserTest extends TestCase {
 		assertTrue(decls[1] instanceof IInstanceDeclaration);
 	}
 	
+//	TODO what should the instance declarations look like on the outline view?
+
 	public void testContextInstanceDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
                                "  instance (Eq a, Show a) => Foo Bar where");
@@ -477,9 +484,8 @@ public class ParserTest extends TestCase {
 		assertTrue(decls[0] instanceof IDefaultDeclaration);
 	}
 
-//TODO what should the instance declarations show?
-	
 //TODO try to declare the function '(==) a b = not (a /= b)'
+	
 //TODO inst rule (that occur inside the instdecl rule)
 //TODO test the gtycon (that occurs inside inst, subrule of instancedecl)
 	

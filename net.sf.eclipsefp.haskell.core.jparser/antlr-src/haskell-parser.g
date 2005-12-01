@@ -76,7 +76,7 @@ module returns [IModule result]
         result = null;
     }
     :
-      ( MODULE
+      ( t:MODULE
         name=modid { aModule.setName(name); }
         ( someExports=exports { aModule.addExports(someExports); } )?
         WHERE aBody=body
@@ -406,19 +406,21 @@ decl returns [IDeclaration result]
 		FunctionBinding decl = new FunctionBinding();
 		result = decl;
 
-		String name = null;
+		Token name = null;
 	}
 	:
-		name=funlhs { decl.setName(name); }
+		name=funlhs {	decl.setName(name.getText());
+						decl.setLocation(name.getLine(), name.getColumn());
+					}
 		declrhs
 	;
 
-funlhs returns [String result]
+funlhs returns [Token result]
 	{
 		result = null;
 	}
 	:
-		id:VARIABLE_ID { result=id.getText(); } (~(EQUALS))*
+		id:VARIABLE_ID { result=id; } (~(EQUALS))*
 	;
 	
 declrhs :
