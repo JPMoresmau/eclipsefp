@@ -5,6 +5,7 @@ import java.io.StringReader;
 import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.IDefaultDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
@@ -466,11 +467,16 @@ public class ParserTest extends TestCase {
 		assertEquals("Bar", instDecl.getName());
 		assertTrue(instDecl instanceof IInstanceDeclaration);
 	}
-
-//TODO a topdecl can be one of the following
-//	| 	default (type1 , ... , typen) 	(n>=0)
-//	| 	decl
 	
+	public void testDefaultDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+				               "  default (Integer, Double)\n");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("default", decls[0].getName());
+		assertTrue(decls[0] instanceof IDefaultDeclaration);
+	}
+
 //TODO what should the instance declarations show?
 	
 //TODO try to declare the function '(==) a b = not (a /= b)'

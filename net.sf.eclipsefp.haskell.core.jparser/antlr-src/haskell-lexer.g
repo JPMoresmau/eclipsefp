@@ -60,6 +60,8 @@ CLASS : "class" ;
 
 INSTANCE : "instance" ;
 
+DEFAULT : "default" ;
+
 CONTEXT_ARROW : "=>" ;
 
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER

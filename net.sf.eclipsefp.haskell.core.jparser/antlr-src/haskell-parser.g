@@ -32,6 +32,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
+import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
@@ -304,6 +305,8 @@ topdecl returns [IDeclaration result]
 	|
 		result=instancedecl
 	|
+		result=defaultdecl
+	|
 		result=decl
 	;
 	
@@ -374,6 +377,14 @@ instancedecl returns [IDeclaration result]
 			WHERE
 			block
 		)?
+	;
+
+defaultdecl returns [IDeclaration result]
+	{
+		result = new DefaultDeclaration();
+	}
+	:
+		DEFAULT list
 	;
 
 context
