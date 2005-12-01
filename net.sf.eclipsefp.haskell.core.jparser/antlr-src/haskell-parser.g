@@ -29,6 +29,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
+import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
@@ -184,6 +185,14 @@ qvar returns [String result]
 		}
 	;
 	
+varid returns [String result]
+	{
+		result = null;
+	}
+	:
+		id:VARIABLE_ID { result = id.getText(); }
+	;
+	
 modid returns [String result]
 	{
 		result = null;
@@ -290,6 +299,8 @@ topdecl returns [IDeclaration result]
 	|
 		result=data_or_rnmdtypedecl
 	|
+		result=classdecl
+	|
 		result=decl
 	;
 	
@@ -325,6 +336,23 @@ data_or_rnmdtypedecl returns [IDeclaration result]
 		{
 			result = aDeclaration;
 		}
+	;
+	
+classdecl returns [IDeclaration result]
+	{
+		ClassDeclaration aDeclaration = new ClassDeclaration();
+		String name = null;
+		result = aDeclaration;
+	}
+	:
+		CLASS
+		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
+		name=conid { aDeclaration.setName(name); }
+		varid
+		(
+			WHERE
+			block
+		)?
 	;
 
 context

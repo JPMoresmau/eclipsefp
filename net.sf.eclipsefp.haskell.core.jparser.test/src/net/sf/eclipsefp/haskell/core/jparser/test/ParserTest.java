@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
@@ -406,11 +407,54 @@ public class ParserTest extends TestCase {
 		assertEquals("Renamed", decls[1].getName());
 	}
 	
+	public void testSimpleClassDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+				               "    class VerySimple v\n" +
+                               "    class  Eq a  where\n" +
+                               "        (==), (/=)  ::  a -> a -> Bool\n" +
+                               "\n" +
+                               "        x /= y  = not (x == y)" +
+                               "        x == y  = not (x /= y)");
+		
+		assertEquals("ParserTest", module.getName());
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("VerySimple", decls[0].getName());
+		assertTrue(decls[0] instanceof IClassDeclaration);
+		
+		assertEquals("Eq", decls[1].getName());
+		assertTrue(decls[1] instanceof IClassDeclaration);
+		
+	}
+	
+	public void testContextClassDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+                               "  class  (Eq a) => Ord a  where\n" +
+                               "    compare              :: a -> a -> Ordering\n" +
+                               "    (<), (<=), (>=), (>) :: a -> a -> Bool\n" +
+                               "    max, min             :: a -> a -> a");
+		
+		assertEquals("ParserTest", module.getName());
+		IDeclaration classDecl = module.getDeclarations()[0];
+		assertEquals("Ord", classDecl.getName());
+		assertTrue(classDecl instanceof IClassDeclaration);
+	}
+	
+//	public void testSimpleInstanceDeclaration() throws RecognitionException, TokenStreamException {
+//		IModule module = parse("module ParserTest where\n" +
+//				               "  instance (Eq a, Show a) => Foo [a]\n" +
+//				               "  instance Functor a => Bar [a] where {}\n");
+//		
+//		assertEquals("ParserTest", module.getName());
+//
+//	}
+	
 //TODO a topdecl can be one of the following
-//	| 	class [scontext =>] tycls tyvar [where cdecls]
 //	| 	instance [scontext =>] qtycls inst [where idecls]
 //	| 	default (type1 , ... , typen) 	(n>=0)
 //	| 	decl
+	
+//TODO try to declare the function '(==) a b = not (a /= b)'
 	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
