@@ -35,6 +35,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
+import net.sf.eclipsefp.haskell.core.jparser.ast.InstanceDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 import net.sf.eclipsefp.haskell.core.jparser.ast.NewtypeDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSynonymDeclaration;
@@ -301,6 +302,8 @@ topdecl returns [IDeclaration result]
 	|
 		result=classdecl
 	|
+		result=instancedecl
+	|
 		result=decl
 	;
 	
@@ -349,6 +352,24 @@ classdecl returns [IDeclaration result]
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=conid { aDeclaration.setName(name); }
 		varid
+		(
+			WHERE
+			block
+		)?
+	;
+	
+instancedecl returns [IDeclaration result]
+	{
+		InstanceDeclaration aDeclaration = new InstanceDeclaration();
+		result = aDeclaration;
+		
+		String name = null;
+	}
+	:
+		INSTANCE
+		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
+		qconid
+		name=qconid { aDeclaration.setName(name); }
 		(
 			WHERE
 			block

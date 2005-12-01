@@ -58,6 +58,8 @@ NEWTYPE : "newtype" ;
 
 CLASS : "class" ;
 
+INSTANCE : "instance" ;
+
 CONTEXT_ARROW : "=>" ;
 
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER

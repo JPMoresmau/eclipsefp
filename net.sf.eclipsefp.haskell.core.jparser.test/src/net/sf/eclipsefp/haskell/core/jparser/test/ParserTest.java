@@ -8,6 +8,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeDeclaration;
@@ -440,21 +441,41 @@ public class ParserTest extends TestCase {
 		assertTrue(classDecl instanceof IClassDeclaration);
 	}
 	
-//	public void testSimpleInstanceDeclaration() throws RecognitionException, TokenStreamException {
-//		IModule module = parse("module ParserTest where\n" +
-//				               "  instance (Eq a, Show a) => Foo [a]\n" +
-//				               "  instance Functor a => Bar [a] where {}\n");
-//		
-//		assertEquals("ParserTest", module.getName());
-//
-//	}
+	public void testSimpleInstanceDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+				               "  instance Foo FooInstance\n" +
+				               "  instance Bar BarInstance where {}\n");
+		
+		assertEquals("ParserTest", module.getName());
+
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("FooInstance", decls[0].getName());
+		assertTrue(decls[0] instanceof IInstanceDeclaration);
+		
+		assertEquals("BarInstance", decls[1].getName());
+		assertTrue(decls[1] instanceof IInstanceDeclaration);
+	}
 	
+	public void testContextInstanceDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+                               "  instance (Eq a, Show a) => Foo Bar where");
+		
+		assertEquals("ParserTest", module.getName());
+		
+		IDeclaration instDecl = module.getDeclarations()[0];
+		assertEquals("Bar", instDecl.getName());
+		assertTrue(instDecl instanceof IInstanceDeclaration);
+	}
+
 //TODO a topdecl can be one of the following
-//	| 	instance [scontext =>] qtycls inst [where idecls]
 //	| 	default (type1 , ... , typen) 	(n>=0)
 //	| 	decl
 	
+//TODO what should the instance declarations show?
+	
 //TODO try to declare the function '(==) a b = not (a /= b)'
+//TODO inst rule (that occur inside the instdecl rule)
+//TODO test the gtycon (that occurs inside inst, subrule of instancedecl)
 	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
