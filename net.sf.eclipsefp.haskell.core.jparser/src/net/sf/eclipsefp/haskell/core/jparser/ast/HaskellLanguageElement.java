@@ -9,7 +9,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
  * 
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-class HaskellLanguageElement implements IHaskellLanguageElement {
+public class HaskellLanguageElement implements IHaskellLanguageElement {
 
 	private String fName = "";
 	private SourceLocation fLocation = new SourceLocation();

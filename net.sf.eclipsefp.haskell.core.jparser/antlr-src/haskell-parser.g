@@ -35,6 +35,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
+import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.InstanceDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
@@ -57,7 +58,17 @@ options {
     
     public HaskellParser(Reader in) {
     	this(new HaskellFormatter(new HaskellCommentFilter(new HaskellLexer(in))));	
-		
+    }
+    
+    private <T extends HaskellLanguageElement> T createNode(Class<T> nodeClazz)
+    	throws TokenStreamException
+    {
+		try {
+    		return nodeClazz.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException("Could not instantiate class " + nodeClazz.getName(),
+			                           e);
+		}
     }
 }
 
@@ -68,7 +79,7 @@ parseModule returns [IModule result]
 
 module returns [IModule result]
     {
-        Module aModule = new Module();
+        Module aModule = createNode(Module.class);
         
         String name = null;
         IModule aBody = null;
@@ -129,7 +140,7 @@ exportlist returns [List<IExportSpecification> result]
 
 export returns [IExportSpecification result]
     {
-    	ExportSpecification anExport = new ExportSpecification();
+    	ExportSpecification anExport = createNode(ExportSpecification.class);
     	String name = null;
     	result = null;
     }
@@ -214,7 +225,7 @@ conid returns [String result]
           
 body returns [Module result]
 	{
-	    result = new Module();
+	    result = createNode(Module.class);
 
 	    List<IImport> imports;
 	    List<IDeclaration> decls;
@@ -248,7 +259,7 @@ impdecls returns [List<IImport> result]
 
 impdecl returns [IImport result]
 	{
-		Import anImport = new Import();
+		Import anImport = createNode(Import.class);
 		
 		String name = null;
 		List<IImportSpecification> someSpecs = null;
@@ -312,7 +323,7 @@ topdecl returns [IDeclaration result]
 	
 typesymdecl returns [IDeclaration result]
 	{
-		Declaration aDeclaration = new TypeSynonymDeclaration();
+		Declaration aDeclaration = createNode(TypeSynonymDeclaration.class);
 		result = aDeclaration;
 		
 		String name = null;
@@ -325,7 +336,7 @@ typesymdecl returns [IDeclaration result]
 	
 data_or_rnmdtypedecl returns [IDeclaration result]
 	{
-		Declaration aDeclaration = new Declaration();
+		Declaration aDeclaration = createNode(Declaration.class);
 		
 		result = null;
 		String name = null;
@@ -346,7 +357,7 @@ data_or_rnmdtypedecl returns [IDeclaration result]
 	
 classdecl returns [IDeclaration result]
 	{
-		ClassDeclaration aDeclaration = new ClassDeclaration();
+		ClassDeclaration aDeclaration = createNode(ClassDeclaration.class);
 		String name = null;
 		result = aDeclaration;
 	}
@@ -363,7 +374,7 @@ classdecl returns [IDeclaration result]
 	
 instancedecl returns [IDeclaration result]
 	{
-		InstanceDeclaration aDeclaration = new InstanceDeclaration();
+		InstanceDeclaration aDeclaration = createNode(InstanceDeclaration.class);
 		result = aDeclaration;
 		
 		String name = null;
@@ -381,7 +392,7 @@ instancedecl returns [IDeclaration result]
 
 defaultdecl returns [IDeclaration result]
 	{
-		result = new DefaultDeclaration();
+		result = createNode(DefaultDeclaration.class);
 	}
 	:
 		DEFAULT list
@@ -403,7 +414,7 @@ simpletype returns [String result]
 	
 decl returns [IDeclaration result]
 	{
-		FunctionBinding decl = new FunctionBinding();
+		FunctionBinding decl = createNode(FunctionBinding.class);
 		result = decl;
 
 		Token name = null;
