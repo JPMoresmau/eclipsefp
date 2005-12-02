@@ -63,12 +63,18 @@ options {
     private <T extends HaskellLanguageElement> T createNode(Class<T> nodeClazz)
     	throws TokenStreamException
     {
+		T result;
 		try {
-    		return nodeClazz.newInstance();
+    		result = nodeClazz.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException("Could not instantiate class " + nodeClazz.getName(),
 			                           e);
 		}
+		
+		Token nextToken = LT(1);
+		result.setLocation(nextToken.getLine(), nextToken.getColumn());
+		
+		return result;
     }
 }
 
@@ -275,7 +281,6 @@ impdecl returns [IImport result]
 		)
 		{
 			anImport.setElementName(name);
-			anImport.setLocation(t.getLine(), t.getColumn());
 			result = anImport;
 		}
 	;
@@ -420,9 +425,7 @@ decl returns [IDeclaration result]
 		Token name = null;
 	}
 	:
-		name=funlhs {	decl.setName(name.getText());
-						decl.setLocation(name.getLine(), name.getColumn());
-					}
+		name=funlhs {	decl.setName(name.getText()); }
 		declrhs
 	;
 

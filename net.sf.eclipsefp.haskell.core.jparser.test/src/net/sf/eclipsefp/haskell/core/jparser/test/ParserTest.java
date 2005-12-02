@@ -33,10 +33,13 @@ import junit.framework.TestCase;
 public class ParserTest extends TestCase {
 	
 	public void testEmptyModule() throws RecognitionException, TokenStreamException {
-		IModule module = parse("module ParserTest where {}");
+		IModule module = parse("\n   module ParserTest where {}");
 
 		assertNotNull(module);
 		assertEquals("ParserTest", module.getName());
+		
+		assertEquals(1, module.getSourceLocation().getLine());
+		assertEquals(3, module.getSourceLocation().getColumn());
 		
 		IExportSpecification[] exports = module.getExportSpecifications();
 		assertNotNull(exports);
