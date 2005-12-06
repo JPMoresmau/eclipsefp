@@ -64,6 +64,8 @@ DEFAULT : "default" ;
 
 CONTEXT_ARROW : "=>" ;
 
+OFTYPE : "::" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

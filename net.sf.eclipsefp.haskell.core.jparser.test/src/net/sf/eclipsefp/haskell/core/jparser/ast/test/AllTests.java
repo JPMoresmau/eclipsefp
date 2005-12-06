@@ -12,6 +12,7 @@ public class AllTests {
 		suite.addTestSuite(FunctionBindingTest.class);
 		suite.addTestSuite(DataDeclarationTest.class);
 		suite.addTestSuite(ClassDeclarationTest.class);
+		suite.addTestSuite(TypeSignatureTest.class);
 		//$JUnit-END$
 		return suite;
 	}

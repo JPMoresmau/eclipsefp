@@ -40,6 +40,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.InstanceDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 import net.sf.eclipsefp.haskell.core.jparser.ast.NewtypeDeclaration;
+import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSignature;
 import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSynonymDeclaration;
 
 }
@@ -419,14 +420,58 @@ simpletype returns [String result]
 	
 decl returns [IDeclaration result]
 	{
+		result = null;
+	}
+	:
+		(vars OFTYPE) => result=signdecl	
+	|	result=valdef
+	;
+	
+valdef returns [IDeclaration result]
+	{
 		FunctionBinding decl = createNode(FunctionBinding.class);
 		result = decl;
-
+		
 		Token name = null;
+
 	}
 	:
 		name=funlhs {	decl.setName(name.getText()); }
 		declrhs
+	;
+
+signdecl returns [IDeclaration result]
+	{
+		TypeSignature tsig = createNode(TypeSignature.class);
+		result = tsig;
+		
+		String name = null;
+	}
+	:
+		name=vars { tsig.setName(name); }
+		OFTYPE
+		(~(SEMICOLON | RIGHT_CURLY))*
+	;
+	
+vars returns [String result]
+	{
+		StringBuffer buf = new StringBuffer();
+		result = null;
+		
+		String var = null;
+	}
+	:
+		var=varid { buf.append(var); }
+		(
+			COMMA
+			var=varid {
+						buf.append(", ");
+		          		buf.append(var);
+		          	  }
+		)*
+		{
+			result = buf.toString();
+		}
 	;
 
 funlhs returns [Token result]

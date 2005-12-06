@@ -14,6 +14,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
 
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
@@ -485,6 +486,17 @@ public class ParserTest extends TestCase {
 		IDeclaration[] decls = module.getDeclarations();
 		assertEquals("default", decls[0].getName());
 		assertTrue(decls[0] instanceof IDefaultDeclaration);
+	}
+	
+	public void testTypeSignatureDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+        					   "  fat :: Int -> Int\n" +
+        					   "  fat 0 = 1\n" +
+        					   "  fat n = n * (fat (n - 1))");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("fat", decls[0].getName());
+		assertTrue(decls[0] instanceof ITypeSignature);
 	}
 
 //TODO try to declare the function '(==) a b = not (a /= b)'
