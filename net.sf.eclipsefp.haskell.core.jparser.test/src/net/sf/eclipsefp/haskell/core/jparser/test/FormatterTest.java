@@ -120,6 +120,42 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(EOF, formatter.nextToken().getType());
 	}
 	
+//TODO pass this test
+//	public void testUnnecessaryLayout() throws TokenStreamException {
+//		final String inStr = "module Main where {\n" +
+//				             "    id x = x ;\n" +
+//				             "    main = id 3\n" +
+//				             "}";
+//		final TestTokenStream formatter = createFormatter(inStr);
+//		
+//		//consume every token on the original stream
+//		formatter.skipTokens(14);
+//		
+//		assertEquals(EOF, formatter.nextToken());
+//	}
+	
+//TODO pass the non-standard code test
+//	public void testNonStandardCode() throws TokenStreamException {
+//		final String inStr = "module Test where {\n" +
+//  							 "#ifdef CURL\n" +
+//							 "import LibraryCurl.ModuleCurl\n" +
+//							 "#endif\n" +
+//							 "foreign export stdcall \"parseHaskellCU\";\n" +
+//							 "haskellParseCU :: CString -> IO ( StablePtr ( ParseResult HsModule ) );\n" +
+//							 "}\n";
+//
+//		final TestTokenStream formatter = createFormatter(inStr);
+//		
+//		//module Test where {
+//		formatter.skipTokens(4);
+//		
+//		//# ifdef CURL
+//		formatter.skipTokens(3);
+//		
+//		Token t = formatter.nextToken();
+//		assertEquals(HaskellLexerTokenTypes.SEMICOLON, t.getType());
+//	}
+	
 	//TODO fix the formatter according to the syntax rules (Haskell Report
 	//Ch. 9) Current version implements just the most basic rules
 	
