@@ -77,6 +77,16 @@ options {
 		
 		return result;
     }
+    
+    private static class NonNullVector<E> extends Vector<E> {
+		@Override
+		public synchronized boolean add(E elem) {
+			if (elem == null)
+				return false;
+			else
+				return super.add(elem);
+		}
+    }
 }
 
 parseModule returns [IModule result]
@@ -297,16 +307,14 @@ impspec returns [List<IImportSpecification> result]
 
 topdecls returns [List<IDeclaration> result]
 	{
-		result = new Vector<IDeclaration>();
+		result = new NonNullVector<IDeclaration>();
 		
 		IDeclaration aDeclaration = null;
 	}
 	:
 		(		
-			aDeclaration=topdecl { if (aDeclaration != null)
-				                       result.add(aDeclaration); }
-			( SEMICOLON aDeclaration=topdecl { if (aDeclaration != null)
-				                                   result.add(aDeclaration); })*
+			aDeclaration=topdecl { result.add(aDeclaration); }
+			( SEMICOLON aDeclaration=topdecl { result.add(aDeclaration); })*
 		)?
 	;
 
