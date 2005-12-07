@@ -488,7 +488,7 @@ public class ParserTest extends TestCase {
 		assertTrue(decls[0] instanceof IDefaultDeclaration);
 	}
 	
-	public void testTypeSignatureDeclaration() throws RecognitionException, TokenStreamException {
+	public void testSimpleTypeSignature() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
         					   "  fat :: Int -> Int\n" +
         					   "  fat 0 = 1\n" +
@@ -497,6 +497,46 @@ public class ParserTest extends TestCase {
 		IDeclaration[] decls = module.getDeclarations();
 		assertEquals("fat", decls[0].getName());
 		assertTrue(decls[0] instanceof ITypeSignature);
+	}
+	
+	public void testTypeSignatureWithContext() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest where\n" +
+							   "  fat :: Int a => a -> a\n" +
+							   "  fat 0 = 1\n" +
+							   "  fat n = n * (fat (n - 1))");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals("fat", decls[0].getName());
+		assertTrue(decls[0] instanceof ITypeSignature);
+	}
+	
+	public void testIgnoreNonStandardDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserImpl where {\n" +
+				"foreign export stdcall \"parseHaskellCU\";\n" +
+				"haskellParseCU :: CString -> IO ( StablePtr ( ParseResult HsModule ) );\n" +
+				"haskellParseCU s = do {\n" +
+				"                       cs <- ( peekCString s )\n" +
+				"                       newStablePtr( parseModule cs )\n" +
+				"                   }\n" +
+				"}");
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		assertEquals(2, decls[0].getSourceLocation().getLine());
+		assertEquals(3, decls[1].getSourceLocation().getLine());
+	}
+
+	public void testEndWithNonStandardDeclaration() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserImpl where {\n" +
+				"haskellParseCU :: CString -> IO ( StablePtr ( ParseResult HsModule ) );\n" +
+				"haskellParseCU s = do {\n" +
+				"                       cs <- ( peekCString s )\n" +
+				"                       newStablePtr( parseModule cs )\n" +
+				"                   };\n" +
+				"foreign export stdcall \"parseHaskellCU\"\n" +
+				"}");
+		
+		assertEquals(2, module.getDeclarations().length);
 	}
 
 //TODO try to declare the function '(==) a b = not (a /= b)'

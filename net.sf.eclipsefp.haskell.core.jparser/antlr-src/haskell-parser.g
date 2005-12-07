@@ -303,8 +303,10 @@ topdecls returns [List<IDeclaration> result]
 	}
 	:
 		(		
-			aDeclaration=topdecl { result.add(aDeclaration); }
-			( SEMICOLON aDeclaration=topdecl { result.add(aDeclaration); })*
+			aDeclaration=topdecl { if (aDeclaration != null)
+				                       result.add(aDeclaration); }
+			( SEMICOLON aDeclaration=topdecl { if (aDeclaration != null)
+				                                   result.add(aDeclaration); })*
 		)?
 	;
 
@@ -424,9 +426,17 @@ decl returns [IDeclaration result]
 	}
 	:
 		(vars OFTYPE) => result=signdecl	
-	|	result=valdef
+	|	(funlhs EQUALS) => result=valdef
+	|   nonstddecl
 	;
 	
+//matches almost anything
+//used to ignore non-standard declarations
+nonstddecl
+	:
+		(block | ~(SEMICOLON|RIGHT_CURLY))+
+	;
+
 valdef returns [IDeclaration result]
 	{
 		FunctionBinding decl = createNode(FunctionBinding.class);
@@ -479,7 +489,7 @@ funlhs returns [Token result]
 		result = null;
 	}
 	:
-		id:VARIABLE_ID { result=id; } (~(EQUALS))*
+		id:VARIABLE_ID { result=id; } (~(EQUALS|SEMICOLON))*
 	;
 	
 declrhs :
