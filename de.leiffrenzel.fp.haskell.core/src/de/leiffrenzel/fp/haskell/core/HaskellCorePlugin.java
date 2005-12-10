@@ -19,6 +19,7 @@ public class HaskellCorePlugin extends Plugin {
   // extension points
   public static final String ID_EXT_POINT_COMPILERS = "haskellCompilers";
   public static final String ID_EXT_POINT_PARSERS   = "haskellParsers";
+  public static final String ID_PROBLEM_MARKER = "de.leiffrenzel.fp.haskell.core.problem";
   
   private static HaskellCorePlugin plugin;
   

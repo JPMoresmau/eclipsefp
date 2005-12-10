@@ -47,7 +47,7 @@ abstract class Visitor {
                              final ICompilerOutputItem[] items ) {
     try {
       for( int i = 0; i < items.length; i++ ) {
-        IMarker marker = file.createMarker( IMarker.PROBLEM );
+        IMarker marker = file.createMarker( HaskellCorePlugin.ID_PROBLEM_MARKER );
         if( marker.exists() ) {
           marker.setAttribute( IMarker.MESSAGE, items[ i ].getComment() );
           marker.setAttribute( IMarker.LINE_NUMBER, 

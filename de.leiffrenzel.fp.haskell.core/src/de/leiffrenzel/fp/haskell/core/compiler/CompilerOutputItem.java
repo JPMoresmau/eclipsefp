@@ -22,7 +22,7 @@ public class CompilerOutputItem implements ICompilerOutputItem {
   }
   
   public void addToComment( final String commentAddition ) {
-    String start = ( comment.equals( "" ) ) ? comment : comment + " - ";
+    String start = ( comment.equals( "" ) ) ? comment : comment + "\n";
     this.comment = start + commentAddition.trim();
   }
   
