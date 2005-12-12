@@ -64,4 +64,8 @@ public class Module extends HaskellLanguageElement implements IModule {
 		addDeclarations(Arrays.asList(someDecls));
 	}
 
+	public void addDeclaration(IDeclaration decl) {
+		fDecls.add(decl);
+	}
+
 }
