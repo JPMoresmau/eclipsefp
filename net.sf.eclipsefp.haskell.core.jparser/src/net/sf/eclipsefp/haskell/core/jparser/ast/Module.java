@@ -8,6 +8,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 public class Module extends HaskellLanguageElement implements IModule {
@@ -66,6 +67,14 @@ public class Module extends HaskellLanguageElement implements IModule {
 
 	public void addDeclaration(IDeclaration decl) {
 		fDecls.add(decl);
+	}
+
+	public void addExport(IExportSpecification export) {
+		fExports.add(export);
+	}
+
+	public void addImport(IImport theImport) {
+		fImports.add(theImport);
 	}
 
 }

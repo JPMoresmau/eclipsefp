@@ -98,7 +98,7 @@ options {
     
 }
 
-module returns [IModule result]
+module
     {
         Module aModule = (Module) fBuilder.startModule();
         
@@ -106,21 +106,14 @@ module returns [IModule result]
         aModule.setLocation(nextToken.getLine(), nextToken.getColumn());
         
         String name = null;
-        IModule aBody = null;
-        List<IExportSpecification> someExports = null;
-        result = null;
     }
     :
-      ( t:MODULE
-        name=modid { aModule.setName(name); }
-        ( someExports=exports { aModule.addExports(someExports); } )?
-        WHERE aBody=body
-    | aBody=body )
-    {
-    	aModule.addImports(aBody.getImports());
-    	aModule.addDeclarations(aBody.getDeclarations());
-        result = aModule;
-    }
+      	(	t:MODULE
+        	name=modid { aModule.setName(name); }
+        	(exports)?
+        	WHERE
+      	)?
+      	body
     ;
 
 qconid returns [String result]
@@ -142,31 +135,25 @@ qconid returns [String result]
 		}
 	;
 
-exports returns [List<IExportSpecification> result]
-    {
-    	result = new Vector<IExportSpecification>(0);
-    }
+exports
 	:
 	    LEFT_PAREN
-	    (result=exportlist)? (COMMA)?
+	    (exportlist)? (COMMA)?
 	    RIGHT_PAREN
 	;
 	
-exportlist returns [List<IExportSpecification> result]
-	{
-		IExportSpecification anExport = null;
-    	result = new Vector<IExportSpecification>();
-	}
+exportlist
 	:
-		anExport=export { result.add(anExport); }
-		(COMMA  anExport=export { result.add(anExport); } )*
+		export 
+		(COMMA  export)*
 	;
 
-export returns [IExportSpecification result]
+export
     {
     	ExportSpecification anExport = createNode(ExportSpecification.class);
+    	fBuilder.addExport(anExport);
+    	
     	String name = null;
-    	result = null;
     }
     :
     (
@@ -181,7 +168,6 @@ export returns [IExportSpecification result]
     )
     {
    		anExport.setName(name);
-   	    result = anExport;
     }
     ;
     
@@ -250,18 +236,13 @@ conid returns [String result]
 body returns [Module result]
 	{
 	    result = createNode(Module.class);
-
-	    List<IImport> imports;
 	}
 	:
 		(
 		LEFT_CURLY
 			(
-				imports=impdecls { result.addImports(imports); }
-				(
-					SEMICOLON
-					topdecls
-				)?
+				impdecls
+				( SEMICOLON topdecls )?
 			|
 				topdecls
 			)
@@ -269,37 +250,29 @@ body returns [Module result]
 		)
 	;
 	
-impdecls returns [List<IImport> result]
-	{
-		IImport anImport;
-		result = new Vector<IImport>();
-	}
+impdecls
 	:
-		anImport=impdecl { result.add(anImport); }
+		impdecl
 		( (SEMICOLON IMPORT) =>
-		SEMICOLON anImport=impdecl { result.add(anImport); } )*
+		  SEMICOLON impdecl )*
 	;
 
-impdecl returns [IImport result]
+impdecl
 	{
 		Import anImport = createNode(Import.class);
+		fBuilder.addImport(anImport);
 		
 		String name = null;
 		List<IImportSpecification> someSpecs = null;
-		result = null;
 	}
 	:
 		(
 			t:IMPORT
 			(QUALIFIED)?
-			name=modid
+			name=modid { anImport.setElementName(name); }
 			(AS modid)?
 			(someSpecs=impspec { anImport.addSpecifications(someSpecs); } )?
 		)
-		{
-			anImport.setElementName(name);
-			result = anImport;
-		}
 	;
 
 impspec returns [List<IImportSpecification> result]
@@ -361,13 +334,12 @@ data_or_rnmdtypedecl
 		}
 	;
 	
-classdecl returns [IDeclaration result]
+classdecl
 	{
 		ClassDeclaration aDeclaration = createNode(ClassDeclaration.class);
 		fBuilder.addDeclaration(aDeclaration);
 
 		String name = null;
-		result = aDeclaration;
 	}
 	:
 		CLASS
@@ -380,11 +352,10 @@ classdecl returns [IDeclaration result]
 		)?
 	;
 	
-instancedecl returns [IDeclaration result]
+instancedecl
 	{
 		InstanceDeclaration aDeclaration = createNode(InstanceDeclaration.class);
 		fBuilder.addDeclaration(aDeclaration);
-		result = aDeclaration;
 		
 		String name = null;
 	}
@@ -449,11 +420,10 @@ valdef
 		declrhs
 	;
 
-signdecl returns [IDeclaration result]
+signdecl
 	{
 		TypeSignature tsig = createNode(TypeSignature.class);
 		fBuilder.addDeclaration(tsig);		
-		result = tsig;
 		
 		String name = null;
 	}
