@@ -35,6 +35,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
+import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.InstanceDeclaration;
@@ -53,6 +54,8 @@ options {
 
 //extra code for HaskellParser class
 {
+	private ModuleBuilder fBuilder = new ModuleBuilder();
+
     public HaskellParser(InputStream in) {
         this(new InputStreamReader(in));
     }
@@ -61,6 +64,11 @@ options {
     	this(new HaskellFormatter(new HaskellCommentFilter(new HaskellLexer(in))));	
     }
     
+    public IModule parseModule() throws RecognitionException, TokenStreamException {
+		module();
+		return fBuilder.getResult();
+    }
+
     private <T extends HaskellLanguageElement> T createNode(Class<T> nodeClazz)
     	throws TokenStreamException
     {
@@ -87,16 +95,15 @@ options {
 				return super.add(elem);
 		}
     }
+    
 }
-
-parseModule returns [IModule result]
-	{ result = null; }
-	: result=module
-	;
 
 module returns [IModule result]
     {
-        Module aModule = createNode(Module.class);
+        Module aModule = (Module) fBuilder.startModule();
+        
+		Token nextToken = LT(1);
+        aModule.setLocation(nextToken.getLine(), nextToken.getColumn());
         
         String name = null;
         IModule aBody = null;
@@ -245,7 +252,6 @@ body returns [Module result]
 	    result = createNode(Module.class);
 
 	    List<IImport> imports;
-	    List<IDeclaration> decls;
 	}
 	:
 		(
@@ -254,10 +260,10 @@ body returns [Module result]
 				imports=impdecls { result.addImports(imports); }
 				(
 					SEMICOLON
-					decls=topdecls { result.addDeclarations(decls); }
+					topdecls
 				)?
 			|
-				decls=topdecls { result.addDeclarations(decls); }
+				topdecls
 			)
 		RIGHT_CURLY
 		)
@@ -305,42 +311,27 @@ impspec returns [List<IImportSpecification> result]
 	    list
 	;
 
-topdecls returns [List<IDeclaration> result]
-	{
-		result = new NonNullVector<IDeclaration>();
-		
-		IDeclaration aDeclaration = null;
-	}
+topdecls
 	:
 		(		
-			aDeclaration=topdecl { result.add(aDeclaration); }
-			( SEMICOLON aDeclaration=topdecl { result.add(aDeclaration); })*
+			topdecl
+			( SEMICOLON topdecl )*
 		)?
 	;
 
-topdecl returns [IDeclaration result]
-	{
-		result = null;
-
-	}
-	:
-		result=typesymdecl
-	|
-		result=data_or_rnmdtypedecl
-	|
-		result=classdecl
-	|
-		result=instancedecl
-	|
-		result=defaultdecl
-	|
-		result=decl
+topdecl 
+	:	typesymdecl
+	|   data_or_rnmdtypedecl
+	|   classdecl
+	|   instancedecl
+	|   defaultdecl
+	|   decl
 	;
 	
-typesymdecl returns [IDeclaration result]
+typesymdecl
 	{
 		Declaration aDeclaration = createNode(TypeSynonymDeclaration.class);
-		result = aDeclaration;
+		fBuilder.addDeclaration(aDeclaration);
 		
 		String name = null;
 	}
@@ -350,11 +341,10 @@ typesymdecl returns [IDeclaration result]
 		declrhs
 	;
 	
-data_or_rnmdtypedecl returns [IDeclaration result]
+data_or_rnmdtypedecl
 	{
 		Declaration aDeclaration = createNode(Declaration.class);
-		
-		result = null;
+
 		String name = null;
 	}
 	:
@@ -367,13 +357,15 @@ data_or_rnmdtypedecl returns [IDeclaration result]
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
 		{
-			result = aDeclaration;
+		    fBuilder.addDeclaration(aDeclaration);
 		}
 	;
 	
 classdecl returns [IDeclaration result]
 	{
 		ClassDeclaration aDeclaration = createNode(ClassDeclaration.class);
+		fBuilder.addDeclaration(aDeclaration);
+
 		String name = null;
 		result = aDeclaration;
 	}
@@ -391,6 +383,7 @@ classdecl returns [IDeclaration result]
 instancedecl returns [IDeclaration result]
 	{
 		InstanceDeclaration aDeclaration = createNode(InstanceDeclaration.class);
+		fBuilder.addDeclaration(aDeclaration);
 		result = aDeclaration;
 		
 		String name = null;
@@ -406,9 +399,10 @@ instancedecl returns [IDeclaration result]
 		)?
 	;
 
-defaultdecl returns [IDeclaration result]
+defaultdecl
 	{
-		result = createNode(DefaultDeclaration.class);
+		IDeclaration aDeclaration = createNode(DefaultDeclaration.class);
+		fBuilder.addDeclaration(aDeclaration);
 	}
 	:
 		DEFAULT list
@@ -428,13 +422,10 @@ simpletype returns [String result]
 		(~(EQUALS))*
 	;
 	
-decl returns [IDeclaration result]
-	{
-		result = null;
-	}
+decl
 	:
-		(vars OFTYPE) => result=signdecl	
-	|	(funlhs EQUALS) => result=valdef
+		(vars OFTYPE) => signdecl	
+	|	(funlhs EQUALS) => valdef
 	|   nonstddecl
 	;
 	
@@ -445,22 +436,23 @@ nonstddecl
 		(block | ~(SEMICOLON|RIGHT_CURLY))+
 	;
 
-valdef returns [IDeclaration result]
+valdef
 	{
-		FunctionBinding decl = createNode(FunctionBinding.class);
-		result = decl;
+		FunctionMatch match = createNode(FunctionMatch.class);
 		
 		Token name = null;
-
 	}
 	:
-		name=funlhs {	decl.setName(name.getText()); }
+		name=funlhs {	match.setName(name.getText());
+						fBuilder.addFunctionMatch(match);
+					}
 		declrhs
 	;
 
 signdecl returns [IDeclaration result]
 	{
 		TypeSignature tsig = createNode(TypeSignature.class);
+		fBuilder.addDeclaration(tsig);		
 		result = tsig;
 		
 		String name = null;

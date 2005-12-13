@@ -24,15 +24,22 @@ public class ModuleBuilderTest extends TestCase {
 		assertNotSame(fstModule, sndModule);
 	}
 	
+	public void testReturnsStartedModule() {
+		final String moduleName = "ModuleBuilderTest";
+		IModule module = fBuilder.startModule(moduleName);
+		
+		assertEquals(moduleName, module.getName());
+	}
+	
 	public void testGroupMatchesInBindings() {
 		fBuilder.startModule();
 		
-		fBuilder.addFunctionMatch(createFunctionMatch("fat"));
-		fBuilder.addFunctionMatch(createFunctionMatch("fat"));
+		fBuilder.addFunctionMatch(createFunctionMatch("fat", 1, 4));
+		fBuilder.addFunctionMatch(createFunctionMatch("fat", 2, 4));
 		
-		fBuilder.addFunctionMatch(createFunctionMatch("fib"));
-		fBuilder.addFunctionMatch(createFunctionMatch("fib"));
-		fBuilder.addFunctionMatch(createFunctionMatch("fib"));
+		fBuilder.addFunctionMatch(createFunctionMatch("fib", 4, 4));
+		fBuilder.addFunctionMatch(createFunctionMatch("fib", 5, 4));
+		fBuilder.addFunctionMatch(createFunctionMatch("fib", 6, 4));
 
 		IModule module = fBuilder.getResult();
 		
@@ -40,15 +47,21 @@ public class ModuleBuilderTest extends TestCase {
 		assertEquals(2, decls.length);
 		assertEquals("fat", decls[0].getName());
 		assertEquals(2, ((IFunctionBinding) decls[0]).getMatches().length);
+		assertEquals(1, decls[0].getSourceLocation().getLine());
+		assertEquals(4, decls[0].getSourceLocation().getColumn());
+
 		assertEquals("fib", decls[1].getName());
 		assertEquals(3, ((IFunctionBinding) decls[1]).getMatches().length);
+		assertEquals(4, decls[1].getSourceLocation().getLine());
+		assertEquals(4, decls[1].getSourceLocation().getColumn());
 		
 	}
 
-	private IMatch createFunctionMatch(String name) {
-		FunctionMatch fstFatMatch = new FunctionMatch();
-		fstFatMatch.setName(name);
-		return fstFatMatch;
+	private FunctionMatch createFunctionMatch(String name, int line, int column) {
+		FunctionMatch match = new FunctionMatch();
+		match.setName(name);
+		match.setLocation(line, column);
+		return match;
 	}
 	
 }

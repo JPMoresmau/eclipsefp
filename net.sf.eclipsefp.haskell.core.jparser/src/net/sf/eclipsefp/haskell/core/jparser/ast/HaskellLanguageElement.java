@@ -43,4 +43,8 @@ public class HaskellLanguageElement implements IHaskellLanguageElement {
 		fLocation.setPoint(line, column);
 	}
 
+	public void setLocation(ISourceLocation srcLoc) {
+		setLocation(srcLoc.getLine(), srcLoc.getColumn());
+	}
+
 }

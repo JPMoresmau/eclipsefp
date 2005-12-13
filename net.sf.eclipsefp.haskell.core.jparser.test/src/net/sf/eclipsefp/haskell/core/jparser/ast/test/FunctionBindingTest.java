@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast.test;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
-import net.sf.eclipsefp.haskell.core.jparser.ast.Match;
+import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import junit.framework.TestCase;
 
 public class FunctionBindingTest extends TestCase {
@@ -19,21 +19,21 @@ public class FunctionBindingTest extends TestCase {
 	
 	public void testAcceptsMatch() {
 		fBinding.setName("fat");
-		Match match = createMatch("fat");
+		FunctionMatch match = createMatch("fat");
 		
 		assertTrue("Did not accept valid match", fBinding.acceptsMatch(match));
 	}
 
 	public void testDoesNotAcceptMatch() {
 		fBinding.setName("fat");
-		Match match = createMatch("fib");
+		FunctionMatch match = createMatch("fib");
 		
 		assertFalse("Did accept invalid match", fBinding.acceptsMatch(match));
 	}
 	
 	public void testRejectInvalidMatch() {
 		fBinding.setName("fat");
-		Match match = createMatch("fib");
+		FunctionMatch match = createMatch("fib");
 
 		try {
 			fBinding.addMatch(match);
@@ -45,8 +45,8 @@ public class FunctionBindingTest extends TestCase {
 		assertEquals(0, fBinding.getMatches().length);
 	}
 	
-	private Match createMatch(String name) {
-		Match match = new Match();
+	private FunctionMatch createMatch(String name) {
+		FunctionMatch match = new FunctionMatch();
 		match.setName(name);
 		return match;
 	}
