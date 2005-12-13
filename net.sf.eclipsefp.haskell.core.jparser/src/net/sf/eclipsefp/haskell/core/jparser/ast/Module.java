@@ -40,31 +40,6 @@ public class Module extends HaskellLanguageElement implements IModule {
 		return null;
 	}
 
-	public void addExports(List<IExportSpecification> someExports) {
-		fExports.addAll(someExports);
-	}
-
-	public void addImports(List<IImport> someImports) {
-		fImports.addAll(someImports);
-	}
-
-	/**
-	 * Adds a list of imports to the module. This is a convenience method.
-	 * 
-	 * @param imports the imports to be added
-	 */
-	public void addImports(IImport[] imports) {
-		addImports(Arrays.asList(imports));
-	}
-
-	public void addDeclarations(List<IDeclaration> someDecls) {
-		fDecls.addAll(someDecls);
-	}
-
-	public void addDeclarations(IDeclaration[] someDecls) {
-		addDeclarations(Arrays.asList(someDecls));
-	}
-
 	public void addDeclaration(IDeclaration decl) {
 		fDecls.add(decl);
 	}
