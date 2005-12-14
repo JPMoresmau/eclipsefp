@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Vector;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
-import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
@@ -34,7 +32,6 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
-import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
@@ -274,7 +271,7 @@ impdecl
 	}
 	:
 		(
-			t:IMPORT
+			IMPORT
 			(QUALIFIED)?
 			name=modid { anImport.setElementName(name); }
 			(AS modid)?
