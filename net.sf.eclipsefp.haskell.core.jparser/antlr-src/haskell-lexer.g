@@ -68,6 +68,10 @@ OFTYPE : "::" ;
 
 LET : "let" ;
 
+DO : "do" ;
+
+OF : "of" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

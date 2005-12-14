@@ -23,10 +23,25 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		return new TestTokenStream(new HaskellFormatter(lexer));
 	}
 	
-	// The sample for these tests was taken from then Haskell Report
-	// and is available at
-	// http://www.haskell.org/onlinereport/lexemes.html#layout-before
-
+	public void testLetOpensBlock() throws TokenStreamException {
+		final String inStr = "{ id x = let b = x\n" +
+				             "         in b }";
+		
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// { id x = let
+		formatter.skipTokens(5);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		
+		//b = x
+		formatter.skipTokens(3);
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		
+		//in b }
+		formatter.skipTokens(3);
+		assertEquals(EOF, formatter.nextToken().getType());
+	}
+	
 	public void testWhereOpensBlock() throws TokenStreamException {
 		final String inStr = "module Simple where\n" +
         					 "data Stack = Empty\n";
@@ -57,24 +72,33 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(EOF, t.getType());
 	}
 	
-	public void testLetOpensBlock() throws TokenStreamException {
-		final String inStr = "{ id x = let b = x\n" +
-				             "         in b }";
-		
+	public void testDoOpensBlock() throws TokenStreamException {
+		final String inStr = "{\n" +
+							 "haskellParseCU s = do\n" +
+				             "                 cs <- ( peekCString s ) ;\n" +
+				             "                 newStablePtr( parseModule cs )\n" +
+				             "}";
 		final TestTokenStream formatter = createFormatter(inStr);
 		
-		// { id x = let
-		formatter.skipTokens(5);
+		// {
+		// haskellParseCU s = do
+		formatter.skipTokens(1);
+		formatter.skipTokens(4);
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testOfOpensBlock() throws TokenStreamException {
+		final String inStr = "{\n" +
+		                     "fat n = case n of 0 -> 1" +
+		                     "                  | True -> n * fat ( n - 1 )\n" +
+		                     "}";
+		final TestTokenStream formatter = createFormatter(inStr);
 		
-		//b = x
-		formatter.skipTokens(3);
-		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
-		
-		//in b }
-		formatter.skipTokens(3);
-		assertEquals(EOF, formatter.nextToken().getType());
-		
+		// {
+		// fat n = case n of
+		formatter.skipTokens(1);
+		formatter.skipTokens(6);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 	}
 	
 	public void testNestedWhere() throws TokenStreamException {

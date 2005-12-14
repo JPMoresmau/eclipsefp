@@ -63,11 +63,23 @@ public class HaskellFormatter implements TokenStream {
 	}
 
 	private boolean isBlockOpener(Token token) {
-		return isWhere(token) || isLet(token);
+		return isWhere(token) || isLet(token) || isDo(token) || isOf(token);
 	}
 
 	private boolean isLet(Token token) {
 		return token.getType() == HaskellLexerTokenTypes.LET;
+	}
+
+	private boolean isDo(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.DO;
+	}
+
+	private boolean isOf(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.OF;
+	}
+
+	private boolean isWhere(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.WHERE;
 	}
 
 	private boolean isModule(Token token) {
@@ -80,10 +92,6 @@ public class HaskellFormatter implements TokenStream {
 
 	private boolean isRightCurly(Token theToken) {
 		return theToken.getType() == HaskellLexerTokenTypes.RIGHT_CURLY;
-	}
-
-	private boolean isWhere(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.WHERE;
 	}
 
 	private boolean isLeftCurly(Token theToken) {
