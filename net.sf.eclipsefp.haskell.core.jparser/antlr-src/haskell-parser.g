@@ -54,15 +54,22 @@ options {
 
 //extra code for HaskellParser class
 {
-	private ModuleBuilder fBuilder = new ModuleBuilder();
+	private ModuleBuilder fBuilder;
 
     public HaskellParser(InputStream in) {
         this(new InputStreamReader(in));
     }
     
     public HaskellParser(Reader in) {
-    	this(new HaskellFormatter(new HaskellCommentFilter(new HaskellLexer(in))));	
+    	this(new HaskellFormatter(new HaskellCommentFilter(new HaskellLexer(in))),
+    		 new ModuleBuilder());	
     }
+    
+	public HaskellParser(TokenStream stream, ModuleBuilder builder) {
+		this(stream);
+		fBuilder = builder;
+	}
+    
     
     public IModule parseModule() throws RecognitionException, TokenStreamException {
 		module();

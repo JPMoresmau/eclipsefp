@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-public class ParserTest extends TestCase {
+public class ParserIntegrationTest extends TestCase {
 	
 	public void testEmptyModule() throws RecognitionException, TokenStreamException {
 		IModule module = parse("\n   module ParserTest where {}");
