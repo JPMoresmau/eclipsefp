@@ -41,7 +41,7 @@ public class HaskellFormatter implements TokenStream {
 			}
 		}
 		
-		if ( isWhere(fLastToken) &&	!isLeftCurly(peekedToken)) {
+		if ( isBlockOpener(fLastToken) &&	!isLeftCurly(peekedToken)) {
 			return new Token(HaskellLexerTokenTypes.LEFT_CURLY);
 		} else {
 			if (isInsideBraces()) {
@@ -60,6 +60,14 @@ public class HaskellFormatter implements TokenStream {
 			
 			return fInput.nextToken();
 		}
+	}
+
+	private boolean isBlockOpener(Token token) {
+		return isWhere(token) || isLet(token);
+	}
+
+	private boolean isLet(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.LET;
 	}
 
 	private boolean isModule(Token token) {

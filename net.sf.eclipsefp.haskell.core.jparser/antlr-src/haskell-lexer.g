@@ -66,6 +66,8 @@ CONTEXT_ARROW : "=>" ;
 
 OFTYPE : "::" ;
 
+LET : "let" ;
+
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;

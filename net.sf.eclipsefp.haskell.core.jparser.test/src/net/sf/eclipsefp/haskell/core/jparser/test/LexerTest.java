@@ -10,7 +10,7 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 
 import junit.framework.TestCase;
 
-public class LexerTest extends TestCase {
+public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	// The sample for these tests was taken from then Haskell Report
 	// and is available at
@@ -28,58 +28,59 @@ public class LexerTest extends TestCase {
 	public void testRecognition() throws TokenStreamException {
 		Token t = fLexer.nextToken();
 		
-		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
+		assertEquals(MODULE, t.getType());
 		assertEquals("module", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.CONSTRUCTOR_ID, t.getType());
+		assertEquals(CONSTRUCTOR_ID, t.getType());
 		assertEquals("Simple", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.WHERE, t.getType());
+		assertEquals(WHERE, t.getType());
 		assertEquals("where", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.DATA, t.getType());
+		assertEquals(DATA, t.getType());
 		assertEquals("data", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.CONSTRUCTOR_ID, t.getType());
+		assertEquals(CONSTRUCTOR_ID, t.getType());
 		assertEquals("Underlined_stack", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.EQUALS, t.getType());
+		assertEquals(EQUALS, t.getType());
 		assertEquals("=", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.CONSTRUCTOR_ID, t.getType());
+		assertEquals(CONSTRUCTOR_ID, t.getType());
 		assertEquals("Empty", t.getText());
 
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.EOF, t.getType());
+		assertEquals(EOF, t.getType());
 	}
 	
-	private TestTokenStream createLexer(String input) {
-		return new TestTokenStream(new HaskellLexer(new StringReader(input)));
+	public void testRecognizeLet() throws TokenStreamException {
+		fLexer = createLexer("let in");
+		assertEquals(LET, fLexer.nextToken().getType());
 	}
 	
 	public void testCommonPrefixes() throws TokenStreamException {
 		fLexer = createLexer("main whomp modula whery");
 		
 		Token t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals(VARIABLE_ID, t.getType());
 		assertEquals("main", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals(VARIABLE_ID, t.getType());
 		assertEquals("whomp", t.getText());
 
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals(VARIABLE_ID, t.getType());
 		assertEquals("modula", t.getText());
 
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals(VARIABLE_ID, t.getType());
 		assertEquals("whery", t.getText());
 	}
 	
@@ -87,11 +88,11 @@ public class LexerTest extends TestCase {
 		fLexer = createLexer("Pwho imodule");
 		
 		Token t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.CONSTRUCTOR_ID, t.getType());
+		assertEquals(CONSTRUCTOR_ID, t.getType());
 		assertEquals("Pwho", t.getText());
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.VARIABLE_ID, t.getType());
+		assertEquals(VARIABLE_ID, t.getType());
 		assertEquals("imodule", t.getText());
 	}
 	
@@ -127,7 +128,7 @@ public class LexerTest extends TestCase {
 				             "main = {- block comment inside -} putStr 'hello'\n"
 				             );
 		Token t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.COMMENT, t.getType());
+		assertEquals(COMMENT, t.getType());
 		assertEquals("--this is the main module for the app\n", t.getText());
 		
 		t = fLexer.nextToken(); //module
@@ -137,7 +138,7 @@ public class LexerTest extends TestCase {
 		fLexer.skipTokens(2); //Main where
 		
 		t = fLexer.nextToken();
-		assertEquals(HaskellLexerTokenTypes.COMMENT, t.getType());
+		assertEquals(COMMENT, t.getType());
 		assertEquals("{- We actually need to import those\n" +
 	                 "   modules here for using the network\n" +
 	                 "   connection capabilities -}",
@@ -149,7 +150,7 @@ public class LexerTest extends TestCase {
 		fLexer.skipTokens(3); //Network main = 
 		
 		t = fLexer.nextToken(); // {- block comment inside -}
-		assertEquals(HaskellLexerTokenTypes.COMMENT, t.getType());
+		assertEquals(COMMENT, t.getType());
 		assertEquals("{- block comment inside -}", t.getText());
 		
 		t = fLexer.nextToken(); //putStr
@@ -157,8 +158,15 @@ public class LexerTest extends TestCase {
 		assertEquals(34, t.getColumn());
 	}
 	
+	private TestTokenStream createLexer(String input) {
+		return new TestTokenStream(new HaskellLexer(new StringReader(input)));
+	}
+	
 	//TODO maybe we need to recognize more comment formats. the report
-	//specifies a return char as the end of a line comment too 
+	//specifies a return char as the end of a line comment too
+	
+	//TODO a string literal my span multiple lines
 
-	//TODO scan literate haskell
+	//TODO scan literate haskell (maybe this doesn't even mess with the lexer)
+	//take a look at the Language.Haskell.Parser impl
 }

@@ -27,7 +27,7 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	// and is available at
 	// http://www.haskell.org/onlinereport/lexemes.html#layout-before
 
-	public void testSimpleInput() throws TokenStreamException {
+	public void testWhereOpensBlock() throws TokenStreamException {
 		final String inStr = "module Simple where\n" +
         					 "data Stack = Empty\n";
 		
@@ -55,6 +55,26 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		t = formatter.nextToken(); // EOF
 
 		assertEquals(EOF, t.getType());
+	}
+	
+	public void testLetOpensBlock() throws TokenStreamException {
+		final String inStr = "{ id x = let b = x\n" +
+				             "         in b }";
+		
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// { id x = let
+		formatter.skipTokens(5);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		
+		//b = x
+		formatter.skipTokens(3);
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		
+		//in b }
+		formatter.skipTokens(3);
+		assertEquals(EOF, formatter.nextToken().getType());
+		
 	}
 	
 	public void testNestedWhere() throws TokenStreamException {
@@ -225,22 +245,6 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		formatter.skipTokens(13);
 
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
-	}
-	
-	public void testWhitespaceModule() throws TokenStreamException {
-		final String inStr = "\n   module ParserTest where {}";
-		final TestTokenStream formatter = createFormatter(inStr);
-
-		assertEquals(MODULE, formatter.nextToken().getType());
-		
-		Token token = formatter.nextToken();
-		assertEquals(CONSTRUCTOR_ID, token.getType());
-		assertEquals("ParserTest", token.getText());
-		
-		assertEquals(WHERE, formatter.nextToken().getType());
-		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
-		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
-		assertEquals(EOF, formatter.nextToken().getType());
 	}
 	
 	//TODO fix the formatter according to the syntax rules (Haskell Report
