@@ -19,28 +19,54 @@ public class HaskellFormatter implements TokenStream {
 	}
 
 	public Token nextToken() throws TokenStreamException {
-		if ( fLastToken.getType() == HaskellLexerTokenTypes.WHERE &&
-		fInput.peekToken().getType() != HaskellLexerTokenTypes.LEFT_CURLY) {
-			fLastToken = new Token(HaskellLexerTokenTypes.LEFT_CURLY);
+		fLastToken = calculateNextToken();
+
+		if (isLeftCurly(fLastToken)) {
 			fOpeningTokenStack.push(fInput.peekToken());
+		} else if (isRightCurly(fLastToken)) {
+			fOpeningTokenStack.pop();
+		}
+		
+		return fLastToken;
+	}
+
+	private Token calculateNextToken() throws TokenStreamException {
+		if ( isWhere(fLastToken) &&	!isLeftCurly(fInput.peekToken())) {
+			return new Token(HaskellLexerTokenTypes.LEFT_CURLY);
 		} else {
 			Token nextToken = fInput.peekToken();
 			if (isInsideBraces()) {
 				Token openingToken = fOpeningTokenStack.peek();
-				if ( nextToken.getType() == HaskellLexerTokenTypes.EOF ||
-				nextToken.getColumn() < openingToken.getColumn()) {
-					fOpeningTokenStack.pop();
-					return new Token(HaskellLexerTokenTypes.RIGHT_CURLY);
-				} else if ( nextToken != openingToken &&
-				fLastToken.getType() != HaskellLexerTokenTypes.SEMICOLON &&
-				nextToken.getColumn() == openingToken.getColumn()) {
-					return fLastToken = new Token(HaskellLexerTokenTypes.SEMICOLON);
+				if (!(isRightCurly(nextToken) || isSemicolon(nextToken))) {
+					if ( nextToken.getType() == HaskellLexerTokenTypes.EOF ||
+					nextToken.getColumn() < openingToken.getColumn()) {
+					    return new Token(HaskellLexerTokenTypes.RIGHT_CURLY);
+					} else if ( nextToken != openingToken &&
+					nextToken.getColumn() == openingToken.getColumn() &&
+					!isSemicolon(fLastToken)) {
+						return new Token(HaskellLexerTokenTypes.SEMICOLON);
+					}
 				}
 			}
 			
-			fLastToken = fInput.nextToken();
+			return fInput.nextToken();
 		}
-		return fLastToken;
+	}
+
+	private boolean isSemicolon(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.SEMICOLON;
+	}
+
+	private boolean isRightCurly(Token theToken) {
+		return theToken.getType() == HaskellLexerTokenTypes.RIGHT_CURLY;
+	}
+
+	private boolean isWhere(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.WHERE;
+	}
+
+	private boolean isLeftCurly(Token theToken) {
+		return theToken.getType() == HaskellLexerTokenTypes.LEFT_CURLY;
 	}
 
 	private boolean isInsideBraces() {

@@ -120,21 +120,74 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(EOF, formatter.nextToken().getType());
 	}
 	
-//TODO pass this test
-//	public void testUnnecessaryLayout() throws TokenStreamException {
-//		final String inStr = "module Main where {\n" +
-//				             "    id x = x ;\n" +
-//				             "    main = id 3\n" +
-//				             "}";
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		//consume every token on the original stream
-//		formatter.skipTokens(14);
-//		
-//		assertEquals(EOF, formatter.nextToken());
-//	}
+	public void testWithBraces() throws TokenStreamException {
+		final String inStr = "module Main where {\n" +
+        					 "    id x = x\n" +
+        					 "    main = id 3\n" +
+        					 "}";
+		
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		//module Main where {
+		//id x = x
+		formatter.skipTokens(8);
+		
+		Token aToken = formatter.nextToken();
+		assertEquals(SEMICOLON, aToken.getType());
+	}
 	
-//TODO pass the non-standard code test
+	public void testNoSemicolonAfterLast() throws TokenStreamException {
+		final String inStr = "{\n" +
+        			  "fat 0 = 1\n" +
+                      "fat n = n * fat (n - 1)\n" +
+                      "}";
+		
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// {
+		// fat 0 = 1
+		// ;
+		// fat n = n * fat ( n - 1 )
+		formatter.skipTokens(1);
+		formatter.skipTokens(4);
+		formatter.skipTokens(1);
+		formatter.skipTokens(11);
+		
+		// }
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testUnnecessaryLayout() throws TokenStreamException {
+		final String inStr = "module Main where {\n" +
+				             "    id x = x ;\n" +
+				             "    main = id 3\n" +
+				             "}";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		//consume every token on the original stream
+		formatter.skipTokens(14);
+		
+		assertEquals(EOF, formatter.nextToken().getType());
+	}
+	
+	public void testSemicolonAtBeggining() throws TokenStreamException {
+		final String inStr = "module Main where {\n" +
+        					 "import Library\n" +
+                             ";main = putStr 'Hello world!'\n" +
+                             "} ";
+
+		final TestTokenStream formatter = createFormatter(inStr);
+
+		//module Main where {
+		//import Library
+		//;
+		formatter.skipTokens(4);
+		formatter.skipTokens(2);
+		formatter.skipTokens(1);
+		
+		assertEquals(VARIABLE_ID, formatter.nextToken().getType());
+	}
+	
 //	public void testNonStandardCode() throws TokenStreamException {
 //		final String inStr = "module Test where {\n" +
 //  							 "#ifdef CURL\n" +
