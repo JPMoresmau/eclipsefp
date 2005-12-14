@@ -11,6 +11,7 @@ public class HaskellFormatter implements TokenStream {
 	private static final Token INVALID_TOKEN = new Token(Token.INVALID_TYPE);
 	
 	private Token fLastToken = INVALID_TOKEN;
+	private Stack<Integer> fLayoutContextStack = new Stack<Integer>();
 	private Stack<Token> fOpeningTokenStack = new Stack<Token>();
 	private LookaheadTokenStream fInput;
 
@@ -25,8 +26,10 @@ public class HaskellFormatter implements TokenStream {
 
 		if (isLeftCurly(fLastToken)) {
 			fOpeningTokenStack.push(fInput.peekToken());
+			fLayoutContextStack.push(fInput.peekToken().getColumn());
 		} else if (isRightCurly(fLastToken)) {
 			fOpeningTokenStack.pop();
+			fLayoutContextStack.pop();
 		}
 		
 		return fLastToken;
@@ -45,13 +48,13 @@ public class HaskellFormatter implements TokenStream {
 			return new Token(HaskellLexerTokenTypes.LEFT_CURLY);
 		} else {
 			if (isInsideBraces()) {
-				Token openingToken = fOpeningTokenStack.peek();
 				if (!(isRightCurly(peekedToken) || isSemicolon(peekedToken))) {
+					int openingTokenColumn = fLayoutContextStack.peek();
 					if ( peekedToken.getType() == HaskellLexerTokenTypes.EOF ||
-					peekedToken.getColumn() < openingToken.getColumn()) {
+					peekedToken.getColumn() < openingTokenColumn) {
 					    return new Token(HaskellLexerTokenTypes.RIGHT_CURLY);
-					} else if ( peekedToken != openingToken &&
-					peekedToken.getColumn() == openingToken.getColumn() &&
+					} else if ( peekedToken != fOpeningTokenStack.peek() &&
+					peekedToken.getColumn() == openingTokenColumn &&
 					!isSemicolon(fLastToken)) {
 						return new Token(HaskellLexerTokenTypes.SEMICOLON);
 					}
