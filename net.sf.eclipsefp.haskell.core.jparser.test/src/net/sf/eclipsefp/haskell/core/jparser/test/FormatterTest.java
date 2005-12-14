@@ -188,26 +188,60 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(VARIABLE_ID, formatter.nextToken().getType());
 	}
 	
-//	public void testNonStandardCode() throws TokenStreamException {
-//		final String inStr = "module Test where {\n" +
-//  							 "#ifdef CURL\n" +
-//							 "import LibraryCurl.ModuleCurl\n" +
-//							 "#endif\n" +
-//							 "foreign export stdcall \"parseHaskellCU\";\n" +
-//							 "haskellParseCU :: CString -> IO ( StablePtr ( ParseResult HsModule ) );\n" +
-//							 "}\n";
-//
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		//module Test where {
-//		formatter.skipTokens(4);
-//		
-//		//# ifdef CURL
-//		formatter.skipTokens(3);
-//		
-//		Token t = formatter.nextToken();
-//		assertEquals(HaskellLexerTokenTypes.SEMICOLON, t.getType());
-//	}
+	public void testNonStandardCode() throws TokenStreamException {
+		final String inStr = "module Test where {\n" +
+  							 "#ifdef CURL\n" +
+							 "import LibraryCurl.ModuleCurl\n" +
+							 "#endif\n" +
+							 "foreign export stdcall \"parseHaskellCU\";\n" +
+							 "haskellParseCU :: CString -> IO ( StablePtr ( ParseResult HsModule ) );\n" +
+							 "}\n";
+
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		//module Test where {
+		formatter.skipTokens(4);
+		
+		//# ifdef CURL
+		formatter.skipTokens(3);
+		
+		Token t = formatter.nextToken();
+		assertEquals(HaskellLexerTokenTypes.SEMICOLON, t.getType());
+	}
+	
+	public void testUntitledModule() throws TokenStreamException {
+		final String inStr = "fat 0 = 1\n" +
+				             "fat n = n * (fat (n - 1))";
+
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		
+		// fat 0 = 1
+		// ;
+		// fat n = n * ( fat ( n - 1 ) )
+		formatter.skipTokens(4);
+		formatter.skipTokens(1);
+		formatter.skipTokens(13);
+
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testWhitespaceModule() throws TokenStreamException {
+		final String inStr = "\n   module ParserTest where {}";
+		final TestTokenStream formatter = createFormatter(inStr);
+
+		assertEquals(MODULE, formatter.nextToken().getType());
+		
+		Token token = formatter.nextToken();
+		assertEquals(CONSTRUCTOR_ID, token.getType());
+		assertEquals("ParserTest", token.getText());
+		
+		assertEquals(WHERE, formatter.nextToken().getType());
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		assertEquals(EOF, formatter.nextToken().getType());
+	}
 	
 	//TODO fix the formatter according to the syntax rules (Haskell Report
 	//Ch. 9) Current version implements just the most basic rules

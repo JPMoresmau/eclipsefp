@@ -13,6 +13,8 @@ public class HaskellFormatter implements TokenStream {
 	private Token fLastToken = INVALID_TOKEN;
 	private Stack<Token> fOpeningTokenStack = new Stack<Token>();
 	private LookaheadTokenStream fInput;
+
+	private boolean fIsFirstCall = true;
 	
 	public HaskellFormatter(TokenStream in) {
 		fInput = new LookaheadTokenStream(in);
@@ -31,18 +33,25 @@ public class HaskellFormatter implements TokenStream {
 	}
 
 	private Token calculateNextToken() throws TokenStreamException {
-		if ( isWhere(fLastToken) &&	!isLeftCurly(fInput.peekToken())) {
+		final Token peekedToken = fInput.peekToken();
+		if (fIsFirstCall) {
+			fIsFirstCall = false;
+			if (!isModule(peekedToken) && !isLeftCurly(peekedToken)) {
+			    return new Token(HaskellLexerTokenTypes.LEFT_CURLY);
+			}
+		}
+		
+		if ( isWhere(fLastToken) &&	!isLeftCurly(peekedToken)) {
 			return new Token(HaskellLexerTokenTypes.LEFT_CURLY);
 		} else {
-			Token nextToken = fInput.peekToken();
 			if (isInsideBraces()) {
 				Token openingToken = fOpeningTokenStack.peek();
-				if (!(isRightCurly(nextToken) || isSemicolon(nextToken))) {
-					if ( nextToken.getType() == HaskellLexerTokenTypes.EOF ||
-					nextToken.getColumn() < openingToken.getColumn()) {
+				if (!(isRightCurly(peekedToken) || isSemicolon(peekedToken))) {
+					if ( peekedToken.getType() == HaskellLexerTokenTypes.EOF ||
+					peekedToken.getColumn() < openingToken.getColumn()) {
 					    return new Token(HaskellLexerTokenTypes.RIGHT_CURLY);
-					} else if ( nextToken != openingToken &&
-					nextToken.getColumn() == openingToken.getColumn() &&
+					} else if ( peekedToken != openingToken &&
+					peekedToken.getColumn() == openingToken.getColumn() &&
 					!isSemicolon(fLastToken)) {
 						return new Token(HaskellLexerTokenTypes.SEMICOLON);
 					}
@@ -51,6 +60,10 @@ public class HaskellFormatter implements TokenStream {
 			
 			return fInput.nextToken();
 		}
+	}
+
+	private boolean isModule(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.MODULE;
 	}
 
 	private boolean isSemicolon(Token token) {
