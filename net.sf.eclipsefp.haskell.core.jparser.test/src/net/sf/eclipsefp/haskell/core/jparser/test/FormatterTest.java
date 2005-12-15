@@ -23,6 +23,34 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		return new TestTokenStream(new HaskellFormatter(lexer));
 	}
 	
+	public void testLetOpensBlock() throws TokenStreamException {
+		final String inStr = "{ id x = let b = x\n" +
+		                     "         in b }";
+		
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// { id x = let
+		formatter.skipTokens(5);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testWhereOpensBlock() throws TokenStreamException {
+		final String inStr = "module Simple where\n" +
+		                     "data Stack = Empty\n";
+		
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		Token t = formatter.nextToken();
+		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
+		assertEquals("module", t.getText());
+		
+		// Simple where
+		formatter.skipTokens(2);
+		t = formatter.nextToken(); // {
+		assertEquals(LEFT_CURLY, t.getType());
+	}
+	
+
 //	public void testLetOpensBlock() throws TokenStreamException {
 //		final String inStr = "{ id x = let b = x\n" +
 //				             "         in b }";
@@ -72,34 +100,34 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 //		assertEquals(EOF, t.getType());
 //	}
 	
-//	public void testDoOpensBlock() throws TokenStreamException {
-//		final String inStr = "{\n" +
-//							 "haskellParseCU s = do\n" +
-//				             "                 cs <- ( peekCString s ) ;\n" +
-//				             "                 newStablePtr( parseModule cs )\n" +
-//				             "}";
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		// {
-//		// haskellParseCU s = do
-//		formatter.skipTokens(1);
-//		formatter.skipTokens(4);
-//		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
-//	}
+	public void testDoOpensBlock() throws TokenStreamException {
+		final String inStr = "{\n" +
+							 "haskellParseCU s = do\n" +
+				             "                 cs <- ( peekCString s ) ;\n" +
+				             "                 newStablePtr( parseModule cs )\n" +
+				             "}";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// {
+		// haskellParseCU s = do
+		formatter.skipTokens(1);
+		formatter.skipTokens(4);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+	}
 	
-//	public void testOfOpensBlock() throws TokenStreamException {
-//		final String inStr = "{\n" +
-//		                     "fat n = case n of 0 -> 1" +
-//		                     "                  | True -> n * fat ( n - 1 )\n" +
-//		                     "}";
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		// {
-//		// fat n = case n of
-//		formatter.skipTokens(1);
-//		formatter.skipTokens(6);
-//		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
-//	}
+	public void testOfOpensBlock() throws TokenStreamException {
+		final String inStr = "{\n" +
+		                     "fat n = case n of 0 -> 1" +
+		                     "                  | True -> n * fat ( n - 1 )\n" +
+		                     "}";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// {
+		// fat n = case n of
+		formatter.skipTokens(1);
+		formatter.skipTokens(6);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+	}
 	
 //	public void testNestedWhere() throws TokenStreamException {
 //		final String inStr = "module Simple where\n" +

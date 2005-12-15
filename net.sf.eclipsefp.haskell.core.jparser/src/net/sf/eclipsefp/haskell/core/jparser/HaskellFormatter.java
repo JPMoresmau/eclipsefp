@@ -2,17 +2,12 @@ package net.sf.eclipsefp.haskell.core.jparser;
 
 import java.util.Stack;
 
-import com.sun.org.apache.bcel.internal.generic.FCONST;
-
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
 public class HaskellFormatter implements TokenStream {
 
-	private static final Token INVALID_TOKEN = new Token(Token.INVALID_TYPE);
-	
-	private Token fLastToken = INVALID_TOKEN;
 	private Stack<Integer> fLayoutContextStack = new Stack<Integer>();
 	private Stack<Token> fOpeningTokenStack = new Stack<Token>();
 	private Stack<Token> fInsertedTokens = new Stack<Token>();
@@ -39,10 +34,19 @@ public class HaskellFormatter implements TokenStream {
 		if (!fInsertedTokens.isEmpty())
 			return;
 		
-		if (fIsFirstCall && !isModule(fInput.peekToken()) && !isLeftCurly(fInput.peekToken())) {
-			Token referenceToken = fInput.nextToken();
+		Token referenceToken = null;
+		if (fIsFirstCall && !isModule(fInput.peekToken()) && !isLeftCurly(fInput.peekToken()))
+		{
+			referenceToken = fInput.nextToken();
 			fInsertedTokens.push(referenceToken);
 			fInsertedTokens.push(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+			fLayoutContextStack.push(referenceToken.getColumn());
+		} else if (isBlockOpener(fInput.peekToken(1)) && !isLeftCurly(fInput.peekToken(2))) {
+			Token blockOpener = fInput.nextToken();
+			referenceToken = fInput.nextToken();
+			fInsertedTokens.push(referenceToken);
+			fInsertedTokens.push(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+			fInsertedTokens.push(blockOpener);
 			fLayoutContextStack.push(referenceToken.getColumn());
 		}
 		
