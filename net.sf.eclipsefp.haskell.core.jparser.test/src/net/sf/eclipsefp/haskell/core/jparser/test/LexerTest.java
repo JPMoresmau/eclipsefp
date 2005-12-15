@@ -40,6 +40,10 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals("where", t.getText());
 		
 		t = fLexer.nextToken();
+		assertEquals(NEWLINE, t.getType());
+		assertEquals("\n", t.getText());
+
+		t = fLexer.nextToken();
 		assertEquals(DATA, t.getType());
 		assertEquals("data", t.getText());
 		
@@ -54,6 +58,10 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		t = fLexer.nextToken();
 		assertEquals(CONSTRUCTOR_ID, t.getType());
 		assertEquals("Empty", t.getText());
+
+		t = fLexer.nextToken();
+		assertEquals(NEWLINE, t.getType());
+		assertEquals("\n", t.getText());
 
 		t = fLexer.nextToken();
 		assertEquals(EOF, t.getType());
@@ -101,13 +109,15 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(0, t.getColumn());
 		assertEquals(0, t.getLine());
 		
-		t = fLexer.nextToken();
+		t = fLexer.nextToken(); // Simple
 		assertEquals(7, t.getColumn());
 		assertEquals(0, t.getLine());
 		
-		t = fLexer.nextToken();
+		t = fLexer.nextToken(); // where
 		assertEquals(0, t.getLine());
 	
+		t = fLexer.nextToken(); // \n
+
 		t = fLexer.nextToken();
 		assertEquals(0, t.getColumn());
 		assertEquals(1, t.getLine());
@@ -135,7 +145,7 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(0, t.getColumn());
 		assertEquals(1, t.getLine());
 		
-		fLexer.skipTokens(2); //Main where
+		fLexer.skipTokens(3); //Main where \n
 		
 		t = fLexer.nextToken();
 		assertEquals(COMMENT, t.getType());
@@ -144,10 +154,12 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	                 "   connection capabilities -}",
 	                 t.getText());
 		
+		fLexer.skipTokens(1); // \n
+
 		t = fLexer.nextToken(); //import
 		assertEquals(5, t.getLine());
 		
-		fLexer.skipTokens(3); //Network main = 
+		fLexer.skipTokens(5); //Network \n \n main = 
 		
 		t = fLexer.nextToken(); // {- block comment inside -}
 		assertEquals(COMMENT, t.getType());

@@ -33,7 +33,6 @@ options	{
 
 WS	:	(' '
     |    '\t'
-    |    NEWLINE
     |    '\r')+
     	{ $setType(Token.SKIP); }
     ;
@@ -106,7 +105,6 @@ LINE_COMMENT : "--" (~'\n')* NEWLINE ;
 protected
 BLOCK_COMMENT : "{-" (options {greedy=false;} : (NEWLINE | .))* "-}" ;
 
-protected
 NEWLINE : '\n' { newline(); } ;
 
 protected

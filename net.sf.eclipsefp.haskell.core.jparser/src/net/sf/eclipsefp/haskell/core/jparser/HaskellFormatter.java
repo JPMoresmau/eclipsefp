@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+import com.sun.org.apache.bcel.internal.generic.FCONST;
+
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
@@ -16,10 +18,8 @@ public class HaskellFormatter implements TokenStream {
 	
 	private LookaheadTokenStream fInput;
 
-	private boolean fIsFirstCall = true;
-
 	public HaskellFormatter(TokenStream in) {
-		fInput = new LookaheadTokenStream(in);
+		fInput = new LookaheadTokenStream(new PreprocessedTokenStream(in));
 	}
 
 	public Token nextToken() throws TokenStreamException {
@@ -36,34 +36,42 @@ public class HaskellFormatter implements TokenStream {
 		if (!fInsertedTokens.isEmpty())
 			return;
 		
-		boolean needToOpenBlock = false;
-		if (fIsFirstCall && !isModule(fInput.peekToken()) && !isLeftCurly(fInput.peekToken()))
-		{
-			needToOpenBlock = true;
-		} else if (isBlockOpener(fInput.peekToken(1)) && !isLeftCurly(fInput.peekToken(2))) {
-			fInsertedTokens.offer(fInput.nextToken());
-			needToOpenBlock = true;
-		}
-		
-		if (needToOpenBlock) {
-			Token referenceToken = fInput.nextToken();;
-			fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
-			if (!isEof(referenceToken)) {
-				fInsertedTokens.offer(referenceToken);
-				fLayoutContextStack.push(referenceToken.getColumn());
+		if (isOpenBlock(fInput.peekToken())) {
+			Token openBlockToken = fInput.nextToken();
+			
+			if (!fLayoutContextStack.isEmpty() && openBlockToken.getColumn() > fLayoutContextStack.peek()) {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+				fLayoutContextStack.push(openBlockToken.getColumn());
+			} else if (fLayoutContextStack.isEmpty() && openBlockToken.getColumn() > -1) {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+				fLayoutContextStack.push(openBlockToken.getColumn());
 			} else {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
-			}
-		} else if (!fLayoutContextStack.isEmpty()) {
-			if (isEof(fInput.peekToken())) {
-				Token referenceToken = fInput.nextToken();
-				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
-				fInsertedTokens.offer(referenceToken);
 			}
 			
+		} else if (isLineBreak(fInput.peekToken())) {
+			Token lineBreakToken = fInput.nextToken();
+			
+			if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() < fLayoutContextStack.peek()) {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+				fLayoutContextStack.pop();
+			}
+		} else if (isEof(fInput.peekToken())) {
+			if (!fLayoutContextStack.isEmpty() && fLayoutContextStack.peek() != -1) {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+				fLayoutContextStack.pop();
+			}
 		}
 		
-		fIsFirstCall = false;
+	}
+
+	private boolean isLineBreak(Token token) {
+		return token.getType() == HaskellLexerExtendedTokenTypes.LINEBREAK;
+	}
+
+	private boolean isOpenBlock(Token token) {
+		return token.getType() == HaskellLexerExtendedTokenTypes.OPENBLOCK;
 	}
 
 	private boolean isEof(Token token) {
