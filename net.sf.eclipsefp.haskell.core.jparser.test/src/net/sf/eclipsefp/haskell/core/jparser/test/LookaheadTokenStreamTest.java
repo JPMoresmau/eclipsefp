@@ -67,4 +67,18 @@ public class LookaheadTokenStreamTest extends TestCase {
 		assertEquals(4, aToken.getType());
 	}
 	
+	public void testLookaheadAfterFirst() throws TokenStreamException {
+		Token fstToken = fStream.peekToken(1);
+		Token sndToken = fStream.peekToken(2);
+		
+		assertEquals(1, fstToken.getType());
+		assertEquals(2, sndToken.getType());
+		
+		Token aToken = fStream.nextToken();
+		assertSame(fstToken, aToken);
+		
+		aToken = fStream.nextToken();
+		assertSame(sndToken, aToken);
+	}
+	
 }
