@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 import antlr.Token;
@@ -10,7 +12,7 @@ public class HaskellFormatter implements TokenStream {
 
 	private Stack<Integer> fLayoutContextStack = new Stack<Integer>();
 	private Stack<Token> fOpeningTokenStack = new Stack<Token>();
-	private Stack<Token> fInsertedTokens = new Stack<Token>();
+	private Queue<Token> fInsertedTokens = new LinkedList<Token>();
 	
 	private LookaheadTokenStream fInput;
 
@@ -26,7 +28,7 @@ public class HaskellFormatter implements TokenStream {
 		if (fInsertedTokens.isEmpty()) {
 			return fInput.nextToken();
 		} else {
-			return fInsertedTokens.pop();
+			return fInsertedTokens.poll();
 		}
 	}
 
@@ -34,19 +36,20 @@ public class HaskellFormatter implements TokenStream {
 		if (!fInsertedTokens.isEmpty())
 			return;
 		
-		Token referenceToken = null;
+		
+		boolean needToOpenBlock = false;
 		if (fIsFirstCall && !isModule(fInput.peekToken()) && !isLeftCurly(fInput.peekToken()))
 		{
-			referenceToken = fInput.nextToken();
-			fInsertedTokens.push(referenceToken);
-			fInsertedTokens.push(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
-			fLayoutContextStack.push(referenceToken.getColumn());
+			needToOpenBlock = true;
 		} else if (isBlockOpener(fInput.peekToken(1)) && !isLeftCurly(fInput.peekToken(2))) {
-			Token blockOpener = fInput.nextToken();
-			referenceToken = fInput.nextToken();
-			fInsertedTokens.push(referenceToken);
-			fInsertedTokens.push(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
-			fInsertedTokens.push(blockOpener);
+			fInsertedTokens.offer(fInput.nextToken());
+			needToOpenBlock = true;
+		}
+		
+		if (needToOpenBlock) {
+			Token referenceToken = fInput.nextToken();;
+			fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+			fInsertedTokens.offer(referenceToken);
 			fLayoutContextStack.push(referenceToken.getColumn());
 		}
 		
