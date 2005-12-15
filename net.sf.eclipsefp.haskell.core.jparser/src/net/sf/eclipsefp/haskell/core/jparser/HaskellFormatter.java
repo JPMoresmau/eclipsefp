@@ -54,6 +54,13 @@ public class HaskellFormatter implements TokenStream {
 			} else {
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
 			}
+		} else if (!fLayoutContextStack.isEmpty()) {
+			if (isEof(fInput.peekToken())) {
+				Token referenceToken = fInput.nextToken();
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+				fInsertedTokens.offer(referenceToken);
+			}
+			
 		}
 		
 		fIsFirstCall = false;

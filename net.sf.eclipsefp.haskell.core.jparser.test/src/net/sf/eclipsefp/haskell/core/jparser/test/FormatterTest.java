@@ -89,9 +89,11 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		//consume 'module Simple where'
 		formatter.skipTokens(3);
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		assertEquals("id", formatter.nextToken().getText());
+		assertEquals("x", formatter.nextToken().getText());
 
-		//consume 'id x = a where'
-		formatter.skipTokens(5);
+		//consume '= a where'
+		formatter.skipTokens(3);
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 		
 //		//consume 'a = x'
@@ -270,6 +272,20 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		formatter.skipTokens(3);
 		
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testCloseModule() throws TokenStreamException {
+		final String inStr = "module Empty where\n" +
+				             "    fat n = n * (fat (n - 1))";
+		final TestTokenStream formatter = createFormatter(inStr);
+
+		// module Empty where
+		formatter.skipTokens(3);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+
+		// fat n = n * ( fat ( n - 1 ) )
+		formatter.skipTokens(13);
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 	}
 	
