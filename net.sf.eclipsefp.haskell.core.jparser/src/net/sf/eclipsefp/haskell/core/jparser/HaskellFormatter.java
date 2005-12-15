@@ -36,7 +36,6 @@ public class HaskellFormatter implements TokenStream {
 		if (!fInsertedTokens.isEmpty())
 			return;
 		
-		
 		boolean needToOpenBlock = false;
 		if (fIsFirstCall && !isModule(fInput.peekToken()) && !isLeftCurly(fInput.peekToken()))
 		{
@@ -49,11 +48,19 @@ public class HaskellFormatter implements TokenStream {
 		if (needToOpenBlock) {
 			Token referenceToken = fInput.nextToken();;
 			fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
-			fInsertedTokens.offer(referenceToken);
-			fLayoutContextStack.push(referenceToken.getColumn());
+			if (!isEof(referenceToken)) {
+				fInsertedTokens.offer(referenceToken);
+				fLayoutContextStack.push(referenceToken.getColumn());
+			} else {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+			}
 		}
 		
 		fIsFirstCall = false;
+	}
+
+	private boolean isEof(Token token) {
+		return token.getType() == HaskellLexerTokenTypes.EOF;
 	}
 
 	private boolean isBlockOpener(Token token) {

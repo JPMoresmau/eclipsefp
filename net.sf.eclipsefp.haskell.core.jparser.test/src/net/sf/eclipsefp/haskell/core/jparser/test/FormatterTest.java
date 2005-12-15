@@ -51,55 +51,6 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	}
 	
 
-//	public void testLetOpensBlock() throws TokenStreamException {
-//		final String inStr = "{ id x = let b = x\n" +
-//				             "         in b }";
-//		
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		// { id x = let
-//		formatter.skipTokens(5);
-//		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
-//		
-//		//b = x
-//		formatter.skipTokens(3);
-//		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
-//		
-//		//in b }
-//		formatter.skipTokens(3);
-//		assertEquals(EOF, formatter.nextToken().getType());
-//	}
-	
-//	public void testWhereOpensBlock() throws TokenStreamException {
-//		final String inStr = "module Simple where\n" +
-//        					 "data Stack = Empty\n";
-//		
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		Token t = formatter.nextToken();
-//		assertEquals(HaskellLexerTokenTypes.MODULE, t.getType());
-//		assertEquals("module", t.getText());
-//		
-//		t = formatter.nextToken(); //Simple
-//		t = formatter.nextToken(); //where
-//		t = formatter.nextToken(); // {
-//		assertEquals(LEFT_CURLY, t.getType());
-//		
-//		t = formatter.nextToken(); //data
-//		assertEquals("data", t.getText());
-//		
-//		t = formatter.nextToken(); //Stack
-//		t = formatter.nextToken(); //=
-//		t = formatter.nextToken(); //Empty
-//
-//		t = formatter.nextToken(); // }
-//		assertEquals(RIGHT_CURLY, t.getType());
-//		
-//		t = formatter.nextToken(); // EOF
-//
-//		assertEquals(EOF, t.getType());
-//	}
-	
 	public void testDoOpensBlock() throws TokenStreamException {
 		final String inStr = "{\n" +
 							 "haskellParseCU s = do\n" +
@@ -129,25 +80,25 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 	}
 	
-//	public void testNestedWhere() throws TokenStreamException {
-//		final String inStr = "module Simple where\n" +
-//		                     "    id x = a where a = x\n";
-//
-//		final TestTokenStream formatter = createFormatter(inStr);
-//		
-//		//consume 'module Simple where'
-//		formatter.skipTokens(3);
-//		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
-//
-//		//consume 'id x = a where'
-//		formatter.skipTokens(5);
-//		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
-//		
+	public void testNestedWhereOpensBlock() throws TokenStreamException {
+		final String inStr = "module Simple where\n" +
+		                     "    id x = a where a = x\n";
+
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		//consume 'module Simple where'
+		formatter.skipTokens(3);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+
+		//consume 'id x = a where'
+		formatter.skipTokens(5);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		
 //		//consume 'a = x'
 //		formatter.skipTokens(3);
 //		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 //		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
-//	}
+	}
 	
 //	public void testPlaceSemicolon() throws TokenStreamException {
 //		final String inStr = "module Simple where\n" +
@@ -310,10 +261,16 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 		assertEquals(VARIABLE_ID, formatter.nextToken().getType());
 	}
-
 	
-	//TODO fix the formatter according to the syntax rules (Haskell Report
-	//Ch. 9) Current version implements just the most basic rules
-	
+	public void testEmptyModule() throws TokenStreamException {
+		final String inStr = "module Empty where\n";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// module Empty where
+		formatter.skipTokens(3);
+		
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
 	
 }
