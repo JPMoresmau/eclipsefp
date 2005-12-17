@@ -170,6 +170,31 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(34, t.getColumn());
 	}
 	
+	public void testSimpleStringLiteral() throws TokenStreamException {
+		final String input = "main = putStr \"Hello, world!\"";
+		fLexer = createLexer(input);
+		
+		// main = putStr
+		fLexer.skipTokens(3);
+		
+		Token helloWorldTk = fLexer.nextToken();
+		assertEquals(STRING_LITERAL, helloWorldTk.getType());
+		assertEquals("\"Hello, world!\"", helloWorldTk.getText());
+	}
+	
+	public void testMultilineString() throws TokenStreamException {
+		final String input = "main = putStr \"Hello, \\\n" +
+				             "                  \\world!\"";
+		fLexer = createLexer(input);
+		
+		// main = putStr
+		fLexer.skipTokens(3);
+		
+		Token helloWorldTk = fLexer.nextToken();
+		assertEquals(STRING_LITERAL, helloWorldTk.getType());
+		assertEquals("\"Hello, world!\"", helloWorldTk.getText());
+	}
+	
 	private TestTokenStream createLexer(String input) {
 		return new TestTokenStream(new HaskellLexer(new StringReader(input)));
 	}

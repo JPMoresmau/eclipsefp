@@ -262,10 +262,10 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		
 		// module Main where
 		// {
-		// main = putStr " Hello , world ! "
+		// main = putStr <string>
 		formatter.skipTokens(3);
 		formatter.skipTokens(1);
-		formatter.skipTokens(9);
+		formatter.skipTokens(4);
 
 		// where
 		// {
@@ -290,12 +290,12 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		// {
 		// test = fat 0
 		// ;
-		// main = putStr " Hello , world ! "
+		// main = putStr <string>
 		formatter.skipTokens(3);
 		formatter.skipTokens(1);
 		formatter.skipTokens(4);
 		formatter.skipTokens(1);
-		formatter.skipTokens(9);
+		formatter.skipTokens(4);
 		
 		// where
 		// {
@@ -313,9 +313,9 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
         final TestTokenStream formatter = createFormatter(inStr);
 		
 		// module Main where {
-		// test = putStr " Hello , world ! "
+		// test = putStr <string>
         formatter.skipTokens(4);
-		formatter.skipTokens(9);
+		formatter.skipTokens(4);
 		
 		assertEquals("main", formatter.nextToken().getText());
 	}
@@ -329,12 +329,12 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		
 		// module Main where
 		// {
-		// test = putStr " Hello , world ! "
+		// test = putStr <string>
 		// ;
 		// main = test
         formatter.skipTokens(3);
         formatter.skipTokens(1);
-		formatter.skipTokens(9);
+		formatter.skipTokens(4);
 		formatter.skipTokens(1);
 		formatter.skipTokens(3);
 		

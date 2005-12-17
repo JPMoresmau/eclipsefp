@@ -81,6 +81,8 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 
 DECIMAL : '0' | ('1'..'9') (DIGIT)* ;
 
+STRING_LITERAL : '"' (~('"'|'\\')|GAP!)* '"' ;
+
 LEFT_CURLY : '{' ;
 
 RIGHT_CURLY : '}' ;
@@ -106,6 +108,9 @@ protected
 BLOCK_COMMENT : "{-" (options {greedy=false;} : (NEWLINE | .))* "-}" ;
 
 NEWLINE : '\n' { newline(); } ;
+
+protected
+GAP : '\\' (WS | NEWLINE)+ '\\' ;
 
 protected
 UPPER_CASE : 'A'..'Z';
