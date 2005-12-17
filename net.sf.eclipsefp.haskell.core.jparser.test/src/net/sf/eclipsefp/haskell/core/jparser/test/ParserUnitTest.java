@@ -1,14 +1,19 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
+import java.io.StringReader;
+
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import antlr.CommonToken;
 import antlr.RecognitionException;
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
+import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 import net.sf.eclipsefp.haskell.core.jparser.ModuleBuilder;
@@ -42,6 +47,55 @@ public class ParserUnitTest extends TestCase {
 		assertEquals("LibraryL.ModuleM", imps[0].getName());
 		assertEquals("LibraryK.ModuleN", imps[1].getName());
 	}
+	
+	public void testEmptyDeclaration() throws RecognitionException, TokenStreamException {
+		final String inStr = "module ParserTest where {" +
+				             " test = putStr \"Hello, world!\" ;" +
+				             " ;" +
+				             " main = test" +
+				             "}";
+		fParser = new HaskellParser(
+				   new HaskellLexer(
+				    new StringReader(inStr)));
+		
+		IModule module = fParser.parseModule();
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+	}
+	
+	public void testEmptyImport() throws RecognitionException, TokenStreamException {
+		final String inStr = "module ParserTest where {" +
+		                     " import LibraryL.ModuleM ;" +
+		                     " ;" +
+		                     " import LibraryL.ModuleN" +
+		                     "}";
+		fParser = new HaskellParser(
+				new HaskellLexer(
+						new StringReader(inStr)));
+		
+		IModule module = fParser.parseModule();
+		
+		IImport[] imps = module.getImports();
+		assertEquals(2, imps.length);
+	}
+	
+	public void testEmptyImportsBeforeDeclarations() throws RecognitionException, TokenStreamException {
+		final String inStr = "module ParserTest where {" +
+		                     " import LibraryL.ModuleM ;" +
+		                     " import LibraryL.ModuleN ;" +
+		                     " ; ; " +
+		                     " fat 0 = 1" +
+		                     "}";
+		fParser = new HaskellParser(
+				new HaskellLexer(
+						new StringReader(inStr)));
+		
+		IModule module = fParser.parseModule();
+		
+		assertEquals(2, module.getImports().length);
+		assertEquals(1, module.getDeclarations().length);
+	}
 
 	/** a stream that gives the following sequence of tokens
 	 * <code>
@@ -54,21 +108,21 @@ public class ParserUnitTest extends TestCase {
 	private static class TestTokenStream implements TokenStream, HaskellLexerTokenTypes {
 
 		private Token[] fTokens = new Token[] {
-				new MyToken(MODULE, "module"),
-				new MyToken(CONSTRUCTOR_ID, "ParserTest"),
-				new MyToken(WHERE, "where"),
-				new MyToken(LEFT_CURLY, "{"),
-				new MyToken(IMPORT, "import"),
-				new MyToken(CONSTRUCTOR_ID, "LibraryL"),
-				new MyToken(DOT, "."),
-				new MyToken(CONSTRUCTOR_ID, "ModuleM"),
-				new MyToken(SEMICOLON, ";"),
-				new MyToken(IMPORT, "import"),
-				new MyToken(CONSTRUCTOR_ID, "LibraryK"),
-				new MyToken(DOT, "."),
-				new MyToken(CONSTRUCTOR_ID, "ModuleN"),
-				new MyToken(RIGHT_CURLY, "}"),
-				new MyToken(EOF)
+				new CommonToken(MODULE, "module"),
+				new CommonToken(CONSTRUCTOR_ID, "ParserTest"),
+				new CommonToken(WHERE, "where"),
+				new CommonToken(LEFT_CURLY, "{"),
+				new CommonToken(IMPORT, "import"),
+				new CommonToken(CONSTRUCTOR_ID, "LibraryL"),
+				new CommonToken(DOT, "."),
+				new CommonToken(CONSTRUCTOR_ID, "ModuleM"),
+				new CommonToken(SEMICOLON, ";"),
+				new CommonToken(IMPORT, "import"),
+				new CommonToken(CONSTRUCTOR_ID, "LibraryK"),
+				new CommonToken(DOT, "."),
+				new CommonToken(CONSTRUCTOR_ID, "ModuleN"),
+				new CommonToken(RIGHT_CURLY, "}"),
+				new CommonToken(EOF, "<<eof>>")
 		};
 		
 		private int currentToken = 0;
@@ -119,29 +173,4 @@ public class ParserUnitTest extends TestCase {
 		}
 		
 	}
-	
-	private static class MyToken extends Token {
-		
-		private String fText;
-		
-		public MyToken(int type, String text) {
-			super(type, text);
-		}
-
-		public MyToken(int type) {
-			super(type);
-		}
-
-		@Override
-		public String getText() {
-			return fText;
-		}
-
-		@Override
-		public void setText(String t) {
-			fText = t;
-		}
-		
-	}
-	
 }

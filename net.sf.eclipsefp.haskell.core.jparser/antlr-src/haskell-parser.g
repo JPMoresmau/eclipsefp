@@ -51,7 +51,7 @@ options {
 
 //extra code for HaskellParser class
 {
-	private ModuleBuilder fBuilder;
+	private ModuleBuilder fBuilder = new ModuleBuilder();
 
     public HaskellParser(InputStream in) {
         this(new InputStreamReader(in));
@@ -257,26 +257,26 @@ body returns [Module result]
 impdecls
 	:
 		impdecl
-		( (SEMICOLON IMPORT) =>
+		( (SEMICOLON (IMPORT | SEMICOLON) ) =>
 		  SEMICOLON impdecl )*
 	;
 
 impdecl
 	{
 		Import anImport = createNode(Import.class);
-		fBuilder.addImport(anImport);
 		
 		String name = null;
 		List<IImportSpecification> someSpecs = null;
 	}
 	:
 		(
-			IMPORT
+			IMPORT { fBuilder.addImport(anImport); }
 			(QUALIFIED)?
 			name=modid { anImport.setElementName(name); }
 			(AS modid)?
 			(someSpecs=impspec { anImport.addSpecifications(someSpecs); } )?
 		)
+	| //empty declaration
 	;
 
 impspec returns [List<IImportSpecification> result]
@@ -402,6 +402,7 @@ decl
 		(vars OFTYPE) => signdecl	
 	|	(funlhs EQUALS) => valdef
 	|   nonstddecl
+	|   //empty declaration
 	;
 	
 //matches almost anything
