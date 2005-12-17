@@ -34,16 +34,16 @@ public class PreprocessedTokenStream implements TokenStream {
 		
 		if (isLineBreak(fStream.peekToken())) {
 			fStream.nextToken();
-			Token referenceToken = nextNonLinebreak(fStream);
+			Token referenceToken = consumeLinebreaks();
 			
 			insertLineBreak(referenceToken.getColumn());
 		} else if (fIsFirstCall && !isModule(fStream.peekToken()) && !isLeftCurly(fStream.peekToken())) {
-			Token referenceToken = nextNonLinebreak(fStream);
+			Token referenceToken = consumeLinebreaks();
 
 			insertOpenBlock(referenceToken.getColumn());
 		} else if (isBlockOpener(fStream.peekToken(1)) && !isLeftCurly(fStream.peekToken(2))) {
 			fInsertedTokens.offer(fStream.nextToken());
-			Token referenceToken = nextNonLinebreak(fStream);
+			Token referenceToken = consumeLinebreaks();
 			
 			int openBlockColumn;
 			
@@ -60,32 +60,33 @@ public class PreprocessedTokenStream implements TokenStream {
 	}
 
 	private void insertOpenBlock(int column) throws TokenStreamException {
-		Token openBlockToken = new CommonToken(HaskellLexerExtendedTokenTypes.OPENBLOCK, "<<special token>>");
-		openBlockToken.setColumn(column);
-		fInsertedTokens.offer(openBlockToken);
-		
-		if (isLineBreak(fStream.peekToken())) {
-			fStream.nextToken();
-		}
+		insertControlToken(HaskellLexerExtendedTokenTypes.OPENBLOCK, column);
 	}
 
-	private void insertLineBreak(int column) {
-		Token lineBreakToken = new CommonToken(HaskellLexerExtendedTokenTypes.LINEBREAK, "<<special token>>");
-		lineBreakToken.setColumn(column);
-		fInsertedTokens.offer(lineBreakToken);
+	private void insertLineBreak(int column) throws TokenStreamException {
+		insertControlToken(HaskellLexerExtendedTokenTypes.LINEBREAK, column);
+    }
+
+	private void insertControlToken(int tokenType, int column) {
+		Token controlToken = new CommonToken(tokenType, "<<special token>>");
+		controlToken.setColumn(column);
+		fInsertedTokens.offer(controlToken);
 	}
 
 	private boolean isEOF(Token token) {
 		return token.getType() == HaskellLexerTokenTypes.EOF;
 	}
 
-	private Token nextNonLinebreak(LookaheadTokenStream stream) throws TokenStreamException {
+	/**
+	 * Consumes all line breaks on the underlying stream and returns
+	 * the next non-linebreak token.
+	 */
+	private Token consumeLinebreaks() throws TokenStreamException {
 		int i = 1;
-		while(true) {
-			Token t = stream.peekToken(i++);
-			if (!isLineBreak(t))
-				return t;
+		while(isLineBreak(fStream.peekToken())) {
+			fStream.nextToken();
 		}
+		return fStream.peekToken();
 	}
 
 	private boolean isLineBreak(Token token) throws TokenStreamException {
