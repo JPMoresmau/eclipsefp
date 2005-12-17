@@ -53,7 +53,9 @@ public class HaskellFormatter implements TokenStream {
 		} else if (isLineBreak(fInput.peekToken())) {
 			Token lineBreakToken = fInput.nextToken();
 			
-			if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() < fLayoutContextStack.peek()) {
+			if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() == fLayoutContextStack.peek()) {
+				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.SEMICOLON));
+			} else if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() < fLayoutContextStack.peek()) {
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
 				fLayoutContextStack.pop();
 			}

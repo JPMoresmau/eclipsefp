@@ -36,30 +36,43 @@ public class PreprocessedTokenStream implements TokenStream {
 			fStream.nextToken();
 			Token referenceToken = nextNonLinebreak(fStream);
 			
-			Token lineBreakToken = new CommonToken(HaskellLexerExtendedTokenTypes.LINEBREAK, "<no text>");
-			lineBreakToken.setColumn(referenceToken.getColumn());
-			
-			fInsertedTokens.offer(lineBreakToken);
+			insertLineBreak(referenceToken.getColumn());
 		} else if (fIsFirstCall && !isModule(fStream.peekToken()) && !isLeftCurly(fStream.peekToken())) {
 			Token referenceToken = nextNonLinebreak(fStream);
 
-			Token openBlockToken = new CommonToken(HaskellLexerExtendedTokenTypes.OPENBLOCK, "<no text>");
-			openBlockToken.setColumn(referenceToken.getColumn());
-			fInsertedTokens.offer(openBlockToken);
+			insertOpenBlock(referenceToken.getColumn());
 		} else if (isBlockOpener(fStream.peekToken(1)) && !isLeftCurly(fStream.peekToken(2))) {
 			fInsertedTokens.offer(fStream.nextToken());
 			Token referenceToken = nextNonLinebreak(fStream);
 			
-			Token openBlockToken = new CommonToken(HaskellLexerExtendedTokenTypes.OPENBLOCK, "<no text>");
+			int openBlockColumn;
+			
 			if (isEOF(referenceToken)) {
-				openBlockToken.setColumn(-1);
+				openBlockColumn = -1;
 			} else {
-				openBlockToken.setColumn(referenceToken.getColumn());
+				openBlockColumn = referenceToken.getColumn();
 			}
-			fInsertedTokens.offer(openBlockToken);
+			
+			insertOpenBlock(openBlockColumn);
 		}
 		
 		fIsFirstCall = false;
+	}
+
+	private void insertOpenBlock(int column) throws TokenStreamException {
+		Token openBlockToken = new CommonToken(HaskellLexerExtendedTokenTypes.OPENBLOCK, "<<special token>>");
+		openBlockToken.setColumn(column);
+		fInsertedTokens.offer(openBlockToken);
+		
+		if (isLineBreak(fStream.peekToken())) {
+			fStream.nextToken();
+		}
+	}
+
+	private void insertLineBreak(int column) {
+		Token lineBreakToken = new CommonToken(HaskellLexerExtendedTokenTypes.LINEBREAK, "<<special token>>");
+		lineBreakToken.setColumn(column);
+		fInsertedTokens.offer(lineBreakToken);
 	}
 
 	private boolean isEOF(Token token) {

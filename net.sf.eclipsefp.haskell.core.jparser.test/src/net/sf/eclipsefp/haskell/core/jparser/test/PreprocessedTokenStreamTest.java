@@ -10,7 +10,7 @@ import antlr.TokenStream;
 import antlr.TokenStreamException;
 import junit.framework.TestCase;
 
-public class PreprocessedTokenStreamTest extends TestCase {
+public class PreprocessedTokenStreamTest extends TestCase implements HaskellLexerExtendedTokenTypes {
 	
 	public void testInsertLinebreakToken() throws TokenStreamException {
 		final String inStr = "module TokenStreamTest\n" +
@@ -21,7 +21,7 @@ public class PreprocessedTokenStreamTest extends TestCase {
 		skipTokens(stream, 2);
 		Token t = stream.nextToken();
 		
-		assertEquals(HaskellLexerExtendedTokenTypes.LINEBREAK, t.getType());
+		assertEquals(LINEBREAK, t.getType());
 		assertEquals(4, t.getColumn());
 	}
 	
@@ -33,25 +33,25 @@ public class PreprocessedTokenStreamTest extends TestCase {
 		skipTokens(stream, 3);
 		Token t = stream.nextToken();
 		
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(29, t.getColumn());
 		
 		// fat n = case n of
 		skipTokens(stream, 6);
 		t = stream.nextToken();
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(47, t.getColumn());
 		
 		// 0 - > let
 		skipTokens(stream, 4);
 		t = stream.nextToken();
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(56, t.getColumn());
 		
 		// x = 1 in do
 		skipTokens(stream, 5);
 		t = stream.nextToken();
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(68, t.getColumn());
 	}
 	
@@ -63,8 +63,19 @@ public class PreprocessedTokenStreamTest extends TestCase {
 		// module TokenStreamTest where
 		skipTokens(stream, 3);
 		Token t = stream.nextToken();
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(4, t.getColumn());
+	}
+	
+	public void testNoLineBreakAfterBlockOpen() throws TokenStreamException {
+		final String inStr = "module TokenStreamTest where\n" +
+        					 "    fat 0 = 1\n";
+		final PreprocessedTokenStream stream = new PreprocessedTokenStream(new HaskellLexer(new StringReader(inStr)));
+		
+		// module TokenStreamTest where
+		skipTokens(stream, 3);
+		assertEquals(OPENBLOCK, stream.nextToken().getType());
+		assertEquals(VARIABLE_ID, stream.nextToken().getType());
 	}
 	
 	public void testUntitledModule() throws TokenStreamException {
@@ -72,7 +83,7 @@ public class PreprocessedTokenStreamTest extends TestCase {
 		final PreprocessedTokenStream stream = new PreprocessedTokenStream(new HaskellLexer(new StringReader(inStr)));
 		
 		Token t = stream.nextToken();
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(0, t.getColumn());
 	}
 	
@@ -82,9 +93,9 @@ public class PreprocessedTokenStreamTest extends TestCase {
 		
 		skipTokens(stream, 3);
 		Token t = stream.nextToken();
-		assertEquals(HaskellLexerExtendedTokenTypes.OPENBLOCK, t.getType());
+		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(-1, t.getColumn());
-		assertEquals(HaskellLexerExtendedTokenTypes.EOF, stream.nextToken().getType());
+		assertEquals(EOF, stream.nextToken().getType());
 	}
 
 	private void skipTokens(TokenStream stream, int n) throws TokenStreamException {
