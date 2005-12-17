@@ -123,9 +123,8 @@ public class PreprocessedTokenStreamTest extends TestCase implements HaskellLexe
 		stream.skipTokens(14);
 		
 		assertEquals(EOF, stream.nextToken().getType());
-		
 	}
-
+	
 	private TestTokenStream createPreprocessor(final String inStr) {
 		return new TestTokenStream(
 				new PreprocessedTokenStream(

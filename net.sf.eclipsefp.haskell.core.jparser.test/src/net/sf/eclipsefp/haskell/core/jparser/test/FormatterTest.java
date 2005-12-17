@@ -253,4 +253,94 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 	}
 	
+	public void testFilledNestedWhere() throws TokenStreamException {
+		final String inStr = "module Main where\n" +
+		                     "    main = putStr \"Hello, world!\"\n" +
+		                     "      where\n" +
+		                     "     fat 0 = 1";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// module Main where
+		// {
+		// main = putStr " Hello , world ! "
+		formatter.skipTokens(3);
+		formatter.skipTokens(1);
+		formatter.skipTokens(9);
+
+		// where
+		// {
+		// fat 0 = 1
+		assertEquals(WHERE, formatter.nextToken().getType());
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		formatter.skipTokens(4);
+		
+		// }
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testEmptyNestedWhere() throws TokenStreamException {
+		final String inStr = "module Main where\n" +
+                             "    test = fat 0\n" +
+							 "    main = putStr \"Hello, world!\"\n" +
+ 					         "      where\n" +
+ 					         "    fat 0 = 1";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// module Main where
+		// {
+		// test = fat 0
+		// ;
+		// main = putStr " Hello , world ! "
+		formatter.skipTokens(3);
+		formatter.skipTokens(1);
+		formatter.skipTokens(4);
+		formatter.skipTokens(1);
+		formatter.skipTokens(9);
+		
+		// where
+		// {
+		// }
+		assertEquals(WHERE, formatter.nextToken().getType());
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testDoNotInsertSemicolonsInsideExplicitBraces() throws TokenStreamException {
+		final String inStr = "module Main where {\n" +
+                             "    test = putStr \"Hello, world!\"\n" +
+                             "    main = test\n" +
+		                     "}";
+        final TestTokenStream formatter = createFormatter(inStr);
+		
+		// module Main where {
+		// test = putStr " Hello , world ! "
+        formatter.skipTokens(4);
+		formatter.skipTokens(9);
+		
+		assertEquals("main", formatter.nextToken().getText());
+	}
+	
+	public void testMatchExplicitCloseBracesOnlyWithExplicitOpenBraces() throws TokenStreamException {
+		final String inStr = "module Main where\n" +
+        					 "    test = putStr \"Hello, world!\"\n" +
+        					 "    main = test\n" +
+        					 "}";
+		final TestTokenStream formatter = createFormatter(inStr);
+		
+		// module Main where
+		// {
+		// test = putStr " Hello , world ! "
+		// ;
+		// main = test
+        formatter.skipTokens(3);
+        formatter.skipTokens(1);
+		formatter.skipTokens(9);
+		formatter.skipTokens(1);
+		formatter.skipTokens(3);
+		
+		// explicit brace
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		// implicit (inserted) brace
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
 }
