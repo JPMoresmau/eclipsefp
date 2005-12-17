@@ -298,7 +298,7 @@ public class ParserIntegrationTest extends TestCase {
 						        "   connection capabilities -}\n" +
 						        "import Network\n" +
 						        "\n" +
-						        "main = {- block comment inside -} putStr 'hello'\n");
+						        "main = {- block comment inside -} putStr \"hello\"\n");
 		
 		assertEquals(5, module.getImports()[0].getSourceLocation().getLine());
 	}

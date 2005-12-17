@@ -33,10 +33,13 @@ public class PreprocessedTokenStream implements TokenStream {
 			return;
 		
 		if (isLineBreak(fStream.peekToken())) {
+			//consume the line break char
 			fStream.nextToken();
 			Token referenceToken = consumeLinebreaks();
 			
-			insertLineBreak(referenceToken.getColumn());
+			if (!isEOF(referenceToken)) {
+				insertLineBreak(referenceToken.getColumn());
+			}
 		} else if (fIsFirstCall && !isModule(fStream.peekToken()) && !isLeftCurly(fStream.peekToken())) {
 			Token referenceToken = consumeLinebreaks();
 

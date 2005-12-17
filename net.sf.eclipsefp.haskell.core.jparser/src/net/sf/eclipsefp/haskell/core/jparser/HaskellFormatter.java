@@ -19,7 +19,9 @@ public class HaskellFormatter implements TokenStream {
 	private LookaheadTokenStream fInput;
 
 	public HaskellFormatter(TokenStream in) {
-		fInput = new LookaheadTokenStream(new PreprocessedTokenStream(in));
+		fInput = new LookaheadTokenStream(
+				  new PreprocessedTokenStream(
+				   new HaskellCommentFilter(in)));
 	}
 
 	public Token nextToken() throws TokenStreamException {

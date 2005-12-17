@@ -112,6 +112,20 @@ public class PreprocessedTokenStreamTest extends TestCase implements HaskellLexe
 		
 		assertEquals(VARIABLE_ID, stream.nextToken().getType());
 	}
+	
+	public void testNoLinebreakForEndOfFile() throws TokenStreamException {
+		final String inStr = "    fat 0 = 1\n" +
+                             "    fat n = n * (fat (n - 1))\n";
+		final TestTokenStream stream = createPreprocessor(inStr);
+		
+		// {4} fat 0 = 1
+		// <4> fat n = n * ( fat ( n - 1 ) )
+		stream.skipTokens(5);
+		stream.skipTokens(14);
+		
+		assertEquals(EOF, stream.nextToken().getType());
+		
+	}
 
 	private TestTokenStream createPreprocessor(final String inStr) {
 		return new TestTokenStream(

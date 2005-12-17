@@ -58,7 +58,7 @@ options {
     }
     
     public HaskellParser(Reader in) {
-    	this(new HaskellFormatter(new HaskellCommentFilter(new HaskellLexer(in))),
+    	this(new HaskellFormatter(new HaskellLexer(in)),
     		 new ModuleBuilder());	
     }
     
