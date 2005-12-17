@@ -3,12 +3,9 @@ package net.sf.eclipsefp.haskell.core.jparser;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
-import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
-import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 
 public class ModuleBuilder {

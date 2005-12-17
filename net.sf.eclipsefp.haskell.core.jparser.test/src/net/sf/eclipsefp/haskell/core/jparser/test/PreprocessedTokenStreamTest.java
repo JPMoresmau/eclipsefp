@@ -6,7 +6,6 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerExtendedTokenTypes;
 import net.sf.eclipsefp.haskell.core.jparser.PreprocessedTokenStream;
 import antlr.Token;
-import antlr.TokenStream;
 import antlr.TokenStreamException;
 import junit.framework.TestCase;
 

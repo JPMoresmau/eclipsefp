@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-import com.sun.org.apache.bcel.internal.generic.FCONST;
-
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
@@ -13,7 +11,6 @@ import antlr.TokenStreamException;
 public class HaskellFormatter implements TokenStream {
 
 	private Stack<Integer> fLayoutContextStack = new Stack<Integer>();
-	private Stack<Token> fOpeningTokenStack = new Stack<Token>();
 	private Queue<Token> fInsertedTokens = new LinkedList<Token>();
 	
 	private LookaheadTokenStream fInput;
@@ -80,46 +77,6 @@ public class HaskellFormatter implements TokenStream {
 
 	private boolean isEof(Token token) {
 		return token.getType() == HaskellLexerTokenTypes.EOF;
-	}
-
-	private boolean isBlockOpener(Token token) {
-		return isWhere(token) || isLet(token) || isDo(token) || isOf(token);
-	}
-
-	private boolean isLet(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.LET;
-	}
-
-	private boolean isDo(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.DO;
-	}
-
-	private boolean isOf(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.OF;
-	}
-
-	private boolean isWhere(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.WHERE;
-	}
-
-	private boolean isModule(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.MODULE;
-	}
-
-	private boolean isSemicolon(Token token) {
-		return token.getType() == HaskellLexerTokenTypes.SEMICOLON;
-	}
-
-	private boolean isRightCurly(Token theToken) {
-		return theToken.getType() == HaskellLexerTokenTypes.RIGHT_CURLY;
-	}
-
-	private boolean isLeftCurly(Token theToken) {
-		return theToken.getType() == HaskellLexerTokenTypes.LEFT_CURLY;
-	}
-
-	private boolean isInsideBraces() {
-		return !fOpeningTokenStack.empty();
 	}
 
 }

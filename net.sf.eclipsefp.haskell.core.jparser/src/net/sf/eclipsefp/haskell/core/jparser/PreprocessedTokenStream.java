@@ -85,7 +85,6 @@ public class PreprocessedTokenStream implements TokenStream {
 	 * the next non-linebreak token.
 	 */
 	private Token consumeLinebreaks() throws TokenStreamException {
-		int i = 1;
 		while(isLineBreak(fStream.peekToken())) {
 			fStream.nextToken();
 		}

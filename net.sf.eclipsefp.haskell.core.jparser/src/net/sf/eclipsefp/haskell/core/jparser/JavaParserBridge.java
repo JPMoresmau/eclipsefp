@@ -1,11 +1,8 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
-import java.io.InputStreamReader;
-
 import net.sf.eclipsefp.haskell.core.jparser.ast.CompilationUnit;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 

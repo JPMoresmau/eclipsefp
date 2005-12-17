@@ -1,7 +1,5 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
-import java.io.StringBufferInputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
