@@ -202,7 +202,8 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	//TODO maybe we need to recognize more comment formats. the report
 	//specifies a return char as the end of a line comment too
 	
-	//TODO a string literal my span multiple lines
+	//TODO current lexer doesn't accept any escape char inside strings
+	//a test case that exposes the bug is the string "Hello, world!\n"
 
 	//TODO scan literate haskell (maybe this doesn't even mess with the lexer)
 	//take a look at the Language.Haskell.Parser impl
