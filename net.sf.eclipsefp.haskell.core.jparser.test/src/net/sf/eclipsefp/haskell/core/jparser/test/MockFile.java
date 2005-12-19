@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
+import java.net.URI;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -432,7 +433,21 @@ public class MockFile implements IFile {
 	}
 
 	public boolean isConflicting(ISchedulingRule rule) {
-		
+		return false;
+	}
+
+	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	}
+
+	public URI getLocationURI() {
+		return null;
+	}
+
+	public URI getRawLocationURI() {
+		return null;
+	}
+
+	public boolean isLinked(int options) {
 		return false;
 	}
 
