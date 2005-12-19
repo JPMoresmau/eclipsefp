@@ -303,6 +303,7 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(WHERE, formatter.nextToken().getType());
 		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		assertEquals(SEMICOLON, formatter.nextToken().getType());
 	}
 	
 	public void testDoNotInsertSemicolonsInsideExplicitBraces() throws TokenStreamException {
@@ -342,5 +343,29 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		// implicit (inserted) brace
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+	}
+	
+	public void testSemicolonAfterBlock() throws TokenStreamException {
+		final String inStr = "module Main where\n" +
+        					 "    main = test\n" +
+        					 "      where test = putStr \"Hello, world!\"\n" +
+        					 "    fat 0 = 1";
+		
+		final TestTokenStream formatter = createFormatter(inStr);		
+		
+		// module Main where
+		// {
+		// main = test
+		// where
+		formatter.skipTokens(3);
+		formatter.skipTokens(1);
+		formatter.skipTokens(3);
+		formatter.skipTokens(1);
+		assertEquals(LEFT_CURLY, formatter.nextToken().getType());
+
+		// test = putStr <string>
+		formatter.skipTokens(4);
+		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
+		assertEquals(SEMICOLON, formatter.nextToken().getType());
 	}
 }

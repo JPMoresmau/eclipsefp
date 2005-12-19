@@ -36,27 +36,33 @@ public class HaskellFormatter implements TokenStream {
 			return;
 		
 		if (isOpenBlock(fInput.peekToken())) {
-			Token openBlockToken = fInput.nextToken();
+			Token openBlockToken = fInput.peekToken();
 			
 			if (!fLayoutContextStack.isEmpty() && openBlockToken.getColumn() > fLayoutContextStack.peek()) {
+				fInput.nextToken();
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
 				fLayoutContextStack.push(openBlockToken.getColumn());
 			} else if (fLayoutContextStack.isEmpty() && openBlockToken.getColumn() > -1) {
+				fInput.nextToken();
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
 				fLayoutContextStack.push(openBlockToken.getColumn());
 			} else {
+				openBlockToken.setType(HaskellLexerExtendedTokenTypes.LINEBREAK);
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
 			}
 			
 		} else if (isLineBreak(fInput.peekToken())) {
-			Token lineBreakToken = fInput.nextToken();
+			Token lineBreakToken = fInput.peekToken();
 			
 			if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() == fLayoutContextStack.peek()) {
+				fInput.nextToken();
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.SEMICOLON));
 			} else if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() < fLayoutContextStack.peek()) {
 				fInsertedTokens.offer(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
 				fLayoutContextStack.pop();
+			} else {
+				fInput.nextToken();
 			}
 		} else if (isEof(fInput.peekToken())) {
 			if (!fLayoutContextStack.isEmpty() && fLayoutContextStack.peek() != -1) {
