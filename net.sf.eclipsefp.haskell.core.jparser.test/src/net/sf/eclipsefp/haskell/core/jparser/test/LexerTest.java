@@ -200,7 +200,10 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 
 	public void testStringWithEscapeChar() throws TokenStreamException {
 		final String input = "main = putStr \"Hello, world!\\n\" " +
-				             "\"tab\\t\" \"slash\\\\\" \"double quote\\\"\"";
+				             "\"tab\\t\" \"slash\\\\\" \"double quote\\\"\" " +
+				             "\"quote\\'\" \"backspace\\b\" \"alert\\a\" " +
+				             "\"formfeed\\f\" \"return\\r\" \"vertical tab\\v\" " +
+				             "\"null \\&char\"";
 		fLexer = createLexer(input);
 		
 		// main = putStr
@@ -210,6 +213,13 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertToken(STRING_LITERAL, "tab\t", fLexer.nextToken());
 		assertToken(STRING_LITERAL, "slash\\", fLexer.nextToken());
 		assertToken(STRING_LITERAL, "double quote\"", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "quote'", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "backspace\b", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "alert", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "formfeed\f", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "return\r", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "vertical tab", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "null char", fLexer.nextToken());
 	}
 
 	private void assertToken(int expectedType, String expectedText, Token token) {

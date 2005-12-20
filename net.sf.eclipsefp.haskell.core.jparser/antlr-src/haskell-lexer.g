@@ -85,11 +85,18 @@ STRING_LITERAL : '"'! (~('"'|'\\')|ESCAPE|GAP!)* '"'! ;
 
 protected
 ESCAPE
-	:	'\\'
-    	( 'n'  { $setText("\n"); }
+	:	'\\'!
+    	( 'a'!
+    	| 'b'  { $setText("\b"); }
+    	| 'f'  { $setText("\f"); }
+    	| 'n'  { $setText("\n"); }
+    	| 'r'  { $setText("\r"); }
     	| 't'  { $setText("\t"); }
+    	| 'v'!
     	| '\\' { $setText("\\"); }
-    	| '\"' { $setText("\""); } )
+    	| '\"' { $setText("\""); }
+    	| '\'' { $setText("'"); }
+    	| '&'! )
     ;
 
 LEFT_CURLY : '{' ;
