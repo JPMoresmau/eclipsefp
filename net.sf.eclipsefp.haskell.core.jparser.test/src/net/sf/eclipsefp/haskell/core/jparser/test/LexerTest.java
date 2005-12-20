@@ -222,6 +222,28 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertToken(STRING_LITERAL, "null char", fLexer.nextToken());
 	}
 
+	public void testCharacterLiteral() throws TokenStreamException {
+		final String input = "'a' 'b' 'Z' '\\n'";
+		fLexer = createLexer(input);
+		
+		assertToken(CHARACTER_LITERAL, "a", fLexer.nextToken());
+		assertToken(CHARACTER_LITERAL, "b", fLexer.nextToken());
+		assertToken(CHARACTER_LITERAL, "Z", fLexer.nextToken());
+		assertToken(CHARACTER_LITERAL, "\n", fLexer.nextToken());
+	}
+	
+	public void testDoNotAcceptNullCharacter() {
+		final String input = "'\\&'";
+		fLexer = createLexer(input);
+		
+		try {
+			fLexer.nextToken();
+			fail("lexer accepted null character");
+		} catch(TokenStreamException e) {
+			// exception is expected
+		}
+	}
+
 	private void assertToken(int expectedType, String expectedText, Token token) {
 		assertEquals(expectedType, token.getType());
 		assertEquals(expectedText, token.getText());
@@ -232,4 +254,8 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	//TODO scan literate haskell (maybe this doesn't even mess with the lexer)
 	//take a look at the Language.Haskell.Parser impl
+	
+	// TODO identifiers may include single quotes
+	
+	// TODO look at the qualified name examples at the 2.4 section of the report
 }

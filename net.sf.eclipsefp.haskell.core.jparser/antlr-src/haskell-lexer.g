@@ -81,10 +81,12 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 
 DECIMAL : '0' | ('1'..'9') (DIGIT)* ;
 
-STRING_LITERAL : '"'! (~('"'|'\\')|ESCAPE|GAP!)* '"'! ;
+CHARACTER_LITERAL : '\''! (~('\''|'\\')|CHARACTER_ESCAPE) '\''! ;
+
+STRING_LITERAL : '"'! (~('"'|'\\')|STRING_ESCAPE|GAP!)* '"'! ;
 
 protected
-ESCAPE
+CHARACTER_ESCAPE
 	:	'\\'!
     	( 'a'!
     	| 'b'  { $setText("\b"); }
@@ -95,10 +97,15 @@ ESCAPE
     	| 'v'!
     	| '\\' { $setText("\\"); }
     	| '\"' { $setText("\""); }
-    	| '\'' { $setText("'"); }
-    	| '&'! )
-    ;
+    	| '\'' { $setText("'"); } )
+	; 
 
+protected
+STRING_ESCAPE
+	:
+		"\\&"! | CHARACTER_ESCAPE
+    ;
+    
 LEFT_CURLY : '{' ;
 
 RIGHT_CURLY : '}' ;

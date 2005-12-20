@@ -189,7 +189,7 @@ public class ParserIntegrationTest extends TestCase {
 	public void testOneImport() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where {\n" +
 				               "import Library\n" +
-				               ";main = putStr 'Hello world!'\n" +
+				               ";main = putStr \"Hello world!\"\n" +
 				               "} ");
 		
 		IImport[] imports = module.getImports();
@@ -203,7 +203,7 @@ public class ParserIntegrationTest extends TestCase {
 		IModule module = parse("module Main where {\n" +
 	               "import LibraryA;\n" +
 	               "import LibraryB.ModuleM;\n" +
-	               "main = putStr 'Hello world!'\n" +
+	               "main = putStr \"Hello world!\"\n" +
 	               "} ");
 
 		IImport[] imports = module.getImports();
@@ -220,7 +220,7 @@ public class ParserIntegrationTest extends TestCase {
 				               "import LibraryB.ModuleM;\n" +
 				               "\n" +
 				               "import LibraryC.ModuleN;\n" +
-				               "main = putStr 'Hello world!'\n" +
+				               "main = putStr \"Hello world!\"\n" +
 				               "} ");
 
 		IImport[] imports = module.getImports();
@@ -305,7 +305,7 @@ public class ParserIntegrationTest extends TestCase {
 	
 	public void testOneFunctionDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where {\n" +
-				               "    main = putStr 'Hello world!' }");
+				               "    main = putStr \"Hello world!\" }");
 		IDeclaration[] decls = module.getDeclarations();
 		assertNotNull(decls);
 		assertEquals(1, decls.length);
@@ -319,7 +319,7 @@ public class ParserIntegrationTest extends TestCase {
 	}
 	
 	public void testMultipleFunctionDeclarations() throws RecognitionException, TokenStreamException {
-		IModule module = parse("module Main where { main = writeout ; writeout = putStr 'Hello world!' }");
+		IModule module = parse("module Main where { main = writeout ; writeout = putStr \"Hello world!\" }");
 	
 		IDeclaration[] decls = module.getDeclarations();
 		
@@ -333,7 +333,7 @@ public class ParserIntegrationTest extends TestCase {
 	public void testFunctionWithWhereBlock() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
 				               "    main = writeout\n" +
-				               "      where writeout = putStr 'Hello world!'");
+				               "      where writeout = putStr \"Hello world!\"");
 		
 		IDeclaration[] decls = module.getDeclarations();
 		
@@ -343,7 +343,7 @@ public class ParserIntegrationTest extends TestCase {
 	
 	public void testFunctionWithLetBlock() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
-					           "    main = let writeout = putStr 'Hello world!' in\n" +
+					           "    main = let writeout = putStr \"Hello world!\" in\n" +
 		                       "      writeout\n" +
 		                       "    fun = 3");
 		
@@ -381,7 +381,7 @@ public class ParserIntegrationTest extends TestCase {
 	public void testTypeSynonymDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
    							   "    type Name = [Char]\n" +
-			                   "    main = putStr 'Hello, world!'\n");
+			                   "    main = putStr \"Hello, world!\"\n");
 		
 		IDeclaration[] decls = module.getDeclarations();
 		
