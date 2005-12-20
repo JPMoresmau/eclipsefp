@@ -243,6 +243,13 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 			// exception is expected
 		}
 	}
+	
+	public void testEscapeAscii() throws TokenStreamException {
+		final String input = "'\\NUL'";
+		fLexer = createLexer(input);
+		
+		assertToken(CHARACTER_LITERAL, "\u0000", fLexer.nextToken());
+	}
 
 	private void assertToken(int expectedType, String expectedText, Token token) {
 		assertEquals(expectedType, token.getType());

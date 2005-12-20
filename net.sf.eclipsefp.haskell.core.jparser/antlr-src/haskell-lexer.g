@@ -88,6 +88,12 @@ STRING_LITERAL : '"'! (~('"'|'\\')|STRING_ESCAPE|GAP!)* '"'! ;
 protected
 CHARACTER_ESCAPE
 	:	'\\'!
+		( CHAR_ESC
+		| ASCII )
+	;
+	
+protected CHAR_ESC
+	:
     	( 'a'!
     	| 'b'  { $setText("\b"); }
     	| 'f'  { $setText("\f"); }
@@ -98,13 +104,16 @@ CHARACTER_ESCAPE
     	| '\\' { $setText("\\"); }
     	| '\"' { $setText("\""); }
     	| '\'' { $setText("'"); } )
-	; 
+	;
 
 protected
 STRING_ESCAPE
 	:
 		"\\&"! | CHARACTER_ESCAPE
     ;
+    
+protected
+ASCII : "NUL" { setText("\u0000"); } ;
     
 LEFT_CURLY : '{' ;
 
