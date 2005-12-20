@@ -81,7 +81,16 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 
 DECIMAL : '0' | ('1'..'9') (DIGIT)* ;
 
-STRING_LITERAL : '"' (~('"'|'\\')|GAP!)* '"' ;
+STRING_LITERAL : '"'! (~('"'|'\\')|ESCAPE|GAP!)* '"'! ;
+
+protected
+ESCAPE
+	:	'\\'
+    	( 'n'  { $setText("\n"); }
+    	| 't'  { $setText("\t"); }
+    	| '\\' { $setText("\\"); }
+    	| '\"' { $setText("\""); } )
+    ;
 
 LEFT_CURLY : '{' ;
 

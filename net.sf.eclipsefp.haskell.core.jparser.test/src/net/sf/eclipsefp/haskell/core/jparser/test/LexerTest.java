@@ -12,10 +12,6 @@ import junit.framework.TestCase;
 
 public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	
-	// The sample for these tests was taken from then Haskell Report
-	// and is available at
-	// http://www.haskell.org/onlinereport/lexemes.html#layout-before
-
 	private TestTokenStream fLexer;
 
 	protected void setUp() {
@@ -179,7 +175,7 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		
 		Token helloWorldTk = fLexer.nextToken();
 		assertEquals(STRING_LITERAL, helloWorldTk.getType());
-		assertEquals("\"Hello, world!\"", helloWorldTk.getText());
+		assertEquals("Hello, world!", helloWorldTk.getText());
 	}
 	
 	public void testMultilineString() throws TokenStreamException {
@@ -192,7 +188,7 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		
 		Token helloWorldTk = fLexer.nextToken();
 		assertEquals(STRING_LITERAL, helloWorldTk.getType());
-		assertEquals("\"Hello, world!\"", helloWorldTk.getText());
+		assertEquals("Hello, world!", helloWorldTk.getText());
 	}
 	
 	private TestTokenStream createLexer(String input) {
@@ -201,10 +197,29 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	//TODO maybe we need to recognize more comment formats. the report
 	//specifies a return char as the end of a line comment too
-	
-	//TODO current lexer doesn't accept any escape char inside strings
-	//a test case that exposes the bug is the string "Hello, world!\n"
 
+	public void testStringWithEscapeChar() throws TokenStreamException {
+		final String input = "main = putStr \"Hello, world!\\n\" " +
+				             "\"tab\\t\" \"slash\\\\\" \"double quote\\\"\"";
+		fLexer = createLexer(input);
+		
+		// main = putStr
+		fLexer.skipTokens(3);
+		
+		assertToken(STRING_LITERAL, "Hello, world!\n", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "tab\t", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "slash\\", fLexer.nextToken());
+		assertToken(STRING_LITERAL, "double quote\"", fLexer.nextToken());
+	}
+
+	private void assertToken(int expectedType, String expectedText, Token token) {
+		assertEquals(expectedType, token.getType());
+		assertEquals(expectedText, token.getText());
+	}
+	
+	// TODO escape  -> 	 \ ( charesc | ascii | decimal | o octal | x hexadecimal )
+	//      charesc -> 	a | b | f | n | r | t | v | \ | " | ' | &
+	
 	//TODO scan literate haskell (maybe this doesn't even mess with the lexer)
 	//take a look at the Language.Haskell.Parser impl
 }
