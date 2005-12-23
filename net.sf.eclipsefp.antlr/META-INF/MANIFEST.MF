@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ANTLR Wrapper
 Bundle-SymbolicName: net.sf.eclipsefp.antlr
-Bundle-Version: 2.7.5
+Bundle-Version: 2.7.6
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
 Bundle-ClassPath: lib/antlr.jar
