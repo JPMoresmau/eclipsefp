@@ -428,6 +428,35 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("Renamed", decls[1].getName());
 	}
 	
+	public void testDataLocationRecording() throws RecognitionException, TokenStreamException {
+		// sample code from darcs source code
+		IModule module = parse("module Curl ( copyUrl, Cachable(Cachable, Uncachable, MaxAge) )\n" +
+				"where\n" +
+				"\n" +
+				"  data Cachable = Cachable | Uncachable | MaxAge !CInt");
+		
+		IDeclaration dataDecl = module.getDeclarations()[0];
+		assertTrue(dataDecl instanceof IDataDeclaration);
+		
+		ISourceLocation srcLoc = dataDecl.getSourceLocation();
+		assertEquals(3, srcLoc.getLine());
+		assertEquals(2, srcLoc.getColumn());
+	}
+
+	public void testNewtypeLocationRecording() throws RecognitionException, TokenStreamException {
+		// sample code from darcs source code
+		IModule module = parse("module Curl ( copyUrl, Cachable(Cachable, Uncachable, MaxAge) )\n" +
+				"where\n" +
+				" newtype Eq t => Renamed = Name [Char]\n");
+		
+		IDeclaration dataDecl = module.getDeclarations()[0];
+		assertTrue(dataDecl instanceof INewTypeDeclaration);
+		
+		ISourceLocation srcLoc = dataDecl.getSourceLocation();
+		assertEquals(2, srcLoc.getLine());
+		assertEquals(1, srcLoc.getColumn());
+	}
+
 	public void testSimpleClassDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
 				               "    class VerySimple v\n" +
@@ -548,10 +577,10 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertEquals(2, module.getDeclarations().length);
 	}
-
+	
 //TODO try to declare the function '(==) a b = not (a /= b)'
 	
-//TODO inst rule (that occur inside the instdecl rule)
+//TODO inst rule (that occurs inside the instdecl rule)
 //TODO test the gtycon (that occurs inside inst, subrule of instancedecl)
 	
 	private static void assertEmpty(Object[] exports) {

@@ -5,7 +5,6 @@ import java.io.StringReader;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import antlr.CommonToken;

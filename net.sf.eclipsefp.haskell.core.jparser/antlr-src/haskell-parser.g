@@ -67,7 +67,6 @@ options {
 		fBuilder = builder;
 	}
     
-    
     public IModule parseModule() throws RecognitionException, TokenStreamException {
 		module();
 		return fBuilder.getResult();
@@ -88,6 +87,14 @@ options {
 		result.setLocation(nextToken.getLine(), nextToken.getColumn());
 		
 		return result;
+    }
+    
+    private <T extends Declaration> T insertNewDeclaration(Class<T> nodeClazz)
+    	throws TokenStreamException
+	{    
+    	T decl = createNode(nodeClazz);
+    	fBuilder.addDeclaration(decl);
+    	return decl;
     }
     
     private static class NonNullVector<E> extends Vector<E> {
@@ -298,7 +305,8 @@ topdecls
 
 topdecl 
 	:	typesymdecl
-	|   data_or_rnmdtypedecl
+	|   datadecl
+	|	rnmdtypedecl
 	|   classdecl
 	|   instancedecl
 	|   defaultdecl
@@ -307,8 +315,7 @@ topdecl
 	
 typesymdecl
 	{
-		Declaration aDeclaration = createNode(TypeSynonymDeclaration.class);
-		fBuilder.addDeclaration(aDeclaration);
+		Declaration aDeclaration = insertNewDeclaration(TypeSynonymDeclaration.class);
 		
 		String name = null;
 	}
@@ -318,30 +325,35 @@ typesymdecl
 		declrhs
 	;
 	
-data_or_rnmdtypedecl
+datadecl
 	{
-		Declaration aDeclaration = createNode(Declaration.class);
+		Declaration aDeclaration = insertNewDeclaration(DataDeclaration.class);
 
 		String name = null;
 	}
 	:
-		(
-			DATA { aDeclaration = new DataDeclaration(); }
-		|
-			NEWTYPE { aDeclaration = new NewtypeDeclaration(); }
-		)
+		DATA
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
-		{
-		    fBuilder.addDeclaration(aDeclaration);
-		}
+	;
+	
+rnmdtypedecl
+	{
+		Declaration aDeclaration = insertNewDeclaration(NewtypeDeclaration.class);
+
+		String name = null;
+	}
+	:
+		NEWTYPE
+		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
+		name=simpletype { aDeclaration.setName(name); }
+		declrhs
 	;
 	
 classdecl
 	{
-		ClassDeclaration aDeclaration = createNode(ClassDeclaration.class);
-		fBuilder.addDeclaration(aDeclaration);
+		ClassDeclaration aDeclaration = insertNewDeclaration(ClassDeclaration.class);
 
 		String name = null;
 	}
@@ -358,8 +370,7 @@ classdecl
 	
 instancedecl
 	{
-		InstanceDeclaration aDeclaration = createNode(InstanceDeclaration.class);
-		fBuilder.addDeclaration(aDeclaration);
+		InstanceDeclaration aDeclaration = insertNewDeclaration(InstanceDeclaration.class);
 		
 		String name = null;
 	}
@@ -376,8 +387,7 @@ instancedecl
 
 defaultdecl
 	{
-		IDeclaration aDeclaration = createNode(DefaultDeclaration.class);
-		fBuilder.addDeclaration(aDeclaration);
+		IDeclaration aDeclaration = insertNewDeclaration(DefaultDeclaration.class);
 	}
 	:
 		DEFAULT list
@@ -427,8 +437,7 @@ valdef
 
 signdecl
 	{
-		TypeSignature tsig = createNode(TypeSignature.class);
-		fBuilder.addDeclaration(tsig);		
+		TypeSignature tsig = insertNewDeclaration(TypeSignature.class);
 		
 		String name = null;
 	}
