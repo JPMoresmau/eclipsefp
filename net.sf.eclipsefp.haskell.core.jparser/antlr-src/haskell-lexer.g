@@ -18,6 +18,36 @@ class HaskellLexer extends Lexer;
 options	{
     k = 9;
 }
+
+tokens {
+	MODULE = "module" ;
+	WHERE = "where" ;
+	IMPORT = "import" ;
+	QUALIFIED = "qualified" ;
+	AS = "as" ;
+	HIDING = "hiding" ;
+	TYPE = "type" ;
+	DATA = "data" ;
+	NEWTYPE = "newtype" ;
+	CLASS = "class" ;
+	INSTANCE = "instance" ;
+	DEFAULT = "default" ;
+	OFTYPE = "::" ;
+	LET = "let" ;
+	DO = "do" ;
+	OF = "of" ;
+	CONTEXT_ARROW = "=>" ;
+	LEFT_CURLY = "{" ;
+	RIGHT_CURLY = "}" ;
+	SEMICOLON = ";" ;
+	LEFT_PAREN = "(" ;
+	RIGHT_PAREN = ")" ;
+	COMMA = "," ;
+	DOT = "." ;
+	EQUALS = "=" ;
+
+}
+
 {
 	/* workaround for starting token coordinates from 0
 	 * as eclipse expects them to */
@@ -31,9 +61,10 @@ options	{
     }
 }
 
-WS	:	(' '
-    |    '\t'
-    |    '\r')+
+WS	:
+		(' '
+    |  	'\t'
+    |  	'\r')+
     	{ $setType(Token.SKIP); }
     ;
     
@@ -41,39 +72,6 @@ PPDIRECTIVE
 	:	'#' (~('\n'))* NEWLINE { $setType(Token.SKIP); }
 	;
 
-MODULE : "module" ;
-       
-WHERE : "where" ;
-
-IMPORT : "import" ;
-
-QUALIFIED : "qualified" ;
-
-AS : "as" ;
-
-HIDING : "hiding" ;
-
-TYPE : "type" ;
-
-DATA : "data" ;
-
-NEWTYPE : "newtype" ;
-
-CLASS : "class" ;
-
-INSTANCE : "instance" ;
-
-DEFAULT : "default" ;
-
-CONTEXT_ARROW : "=>" ;
-
-OFTYPE : "::" ;
-
-LET : "let" ;
-
-DO : "do" ;
-
-OF : "of" ;
 
 CONSTRUCTOR_ID : UPPER_CASE	( LETTER
 							| DIGIT
@@ -123,22 +121,6 @@ STRING_ESCAPE
 protected
 ASCII : "NUL" { setText("\u0000"); } ;
     
-LEFT_CURLY : '{' ;
-
-RIGHT_CURLY : '}' ;
-
-SEMICOLON : ';' ;
-
-LEFT_PAREN : '(' ;
-
-RIGHT_PAREN : ')' ;
-
-COMMA : ',' ;
-
-DOT : '.' ;
-
-EQUALS : '=' ;
-
 COMMENT : LINE_COMMENT | BLOCK_COMMENT ;
 
 protected

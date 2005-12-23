@@ -88,6 +88,13 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals("whery", t.getText());
 	}
 	
+	public void testMaximalMunchRule() throws TokenStreamException  {
+		fLexer = createLexer("render doc = renderStyle style doc");
+		
+		fLexer.skipTokens(1);
+		assertToken(VARIABLE_ID, "doc", fLexer.nextToken());
+	}
+	
 	public void testKeyworkPreffixInsideIdentifier() throws TokenStreamException {
 		fLexer = createLexer("Pwho imodule");
 		
