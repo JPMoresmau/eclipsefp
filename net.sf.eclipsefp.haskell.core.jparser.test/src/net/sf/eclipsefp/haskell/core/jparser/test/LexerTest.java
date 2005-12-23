@@ -250,6 +250,21 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		
 		assertToken(CHARACTER_LITERAL, "\u0000", fLexer.nextToken());
 	}
+	
+	public void testIgnorePreprocessor() throws TokenStreamException {
+		final String input = "#ifdef HAVE_CURL\n" +
+				             "import Foreign.C.String ( withCString, CString )\n" +
+				             "#endif";
+		
+		fLexer = createLexer(input);
+		final Token impToken = fLexer.nextToken();
+		assertTokenType(IMPORT, impToken);
+		assertEquals(1, impToken.getLine());
+	}
+
+	private void assertTokenType(int expectedType, Token token) {
+		assertEquals(expectedType, token.getType());
+	}
 
 	private void assertToken(int expectedType, String expectedText, Token token) {
 		assertEquals(expectedType, token.getType());

@@ -36,6 +36,10 @@ WS	:	(' '
     |    '\r')+
     	{ $setType(Token.SKIP); }
     ;
+    
+PPDIRECTIVE
+	:	'#' (~('\n'))* NEWLINE { $setType(Token.SKIP); }
+	;
 
 MODULE : "module" ;
        

@@ -172,18 +172,16 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	public void testNonStandardCode() throws TokenStreamException {
 		final String inStr = "module Test where\n" +
-  							 "#ifdef CURL\n" +
-							 "import LibraryCurl.ModuleCurl\n" +
-							 "#endif\n" +
-							 "foreign export stdcall \"parseHaskellCU\";\n" +
+							 "\n" +
+							 "foreign export stdcall \"parseHaskellCU\"\n" +
 							 "haskellParseCU :: CString -> IO ( StablePtr ( ParseResult HsModule ) );\n";
 
 		final TestTokenStream formatter = createFormatter(inStr);
 		
 		//module Test where {
-		//# ifdef CURL
+		//foreign export stdcall <string>
 		formatter.skipTokens(4);
-		formatter.skipTokens(3);
+		formatter.skipTokens(4);
 		
 		Token t = formatter.nextToken();
 		assertEquals(HaskellLexerTokenTypes.SEMICOLON, t.getType());
