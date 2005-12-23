@@ -156,7 +156,7 @@ exports
 exportlist
 	:
 		export 
-		(COMMA  export)*
+		((COMMA  (qvar | qtyconorcls | MODULE)) => COMMA  export)*
 	;
 
 export

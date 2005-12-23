@@ -63,6 +63,15 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("Under_lined", module.getName());
 	}
 
+	public void testModuleWithOneExport() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest(f1) where {}");
+
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(1, exports.length);
+		assertEquals("f1", exports[0].getName());
+	}
+
 	public void testModuleWithExports() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest(f1, f2, f3.f4) where {}");
 
@@ -76,6 +85,17 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("f1", exports[0].getName());
 		assertEquals("f2", exports[1].getName());
 		assertEquals("f3.f4", exports[2].getName());
+	}
+	
+	public void testExportWithOptionalComma() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module ParserTest(f1, f2,) where {}");
+
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertNotNull(exports);
+		assertEquals(2, exports.length);
+		
+		assertEquals("f1", exports[0].getName());
+		assertEquals("f2", exports[1].getName());
 	}
 	
 	public void testExportingTypeConstructors() throws RecognitionException, TokenStreamException {
