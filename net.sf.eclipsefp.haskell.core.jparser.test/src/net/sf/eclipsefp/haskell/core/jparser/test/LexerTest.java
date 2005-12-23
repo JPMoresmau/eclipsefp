@@ -251,6 +251,14 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertToken(CHARACTER_LITERAL, "\u0000", fLexer.nextToken());
 	}
 	
+	public void testEspaceDecimal() throws TokenStreamException {
+		final String input = "'\\31' '\\139'";
+		fLexer = createLexer(input);
+		
+		assertToken(CHARACTER_LITERAL, "" + ((char) 31), fLexer.nextToken());
+		assertToken(CHARACTER_LITERAL, "" + ((char) 139), fLexer.nextToken());
+	}
+	
 	public void testIgnorePreprocessor() throws TokenStreamException {
 		final String input = "#ifdef HAVE_CURL\n" +
 				             "import Foreign.C.String ( withCString, CString )\n" +

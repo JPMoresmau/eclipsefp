@@ -93,7 +93,11 @@ protected
 CHARACTER_ESCAPE
 	:	'\\'!
 		( CHAR_ESC
-		| ASCII )
+		| ASCII
+		| t:DECIMAL {	char c = (char) Integer.parseInt(t.getText());
+						setText(Character.toString(c));
+					}
+		)
 	;
 	
 protected CHAR_ESC
