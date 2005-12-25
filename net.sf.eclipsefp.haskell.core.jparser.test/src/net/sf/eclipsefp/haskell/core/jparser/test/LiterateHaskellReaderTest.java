@@ -43,6 +43,12 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertRead("  main :: IO ");
 		assertEquals(3, fReader.read(new char[5]));
 	}
+	
+	public void testEmptyInput() throws IOException {
+		setReaderInput("");
+		
+		assertEquals(-1, fReader.read(new char[3]));
+	}
 
 	private void assertRead(String expected) throws IOException {
 		char[] readBuffer = new char[expected.length()];

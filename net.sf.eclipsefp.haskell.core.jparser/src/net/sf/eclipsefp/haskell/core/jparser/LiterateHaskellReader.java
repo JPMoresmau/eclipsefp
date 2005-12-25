@@ -50,6 +50,7 @@ public class LiterateHaskellReader extends Reader {
 			}
 			
 			if (n < 80) {
+				fProcessedOutput.close();
 				break;
 			}
 		}

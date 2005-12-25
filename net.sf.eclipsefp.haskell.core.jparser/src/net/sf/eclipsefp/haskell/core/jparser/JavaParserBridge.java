@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import net.sf.eclipsefp.haskell.core.jparser.ast.CompilationUnit;
 
 import org.eclipse.core.resources.IFile;
@@ -15,7 +18,16 @@ import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
 public class JavaParserBridge implements IHaskellParser {
 
 	public ICompilationUnit parse(IFile file) throws CoreException {
-		HaskellParser parser = new HaskellParser(file.getContents());
+		Reader input;
+		if (isLiterate(file)) {
+			input = new LiterateHaskellReader(
+						new InputStreamReader(
+						    file.getContents()));
+		} else {
+			input = new InputStreamReader(
+				    	file.getContents());
+		}
+		HaskellParser parser = new HaskellParser(input);
 		try {
 			return new CompilationUnit(parser.parseModule());
 		} catch (RecognitionException e) {
@@ -33,6 +45,11 @@ public class JavaParserBridge implements IHaskellParser {
 							   "Scanning error on " + file.getName(),
 							   e ));
 		}
+	}
+
+	private boolean isLiterate(IFile file) {
+		final String fileName = file.getName();
+		return fileName != null && fileName.endsWith("lhs");
 	}
 
 	public boolean canParse() {
