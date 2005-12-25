@@ -147,6 +147,10 @@ LEFT_PAREN : "(" ;
 
 RIGHT_PAREN : ")" ;
 
+LEFT_BRACKET : '[' ;
+
+RIGHT_BRACKET : ']' ;
+
 COMMA : "," ;
 
 DOT : "." ;

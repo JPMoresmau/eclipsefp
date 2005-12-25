@@ -378,11 +378,27 @@ instancedecl
 		INSTANCE
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		qconid
-		name=qconid { aDeclaration.setName(name); }
+		name=inst { aDeclaration.setName(name); }
 		(
 			WHERE
 			block
 		)?
+	;
+
+inst returns [String result]
+	{
+		result=null;
+	}
+	:	result=gtycon
+	|   LEFT_PAREN result=gtycon (varid)* RIGHT_PAREN
+	|	LEFT_BRACKET result=conid RIGHT_BRACKET {result = '[' + result + ']';}
+	;
+		
+gtycon returns [String result]
+	{
+		result = null;
+	}
+	: result=qtyconorcls
 	;
 
 defaultdecl

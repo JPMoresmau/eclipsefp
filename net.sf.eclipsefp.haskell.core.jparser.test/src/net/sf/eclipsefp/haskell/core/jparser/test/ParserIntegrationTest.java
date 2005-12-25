@@ -538,6 +538,24 @@ public class ParserIntegrationTest extends TestCase {
 		assertTrue(instDecl instanceof IInstanceDeclaration);
 	}
 	
+	public void testParenthysedInstanceDeclaration() throws RecognitionException, TokenStreamException {
+		final IModule module = parse("module ParserTest where\n" +
+				                      "instance Monad (SM s) where\n");
+		
+		IDeclaration instDecl = module.getDeclarations()[0];
+		assertTrue(instDecl instanceof IInstanceDeclaration);
+		assertEquals("SM", instDecl.getName());
+	}
+	
+	public void testListTypeInstanceDeclaration() throws RecognitionException, TokenStreamException {
+		final IModule module = parse("module ParserTest where\n" +
+        							 "instance Stringalike [PackedString] where\n");
+
+		IDeclaration instDecl = module.getDeclarations()[0];
+		assertTrue(instDecl instanceof IInstanceDeclaration);
+		assertEquals("[PackedString]", instDecl.getName());
+	}
+	
 	public void testDefaultDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
 				               "  default (Integer, Double)\n");
@@ -600,8 +618,15 @@ public class ParserIntegrationTest extends TestCase {
 	
 //TODO try to declare the function '(==) a b = not (a /= b)'
 	
-//TODO inst rule (that occurs inside the instdecl rule)
 //TODO test the gtycon (that occurs inside inst, subrule of instancedecl)
+	
+//TODO decide what should be the name for the instance declarations below:
+// instance Eq (a, b)
+// instance Eq [a]
+// instance Eq (a -> b)
+	
+//TODO take a look at the decl definition from Language.Haskell.Parser
+	
 	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
