@@ -71,9 +71,11 @@
 		<delete>
 			<fileset dir="${output.dir}">
 			    <include name="HaskellLexer.java"/>
+			    <include name="HaskellLexer.smap"/>
 			    <include name="HaskellLexerTokenTypes.java"/>
 			    <include name="HaskellLexerTokenTypes.txt"/>
 			    <include name="HaskellParser.java"/>
+			    <include name="HaskellParser.smap"/>
 			    <include name="HaskellParserTokenTypes.java"/>
 			    <include name="HaskellParserTokenTypes.txt"/>
 			</fileset>
