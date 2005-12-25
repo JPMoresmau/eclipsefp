@@ -125,6 +125,32 @@ public class PreprocessedTokenStreamTest extends TestCase implements HaskellLexe
 		assertEquals(EOF, stream.nextToken().getType());
 	}
 	
+	public void testStartWithLinebreaks() throws TokenStreamException {
+		final String inStr = "\n" +
+				             "\n" +
+				             "  main = putStr \"Hello, world\"";
+		final TestTokenStream stream = createPreprocessor(inStr);
+		
+		// {2} main
+		Token token = stream.nextToken();
+		assertEquals(OPENBLOCK, token.getType());
+		assertEquals(2, token.getColumn());
+		
+		token = stream.nextToken();
+		assertEquals(VARIABLE_ID, token.getType());
+		assertEquals("main", token.getText());
+	}
+	
+	public void testModuleAfterLinebreak() throws TokenStreamException {
+		final String inStr = "\n" +
+				             "   module ParserTest where {}";
+		final TestTokenStream stream = createPreprocessor(inStr);
+		
+		Token token = stream.nextToken();
+		assertEquals(MODULE, token.getType());
+		assertEquals(3, token.getColumn());
+	}
+
 	private TestTokenStream createPreprocessor(final String inStr) {
 		return new TestTokenStream(
 				new PreprocessedTokenStream(

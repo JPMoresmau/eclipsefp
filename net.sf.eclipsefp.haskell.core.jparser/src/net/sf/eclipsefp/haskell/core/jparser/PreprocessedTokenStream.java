@@ -32,7 +32,13 @@ public class PreprocessedTokenStream implements TokenStream {
 		if (!fInsertedTokens.isEmpty())
 			return;
 		
-		if (isLineBreak(fStream.peekToken())) {
+		if (fIsFirstCall) {
+			Token firstToken = consumeLinebreaks();
+			
+			if (!isModule(firstToken) && !isLeftCurly(firstToken)) {
+				insertOpenBlock(firstToken.getColumn());
+			}
+		} else if (isLineBreak(fStream.peekToken())) {
 			//consume the line break char
 			fStream.nextToken();
 			Token referenceToken = consumeLinebreaks();
@@ -40,10 +46,6 @@ public class PreprocessedTokenStream implements TokenStream {
 			if (!isEOF(referenceToken)) {
 				insertLineBreak(referenceToken.getColumn());
 			}
-		} else if (fIsFirstCall && !isModule(fStream.peekToken()) && !isLeftCurly(fStream.peekToken())) {
-			Token referenceToken = consumeLinebreaks();
-
-			insertOpenBlock(referenceToken.getColumn());
 		} else if (isBlockOpener(fStream.peekToken(1)) && !isLeftCurly(fStream.peekToken(2))) {
 			fInsertedTokens.offer(fStream.nextToken());
 			Token referenceToken = consumeLinebreaks();
@@ -73,7 +75,11 @@ public class PreprocessedTokenStream implements TokenStream {
 	private void insertControlToken(int tokenType, int column) {
 		Token controlToken = new CommonToken(tokenType, "<<special token>>");
 		controlToken.setColumn(column);
-		fInsertedTokens.offer(controlToken);
+		insertToken(controlToken);
+	}
+
+	private void insertToken(Token token) {
+		fInsertedTokens.offer(token);
 	}
 
 	private boolean isEOF(Token token) {
