@@ -32,20 +32,9 @@ tokens {
 	CLASS = "class" ;
 	INSTANCE = "instance" ;
 	DEFAULT = "default" ;
-	OFTYPE = "::" ;
 	LET = "let" ;
 	DO = "do" ;
 	OF = "of" ;
-	CONTEXT_ARROW = "=>" ;
-	LEFT_CURLY = "{" ;
-	RIGHT_CURLY = "}" ;
-	SEMICOLON = ";" ;
-	LEFT_PAREN = "(" ;
-	RIGHT_PAREN = ")" ;
-	COMMA = "," ;
-	DOT = "." ;
-	EQUALS = "=" ;
-
 }
 
 {
@@ -145,5 +134,25 @@ LETTER : UPPER_CASE | LOWER_CASE;
 
 protected
 DIGIT : '0'..'9';
+
+CONTEXT_ARROW : "=>" ;
+
+LEFT_CURLY : "{" ;
+
+RIGHT_CURLY : "}" ;
+
+SEMICOLON : ";" ;
+
+LEFT_PAREN : "(" ;
+
+RIGHT_PAREN : ")" ;
+
+COMMA : "," ;
+
+DOT : "." ;
+
+EQUALS : "=" ;
+
+OFTYPE : "::" ;
 
 SYMBOL : ~('a'..'z' | 'A'..'Z' | '0'..'9');

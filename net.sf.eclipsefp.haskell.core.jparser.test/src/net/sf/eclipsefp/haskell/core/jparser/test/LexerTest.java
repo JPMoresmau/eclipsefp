@@ -276,6 +276,14 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertTokenType(IMPORT, impToken);
 		assertEquals(1, impToken.getLine());
 	}
+	
+	public void testRecognizeContextArrow() throws TokenStreamException {
+		final String input = "Eq t => Algebraic";
+		fLexer = createLexer(input);
+		
+		fLexer.skipTokens(2);
+		assertToken(CONTEXT_ARROW, "=>", fLexer.nextToken());
+	}
 
 	private void assertTokenType(int expectedType, Token token) {
 		assertEquals(expectedType, token.getType());
