@@ -2,7 +2,7 @@
 <feature
       id="de.leiffrenzel.fp.haskell"
       label="FP: Haskell support for Eclipse"
-      version="0.10.0"
+      version="0.9.1"
       provider-name="eclipsefp.sourceforge.net">
 
    <description>
@@ -44,75 +44,81 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="de.leiffrenzel.fp.haskell"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.leiffrenzel.fp.haskell.core"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.leiffrenzel.fp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="0.10.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.leiffrenzel.fp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.leiffrenzel.fp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.haddock"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="net.sf.eclipsefp.common.core"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="net.sf.eclipsefp.common.doc"
          download-size="0"
          install-size="0"
-         version="0.10.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.common.ui"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
-         id="net.sf.eclipsefp.haskell.core.parser"
+         id="net.sf.eclipsefp.antlr"
          download-size="0"
          install-size="0"
-         version="0.10.0"/>
+         version="0.0.0"/>
 
    <plugin
-         id="net.sf.eclipsefp.haskell.core.parser.win32"
+         id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
-         version="0.10.0"
-         fragment="true"/>
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.refactoring"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
