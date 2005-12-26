@@ -54,11 +54,10 @@
 		<ant antfile="build-parser.xml" target="parser-build"/>
     </target>
 
-	<target name="jparser.jar" depends="init,generate-parser" unless="jparser.jar" description="Create jar: net.sf.eclipsefp.haskell.core.jparser jparser.jar.">
-		<delete dir="${temp.folder}/jparser.jar.bin"/>
-		<mkdir dir="${temp.folder}/jparser.jar.bin"/>
+	<target name="compile-source" depends="init,generate-parser" unless="jparser.jar" description="Create jar: net.sf.eclipsefp.haskell.core.jparser jparser.jar.">
+		<mkdir dir="${build.result.folder}"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/jparser.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
+		<javac destdir="${build.result.folder}" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
 			<compilerarg line="${compilerArg}"/>
 			<classpath>
 				<pathelement path="../de.leiffrenzel.fp.haskell.core/bin"/>
@@ -81,13 +80,6 @@
 			</classpath>
 			<src path="src/"			/>
 			</javac>
-		<!-- Copy necessary resources -->
-		<copy todir="${temp.folder}/jparser.jar.bin" failonerror="true" overwrite="false">
-			<fileset dir="src/" excludes="**/*.java, **/package.htm*,null"			/>
-		</copy>
-		<mkdir dir="${build.result.folder}"/>
-		<jar destfile="${build.result.folder}/jparser.jar" basedir="${temp.folder}/jparser.jar.bin"/>
-		<delete dir="${temp.folder}/jparser.jar.bin"/>
 	</target>
 
 	<target name="jparsersrc.zip" depends="init" unless="jparsersrc.zip">
@@ -98,8 +90,8 @@
 	</target>
 
 	<target name="build.jars" depends="init" description="Build all the jars for the plug-in: net.sf.eclipsefp.haskell.core.jparser.">
-		<available property="jparser.jar" file="${build.result.folder}/jparser.jar"/>
-		<antcall target="jparser.jar"/>
+		<available property="compile-source" file="${build.result.folder}/compile-source"/>
+		<antcall target="compile-source"/>
 	</target>
 
 	<target name="build.sources" depends="init">
@@ -110,10 +102,10 @@
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/net.sf.eclipsefp.haskell.core.jparser_0.9.1"/>
 		<copy todir="${destination.temp.folder}/net.sf.eclipsefp.haskell.core.jparser_0.9.1" failonerror="true" overwrite="false">
-			<fileset dir="${build.result.folder}" includes="jparser.jar"			/>
+			<fileset dir="${build.result.folder}" includes="**/*.class"			/>
 		</copy>
 		<copy todir="${destination.temp.folder}/net.sf.eclipsefp.haskell.core.jparser_0.9.1" failonerror="true" overwrite="false">
-			<fileset dir="${basedir}" includes="META-INF/,plugin.xml,jparser.jar"			/>
+			<fileset dir="${basedir}" includes="META-INF/,plugin.xml,compile-source"			/>
 		</copy>
 	</target>
 
@@ -127,11 +119,11 @@
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/net.sf.eclipsefp.haskell.core.jparser_0.9.1"/>
-		<copy file="${temp.folder}/jparser.jar.bin.log" todir="${destination.temp.folder}/net.sf.eclipsefp.haskell.core.jparser_0.9.1" failonerror="false" overwrite="false"/>
+		<copy file="${temp.folder}/compile-source.bin.log" todir="${destination.temp.folder}/net.sf.eclipsefp.haskell.core.jparser_0.9.1" failonerror="false" overwrite="false"/>
 	</target>
 
 	<target name="clean" depends="init" description="Clean the plug-in: net.sf.eclipsefp.haskell.core.jparser of all the zips, jars and logs created.">
-		<delete file="${build.result.folder}/jparser.jar"/>
+		<delete file="${build.result.folder}/compile-source"/>
 		<delete file="${build.result.folder}/jparsersrc.zip"/>
 		<delete file="${plugin.destination}/net.sf.eclipsefp.haskell.core.jparser_0.9.1.jar"/>
 		<delete file="${plugin.destination}/net.sf.eclipsefp.haskell.core.jparser_0.9.1.zip"/>
