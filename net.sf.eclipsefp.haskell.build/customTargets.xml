@@ -104,10 +104,6 @@
 <!-- Steps to do after running the build.xmls for the elements being built. -->
 <!-- ===================================================================== -->
 <target name="postProcess">
-	<condition property="logsAvailable">
-		<istrue value="${javacVerbose}"/> 
-	</condition>
-	<antcall target="gatherLogs" />
 </target>
 
 <!-- ===================================================================== -->
@@ -121,17 +117,6 @@
 <!-- Helper targets -->
 <!-- ===================================================================== -->
 <target name="gatherLogs" if="logsAvailable">
-
-	<mkdir dir="${buildDirectory}/${buildLabel}/compilelogs" />
-	<antcall target="allElements">
-		<param name="target" value="gatherLogs" />
-	</antcall>
-
-	<unzip dest="${buildDirectory}/${buildLabel}/compilelogs" overwrite="true">
-		<fileset dir="${buildDirectory}/features/org.eclipse.sdk.examples">
-			<include name="*.log.zip" />
-		</fileset>
-	</unzip>
 </target>
 <target name="clean" unless="noclean">
 	<antcall target="allElements">
