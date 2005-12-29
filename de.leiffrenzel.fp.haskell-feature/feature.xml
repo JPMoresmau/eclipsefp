@@ -47,6 +47,12 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          version="0.0.0"/>
 
    <plugin
+         id="net.sf.eclipsefp.common.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
          id="de.leiffrenzel.fp.haskell.core"
          download-size="0"
          install-size="0"
@@ -79,12 +85,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="net.sf.eclipsefp.common.core"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
