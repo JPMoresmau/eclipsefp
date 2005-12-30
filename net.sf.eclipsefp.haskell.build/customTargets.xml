@@ -90,9 +90,11 @@
 <!-- Steps to do before running the build.xmls for the elements being built. -->
 <!-- ===================================================================== -->
 <target name="preProcess">
-	<replace dir="${buildDirectory}/plugins" value="${timestamp}" token="@build@">
-		<include name="**/about.mappings" />
-	</replace>
+	<!-- Before compiling everything, we need to translate the parser -->
+	<!-- grammar files to Java -->
+	<ant antfile="${buildDirectory}/plugins/net.sf.eclipsefp.haskell.core.jparser/build-parser.xml"
+	     target="parser-build"
+	     dir="${buildDirectory}/plugins/net.sf.eclipsefp.haskell.core.jparser"/>
 </target>
 
 <!-- ===================================================================== -->
