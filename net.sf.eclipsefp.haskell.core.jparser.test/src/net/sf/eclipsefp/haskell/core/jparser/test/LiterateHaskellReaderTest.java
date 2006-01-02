@@ -71,8 +71,27 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertRead("main :: IO ()\n");
 		assertRead("main =  p");
 	}
+	
+	public void testTexStyleEndCode() throws IOException {
+		final String input = 
+				       "\\begin{document}\n" +
+				       "\n" +
+				       "\\begin{code}\n" +
+				       "main = fat 3\n" +
+				       "fat 0 = 1\n" +
+				       "\\end{code}\n" +
+				       "\n" +
+				       "\\end{document}";
+		setReaderInput(input);
+		
+		assertRead("\n\n\n");
+		assertRead("main = fat 3\n");
+		assertRead("fat 0 = 1\n");
+		assertRead("\n\n");
+	}
+	
 
-	private void assertRead(String expected) throws IOException {
+	private void assertRead(final String expected) throws IOException {
 		char[] readBuffer = new char[expected.length()];
 		fReader.read(readBuffer);
 		assertEquals(expected, new String(readBuffer));

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.Reader;
+import java.util.Arrays;
 
 public class LiterateHaskellReader extends Reader {
 
@@ -17,6 +18,7 @@ public class LiterateHaskellReader extends Reader {
 	private boolean fInsideTexCodeBlock;
 	private static final int STANDARD_LINE_LENGTH = 80;
 	private static final char[] TEX_BEGIN_STRING = "\\begin{code}\n".toCharArray();
+	private static final char[] TEX_END_STRING = "\\end{code}".toCharArray();
 
 	public LiterateHaskellReader(Reader reader) {
 		fInput = new BufferedReader(reader);
@@ -44,6 +46,18 @@ public class LiterateHaskellReader extends Reader {
 					} else {
 						fProcessedOutput.write('\n');
 					}
+				} else if (fInsideTexCodeBlock && buf[i] == TEX_END_STRING[0]) {
+					final int endStringSize = TEX_END_STRING.length;
+					char[] lookaheadBuffer = new char[endStringSize];
+					final int numCharsCopied = n - i > endStringSize ? endStringSize : n - i;
+					System.arraycopy(buf, i, lookaheadBuffer, 0, numCharsCopied);
+					if (numCharsCopied < endStringSize) {
+						fInput.mark(endStringSize - numCharsCopied);
+						fInput.read(lookaheadBuffer, i + numCharsCopied, endStringSize - numCharsCopied);
+						fInput.reset();
+					}
+					fInsideTexCodeBlock = !Arrays.equals(TEX_END_STRING, lookaheadBuffer);
+					fProgramLine = fInsideTexCodeBlock;
 				} else if (fProgramLine) {
 					fProcessedOutput.write(buf[i]);
 					++numProcessedChars;
