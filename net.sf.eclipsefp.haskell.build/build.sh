@@ -10,6 +10,7 @@ ECLIPSE_HOME=${ECLIPSE_HOME:-/opt/eclipse/platform/3.1.1/eclipse}
 
 echo using ECLIPSEFP_HOME: ${ECLIPSEFP_HOME:?must be set}
 echo using ECLIPSE_HOME: $ECLIPSE_HOME
+echo
 pdeBuildPluginVersion=3.1.0
 buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-${ECLIPSEFP_HOME}/tmp/build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
@@ -25,7 +26,27 @@ ANT_CMD_LINE_ARGS=
 
 buildfile=$ECLIPSE_HOME/plugins/org.eclipse.pde.build_$pdeBuildPluginVersion/scripts/build.xml
 
+# Make sure the buildDirectory isn't filled
+rm -Rf $buildDirectory
+
+if ! $vm -version > /dev/null 2>&1; then
+    echo "Java VM not found. Aborting build..."
+    exit
+fi
+
+if ! test -e $ECLIPSE_HOME/startup.jar; then
+    echo "Eclipse installation not found. Aborting build..."
+    exit
+fi
+
+if ! darcs --version > /dev/null 2>&1; then
+    echo "Darcs not found. Aborting build..."
+    exit
+fi 
+
 echo Starting eclipse in $ECLIPSE_HOME, $vm
+echo
+
 cmd="$vm -cp $ECLIPSE_HOME/startup.jar \
 org.eclipse.core.launcher.Main \
 -application org.eclipse.ant.core.antRunner \
