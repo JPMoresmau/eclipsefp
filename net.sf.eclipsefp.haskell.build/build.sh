@@ -1,6 +1,9 @@
 #!/bin/bash
 #
-# Script for build EclipseFP
+# Script for building EclipseFP headless
+#
+# Author: Thiago Arrais - thiago.arrais@gmail.com
+# 
 # Largelly inspired by the Ruby Development tools build script
 
 ECLIPSE_HOME=${ECLIPSE_HOME:-/opt/eclipse/platform/3.1.1/eclipse}
