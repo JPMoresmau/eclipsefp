@@ -27,10 +27,9 @@
 <!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
 <!-- ===================================================================== -->
 <target name="checkLocal">
-	<available property="mapsLocal" file="${buildDirectory}/maps/org.eclipse.releng" />
 </target>
-<target name="getMapFiles" depends="checkLocal" unless="mapsLocal">
 
+<target name="getMapFiles" depends="checkLocal" unless="mapsLocal">
 </target>
 
 <!-- ===================================================================== -->
@@ -43,6 +42,22 @@
 <!-- Steps to do after setup but before starting the build proper -->
 <!-- ===================================================================== -->
 <target name="postSetup">
+	<exec executable="darcs" dir="${buildDirectory}">
+		<arg value="get"/>
+		<arg value="${builder}/.."/>
+		<arg value="eclipsefp"/>
+	</exec>
+	<mkdir dir="${buildDirectory}/plugins"/>
+	<mkdir dir="${buildDirectory}/features"/>
+	<move todir="${buildDirectory}/plugins">
+		<fileset dir="${buildDirectory}/eclipsefp">
+			<exclude name="_darcs" />
+			<exclude name="de.leiffrenzel.fp.haskell-feature/**" />
+		</fileset>
+	</move>
+	<move file="${buildDirectory}/eclipsefp/de.leiffrenzel.fp.haskell-feature"
+	      tofile="${buildDirectory}/features/de.leiffrenzel.fp.haskell"/>
+	<delete dir="${buildDirectory}/eclipsefp" />
 </target>
 
 <!-- ===================================================================== -->
@@ -55,7 +70,6 @@
 <!-- Steps to do after fetching the build elements -->
 <!-- ===================================================================== -->
 <target name="postFetch">
-
 </target>
 
 <!-- ===================================================================== -->
@@ -69,7 +83,6 @@
 <!-- Steps to do after generating the build scripts -->
 <!-- ===================================================================== -->
 <target name="postGenerate">
-	<antcall target="clean" />
 </target>
 
 <!-- ===================================================================== -->
