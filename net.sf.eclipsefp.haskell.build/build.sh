@@ -14,6 +14,8 @@ pdeBuildPluginVersion=3.1.0
 buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-${ECLIPSEFP_HOME}/tmp/build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
 
+dateTag=`date +%Y%m%d-%H%M`
+
 os=${ECLIPSEFP_OS:-linux}
 ws=${ECLIPSEFP_WS:-gtk}
 arch=${ECLIPSEFP_ARCH:-x86}
@@ -23,7 +25,7 @@ ANT_CMD_LINE_ARGS=
 
 buildfile=$ECLIPSE_HOME/plugins/org.eclipse.pde.build_$pdeBuildPluginVersion/scripts/build.xml
 
-echo Starting eclipse in $eclipseDir, $vm
+echo Starting eclipse in $ECLIPSE_HOME, $vm
 cmd="$vm -cp $ECLIPSE_HOME/startup.jar \
 org.eclipse.core.launcher.Main \
 -application org.eclipse.ant.core.antRunner \
@@ -36,6 +38,7 @@ org.eclipse.core.launcher.Main \
 -DbaseLocation=$ECLIPSE_HOME \
 -Dbuilder=$ECLIPSEFP_HOME/net.sf.eclipsefp.haskell.build \
 -DbuildDirectory=$buildDirectory \
+-DbuildId=I${dateTag} \
 -DskipFetch=true"
 echo $cmd
 exec $cmd
