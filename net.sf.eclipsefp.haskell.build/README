@@ -1,0 +1,38 @@
+EclipseFP Automatic Build
+
+Author: Thiago Arrais - thiago.arrais@gmail.com
+
+These files are used when automatic building EclipseFP. In order to 
+start the build process, you will need the following:
+
+- A suitable Java VM for running Eclipse
+- Eclipse 3.1.1 with JDT and PDE (if you didn't download a platform-only 
+archive, you probably already have it)
+- A Darcs executable binary on the default path, for fetching the 
+sources
+
+Although Eclipse is needed, it will be started by the build scripts in 
+headless mode. The process can be completely run from a shell prompt.
+
+The build can be customized with the following environment variables. 
+The only required variable is ECLIPSEFP_HOME, the others have default 
+values.
+
+ECLIPSEFP_HOME: The directory that holds the sources for the plugin 
+projects
+
+ECLIPSE_HOME: The directory that holds the Eclipse application to be 
+used for building. Most releases from 3.1.1 and on will do, although
+the shell script will need to be updated when using later releases (see 
+below). Defaults to '/opt/eclipse/platform/3.1.1/eclipse'
+
+ECLIPSEFP_BUILD_TARGET_DIR: Where the build process will be executed. 
+Defaults to 'ECLIPSEFP_HOME/tmp/build'
+
+ECLIPSEFP_JAVA_INTERPRETER: The command used to start the Java VM used 
+during the build. Defaults do 'java'.
+
+If a non-3.1.1 Eclipse is used, the variable pdeBuildPluginVersion 
+inside the build shell script must be updated. This variable holds the 
+version id for the org.eclipse.pde.build plugin. Refer to your 
+Eclipse installation for the correct string.
