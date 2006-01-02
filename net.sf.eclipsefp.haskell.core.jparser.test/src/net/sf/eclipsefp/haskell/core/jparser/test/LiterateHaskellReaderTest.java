@@ -49,6 +49,28 @@ public class LiterateHaskellReaderTest extends TestCase {
 		
 		assertEquals(-1, fReader.read(new char[3]));
 	}
+	
+	public void testTexStyleBeginCode() throws IOException {
+		final String input = "\\documentstyle{article}\n" +
+				       "\n" +
+				       "\\begin{document}\n" +
+				       "\n" +
+				       "\\section{Introduction}\n" +
+				       "\n" +
+				       "This is a trivial program that prints the first 20 factorials.\n" +
+				       "\n" +
+				       "\\begin{code}\n" +
+				       "main :: IO ()\n" +
+				       "main =  print [ (n, product [1..n]) | n <- [1..20]]\n" +
+				       "\\end{code}\n" +
+				       "\n" +
+				       "\\end{document}";
+		setReaderInput(input);
+		
+		assertRead("\n\n\n\n\n\n\n\n\n");
+		assertRead("main :: IO ()\n");
+		assertRead("main =  p");
+	}
 
 	private void assertRead(String expected) throws IOException {
 		char[] readBuffer = new char[expected.length()];
