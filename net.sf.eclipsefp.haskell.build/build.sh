@@ -65,7 +65,11 @@ org.eclipse.core.launcher.Main \
 -DskipFetch=true"
 echo $cmd
 
+remoteUser=${PUBLISH_USER:-tbasouza}
+remoteServer=${PUBLISH_SERVER:-shell.sf.net}
+remoteSiteRoot=${PUBLISH_SERVER_SITE_ROOT:-/home/groups/e/ec/eclipsefp/htdocs}
+
 if $cmd; then
-    echo Rasta
-    scp -p $buildDirectory/I.$buildId/net.sf.eclipsefp.haskell-${buildId}.zip tbasouza@shell.sf.net:~/eclipsefp/download/drops
+    scp $buildDirectory/I.$buildId/net.sf.eclipsefp.haskell-${buildId}.zip \
+        $remoteUser@$remoteServer:$remoteSiteRoot/download/drops
 fi
