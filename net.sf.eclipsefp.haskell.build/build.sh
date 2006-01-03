@@ -17,6 +17,8 @@ vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
 
 dateTag=`date +%Y%m%d-%H%M`
 
+buildId=I${dateTag}
+
 os=${ECLIPSEFP_OS:-linux}
 ws=${ECLIPSEFP_WS:-gtk}
 arch=${ECLIPSEFP_ARCH:-x86}
@@ -59,7 +61,11 @@ org.eclipse.core.launcher.Main \
 -DbaseLocation=$ECLIPSE_HOME \
 -Dbuilder=$ECLIPSEFP_HOME/net.sf.eclipsefp.haskell.build \
 -DbuildDirectory=$buildDirectory \
--DbuildId=I${dateTag} \
+-DbuildId=$buildId \
 -DskipFetch=true"
 echo $cmd
-exec $cmd
+
+if $cmd; then
+    echo Rasta
+    scp -p $buildDirectory/I.$buildId/net.sf.eclipsefp.haskell-${buildId}.zip tbasouza@shell.sf.net:~/eclipsefp/download/drops
+fi
