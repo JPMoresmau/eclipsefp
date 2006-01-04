@@ -27,7 +27,7 @@ the shell script will need to be updated when using later releases (see
 below). Defaults to '/opt/eclipse/platform/3.1.1/eclipse'
 
 ECLIPSEFP_BUILD_TARGET_DIR: Where the build process will be executed. 
-Defaults to 'ECLIPSEFP_HOME/tmp/build'
+Defaults to '/tmp/eclipsefp-build'
 
 ECLIPSEFP_JAVA_INTERPRETER: The command used to start the Java VM used 
 during the build. Defaults do 'java'.

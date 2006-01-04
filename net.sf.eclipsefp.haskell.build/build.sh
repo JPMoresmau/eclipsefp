@@ -12,7 +12,7 @@ echo using ECLIPSEFP_HOME: ${ECLIPSEFP_HOME:?must be set}
 echo using ECLIPSE_HOME: $ECLIPSE_HOME
 echo
 pdeBuildPluginVersion=3.1.0
-buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-${ECLIPSEFP_HOME}/tmp/build}
+buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-/tmp/eclipsefp-build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
 
 dateTag=`date +%Y%m%d-%H%M`
