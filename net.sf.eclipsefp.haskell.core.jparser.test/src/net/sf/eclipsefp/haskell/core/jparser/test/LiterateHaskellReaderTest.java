@@ -6,6 +6,7 @@ import java.io.StringReader;
 
 import net.sf.eclipsefp.haskell.core.jparser.LiterateHaskellReader;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 public class LiterateHaskellReaderTest extends TestCase {
@@ -90,6 +91,48 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertRead("\n\n");
 	}
 	
+	public void testExactBufferSize() throws IOException {
+		final String input = "01234567890123456789012345678901234567890123456789012345678901234567\n" +
+				             "> fat 0 = 1";
+		setReaderInput(input);
+		
+		assertRead("\n");
+		assertRead("  fat 0 = 1");
+	}
+	
+	public void testPipeBufferFull() throws IOException {
+		final StringBuffer input = new StringBuffer();
+		input.append('>');
+		for(int i = 0; i < 2048; ++i)
+			input.append('a');
+		fReader = new LiterateHaskellReader(new StringReader(input.toString()));
+		
+		for(int i  = 0; i < 1024 / 79; ++i)
+			fReader.read();
+		
+		final Runnable runnable = new Runnable() {
+			public void run()  {
+				try {
+					fReader.read();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		assertFaster(runnable, 5000);
+	}
+	
+	private void assertFaster(Runnable runnable, long millis) {
+		Thread t = new Thread(runnable);
+		t.start();
+		try {
+			t.join(millis);
+			if (t.isAlive())
+				throw new AssertionFailedError("Execution didn't finish on " + millis + "ms");
+		} catch (InterruptedException e) {
+			throw new AssertionFailedError("Execution was interrupted");
+		}
+	}
 
 	private void assertRead(final String expected) throws IOException {
 		char[] readBuffer = new char[expected.length()];
