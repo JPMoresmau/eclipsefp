@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class LiterateHaskellReader extends Reader {
 
 	private BufferedReader fInput;
-	private PipedReader fProcessedInput ;
+	private Reader fProcessedInput ;
 	private PipedWriter fProcessedOutput;
 	private boolean fBeginOfLine = true;
 	private boolean fProgramLine = false;
@@ -22,9 +22,9 @@ public class LiterateHaskellReader extends Reader {
 
 	public LiterateHaskellReader(Reader reader) {
 		fInput = new BufferedReader(reader);
-		fProcessedInput = new PipedReader();
+		fProcessedOutput = new PipedWriter();
 		try {
-			fProcessedOutput = new PipedWriter(fProcessedInput);
+			fProcessedInput = new BufferedReader(new PipedReader(fProcessedOutput));
 		} catch (IOException e) {
 			// should not happen
 			throw new AssertionError();
@@ -33,8 +33,24 @@ public class LiterateHaskellReader extends Reader {
 
 	@Override
 	public int read(final char[] cbuf, final  int off, final int len) throws IOException {
+		int numCharsNeeded = len - countAlreadyAvailableChars(len);
+		unlitStream(numCharsNeeded);
+		
+		return fProcessedInput.read(cbuf, off, len);
+	}
+
+	/**
+	 * Preprocesses the input stream unliterating it until there are enough
+	 * characters. The unlitered output is placed on the piped stream
+	 * <code>fProcessedOutput</code> that is connected to the reader
+	 * <code>fProcessedInput</code>.
+	 * 
+	 * @param numCharsNeeded
+	 * @throws IOException
+	 */
+	private void unlitStream(final int numCharsNeeded) throws IOException {
 		int numProcessedChars = 0;
-		while(numProcessedChars < len) {
+		while(numProcessedChars < numCharsNeeded) {
 			char[] buf = new char[STANDARD_LINE_LENGTH];
 			int n = fInput.read(buf);
 			for(int i = 0; i < n; ++i) {
@@ -78,8 +94,17 @@ public class LiterateHaskellReader extends Reader {
 				break;
 			}
 		} //while
-		
-		return fProcessedInput.read(cbuf, off, len);
+	}
+
+	private int countAlreadyAvailableChars(final int max) throws IOException {
+		int numAvailableChars = 0;
+		fProcessedInput.mark(max);
+		while (fProcessedInput.ready() && numAvailableChars < max) {
+			fProcessedInput.read();
+			++numAvailableChars;
+		}
+		fProcessedInput.reset();
+		return numAvailableChars;
 	}
 
 	private boolean checkTexStyleBegin(char c) {

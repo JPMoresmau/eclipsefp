@@ -100,37 +100,40 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertRead("  fat 0 = 1");
 	}
 	
-	public void testPipeBufferFull() throws IOException {
-		final StringBuffer input = new StringBuffer();
-		input.append('>');
-		for(int i = 0; i < 2048; ++i)
-			input.append('a');
-		fReader = new LiterateHaskellReader(new StringReader(input.toString()));
+	public void testBufferFill() throws IOException {
+		final StringBuffer buf = new StringBuffer(">");
+		for(int i = 0; i < 2048; ++i) {
+			buf.append('a');
+		}
+		setReaderInput(buf.toString());
 		
 		for(int i  = 0; i < 1024 / 79; ++i)
 			fReader.read();
 		
-		final Runnable runnable = new Runnable() {
+		final Runnable readBufferBlock = new Runnable() {
 			public void run()  {
 				try {
 					fReader.read();
 				} catch (IOException e) {
-					e.printStackTrace();
+					//should not happen
+					throw new AssertionFailedError();
 				}
 			}
 		};
-		assertFaster(runnable, 5000);
+		
+		assertNoDeadLock(readBufferBlock, 5000);
 	}
 	
-	private void assertFaster(Runnable runnable, long millis) {
+	private void assertNoDeadLock(Runnable runnable, long timeoutMillis) {
 		Thread t = new Thread(runnable);
 		t.start();
 		try {
-			t.join(millis);
-			if (t.isAlive())
-				throw new AssertionFailedError("Execution didn't finish on " + millis + "ms");
+			t.join(timeoutMillis);
+			if (t.isAlive()) {
+				fail("Execution did not finish after " + timeoutMillis + "ms");
+			}
 		} catch (InterruptedException e) {
-			throw new AssertionFailedError("Execution was interrupted");
+			fail("Code interrupted");
 		}
 	}
 
