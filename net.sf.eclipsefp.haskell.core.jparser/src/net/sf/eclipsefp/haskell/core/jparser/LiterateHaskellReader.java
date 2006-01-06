@@ -69,7 +69,7 @@ public class LiterateHaskellReader extends Reader {
 					System.arraycopy(buf, i, lookaheadBuffer, 0, numCharsCopied);
 					if (numCharsCopied < endStringSize) {
 						fInput.mark(endStringSize - numCharsCopied);
-						fInput.read(lookaheadBuffer, i + numCharsCopied, endStringSize - numCharsCopied);
+						fInput.read(lookaheadBuffer, numCharsCopied, endStringSize - numCharsCopied);
 						fInput.reset();
 					}
 					fInsideTexCodeBlock = !Arrays.equals(TEX_END_STRING, lookaheadBuffer);
