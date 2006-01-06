@@ -192,6 +192,25 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertRead("\n");
 		assertRead("\\world!\"\n");
 	}
+	
+	public void testTwoTexCodeBlocks() throws IOException {
+		final String input = "The fat function calculates a factorial\n" +
+				             "\\begin{code}\n" +
+				             "fat 0 = 1\n" +
+				             "fat n = n * (fat (n - 1))\n" +
+				             "\\end{code}\n" +
+				             "The main function is the program entry point\n" +
+				             "\\begin{code}\n" +
+				             "main = fat 3\n" +
+				             "\\end{code}\n";
+		
+		setReaderInput(input);
+		assertRead("\n\n");
+		assertRead("fat 0 = 1\n");
+		assertRead("fat n = n * (fat (n - 1))\n");
+		assertRead("\n\n\n");
+		assertRead("main = fat 3\n");
+	}
 
 	private void assertNoDeadLock(Runnable runnable, long timeoutMillis) {
 		Thread t = new Thread(runnable);

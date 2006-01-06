@@ -74,6 +74,7 @@ public class LiterateHaskellReader extends Reader {
 					}
 					if (Arrays.equals(TEX_END_STRING, lookaheadBuffer)) {
 						fProgramLine = fInsideTexCodeBlock = false;
+						fProcessedOutput.write('\n');
 					} else {
 						fProcessedOutput.write(buf[i]);
 					}
