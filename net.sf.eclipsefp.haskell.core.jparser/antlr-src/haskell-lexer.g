@@ -70,7 +70,7 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;
 
-DECIMAL : '0' | ('1'..'9') (DIGIT)* ;
+DECIMAL : (DIGIT)+ ;
 
 HEXADECIMAL : (HEXIT)+ ;
 
