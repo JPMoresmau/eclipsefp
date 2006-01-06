@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
+import java.io.Reader;
 import java.io.StringReader;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
@@ -633,7 +634,11 @@ public class ParserIntegrationTest extends TestCase {
 	}
 	
 	private IModule parse(String contents) throws RecognitionException, TokenStreamException {
-		HaskellParser parser = new HaskellParser(new StringReader(contents));
+		return parse(new StringReader(contents));
+	}
+
+	private IModule parse(final Reader input) throws RecognitionException, TokenStreamException {
+		HaskellParser parser = new HaskellParser(input);
 		
 		return parser.parseModule();
 	}

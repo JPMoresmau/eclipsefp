@@ -124,6 +124,16 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertNoDeadLock(readBufferBlock, 5000);
 	}
 	
+	public void testCommentInsideTexBlock() throws IOException {
+		final String program = "\\begin{code}\n" +
+                               "-- This is a comment\n" +
+                               "show_motd :: [DarcsFlag] -> String -> IO ()\n" +
+				               "\\end{code}";
+
+		setReaderInput(program);
+		while(fReader.read() != -1)	;
+	}
+	
 	private void assertNoDeadLock(Runnable runnable, long timeoutMillis) {
 		Thread t = new Thread(runnable);
 		t.start();
