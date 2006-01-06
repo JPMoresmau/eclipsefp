@@ -72,8 +72,11 @@ public class LiterateHaskellReader extends Reader {
 						fInput.read(lookaheadBuffer, numCharsCopied, endStringSize - numCharsCopied);
 						fInput.reset();
 					}
-					fInsideTexCodeBlock = !Arrays.equals(TEX_END_STRING, lookaheadBuffer);
-					fProgramLine = fInsideTexCodeBlock;
+					if (Arrays.equals(TEX_END_STRING, lookaheadBuffer)) {
+						fProgramLine = fInsideTexCodeBlock = false;
+					} else {
+						fProcessedOutput.write(buf[i]);
+					}
 				} else if (fProgramLine) {
 					fProcessedOutput.write(buf[i]);
 					++numProcessedChars;

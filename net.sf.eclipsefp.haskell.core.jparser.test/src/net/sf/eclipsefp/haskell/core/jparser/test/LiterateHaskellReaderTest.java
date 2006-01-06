@@ -161,13 +161,38 @@ public class LiterateHaskellReaderTest extends TestCase {
 		final String program = "\\begin{code}\n" +
                                "--  This line is exactly 66  characters long (line break excluded)\n" +
  			                  //012345678901234567890123456789012345678901234567890123456789012345  
-                               "\\end{code}";
+                               "\\end{code}\n" +
+                               "rasta";
 
 		setReaderInput(program);
 		assertRead("\n");
 		assertRead("--  This line is exactly 66  characters long (line break excluded)\n");
 	}
 	
+	public void testTexBlockContainsBackslash() throws IOException {
+		final String program = "\\begin{code}\n" +
+                               "main = putStr \"This is a double-quote: \\\"\"\n" +
+                               "\\end{code}";
+
+		setReaderInput(program);
+		assertRead("\n");
+		assertRead("main = putStr \"This is a double-quote: \\\"\"\n");
+	}
+
+	public void testLineInsideTexBlockStartsWithBackslash() throws IOException {
+		final String program = "\\begin{code}\n" +
+                               "main = putStr \"Hello, \\\n" +
+                               "\n" +
+                               "\\world!\"\n" +
+                               "\\end{code}";
+
+		setReaderInput(program);
+		assertRead("\n");
+		assertRead("main = putStr \"Hello, \\\n");
+		assertRead("\n");
+		assertRead("\\world!\"\n");
+	}
+
 	private void assertNoDeadLock(Runnable runnable, long timeoutMillis) {
 		Thread t = new Thread(runnable);
 		t.start();
