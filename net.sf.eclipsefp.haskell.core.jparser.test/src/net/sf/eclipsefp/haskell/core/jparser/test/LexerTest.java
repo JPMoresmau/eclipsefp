@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
+import antlr.RecognitionException;
 import antlr.Token;
 import antlr.TokenStreamException;
 
@@ -142,7 +143,9 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 				             );
 		Token t = fLexer.nextToken();
 		assertEquals(COMMENT, t.getType());
-		assertEquals("--this is the main module for the app\n", t.getText());
+		assertEquals("--this is the main module for the app", t.getText());
+		
+		fLexer.skipTokens(1); // \n
 		
 		t = fLexer.nextToken(); //module
 		assertEquals(0, t.getColumn());
@@ -171,6 +174,22 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		t = fLexer.nextToken(); //putStr
 		assertEquals("putStr", t.getText());
 		assertEquals(34, t.getColumn());
+	}
+	
+	public void testNewlineAfterComment() throws RecognitionException, TokenStreamException {
+		//inspired on darcs' source code
+		final String input = "fat 0 = 1 -- base case\n" +
+			                 "fat n = n * (fat (n - 1))";
+		
+		fLexer = createLexer(input);
+		//fat 0 = 1
+		fLexer.skipTokens(4);
+		
+		Token commentToken = fLexer.nextToken();
+		assertEquals(COMMENT, commentToken.getType());
+		assertEquals("-- base case", commentToken.getText());
+		
+		assertEquals(NEWLINE, fLexer.nextToken().getType());
 	}
 	
 	public void testSimpleStringLiteral() throws TokenStreamException {

@@ -113,7 +113,7 @@ ASCII : "NUL" { setText("\u0000"); } ;
 COMMENT : LINE_COMMENT | BLOCK_COMMENT ;
 
 protected
-LINE_COMMENT : "--" (~'\n')* NEWLINE ;
+LINE_COMMENT : "--" (~'\n')* ;
 
 protected
 BLOCK_COMMENT : "{-" (options {greedy=false;} : (NEWLINE | .))* "-}" ;
