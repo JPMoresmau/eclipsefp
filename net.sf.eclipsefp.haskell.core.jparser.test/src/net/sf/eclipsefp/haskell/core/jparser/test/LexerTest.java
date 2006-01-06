@@ -285,6 +285,20 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertToken(CHARACTER_LITERAL, "" + ((char) 139), fLexer.nextToken());
 	}
 	
+	public void testEscapeHexadecimal() throws TokenStreamException {
+		fLexer = createLexer("'\\x80' '\\x0F'");
+		
+		assertToken(CHARACTER_LITERAL, "" + ((char) 0x80), fLexer.nextToken());
+		assertToken(CHARACTER_LITERAL, "" + ((char) 0x0F), fLexer.nextToken());
+	}
+	
+	public void testEscapeOctal() throws TokenStreamException {
+		fLexer = createLexer("'\\o40' '\\o100'");
+
+		assertToken(CHARACTER_LITERAL, "" + ((char) 040), fLexer.nextToken());
+		assertToken(CHARACTER_LITERAL, "" + ((char) 0100), fLexer.nextToken());
+	}
+	
 	public void testIgnorePreprocessor() throws TokenStreamException {
 		final String input = "#ifdef HAVE_CURL\n" +
 				             "import Foreign.C.String ( withCString, CString )\n" +

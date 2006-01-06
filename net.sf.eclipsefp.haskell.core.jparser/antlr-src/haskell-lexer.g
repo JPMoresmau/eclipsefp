@@ -72,6 +72,10 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 
 DECIMAL : '0' | ('1'..'9') (DIGIT)* ;
 
+HEXADECIMAL : (HEXIT)+ ;
+
+OCTAL : (OCTIT)+ ;
+
 CHARACTER_LITERAL : '\''! (~('\''|'\\')|CHARACTER_ESCAPE) '\''! ;
 
 STRING_LITERAL : '"'! (~('"'|'\\')|STRING_ESCAPE|GAP!)* '"'! ;
@@ -81,9 +85,15 @@ CHARACTER_ESCAPE
 	:	'\\'!
 		( CHAR_ESC
 		| ASCII
-		| t:DECIMAL {	char c = (char) Integer.parseInt(t.getText());
+		| d:DECIMAL {	char c = (char) Integer.parseInt(d.getText());
 						setText(Character.toString(c));
 					}
+		| 'x' h:HEXADECIMAL {	char c = (char) Integer.parseInt(h.getText(), 16);
+			             		setText(Character.toString(c));
+		                    }
+		| 'o' o:OCTAL {	char c = (char) Integer.parseInt(o.getText(), 8);
+						setText(Character.toString(c));
+		              }
 		)
 	;
 	
@@ -134,6 +144,12 @@ LETTER : UPPER_CASE | LOWER_CASE;
 
 protected
 DIGIT : '0'..'9';
+
+protected
+HEXIT : DIGIT | 'A'..'F' | 'a'..'f' ;
+
+protected
+OCTIT : '0'..'7' ;
 
 CONTEXT_ARROW : "=>" ;
 
