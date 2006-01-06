@@ -124,14 +124,48 @@ public class LiterateHaskellReaderTest extends TestCase {
 		assertNoDeadLock(readBufferBlock, 5000);
 	}
 	
-	public void testCommentInsideTexBlock() throws IOException {
+	public void test56CharsInsideTextBlock() throws IOException {
 		final String program = "\\begin{code}\n" +
-                               "-- This is a comment\n" +
-                               "show_motd :: [DarcsFlag] -> String -> IO ()\n" +
+		                       "-- This line is exactly 56 characters long (line break e\n" +
+		                      //01234567890123456789012345678901234567890123456789012345  
 				               "\\end{code}";
 
 		setReaderInput(program);
-		while(fReader.read() != -1)	;
+		assertRead("\n");
+		assertRead("-- This line is exactly 56 characters long (line break e\n");
+	}
+
+	public void test57CharsInsideTextBlock() throws IOException {
+		final String program = "\\begin{code}\n" +
+		                       "-- This line is exactly 57 characters long (line break ex\n" +
+		                      //012345678901234567890123456789012345678901234567890123456  
+				               "\\end{code}";
+
+		setReaderInput(program);
+		assertRead("\n");
+		assertRead("-- This line is exactly 57 characters long (line break ex\n");
+	}
+
+	public void test65CharsInsideTextBlock() throws IOException {
+		final String program = "\\begin{code}\n" +
+ 	                           "--  This line is exactly 65 characters long (line break excluded)\n" +
+			                  //01234567890123456789012345678901234567890123456789012345678901234  
+				               "\\end{code}";
+
+		setReaderInput(program);
+		assertRead("\n");
+		assertRead("--  This line is exactly 65 characters long (line break excluded)\n");
+	}
+	
+	public void test66CharsInsideTextBlock() throws IOException {
+		final String program = "\\begin{code}\n" +
+                               "--  This line is exactly 66  characters long (line break excluded)\n" +
+ 			                  //012345678901234567890123456789012345678901234567890123456789012345  
+                               "\\end{code}";
+
+		setReaderInput(program);
+		assertRead("\n");
+		assertRead("--  This line is exactly 66  characters long (line break excluded)\n");
 	}
 	
 	private void assertNoDeadLock(Runnable runnable, long timeoutMillis) {
