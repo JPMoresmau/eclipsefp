@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
+<stringAttribute key="product" value="org.eclipse.platform.ide"/>
+<booleanAttribute key="usefeatures" value="false"/>
+<stringAttribute key="bootstrap" value=""/>
+<booleanAttribute key="useProduct" value="false"/>
+<stringAttribute key="location5" value="c:\runtime-workspace"/>
+<booleanAttribute key="tracing" value="false"/>
+<stringAttribute key="location2" value="${env.TEMP}/tmp/runtime-workspace"/>
+<stringAttribute key="selected_target_plugins" value="org.apache.lucene,org.eclipse.ant.core,org.eclipse.compare,org.eclipse.core.commands,org.eclipse.core.contenttype,org.eclipse.core.expressions,org.eclipse.core.filebuffers,org.eclipse.core.filesystem,org.eclipse.core.filesystem.win32.x86,org.eclipse.core.jobs,org.eclipse.core.resources,org.eclipse.core.resources.compatibility,org.eclipse.core.resources.win32,org.eclipse.core.runtime,org.eclipse.core.runtime.compatibility,org.eclipse.core.variables,org.eclipse.debug.core,org.eclipse.debug.ui,org.eclipse.equinox.common,org.eclipse.equinox.preferences,org.eclipse.equinox.registry,org.eclipse.help,org.eclipse.help.appserver,org.eclipse.help.base,org.eclipse.jface,org.eclipse.jface.text,org.eclipse.ltk.core.refactoring,org.eclipse.ltk.ui.refactoring,org.eclipse.osgi,org.eclipse.swt,org.eclipse.swt.win32.win32.x86,org.eclipse.team.core,org.eclipse.team.ui,org.eclipse.text,org.eclipse.ui,org.eclipse.ui.cheatsheets,org.eclipse.ui.console,org.eclipse.ui.editors,org.eclipse.ui.forms,org.eclipse.ui.ide,org.eclipse.ui.navigator,org.eclipse.ui.views,org.eclipse.ui.win32,org.eclipse.ui.workbench,org.eclipse.ui.workbench.compatibility,org.eclipse.ui.workbench.texteditor,org.eclipse.update.configurator,org.eclipse.update.core,org.eclipse.update.core.win32,org.eclipse.update.ui,org.junit"/>
+<booleanAttribute key="automaticValidate" value="false"/>
+<stringAttribute key="location3" value="/tmp/runtime-workspace"/>
+<booleanAttribute key="automaticAdd" value="false"/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="includeFragments" value="true"/>
+<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,de.leiffrenzel.fp.haskell.core,de.leiffrenzel.fp.haskell.ghccompiler,net.sf.eclipsefp.antlr,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.common.ui,de.leiffrenzel.fp.haskell,de.leiffrenzel.fp.haskell.ui,net.sf.eclipsefp.haskell.core.jparser,de.leiffrenzel.fp.haskell.doc.user,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.hugs,net.sf.eclipsefp.common.ui.test,net.sf.eclipsefp.haskell.core.jparser.test"/>
+<stringAttribute key="location" value="tmp/runtime-workspace"/>
+<stringAttribute key="location4" value="c:\temp\runtime-workspace"/>
+<stringAttribute key="configLocation" value=""/>
+<booleanAttribute key="clearws" value="true"/>
+<stringAttribute key="location1" value="tmp/runtime-workspace"/>
+<stringAttribute key="pde.version" value="3.2"/>
+<stringAttribute key="templateConfig" value=""/>
+<booleanAttribute key="default" value="false"/>
+<booleanAttribute key="clearConfig" value="true"/>
+<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<booleanAttribute key="useDefaultConfig" value="true"/>
+<booleanAttribute key="askclear" value="false"/>
+<booleanAttribute key="includeOptional" value="true"/>
+</launchConfiguration>
