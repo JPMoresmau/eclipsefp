@@ -629,7 +629,23 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("readPatchInfo", decls[1].getName());
 	}
 	
+	public void testFunctionDeclarationWithLabeledPattern() throws RecognitionException, TokenStreamException {
+		//code shamelessly copied from darcs
+		final String input = "command_alloptions DarcsCommand { command_darcsoptions = opts }\n" +
+				             "    = opts ++ [disable, help, posthook_cmd, posthook_prompt]\n" +
+				             "command_options = concat . map option_from_darcsoption . command_alloptions";
+		
+		IModule module = parse(input);
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		assertEquals("command_alloptions", decls[0].getName());
+		assertEquals("command_options", decls[1].getName());
+	}
+	
 //TODO try to declare the function '(==) a b = not (a /= b)'
+	
+//TODO recognize infix functions named with symbols (like <>, <+> and $$)
+//see darcs source code, Printer.lhs
 	
 //TODO test the gtycon (that occurs inside inst, subrule of instancedecl)
 	
