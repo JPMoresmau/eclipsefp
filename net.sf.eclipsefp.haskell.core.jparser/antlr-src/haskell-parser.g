@@ -411,7 +411,7 @@ defaultdecl
 
 context
 	:
-		(~(CONTEXT_ARROW))*
+		(~(CONTEXT_ARROW|SEMICOLON))*
 	;
 	
 simpletype returns [String result]

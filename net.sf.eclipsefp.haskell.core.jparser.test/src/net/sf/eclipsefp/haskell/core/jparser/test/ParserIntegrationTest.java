@@ -617,6 +617,18 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals(2, module.getDeclarations().length);
 	}
 	
+	public void testContextAfterDatatypeDeclaration() throws RecognitionException, TokenStreamException {
+		final String input = "data RepoPatchInfo = RPI String PatchInfo\n" +
+				             "readPatchInfo :: Stringalike s => s -> Maybe (PatchInfo, s)";
+		
+		IModule module = parse(input);
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		assertEquals("RepoPatchInfo", decls[0].getName());
+		assertEquals("readPatchInfo", decls[1].getName());
+	}
+	
 //TODO try to declare the function '(==) a b = not (a /= b)'
 	
 //TODO test the gtycon (that occurs inside inst, subrule of instancedecl)
