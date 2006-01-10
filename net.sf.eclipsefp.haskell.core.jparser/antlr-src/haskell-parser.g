@@ -219,14 +219,6 @@ qvar returns [String result]
 		}
 	;
 	
-varid returns [String result]
-	{
-		result = null;
-	}
-	:
-		id:VARIABLE_ID { result = id.getText(); }
-	;
-	
 modid returns [String result]
 	{
 		result = null;
@@ -361,7 +353,7 @@ classdecl
 		CLASS
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=conid { aDeclaration.setName(name); }
-		varid
+		tyvar
 		(
 			WHERE
 			block
@@ -390,7 +382,7 @@ inst returns [String result]
 		result=null;
 	}
 	:	result=gtycon
-	|   LEFT_PAREN result=gtycon (varid)* RIGHT_PAREN
+	|   LEFT_PAREN result=gtycon (tyvar)* RIGHT_PAREN
 	|	LEFT_BRACKET result=conid RIGHT_BRACKET {result = '[' + result + ']';}
 	;
 		
@@ -471,10 +463,10 @@ vars returns [String result]
 		String var = null;
 	}
 	:
-		var=varid { buf.append(var); }
+		var=var { buf.append(var); }
 		(
 			COMMA
-			var=varid {
+			var=var	{
 						buf.append(", ");
 		          		buf.append(var);
 		          	  }
@@ -483,6 +475,16 @@ vars returns [String result]
 			result = buf.toString();
 		}
 	;
+	
+var returns [String result]
+	{
+		result = null;
+	}
+	:
+		id:VARIABLE_ID { result = id.getText(); }
+	;
+
+tyvar : VARIABLE_ID ;
 
 funlhs returns [Token result]
 	{
