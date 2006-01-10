@@ -70,23 +70,13 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 	}
 	
 	public void testCommonPrefixes() throws TokenStreamException {
-		fLexer = createLexer("main whomp modula whery");
+		fLexer = createLexer("main whomp modula whery .");
 		
-		Token t = fLexer.nextToken();
-		assertEquals(VARIABLE_ID, t.getType());
-		assertEquals("main", t.getText());
-		
-		t = fLexer.nextToken();
-		assertEquals(VARIABLE_ID, t.getType());
-		assertEquals("whomp", t.getText());
-
-		t = fLexer.nextToken();
-		assertEquals(VARIABLE_ID, t.getType());
-		assertEquals("modula", t.getText());
-
-		t = fLexer.nextToken();
-		assertEquals(VARIABLE_ID, t.getType());
-		assertEquals("whery", t.getText());
+		assertToken(VARIABLE_ID, "main", fLexer.nextToken());
+		assertToken(VARIABLE_ID, "whomp", fLexer.nextToken());
+		assertToken(VARIABLE_ID, "modula", fLexer.nextToken());
+		assertToken(VARIABLE_ID, "whery", fLexer.nextToken());
+		assertToken(DOT, ".", fLexer.nextToken());
 	}
 	
 	public void testMaximalMunchRule() throws TokenStreamException  {
@@ -318,6 +308,15 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertToken(CONTEXT_ARROW, "=>", fLexer.nextToken());
 	}
 
+	public void testRecognizeVarsyms() throws TokenStreamException {
+		final String input = "<> =>$ $$";
+		fLexer = createLexer(input);
+		
+		assertToken(VARSYM, "<>", fLexer.nextToken());
+		assertToken(VARSYM, "=>$", fLexer.nextToken());
+		assertToken(VARSYM, "$$", fLexer.nextToken());
+	}
+	
 	private void assertTokenType(int expectedType, Token token) {
 		assertEquals(expectedType, token.getType());
 	}

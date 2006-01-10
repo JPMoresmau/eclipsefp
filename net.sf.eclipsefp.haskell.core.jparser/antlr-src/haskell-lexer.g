@@ -35,6 +35,9 @@ tokens {
 	LET = "let" ;
 	DO = "do" ;
 	OF = "of" ;
+	CONTEXT_ARROW = "=>" ;
+	DOT = "." ;
+	EQUALS = "=" ;
 }
 
 {
@@ -151,8 +154,6 @@ HEXIT : DIGIT | 'A'..'F' | 'a'..'f' ;
 protected
 OCTIT : '0'..'7' ;
 
-CONTEXT_ARROW : "=>" ;
-
 LEFT_CURLY : "{" ;
 
 RIGHT_CURLY : "}" ;
@@ -163,18 +164,20 @@ LEFT_PAREN : "(" ;
 
 RIGHT_PAREN : ")" ;
 
-LEFT_BRACKET : '[' ;
+LEFT_BRACKET : "[" ;
 
-RIGHT_BRACKET : ']' ;
+RIGHT_BRACKET : "]" ;
 
 COMMA : "," ;
-
-DOT : "." ;
-
-EQUALS : "=" ;
 
 OFTYPE : "::" ;
 
 INFIX_QUOTE : "`" ;
 
-SYMBOL : ~('a'..'z' | 'A'..'Z' | '0'..'9');
+VARSYM : SYMBOL (SYMBOL | ":" )* ;
+
+SYMBOL : "!" | "#" | "$" | "%" | "&" | "*" | "+" | "." | "/" | "<" | "="
+       | ">" | "?" | "@" | "\\" | "^" | "-" | "~"
+       ;
+       
+UNANTICIPATED_SYMBOL : ~('a'..'z' | 'A'..'Z' | '0'..'9') ;

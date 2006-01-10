@@ -41,8 +41,8 @@ public class PreprocessedTokenStreamTest extends TestCase implements HaskellLexe
 		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(47, t.getColumn());
 		
-		// 0 - > let
-		stream.skipTokens(4);
+		// 0 -> let
+		stream.skipTokens(3);
 		t = stream.nextToken();
 		assertEquals(OPENBLOCK, t.getType());
 		assertEquals(56, t.getColumn());
