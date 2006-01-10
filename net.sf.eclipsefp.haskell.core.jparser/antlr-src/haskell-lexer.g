@@ -175,4 +175,6 @@ EQUALS : "=" ;
 
 OFTYPE : "::" ;
 
+INFIX_QUOTE : "`" ;
+
 SYMBOL : ~('a'..'z' | 'A'..'Z' | '0'..'9');
