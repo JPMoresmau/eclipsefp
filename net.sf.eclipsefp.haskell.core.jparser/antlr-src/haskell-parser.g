@@ -430,14 +430,16 @@ nonstddecl
 		(block | ~(SEMICOLON|RIGHT_CURLY))+
 	;
 
+//the valdef rule doesn't come directly from the report spec
+//it is inherited from the Language.Haskell.Parser impl
 valdef
 	{
 		FunctionMatch match = createNode(FunctionMatch.class);
 		
-		Token name = null;
+		String name = null;
 	}
 	:
-		name=funlhs {	match.setName(name.getText());
+		name=funlhs {	match.setName(name);
 						fBuilder.addFunctionMatch(match);
 					}
 		declrhs
@@ -482,22 +484,33 @@ var returns [String result]
 	}
 	:
 		id:VARIABLE_ID { result = id.getText(); }
+	|	LEFT_PAREN varsymID:VARSYM { result = varsymID.getText(); } RIGHT_PAREN
 	;
 
 tyvar : VARIABLE_ID ;
 
-funlhs returns [Token result]
+funlhs returns [String result]
 	{
+		String infixID;
 		result = null;
 	}
 	:
-		(	(VARIABLE_ID INFIX_QUOTE) =>
+		(	(VARIABLE_ID varop) =>
 		        VARIABLE_ID
-		        INFIX_QUOTE
-		        infixID:VARIABLE_ID { result = infixID; }
-		        INFIX_QUOTE 
-		|	id:VARIABLE_ID { result=id; } )
+		        infixID=varop { result = infixID; }
+		|	id:VARIABLE_ID { result=id.getText(); } )
 		(block | ~(EQUALS|SEMICOLON))*
+	;
+	
+varop returns [String result]
+	{
+		result = null;
+	}
+	:	
+		t1:VARSYM { result=t1.getText(); }
+	|	INFIX_QUOTE
+		t2:VARIABLE_ID { result = t2.getText(); }
+		INFIX_QUOTE
 	;
 	
 declrhs :
