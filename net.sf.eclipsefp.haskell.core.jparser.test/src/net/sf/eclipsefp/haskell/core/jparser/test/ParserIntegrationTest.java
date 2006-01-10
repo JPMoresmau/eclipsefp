@@ -642,6 +642,32 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("command_options", decls[1].getName());
 	}
 	
+	public void testInfixOperatorDeclaration() throws RecognitionException, TokenStreamException {
+		final String input = "a <> b = not (a == b)";
+		IModule module = parse(input);
+		
+		assertEquals("<>", module.getDeclarations()[0].getName());
+	}
+	
+	public void testInfixOperatorTypeSignature() throws RecognitionException, TokenStreamException {
+		final String input = "(<>) :: a -> a -> Bool";
+
+		IModule module = parse(input);
+		
+		assertEquals("<>", module.getDeclarations()[0].getName());
+	}
+	
+	public void testInfixFunctionDefinition() throws RecognitionException, TokenStreamException {
+		//another code excerpt shamelessly copied from darcs
+		final String input = "a `mand` b = do isa <- a" +
+				             "    if isa then b else return False\n";
+		IModule module = parse(input);
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals(1, decls.length);
+		assertEquals("mand", decls[0].getName());
+	}
+	
 //TODO try to declare the function '(==) a b = not (a /= b)'
 	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)
