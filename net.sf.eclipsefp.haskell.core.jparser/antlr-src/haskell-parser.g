@@ -489,7 +489,7 @@ funlhs returns [Token result]
 		result = null;
 	}
 	:
-		id:VARIABLE_ID { result=id; } (~(EQUALS|SEMICOLON))*
+		id:VARIABLE_ID { result=id; } (block | ~(EQUALS|SEMICOLON))*
 	;
 	
 declrhs :
