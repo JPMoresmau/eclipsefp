@@ -39,6 +39,8 @@ tokens {
 	DOT = "." ;
 	EQUALS = "=" ;
 	QVARID;
+	QCONID;
+	QVARSYM;
 }
 
 {
