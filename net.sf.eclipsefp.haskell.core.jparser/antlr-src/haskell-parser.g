@@ -223,7 +223,6 @@ modid returns [String result]
 	}
 	: 
 	    result = qconid
-	    { return result; }
 	;
 
 conid returns [String result]

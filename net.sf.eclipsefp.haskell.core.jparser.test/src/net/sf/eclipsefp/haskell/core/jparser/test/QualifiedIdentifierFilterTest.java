@@ -25,6 +25,28 @@ public class QualifiedIdentifierFilterTest extends TokenStreamTestCase implement
 		assertToken(QCONID, "MyModule.MyCon", fFilter.nextToken());
 	}
 	
+	public void testDoubleQualifiedConstructor() throws TokenStreamException {
+		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
+				new CommonToken(DOT, "."),
+				new CommonToken(CONSTRUCTOR_ID, "MySubModule"),
+				new CommonToken(DOT, "."),
+				new CommonToken(CONSTRUCTOR_ID, "MyCon"));
+		assertToken(QCONID, "MyModule.MySubModule.MyCon", fFilter.nextToken());
+	}
+	
+	public void testInvalidStream() {
+		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
+				 new CommonToken(DOT, "."),
+				 new CommonToken(MODULE, "module"));
+		
+		try {
+			fFilter.nextToken();
+			fail("Should reject invalid underlying stream");
+		} catch (TokenStreamException e) {
+			assertTrue(true);
+		}
+	}
+	
 	public void testQualifiedVarsym() throws TokenStreamException {
 		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
 				 new CommonToken(DOT, "."),
