@@ -38,6 +38,7 @@ tokens {
 	CONTEXT_ARROW = "=>" ;
 	DOT = "." ;
 	EQUALS = "=" ;
+	QVARID;
 }
 
 {

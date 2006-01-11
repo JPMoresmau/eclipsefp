@@ -9,9 +9,7 @@ import antlr.TokenStreamException;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 
-import junit.framework.TestCase;
-
-public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
+public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenTypes {
 	
 	private TestTokenStream fLexer;
 
@@ -315,15 +313,6 @@ public class LexerTest extends TestCase implements HaskellLexerTokenTypes {
 		assertToken(VARSYM, "<>", fLexer.nextToken());
 		assertToken(VARSYM, "=>$", fLexer.nextToken());
 		assertToken(VARSYM, "$$", fLexer.nextToken());
-	}
-	
-	private void assertTokenType(int expectedType, Token token) {
-		assertEquals(expectedType, token.getType());
-	}
-
-	private void assertToken(int expectedType, String expectedText, Token token) {
-		assertEquals(expectedType, token.getType());
-		assertEquals(expectedText, token.getText());
 	}
 	
 	// TODO escape  -> 	 \ ( charesc | ascii | decimal | o octal | x hexadecimal )

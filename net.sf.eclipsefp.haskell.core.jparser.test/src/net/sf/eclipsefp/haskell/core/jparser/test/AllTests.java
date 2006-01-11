@@ -12,6 +12,7 @@ public class AllTests {
 		suite.addTestSuite(ParserIntegrationTest.class);
 		suite.addTestSuite(LexerTest.class);
 		suite.addTestSuite(LiterateHaskellReaderTest.class);
+		suite.addTestSuite(QualifiedIdentifierFilterTest.class);
 		suite.addTestSuite(PluginTest.class);
 		suite.addTestSuite(ModuleBuilderTest.class);
 		suite.addTestSuite(ParserUnitTest.class);
