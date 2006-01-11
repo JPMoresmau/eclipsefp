@@ -1,16 +1,14 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 import antlr.CommonToken;
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
-public class QualifiedIdentifierFilter implements TokenStream, HaskellLexerTokenTypes {
+public class QualifiedIdentifierFilter extends TokenStreamProcessor implements HaskellLexerTokenTypes {
 
 	private static final Map<Integer, Integer> QUALIFIED_TYPE_TABLE
 		= new Hashtable<Integer, Integer>();
@@ -21,28 +19,15 @@ public class QualifiedIdentifierFilter implements TokenStream, HaskellLexerToken
 		QUALIFIED_TYPE_TABLE.put(VARSYM, QVARSYM);
 	}
 	
-	private LookaheadTokenStream fStream;
-	private Queue<Token> fInsertedTokens = new LinkedList<Token>();
-	
 	public QualifiedIdentifierFilter(TokenStream input) {
-		fStream = new LookaheadTokenStream(input);
+		super(new LookaheadTokenStream(input));
 	}
 
-	public Token nextToken() throws TokenStreamException {
-		insertNeededTokens();
-		
-		if (fInsertedTokens.isEmpty()) {
-			return fStream.nextToken();
-		} else {
-			return fInsertedTokens.poll();
-		}
-	}
-
-	private void insertNeededTokens() throws TokenStreamException {
-		if (isConstructorId(fStream.peekToken()) && isDot(fStream.peekToken(2))) {
-			Token conid = fStream.nextToken();
-			Token dot = fStream.nextToken();
-			Token id = fStream.nextToken();
+	protected void insertTokensAsNeeded() throws TokenStreamException {
+		if (isConstructorId(peekToken()) && isDot(peekToken(2))) {
+			Token conid = consumeToken();
+			Token dot = consumeToken();
+			Token id = consumeToken();
 			String tokenText = conid.getText() + dot.getText() + id.getText();
 			
 			Token qualifiedId = new CommonToken(getQualifiedType(id),
