@@ -6,7 +6,6 @@ import antlr.TokenStream;
 import antlr.TokenStreamException;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 import net.sf.eclipsefp.haskell.core.jparser.QualifiedIdentifierFilter;
-import junit.framework.TestCase;
 
 public class QualifiedIdentifierFilterTest extends TokenStreamTestCase implements HaskellLexerTokenTypes {
 	
