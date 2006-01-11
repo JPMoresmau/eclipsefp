@@ -36,7 +36,6 @@ tokens {
 	DO = "do" ;
 	OF = "of" ;
 	CONTEXT_ARROW = "=>" ;
-	DOT = "." ;
 	EQUALS = "=" ;
 	QVARID;
 	QCONID;

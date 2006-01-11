@@ -56,7 +56,8 @@ public class QualifiedIdentifierFilter extends TokenStreamProcessor implements H
 	}
 
 	private boolean isDot(Token aToken) {
-		return aToken.getType() == HaskellLexerTokenTypes.DOT;
+		return aToken.getType() == HaskellLexerTokenTypes.VARSYM
+		    && ".".equals(aToken.getText());
 	}
 
 	private boolean isConstructorId(Token aToken) {

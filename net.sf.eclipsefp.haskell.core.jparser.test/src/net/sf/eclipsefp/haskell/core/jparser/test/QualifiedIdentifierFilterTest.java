@@ -13,30 +13,30 @@ public class QualifiedIdentifierFilterTest extends TokenStreamTestCase implement
 
 	public void testQualifiedVariable() throws TokenStreamException {
 		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
-				 new CommonToken(DOT, "."),
+				 new CommonToken(VARSYM, "."),
 				 new CommonToken(VARIABLE_ID, "aFunction"));
 		assertToken(QVARID, "MyModule.aFunction", fFilter.nextToken());
 	}
 	
 	public void testQualifiedConstructor() throws TokenStreamException {
 		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
-				 new CommonToken(DOT, "."),
+				 new CommonToken(VARSYM, "."),
 				 new CommonToken(CONSTRUCTOR_ID, "MyCon"));
 		assertToken(QCONID, "MyModule.MyCon", fFilter.nextToken());
 	}
 	
 	public void testDoubleQualifiedConstructor() throws TokenStreamException {
 		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
-				new CommonToken(DOT, "."),
+				new CommonToken(VARSYM, "."),
 				new CommonToken(CONSTRUCTOR_ID, "MySubModule"),
-				new CommonToken(DOT, "."),
+				new CommonToken(VARSYM, "."),
 				new CommonToken(CONSTRUCTOR_ID, "MyCon"));
 		assertToken(QCONID, "MyModule.MySubModule.MyCon", fFilter.nextToken());
 	}
 	
 	public void testInvalidStream() {
 		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
-				 new CommonToken(DOT, "."),
+				 new CommonToken(VARSYM, "."),
 				 new CommonToken(MODULE, "module"));
 		
 		try {
@@ -49,7 +49,7 @@ public class QualifiedIdentifierFilterTest extends TokenStreamTestCase implement
 	
 	public void testQualifiedVarsym() throws TokenStreamException {
 		setInput(new CommonToken(CONSTRUCTOR_ID, "MyModule"),
-				 new CommonToken(DOT, "."),
+				 new CommonToken(VARSYM, "."),
 				 new CommonToken(VARSYM, "$$"));
 		assertToken(QVARSYM, "MyModule.$$", fFilter.nextToken());
 	}

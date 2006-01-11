@@ -74,7 +74,7 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		assertToken(VARIABLE_ID, "whomp", fLexer.nextToken());
 		assertToken(VARIABLE_ID, "modula", fLexer.nextToken());
 		assertToken(VARIABLE_ID, "whery", fLexer.nextToken());
-		assertToken(DOT, ".", fLexer.nextToken());
+		assertToken(VARSYM, ".", fLexer.nextToken());
 	}
 	
 	public void testMaximalMunchRule() throws TokenStreamException  {
@@ -315,13 +315,24 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		assertToken(VARSYM, "$$", fLexer.nextToken());
 	}
 	
+	public void testIdentifiersWithQuotes() throws TokenStreamException {
+		fLexer = createLexer("MyConstructor' myFunction'");
+		
+		assertToken(CONSTRUCTOR_ID, "MyConstructor'", fLexer.nextToken());
+		assertToken(VARIABLE_ID, "myFunction'", fLexer.nextToken());
+	}
+	
+	public void testDotString() throws TokenStreamException {
+		final String input = "\".\"";
+		fLexer = createLexer(input);
+		
+		assertToken(STRING_LITERAL, ".", fLexer.nextToken());
+	}
+	
 	// TODO escape  -> 	 \ ( charesc | ascii | decimal | o octal | x hexadecimal )
 	//      charesc -> 	a | b | f | n | r | t | v | \ | " | ' | &
 	
-	//TODO scan literate haskell (maybe this doesn't even mess with the lexer)
-	//take a look at the Language.Haskell.Parser impl
-	
-	// TODO identifiers may include single quotes
+	// TODO implement ascii escape sequences (\NUL, \RET, etc.)
 	
 	// TODO look at the qualified name examples at the 2.4 section of the report
 }
