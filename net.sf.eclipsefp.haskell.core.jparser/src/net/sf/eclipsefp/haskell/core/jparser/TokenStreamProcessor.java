@@ -9,7 +9,7 @@ import antlr.TokenStreamException;
 
 public class TokenStreamProcessor implements TokenStream {
 
-	protected Queue<Token> fInsertedTokens = new LinkedList<Token>();
+	private Queue<Token> fInsertedTokens = new LinkedList<Token>();
 	private LookaheadTokenStream fInput;
 
 	public TokenStreamProcessor(TokenStream input) {

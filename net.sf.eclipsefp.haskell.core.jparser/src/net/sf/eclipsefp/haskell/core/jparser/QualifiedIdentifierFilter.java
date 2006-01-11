@@ -32,7 +32,7 @@ public class QualifiedIdentifierFilter extends TokenStreamProcessor implements H
 			
 			Token qualifiedId = new CommonToken(getQualifiedType(id),
 									tokenText);
-			fInsertedTokens.offer(qualifiedId);
+			insertToken(qualifiedId);
 		}
 	}
 
