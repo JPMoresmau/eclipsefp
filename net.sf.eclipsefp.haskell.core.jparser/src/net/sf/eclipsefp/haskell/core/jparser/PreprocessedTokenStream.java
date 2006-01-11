@@ -1,35 +1,20 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import antlr.CommonToken;
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
-public class PreprocessedTokenStream implements TokenStream {
+public class PreprocessedTokenStream extends TokenStreamProcessor {
 
-	private Queue<Token> fInsertedTokens = new LinkedList<Token>();
-	private LookaheadTokenStream fStream;
 	private boolean fIsFirstCall = true;
 	
 	public PreprocessedTokenStream(TokenStream stream) {
-		fStream = new LookaheadTokenStream(stream);
+		super(stream);
 	}
 	
-	public Token nextToken() throws TokenStreamException {
-		insertNeededTokens();
-		
-		if (fInsertedTokens.isEmpty()) {
-			return fStream.nextToken();
-		} else {
-			return fInsertedTokens.poll();
-		}
-	}
-
-	private void insertNeededTokens() throws TokenStreamException {
-		if (!fInsertedTokens.isEmpty())
+	protected void insertTokensAsNeeded() throws TokenStreamException {
+		if (hasInsertedTokens())
 			return;
 		
 		if (fIsFirstCall) {
@@ -38,16 +23,16 @@ public class PreprocessedTokenStream implements TokenStream {
 			if (!isModule(firstToken) && !isLeftCurly(firstToken)) {
 				insertOpenBlock(firstToken.getColumn());
 			}
-		} else if (isLineBreak(fStream.peekToken())) {
+		} else if (isLineBreak(peekToken())) {
 			//consume the line break char
-			fStream.nextToken();
+			consumeToken();
 			Token referenceToken = consumeLinebreaks();
 			
 			if (!isEOF(referenceToken)) {
 				insertLineBreak(referenceToken.getColumn());
 			}
-		} else if (isBlockOpener(fStream.peekToken(1)) && !isLeftCurly(fStream.peekToken(2))) {
-			fInsertedTokens.offer(fStream.nextToken());
+		} else if (isBlockOpener(peekToken(1)) && !isLeftCurly(peekToken(2))) {
+			insertToken(consumeToken());
 			Token referenceToken = consumeLinebreaks();
 			
 			int openBlockColumn;
@@ -78,10 +63,6 @@ public class PreprocessedTokenStream implements TokenStream {
 		insertToken(controlToken);
 	}
 
-	private void insertToken(Token token) {
-		fInsertedTokens.offer(token);
-	}
-
 	private boolean isEOF(Token token) {
 		return token.getType() == HaskellLexerTokenTypes.EOF;
 	}
@@ -91,10 +72,10 @@ public class PreprocessedTokenStream implements TokenStream {
 	 * the next non-linebreak token.
 	 */
 	private Token consumeLinebreaks() throws TokenStreamException {
-		while(isLineBreak(fStream.peekToken())) {
-			fStream.nextToken();
+		while(isLineBreak(peekToken())) {
+			consumeToken();
 		}
-		return fStream.peekToken();
+		return peekToken();
 	}
 
 	private boolean isLineBreak(Token token) throws TokenStreamException {
