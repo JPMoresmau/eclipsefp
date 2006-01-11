@@ -11,7 +11,9 @@ public class HaskellFormatter extends TokenStreamProcessor {
 	private Stack<Integer> fLayoutContextStack = new Stack<Integer>();
 	
 	public HaskellFormatter(TokenStream in) {
-		super(new PreprocessedTokenStream(new HaskellCommentFilter(in)));
+		super(new PreprocessedTokenStream(
+				new HaskellCommentFilter(
+					new QualifiedIdentifierFilter(in))));
 	}
 
 	protected void insertTokensAsNeeded() throws TokenStreamException {

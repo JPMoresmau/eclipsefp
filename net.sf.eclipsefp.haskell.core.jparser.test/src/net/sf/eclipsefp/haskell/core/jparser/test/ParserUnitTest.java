@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 import net.sf.eclipsefp.haskell.core.jparser.ModuleBuilder;
+import net.sf.eclipsefp.haskell.core.jparser.QualifiedIdentifierFilter;
 import junit.framework.TestCase;
 
 public class ParserUnitTest extends TestCase {
@@ -54,8 +55,8 @@ public class ParserUnitTest extends TestCase {
 				             " main = test" +
 				             "}";
 		fParser = new HaskellParser(
-				   new HaskellLexer(
-				    new StringReader(inStr)));
+				    new HaskellLexer(
+				     new StringReader(inStr)));
 		
 		IModule module = fParser.parseModule();
 		
@@ -70,8 +71,9 @@ public class ParserUnitTest extends TestCase {
 		                     " import LibraryL.ModuleN" +
 		                     "}";
 		fParser = new HaskellParser(
-				new HaskellLexer(
-						new StringReader(inStr)));
+				   new QualifiedIdentifierFilter(
+				    new HaskellLexer(
+					 new StringReader(inStr))));
 		
 		IModule module = fParser.parseModule();
 		
@@ -87,8 +89,9 @@ public class ParserUnitTest extends TestCase {
 		                     " fat 0 = 1" +
 		                     "}";
 		fParser = new HaskellParser(
-				new HaskellLexer(
-						new StringReader(inStr)));
+				   new QualifiedIdentifierFilter(
+				    new HaskellLexer(
+					 new StringReader(inStr))));
 		
 		IModule module = fParser.parseModule();
 		
@@ -112,14 +115,10 @@ public class ParserUnitTest extends TestCase {
 				new CommonToken(WHERE, "where"),
 				new CommonToken(LEFT_CURLY, "{"),
 				new CommonToken(IMPORT, "import"),
-				new CommonToken(CONSTRUCTOR_ID, "LibraryL"),
-				new CommonToken(DOT, "."),
-				new CommonToken(CONSTRUCTOR_ID, "ModuleM"),
+				new CommonToken(QCONID, "LibraryL.ModuleM"),
 				new CommonToken(SEMICOLON, ";"),
 				new CommonToken(IMPORT, "import"),
-				new CommonToken(CONSTRUCTOR_ID, "LibraryK"),
-				new CommonToken(DOT, "."),
-				new CommonToken(CONSTRUCTOR_ID, "ModuleN"),
+				new CommonToken(QCONID, "LibraryK.ModuleN"),
 				new CommonToken(RIGHT_CURLY, "}"),
 				new CommonToken(EOF, "<<eof>>")
 		};

@@ -129,21 +129,11 @@ module
 
 qconid returns [String result]
 	{
-		StringBuffer buf = new StringBuffer();
 		result = null;
 	}
 	:
-		id:CONSTRUCTOR_ID { buf.append(id.getText()); }
-		(
-			DOT t:CONSTRUCTOR_ID
-			{
-				buf.append('.');
-				buf.append(t.getText());
-			}
-		)*
-		{
-			result = buf.toString();
-		}
+		t1:QCONID { result = t1.getText(); }
+	|	t2:CONSTRUCTOR_ID { result = t2.getText(); }
 	;
 
 exports
@@ -202,21 +192,29 @@ cname
     
 qvar returns [String result] 
 	{
-		StringBuffer buf = new StringBuffer();
 		result = null;
 	}
 	:
-		id:VARIABLE_ID { buf.append(id.getText()); }
-		(
-			DOT t:VARIABLE_ID
-			{
-				buf.append('.');
-				buf.append(t.getText());
-			}
-		)*
-		{
-			result = buf.toString();
-		}
+		result=qvarid
+	|	LEFT_PAREN result=qvarsym RIGHT_PAREN
+	;
+	
+qvarid returns [String result]
+	{
+		result = null;
+	}
+	:
+		t1:QVARID { result = t1.getText(); }
+	|	t2:VARIABLE_ID { result = t2.getText(); }
+	;
+
+qvarsym returns [String result]
+	{
+		result = null;
+	}
+	:
+		t1:QVARSYM { result = t1.getText(); }
+	|	t2:VARSYM { result = t2.getText(); }
 	;
 	
 modid returns [String result]

@@ -366,4 +366,5 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
 		assertEquals(SEMICOLON, formatter.nextToken().getType());
 	}
+	
 }

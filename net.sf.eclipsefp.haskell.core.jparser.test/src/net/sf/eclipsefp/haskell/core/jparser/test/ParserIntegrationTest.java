@@ -669,12 +669,12 @@ public class ParserIntegrationTest extends TestCase {
 	}
 	
 	public void testVarsymsAtExportsSpec() throws RecognitionException, TokenStreamException {
-		final String input = "module MathExtensions((--), (**)) where\n";
+		final String input = "module MathExtensions((&&), (**)) where\n";
 		IModule module = parse(input);
 		
 		IExportSpecification[] exports = module.getExportSpecifications();
 		assertEquals(2, exports.length);
-		assertEquals("--", exports[0].getName());
+		assertEquals("&&", exports[0].getName());
 		assertEquals("**", exports[1].getName());
 	}
 //TODO try to declare the function '(==) a b = not (a /= b)'
