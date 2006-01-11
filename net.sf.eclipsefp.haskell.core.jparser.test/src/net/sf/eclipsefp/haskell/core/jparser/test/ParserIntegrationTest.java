@@ -74,7 +74,7 @@ public class ParserIntegrationTest extends TestCase {
 	}
 
 	public void testModuleWithExports() throws RecognitionException, TokenStreamException {
-		IModule module = parse("module ParserTest(f1, f2, f3.f4) where {}");
+		IModule module = parse("module ParserTest(f1, f2, M1.f4) where {}");
 
 		assertNotNull(module);
 		assertEquals("ParserTest", module.getName());
@@ -85,7 +85,7 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertEquals("f1", exports[0].getName());
 		assertEquals("f2", exports[1].getName());
-		assertEquals("f3.f4", exports[2].getName());
+		assertEquals("M1.f4", exports[2].getName());
 	}
 	
 	public void testExportWithOptionalComma() throws RecognitionException, TokenStreamException {
@@ -668,6 +668,15 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("mand", decls[0].getName());
 	}
 	
+	public void testVarsymsAtExportsSpec() throws RecognitionException, TokenStreamException {
+		final String input = "module MathExtensions((--), (**)) where\n";
+		IModule module = parse(input);
+		
+		IExportSpecification[] exports = module.getExportSpecifications();
+		assertEquals(2, exports.length);
+		assertEquals("--", exports[0].getName());
+		assertEquals("**", exports[1].getName());
+	}
 //TODO try to declare the function '(==) a b = not (a /= b)'
 	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)
