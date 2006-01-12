@@ -11,8 +11,9 @@ public class AllTests {
 		//$JUnit-BEGIN$
 		suite.addTestSuite(FunctionBindingTest.class);
 		suite.addTestSuite(DataDeclarationTest.class);
-		suite.addTestSuite(ClassDeclarationTest.class);
 		suite.addTestSuite(TypeSignatureTest.class);
+		suite.addTestSuite(SourceLocationTest.class);
+		suite.addTestSuite(ClassDeclarationTest.class);
 		//$JUnit-END$
 		return suite;
 	}

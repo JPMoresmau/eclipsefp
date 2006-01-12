@@ -7,6 +7,13 @@ public class SourceLocation implements ISourceLocation {
 	private int fLine;
 	private int fColumn;
 
+	public SourceLocation() {
+	}
+
+	public SourceLocation(int line, int column) {
+		setPoint(line, column);
+	}
+
 	public int getLine() {
 		return fLine;
 	}
@@ -15,19 +22,29 @@ public class SourceLocation implements ISourceLocation {
 		return fColumn;
 	}
 
-	public boolean isBefore(ISourceLocation anotherLocation) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isAfter(final ISourceLocation anotherLocation) {
+		return    fLine > anotherLocation.getLine() 
+		       || (  fLine == anotherLocation.getLine() 
+			      && fColumn > anotherLocation.getColumn() );    
 	}
-
-	public boolean isAfter(ISourceLocation anotherLocation) {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public boolean isBefore(final ISourceLocation anotherLocation) {
+		return !isAfter( anotherLocation) 
+		    && !isEqual( anotherLocation );
 	}
-
-	public void setPoint(int line, int column) {
+	
+	
+    public void setPoint(int line, int column) {
 		fLine = line;
 		fColumn = column;
 	}
 
+	// helping methods
+	//////////////////
+	
+	private boolean isEqual( ISourceLocation anotherLocation ) {
+		return fLine == anotherLocation.getLine()
+		    && fColumn == anotherLocation.getColumn();
+	}
+	
 }
