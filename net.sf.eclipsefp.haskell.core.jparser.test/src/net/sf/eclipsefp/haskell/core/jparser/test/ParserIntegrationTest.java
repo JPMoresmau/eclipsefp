@@ -577,6 +577,18 @@ public class ParserIntegrationTest extends TestCase {
 		assertTrue(decls[0] instanceof ITypeSignature);
 	}
 	
+	public void testMultipleTypeSignature() throws RecognitionException, TokenStreamException {
+		IModule module = parse("idf2, idf3 :: Int\n" + 
+                               "idf2 = 42");
+		
+		final ITypeSignature ts = (ITypeSignature) module.getDeclarations()[0];
+		final String[] ids = ts.getIdentifiers();
+		
+		assertEquals(2, ids.length);
+		assertEquals("idf2", ids[0]);
+		assertEquals("idf3", ids[1]);
+	}
+	
 	public void testTypeSignatureWithContext() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
 							   "  fat :: Int a => a -> a\n" +
@@ -677,6 +689,7 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("&&", exports[0].getName());
 		assertEquals("**", exports[1].getName());
 	}
+	
 //TODO try to declare the function '(==) a b = not (a /= b)'
 	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)

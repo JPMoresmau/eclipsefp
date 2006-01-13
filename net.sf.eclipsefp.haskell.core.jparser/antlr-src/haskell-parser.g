@@ -446,32 +446,29 @@ signdecl
 	{
 		TypeSignature tsig = insertNewDeclaration(TypeSignature.class);
 		
-		String name = null;
+		String[] names = null;
 	}
 	:
-		name=vars { tsig.setName(name); }
+		names=vars { tsig.setIdentifiers(names); }
 		OFTYPE
 		(~(SEMICOLON | RIGHT_CURLY))*
 	;
 	
-vars returns [String result]
+vars returns [String[] result]
 	{
-		StringBuffer buf = new StringBuffer();
+		List<String> buf = new Vector<String>(10);
 		result = null;
 		
 		String var = null;
 	}
 	:
-		var=var { buf.append(var); }
+		var=var { buf.add(var); }
 		(
 			COMMA
-			var=var	{
-						buf.append(", ");
-		          		buf.append(var);
-		          	  }
+			var=var	{ buf.add(var); }
 		)*
 		{
-			result = buf.toString();
+			result = buf.toArray(new String[buf.size()]);
 		}
 	;
 	
