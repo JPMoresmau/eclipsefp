@@ -6,6 +6,6 @@ Bundle-Version: 0.9.1
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
 Require-Bundle: org.junit,
- net.sf.eclipsefp.common.ui,
+ net.sf.eclipsefp.common.ui.test,
  net.sf.eclipsefp.haskell.core.parser.test,
  net.sf.eclipsefp.haskell.core.jparser.test

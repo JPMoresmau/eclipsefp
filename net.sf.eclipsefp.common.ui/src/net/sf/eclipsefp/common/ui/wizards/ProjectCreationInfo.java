@@ -69,7 +69,7 @@ public class ProjectCreationInfo {
     return projectName;
   }
 
-  void setProjectName( final String projectName ) {
+  public void setProjectName( final String projectName ) {
     this.projectName = projectName;
   }
   
@@ -89,7 +89,7 @@ public class ProjectCreationInfo {
     this.descFileInfo = descFileInfo;
   }
 
-  void setProjectLocation(String location) {
+  public void setProjectLocation(String location) {
     this.projectLocation = location;
   }
 

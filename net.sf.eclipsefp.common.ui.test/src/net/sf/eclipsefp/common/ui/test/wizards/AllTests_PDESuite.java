@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.common.ui.wizards;
+package net.sf.eclipsefp.common.ui.test.wizards;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

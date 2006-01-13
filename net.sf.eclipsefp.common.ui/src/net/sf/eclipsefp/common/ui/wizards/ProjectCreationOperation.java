@@ -17,11 +17,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
   *
   * @author Leif Frenzel 
   */
-class ProjectCreationOperation implements IRunnableWithProgress {
+public class ProjectCreationOperation implements IRunnableWithProgress {
 
   private ProjectCreationInfo info;
   
-  ProjectCreationOperation( final ProjectCreationInfo info ) {
+  public ProjectCreationOperation( final ProjectCreationInfo info ) {
     this.info = info;
   }
   
