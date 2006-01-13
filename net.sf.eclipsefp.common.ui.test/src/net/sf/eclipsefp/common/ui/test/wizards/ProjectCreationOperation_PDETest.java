@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.common.ui.test.wizards;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsefp.common.ui.wizards.ProjectCreationInfo;
@@ -53,7 +54,7 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
 		assertValid(prj);
 		
-		assertEquals("Incorrect project location", defaultLocation, prj.getLocation().toString());
+		assertSameLocation(defaultLocation, prj.getLocation().toString());
 	}
 
 	public void testCustomLocation() throws InvocationTargetException, InterruptedException {
@@ -65,9 +66,9 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
 		assertValid(prj);
 		
-		assertEquals("Incorrect project location", customLocation, prj.getLocation().toString());
+		assertSameLocation(customLocation, prj.getLocation().toString());
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		deleteCreatedProject();
@@ -88,4 +89,9 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		prj.delete(true, true, null);
 	}
 
+	private void assertSameLocation(final String expected, final String actual) {
+		assertTrue("Locations are different",
+		    new File(expected).equals(new File(actual)));
+	}
+	
 }
