@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * 
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-public class PluginTest extends TestCase {
+public class ParserPlugin_PDETest extends TestCase {
 
 	public void testVisibleToCore() {
 		IHaskellParser parser = ParserManager.getInstance().getParser();

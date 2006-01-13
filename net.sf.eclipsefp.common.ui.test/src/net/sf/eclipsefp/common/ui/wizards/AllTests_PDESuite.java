@@ -3,13 +3,13 @@ package net.sf.eclipsefp.common.ui.wizards;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests {
+public class AllTests_PDESuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.common.ui.wizards");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(ProjectCreationOperationTest.class);
+		suite.addTestSuite(ProjectCreationOperation_PDETest.class);
 		//$JUnit-END$
 		return suite;
 	}

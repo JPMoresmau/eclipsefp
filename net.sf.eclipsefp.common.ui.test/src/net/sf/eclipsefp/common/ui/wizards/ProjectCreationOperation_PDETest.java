@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Platform;
 
 import junit.framework.TestCase;
 
-public class ProjectCreationOperationTest extends TestCase {
+public class ProjectCreationOperation_PDETest extends TestCase {
 	
 	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 	private static final String PROJECT_NAME = "hello.haskell.world";

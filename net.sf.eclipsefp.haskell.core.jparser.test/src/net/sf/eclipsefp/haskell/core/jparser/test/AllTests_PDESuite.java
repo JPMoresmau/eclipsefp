@@ -3,14 +3,14 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllAllTests {
+public class AllTests_PDESuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.jparser.test");
 		//$JUnit-BEGIN$
-		suite.addTest(net.sf.eclipsefp.haskell.core.jparser.test.AllTests.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.core.jparser.ast.test.AllTests.suite());
+		suite.addTestSuite(ParserPlugin_PDETest.class);
+		suite.addTest(AllTests.suite());
 		//$JUnit-END$
 		return suite;
 	}
