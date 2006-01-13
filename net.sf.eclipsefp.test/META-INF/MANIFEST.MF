@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EclipseFP Test Suite Plug-in
+Bundle-SymbolicName: net.sf.eclipsefp.test
+Bundle-Version: 0.9.1
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.junit,
+ net.sf.eclipsefp.common.ui,
+ net.sf.eclipsefp.haskell.core.parser.test,
+ net.sf.eclipsefp.haskell.core.jparser.test

@@ -13,3 +13,4 @@ Require-Bundle: de.leiffrenzel.fp.haskell.core,
  org.eclipse.core.runtime,
  org.junit
 Eclipse-AutoStart: true
+Export-Package: net.sf.eclipsefp.haskell.core.parser

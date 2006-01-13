@@ -10,7 +10,8 @@ Require-Bundle: de.leiffrenzel.fp.haskell.core,
  net.sf.eclipsefp.antlr
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Activator: net.sf.eclipsefp.haskell.core.jparser.JParserPlugin
-Export-Package: net.sf.eclipsefp.haskell.core.jparser
+Export-Package: net.sf.eclipsefp.haskell.core.jparser,
+ net.sf.eclipsefp.haskell.core.jparser.ast;x-friends:="net.sf.eclipsefp.haskell.core.jparser.test"
 Eclipse-AutoStart: true
 Eclipse-AutoStop: true
 Bundle-ClassPath: jparser.jar
