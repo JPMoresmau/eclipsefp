@@ -31,7 +31,11 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ExportAbsolute;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ExportModuleContent;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ExportThingAll;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ExportVariable;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
@@ -151,23 +155,25 @@ exportlist
 
 export
     {
-    	ExportSpecification anExport = createNode(ExportSpecification.class);
-    	fBuilder.addExport(anExport);
+    	ExportSpecification anExport = null;
     	
     	String name = null;
     }
     :
     (
-    	name = qvar
+    	name = qvar { anExport = createNode(ExportVariable.class); }
     |
-    	name=qtyconorcls ( LEFT_PAREN
-    	                   ((~(RIGHT_PAREN))*)
-    	                   RIGHT_PAREN
-    	                 )?
+    	name=qtyconorcls { anExport = createNode(ExportAbsolute.class); }
+    	( LEFT_PAREN
+    	  ( t:VARSYM { "..".equals(t.getText()) }? { anExport = createNode(ExportThingAll.class); }
+    	  | cname (COMMA cname)*
+    	  | qvar (COMMA qvar)* )?
+    	  RIGHT_PAREN )?
    	|
-   		MODULE name=modid
+   		MODULE name=modid { anExport = createNode(ExportModuleContent.class); }
     )
     {
+		fBuilder.addExport(anExport);
    		anExport.setName(name);
     }
     ;

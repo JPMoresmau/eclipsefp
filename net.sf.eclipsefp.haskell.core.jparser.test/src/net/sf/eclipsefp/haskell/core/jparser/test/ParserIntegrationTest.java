@@ -8,6 +8,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDefaultDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
+import de.leiffrenzel.fp.haskell.core.halamo.IExportThingAll;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
@@ -128,6 +129,7 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals(1, exports.length);
 		
 		assertNotNull(exports[0]);
+		assertTrue(exports[0] instanceof IExportThingAll);
 		assertEquals("Stack", exports[0].getName());
 	}
 	
