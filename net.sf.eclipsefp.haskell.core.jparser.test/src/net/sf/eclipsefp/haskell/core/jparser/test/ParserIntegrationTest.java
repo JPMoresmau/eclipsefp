@@ -9,6 +9,8 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDefaultDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportThingAll;
+import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWith;
+import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWithComponent;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
@@ -117,6 +119,14 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertEquals("copyUrl", exports[0].getName());
 		assertEquals("Cachable", exports[1].getName());
+		
+		assertTrue(exports[1] instanceof IExportThingWith);
+		
+		IExportThingWith cacheableExp = (IExportThingWith) exports[1];
+		IExportThingWithComponent[] expComponents = cacheableExp.getComponents();
+		
+		assertNotNull(expComponents);
+		assertEquals(3, expComponents.length);
 	}
 	
 	public void testExportingTypesWithAllConstructors() throws RecognitionException, TokenStreamException {
@@ -167,6 +177,15 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertNotNull(exports[0]);
 		assertEquals("TypeClass", exports[0].getName());
+		
+		assertTrue(exports[0] instanceof IExportThingWith);
+
+		IExportThingWith cacheableExp = (IExportThingWith) exports[0];
+		IExportThingWithComponent[] expComponents = cacheableExp.getComponents();
+		
+		assertNotNull(expComponents);
+		assertEquals(3, expComponents.length);
+		
 	}
 
 	public void testExportingModule() throws RecognitionException, TokenStreamException {
