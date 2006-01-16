@@ -35,6 +35,8 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.ExportAbsolute;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportModuleContent;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportThingAll;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ExportThingWith;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ExportThingWithComponent;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportVariable;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
@@ -156,7 +158,10 @@ exportlist
 export
     {
     	ExportSpecification anExport = null;
+    	ExportThingWith anExportWith = null;
+    	ExportThingWithComponent aComponent = null;
     	
+		String compName = null;
     	String name = null;
     }
     :
@@ -166,8 +171,14 @@ export
     	name=qtyconorcls { anExport = createNode(ExportAbsolute.class); }
     	( LEFT_PAREN
     	  ( t:VARSYM { "..".equals(t.getText()) }? { anExport = createNode(ExportThingAll.class); }
-    	  | cname (COMMA cname)*
-    	  | qvar (COMMA qvar)* )?
+    	  | { anExport = anExportWith = createNode(ExportThingWith.class); }
+    	    ( { aComponent = createNode(ExportThingWithComponent.class); }
+    	      compName=cname {	aComponent.setName(compName);
+    	      					anExportWith.addComponent(aComponent); }
+    	      ( COMMA { aComponent = createNode(ExportThingWithComponent.class); }
+    	        compName=cname {	aComponent.setName(compName);
+    	      						anExportWith.addComponent(aComponent); } )*
+    	    | qvar (COMMA qvar)* ) )?
     	  RIGHT_PAREN )?
    	|
    		MODULE name=modid { anExport = createNode(ExportModuleContent.class); }
@@ -191,9 +202,13 @@ cnamelist
 		cname (COMMA cname)*
 	;
 	
-cname
+cname returns [String result]
+	{
+		result = null;
+	}
 	:
-		VARIABLE_ID | CONSTRUCTOR_ID
+		t1:VARIABLE_ID { result = t1.getText(); }
+	|	t2:CONSTRUCTOR_ID { result = t2.getText(); }
 	;
     
 qvar returns [String result] 

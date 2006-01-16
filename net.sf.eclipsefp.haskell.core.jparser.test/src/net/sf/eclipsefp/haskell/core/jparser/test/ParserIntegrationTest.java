@@ -127,6 +127,9 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertNotNull(expComponents);
 		assertEquals(3, expComponents.length);
+		assertEquals("Cachable", expComponents[0].getName());
+		assertEquals("Uncachable", expComponents[1].getName());
+		assertEquals("MaxAge", expComponents[2].getName());
 	}
 	
 	public void testExportingTypesWithAllConstructors() throws RecognitionException, TokenStreamException {
@@ -184,7 +187,12 @@ public class ParserIntegrationTest extends TestCase {
 		IExportThingWithComponent[] expComponents = cacheableExp.getComponents();
 		
 		assertNotNull(expComponents);
-		assertEquals(3, expComponents.length);
+		assertEquals(5, expComponents.length);
+		assertEquals("these", expComponents[0].getName());
+		assertEquals("are", expComponents[1].getName());
+		assertEquals("some", expComponents[2].getName());
+		assertEquals("clazz", expComponents[3].getName());
+		assertEquals("operations", expComponents[4].getName());
 		
 	}
 

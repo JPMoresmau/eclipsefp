@@ -20,41 +20,8 @@ public class ExportThingWith extends ExportSpecification implements
 				new IExportThingWithComponent[fComponents.size()]);
 	}
 
-	public void addComponents(final List<String> exportComponents) {
-		for (String component : exportComponents) {
-			fComponents.add(new ExportComponent(component));
-		}
-	}
-	
-	private class ExportComponent implements IExportThingWithComponent {
-
-		private String fName;
-
-		public ExportComponent(String name) {
-			fName = name;
-		}
-
-		public IExportThingWith getExportSpecification() {
-			return ExportThingWith.this;
-		}
-
-		public String getName() {
-			return fName;
-		}
-
-		public ICompilationUnit getCompilationUnit() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public IHaskellLanguageElement getParent() {
-			return ExportThingWith.this;
-		}
-
-		public ISourceLocation getSourceLocation() {
-			return null;
-		}
-		
+	public void addComponent(ExportThingWithComponent component) {
+		fComponents.add(component);
 	}
 
 }
