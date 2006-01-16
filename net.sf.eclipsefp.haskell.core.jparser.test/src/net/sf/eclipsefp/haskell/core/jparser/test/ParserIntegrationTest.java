@@ -164,7 +164,7 @@ public class ParserIntegrationTest extends TestCase {
 	
 	public void testExportingTypeClasses() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest ( TypeClass (these, are, " +
-				                                              "some, class, " +
+				                                              "some, clazz, " +
 				                                              "operations ))" +
 				               "where {}");
 		
