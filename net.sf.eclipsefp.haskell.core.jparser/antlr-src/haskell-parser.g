@@ -103,16 +103,6 @@ options {
     	return decl;
     }
     
-    private static class NonNullVector<E> extends Vector<E> {
-		@Override
-		public synchronized boolean add(E elem) {
-			if (elem == null)
-				return false;
-			else
-				return super.add(elem);
-		}
-    }
-    
 }
 
 module
@@ -125,7 +115,7 @@ module
         String name = null;
     }
     :
-      	(	t:MODULE
+      	(	MODULE
         	name=modid { aModule.setName(name); }
         	(exports)?
         	WHERE
@@ -413,7 +403,7 @@ gtycon returns [String result]
 
 defaultdecl
 	{
-		IDeclaration aDeclaration = insertNewDeclaration(DefaultDeclaration.class);
+		insertNewDeclaration(DefaultDeclaration.class);
 	}
 	:
 		DEFAULT list
