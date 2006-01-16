@@ -6,14 +6,19 @@ import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 public class ImportSpecification extends HaskellLanguageElement implements IImportSpecification {
 
+	private IImport fImport;
+
 	public IModule getModule() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public IImport getImport() {
-		// TODO Auto-generated method stub
-		return null;
+		return fImport;
+	}
+
+	public void setImport(Import imp) {
+		fImport = imp;
 	}
 
 }

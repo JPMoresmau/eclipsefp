@@ -41,6 +41,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.ExportVariable;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ImportSpecification;
 import net.sf.eclipsefp.haskell.core.jparser.ast.InstanceDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 import net.sf.eclipsefp.haskell.core.jparser.ast.NewtypeDeclaration;
@@ -273,7 +274,7 @@ impdecl
 		Import anImport = createNode(Import.class);
 		
 		String name = null;
-		List<IImportSpecification> someSpecs = null;
+		List<ImportSpecification> someSpecs = null;
 	}
 	:
 		(
@@ -286,13 +287,45 @@ impdecl
 	| //empty declaration
 	;
 
-impspec returns [List<IImportSpecification> result]
+impspec returns [List<ImportSpecification> result]
 	{
-		result = new Vector<IImportSpecification>(0);
+		ImportSpecification anImpSpec = null;
+
+		result = new Vector<ImportSpecification>();
 	}
 	:
 	    (HIDING)?
-	    list
+	    LEFT_PAREN
+	    ( anImpSpec=imp { result.add(anImpSpec); }
+	      ( (COMMA imp)
+	      => COMMA anImpSpec=imp { result.add(anImpSpec); } )*
+	      (COMMA)?)?
+	    RIGHT_PAREN
+	;
+	
+imp returns [ImportSpecification result]
+	{
+		ImportSpecification anImport = createNode(ImportSpecification.class);
+		result = anImport;
+		
+		String specName = null;
+	}
+	:
+		specName=var { anImport.setName(specName); }
+	|	specName=tyconorcls { anImport.setName(specName); }
+	   	( LEFT_PAREN
+    	  ( t:VARSYM { "..".equals(t.getText()) }?
+    	  | cname (COMMA cname)*
+    	  | var (COMMA var)* )?
+    	  RIGHT_PAREN )?
+	;
+	
+tyconorcls returns [String result]
+	{
+		result = null;
+	}
+	:
+		result = conid
 	;
 
 topdecls

@@ -30,8 +30,11 @@ public class Import extends HaskellLanguageElement implements IImport {
 		return false;
 	}
 
-	public void addSpecifications(List<IImportSpecification> specs) {
-		fSpecifications.addAll(specs);
+	public void addSpecifications(List<ImportSpecification> specs) {
+		for (ImportSpecification spec : specs) {
+			spec.setImport(this);
+			fSpecifications.add(spec);
+		}
 	}
 
 	public void setElementName(String name) {
