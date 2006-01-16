@@ -13,6 +13,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWith;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWithComponent;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
+import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
@@ -329,6 +330,19 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("ModuleM", module.getImports()[0].getName());
 	}
 	
+	public void testImportingComponents() throws RecognitionException, TokenStreamException {
+		IModule module = parse("module Main where\n" +
+				   "\n" +
+	               "import Data.List (unzip3, unzip4, unzip5, unzip6, unzip7)");
+		
+		final IImport imp = module.getImports()[0];
+		final IImportSpecification[] impSpecs = imp.getImportSpecifications();
+
+		assertEquals(5, impSpecs.length);
+		assertEquals("unzip3", impSpecs[0].getName());
+		assertEquals("unzip5", impSpecs[2].getName());
+	}
+
 	public void testOnlyImports() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module Main where\n" +
 							   "\n" +
