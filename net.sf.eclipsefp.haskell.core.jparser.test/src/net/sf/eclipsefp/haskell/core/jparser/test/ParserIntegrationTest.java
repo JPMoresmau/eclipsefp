@@ -734,7 +734,14 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("**", exports[1].getName());
 	}
 	
-//TODO try to declare the function '(==) a b = not (a /= b)'
+	public void testPrefixVarsymAsFunctionId() throws RecognitionException, TokenStreamException {
+		final String input = "(==) a b = not (a /= b)";
+		IModule module = parse(input);
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(1, decls.length);
+		assertEquals("==", decls[0].getName());
+	}
 	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)
 //see darcs source code, Printer.lhs

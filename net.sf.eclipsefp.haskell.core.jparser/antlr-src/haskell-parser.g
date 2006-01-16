@@ -528,13 +528,14 @@ tyvar : VARIABLE_ID ;
 funlhs returns [String result]
 	{
 		String infixID;
+		String prefixedID;
 		result = null;
 	}
 	:
 		(	(VARIABLE_ID varop) =>
 		        VARIABLE_ID
 		        infixID=varop { result = infixID; }
-		|	id:VARIABLE_ID { result=id.getText(); } )
+		|	prefixedID=var { result = prefixedID; } )
 		(block | ~(EQUALS|SEMICOLON))*
 	;
 	
