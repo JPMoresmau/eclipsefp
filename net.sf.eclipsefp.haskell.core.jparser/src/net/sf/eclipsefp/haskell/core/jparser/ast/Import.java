@@ -11,6 +11,7 @@ public class Import extends HaskellLanguageElement implements IImport {
 
 	private String fImportedElementName;
 	private List<IImportSpecification> fSpecifications = new Vector<IImportSpecification>();
+	private boolean fHiding;
 
 	public IModule getModule() {
 		// TODO Auto-generated method stub
@@ -26,8 +27,7 @@ public class Import extends HaskellLanguageElement implements IImport {
 	}
 
 	public boolean isHiding() {
-		// TODO Auto-generated method stub
-		return false;
+		return fHiding;
 	}
 
 	public void addSpecifications(List<ImportSpecification> specs) {
@@ -40,6 +40,10 @@ public class Import extends HaskellLanguageElement implements IImport {
 	public void setElementName(String name) {
 		fImportedElementName = name;
 		setName(name);
+	}
+
+	public void setHiding(boolean b) {
+		fHiding = true;
 	}
 
 }

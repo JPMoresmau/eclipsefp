@@ -308,6 +308,7 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertEquals("ModuleM", imports[0].getName());
 		assertEquals("ModuleN", imports[1].getName());
+		assertTrue(imports[1].isHiding());
 	}
 	
 	public void testImportingTypeConstructors() throws RecognitionException, TokenStreamException {

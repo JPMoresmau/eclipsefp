@@ -23,8 +23,6 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
@@ -282,7 +280,8 @@ impdecl
 			(QUALIFIED)?
 			name=modid { anImport.setElementName(name); }
 			(AS modid)?
-			(someSpecs=impspec { anImport.addSpecifications(someSpecs); } )?
+			( (HIDING { anImport.setHiding(true); } )?
+			  someSpecs=impspec { anImport.addSpecifications(someSpecs); } )?
 		)
 	| //empty declaration
 	;
@@ -294,7 +293,6 @@ impspec returns [List<ImportSpecification> result]
 		result = new Vector<ImportSpecification>();
 	}
 	:
-	    (HIDING)?
 	    LEFT_PAREN
 	    ( anImpSpec=imp { result.add(anImpSpec); }
 	      ( (COMMA imp)
