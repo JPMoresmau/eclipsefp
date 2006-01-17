@@ -829,17 +829,35 @@ public class ParserIntegrationTest extends TestCase {
 				             "infixl 5 `op3`\n" +
 				             "\n" +
 				             "infix 5 `op0`, `op1`\n" +
-				             "infixl 0 `op1`, +, `opx`";
+				             "infixl 0 `op1`, +, `opx`\n" +
+				             "infix 0o10 :+";
 		IModule module = parse(input);
 		
 		final IDeclaration[] decls = module.getDeclarations();
-		assertEquals(5, decls.length);
+		assertEquals(6, decls.length);
 		
 	    IInfixDeclaration decl = ( IInfixDeclaration )decls[ 0 ];
 	    assertEquals( 9, decl.getPrecedenceLevel() );
 	    assertEquals( IInfixDeclaration.ASSOC_NONE, decl.getAssociativity() );
 	    assertEquals( 1, decl.getOperators().length );
 	    assertEquals( "++", decl.getOperators()[ 0 ] );
+	    
+	    decl = ( IInfixDeclaration )decls[ 1 ];
+	    assertEquals( 1, decl.getPrecedenceLevel() );
+	    assertEquals( IInfixDeclaration.ASSOC_RIGHT, decl.getAssociativity() );
+	    assertEquals( 1, decl.getOperators().length );
+	    assertEquals( "op2", decl.getOperators()[ 0 ] );
+
+	    decl = ( IInfixDeclaration )decls[ 4 ];
+	    assertEquals( IInfixDeclaration.ASSOC_LEFT, decl.getAssociativity() );
+	    assertEquals( 3, decl.getOperators().length );
+	    assertEquals( "op1", decl.getOperators()[ 0 ] );
+	    assertEquals( "+", decl.getOperators()[ 1 ] );
+	    assertEquals( "opx", decl.getOperators()[ 2 ] );
+
+	    decl = ( IInfixDeclaration )decls[ 5 ];
+	    assertEquals( 8, decl.getPrecedenceLevel() );
+	    assertEquals( ":+", decl.getOperators()[ 0 ] );
 	}
 	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)
