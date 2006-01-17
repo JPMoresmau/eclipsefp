@@ -28,7 +28,6 @@ import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Constructor;
-import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ExportAbsolute;
@@ -42,6 +41,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
 import net.sf.eclipsefp.haskell.core.jparser.ast.HaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Import;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ImportSpecification;
+import net.sf.eclipsefp.haskell.core.jparser.ast.InfixDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.InstanceDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 import net.sf.eclipsefp.haskell.core.jparser.ast.NewtypeDeclaration;
