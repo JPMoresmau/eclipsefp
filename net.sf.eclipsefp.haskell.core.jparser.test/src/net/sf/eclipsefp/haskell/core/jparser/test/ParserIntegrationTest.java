@@ -629,8 +629,8 @@ public class ParserIntegrationTest extends TestCase {
 	
 	public void testSimpleInstanceDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
-				               "  instance Foo FooInstance\n" +
-				               "  instance Bar BarInstance where {}\n");
+				               "  instance FooInstance Foo \n" +
+				               "  instance BarInstance Bar where {}\n");
 		
 		assertEquals("ParserTest", module.getName());
 
@@ -646,7 +646,7 @@ public class ParserIntegrationTest extends TestCase {
 
 	public void testContextInstanceDeclaration() throws RecognitionException, TokenStreamException {
 		IModule module = parse("module ParserTest where\n" +
-                               "  instance (Eq a, Show a) => Foo Bar where");
+                               "  instance (Eq a, Show a) => Bar Foo where");
 		
 		assertEquals("ParserTest", module.getName());
 		
@@ -661,7 +661,7 @@ public class ParserIntegrationTest extends TestCase {
 		
 		IDeclaration instDecl = module.getDeclarations()[0];
 		assertTrue(instDecl instanceof IInstanceDeclaration);
-		assertEquals("SM", instDecl.getName());
+		assertEquals("Monad", instDecl.getName());
 	}
 	
 	public void testListTypeInstanceDeclaration() throws RecognitionException, TokenStreamException {
@@ -670,7 +670,7 @@ public class ParserIntegrationTest extends TestCase {
 
 		IDeclaration instDecl = module.getDeclarations()[0];
 		assertTrue(instDecl instanceof IInstanceDeclaration);
-		assertEquals("[PackedString]", instDecl.getName());
+		assertEquals("Stringalike", instDecl.getName());
 	}
 	
 	public void testDefaultDeclaration() throws RecognitionException, TokenStreamException {

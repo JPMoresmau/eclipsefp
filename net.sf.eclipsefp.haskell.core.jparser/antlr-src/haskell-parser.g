@@ -416,8 +416,8 @@ instancedecl
 	:
 		INSTANCE
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
-		qconid
-		name=inst { aDeclaration.setName(name); }
+		name=qconid { aDeclaration.setName(name); }
+		inst
 		(
 			WHERE
 			block
