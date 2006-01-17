@@ -324,6 +324,17 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		assertToken(OFTYPE, "::", fLexer.nextToken());
 	}
 	
+	public void testRecognizeIntegerLiterals() throws TokenStreamException {
+		final String input = "0123 0x123A 0o123 0X123 0O765";
+		fLexer = createLexer(input);
+
+		assertToken(INTEGER, "0123", fLexer.nextToken());
+		assertToken(INTEGER, "0x123A", fLexer.nextToken());
+		assertToken(INTEGER, "0o123", fLexer.nextToken());
+		assertToken(INTEGER, "0X123", fLexer.nextToken());
+		assertToken(INTEGER, "0O765", fLexer.nextToken());
+	}
+	
 	public void testIdentifiersWithQuotes() throws TokenStreamException {
 		fLexer = createLexer("MyConstructor' myFunction'");
 		

@@ -15,6 +15,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWithComponent;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
+import de.leiffrenzel.fp.haskell.core.halamo.IInfixDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
@@ -820,6 +821,25 @@ public class ParserIntegrationTest extends TestCase {
 		final IDeclaration[] decls = module.getDeclarations();
 		assertEquals(1, decls.length);
 		assertEquals("==", decls[0].getName());
+	}
+	
+	public void testSimpleFixityDeclaration() throws RecognitionException, TokenStreamException {
+		final String input = "infix ++\n" +
+				             "infixr 1 `op2`\n" +
+				             "infixl 5 `op3`\n" +
+				             "\n" +
+				             "infix 5 `op0`, `op1`\n" +
+				             "infixl 0 `op1`, +, `opx`";
+		IModule module = parse(input);
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(5, decls.length);
+		
+	    IInfixDeclaration decl = ( IInfixDeclaration )decls[ 0 ];
+	    assertEquals( 9, decl.getPrecedenceLevel() );
+	    assertEquals( IInfixDeclaration.ASSOC_NONE, decl.getAssociativity() );
+	    assertEquals( 1, decl.getOperators().length );
+	    assertEquals( "++", decl.getOperators()[ 0 ] );
 	}
 	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)

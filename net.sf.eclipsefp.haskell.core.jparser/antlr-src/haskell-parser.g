@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Vector;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IInfixDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
@@ -109,6 +110,16 @@ options {
     	return decl;
     }
     
+    private int decodeInteger(String haskellInt) {
+    	if (haskellInt.startsWith("0x") || haskellInt.startsWith("0X")) {
+    		return Integer.parseInt(haskellInt.substring(2), 16);
+    	} else if (haskellInt.startsWith("0o") || haskellInt.startsWith("0O")) {
+    		return Integer.parseInt(haskellInt.substring(2), 8);
+    	} else {
+    		return Integer.parseInt(haskellInt, 10);
+    	}
+    }
+
 }
 
 module
@@ -497,6 +508,7 @@ simpletype returns [String result]
 decl
 	:
 		(vars OFTYPE) => signdecl	
+	|   fixdecl
 	|	(funlhs EQUALS) => valdef
 	|   nonstddecl
 	|   //empty declaration
@@ -523,6 +535,43 @@ valdef
 					}
 		declrhs
 	;
+
+//the fixdecl rule also doesn't come directly from the report spec
+fixdecl
+	{
+		InfixDeclaration aDeclaration = insertNewDeclaration(InfixDeclaration.class);
+		
+		int associativity = 0;
+		List<String> operators = null;
+		
+	}
+	:
+		associativity=fixity { aDeclaration.setAssociativity(associativity); }
+		(t:INTEGER {	int precedence = decodeInteger(t.getText());
+			     		aDeclaration.setPrecedence(precedence); })?
+		operators=ops { aDeclaration.addOperators(operators); }
+	;
+	
+fixity returns [int result]
+	{
+		result = 0;
+	}
+	:	INFIXL { result = IInfixDeclaration.ASSOC_LEFT; }
+	|	INFIXR { result = IInfixDeclaration.ASSOC_RIGHT; }
+	|	INFIX { result = IInfixDeclaration.ASSOC_NONE; }
+	;
+	
+ops returns [List<String> result]
+	{
+		result = new Vector<String>();
+		
+		String operator = null;
+	}
+	:
+		operator=op { result.add(operator); }
+		(COMMA operator=op { result.add(operator); } )*
+	;
+	
 
 signdecl
 	{
@@ -598,6 +647,22 @@ varop returns [String result]
 	|	INFIX_QUOTE
 		t2:VARIABLE_ID { result = t2.getText(); }
 		INFIX_QUOTE
+	;
+	
+conop returns [String result]
+	{
+		result = null;
+	}
+	:	t1:CONSYM { result = t1.getText(); }
+	|	INFIX_QUOTE t2:CONSTRUCTOR_ID INFIX_QUOTE { result = t2.getText(); }
+	;
+	
+op returns [String result]
+	{
+		result = null;
+	}
+	:	result=varop
+	|	result=conop
 	;
 	
 declrhs :

@@ -36,6 +36,9 @@ tokens {
 	LET = "let" ;
 	DO = "do" ;
 	OF = "of" ;
+	INFIXL = "infixl" ;
+	INFIXR = "infixr" ;
+	INFIX = "infix" ;
 	CONTEXT_ARROW = "=>" ;
 	EQUALS = "=" ;
 	ALT = "|" ;
@@ -78,10 +81,19 @@ VARIABLE_ID : LOWER_CASE	( LETTER
 							| DIGIT
 							| '\'' )* ;
 
+INTEGER
+	:	DECIMAL 
+	|	"0o" OCTAL | "0O" OCTAL
+	|	"0x" HEXADECIMAL | "0X" HEXADECIMAL
+	;
+
+protected
 DECIMAL : (DIGIT)+ ;
 
+protected
 HEXADECIMAL : (HEXIT)+ ;
 
+protected
 OCTAL : (OCTIT)+ ;
 
 CHARACTER_LITERAL : '\''! (~('\''|'\\')|CHARACTER_ESCAPE) '\''! ;
