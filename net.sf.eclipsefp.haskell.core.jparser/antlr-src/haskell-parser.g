@@ -26,6 +26,7 @@ import java.util.Vector;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
+import net.sf.eclipsefp.haskell.core.jparser.ast.Constructor;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DefaultDeclaration;
@@ -362,7 +363,8 @@ typesymdecl
 	
 datadecl
 	{
-		Declaration aDeclaration = insertNewDeclaration(DataDeclaration.class);
+		Declaration aDeclaration = fBuilder.startDataDeclaration();
+		recordNextTokenLocation(aDeclaration);
 
 		String name = null;
 	}
@@ -381,8 +383,15 @@ constrs
 	;
 	
 constr
+	{
+		Constructor aConstructor = createNode(Constructor.class);
+		fBuilder.addConstructor(aConstructor);
+		
+		String name = null;
+	}
 	:
-		con (block | ~(SEMICOLON|ALT|RIGHT_CURLY))*
+		name=con { aConstructor.setName(name); }
+		(block | ~(SEMICOLON|ALT|RIGHT_CURLY))*
 	;
 	
 rnmdtypedecl
@@ -555,10 +564,13 @@ var returns [String result]
 	|	LEFT_PAREN varsymID:VARSYM { result = varsymID.getText(); } RIGHT_PAREN
 	;
 
-con
+con returns [String result]
+	{
+		result = null;
+	}
 	:
-		CONSTRUCTOR_ID
-	|	LEFT_PAREN CONSYM RIGHT_PAREN
+		t1:CONSTRUCTOR_ID { result = t1.getText(); }
+	|	LEFT_PAREN t2:CONSYM { result = t2.getText(); } RIGHT_PAREN
 	;
 
 tyvar : VARIABLE_ID ;

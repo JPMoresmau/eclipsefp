@@ -4,6 +4,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.IConstructor;
 import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDefaultDeclaration;
@@ -467,6 +468,12 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertTrue(decls[0] instanceof IDataDeclaration);
 		assertEquals("DataType", decls[0].getName());
+		
+		final IDataDeclaration dataDecl = (IDataDeclaration) decls[0];
+		final IConstructor[] constrs = dataDecl.getConstructors();
+		assertEquals(2, constrs.length);
+		assertEquals("ConC", constrs[0].getName());
+		assertEquals("ConD", constrs[1].getName());
 	}
 	
 	public void testRenamedDatatypeDeclaration() throws RecognitionException, TokenStreamException {

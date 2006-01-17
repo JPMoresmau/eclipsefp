@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IConstructor;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
@@ -7,6 +8,8 @@ import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
+import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
+import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 
@@ -15,6 +18,7 @@ public class ModuleBuilder {
 	private Module fModule;
 	private FunctionBinding fCurrentFunction = new NullFunctionBinding();
 	private ClassDeclaration fClassDeclaration = new NullClassDeclaration();
+	private DataDeclaration fDataDeclaration = new NullDataDeclaration();
 
 	public IModule startModule() {
 		return startModule("");
@@ -60,7 +64,7 @@ public class ModuleBuilder {
 
 	public ClassDeclaration startClassDeclaration() {
 		fClassDeclaration = new ClassDeclaration();
-		fModule.addDeclaration(fClassDeclaration);
+		addDeclaration(fClassDeclaration);
 		return fClassDeclaration;
 	}
 
@@ -74,6 +78,18 @@ public class ModuleBuilder {
 
 	public void endClassDeclaration() {
 		fClassDeclaration = new NullClassDeclaration();
+	}
+
+	public Declaration startDataDeclaration() {
+		fDataDeclaration = new DataDeclaration();
+		addDeclaration(fDataDeclaration);
+		return fDataDeclaration;
+	}
+
+	public void addConstructor(IConstructor cons) {
+		if (fDataDeclaration.accepts(cons)) {
+			fDataDeclaration.addConstructor(cons);
+		}
 	}
 
 }
