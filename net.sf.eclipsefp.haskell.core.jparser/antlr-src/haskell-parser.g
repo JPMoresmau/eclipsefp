@@ -449,7 +449,7 @@ cdecls
 	
 cdecl
 	:
-		signdecl
+		(vars OFTYPE) => signdecl
 	|	nonstddecl
 	;
 
