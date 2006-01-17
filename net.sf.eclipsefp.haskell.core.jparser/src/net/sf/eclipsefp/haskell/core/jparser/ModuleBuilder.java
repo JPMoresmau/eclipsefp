@@ -58,9 +58,10 @@ public class ModuleBuilder {
 		fModule.addImport(theImport);
 	}
 
-	public void startClassDeclaration() {
+	public ClassDeclaration startClassDeclaration() {
 		fClassDeclaration = new ClassDeclaration();
 		fModule.addDeclaration(fClassDeclaration);
+		return fClassDeclaration;
 	}
 
 	public void addTypeSignature(ITypeSignature tsig) {
@@ -69,6 +70,10 @@ public class ModuleBuilder {
 		} else {
 			fModule.addDeclaration(tsig);
 		}
+	}
+
+	public void endClassDeclaration() {
+		fClassDeclaration = new NullClassDeclaration();
 	}
 
 }

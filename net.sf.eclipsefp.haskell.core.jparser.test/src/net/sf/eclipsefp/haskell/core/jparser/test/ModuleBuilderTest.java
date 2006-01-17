@@ -60,7 +60,7 @@ public class ModuleBuilderTest extends TestCase {
 	}
 
 	public void testGroupClassDeclarationComponents() {
-		final TypeSignature tsig = createTypeSignature();
+		final ITypeSignature tsig = createTypeSignature();
 
 		fBuilder.startModule();
 		fBuilder.startClassDeclaration();
@@ -74,6 +74,28 @@ public class ModuleBuilderTest extends TestCase {
 		ITypeSignature[] tsigs = ((IClassDeclaration) decl).getTypeSignatures();
 		assertEquals(1, tsigs.length);
 		assertSame(tsig, tsigs[0]);
+	}
+	
+	public void testEndClassDeclaration() {
+		final ITypeSignature internalTSig = createTypeSignature();
+		final ITypeSignature externalTSig = createTypeSignature();
+		
+		fBuilder.startModule();
+		fBuilder.startClassDeclaration();
+		fBuilder.addTypeSignature(internalTSig);
+		fBuilder.endClassDeclaration();
+		fBuilder.addTypeSignature(externalTSig);
+		
+		final IModule module = fBuilder.getResult();
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		assertTrue(decls[0] instanceof IClassDeclaration);
+		
+		IClassDeclaration classDecl = (IClassDeclaration) decls[0];
+		assertSame(internalTSig, classDecl.getTypeSignatures()[0]);
+		
+		assertSame(externalTSig, decls[1]);
 	}
 
 	private TypeSignature createTypeSignature() {

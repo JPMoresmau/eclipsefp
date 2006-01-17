@@ -384,7 +384,7 @@ rnmdtypedecl
 	
 classdecl
 	{
-		ClassDeclaration aDeclaration = insertNewDeclaration(ClassDeclaration.class);
+		ClassDeclaration aDeclaration = fBuilder.startClassDeclaration();
 
 		String name = null;
 	}
@@ -397,6 +397,7 @@ classdecl
 			WHERE
 			cdecls
 		)?
+		{ fBuilder.endClassDeclaration(); }
 	;
 	
 instancedecl
@@ -499,7 +500,8 @@ valdef
 
 signdecl
 	{
-		TypeSignature tsig = insertNewDeclaration(TypeSignature.class);
+		TypeSignature tsig = createNode(TypeSignature.class);
+		fBuilder.addTypeSignature(tsig);
 		
 		String[] names = null;
 	}

@@ -534,6 +534,7 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("ParserTest", module.getName());
 		
 		IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
 		assertEquals("VerySimple", decls[0].getName());
 		assertTrue(decls[0] instanceof IClassDeclaration);
 		
@@ -561,6 +562,67 @@ public class ParserIntegrationTest extends TestCase {
 		IDeclaration classDecl = module.getDeclarations()[0];
 		assertEquals("Ord", classDecl.getName());
 		assertTrue(classDecl instanceof IClassDeclaration);
+	}
+	
+	public void testDeclarationsAfterClass() throws RecognitionException, TokenStreamException {
+		final String input = "class TestClass c where\n" +
+				             "    test :: Int -> Int\n" +
+				             "\n" +
+				             "fat 0 = 1\n";
+		IModule module = parse(input);
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		final ITypeSignature[] tsigs =
+			((IClassDeclaration) decls[0]).getTypeSignatures();
+		assertEquals("test", tsigs[0].getIdentifiers()[0]);
+		
+		assertEquals("fat", decls[1].getName());
+	}
+	
+	public void testTwoClassDeclarations() throws RecognitionException, TokenStreamException {
+		final String input = "class TestClassA a where\n" +
+                             "    testA :: Int -> Int\n" +
+                             "    testA2 :: String -> Int -> Int\n" +
+                             "\n" +
+                             "fat 0 = 1\n" +
+                             "fat n = n * (fat (n - 1))\n" +
+                             "\n" +
+                             "class TestClassB b where\n" +
+                             "    testB :: Char -> Int\n";
+		IModule module = parse(input);
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(3, decls.length);
+		
+		IClassDeclaration classDeclA = (IClassDeclaration) decls[0];
+		assertEquals("TestClassA", classDeclA.getName());
+		assertEquals("testA", classDeclA.getTypeSignatures()[0].getIdentifiers()[0]);
+		assertEquals("testA2", classDeclA.getTypeSignatures()[1].getIdentifiers()[0]);
+		
+		assertEquals("fat", decls[1].getName());
+
+		IClassDeclaration classDeclB = (IClassDeclaration) decls[2];
+		assertEquals("TestClassB", classDeclB.getName());
+		assertEquals("testB", classDeclB.getTypeSignatures()[0].getIdentifiers()[0]);
+	}
+	
+	public void testTypeSignatureAfterClassDeclaration() throws RecognitionException, TokenStreamException {
+		final String input = "class TestClassA a where\n" +
+ 					         "    testA :: Int -> Int\n" +
+					         "    testA2 :: String -> Int -> Int\n" +
+					         "    testA3 x = x\n" +
+					         "\n" +
+					         "fat :: Int -> Int\n" +
+					         "fat 0 = 1\n" +
+					         "fat n = n * (fat (n - 1))\n";
+		IModule module = parse(input);
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(3, decls.length);
+		
+		assertTrue(decls[1] instanceof ITypeSignature);
+		assertEquals("fat", decls[1].getName());
 	}
 	
 	public void testSimpleInstanceDeclaration() throws RecognitionException, TokenStreamException {
