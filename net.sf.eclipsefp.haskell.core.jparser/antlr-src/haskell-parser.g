@@ -87,11 +87,17 @@ options {
 			throw new RuntimeException("Could not instantiate class " + nodeClazz.getName(),
 			                           e);
 		}
-		
-		Token nextToken = LT(1);
-		result.setLocation(nextToken.getLine(), nextToken.getColumn());
+
+		recordNextTokenLocation(result);		
 		
 		return result;
+    }
+    
+    private void recordNextTokenLocation(HaskellLanguageElement node)
+    	throws TokenStreamException
+    {
+		Token nextToken = LT(1);
+		node.setLocation(nextToken.getLine(), nextToken.getColumn());
     }
     
     private <T extends Declaration> T insertNewDeclaration(Class<T> nodeClazz)
@@ -385,6 +391,7 @@ rnmdtypedecl
 classdecl
 	{
 		ClassDeclaration aDeclaration = fBuilder.startClassDeclaration();
+		recordNextTokenLocation(aDeclaration);
 
 		String name = null;
 	}

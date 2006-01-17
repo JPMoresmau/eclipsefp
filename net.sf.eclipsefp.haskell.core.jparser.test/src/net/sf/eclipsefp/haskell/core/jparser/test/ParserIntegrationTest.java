@@ -536,6 +536,8 @@ public class ParserIntegrationTest extends TestCase {
 		IDeclaration[] decls = module.getDeclarations();
 		assertEquals(2, decls.length);
 		assertEquals("VerySimple", decls[0].getName());
+		assertEquals(1, decls[0].getSourceLocation().getLine());
+		assertEquals(4, decls[0].getSourceLocation().getColumn());
 		assertTrue(decls[0] instanceof IClassDeclaration);
 		
 		assertEquals("Eq", decls[1].getName());
