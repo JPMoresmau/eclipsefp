@@ -5,6 +5,8 @@ import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
 import de.leiffrenzel.fp.haskell.core.halamo.IImport;
 import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
+import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionBinding;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 
@@ -12,6 +14,7 @@ public class ModuleBuilder {
 
 	private Module fModule;
 	private FunctionBinding fCurrentFunction = new NullFunctionBinding();
+	private ClassDeclaration fClassDeclaration = new NullClassDeclaration();
 
 	public IModule startModule() {
 		return startModule("");
@@ -53,6 +56,19 @@ public class ModuleBuilder {
 
 	public void addImport(IImport theImport) {
 		fModule.addImport(theImport);
+	}
+
+	public void startClassDeclaration() {
+		fClassDeclaration = new ClassDeclaration();
+		fModule.addDeclaration(fClassDeclaration);
+	}
+
+	public void addTypeSignature(ITypeSignature tsig) {
+		if (fClassDeclaration.accepts(tsig)) {
+			fClassDeclaration.addTypeSignature(tsig);
+		} else {
+			fModule.addDeclaration(tsig);
+		}
 	}
 
 }

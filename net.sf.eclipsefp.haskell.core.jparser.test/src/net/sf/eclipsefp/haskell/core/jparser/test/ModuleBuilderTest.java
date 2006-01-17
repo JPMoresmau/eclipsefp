@@ -1,10 +1,13 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
+import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
 import net.sf.eclipsefp.haskell.core.jparser.ModuleBuilder;
 import net.sf.eclipsefp.haskell.core.jparser.ast.FunctionMatch;
+import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSignature;
 import junit.framework.TestCase;
 
 public class ModuleBuilderTest extends TestCase {
@@ -56,6 +59,28 @@ public class ModuleBuilderTest extends TestCase {
 		
 	}
 
+	public void testGroupClassDeclarationComponents() {
+		final TypeSignature tsig = createTypeSignature();
+
+		fBuilder.startModule();
+		fBuilder.startClassDeclaration();
+		fBuilder.addTypeSignature(tsig);
+		fBuilder.addFunctionMatch(createFunctionMatch("fat", 3, 4));
+		
+		IModule module = fBuilder.getResult();
+		IDeclaration decl = module.getDeclarations()[0];
+		assertTrue(decl instanceof IClassDeclaration);
+		
+		ITypeSignature[] tsigs = ((IClassDeclaration) decl).getTypeSignatures();
+		assertEquals(1, tsigs.length);
+		assertSame(tsig, tsigs[0]);
+	}
+
+	private TypeSignature createTypeSignature() {
+		TypeSignature typeSignature = new TypeSignature();
+		return typeSignature;
+	}
+	
 	private FunctionMatch createFunctionMatch(String name, int line, int column) {
 		FunctionMatch match = new FunctionMatch();
 		match.setName(name);
