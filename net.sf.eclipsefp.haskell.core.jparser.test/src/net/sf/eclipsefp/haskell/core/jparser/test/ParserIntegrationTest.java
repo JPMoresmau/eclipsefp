@@ -678,7 +678,7 @@ public class ParserIntegrationTest extends TestCase {
 				               "  default (Integer, Double)\n");
 		
 		IDeclaration[] decls = module.getDeclarations();
-		assertEquals("default", decls[0].getName());
+		assertEquals("default declaration", decls[0].getName());
 		assertTrue(decls[0] instanceof IDefaultDeclaration);
 	}
 	

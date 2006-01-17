@@ -6,7 +6,7 @@ public class DefaultDeclaration extends Declaration implements
 		IDefaultDeclaration {
 	
 	public DefaultDeclaration() {
-		this.setName("default");
+		this.setName("default declaration");
 	}
 
 }
