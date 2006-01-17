@@ -113,9 +113,7 @@ options {
 module
     {
         Module aModule = (Module) fBuilder.startModule();
-        
-		Token nextToken = LT(1);
-        aModule.setLocation(nextToken.getLine(), nextToken.getColumn());
+        recordNextTokenLocation(aModule);
         
         String name = null;
     }
@@ -372,7 +370,19 @@ datadecl
 		DATA
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=simpletype { aDeclaration.setName(name); }
-		declrhs
+		EQUALS
+		constrs
+		(DERIVING (block | ~(SEMICOLON|RIGHT_CURLY))+)?
+	;
+	
+constrs
+	:
+		constr (ALT constr)*
+	;
+	
+constr
+	:
+		con (block | ~(SEMICOLON|ALT|RIGHT_CURLY))*
 	;
 	
 rnmdtypedecl
@@ -543,6 +553,12 @@ var returns [String result]
 	:
 		id:VARIABLE_ID { result = id.getText(); }
 	|	LEFT_PAREN varsymID:VARSYM { result = varsymID.getText(); } RIGHT_PAREN
+	;
+
+con
+	:
+		CONSTRUCTOR_ID
+	|	LEFT_PAREN CONSYM RIGHT_PAREN
 	;
 
 tyvar : VARIABLE_ID ;

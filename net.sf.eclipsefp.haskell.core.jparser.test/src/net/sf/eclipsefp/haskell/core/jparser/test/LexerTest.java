@@ -315,6 +315,15 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		assertToken(VARSYM, "$$", fLexer.nextToken());
 	}
 	
+	public void testRecognizeConsyms() throws TokenStreamException {
+		final String input = ":! ::% ::";
+		fLexer = createLexer(input);
+		
+		assertToken(CONSYM, ":!", fLexer.nextToken());
+		assertToken(CONSYM, "::%", fLexer.nextToken());
+		assertToken(OFTYPE, "::", fLexer.nextToken());
+	}
+	
 	public void testIdentifiersWithQuotes() throws TokenStreamException {
 		fLexer = createLexer("MyConstructor' myFunction'");
 		

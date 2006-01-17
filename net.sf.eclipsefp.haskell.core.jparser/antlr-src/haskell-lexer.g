@@ -24,6 +24,7 @@ tokens {
 	WHERE = "where" ;
 	IMPORT = "import" ;
 	QUALIFIED = "qualified" ;
+	DERIVING = "deriving" ;
 	AS = "as" ;
 	HIDING = "hiding" ;
 	TYPE = "type" ;
@@ -37,6 +38,8 @@ tokens {
 	OF = "of" ;
 	CONTEXT_ARROW = "=>" ;
 	EQUALS = "=" ;
+	ALT = "|" ;
+	OFTYPE = "::" ;
 	QVARID;
 	QCONID;
 	QVARSYM;
@@ -172,11 +175,11 @@ RIGHT_BRACKET : "]" ;
 
 COMMA : "," ;
 
-OFTYPE : "::" ;
-
 INFIX_QUOTE : "`" ;
 
 VARSYM : SYMBOL (SYMBOL | ":" )* ;
+
+CONSYM : ":" (SYMBOL | ":" )* ;
 
 SYMBOL : "!" | "#" | "$" | "%" | "&" | "*" | "+" | "." | "/" | "<" | "="
        | ">" | "?" | "@" | "\\" | "^" | "-" | "~"
