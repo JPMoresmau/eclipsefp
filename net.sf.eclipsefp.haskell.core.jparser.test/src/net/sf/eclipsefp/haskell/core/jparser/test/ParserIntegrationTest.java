@@ -540,6 +540,14 @@ public class ParserIntegrationTest extends TestCase {
 		assertEquals("Eq", decls[1].getName());
 		assertTrue(decls[1] instanceof IClassDeclaration);
 		
+		IClassDeclaration classDecl = (IClassDeclaration) decls[1];
+		final ITypeSignature[] typeSigs = classDecl.getTypeSignatures();
+		
+		assertEquals(1, typeSigs.length);
+
+		final String[] ids = typeSigs[0].getIdentifiers();
+		assertEquals("==", ids[0]);
+		assertEquals("/=", ids[1]);
 	}
 	
 	public void testContextClassDeclaration() throws RecognitionException, TokenStreamException {

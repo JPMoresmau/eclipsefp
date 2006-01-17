@@ -395,7 +395,7 @@ classdecl
 		tyvar
 		(
 			WHERE
-			block
+			cdecls
 		)?
 	;
 	
@@ -438,6 +438,19 @@ defaultdecl
 	}
 	:
 		DEFAULT list
+	;
+
+cdecls
+	:
+		LEFT_CURLY
+		( cdecl (SEMICOLON cdecl)* )?
+		RIGHT_CURLY	
+	;
+	
+cdecl
+	:
+		signdecl
+	|	nonstddecl
 	;
 
 context
