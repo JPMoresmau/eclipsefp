@@ -30,6 +30,7 @@ buildfile=$ECLIPSE_HOME/plugins/org.eclipse.pde.build_$pdeBuildPluginVersion/scr
 
 # Make sure the buildDirectory isn't filled
 rm -Rf $buildDirectory
+mkdir $buildDirectory
 
 if ! $vm -version > /dev/null 2>&1; then
     echo "Java VM not found. Aborting build..."
@@ -69,7 +70,13 @@ remoteUser=${PUBLISH_USER:-tbasouza}
 remoteServer=${PUBLISH_SERVER:-shell.sf.net}
 remoteSiteRoot=${PUBLISH_SERVER_SITE_ROOT:-/home/groups/e/ec/eclipsefp/htdocs}
 
-if $cmd; then
+if $cmd > $buildDirectory/build.log; then
+    mv $buildDirectory/build.log \
+       $buildDirectory/I.$buildId/compilelogs/build.log
+    tar czf $buildDirectory/net.sf.eclipsefp.haskell-${buildId}.zip.log.tar.gz \
+            -C$buildDirectory/I.$buildId \
+            compilelogs
     scp $buildDirectory/I.$buildId/net.sf.eclipsefp.haskell-${buildId}.zip \
+        $buildDirectory/net.sf.eclipsefp.haskell-${buildId}.zip.log.tar.gz \
         $remoteUser@$remoteServer:$remoteSiteRoot/download/drops
 fi
