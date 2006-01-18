@@ -100,10 +100,16 @@ public class HaskellParser_PDETest extends HaskellProjectTestCase {
     assertEquals( 2, ts2.getIdentifiers().length );
     assertEquals( "idf2", ts2.getIdentifiers()[ 0 ] );
     assertEquals( "idf3", ts2.getIdentifiers()[ 1 ] );
+  }
+  
+  public void testPatternBidings() throws Exception {
+	IModule module = loadMainModule( "005" );
+	IDeclaration[] decls = module.getDeclarations();
+	assertEquals( 4, decls.length );
 
-    IPatternBinding pb1 = ( IPatternBinding )decls[ 3 ];
-    assertEquals( 9, pb1.getSourceLocation().getLine() );
-    assertEquals( 0, pb1.getSourceLocation().getColumn() );
+	IPatternBinding pb1 = ( IPatternBinding )decls[ 3 ];
+	assertEquals( 9, pb1.getSourceLocation().getLine() );
+	assertEquals( 0, pb1.getSourceLocation().getColumn() );
   }
   
   public void testSimpleExports() throws Exception {
