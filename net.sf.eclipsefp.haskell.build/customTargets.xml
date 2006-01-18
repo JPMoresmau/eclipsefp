@@ -121,13 +121,25 @@
 <!-- (e.g., testing, posting, emailing, ...) -->
 <!-- ===================================================================== -->
 <target name="postBuild">
+	<antcall target="gatherLogs" />
 </target>
 
 <!-- ===================================================================== -->
 <!-- Helper targets -->
 <!-- ===================================================================== -->
-<target name="gatherLogs" if="logsAvailable">
+<target name="gatherLogs">
+    <mkdir dir="${buildDirectory}/${buildLabel}/compilelogs" />
+    <antcall target="allElements">
+        <param name="target" value="gatherLogs" />
+    </antcall>
+	<unzip dest="${buildDirectory}/${buildLabel}/compilelogs"
+			   overwrite="true">
+		<fileset dir="${buildDirectory}/features">
+			<include name="**/*.log.zip" />
+		</fileset>
+	</unzip>
 </target>
+	
 <target name="clean" unless="noclean">
 	<antcall target="allElements">
 		<param name="target" value="cleanElement" />
