@@ -19,6 +19,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IInfixDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IInstanceDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.INewTypeDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.IPatternBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
@@ -418,6 +419,7 @@ public class ParserIntegrationTest extends TestCase {
 		
 		assertEquals(2, decls.length);
 		assertEquals("main", decls[0].getName());
+		assertTrue(decls[1] instanceof IPatternBinding);
 		assertEquals("fun", decls[1].getName());
 	}
 	
