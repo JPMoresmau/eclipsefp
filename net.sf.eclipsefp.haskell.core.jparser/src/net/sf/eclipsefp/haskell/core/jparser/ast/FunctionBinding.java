@@ -6,8 +6,12 @@ import java.util.Vector;
 import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
 import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
 import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import de.leiffrenzel.fp.haskell.core.halamo.IPatternBinding;
 
-public class FunctionBinding extends Declaration implements IFunctionBinding {
+// the IPatternBinding implementation here isn't a hack, it is almost a sin,
+// but the current parser works just well. although, this should be of course
+// removed when the parser evolves
+public class FunctionBinding extends Declaration implements IFunctionBinding, IPatternBinding {
 
 	private List<IMatch> fMatches = new Vector<IMatch>();
 	
