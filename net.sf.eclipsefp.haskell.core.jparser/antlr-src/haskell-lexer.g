@@ -11,6 +11,9 @@
  */
 header {
 package net.sf.eclipsefp.haskell.core.jparser;
+
+import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
+
 }
 
 class HaskellLexer extends Lexer;
@@ -51,6 +54,7 @@ tokens {
 {
 	public HaskellLexer(Reader reader, IHaskellPreferenceProvider prefs) {
 		this(reader);
+		this.setTabSize(prefs.getTabSize());
 	}
 
 	/* workaround for starting token coordinates from 0

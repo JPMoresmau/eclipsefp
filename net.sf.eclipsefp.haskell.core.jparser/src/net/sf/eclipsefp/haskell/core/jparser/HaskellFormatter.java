@@ -16,10 +16,6 @@ public class HaskellFormatter extends TokenStreamProcessor {
 					new QualifiedIdentifierFilter(in))));
 	}
 
-	public HaskellFormatter(TokenStream in, IHaskellPreferenceProvider prefs) {
-		this(in);
-	}
-
 	protected void insertTokensAsNeeded() throws TokenStreamException {
 		if (hasInsertedTokens())
 			return;

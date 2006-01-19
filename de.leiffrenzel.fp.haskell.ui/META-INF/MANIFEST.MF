@@ -20,7 +20,9 @@ Require-Bundle: de.leiffrenzel.fp.haskell.core,
  net.sf.eclipsefp.common.core,
  net.sf.eclipsefp.common.ui
 Eclipse-AutoStart: true
-Provide-Package: de.leiffrenzel.fp.haskell.ui.dialog,
+Provide-Package: de.leiffrenzel.fp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ de.leiffrenzel.fp.haskell.ui.dialog,
  de.leiffrenzel.fp.haskell.ui.launch,
  de.leiffrenzel.fp.haskell.ui.util,
+ de.leiffrenzel.fp.haskell.ui.util.preferences,
  de.leiffrenzel.fp.haskell.ui.util.text

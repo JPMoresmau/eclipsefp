@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
+import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
+
 import antlr.RecognitionException;
 import antlr.Token;
 import antlr.TokenStreamException;
@@ -206,10 +208,10 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 	}
 	
 	private TestTokenStream createLexer(String input) {
-		return new TestTokenStream(new HaskellLexer(new StringReader(input)));
+		return createLexer(input, new HaskellPreferenceProviderStub());
 	}
 	
-	private TestTokenStream createLexer(String input, HaskellPreferenceProviderStub prefs) {
+	private TestTokenStream createLexer(String input, IHaskellPreferenceProvider prefs) {
 		return new TestTokenStream(
 				new HaskellLexer(new StringReader(input), prefs));
 	}

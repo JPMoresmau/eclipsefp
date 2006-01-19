@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
-import net.sf.eclipsefp.haskell.core.jparser.IHaskellPreferenceProvider;
+import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
 
 public class HaskellPreferenceProviderStub
 	implements IHaskellPreferenceProvider {

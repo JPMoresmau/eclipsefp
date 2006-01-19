@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.jparser;
+package de.leiffrenzel.fp.haskell.ui.util.preferences;
 
 public interface IHaskellPreferenceProvider {
 	
