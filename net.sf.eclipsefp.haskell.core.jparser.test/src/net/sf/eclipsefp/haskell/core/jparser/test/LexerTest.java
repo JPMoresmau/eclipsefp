@@ -368,6 +368,13 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		fLexer.skipTokens(4);
 		assertEquals(4, fLexer.nextToken().getColumn());
 	}
+	
+	public void testRecognizeVarsymWithAlt() throws TokenStreamException {
+		fLexer = createLexer("var .|.");
+		
+		assertToken(VARIABLE_ID, "var", fLexer.nextToken());
+		assertToken(VARSYM, ".|.", fLexer.nextToken());
+	}
 
 	// TODO escape  -> 	 \ ( charesc | ascii | decimal | o octal | x hexadecimal )
 	//      charesc -> 	a | b | f | n | r | t | v | \ | " | ' | &
