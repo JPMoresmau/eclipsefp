@@ -327,11 +327,7 @@ imp returns [ImportSpecification result]
 	:
 		specName=var { anImport.setName(specName); }
 	|	specName=tyconorcls { anImport.setName(specName); }
-	   	( LEFT_PAREN
-    	  ( t:VARSYM { "..".equals(t.getText()) }?
-    	  | cname (COMMA cname)*
-    	  | var (COMMA var)* )?
-    	  RIGHT_PAREN )?
+	   	( list )?
 	;
 	
 tyconorcls returns [String result]
