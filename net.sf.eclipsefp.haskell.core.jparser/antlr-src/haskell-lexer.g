@@ -12,6 +12,7 @@
 header {
 package net.sf.eclipsefp.haskell.core.jparser;
 
+import de.leiffrenzel.fp.haskell.ui.util.preferences.HaskellPreferenceProvider;
 import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
 
 }
@@ -52,6 +53,15 @@ tokens {
 }
 
 {
+	{
+		try {
+			this.setTabSize(new HaskellPreferenceProvider().getTabSize());
+		} catch(NullPointerException e) {
+			//happens when the eclipse platform isn't loaded
+			//in this case, ignore the default preference provider
+		}
+	}
+
 	public HaskellLexer(Reader reader, IHaskellPreferenceProvider prefs) {
 		this(reader);
 		this.setTabSize(prefs.getTabSize());

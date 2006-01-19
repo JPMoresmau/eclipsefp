@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Haskell UI Test Plug-in
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.ui.test
+Bundle-Version: 0.9.1
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.junit,
+ org.eclipse.ui,
+ de.leiffrenzel.fp.haskell.ui
+Export-Package: net.sf.eclipsefp.haskell.ui.test

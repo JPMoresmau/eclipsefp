@@ -8,4 +8,5 @@ Bundle-Localization: plugin
 Require-Bundle: org.junit,
  net.sf.eclipsefp.common.ui.test,
  net.sf.eclipsefp.haskell.core.parser.test,
- net.sf.eclipsefp.haskell.core.jparser.test
+ net.sf.eclipsefp.haskell.core.jparser.test,
+ net.sf.eclipsefp.haskell.ui.test
