@@ -209,6 +209,11 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		return new TestTokenStream(new HaskellLexer(new StringReader(input)));
 	}
 	
+	private TestTokenStream createLexer(String input, HaskellPreferenceProviderStub prefs) {
+		return new TestTokenStream(
+				new HaskellLexer(new StringReader(input), prefs));
+	}
+	
 	//TODO maybe we need to recognize more comment formats. the report
 	//specifies a return char as the end of a line comment too
 
@@ -349,6 +354,19 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		assertToken(STRING_LITERAL, ".", fLexer.nextToken());
 	}
 	
+	public void testCustomTabSize() throws TokenStreamException {
+		final String input = "module Main where\n" +
+				             "\tfat 0 = 1";
+		
+		final HaskellPreferenceProviderStub prefs = new HaskellPreferenceProviderStub();
+		prefs.setTabSize(4);
+		fLexer = createLexer(input, prefs);
+		
+		// module Main where \n
+		fLexer.skipTokens(4);
+		assertEquals(4, fLexer.nextToken().getColumn());
+	}
+
 	// TODO escape  -> 	 \ ( charesc | ascii | decimal | o octal | x hexadecimal )
 	//      charesc -> 	a | b | f | n | r | t | v | \ | " | ' | &
 	

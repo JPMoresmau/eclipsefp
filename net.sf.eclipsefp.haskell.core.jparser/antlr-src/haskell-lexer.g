@@ -49,6 +49,10 @@ tokens {
 }
 
 {
+	public HaskellLexer(Reader reader, IHaskellPreferenceProvider prefs) {
+		this(reader);
+	}
+
 	/* workaround for starting token coordinates from 0
 	 * as eclipse expects them to */
     protected Token makeToken(int t) {

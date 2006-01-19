@@ -8,7 +8,6 @@ import antlr.TokenStreamException;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellFormatter;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
-import net.sf.eclipsefp.haskell.core.jparser.IHaskellPreferenceProvider;
 
 import junit.framework.TestCase;
 
@@ -19,10 +18,6 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 	
 	private static TestTokenStream createFormatter(final String input) {
 		return new TestTokenStream(new HaskellFormatter(createLexer(input)));
-	}
-
-	private static TestTokenStream createFormatter(final String input, IHaskellPreferenceProvider prefs) {
-		return new TestTokenStream(new HaskellFormatter(createLexer(input), prefs));
 	}
 
 	private static HaskellLexer createLexer(final String input) {
@@ -370,25 +365,6 @@ public class FormatterTest extends TestCase implements HaskellLexerTokenTypes {
 		// test = putStr <string>
 		formatter.skipTokens(4);
 		assertEquals(RIGHT_CURLY, formatter.nextToken().getType());
-		assertEquals(SEMICOLON, formatter.nextToken().getType());
-	}
-	
-	public void testMixTabAndSpaces() throws TokenStreamException {
-		final String input = "module Main where\n" +
-				             "\tfat 0 = 1\n" +
-				             "    fat n = n * (fat (n - 1))";
-		
-		final HaskellPreferenceProviderStub prefs = new HaskellPreferenceProviderStub();
-		prefs.setTabSize(4);
-		final TestTokenStream formatter = createFormatter(input, prefs);
-		
-		// module Main where
-		// {
-		// fat 0 = 1
-		formatter.skipTokens(3);
-		formatter.skipTokens(1);
-		formatter.skipTokens(4);
-		
 		assertEquals(SEMICOLON, formatter.nextToken().getType());
 	}
 	
