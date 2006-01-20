@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.ui.test;
 
-import net.sf.eclipsefp.haskell.ui.test.util.preferences.AllTests_PDESuite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -10,7 +9,8 @@ public class AllAllTests_PDESuite {
 		TestSuite suite = new TestSuite(
 				"Test for de.leiffrenzel.fp.haskell.ui");
 		//$JUnit-BEGIN$
-		suite.addTest(AllTests_PDESuite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.ui.test.util.preferences.AllTests_PDESuite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.ui.test.wizards.AllTests_PDESuite.suite());
 		//$JUnit-END$
 		return suite;
 	}

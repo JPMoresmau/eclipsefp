@@ -15,6 +15,7 @@ public class ModuleCreationInfo {
   private String moduleName = "";
   private IPath folders;
   private IContainer sourceContainer;
+  private EHaskellCommentStyle fCommentStyle = EHaskellCommentStyle.USUAL;
   
   
   // attribute setters and getters
@@ -42,5 +43,13 @@ public class ModuleCreationInfo {
  
   public void setSourceContainer( final IContainer sourceContainer ) {
     this.sourceContainer = sourceContainer;
+  }
+
+  public EHaskellCommentStyle getCommentStyle() {
+    return fCommentStyle;
+  }
+  
+  public void setCommentStyle( EHaskellCommentStyle style ) {
+    fCommentStyle = style;
   }
 }

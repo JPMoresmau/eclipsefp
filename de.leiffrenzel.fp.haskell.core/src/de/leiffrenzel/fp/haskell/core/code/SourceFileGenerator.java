@@ -7,8 +7,6 @@ import java.io.InputStream;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
-
 /** <p>helper to generate the code in the new module.</p>
   * 
   * @author Leif Frenzel
@@ -67,11 +65,13 @@ public class SourceFileGenerator {
                                    final IContainer destFolder, 
                                    final IProgressMonitor monitor ) 
                                                           throws CoreException {
-    String[] segments = getPathSegments( info );
-    String moduleName = info.getModuleName();
+    final String[] segments = getPathSegments( info );
+    final String moduleName = info.getModuleName();
+    final EHaskellCommentStyle style = info.getCommentStyle();
     String fileContent = CodeGenerator.createModuleContent( segments, 
-                                                            moduleName );
-    String fileName = createFileName( moduleName );
+                                                            moduleName,
+                                                            style );
+    String fileName = createFileName( style, moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
     InputStream isContent = new ByteArrayInputStream( fileContent.getBytes() ); 
     SubProgressMonitor subMon = new SubProgressMonitor( monitor, 4 );
@@ -84,7 +84,7 @@ public class SourceFileGenerator {
     return ( path == null ) ? new String[ 0 ] : path.segments();
   }
 
-  private static String createFileName( final String moduleName ) {
-    return moduleName + "." + ResourceUtil.EXTENSION_HS;
+  private static String createFileName(EHaskellCommentStyle style, final String moduleName ) {
+    return moduleName + "." + style.getFileExtension();
   }
 }

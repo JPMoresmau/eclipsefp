@@ -17,14 +17,14 @@ import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
   * 
   * @author Leif Frenzel
   */
-class ModuleCreationOperation implements IRunnableWithProgress {
+public class ModuleCreationOperation implements IRunnableWithProgress {
 
   private ModuleCreationInfo info;
   // the file that is finally generated in this operation
   private IFile generatedFile;
 
   
-  ModuleCreationOperation( final ModuleCreationInfo info ) {
+  public ModuleCreationOperation( final ModuleCreationInfo info ) {
     this.info = info;
   }
   
