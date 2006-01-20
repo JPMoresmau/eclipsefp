@@ -15,8 +15,8 @@
  	 ANTLR is available at http://www.antlr.org
  	 
  	 If you've got the full eclipsefp project, there should be a
- 	 net.sf.eclipsefp.antlr side-by-side with this one. It includes the
- 	 antlr.jar for version 2.7.5, and this script is designed to use that
+ 	 org.antlr side-by-side with this one. It includes the
+ 	 antlr.jar for version 2.7.6, and this script is designed to use that
  	 Jar. If this is your case, you probably just need to run the script.
  	 
  	 If you don't wish to obtain that, or if you wish to use a newer
@@ -39,7 +39,7 @@
 	<property environment="env" />
 	<property name="antlr.src.dir" location="${basedir}/antlr-src" />
 	<property name="output.dir" location="${basedir}/src/net/sf/eclipsefp/haskell/core/jparser" />
-	<property name="antlr.lib" location="../net.sf.eclipsefp.antlr/lib/antlr.jar" />
+	<property name="antlr.lib" location="../org.antlr/lib/antlr.jar" />
 
     <!-- ================================= 
           target: default              
