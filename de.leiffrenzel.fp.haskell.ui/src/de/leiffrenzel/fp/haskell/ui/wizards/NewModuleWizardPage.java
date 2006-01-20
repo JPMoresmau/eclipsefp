@@ -7,10 +7,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
+import de.leiffrenzel.fp.haskell.core.code.EHaskellCommentStyle;
 import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
 import de.leiffrenzel.fp.haskell.ui.dialog.FolderSelectionDialog;
 import de.leiffrenzel.fp.haskell.ui.dialog.SourceFolderSelectionDialog;
@@ -33,6 +36,10 @@ public class NewModuleWizardPage extends StatusWizardPage {
   private IStatus nameStatus;
   
   private ModuleCreationInfo currentInfo;
+  private Button chkUseLiterate;
+  private Group grpLiterate;
+  private Button rdoLiterate;
+  private Button rdoTex;
   
   
   public NewModuleWizardPage() {
@@ -52,6 +59,15 @@ public class NewModuleWizardPage extends StatusWizardPage {
   }
   
   ModuleCreationOperation getOperation() {        
+    if (chkUseLiterate.getSelection()) {
+      if (rdoLiterate.getSelection()) {
+        currentInfo.setCommentStyle(EHaskellCommentStyle.LITERATE);
+      } else {
+        currentInfo.setCommentStyle(EHaskellCommentStyle.TEX);
+      }
+    } else {
+      currentInfo.setCommentStyle(EHaskellCommentStyle.USUAL);
+    }
     return new ModuleCreationOperation( currentInfo );
   }
       
@@ -134,12 +150,75 @@ public class NewModuleWizardPage extends StatusWizardPage {
     createFolderControls( composite, cols );
     createSeparator( composite, cols );
     createNameControls( composite, cols );
+    createLiterateControls( composite );
+    
     setControl( composite );
 
     Dialog.applyDialogFont( composite );
   }
 
-  
+  private void createLiterateControls( Composite composite ) {
+    createUseLiterateCheckBox( composite );
+    createLiterateBlock(composite);
+  }
+
+  private void createUseLiterateCheckBox( Composite composite ) {
+    GridData gd = new GridData();
+    gd.horizontalAlignment = GridData.FILL;
+    gd.grabExcessHorizontalSpace = false;
+    gd.horizontalSpan = 1;
+    chkUseLiterate = new Button(composite, SWT.CHECK);
+    chkUseLiterate.setText( "Use literate style" );
+    chkUseLiterate.setLayoutData(gd);
+    
+    chkUseLiterate.addSelectionListener(new SelectionListener() {
+
+      public void widgetSelected( SelectionEvent e ) {
+        enableLiterateGroup(chkUseLiterate.getSelection());
+      }
+
+      public void widgetDefaultSelected( SelectionEvent e ) {
+        widgetSelected( e );
+      }
+      
+    });
+  }
+
+  private void createLiterateBlock( Composite composite ) {
+    createLiterateGroup( composite );  
+    createLiterateRadio();
+    createTexStyleRadio();
+  }
+
+  private void createLiterateGroup( Composite composite ) {
+    grpLiterate = new Group(composite, SWT.NONE);
+    grpLiterate.setText("Literate Haskell");
+    grpLiterate.setEnabled( false );
+    GridData gd = new GridData();
+    gd.horizontalAlignment = GridData.FILL;
+    gd.grabExcessHorizontalSpace = false;
+    gd.horizontalSpan = 4;
+    grpLiterate.setLayoutData(gd);
+    GridLayout layout= new GridLayout();
+    layout.marginHeight= 0;
+    layout.marginWidth= 0;
+    layout.numColumns= 1;
+    grpLiterate.setLayout(layout);
+  }
+
+  private void createLiterateRadio() {
+    rdoLiterate = new Button(grpLiterate, SWT.RADIO);
+    rdoLiterate.setText("Traditional literate style");
+    rdoLiterate.setEnabled( false );
+    rdoLiterate.setSelection(true);
+  }
+
+  private void createTexStyleRadio() {
+    rdoTex = new Button(grpLiterate, SWT.RADIO);
+    rdoTex.setText("Tex literate style");
+    rdoTex.setEnabled( false );
+  }
+
   // UI creation
   //////////////
   
@@ -314,6 +393,13 @@ public class NewModuleWizardPage extends StatusWizardPage {
   
   // inner classes
   ////////////////
+
+  private void enableLiterateGroup(boolean enabled) {
+    grpLiterate.setEnabled(enabled);
+    for(Control child : grpLiterate.getChildren()) {
+      child.setEnabled( enabled );
+    }
+  }
 
   private class FieldsAdapter implements IStringButtonAdapter,
                                          IDialogFieldListener {
