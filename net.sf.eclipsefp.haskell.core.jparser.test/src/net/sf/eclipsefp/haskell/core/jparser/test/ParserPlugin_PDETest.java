@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -32,6 +34,16 @@ public class ParserPlugin_PDETest extends TestCase {
 		assertNotNull(unit);
 		assertEquals(1, unit.getModules().length);
 		assertEquals("Empty", unit.getModules()[0].getName());
+	}
+	
+	public void testCanReadContentsAfterParse() throws CoreException {
+	    MockFile file = new MockFile("module Empty where {}");
+	    
+		IHaskellParser parser = ParserManager.getInstance().getParser();
+		
+		parser.parse(file);
+		
+		file.verify();
 	}
 	
 }

@@ -24,10 +24,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class MockFile implements IFile {
 
-	private StringBufferInputStream fContents;
+	private MockInputStream fContents;
 	
 	public MockFile(String contents) {
-		fContents = new StringBufferInputStream(contents);
+		fContents = new MockInputStream(new StringBufferInputStream(contents));
 	}
 
 	public void appendContents(InputStream source, boolean force,
@@ -449,6 +449,10 @@ public class MockFile implements IFile {
 
 	public boolean isLinked(int options) {
 		return false;
+	}
+
+	public void verify() {
+		fContents.verify();
 	}
 
 }
