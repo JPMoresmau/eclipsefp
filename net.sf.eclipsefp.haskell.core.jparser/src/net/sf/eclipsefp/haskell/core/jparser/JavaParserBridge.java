@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -28,23 +29,29 @@ public class JavaParserBridge implements IHaskellParser {
 				    	file.getContents());
 		}
 		HaskellParser parser = new HaskellParser(input);
+		ICompilationUnit result = null;
 		try {
-			return new CompilationUnit(parser.parseModule());
+			result = new CompilationUnit(parser.parseModule());
 		} catch (RecognitionException e) {
-			throw new CoreException(
-					new Status(Status.ERROR,
-							   JParserPlugin.getPluginId(),
-							   -1,
-							   "Parsing error on " + file.getName(),
-							   e ));
+			raiseCoreException(e, "Parsing error on " + file.getName());
 		} catch (TokenStreamException e) {
-			throw new CoreException(
-					new Status(Status.ERROR,
-							   JParserPlugin.getPluginId(),
-							   -1,
-							   "Scanning error on " + file.getName(),
-							   e ));
+			raiseCoreException(e, "Scanning error on " + file.getName());
+		} finally {
+			try {
+				input.close();
+			} catch (IOException e) {
+				raiseCoreException(e, "Cannot close " + file.getName());
+			}
 		}
+		return result;
+	}
+
+	private void raiseCoreException(Throwable cause, String msg)
+		throws CoreException
+	{
+		throw new CoreException(
+				new Status(Status.ERROR, JParserPlugin.getPluginId(),
+						   -1, msg, cause ));
 	}
 
 	private boolean isLiterate(IFile file) {

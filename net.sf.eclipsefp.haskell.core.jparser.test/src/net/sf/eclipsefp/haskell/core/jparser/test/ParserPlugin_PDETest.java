@@ -1,10 +1,11 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
-import java.io.InputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import antlr.TokenStreamException;
+
+import net.sf.eclipsefp.haskell.core.jparser.JParserPlugin;
 import net.sf.eclipsefp.haskell.core.jparser.JavaParserBridge;
 import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
@@ -18,6 +19,10 @@ import junit.framework.TestCase;
  */
 public class ParserPlugin_PDETest extends TestCase {
 
+	public void testConstructorCalled() {
+		assertNotNull(JParserPlugin.getDefault());
+	}
+	
 	public void testVisibleToCore() {
 		IHaskellParser parser = ParserManager.getInstance().getParser();
 		
@@ -36,7 +41,7 @@ public class ParserPlugin_PDETest extends TestCase {
 		assertEquals("Empty", unit.getModules()[0].getName());
 	}
 	
-	public void testCanReadContentsAfterParse() throws CoreException {
+	public void testClosesStream() throws CoreException {
 	    MockFile file = new MockFile("module Empty where {}");
 	    
 		IHaskellParser parser = ParserManager.getInstance().getParser();
@@ -46,4 +51,29 @@ public class ParserPlugin_PDETest extends TestCase {
 		file.verify();
 	}
 	
+	public void testClosesStreamOnLiterateFile() throws CoreException {
+	    MockFile file = new MockFile("Mock.lhs", "> module Empty where {}");
+
+	    IHaskellParser parser = ParserManager.getInstance().getParser();
+		
+		parser.parse(file);
+		
+		file.verify();
+	}
+	
+	public void testClosesStreamOnScanningError() {
+	    MockFile file = new MockFile("module Empty where { fat 0 = 0o8 }");
+	    
+		IHaskellParser parser = ParserManager.getInstance().getParser();
+		
+		try {
+			parser.parse(file);
+			fail("Should have raised a scanning error");
+		} catch (CoreException e) {
+			Throwable cause = e.getStatus().getException();
+			assertTrue(cause instanceof TokenStreamException);
+		}
+		
+		file.verify();
+	}
 }

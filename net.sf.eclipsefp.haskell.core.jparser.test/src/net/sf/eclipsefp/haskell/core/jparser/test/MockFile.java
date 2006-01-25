@@ -25,9 +25,15 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 public class MockFile implements IFile {
 
 	private MockInputStream fContents;
+	private String fFileName;
 	
 	public MockFile(String contents) {
+		this("Mock.hs", contents);
+	}
+
+	public MockFile(String filename, String contents) {
 		fContents = new MockInputStream(new StringBufferInputStream(contents));
+		fFileName = filename;
 	}
 
 	public void appendContents(InputStream source, boolean force,
@@ -92,7 +98,7 @@ public class MockFile implements IFile {
 	}
 
 	public String getName() {
-		return null;
+		return fFileName;
 	}
 
 	public boolean isReadOnly() {
