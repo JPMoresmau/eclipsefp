@@ -2,6 +2,9 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.parser;
 
+
+import net.sf.eclipsefp.haskell.core.parser.test.internal.util.ResourceImport_PDETestCase;
+
 import org.eclipse.core.resources.IFile;
 
 import de.leiffrenzel.fp.haskell.core.halamo.*;
@@ -13,7 +16,7 @@ import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
   *
   * @author Leif Frenzel
   */
-public class CompilationUnit_PDETest extends HaskellProjectTestCase {
+public class CompilationUnit_PDETest extends ResourceImport_PDETestCase {
 
   public void testEmptyCU() throws Exception {
     // an empty compilation unit has an implicit Main module at position 0,0

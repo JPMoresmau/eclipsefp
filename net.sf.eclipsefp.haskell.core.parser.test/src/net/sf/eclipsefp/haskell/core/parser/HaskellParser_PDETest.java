@@ -2,6 +2,9 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.parser;
 
+
+import net.sf.eclipsefp.haskell.core.parser.test.internal.util.ResourceImport_PDETestCase;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -14,7 +17,7 @@ import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
   *
   * @author Leif Frenzel
   */
-public class HaskellParser_PDETest extends HaskellProjectTestCase {
+public class HaskellParser_PDETest extends ResourceImport_PDETestCase {
 
   public void testSimpleRead() throws Exception {
     importSourceFile( "Main.hs", "001", "Main.hs" );

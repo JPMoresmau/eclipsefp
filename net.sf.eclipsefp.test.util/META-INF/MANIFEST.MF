@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test Utilities Plug-In
+Bundle-SymbolicName: net.sf.eclipsefp.test.util
+Bundle-Version: 0.9.1
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: org.junit,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ de.leiffrenzel.fp.haskell.core
+Export-Package: net.sf.eclipsefp.test.util.haskell

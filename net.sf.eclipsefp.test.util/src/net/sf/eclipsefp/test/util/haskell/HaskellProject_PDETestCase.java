@@ -1,6 +1,6 @@
 // Copyright (c) 2004-2005 by Leif Frenzel
 // See http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.core.parser;
+package net.sf.eclipsefp.test.util.haskell;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -10,32 +10,21 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import de.leiffrenzel.fp.haskell.core.project.*;
+import de.leiffrenzel.fp.haskell.core.project.HaskellNature;
+import de.leiffrenzel.fp.haskell.core.project.HaskellProjectManager;
+import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
 
 /** <p>the super class for test cases that run on a Haskell project.</p>
   *
   * @author Leif Frenzel
   */
-public abstract class HaskellProjectTestCase extends TestCase {
+public abstract class HaskellProject_PDETestCase extends TestCase {
 
   private IProject project;
   
   protected IProject getProject() {
     return project;
   }
-  
-  protected void importSourceFile( final String fileName, 
-                                   final String resFolder, 
-                                   final String resName ) throws Exception {
-    IHaskellProject hsProject = HaskellProjectManager.get( project );
-    IPath path = hsProject.getSourcePath().append( fileName );
-    IFile newFile = project.getFile( path );
-    newFile.create( getStream( resFolder, resName, this ), true, null );
-  }
-  
-  
-  // interface methods of TestCase
-  ////////////////////////////////
   
   protected void setUp() throws Exception {
     IWorkspaceRunnable op = new IWorkspaceRunnable() {
@@ -95,19 +84,11 @@ public abstract class HaskellProjectTestCase extends TestCase {
     folder.create( true, true, null );
   }
   
-  private String constructName( final String folder, 
+  protected String constructName( final String folder, 
                                 final String name,
                                 final Object context ) {
     Package pack = context.getClass().getPackage();
     String packageName = pack.getName().replace( '.', '/' ) + "/res/";
     return packageName + folder + "/" + name;
-  }
-  
-  private InputStream getStream( final String folder, 
-                                 final String name,
-                                 final Object context ) {
-    String resourceName = constructName( folder, name, context );
-    ClassLoader classLoader = context.getClass().getClassLoader();
-    return classLoader.getResourceAsStream( resourceName );
   }
 }
