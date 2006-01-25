@@ -55,6 +55,7 @@ public class ModuleCreatioOperation_PDETest extends TestCase {
 								new InputStreamReader(file.getContents()));
 		char[] inBuffer = new char[expected.length()];
 		int n = input.read(inBuffer);
+		input.close();
 		
 		final String actual = new String(inBuffer, 0, n);
 		assertEquals(expected, actual);
