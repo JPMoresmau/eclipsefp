@@ -10,7 +10,6 @@ public class AllAllTests_PDESuite {
 				"Test for de.leiffrenzel.fp.haskell.ui");
 		//$JUnit-BEGIN$
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.util.preferences.AllTests_PDESuite.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.ui.test.wizards.AllTests_PDESuite.suite());
 		//$JUnit-END$
 		return suite;
 	}

@@ -1,14 +1,17 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package de.leiffrenzel.fp.haskell.core.code;
+package de.leiffrenzel.fp.haskell.core.internal.code;
+
+import de.leiffrenzel.fp.haskell.core.code.EHaskellCommentStyle;
+
 
 /** <p>helping class that generates Haskell source code.</p>
   *
   * @author Leif Frenzel
   */
-class CodeGenerator {
+public class CodeGenerator {
 
   // TODO honor code template for generating this
-  static String createModuleContent( final String[] folderNames,
+  public String createModuleContent( final String[] folderNames,
                                      final String name,
                                      EHaskellCommentStyle style )
   {

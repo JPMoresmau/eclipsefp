@@ -7,14 +7,29 @@ import java.io.InputStream;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
+import de.leiffrenzel.fp.haskell.core.internal.code.CodeGenerator;
+
+
 /** <p>helper to generate the code in the new module.</p>
   * 
   * @author Leif Frenzel
   */
 public class SourceFileGenerator {
 
+  private CodeGenerator fCodeGenerator;
+  
+  public SourceFileGenerator( CodeGenerator codeGenerator ) {
+    fCodeGenerator = codeGenerator;
+  }
+
+
+  public SourceFileGenerator() {
+    this(new CodeGenerator());
+  }
+
+
   /** Creates the new type using the specified information values. */
-  public static IFile createFile( final IProgressMonitor monitor,
+  public IFile createFile( final IProgressMonitor monitor,
                                   final ModuleCreationInfo info ) 
                                                           throws CoreException {
     monitor.beginTask( "Creating module...", 12 );
@@ -29,7 +44,7 @@ public class SourceFileGenerator {
   // helping methods
   //////////////////
 
-  private static IContainer createFolders( final ModuleCreationInfo info, 
+  private IContainer createFolders( final ModuleCreationInfo info, 
                                            final IProgressMonitor monitor ) 
                                                           throws CoreException {
     IPath foldersPath = info.getFolders();
@@ -53,7 +68,7 @@ public class SourceFileGenerator {
     return result;
   }
 
-  private static void refresh( final ModuleCreationInfo info, 
+  private void refresh( final ModuleCreationInfo info, 
                                final IProgressMonitor monitor ) 
                                                           throws CoreException {
     SubProgressMonitor refMon = new SubProgressMonitor( monitor, 2 );
@@ -61,16 +76,16 @@ public class SourceFileGenerator {
     srcContainer.refreshLocal( IResource.DEPTH_INFINITE, refMon );
   }
 
-  private static IFile createFile( final ModuleCreationInfo info, 
+  private IFile createFile( final ModuleCreationInfo info, 
                                    final IContainer destFolder, 
                                    final IProgressMonitor monitor ) 
                                                           throws CoreException {
     final String[] segments = getPathSegments( info );
     final String moduleName = info.getModuleName();
     final EHaskellCommentStyle style = info.getCommentStyle();
-    String fileContent = CodeGenerator.createModuleContent( segments, 
-                                                            moduleName,
-                                                            style );
+    String fileContent = fCodeGenerator.createModuleContent( segments, 
+        moduleName,
+        style );
     String fileName = createFileName( style, moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
     InputStream isContent = new ByteArrayInputStream( fileContent.getBytes() ); 

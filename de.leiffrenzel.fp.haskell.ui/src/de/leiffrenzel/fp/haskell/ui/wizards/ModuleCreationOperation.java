@@ -41,7 +41,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
                                                      InterruptedException {
     Assert.isNotNull( info );
     try {
-      generatedFile = SourceFileGenerator.createFile( monitor, info );
+      generatedFile = new SourceFileGenerator().createFile( monitor, info );
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );
     }
