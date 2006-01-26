@@ -59,19 +59,18 @@ public class HaskellParser_PDETest extends ResourceImport_PDETestCase {
     assertEquals( 0, imports[ 3 ].getSourceLocation().getColumn() );
   }
   
-  public void testError() throws Exception {
+  public void testIgnoreError() throws Exception {
     importSourceFile( "Main.hs", "003", "Main.hs" );
     IFile file = getProject().getFile( "src/Main.hs" );
     assertTrue( file.exists() );
 
     IHaskellParser parser = ParserManager.getInstance().getParser();
-    boolean exceptionOccured = false;
-    try {
-      parser.parse( file );
-    } catch( CoreException cex ) {
-      exceptionOccured = true;
-    }
-    assertTrue( exceptionOccured );
+    ICompilationUnit cUnit = parser.parse( file );
+    IDeclaration[] decls = cUnit.getModules()[0].getDeclarations();
+    assertEquals(1, decls.length);
+    
+	IFunctionBinding fb = (IFunctionBinding) decls[0];
+    assertEquals("main", fb.getName());
   }
   
   public void testSimpleDecls() throws Exception {
