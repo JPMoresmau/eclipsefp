@@ -122,6 +122,8 @@
 <!-- ===================================================================== -->
 <target name="postBuild">
 	<antcall target="gatherLogs" />
+	<property name="update.site.staging.loc" value="${buildDirectory}/updateSite" />
+	<antcall target="generateUpdateSite" />
 </target>
 
 <!-- ===================================================================== -->
@@ -139,6 +141,25 @@
 		</fileset>
 	</unzip>
 </target>
+	
+<target name="generateUpdateSite" if="doGenerateUpdateSite">
+	<!-- Create the directory structure -->
+	<mkdir dir="${update.site.staging.loc}" />
+	<mkdir dir="${update.site.staging.loc}/features" />
+	<mkdir dir="${update.site.staging.loc}/plugins" />
+	
+	<antcall target="allElements">
+	    <param name="genericTargets" value="${builder}/customTargets.xml"/>
+	    <param name="target" value="updateSiteExport"/>
+	</antcall>
+</target>
+	
+<target name="updateSiteExport">
+	<ant antfile="build.xml" dir="${buildDirectory}/features/${id}/" target="build.update.jar">
+		<property name="feature.destination" value="${update.site.staging.loc}/features"/>
+    	<property name="plugin.destination" value="${update.site.staging.loc}/plugins"/>
+	</ant>
+</target>	
 	
 <target name="clean" unless="noclean">
 	<antcall target="allElements">
