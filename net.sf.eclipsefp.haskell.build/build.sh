@@ -6,12 +6,12 @@
 # 
 # Largelly inspired by the Ruby Development tools build script
 
-ECLIPSE_HOME=${ECLIPSE_HOME:-/opt/eclipse/platform/3.1.1/eclipse}
+ECLIPSE_HOME=${ECLIPSE_HOME:-/opt/eclipse/platform/3.1.2/eclipse}
 
 echo using ECLIPSEFP_HOME: ${ECLIPSEFP_HOME:?must be set}
 echo using ECLIPSE_HOME: $ECLIPSE_HOME
 echo
-pdeBuildPluginVersion=3.1.0
+pdeBuildPluginVersion=3.1.2
 buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-/tmp/eclipsefp-build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
 
