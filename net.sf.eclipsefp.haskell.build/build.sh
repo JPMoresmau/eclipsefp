@@ -63,6 +63,7 @@ org.eclipse.core.launcher.Main \
 -Dbuilder=$ECLIPSEFP_HOME/net.sf.eclipsefp.haskell.build \
 -DbuildDirectory=$buildDirectory \
 -DbuildId=$buildId \
+-DdoGenerateUpdateSite=true \
 -DskipFetch=true"
 echo $cmd
 
