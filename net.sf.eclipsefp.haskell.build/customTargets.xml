@@ -49,14 +49,18 @@
 	</exec>
 	<mkdir dir="${buildDirectory}/plugins"/>
 	<mkdir dir="${buildDirectory}/features"/>
+	<mkdir dir="${buildDirectory}/sites"/>
 	<move todir="${buildDirectory}/plugins">
 		<fileset dir="${buildDirectory}/eclipsefp">
 			<exclude name="_darcs" />
 			<exclude name="de.leiffrenzel.fp.haskell-feature/**" />
+			<exclude name="net.sf.eclipsefp.updatesite/**" />
 		</fileset>
 	</move>
 	<move file="${buildDirectory}/eclipsefp/de.leiffrenzel.fp.haskell-feature"
 	      tofile="${buildDirectory}/features/de.leiffrenzel.fp.haskell"/>
+	<move file="${buildDirectory}/eclipsefp/net.sf.eclipsefp.updatesite"
+	      tofile="${buildDirectory}/sites/net.sf.eclipsefp.updatesite"/>
 	<delete dir="${buildDirectory}/eclipsefp" />
 </target>
 
@@ -152,6 +156,9 @@
 	    <param name="genericTargets" value="${builder}/customTargets.xml"/>
 	    <param name="target" value="updateSiteExport"/>
 	</antcall>
+	
+	<copy file="${buildDirectory}/sites/net.sf.eclipsefp.updatesite/site.xml"
+		  todir="${update.site.staging.loc}"/>
 </target>
 	
 <target name="updateSiteExport">
