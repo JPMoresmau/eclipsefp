@@ -23,6 +23,8 @@ available at http://www.eclipse.org/legal/epl-v10.html.
    <url>
       <update label="eclipsefp update site" url="http://eclipsefp.sf.net/updates/site.xml"/>
    </url>
+   
+   <includes id="de.leiffrenzel.fp.haskell.source" version="0.0.0" />
 
    <requires>
       <import plugin="org.eclipse.ui.cheatsheets"/>
