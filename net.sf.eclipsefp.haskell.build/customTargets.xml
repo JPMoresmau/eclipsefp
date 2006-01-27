@@ -166,6 +166,15 @@
 		<property name="feature.destination" value="${update.site.staging.loc}/features"/>
     	<property name="plugin.destination" value="${update.site.staging.loc}/plugins"/>
 	</ant>
+	<zip basedir="${buildDirectory}/features/${id}.source/"
+		 destfile="${update.site.staging.loc}/features/${id}.source_0.9.1.jar" />
+	<delete>
+		<fileset dir="${buildDirectory}/plugins/${id}.source/">
+		    <include name="*.zip"/>
+		</fileset>
+	</delete>
+	<zip basedir="${buildDirectory}/plugins/${id}.source/"
+		 destfile="${update.site.staging.loc}/plugins/${id}.source_0.9.1.jar" />
 </target>	
 	
 <target name="clean" unless="noclean">
