@@ -8,5 +8,12 @@
          <run class="net.sf.eclipsefp.haskell.build.check.VerifyPreconditions"/>
       </application>
    </extension>
+   <extension
+         id="verifypostinstall"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run class="net.sf.eclipsefp.haskell.build.check.VerifyPostInstallationConditions"/>
+      </application>
+   </extension>
 
 </plugin>
