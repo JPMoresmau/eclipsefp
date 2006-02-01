@@ -47,6 +47,16 @@ if ! darcs --version > /dev/null 2>&1; then
     exit
 fi 
 
+verifyCmd="$vm -cp $ECLIPSE_HOME/startup.jar \
+org.eclipse.core.launcher.Main \
+-application net.sf.eclipsefp.haskell.build.check.verifypreconditions \
+-os linux -ws gtk -arch x86"
+
+if ! $verifyCmd; then
+    echo "Build preconditions not met. Aborting build..."
+    exit
+fi
+
 echo Starting eclipse in $ECLIPSE_HOME, $vm
 echo
 
