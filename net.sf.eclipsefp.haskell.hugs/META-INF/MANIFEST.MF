@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: Hugs support
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.hugs; singleton=true
-Bundle-Version: 0.9.1
+Bundle-Version: 0.10.0
 Bundle-ClassPath: hugs.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.hugs.HugsPlugin
 Bundle-Vendor: eclipsefp.sourceforge.net

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: EclipseFP: Haskell
 Bundle-SymbolicName: de.leiffrenzel.fp.haskell; singleton=true
-Bundle-Version: 0.9.1
+Bundle-Version: 0.10.0
 Bundle-ClassPath: haskell.jar
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin

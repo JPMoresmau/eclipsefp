@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Haskell Refactoring
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.refactoring; singleton:=true
-Bundle-Version: 0.9.1
+Bundle-Version: 0.10.0
 Bundle-ClassPath: haskellrefactoring.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.refactoring.internal.ui.HaskellRefactoringUI
 Bundle-Vendor: eclipsefp.sourceforge.net
