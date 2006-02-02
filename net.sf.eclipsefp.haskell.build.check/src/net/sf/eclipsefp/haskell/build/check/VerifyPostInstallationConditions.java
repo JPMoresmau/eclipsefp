@@ -10,8 +10,10 @@ public class VerifyPostInstallationConditions implements IPlatformRunnable {
 
 	public Object run(Object args) throws Exception {
 		try {
-			checkPluginExistence("de.leiffrenzel.fp.haskell.core");
-			checkSourceCodePlugin("de.leiffrenzel.fp.haskell.source");
+			assertPluginExistence("de.leiffrenzel.fp.haskell.core");
+			assertSourceCodePlugin("de.leiffrenzel.fp.haskell.source");
+			assertDocumentationPlugin("net.sf.eclipsefp.common.doc");
+			assertDocumentationPlugin("de.leiffrenzel.fp.haskell.doc.user");
 			return 0;
 		} catch (Exception e) {
 			final String message = "Bad installation. " + e.getMessage();
@@ -20,22 +22,40 @@ public class VerifyPostInstallationConditions implements IPlatformRunnable {
 		}
 	}
 
-	private void checkPluginExistence(final String pluginName) throws Exception {
+	private void assertPluginExistence(final String pluginName) throws Exception {
 		Object bundle = Platform.getBundle(pluginName);
 		if (bundle == null) {
 			throw new Exception(pluginName + " plugin not found.");
 		}
 	}
 
-	private void checkSourceCodePlugin(final String pluginName) throws Exception {
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint point = reg.getExtensionPoint("org.eclipse.pde.core.source");
-		for (IExtension ext : point.getExtensions()) {
-			if (pluginName.equals(ext.getNamespace())) {
-				return;
-			}
+	private void assertSourceCodePlugin(final String pluginName) throws Exception {
+		if (!checkDeclaredExtension(pluginName, "org.eclipse.pde.core.source")) {
+			throw new Exception("Source code plugin " + pluginName + " not found");
 		}
-		throw new Exception("Source code plugin " + pluginName + " not found");
 	}
 
+	private void assertDocumentationPlugin(final String pluginName) throws Exception {
+		if (!checkDeclaredExtension(pluginName, "org.eclipse.help.toc")) {
+			throw new Exception("Documentation plugin " + pluginName + " not found");
+		}
+	}
+
+	/**
+	 * Checks if a given plugin declares an specific extension.
+	 * 
+	 * @param declaringPlugin the plugin that declares the extension
+	 * @param extension the declared extension
+	 * @return
+	 */
+	private boolean checkDeclaredExtension(final String declaringPlugin, String extension) {
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint point = reg.getExtensionPoint(extension);
+		for (IExtension ext : point.getExtensions()) {
+			if (declaringPlugin.equals(ext.getNamespace())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
