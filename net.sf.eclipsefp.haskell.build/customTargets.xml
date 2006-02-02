@@ -128,6 +128,7 @@
 	<antcall target="gatherLogs" />
 	<property name="update.site.staging.loc" value="${buildDirectory}/updateSite" />
 	<antcall target="generateUpdateSite" />
+	<antcall target="test" />
 </target>
 
 <!-- ===================================================================== -->
@@ -176,6 +177,23 @@
 	<zip basedir="${buildDirectory}/plugins/${id}.source/"
 		 destfile="${update.site.staging.loc}/plugins/${id}.source_0.10.0.jar" />
 </target>	
+
+<target name="test">
+	<copy todir="${buildDirectory}/eclipse">
+		<fileset dir="${baseLocation}">
+		    <include name="**"/>
+		</fileset>
+	</copy>
+	<unzip src="${buildDirectory}/${buildType}.${buildId}/net.sf.eclipsefp.haskell-${buildId}.zip"
+		   dest="${buildDirectory}" />
+	<java classname="org.eclipse.core.launcher.Main"
+		  classpath="${buildDirectory}/eclipse/startup.jar"
+		  fork="true"
+		  failonerror="true" >
+		<arg line="-application net.sf.eclipsefp.haskell.build.check.verifypostinstall" />
+		<arg line="-clean" />
+	</java>
+</target>
 	
 <target name="clean" unless="noclean">
 	<antcall target="allElements">
