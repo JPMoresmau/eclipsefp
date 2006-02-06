@@ -24,4 +24,5 @@ Provide-Package: de.leiffrenzel.fp.haskell.core,
  de.leiffrenzel.fp.haskell.core.parser,
  de.leiffrenzel.fp.haskell.core.preferences,
  de.leiffrenzel.fp.haskell.core.project,
- de.leiffrenzel.fp.haskell.core.util
+ de.leiffrenzel.fp.haskell.core.util,
+ net.sf.eclipsefp.haskell.core.codeassist;x-friends:="net.sf.eclipsefp.haskell.core.test"

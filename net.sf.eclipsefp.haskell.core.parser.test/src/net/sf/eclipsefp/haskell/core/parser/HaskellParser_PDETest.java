@@ -6,7 +6,6 @@ package net.sf.eclipsefp.haskell.core.parser;
 import net.sf.eclipsefp.haskell.core.parser.test.internal.util.ResourceImport_PDETestCase;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 
 import de.leiffrenzel.fp.haskell.core.halamo.*;
 import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;

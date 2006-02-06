@@ -1,8 +1,7 @@
-package net.sf.eclipsefp.haskell.core.jparser.test;
+package net.sf.eclipsefp.test.util.common;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 
 import junit.framework.Assert;
 
@@ -11,7 +10,7 @@ public class MockInputStream extends InputStream {
 	private InputStream fInput;
 	private int fTimesClosed = 0;
 	
-	public MockInputStream(StringBufferInputStream stream) {
+	public MockInputStream(InputStream stream) {
 		fInput = stream;
 	}
 

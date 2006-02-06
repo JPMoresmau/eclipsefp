@@ -1,7 +1,5 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
-import java.io.Reader;
-import java.io.StringReader;
 
 import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IConstructor;
@@ -27,9 +25,6 @@ import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
-import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the parser componenent.
@@ -39,7 +34,7 @@ import junit.framework.TestCase;
  * 
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-public class ParserIntegrationTest extends TestCase {
+public class ParserIntegrationTest extends JParserTestCase {
 	
 	public void testEmptyModule() throws RecognitionException, TokenStreamException {
 		IModule module = parse("\n   module ParserTest where {}");
@@ -877,16 +872,6 @@ public class ParserIntegrationTest extends TestCase {
 	
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
-	}
-	
-	private IModule parse(String contents) throws RecognitionException, TokenStreamException {
-		return parse(new StringReader(contents));
-	}
-
-	private IModule parse(final Reader input) throws RecognitionException, TokenStreamException {
-		HaskellParser parser = new HaskellParser(input);
-		
-		return parser.parseModule();
 	}
 	
 	//TODO should be able to build a tree with a partial parse, not just

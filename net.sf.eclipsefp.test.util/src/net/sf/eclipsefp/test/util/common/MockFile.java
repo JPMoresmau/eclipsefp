@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.jparser.test;
+package net.sf.eclipsefp.test.util.common;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -22,6 +22,13 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
+/**
+ * A mocked IFile.
+ * 
+ * Verifies if the underlying inputstream is closed.
+ * 
+ * @author Thiago Arrais - thiago.arrais@gmailcom
+ */
 public class MockFile implements IFile {
 
 	private MockInputStream fContents;
