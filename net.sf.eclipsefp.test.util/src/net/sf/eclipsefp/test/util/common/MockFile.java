@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
 import java.net.URI;
+import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -31,7 +33,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 public class MockFile implements IFile {
 
-	private MockInputStream fContents;
+	private List<MockInputStream> fOpenStreams = new Vector<MockInputStream>();
+	private String fContents;
 	private String fFileName;
 	
 	public MockFile(String contents) {
@@ -39,7 +42,7 @@ public class MockFile implements IFile {
 	}
 
 	public MockFile(String filename, String contents) {
-		fContents = new MockInputStream(new StringBufferInputStream(contents));
+		fContents = contents;
 		fFileName = filename;
 	}
 
@@ -84,11 +87,14 @@ public class MockFile implements IFile {
 	}
 
 	public InputStream getContents() throws CoreException {
-		return fContents;
+		MockInputStream stream = new MockInputStream(
+				                     new StringBufferInputStream(fContents));
+		fOpenStreams.add(stream);
+		return stream;
 	}
 
 	public InputStream getContents(boolean force) throws CoreException {
-		return fContents;
+		return getContents();
 	}
 
 	public int getEncoding() throws CoreException {
@@ -465,7 +471,9 @@ public class MockFile implements IFile {
 	}
 
 	public void verify() {
-		fContents.verify();
+		for (MockInputStream stream : fOpenStreams) {
+			stream.verify();
+		}
 	}
 
 }
