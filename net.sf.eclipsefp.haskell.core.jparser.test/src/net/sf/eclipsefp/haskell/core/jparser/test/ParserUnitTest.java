@@ -12,6 +12,7 @@ import antlr.RecognitionException;
 import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
+import net.sf.eclipsefp.haskell.core.jparser.EclipseFPToken;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
@@ -110,17 +111,17 @@ public class ParserUnitTest extends TestCase {
 	private static class TestTokenStream implements TokenStream, HaskellLexerTokenTypes {
 
 		private Token[] fTokens = new Token[] {
-				new CommonToken(MODULE, "module"),
-				new CommonToken(CONSTRUCTOR_ID, "ParserTest"),
-				new CommonToken(WHERE, "where"),
-				new CommonToken(LEFT_CURLY, "{"),
-				new CommonToken(IMPORT, "import"),
-				new CommonToken(QCONID, "LibraryL.ModuleM"),
-				new CommonToken(SEMICOLON, ";"),
-				new CommonToken(IMPORT, "import"),
-				new CommonToken(QCONID, "LibraryK.ModuleN"),
-				new CommonToken(RIGHT_CURLY, "}"),
-				new CommonToken(EOF, "<<eof>>")
+				new EclipseFPToken(MODULE, "module"),
+				new EclipseFPToken(CONSTRUCTOR_ID, "ParserTest"),
+				new EclipseFPToken(WHERE, "where"),
+				new EclipseFPToken(LEFT_CURLY, "{"),
+				new EclipseFPToken(IMPORT, "import"),
+				new EclipseFPToken(QCONID, "LibraryL.ModuleM"),
+				new EclipseFPToken(SEMICOLON, ";"),
+				new EclipseFPToken(IMPORT, "import"),
+				new EclipseFPToken(QCONID, "LibraryK.ModuleN"),
+				new EclipseFPToken(RIGHT_CURLY, "}"),
+				new EclipseFPToken(EOF, "<<eof>>")
 		};
 		
 		private int currentToken = 0;

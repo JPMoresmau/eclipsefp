@@ -22,4 +22,5 @@ public interface ISourceLocation {
   /** <p>whether this <code>ISourceLocation</code> is after the specified
    * other location.</p> */
   boolean isAfter( ISourceLocation anotherLocation );
+  long getOffset();
 }

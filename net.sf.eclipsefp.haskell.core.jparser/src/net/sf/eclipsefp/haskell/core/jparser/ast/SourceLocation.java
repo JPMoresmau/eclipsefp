@@ -6,6 +6,7 @@ public class SourceLocation implements ISourceLocation {
 
 	private int fLine;
 	private int fColumn;
+	private long fOffset;
 
 	public SourceLocation() {
 	}
@@ -39,6 +40,14 @@ public class SourceLocation implements ISourceLocation {
 		fColumn = column;
 	}
 
+	public void setOffset(long offset) {
+		fOffset = offset;
+	}
+
+	public long getOffset() {
+		return fOffset;
+	}
+	
 	// helping methods
 	//////////////////
 	
@@ -46,5 +55,5 @@ public class SourceLocation implements ISourceLocation {
 		return fLine == anotherLocation.getLine()
 		    && fColumn == anotherLocation.getColumn();
 	}
-	
+
 }

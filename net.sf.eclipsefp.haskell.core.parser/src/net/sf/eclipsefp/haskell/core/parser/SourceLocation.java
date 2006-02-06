@@ -60,4 +60,10 @@ public class SourceLocation implements ISourceLocation {
     return    line == anotherLocation.getLine()
            && column == anotherLocation.getColumn();
   }
+
+
+  public long getOffset() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 }

@@ -25,16 +25,16 @@ public class HaskellFormatter extends TokenStreamProcessor {
 			
 			if (!fLayoutContextStack.isEmpty() && openBlockToken.getColumn() > fLayoutContextStack.peek()) {
 				consumeToken();
-				insertToken(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.LEFT_CURLY));
 				fLayoutContextStack.push(openBlockToken.getColumn());
 			} else if (fLayoutContextStack.isEmpty() && openBlockToken.getColumn() > -1) {
 				consumeToken();
-				insertToken(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.LEFT_CURLY));
 				fLayoutContextStack.push(openBlockToken.getColumn());
 			} else {
 				openBlockToken.setType(HaskellLexerExtendedTokenTypes.LINEBREAK);
-				insertToken(new Token(HaskellLexerTokenTypes.LEFT_CURLY));
-				insertToken(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.LEFT_CURLY));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.RIGHT_CURLY));
 			}
 			
 		} else if (isLineBreak(peekToken())) {
@@ -42,16 +42,16 @@ public class HaskellFormatter extends TokenStreamProcessor {
 			
 			if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() == fLayoutContextStack.peek()) {
 				consumeToken();
-				insertToken(new Token(HaskellLexerTokenTypes.SEMICOLON));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.SEMICOLON));
 			} else if (!fLayoutContextStack.isEmpty() && lineBreakToken.getColumn() < fLayoutContextStack.peek()) {
-				insertToken(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.RIGHT_CURLY));
 				fLayoutContextStack.pop();
 			} else {
 				consumeToken();
 			}
 		} else if (isEof(peekToken())) {
 			if (!fLayoutContextStack.isEmpty() && fLayoutContextStack.peek() != -1) {
-				insertToken(new Token(HaskellLexerTokenTypes.RIGHT_CURLY));
+				insertToken(new EclipseFPToken(HaskellLexerTokenTypes.RIGHT_CURLY));
 				fLayoutContextStack.pop();
 			}
 		}

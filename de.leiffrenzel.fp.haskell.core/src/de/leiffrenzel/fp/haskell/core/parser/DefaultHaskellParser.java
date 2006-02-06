@@ -100,6 +100,11 @@ class DefaultHaskellParser implements IHaskellParser {
         // unused
         return false;
       }
+
+      public long getOffset() {
+        // TODO Auto-generated method stub
+        return 0;
+      }
     };
   }
   

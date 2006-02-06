@@ -98,8 +98,10 @@ options {
     private void recordNextTokenLocation(HaskellLanguageElement node)
     	throws TokenStreamException
     {
-		Token nextToken = LT(1);
-		node.setLocation(nextToken.getLine(), nextToken.getColumn());
+		EclipseFPToken nextToken = (EclipseFPToken) LT(1);
+		node.setLocation(nextToken.getLine(),
+		                 nextToken.getColumn(),
+		                 nextToken.getOffset());
     }
     
     private <T extends Declaration> T insertNewDeclaration(Class<T> nodeClazz)

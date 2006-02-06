@@ -44,6 +44,7 @@ public class ParserIntegrationTest extends JParserTestCase {
 		
 		assertEquals(1, module.getSourceLocation().getLine());
 		assertEquals(3, module.getSourceLocation().getColumn());
+		assertEquals(4, module.getSourceLocation().getOffset());
 		
 		IExportSpecification[] exports = module.getExportSpecifications();
 		assertNotNull(exports);
@@ -278,6 +279,7 @@ public class ParserIntegrationTest extends JParserTestCase {
 		
 		assertNotNull(imports[0].getSourceLocation());
 		assertEquals(1, imports[0].getSourceLocation().getLine());
+		assertEquals(20, imports[0].getSourceLocation().getOffset());
 		
 		assertNotNull(imports[1].getSourceLocation());
 		assertEquals(2, imports[1].getSourceLocation().getLine());
@@ -364,6 +366,7 @@ public class ParserIntegrationTest extends JParserTestCase {
 						        "main = {- block comment inside -} putStr \"hello\"\n");
 		
 		assertEquals(5, module.getImports()[0].getSourceLocation().getLine());
+		assertEquals(160, module.getImports()[0].getSourceLocation().getOffset());
 	}
 	
 	public void testOneFunctionDeclaration() throws RecognitionException, TokenStreamException {

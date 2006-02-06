@@ -131,7 +131,7 @@ public class ModuleBuilderTest extends TestCase {
 	private FunctionMatch createFunctionMatch(String name, int line, int column) {
 		FunctionMatch match = new FunctionMatch();
 		match.setName(name);
-		match.setLocation(line, column);
+		match.setLocation(line, column, 0);
 		return match;
 	}
 	

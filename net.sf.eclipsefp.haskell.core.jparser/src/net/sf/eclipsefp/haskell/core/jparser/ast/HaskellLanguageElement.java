@@ -39,12 +39,13 @@ public class HaskellLanguageElement implements IHaskellLanguageElement {
 		return fLocation;
 	}
 
-	public void setLocation(int line, int column) {
+	public void setLocation(int line, int column, long offset) {
 		fLocation.setPoint(line, column);
+		fLocation.setOffset(offset);
 	}
 
 	public void setLocation(ISourceLocation srcLoc) {
-		setLocation(srcLoc.getLine(), srcLoc.getColumn());
+		setLocation(srcLoc.getLine(), srcLoc.getColumn(), srcLoc.getOffset());
 	}
 
 }
