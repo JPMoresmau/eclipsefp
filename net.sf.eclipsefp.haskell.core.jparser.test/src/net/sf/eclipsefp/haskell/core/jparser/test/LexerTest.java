@@ -8,6 +8,7 @@ import antlr.RecognitionException;
 import antlr.Token;
 import antlr.TokenStreamException;
 
+import net.sf.eclipsefp.haskell.core.jparser.EclipseFPToken;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
 
@@ -374,6 +375,25 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		
 		assertToken(VARIABLE_ID, "var", fLexer.nextToken());
 		assertToken(VARSYM, ".|.", fLexer.nextToken());
+	}
+	
+	public void testTokenOffset() throws TokenStreamException {
+		final String input = "module Main where\n" +
+                             "\tfat 0 = 1";
+		fLexer = createLexer(input);
+		
+		assertOffset(0, fLexer.nextToken());
+		assertOffset(7, fLexer.nextToken());
+		
+		// where \n
+		fLexer.skipTokens(2);
+		
+		assertOffset(19, fLexer.nextToken());
+	}
+
+	private void assertOffset(int expectedOffset, Token token) {
+		EclipseFPToken tok = (EclipseFPToken) token;
+		assertEquals(expectedOffset, tok.getOffset());
 	}
 
 	// TODO escape  -> 	 \ ( charesc | ascii | decimal | o octal | x hexadecimal )

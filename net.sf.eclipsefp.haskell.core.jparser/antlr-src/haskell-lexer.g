@@ -56,12 +56,15 @@ tokens {
 	{
 		try {
 			this.setTabSize(new HaskellPreferenceProvider().getTabSize());
-		} catch(NullPointerException e) {
+		} catch(Exception e) {
 			//happens when the eclipse platform isn't loaded
 			//in this case, ignore the default preference provider
 		}
 	}
 
+	private long tokenStartOffset;
+	private long currentOffset;
+	
 	public HaskellLexer(Reader reader, IHaskellPreferenceProvider prefs) {
 		this(reader);
 		this.setTabSize(prefs.getTabSize());
@@ -70,12 +73,23 @@ tokens {
 	/* workaround for starting token coordinates from 0
 	 * as eclipse expects them to */
     protected Token makeToken(int t) {
-    	Token result = super.makeToken(t);
-    	
-    	result.setLine(result.getLine() - 1);
-    	result.setColumn(result.getColumn() - 1);
-    	
-    	return result;
+        EclipseFPToken tok = new EclipseFPToken();
+        tok.setType(t);
+        tok.setColumn(getInputState().getTokenStartColumn() - 1);
+        tok.setLine(getInputState().getTokenStartLine() - 1);
+        tok.setOffset(tokenStartOffset);
+        
+        return tok;
+    }
+    
+    public void consume() throws CharStreamException {
+        super.consume();
+        currentOffset++;
+    }
+    
+    public void resetText() {
+        super.resetText();
+        tokenStartOffset = currentOffset;
     }
 }
 

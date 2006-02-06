@@ -5,7 +5,7 @@ import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
 public class HaskellPreferenceProviderStub
 	implements IHaskellPreferenceProvider {
 
-	private int fTabSize;
+	private int fTabSize = 8;
 
 	public void setTabSize(int size) {
 		fTabSize = size;
