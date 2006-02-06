@@ -29,9 +29,10 @@ public class JavaParserBridge implements IHaskellParser {
 				    	file.getContents());
 		}
 		HaskellParser parser = new HaskellParser(input);
-		ICompilationUnit result = null;
+		CompilationUnit result = null;
 		try {
 			result = new CompilationUnit(parser.parseModule());
+			result.setUnderlyingResource(file);
 		} catch (RecognitionException e) {
 			raiseCoreException(e, "Parsing error on " + file.getName());
 		} catch (TokenStreamException e) {

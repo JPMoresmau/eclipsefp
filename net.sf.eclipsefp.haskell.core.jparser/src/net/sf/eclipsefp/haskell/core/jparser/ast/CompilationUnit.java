@@ -10,6 +10,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
 public class CompilationUnit implements ICompilationUnit {
 
 	private IModule fModule;
+	private IFile fFile;
 
 	public CompilationUnit(IModule module) {
 		fModule = module;
@@ -68,7 +69,11 @@ public class CompilationUnit implements ICompilationUnit {
 	}
 	
 	public IFile getUnderlyingResource() {
-		return null;
+		return fFile;
+	}
+
+	public void setUnderlyingResource(IFile file) {
+		fFile = file;
 	}
 	  
 }
