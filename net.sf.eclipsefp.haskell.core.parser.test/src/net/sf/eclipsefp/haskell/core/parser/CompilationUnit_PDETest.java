@@ -2,27 +2,21 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.parser;
 
-
-import net.sf.eclipsefp.haskell.core.parser.test.internal.util.ResourceImport_PDETestCase;
-
-import org.eclipse.core.resources.IFile;
+import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 
 import de.leiffrenzel.fp.haskell.core.halamo.*;
-import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
-import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
-
 
 /** <p>tests for compilation units (src location support).</p>
   *
   * @author Leif Frenzel
   */
-public class CompilationUnit_PDETest extends ResourceImport_PDETestCase {
+public class CompilationUnit_PDETest extends Parser_PDETestCase {
 
   public void testEmptyCU() throws Exception {
     // an empty compilation unit has an implicit Main module at position 0,0
     // (apart from leading comment lines like in the target file, which makes
     // it in this case position 1,0 )
-    ICompilationUnit cu = loadCU( "020" );
+    ICompilationUnit cu = loadCompilationUnit( "020" );
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -32,7 +26,7 @@ public class CompilationUnit_PDETest extends ResourceImport_PDETestCase {
   }
   
   public void testSingleSrcLoc() throws Exception {
-    ICompilationUnit cu = loadCU( "021" );
+    ICompilationUnit cu = loadCompilationUnit( "021" );
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -43,7 +37,7 @@ public class CompilationUnit_PDETest extends ResourceImport_PDETestCase {
   }
 
   public void testTwoSrcLocs() throws Exception {
-    ICompilationUnit cu = loadCU( "022" );
+    ICompilationUnit cu = loadCompilationUnit( "022" );
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -59,7 +53,7 @@ public class CompilationUnit_PDETest extends ResourceImport_PDETestCase {
   }
 
   public void testLotsOfLocs() throws Exception {
-    ICompilationUnit cu = loadCU( "023" );
+    ICompilationUnit cu = loadCompilationUnit( "023" );
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertEquals( 1, sl1.getLine() );
     assertEquals( 0, sl1.getColumn() );
@@ -92,14 +86,4 @@ public class CompilationUnit_PDETest extends ResourceImport_PDETestCase {
     assertTrue( sl8 == null );
   }
   
-  // helping methods
-  //////////////////
-  
-  private ICompilationUnit loadCU( final String name ) throws Exception {
-    importSourceFile( "Main.hs", name, "Main.hs" );
-    IFile file = getProject().getFile( "src/Main.hs" );
-    assertTrue( file.exists() );
-    IHaskellParser parser = ParserManager.getInstance().getParser();
-    return parser.parse( file );
-  }
 }

@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.parser.test.util;
 
+import net.sf.eclipsefp.haskell.core.parser.test.internal.util.ResourceImport_PDETestCase;
 import net.sf.eclipsefp.test.util.common.MockFile;
 
 import org.eclipse.core.resources.IFile;
@@ -21,5 +22,10 @@ public class Parser_PDETestCase extends TestCase {
 		
 		return parser.parse(input);
 	}
+
+	protected ICompilationUnit loadCompilationUnit(final String resKey) throws Exception {
+	    String input = new ResourceImport_PDETestCase().getModuleContents(resKey);
+		return parse(input);
+	  }
 	
 }

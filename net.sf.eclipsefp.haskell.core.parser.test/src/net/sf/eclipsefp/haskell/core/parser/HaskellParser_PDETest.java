@@ -3,28 +3,19 @@
 package net.sf.eclipsefp.haskell.core.parser;
 
 
-import net.sf.eclipsefp.haskell.core.parser.test.internal.util.ResourceImport_PDETestCase;
+import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 
-import org.eclipse.core.resources.IFile;
 
 import de.leiffrenzel.fp.haskell.core.halamo.*;
-import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
-import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
-
 
 /** <p>tests for the Haskell parser.</p>
   *
   * @author Leif Frenzel
   */
-public class HaskellParser_PDETest extends ResourceImport_PDETestCase {
+public class HaskellParser_PDETest extends Parser_PDETestCase {
 
   public void testSimpleRead() throws Exception {
-    importSourceFile( "Main.hs", "001", "Main.hs" );
-    IFile file = getProject().getFile( "src/Main.hs" );
-    assertTrue( file.exists() );
-    
-    IHaskellParser parser = ParserManager.getInstance().getParser();
-    ICompilationUnit cu = parser.parse( file );
+    ICompilationUnit cu = loadCompilationUnit("001");;
     assertTrue( cu != null );
     
     IModule[] modules = cu.getModules();
@@ -35,7 +26,7 @@ public class HaskellParser_PDETest extends ResourceImport_PDETestCase {
     assertEquals( 0, srcLoc.getColumn() );
   }
   
-  public void testReadImports() throws Exception {
+public void testReadImports() throws Exception {
     IModule module = loadMainModule( "002" );
     IImport[] imports = module.getImports();
     assertTrue ( imports != null );
@@ -59,13 +50,8 @@ public class HaskellParser_PDETest extends ResourceImport_PDETestCase {
   }
   
   public void testIgnoreError() throws Exception {
-    importSourceFile( "Main.hs", "003", "Main.hs" );
-    IFile file = getProject().getFile( "src/Main.hs" );
-    assertTrue( file.exists() );
-
-    IHaskellParser parser = ParserManager.getInstance().getParser();
-    ICompilationUnit cUnit = parser.parse( file );
-    IDeclaration[] decls = cUnit.getModules()[0].getDeclarations();
+    IModule module = loadMainModule("003");
+	IDeclaration[] decls = module.getDeclarations();
     assertEquals(1, decls.length);
     
 	IFunctionBinding fb = (IFunctionBinding) decls[0];
@@ -358,12 +344,8 @@ public class HaskellParser_PDETest extends ResourceImport_PDETestCase {
   // helping methods
   //////////////////
   
-  private IModule loadMainModule( final String name ) throws Exception {
-    importSourceFile( "Main.hs", name, "Main.hs" );
-    IFile file = getProject().getFile( "src/Main.hs" );
-    assertTrue( file.exists() );
-    IHaskellParser parser = ParserManager.getInstance().getParser();
-    ICompilationUnit cu = parser.parse( file );
-    return cu.getModules()[ 0 ];
+  private IModule loadMainModule( final String resKey ) throws Exception {
+    ICompilationUnit cu = loadCompilationUnit(resKey);
+	return cu.getModules()[ 0 ];
   }
 }
