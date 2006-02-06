@@ -16,7 +16,7 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
     // an empty compilation unit has an implicit Main module at position 0,0
     // (apart from leading comment lines like in the target file, which makes
     // it in this case position 1,0 )
-    ICompilationUnit cu = loadCompilationUnit( "020" );
+    ICompilationUnit cu = parse("-- nothing in here, so no src locations\n");
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -26,7 +26,11 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
   }
   
   public void testSingleSrcLoc() throws Exception {
-    ICompilationUnit cu = loadCompilationUnit( "021" );
+    final String input = "-- only one src location\n" +
+    		             "module Main (main, \n" +
+    		             "             getTheAnswer,\n" +
+    		             "             module Haskell.Language.Syntax) where";
+	ICompilationUnit cu = parse(input);
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -37,7 +41,14 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
   }
 
   public void testTwoSrcLocs() throws Exception {
-    ICompilationUnit cu = loadCompilationUnit( "022" );
+    final String input = "-- only one src location\n" +
+    		             "module Main (main,\n" +
+    		             "             getTheAnswer,\n" +
+    		             "             module Haskell.Language.Syntax) where\n" +
+    		             "\n" +
+    		             "import Haskell.Language.Syntax";
+
+	ICompilationUnit cu = parse(input);
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -53,7 +64,48 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
   }
 
   public void testLotsOfLocs() throws Exception {
-    ICompilationUnit cu = loadCompilationUnit( "023" );
+	final String input = "-- lots of things that have source locations\n" +
+			             "module Main (main,\n" +
+			             "             getTheAnswer,\n" +
+			             "             module Haskell.Language.Syntax) where\n" +
+			             "\n" +
+			             "import Haskell.Language.Syntax\n" +
+			             "import Bla\n" +
+			             "import Blubb\n" +
+			             "\n" +
+			             "data Eq a => Set a =   NilSet\n" +
+			             "                     | ConsSet a (Set a)\n" +
+			             "\n" +
+			             "data Temp = Cold | Hot\n" +
+			             "\n" +
+			             "idf2, idf3 :: Int\n" +
+			             "idf2 = 42\n" +
+			             "\n" +
+			             "getTheAnswer, getItAgain :: Int -> Int\n" +
+			             "getTheAnswer n = 42\n" +
+			             "\n" +
+			             "class Visible a where\n" +
+			             "  toString :: a -> String\n" +
+			             "  size :: a -> Int\n" +
+			             "\n" +
+			             "instance Visible Bla where\n" +
+			             "  toString Bla = \"Bla\"\n" +
+			             "  size Bla = 42\n" +
+			             "\n" +
+			             "infix 5 `op1`\n" +
+			             "infixr 1 `op2`\n" +
+			             "\n" +
+			             "infixl 5 `op2`\n" +
+			             "\n" +
+			             "infix 5 `op1`, `op2`\n" +
+			             "infixl 0 `op1`, +, `opx`\n" +
+			             "\n" +
+			             "newtype Age = Age { unAge :: Int }\n" +
+			             "\n" +
+			             "type Rec a = [Circ a]\n" +
+			             "\n" +
+			             "default (Integer, Double)";
+    ICompilationUnit cu = parse(input);
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertEquals( 1, sl1.getLine() );
     assertEquals( 0, sl1.getColumn() );

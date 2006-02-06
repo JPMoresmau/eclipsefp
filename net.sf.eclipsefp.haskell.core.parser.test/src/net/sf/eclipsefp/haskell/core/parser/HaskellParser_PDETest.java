@@ -3,6 +3,8 @@
 package net.sf.eclipsefp.haskell.core.parser;
 
 
+import org.eclipse.core.runtime.CoreException;
+
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 
 
@@ -15,7 +17,11 @@ import de.leiffrenzel.fp.haskell.core.halamo.*;
 public class HaskellParser_PDETest extends Parser_PDETestCase {
 
   public void testSimpleRead() throws Exception {
-    ICompilationUnit cu = loadCompilationUnit("001");;
+    final String input = "-- testing module for a simple case\n" +
+ 			    		 "module Main where\n" +
+ 			    		 "\n" +
+			    		 "main = print 42";
+	ICompilationUnit cu = parse(input);
     assertTrue( cu != null );
     
     IModule[] modules = cu.getModules();
@@ -26,8 +32,18 @@ public class HaskellParser_PDETest extends Parser_PDETestCase {
     assertEquals( 0, srcLoc.getColumn() );
   }
   
-public void testReadImports() throws Exception {
-    IModule module = loadMainModule( "002" );
+  public void testReadImports() throws Exception {
+    final String input = "-- testing module for a simple case\n" +
+    		             "module Main where\n" +
+    		             "\n" +
+    		             "import Foreign\n" +
+    		             "import Language.Haskell.Parser\n" +
+    		             "import Language.Haskell.Syntax\n" +
+    		             "\n" +
+    		             "import CString\n" +
+    		             "\n" +
+    		             "main = print 42";
+    IModule module = parseModule(input);
     IImport[] imports = module.getImports();
     assertTrue ( imports != null );
     assertEquals( 4, imports.length );
@@ -50,7 +66,11 @@ public void testReadImports() throws Exception {
   }
   
   public void testIgnoreError() throws Exception {
-    IModule module = loadMainModule("003");
+	final String input = "-- testing module for an error case\n" +
+	   		             "modu le Main where\n" +
+	   		             "\n" +
+	   		             "main = print 42";
+	IModule module = parseModule(input);
 	IDeclaration[] decls = module.getDeclarations();
     assertEquals(1, decls.length);
     
@@ -59,7 +79,17 @@ public void testReadImports() throws Exception {
   }
   
   public void testSimpleDecls() throws Exception {
-    IModule module = loadMainModule( "004" );
+	final String input = "-- testing module with some declarations\n" +
+			             "module Main where\n" +
+			             "\n" +
+			             "import Bla\n" +
+			             "\n" +
+			             "sabber :: Int -> Int\n" +
+			             "sabber n = n + 42\n" +
+			             "\n" +
+			             "laber :: Int\n" +
+			             "laber = 42";
+	IModule module = parseModule(input);
     IImport[] imports = module.getImports();
     assertEquals( 1, imports.length );
     
@@ -68,7 +98,17 @@ public void testReadImports() throws Exception {
   }
   
   public void testTypeSignatures() throws Exception {
-    IModule module = loadMainModule( "005" );
+	final String input = "-- testing module with some declarations\n" +
+						 "module Main where\n" +
+						 "\n" +
+						 "import Bla\n" +
+						 "\n" +
+						 "idf1 :: Int -> Int\n" +
+						 "idf1 n = n + 42\n" +
+						 "\n" +
+						 "idf2, idf3 :: Int\n" +
+						 "idf2 = 42";
+	IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 4, decls.length );
     
@@ -90,7 +130,17 @@ public void testReadImports() throws Exception {
   }
   
   public void testPatternBidings() throws Exception {
-	IModule module = loadMainModule( "005" );
+	final String input = "-- testing module with some declarations\n" +
+		                 "module Main where\n" +
+		                 "\n" +
+		                 "import Bla\n" +
+		                 "\n" +
+		                 "idf1 :: Int -> Int\n" +
+		                 "idf1 n = n + 42\n" +
+		                 "\n" +
+		                 "idf2, idf3 :: Int\n" +
+		                 "idf2 = 42";
+	IModule module = parseModule(input);
 	IDeclaration[] decls = module.getDeclarations();
 	assertEquals( 4, decls.length );
 
@@ -100,7 +150,14 @@ public void testReadImports() throws Exception {
   }
   
   public void testSimpleExports() throws Exception {
-    IModule module = loadMainModule( "006" );
+	final String input = "-- testing module with some export specifications\n" +
+			             "module Main (idf1, Bla) where\n" +
+			             "\n" +
+			             "import Bla\n" +
+			             "\n" +
+			             "idf1 :: Int -> Int\n" +
+			             "idf1 n = n + 42";
+    IModule module = parseModule(input);
     IExportSpecification[] exports = module.getExportSpecifications();
     assertEquals( 2, exports.length );
     
@@ -111,7 +168,15 @@ public void testReadImports() throws Exception {
   }
   
   public void testMoreExports() throws Exception {
-    IModule module = loadMainModule( "007" );
+	final String input = "-- testing module with some export specifications\n" +
+				         "module Main (idf1, module Bla) where\n" +
+				         "\n" +
+				         "import Bla\n" +
+				         "\n" +
+				         "idf1 :: Int -> Int\n" +
+				         "idf1 n = n + 42";
+	
+    IModule module = parseModule(input);
     IExportSpecification[] exports = module.getExportSpecifications();
     assertEquals( 2, exports.length );
     
@@ -123,7 +188,14 @@ public void testReadImports() throws Exception {
   }
 
   public void testExportWildcard() throws Exception {
-    IModule module = loadMainModule( "008" );
+	final String input = "-- testing module with some export specifications\n" +
+			             "module Main ( Blubb(..) ) where\n" +
+			             "\n" +
+			             "import Bla\n" +
+			             "\n" +
+			             "data Blubb = Blibb | Blabb | Bloob";
+
+    IModule module = parseModule(input);
     IExportSpecification[] exports = module.getExportSpecifications();
     assertEquals( 1, exports.length );
     IExportThingAll exportTA = ( IExportThingAll )exports[ 0 ];
@@ -131,7 +203,14 @@ public void testReadImports() throws Exception {
   }
 
   public void testExportList() throws Exception {
-    IModule module = loadMainModule( "009" );
+	final String input = "-- testing module with some export specifications\n" +
+			             "module Main ( Blubb(Blabb, Bloob) ) where\n" +
+			             "\n" +
+			             "import Bla\n" +
+			             "\n" +
+			             "data Blubb = Blibb | Blabb | Bloob\n";
+
+	IModule module = parseModule(input);
     IExportSpecification[] exports = module.getExportSpecifications();
     assertEquals( 1, exports.length );
     IExportThingWith exportTW = ( IExportThingWith )exports[ 0 ];
@@ -144,7 +223,11 @@ public void testReadImports() throws Exception {
   }
   
   public void testImportWithoutHiding() throws Exception {
-    IModule module = loadMainModule( "010" );
+    final String input = "module Main where\n" +
+    		             "\n" +
+    		             "import Bla\n" +
+    		             "import Data.List (unzip3, unzip4, unzip5, unzip6, unzip7)";
+	IModule module = parseModule(input);
     IImport[] imports = module.getImports();
     assertEquals( 2, imports.length );
     
@@ -164,7 +247,10 @@ public void testReadImports() throws Exception {
   }
 
   public void testImportWithHiding() throws Exception {
-    IModule module = loadMainModule( "011" );
+	final String input = "module Main where\n" +
+			"\n" +
+			"import Prelude hiding (max, min)";
+	IModule module = parseModule(input);
     IImport[] imports = module.getImports();
     assertEquals( 1, imports.length );
 
@@ -180,7 +266,15 @@ public void testReadImports() throws Exception {
   }
 
   public void testClassDecl() throws Exception {
-    IModule module = loadMainModule( "012" );
+	final String input = "module Main where\n" +
+			             "\n" +
+			             "class Eq a => Hash a where\n" +
+			             "  hash :: a -> Int\n" +
+			             "\n" +
+			             "class Visible a where\n" +
+			             "  toString :: a -> String\n" +
+			             "  size :: a -> Int";
+    IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 2, decls.length );
     
@@ -196,7 +290,13 @@ public void testReadImports() throws Exception {
   }
 
   public void testInstanceDecl() throws Exception {
-    IModule module = loadMainModule( "013" );
+	final String input = "module Main where\n" +
+				         "\n" +
+				         "instance Visible Bool where\n" +
+				         "  toString True  = \"True\"\n" +
+				         "  toString False = \"False\"\n" +
+				         "  size _ = 1\n";
+    IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 1, decls.length );
 
@@ -207,7 +307,10 @@ public void testReadImports() throws Exception {
   }
 
   public void testDefaultDecl() throws Exception {
-    IModule module = loadMainModule( "014" );
+	final String input = "module Main where\n" +
+			             "\n" +
+			             "default (Integer, Double)";
+	IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 1, decls.length );
     IDefaultDeclaration decl = ( IDefaultDeclaration )decls[ 0 ];
@@ -217,7 +320,16 @@ public void testReadImports() throws Exception {
   }
 
   public void testInfixDecl() throws Exception {
-    IModule module = loadMainModule( "015" );
+	final String input = "module Main where\n" +
+			             "\n" +
+			             "infix 5 `op1`\n" +
+			             "infixr 1 `op2`\n" +
+			             "\n" +
+			             "infixl 5 `op2`\n" +
+			             "\n" +
+			             "infix 5 `op1`, `op2`\n" +
+			             "infixl 0 `op1`, +, `opx`";
+    IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 5, decls.length );
     
@@ -256,7 +368,10 @@ public void testReadImports() throws Exception {
   }
 
   public void testTypeDecl() throws Exception {
-    IModule module = loadMainModule( "016" );
+	final String input = "module Main where\n" +
+			             "\n" +
+			             "type Rec a = [Circ a]";
+	IModule module = parseModule(input);
     assertEquals( 1, module.getDeclarations().length );
     ITypeDeclaration decl = ( ITypeDeclaration )module.getDeclarations()[ 0 ];
     assertEquals( "Rec", decl.getName() );
@@ -265,7 +380,10 @@ public void testReadImports() throws Exception {
   }
   
   public void testNewTypeDecl() throws Exception {
-    IModule module = loadMainModule( "017" );
+	final String input = "module Main where\n" +
+			             "\n" +
+			             "newtype Age = Age { unAge :: Int }";
+    IModule module = parseModule(input);
     assertEquals( 1, module.getDeclarations().length );
     IDeclaration declaration = module.getDeclarations()[ 0 ];
     INewTypeDeclaration decl = ( INewTypeDeclaration )declaration;
@@ -275,7 +393,12 @@ public void testReadImports() throws Exception {
   }
 
   public void testDataDecl() throws Exception {
-    IModule module = loadMainModule( "018" );
+	final String input = "module Main where\n" +
+			             "\n" +
+			             "data Eq a => Set a = NilSet | ConsSet a (Set a)\n" +
+			             "\n" +
+			             "data Temp = Cold | Hot";
+    IModule module = parseModule(input);
     assertEquals( 2, module.getDeclarations().length );
     
     IDataDeclaration decl = ( IDataDeclaration )module.getDeclarations()[ 0 ];
@@ -312,7 +435,14 @@ public void testReadImports() throws Exception {
   }
 
   public void testFunctionBinding() throws Exception {
-    IModule module = loadMainModule( "019" );
+	final String input = "\n" +
+			             "module Main () where\n" +
+			             "\n" +
+			             "bla :: Bool -> Int -> Int\n" +
+			             "bla True 0 = 1\n" +
+			             "bla False 0 = 2\n" +
+			             "bla _ n = n + 2";
+    IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 2, decls.length );
     
@@ -328,7 +458,11 @@ public void testReadImports() throws Exception {
   }
   
   public void testRealWorldCrash() throws Exception {
-    IModule module = loadMainModule( "024" );
+	final String input = "module ClassDeclTypeSigLineCrash where\n" +
+			             "class A a where\n" +
+			             "    dummy :: a -> Int\n" +
+			             "    dummy _ = undefined";
+	IModule module = parseModule(input);
     IDeclaration[] decls = module.getDeclarations();
     assertEquals( 1, decls.length );
     
@@ -344,8 +478,9 @@ public void testReadImports() throws Exception {
   // helping methods
   //////////////////
   
-  private IModule loadMainModule( final String resKey ) throws Exception {
-    ICompilationUnit cu = loadCompilationUnit(resKey);
+  private IModule parseModule(String input) throws CoreException {
+    ICompilationUnit cu = parse(input);
 	return cu.getModules()[ 0 ];
   }
+
 }
