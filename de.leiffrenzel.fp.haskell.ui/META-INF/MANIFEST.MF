@@ -17,11 +17,11 @@ Require-Bundle: de.leiffrenzel.fp.haskell.core,
  org.eclipse.debug.ui,
  org.eclipse.debug.core,
  org.eclipse.core.runtime,
- net.sf.eclipsefp.common.core,
  net.sf.eclipsefp.common.ui
 Eclipse-AutoStart: true
 Provide-Package: de.leiffrenzel.fp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  de.leiffrenzel.fp.haskell.ui.dialog,
+ de.leiffrenzel.fp.haskell.ui.editor.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  de.leiffrenzel.fp.haskell.ui.launch,
  de.leiffrenzel.fp.haskell.ui.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  de.leiffrenzel.fp.haskell.ui.util,

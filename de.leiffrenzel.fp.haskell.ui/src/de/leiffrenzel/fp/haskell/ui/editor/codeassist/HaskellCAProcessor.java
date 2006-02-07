@@ -4,6 +4,8 @@ package de.leiffrenzel.fp.haskell.ui.editor.codeassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.core.codeassist.CompletionEngine;
+
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 
@@ -17,6 +19,16 @@ import de.leiffrenzel.fp.haskell.ui.editor.syntax.HaskellSyntax;
   */
 public class HaskellCAProcessor implements IContentAssistProcessor {
 
+  private CompletionEngine fEngine = null;
+  
+  public HaskellCAProcessor() {
+    //placeholder constructor
+  }
+
+  public HaskellCAProcessor(CompletionEngine engine) {
+    fEngine = engine;
+  }
+
   // interface methods of IContentAssistProcessor
   ///////////////////////////////////////////////
   
@@ -27,6 +39,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     String mask = "";
     try {
       mask = getQualifier( doc, offset );
+      getCompletionEngine().complete(null, offset);
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( "Problem while determining start of proposal.", ex );
     }
@@ -61,6 +74,13 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
   }
   
   
+  protected CompletionEngine getCompletionEngine() {
+    if (fEngine == null) {
+      fEngine = new CompletionEngine();
+    }
+    return fEngine;
+  }
+  
   // helping methods
   //////////////////
   
@@ -94,7 +114,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
   
   private ICompletionProposal[] computeProposals( final String mask,
                                                   final int offset ) {
-    ArrayList alResult = new ArrayList();
+    List<CompletionProposal> alResult = new ArrayList<CompletionProposal>();
     computeKeywordCompletions( mask, offset, alResult );
     computeClassCompletions( mask, offset, alResult );
     return toArray( alResult );
@@ -102,7 +122,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
   private void computeKeywordCompletions( final String mask, 
                                           final int offset, 
-                                          final ArrayList al ) {
+                                          final List<CompletionProposal> al ) {
     String[] keywords = HaskellSyntax.getKeywords();
     for( int i = 0; i < keywords.length; i++ ) {
       String kw = keywords[ i ];
@@ -115,7 +135,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
   private void computeClassCompletions( final String mask, 
                                         final int offset, 
-                                        final ArrayList al ) {
+                                        final List<CompletionProposal> al ) {
     String[] classes = HaskellSyntax.getClasses();
     for( int i = 0; i < classes.length; i++ ) {
       String kw = classes[ i ];
@@ -130,7 +150,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     }
   }
 
-  private ICompletionProposal[] toArray( final List list ) {
+  private ICompletionProposal[] toArray( final List<CompletionProposal> list ) {
     ICompletionProposal[] result = new ICompletionProposal[ list.size() ];
     list.toArray( result );
     return result;
