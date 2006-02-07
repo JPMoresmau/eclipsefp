@@ -3,6 +3,8 @@ package de.leiffrenzel.fp.haskell.ui.editor.text;
 
 import java.util.ArrayList;
 
+import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
+
 import org.eclipse.jface.text.rules.*;
 
 import de.leiffrenzel.fp.haskell.ui.editor.syntax.*;

@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package de.leiffrenzel.fp.haskell.ui.editor.syntax;
+package net.sf.eclipsefp.haskell.core.codeassist;
 
 /** <p>contains a collection of keywords and names usually considered 
   * in syntax coloring.</p>

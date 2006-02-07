@@ -13,7 +13,6 @@ import org.eclipse.jface.text.contentassist.*;
 import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
 import de.leiffrenzel.fp.haskell.ui.HaskellUIPlugin;
-import de.leiffrenzel.fp.haskell.ui.editor.syntax.HaskellSyntax;
 
 /** <p>computes the code assist completion proposals and context 
   * information.</p>
@@ -53,7 +52,6 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     } catch(CoreException ex) {
       HaskellUIPlugin.log( "Problem while parsing for proposal.", ex);
     }
-    result.addAll(computeProposals( mask, offset ));
     return toArray(result);
   }
 
@@ -62,7 +60,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     for(String text : proposals) {
       int textLength = text.length();
       int insertOffset = offset - qlen;
-      result.add(new CompletionProposal(text, insertOffset, textLength, insertOffset + textLength));
+      result.add(new CompletionProposal(text, insertOffset, textLength, offset + textLength));
     }
     return result;
   }
@@ -133,44 +131,6 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     return result;
   }
   
-  private List<CompletionProposal> computeProposals( final String mask,
-                                                  final int offset ) {
-    List<CompletionProposal> alResult = new ArrayList<CompletionProposal>();
-    computeKeywordCompletions( mask, offset, alResult );
-    computeClassCompletions( mask, offset, alResult );
-    return alResult;
-  }
-
-  private void computeKeywordCompletions( final String mask, 
-                                          final int offset, 
-                                          final List<CompletionProposal> al ) {
-    String[] keywords = HaskellSyntax.getKeywords();
-    for( int i = 0; i < keywords.length; i++ ) {
-      String kw = keywords[ i ];
-      if( kw.startsWith( mask ) ) {
-        int len = mask.length();
-        al.add( new CompletionProposal( kw, offset - len, len, offset + len ) );
-      }
-    }
-  }
-
-  private void computeClassCompletions( final String mask, 
-                                        final int offset, 
-                                        final List<CompletionProposal> al ) {
-    String[] classes = HaskellSyntax.getClasses();
-    for( int i = 0; i < classes.length; i++ ) {
-      String kw = classes[ i ];
-      if( kw.startsWith( mask ) ) {
-        int len = mask.length();
-        // TODO img
-        al.add( new CompletionProposal( kw, 
-                                        offset - len, 
-                                        len, 
-                                        offset + len ) );
-      }
-    }
-  }
-
   private ICompletionProposal[] toArray( final List<ICompletionProposal> list ) {
     ICompletionProposal[] result = new ICompletionProposal[ list.size() ];
     list.toArray( result );

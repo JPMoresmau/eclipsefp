@@ -30,7 +30,7 @@ public class HaskellContentAssistProcessorTest extends TestCase {
 				                          new StubViewer(input), inputOffset);
 		
 		assertNotNull(props);
-		assertContains(new CompletionProposal("putStr", inputOffset - 2, 6, 66), props);
+		assertContains(new CompletionProposal("putStr", inputOffset - 2, 6, 68), props);
 		
 		engine.verify();
 	}
