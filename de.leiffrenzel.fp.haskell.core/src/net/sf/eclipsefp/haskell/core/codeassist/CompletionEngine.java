@@ -11,19 +11,16 @@ import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 public class CompletionEngine {
 
 	public String[] complete(ICompilationUnit unit, int offset) {
+		String completedToken;
 		try {
-			String completedToken = scanPreffix(unit, offset);
+			completedToken = getQualifier(unit, offset);
 			List<String> possibilities = computePossibilities(unit);
 			List<String> result = filter(possibilities, completedToken);
 			return result.toArray(new String[result.size()]);
-		} catch (CoreException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
+		} catch (Exception ex) {
+			//ignore the error and just return an empty result 
 		}
-		return null;
+		return new String[0];
 	}
 	
 	private List<String> filter(List<String> strings, String prefix) {
@@ -47,26 +44,44 @@ public class CompletionEngine {
 		return result;
 	}
 
-	private String scanPreffix(ICompilationUnit unit, int offset)
-			throws CoreException, IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(unit
-				.getUnderlyingResource().getContents()));
-		StringBuffer buf = new StringBuffer();
-		for (long i = 0; i < offset; ++i) {
-			buf.append((char) in.read());
+	private String getQualifier( final ICompilationUnit unit, 
+			                     final int offset ) throws CoreException, IOException
+	{
+		StringBuffer contents = readSourceTillOffset(unit, offset);
+
+		int index = offset;
+		StringBuffer sb = new StringBuffer();
+		String result = "";
+		
+		boolean finished = false;
+		while( !finished && index > 0 ) {
+			char ch = contents.charAt(--index);
+			if( Character.isLetterOrDigit( ch ) ) {
+				sb.append( ch );
+			} else if( ch == '\"' || ch == '\'' ) {
+//				striong or char literals are not taken into account
+				finished = true;
+			} else {
+//				no ore identifier part, so we use what we have collected
+				result = sb.reverse().toString();
+				finished = true;
+			}
 		}
-		StringBuffer tokenBuf = new StringBuffer();
-		char c = buf.charAt(--offset);
-		while (!isWhitespace(c)) {
-			tokenBuf.append(c);
-			c = buf.charAt(--offset);
+		if( index == 0 ) {
+//			the special case where we have collected sth. but have reached the
+//			end of the document meanwhile
+			result = sb.reverse().toString();
 		}
-		String completedToken = tokenBuf.reverse().toString();
-		return completedToken;
+		return result;
 	}
 
-	private boolean isWhitespace(char c) {
-		return "\r\t\n ".indexOf(c) > -1;
+	private StringBuffer readSourceTillOffset(final ICompilationUnit unit, final int offset) throws CoreException, IOException {
+		InputStream in = unit.getUnderlyingResource().getContents();
+		StringBuffer contents = new StringBuffer(offset);
+		for(int i = 0; i < offset; ++i) {
+			contents.append((char) in.read());
+		}
+		return contents;
 	}
 
 }

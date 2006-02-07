@@ -60,7 +60,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     for(String text : proposals) {
       int textLength = text.length();
       int insertOffset = offset - qlen;
-      result.add(new CompletionProposal(text, insertOffset, textLength, offset + textLength));
+      result.add(new CompletionProposal(text, insertOffset, qlen, textLength));
     }
     return result;
   }

@@ -18,7 +18,7 @@ public class HaskellContentAssistProcessorTest extends TestCase {
                              "\n" +
                              "putStr str = str\n" +
                              "\n" +
-                             "main = pu\n";
+                             "main = pu";
 		final int inputOffset = 62;
 
 		MockCompletionEngine engine = new MockCompletionEngine();
@@ -30,7 +30,7 @@ public class HaskellContentAssistProcessorTest extends TestCase {
 				                          new StubViewer(input), inputOffset);
 		
 		assertNotNull(props);
-		assertContains(new CompletionProposal("putStr", inputOffset - 2, 6, 68), props);
+		assertContains(new CompletionProposal("putStr", inputOffset - 2, 2, 6), props);
 		
 		engine.verify();
 	}

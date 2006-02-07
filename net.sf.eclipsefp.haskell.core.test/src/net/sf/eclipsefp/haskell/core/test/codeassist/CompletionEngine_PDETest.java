@@ -40,6 +40,7 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 	
 	public void testKeywordCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest wh";
+		//TODO avoid complaining about parsing error here
 		final ICompilationUnit unit = parse(input);
 		final CompletionEngine engine = new CompletionEngine();
 
@@ -52,6 +53,22 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 	
 	//TODO test if the proposals really start with the preffix
 	
-	//TODO use preffix after non-whitespace char, like a left paren '(' for example
+	public void testDiscoverPreffixAfterLeftParen() throws CoreException {
+		final String input = "module Factorial where\n" +
+				             "\n" +
+				             "fat 0 = 1\n" +
+				             "fat 1 = n * (f";
+		final ICompilationUnit unit = parse(input);
+		final CompletionEngine engine = new CompletionEngine();
+		
+		assertEquals('f', input.charAt(48 - 1));
 
+		String[] proposals = engine.complete(unit, 48);
+
+		assertEquals("fat", proposals[0]);
+	}
+	
+	//TODO do not complete on empty preffix
+	
+	//TODO test preffix with underscore
 }
