@@ -1,8 +1,6 @@
 package net.sf.eclipsefp.haskell.core.codeassist;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
@@ -53,5 +51,5 @@ public class CompletionEngine {
   private boolean isWhitespace( char c ) {
     return "\r\t\n ".indexOf(c) > -1;
   }
-  
+
 }

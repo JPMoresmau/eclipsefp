@@ -1,14 +1,17 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package de.leiffrenzel.fp.haskell.ui.editor.codeassist;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsefp.haskell.core.codeassist.CompletionEngine;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 
+import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
+import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
 import de.leiffrenzel.fp.haskell.ui.HaskellUIPlugin;
 import de.leiffrenzel.fp.haskell.ui.editor.syntax.HaskellSyntax;
 
@@ -37,13 +40,31 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
     IDocument doc = viewer.getDocument();
     String mask = "";
+    List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
     try {
       mask = getQualifier( doc, offset );
-      getCompletionEngine().complete(null, offset);
+      IFile tmp = new HaskellFile(viewer.getDocument().get());
+      ICompilationUnit unit = ParserManager.getInstance().getParser().parse(tmp);
+      //TODO move this conversion to the completion engine
+      String[] proposals = getCompletionEngine().complete(unit, offset);
+      result.addAll(toProposalList(proposals, offset, mask.length()));
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( "Problem while determining start of proposal.", ex );
+    } catch(CoreException ex) {
+      HaskellUIPlugin.log( "Problem while parsing for proposal.", ex);
     }
-    return computeProposals( mask, offset );
+    result.addAll(computeProposals( mask, offset ));
+    return toArray(result);
+  }
+
+  private List<ICompletionProposal> toProposalList( String[] proposals, int offset, int qlen) {
+    List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.length);
+    for(String text : proposals) {
+      int textLength = text.length();
+      int insertOffset = offset - qlen;
+      result.add(new CompletionProposal(text, insertOffset, textLength, insertOffset + textLength));
+    }
+    return result;
   }
 
   public IContextInformation[] computeContextInformation(
@@ -112,12 +133,12 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     return result;
   }
   
-  private ICompletionProposal[] computeProposals( final String mask,
+  private List<CompletionProposal> computeProposals( final String mask,
                                                   final int offset ) {
     List<CompletionProposal> alResult = new ArrayList<CompletionProposal>();
     computeKeywordCompletions( mask, offset, alResult );
     computeClassCompletions( mask, offset, alResult );
-    return toArray( alResult );
+    return alResult;
   }
 
   private void computeKeywordCompletions( final String mask, 
@@ -150,7 +171,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
     }
   }
 
-  private ICompletionProposal[] toArray( final List<CompletionProposal> list ) {
+  private ICompletionProposal[] toArray( final List<ICompletionProposal> list ) {
     ICompletionProposal[] result = new ICompletionProposal[ list.size() ];
     list.toArray( result );
     return result;

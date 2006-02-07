@@ -8,6 +8,7 @@ public class MockCompletionEngine extends CompletionEngine{
 
 	private int fExpectedOffset;
 	private int fTimesCalled = 0;
+	private String[] fOutput;
 
 	public void setExpectedOffset(int offset) {
 		fExpectedOffset = offset;
@@ -16,12 +17,17 @@ public class MockCompletionEngine extends CompletionEngine{
 	@Override
 	public String[] complete(ICompilationUnit unit, int offset) {
 		fTimesCalled ++;
+		Assert.assertNotNull(unit);
 		Assert.assertEquals(fExpectedOffset, offset);
-		return new String[0];
+		return fOutput;
 	}
 
 	public void verify() {
 		Assert.assertEquals("Wrong number of calls", 1, fTimesCalled);
+	}
+
+	public void setOutput(String[] output) {
+		fOutput = output;
 	}
 	
 }
