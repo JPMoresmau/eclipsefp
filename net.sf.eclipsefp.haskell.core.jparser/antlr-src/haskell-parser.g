@@ -348,9 +348,14 @@ topdecls
 		)?
 	;
 
-topdecl 
+topdecl
+	:	(stdtopdecl) => stdtopdecl
+	|   nonstddecl
+	;
+
+stdtopdecl 
 	:	typesymdecl
-	|   (datadecl) => datadecl
+	|   datadecl
 	|	rnmdtypedecl
 	|   classdecl
 	|   instancedecl
@@ -360,11 +365,11 @@ topdecl
 	
 typesymdecl
 	{
-		Declaration aDeclaration = insertNewDeclaration(TypeSynonymDeclaration.class);
-		
+		Declaration aDeclaration = null;
 		String name = null;
 	}
 	:
+		{ aDeclaration = insertNewDeclaration(TypeSynonymDeclaration.class); }
 		TYPE
 		name=simpletype { aDeclaration.setName(name); }
 		declrhs
@@ -405,11 +410,11 @@ constr
 	
 rnmdtypedecl
 	{
-		Declaration aDeclaration = insertNewDeclaration(NewtypeDeclaration.class);
-
+		Declaration aDeclaration = null;
 		String name = null;
 	}
 	:
+		{ aDeclaration = insertNewDeclaration(NewtypeDeclaration.class); }
 		NEWTYPE
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=simpletype { aDeclaration.setName(name); }
@@ -418,12 +423,12 @@ rnmdtypedecl
 	
 classdecl
 	{
-		ClassDeclaration aDeclaration = fBuilder.startClassDeclaration();
-		recordNextTokenLocation(aDeclaration);
-
+		ClassDeclaration aDeclaration = null;
 		String name = null;
 	}
 	:
+		{	aDeclaration = fBuilder.startClassDeclaration();
+			recordNextTokenLocation(aDeclaration); }
 		CLASS
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=conid { aDeclaration.setName(name); }
@@ -437,11 +442,11 @@ classdecl
 	
 instancedecl
 	{
-		InstanceDeclaration aDeclaration = insertNewDeclaration(InstanceDeclaration.class);
-		
+		InstanceDeclaration aDeclaration = null;
 		String name = null;
 	}
 	:
+		{ aDeclaration = insertNewDeclaration(InstanceDeclaration.class); }
 		INSTANCE
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=qconid { aDeclaration.setName(name); }
@@ -469,10 +474,9 @@ gtycon returns [String result]
 	;
 
 defaultdecl
-	{
-		insertNewDeclaration(DefaultDeclaration.class);
-	}
 	:
+		{ insertNewDeclaration(DefaultDeclaration.class); }
+		
 		DEFAULT list
 	;
 
@@ -508,7 +512,6 @@ decl
 		(vars OFTYPE) => signdecl	
 	|   fixdecl
 	|	(funlhs EQUALS) => valdef
-	|   nonstddecl
 	|   //empty declaration
 	;
 	
@@ -537,13 +540,14 @@ valdef
 //the fixdecl rule also doesn't come directly from the report spec
 fixdecl
 	{
-		InfixDeclaration aDeclaration = insertNewDeclaration(InfixDeclaration.class);
+		InfixDeclaration aDeclaration = null;
 		
 		int associativity = 0;
 		List<String> operators = null;
 		
 	}
 	:
+		{ aDeclaration = insertNewDeclaration(InfixDeclaration.class); }
 		associativity=fixity { aDeclaration.setAssociativity(associativity); }
 		(t:INTEGER {	int precedence = decodeInteger(t.getText());
 			     		aDeclaration.setPrecedence(precedence); })?
@@ -573,12 +577,13 @@ ops returns [List<String> result]
 
 signdecl
 	{
-		TypeSignature tsig = createNode(TypeSignature.class);
-		fBuilder.addTypeSignature(tsig);
+		TypeSignature tsig = null;
 		
 		String[] names = null;
 	}
 	:
+		{	tsig = createNode(TypeSignature.class);
+			fBuilder.addTypeSignature(tsig); }
 		names=vars { tsig.setIdentifiers(names); }
 		OFTYPE
 		(~(SEMICOLON | RIGHT_CURLY))*
