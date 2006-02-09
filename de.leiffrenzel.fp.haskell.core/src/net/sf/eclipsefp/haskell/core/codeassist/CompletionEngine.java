@@ -27,9 +27,13 @@ public class CompletionEngine {
 	
 	private List<ICompletionProposal> filterAndConvert(List<String> proposals, String prefix, int offset) {
 		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.size());
+		int qlen = prefix.length();
+		if (qlen == 0) {
+			return result; 
+		}
+
 		for (String prop : proposals) {
 			if (prop.startsWith(prefix)) {
-				int qlen = prefix.length();
 				result.add(new CompletionProposal(prop, offset - qlen,
 						                          qlen, prop.length()));
 			}

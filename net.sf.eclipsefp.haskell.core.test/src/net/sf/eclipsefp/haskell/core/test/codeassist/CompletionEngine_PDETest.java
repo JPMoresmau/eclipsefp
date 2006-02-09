@@ -70,7 +70,20 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		assertContains(createProposal("f", "fat", 48), proposals);
 	}
 	
-	//TODO do not complete on empty preffix
+	public void testDoNotCompleteOnEmptyPrefix() throws CoreException {
+		final String input = "module Factorial where\n" +
+				             "\n" +
+				             "fat 0 = 1\n" +
+				             "fat 1 = n * (";
+		final ICompilationUnit unit = parse(input);
+		final CompletionEngine engine = new CompletionEngine();
+		
+		assertEquals('(', input.charAt(47 - 1));
+
+		ICompletionProposal[] proposals = engine.complete(unit, 48);
+		
+		assertEquals(0, proposals.length);
+	}
 	
 	//TODO test preffix with underscore
 	
