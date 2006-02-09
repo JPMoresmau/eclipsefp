@@ -9,5 +9,6 @@ Require-Bundle: org.junit,
  org.eclipse.jface.text,
  org.eclipse.ui,
  de.leiffrenzel.fp.haskell.ui,
- de.leiffrenzel.fp.haskell.core
+ de.leiffrenzel.fp.haskell.core,
+ net.sf.eclipsefp.haskell.core.test
 Export-Package: net.sf.eclipsefp.haskell.ui.test

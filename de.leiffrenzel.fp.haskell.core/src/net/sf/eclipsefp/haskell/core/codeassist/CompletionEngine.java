@@ -4,30 +4,34 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
 
 public class CompletionEngine {
 
-	public String[] complete(ICompilationUnit unit, int offset) {
+	public ICompletionProposal[] complete(ICompilationUnit unit, int offset) {
 		String completedToken;
 		try {
 			completedToken = getQualifier(unit, offset);
 			List<String> possibilities = computePossibilities(unit);
-			List<String> result = filter(possibilities, completedToken);
-			return result.toArray(new String[result.size()]);
+			List<ICompletionProposal> result = filterAndConvert(possibilities, completedToken, offset);
+			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
 			//ignore the error and just return an empty result 
 		}
-		return new String[0];
+		return new ICompletionProposal[0];
 	}
 	
-	private List<String> filter(List<String> strings, String prefix) {
-		List<String> result = new ArrayList<String>(strings.size());
-		for (String string : strings) {
-			if (string.startsWith(prefix)) {
-				result.add(string);
+	private List<ICompletionProposal> filterAndConvert(List<String> proposals, String prefix, int offset) {
+		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.size());
+		for (String prop : proposals) {
+			if (prop.startsWith(prefix)) {
+				int qlen = prefix.length();
+				result.add(new CompletionProposal(prop, offset - qlen,
+						                          qlen, prop.length()));
 			}
 		}
 		return result;

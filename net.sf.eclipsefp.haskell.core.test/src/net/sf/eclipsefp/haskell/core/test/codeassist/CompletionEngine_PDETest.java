@@ -1,9 +1,11 @@
 package net.sf.eclipsefp.haskell.core.test.codeassist;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import net.sf.eclipsefp.haskell.core.codeassist.CompletionEngine;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
+import net.sf.eclipsefp.haskell.core.test.util.CompletionProposalTestCase;
 import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 
 public class CompletionEngine_PDETest extends Parser_PDETestCase {
@@ -19,9 +21,9 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		
 		assertEquals('u', input.charAt(62 - 1));
 		
-		String[] proposals = engine.complete(unit, 62);
+		ICompletionProposal[] proposals = engine.complete(unit, 62);
 		
-		assertEquals("putStr", proposals[0]);
+		assertContains(createProposal("pu", "putStr", 62), proposals);
 	}
 	
 	public void testPreludeClassCompletion() throws CoreException {
@@ -33,11 +35,11 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 
 		assertEquals('N', input.charAt(43 - 1));
 
-		String[] proposals = engine.complete(unit, 43);
+		ICompletionProposal[] proposals = engine.complete(unit, 43);
 
-		assertEquals("Num", proposals[0]);
+		assertContains(createProposal("N", "Num", 43), proposals);
 	}
-	
+
 	public void testKeywordCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest wh";
 		//TODO avoid complaining about parsing error here
@@ -46,9 +48,9 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 
 		assertEquals('h', input.charAt(30 - 1));
 
-		String[] proposals = engine.complete(unit, 30);
+		ICompletionProposal[] proposals = engine.complete(unit, 30);
 
-		assertEquals("where", proposals[0]);
+		assertContains(createProposal("wh", "where", 30), proposals);
 	}
 	
 	//TODO test if the proposals really start with the preffix
@@ -63,12 +65,21 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		
 		assertEquals('f', input.charAt(48 - 1));
 
-		String[] proposals = engine.complete(unit, 48);
+		ICompletionProposal[] proposals = engine.complete(unit, 48);
 
-		assertEquals("fat", proposals[0]);
+		assertContains(createProposal("f", "fat", 48), proposals);
 	}
 	
 	//TODO do not complete on empty preffix
 	
 	//TODO test preffix with underscore
+	
+	private void assertContains(ICompletionProposal proposal, ICompletionProposal[] proposals) {
+		CompletionProposalTestCase.assertContains(proposal, proposals);
+	}
+
+	private ICompletionProposal createProposal(String replaced, String replacement, int offset) {
+		return CompletionProposalTestCase.createProposal(replaced, replacement, offset);
+	}
+	
 }
