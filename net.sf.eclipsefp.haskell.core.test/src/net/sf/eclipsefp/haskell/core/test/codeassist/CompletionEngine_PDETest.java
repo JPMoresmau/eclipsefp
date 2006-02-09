@@ -53,8 +53,6 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		assertContains(createProposal("wh", "where", 30), proposals);
 	}
 	
-	//TODO test if the proposals really start with the preffix
-	
 	public void testDiscoverPreffixAfterLeftParen() throws CoreException {
 		final String input = "module Factorial where\n" +
 				             "\n" +
@@ -85,7 +83,20 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		assertEquals(0, proposals.length);
 	}
 	
-	//TODO test preffix with underscore
+	public void testCompletePreffixWithUnderscore() throws CoreException {
+		final String input = "module Underscore where\n" +
+				             "\n" +
+				             "_underscore = '_'\n" +
+				             "prefixWithUnderscore str = _und";
+		final ICompilationUnit unit = parse(input);
+		final CompletionEngine engine = new CompletionEngine();
+		
+		assertEquals('d', input.charAt(74 - 1));
+
+		ICompletionProposal[] proposals = engine.complete(unit, 74);
+
+		assertContains(createProposal("_und", "_underscore", 74), proposals);
+	}
 	
 	private void assertContains(ICompletionProposal proposal, ICompletionProposal[] proposals) {
 		CompletionProposalTestCase.assertContains(proposal, proposals);

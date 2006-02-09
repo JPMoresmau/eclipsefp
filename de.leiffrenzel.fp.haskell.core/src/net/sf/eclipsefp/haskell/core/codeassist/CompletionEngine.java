@@ -64,7 +64,7 @@ public class CompletionEngine {
 		boolean finished = false;
 		while( !finished && index > 0 ) {
 			char ch = contents.charAt(--index);
-			if( Character.isLetterOrDigit( ch ) ) {
+			if( isIdentifierChar(ch) ) {
 				sb.append( ch );
 			} else if( ch == '\"' || ch == '\'' ) {
 //				striong or char literals are not taken into account
@@ -81,6 +81,10 @@ public class CompletionEngine {
 			result = sb.reverse().toString();
 		}
 		return result;
+	}
+
+	private boolean isIdentifierChar(char ch) {
+		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1;
 	}
 
 	private StringBuffer readSourceTillOffset(final ICompilationUnit unit, final int offset) throws CoreException, IOException {
