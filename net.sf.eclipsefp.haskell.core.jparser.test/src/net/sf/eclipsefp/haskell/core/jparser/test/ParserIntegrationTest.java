@@ -528,6 +528,32 @@ public class ParserIntegrationTest extends JParserTestCase {
 		assertEquals(3, srcLoc.getLine());
 		assertEquals(2, srcLoc.getColumn());
 	}
+	
+	public void testConsecutiveADTDeclarations() throws RecognitionException, TokenStreamException {
+		final String input = "module Nature where\n" +
+                             "\n" +
+                             "data Gender = Male | Female\n" +
+                             "data Temperature = Cold | Warm | Hot";
+		IModule module = parse(input);
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		assertTrue(decls[0] instanceof IDataDeclaration);
+		assertTrue(decls[1] instanceof IDataDeclaration);
+		
+		IDataDeclaration fstDataDecl = (IDataDeclaration) decls[0];
+		IConstructor[] fstConstructorGroup = fstDataDecl.getConstructors();
+		assertEquals(2, fstConstructorGroup.length);
+		assertEquals("Male", fstConstructorGroup[0].getName());
+		assertEquals("Female", fstConstructorGroup[1].getName());
+
+		IDataDeclaration sndDataDecl = (IDataDeclaration) decls[1];
+		IConstructor[] sndConstructorGroup = sndDataDecl.getConstructors();
+		assertEquals(3, sndConstructorGroup.length);
+		assertEquals("Cold", sndConstructorGroup[0].getName());
+		assertEquals("Warm", sndConstructorGroup[1].getName());
+		assertEquals("Hot", sndConstructorGroup[2].getName());
+	}
 
 	public void testNewtypeLocationRecording() throws RecognitionException, TokenStreamException {
 		// sample code from darcs source code

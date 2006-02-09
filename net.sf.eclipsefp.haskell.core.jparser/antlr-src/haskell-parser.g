@@ -393,12 +393,12 @@ constrs
 	
 constr
 	{
-		Constructor aConstructor = createNode(Constructor.class);
-		fBuilder.addConstructor(aConstructor);
-		
+		Constructor aConstructor = null;
 		String name = null;
 	}
 	:
+		{	aConstructor = createNode(Constructor.class);
+			fBuilder.addConstructor(aConstructor); }
 		name=con { aConstructor.setName(name); }
 		(block | ~(SEMICOLON|ALT|RIGHT_CURLY))*
 	;

@@ -119,7 +119,36 @@ public class ModuleBuilderTest extends TestCase {
 		assertSame(cons, dataDecl.getConstructors()[0]);
 	}
 
-    private IConstructor createConstructor() {
+	public void testDistributeConstructorsBetweenDataDeclarations() {
+		final IConstructor fstCons = createConstructor();
+		final IConstructor sndCons = createConstructor();
+		
+		fBuilder.startModule();
+		fBuilder.startDataDeclaration();
+		fBuilder.addConstructor(fstCons);
+		
+		fBuilder.startDataDeclaration();
+		fBuilder.addConstructor(sndCons);
+		
+		final IModule module = fBuilder.getResult();
+		
+		final IDeclaration[] decls = module.getDeclarations();
+		assertEquals(2, decls.length);
+		assertTrue(decls[0] instanceof IDataDeclaration);
+		assertTrue(decls[1] instanceof IDataDeclaration);
+		
+		IDataDeclaration fstDataDecl = (IDataDeclaration) decls[0];
+		IConstructor[] fstConstructorGroup = fstDataDecl.getConstructors();
+		assertEquals(1, fstConstructorGroup.length);
+		assertSame(fstCons, fstConstructorGroup[0]);
+
+		IDataDeclaration sndDataDecl = (IDataDeclaration) decls[1];
+		IConstructor[] sndConstructorGroup = sndDataDecl.getConstructors();
+		assertEquals(1, sndConstructorGroup.length);
+		assertSame(sndCons, sndConstructorGroup[0]);
+	}
+
+	private IConstructor createConstructor() {
 		return new Constructor();
 	}
 
