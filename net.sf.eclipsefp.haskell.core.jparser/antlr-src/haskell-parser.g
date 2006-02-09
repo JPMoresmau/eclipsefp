@@ -350,7 +350,7 @@ topdecls
 
 topdecl 
 	:	typesymdecl
-	|   datadecl
+	|   (datadecl) => datadecl
 	|	rnmdtypedecl
 	|   classdecl
 	|   instancedecl
@@ -372,12 +372,12 @@ typesymdecl
 	
 datadecl
 	{
-		Declaration aDeclaration = fBuilder.startDataDeclaration();
-		recordNextTokenLocation(aDeclaration);
-
+		Declaration aDeclaration = null;
 		String name = null;
 	}
 	:
+		{	aDeclaration = fBuilder.startDataDeclaration();
+			recordNextTokenLocation(aDeclaration); }
 		DATA
 		((context CONTEXT_ARROW) => context CONTEXT_ARROW)?
 		name=simpletype { aDeclaration.setName(name); }

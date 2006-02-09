@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.jparser.test;
+package net.sf.eclipsefp.haskell.core.jparser.test.doubles;
 
 import antlr.Token;
 import antlr.TokenStream;

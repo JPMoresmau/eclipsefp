@@ -5,6 +5,7 @@ import java.io.StringReader;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerExtendedTokenTypes;
 import net.sf.eclipsefp.haskell.core.jparser.PreprocessedTokenStream;
+import net.sf.eclipsefp.haskell.core.jparser.test.doubles.TestTokenStream;
 import antlr.Token;
 import antlr.TokenStreamException;
 import junit.framework.TestCase;

@@ -11,6 +11,7 @@ import antlr.TokenStreamException;
 import net.sf.eclipsefp.haskell.core.jparser.EclipseFPToken;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
+import net.sf.eclipsefp.haskell.core.jparser.test.doubles.TestTokenStream;
 
 public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenTypes {
 	

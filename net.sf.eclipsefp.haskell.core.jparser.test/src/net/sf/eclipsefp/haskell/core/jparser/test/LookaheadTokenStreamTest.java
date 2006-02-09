@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Vector;
 
 import net.sf.eclipsefp.haskell.core.jparser.LookaheadTokenStream;
+import net.sf.eclipsefp.haskell.core.jparser.test.doubles.ListTokenStream;
 
 import antlr.Token;
 import antlr.TokenStreamException;

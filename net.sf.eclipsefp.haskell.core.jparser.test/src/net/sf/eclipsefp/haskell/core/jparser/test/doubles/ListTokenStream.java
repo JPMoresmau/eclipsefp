@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.jparser.test;
+package net.sf.eclipsefp.haskell.core.jparser.test.doubles;
 
 import java.util.Iterator;
 import java.util.List;

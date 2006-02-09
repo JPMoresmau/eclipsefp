@@ -8,6 +8,7 @@ import antlr.TokenStreamException;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellFormatter;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexer;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellLexerTokenTypes;
+import net.sf.eclipsefp.haskell.core.jparser.test.doubles.TestTokenStream;
 
 import junit.framework.TestCase;
 

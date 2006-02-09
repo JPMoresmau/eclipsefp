@@ -1,6 +1,9 @@
 package net.sf.eclipsefp.haskell.core.jparser.test;
 
 
+import java.io.PrintStream;
+
+import net.sf.eclipsefp.haskell.core.jparser.test.doubles.MockPrintStream;
 import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
 import de.leiffrenzel.fp.haskell.core.halamo.IConstructor;
 import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
@@ -36,6 +39,16 @@ import antlr.TokenStreamException;
  */
 public class ParserIntegrationTest extends JParserTestCase {
 	
+	private PrintStream fOldErrStream;
+
+	@Override
+	protected void setUp() throws Exception {
+		fOldErrStream = System.err;
+		MockPrintStream mockErr = new MockPrintStream(fOldErrStream);
+		
+		System.setErr(mockErr);
+	}
+
 	public void testEmptyModule() throws RecognitionException, TokenStreamException {
 		IModule module = parse("\n   module ParserTest where {}");
 
@@ -860,6 +873,24 @@ public class ParserIntegrationTest extends JParserTestCase {
 	    assertEquals( ":+", decl.getOperators()[ 0 ] );
 	}
 	
+	public void testSilentlyIgnoreGeneralisedDatatypes() throws RecognitionException, TokenStreamException {
+		//sample code inspired on code from  Chris Kuklewicz
+		final String input = "module AbsNum where\n" +
+				             "\n" +
+				             "data T :: * -> * where\n" +
+				             "   -- Base\n" +
+				             "   Var :: (Simplify a) => SymName -> T a\n" +
+				             "   Const :: (Simplify a) => a -> T a\n" +
+				             "\n" +
+				             "abs a = if a < 0 then -a else a";
+		
+		IModule module = parse(input);
+		
+		IDeclaration[] decls = module.getDeclarations();
+		assertEquals(1, decls.length);
+		assertEquals("abs", decls[0].getName());
+	}
+	
 //TODO recognize infix functions named with symbols (like <>, <+> and $$)
 //see darcs source code, Printer.lhs
 	
@@ -876,11 +907,18 @@ public class ParserIntegrationTest extends JParserTestCase {
 	private static void assertEmpty(Object[] exports) {
 		assertEquals(0, exports.length);
 	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		System.setErr(fOldErrStream);
+	}
 	
 	//TODO should be able to build a tree with a partial parse, not just
 	//with valid inputs
 	
 	//TODO pay attention to the varsym rules (they can appear anywhere a
 	//normal var appears)
+	
+	
 	
 }
