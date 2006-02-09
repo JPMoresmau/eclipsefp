@@ -11,7 +11,7 @@ import net.sf.eclipsefp.haskell.ui.test.editor.codeassist.doubles.StubViewer;
 import de.leiffrenzel.fp.haskell.ui.editor.codeassist.HaskellCAProcessor;
 import junit.framework.TestCase;
 
-public class HaskellContentAssistProcessorTest extends TestCase {
+public class HaskellContentAssistProcessor_PDETest extends TestCase {
 	
 	public void testCallsCompletionEngine() {
 		final String input = "module CompletionEngineTest where\n" +
