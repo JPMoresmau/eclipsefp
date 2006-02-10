@@ -179,6 +179,7 @@
 </target>	
 
 <target name="test">
+	<!-- Install the .zip bundle -->
 	<copy todir="${buildDirectory}/eclipse">
 		<fileset dir="${baseLocation}">
 		    <include name="**"/>
@@ -186,6 +187,23 @@
 	</copy>
 	<unzip src="${buildDirectory}/${buildType}.${buildId}/net.sf.eclipsefp.haskell-${buildId}.zip"
 		   dest="${buildDirectory}" />
+	<!-- Install using the update site -->
+	<copy todir="${buildDirectory}/eclipse-update-site">
+		<fileset dir="${baseLocation}">
+		    <include name="**"/>
+		</fileset>
+	</copy>
+	<java classname="org.eclipse.core.launcher.Main"
+		  classpath="${buildDirectory}/eclipse-update-site/startup.jar"
+		  fork="true"
+		  failonerror="true" >
+		<arg line="-application  org.eclipse.update.core.standaloneUpdate" />
+	    <arg line="-command install" />
+		<arg line="-featureId de.leiffrenzel.fp.haskell" />
+		<arg line="-version 0.10.0" />
+		<arg line="-from file://${update.site.staging.loc}/" />
+	</java>
+	<!-- Test the .zip installation -->
 	<java classname="org.eclipse.core.launcher.Main"
 		  classpath="${buildDirectory}/eclipse/startup.jar"
 		  fork="true"
