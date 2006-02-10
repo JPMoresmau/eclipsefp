@@ -211,6 +211,14 @@
 		<arg line="-application net.sf.eclipsefp.haskell.build.check.verifypostinstall" />
 		<arg line="-clean" />
 	</java>
+	<!-- Test the update site installation -->
+	<java classname="org.eclipse.core.launcher.Main"
+		  classpath="${buildDirectory}/eclipse-update-site/startup.jar"
+		  fork="true"
+		  failonerror="true" >
+		<arg line="-application net.sf.eclipsefp.haskell.build.check.verifypostinstall" />
+		<arg line="-clean" />
+	</java>
 </target>
 	
 <target name="clean" unless="noclean">
