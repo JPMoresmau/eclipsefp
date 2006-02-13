@@ -1,2 +1,0 @@
-# Turn on tracing for the parser plugin
-net.sf.eclipsefp.haskell.core.parser/trace/unmarshal = false

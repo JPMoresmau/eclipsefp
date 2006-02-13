@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Name: Native Haskell Parser Implementation (win32)
-Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.parser.win32
-Bundle-Version: 0.10.0
-Bundle-Vendor: eclipsefp.sourceforge.net
-Fragment-Host: net.sf.eclipsefp.haskell.core.parser;bundle-version="0.10.0"
-Bundle-Localization: plugin
