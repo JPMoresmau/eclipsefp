@@ -4,6 +4,7 @@ package net.sf.eclipsefp.test.util.haskell;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
 
 import junit.framework.TestCase;
 
@@ -21,9 +22,14 @@ import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
 public abstract class HaskellProject_PDETestCase extends TestCase {
 
   private IProject project;
+  private IFolder fSourceFolder;
   
   protected IProject getProject() {
     return project;
+  }
+  
+  protected IFolder getSourceFolder() {
+	  return fSourceFolder;
   }
   
   protected void setUp() throws Exception {
@@ -74,14 +80,15 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
   
   private void createDefaultFolders() throws CoreException {
     IHaskellProject hsProject = HaskellProjectManager.get( project );
-    createFolder( hsProject.getSourcePath() );
+    fSourceFolder = createFolder( hsProject.getSourcePath() );
     createFolder( hsProject.getBinPath() );
     createFolder( hsProject.getOutputPath() );
   }
   
-  private void createFolder( final IPath folderPath ) throws CoreException {
+  private IFolder createFolder( final IPath folderPath ) throws CoreException {
     IFolder folder = project.getFolder( folderPath );
     folder.create( true, true, null );
+    return folder;
   }
   
   protected String constructName( final String folder, 
@@ -91,4 +98,11 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
     String packageName = pack.getName().replace( '.', '/' ) + "/res/";
     return packageName + folder + "/" + name;
   }
+
+protected IFile createSourceFile(final String contents, final String name) throws CoreException {
+	IFile file = getSourceFolder().getFile(name);
+	file.create(new StringBufferInputStream(contents), true, null);
+	
+	return file;
+}
 }

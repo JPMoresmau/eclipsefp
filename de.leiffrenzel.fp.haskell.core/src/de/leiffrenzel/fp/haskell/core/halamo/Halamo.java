@@ -170,4 +170,8 @@ public class Halamo {
   private IWorkspace getWorkspace() {
     return ResourcesPlugin.getWorkspace();
   }
+
+  public Scope getScopeFor(IFile file) {
+	return new ScopeCalculator().computeScopeFor(file);
+  }
 }

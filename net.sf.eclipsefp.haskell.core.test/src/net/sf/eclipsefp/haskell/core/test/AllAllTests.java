@@ -10,6 +10,7 @@ public class AllAllTests {
 				"Test for net.sf.eclipsefp.haskell.core.test");
 		//$JUnit-BEGIN$
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.compiler.AllTests.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.core.test.halamo.AllTests.suite());
 		//$JUnit-END$
 		return suite;
 	}
