@@ -27,7 +27,10 @@ public class ScopeCalculator {
 			ModuleSearcher searcher = new ModuleSearcher(
 					                          result,
 					                          importedModules);
-			file.getProject().accept(searcher);
+			IProject project = file.getProject();
+			if (project != null) {
+				project.accept(searcher);
+			}
 		} catch (CoreException ex) {
 			//in case something strange occurs, just return the calculated
 			//scope the way it is

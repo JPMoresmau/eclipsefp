@@ -36,6 +36,7 @@ public class MockFile implements IFile {
 	private List<MockInputStream> fOpenStreams = new Vector<MockInputStream>();
 	private String fContents;
 	private String fFileName;
+	private IProject fProject;
 	
 	public MockFile(String contents) {
 		this("Mock.hs", contents);
@@ -286,9 +287,12 @@ public class MockFile implements IFile {
 		return null;
 	}
 
+	public void setProject(IProject project) {
+		fProject = project;
+	}
+
 	public IProject getProject() {
-		
-		return null;
+		return fProject;
 	}
 
 	public IPath getProjectRelativePath() {

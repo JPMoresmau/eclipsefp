@@ -7,10 +7,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
+import de.leiffrenzel.fp.haskell.core.halamo.*;
 
 public class CompletionEngine {
+
+	private Halamo fLanguageModel;
+
+	public CompletionEngine() {
+		fLanguageModel = Halamo.getInstance();
+	}
+	
+	public CompletionEngine(Halamo langModel) {
+		fLanguageModel = langModel;
+	}
 
 	public ICompletionProposal[] complete(ICompilationUnit unit, int offset) {
 		String completedToken;
@@ -45,7 +54,14 @@ public class CompletionEngine {
 		List<String> result = new ArrayList<String>();
 		result.addAll(Arrays.asList(HaskellSyntax.getClasses()));
 		result.addAll(Arrays.asList(HaskellSyntax.getKeywords()));
-		for (IDeclaration decl : unit.getModules()[0].getDeclarations()) {
+		//TODO move this to the scope calculator
+		Scope scope = fLanguageModel.getScopeFor(unit.getUnderlyingResource());
+		List<IDeclaration> internalDecls = Arrays.asList(unit.getModules()[0].getDeclarations());
+		List<IDeclaration> externalDecls = scope.getAvailableDeclarations();
+		List<IDeclaration> decls = new ArrayList<IDeclaration>(internalDecls.size() + externalDecls.size());
+		decls.addAll(internalDecls);
+		decls.addAll(externalDecls);
+		for (IDeclaration decl : decls) {
 			result.add(decl.getName());
 		}
 		

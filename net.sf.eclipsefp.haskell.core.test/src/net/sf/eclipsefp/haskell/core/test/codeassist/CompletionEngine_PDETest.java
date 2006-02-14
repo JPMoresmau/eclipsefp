@@ -5,6 +5,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import net.sf.eclipsefp.haskell.core.codeassist.CompletionEngine;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
+import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
+import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
 import net.sf.eclipsefp.haskell.core.test.util.CompletionProposalTestCase;
 import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
 
@@ -96,6 +98,22 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		ICompletionProposal[] proposals = engine.complete(unit, 74);
 
 		assertContains(createProposal("_und", "_underscore", 74), proposals);
+	}
+	
+	public void testSeeAcrossModules() throws CoreException {
+		final String input = "module Main where\n" +
+				             "\n" +
+				             "main = putStr $ show $ f";
+		final int offset = input.length();
+		final ICompilationUnit unit = parse(input);
+		final StubHalamo langModel = new StubHalamo();
+		final CompletionEngine engine = new CompletionEngine(langModel);
+		
+		langModel.setModulesInScope(new StubModule("fat", "fib"));
+		
+		ICompletionProposal[] proposals = engine.complete(unit, offset);
+		
+		assertContains(createProposal("f", "fat", offset), proposals);
 	}
 	
 	private void assertContains(ICompletionProposal proposal, ICompletionProposal[] proposals) {

@@ -12,6 +12,7 @@ import de.leiffrenzel.fp.haskell.core.halamo.IModule;
 import de.leiffrenzel.fp.haskell.core.halamo.Scope;
 
 import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
+import net.sf.eclipsefp.test.util.common.MockFile;
 import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
 
 public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
@@ -83,6 +84,18 @@ public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
 		
 		HalamoAssert.assertContains("fib", declarations);
 		HalamoAssert.assertContains("fac", declarations);
+	}
+	
+	public void testFailGracefullyWithFileOusideProject() {
+		final String contents = "module Main where\n" +
+				                "\n" +
+				                "main = putStr \"Hello, world!\\n\"";
+		MockFile file = new MockFile(contents);
+		
+		file.setProject(null);
+		
+		Scope scope = fLangModelEngine.getScopeFor(file);
+		assertNotNull(scope);
 	}
 
 }

@@ -34,7 +34,7 @@ public class Halamo {
   
   /** constructs the singleton instance of the Haskell Language Model.
     * Private in order to ensure the singleton pattern. */
-  private Halamo() {
+  protected Halamo() {
     htProjectModels = new Hashtable();
   }
 
