@@ -32,7 +32,7 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
 	  return fSourceFolder;
   }
   
-  protected void setUp() throws Exception {
+  protected final void setUp() throws Exception {
     IWorkspaceRunnable op = new IWorkspaceRunnable() {
       public void run( final IProgressMonitor monitor ) throws CoreException {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -46,6 +46,15 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
       }
     };
     ResourcesPlugin.getWorkspace().run( op, null, 0, null );
+    setUpMore();
+  }
+  
+  /**
+   * Provide a point where subclasses can hook to add their own setUp behavior
+   * 
+   * @throws Exception 
+   */
+  protected void setUpMore() throws Exception {
   }
   
   protected void tearDown() throws Exception {

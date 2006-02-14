@@ -27,9 +27,7 @@ public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 	private ModuleCreationInfo fInfo;
 
 	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	protected void setUpMore() throws Exception {
 		fInfo = new ModuleCreationInfo();
 		fInfo.setFolders(new Path(""));
 		fInfo.setSourceContainer(getProject().getFolder(SOURCE_FOLDER_NAME));

@@ -1,5 +1,7 @@
 package de.leiffrenzel.fp.haskell.core.halamo;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -18,9 +20,13 @@ public class ScopeCalculator {
 			ICompilationUnit unit = parser.parse(file);
 			
 			IImport[] imports = unit.getModules()[0].getImports();
+			String[] importedModules = new String[imports.length];
+			for(int i = 0; i < imports.length; ++i) {
+				importedModules[i] = imports[i].getImportedElement();
+			}
 			ModuleSearcher searcher = new ModuleSearcher(
-					                          imports[0].getImportedElement(),
-					                          result);
+					                          result,
+					                          importedModules);
 			file.getProject().accept(searcher);
 		} catch (CoreException ex) {
 			//in case something strange occurs, just return the calculated
@@ -33,11 +39,12 @@ public class ScopeCalculator {
 	}
 
 	private static class ModuleSearcher implements IResourceVisitor {
-		private String fModuleName;
+		private String[] fModuleNames;
 		private Scope fScope;
 
-		public ModuleSearcher(String moduleName, Scope collector) {
-			fModuleName = moduleName;
+		public ModuleSearcher(Scope collector, final String... moduleNames) {
+			Arrays.sort(moduleNames);
+			fModuleNames = moduleNames;
 			fScope = collector;
 		}
 
@@ -55,7 +62,7 @@ public class ScopeCalculator {
 				
 				IModule mod = unit.getModules()[0];
 				
-				if (fModuleName.equals(mod.getName())) {
+				if (Arrays.binarySearch(fModuleNames, mod.getName()) >= 0) {
 					fScope.addAvailableModule(mod);
 				}
 			}
