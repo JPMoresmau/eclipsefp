@@ -54,6 +54,8 @@ org.eclipse.core.launcher.Main \
 
 if ! $verifyCmd; then
     echo "Build preconditions not met. Aborting build..."
+    echo "Are you sure you installed the net.sf.eclipsefp.haskell.build.check \
+plugin to the Eclipse platform at $ECLIPSE_HOME?"
     exit
 fi
 

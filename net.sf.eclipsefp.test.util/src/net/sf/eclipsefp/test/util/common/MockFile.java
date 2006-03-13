@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
@@ -478,6 +479,11 @@ public class MockFile implements IFile {
 		for (MockInputStream stream : fOpenStreams) {
 			stream.verify();
 		}
+	}
+
+	public IResourceProxy createProxy() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

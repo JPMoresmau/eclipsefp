@@ -470,4 +470,9 @@ class HaskellFile implements IFile {
     return false;
   }
 
+  public IResourceProxy createProxy() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
