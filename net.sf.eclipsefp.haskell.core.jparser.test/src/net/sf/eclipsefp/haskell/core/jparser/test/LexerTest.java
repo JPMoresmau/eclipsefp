@@ -391,6 +391,41 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		
 		assertOffset(19, fLexer.nextToken());
 	}
+	
+	/**
+	 * Test case for bug #1432717
+	 * @throws TokenStreamException 
+	 */
+	public void testAcceptsForeignCharsInComments() throws TokenStreamException {
+		//test case source by Anssi (akaariai@users.sourceforge.net)
+		final String input = "module Test where\n" +
+							 "\n" +
+							 "test :: Int -> Int -> Int\n" +
+							 "test x y = 2*x*y\n" +
+							 "-- If I have only this comment everything works\n" +
+							 "\n" +
+							 "-- But if I have foreign chars then Outline will stop working: צה\n";
+		
+		fLexer = createLexer(input);
+		
+		// module Test where \n
+		// \n
+		// test :: Int -> Int -> Int \n
+		// test x y = 2 * x * y \n
+		fLexer.skipTokens(4);
+		fLexer.skipTokens(1);
+		fLexer.skipTokens(8);
+		fLexer.skipTokens(10);
+		
+		Token firstComment = fLexer.nextToken();
+		assertToken(COMMENT, "-- If I have only this comment everything works", firstComment);
+		
+		// \n \n
+		fLexer.skipTokens(2);
+
+		Token secondComment = fLexer.nextToken();
+		assertToken(COMMENT, "-- But if I have foreign chars then Outline will stop working: צה", secondComment);
+	}
 
 	private void assertOffset(int expectedOffset, Token token) {
 		EclipseFPToken tok = (EclipseFPToken) token;

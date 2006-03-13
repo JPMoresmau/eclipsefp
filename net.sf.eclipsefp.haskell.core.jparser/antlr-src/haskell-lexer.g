@@ -21,6 +21,8 @@ class HaskellLexer extends Lexer;
 
 options	{
     k = 9;
+    // Allow any char but \uFFFF (16 bit -1)
+    charVocabulary='\u0000'..'\uFFFE';
 }
 
 tokens {
