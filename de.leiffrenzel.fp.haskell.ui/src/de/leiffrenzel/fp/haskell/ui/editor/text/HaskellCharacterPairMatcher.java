@@ -34,21 +34,41 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     document = null;
   }
 
-  public IRegion match( final IDocument document, final int offset ) {
+  public IRegion match(final IDocument document, final int theOffset) {
     Assert.isNotNull( document );
-    Assert.isLegal( offset >= 0 );
-    this.document = document;
-    this.offset = offset;
-
-    IRegion retVal = null;
+    Assert.isLegal( theOffset >= 1 );
+    
     try {
-      retVal = matchPairsAt();
-    } catch( BadLocationException e ) {
-      // ignore, there's probably no matching character to highlight
+      final char start = document.getChar(theOffset - 1);
+      if (isClosingCharacter(start)) {
+        final char match = pairFor(start);
+        int offset = theOffset;
+        while(offset > 0) {
+          char c = document.getChar(offset);
+          if (c == match) {
+            return new Region(offset, theOffset - offset);
+          }
+          --offset;
+        }
+      } else if (isOpeningCharacter(start)) {
+        final char match = pairFor(start);
+        int offset = theOffset;
+        while(offset < document.getLength()) {
+          char c = document.getChar(offset);
+          if (c == match) {
+            return new Region(theOffset - 1, offset - theOffset + 2);
+          }
+          ++offset;
+        }
+      }
+    } catch( BadLocationException ex ) {
+      // ignore probably there isn't a matching character yet
     }
-    return retVal;
+    
+    return null;
   }
 
+  //TODO remove this method
   public int getAnchor() {
     return anchor;
   }
@@ -58,23 +78,34 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
   //////////////////
 
   private boolean isClosingCharacter( final char ch ) {
-    boolean result = false;
-    for( int i = 1; !result && i < PAIRS.length; i += 2 ) {
+    for( int i = 1; i < PAIRS.length; i += 2 ) {
       if( ch == PAIRS[ i ] ) {
-        result = true;
+        return true;
       }
     }
-    return result;
+    return false;
   }
 
   private boolean isOpeningCharacter( final char ch ) {
-    boolean result = false;
-    for( int i = 0; !result && i < PAIRS.length; i += 2 ) {
+    for( int i = 0; i < PAIRS.length; i += 2 ) {
       if( ch == PAIRS[ i ] ) {
-        result = true;
+        return true;
       }
     }
-    return result;
+    return false;
+  }
+
+  private char pairFor(char c) {
+    for(int i = 0; i < PAIRS.length; ++i ) {
+      if (PAIRS[i] == c) {
+        if (i % 2 == 0) {
+          return PAIRS[i + 1];
+        }
+        
+        return PAIRS[i - 1];
+      }
+    }
+    return c;
   }
 
   private IRegion matchPairsAt() throws BadLocationException {
