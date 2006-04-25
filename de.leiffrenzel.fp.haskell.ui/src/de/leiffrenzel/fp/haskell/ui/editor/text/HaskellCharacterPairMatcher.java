@@ -14,6 +14,9 @@ import de.leiffrenzel.fp.haskell.ui.util.text.Matcher;
   */
 public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
 
+  private static final int FORWARD = +1;
+  private static final int BACKWARDS = -1;
+
   private static final char PAIRS[] = { '{', '}', '(', ')', '[', ']' };
 
   private IDocument document;
@@ -36,33 +39,57 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
 
   public IRegion match(final IDocument document, final int theOffset) {
     Assert.isNotNull( document );
-    Assert.isLegal( theOffset >= 1 );
+    Assert.isLegal( theOffset >= 0 );
+    
+    //special case, there is nothing to complete if cursor is on position zero
+    if (0 == theOffset) return null;
     
     try {
-      final char start = document.getChar(theOffset - 1);
+      final int initialOffset = theOffset - 1;
+      final char start = document.getChar(initialOffset);
+      int direction = 0;
       if (isClosingCharacter(start)) {
-        final char match = pairFor(start);
-        int offset = theOffset;
-        while(offset > 0) {
-          char c = document.getChar(offset);
-          if (c == match) {
-            return new Region(offset, theOffset - offset);
-          }
-          --offset;
-        }
+        anchor = RIGHT;
+        direction = BACKWARDS;
       } else if (isOpeningCharacter(start)) {
-        final char match = pairFor(start);
-        int offset = theOffset;
-        while(offset < document.getLength()) {
-          char c = document.getChar(offset);
-          if (c == match) {
-            return new Region(theOffset - 1, offset - theOffset + 2);
-          }
-          ++offset;
-        }
+        anchor = LEFT;
+        direction = FORWARD;
+      } else {
+        return null;
       }
+      
+      return matchPair(document, initialOffset, direction);
     } catch( BadLocationException ex ) {
-      // ignore probably there isn't a matching character yet
+      // ignore: probably there isn't a matching character yet
+    }
+    
+    return null;
+  }
+
+  private IRegion matchPair(final IDocument document,
+                            final int initialOffset,
+                            int searchDirection)
+    throws BadLocationException
+  {
+    final Reader reader = new Reader(document, initialOffset, searchDirection);
+    final char start = reader.readChar();
+    final char match = pairFor(start);
+    
+    int length = 1;
+    int nestingLevel = 0;
+    //advance the starting character
+    while(!reader.eof()) {
+      char c = reader.readChar();
+      ++length;
+      if (c == match) {
+        if (nestingLevel == 0) {
+          return new Region(reader.getSmallestOffset(), length);
+        }
+
+        --nestingLevel;
+      } else if (c == start){
+        ++nestingLevel;
+      }
     }
     
     return null;
@@ -106,6 +133,40 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
       }
     }
     return c;
+  }
+  
+  private static class Reader {
+
+    private IDocument fSourceDoc;
+    private int fInitialOffset;
+    private int fIncrement;
+    private int fLastOffset;
+
+    public Reader(IDocument document, int initialOffset, int increment) {
+      fSourceDoc = document; 
+      fInitialOffset = initialOffset;
+      fIncrement = increment;
+      fLastOffset = fInitialOffset - fIncrement;
+    }
+
+    public int getSmallestOffset() {
+      return Math.min(fInitialOffset, fLastOffset);
+    }
+
+    public char readChar() throws BadLocationException {
+      fLastOffset += fIncrement;
+      char result = fSourceDoc.getChar(fLastOffset);
+      return result;
+    }
+
+    public boolean eof() {
+      if (fIncrement < 0) {
+        return fLastOffset < 0;
+      } else {
+        return fLastOffset >= fSourceDoc.getLength();
+      }
+    }
+    
   }
 
   private IRegion matchPairsAt() throws BadLocationException {
