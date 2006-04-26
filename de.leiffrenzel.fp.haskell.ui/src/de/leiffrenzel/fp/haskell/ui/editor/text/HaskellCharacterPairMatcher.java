@@ -5,9 +5,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.util.Assert;
 
-import de.leiffrenzel.fp.haskell.ui.util.text.Matcher;
-
-
 /** <p>The pair matcher implementation used for matching parentheses etc.</p>
   * 
   * @author Leif Frenzel
@@ -19,8 +16,6 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
 
   private static final char PAIRS[] = { '{', '}', '(', ')', '[', ']' };
 
-  private IDocument document;
-  private int offset;
   private int anchor;
 
   
@@ -28,13 +23,11 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
   /////////////////////////////////////////////
 
   public void clear() {
-    document = null;
-    offset = -1;
     anchor = 0;
   }
 
   public void dispose() {
-    document = null;
+    //nothing to dispose
   }
 
   public IRegion match(final IDocument document, final int theOffset) {
@@ -169,32 +162,4 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     
   }
 
-  private IRegion matchPairsAt() throws BadLocationException {
-    int startPos = -1;
-    int endPos = -1;
-    IRegion result = null;
-    
-    char prevChar = document.getChar( Math.max( offset - 1, 0 ) );
-    if( isOpeningCharacter( prevChar ) ) {
-      startPos = offset - 1;
-      if( startPos >= 0 ) {
-        anchor = LEFT;
-        endPos = Matcher.findClosing( document, startPos + 1, prevChar );
-        if( endPos > -1 ) {
-          result = new Region( startPos, endPos - startPos + 1 );
-        }
-      }
-    }
-    if( isClosingCharacter( prevChar ) ) {
-      endPos = offset - 1;
-      if( endPos >= 0 ) {
-        anchor = RIGHT;
-        startPos = Matcher.findOpening( document, endPos - 1, prevChar );
-        if( startPos > -1 ) {
-          result = new Region( startPos, endPos - startPos + 1 );
-        }
-      }
-    }
-    return result;
-  }
 }
