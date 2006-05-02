@@ -5,7 +5,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 
-import de.leiffrenzel.fp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
+import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
 
 import junit.framework.TestCase;
 

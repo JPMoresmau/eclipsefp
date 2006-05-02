@@ -8,7 +8,7 @@ Bundle-Activator: net.sf.eclipsefp.haskell.refactoring.internal.ui.HaskellRefact
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
 Require-Bundle: de.leiffrenzel.fp.haskell.core,
- de.leiffrenzel.fp.haskell.ui,
+ net.sf.eclipsefp.haskell.ui,
  org.eclipse.core.filebuffers,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,

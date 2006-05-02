@@ -16,8 +16,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import de.leiffrenzel.fp.haskell.ui.util.DefaultStatus;
-import de.leiffrenzel.fp.haskell.ui.util.StatusUtil;
+import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
+import net.sf.eclipsefp.haskell.ui.util.StatusUtil;
 
 /** <p>the super class of all wizard pages for the Haddock Export wizard.
   * Encapsulates some common functionality.</p>

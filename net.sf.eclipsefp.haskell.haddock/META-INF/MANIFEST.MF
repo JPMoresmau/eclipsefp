@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui,
  de.leiffrenzel.fp.haskell.core,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
- de.leiffrenzel.fp.haskell.ui,
+ net.sf.eclipsefp.haskell.ui,
  org.eclipse.ui.ide,
  net.sf.eclipsefp.common.core
 Eclipse-AutoStart: true

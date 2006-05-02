@@ -13,7 +13,7 @@ import de.leiffrenzel.fp.haskell.ghccompiler.GhcCompilerPlugin;
 import de.leiffrenzel.fp.haskell.ghccompiler.core.CompilerParams;
 import de.leiffrenzel.fp.haskell.ghccompiler.core.Util;
 import de.leiffrenzel.fp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
-import de.leiffrenzel.fp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
 
 /** <p>implements a delegate for launching GHCi.</p>
   * 

@@ -2,10 +2,10 @@ package net.sf.eclipsefp.haskell.ui.test.util.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.leiffrenzel.fp.haskell.ui.HaskellUIPlugin;
-import de.leiffrenzel.fp.haskell.ui.preferences.editor.IEditorPreferenceNames;
-import de.leiffrenzel.fp.haskell.ui.util.preferences.HaskellPreferenceProvider;
-import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.util.preferences.HaskellPreferenceProvider;
+import net.sf.eclipsefp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
 import junit.framework.TestCase;
 
 public class HaskellPreferenceProvider_PDETest extends TestCase

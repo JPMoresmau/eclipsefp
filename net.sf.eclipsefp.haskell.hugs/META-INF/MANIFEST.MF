@@ -8,7 +8,7 @@ Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.leiffrenzel.fp.haskell.ui,
+ net.sf.eclipsefp.haskell.ui,
  de.leiffrenzel.fp.haskell.core,
  org.eclipse.debug.ui,
  org.eclipse.core.resources,

@@ -10,7 +10,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page name="Hugs 98"
-            category="de.leiffrenzel.fp.haskell.ui.preferences.HaskellInterpreterPP"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
             class="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage"
             id="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage">
       </page>
@@ -38,7 +38,7 @@
             </contextLabel>
          </contextualLaunch>
          <perspective
-               id="de.leiffrenzel.fp.haskell.ui.HaskellPerspective">
+               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
          </perspective>
       </shortcut>
    </extension>

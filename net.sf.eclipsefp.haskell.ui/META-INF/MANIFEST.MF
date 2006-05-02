@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-Name: Haskell UI Plug-in
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.ui; singleton=true
+Bundle-Version: 0.10.0
+Bundle-ClassPath: haskellui.jar
+Bundle-Activator: net.sf.eclipsefp.haskell.ui.HaskellUIPlugin
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Require-Bundle: de.leiffrenzel.fp.haskell.core,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.views,
+ org.eclipse.jface.text,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.editors,
+ org.eclipse.core.resources,
+ org.eclipse.ui,
+ org.eclipse.debug.ui,
+ org.eclipse.debug.core,
+ org.eclipse.core.runtime,
+ net.sf.eclipsefp.common.ui
+Eclipse-AutoStart: true
+Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.dialog,
+ net.sf.eclipsefp.haskell.ui.editor.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.editor.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.launch,
+ net.sf.eclipsefp.haskell.ui.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.util,
+ net.sf.eclipsefp.haskell.ui.util.preferences,
+ net.sf.eclipsefp.haskell.ui.util.text,
+ net.sf.eclipsefp.haskell.ui.wizards;x-friends:="net.sf.eclipsefp.haskell.ui.test"

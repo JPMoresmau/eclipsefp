@@ -9,9 +9,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
-import de.leiffrenzel.fp.haskell.ui.dialog.DialogLabelProvider;
-import de.leiffrenzel.fp.haskell.ui.util.HaskellUIImages;
-import de.leiffrenzel.fp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.ui.dialog.DialogLabelProvider;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 
 
 /** <p>The label provider for the checkbox tree and list on the selection 

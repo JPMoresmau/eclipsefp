@@ -22,13 +22,13 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="GHC compiler"
-            category="de.leiffrenzel.fp.haskell.ui.preferences.HaskellCompilerPP"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP"
             class="de.leiffrenzel.fp.haskell.ghccompiler.ui.preferences.GhcPreferencePage"
             id="de.leiffrenzel.fp.haskell.ghccompiler.ui.preferences.GhcPreferencePage">
       </page>
       <page
             name="GHCi (interactive)"
-            category="de.leiffrenzel.fp.haskell.ui.preferences.HaskellInterpreterPP"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
             class="de.leiffrenzel.fp.haskell.ghccompiler.ui.preferences.GhciPreferencePage"
             id="de.leiffrenzel.fp.haskell.ghccompiler.ui.preferences.GhciPreferencePage">
       </page>
@@ -56,7 +56,7 @@
             </contextLabel>
          </contextualLaunch>
          <perspective
-               id="de.leiffrenzel.fp.haskell.ui.HaskellPerspective">
+               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
          </perspective>
       </shortcut>
    </extension>

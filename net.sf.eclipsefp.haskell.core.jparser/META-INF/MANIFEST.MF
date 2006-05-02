@@ -8,7 +8,7 @@ Require-Bundle: org.antlr,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
  de.leiffrenzel.fp.haskell.core,
- de.leiffrenzel.fp.haskell.ui
+ net.sf.eclipsefp.haskell.ui
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Activator: net.sf.eclipsefp.haskell.core.jparser.JParserPlugin
 Export-Package: net.sf.eclipsefp.haskell.core.jparser,

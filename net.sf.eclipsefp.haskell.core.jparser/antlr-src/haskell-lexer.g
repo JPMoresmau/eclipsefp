@@ -12,8 +12,8 @@
 header {
 package net.sf.eclipsefp.haskell.core.jparser;
 
-import de.leiffrenzel.fp.haskell.ui.util.preferences.HaskellPreferenceProvider;
-import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
+import net.sf.eclipsefp.haskell.ui.util.preferences.HaskellPreferenceProvider;
+import net.sf.eclipsefp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
 
 }
 

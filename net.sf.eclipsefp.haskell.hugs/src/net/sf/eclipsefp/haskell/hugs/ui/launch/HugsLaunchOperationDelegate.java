@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IFile;
 
 import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
 import de.leiffrenzel.fp.haskell.core.util.TracingUtil;
-import de.leiffrenzel.fp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
 
 /** <p>implements a delegate for launching HUGS.</p>
   * 

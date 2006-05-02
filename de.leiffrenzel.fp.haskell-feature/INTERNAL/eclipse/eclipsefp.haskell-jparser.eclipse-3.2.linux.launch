@@ -12,7 +12,7 @@
 <booleanAttribute key="automaticAdd" value="false"/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="includeFragments" value="false"/>
-<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,net.sf.eclipsefp.haskell.core.jparser.test,de.leiffrenzel.fp.haskell.core,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.common.ui,de.leiffrenzel.fp.haskell.ui,de.leiffrenzel.fp.haskell,net.sf.eclipsefp.haskell.core.jparser,de.leiffrenzel.fp.haskell.doc.user,org.antlr,net.sf.eclipsefp.test.util,net.sf.eclipsefp.haskell.core.parser.test,de.leiffrenzel.fp.haskell.ghccompiler,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.hugs"/>
+<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,net.sf.eclipsefp.haskell.core.jparser.test,de.leiffrenzel.fp.haskell.core,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.common.ui,net.sf.eclipsefp.haskell.ui,de.leiffrenzel.fp.haskell,net.sf.eclipsefp.haskell.core.jparser,de.leiffrenzel.fp.haskell.doc.user,org.antlr,net.sf.eclipsefp.test.util,net.sf.eclipsefp.haskell.core.parser.test,de.leiffrenzel.fp.haskell.ghccompiler,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.hugs"/>
 <stringAttribute key="location" value="tmp/runtime-workspace"/>
 <stringAttribute key="configLocation" value=""/>
 <booleanAttribute key="clearws" value="true"/>

@@ -7,7 +7,7 @@ public class AllAllTests_PDESuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
-				"Test for de.leiffrenzel.fp.haskell.ui");
+				"Test for net.sf.eclipsefp.haskell.ui");
 		//$JUnit-BEGIN$
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.util.preferences.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.editor.codeassist.AllTests_PDESuite.suite());

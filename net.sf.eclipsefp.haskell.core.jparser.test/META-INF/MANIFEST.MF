@@ -10,7 +10,7 @@ Require-Bundle: org.antlr,
  org.eclipse.core.runtime,
  de.leiffrenzel.fp.haskell.core,
  net.sf.eclipsefp.haskell.core.jparser,
- de.leiffrenzel.fp.haskell.ui,
+ net.sf.eclipsefp.haskell.ui,
  net.sf.eclipsefp.test.util,
  net.sf.eclipsefp.haskell.core.parser.test
 Bundle-Vendor: eclipsefp.sourceforge.net

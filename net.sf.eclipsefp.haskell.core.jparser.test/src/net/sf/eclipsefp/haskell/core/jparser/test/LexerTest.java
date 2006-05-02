@@ -2,7 +2,7 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
-import de.leiffrenzel.fp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
+import net.sf.eclipsefp.haskell.ui.util.preferences.IHaskellPreferenceProvider;
 
 import antlr.RecognitionException;
 import antlr.Token;

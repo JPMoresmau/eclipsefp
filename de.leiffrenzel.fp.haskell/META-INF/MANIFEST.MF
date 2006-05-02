@@ -5,7 +5,7 @@ Bundle-Version: 0.10.0
 Bundle-ClassPath: haskell.jar
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: de.leiffrenzel.fp.haskell.ui,
+Require-Bundle: net.sf.eclipsefp.haskell.ui,
  net.sf.eclipsefp.haskell.haddock,
  org.eclipse.ui.cheatsheets,
  net.sf.eclipsefp.common.ui

@@ -31,7 +31,7 @@
 	<action
 		pluginId="org.eclipse.ui.cheatsheets"
 		class="org.eclipse.ui.internal.cheatsheets.actions.OpenPerspective"
-		param1="de.leiffrenzel.fp.haskell.ui.HaskellPerspective"/>
+		param1="net.sf.eclipsefp.haskell.ui.HaskellPerspective"/>
 	<description>
 		Select Window &gt; Open Perspective &gt; Haskell in the menubar at
 		the top of the workbench. This step changes the perspective to
@@ -46,8 +46,8 @@
 	title="Create a Haskell project"
 	skip="true">
 	<action
-		pluginId="de.leiffrenzel.fp.haskell.ui"
-		class="de.leiffrenzel.fp.haskell.ui.actions.OpenNewProjectWizard"/>
+		pluginId="net.sf.eclipsefp.haskell.ui"
+		class="net.sf.eclipsefp.haskell.ui.actions.OpenNewProjectWizard"/>
 	<description>
 		The first thing you will need is a Haskell Project. (If you already 
 		have one in your workspace that you would like to use, you may skip 
@@ -63,8 +63,8 @@
 	title="Create a Main module"
 	skip="true">
 	<action
-		pluginId="de.leiffrenzel.fp.haskell.ui"
-		class="de.leiffrenzel.fp.haskell.ui.actions.OpenNewModuleWizard"/>
+		pluginId="net.sf.eclipsefp.haskell.ui"
+		class="net.sf.eclipsefp.haskell.ui.actions.OpenNewModuleWizard"/>
 	<description>
 		We create now a Main module in the Haskell project. You may do this by 
 		either clicking the "Click to Perform" button below to launch the

@@ -1,8 +1,8 @@
 //Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.hugs.ui.launch;
 
-import de.leiffrenzel.fp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
-import de.leiffrenzel.fp.haskell.ui.launch.InteractiveLaunchShortcut;
+import net.sf.eclipsefp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.ui.launch.InteractiveLaunchShortcut;
 
 /** <p>launch shortcut for running GHCi.</p>
   * 
