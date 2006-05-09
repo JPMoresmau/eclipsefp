@@ -2,7 +2,7 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.refactoring.internal.core.refactorings;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 /** <p>Encapsulates information that is needed for creating a rename 
   * refactoring.</p>

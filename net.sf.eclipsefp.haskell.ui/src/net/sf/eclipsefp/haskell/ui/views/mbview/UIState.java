@@ -8,8 +8,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.IMemento;
 
-import de.leiffrenzel.fp.haskell.core.project.HaskellProjectManager;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 
 /** <p>encapsulates all state handling of the user interrface of the 

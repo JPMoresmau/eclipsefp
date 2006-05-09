@@ -7,9 +7,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 
-import de.leiffrenzel.fp.haskell.core.launch.ILaunchAttributes;
-import de.leiffrenzel.fp.haskell.core.project.HaskellNature;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.launch.ILaunchAttributes;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 

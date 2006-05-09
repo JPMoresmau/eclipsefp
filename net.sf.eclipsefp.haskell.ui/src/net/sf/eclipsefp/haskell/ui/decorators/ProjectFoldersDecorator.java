@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
-import de.leiffrenzel.fp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.project.*;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;

@@ -10,7 +10,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
 
 /** <p>provides folding regions for documents in the Haskell editor.</p>

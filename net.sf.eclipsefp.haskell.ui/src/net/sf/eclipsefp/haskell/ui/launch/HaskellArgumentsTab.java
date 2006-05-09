@@ -20,7 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
-import de.leiffrenzel.fp.haskell.core.launch.ILaunchAttributes;
+import net.sf.eclipsefp.haskell.core.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;

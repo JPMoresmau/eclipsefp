@@ -9,8 +9,8 @@ import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
 
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 
 /** <p>contains common helping functionality.</p>
   * 

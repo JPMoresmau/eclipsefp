@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IImportSpecification;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IImportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 public class ImportSpecification extends HaskellLanguageElement implements IImportSpecification {
 

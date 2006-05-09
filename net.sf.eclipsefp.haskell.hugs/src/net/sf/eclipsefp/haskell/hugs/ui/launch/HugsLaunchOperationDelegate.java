@@ -9,8 +9,8 @@ import net.sf.eclipsefp.haskell.hugs.core.Util;
 
 import org.eclipse.core.resources.IFile;
 
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
-import de.leiffrenzel.fp.haskell.core.util.TracingUtil;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 import net.sf.eclipsefp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
 
 /** <p>implements a delegate for launching HUGS.</p>

@@ -5,8 +5,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.*;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 

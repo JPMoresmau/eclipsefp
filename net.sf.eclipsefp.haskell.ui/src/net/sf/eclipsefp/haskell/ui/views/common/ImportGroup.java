@@ -2,7 +2,7 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.views.common;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 /** <p>grouping object that is used on viewers to group import statements.
   * It has it's own visual representation, import statements appear below 

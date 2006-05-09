@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast.test;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.core.jparser.ast.SourceLocation;
 import junit.framework.TestCase;
 

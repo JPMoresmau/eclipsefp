@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
 
-import de.leiffrenzel.fp.haskell.core.project.*;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 

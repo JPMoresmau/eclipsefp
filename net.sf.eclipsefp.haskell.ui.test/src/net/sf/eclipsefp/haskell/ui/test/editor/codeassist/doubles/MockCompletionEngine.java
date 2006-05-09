@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.test.editor.codeassist.doubles;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import junit.framework.Assert;
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.codeassist.CompletionEngine;
 
 public class MockCompletionEngine extends CompletionEngine{

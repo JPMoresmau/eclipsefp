@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.preferences;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
-import de.leiffrenzel.fp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 
 
 /** <p>a label provider for compilers from the core.</p>

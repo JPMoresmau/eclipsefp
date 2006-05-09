@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 public class Declaration extends HaskellLanguageElement implements IDeclaration {
 

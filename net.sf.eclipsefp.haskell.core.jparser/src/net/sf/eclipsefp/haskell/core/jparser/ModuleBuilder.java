@@ -1,12 +1,12 @@
 package net.sf.eclipsefp.haskell.core.jparser;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IConstructor;
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
-import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
-import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
+import net.sf.eclipsefp.haskell.core.halamo.IConstructor;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IMatch;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Declaration;

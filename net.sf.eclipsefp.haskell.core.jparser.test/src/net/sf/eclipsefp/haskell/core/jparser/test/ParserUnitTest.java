@@ -2,11 +2,11 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 
 import java.io.StringReader;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
-import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IMatch;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import antlr.CommonToken;
 import antlr.RecognitionException;
 import antlr.Token;

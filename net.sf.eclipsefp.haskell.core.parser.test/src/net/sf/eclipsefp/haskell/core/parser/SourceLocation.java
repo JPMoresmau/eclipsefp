@@ -2,7 +2,7 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.parser;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 
 /** <p>implementation for the <code>ISourceLocation</code> interface.</p>
   *

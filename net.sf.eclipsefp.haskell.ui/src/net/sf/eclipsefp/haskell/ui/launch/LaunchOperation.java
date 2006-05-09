@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-import de.leiffrenzel.fp.haskell.core.launch.HaskellLaunchDelegate;
-import de.leiffrenzel.fp.haskell.core.launch.ILaunchAttributes;
+import net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.core.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 /** <p>super class for launch operations. Contains some common 

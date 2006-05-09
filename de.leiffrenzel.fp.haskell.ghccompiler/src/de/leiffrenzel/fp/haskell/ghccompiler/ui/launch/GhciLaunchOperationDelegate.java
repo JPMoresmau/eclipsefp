@@ -7,8 +7,8 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
-import de.leiffrenzel.fp.haskell.core.util.TracingUtil;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 import de.leiffrenzel.fp.haskell.ghccompiler.GhcCompilerPlugin;
 import de.leiffrenzel.fp.haskell.ghccompiler.core.CompilerParams;
 import de.leiffrenzel.fp.haskell.ghccompiler.core.Util;

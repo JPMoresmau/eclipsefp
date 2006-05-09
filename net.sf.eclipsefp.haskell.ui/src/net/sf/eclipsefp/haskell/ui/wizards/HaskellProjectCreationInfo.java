@@ -7,8 +7,8 @@ import net.sf.eclipsefp.common.ui.wizards.ProjectCreationInfo;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import de.leiffrenzel.fp.haskell.core.project.HaskellNature;
-import de.leiffrenzel.fp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;

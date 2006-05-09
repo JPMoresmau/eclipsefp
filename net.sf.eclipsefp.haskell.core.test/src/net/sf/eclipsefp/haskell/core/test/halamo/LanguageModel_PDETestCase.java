@@ -6,10 +6,10 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-import de.leiffrenzel.fp.haskell.core.halamo.Halamo;
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
-import de.leiffrenzel.fp.haskell.core.halamo.Scope;
+import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.Scope;
 
 import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
 import net.sf.eclipsefp.test.util.common.MockFile;

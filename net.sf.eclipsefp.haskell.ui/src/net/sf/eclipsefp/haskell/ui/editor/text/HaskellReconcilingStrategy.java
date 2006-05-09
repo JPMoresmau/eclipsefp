@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
-import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
 
 /** <p>helper class that defines the model reconciling for the Haskell 

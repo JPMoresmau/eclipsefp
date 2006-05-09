@@ -3,10 +3,10 @@ package net.sf.eclipsefp.haskell.core.jparser.ast;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IFunctionBinding;
-import de.leiffrenzel.fp.haskell.core.halamo.IMatch;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
-import de.leiffrenzel.fp.haskell.core.halamo.IPatternBinding;
+import net.sf.eclipsefp.haskell.core.halamo.IFunctionBinding;
+import net.sf.eclipsefp.haskell.core.halamo.IMatch;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IPatternBinding;
 
 // the IPatternBinding implementation here isn't a hack, it is almost a sin,
 // but the current parser works just well. although, this should be of course

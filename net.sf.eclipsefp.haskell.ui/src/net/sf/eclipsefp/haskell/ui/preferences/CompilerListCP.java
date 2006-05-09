@@ -4,7 +4,7 @@ package net.sf.eclipsefp.haskell.ui.preferences;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.leiffrenzel.fp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 
 
 /** <p>the content provider for the list of compilers registered with

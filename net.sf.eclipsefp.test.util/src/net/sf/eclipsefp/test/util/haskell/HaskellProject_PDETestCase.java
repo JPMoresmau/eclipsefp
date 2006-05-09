@@ -11,9 +11,9 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import de.leiffrenzel.fp.haskell.core.project.HaskellNature;
-import de.leiffrenzel.fp.haskell.core.project.HaskellProjectManager;
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 
 /** <p>the super class for test cases that run on a Haskell project.</p>
   *

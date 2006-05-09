@@ -6,7 +6,7 @@ Bundle-ClassPath: haskellui.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.ui.HaskellUIPlugin
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: de.leiffrenzel.fp.haskell.core,
+Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.jface.text,

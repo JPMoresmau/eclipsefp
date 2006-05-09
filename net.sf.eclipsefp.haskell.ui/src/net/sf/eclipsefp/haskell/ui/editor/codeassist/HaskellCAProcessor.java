@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 /** <p>computes the code assist completion proposals and context 

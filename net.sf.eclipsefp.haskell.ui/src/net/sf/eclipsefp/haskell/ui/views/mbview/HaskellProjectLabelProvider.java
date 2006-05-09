@@ -5,10 +5,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;

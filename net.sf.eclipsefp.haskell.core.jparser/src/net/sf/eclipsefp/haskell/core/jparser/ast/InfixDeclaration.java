@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.core.jparser.ast;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IInfixDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IInfixDeclaration;
 
 public class InfixDeclaration extends Declaration implements IInfixDeclaration {
 

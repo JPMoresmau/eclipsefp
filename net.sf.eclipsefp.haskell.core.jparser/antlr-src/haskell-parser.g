@@ -23,8 +23,8 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IInfixDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IInfixDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 import net.sf.eclipsefp.haskell.core.jparser.ast.Constructor;

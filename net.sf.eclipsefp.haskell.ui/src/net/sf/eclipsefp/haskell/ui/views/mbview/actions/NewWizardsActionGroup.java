@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.NewWizardMenu;
 
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 
 /** <p>Action group that adds the 'New' menu to a context menu.</p>

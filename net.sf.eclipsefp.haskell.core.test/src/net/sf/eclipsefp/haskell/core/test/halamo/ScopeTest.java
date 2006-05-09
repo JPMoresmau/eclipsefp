@@ -5,8 +5,8 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
 import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.Scope;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.Scope;
 import junit.framework.TestCase;
 
 public class ScopeTest extends TestCase {

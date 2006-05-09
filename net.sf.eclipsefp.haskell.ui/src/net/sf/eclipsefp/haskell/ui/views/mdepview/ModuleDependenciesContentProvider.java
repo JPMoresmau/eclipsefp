@@ -4,8 +4,8 @@ package net.sf.eclipsefp.haskell.ui.views.mdepview;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.*;
 
-import de.leiffrenzel.fp.haskell.core.halamo.Halamo;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 /** <p>the content provider for the dependencies view.</p>
   *

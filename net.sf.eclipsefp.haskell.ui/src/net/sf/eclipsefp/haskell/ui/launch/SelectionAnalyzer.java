@@ -7,8 +7,8 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
-import de.leiffrenzel.fp.haskell.core.project.HaskellNature;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 /** <p>contains static helping functionality to analyze multiple files in
   * a selection for launching interactive sessions.</p>

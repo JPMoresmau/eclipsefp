@@ -8,9 +8,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IFileEditorInput;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
-import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
-import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.ui.views.common.ExportGroup;
 import net.sf.eclipsefp.haskell.ui.views.common.ImportGroup;
 

@@ -8,9 +8,9 @@ import net.sf.eclipsefp.haskell.core.jparser.JParserPlugin;
 import net.sf.eclipsefp.haskell.core.jparser.JavaParserBridge;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 import net.sf.eclipsefp.test.util.common.MockFile;
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
-import de.leiffrenzel.fp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 
 /**
  * Sanity checks for the JParser plugin.

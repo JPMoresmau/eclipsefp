@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.Status;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 
 public class JavaParserBridge implements IHaskellParser {
 

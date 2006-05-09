@@ -2,7 +2,7 @@ package net.sf.eclipsefp.haskell.core.test.util;
 
 import java.util.List;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import junit.framework.Assert;
 
 /**

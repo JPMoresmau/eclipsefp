@@ -7,7 +7,7 @@ Bundle-ClassPath: haskellrefactoring.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.refactoring.internal.ui.HaskellRefactoringUI
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: de.leiffrenzel.fp.haskell.core,
+Require-Bundle: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.ui,
  org.eclipse.core.filebuffers,
  org.eclipse.core.resources,

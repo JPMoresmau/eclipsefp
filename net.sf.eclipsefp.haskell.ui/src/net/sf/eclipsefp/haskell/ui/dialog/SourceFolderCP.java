@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.leiffrenzel.fp.haskell.core.project.HaskellProjectManager;
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 
 /** the content provider for the source folder selection dialog.
   * 

@@ -10,7 +10,7 @@ public class VerifyPostInstallationConditions implements IPlatformRunnable {
 
 	public Object run(Object args) throws Exception {
 		try {
-			assertPluginExistence("de.leiffrenzel.fp.haskell.core");
+			assertPluginExistence("net.sf.eclipsefp.haskell.core");
 			assertSourceCodePlugin("de.leiffrenzel.fp.haskell.source");
 			assertDocumentationPlugin("net.sf.eclipsefp.common.doc");
 			assertDocumentationPlugin("de.leiffrenzel.fp.haskell.doc.user");

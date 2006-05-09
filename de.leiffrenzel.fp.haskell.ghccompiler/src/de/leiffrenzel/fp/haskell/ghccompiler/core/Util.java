@@ -6,8 +6,8 @@ import net.sf.eclipsefp.common.core.util.QueryUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import de.leiffrenzel.fp.haskell.ghccompiler.GhcCompilerPlugin;
 import de.leiffrenzel.fp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 

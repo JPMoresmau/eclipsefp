@@ -6,7 +6,7 @@ import java.io.StringReader;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import junit.framework.TestCase;
 
 /**

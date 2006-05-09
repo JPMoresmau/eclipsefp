@@ -7,7 +7,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 
-import de.leiffrenzel.fp.haskell.core.compiler.*;
+import net.sf.eclipsefp.haskell.core.compiler.*;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.preferences.IPreferenceConstants;
 

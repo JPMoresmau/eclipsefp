@@ -2,9 +2,9 @@ package net.sf.eclipsefp.haskell.core.test.internal.doubles;
 
 import org.eclipse.core.resources.IFile;
 
-import de.leiffrenzel.fp.haskell.core.halamo.Halamo;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
-import de.leiffrenzel.fp.haskell.core.halamo.Scope;
+import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.Scope;
 
 public class StubHalamo extends Halamo {
 

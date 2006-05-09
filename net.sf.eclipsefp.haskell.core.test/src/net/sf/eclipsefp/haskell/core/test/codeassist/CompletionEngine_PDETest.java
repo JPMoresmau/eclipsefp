@@ -8,7 +8,7 @@ import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
 import net.sf.eclipsefp.haskell.core.test.util.CompletionProposalTestCase;
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 
 public class CompletionEngine_PDETest extends Parser_PDETestCase {
 	

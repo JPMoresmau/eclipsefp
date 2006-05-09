@@ -10,9 +10,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
-import de.leiffrenzel.fp.haskell.core.halamo.Halamo;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 
 /** <p>Structures the editor's document into a tree-like model and 

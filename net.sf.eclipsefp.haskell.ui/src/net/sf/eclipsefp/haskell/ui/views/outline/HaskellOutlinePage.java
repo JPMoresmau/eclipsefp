@@ -10,8 +10,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
-import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.views.common.HaskellLabelProvider;
 
 

@@ -3,8 +3,8 @@ package net.sf.eclipsefp.haskell.core.jparser.ast;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IClassDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.ITypeSignature;
+import net.sf.eclipsefp.haskell.core.halamo.IClassDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
 
 public class ClassDeclaration extends Declaration implements IClassDeclaration {
 

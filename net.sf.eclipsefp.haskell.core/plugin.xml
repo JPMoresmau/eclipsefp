@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension-point id="haskellCompilers" name="Haskell Compilers" schema="schema/haskellCompilers.exsd"/>
+   <extension-point id="haskellParsers" name="Haskell Parsers" schema="schema/haskellParsers.exsd"/>
+
+   <extension
+         id="project.HaskellNature"
+         name="Haskell project nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="builder.HaskellBuilder"
+         name="Haskell Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.builder.HaskellBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.sf.eclipsefp.haskell.core.preferences.CorePreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="Haskell application"
+            delegate="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="hs">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="lhs">
+      </fileTypes>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            properties="isProjectExecutable, isSourceFolder"
+            namespace="net.sf.eclipsefp.haskell.core"
+            type="org.eclipse.core.resources.IResource"
+            class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
+            id="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester">
+      </propertyTester>
+   </extension>
+   <extension
+         id="problem"
+         name="Haskell Problem"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+   </extension>
+
+</plugin>

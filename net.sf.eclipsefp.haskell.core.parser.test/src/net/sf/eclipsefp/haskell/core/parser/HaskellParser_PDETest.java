@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.halamo.*;
 
 /** <p>tests for the Haskell parser.</p>
   *

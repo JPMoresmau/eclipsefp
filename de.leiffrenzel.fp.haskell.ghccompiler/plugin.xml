@@ -8,7 +8,7 @@
       </initializer>
    </extension>
    <extension
-         point="de.leiffrenzel.fp.haskell.core.haskellCompilers">
+         point="net.sf.eclipsefp.haskell.core.haskellCompilers">
       <compiler
             outputParser="de.leiffrenzel.fp.haskell.ghccompiler.core.GhcOutputParser"
             name="Glasgow Haskell Compiler (ghc)"

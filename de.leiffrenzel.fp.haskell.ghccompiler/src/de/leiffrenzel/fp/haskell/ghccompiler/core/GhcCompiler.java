@@ -9,9 +9,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
-import de.leiffrenzel.fp.haskell.core.compiler.AbstractHaskellCompiler;
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
-import de.leiffrenzel.fp.haskell.core.util.TracingUtil;
+import net.sf.eclipsefp.haskell.core.compiler.AbstractHaskellCompiler;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 import de.leiffrenzel.fp.haskell.ghccompiler.GhcCompilerPlugin;
 
 /** <p>Implements the compiler specific parts for the Glasgow Haskell compiler

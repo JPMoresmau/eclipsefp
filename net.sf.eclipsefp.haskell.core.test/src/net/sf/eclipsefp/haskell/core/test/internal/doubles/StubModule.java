@@ -1,12 +1,12 @@
 package net.sf.eclipsefp.haskell.core.test.internal.doubles;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.halamo.IDeclaration;
-import de.leiffrenzel.fp.haskell.core.halamo.IExportSpecification;
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
-import de.leiffrenzel.fp.haskell.core.halamo.IImport;
-import de.leiffrenzel.fp.haskell.core.halamo.IModule;
-import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 
 public class StubModule implements IModule {
 

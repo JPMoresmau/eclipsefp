@@ -9,8 +9,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 
-import de.leiffrenzel.fp.haskell.core.code.SourceFileGenerator;
-import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 
 
 /** <p>the operation that creates a new module in a Haskell project.</p>

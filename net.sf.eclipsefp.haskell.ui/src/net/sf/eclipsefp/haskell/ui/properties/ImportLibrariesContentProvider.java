@@ -4,7 +4,7 @@ package net.sf.eclipsefp.haskell.ui.properties;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.leiffrenzel.fp.haskell.core.project.ImportLibrariesList;
+import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
 
 /** <p>the content provider for ImportLibraries on the viewer.</p>
   * 

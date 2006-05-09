@@ -5,9 +5,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Control;
 
-import de.leiffrenzel.fp.haskell.core.project.*;
-import de.leiffrenzel.fp.haskell.core.project.IProjectPropertiesEvent;
-import de.leiffrenzel.fp.haskell.core.project.IProjectPropertiesListener;
+import net.sf.eclipsefp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.project.IProjectPropertiesEvent;
+import net.sf.eclipsefp.haskell.core.project.IProjectPropertiesListener;
 
 
 /** <p>listens for resource changes and refreshes the Module Browser, 

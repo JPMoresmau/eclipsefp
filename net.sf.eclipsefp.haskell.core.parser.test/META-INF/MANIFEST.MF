@@ -7,7 +7,7 @@ Bundle-ClassPath: haskellcoreparsertest.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.core.parser.test.TestPlugin
 Bundle-Vendor: eclipsefp.sourcefourge.net
 Bundle-Localization: plugin
-Require-Bundle: de.leiffrenzel.fp.haskell.core,
+Require-Bundle: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.test.util,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,

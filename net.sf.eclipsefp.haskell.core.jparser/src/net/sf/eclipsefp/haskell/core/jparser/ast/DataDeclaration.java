@@ -3,8 +3,8 @@ package net.sf.eclipsefp.haskell.core.jparser.ast;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IConstructor;
-import de.leiffrenzel.fp.haskell.core.halamo.IDataDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IConstructor;
+import net.sf.eclipsefp.haskell.core.halamo.IDataDeclaration;
 
 public class DataDeclaration extends Declaration implements IDataDeclaration {
 

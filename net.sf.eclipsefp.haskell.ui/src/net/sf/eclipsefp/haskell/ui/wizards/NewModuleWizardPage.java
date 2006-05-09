@@ -13,8 +13,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import de.leiffrenzel.fp.haskell.core.code.EHaskellCommentStyle;
-import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.ui.dialog.FolderSelectionDialog;
 import net.sf.eclipsefp.haskell.ui.dialog.SourceFolderSelectionDialog;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.*;

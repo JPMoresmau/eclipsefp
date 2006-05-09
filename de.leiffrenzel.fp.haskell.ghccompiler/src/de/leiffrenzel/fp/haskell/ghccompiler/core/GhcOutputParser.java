@@ -4,7 +4,7 @@ package de.leiffrenzel.fp.haskell.ghccompiler.core;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.compiler.*;
+import net.sf.eclipsefp.haskell.core.compiler.*;
 
 /** <p>Breaks the ghc output into items that can be displayed in the 
   * Eclipse UI.</p>

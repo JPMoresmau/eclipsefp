@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.core.test.compiler;
 
-import de.leiffrenzel.fp.haskell.core.compiler.CompilerOutputItem;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import junit.framework.TestCase;
 
 public class CompilerOutputItemTest extends TestCase {

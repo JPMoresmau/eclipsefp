@@ -19,7 +19,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;

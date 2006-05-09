@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 
 public class SourceLocation implements ISourceLocation {
 

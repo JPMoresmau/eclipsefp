@@ -3,8 +3,8 @@ package net.sf.eclipsefp.haskell.ui.views.mbview;
 
 import org.eclipse.core.resources.IFile;
 
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 
 /** <p>contains filter criteria for the ModuleBrowser as value objects.</p>

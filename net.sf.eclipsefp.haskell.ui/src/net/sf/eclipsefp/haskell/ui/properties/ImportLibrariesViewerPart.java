@@ -9,8 +9,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
-import de.leiffrenzel.fp.haskell.core.project.ImportLibrariesList;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
 import net.sf.eclipsefp.haskell.ui.properties.viewerpart.CheckboxTablePart;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 

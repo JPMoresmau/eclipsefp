@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.core.test.internal.doubles;
 
 import junit.framework.Assert;
-import de.leiffrenzel.fp.haskell.core.code.EHaskellCommentStyle;
-import de.leiffrenzel.fp.haskell.core.internal.code.CodeGenerator;
+import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
+import net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator;
 
 public class MockCodeGenerator extends CodeGenerator {
 	

@@ -55,8 +55,8 @@
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
             icon="icons/haskellNature.gif"
-            natureId="de.leiffrenzel.fp.haskell.core.project.HaskellNature"
-            id="de.leiffrenzel.fp.haskell.core.project.haskellNatureImage">
+            natureId="net.sf.eclipsefp.haskell.core.project.HaskellNature"
+            id="net.sf.eclipsefp.haskell.core.project.haskellNatureImage">
       </image>
    </extension>
    <extension
@@ -145,7 +145,7 @@
             id="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP">
          <filter
                name="nature"
-               value="de.leiffrenzel.fp.haskell.core.project.HaskellNature">
+               value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
          </filter>
          <filter
                name="open"
@@ -160,7 +160,7 @@
             id="net.sf.eclipsefp.haskell.ui.properties.CompilerPP">
          <filter
                name="nature"
-               value="de.leiffrenzel.fp.haskell.core.project.HaskellNature">
+               value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
          </filter>
          <filter
                name="open"
@@ -172,14 +172,14 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="icons/hsicon16.gif"
-            configTypeID="de.leiffrenzel.fp.haskell.core.launch.HaskellLaunchDelegate"
+            configTypeID="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
       </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="de.leiffrenzel.fp.haskell.core.launch.HaskellLaunchDelegate"
+            type="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
             class="net.sf.eclipsefp.haskell.ui.launch.HaskellLaunchTabGroup"
             id="net.sf.eclipsefp.haskell.ui.launch.HaskellLaunchTabGroup">
       </launchConfigurationTabGroup>
@@ -201,7 +201,7 @@
                   </count>
                   <iterate>
                      <test
-                           property="de.leiffrenzel.fp.haskell.core.isProjectExecutable">
+                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
                      </test>
                   </iterate>
                </with>

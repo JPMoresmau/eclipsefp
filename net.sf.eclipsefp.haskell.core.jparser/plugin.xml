@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension
-         point="de.leiffrenzel.fp.haskell.core.haskellParsers">
+         point="net.sf.eclipsefp.haskell.core.haskellParsers">
       <parser
             class="net.sf.eclipsefp.haskell.core.jparser.JavaParserBridge"
             id="net.sf.eclipsefp.haskell.core.jparser"

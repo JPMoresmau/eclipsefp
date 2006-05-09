@@ -4,7 +4,7 @@ package net.sf.eclipsefp.haskell.ui.views.common;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 
 /** <p>sorts Haskell language elements in views by name.</p>
   * 

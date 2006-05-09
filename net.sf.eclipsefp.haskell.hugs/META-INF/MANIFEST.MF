@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.sf.eclipsefp.haskell.ui,
- de.leiffrenzel.fp.haskell.core,
+ net.sf.eclipsefp.haskell.core,
  org.eclipse.debug.ui,
  org.eclipse.core.resources,
  net.sf.eclipsefp.common.ui

@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.core.jparser.ast;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
-import de.leiffrenzel.fp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 
 /**
  * Convenience class for all nodes of the AST

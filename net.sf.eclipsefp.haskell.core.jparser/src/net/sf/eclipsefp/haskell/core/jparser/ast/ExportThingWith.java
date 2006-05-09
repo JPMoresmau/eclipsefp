@@ -3,8 +3,8 @@ package net.sf.eclipsefp.haskell.core.jparser.ast;
 import java.util.List;
 import java.util.Vector;
 
-import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWith;
-import de.leiffrenzel.fp.haskell.core.halamo.IExportThingWithComponent;
+import net.sf.eclipsefp.haskell.core.halamo.IExportThingWith;
+import net.sf.eclipsefp.haskell.core.halamo.IExportThingWithComponent;
 
 public class ExportThingWith extends ExportSpecification implements
 		IExportThingWith {

@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.launch;
 
 import org.eclipse.core.resources.IFile;
 
-import de.leiffrenzel.fp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 
 /** <p>Implementors tell the <code>AbstractInteractiveLaunchShortcut</code>
   * the essential things for launching an interactive environment for a 

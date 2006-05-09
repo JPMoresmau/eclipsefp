@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import de.leiffrenzel.fp.haskell.core.code.EHaskellCommentStyle;
-import de.leiffrenzel.fp.haskell.core.code.ModuleCreationInfo;
-import de.leiffrenzel.fp.haskell.core.code.SourceFileGenerator;
+import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator;
 
 public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 	

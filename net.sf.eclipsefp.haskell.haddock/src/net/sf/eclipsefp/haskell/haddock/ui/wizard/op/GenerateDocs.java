@@ -13,9 +13,9 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-import de.leiffrenzel.fp.haskell.core.launch.CommandLineUtil;
-import de.leiffrenzel.fp.haskell.core.launch.HaskellLaunchDelegate;
-import de.leiffrenzel.fp.haskell.core.util.TracingUtil;
+import net.sf.eclipsefp.haskell.core.launch.CommandLineUtil;
+import net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 
 /** <p>the operation that performs the actual Haddock run.</p>
   *

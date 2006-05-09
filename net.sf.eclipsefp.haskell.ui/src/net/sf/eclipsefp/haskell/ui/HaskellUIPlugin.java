@@ -15,8 +15,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.leiffrenzel.fp.haskell.core.halamo.ICompilationUnit;
-import de.leiffrenzel.fp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.editor.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;

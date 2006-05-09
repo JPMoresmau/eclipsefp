@@ -12,8 +12,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
-import de.leiffrenzel.fp.haskell.core.project.ImportLibrariesList;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.properties.viewerpart.CheckboxTablePart;
 

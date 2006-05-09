@@ -15,8 +15,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.text.edits.*;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 /** <p>a delegate helper that creates changes for module renaming.</p>
   *

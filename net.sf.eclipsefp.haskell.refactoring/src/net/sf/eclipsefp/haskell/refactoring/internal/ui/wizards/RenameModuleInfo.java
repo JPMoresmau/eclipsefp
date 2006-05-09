@@ -12,7 +12,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import de.leiffrenzel.fp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 
 /** <p>Gets the information that is needed for creating a rename refactoring

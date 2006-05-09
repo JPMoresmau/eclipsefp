@@ -4,7 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>de.leiffrenzel.fp.common.ui</project>
-		<project>de.leiffrenzel.fp.haskell.core</project>
+		<project>net.sf.eclipsefp.haskell.core</project>
 		<project>org.eclipse.osgi</project>
 		<project>org.eclipse.osgi.services</project>
 		<project>org.eclipse.osgi.util</project>

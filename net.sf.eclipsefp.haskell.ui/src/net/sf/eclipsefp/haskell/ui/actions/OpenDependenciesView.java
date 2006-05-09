@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 
-import de.leiffrenzel.fp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.project.*;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.views.mdepview.ModuleDependenciesView;
 

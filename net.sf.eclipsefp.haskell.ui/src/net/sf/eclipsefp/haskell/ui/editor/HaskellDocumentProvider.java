@@ -9,7 +9,7 @@ import org.eclipse.jface.text.rules.*;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
-import de.leiffrenzel.fp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellPartitionScanner;
 import net.sf.eclipsefp.haskell.ui.editor.text.LiterateHaskellPartitionScanner;
 

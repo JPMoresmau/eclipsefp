@@ -13,7 +13,7 @@
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="includeFragments" value="true"/>
 <stringAttribute key="location" value="tmp/runtime-workspace"/>
-<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,de.leiffrenzel.fp.haskell.core,de.leiffrenzel.fp.haskell.ghccompiler,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.common.ui,de.leiffrenzel.fp.haskell,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.core.parser,de.leiffrenzel.fp.haskell.doc.user,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.hugs,net.sf.eclipsefp.haskell.core.parser.test"/>
+<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,net.sf.eclipsefp.haskell.core,de.leiffrenzel.fp.haskell.ghccompiler,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.common.ui,de.leiffrenzel.fp.haskell,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.core.parser,de.leiffrenzel.fp.haskell.doc.user,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.hugs,net.sf.eclipsefp.haskell.core.parser.test"/>
 <stringAttribute key="location4" value="c:\temp\runtime-workspace"/>
 <stringAttribute key="configLocation" value=""/>
 <booleanAttribute key="clearws" value="true"/>
@@ -28,7 +28,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="progargs" value=""/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
-<stringAttribute key="wsproject" value="net.sf.eclipsefp.haskell.refactoring;de.leiffrenzel.fp.haskell.core;de.leiffrenzel.fp.haskell.ghccompiler;net.sf.eclipsefp.antlr;net.sf.eclipsefp.haskell.haddock;net.sf.eclipsefp.common.doc;net.sf.eclipsefp.common.ui;de.leiffrenzel.fp.haskell;net.sf.eclipsefp.haskell.ui;net.sf.eclipsefp.haskell.core.jparser;de.leiffrenzel.fp.haskell.doc.user;net.sf.eclipsefp.common.core;net.sf.eclipsefp.haskell.hugs;net.sf.eclipsefp.common.ui.test;net.sf.eclipsefp.haskell.core.jparser.test;"/>
+<stringAttribute key="wsproject" value="net.sf.eclipsefp.haskell.refactoring;net.sf.eclipsefp.haskell.core;de.leiffrenzel.fp.haskell.ghccompiler;net.sf.eclipsefp.antlr;net.sf.eclipsefp.haskell.haddock;net.sf.eclipsefp.common.doc;net.sf.eclipsefp.common.ui;de.leiffrenzel.fp.haskell;net.sf.eclipsefp.haskell.ui;net.sf.eclipsefp.haskell.core.jparser;de.leiffrenzel.fp.haskell.doc.user;net.sf.eclipsefp.common.core;net.sf.eclipsefp.haskell.hugs;net.sf.eclipsefp.common.ui.test;net.sf.eclipsefp.haskell.core.jparser.test;"/>
 <booleanAttribute key="askclear" value="false"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <stringAttribute key="location0" value="tmp/runtime-workspace"/>

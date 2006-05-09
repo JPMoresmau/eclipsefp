@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 
-import de.leiffrenzel.fp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 
 /** <p>the label provider for ImportLibraries on the viewer.</p>
   * 
