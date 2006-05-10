@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Easymock
+Bundle-SymbolicName: org.easymock
+Bundle-Version: 2.2
+Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Localization: plugin
+Bundle-ClassPath: lib/easymock.jar
+Export-Package: org.easymock
