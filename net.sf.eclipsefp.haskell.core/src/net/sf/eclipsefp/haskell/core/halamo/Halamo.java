@@ -168,7 +168,7 @@ public class Halamo {
   }
   
   private IWorkspace getWorkspace() {
-    return ResourcesPlugin.getWorkspace();
+    return HaskellCorePlugin.getDefault().getWorkspace();
   }
 
   public Scope getScopeFor(IFile file) {

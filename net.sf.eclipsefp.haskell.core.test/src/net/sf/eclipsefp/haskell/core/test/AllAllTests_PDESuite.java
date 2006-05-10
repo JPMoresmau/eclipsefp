@@ -9,6 +9,7 @@ public class AllAllTests_PDESuite {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.test");
 		//$JUnit-BEGIN$
+		suite.addTest(net.sf.eclipsefp.haskell.core.test.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.code.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.codeassist.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.compiler.AllTests.suite());
