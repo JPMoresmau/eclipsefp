@@ -124,4 +124,7 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		return CompletionProposalTestCase.createProposal(replaced, replacement, offset);
 	}
 	
+	//TODO test inter-module dependency fetching
+	//create the Fibonacci module declaring the fibb function
+	//create the Main module that imports the Fibonacci module and uses fibb
 }
