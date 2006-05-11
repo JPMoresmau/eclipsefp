@@ -26,7 +26,7 @@ class WSSaveParticipant implements ISaveParticipant {
     // any changes that appeared while we were down
     ISavedState lastState = getLastState();
     if( lastState != null ) {
-      IResourceChangeListener monitor = ResourceChangeMonitor.getInstance();
+      IResourceChangeListener monitor = new ResourceChangeMonitor();
       lastState.processResourceChangeEvents( monitor );
     }
   }

@@ -22,7 +22,7 @@ import net.sf.eclipsefp.haskell.core.project.*;
   *  
   * @author Leif Frenzel
   */
-public class Halamo {
+public class Halamo implements IHaskellModel {
 
   /** the singleton instance of the Haskell Language Model. */
   private static Halamo _instance;
@@ -162,7 +162,7 @@ public class Halamo {
   }
 
   private void initializeResourceChangeMonitor() {
-    ResourceChangeMonitor resChaMon = ResourceChangeMonitor.getInstance();
+    ResourceChangeMonitor resChaMon = new ResourceChangeMonitor();
     getWorkspace().addResourceChangeListener( resChaMon, 
                                               ResourceChangeMonitor.TYPES );
   }
@@ -174,4 +174,9 @@ public class Halamo {
   public Scope getScopeFor(IFile file) {
 	return new ScopeCalculator().computeScopeFor(file);
   }
+
+public void addModule(IModule module) {
+	// TODO Auto-generated method stub
+	
+}
 }

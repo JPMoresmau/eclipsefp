@@ -1,0 +1,59 @@
+package net.sf.eclipsefp.haskell.core.test.halamo;
+
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.ResourceChangeMonitor;
+import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
+
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+
+import static org.easymock.EasyMock.*;
+
+/**
+ * The ResourceChangeMonitor is responsible for keeping the language model
+ * up-to-date. Here we check if it is calling the expected methods for updating
+ * the model.
+ * 
+ * @author Thiago Arrais - thiago.arrais@gmail.com
+ */
+public class ResourceChangeMonitor_PDETestCase extends HaskellProject_PDETestCase {
+	
+	private IHaskellModel fLanguageModel;
+	private IResourceChangeListener fMonitor;
+
+	@Override
+	protected void setUpMore() throws Exception {
+		fLanguageModel = createMock(IHaskellModel.class);
+		fMonitor = new ResourceChangeMonitor(getLanguageModel());
+
+		getWorkspace().addResourceChangeListener(getMonitor());
+	}
+
+	private IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+
+	public void testAddModule() throws CoreException {
+		getLanguageModel().addModule((IModule) anyObject());
+		expectLastCall().atLeastOnce();
+		replay(getLanguageModel());
+	
+		createSourceFile("module QuickSort where\n\n", "QuickSort.hs");
+		
+		verify(getLanguageModel());
+	}
+	
+	//TODO test multiple projects
+
+	private IHaskellModel getLanguageModel() {
+		return fLanguageModel;
+	}
+
+	private IResourceChangeListener getMonitor() {
+		return fMonitor;
+	}
+	
+}

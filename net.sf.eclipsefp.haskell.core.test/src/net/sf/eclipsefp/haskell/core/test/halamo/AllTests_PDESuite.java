@@ -10,6 +10,7 @@ public class AllTests_PDESuite {
 				"Test for net.sf.eclipsefp.haskell.core.test.halamo");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(LanguageModel_PDETestCase.class);
+		suite.addTestSuite(ResourceChangeMonitor_PDETestCase.class);
 		suite.addTest(AllTests.suite());
 		//$JUnit-END$
 		return suite;
