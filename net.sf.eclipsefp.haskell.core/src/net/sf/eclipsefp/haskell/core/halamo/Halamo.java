@@ -39,8 +39,6 @@ public class Halamo implements IHaskellModel {
 	/** the singleton instance of the Haskell Language Model. */
 	private static Halamo _instance;
 
-	private static boolean tracing = HaskellCorePlugin.isTracing("halamo");
-
 	private Map<String, ProjectModel> htProjectModels = new Hashtable<String, ProjectModel>();
 
 	private Map<String, IModule> fModules = new Hashtable<String, IModule>();
@@ -73,8 +71,6 @@ public class Halamo implements IHaskellModel {
 	 * Model in JDT.
 	 */
 	public void initialize() throws CoreException {
-		long start = System.currentTimeMillis();
-
 		// start the monitoring for ws saving and resource changes
 		WSSaveParticipant.initialize();
 		initializeResourceChangeMonitor();
@@ -85,10 +81,6 @@ public class Halamo implements IHaskellModel {
 					&& projects[i].hasNature(HaskellNature.NATURE_ID)) {
 				initialize(projects[i]);
 			}
-		}
-		if (tracing) {
-			long time = System.currentTimeMillis() - start;
-			System.out.println("Initializing Halamo ... " + time + " ms.");
 		}
 	}
 

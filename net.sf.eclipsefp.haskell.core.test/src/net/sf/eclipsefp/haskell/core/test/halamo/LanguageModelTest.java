@@ -19,7 +19,7 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
 import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
 
-public class LanguageModel_PDETestCase extends TestCase {
+public class LanguageModelTest extends TestCase {
 	
 	private Halamo fLangModelEngine = Halamo.getInstance();
 

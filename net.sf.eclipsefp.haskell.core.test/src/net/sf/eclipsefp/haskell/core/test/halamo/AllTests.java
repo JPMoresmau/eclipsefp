@@ -9,6 +9,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.test.halamo");
 		//$JUnit-BEGIN$
+		suite.addTestSuite(LanguageModelTest.class);
 		suite.addTestSuite(ScopeTest.class);
 		//$JUnit-END$
 		return suite;
