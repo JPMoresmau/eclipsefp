@@ -1,10 +1,13 @@
 package net.sf.eclipsefp.haskell.core.test.halamo;
 
+import java.io.StringBufferInputStream;
+
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.ResourceChangeMonitor;
 import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,11 +40,24 @@ public class ResourceChangeMonitor_PDETestCase extends HaskellProject_PDETestCas
 	}
 
 	public void testAddModule() throws CoreException {
-		getLanguageModel().addModule((IModule) anyObject());
+		getLanguageModel().putModule((IModule) anyObject());
 		expectLastCall().atLeastOnce();
 		replay(getLanguageModel());
 	
 		createSourceFile("module QuickSort where\n\n", "QuickSort.hs");
+		
+		verify(getLanguageModel());
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void testChangeModule() throws CoreException {
+		getLanguageModel().putModule((IModule) anyObject());
+		expectLastCall().times(2);
+		replay(getLanguageModel());
+		
+		IFile file = createSourceFile("module QuickSort where\n\n", "QuickSort.hs");
+		
+		file.setContents(new StringBufferInputStream("module QuickSort where\n\n"), true, false, null);
 		
 		verify(getLanguageModel());
 	}

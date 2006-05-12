@@ -55,7 +55,7 @@ public class CompletionEngine {
 		result.addAll(Arrays.asList(HaskellSyntax.getClasses()));
 		result.addAll(Arrays.asList(HaskellSyntax.getKeywords()));
 		//TODO move this to the scope calculator
-		Scope scope = fLanguageModel.getScopeFor(unit.getUnderlyingResource());
+		Scope scope = fLanguageModel.getScopeFor(unit.getModules()[0]);
 		List<IDeclaration> internalDecls = Arrays.asList(unit.getModules()[0].getDeclarations());
 		List<IDeclaration> externalDecls = scope.getAvailableDeclarations();
 		List<IDeclaration> decls = new ArrayList<IDeclaration>(internalDecls.size() + externalDecls.size());

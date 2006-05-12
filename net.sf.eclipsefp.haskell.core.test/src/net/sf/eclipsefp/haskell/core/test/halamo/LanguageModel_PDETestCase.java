@@ -1,26 +1,30 @@
 package net.sf.eclipsefp.haskell.core.test.halamo;
 
 
+import java.io.StringReader;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
 import org.eclipse.core.runtime.CoreException;
+
+import static org.easymock.EasyMock.*;
 
 import net.sf.eclipsefp.haskell.core.halamo.Halamo;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.Scope;
+import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
 import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
-import net.sf.eclipsefp.test.util.common.MockFile;
-import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
 
-public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
+public class LanguageModel_PDETestCase extends TestCase {
 	
-	private Halamo fLangModelEngine = Halamo.getInstance();;
+	private Halamo fLangModelEngine = Halamo.getInstance();
 
 	@Override
-	protected void setUpMore() throws Exception {
+	protected void setUp() throws Exception {
 		final String fibContents = "module Fibonacci where\n" +
                                    "\n" +
                                    "fib 1 = 0\n" +
@@ -30,8 +34,8 @@ public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
                                    "\n" +
                                    "fac 0 = 1\n" +
                                    "fac n = n * (fac (n - 1))\n";
-		createSourceFile(fibContents, "Fibonacci.hs");
-		createSourceFile(facContents, "Factorial.hs");
+		createModule(fibContents);
+		createModule(facContents);
 	}
 
 	public void testExtendedScopeWithImport() throws CoreException {
@@ -40,9 +44,9 @@ public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
         							"import Fibonacci\n" +
         							"\n" +
         							"main = putStr $ show $ fib 5";
-		IFile mainFile = createSourceFile(mainContents, "Main.hs");
+		IModule mainModule = createModule(mainContents);
 		
-		Scope scope = fLangModelEngine.getScopeFor(mainFile);
+		Scope scope = fLangModelEngine.getScopeFor(mainModule);
 		assertNotNull(scope);
 		
 		List<IModule> modules = scope.getAvailableModules();
@@ -55,9 +59,9 @@ public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
 		final String contents = "module WrongFactorial where\n" +
 				                      "\n" +
 				                      "fat 0 = 1";
-		IFile file = createSourceFile(contents, "WrongFactorial.hs");
+		IModule module = createModule(contents);
 		
-		Scope scope = fLangModelEngine.getScopeFor(file);
+		Scope scope = fLangModelEngine.getScopeFor(module);
 		assertNotNull(scope);
 	}
 	
@@ -69,9 +73,9 @@ public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
 									"\n" +
 									"main = putStr $ show $ fib $ fac 3";
 		
-		IFile file = createSourceFile(contents, "Main.hs");
+		IModule module = createModule(contents);
 		
-		Scope scope = fLangModelEngine.getScopeFor(file);
+		Scope scope = fLangModelEngine.getScopeFor(module);
 		
 		assertNotNull(scope);
 		
@@ -87,15 +91,45 @@ public class LanguageModel_PDETestCase extends HaskellProject_PDETestCase {
 	}
 	
 	public void testFailGracefullyWithFileOusideProject() {
-		final String contents = "module Main where\n" +
-				                "\n" +
-				                "main = putStr \"Hello, world!\\n\"";
-		MockFile file = new MockFile(contents);
+//TODO check this edge case
+//		final String contents = "module Main where\n" +
+//				                "\n" +
+//				                "main = putStr \"Hello, world!\\n\"";
+//		MockFile file = new MockFile(contents);
+//		
+//		file.setProject(null);
+//		
+//		Scope scope = fLangModelEngine.getScopeFor(file);
+//		assertNotNull(scope);
+	}
+	
+	public void testAddingModules() {
+		IModule myModule = createModuleByName("MyModule");
+		IModule otherModule = createModuleByName("OtherModule");
+		fLangModelEngine.putModule(myModule);
+		fLangModelEngine.putModule(otherModule);
 		
-		file.setProject(null);
-		
-		Scope scope = fLangModelEngine.getScopeFor(file);
-		assertNotNull(scope);
+		assertSame(otherModule, fLangModelEngine.getModule("OtherModule"));
+		assertSame(myModule, fLangModelEngine.getModule("MyModule"));
+	}
+	
+	private IModule createModuleByName(String name) {
+		IModule module = createMock(IModule.class);
+		expect(module.getName()).
+			andReturn(name).
+			anyTimes();
+		replay(module);
+		return module;
+	}
+
+	private IModule createModule(final String contents) {
+		try {
+			IModule module = new HaskellParser(new StringReader(contents)).parseModule();
+			fLangModelEngine.putModule(module);
+			return module;
+		} catch (Exception e) {
+			throw new AssertionFailedError(e.getMessage());
+		}
 	}
 
 }

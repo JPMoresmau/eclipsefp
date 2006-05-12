@@ -103,10 +103,10 @@ public class ResourceChangeMonitor implements IResourceChangeListener {
 			{
 				System.out.println("Processing change for " + resource
 						+ " kind: " + delta.getKind());
-				if ((delta.getKind() & IResourceDelta.ADDED) != 0) {
+				if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED)) != 0) {
 					//TODO clean this mess
 					ICompilationUnit unit = ParserManager.getInstance().getParser().parse((IFile) resource);
-					getLanguageModel().addModule(unit.getModules()[0]);
+					getLanguageModel().putModule(unit.getModules()[0]);
 				}
 			}
 			return true;

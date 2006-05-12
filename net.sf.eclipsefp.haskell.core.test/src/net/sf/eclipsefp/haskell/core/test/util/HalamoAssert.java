@@ -8,7 +8,7 @@ import junit.framework.Assert;
 /**
  * Convenience assertions for the Haskell Language Model tests.
  * 
- * @author thiagob
+ * @author Thiago Arrais - thiago.arrais@gmail.com
  */
 public class HalamoAssert extends Assert {
 	
