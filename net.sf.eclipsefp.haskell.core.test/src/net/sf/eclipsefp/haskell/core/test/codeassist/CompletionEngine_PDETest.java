@@ -127,4 +127,10 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 	//TODO test inter-module dependency fetching
 	//create the Fibonacci module declaring the fibb function
 	//create the Main module that imports the Fibonacci module and uses fibb
+	
+	//TODO seems like the functions from the module being completed are being listed twice
+	//example: module Fibbonacci where
+	//         fibb 0 = 1
+	//         fi
+	//when asking for code assistance here, we will get fibb listed twice
 }
