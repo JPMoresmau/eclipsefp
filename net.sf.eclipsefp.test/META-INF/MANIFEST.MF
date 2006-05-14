@@ -10,4 +10,5 @@ Require-Bundle: org.junit,
  net.sf.eclipsefp.haskell.core.parser.test,
  net.sf.eclipsefp.haskell.core.jparser.test,
  net.sf.eclipsefp.haskell.core.test,
- net.sf.eclipsefp.haskell.ui.test
+ net.sf.eclipsefp.haskell.ui.test,
+ net.sf.eclipsefp.test.util

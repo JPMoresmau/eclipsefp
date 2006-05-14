@@ -68,7 +68,7 @@ public class RenameModuleInfo implements IRenameModuleInfo {
   public IModule getModule() {
     IModule result = null;
     if( file != null ) {
-      ICompilationUnit cu = Halamo.getInstance().getCompilationUnit( file );
+      ICompilationUnit cu = HaskellModelManager.getInstance().getCompilationUnit( file );
       IModule[] modules = cu.getModules();
       // TODO
       result = modules[ 0 ];

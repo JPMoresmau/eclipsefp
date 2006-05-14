@@ -3,7 +3,7 @@
 <stringAttribute key="product" value="org.eclipse.platform.ide"/>
 <stringAttribute key="bootstrap" value=""/>
 <booleanAttribute key="useProduct" value="false"/>
-<stringAttribute key="deselected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,net.sf.eclipsefp.haskell.haddock,org.eclipse.update.scheduler,net.sf.eclipsefp.common.doc,de.leiffrenzel.fp.haskell,org.eclipse.jdt,org.eclipse.jdt.core,org.eclipse.jdt.core.manipulation,org.eclipse.jdt.debug.ui,de.leiffrenzel.fp.haskell.doc.user,org.eclipse.jdt.doc.user,de.leiffrenzel.fp.haskell.ghccompiler,org.eclipse.jdt.ui,org.eclipse.jdt.doc.isv,org.eclipse.jdt.junit4.runtime,org.eclipse.update.configurator,org.eclipse.update.ui,org.eclipse.jdt.apt.ui,org.eclipse.update.core,org.eclipse.jdt.apt.core,org.eclipse.jdt.source,org.eclipse.jdt.launching,net.sf.eclipsefp.haskell.hugs,org.eclipse.update.core.linux"/>
+<stringAttribute key="deselected_workspace_plugins" value="net.sf.eclipsefp.haskell.refactoring,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,de.leiffrenzel.fp.haskell,org.eclipse.jdt,org.eclipse.jdt.core,org.eclipse.jdt.core.manipulation,org.eclipse.jdt.debug.ui,de.leiffrenzel.fp.haskell.doc.user,org.eclipse.jdt.doc.user,de.leiffrenzel.fp.haskell.ghccompiler,org.eclipse.jdt.ui,org.eclipse.jdt.doc.isv,org.eclipse.jdt.junit4.runtime,org.eclipse.jdt.apt.ui,org.eclipse.jdt.apt.core,org.eclipse.jdt.source,org.eclipse.jdt.launching,net.sf.eclipsefp.haskell.hugs"/>
 <booleanAttribute key="tracing" value="false"/>
 <stringAttribute key="selected_target_plugins" value="com.ibm.icu,org.apache.ant,org.apache.lucene,org.eclipse.ant.core,org.eclipse.compare,org.eclipse.core.commands,org.eclipse.core.contenttype,org.eclipse.core.expressions,org.eclipse.core.filebuffers,org.eclipse.core.filesystem,org.eclipse.core.filesystem.linux.x86,org.eclipse.core.jobs,org.eclipse.core.resources,org.eclipse.core.resources.compatibility,org.eclipse.core.runtime,org.eclipse.core.runtime.compatibility,org.eclipse.core.runtime.compatibility.auth,org.eclipse.core.runtime.compatibility.registry,org.eclipse.core.variables,org.eclipse.debug.core,org.eclipse.debug.ui,org.eclipse.equinox.common,org.eclipse.equinox.preferences,org.eclipse.equinox.registry,org.eclipse.help,org.eclipse.help.appserver,org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.jface,org.eclipse.jface.text,org.eclipse.ltk.core.refactoring,org.eclipse.ltk.ui.refactoring,org.eclipse.osgi,org.eclipse.search,org.eclipse.swt,org.eclipse.swt.gtk.linux.x86,org.eclipse.team.core,org.eclipse.team.ui,org.eclipse.text,org.eclipse.ui,org.eclipse.ui.cheatsheets,org.eclipse.ui.console,org.eclipse.ui.editors,org.eclipse.ui.forms,org.eclipse.ui.ide,org.eclipse.ui.navigator,org.eclipse.ui.navigator.resources,org.eclipse.ui.views,org.eclipse.ui.views.properties.tabbed,org.eclipse.ui.workbench,org.eclipse.ui.workbench.texteditor,org.eclipse.update.configurator,org.eclipse.update.core,org.eclipse.update.core.linux,org.eclipse.update.ui,org.junit"/>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
@@ -13,15 +13,14 @@
 <stringAttribute key="checked" value="[NONE]"/>
 <stringAttribute key="location" value="${system_property:user.home}/tmp/junit-workspace"/>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
-<stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <booleanAttribute key="clearws" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.sf.eclipsefp.test.AllAllTests_PDESuite"/>
 <stringAttribute key="pde.version" value="3.2a"/>
 <booleanAttribute key="default" value="false"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
-<booleanAttribute key="useDefaultConfigArea" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<booleanAttribute key="useDefaultConfigArea" value="false"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="net.sf.eclipsefp.test"/>

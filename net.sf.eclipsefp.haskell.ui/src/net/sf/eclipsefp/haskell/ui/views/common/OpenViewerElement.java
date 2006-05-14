@@ -36,7 +36,7 @@ public class OpenViewerElement extends Action {
       // try to find the corresponding compilation unit
       IFile file = ( IFile )element;
       if( ResourceUtil.hasHaskellExtension( file ) ) {
-        ICompilationUnit cu = Halamo.getInstance().getCompilationUnit( file );
+        ICompilationUnit cu = HaskellModelManager.getInstance().getCompilationUnit( file );
         HaskellUIPlugin.showInEditor( cu );
       }
     }

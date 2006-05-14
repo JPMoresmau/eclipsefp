@@ -4,8 +4,7 @@ package net.sf.eclipsefp.haskell.ui.views.mdepview;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.*;
 
-import net.sf.eclipsefp.haskell.core.halamo.Halamo;
-import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.*;
 
 /** <p>the content provider for the dependencies view.</p>
   *
@@ -20,7 +19,7 @@ class ModuleDependenciesContentProvider implements IStructuredContentProvider,
     Object[] result = EMPTY; 
     if( inputElement instanceof IProject ) {
       IProject project = ( IProject )inputElement;
-      result = Halamo.getInstance().getAllModules( project );
+      result = HaskellModelManager.getInstance().getAllModules( project );
     }
     // else?? module?? source folder??
     return result;

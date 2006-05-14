@@ -3,14 +3,11 @@
 package net.sf.eclipsefp.haskell.refactoring.internal.core.refactorings;
 
 import java.util.*;
-import java.util.Map;
 
 import net.sf.eclipsefp.haskell.refactoring.internal.core.changes.RenameResourceChange;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.text.edits.*;
@@ -112,7 +109,7 @@ class RenameModuleDelegate {
   }
 
   private ICompilationUnit[] getAllDependentCUs() {
-    Halamo halamo = Halamo.getInstance();
+    HaskellModelManager halamo = HaskellModelManager.getInstance();
     ICompilationUnit compilationUnit = halamo.getCompilationUnit( getFile() );
     return halamo.getDependentCUs( compilationUnit );
   }

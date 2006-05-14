@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import static org.easymock.EasyMock.*;
 
-import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.Scope;
@@ -21,7 +21,7 @@ import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
 
 public class LanguageModelTest extends TestCase {
 	
-	private Halamo fLangModelEngine = Halamo.getInstance();
+	private HaskellLanguageModel fLangModelEngine = new HaskellLanguageModel();
 
 	@Override
 	protected void setUp() throws Exception {
@@ -88,19 +88,6 @@ public class LanguageModelTest extends TestCase {
 		
 		HalamoAssert.assertContains("fib", declarations);
 		HalamoAssert.assertContains("fac", declarations);
-	}
-	
-	public void testFailGracefullyWithFileOusideProject() {
-//TODO check this edge case
-//		final String contents = "module Main where\n" +
-//				                "\n" +
-//				                "main = putStr \"Hello, world!\\n\"";
-//		MockFile file = new MockFile(contents);
-//		
-//		file.setProject(null);
-//		
-//		Scope scope = fLangModelEngine.getScopeFor(file);
-//		assertNotNull(scope);
 	}
 	
 	public void testAddingModules() {

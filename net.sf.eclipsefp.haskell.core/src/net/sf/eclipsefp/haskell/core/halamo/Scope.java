@@ -4,6 +4,8 @@ import java.util.*;
 
 public class Scope {
 
+	public static final Scope EMPTY = new Scope();
+	
 	private List<IModule> fAvailableModules = new ArrayList<IModule>();
 	
 	public List<IModule> getAvailableModules() {

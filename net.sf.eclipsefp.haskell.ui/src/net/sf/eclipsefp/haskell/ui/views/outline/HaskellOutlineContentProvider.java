@@ -11,7 +11,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import net.sf.eclipsefp.haskell.core.halamo.*;
-import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 
@@ -118,7 +118,7 @@ public class HaskellOutlineContentProvider implements ITreeContentProvider {
   //////////////////
   
   private void parse( final IFile file ) {
-    ICompilationUnit cu = Halamo.getInstance().getCompilationUnit( file );
+    ICompilationUnit cu = HaskellModelManager.getInstance().getCompilationUnit( file );
     IModule[] modules = cu.getModules();
     // old TODO remove
     for( int i = 0; i < modules.length; i++ ) {

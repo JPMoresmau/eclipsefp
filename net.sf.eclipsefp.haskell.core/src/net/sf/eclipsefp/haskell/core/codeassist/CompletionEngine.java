@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.codeassist;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -11,14 +12,50 @@ import net.sf.eclipsefp.haskell.core.halamo.*;
 
 public class CompletionEngine {
 
-	private Halamo fLanguageModel;
-
-	public CompletionEngine() {
-		fLanguageModel = Halamo.getInstance();
+	private static interface IScopeStrategy {
+		
+		public Scope getScopeFor(ICompilationUnit unit);
+		
 	}
 	
-	public CompletionEngine(Halamo langModel) {
-		fLanguageModel = langModel;
+	private static class WorkspaceScopeStrategy implements IScopeStrategy {
+		public Scope getScopeFor(ICompilationUnit unit) {
+			IProject currentProject = unit.getUnderlyingResource().getProject();
+			if (null == currentProject)
+				return Scope.EMPTY;
+			
+			
+			HaskellModelManager models = HaskellModelManager.getInstance();
+			HaskellLanguageModel model = models.getModelFor(currentProject);
+			
+			if (null == model)
+				return Scope.EMPTY;
+			
+			return model.getScopeFor(unit.getModules()[0]);
+		}
+	}
+	
+	private static class ModelScopeStrategy implements IScopeStrategy {
+		
+		private HaskellLanguageModel fLanguageModel;
+		
+		public ModelScopeStrategy(HaskellLanguageModel model) {
+			fLanguageModel = model;
+		}
+		
+		public Scope getScopeFor(ICompilationUnit unit) {
+			return fLanguageModel.getScopeFor(unit.getModules()[0]);
+		}
+	}
+
+	private IScopeStrategy fScopeCalculator;
+	
+	public CompletionEngine() {
+		fScopeCalculator = new WorkspaceScopeStrategy();
+	}
+	
+	public CompletionEngine(HaskellLanguageModel langModel) {
+		fScopeCalculator = new ModelScopeStrategy(langModel);
 	}
 
 	public ICompletionProposal[] complete(ICompilationUnit unit, int offset) {
@@ -55,7 +92,7 @@ public class CompletionEngine {
 		result.addAll(Arrays.asList(HaskellSyntax.getClasses()));
 		result.addAll(Arrays.asList(HaskellSyntax.getKeywords()));
 		//TODO move this to the scope calculator
-		Scope scope = fLanguageModel.getScopeFor(unit.getModules()[0]);
+		Scope scope = fScopeCalculator.getScopeFor(unit);
 		List<IDeclaration> internalDecls = Arrays.asList(unit.getModules()[0].getDeclarations());
 		List<IDeclaration> externalDecls = scope.getAvailableDeclarations();
 		List<IDeclaration> decls = new ArrayList<IDeclaration>(internalDecls.size() + externalDecls.size());

@@ -7,7 +7,8 @@ import org.eclipse.core.runtime.*;
 import org.osgi.framework.BundleContext;
 
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.halamo.Halamo;
+import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
+import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 
@@ -44,8 +45,7 @@ public class HaskellCorePlugin extends Plugin {
 		collectCompilerInfo();
 		collectParserInfo();
 		try {
-			// TODO temp (to register as listener)
-			Halamo.getInstance().initialize();
+			HaskellModelManager.getInstance().initialize();
 		} catch (CoreException ex) {
 			String message = "Serious problem: could not initialize the Haskell "
 					+ "language model.";

@@ -1,12 +1,20 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.halamo;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
-import net.sf.eclipsefp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 /**
@@ -33,27 +41,21 @@ public class ResourceChangeMonitor implements IResourceChangeListener {
 
 	private IHaskellModel fLanguageModel;
 
-	// interface methods of IResourceChangeListener
-	// /////////////////////////////////////////////
-
-	public ResourceChangeMonitor() {
-		this(Halamo.getInstance());
+	public ResourceChangeMonitor(IProject project) {
+		this(HaskellModelManager.getInstance().getModelFor(project));
 	}
 	
-	public ResourceChangeMonitor(IHaskellModel languageModel) {
-		fLanguageModel = languageModel;
+	public ResourceChangeMonitor(IHaskellModel model) {
+		fLanguageModel = model;
 	}
 
 	public void resourceChanged(final IResourceChangeEvent event) {
-		// long start = System.currentTimeMillis();
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE) { // TODO ??
 			IResourceDelta[] projectDeltas = getProjectDeltas(event.getDelta());
 			for (int i = 0; i < projectDeltas.length; i++) {
 				process(projectDeltas[i]);
 			}
 		}
-		// long time = System.currentTimeMillis() - start;
-		// System.out.println( "Resource change op took " + time + "ms." );
 	}
 
 	// helping methods

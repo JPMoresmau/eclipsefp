@@ -35,10 +35,6 @@ public class ResourceChangeMonitor_PDETestCase extends HaskellProject_PDETestCas
 		getWorkspace().addResourceChangeListener(getMonitor());
 	}
 
-	private IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-
 	public void testAddModule() throws CoreException {
 		getLanguageModel().putModule((IModule) anyObject());
 		expectLastCall().atLeastOnce();
@@ -62,7 +58,14 @@ public class ResourceChangeMonitor_PDETestCase extends HaskellProject_PDETestCas
 		verify(getLanguageModel());
 	}
 	
-	//TODO test multiple projects
+	@Override
+	protected void doTearDown() throws Exception {
+		getWorkspace().removeResourceChangeListener(getMonitor());
+	}
+
+	private IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
 
 	private IHaskellModel getLanguageModel() {
 		return fLanguageModel;
