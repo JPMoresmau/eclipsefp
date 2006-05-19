@@ -10,7 +10,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import net.sf.eclipsefp.haskell.core.halamo.*;
 
-public class CompletionEngine {
+public class CompletionEngine implements ICompletionEngine {
 
 	private static interface IScopeStrategy {
 		
@@ -26,7 +26,7 @@ public class CompletionEngine {
 			
 			
 			HaskellModelManager models = HaskellModelManager.getInstance();
-			HaskellLanguageModel model = models.getModelFor(currentProject);
+			IHaskellModel model = models.getModelFor(currentProject);
 			
 			if (null == model)
 				return Scope.EMPTY;
@@ -147,6 +147,10 @@ public class CompletionEngine {
 			contents.append((char) in.read());
 		}
 		return contents;
+	}
+
+	public ICompletionProposal[] computeProposals(HaskellCompletionContext context) {
+		return null;
 	}
 
 }

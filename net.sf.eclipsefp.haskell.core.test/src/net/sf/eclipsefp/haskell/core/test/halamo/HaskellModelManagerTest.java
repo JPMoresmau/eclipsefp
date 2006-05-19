@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.test.halamo;
 
-import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 
 import org.eclipse.core.resources.IProject;
 
@@ -15,10 +15,10 @@ public class HaskellModelManagerTest extends TestCase {
 		IProject project = createMock(IProject.class);
 		HaskellModelManager manager = HaskellModelManager.getInstance();
 		
-		HaskellLanguageModel fstHalamo = manager.getModelFor(project);
+		IHaskellModel fstHalamo = manager.getModelFor(project);
 		assertNotNull(fstHalamo);
 		
-		HaskellLanguageModel sndHalamo = manager.getModelFor(project);
+		IHaskellModel sndHalamo = manager.getModelFor(project);
 		assertNotNull(sndHalamo);
 		
 		assertSame(fstHalamo, sndHalamo);

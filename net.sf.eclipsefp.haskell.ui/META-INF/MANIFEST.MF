@@ -21,6 +21,7 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
 Eclipse-AutoStart: true
 Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.dialog,
+ net.sf.eclipsefp.haskell.ui.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.editor.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.editor.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.launch,

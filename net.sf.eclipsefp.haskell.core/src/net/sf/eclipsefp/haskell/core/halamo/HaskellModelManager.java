@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @author Thiago Arrais
  */
-public class HaskellModelManager {
+public class HaskellModelManager implements IHaskellModelManager {
 
 	private final static HaskellModelManager INSTANCE = new HaskellModelManager();
 	
@@ -40,7 +40,7 @@ public class HaskellModelManager {
 		//hide default constructor on singleton
 	}
 
-	public HaskellLanguageModel getModelFor(IProject project) {
+	public IHaskellModel getModelFor(IProject project) {
 		HaskellLanguageModel result = fLanguageModels.get(project);
 		if (null == result) {
 			result = new HaskellLanguageModel();
