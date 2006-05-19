@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.editor.codeassist;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -18,13 +19,24 @@ import net.sf.eclipsefp.haskell.core.codeassist.*;
  */
 public class HaskellCAProcessor implements IContentAssistProcessor {
 
+	public static class NullCompletionContext extends HaskellCompletionContext {
+		//TODO write the computeProposals method that doesn't return anything here 
+	}
+
 	private static class WorkbenchContextFactory implements
 			ICompletionContextFactory {
 
 		public HaskellCompletionContext createContext(ITextViewer viewer,
 													  int offset)
 		{
-			return new WorkbenchHaskellCompletionContext(viewer, offset);
+			try {
+				return new WorkbenchHaskellCompletionContext(viewer, offset);
+			} catch (CoreException ex) {
+				//TODO this means there was an error when parsing the contents
+				//of the viewer and the code assistance cannot go on
+				//TODO log the error
+				return new NullCompletionContext();
+			}
 		}
 
 	}

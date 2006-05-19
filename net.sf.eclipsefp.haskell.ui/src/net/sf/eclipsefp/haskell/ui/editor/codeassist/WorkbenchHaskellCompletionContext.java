@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.editor.codeassist;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorInput;
@@ -13,22 +14,31 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 
 public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext {
 
-	private int fOffset;
-
-	public WorkbenchHaskellCompletionContext(ITextViewer viewer, int offset) {
+	public WorkbenchHaskellCompletionContext(ITextViewer viewer, int offset) throws CoreException {
 		this(HaskellModelManager.getInstance(), viewer, offset);
 	}
 
-	public WorkbenchHaskellCompletionContext(IHaskellModelManager manager, ITextViewer viewer, int offset) {
-		fLanguageModel = manager.getModelFor(getFile(viewer).getProject());
-		fOffset = offset;
+	public WorkbenchHaskellCompletionContext(IHaskellModelManager manager, ITextViewer viewer, int offset) throws CoreException {
+		this(manager, ParserManager.getInstance().getParser(), viewer, offset);
 	}
 
-	public int getOffset() {
-		return fOffset;
+	public WorkbenchHaskellCompletionContext(IHaskellParser parser, ITextViewer viewer, int offset) throws CoreException {
+		this(HaskellModelManager.getInstance(), parser, viewer, offset);
+	}
+	
+	protected WorkbenchHaskellCompletionContext(IHaskellModelManager manager,
+												IHaskellParser parser,
+												ITextViewer viewer,
+												int offset) throws CoreException
+	{
+		setLanguageModel(manager.getModelFor(getFile(viewer).getProject()));
+		setCompilationUnit(parser.parse(viewer.getDocument().get()));
+		setOffset(offset);
 	}
 
 	private IFile getFile(final ITextViewer viewer) {

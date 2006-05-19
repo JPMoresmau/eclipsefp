@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.jparser;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 
 import net.sf.eclipsefp.haskell.core.jparser.ast.CompilationUnit;
 
@@ -62,6 +63,28 @@ public class JavaParserBridge implements IHaskellParser {
 
 	public boolean canParse() {
 		return true;
+	}
+
+	public ICompilationUnit parse(String sourceCode) throws CoreException {
+		Reader input = new StringReader(sourceCode);
+		
+		//TODO copied-and-pasted code: remove duplication!!!!
+		HaskellParser parser = new HaskellParser(input);
+		CompilationUnit result = null;
+		try {
+			result = new CompilationUnit(parser.parseModule());
+		} catch (RecognitionException e) {
+			raiseCoreException(e, "Parsing error");
+		} catch (TokenStreamException e) {
+			raiseCoreException(e, "Scanning error");
+		} finally {
+			try {
+				input.close();
+			} catch (IOException e) {
+				raiseCoreException(e, "Cannot close");
+			}
+		}
+		return result;
 	}
 
 }
