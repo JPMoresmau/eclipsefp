@@ -70,7 +70,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return new ICompletionProposal[0];
 	}
 	
-	List<ICompletionProposal> filterAndConvert(List<String> proposals, String prefix, int offset) {
+	private List<ICompletionProposal> filterAndConvert(List<String> proposals, String prefix, int offset) {
 		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.size());
 		int qlen = prefix.length();
 		if (qlen == 0) {
@@ -86,7 +86,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return result;
 	}
 
-	List<String> computePossibilities(ICompilationUnit unit,
+	private List<String> computePossibilities(ICompilationUnit unit,
 											  IHaskellModel model)
 	{
 		List<String> result = new ArrayList<String>();
@@ -106,7 +106,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return result;
 	}
 
-	String getQualifier( final ICompilationUnit unit, 
+	private String getQualifier( final ICompilationUnit unit, 
 			                     final int offset )
 	{
 		StringBuffer contents = readSourceTillOffset(unit, offset);
