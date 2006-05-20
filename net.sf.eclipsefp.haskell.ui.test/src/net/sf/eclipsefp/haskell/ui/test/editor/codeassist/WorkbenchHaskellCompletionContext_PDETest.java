@@ -28,7 +28,7 @@ import net.sf.eclipsefp.haskell.ui.editor.codeassist.WorkbenchHaskellCompletionC
 import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
 import junit.framework.TestCase;
 
-public class WorkbenchHaskellCompletionContextTest extends TestCase {
+public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 	
 	private TestHaskellProject fRightHandle;
 	private TestHaskellProject fWrongHandle;
@@ -91,6 +91,7 @@ public class WorkbenchHaskellCompletionContextTest extends TestCase {
 		
 		HaskellCompletionContext context = new WorkbenchHaskellCompletionContext(parser, fibbViewer, 0);
 		
+		fibbFile.delete(true, null);
 		//TODO need to avoid showing the 'Save changes?' dialog when testing
 		
 		verify(parser);

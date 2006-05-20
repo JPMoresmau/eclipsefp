@@ -20,6 +20,20 @@ import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 public class JavaParserBridge implements IHaskellParser {
 
 	public ICompilationUnit parse(IFile file) throws CoreException {
+		String sourceCode = "";
+		Reader originalInput = new InputStreamReader(file.getContents()); 
+		try {
+			sourceCode = readFully(originalInput);
+		} catch (IOException e) {
+				raiseCoreException(e, "I/O error when reading " + file.getName());
+		} finally {
+			try {
+				originalInput.close();
+			} catch (IOException e) {
+				raiseCoreException(e, "Cannot close " + file.getName());
+			}
+		}
+		
 		Reader input;
 		if (isLiterate(file)) {
 			input = new LiterateHaskellReader(
@@ -29,23 +43,49 @@ public class JavaParserBridge implements IHaskellParser {
 			input = new InputStreamReader(
 				    	file.getContents());
 		}
+
+		CompilationUnit result = parse(input, sourceCode, file.getName());
+		result.setUnderlyingResource(file);
+		return result;
+	}
+
+	public ICompilationUnit parse(String sourceCode) throws CoreException {
+		return parse(new StringReader(sourceCode), sourceCode, "<unidentified file>");
+	}
+
+	private CompilationUnit parse(Reader input, String sourceCode, String fileName) throws CoreException {
 		HaskellParser parser = new HaskellParser(input);
 		CompilationUnit result = null;
 		try {
 			result = new CompilationUnit(parser.parseModule());
-			result.setUnderlyingResource(file);
+			result.setOriginalSourceCode(sourceCode);
 		} catch (RecognitionException e) {
-			raiseCoreException(e, "Parsing error on " + file.getName());
+			raiseCoreException(e, "Parsing error on " + fileName);
 		} catch (TokenStreamException e) {
-			raiseCoreException(e, "Scanning error on " + file.getName());
+			raiseCoreException(e, "Scanning error on " + fileName);
 		} finally {
 			try {
 				input.close();
 			} catch (IOException e) {
-				raiseCoreException(e, "Cannot close " + file.getName());
+				raiseCoreException(e, "Cannot close " + fileName);
 			}
 		}
 		return result;
+	}
+
+	private String readFully(Reader input) throws IOException {
+		StringBuffer buffer = new StringBuffer(1024);
+		final int CBUF_SIZE = 256;
+		char[] cbuf = new char[CBUF_SIZE];
+		int n = 0;
+		while(CBUF_SIZE == (n = input.read(cbuf))) {
+			buffer.append(cbuf);
+		}
+		
+		if (n > 0) {
+			buffer.append(cbuf, 0, n);
+		}
+		return buffer.toString();
 	}
 
 	private void raiseCoreException(Throwable cause, String msg)
@@ -63,28 +103,6 @@ public class JavaParserBridge implements IHaskellParser {
 
 	public boolean canParse() {
 		return true;
-	}
-
-	public ICompilationUnit parse(String sourceCode) throws CoreException {
-		Reader input = new StringReader(sourceCode);
-		
-		//TODO copied-and-pasted code: remove duplication!!!!
-		HaskellParser parser = new HaskellParser(input);
-		CompilationUnit result = null;
-		try {
-			result = new CompilationUnit(parser.parseModule());
-		} catch (RecognitionException e) {
-			raiseCoreException(e, "Parsing error");
-		} catch (TokenStreamException e) {
-			raiseCoreException(e, "Scanning error");
-		} finally {
-			try {
-				input.close();
-			} catch (IOException e) {
-				raiseCoreException(e, "Cannot close");
-			}
-		}
-		return result;
 	}
 
 }

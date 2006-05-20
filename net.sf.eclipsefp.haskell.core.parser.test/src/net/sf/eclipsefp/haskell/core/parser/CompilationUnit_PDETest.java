@@ -16,7 +16,7 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
     // an empty compilation unit has an implicit Main module at position 0,0
     // (apart from leading comment lines like in the target file, which makes
     // it in this case position 1,0 )
-    ICompilationUnit cu = parse("-- nothing in here, so no src locations\n");
+    ICompilationUnit cu = parseAsFile("-- nothing in here, so no src locations\n");
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -30,7 +30,7 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
     		             "module Main (main, \n" +
     		             "             getTheAnswer,\n" +
     		             "             module Haskell.Language.Syntax) where";
-	ICompilationUnit cu = parse(input);
+	ICompilationUnit cu = parseAsFile(input);
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -48,7 +48,7 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
     		             "\n" +
     		             "import Haskell.Language.Syntax";
 
-	ICompilationUnit cu = parse(input);
+	ICompilationUnit cu = parseAsFile(input);
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertTrue( sl1 != null );
     assertEquals( 1, sl1.getLine() );
@@ -105,7 +105,7 @@ public class CompilationUnit_PDETest extends Parser_PDETestCase {
 			             "type Rec a = [Circ a]\n" +
 			             "\n" +
 			             "default (Integer, Double)";
-    ICompilationUnit cu = parse(input);
+    ICompilationUnit cu = parseAsFile(input);
     ISourceLocation sl1 = cu.getNextLocation( new SourceLocation( 0, 0 ) );
     assertEquals( 1, sl1.getLine() );
     assertEquals( 0, sl1.getColumn() );

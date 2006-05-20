@@ -160,6 +160,10 @@ class DefaultHaskellParser implements IHaskellParser {
 			return result;
 		}
 
+		public String getOriginalSourceCode() {
+			return "";
+		}
+
 	}
 
 }

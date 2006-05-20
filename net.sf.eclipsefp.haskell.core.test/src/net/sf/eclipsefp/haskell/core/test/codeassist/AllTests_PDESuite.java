@@ -9,7 +9,7 @@ public class AllTests_PDESuite {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.test.codeassist");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(CompletionEngine_PDETest.class);
+		suite.addTestSuite(CompletionContext_PDETest.class);
 		//$JUnit-END$
 		return suite;
 	}

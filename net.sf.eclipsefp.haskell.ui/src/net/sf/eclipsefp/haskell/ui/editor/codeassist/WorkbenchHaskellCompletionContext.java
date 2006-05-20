@@ -36,12 +36,12 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 												ITextViewer viewer,
 												int offset) throws CoreException
 	{
-		setLanguageModel(manager.getModelFor(getFile(viewer).getProject()));
-		setCompilationUnit(parser.parse(viewer.getDocument().get()));
-		setOffset(offset);
+		super(parser.parse(viewer.getDocument().get()),
+				manager.getModelFor(getFile(viewer).getProject()),
+				offset);
 	}
 
-	private IFile getFile(final ITextViewer viewer) {
+	private static IFile getFile(final ITextViewer viewer) {
 		IDocument currentDocument = viewer.getDocument();
 
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

@@ -12,8 +12,14 @@ import junit.framework.TestCase;
 
 public class Parser_PDETestCase extends TestCase {
 
-	public ICompilationUnit parse(String input) throws CoreException {
+	public ICompilationUnit parseAsFile(String input) throws CoreException {
 		return parse(new MockFile(input));
+	}
+	
+	public ICompilationUnit parseAsString(String input) throws CoreException {
+		IHaskellParser parser = ParserManager.getInstance().getParser();
+		
+		return parser.parse(input);
 	}
 
 	public ICompilationUnit parse(IFile input) throws CoreException {

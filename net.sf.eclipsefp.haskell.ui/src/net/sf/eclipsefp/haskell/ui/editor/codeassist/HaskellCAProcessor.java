@@ -26,7 +26,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 	private static class WorkbenchContextFactory implements
 			ICompletionContextFactory {
 
-		public HaskellCompletionContext createContext(ITextViewer viewer,
+		public IHaskellCompletionContext createContext(ITextViewer viewer,
 													  int offset)
 		{
 			try {
@@ -41,15 +41,13 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
 	}
 
-	private ICompletionEngine fEngine = null;
 	private ICompletionContextFactory fContextFactory;
 
 	public HaskellCAProcessor() {
-		this(new CompletionEngine(), new WorkbenchContextFactory());
+		this(new WorkbenchContextFactory());
 	}
 
-	public HaskellCAProcessor(ICompletionEngine engine, ICompletionContextFactory factory) {
-		fEngine = engine;
+	public HaskellCAProcessor(ICompletionContextFactory factory) {
 		fContextFactory = factory;
 	}
 
@@ -59,8 +57,8 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(
 			final ITextViewer viewer, final int offset)
 	{
-		HaskellCompletionContext context = fContextFactory.createContext(viewer, offset);
-		return getCompletionEngine().computeProposals(context);
+		IHaskellCompletionContext context = fContextFactory.createContext(viewer, offset);
+		return context.computeProposals();
 	}
 
 	public IContextInformation[] computeContextInformation(
@@ -88,13 +86,6 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 	public IContextInformationValidator getContextInformationValidator() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	protected ICompletionEngine getCompletionEngine() {
-		if (fEngine == null) {
-			fEngine = new CompletionEngine();
-		}
-		return fEngine;
 	}
 
 }

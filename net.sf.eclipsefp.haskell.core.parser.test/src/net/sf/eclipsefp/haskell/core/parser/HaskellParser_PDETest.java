@@ -21,7 +21,7 @@ public class HaskellParser_PDETest extends Parser_PDETestCase {
  			    		 "module Main where\n" +
  			    		 "\n" +
 			    		 "main = print 42";
-	ICompilationUnit cu = parse(input);
+	ICompilationUnit cu = parseAsFile(input);
     assertTrue( cu != null );
     
     IModule[] modules = cu.getModules();
@@ -479,7 +479,7 @@ public class HaskellParser_PDETest extends Parser_PDETestCase {
   //////////////////
   
   private IModule parseModule(String input) throws CoreException {
-    ICompilationUnit cu = parse(input);
+    ICompilationUnit cu = parseAsFile(input);
 	return cu.getModules()[ 0 ];
   }
 

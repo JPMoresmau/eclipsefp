@@ -3,14 +3,15 @@ package net.sf.eclipsefp.haskell.core.test.codeassist;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-import net.sf.eclipsefp.haskell.core.codeassist.CompletionEngine;
+import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
+import net.sf.eclipsefp.haskell.core.test.codeassist.doubles.EmptyCompletionContext;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
 import net.sf.eclipsefp.haskell.core.test.util.CompletionProposalTestCase;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 
-public class CompletionEngine_PDETest extends Parser_PDETestCase {
+public class CompletionContext_PDETest extends Parser_PDETestCase {
 	
 	public void testDeclarationCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest where\n" +
@@ -18,12 +19,12 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 				             "putStr str = str\n" +
 				             "\n" +
 				             "main = pu\n";
-		final ICompilationUnit unit = parse(input);
-		final CompletionEngine engine = new CompletionEngine();
+		final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = new EmptyCompletionContext(unit, 62);
 		
 		assertEquals('u', input.charAt(62 - 1));
 		
-		ICompletionProposal[] proposals = engine.complete(unit, 62);
+		ICompletionProposal[] proposals = context.computeProposals();
 		
 		assertContains(createProposal("pu", "putStr", 62), proposals);
 	}
@@ -32,12 +33,12 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 		final String input = "module CompletionEngineTest where\n" +
                              "\n" +
                              "fat :: N";
-		final ICompilationUnit unit = parse(input);
-		final CompletionEngine engine = new CompletionEngine();
+		final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = new EmptyCompletionContext(unit, 43);
 
 		assertEquals('N', input.charAt(43 - 1));
 
-		ICompletionProposal[] proposals = engine.complete(unit, 43);
+		ICompletionProposal[] proposals = context.computeProposals();
 
 		assertContains(createProposal("N", "Num", 43), proposals);
 	}
@@ -45,12 +46,12 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 	public void testKeywordCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest wh";
 		//TODO avoid complaining about parsing error here
-		final ICompilationUnit unit = parse(input);
-		final CompletionEngine engine = new CompletionEngine();
+		final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = new EmptyCompletionContext(unit, 30);
 
 		assertEquals('h', input.charAt(30 - 1));
 
-		ICompletionProposal[] proposals = engine.complete(unit, 30);
+		ICompletionProposal[] proposals = context.computeProposals();
 
 		assertContains(createProposal("wh", "where", 30), proposals);
 	}
@@ -60,12 +61,12 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (f";
-		final ICompilationUnit unit = parse(input);
-		final CompletionEngine engine = new CompletionEngine();
+		final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = new EmptyCompletionContext(unit, 48);
 		
 		assertEquals('f', input.charAt(48 - 1));
 
-		ICompletionProposal[] proposals = engine.complete(unit, 48);
+		ICompletionProposal[] proposals = context.computeProposals();
 
 		assertContains(createProposal("f", "fat", 48), proposals);
 	}
@@ -75,12 +76,12 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (";
-		final ICompilationUnit unit = parse(input);
-		final CompletionEngine engine = new CompletionEngine();
+		final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = new EmptyCompletionContext(unit, 48);
 		
 		assertEquals('(', input.charAt(47 - 1));
 
-		ICompletionProposal[] proposals = engine.complete(unit, 48);
+		ICompletionProposal[] proposals = context.computeProposals();
 		
 		assertEquals(0, proposals.length);
 	}
@@ -90,12 +91,12 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "_underscore = '_'\n" +
 				             "prefixWithUnderscore str = _und";
-		final ICompilationUnit unit = parse(input);
-		final CompletionEngine engine = new CompletionEngine();
+		final ICompilationUnit unit = parseAsFile(input);
+		final HaskellCompletionContext context = new EmptyCompletionContext(unit, 74);
 		
 		assertEquals('d', input.charAt(74 - 1));
 
-		ICompletionProposal[] proposals = engine.complete(unit, 74);
+		ICompletionProposal[] proposals = context.computeProposals();
 
 		assertContains(createProposal("_und", "_underscore", 74), proposals);
 	}
@@ -105,13 +106,13 @@ public class CompletionEngine_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "main = putStr $ show $ f";
 		final int offset = input.length();
-		final ICompilationUnit unit = parse(input);
+		final ICompilationUnit unit = parseAsFile(input);
 		final StubHalamo langModel = new StubHalamo();
-		final CompletionEngine engine = new CompletionEngine(langModel);
+		HaskellCompletionContext context = new HaskellCompletionContext(unit, langModel, offset);
 		
 		langModel.setModulesInScope(new StubModule("fat", "fib"));
 		
-		ICompletionProposal[] proposals = engine.complete(unit, offset);
+		ICompletionProposal[] proposals = context.computeProposals();
 		
 		assertContains(createProposal("f", "fat", offset), proposals);
 	}

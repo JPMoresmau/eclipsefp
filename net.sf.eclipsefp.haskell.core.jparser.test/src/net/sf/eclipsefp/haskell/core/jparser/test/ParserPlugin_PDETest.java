@@ -30,7 +30,7 @@ public class ParserPlugin_PDETest extends Parser_PDETestCase {
 	}
 	
 	public void testParseFileResource() throws CoreException {
-		ICompilationUnit unit = parse("module Empty where {}");
+		ICompilationUnit unit = parseAsFile("module Empty where {}");
 		
 		assertNotNull(unit);
 		assertEquals(1, unit.getModules().length);
@@ -66,4 +66,26 @@ public class ParserPlugin_PDETest extends Parser_PDETestCase {
 		
 		file.verify();
 	}
+	
+	public void testRecordsOriginalSourceCodeFromString() throws CoreException {
+		final String source = "module Factorial where\n" +
+							  "fat 0 = 1\n" +
+							  "fat n = n * (fat (n - 1))";
+		
+		ICompilationUnit unit = parseAsString(source);
+		
+		assertEquals(source, unit.getOriginalSourceCode());
+	}
+	
+	public void testRecordsOriginalSourceCodeFromFile() throws CoreException {
+		final String source = "module Factorial where\n" +
+							  "fat 0 = 1\n" +
+							  "fat n = n * (fat (n - 1))";
+		
+		ICompilationUnit unit = parseAsFile(source);
+		
+		assertEquals(source, unit.getOriginalSourceCode());
+	}
+	
+	
 }

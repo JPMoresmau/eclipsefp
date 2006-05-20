@@ -11,6 +11,7 @@ public class CompilationUnit implements ICompilationUnit {
 
 	private IModule fModule;
 	private IFile fFile;
+	private String fOriginalSourceCode;
 
 	public CompilationUnit(IModule module) {
 		fModule = module;
@@ -74,6 +75,14 @@ public class CompilationUnit implements ICompilationUnit {
 
 	public void setUnderlyingResource(IFile file) {
 		fFile = file;
+	}
+
+	public String getOriginalSourceCode() {
+		return fOriginalSourceCode;
+	}
+	
+	public void setOriginalSourceCode(String code) {
+		fOriginalSourceCode = code;
 	}
 	  
 }

@@ -10,8 +10,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay; 
 import static org.easymock.EasyMock.verify; 
 
-import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
-import net.sf.eclipsefp.haskell.core.codeassist.ICompletionEngine;
+import net.sf.eclipsefp.haskell.core.codeassist.IHaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.test.util.CompletionProposalTestCase;
 import net.sf.eclipsefp.haskell.ui.editor.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.editor.codeassist.ICompletionContextFactory;
@@ -19,7 +18,7 @@ import net.sf.eclipsefp.haskell.ui.test.editor.codeassist.doubles.StubViewer;
 
 public class HaskellContentAssistProcessor_PDETest extends CompletionProposalTestCase {
 	
-	public void testCallsCompletionEngine() {
+	public void testCallsCompletionContext() {
 		final String input = "module CompletionEngineTest where\n" +
                              "\n" +
                              "putStr str = str\n" +
@@ -29,24 +28,24 @@ public class HaskellContentAssistProcessor_PDETest extends CompletionProposalTes
 
 		final ICompletionProposal proposalResult = createProposal("pu", "putStr", 62);
 		
-		ICompletionEngine engine = createMock(ICompletionEngine.class);
-		expect(engine.computeProposals((HaskellCompletionContext) anyObject()))
+		IHaskellCompletionContext context = createMock(IHaskellCompletionContext.class);
+		expect(context.computeProposals())
 				.andReturn(new ICompletionProposal[] {proposalResult});
-		replay(engine);
+		replay(context);
 		
 		ICompletionContextFactory factory = createMock(ICompletionContextFactory.class);
 		expect(factory.createContext((ITextViewer) anyObject(), anyInt()))
-			.andReturn((HaskellCompletionContext) null);
+			.andReturn(context);
 		replay(factory);
 		
-		HaskellCAProcessor processor = new HaskellCAProcessor(engine, factory);
+		HaskellCAProcessor processor = new HaskellCAProcessor(factory);
 		ICompletionProposal[] props = processor.computeCompletionProposals(
 				                          new StubViewer(input), inputOffset);
 		
 		assertNotNull(props);
 		assertContains(proposalResult, props);
 		
-		verify(engine, factory);
+		verify(context, factory);
 	}
 
 }

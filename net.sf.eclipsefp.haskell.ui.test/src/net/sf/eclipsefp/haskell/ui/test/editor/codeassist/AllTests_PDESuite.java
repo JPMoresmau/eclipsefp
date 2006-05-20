@@ -10,7 +10,7 @@ public class AllTests_PDESuite {
 				"Test for net.sf.eclipsefp.haskell.ui.test.editor.codeassist");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(HaskellContentAssistProcessor_PDETest.class);
-		suite.addTestSuite(WorkbenchHaskellCompletionContextTest.class);
+		suite.addTestSuite(WorkbenchHaskellCompletionContext_PDETest.class);
 		//$JUnit-END$
 		return suite;
 	}
