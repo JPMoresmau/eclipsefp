@@ -1,16 +1,19 @@
 package net.sf.eclipsefp.common.ui.test.wizards;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsefp.common.ui.wizards.ProjectCreationInfo;
 import net.sf.eclipsefp.common.ui.wizards.ProjectCreationOperation;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import junit.framework.TestCase;
@@ -45,7 +48,7 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		
 	}
 	
-	public void testPlatformDefaultLocation() throws InvocationTargetException, InterruptedException {
+	public void testPlatformDefaultLocation() throws InvocationTargetException, InterruptedException, IOException {
 		final String defaultLocation = Platform.getLocation().toString() + '/' + PROJECT_NAME;
 		fInfo.setProjectLocation(Platform.getLocation().toString());
 		
@@ -57,7 +60,7 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		assertSameLocation(defaultLocation, prj.getLocation().toString());
 	}
 
-	public void testCustomLocation() throws InvocationTargetException, InterruptedException {
+	public void testCustomLocation() throws InvocationTargetException, InterruptedException, IOException {
 		final String customLocation = TMP_DIR + '/' + PROJECT_NAME;
 		fInfo.setProjectLocation(customLocation);
 		
@@ -89,9 +92,10 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		prj.delete(true, true, null);
 	}
 
-	private void assertSameLocation(final String expected, final String actual) {
-		assertTrue("Locations are different",
-		    new File(expected).equals(new File(actual)));
+	private void assertSameLocation(final String expected, final String actual) throws IOException {
+		String expectedPath = new Path(expected).toFile().getCanonicalPath();
+		String actualPath = new Path(actual).toFile().getCanonicalPath();
+		assertEquals(expectedPath, actualPath);
 	}
 	
 }
