@@ -16,6 +16,12 @@ import org.eclipse.core.runtime.CoreException;
 
 public class WorkspaceChangeMonitor implements IResourceChangeListener {
 
+	/** the resource change types the ResourceChangeMonitor is interested in. */
+	public static final int TYPES = IResourceChangeEvent.PRE_BUILD
+			| IResourceChangeEvent.POST_BUILD
+			| IResourceChangeEvent.POST_CHANGE
+			| IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE;
+
 	private class DeltaVisitor implements IResourceDeltaVisitor {
 
 		private IResourceChangeEvent fOriginalEvent;
@@ -48,8 +54,6 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 
 
 	}
-
-	private static final int EVENT_TYPES = IResourceChangeEvent.POST_CHANGE;
 	
 	private IProjectChangeMonitorFactory fProjectMonitorFactory; 
 
@@ -61,7 +65,7 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 			public IResourceChangeListener createProjectChangeMonitor(
 					IProject project)
 			{
-				return new ResourceChangeMonitor(project);
+				return new ProjectChangeMonitor(project);
 			}
 		});
 	}
@@ -83,7 +87,7 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 	}
 
 	public void observeChangesOn(IWorkspace workspace) {
-		workspace.addResourceChangeListener(this, EVENT_TYPES);
+		workspace.addResourceChangeListener(this, TYPES);
 	}
 
 }

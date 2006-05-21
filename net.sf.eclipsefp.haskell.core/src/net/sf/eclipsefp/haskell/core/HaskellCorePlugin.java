@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.*;
 import org.osgi.framework.BundleContext;
 
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
@@ -69,6 +68,13 @@ public class HaskellCorePlugin extends Plugin {
 	// logging and tracing
 	// ////////////////////
 
+	/**
+	 * Logs a message to the plugin's error log
+	 * 
+	 * @param message	Message to be logger
+	 * @param severity	One of IStatus.ERROR, IStatus.CANCEL, IStatus.INFO,
+	 * 					IStatus.OK or IStatus.WARNING 
+	 */
 	public static void log(final String message, final int severity) {
 		String id = getPluginId();
 		Status status = new Status(severity, id, IStatus.OK, message, null);

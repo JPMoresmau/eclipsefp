@@ -134,9 +134,8 @@ public class HaskellModelManager implements IHaskellModelManager {
 	}
 
 	private void initializeResourceChangeMonitor() {
-		WorkspaceChangeMonitor resChaMon = new WorkspaceChangeMonitor();
-		getWorkspace().addResourceChangeListener(resChaMon,
-				ResourceChangeMonitor.TYPES);
+		WorkspaceChangeMonitor changeMonitor = new WorkspaceChangeMonitor();
+		changeMonitor.observeChangesOn(getWorkspace());
 	}
 
 	private void initialize(final IProject project) throws CoreException {

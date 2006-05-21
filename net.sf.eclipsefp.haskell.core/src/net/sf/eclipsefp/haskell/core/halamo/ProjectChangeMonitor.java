@@ -1,4 +1,3 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.halamo;
 
 import org.eclipse.core.resources.IFile;
@@ -11,6 +10,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
@@ -18,39 +18,29 @@ import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 /**
- * <p>
- * watches all resource changes in the workspace and informs the language model
- * about them.
- * </p>
+ * Watches for changes on an specific project and updates the internal language
+ * model when needed
  * 
- * <p>
- * Singleton
- * </p>
+ * @see WorkspaceChangeMonitor
  * 
- * @author Leif Frenzel
+ * @author Thiago Arrais
  */
-public class ResourceChangeMonitor implements IResourceChangeListener {
-
-	/** the resource change types the ResourceChangeMonitor is interested in. */
-	public static final int TYPES = IResourceChangeEvent.PRE_BUILD
-			| IResourceChangeEvent.POST_BUILD
-			| IResourceChangeEvent.POST_CHANGE
-			| IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE;
+public class ProjectChangeMonitor implements IResourceChangeListener {
 
 	private IResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
 
 	private IHaskellModel fLanguageModel;
 
-	public ResourceChangeMonitor(IProject project) {
+	public ProjectChangeMonitor(IProject project) {
 		this(HaskellModelManager.getInstance().getModelFor(project));
 	}
 	
-	public ResourceChangeMonitor(IHaskellModel model) {
+	public ProjectChangeMonitor(IHaskellModel model) {
 		fLanguageModel = model;
 	}
 
 	public void resourceChanged(final IResourceChangeEvent event) {
-		if (event.getType() == IResourceChangeEvent.POST_CHANGE) { // TODO ??
+		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 			IResourceDelta[] projectDeltas = getProjectDeltas(event.getDelta());
 			for (int i = 0; i < projectDeltas.length; i++) {
 				process(projectDeltas[i]);
@@ -85,7 +75,7 @@ public class ResourceChangeMonitor implements IResourceChangeListener {
 	}
 
 	private IResourceDelta[] getProjectDeltas(final IResourceDelta rootDelta) {
-		return rootDelta.getAffectedChildren(TYPES, IResource.PROJECT);
+		return rootDelta.getAffectedChildren(WorkspaceChangeMonitor.TYPES, IResource.PROJECT);
 	}
 
 	// inner classes
@@ -97,21 +87,26 @@ public class ResourceChangeMonitor implements IResourceChangeListener {
 	 */
 	private final class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		public boolean visit(final IResourceDelta delta) throws CoreException {
-			// only interested in changed resources (not added or removed)
 			IResource resource = delta.getResource();
 			// only interested in Haskell source files
-			if (resource.getType() == IResource.FILE
-					&& ResourceUtil.hasHaskellExtension(resource))
+			if (!(  IResource.FILE == resource.getType()
+				 || ResourceUtil.hasHaskellExtension(resource)))
 			{
-				System.out.println("Processing change for " + resource
-						+ " kind: " + delta.getKind());
-				if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED)) != 0) {
-					//TODO clean this mess
-					ICompilationUnit unit = ParserManager.getInstance().getParser().parse((IFile) resource);
-					getLanguageModel().putModule(unit.getModules()[0]);
-				}
+				return true;
+			}
+
+			if (isAdditionOrChange(delta)) {
+				IHaskellParser parser = ParserManager.getInstance().getParser();
+				ICompilationUnit unit = parser.parse((IFile) resource);
+				getLanguageModel().putModule(unit.getModules()[0]);
 			}
 			return true;
+		}
+
+		private boolean isAdditionOrChange(final IResourceDelta delta) {
+			return    (delta.getKind() & ( IResourceDelta.ADDED
+					                     | IResourceDelta.CHANGED))
+				   != 0;
 		}
 	}
 

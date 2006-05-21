@@ -4,7 +4,7 @@ import java.io.StringBufferInputStream;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
-import net.sf.eclipsefp.haskell.core.halamo.ResourceChangeMonitor;
+import net.sf.eclipsefp.haskell.core.halamo.ProjectChangeMonitor;
 import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
 
 import org.eclipse.core.resources.IFile;
@@ -22,7 +22,7 @@ import static org.easymock.EasyMock.*;
  * 
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-public class ResourceChangeMonitor_PDETestCase extends HaskellProject_PDETestCase {
+public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase {
 	
 	private IHaskellModel fLanguageModel;
 	private IResourceChangeListener fMonitor;
@@ -30,7 +30,7 @@ public class ResourceChangeMonitor_PDETestCase extends HaskellProject_PDETestCas
 	@Override
 	protected void setUpMore() throws Exception {
 		fLanguageModel = createMock(IHaskellModel.class);
-		fMonitor = new ResourceChangeMonitor(getLanguageModel());
+		fMonitor = new ProjectChangeMonitor(getLanguageModel());
 
 		getWorkspace().addResourceChangeListener(getMonitor());
 	}

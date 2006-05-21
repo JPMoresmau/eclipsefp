@@ -110,7 +110,6 @@ class DefaultHaskellParser implements IHaskellParser {
 			}
 
 			public long getOffset() {
-				// TODO Auto-generated method stub
 				return 0;
 			}
 		};

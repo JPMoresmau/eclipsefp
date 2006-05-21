@@ -7,8 +7,5 @@ package net.sf.eclipsefp.haskell.core.halamo;
   * @author Leif Frenzel
   */
 public interface IExportThingWithComponent extends IHaskellLanguageElement {
-
-  /** <p>returns the <code>IExportThingWith</code> element to which this 
-    * component belongs.</p> */
-  IExportThingWith getExportSpecification();
+	//marker interface
 }

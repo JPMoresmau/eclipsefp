@@ -8,6 +8,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.codeassist.*;
 
 /**
@@ -20,7 +21,20 @@ import net.sf.eclipsefp.haskell.core.codeassist.*;
 public class HaskellCAProcessor implements IContentAssistProcessor {
 
 	public static class NullCompletionContext extends HaskellCompletionContext {
-		//TODO write the computeProposals method that doesn't return anything here 
+
+		private static NullCompletionContext instance = null;
+
+		public static NullCompletionContext getInstance() {
+			if (null == instance)
+				instance = new NullCompletionContext();
+			return instance ;
+		}
+		
+		@Override
+		public ICompletionProposal[] computeProposals() {
+			return new ICompletionProposal[0];
+		}
+		
 	}
 
 	private static class WorkbenchContextFactory implements
@@ -32,10 +46,9 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 			try {
 				return new WorkbenchHaskellCompletionContext(viewer, offset);
 			} catch (CoreException ex) {
-				//TODO this means there was an error when parsing the contents
-				//of the viewer and the code assistance cannot go on
-				//TODO log the error
-				return new NullCompletionContext();
+				HaskellCorePlugin.log("Error when parsing the viewer "+
+						"contents. Aborting code assistance.", ex);
+				return NullCompletionContext.getInstance();
 			}
 		}
 

@@ -5,7 +5,6 @@ import java.util.Vector;
 
 import net.sf.eclipsefp.haskell.core.halamo.IFunctionBinding;
 import net.sf.eclipsefp.haskell.core.halamo.IMatch;
-import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.IPatternBinding;
 
 // the IPatternBinding implementation here isn't a hack, it is almost a sin,
@@ -17,11 +16,6 @@ public class FunctionBinding extends Declaration implements IFunctionBinding, IP
 	
 	public IMatch[] getMatches() {
 		return fMatches.toArray(new IMatch[fMatches.size()]);
-	}
-
-	public IModule getModule() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public boolean acceptsMatch(IMatch match) {

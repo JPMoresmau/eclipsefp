@@ -7,8 +7,5 @@ package net.sf.eclipsefp.haskell.core.halamo;
   * @author Leif Frenzel
   */
 public interface IDeclaration extends IHaskellLanguageElement {
-
-  /** <p>returns the module to which this declaration belongs.</p> */
-  IModule getModule();
-  
+	//marker interface is supposed to be extended
 }

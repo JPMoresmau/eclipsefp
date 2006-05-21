@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.core.halamo.IModule;
 public class ExportSpecification extends HaskellLanguageElement implements IExportSpecification {
 
 	public IModule getModule() {
-		// TODO Auto-generated method stub
+		// TODO check this method's users to remove it
 		return null;
 	}
 
