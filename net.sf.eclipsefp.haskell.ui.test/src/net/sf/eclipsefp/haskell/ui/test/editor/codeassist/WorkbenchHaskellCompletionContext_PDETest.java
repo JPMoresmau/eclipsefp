@@ -9,9 +9,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -25,6 +23,7 @@ import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModelManager;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.ui.editor.codeassist.WorkbenchHaskellCompletionContext;
+import net.sf.eclipsefp.haskell.ui.test.editor.codeassist.doubles.StubViewer;
 import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
 import junit.framework.TestCase;
 
@@ -76,7 +75,8 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 		
 		IFile fibbFile = fRightHandle.createSourceFile("Fibonacci.hs", oldText);
 		
-		final IDocument fibbDoc = createEditorDocumentFor(fibbFile);
+		final ITextEditor fibbEditor = createEditorFor(fibbFile);
+		final IDocument fibbDoc = getDocumentFrom(fibbEditor);
 		final ITextViewer fibbViewer = createViewerFor(fibbDoc);
 		
 		final String currentText = oldText + "fibb n = (fibb (n - 1)) + (fibb (n - 1))\n";
@@ -91,8 +91,7 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 		
 		HaskellCompletionContext context = new WorkbenchHaskellCompletionContext(parser, fibbViewer, 0);
 		
-		fibbFile.delete(true, null);
-		//TODO need to avoid showing the 'Save changes?' dialog when testing
+		fibbEditor.doRevertToSaved();
 		
 		verify(parser);
 		
@@ -105,18 +104,26 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 	}
 
 	private ITextViewer createViewerFor(IDocument doc) {
-		TextViewer viewer = new TextViewer(new Shell(), SWT.NONE);
-		viewer.setDocument(doc);
-		return viewer;
+		return new StubViewer(doc);
 	}
 
 	private IDocument createEditorDocumentFor(IFile file) throws PartInitException {
+		ITextEditor editor = createEditorFor(file);
+		return getDocumentFrom(editor);
+	}
+
+	private IDocument getDocumentFrom(ITextEditor editor) {
+		final IEditorInput input = editor.getEditorInput();
+		IDocument doc = editor.getDocumentProvider().getDocument(input);
+		return doc;
+	}
+
+	private ITextEditor createEditorFor(IFile file) throws PartInitException {
 		FileEditorInput input = new FileEditorInput(file);
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		
 		ITextEditor editor = (ITextEditor) activePage.openEditor(input, "net.sf.eclipsefp.haskell.ui.editor.HaskellEditor");
-		IDocument doc = editor.getDocumentProvider().getDocument(input);
-		return doc;
+		return editor;
 	}
 	
 }
