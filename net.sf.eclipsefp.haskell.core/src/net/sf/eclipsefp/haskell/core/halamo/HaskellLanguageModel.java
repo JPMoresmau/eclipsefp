@@ -34,7 +34,6 @@ public class HaskellLanguageModel implements IHaskellModel {
 
 	public Scope computeScopeFor(IModule module) {
 		Scope result = new Scope();
-		addOwnFunctions(module, result);
 		addImportedModules(module, result);
 		return result;
 	}
@@ -46,7 +45,4 @@ public class HaskellLanguageModel implements IHaskellModel {
 		}
 	}
 
-	private void addOwnFunctions(IModule module, Scope result) {
-		result.addAvailableModule(module);
-	}
 }

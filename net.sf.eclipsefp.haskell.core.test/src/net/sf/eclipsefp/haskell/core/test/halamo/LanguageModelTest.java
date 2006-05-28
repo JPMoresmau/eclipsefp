@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.test.halamo;
 
-
 import java.io.StringReader;
 import java.util.List;
 
@@ -8,6 +7,10 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
+
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
+
 
 import static org.easymock.EasyMock.*;
 
@@ -63,6 +66,9 @@ public class LanguageModelTest extends TestCase {
 		
 		Scope scope = fLangModelEngine.getScopeFor(module);
 		assertNotNull(scope);
+		
+		List<IModule> modules = scope.getAvailableModules();
+		assertEquals(0, modules.size());
 	}
 	
 	public void testWithMoreThanOneImport() throws CoreException {
@@ -111,12 +117,18 @@ public class LanguageModelTest extends TestCase {
 
 	private IModule createModule(final String contents) {
 		try {
-			IModule module = new HaskellParser(new StringReader(contents)).parseModule();
+			IModule module = parse(contents);
 			fLangModelEngine.putModule(module);
 			return module;
 		} catch (Exception e) {
 			throw new AssertionFailedError(e.getMessage());
 		}
+	}
+	
+	private static IModule parse(final String contents)
+		throws RecognitionException,TokenStreamException
+	{
+		return new HaskellParser(new StringReader(contents)).parseModule();
 	}
 
 }

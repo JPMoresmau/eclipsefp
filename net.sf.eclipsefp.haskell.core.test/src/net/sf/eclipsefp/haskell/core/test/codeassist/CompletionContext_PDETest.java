@@ -5,7 +5,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
-import net.sf.eclipsefp.haskell.core.test.codeassist.doubles.EmptyCompletionContext;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
 import net.sf.eclipsefp.haskell.core.test.util.CompletionProposalTestCase;
@@ -20,7 +19,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "main = pu\n";
 		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = new EmptyCompletionContext(unit, 62);
+		HaskellCompletionContext context = createContext(unit, 62);
 		
 		assertEquals('u', input.charAt(62 - 1));
 		
@@ -34,7 +33,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
                              "\n" +
                              "fat :: N";
 		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = new EmptyCompletionContext(unit, 43);
+		HaskellCompletionContext context = createContext(unit, 43);
 
 		assertEquals('N', input.charAt(43 - 1));
 
@@ -47,7 +46,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		final String input = "module CompletionEngineTest wh";
 		//TODO avoid complaining about parsing error here
 		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = new EmptyCompletionContext(unit, 30);
+		HaskellCompletionContext context = createContext(unit, 30);
 
 		assertEquals('h', input.charAt(30 - 1));
 
@@ -62,7 +61,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (f";
 		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = new EmptyCompletionContext(unit, 48);
+		HaskellCompletionContext context = createContext(unit, 48);
 		
 		assertEquals('f', input.charAt(48 - 1));
 
@@ -77,7 +76,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (";
 		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = new EmptyCompletionContext(unit, 48);
+		HaskellCompletionContext context = createContext(unit, 48);
 		
 		assertEquals('(', input.charAt(47 - 1));
 
@@ -92,7 +91,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "_underscore = '_'\n" +
 				             "prefixWithUnderscore str = _und";
 		final ICompilationUnit unit = parseAsFile(input);
-		final HaskellCompletionContext context = new EmptyCompletionContext(unit, 74);
+		final HaskellCompletionContext context = createContext(unit, 74);
 		
 		assertEquals('d', input.charAt(74 - 1));
 
@@ -125,10 +124,10 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		return CompletionProposalTestCase.createProposal(replaced, replacement, offset);
 	}
 	
-	//TODO test inter-module dependency fetching
-	//create the Fibonacci module declaring the fibb function
-	//create the Main module that imports the Fibonacci module and uses fibb
-	
+	private HaskellCompletionContext createContext(ICompilationUnit unit, int offset) {
+		return new HaskellCompletionContext(unit, new StubHalamo(), offset);
+	}
+
 	//TODO seems like the functions from the module being completed are being listed twice
 	//example: module Fibbonacci where
 	//         fibb 0 = 1
