@@ -64,6 +64,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration
     
     // TODO get from pref / update on pref change
     result.enableAutoActivation( true );
+    result.enableAutoInsert(true);
     result.setAutoActivationDelay( 500 );
     
     return result; 
