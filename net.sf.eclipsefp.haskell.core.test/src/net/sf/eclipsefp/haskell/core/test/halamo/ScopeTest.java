@@ -11,7 +11,7 @@ import junit.framework.TestCase;
 
 public class ScopeTest extends TestCase {
 	
-	public void testFlattenDeclarations() {
+	public void testFlattenDeclarationLists() {
 		Scope scope = new Scope();
 		
 		scope.addAvailableModule(new StubModule("fib"));

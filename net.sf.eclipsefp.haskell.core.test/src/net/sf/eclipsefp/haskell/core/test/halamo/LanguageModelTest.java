@@ -16,6 +16,7 @@ import static org.easymock.EasyMock.*;
 
 import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.Scope;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
@@ -24,7 +25,7 @@ import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
 
 public class LanguageModelTest extends TestCase {
 	
-	private HaskellLanguageModel fLangModelEngine = new HaskellLanguageModel();
+	private IHaskellModel fLangModel = new HaskellLanguageModel();
 
 	@Override
 	protected void setUp() throws Exception {
@@ -49,7 +50,7 @@ public class LanguageModelTest extends TestCase {
         							"main = putStr $ show $ fib 5";
 		IModule mainModule = createModule(mainContents);
 		
-		Scope scope = fLangModelEngine.getScopeFor(mainModule);
+		Scope scope = fLangModel.getScopeFor(mainModule);
 		assertNotNull(scope);
 		
 		List<IModule> modules = scope.getAvailableModules();
@@ -64,7 +65,7 @@ public class LanguageModelTest extends TestCase {
 				                      "fat 0 = 1";
 		IModule module = createModule(contents);
 		
-		Scope scope = fLangModelEngine.getScopeFor(module);
+		Scope scope = fLangModel.getScopeFor(module);
 		assertNotNull(scope);
 		
 		List<IModule> modules = scope.getAvailableModules();
@@ -81,7 +82,7 @@ public class LanguageModelTest extends TestCase {
 		
 		IModule module = createModule(contents);
 		
-		Scope scope = fLangModelEngine.getScopeFor(module);
+		Scope scope = fLangModel.getScopeFor(module);
 		
 		assertNotNull(scope);
 		
@@ -99,11 +100,11 @@ public class LanguageModelTest extends TestCase {
 	public void testAddingModules() {
 		IModule myModule = createModuleByName("MyModule");
 		IModule otherModule = createModuleByName("OtherModule");
-		fLangModelEngine.putModule(myModule);
-		fLangModelEngine.putModule(otherModule);
+		fLangModel.putModule(myModule);
+		fLangModel.putModule(otherModule);
 		
-		assertSame(otherModule, fLangModelEngine.getModule("OtherModule"));
-		assertSame(myModule, fLangModelEngine.getModule("MyModule"));
+		assertSame(otherModule, fLangModel.getModule("OtherModule"));
+		assertSame(myModule, fLangModel.getModule("MyModule"));
 	}
 	
 	private IModule createModuleByName(String name) {
@@ -118,7 +119,7 @@ public class LanguageModelTest extends TestCase {
 	private IModule createModule(final String contents) {
 		try {
 			IModule module = parse(contents);
-			fLangModelEngine.putModule(module);
+			fLangModel.putModule(module);
 			return module;
 		} catch (Exception e) {
 			throw new AssertionFailedError(e.getMessage());

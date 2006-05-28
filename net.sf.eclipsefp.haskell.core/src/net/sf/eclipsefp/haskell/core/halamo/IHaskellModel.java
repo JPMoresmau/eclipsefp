@@ -4,6 +4,8 @@ public interface IHaskellModel {
 
 	void putModule(IModule module);
 	
-	Scope getScopeFor(IModule module);	
+	Scope getScopeFor(IModule module);
+
+	IModule getModule(String string);	
 
 }

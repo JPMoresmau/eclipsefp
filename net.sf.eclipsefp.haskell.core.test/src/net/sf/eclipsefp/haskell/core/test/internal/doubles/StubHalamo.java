@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.core.halamo.Scope;
 
 public class StubHalamo extends HaskellLanguageModel {
 
-	private Scope fScope = new Scope();
+	private Scope fScope = Scope.EMPTY;
 
 	public void setModulesInScope(IModule... modules) {
 		fScope = new Scope();

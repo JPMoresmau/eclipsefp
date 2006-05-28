@@ -29,20 +29,7 @@ public class HaskellLanguageModel implements IHaskellModel {
 	}
 
 	public Scope getScopeFor(IModule module) {
-		return computeScopeFor(module);
-	}
-
-	public Scope computeScopeFor(IModule module) {
-		Scope result = new Scope();
-		addImportedModules(module, result);
-		return result;
-	}
-
-	private void addImportedModules(IModule module, Scope result) {
-		for (IImport imp : module.getImports()) {
-			final IModule foreignModule = getModule(imp.getImportedElement());
-			result.addAvailableModule(foreignModule);
-		}
+		return new Scope(module, this);
 	}
 
 }
