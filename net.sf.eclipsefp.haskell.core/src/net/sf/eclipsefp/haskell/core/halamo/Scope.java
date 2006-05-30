@@ -7,6 +7,7 @@ public class Scope {
 	public static final Scope EMPTY = new Scope();
 	
 	private IHaskellModel fModel;
+	private IModule fModule = new NullModule();
 	private List<IModule> fAvailableModules = new ArrayList<IModule>();
 
 	/**
@@ -24,6 +25,7 @@ public class Scope {
 	 */
 	public Scope(IModule module, IHaskellModel model) {
 		fModel = model;
+		fModule = module;
 		addImportedModules(module);
 	}
 	
@@ -35,8 +37,13 @@ public class Scope {
 		fAvailableModules.add(mod);
 	}
 
+	public void addAvailableModules(List<IModule> modules) {
+		fAvailableModules.addAll(modules);
+	}
+	
 	public List<IDeclaration> getAvailableDeclarations() {
 		List<IDeclaration> decls = new ArrayList<IDeclaration>();
+		decls.addAll(Arrays.asList(fModule.getDeclarations()));
 		for(IModule module : fAvailableModules) {
 			decls.addAll(Arrays.asList(module.getDeclarations()));
 		}
@@ -49,5 +56,5 @@ public class Scope {
 			addAvailableModule(foreignModule);
 		}
 	}
-	
+
 }

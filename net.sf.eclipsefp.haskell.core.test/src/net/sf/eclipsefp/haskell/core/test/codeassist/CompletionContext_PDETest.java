@@ -127,10 +127,4 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 	private HaskellCompletionContext createContext(ICompilationUnit unit, int offset) {
 		return new HaskellCompletionContext(unit, new StubHalamo(), offset);
 	}
-
-	//TODO seems like the functions from the module being completed are being listed twice
-	//example: module Fibbonacci where
-	//         fibb 0 = 1
-	//         fi
-	//when asking for code assistance here, we will get fibb listed twice
 }

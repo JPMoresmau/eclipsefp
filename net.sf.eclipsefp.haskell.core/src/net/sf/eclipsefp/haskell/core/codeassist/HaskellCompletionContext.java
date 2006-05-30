@@ -92,13 +92,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		List<String> result = new ArrayList<String>();
 		result.addAll(Arrays.asList(HaskellSyntax.getClasses()));
 		result.addAll(Arrays.asList(HaskellSyntax.getKeywords()));
-		//TODO move this to the scope calculator
 		Scope scope = model.getScopeFor(unit.getModules()[0]);
-		List<IDeclaration> internalDecls = Arrays.asList(unit.getModules()[0].getDeclarations());
-		List<IDeclaration> externalDecls = scope.getAvailableDeclarations();
-		List<IDeclaration> decls = new ArrayList<IDeclaration>(internalDecls.size() + externalDecls.size());
-		decls.addAll(internalDecls);
-		decls.addAll(externalDecls);
+		List<IDeclaration> decls = scope.getAvailableDeclarations();
 		for (IDeclaration decl : decls) {
 			result.add(decl.getName());
 		}
@@ -121,7 +116,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			if( isIdentifierChar(ch) ) {
 				sb.append( ch );
 			} else if( ch == '\"' || ch == '\'' ) {
-//				striong or char literals are not taken into account
+//				string or char literals are not taken into account
 				finished = true;
 			} else {
 //				no more identifier part, so we use what we have collected

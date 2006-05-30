@@ -16,8 +16,10 @@ public class StubHalamo extends HaskellLanguageModel {
 	}
 
 	@Override
-	public Scope getScopeFor(IModule file) {
-		return fScope;
+	public Scope getScopeFor(IModule module) {
+		Scope scope = new Scope(module, this);
+		scope.addAvailableModules(fScope.getAvailableModules());
+		return scope;
 	}
 	
 }
