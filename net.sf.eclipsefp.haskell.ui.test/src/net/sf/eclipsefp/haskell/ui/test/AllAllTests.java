@@ -10,6 +10,7 @@ public class AllAllTests {
 				"Test for net.sf.eclipsefp.haskell.ui.test");
 		//$JUnit-BEGIN$
 		suite.addTest( net.sf.eclipsefp.haskell.ui.test.editor.text.AllTests.suite());
+		suite.addTest( net.sf.eclipsefp.haskell.ui.test.editor.AllTests.suite());
 		//$JUnit-END$
 		return suite;
 	}
