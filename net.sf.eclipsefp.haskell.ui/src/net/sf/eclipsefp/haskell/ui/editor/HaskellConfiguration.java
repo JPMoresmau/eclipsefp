@@ -123,7 +123,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
 	public String[] getIndentPrefixes(final ISourceViewer sourceViewer,
 			final String contentType) {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		int tabWidth = getTabWidth(sourceViewer);
 		for (int i = 0; i <= tabWidth; i++) {
 			StringBuffer prefix = new StringBuffer();
