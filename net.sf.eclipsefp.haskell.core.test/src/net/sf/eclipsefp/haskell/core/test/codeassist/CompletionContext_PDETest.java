@@ -109,12 +109,30 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		final StubHalamo langModel = new StubHalamo();
 		HaskellCompletionContext context = new HaskellCompletionContext(unit, langModel, offset);
 		
-		langModel.setModulesInScope(new StubModule("fat", "fib"));
+		langModel.setModulesInScope(new StubModule("Recursive", "fat", "fib"));
 		
 		ICompletionProposal[] proposals = context.computeProposals();
 		
 		assertContains(createProposal("f", "fat", offset), proposals);
 	}
+	
+	public void testCompletesModuleNames() throws CoreException {
+		final String input = "module Main where\n" +
+							 "\n" +
+		                     "import Fib";
+		final int offset = input.length();
+		final ICompilationUnit unit = parseAsFile(input);
+		final StubHalamo langModel = new StubHalamo();
+		HaskellCompletionContext context = new HaskellCompletionContext(unit, langModel, offset);
+		
+		langModel.putModule(new StubModule("Fibonacci"));
+		
+		ICompletionProposal[] proposals = context.computeProposals();
+
+		assertContains(createProposal("Fib", "Fibonacci", offset), proposals);
+	}
+	
+	//TODO do not propose an already imported module
 	
 	private void assertContains(ICompletionProposal proposal, ICompletionProposal[] proposals) {
 		CompletionProposalTestCase.assertContains(proposal, proposals);

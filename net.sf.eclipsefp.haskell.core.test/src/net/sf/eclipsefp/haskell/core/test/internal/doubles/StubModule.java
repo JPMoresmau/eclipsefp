@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.core.test.internal.doubles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
 import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
@@ -11,8 +14,15 @@ import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 public class StubModule implements IModule {
 
 	private IDeclaration[] fDeclarations;
+	private String fModuleName;
+	private List<IImport> fImports = new ArrayList<IImport>();
+	
+	public StubModule() {
+		this("UnimportantModule");
+	}
 
-	public StubModule(String... declNames) {
+	public StubModule(String moduleName, String... declNames) {
+		fModuleName = moduleName;
 		fDeclarations = new IDeclaration[declNames.length];
 		for(int i = 0; i < declNames.length; ++i) {
 			fDeclarations[i] = new StubDeclaration(declNames[i]);
@@ -24,7 +34,7 @@ public class StubModule implements IModule {
 	}
 
 	public IImport[] getImports() {
-		return null;
+		return fImports.toArray(new IImport[fImports.size()]);
 	}
 
 	public IDeclaration[] getDeclarations() {
@@ -36,7 +46,7 @@ public class StubModule implements IModule {
 	}
 
 	public String getName() {
-		return null;
+		return fModuleName;
 	}
 
 	public IHaskellLanguageElement getParent() {
@@ -45,6 +55,10 @@ public class StubModule implements IModule {
 
 	public ISourceLocation getSourceLocation() {
 		return null;
+	}
+
+	public void addImport(String module) {
+		fImports.add(new StubImport(module));
 	}
 
 }

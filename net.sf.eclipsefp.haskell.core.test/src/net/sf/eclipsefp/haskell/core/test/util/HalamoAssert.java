@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.core.test.util;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import junit.framework.Assert;
@@ -13,9 +13,9 @@ import junit.framework.Assert;
 public class HalamoAssert extends Assert {
 	
 	public static <T extends IHaskellLanguageElement> T
-	    assertContains(String name, List<T> elements)
+	    assertContains(String name, Collection<T> modules)
 	{
-		for (T module : elements) {
+		for (T module : modules) {
 			if (name.equals(module.getName())) {
 				return module;
 			}
@@ -23,6 +23,5 @@ public class HalamoAssert extends Assert {
 		fail("Element " + name + " not found");
 		return null;
 	}
-
 
 }

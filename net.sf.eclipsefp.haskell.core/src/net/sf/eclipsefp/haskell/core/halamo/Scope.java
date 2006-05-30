@@ -53,8 +53,14 @@ public class Scope {
 	private void addImportedModules(IModule module) {
 		for (IImport imp : module.getImports()) {
 			final IModule foreignModule = fModel.getModule(imp.getImportedElement());
-			addAvailableModule(foreignModule);
+			if (foreignModule != null) {
+				addAvailableModule(foreignModule);
+			}
 		}
+	}
+
+	public Collection<IModule> getImportableModules() {
+		return fModel.getModules();
 	}
 
 }

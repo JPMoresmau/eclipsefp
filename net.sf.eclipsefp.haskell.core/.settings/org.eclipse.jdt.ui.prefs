@@ -1,5 +1,11 @@
-#Fri May 12 09:58:42 BRT 2006
+#Tue May 30 14:29:45 BRT 2006
 eclipse.preferences.version=1
+formatter_profile=_EclipseFP
 formatter_settings_version=10
 internal.default.compliance=default
+org.eclipse.jdt.ui.exception.name=e
+org.eclipse.jdt.ui.gettersetter.use.is=true
+org.eclipse.jdt.ui.javadoc=false
+org.eclipse.jdt.ui.keywordthis=false
+org.eclipse.jdt.ui.overrideannotation=true
 org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?><templates/>

@@ -1,6 +1,9 @@
 package net.sf.eclipsefp.haskell.core.halamo;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +29,10 @@ public class HaskellLanguageModel implements IHaskellModel {
 
 	public IModule getModule(String name) {
 		return fModules.get(name);
+	}
+
+	public Collection<IModule> getModules() {
+		return new ArrayList<IModule>(fModules.values());
 	}
 
 	public Scope getScopeFor(IModule module) {

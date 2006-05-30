@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.core.codeassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -9,7 +10,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.Scope;
 
 public class HaskellCompletionContext implements IHaskellCompletionContext {
@@ -59,46 +62,59 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		String completedToken;
 		try {
 			completedToken = getQualifier(getCompilationUnit(), getOffset());
-			List<String> possibilities = computePossibilities(
-												getCompilationUnit(),
-												getLanguageModel());
-			List<ICompletionProposal> result = filterAndConvert(possibilities, completedToken, getOffset());
+			List<String> possibilities = computePossibilities();
+			List<ICompletionProposal> result = filterAndConvert(possibilities,
+																completedToken,
+																getOffset());
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
-			//ignore the error and just return an empty result 
+			// ignore the error and just return an empty result
 		}
 		return new ICompletionProposal[0];
 	}
 	
-	private List<ICompletionProposal> filterAndConvert(List<String> proposals, String prefix, int offset) {
-		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.size());
+	private List<ICompletionProposal> filterAndConvert(List<String> proposals,
+		String prefix,
+		int offset)
+	{
+		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(
+				proposals.size());
 		int qlen = prefix.length();
 		if (qlen == 0) {
-			return result; 
+			return result;
 		}
 
 		for (String prop : proposals) {
 			if (prop.startsWith(prefix)) {
-				result.add(new CompletionProposal(prop, offset - qlen,
-						                          qlen, prop.length()));
+				result.add(new CompletionProposal(prop, offset - qlen, qlen,
+													prop.length()));
 			}
 		}
 		return result;
 	}
 
-	private List<String> computePossibilities(ICompilationUnit unit,
-											  IHaskellModel model)
-	{
+	private List<String> computePossibilities() {
 		List<String> result = new ArrayList<String>();
 		result.addAll(Arrays.asList(HaskellSyntax.getClasses()));
 		result.addAll(Arrays.asList(HaskellSyntax.getKeywords()));
-		Scope scope = model.getScopeFor(unit.getModules()[0]);
+
+		final IModule module = getCompilationUnit().getModules()[0];
+		Scope scope = getLanguageModel().getScopeFor(module);
 		List<IDeclaration> decls = scope.getAvailableDeclarations();
-		for (IDeclaration decl : decls) {
-			result.add(decl.getName());
-		}
-		
+		Collection<IModule> mods = scope.getImportableModules();
+		addAllNames(decls, result);
+		addAllNames(mods, result);
+
 		return result;
+	}
+	
+	private <T extends IHaskellLanguageElement> void addAllNames(
+		Collection<T> source,
+		List<String> destination)
+	{
+		for (IHaskellLanguageElement elem : source) {
+			destination.add(elem.getName());
+		}
 	}
 
 	private String getQualifier( final ICompilationUnit unit, 
@@ -136,7 +152,9 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1;
 	}
 
-	private StringBuffer readSourceTillOffset(final ICompilationUnit unit, final int offset) {
+	private StringBuffer readSourceTillOffset(final ICompilationUnit unit,
+		final int offset)
+	{
 		final String source = unit.getOriginalSourceCode();
 		return new StringBuffer(source.substring(0, offset));
 	}
