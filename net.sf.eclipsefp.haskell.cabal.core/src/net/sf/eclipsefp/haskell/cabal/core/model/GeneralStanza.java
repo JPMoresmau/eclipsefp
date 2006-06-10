@@ -9,7 +9,7 @@ package net.sf.eclipsefp.haskell.cabal.core.model;
   */
 public class GeneralStanza extends PackageDescriptionStanza {
 
-  GeneralStanza( final String name ) {
-    super( name );
+  GeneralStanza( final String name, final int startLine, final int endLine ) {
+    super( name, startLine, endLine );
   }
 }

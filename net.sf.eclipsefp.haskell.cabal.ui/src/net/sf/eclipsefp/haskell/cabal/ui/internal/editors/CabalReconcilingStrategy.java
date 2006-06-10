@@ -18,9 +18,11 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
 
   private final CabalEditor editor;
   private IDocument document;
+  private CabalFoldingStructureProvider foldingStructureProvider;
   
   CabalReconcilingStrategy( final CabalEditor editor ) {
     this.editor = editor;
+    foldingStructureProvider = new CabalFoldingStructureProvider( editor );
   }
 
   
@@ -37,6 +39,7 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
 
   public void setDocument( final IDocument document ) {
     this.document = document;
+    foldingStructureProvider.setDocument( document );
   }
 
   
@@ -63,5 +66,6 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
         editor.setPackageDescription( pd );
       }
     } );
+    foldingStructureProvider.updateFoldingRegions( pd );
   }
 }

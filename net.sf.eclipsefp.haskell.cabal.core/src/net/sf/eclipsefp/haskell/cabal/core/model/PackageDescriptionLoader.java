@@ -41,46 +41,61 @@ public class PackageDescriptionLoader {
   
   private static void parse( final String content, 
                              final PackageDescription pd ) throws IOException {
-    List<List<String>> stanzas = new ArrayList<List<String>>();
-    List<String> lastStanza = new ArrayList<String>();
+    List<StanzaInfo> stanzas = new ArrayList<StanzaInfo>();
+    StanzaInfo lastStanza = new StanzaInfo();
     stanzas.add( lastStanza );
     
     BufferedReader br = new BufferedReader( new StringReader( content ) );
+    int count = 0;
+    boolean contentStarted = false;
     String line = br.readLine();
     while( line != null ) {
+      count++;
       if( !isComment( line ) ) {
+        contentStarted = true;
         if( isEmpty( line ) ) {
-          lastStanza = new ArrayList<String>();
+          lastStanza.setEnd( count - 1 );
+          lastStanza = new StanzaInfo();
+          lastStanza.setStart( count );
           stanzas.add( lastStanza );
         } else {
-          lastStanza.add( line );
+          lastStanza.getContent().add( line );
         }
+      } else if( !contentStarted ) {
+        lastStanza.setStart( lastStanza.getStart() + 1 );
       }
       line = br.readLine();
     }
-    
+    if( !lastStanza.getContent().isEmpty() ) {
+      // then we had not yet a chance to set the end line
+      lastStanza.setEnd( count );
+    }
     applyStanzas( stanzas, pd );
   }
 
-  private static void applyStanzas( final List<List<String>> stanzas, 
+  private static void applyStanzas( final List<StanzaInfo> stanzas, 
                                     final PackageDescription pd ) {
-    Iterator<List<String>> it = stanzas.iterator();
+    Iterator<StanzaInfo> it = stanzas.iterator();
     while( it.hasNext() ) {
-      List<String> stanza = it.next();
-      if( !stanza.isEmpty() ) {
-        pd.addStanza( createStanza( stanza ) );
+      StanzaInfo info = it.next();
+      if( !info.getContent().isEmpty() ) {
+        pd.addStanza( create( info.getStart(), 
+                              info.getEnd(), 
+                              info.getContent() ) );
       }
     }
   }
 
-  private static PackageDescriptionStanza createStanza( final List<String> content ) {
+  private static PackageDescriptionStanza create( final int start, 
+                                                  final int end, 
+                                                  final List<String> content ) {
     PackageDescriptionStanza result;
     if( isExecutable( content ) ) {
-      result = new ExecutableStanza( getExecutableName( content ) );
+      result = new ExecutableStanza( getExecutableName( content ), start, end );
     } else if( isLibrary( content ) ) {
-      result = new LibraryStanza( getLibraryName( content ) );
+      result = new LibraryStanza( getLibraryName( content ), start, end );
     } else {
-      result = new GeneralStanza( getPlainName( content ) );
+      result = new GeneralStanza( getPlainName( content ), start, end );
     }
     return result;
   }
@@ -149,5 +164,40 @@ public class PackageDescriptionLoader {
     String pluginId = CabalCorePlugin.getPluginId();
     IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, ex );
     CabalCorePlugin.getDefault().getLog().log( status );
+  }
+  
+  
+  // inner classes
+  ////////////////
+  
+  private static class StanzaInfo {
+    
+    private final List<String> content;
+    private int start = 0;
+    private int end = 1;
+    
+    StanzaInfo() {
+      this.content = new ArrayList<String>();
+    }
+
+    List<String> getContent() {
+      return content;
+    }
+
+    void setEnd( final int end ) {
+      this.end = end;
+    }
+
+    int getEnd() {
+      return end;
+    }
+
+    void setStart( final int start ) {
+      this.start = start;
+    }
+    
+    int getStart() {
+      return start;
+    }
   }
 }

@@ -8,7 +8,7 @@ package net.sf.eclipsefp.haskell.cabal.core.model;
   */
 public class LibraryStanza extends PackageDescriptionStanza {
 
-  LibraryStanza( final String name ) {
-    super( name );
+  LibraryStanza( final String name, final int startLine, final int endLine ) {
+    super( name, startLine, endLine );
   }
 }

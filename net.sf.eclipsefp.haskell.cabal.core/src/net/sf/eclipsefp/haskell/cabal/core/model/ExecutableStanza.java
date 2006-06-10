@@ -8,7 +8,9 @@ package net.sf.eclipsefp.haskell.cabal.core.model;
   */
 public class ExecutableStanza extends PackageDescriptionStanza {
 
-  ExecutableStanza( final String name ) {
-    super( name );
+  ExecutableStanza( final String name, 
+                    final int startLine, 
+                    final int endLine ) {
+    super( name, startLine, endLine );
   }
 }

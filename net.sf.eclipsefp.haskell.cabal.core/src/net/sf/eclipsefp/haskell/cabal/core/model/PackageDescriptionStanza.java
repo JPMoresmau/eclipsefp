@@ -9,13 +9,27 @@ package net.sf.eclipsefp.haskell.cabal.core.model;
 public abstract class PackageDescriptionStanza {
 
   private final String name;
+  private final int startLine;
+  private final int endLine;
 
-  PackageDescriptionStanza( final String name ) {
+  PackageDescriptionStanza( final String name, 
+                            final int startLine, 
+                            final int endLine ) {
     this.name = name;
+    this.startLine = startLine;
+    this.endLine = endLine;
   }
   
   public String getName() {
     return name;
+  }
+  
+  public int getStartLine() {
+    return startLine;
+  }
+  
+  public int getEndLine() {
+    return endLine;
   }
   
   
@@ -24,6 +38,6 @@ public abstract class PackageDescriptionStanza {
   
   @Override
   public String toString() {
-    return getName();
+    return getName() + " (line " + startLine + "-" + endLine + ")";
   }
 }

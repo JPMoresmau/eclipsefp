@@ -3,8 +3,12 @@
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline;
 
 import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
+import net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalEditor;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -15,9 +19,12 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
   */
 public class CabalOutlinePage extends ContentOutlinePage {
   
+  private final CabalEditor editor;
   private PackageDescription packageDescription;
 
-  public CabalOutlinePage( final PackageDescription packageDescription ) {
+  public CabalOutlinePage( final CabalEditor editor, 
+                           final PackageDescription packageDescription ) {
+    this.editor = editor;
     this.packageDescription = packageDescription;
   }
   
@@ -39,6 +46,17 @@ public class CabalOutlinePage extends ContentOutlinePage {
     tv.setLabelProvider( new CabalOutlineLP() );
     tv.setContentProvider( new CabalOutlinePageCP() );
     tv.setAutoExpandLevel( AbstractTreeViewer.ALL_LEVELS );
+    tv.addSelectionChangedListener( new ISelectionChangedListener() {
+      public void selectionChanged(SelectionChangedEvent event) {
+        if( event.getSelection() instanceof IStructuredSelection ) {
+          IStructuredSelection ssel = ( IStructuredSelection )event.getSelection();
+          if( ssel.size() == 1 ) {
+            editor.selectAndReveal( ssel.getFirstElement() );
+          }
+        }
+      }
+    });
+
     tv.setInput( packageDescription );
   }
 }
