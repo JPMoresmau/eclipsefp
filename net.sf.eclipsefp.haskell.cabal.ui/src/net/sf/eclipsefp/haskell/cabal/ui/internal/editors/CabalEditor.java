@@ -12,5 +12,7 @@ import org.eclipse.ui.editors.text.TextEditor;
   */
 public class CabalEditor extends TextEditor {
 
-
+  public CabalEditor() {
+    setSourceViewerConfiguration( new CabalConfiguration() );
+  }
 }

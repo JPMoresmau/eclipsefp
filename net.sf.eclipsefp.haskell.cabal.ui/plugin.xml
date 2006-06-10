@@ -12,5 +12,12 @@
             id="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalEditor"
             name="%cabalEditor_name"/>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            extensions="cabal"
+            class="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalDocProvider"
+            id="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalDocProvider">
+      </provider>
+   </extension>
 </plugin>
