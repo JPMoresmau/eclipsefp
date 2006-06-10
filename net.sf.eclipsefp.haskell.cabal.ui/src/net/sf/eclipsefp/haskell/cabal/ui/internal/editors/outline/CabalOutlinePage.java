@@ -1,6 +1,6 @@
 // Copyright (c) 2006 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
+package net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline;
 
 import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
 
@@ -13,18 +13,18 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
   * 
   * @author Leif Frenzel 
   */
-class CabalOutlinePage extends ContentOutlinePage {
+public class CabalOutlinePage extends ContentOutlinePage {
   
   private PackageDescription packageDescription;
 
-  CabalOutlinePage( final PackageDescription packageDescription ) {
+  public CabalOutlinePage( final PackageDescription packageDescription ) {
     this.packageDescription = packageDescription;
   }
   
-  void setPackageDescription( final PackageDescription packageDescription ) {
-    this.packageDescription = packageDescription;
+  public void setPackageDescription( final PackageDescription pd ) {
+    this.packageDescription = pd;
     if( getTreeViewer() != null ) {
-      getTreeViewer().setInput( packageDescription );
+      getTreeViewer().setInput( pd );
     }
   }
   

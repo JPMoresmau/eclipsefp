@@ -1,6 +1,6 @@
 // Copyright (c) 2006 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
+package net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline;
 
 import net.sf.eclipsefp.haskell.cabal.core.model.ExecutableStanza;
 import net.sf.eclipsefp.haskell.cabal.core.model.GeneralStanza;

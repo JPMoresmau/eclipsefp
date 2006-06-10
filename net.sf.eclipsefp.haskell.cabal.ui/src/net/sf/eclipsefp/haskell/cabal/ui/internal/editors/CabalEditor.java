@@ -3,6 +3,7 @@
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
 
 import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
+import net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline.CabalOutlinePage;
 
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
