@@ -26,7 +26,7 @@ public class ColorProvider {
   static final String OTHER   = "OTHER";
 
   private static final RGB DEFAULT_COMMENT           = new RGB( 128, 128, 192 );
-  private static final RGB DEFAULT_KEYWORD           = new RGB( 0, 0, 196 );
+  private static final RGB DEFAULT_KEYWORD           = new RGB( 128, 0, 86 );
   private static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
   /** the singleton instance of ColorProvider. */
