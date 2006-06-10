@@ -20,4 +20,8 @@ public class CabalCorePlugin extends Plugin {
   public static CabalCorePlugin getDefault() {
     return plugin;
   }
+  
+  public static String getPluginId() {
+    return getDefault().getBundle().getSymbolicName();
+  }
 }

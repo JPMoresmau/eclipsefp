@@ -9,3 +9,4 @@ Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-LazyStart: true
+Export-Package: net.sf.eclipsefp.haskell.cabal.core.model

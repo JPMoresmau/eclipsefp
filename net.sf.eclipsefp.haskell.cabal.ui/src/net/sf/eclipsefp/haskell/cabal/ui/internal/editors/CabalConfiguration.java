@@ -8,6 +8,8 @@ import net.sf.eclipsefp.haskell.cabal.ui.internal.editors.text.CommentScanner;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -17,28 +19,42 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
   *
   * @author Leif Frenzel
   */
-public class CabalConfiguration extends SourceViewerConfiguration {
+class CabalConfiguration extends SourceViewerConfiguration {
+
+  private final CabalEditor editor;
 
   private ITokenScanner defaultScanner;
   private ITokenScanner commentScanner;
+  
+  CabalConfiguration( final CabalEditor editor ) {
+    this.editor = editor;
+  }  
   
   
   // interface methods of SourceViewerConfiguration
   /////////////////////////////////////////////////
   
   public IPresentationReconciler getPresentationReconciler( final ISourceViewer sv ) {
-    PresentationReconciler reconciler= new PresentationReconciler();
+    PresentationReconciler result= new PresentationReconciler();
     
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( getDefaultScanner() );
-    reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
-    reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
+    result.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
+    result.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
 
     DefaultDamagerRepairer cdr = new DefaultDamagerRepairer( getCommentScanner() );
-    reconciler.setDamager( cdr, CabalDocProvider.COMMENT_CONTENT_TYPE );
-    reconciler.setRepairer( cdr, CabalDocProvider.COMMENT_CONTENT_TYPE );
+    result.setDamager( cdr, CabalDocProvider.COMMENT_CONTENT_TYPE );
+    result.setRepairer( cdr, CabalDocProvider.COMMENT_CONTENT_TYPE );
     
-    return reconciler;
+    return result;
   }
+
+  public IReconciler getReconciler( final ISourceViewer sourceViewer ) {
+    CabalReconcilingStrategy strategy = new CabalReconcilingStrategy( editor );
+    MonoReconciler result = new MonoReconciler( strategy, false );
+    result.setDelay( 500 );
+    return result;
+  }
+
 
   
   // helping methods

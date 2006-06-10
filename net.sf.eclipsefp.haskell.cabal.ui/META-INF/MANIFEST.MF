@@ -7,10 +7,12 @@ Bundle-ClassPath: cabalui.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.cabal.ui.internal.CabalUIPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime,
+Require-Bundle: net.sf.eclipsefp.haskell.cabal.core,
+ org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.ui,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
+ org.eclipse.ui.views,
  org.eclipse.ui.workbench.texteditor
 Eclipse-LazyStart: true
