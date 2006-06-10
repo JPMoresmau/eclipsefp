@@ -5,7 +5,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            contributorClass="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalEditorContributor"
             default="true"
             extensions="cabal"
             icon="$nl$/icons/eview16/cabal.gif"
@@ -19,5 +19,13 @@
             class="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalDocProvider"
             id="net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalDocProvider">
       </provider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            name="%templateContext_name"
+            id="cabalPackageDescriptionTemplates"/>
+      <include file="templates/templates.xml"/>
    </extension>
 </plugin>

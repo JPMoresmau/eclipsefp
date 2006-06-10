@@ -2,10 +2,13 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
 
+import java.util.ResourceBundle;
+
 import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
 import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline.CabalOutlinePage;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -14,6 +17,8 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /** <p>an editor for Cabal package description files.</p> 
@@ -83,6 +88,19 @@ public class CabalEditor extends TextEditor {
                                                getSharedColors() );
     projectionSupport.install();
     pv.doOperation( ProjectionViewer.TOGGLE );
+  }
+  
+  protected void createActions() {
+    super.createActions();
+    IAction action = new TextOperationAction(
+        ResourceBundle.getBundle( CabalEditor.class.getName() ),
+        "ContentAssistProposal.",
+        this,
+        ISourceViewer.CONTENTASSIST_PROPOSALS );
+    String adi = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
+    action.setActionDefinitionId( adi );
+    setAction( "ContentAssist.", action );
+    markAsStateDependentAction( "ContentAssist.", true );
   }
   
   

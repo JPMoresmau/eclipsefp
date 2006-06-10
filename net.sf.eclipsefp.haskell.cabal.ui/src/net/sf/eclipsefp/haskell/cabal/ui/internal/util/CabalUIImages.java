@@ -44,8 +44,9 @@ public class CabalUIImages implements IImageNames {
   private static void declareImages() {
     // objects
     declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" );
-    declare( LIBRARY_STANZA, OBJECT    + "librarystanza.gif" );
-    declare( GENERAL_STANZA, OBJECT    + "generalstanza.gif" );
+    declare( LIBRARY_STANZA,    OBJECT + "librarystanza.gif" );
+    declare( GENERAL_STANZA,    OBJECT + "generalstanza.gif" );
+    declare( TEMPLATE,          OBJECT + "template.gif" );
   }
 
   private final static void declare( final String key, 

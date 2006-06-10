@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<templates>
+  <template id="simpleLibrary" 
+            name="Simple Library Package"
+            description="A package containing a simple library" 
+            context="cabalPackageDescriptionTemplates" 
+            enabled="true">Name:           ${name}
+Version:        ${version}
+License:        ${license}
+Author:         ${author}
+Homepage:       http://${homepage}
+Category:       ${category}
+Build-Depends:  base
+Synopsis:       ${synopsis}
+Exposed-modules: ${exposedModules}
+Extensions:     ${extensions}
+</template>
+  <template id="executables" 
+            name="Package with Executables" 
+            description="A package containing executable programs" 
+            context="cabalPackageDescriptionTemplates" 
+            enabled="true">Name:           ${name}
+Version:        ${version}
+License:        ${license}
+Author:         ${author}
+Synopsis:       Small package with two programs
+Build-Depends:  HUnit
+
+Executable:     program1
+Main-Is:        Main.hs
+Hs-Source-Dirs: prog1
+
+Executable:     program2
+Main-Is:        Main.hs
+Hs-Source-Dirs: prog2
+Other-Modules:  Utils
+</template>
+</templates>

@@ -16,4 +16,5 @@ public interface IImageNames {
   String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA";
   String LIBRARY_STANZA    = ID + ".LIBRARY_STANZA";
   String GENERAL_STANZA    = ID + ".GENERAL_STANZA";
+  String TEMPLATE          = ID + ".TEMPLATE";
 }
