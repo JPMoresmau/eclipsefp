@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.cabal.core
+Bundle-Version: 1.0.0
+Bundle-ClassPath: cabalcore.jar
+Bundle-Activator: net.sf.eclipsefp.haskell.cabal.core.internal.CabalCorePlugin
+Bundle-Vendor: %bundleVendor
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime
+Eclipse-LazyStart: true

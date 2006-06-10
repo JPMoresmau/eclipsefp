@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.cabal.ui
+Bundle-Version: 1.0.0
+Bundle-ClassPath: cabalui.jar
+Bundle-Activator: net.sf.eclipsefp.haskell.cabal.ui.internal.CabalUIPlugin
+Bundle-Vendor: %bundleVendor
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
