@@ -22,7 +22,11 @@ public class CabalScanner extends RuleBasedScanner {
     "name", "version", "cabal-version", "license", "license-file", "copyright", 
     "author", "maintainer", "stability", "homepage", "package-url", "synopsis", 
     "description", "category", "tested-with", "build-depends", "data-files", 
-    "extra-source-files", "extra-tmp-files"
+    "extra-source-files", "extra-tmp-files", "exposed-modules", "executable",
+    "main-is", "buildable", "other-modules", "hs-source-dirs", "extensions", 
+    "ghc-options", "ghc-prof-options", "hugs-options", "nhc-options", "includes", 
+    "include-dirs", "c-sources", "extra-libraries", "extra-lib-dirs", "cc-options", 
+    "ld-options", "frameworks"
   };
 
 
