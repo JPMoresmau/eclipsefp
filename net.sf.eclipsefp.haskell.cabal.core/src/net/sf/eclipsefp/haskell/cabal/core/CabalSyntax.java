@@ -10,5 +10,6 @@ public class CabalSyntax {
   public static final String FIELD_EXECUTABLE      = "executable"; //$NON-NLS-1$
   public static final String FIELD_EXPOSED_MODULES = "exposed-modules"; //$NON-NLS-1$
   public static final String FIELD_NAME            = "name"; //$NON-NLS-1$
+  public static final String FIELD_LICENSE_FILE    = "license-file"; //$NON-NLS-1$
 
 }

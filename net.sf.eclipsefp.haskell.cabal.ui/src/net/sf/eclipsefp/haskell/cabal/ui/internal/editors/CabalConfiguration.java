@@ -10,6 +10,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -71,6 +73,17 @@ class CabalConfiguration extends SourceViewerConfiguration {
     return result;
   }
   
+  @Override
+  public IHyperlinkDetector[] getHyperlinkDetectors( final ISourceViewer sv ) {
+    IHyperlinkDetector[] result = null;
+    if( sv != null) {
+      result = new IHyperlinkDetector[] { new URLHyperlinkDetector(),
+                                          new CabalHyperlinkDetector( editor ) };
+    }
+    return result;
+  }
+  
+
   // helping methods
   //////////////////
 
