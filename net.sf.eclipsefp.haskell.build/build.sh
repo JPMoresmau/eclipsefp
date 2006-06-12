@@ -12,6 +12,7 @@ echo using ECLIPSEFP_HOME: ${ECLIPSEFP_HOME:?must be set}
 echo using ECLIPSE_HOME: $ECLIPSE_HOME
 echo
 pdeBuildPluginVersion=3.1.2
+branchID="0.10.0"
 buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-/tmp/eclipsefp-build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
 
@@ -91,5 +92,5 @@ if $cmd > $buildDirectory/build.log; then
             compilelogs
     scp $buildDirectory/I.$buildId/net.sf.eclipsefp.haskell-${buildId}.zip \
         $buildDirectory/net.sf.eclipsefp.haskell-${buildId}.zip.log.tar.gz \
-        $remoteUser@$remoteServer:$remoteSiteRoot/download/drops
+        $remoteUser@$remoteServer:$remoteSiteRoot/download/drops/$branchID/
 fi
