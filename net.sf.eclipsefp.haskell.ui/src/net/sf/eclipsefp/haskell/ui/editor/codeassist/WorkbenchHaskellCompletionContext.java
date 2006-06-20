@@ -12,6 +12,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
@@ -20,7 +21,7 @@ import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext {
 
 	public WorkbenchHaskellCompletionContext(ITextViewer viewer, int offset) throws CoreException {
-		this(HaskellModelManager.getInstance(), viewer, offset);
+		this(HaskellCorePlugin.getDefaultModelManager(), viewer, offset);
 	}
 
 	public WorkbenchHaskellCompletionContext(IHaskellModelManager manager, ITextViewer viewer, int offset) throws CoreException {
@@ -28,7 +29,7 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 	}
 
 	public WorkbenchHaskellCompletionContext(IHaskellParser parser, ITextViewer viewer, int offset) throws CoreException {
-		this(HaskellModelManager.getInstance(), parser, viewer, offset);
+		this(HaskellCorePlugin.getDefaultModelManager(), parser, viewer, offset);
 	}
 	
 	protected WorkbenchHaskellCompletionContext(IHaskellModelManager manager,

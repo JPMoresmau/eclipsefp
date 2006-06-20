@@ -12,6 +12,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.text.edits.*;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
@@ -109,7 +110,7 @@ class RenameModuleDelegate {
   }
 
   private ICompilationUnit[] getAllDependentCUs() {
-    HaskellModelManager halamo = HaskellModelManager.getInstance();
+    HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
     ICompilationUnit compilationUnit = halamo.getCompilationUnit( getFile() );
     return halamo.getDependentCUs( compilationUnit );
   }

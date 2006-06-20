@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.eclipsefp.common.core.util.Assert;
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -20,26 +23,30 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * The model manager takes care of all language models on the workbench.
+ * The model manager takes care of all language models on the workspace.
  * 
  * @author Thiago Arrais
  */
 public class HaskellModelManager implements IHaskellModelManager {
 
-	private final static HaskellModelManager INSTANCE = new HaskellModelManager();
-	
-	public static HaskellModelManager getInstance() {
-		return INSTANCE;
-	}
-	
 	private Map<String, ProjectModel> htProjectModels = new Hashtable<String, ProjectModel>();
 
 	private Map<IProject, HaskellLanguageModel> fLanguageModels = new Hashtable<IProject, HaskellLanguageModel>();
+
+	private IWorkspace fWorkspace;
 	
-	private HaskellModelManager() {
-		//hide default constructor on singleton
+	public HaskellModelManager(IWorkspace workspace) {
+		fWorkspace = workspace;
 	}
 
+	/**
+	 * Gets the corresponding IHaskellModel object for a project.
+	 * This method doesn't initialize the project (i.e. the resulting object
+	 * does not contain any of the modules defined on the project), it is
+	 * supposed to be used as a lazy proxy only.
+	 * 
+	 * @see buildModelFor
+	 */
 	public IHaskellModel getModelFor(IProject project) {
 		HaskellLanguageModel result = fLanguageModels.get(project);
 		if (null == result) {
@@ -64,7 +71,7 @@ public class HaskellModelManager implements IHaskellModelManager {
 		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].isOpen()
 					&& projects[i].hasNature(HaskellNature.NATURE_ID)) {
-				initialize(projects[i]);
+				buildModelFor(projects[i]);
 			}
 		}
 	}
@@ -138,9 +145,28 @@ public class HaskellModelManager implements IHaskellModelManager {
 		changeMonitor.observeChangesOn(getWorkspace());
 	}
 
-	private void initialize(final IProject project) throws CoreException {
-		ProjectModel model = getProjectModel(project);
-		model.initialize();
+	private IHaskellModel buildModelFor(final IProject project)
+		throws CoreException
+	{
+		IHaskellModel prjModel = getModelFor(project);
+		//TODO parametrize the sourcefolder
+		IContainer sources = project.getFolder("src");
+		for(IResource resource : sources.members()) {
+			if( resource.getType() == IResource.FILE ) {
+				IFile file = (IFile) resource;
+				if( ResourceUtil.hasHaskellExtension( file ) ) {
+					IHaskellParser parser = ParserManager.getInstance()
+	                            				.getParser();
+					try {
+						ICompilationUnit unit = parser.parse(file);
+						prjModel.putModule(unit.getModules()[0]);
+					} catch (CoreException e) {
+						//ignore parsing exception and go on
+					}
+				}
+			}
+		}
+		return prjModel;
 	}
 
 	private ProjectModel getProjectModel(final ICompilationUnit cu) {
@@ -168,7 +194,7 @@ public class HaskellModelManager implements IHaskellModelManager {
 	}
 
 	private IWorkspace getWorkspace() {
-		return HaskellCorePlugin.getDefault().getWorkspace();
+		return fWorkspace;
 	}
 
 }

@@ -10,9 +10,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.halamo.*;
-import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
-import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 
 /** <p>Structures the editor's document into a tree-like model and 
@@ -118,7 +117,8 @@ public class HaskellOutlineContentProvider implements ITreeContentProvider {
   //////////////////
   
   private void parse( final IFile file ) {
-    ICompilationUnit cu = HaskellModelManager.getInstance().getCompilationUnit( file );
+    HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
+	ICompilationUnit cu = halamo.getCompilationUnit( file );
     IModule[] modules = cu.getModules();
     // old TODO remove
     for( int i = 0; i < modules.length; i++ ) {

@@ -12,6 +12,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 
@@ -68,7 +69,8 @@ public class RenameModuleInfo implements IRenameModuleInfo {
   public IModule getModule() {
     IModule result = null;
     if( file != null ) {
-      ICompilationUnit cu = HaskellModelManager.getInstance().getCompilationUnit( file );
+      HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
+      ICompilationUnit cu = halamo.getCompilationUnit( file );
       IModule[] modules = cu.getModules();
       // TODO
       result = modules[ 0 ];

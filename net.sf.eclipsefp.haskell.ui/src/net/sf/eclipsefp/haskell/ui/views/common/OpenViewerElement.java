@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.*;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -36,7 +37,8 @@ public class OpenViewerElement extends Action {
       // try to find the corresponding compilation unit
       IFile file = ( IFile )element;
       if( ResourceUtil.hasHaskellExtension( file ) ) {
-        ICompilationUnit cu = HaskellModelManager.getInstance().getCompilationUnit( file );
+        HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
+		ICompilationUnit cu = halamo.getCompilationUnit( file );
         HaskellUIPlugin.showInEditor( cu );
       }
     }

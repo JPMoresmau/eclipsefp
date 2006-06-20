@@ -32,7 +32,7 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 	private IHaskellModel fLanguageModel;
 
 	public ProjectChangeMonitor(IProject project) {
-		this(HaskellModelManager.getInstance().getModelFor(project));
+		this(HaskellCorePlugin.getDefaultModelManager().getModelFor(project));
 	}
 	
 	public ProjectChangeMonitor(IHaskellModel model) {

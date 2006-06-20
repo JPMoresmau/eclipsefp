@@ -29,6 +29,8 @@ public class HaskellCorePlugin extends Plugin {
 
 	private IWorkspace fWorkspace;
 
+	private HaskellModelManager fModelManager;
+
 	public HaskellCorePlugin() {
 		this(ResourcesPlugin.getWorkspace());
 	}
@@ -44,14 +46,25 @@ public class HaskellCorePlugin extends Plugin {
 		collectCompilerInfo();
 		collectParserInfo();
 		try {
-			HaskellModelManager.getInstance().initialize();
+			fModelManager = new HaskellModelManager(getWorkspace());
+			fModelManager.initialize();
 		} catch (CoreException ex) {
 			String message = "Serious problem: could not initialize the Haskell "
 					+ "language model.";
 			HaskellCorePlugin.log(message, ex);
 		}
 	}
+	
+	public HaskellModelManager getModelManager() {
+		return fModelManager;
+	}
 
+	/**
+	 * Returns the shared instance's model manager
+	 */
+	public static HaskellModelManager getDefaultModelManager() {
+		return getDefault().getModelManager();
+	}
 	/**
 	 * <p>
 	 * returns the shared instance.
@@ -147,4 +160,5 @@ public class HaskellCorePlugin extends Plugin {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		return registry.getConfigurationElementsFor(getPluginId(), key);
 	}
+
 }
