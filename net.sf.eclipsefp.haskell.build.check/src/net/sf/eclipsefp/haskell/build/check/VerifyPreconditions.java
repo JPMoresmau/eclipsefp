@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Platform;
 public class VerifyPreconditions implements IPlatformRunnable {
 
 	public Object run(Object args) throws Exception {
-		Object bundle = Platform.getBundle("de.leiffrenzel.fp.haskell.core");
+		Object bundle = Platform.getBundle("net.sf.eclipsefp.haskell.core");
 		if (bundle != null) {
 			System.err.println("EclipseFP plugins found. Please try to build using a platform _without_ EclipseFP installed.");
 			return -127;
