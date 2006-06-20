@@ -44,6 +44,7 @@
 <target name="postSetup">
 	<exec executable="darcs" dir="${buildDirectory}">
 		<arg value="get"/>
+		<arg value="--partial"/>
 		<arg value="${builder}/.."/>
 		<arg value="eclipsefp"/>
 	</exec>
