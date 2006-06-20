@@ -49,6 +49,4 @@ public class HaskellModelManagerTest extends TestCase {
 		assertEquals(1, module.getDeclarations().length);
 	}
 	
-	//TODO test last case for restarted workspaces
-
 }

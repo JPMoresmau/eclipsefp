@@ -1,13 +1,14 @@
 package net.sf.eclipsefp.common.ui.test.wizards;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsefp.common.ui.wizards.ProjectCreationInfo;
 import net.sf.eclipsefp.common.ui.wizards.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,7 +35,6 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 	}
 
 	public void testCreateProject() throws InvocationTargetException, InterruptedException, CoreException {
-		
 		fInfo.setProjectName(PROJECT_NAME);
 		
 		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
@@ -45,7 +45,6 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		
 		prj = fWorkspaceRoot.getProject(PROJECT_NAME);
 		assertValid(prj);
-		
 	}
 	
 	public void testPlatformDefaultLocation() throws InvocationTargetException, InterruptedException, IOException {
@@ -70,6 +69,23 @@ public class ProjectCreationOperation_PDETest extends TestCase {
 		assertValid(prj);
 		
 		assertSameLocation(customLocation, prj.getLocation().toString());
+	}
+	
+	public void testAddsHaskellNature()
+		throws InvocationTargetException, InterruptedException, CoreException
+	{
+		runOperation(new ProjectCreationOperation(fInfo));
+		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		assertNotNull(prj.getNature(HaskellNature.NATURE_ID));
+	}
+	
+	public void testSetsUpSourceLocation()
+		throws InvocationTargetException, InterruptedException
+	{
+		runOperation(new ProjectCreationOperation(fInfo));
+		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		IHaskellProject hprj = HaskellProjectManager.get(prj);
+		System.out.println(hprj.getSourcePath().toString());
 	}
 
 	@Override

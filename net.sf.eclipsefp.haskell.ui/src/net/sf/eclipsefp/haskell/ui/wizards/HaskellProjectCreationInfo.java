@@ -19,9 +19,9 @@ import net.sf.eclipsefp.haskell.ui.util.IImageNames;
   * 
   * @author Leif Frenzel
   */
-class HaskellProjectCreationInfo extends ProjectCreationInfo {
+public class HaskellProjectCreationInfo extends ProjectCreationInfo {
 
-  HaskellProjectCreationInfo() {
+  public HaskellProjectCreationInfo() {
     setPageTitle( "Haskell project" ); 
     setPageDescription( "Create a new Haskell project in the workspace." );
     setProjectNatures( new String[] { HaskellNature.NATURE_ID } );

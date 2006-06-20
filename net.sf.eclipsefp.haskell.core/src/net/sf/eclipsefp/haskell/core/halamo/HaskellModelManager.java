@@ -7,6 +7,8 @@ import net.sf.eclipsefp.common.core.util.Assert;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 import org.eclipse.core.resources.IContainer;
@@ -93,8 +95,9 @@ public class HaskellModelManager implements IHaskellModelManager {
 		throws CoreException
 	{
 		IHaskellModel prjModel = getModelFor(project);
+		IHaskellProject hsProject = HaskellProjectManager.get(project);
 		//TODO parametrize the sourcefolder
-		IContainer sources = project.getFolder("src");
+		IContainer sources = hsProject.getSourceFolder();
 		for(IResource resource : sources.members()) {
 			if( resource.getType() == IResource.FILE ) {
 				IFile file = (IFile) resource;

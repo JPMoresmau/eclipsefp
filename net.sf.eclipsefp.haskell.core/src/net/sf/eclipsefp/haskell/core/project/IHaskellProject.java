@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.project;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -33,4 +34,6 @@ public interface IHaskellProject extends IAdaptable {
   String getTargetName();
   /** <p>returns the import libraries for this Haskell project.</p> */
   IImportLibrary[] getImportLibraries();
+
+  IContainer getSourceFolder();
 }

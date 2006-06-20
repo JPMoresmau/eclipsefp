@@ -95,8 +95,6 @@ public class ProjectCreationOperation implements IRunnableWithProgress {
   private void addNatures( final IProgressMonitor mon, 
                            final IProject project ) throws CoreException {
     IProjectDescription desc = project.getDescription();
-    // setting null here will apply the default location
-    desc.setLocation( null );
     desc.setNatureIds( info.getProjectNatures() );
     project.setDescription( desc, new SubProgressMonitor( mon, 1 ) );
   }
