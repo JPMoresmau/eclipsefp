@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.views.mdepview;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.*;
 
@@ -21,7 +23,8 @@ class ModuleDependenciesContentProvider implements IStructuredContentProvider,
     if( inputElement instanceof IProject ) {
       IProject project = ( IProject )inputElement;
       HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
-	result = halamo.getAllModules( project );
+	  Collection<IModule> modules = halamo.getModelFor(project).getModules();
+	  result = modules.toArray(new Object[modules.size()]);
     }
     // else?? module?? source folder??
     return result;

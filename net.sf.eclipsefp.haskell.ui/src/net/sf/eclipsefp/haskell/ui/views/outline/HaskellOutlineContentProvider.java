@@ -26,7 +26,7 @@ public class HaskellOutlineContentProvider implements ITreeContentProvider {
   private IPositionUpdater positionUpdater 
     = new DefaultPositionUpdater( POS_CAT_MODULE );
     
-  private ArrayList content = new ArrayList( 10 );
+  private ArrayList<IModule> content = new ArrayList<IModule>( 10 );
 
   private IDocumentProvider documentProvider;
   private Object input;
@@ -117,7 +117,7 @@ public class HaskellOutlineContentProvider implements ITreeContentProvider {
   //////////////////
   
   private void parse( final IFile file ) {
-    HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
+	HaskellModelManager halamo = HaskellCorePlugin.getDefaultModelManager();
 	ICompilationUnit cu = halamo.getCompilationUnit( file );
     IModule[] modules = cu.getModules();
     // old TODO remove
