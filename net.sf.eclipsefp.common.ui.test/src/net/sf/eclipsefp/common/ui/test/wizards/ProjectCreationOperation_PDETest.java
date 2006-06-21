@@ -3,115 +3,65 @@ package net.sf.eclipsefp.common.ui.test.wizards;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import net.sf.eclipsefp.common.ui.wizards.ProjectCreationInfo;
-import net.sf.eclipsefp.common.ui.wizards.ProjectCreationOperation;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.test.util.common.ProjectCreationOperationPDETestCase;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-import junit.framework.TestCase;
-
-public class ProjectCreationOperation_PDETest extends TestCase {
+public class ProjectCreationOperation_PDETest
+	extends ProjectCreationOperationPDETestCase {
 	
 	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
-	private static final String PROJECT_NAME = "hello.haskell.world";
 
-	private ProjectCreationInfo fInfo;
-	private IWorkspaceRoot fWorkspaceRoot;
-	
-	@Override
-	protected void setUp() {
-		fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		fInfo = new DumbProjectCreationInfo();
-		fInfo.setProjectName(PROJECT_NAME);
-	}
-
-	public void testCreateProject() throws InvocationTargetException, InterruptedException, CoreException {
-		fInfo.setProjectName(PROJECT_NAME);
-		
-		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
-		
+	public void testCreateProject()
+		throws InvocationTargetException, InterruptedException, CoreException
+	{
+		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
 		assertFalse("Project already exists in the workspace", prj.exists());
 		
-		runOperation(new ProjectCreationOperation(fInfo));
+		runOperation();
 		
-		prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		prj = getWorkspaceRoot().getProject(PROJECT_NAME);
 		assertValid(prj);
 	}
 	
-	public void testPlatformDefaultLocation() throws InvocationTargetException, InterruptedException, IOException {
-		final String defaultLocation = Platform.getLocation().toString() + '/' + PROJECT_NAME;
-		fInfo.setProjectLocation(Platform.getLocation().toString());
+	public void testPlatformDefaultLocation()
+		throws InvocationTargetException, InterruptedException, IOException
+	{
+		getOperation().setProjectLocation(Platform.getLocation().toString());
 		
-		runOperation(new ProjectCreationOperation(fInfo));
+		runOperation();
 		
-		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
 		assertValid(prj);
 		
-		assertSameLocation(defaultLocation, prj.getLocation().toString());
+		assertSameLocation(defaultLocation(), prj.getLocation().toString());
 	}
 
-	public void testCustomLocation() throws InvocationTargetException, InterruptedException, IOException {
+	public void testCustomLocation()
+		throws InvocationTargetException, InterruptedException, IOException
+	{
 		final String customLocation = TMP_DIR + '/' + PROJECT_NAME;
-		fInfo.setProjectLocation(customLocation);
+		getOperation().setProjectLocation(customLocation);
 		
-		runOperation(new ProjectCreationOperation(fInfo));
+		runOperation();
 		
-		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
+		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
 		assertValid(prj);
 		
 		assertSameLocation(customLocation, prj.getLocation().toString());
 	}
 	
-	public void testAddsHaskellNature()
-		throws InvocationTargetException, InterruptedException, CoreException
+	public void testResortToDefaultLocationWhenNotInformed()
+	    throws InvocationTargetException, InterruptedException, IOException
 	{
-		runOperation(new ProjectCreationOperation(fInfo));
-		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
-		assertNotNull(prj.getNature(HaskellNature.NATURE_ID));
+		runOperation();
+		
+		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
+		assertSameLocation(defaultLocation(), prj.getLocation().toString());
 	}
 	
-	public void testSetsUpSourceLocation()
-		throws InvocationTargetException, InterruptedException
-	{
-		runOperation(new ProjectCreationOperation(fInfo));
-		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
-		IHaskellProject hprj = HaskellProjectManager.get(prj);
-		System.out.println(hprj.getSourcePath().toString());
-	}
+	//TODO should throw an exception when project name not set
 
-	@Override
-	protected void tearDown() throws Exception {
-		deleteCreatedProject();
-	}
-
-
-	private void runOperation(ProjectCreationOperation op) throws InvocationTargetException, InterruptedException {
-		op.run(new NullProgressMonitor());
-	}
-	
-	private static void assertValid(IProject prj) {
-		assertTrue("Project was not created", prj.exists());
-		assertTrue("Project is closed", prj.isOpen());
-	}
-	
-	private void deleteCreatedProject() throws CoreException {
-		IProject prj = fWorkspaceRoot.getProject(PROJECT_NAME);
-		prj.delete(true, true, null);
-	}
-
-	private void assertSameLocation(final String expected, final String actual) throws IOException {
-		String expectedPath = new Path(expected).toFile().getCanonicalPath();
-		String actualPath = new Path(actual).toFile().getCanonicalPath();
-		assertEquals(expectedPath, actualPath);
-	}
-	
 }

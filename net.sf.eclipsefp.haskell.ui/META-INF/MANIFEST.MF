@@ -25,6 +25,7 @@ Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskel
  net.sf.eclipsefp.haskell.ui.editor.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.editor.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.launch,
+ net.sf.eclipsefp.haskell.ui.preferences,
  net.sf.eclipsefp.haskell.ui.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.util,
  net.sf.eclipsefp.haskell.ui.util.preferences,

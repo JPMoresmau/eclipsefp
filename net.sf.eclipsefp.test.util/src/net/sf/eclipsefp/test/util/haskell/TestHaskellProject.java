@@ -2,9 +2,8 @@ package net.sf.eclipsefp.test.util.haskell;
 
 import java.io.StringBufferInputStream;
 
-import net.sf.eclipsefp.common.ui.wizards.ProjectCreationInfo;
 import net.sf.eclipsefp.common.ui.wizards.ProjectCreationOperation;
-import net.sf.eclipsefp.haskell.ui.wizards.HaskellProjectCreationInfo;
+import net.sf.eclipsefp.haskell.ui.wizards.HaskellProjectCreationOperation;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -20,9 +19,8 @@ public class TestHaskellProject {
 	private IFolder fSourceFolder;
 	
 	public TestHaskellProject(final String projectName) throws CoreException {
-		ProjectCreationInfo info = new HaskellProjectCreationInfo();
-		info.setProjectName(projectName);
-		ProjectCreationOperation op = new ProjectCreationOperation(info);
+		ProjectCreationOperation op = new HaskellProjectCreationOperation();
+		op.setProjectName(projectName);
         try {
 			op.run(new NullProgressMonitor());
 			fUnderlyingProject = ResourcesPlugin.getWorkspace().getRoot().

@@ -11,6 +11,7 @@ public class AllAllTests_PDESuite {
 		//$JUnit-BEGIN$
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.util.preferences.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.editor.codeassist.AllTests_PDESuite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.ui.test.wizards.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.AllAllTests.suite());
 		//$JUnit-END$
 		return suite;

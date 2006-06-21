@@ -10,7 +10,8 @@ Require-Bundle: org.junit,
  org.eclipse.core.runtime,
  net.sf.eclipsefp.haskell.ui,
  net.sf.eclipsefp.haskell.core,
- net.sf.eclipsefp.common.ui
+ net.sf.eclipsefp.common.ui,
+ org.eclipse.jface
 Export-Package: net.sf.eclipsefp.test.util;x-friends:="net.sf.eclipsefp.test",
  net.sf.eclipsefp.test.util.common,
  net.sf.eclipsefp.test.util.haskell
