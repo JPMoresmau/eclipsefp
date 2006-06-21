@@ -11,13 +11,6 @@ public interface IPreferenceConstants {
   // Haskell compiler
   String SHOW_COMPILER_LOG = "SHOW_COMPILER_LOG";
   
-  // new Haskell project
-  String TARGET_BINARY = "TARGET_BINARY";
-  String FOLDERS_BIN = "FOLDERS_BIN";
-  String FOLDERS_SRC = "FOLDERS_SRC";
-  String FOLDERS_OUT = "FOLDERS_OUT";
-  String FOLDERS_IN_NEW_PROJECT = "FOLDERS_IN_NEW_PROJECT";
- 
   // code assist
   String AUTO_ACTIVATION_DELAY  = "AUTO_ACTIVATION_DELAY";
   String AUTO_INSERT            = "AUTO_INSERT";

@@ -3,6 +3,7 @@ package net.sf.eclipsefp.common.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
+import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
 import net.sf.eclipsefp.common.ui.CommonUIPlugin;
 
 import org.eclipse.core.runtime.*;
@@ -25,34 +26,29 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  * 
  * @author Leif Frenzel
  */
-public class ProjectCreationWizard extends Wizard implements INewWizard,
-		IExecutableExtension {
+public abstract class ProjectCreationWizard
+    extends Wizard
+    implements INewWizard, IExecutableExtension {
 
 	private ProjectCreationWizardPage page;
 
 	private IConfigurationElement configElement;
 	
-	private ProjectCreationInfo info;
-	
 	private ProjectCreationOperation fOperation;
 
-	public ProjectCreationWizard(final ProjectCreationInfo info) {
+	public ProjectCreationWizard(ProjectCreationOperation operation) {
 		super();
-		this.info = info;
-		fOperation = createOperation();
+		fOperation = operation;
 		setDialogSettings(CommonUIPlugin.getDefault().getDialogSettings());
 		setWindowTitle("Choose project name");
 		setNeedsProgressMonitor(true);
 	}
 
-	protected ProjectCreationOperation createOperation() {
-		return new ProjectCreationOperation();
-	}
-
 	public void addPages() {
-		super.addPages();
-		page = new ProjectCreationWizardPage(info);
-		addPage(page);
+  	    super.addPages();
+	    page = new ProjectCreationWizardPage(
+                       getPageTitle(), getPageDescrition());
+	    addPage(page);
 	}
 
 	public boolean performFinish() {
@@ -73,8 +69,24 @@ public class ProjectCreationWizard extends Wizard implements INewWizard,
 		BasicNewProjectResourceWizard.updatePerspective(configElement);
 		return result;
 	}
+    
+    /**
+     * Returns a descriptor for the banner image (the one on the top right
+     * corner)
+     */
+    protected abstract ImageDescriptor getBannerImage();
 
-	/**
+    /**
+     * Returns the description for the create project wizard page
+     */
+    protected abstract String getPageDescrition();
+
+    /**
+     * Returns the title for the create project wizard page
+     */
+    protected abstract String getPageTitle();
+
+    /**
 	 * Stores the configuration element for the wizard. The config element will
 	 * be used in <code>performFinish</code> to set the result perspective.
 	 */
@@ -93,13 +105,13 @@ public class ProjectCreationWizard extends Wizard implements INewWizard,
 	// ////////////////
 
 	private void initializePageImageDescriptor() {
-		ImageDescriptor bannerImage = info.getBannerImage();
+		ImageDescriptor bannerImage = getBannerImage();
 		if (bannerImage != null) {
 			setDefaultPageImageDescriptor(bannerImage);
 		}
 	}
 
-	private void handleException(final Throwable target) {
+  private void handleException(final Throwable target) {
 		String title = "A problem occured.";
 		String message = "Could not create project.";
 		if (target instanceof CoreException) {

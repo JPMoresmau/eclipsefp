@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.common.ui.test.wizards;
+package net.sf.eclipsefp.common.core.test.project;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

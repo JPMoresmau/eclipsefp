@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -17,8 +18,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 
 
 /** <p>the preference page for new Haskell projects. The user can pre-define
@@ -30,9 +33,8 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 public class NewHaskellProjectPP extends PreferencePage
                                  implements IWorkbenchPreferencePage {
 
-  private ArrayList alCheckBoxes;
-  private ArrayList alRadioButtons;
-  private ArrayList alTextControls;
+  private ArrayList<Button> alRadioButtons;
+  private ArrayList<Text> alTextControls;
 
   private SelectionListener selectionListener;
   private ModifyListener modifyListener;
@@ -48,11 +50,9 @@ public class NewHaskellProjectPP extends PreferencePage
 
   public NewHaskellProjectPP() {
     super( "New Haskell Project Preferences" );
-    setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     setDescription(   "Specify the names of the default directories when "                    + "creating new Haskell projects." );
-    alRadioButtons = new ArrayList();
-    alCheckBoxes = new ArrayList();
-    alTextControls = new ArrayList();
+    alRadioButtons = new ArrayList<Button>();
+    alTextControls = new ArrayList<Text>();
 
     selectionListener = new SelectionListener() {
       public void widgetDefaultSelected( final SelectionEvent e ) {
@@ -72,11 +72,11 @@ public class NewHaskellProjectPP extends PreferencePage
   }
 
   public static void initDefaults( final IPreferenceStore store ) {
-    store.setDefault( IPreferenceConstants.FOLDERS_IN_NEW_PROJECT, true );
-    store.setDefault( IPreferenceConstants.FOLDERS_SRC, "src" );
-    store.setDefault( IPreferenceConstants.FOLDERS_BIN, "bin" );
-    store.setDefault( IPreferenceConstants.FOLDERS_OUT, "out" );
-    store.setDefault( IPreferenceConstants.TARGET_BINARY, "theResult" );
+    store.setDefault( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
+    store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" );
+    store.setDefault( ICorePreferenceNames.FOLDERS_BIN, "bin" );
+    store.setDefault( ICorePreferenceNames.FOLDERS_OUT, "out" );
+    store.setDefault( ICorePreferenceNames.TARGET_BINARY, "theResult" );
   }
 
   public void init( final IWorkbench workbench ) {
@@ -171,7 +171,7 @@ public class NewHaskellProjectPP extends PreferencePage
 
   private void createRadios( final Group folderGroup ) {
     int indent = 0;
-    String prefFolders = IPreferenceConstants.FOLDERS_IN_NEW_PROJECT;
+    String prefFolders = ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT;
     btnProjectAsSourceFolder = addRadioButton( folderGroup, 
                                                "Project",
                                                prefFolders, 
@@ -190,19 +190,19 @@ public class NewHaskellProjectPP extends PreferencePage
     int indent = convertWidthInCharsToPixels( 4 );
     txtSrcFolderName = addTextControl( folderGroup, 
                                          "Source folder name:", 
-                                         IPreferenceConstants.FOLDERS_SRC, 
+                                         ICorePreferenceNames.FOLDERS_SRC, 
                                          indent );
     txtOutFolderName = addTextControl( folderGroup, 
                                          "Output folder name:", 
-                                         IPreferenceConstants.FOLDERS_OUT, 
+                                         ICorePreferenceNames.FOLDERS_OUT, 
                                          indent );
     txtBinFolderName = addTextControl( folderGroup, 
                                          "Binaries folder name:", 
-                                         IPreferenceConstants.FOLDERS_BIN, 
+                                         ICorePreferenceNames.FOLDERS_BIN, 
                                          indent );
     txtTargetBinaryName = addTextControl( folderGroup, 
                                           "Target binary name:", 
-                                         IPreferenceConstants.TARGET_BINARY, 
+                                          ICorePreferenceNames.TARGET_BINARY, 
                                          indent );
   }
 
@@ -286,19 +286,14 @@ public class NewHaskellProjectPP extends PreferencePage
   /* @see PreferencePage#performDefaults() */
   protected void performDefaults() {
     IPreferenceStore store = getPreferenceStore();
-    for( int i = 0; i < alCheckBoxes.size(); i++ ) {
-      Button button = ( Button )alCheckBoxes.get( i );
-      String key = ( String )button.getData();
-      button.setSelection( store.getDefaultBoolean( key ) );
-    }
     for( int i = 0; i < alRadioButtons.size(); i++ ) {
-      Button button = ( Button )alRadioButtons.get( i );
+      Button button = alRadioButtons.get( i );
       String[] info = ( String[] )button.getData();
       boolean sel = info[ 1 ].equals( store.getDefaultString( info[ 0 ] ) );
       button.setSelection( sel );
     }
     for( int i = 0; i < alTextControls.size(); i++ ) {
-      Text text = ( Text ) alTextControls.get( i );
+      Text text = alTextControls.get( i );
       String key = ( String )text.getData();
       text.setText( store.getDefaultString( key ) );
     }
@@ -309,24 +304,28 @@ public class NewHaskellProjectPP extends PreferencePage
   /* @see IPreferencePage#performOk() */
   public boolean performOk() {
     IPreferenceStore store = getPreferenceStore();
-    for( int i = 0; i < alCheckBoxes.size(); i++ ) {
-      Button button = ( Button )alCheckBoxes.get( i );
-      String key = ( String )button.getData();
-      store.setValue( key, button.getSelection() );
-    }
     for( int i = 0; i < alRadioButtons.size(); i++ ) {
-      Button button = ( Button )alRadioButtons.get( i );
+      Button button = alRadioButtons.get( i );
       if( button.getSelection() ) {
         String[] info = ( String[] )button.getData();
         store.setValue( info[ 0 ], info[ 1 ] );
       }
     }
     for( int i = 0; i < alTextControls.size(); i++ ) {
-      Text text = ( Text )alTextControls.get( i );
+      Text text = alTextControls.get( i );
       String key = ( String )text.getData();
       store.setValue( key, text.getText() );
     }
-    HaskellUIPlugin.getDefault().savePluginPreferences();
+    HaskellCorePlugin.getDefault().savePluginPreferences();
     return super.performOk();
   }
+
+  @Override
+  protected IPreferenceStore doGetPreferenceStore() {
+	  return new ScopedPreferenceStore(new InstanceScope(),
+			         HaskellCorePlugin.getDefault()
+			             .getBundle().getSymbolicName());
+  }
+  
+  
 }

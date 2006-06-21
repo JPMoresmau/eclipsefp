@@ -110,6 +110,8 @@ public class HaskellCorePlugin extends Plugin {
 		return fWorkspace;
 	}
 	
+	
+	
 	// helping methods
 	// ////////////////
 

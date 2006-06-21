@@ -10,4 +10,11 @@ public interface ICorePreferenceNames {
 
   String SELECTED_COMPILER = "SELECTED_COMPILER";
   
+  // new Haskell project
+  String TARGET_BINARY = "TARGET_BINARY";
+  String FOLDERS_BIN = "FOLDERS_BIN";
+  String FOLDERS_SRC = "FOLDERS_SRC";
+  String FOLDERS_OUT = "FOLDERS_OUT";
+  String FOLDERS_IN_NEW_PROJECT = "FOLDERS_IN_NEW_PROJECT";
+ 
 }

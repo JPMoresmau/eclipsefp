@@ -12,10 +12,9 @@ Require-Bundle: org.junit,
  org.eclipse.jface.text,
  org.eclipse.ui,
  org.eclipse.ui.ide,
- net.sf.eclipsefp.common.ui,
+ org.eclipse.ui.workbench.texteditor,
  net.sf.eclipsefp.haskell.ui,
  net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.core.test,
- net.sf.eclipsefp.test.util,
- org.eclipse.ui.workbench.texteditor
+ net.sf.eclipsefp.test.util
 Export-Package: net.sf.eclipsefp.haskell.ui.test

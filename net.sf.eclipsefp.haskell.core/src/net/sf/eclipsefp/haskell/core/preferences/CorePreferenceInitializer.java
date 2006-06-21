@@ -24,7 +24,12 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
 //    store.setDefault( SELECTED_COMPILER, 
 //                      DefaultHaskellCompiler.class.getName() );
     // TODO for the moment hardcoded ghc
-    preferences.setDefault( SELECTED_COMPILER, "ghcCompiler" );
+    preferences.setDefault(SELECTED_COMPILER, "ghcCompiler");
+    preferences.setDefault(FOLDERS_SRC, "src");		
+    preferences.setDefault(FOLDERS_OUT, "out");
+    preferences.setDefault(FOLDERS_BIN, "bin");		
+    preferences.setDefault(TARGET_BINARY, "theResult");		
+    preferences.setDefault(FOLDERS_IN_NEW_PROJECT, true);
   }
   
   

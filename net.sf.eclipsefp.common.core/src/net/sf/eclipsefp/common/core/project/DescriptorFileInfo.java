@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.common.ui.wizards;
+package net.sf.eclipsefp.common.core.project;
 
 /** <p>Encapsulates information about and contents of the descriptor file
   * that is created in the project. FP Projects store informations like 

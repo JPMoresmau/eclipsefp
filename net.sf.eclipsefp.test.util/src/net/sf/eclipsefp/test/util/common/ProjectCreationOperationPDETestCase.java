@@ -3,7 +3,7 @@ package net.sf.eclipsefp.test.util.common;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import net.sf.eclipsefp.common.ui.wizards.ProjectCreationOperation;
+import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;

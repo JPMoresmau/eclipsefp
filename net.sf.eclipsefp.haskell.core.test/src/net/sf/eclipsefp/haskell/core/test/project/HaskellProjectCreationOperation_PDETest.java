@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.test.wizards;
+package net.sf.eclipsefp.haskell.core.test.project;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,25 +10,24 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.core.runtime.Preferences;
 
-import net.sf.eclipsefp.common.ui.wizards.ProjectCreationOperation;
+import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.ui.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.ui.wizards.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.test.util.common.ProjectCreationOperationPDETestCase;
 
 public class HaskellProjectCreationOperation_PDETest extends
 		ProjectCreationOperationPDETestCase {
 
-	private IPreferenceStore fStore;
+	private Preferences fStore;
 
 	@Override
 	protected ProjectCreationOperation createOperation() {
-		fStore = new PreferenceStore();
-		fStore.setValue(IPreferenceConstants.FOLDERS_IN_NEW_PROJECT, true);
+		fStore = new Preferences();
+		fStore.setValue(ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true);
 		return new HaskellProjectCreationOperation(fStore);
 	}
 
@@ -42,9 +41,9 @@ public class HaskellProjectCreationOperation_PDETest extends
 
 	public void testCreatesDirectoriesFromPreferences()
 			throws InvocationTargetException, InterruptedException {
-		fStore.setValue(IPreferenceConstants.FOLDERS_SRC, "customSrc");
-		fStore.setValue(IPreferenceConstants.FOLDERS_OUT, "customOut");
-		fStore.setValue(IPreferenceConstants.FOLDERS_BIN, "customBin");
+		fStore.setValue(ICorePreferenceNames.FOLDERS_SRC, "customSrc");
+		fStore.setValue(ICorePreferenceNames.FOLDERS_OUT, "customOut");
+		fStore.setValue(ICorePreferenceNames.FOLDERS_BIN, "customBin");
 
 		runOperation();
 		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
@@ -65,10 +64,10 @@ public class HaskellProjectCreationOperation_PDETest extends
 	public void testSetsUpProjectFoldersFromPreferences()
 			throws InvocationTargetException, InterruptedException,
 			CoreException, IOException {
-		fStore.setValue(IPreferenceConstants.FOLDERS_SRC, "mySrc");
-		fStore.setValue(IPreferenceConstants.FOLDERS_OUT, "myOut");
-		fStore.setValue(IPreferenceConstants.FOLDERS_BIN, "myBin");
-		fStore.setValue(IPreferenceConstants.TARGET_BINARY, "myBinary");
+		fStore.setValue(ICorePreferenceNames.FOLDERS_SRC, "mySrc");
+		fStore.setValue(ICorePreferenceNames.FOLDERS_OUT, "myOut");
+		fStore.setValue(ICorePreferenceNames.FOLDERS_BIN, "myBin");
+		fStore.setValue(ICorePreferenceNames.TARGET_BINARY, "myBinary");
 
 		runOperation();
 		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
@@ -82,7 +81,7 @@ public class HaskellProjectCreationOperation_PDETest extends
 	public void testDoNotCreateFoldersWhenPreferenceDisabled()
 			throws InvocationTargetException, InterruptedException,
 			CoreException, IOException {
-		fStore.setValue(IPreferenceConstants.FOLDERS_IN_NEW_PROJECT, false);
+		fStore.setValue(ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, false);
 
 		runOperation();
 		

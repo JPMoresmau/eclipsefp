@@ -30,20 +30,18 @@ public class CommonCorePlugin extends Plugin {
 
   /** <p>logs the specified message.</p> */
   public static void log( final String message ) {
-    log( new Status( IStatus.ERROR, 
-                     getPluginId(), 
-                     IStatus.ERROR, 
-                     message, 
-                     null ) );
+    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
+  }
+
+  /** <p>logs the specified message.</p> */
+  public static void log(final String message, final Throwable thr) {
+    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, thr));
   }
 
   /** <p>logs the specified throwable.</p> */
-  public static void log( final Throwable thr ) {
-    log( new Status( IStatus.ERROR, 
-                     getPluginId(), 
-                     IStatus.ERROR, 
-                     "Internal Error", 
-                     thr ) );
+  public static void log(final Throwable thr) {
+    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR,
+                   "Internal Error", thr));
   }
   
   

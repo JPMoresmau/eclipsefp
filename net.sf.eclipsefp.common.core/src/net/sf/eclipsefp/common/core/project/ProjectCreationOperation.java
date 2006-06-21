@@ -1,11 +1,11 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.common.ui.wizards;
+package net.sf.eclipsefp.common.core.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
-import net.sf.eclipsefp.common.ui.CommonUIPlugin;
+import net.sf.eclipsefp.common.core.CommonCorePlugin;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -50,7 +50,7 @@ public class ProjectCreationOperation implements IRunnableWithProgress {
 		try {
 			ResourcesPlugin.getWorkspace().run(operation, mon);
 		} catch (CoreException cex) {
-			CommonUIPlugin.log("Problem creating new project.", cex);
+			CommonCorePlugin.log("Problem creating new project.", cex);
 		} finally {
 			mon.done();
 		}
