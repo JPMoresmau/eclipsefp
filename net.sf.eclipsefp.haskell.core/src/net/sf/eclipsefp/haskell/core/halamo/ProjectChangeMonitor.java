@@ -99,6 +99,12 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 				IHaskellParser parser = ParserManager.getInstance().getParser();
 				ICompilationUnit unit = parser.parse((IFile) resource);
 				getLanguageModel().putModule(unit.getModules()[0]);
+			} else if (isDeletion(delta)) {
+				//TODO we are assuming fileName = moduleName + .hs
+				//is this always true?
+				String fileName = resource.getName();
+				String moduleName = fileName.substring(0, fileName.length() - 3);
+				getLanguageModel().removeModule(moduleName);
 			}
 			return true;
 		}
@@ -108,6 +114,11 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 					                     | IResourceDelta.CHANGED))
 				   != 0;
 		}
+
+		private boolean isDeletion(final IResourceDelta delta) {
+			return (delta.getKind() & (IResourceDelta.REMOVED)) != 0;
+		}
+	
 	}
 
 	public IHaskellModel getLanguageModel() {

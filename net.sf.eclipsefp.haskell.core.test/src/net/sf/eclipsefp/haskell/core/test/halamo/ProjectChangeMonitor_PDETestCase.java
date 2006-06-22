@@ -58,6 +58,21 @@ public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase
 		verify(getLanguageModel());
 	}
 	
+	public void testRemoveModule() throws CoreException {
+		getLanguageModel().putModule((IModule) anyObject());
+		getLanguageModel().removeModule("QuickSort");
+		replay(getLanguageModel());
+
+		IFile file = createSourceFile("module QuickSort where\n\n", "QuickSort.hs");
+
+		file.delete(true, null);
+		
+		verify(getLanguageModel());
+	}
+	
+	//TODO do not remove modules when removing non-haskell files
+	//TODO remove module when using literate haskell
+	
 	@Override
 	protected void doTearDown() throws Exception {
 		getWorkspace().removeResourceChangeListener(getMonitor());

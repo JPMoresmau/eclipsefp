@@ -38,4 +38,8 @@ public class HaskellLanguageModel implements IHaskellModel {
 		return new Scope(module, this);
 	}
 
+	public void removeModule(String name) {
+		fModules.remove(name);
+	}
+
 }

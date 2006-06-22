@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.Preferences;
 import net.sf.eclipsefp.common.core.project.DescriptorFileInfo;
 import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 
 public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 
