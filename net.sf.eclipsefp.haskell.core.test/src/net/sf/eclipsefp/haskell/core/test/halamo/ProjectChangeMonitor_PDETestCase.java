@@ -70,7 +70,18 @@ public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase
 		verify(getLanguageModel());
 	}
 	
-	//TODO do not remove modules when removing non-haskell files
+	public void testDoNotRemoveModuleWhenDeletingNonHaskellFile() throws CoreException {
+		getLanguageModel().putModule((IModule) anyObject());
+		replay(getLanguageModel());
+
+		createSourceFile("module ReadMe where\n\n", "Readme.hs");
+		IFile nonHaskellfile = createSourceFile("read this!", "Readme.tx");
+		
+		nonHaskellfile.delete(true, null);
+
+		verify(getLanguageModel());		
+	}
+	
 	//TODO remove module when using literate haskell
 	
 	@Override

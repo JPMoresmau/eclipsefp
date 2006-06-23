@@ -90,7 +90,7 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 			IResource resource = delta.getResource();
 			// only interested in Haskell source files
 			if (!(  IResource.FILE == resource.getType()
-				 || ResourceUtil.hasHaskellExtension(resource)))
+				 && ResourceUtil.hasHaskellExtension(resource)))
 			{
 				return true;
 			}
