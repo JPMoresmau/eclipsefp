@@ -19,7 +19,7 @@ public class Parser_PDETestCase extends TestCase {
 	public ICompilationUnit parseAsString(String input) throws CoreException {
 		IHaskellParser parser = ParserManager.getInstance().getParser();
 		
-		return parser.parse(input);
+		return parser.parse(new MockFile(input), input);
 	}
 
 	public ICompilationUnit parse(IFile input) throws CoreException {

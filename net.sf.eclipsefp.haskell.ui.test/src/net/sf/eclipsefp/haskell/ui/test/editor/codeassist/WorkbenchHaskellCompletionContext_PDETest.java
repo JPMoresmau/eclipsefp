@@ -85,7 +85,7 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 		final ICompilationUnit unit = org.easymock.EasyMock.createMock(ICompilationUnit.class);
 		
 		IHaskellParser parser = createMock(IHaskellParser.class);
-		expect(parser.parse(currentText))
+		expect(parser.parse(fibbFile, currentText))
 			.andReturn(unit);
 		replay(parser);
 		

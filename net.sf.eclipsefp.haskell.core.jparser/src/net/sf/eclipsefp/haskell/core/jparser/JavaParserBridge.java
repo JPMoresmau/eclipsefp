@@ -34,23 +34,21 @@ public class JavaParserBridge implements IHaskellParser {
 			}
 		}
 		
+		return parse(file, sourceCode);
+	}
+
+	public ICompilationUnit parse(IFile file, String sourceCode) throws CoreException {
 		Reader input;
 		if (isLiterate(file)) {
 			input = new LiterateHaskellReader(
-						new InputStreamReader(
-						    file.getContents()));
+						new StringReader(sourceCode));
 		} else {
-			input = new InputStreamReader(
-				    	file.getContents());
+			input = new StringReader(sourceCode);
 		}
 
 		CompilationUnit result = parse(input, sourceCode, file.getName());
 		result.setUnderlyingResource(file);
 		return result;
-	}
-
-	public ICompilationUnit parse(String sourceCode) throws CoreException {
-		return parse(new StringReader(sourceCode), sourceCode, "<unidentified file>");
 	}
 
 	private CompilationUnit parse(Reader input, String sourceCode, String fileName) throws CoreException {

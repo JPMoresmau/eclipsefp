@@ -25,7 +25,9 @@ class DefaultHaskellParser implements IHaskellParser {
 		return createDummyCompilationUnit();
 	}
 
-	public ICompilationUnit parse(String sourceCode) throws CoreException {
+	public ICompilationUnit parse(IFile file,
+		String sourceCode) throws CoreException
+	{
 		return createDummyCompilationUnit();
 	}
 

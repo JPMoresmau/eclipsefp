@@ -18,7 +18,7 @@ public interface IHaskellParser {
 
   ICompilationUnit parse(final IFile file ) throws CoreException;  
 
-  ICompilationUnit parse(final String sourceCode) throws CoreException;
+  ICompilationUnit parse(IFile file, String sourceCode) throws CoreException; 
 
   /** <p>returns whether this <code>IHaskellParser</code> has been properly
     * initialized and can be used for parsing. Clients of the parser API 

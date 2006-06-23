@@ -37,7 +37,7 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 												ITextViewer viewer,
 												int offset) throws CoreException
 	{
-		super(parser.parse(viewer.getDocument().get()),
+		super(parser.parse(getFile(viewer), viewer.getDocument().get()),
 				manager.getModelFor(getFile(viewer).getProject()),
 				offset);
 	}
