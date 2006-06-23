@@ -392,6 +392,23 @@ public class LexerTest extends TokenStreamTestCase implements HaskellLexerTokenT
 		assertOffset(19, fLexer.nextToken());
 	}
 	
+	public void testAcceptConstructorComposition() throws TokenStreamException {
+		final String input = "data Tree a = Leaf a\n\n" +
+		                     "doubleLeaf i = (Leaf . (2 *)) i";
+
+		fLexer = createLexer(input);
+		// date Tree a = Leaf a \n \n
+		// doubleLeaf i = ( 
+		fLexer.skipTokens(8);
+		fLexer.skipTokens(4);
+
+		assertToken(CONSTRUCTOR_ID, "Leaf", fLexer.nextToken());
+		assertToken(VARSYM, ".", fLexer.nextToken());
+		assertTokenType(LEFT_PAREN, fLexer.nextToken());
+		assertTokenType(INTEGER, fLexer.nextToken());
+		assertTokenType(VARSYM, fLexer.nextToken());
+	}
+	
 	/**
 	 * Test case for bug #1432717
 	 * @throws TokenStreamException 

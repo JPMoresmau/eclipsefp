@@ -8,6 +8,13 @@ import antlr.Token;
 import antlr.TokenStream;
 import antlr.TokenStreamException;
 
+/**
+ * Filters an underlying token stream looking for haskell qualified identifiers
+ * (for example: Char.isAlpha). When one is found, it is packaged as an unique
+ * token and returned to the caller.
+ * 
+ * @author Thiago Arrais - thiago.arrais@gmail.com
+ */
 public class QualifiedIdentifierFilter extends TokenStreamProcessor implements HaskellLexerTokenTypes {
 
 	private static final Map<Integer, Integer> QUALIFIED_TYPE_TABLE
@@ -25,6 +32,10 @@ public class QualifiedIdentifierFilter extends TokenStreamProcessor implements H
 
 	protected void insertTokensAsNeeded() throws TokenStreamException {
 		if (!(isConstructorId(peekToken(1)) && isDot(peekToken(2))))
+			return;
+		
+		if (  peekToken(2).getColumn()
+		   != peekToken(1).getColumn() + peekToken(1).getText().length() )
 			return;
 		
 		StringBuffer tokenText = new StringBuffer();

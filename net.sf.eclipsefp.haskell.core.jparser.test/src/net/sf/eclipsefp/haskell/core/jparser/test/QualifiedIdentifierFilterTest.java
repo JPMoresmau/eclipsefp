@@ -61,7 +61,36 @@ public class QualifiedIdentifierFilterTest extends TokenStreamTestCase implement
 		assertToken(VARIABLE_ID, "aVar", fFilter.nextToken());
 	}
 	
+	public void testDoNotMessWithFunctionComposition() throws TokenStreamException {
+		//when there is whitespace after the preceding token, the dot is
+		//interpreted as the composition function instead of a qualifier
+		CommonToken leafToken = new CommonToken(CONSTRUCTOR_ID, "Leaf");
+		CommonToken dotToken = new CommonToken(VARSYM, ".");
+		leafToken.setColumn(0);
+		dotToken.setColumn("Leaf".length() + 1);
+
+		setInput(leafToken,
+				 dotToken,
+				 new CommonToken(LEFT_PAREN, "("),
+				 new CommonToken(DECIMAL, "2"),
+		         new CommonToken(VARSYM, "*"),
+		         new CommonToken(RIGHT_PAREN, ")"));
+
+		assertToken(CONSTRUCTOR_ID, "Leaf", fFilter.nextToken());
+		assertToken(VARSYM, ".", fFilter.nextToken());
+		assertToken(LEFT_PAREN, "(", fFilter.nextToken());
+	}
+	
 	private void setInput(final Token... tokens) {
+		int column = 0;
+		for(Token t : tokens) {
+			if (t.getColumn() == 0) {
+				t.setColumn(column);
+				column += t.getText().length();
+			} else {
+				column = t.getColumn() + t.getText().length();
+			}
+		}
 		TokenStream input = new TestTokenStream(tokens);
 		fFilter = new QualifiedIdentifierFilter(input);
 	}
