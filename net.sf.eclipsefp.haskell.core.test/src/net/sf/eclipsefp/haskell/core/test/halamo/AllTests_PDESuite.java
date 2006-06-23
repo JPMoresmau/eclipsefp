@@ -9,6 +9,7 @@ public class AllTests_PDESuite {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.test.halamo");
 		//$JUnit-BEGIN$
+		suite.addTestSuite(WorkspaceChangeMonitor_PDETestCase.class);
 		suite.addTestSuite(ProjectChangeMonitor_PDETestCase.class);
 		suite.addTest(AllTests.suite());
 		//$JUnit-END$

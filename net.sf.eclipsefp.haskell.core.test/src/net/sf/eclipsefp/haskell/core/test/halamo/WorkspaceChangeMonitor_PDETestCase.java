@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.core.test.halamo;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -21,14 +22,7 @@ import junit.framework.TestCase;
 public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
 	
 	private IProjectChangeMonitorFactory fFactory;
-
-	@Override
-	protected void setUp() throws Exception {
-		fFactory = createMock(IProjectChangeMonitorFactory.class); 
-		WorkspaceChangeMonitor monitor = new WorkspaceChangeMonitor(getFactory());
-		
-		monitor.observeChangesOn(getWorkspace());
-	}
+	private WorkspaceChangeMonitor fMonitor;
 
 	public void testCreatesChangeMonitorWhenProjectIsCreated()
 		throws CoreException
@@ -45,8 +39,8 @@ public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
 	}
 	
 	public void testDelegatesProjectEventsToMonitors() throws CoreException {
-		IResourceChangeListener fstMonitor = createMock(IResourceChangeListener.class);
-		IResourceChangeListener sndMonitor = createMock(IResourceChangeListener.class);
+		IResourceChangeListener fstMonitor = createNiceMock(IResourceChangeListener.class);
+		IResourceChangeListener sndMonitor = createNiceMock(IResourceChangeListener.class);
 		expect(getFactory().createProjectChangeMonitor((IProject) anyObject())).
 			andReturn(fstMonitor);
 		expect(getFactory().createProjectChangeMonitor((IProject) anyObject())).
@@ -54,7 +48,7 @@ public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
 		replay(getFactory());
 		
 		TestHaskellProject fstPrj = new TestHaskellProject("fisrt-project");
-		new TestHaskellProject("second-project");
+		TestHaskellProject sndPrj = new TestHaskellProject("second-project");
 		
 		fstMonitor.resourceChanged((IResourceChangeEvent) anyObject());
 		replay(fstMonitor, sndMonitor);
@@ -62,14 +56,49 @@ public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
 		fstPrj.createSourceFile("Factorial.hs", "module Factorial where\n\n");
 		
 		verify(getFactory(), fstMonitor, sndMonitor);
+		
+		fstPrj.destroy();
+		sndPrj.destroy();
 	}
+	
+	public void testCreatesProjectMonitorsForLoadedWorkspace()
+		throws CoreException {
+		TestHaskellProject prj = new TestHaskellProject("myproject");
+
+		IProjectChangeMonitorFactory factory =
+			createMock(IProjectChangeMonitorFactory.class); 
+		expect(factory.createProjectChangeMonitor(prj.getPlatformProject())).
+			andReturn(createNiceMock(IResourceChangeListener.class));
+		replay(factory);
+		
+		WorkspaceChangeMonitor mon = new WorkspaceChangeMonitor(factory);
+		mon.observeChangesOn(getWorkspace());
+		
+		getWorkspace().removeResourceChangeListener(mon);
+
+		verify(factory);
+	}
+	
+	//TODO do not watch changes on non-haskell projects 
 
 	private IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 
 	private IProjectChangeMonitorFactory getFactory() {
+		if (fFactory == null) {
+			fFactory = createNiceMock(IProjectChangeMonitorFactory.class); 
+			fMonitor = new WorkspaceChangeMonitor(getFactory());
+			fMonitor.observeChangesOn(getWorkspace());			
+		}
 		return fFactory;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		if (fMonitor != null) {
+			getWorkspace().removeResourceChangeListener(fMonitor);
+		}
 	}
 	
 }

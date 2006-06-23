@@ -22,7 +22,8 @@ public class HaskellCorePluginTest extends TestCase {
 		expectLastCall().times(1);
 		
 		expect(workspace.getRoot()).
-			andReturn(ResourcesPlugin.getWorkspace().getRoot());
+			andReturn(ResourcesPlugin.getWorkspace().getRoot()).
+			atLeastOnce();
 		
 		replay(workspace, getStubContext());
 		

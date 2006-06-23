@@ -87,7 +87,14 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 	}
 
 	public void observeChangesOn(IWorkspace workspace) {
+		createProjectMonitorsFor(workspace);
 		workspace.addResourceChangeListener(this, TYPES);
+	}
+
+	private void createProjectMonitorsFor(IWorkspace workspace) {
+		for(IProject project : workspace.getRoot().getProjects()) {
+			fProjectMonitors.put(project, createProjectChangeMonitor(project));
+		}
 	}
 
 }
