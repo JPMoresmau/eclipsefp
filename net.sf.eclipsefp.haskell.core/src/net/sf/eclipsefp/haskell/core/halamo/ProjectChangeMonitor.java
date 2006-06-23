@@ -102,8 +102,8 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 			} else if (isDeletion(delta)) {
 				//TODO we are assuming fileName = moduleName + .hs
 				//is this always true?
-				String fileName = resource.getName();
-				String moduleName = fileName.substring(0, fileName.length() - 3);
+				String moduleName = ResourceUtil.getModuleName(
+				                        resource.getName());
 				getLanguageModel().removeModule(moduleName);
 			}
 			return true;

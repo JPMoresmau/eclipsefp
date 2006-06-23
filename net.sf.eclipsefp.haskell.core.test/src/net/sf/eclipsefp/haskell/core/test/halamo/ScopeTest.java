@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
-import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
+import net.sf.eclipsefp.haskell.core.test.internal.util.HalamoAssert;
 
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;

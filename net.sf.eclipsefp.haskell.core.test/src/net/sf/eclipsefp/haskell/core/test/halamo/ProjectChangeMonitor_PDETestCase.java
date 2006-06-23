@@ -70,6 +70,18 @@ public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase
 		verify(getLanguageModel());
 	}
 	
+	public void testRemoveLiterateModule() throws CoreException {
+		getLanguageModel().putModule((IModule) anyObject());
+		getLanguageModel().removeModule("Factorial");
+		replay(getLanguageModel());
+
+		IFile file = createSourceFile("> module Factorial where\n\n", "Factorial.lhs");
+
+		file.delete(true, null);
+		
+		verify(getLanguageModel());
+	}
+
 	public void testDoNotRemoveModuleWhenDeletingNonHaskellFile() throws CoreException {
 		getLanguageModel().putModule((IModule) anyObject());
 		replay(getLanguageModel());
@@ -81,8 +93,6 @@ public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase
 
 		verify(getLanguageModel());		
 	}
-	
-	//TODO remove module when using literate haskell
 	
 	@Override
 	protected void doTearDown() throws Exception {

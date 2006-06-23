@@ -18,4 +18,4 @@ Require-Bundle: org.antlr,
  net.sf.eclipsefp.haskell.core.parser.test,
  net.sf.eclipsefp.common.core
 Export-Package: net.sf.eclipsefp.haskell.core.test,
- net.sf.eclipsefp.haskell.core.test.util
+ net.sf.eclipsefp.haskell.core.test.internal.util

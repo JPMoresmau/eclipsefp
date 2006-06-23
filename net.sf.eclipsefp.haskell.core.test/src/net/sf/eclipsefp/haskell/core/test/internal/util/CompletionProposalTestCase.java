@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.test.util;
+package net.sf.eclipsefp.haskell.core.test.internal.util;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;

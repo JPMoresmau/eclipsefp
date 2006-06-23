@@ -21,7 +21,7 @@ import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.Scope;
 import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
-import net.sf.eclipsefp.haskell.core.test.util.HalamoAssert;
+import net.sf.eclipsefp.haskell.core.test.internal.util.HalamoAssert;
 
 public class LanguageModelTest extends TestCase {
 	
