@@ -61,4 +61,8 @@ public class StubModule implements IModule {
 		fImports.add(new StubImport(module));
 	}
 
+	public boolean isEmpty() {
+		return true;
+	}
+
 }

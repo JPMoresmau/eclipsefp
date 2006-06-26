@@ -88,6 +88,10 @@ class DefaultHaskellParser implements IHaskellParser {
 				// and have no parent
 				return null;
 			}
+
+			public boolean isEmpty() {
+				return true;
+			}
 		} };
 	}
 

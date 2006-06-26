@@ -18,7 +18,10 @@ public class CompilationUnit implements ICompilationUnit {
 	}
 
 	public IModule[] getModules() {
-		return new IModule[] { fModule };
+		if (fModule.isEmpty())
+			return new IModule[0];
+		else
+			return new IModule[] { fModule };
 	}
 
 	public ISourceLocation getNextLocation(final ISourceLocation srcLoc) {

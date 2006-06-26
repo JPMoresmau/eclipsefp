@@ -50,4 +50,9 @@ public class Module extends HaskellLanguageElement implements IModule {
 		fImports.add(theImport);
 	}
 
+	public boolean isEmpty() {
+		return    fImports.isEmpty() && fDecls.isEmpty() && fExports.isEmpty()
+		       && (getName() == null || getName().length() == 0);
+	}
+
 }

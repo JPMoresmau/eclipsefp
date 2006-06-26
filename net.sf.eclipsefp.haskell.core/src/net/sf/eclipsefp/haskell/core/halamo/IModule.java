@@ -16,5 +16,9 @@ public interface IModule extends IHaskellLanguageElement {
   IDeclaration[] getDeclarations();
   /** <p>returns the compilation unit to which this module belongs.</p> */  
   ICompilationUnit getCompilationUnit();
+  
+  /** Is this a totally empty (anonymous, no imports, no declarations, and no
+   *  exports) module? */
+  boolean isEmpty();
 
 }

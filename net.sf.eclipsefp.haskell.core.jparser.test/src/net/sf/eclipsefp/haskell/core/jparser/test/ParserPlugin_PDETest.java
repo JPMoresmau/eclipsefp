@@ -87,5 +87,13 @@ public class ParserPlugin_PDETest extends Parser_PDETestCase {
 		assertEquals(source, unit.getOriginalSourceCode());
 	}
 	
+	public void testEmptyUnit() throws CoreException {
+		final String source = "";
+		
+		ICompilationUnit unit = parseAsString(source);
+
+		assertEquals(0, unit.getModules().length);
+	}
+	
 	
 }

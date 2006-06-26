@@ -5,6 +5,7 @@ Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.jparser.test
 Bundle-Version: 0.10.0
 Bundle-Localization: plugin
 Require-Bundle: org.antlr,
+ org.easymock,
  org.junit,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,

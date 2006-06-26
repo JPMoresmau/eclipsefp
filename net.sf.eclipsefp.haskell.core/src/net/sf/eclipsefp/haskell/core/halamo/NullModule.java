@@ -30,4 +30,8 @@ public class NullModule implements IModule {
 		return null;
 	}
 
+	public boolean isEmpty() {
+		return true;
+	}
+
 }

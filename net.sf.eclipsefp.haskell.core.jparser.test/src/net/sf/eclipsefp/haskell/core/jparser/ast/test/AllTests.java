@@ -14,6 +14,7 @@ public class AllTests {
 		suite.addTestSuite(TypeSignatureTest.class);
 		suite.addTestSuite(SourceLocationTest.class);
 		suite.addTestSuite(ClassDeclarationTest.class);
+		suite.addTestSuite(ModuleTest.class);
 		//$JUnit-END$
 		return suite;
 	}

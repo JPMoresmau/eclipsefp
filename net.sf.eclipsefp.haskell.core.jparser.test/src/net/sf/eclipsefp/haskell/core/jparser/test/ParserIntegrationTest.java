@@ -30,7 +30,7 @@ import antlr.TokenStreamException;
 
 
 /**
- * Tests for the parser componenent.
+ * Tests for the parser component.
  * 
  * These tests depend on the HaskellLexer class, it would be good not
  * to do so (although it doesn't hurt too much to do).
