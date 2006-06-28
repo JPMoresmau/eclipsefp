@@ -11,7 +11,7 @@ ECLIPSE_HOME=${ECLIPSE_HOME:-/opt/eclipse/platform/3.1.2/eclipse}
 echo using ECLIPSEFP_HOME: ${ECLIPSEFP_HOME:?must be set}
 echo using ECLIPSE_HOME: $ECLIPSE_HOME
 echo
-pdeBuildPluginVersion=3.1.2
+pdeBuildPluginVersion=3.2.0.v20060601
 branchID="0.10.0"
 buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-/tmp/eclipsefp-build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
