@@ -201,7 +201,7 @@
 		<arg line="-application  org.eclipse.update.core.standaloneUpdate" />
 	    <arg line="-command install" />
 		<arg line="-featureId de.leiffrenzel.fp.haskell" />
-		<arg line="-version 0.10.0" />
+		<arg line="-version 0.11.0" />
 		<arg line="-from file://${update.site.staging.loc}/" />
 	</java>
 	<!-- Test the .zip installation -->

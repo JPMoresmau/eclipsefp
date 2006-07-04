@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: FP Common UI
 Bundle-SymbolicName: net.sf.eclipsefp.common.ui; singleton=true
-Bundle-Version: 0.10.0
+Bundle-Version: 0.11.0
 Bundle-ClassPath: commonui.jar
 Bundle-Activator: net.sf.eclipsefp.common.ui.CommonUIPlugin
 Bundle-Vendor: eclipsefp.sourceforge.net

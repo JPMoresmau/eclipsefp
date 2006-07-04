@@ -33,5 +33,8 @@
    <feature url="features/de.leiffrenzel.fp.haskell_0.10.0.jar" id="de.leiffrenzel.fp.haskell" version="0.10.0">
       <category name="FP"/>
    </feature>
+   <feature url="features/de.leiffrenzel.fp.haskell_0.11.0.jar" id="de.leiffrenzel.fp.haskell" version="0.11.0">
+      <category name="FP"/>
+   </feature>
    <category-def name="FP" label="Functional Programming"/>
 </site>

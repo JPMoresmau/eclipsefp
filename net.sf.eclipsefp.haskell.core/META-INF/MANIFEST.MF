@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: Haskell Core Plug-in
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core; singleton=true
-Bundle-Version: 0.10.0
+Bundle-Version: 0.11.0
 Bundle-ClassPath: haskellcore.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.core.HaskellCorePlugin
 Bundle-Vendor: eclipsefp.sourceforge.net
