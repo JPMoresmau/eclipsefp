@@ -100,7 +100,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 
 		final IModule module = getCompilationUnit().getModules()[0];
 		Scope scope = getLanguageModel().getScopeFor(module);
-		List<IDeclaration> decls = scope.getAvailableDeclarations();
+		List<IDeclaration> decls = scope.getCreatingDeclarations();
 		Collection<IModule> mods = scope.getImportableModules();
 		addAllNames(decls, result);
 		addAllNames(mods, result);

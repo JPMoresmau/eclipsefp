@@ -134,6 +134,21 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 	
 	//TODO do not propose an already imported module
 	
+	public void testDoNotProposeSameFunctionTwice() throws CoreException {
+		final String input = "module Main where\n" +
+		                     "\n" +
+		                     "factorial :: Int -> Int\n" +
+		                     "factorial = foldr (*) 1 . enumFromTo 1\n" +
+		                     "\n" +
+		                     "main = putStr $ show $ fac";
+		final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = createContext(unit, input.length());
+
+		ICompletionProposal[] proposals = context.computeProposals();
+		
+		assertEquals(1, proposals.length);
+	}
+	
 	private void assertContains(ICompletionProposal proposal, ICompletionProposal[] proposals) {
 		CompletionProposalTestCase.assertContains(proposal, proposals);
 	}

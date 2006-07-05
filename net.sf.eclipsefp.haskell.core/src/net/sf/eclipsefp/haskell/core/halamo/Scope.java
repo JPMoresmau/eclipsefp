@@ -63,4 +63,22 @@ public class Scope {
 		return fModel.getModules();
 	}
 
+	/**
+	 * Returns all the declarations that actually create something (a data type,
+	 * function, class, etc.). Type signatures, for example, do not create
+	 * anything.
+	 * 
+	 * @return list of creating declarations
+	 */
+	public List<IDeclaration> getCreatingDeclarations() {
+		List<IDeclaration> decls = getAvailableDeclarations();
+		List<IDeclaration> result = new ArrayList<IDeclaration>(decls.size());
+		for(IDeclaration decl : decls) {
+			if (! (decl instanceof ITypeSignature)) {
+				result.add(decl);
+			}
+		}
+		return result;
+	}
+
 }
