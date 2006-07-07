@@ -1,8 +1,6 @@
 package net.sf.eclipsefp.haskell.core.codeassist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -10,9 +8,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
 import net.sf.eclipsefp.haskell.core.halamo.Scope;
 
 public class HaskellCompletionContext implements IHaskellCompletionContext {
@@ -62,10 +60,11 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		String completedToken;
 		try {
 			completedToken = getQualifier(getCompilationUnit(), getOffset());
-			List<String> possibilities = computePossibilities();
-			List<ICompletionProposal> result = filterAndConvert(possibilities,
-																completedToken,
-																getOffset());
+			
+			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
+			searchScope(completedToken, result);
+			searchImportableModules(completedToken, result);
+			searchPreludeAndKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
 			// ignore the error and just return an empty result
@@ -73,47 +72,80 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return new ICompletionProposal[0];
 	}
 	
-	private List<ICompletionProposal> filterAndConvert(List<String> proposals,
-		String prefix,
-		int offset)
+	private void searchPreludeAndKeywords(String prefix,
+		List<ICompletionProposal> result)
 	{
-		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(
-				proposals.size());
-		int qlen = prefix.length();
-		if (qlen == 0) {
-			return result;
-		}
+		searchStringList(prefix, HaskellSyntax.getClasses(), result);
+		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
+	}
 
-		for (String prop : proposals) {
-			if (prop.startsWith(prefix)) {
-				result.add(new CompletionProposal(prop, offset - qlen, qlen,
-													prop.length()));
+	private void searchStringList(String prefix, String[] names,
+		List<ICompletionProposal> result)
+	{
+		final int offset = getOffset();
+		final int plength = prefix.length();
+		
+		for(String name : names) {
+			if (name.startsWith(prefix)) {
+				result.add(new CompletionProposal(name, offset - plength,
+				                                  plength,
+				                                  name.length()));
+				
 			}
 		}
-		return result;
 	}
 
-	private List<String> computePossibilities() {
-		List<String> result = new ArrayList<String>();
-		result.addAll(Arrays.asList(HaskellSyntax.getClasses()));
-		result.addAll(Arrays.asList(HaskellSyntax.getKeywords()));
+	private void searchImportableModules(String prefix,
+		List<ICompletionProposal> result)
+	{
+		final int offset = getOffset();
+		final int plength = prefix.length();
+		
+		for(IModule m : getLanguageModel().getModules()) {
+			final String moduleName = m.getName();
+			if (moduleName.startsWith(prefix)) {
+				result.add(new CompletionProposal(moduleName, offset - plength,
+				                                  plength,
+				                                  moduleName.length()));
+			}
+		}
+	}
 
+	private void searchScope(String prefix, List<ICompletionProposal> result) {
+		if (prefix.length() == 0) {
+			return;
+		}
+		
 		final IModule module = getCompilationUnit().getModules()[0];
 		Scope scope = getLanguageModel().getScopeFor(module);
-		List<IDeclaration> decls = scope.getCreatingDeclarations();
-		Collection<IModule> mods = scope.getImportableModules();
-		addAllNames(decls, result);
-		addAllNames(mods, result);
 
-		return result;
+		searchDeclarations(prefix, result, module);
+		
+		List<IModule> modules = scope.getAvailableModules();
+		for(IModule m : modules) {
+			searchDeclarations(prefix, result, m);
+		}
 	}
-	
-	private <T extends IHaskellLanguageElement> void addAllNames(
-		Collection<T> source,
-		List<String> destination)
+
+	private void searchDeclarations(String prefix,
+		List<ICompletionProposal> result,
+		IModule module)
 	{
-		for (IHaskellLanguageElement elem : source) {
-			destination.add(elem.getName());
+		final String moduleName = module.getName();
+		final int offset = getOffset();
+		final int plength = prefix.length();
+		final IDeclaration[] decls = module.getDeclarations();
+		
+		for(IDeclaration decl : decls) {
+			final String declName = decl.getName();
+			if (!(decl instanceof ITypeSignature) &&
+				declName.startsWith(prefix))
+			{
+				final CompletionProposal proposal = new CompletionProposal(
+				    declName, offset - plength, plength, declName.length(), null,
+				    declName + " - " + moduleName, null, null);
+				result.add(proposal);
+			}
 		}
 	}
 

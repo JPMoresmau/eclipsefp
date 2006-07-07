@@ -114,6 +114,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		ICompletionProposal[] proposals = context.computeProposals();
 		
 		assertContains(createProposal("f", "fat", offset), proposals);
+		assertEquals("fat - Recursive", proposals[0].getDisplayString());
 	}
 	
 	public void testCompletesModuleNames() throws CoreException {
