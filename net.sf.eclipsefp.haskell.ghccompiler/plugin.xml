@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.sf.eclipsefp.haskell.ghccompiler.core.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="net.sf.eclipsefp.haskell.core.haskellCompilers">
+      <compiler
+            outputParser="net.sf.eclipsefp.haskell.ghccompiler.core.GhcOutputParser"
+            name="Glasgow Haskell Compiler (ghc)"
+            description="Glasgow Haskell Compiler wrapper for ghc support."
+            class="net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler"
+            mode="make"
+            id="ghcCompiler">
+      </compiler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="GHC compiler"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP"
+            class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage"
+            id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage">
+      </page>
+      <page
+            name="GHCi (interactive)"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
+            class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage"
+            id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="GHCi session"
+            icon="icons/full/etool16/ghci16.gif"
+            class="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="*">
+                  </count>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="Run GHCi session"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+         <perspective
+               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
+         </perspective>
+      </shortcut>
+   </extension>
+   <!-- configurator page to simplify setting the ghc executable -->   
+   <extension point="net.sf.eclipsefp.common.ui.configuratorPages">
+     <configuratorPage id="net.sf.eclipsefp.haskell.ghccompiler.ui.configuratorpage.GHCConfiguratorPage"
+                       title="%configuratorPage.title"
+                       description="%configuratorPage.description"
+                       bannerImage="icons/full/wizban/ghc.png"
+                       class="net.sf.eclipsefp.haskell.ghccompiler.ui.configuratorpage.GHCConfiguratorPage" />
+   </extension>
+</plugin>

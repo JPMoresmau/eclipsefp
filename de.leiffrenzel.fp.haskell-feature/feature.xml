@@ -70,12 +70,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          unpack="false"/>
 
    <plugin
-         id="de.leiffrenzel.fp.haskell.ghccompiler"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
@@ -126,6 +120,12 @@ available at http://www.eclipse.org/legal/epl-v10.html.
 
    <plugin
          id="net.sf.eclipsefp.haskell.cabal.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

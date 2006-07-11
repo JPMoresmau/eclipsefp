@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>net.sf.eclipsefp.haskell.ghccompiler</name>
+	<comment></comment>
+	<projects>
+		<project>de.leiffrenzel.fp.common.ui</project>
+		<project>net.sf.eclipsefp.haskell.core</project>
+		<project>org.eclipse.osgi</project>
+		<project>org.eclipse.osgi.services</project>
+		<project>org.eclipse.osgi.util</project>
+		<project>org.eclipse.ui</project>
+		<project>org.eclipse.update.configurator</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.pde.ManifestBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.pde.SchemaBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.pde.PluginNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+	</natures>
+</projectDescription>
