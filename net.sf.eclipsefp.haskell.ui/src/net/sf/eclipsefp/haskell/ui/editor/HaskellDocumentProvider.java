@@ -2,12 +2,13 @@
 package net.sf.eclipsefp.haskell.ui.editor;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.jface.text.rules.IPartitionTokenScanner;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellPartitionScanner;
@@ -18,7 +19,7 @@ import net.sf.eclipsefp.haskell.ui.editor.text.LiterateHaskellPartitionScanner;
   * 
   * @author Leif Frenzel
   */
-public class HaskellDocumentProvider extends FileDocumentProvider {
+public class HaskellDocumentProvider extends TextFileDocumentProvider {
 
   private static final String[] TOKEN_TYPES = new String[] { 
     IDocument.DEFAULT_CONTENT_TYPE,
@@ -31,16 +32,10 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
     return new FastPartitioner( partitionScanner, TOKEN_TYPES );
   }
   
-  protected IDocument createDocument( final Object elem ) throws CoreException {
-    IDocument result = super.createDocument( elem );
-    if( result != null ) {
-      IDocumentPartitioner partitioner = getPartitioner( elem ); 
-      partitioner.connect( result );
-      result.setDocumentPartitioner( partitioner );
-    }
-    return result;
+  @Override
+  protected IAnnotationModel createAnnotationModel(IFile file) {
+	  return new HaskellAnnotationModel(file);
   }
-  
   
   // helping methods
   //////////////////
