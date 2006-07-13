@@ -21,7 +21,7 @@ public class HaskellAnnotationModel extends ResourceMarkerAnnotationModel {
 		int line = MarkerUtilities.getLineNumber(marker);
 
 		if (start > end || start == -1 || end == -1 || line == -1) {
-			return null;
+			return super.createPositionFromMarker(marker);
 		}
 
 		try {

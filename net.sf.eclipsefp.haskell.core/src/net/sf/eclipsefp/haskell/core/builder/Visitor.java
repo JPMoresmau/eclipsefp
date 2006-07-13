@@ -1,12 +1,17 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.compiler.*;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
+import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 
 
 /** <p>The superclass for visitors used in building Haskell projects</p>
@@ -49,10 +54,7 @@ abstract class Visitor {
       for( int i = 0; i < items.length; i++ ) {
         IMarker marker = file.createMarker( HaskellCorePlugin.ID_PROBLEM_MARKER );
         if( marker.exists() ) {
-          marker.setAttribute( IMarker.MESSAGE, items[ i ].getComment() );
-          marker.setAttribute( IMarker.LINE_NUMBER, 
-                               items[ i ].getLineNumber() );
-          marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_ERROR );
+        	items[i].populateMarker(marker);
         }
       }
     } catch( CoreException cex ) {
