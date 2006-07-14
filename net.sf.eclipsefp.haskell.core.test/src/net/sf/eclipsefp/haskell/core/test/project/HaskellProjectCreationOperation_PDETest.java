@@ -68,12 +68,13 @@ public class HaskellProjectCreationOperation_PDETest extends
 		fStore.setValue(ICorePreferenceNames.FOLDERS_OUT, "myOut");
 		fStore.setValue(ICorePreferenceNames.FOLDERS_BIN, "myBin");
 		fStore.setValue(ICorePreferenceNames.TARGET_BINARY, "myBinary");
+		fStore.setValue(ICorePreferenceNames.SELECTED_COMPILER, "null");
 
 		runOperation();
 		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
 		IFile f = prj.getFile(HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR);
 		final String expectedContents = HaskellProjectManager
-				.createDescriptorContent("mySrc", "myOut", "myBin", "myBinary");
+				.createDescriptorContent("mySrc", "myOut", "myBin", "myBinary", "null");
 		assertEquals(expectedContents, readContents(f));
 
 	}

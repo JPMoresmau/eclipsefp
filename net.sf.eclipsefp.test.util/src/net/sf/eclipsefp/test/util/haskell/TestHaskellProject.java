@@ -36,7 +36,7 @@ public class TestHaskellProject implements ICorePreferenceNames {
 
 	private Preferences preferences() {
 		Preferences preferences = new Preferences();
-	    preferences.setValue(SELECTED_COMPILER, "ghcCompiler");
+	    preferences.setValue(SELECTED_COMPILER, "null");
 	    preferences.setValue(FOLDERS_SRC, "src");		
 	    preferences.setValue(FOLDERS_OUT, "out");
 	    preferences.setValue(FOLDERS_BIN, "bin");		

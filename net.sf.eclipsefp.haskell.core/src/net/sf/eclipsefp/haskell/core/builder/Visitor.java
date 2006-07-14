@@ -12,6 +12,8 @@ import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 
 
 /** <p>The superclass for visitors used in building Haskell projects</p>
@@ -38,7 +40,9 @@ abstract class Visitor {
   void compileFile( final IFile file ) {
     // TODO should do sth. with the progress monitor
     CompilerManager man = CompilerManager.getInstance();
-    IHaskellCompiler compiler = man.getCompiler();
+    // TODO refactor: move compiling code to hsProject itself
+	IHaskellProject hsProject = HaskellProjectManager.get(file.getProject());
+    IHaskellCompiler compiler = hsProject.getCompiler();
     ICompilerOutput out = compiler.compile( file );
     CompilerManager.getInstance().notifyListeners( out );
     deleteMarkers( file );

@@ -10,7 +10,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import net.sf.eclipsefp.haskell.core.compiler.defaultcompiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
 import junit.framework.TestCase;
 
@@ -49,6 +52,15 @@ public class TestHaskellProjectMetaTest_PDETestCase extends TestCase {
 		
 		underlyingProject = getProject("other-project");
 		assertFalse(underlyingProject.exists());
+	}
+	
+	public void testUsesDefaultCompiler() throws CoreException {
+		TestHaskellProject project = new TestHaskellProject("yet-another-project");
+		
+		IHaskellProject hsprj = HaskellProjectManager.get(getProject("yet-another-project"));
+		assertEquals(DefaultHaskellCompiler.class, hsprj.getCompiler().getClass());
+		
+		project.destroy();
 	}
 
 	private String readFirstLine(IFile file) throws IOException, CoreException {

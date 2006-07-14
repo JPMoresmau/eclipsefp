@@ -50,7 +50,8 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 			       getPreference(ICorePreferenceNames.FOLDERS_SRC),
 			       getPreference(ICorePreferenceNames.FOLDERS_OUT),
 			       getPreference(ICorePreferenceNames.FOLDERS_BIN),
-			       getPreference(ICorePreferenceNames.TARGET_BINARY));
+			       getPreference(ICorePreferenceNames.TARGET_BINARY),
+			       getPreference(ICorePreferenceNames.SELECTED_COMPILER));
 	}
 
 	private boolean createFolders() {

@@ -8,7 +8,8 @@ package net.sf.eclipsefp.haskell.core.project;
   */
 interface IXMLNames {
 
-  /** <p>the single root element of the XML hierarchy in 
+  public static final String COMPILER_ELEMENT = "compiler";
+/** <p>the single root element of the XML hierarchy in 
     * <code>.hsproject</code> files.</p> */
   String DOCUMENT_ELEMENT = "haskellProject";
   /** <p>the element in the <code>.hsproject</code> file that names the source 

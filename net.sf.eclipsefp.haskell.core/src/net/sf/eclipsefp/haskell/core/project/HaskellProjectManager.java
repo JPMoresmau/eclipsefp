@@ -82,11 +82,13 @@ public class HaskellProjectManager {
   public static String createDescriptorContent( final String sourcePath,
                                                 final String outputPath,
                                                 final String binPath,
-                                                final String targetName ) {
+                                                final String targetName,
+                                                final String compiler) {
     return DescriptorFile.createDescriptorContent( sourcePath, 
                                                    outputPath, 
                                                    binPath,
-                                                   targetName );
+                                                   targetName,
+                                                   compiler);
   }
   
   /** <p>creates the content of a project descriptor file with empty path 

@@ -2,6 +2,9 @@
 package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.common.core.util.Assert;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
+import net.sf.eclipsefp.haskell.core.compiler.defaultcompiler.DefaultHaskellCompiler;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -19,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
  */
 final class HaskellProject implements IHaskellProject {
 
-	private IProject project;
+	private IProject fProject;
 
 	private String sourcePath = "";
 
@@ -29,15 +32,18 @@ final class HaskellProject implements IHaskellProject {
 
 	private String targetName = "";
 
-	HaskellProject(final IProject project) {
-		this.project = project;
-	}
+	private IHaskellCompiler fCompiler;
 
+	HaskellProject(final IProject project) {
+		fCompiler = CompilerManager.getInstance().getCompiler();
+		fProject = project;
+	}
+	
 	// interface methods of IHaskellProject
 	// /////////////////////////////////////
 
 	public IProject getResource() {
-		return project;
+		return fProject;
 	}
 
 	public IPath getSourcePath() {
@@ -127,26 +133,37 @@ final class HaskellProject implements IHaskellProject {
 		event.setNewValue(getTargetName());
 		HaskellProjectManager.getInstance().broadcast(event);
 	}
-
+	
 	// helping methods
 	// ////////////////
 
 	private IPath getProjectRelativePath(final String whichPath) {
 		IPath result;
 		if (whichPath.equals("")) {
-			result = project.getProjectRelativePath();
+			result = fProject.getProjectRelativePath();
 		} else {
-			result = project.getFolder(whichPath).getProjectRelativePath();
+			result = fProject.getFolder(whichPath).getProjectRelativePath();
 		}
 		return result;
 	}
 
 	public IContainer getSourceFolder() {
 		IPath sourcePath = getSourcePath();
-		if (sourcePath.equals(project.getProjectRelativePath())) {
-			return project;
+		if (sourcePath.equals(fProject.getProjectRelativePath())) {
+			return fProject;
 		}
 
-		return project.getFolder(sourcePath);
+		return fProject.getFolder(sourcePath);
+	}
+
+	public IHaskellCompiler getCompiler() {
+		return fCompiler;
+	}
+
+	public void setCompiler(IHaskellCompiler compiler) {
+		if (null == compiler) {
+			compiler = new DefaultHaskellCompiler();
+		}
+		fCompiler = compiler; 
 	}
 }
