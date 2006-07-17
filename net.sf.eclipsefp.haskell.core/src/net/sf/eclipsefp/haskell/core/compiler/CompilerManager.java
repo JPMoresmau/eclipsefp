@@ -4,8 +4,6 @@ package net.sf.eclipsefp.haskell.core.compiler;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import net.sf.eclipsefp.common.core.util.Assert;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -44,17 +42,7 @@ public class CompilerManager {
     * value - the compiler object (which implements IHaskellCompiler)
     */
   private Hashtable htInstalledCompilers;
-  /** the output parsers for compilers. 
-    * 
-    * Since a compiler must not necessarily provide an output parser, this
-    * map needs not to contain an object for a compiler id even if that 
-    * compiler can be found in htInstalledCompilers. 
-    * 
-    * key   - compiler id
-    * value - the parser object (which implements IHaskellCompilerOutputParser)
-    *         for the compiler
-    */
-  private Hashtable htInstalledParsers;
+
   /** contains ICompilerOutputListeners that have registered with the
     * compiler manager to get informed about output produced by compilers. */
   private ArrayList alListeners;
@@ -64,7 +52,6 @@ public class CompilerManager {
   private CompilerManager() {
     htInstalledCompilers = new Hashtable();
     htRegisteredCompilers = new Hashtable();
-    htInstalledParsers = new Hashtable();
     alListeners = new ArrayList();
     initDefaultCompiler();
   }
@@ -123,27 +110,6 @@ public class CompilerManager {
     htRegisteredCompilers.put( id, info );
   }
 
-  /** <p>returns whether the currently selected compiler has an output
-    * parser installed in this CompilerManager.</p> */ 
-  public boolean hasParser() {
-    return htInstalledParsers.containsKey( selectedCompiler );
-  }
-
-  /** <p>returns the output parser for the currently selected compiler.</p>
-    * 
-    * <p>Clients have to query with hasParser() before a call to this in 
-    * order to find out whether the currently selected compiler has actually 
-    * a parser assigned to it.</p> */
-  public IHaskellCompilerOutputParser getParser() {
-    Object result = null;
-    Assert.isTrue( hasParser(),
-                     "No output parser available for compiler '" 
-                   + selectedCompiler 
-                   + "'." );
-    result = htInstalledParsers.get( selectedCompiler );
-    return ( IHaskellCompilerOutputParser )result;
-  }
-
   /** <p>registers the passed listener with the compiler manager. The 
     * listener is notified about compiler output that has been produced
     * when the currently selected compiler compiled.</p> */
@@ -194,7 +160,6 @@ public class CompilerManager {
     IConfigurationElement configElem 
       = ( IConfigurationElement )htRegisteredCompilers.get( id );
     installCompilerExecutable( id, configElem );
-    installParser( id, configElem );
   }
 
   private void installCompilerExecutable( final String id,
@@ -215,26 +180,6 @@ public class CompilerManager {
     htInstalledCompilers.put( id, compiler );
   }
 
-  private void installParser( final String id, 
-                              final IConfigurationElement elem ) 
-                                                   throws HaskellCoreException {
-    if( elem.getAttribute( "outputParser" ) != null ) {
-      Object parser = null;
-      try {
-        parser = elem.createExecutableExtension( "outputParser" );
-      } catch ( CoreException cex ) {
-        fireHCEx( cex.getMessage() );
-      }
-      if( !( parser instanceof IHaskellCompilerOutputParser ) ) {
-        fireHCEx(   "Putative Haskell compiler output parser for compiler '" 
-                  + id 
-                  + "' must implement" 
-                  + IHaskellCompilerOutputParser.class.getName() );
-      }
-      htInstalledParsers.put( id, parser );      
-    }
-  }
-  
   private void fireHCEx( final String message ) throws HaskellCoreException {
     throw new HaskellCoreException( message );
   }

@@ -3,10 +3,12 @@ package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.common.core.util.Assert;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.defaultcompiler.DefaultHaskellCompiler;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -165,5 +167,9 @@ final class HaskellProject implements IHaskellProject {
 			compiler = new DefaultHaskellCompiler();
 		}
 		fCompiler = compiler; 
+	}
+
+	public ICompilerOutput compile(IFile file) {
+		return getCompiler().compile(file);
 	}
 }

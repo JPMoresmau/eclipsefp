@@ -29,7 +29,7 @@ public class GhciLaunchOperationDelegate
   
   public String[] createArguments( final IHaskellProject hsProject,
                                    final IFile[] selectedFiles ) {
-    List cmdLine = new ArrayList();
+    List<String> cmdLine = new ArrayList<String>();
 
     cmdLine.add( "--interactive" );
 
@@ -63,7 +63,7 @@ public class GhciLaunchOperationDelegate
     return ps.getBoolean( IGhcPreferenceNames.GHCI_USES_GHC_OPTIONS );
   }
   
-  private void addAll( final List cmdLine, final IFile[] selectedFiles ) {
+  private void addAll( final List<String> cmdLine, final IFile[] selectedFiles ) {
     for( int i = 0; i < selectedFiles.length; i++ ) {
       String path = selectedFiles[ i ].getLocation().toOSString();
       cmdLine.add( "\"" + path + "\"" );

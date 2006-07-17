@@ -65,16 +65,6 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="outputParser" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="net.sf.eclipsefp.haskell.core.compiler.IHaskellCompilerOutputParser"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="mode" use="required">
             <annotation>
                <documentation>

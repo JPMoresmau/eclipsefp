@@ -41,17 +41,11 @@ abstract class Visitor {
   
   void compileFile( final IFile file ) {
     // TODO should do sth. with the progress monitor
-    CompilerManager man = CompilerManager.getInstance();
-    // TODO refactor: move compiling code to hsProject itself
 	IHaskellProject hsProject = HaskellProjectManager.get(file.getProject());
-    IHaskellCompiler compiler = hsProject.getCompiler();
-    ICompilerOutput out = compiler.compile( file );
+	ICompilerOutput out = hsProject.compile(file);
     CompilerManager.getInstance().notifyListeners( out );
     deleteMarkers( file );
-    if( man.hasParser() ) {
-      Collection<ICompilerOutputItem> items = out.getErrors();
-      markResource( file, items );
-    } 
+    markResource( file, out.getErrors());
   }
 
   private void markResource( final IFile file, 

@@ -10,7 +10,6 @@
    <extension
          point="net.sf.eclipsefp.haskell.core.haskellCompilers">
       <compiler
-            outputParser="net.sf.eclipsefp.haskell.ghccompiler.core.GhcOutputParser"
             name="Glasgow Haskell Compiler (ghc)"
             description="Glasgow Haskell Compiler wrapper for ghc support."
             class="net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler"
