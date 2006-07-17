@@ -25,4 +25,12 @@ public interface ICompilerOutputItem {
 
 	void populateMarker(IMarker marker) throws CoreException;
 
+	int getLine();
+
+	int getStartColumn();
+
+	int getEndColumn();
+
+	String getComment();
+
 }

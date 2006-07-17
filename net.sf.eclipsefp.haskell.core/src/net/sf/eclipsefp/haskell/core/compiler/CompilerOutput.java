@@ -1,54 +1,60 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.compiler;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-/** <p>Default implementation for a compiler's output.</p>
-  * 
-  * @author Leif Frenzel
-  */
+/**
+ * <p>
+ * Default implementation for a compiler's output.
+ * </p>
+ * 
+ * @author Leif Frenzel
+ */
 public class CompilerOutput implements ICompilerOutput {
 
-  private int exitStatus;
-  private String output;
-  private String errors;
-  private List exceptions;
+	private int exitStatus;
 
-  
-  public CompilerOutput( final int exitStatus, 
-                         final String output,
-                         final String errors,
-                         final List exceptions ) {
-    this.exitStatus = exitStatus;
-    this.output = output;
-    this.errors = errors;
-    this.exceptions = exceptions;
-  }
+	private String output;
 
-  public String toString() {
-    return   "Compiler output [ " + exceptions.size() + " Exceptions ]\n"
-           + output
-           + "\n"
-           + errors;
-  }
-  
+	private Collection<ICompilerOutputItem> fErrors =
+		new ArrayList<ICompilerOutputItem>();
 
-  // interface methods of ICompilerOutput
-  ////////////////////////////////////////////// 
+	private List exceptions;
 
-  public int getExitStatus() {
-    return exitStatus;
-  }
+	public CompilerOutput(final int exitStatus, final String output,
+			final List exceptions) {
+		this.exitStatus = exitStatus;
+		this.output = output;
+		this.exceptions = exceptions;
+	}
 
-  public String getOutput() {
-    return output;
-  }
+	public String toString() {
+		return "Compiler output [ " + exceptions.size() + " Exceptions ]\n"
+				+ output + "\n" + fErrors;
+	}
 
-  public String getErrors() {
-    return errors;
-  }
+	// interface methods of ICompilerOutput
+	// ////////////////////////////////////////////
 
-  public List getExceptions() {
-    return exceptions;
-  }
+	public int getExitStatus() {
+		return exitStatus;
+	}
+
+	public String getOutput() {
+		return output;
+	}
+
+	public Collection<ICompilerOutputItem> getErrors() {
+		return new ArrayList<ICompilerOutputItem>(fErrors);
+	}
+
+	public List getExceptions() {
+		return exceptions;
+	}
+
+	public void addError(CompilerOutputItem item) {
+		fErrors.add(item);
+	}
 }

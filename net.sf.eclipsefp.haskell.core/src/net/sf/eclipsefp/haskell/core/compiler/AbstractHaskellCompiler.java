@@ -81,8 +81,7 @@ public abstract class AbstractHaskellCompiler implements IHaskellCompiler {
 		final StringWriter err,
 		final int status)
 	{
-		return new CompilerOutput(status, out.toString(), err.toString(),
-									exList);
+		return new CompilerOutput(status, out.toString(), exList);
 	}
 
 	private void collectExceptions(final List<Exception> excList,

@@ -20,12 +20,31 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 
 	private String fComment;
 
+	private int fStartColumn;
+
+	private int fEndColumn;
+
+	public CompilerOutputItem() {
+		//placeholder constructor
+	}
+
 	public CompilerOutputItem(final String fileName, final int lineNumber,
 			final String comment) {
 		fFileName = fileName;
 		fLineNumber = lineNumber;
 		fComment = comment.trim();
 	}
+
+	public CompilerOutputItem(String fileName, int lineNumber, int startColumn,
+		                      int endColumn, String comment)
+	{
+		fFileName = fileName;
+		fLineNumber = lineNumber;
+		fStartColumn = startColumn;
+		fEndColumn = endColumn;
+		fComment = comment;
+	}
+
 
 	public void addToComment(final String commentAddition) {
 		String start = (fComment.equals("")) ? fComment : fComment + "\n";
@@ -40,6 +59,18 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 	// attribute setters and getters
 	// //////////////////////////////
 
+	public int getLine() {
+		return fLineNumber;
+	}
+
+	public int getStartColumn() {
+		return fStartColumn;
+	}
+
+	public int getEndColumn() {
+		return fEndColumn;
+	}
+
 	public String getComment() {
 		return fComment;
 	}
@@ -48,5 +79,28 @@ public class CompilerOutputItem implements ICompilerOutputItem {
         marker.setAttribute(IMarker.MESSAGE, fComment);
         marker.setAttribute(IMarker.LINE_NUMBER, fLineNumber);
         marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+        marker.setAttribute(IMarker.CHAR_START, fStartColumn);
+        marker.setAttribute(IMarker.CHAR_END, fEndColumn);
 	}
+
+	public void setFileName(String fileName) {
+		fFileName = fileName;
+	}
+
+	public void setLine(int line) {
+		fLineNumber = line;
+	}
+
+	public void setStartColumn(int column) {
+		fStartColumn = column;
+	}
+
+	public void setEndColumn(int column) {
+		fEndColumn = column;
+	}
+
+	public void setComment(String comment) {
+		fComment = comment;
+	}
+
 }

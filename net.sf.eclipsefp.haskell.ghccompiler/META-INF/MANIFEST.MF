@@ -15,4 +15,5 @@ Require-Bundle: org.eclipse.core.resources,
  net.sf.eclipsefp.common.ui,
  net.sf.eclipsefp.common.core
 Eclipse-AutoStart: true
-Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.ui.launch
+Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test",
+ net.sf.eclipsefp.haskell.ghccompiler.ui.launch

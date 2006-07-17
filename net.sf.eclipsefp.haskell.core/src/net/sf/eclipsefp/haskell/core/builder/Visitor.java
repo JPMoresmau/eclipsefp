@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -47,18 +49,18 @@ abstract class Visitor {
     CompilerManager.getInstance().notifyListeners( out );
     deleteMarkers( file );
     if( man.hasParser() ) {
-      ICompilerOutputItem[] items = man.getParser().getItems( out );
+      Collection<ICompilerOutputItem> items = out.getErrors();
       markResource( file, items );
     } 
   }
 
   private void markResource( final IFile file, 
-                             final ICompilerOutputItem[] items ) {
+                             final Collection<ICompilerOutputItem> items ) {
     try {
-      for( int i = 0; i < items.length; i++ ) {
+      for(ICompilerOutputItem item : items) {
         IMarker marker = file.createMarker( HaskellCorePlugin.ID_PROBLEM_MARKER );
         if( marker.exists() ) {
-        	items[i].populateMarker(marker);
+        	item.populateMarker(marker);
         }
       }
     } catch( CoreException cex ) {

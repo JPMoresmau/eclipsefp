@@ -2,9 +2,11 @@
 package net.sf.eclipsefp.haskell.core.compiler.defaultcompiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 
 
 /** <p>Default implementation for a practically empty compiler output.</p>
@@ -19,8 +21,8 @@ class DefaultHaskellCompilerOutput implements ICompilerOutput {
     this.name = name;
   }
   
-  public String getErrors() {
-    return "";
+  public Collection<ICompilerOutputItem> getErrors() {
+    return new ArrayList<ICompilerOutputItem>(0);
   }
 
   public List getExceptions() {

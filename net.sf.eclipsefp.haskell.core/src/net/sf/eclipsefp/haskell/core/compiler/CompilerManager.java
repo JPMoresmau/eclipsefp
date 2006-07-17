@@ -29,7 +29,7 @@ public class CompilerManager {
     * it has to be selected with selectCompiler. By the default, the 
     * DefaultCompiler (a dummy object that does no compiling itself) is 
     * selected. */
-  private String selectedCompiler;
+  private String selectedCompiler = DEFAULT;
   /** registered compilers.
     * 
     * keys  - compiler id
