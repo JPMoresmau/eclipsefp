@@ -3,12 +3,11 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-import net.sf.eclipsefp.haskell.core.compiler.AbstractHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
+import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.TracingUtil;
@@ -26,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @author Leif Frenzel
  */
-public class GhcCompiler extends AbstractHaskellCompiler {
+public class GhcCompiler implements IHaskellCompiler {
 
 	private static boolean trace = GhcCompilerPlugin.isTracing();
 
@@ -45,8 +44,15 @@ public class GhcCompiler extends AbstractHaskellCompiler {
 		fProcessRunner = procRunner;
 	}
 
-	// interface methods of AbstractHaskellCompiler
-	// /////////////////////////////////////////////
+	public ICompilerOutput compile(IFile file) {
+		final IProject project = file.getProject();
+		IHaskellProject hsProject = HaskellProjectManager.get(project);
+		String[] cmdLine = buildCommandLine(file, hsProject);
+		IPath src = project.getLocation().append(hsProject.getSourcePath());
+		String output = fProcessRunner.execute(
+			new File(src.toOSString()), cmdLine);
+		return parse(output);
+	}
 
 	public String[] buildCommandLine(final IFile file,
 			final IHaskellProject haskellProject) {
@@ -57,7 +63,7 @@ public class GhcCompiler extends AbstractHaskellCompiler {
 		IProject project = haskellProject.getResource();
 		String outDir = getAbsPath(project, haskellProject.getOutputPath());
 
-		ArrayList cmdLine = new ArrayList();
+		ArrayList<String> cmdLine = new ArrayList<String>();
 		// command and special options
 		cmdLine.add(Util.getCompilerExecutable());
 		String libPath = Util.constructLibPath(haskellProject);
@@ -78,22 +84,11 @@ public class GhcCompiler extends AbstractHaskellCompiler {
 		if (trace) {
 			TracingUtil.dump(cmdLine);
 		}
-		return toArray(cmdLine);
+		return cmdLine.toArray(new String[cmdLine.size()]);
 	}
 
 	// helping methods
 	// ////////////////
-
-	@Override
-	public ICompilerOutput compile(IFile file) {
-		final IProject project = file.getProject();
-		IHaskellProject hsProject = HaskellProjectManager.get(project);
-		String[] cmdLine = buildCommandLine(file, hsProject);
-		IPath src = project.getLocation().append(hsProject.getSourcePath());
-		String output = fProcessRunner.execute(
-			new File(src.toOSString()), cmdLine);
-		return parse(output);
-	}
 
 	private ICompilerOutput parse(String messages) {
 		final CompilerOutput output = new CompilerOutput(0, messages, new ArrayList<Exception>(0));
@@ -160,9 +155,4 @@ public class GhcCompiler extends AbstractHaskellCompiler {
 		return projectRelPath.removeFirstSegments(num);
 	}
 
-	private final String[] toArray(final List list) {
-		String[] result = new String[list.size()];
-		list.toArray(result);
-		return result;
-	}
 }

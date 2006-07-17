@@ -19,9 +19,9 @@ import java.util.Collection;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-import net.sf.eclipsefp.haskell.core.compiler.AbstractHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
+import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IProcessRunner;
 import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
@@ -35,7 +35,7 @@ public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 		replay(procRunner);
 		
 		IFile f = createSourceFile("main = putStrLn $ show $ fat 4", "Main.hs");
-		AbstractHaskellCompiler compiler = new GhcCompiler(procRunner);
+		IHaskellCompiler compiler = new GhcCompiler(procRunner);
 		ICompilerOutput output = compiler.compile(f);
 		Collection<ICompilerOutputItem> errors = output.getErrors();
 		

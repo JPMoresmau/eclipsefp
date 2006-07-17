@@ -22,8 +22,8 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     preferences = GhcCompilerPlugin.getDefault().getPluginPreferences();
   }
   
-  public List construct() {
-    List result = new ArrayList();
+  public List<String> construct() {
+    List<String> result = new ArrayList<String>();
     addOptimizationLevel( result );
     addLanguageParams( result );
     addOptimizationParams( result );    
@@ -36,7 +36,7 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
   // helping methods
   //////////////////
 
-  private void addLanguageParams( final List result ) {
+  private void addLanguageParams( final List<String> result ) {
     // boolean preferences use the parameter as key    
     addBooleanParam( LANG_GLASGOW_EXTS, result );
     addBooleanParam( LANG_FI, result );
@@ -50,7 +50,7 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     addBooleanParam( LANG_NO_IMPLICIT_PRELUDE, result );
   }
   
-  private void addOptimizationParams( final List result ) {
+  private void addOptimizationParams( final List<String> result ) {
     // boolean preferences use the parameter as key
     addBooleanParam( OPT_EXCESS_PRECISION, result );
     addBooleanParam( OPT_IGNORE_ASSERTS, result );
@@ -59,7 +59,7 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     addBooleanParam( OPT_UNBOX_STRICT_FIELDS, result );
   }
   
-  private void addMoreOptimizationParams( final List result ) {
+  private void addMoreOptimizationParams( final List<String> result ) {
     // boolean preferences use the parameter as key
     addBooleanParam( OPT_CASE_MERGE, result );
     addBooleanParam( OPT_DICTS_STRICT, result );
@@ -75,7 +75,7 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     addBooleanParam( OPT_USAGESP, result );
   }
 
-  private void addExtraOptions( final List list ) {
+  private void addExtraOptions( final List<String> list ) {
     if( preferences.getBoolean( USE_EXTRA_OPTIONS ) ) {
       String extras = preferences.getString( EXTRA_OPTIONS );
       if( extras !=  null && !extras.trim().equals( "" ) ) {
@@ -84,14 +84,14 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     }
   }
   
-  private void addBooleanParam( final String key, final List list ) {
+  private void addBooleanParam( final String key, final List<String> list ) {
     boolean value = preferences.getBoolean( key );
     if( value ) {
       list.add( key );
     }
   }
 
-  private void addOptimizationLevel( final List list ) {
+  private void addOptimizationLevel( final List<String> list ) {
     int level = preferences.getInt( OPTIMIZATION_LEVEL );
     if( level > -1 ) {
       String optLevel = "-O" + String.valueOf( level );
