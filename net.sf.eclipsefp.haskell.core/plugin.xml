@@ -3,6 +3,7 @@
 <plugin>
 
    <extension-point id="haskellCompilers" name="Haskell Compilers" schema="schema/haskellCompilers.exsd"/>
+   <extension-point id="haskellParsers" name="Haskell Parsers" schema="schema/haskellParsers.exsd"/>
 
    <extension
          id="project.HaskellNature"
