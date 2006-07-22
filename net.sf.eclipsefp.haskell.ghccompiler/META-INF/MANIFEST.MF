@@ -6,14 +6,15 @@ Bundle-ClassPath: ghccompiler.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.resources,
+Require-Bundle: org.antlr,
+ org.eclipse.core.resources,
  org.eclipse.ui,
- net.sf.eclipsefp.haskell.core,
- net.sf.eclipsefp.haskell.ui,
  org.eclipse.debug.ui,
  org.eclipse.core.runtime,
  net.sf.eclipsefp.common.ui,
- net.sf.eclipsefp.common.core
+ net.sf.eclipsefp.common.core,
+ net.sf.eclipsefp.haskell.core,
+ net.sf.eclipsefp.haskell.ui
 Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test",
  net.sf.eclipsefp.haskell.ghccompiler.ui.launch

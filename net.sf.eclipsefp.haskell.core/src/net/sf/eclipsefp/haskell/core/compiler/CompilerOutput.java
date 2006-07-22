@@ -30,6 +30,10 @@ public class CompilerOutput implements ICompilerOutput {
 		this.exceptions = exceptions;
 	}
 
+	public CompilerOutput() {
+		//placeholder constructor
+	}
+
 	public String toString() {
 		return "Compiler output [ " + exceptions.size() + " Exceptions ]\n"
 				+ output + "\n" + fErrors;

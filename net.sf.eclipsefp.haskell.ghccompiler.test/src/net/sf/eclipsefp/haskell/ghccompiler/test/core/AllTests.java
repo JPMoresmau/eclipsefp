@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.test.halamo;
+package net.sf.eclipsefp.haskell.ghccompiler.test.core;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -7,10 +7,9 @@ public class AllTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
-				"Test for net.sf.eclipsefp.haskell.core.test.halamo");
+				"Test for net.sf.eclipsefp.haskell.ghccompiler.test.core");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(LanguageModelTest.class);
-		suite.addTestSuite(ScopeTest.class);
+		suite.addTestSuite(GhcOutputParserTest.class);
 		//$JUnit-END$
 		return suite;
 	}

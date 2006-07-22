@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 
 import static org.easymock.EasyMock.*;
 
-public class HaskellModelManagerTest extends TestCase {
+public class HaskellModelManager_PDETestCase extends TestCase {
 	
 	public void testCreatesModelsForNewProjects() {
 		IWorkspace workspace = createMock(IWorkspace.class);
@@ -32,21 +32,25 @@ public class HaskellModelManagerTest extends TestCase {
 	
 	public void testFetchesModelsForExistingProjects() throws CoreException {
 		TestHaskellProject project = new TestHaskellProject("factorial");
-		project.createSourceFile("Factorial.hs", "module Factorial where\n" +
-				                                 "\n" +
-				                                 "fac 0 = 1\n" +
-				                                 "fac n = n * fac (n - 1)");
-		
-		HaskellModelManager mngr = new HaskellModelManager(
-				ResourcesPlugin.getWorkspace());
-		mngr.initialize();
-		
-		IHaskellModel prjModel = mngr.getModelFor(project.getPlatformProject());
-		assertNotNull(prjModel);
-		
-		IModule module = prjModel.getModule("Factorial");
-		assertNotNull(module);
-		assertEquals(1, module.getDeclarations().length);
+		try {
+			project.createSourceFile("Factorial.hs", "module Factorial where\n" +
+					                                 "\n" +
+					                                 "fac 0 = 1\n" +
+					                                 "fac n = n * fac (n - 1)");
+			
+			HaskellModelManager mngr = new HaskellModelManager(
+					ResourcesPlugin.getWorkspace());
+			mngr.initialize();
+			
+			IHaskellModel prjModel = mngr.getModelFor(project.getPlatformProject());
+			assertNotNull(prjModel);
+			
+			IModule module = prjModel.getModule("Factorial");
+			assertNotNull(module);
+			assertEquals(1, module.getDeclarations().length);
+		} finally {
+			project.destroy();
+		}
 	}
 	
 }

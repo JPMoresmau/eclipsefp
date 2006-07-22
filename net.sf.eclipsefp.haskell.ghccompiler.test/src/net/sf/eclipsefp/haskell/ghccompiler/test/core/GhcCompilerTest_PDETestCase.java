@@ -12,6 +12,7 @@
 package net.sf.eclipsefp.haskell.ghccompiler.test.core;
 
 import static org.easymock.EasyMock.*;
+import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.*;
 
 import java.io.File;
 import java.util.Collection;
@@ -28,7 +29,7 @@ import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
 
 public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 	
-	public void testParseResults() throws CoreException {
+	public void testParseOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
 		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
 			.andReturn("\nMain.hs:1:25-27: Not in scope: `fat'\n");
@@ -44,22 +45,23 @@ public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 		
 		verify(procRunner);
 	}
+	
+	public void testParseMakeFlagOneErrorResult() throws CoreException {
+		IProcessRunner procRunner = createMock(IProcessRunner.class);
+		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
+			.andReturn("Chasing modules from: Main.hs\n" +
+					   "Compiling Main             ( Main.hs, Main.o )\n" +
+					   "\n" +
+					   "Main.hs:6:25-27: Not in scope: `fac'\n");
+		replay(procRunner);
 
-	private void assertContains(int line, int startColumn, int endColumn,
-	    String message, Collection<ICompilerOutputItem> errors)
-	{
-		for(ICompilerOutputItem item : errors) {
-			if (   line == item.getLine()
-			   && startColumn == item.getStartColumn()
-			   && endColumn == item.getEndColumn()
-			   && message.equals(item.getComment()) )
-			{
-				return;
-			}
-		}
-		fail(String.format("Could not find error on line %d, range (%d, %d)" +
-				           "and message %s", line, startColumn, endColumn,
-				           message));
+		IFile f = createSourceFile("main = putStrLn $ show $ fat 4", "Main.hs");
+		IHaskellCompiler compiler = new GhcCompiler(procRunner);
+		ICompilerOutput output = compiler.compile(f);
+		Collection<ICompilerOutputItem> errors = output.getErrors();
+	
+		assertEquals(1, errors.size());
+		assertContains(6, 25, 27, "Not in scope: `fat'", errors);
 	}
-
+	
 }
