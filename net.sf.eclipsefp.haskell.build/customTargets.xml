@@ -108,11 +108,14 @@
 <!-- Steps to do before running the build.xmls for the elements being built. -->
 <!-- ===================================================================== -->
 <target name="preProcess">
-	<!-- Before compiling everything, we need to translate the parser -->
+	<!-- Before compiling everything, we need to translate all the parser -->
 	<!-- grammar files to Java -->
 	<ant antfile="${buildDirectory}/plugins/net.sf.eclipsefp.haskell.core.jparser/build-parser.xml"
 	     target="parser-build"
 	     dir="${buildDirectory}/plugins/net.sf.eclipsefp.haskell.core.jparser"/>
+	<ant antfile="${buildDirectory}/plugins/net.sf.eclipsefp.haskell.ghccompiler/build-parser.xml"
+	     target="parser-build"
+	     dir="${buildDirectory}/plugins/net.sf.eclipsefp.haskell.ghccompiler"/>
 </target>
 
 <!-- ===================================================================== -->
