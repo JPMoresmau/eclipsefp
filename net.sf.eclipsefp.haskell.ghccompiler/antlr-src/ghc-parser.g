@@ -65,7 +65,7 @@ class GhcOutputParser extends Parser;
     }
 }
 
-output : error ;
+output : (error)+ ;
 
 error
     {

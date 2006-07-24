@@ -25,5 +25,15 @@ public class GhcOutputParserTest extends TestCase {
 		
 		assertContains(3, 25, 27, "Not in scope: `fac'", output.getErrors());
 	}
+	
+	public void testMultipleErrors() {
+		ICompilerOutput output = GhcOutputParser.parse(
+	    "\nMain.hs:4:26-28: Not in scope: `fac'\n" +
+	    "\n" +
+	    "Main.hs:4:32-34: Not in scope: `fib'\n");
+
+		assertContains(4, 26, 28, "Not in scope: `fac'", output.getErrors());
+		assertContains(4, 32, 34, "Not in scope: `fib'", output.getErrors());
+	}
 
 }

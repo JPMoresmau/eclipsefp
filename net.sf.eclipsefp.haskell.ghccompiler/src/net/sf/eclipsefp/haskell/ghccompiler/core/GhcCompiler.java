@@ -4,8 +4,6 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 import java.io.File;
 import java.util.ArrayList;
 
-import net.sf.eclipsefp.haskell.core.compiler.CompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
@@ -91,43 +89,7 @@ public class GhcCompiler implements IHaskellCompiler {
 	// ////////////////
 
 	private ICompilerOutput parse(String messages) {
-		final CompilerOutput output = new CompilerOutput(0, messages, new ArrayList<Exception>(0));
-		final CompilerOutputItem item = new CompilerOutputItem();
-		
-		messages = messages.trim();
-
-		String remainder = extractFileName(item, messages);
-		remainder = extractLine(item, remainder);
-		remainder = extractColumnRange(item, remainder);
-		remainder = extractComment(item, remainder);
-
-		output.addError(item);
-		return output;
-	}
-
-	private String extractFileName(CompilerOutputItem item, String text) {
-		String[] split = text.split(":", 2);
-		item.setFileName(split[0]);
-		return split[1];
-	}
-
-	private String extractLine(CompilerOutputItem item, String text) {
-		String[] split = text.split(":", 2);
-		item.setLine(Integer.parseInt(split[0]));
-		return split[1];
-	}
-
-	private String extractColumnRange(CompilerOutputItem item, String text) {
-		String[] split = text.split(":", 2);
-		String[] columns = split[0].split("-", 2);
-		item.setStartColumn(Integer.parseInt(columns[0]));
-		item.setEndColumn(Integer.parseInt(columns[1]));
-		return split[1];
-	}
-
-	private String extractComment(CompilerOutputItem item, String text) {
-		item.setComment(text.trim());
-		return "";
+		return GhcOutputParser.parse(messages);
 	}
 
 	private String getAbsPath(final IProject project, final IPath path) {
