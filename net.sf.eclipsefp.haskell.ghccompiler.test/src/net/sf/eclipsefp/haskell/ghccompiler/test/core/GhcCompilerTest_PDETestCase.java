@@ -31,7 +31,7 @@ public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 	
 	public void testParseOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
-		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
+		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
 			.andReturn("\nMain.hs:1:25-27: Not in scope: `fat'\n");
 		replay(procRunner);
 		
@@ -48,20 +48,20 @@ public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 	
 	public void testParseMakeFlagOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
-		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
+		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
 			.andReturn("Chasing modules from: Main.hs\n" +
 					   "Compiling Main             ( Main.hs, Main.o )\n" +
 					   "\n" +
 					   "Main.hs:6:25-27: Not in scope: `fac'\n");
 		replay(procRunner);
 
-		IFile f = createSourceFile("main = putStrLn $ show $ fat 4", "Main.hs");
+		IFile f = createSourceFile("main = putStrLn $ show $ fac 4", "Main.hs");
 		IHaskellCompiler compiler = new GhcCompiler(procRunner);
 		ICompilerOutput output = compiler.compile(f);
 		Collection<ICompilerOutputItem> errors = output.getErrors();
 	
 		assertEquals(1, errors.size());
-		assertContains(6, 25, 27, "Not in scope: `fat'", errors);
+		assertContains(6, 25, 27, "Not in scope: `fac'", errors);
 	}
 	
 }

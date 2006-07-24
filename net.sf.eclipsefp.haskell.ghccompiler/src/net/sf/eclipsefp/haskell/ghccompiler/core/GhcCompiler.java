@@ -68,6 +68,7 @@ public class GhcCompiler implements IHaskellCompiler {
 		if (!libPath.equals("")) {
 			cmdLine.add(libPath);
 		}
+		cmdLine.add("--make");
 		cmdLine.add("-odir");
 		cmdLine.add(outDir);
 		cmdLine.add("-hidir");

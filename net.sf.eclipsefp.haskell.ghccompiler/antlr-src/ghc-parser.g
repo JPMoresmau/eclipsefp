@@ -65,7 +65,10 @@ class GhcOutputParser extends Parser;
     }
 }
 
-output : (error)+ ;
+output : (chasing)? (error)+ ;
+
+chasing : CHASING_FROM COLON TEXT NL
+          ((COMPILING|SKIPPING) TEXT NL)+ ;
 
 error
     {
@@ -101,6 +104,16 @@ not_nl returns [String result]
     
 class GhcOutputLexer extends Lexer;
 
+options	{
+    k = 10;
+}
+
+tokens {
+    CHASING_FROM = "Chasing modules from" ;
+}
+
+COMPILING : "Compiling" ;
+SKIPPING : "Skipping" ;
 TEXT : (~(':' | '\r' | '\n' ))+;
 
 COLON : ':' ;
