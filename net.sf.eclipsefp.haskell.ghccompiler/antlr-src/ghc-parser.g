@@ -33,6 +33,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import net.sf.eclipsefp.haskell.core.compiler.CompilerOutput;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 
 }
@@ -40,6 +41,9 @@ import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 class GhcOutputParser extends Parser;
 
 {
+    
+    private CompilerOutput fOutput = new CompilerOutput();
+    
     /**
      * Convenience method for parsing strings
      */
@@ -57,12 +61,47 @@ class GhcOutputParser extends Parser;
     }
     
     public ICompilerOutput getParsedOutput() {
-        return new CompilerOutput();
+        return fOutput;
     }
 }
 
-output : LETTER ;
+output : error ;
 
+error
+    {
+        final CompilerOutputItem item = new CompilerOutputItem();
+        
+        String message = "";
+    }
+    :
+    	NL fileName:TEXT { item.setFileName(fileName.getText()); }
+    	COLON line:TEXT { item.setLine(Integer.parseInt(line.getText())); }
+    	COLON range:TEXT {  String[] arrRange = range.getText().split("-");
+    	                    item.setStartColumn(Integer.parseInt(arrRange[0]));
+    	                    item.setEndColumn(Integer.parseInt(arrRange[1])); }
+    	COLON message=not_nl { item.setComment(message.trim()); }
+    	NL
+    	{
+    		fOutput.addError(item);
+    	}
+    ;
+
+not_nl returns [String result]
+    {
+        StringBuffer buf = new StringBuffer();
+        
+        result = "";
+    }
+    :
+        ( t:TEXT { buf.append(t.getText()); }
+        | c:COLON { buf.append(c.getText()); }
+        )+
+    { result = buf.toString(); }
+    ;
+    
 class GhcOutputLexer extends Lexer;
 
-LETTER : ( 'a'..'z'|'A'..'Z') ;
+TEXT : (~(':' | '\r' | '\n' ))+;
+
+COLON : ':' ;
+NL : '\r' '\n' | '\n' ;
