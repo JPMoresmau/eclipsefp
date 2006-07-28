@@ -73,6 +73,16 @@ public class GhcOutputParserTest extends TestCase {
 			assertContains(6, 25, 27, "Not in scope: `fib'", output.getErrors());
 	}
 	
+	public void testParseInputWithWindowsStyleLineBreaks() {
+		ICompilerOutput output = GhcOutputParser.parse(
+			    "Chasing modules from: Main.hs\r\n" +
+			    "Compiling Main             ( Main.hs, C:\\programas\\eclipse\\platform\\3.2\\eclipse\\tmp\\runtime-workspace\\qsort\\out/Main.o )\r\n" +
+			    "\r\n" +
+			    "Main.hs:4:28-30: Not in scope: `fac'\r\n\n");	
+		
+		assertContains(4, 28, 30, "Not in scope: `fib'", output.getErrors());
+	}
+	
 	//TODO write tests for the ghc output
 	//TODO parse multi-line errors like this:
 //
