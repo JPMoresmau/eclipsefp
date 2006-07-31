@@ -68,7 +68,7 @@ class GhcOutputParser extends Parser;
 output : (chasing)? (error)+ ;
 
 chasing : CHASING_FROM COLON TEXT NL
-          ((COMPILING|SKIPPING) TEXT NL)+ ;
+          ((COMPILING|SKIPPING) not_nl NL)+ ;
 
 error
     {
