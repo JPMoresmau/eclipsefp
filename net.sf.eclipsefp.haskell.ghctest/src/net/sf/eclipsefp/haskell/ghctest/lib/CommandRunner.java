@@ -31,7 +31,7 @@ public class CommandRunner {
 		}
 	}
 
-	private void consume(Reader input, StringBuffer outBuf) throws IOException {
+	public static void consume(Reader input, StringBuffer outBuf) throws IOException {
 		char[] inBuf = new char[BUFFER_SIZE];
 		int n;
 		while(-1 != (n = input.read(inBuf))) {

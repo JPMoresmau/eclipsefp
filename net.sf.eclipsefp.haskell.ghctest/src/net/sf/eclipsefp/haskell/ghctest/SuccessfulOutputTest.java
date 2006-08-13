@@ -3,31 +3,63 @@ package net.sf.eclipsefp.haskell.ghctest;
 import static net.sf.eclipsefp.haskell.ghctest.lib.Assert.*;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 
+import net.sf.eclipsefp.haskell.ghctest.lib.TestingDirectory;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class SuccessfulOutputTest {
 	
+	private TestingDirectory fTempDir;
+
 	@Test public void flagVersionSaysVersionNumber() {
 		assertCommandMatches("The Glorious Glasgow Haskell Compilation System, version",
 				             "ghc --version");
 	}
 	
 	@Test public void supportsErrorSpansFlag() throws IOException {
-		File file = new File(System.getProperty("java.io.tmpdir") + "/Main.hs");
-		Writer output = new FileWriter(file);
-		output.write("module Main where\n" +
-				     "\n" +
-				     "main = putStrLn \"Hello, world!\"");
-		output.close();
-		assertCommandOutput("",
-				            "ghc -ferror-spans "
-				           + file.getCanonicalPath()
-				           + " -odir "
-				           + System.getProperty("java.io.tmpdir"));
+		assertCompilationOutput("", createHelloWorldFile(), "-ferror-spans");
 	}
 
+	@Test public void supportsMakeFlag() throws IOException {
+		final String expectedOutput = "Chasing modules from: /tmp/1/Main.hs\n" +
+						              "Compiling Main             ( /tmp/1/Main.hs, /tmp/1/Main.o )\n" +
+						              "Linking ...\n";
+		assertCompilationOutput(expectedOutput, createHelloWorldFile(), "--make");
+	}
+	
+	private void assertCompilationOutput(String expectedOutput,
+			                             File file,
+			                             String options)
+	throws IOException
+	{
+		final String parentDirectory = fTempDir.getPathname().getCanonicalPath();
+		assertCommandOutput(expectedOutput,
+				            "ghc " + options + " "
+				           + file.getCanonicalPath()
+				           + " -odir " + parentDirectory
+				           + " -o " + parentDirectory + "/a.out");
+	}
+
+	private File createHelloWorldFile() throws IOException {
+		return createSourceFile("Main.hs", "module Main where\n" +
+						                   "\n" +
+						                   "main = putStrLn \"Hello, world!\"");
+	}
+	
+	private File createSourceFile(String fileName, String contents) throws IOException {
+		return fTempDir.createFile(fileName, contents);
+	}
+	
+	@Before public void initializeTempTestDirectory() {
+		fTempDir = new TestingDirectory();
+	}
+	
+	@After public void clearTempTestDirectory() {
+		fTempDir.destroy();
+	}
+	
 }
