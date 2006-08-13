@@ -25,12 +25,21 @@ public class SuccessfulOutputTest {
 	}
 
 	@Test public void supportsMakeFlag() throws IOException {
-		final String expectedOutput = "Chasing modules from: /tmp/1/Main.hs\n" +
-						              "Compiling Main             ( /tmp/1/Main.hs, /tmp/1/Main.o )\n" +
-						              "Linking ...\n";
-		assertCompilationOutput(expectedOutput, createHelloWorldFile(), "--make");
+		final String expectedOutput = "Chasing modules from: [^\r\n]*\r?\n" +
+						              "Compiling Main\\s+\\( [^,]+, [^\\)]+\\)\r?\n" +
+						              "Linking ...";
+		assertCompilationMatches(expectedOutput, createHelloWorldFile(), "--make");
 	}
 	
+	private void assertCompilationMatches(String expectedOutput, File file, String options) throws IOException {
+		final String parentDirectory = fTempDir.getPathname().getCanonicalPath();
+		assertCommandMatches(expectedOutput,
+				            "ghc " + options + " "
+				           + file.getCanonicalPath()
+				           + " -odir " + parentDirectory
+				           + " -o " + parentDirectory + "/a.out");
+	}
+
 	private void assertCompilationOutput(String expectedOutput,
 			                             File file,
 			                             String options)
