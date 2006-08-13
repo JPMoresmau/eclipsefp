@@ -31,13 +31,25 @@ public class SuccessfulOutputTest {
 		assertCompilationMatches(expectedOutput, createHelloWorldFile(), "--make");
 	}
 	
+	@Test public void multiModuleMakeFlagOutput() throws IOException {
+		createSourceFile("Factorial.hs", "module Factorial where\n" +
+				                         "\n" +
+				                         "fac = foldr (*) 1 . enumFromTo 1");
+		File mainFile = createSourceFile("Main.hs",
+				                         "module Main where\n" +
+				                         "\n" +
+				                         "import Factorial\n" +
+				                         "\n" +
+				                         "main = putStrLn $ show $ fac 4\n");
+		final String expectedOutput = "Chasing modules from: [^\r\n]*\r?\n" +
+                                      "Compiling Factorial\\s+\\( [^,]+, [^\\)]+\\)\r?\n" +
+                                      "Compiling Main\\s+\\( [^,]+, [^\\)]+\\)\r?\n" +
+                                      "Linking ...";
+		assertCompilationMatches(expectedOutput, mainFile, "--make");
+	}
+	
 	private void assertCompilationMatches(String expectedOutput, File file, String options) throws IOException {
-		final String parentDirectory = fTempDir.getPathname().getCanonicalPath();
-		assertCommandMatches(expectedOutput,
-				            "ghc " + options + " "
-				           + file.getCanonicalPath()
-				           + " -odir " + parentDirectory
-				           + " -o " + parentDirectory + "/a.out");
+		assertCommandMatches(expectedOutput, commandToCompile(file, options));
 	}
 
 	private void assertCompilationOutput(String expectedOutput,
@@ -45,12 +57,16 @@ public class SuccessfulOutputTest {
 			                             String options)
 	throws IOException
 	{
+		assertCommandOutput(expectedOutput, commandToCompile(file, options));
+	}
+
+	private String commandToCompile(File file, String options) throws IOException {
 		final String parentDirectory = fTempDir.getPathname().getCanonicalPath();
-		assertCommandOutput(expectedOutput,
-				            "ghc " + options + " "
-				           + file.getCanonicalPath()
-				           + " -odir " + parentDirectory
-				           + " -o " + parentDirectory + "/a.out");
+		return "ghc " + options + " "
+               + file.getCanonicalPath()
+               + " -i" + parentDirectory
+               + " -odir " + parentDirectory
+               + " -o " + parentDirectory + "/a.out";
 	}
 
 	private File createHelloWorldFile() throws IOException {
