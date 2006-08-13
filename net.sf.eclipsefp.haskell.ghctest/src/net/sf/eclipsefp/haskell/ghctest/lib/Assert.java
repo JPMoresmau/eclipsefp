@@ -1,14 +1,23 @@
 package net.sf.eclipsefp.haskell.ghctest.lib;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.regex.Pattern;
 
 public class Assert {
 
 	public static void assertCommandMatches(String expectedRegex, String command) {
-		String output = new CommandRunner().run(command);
-		assertTrue(Pattern.compile(expectedRegex).matcher(output).find());
+		Pattern expectedPattern = Pattern.compile(expectedRegex);
+		String commandOutput = run(command);
+		assertTrue(expectedPattern.matcher(commandOutput).find());
+	}
+	
+	public static void assertCommandOutput(String expectedOutput, String command) {
+		assertEquals(expectedOutput, run(command));
 	}
 
+	private static String run(String command) {
+		return new CommandRunner().run(command);
+	}
+	
 }

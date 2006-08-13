@@ -22,14 +22,16 @@ public class StubProcess extends Process {
 
 	}
 
-	private InputStream fInputStream;
+	private InputStream fStdInputStream;
+	private InputStream fErrInputStream;
 
-	public StubProcess(String processOutput) {
-		fInputStream = new StringBufferInputStream(processOutput);
+	public StubProcess(String processStdOutput, String processErrOutput) {
+		fStdInputStream = new StringBufferInputStream(processStdOutput);
+		fErrInputStream = new StringBufferInputStream(processErrOutput);
 	}
 
 	public StubProcess(IOException exception) {
-		fInputStream = new FailureInputStream(exception);
+		fStdInputStream = fErrInputStream = new FailureInputStream(exception);
 	}
 
 	@Override
@@ -43,12 +45,12 @@ public class StubProcess extends Process {
 
 	@Override
 	public InputStream getErrorStream() {
-		return null;
+		return fErrInputStream;
 	}
 
 	@Override
 	public InputStream getInputStream() {
-		return fInputStream;
+		return fStdInputStream;
 	}
 
 	@Override

@@ -20,16 +20,22 @@ public class CommandRunner {
 	public String run(String command) {
 		try {
 			Process process = fRuntime.exec(command);
-			Reader input = new InputStreamReader(process.getInputStream());
-			char[] inBuf = new char[BUFFER_SIZE];
-			StringBuffer outBuf = new StringBuffer(BUFFER_SIZE);
-			int n;
-			while(-1 != (n = input.read(inBuf))) {
-				outBuf.append(inBuf, 0, n);
-			}
-			return outBuf.toString();
+			Reader std = new InputStreamReader(process.getInputStream());
+			Reader err = new InputStreamReader(process.getErrorStream());
+			StringBuffer buf = new StringBuffer(BUFFER_SIZE);
+			consume(err, buf);
+			consume(std, buf);
+			return buf.toString();
 		} catch (IOException e) {
 			return "";
+		}
+	}
+
+	private void consume(Reader input, StringBuffer outBuf) throws IOException {
+		char[] inBuf = new char[BUFFER_SIZE];
+		int n;
+		while(-1 != (n = input.read(inBuf))) {
+			outBuf.append(inBuf, 0, n);
 		}
 	}
 

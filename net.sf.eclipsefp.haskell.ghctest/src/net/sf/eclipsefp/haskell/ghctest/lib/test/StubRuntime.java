@@ -9,13 +9,18 @@ public class StubRuntime extends RunnerRuntime {
 	private Process fProcess;
 	private IOException fException = null;
 
-	public StubRuntime(String processOutput) {
-		fProcess = new StubProcess(processOutput);
+	public StubRuntime(String processStdOutput, String processErrOutput) {
+		fProcess = new StubProcess(processStdOutput, processErrOutput);
+	}
+
+	public StubRuntime(String processStdOutput) {
+		this(processStdOutput, "");
 	}
 
 	public StubRuntime(IOException exception) {
 		fProcess = new StubProcess(exception);
 	}
+
 
 	public Process exec(String command) throws IOException {
 		if (null != fException)
