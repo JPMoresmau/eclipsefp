@@ -83,7 +83,6 @@ public class GhcOutputParserTest extends TestCase {
 		assertContains(4, 28, 30, "Not in scope: `fac'", output.getErrors());
 	}
 	
-	//TODO write tests for the ghc output
 	//TODO parse multi-line errors like this:
 //
 //	Main.hs:4:0-15:

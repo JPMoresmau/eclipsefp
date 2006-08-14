@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SuccessfulOutputTest.class
+	SuccessfulOutputTest.class,
+	ErrorOutputTest.class
 })
 public class AllTests {}
