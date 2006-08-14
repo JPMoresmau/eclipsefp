@@ -1,19 +1,24 @@
 package net.sf.eclipsefp.haskell.ghctest;
 
-import static net.sf.eclipsefp.haskell.ghctest.lib.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
 
-import net.sf.eclipsefp.haskell.ghctest.lib.TestingDirectory;
+import net.sf.eclipsefp.haskell.ghctest.lib.CompilationTestCase;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class SuccessfulOutputTest {
+public class SuccessfulOutputTest extends CompilationTestCase {
 	
-	private TestingDirectory fTempDir;
+	private static final String MAIN_FACTORIAL_SRC =
+		"module Main where\n" +
+		"\n" +
+		"import Factorial\n" +
+		"\n" +
+		"main = putStrLn $ show $ fac 4\n";
+	private static final String FACTORIAL_SRC =
+		"module Factorial where\n" +
+		"\n" +
+		"fac = foldr (*) 1 . enumFromTo 1";
 
 	@Test public void flagVersionSaysVersionNumber() {
 		assertCommandMatches("The Glorious Glasgow Haskell Compilation System, version",
@@ -32,15 +37,8 @@ public class SuccessfulOutputTest {
 	}
 	
 	@Test public void multiModuleMakeFlagOutput() throws IOException {
-		createSourceFile("Factorial.hs", "module Factorial where\n" +
-				                         "\n" +
-				                         "fac = foldr (*) 1 . enumFromTo 1");
-		File mainFile = createSourceFile("Main.hs",
-				                         "module Main where\n" +
-				                         "\n" +
-				                         "import Factorial\n" +
-				                         "\n" +
-				                         "main = putStrLn $ show $ fac 4\n");
+		createSourceFile("Factorial.hs", FACTORIAL_SRC);
+		File mainFile = createSourceFile("Main.hs", MAIN_FACTORIAL_SRC);
 		final String expectedOutput = "Chasing modules from: [^\r\n]*\r?\n" +
                                       "Compiling Factorial\\s+\\( [^,]+, [^\\)]+\\)\r?\n" +
                                       "Compiling Main\\s+\\( [^,]+, [^\\)]+\\)\r?\n" +
@@ -48,43 +46,25 @@ public class SuccessfulOutputTest {
 		assertCompilationMatches(expectedOutput, mainFile, "--make");
 	}
 	
-	private void assertCompilationMatches(String expectedOutput, File file, String options) throws IOException {
-		assertCommandMatches(expectedOutput, commandToCompile(file, options));
+	@Test public void shouldSkipModulesThatDontNeedRecompiling() throws IOException, InterruptedException {
+		createSourceFile("Factorial.hs", FACTORIAL_SRC);
+		File mainFile = createSourceFile("Main.hs", MAIN_FACTORIAL_SRC);
+		compile(mainFile, "--make");
+		mainFile = createSourceFile("Main.hs",
+                                    "module Main where\n" +
+                                    "\n" +
+                                    "import Factorial\n" +
+                                    "\n" +
+                					"main = putStrLn $ show $ fac 5\n");
+		final String expectedOutput = "Chasing modules from: [^\r\n]*\r?\n" +
+                                      "Skipping\\s+Factorial\\s+\\( [^,]+, [^\\)]+\\)\r?\n";
+		assertCompilationMatches(expectedOutput, mainFile, "--make");
 	}
-
-	private void assertCompilationOutput(String expectedOutput,
-			                             File file,
-			                             String options)
-	throws IOException
-	{
-		assertCommandOutput(expectedOutput, commandToCompile(file, options));
-	}
-
-	private String commandToCompile(File file, String options) throws IOException {
-		final String parentDirectory = fTempDir.getPathname().getCanonicalPath();
-		return "ghc " + options + " "
-               + file.getCanonicalPath()
-               + " -i" + parentDirectory
-               + " -odir " + parentDirectory
-               + " -o " + parentDirectory + "/a.out";
-	}
-
+	
 	private File createHelloWorldFile() throws IOException {
 		return createSourceFile("Main.hs", "module Main where\n" +
 						                   "\n" +
 						                   "main = putStrLn \"Hello, world!\"");
-	}
-	
-	private File createSourceFile(String fileName, String contents) throws IOException {
-		return fTempDir.createFile(fileName, contents);
-	}
-	
-	@Before public void initializeTempTestDirectory() {
-		fTempDir = new TestingDirectory();
-	}
-	
-	@After public void clearTempTestDirectory() {
-		fTempDir.destroy();
 	}
 	
 }
