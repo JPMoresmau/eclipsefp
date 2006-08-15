@@ -78,16 +78,24 @@ error
     }
     :
     	NL fileName:TEXT { item.setFileName(fileName.getText()); }
-    	COLON line:TEXT { item.setLine(Integer.parseInt(line.getText())); }
-    	COLON range:TEXT {  String[] arrRange = range.getText().split("-");
-    	                    item.setStartColumn(Integer.parseInt(arrRange[0]));
-    	                    item.setEndColumn(Integer.parseInt(arrRange[1])); }
+    	COLON line:DECIMAL { item.setLine(Integer.parseInt(line.getText())); }
+    	COLON error_range[item]
     	COLON message=not_nl { item.setComment(message.trim()); }
     	NL
     	{
     		fOutput.addError(item);
     	}
     ;
+
+error_range[CompilerOutputItem item]
+	:
+		t1:DECIMAL              { int number = Integer.parseInt(t1.getText());
+		                          item.setStartColumn(number);
+		                          item.setEndColumn(number); }
+		( DASH
+		  t2:DECIMAL    {item.setEndColumn(Integer.parseInt(t2.getText()));}
+		)?
+	;
 
 not_nl returns [String result]
     {
@@ -96,8 +104,8 @@ not_nl returns [String result]
         result = "";
     }
     :
-        ( t:TEXT { buf.append(t.getText()); }
-        | c:COLON { buf.append(c.getText()); }
+        ( t:TEXT       { buf.append(t.getText()); }
+        | c:COLON      { buf.append(c.getText()); }
         )+
     { result = buf.toString(); }
     ;
@@ -114,7 +122,9 @@ tokens {
 
 COMPILING : "Compiling" ;
 SKIPPING : "Skipping" ;
-TEXT : (~(':' | '\r' | '\n' ))+;
+DASH : '-' ;
+DECIMAL : ('0'..'9')+ ;
+TEXT : (~(':' | '\r' | '\n' ))+ ;
 
 COLON : ':' ;
 NL : '\r' '\n' | '\n' ;

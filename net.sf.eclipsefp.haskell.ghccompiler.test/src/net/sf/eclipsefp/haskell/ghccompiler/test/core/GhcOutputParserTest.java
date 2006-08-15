@@ -29,6 +29,20 @@ public class GhcOutputParserTest extends TestCase {
 		assertContains(3, 25, 27, "Not in scope: `fac'", output.getErrors());
 	}
 	
+	public void testOneCharacterErrorSpan() {
+		ICompilerOutput output = GhcOutputParser.parse(
+		    "\nMain.hs:3:25: Not in scope: `f'\n");
+		
+		assertContains(3, 25, 25, "Not in scope: `f'", output.getErrors());
+	}
+
+	public void testWoirdCompilingAppearsOnErrorMessage() {
+		ICompilerOutput output = GhcOutputParser.parse(
+		    "\nMain.hs:3:25-33: Not in scope: `Compiling'\n");
+		
+		assertContains(3, 25, 33, "Not in scope: `Compiling'", output.getErrors());
+	}
+
 	public void testMultipleErrors() {
 		ICompilerOutput output = GhcOutputParser.parse(
 		    "\nMain.hs:4:26-28: Not in scope: `fac'\n" +

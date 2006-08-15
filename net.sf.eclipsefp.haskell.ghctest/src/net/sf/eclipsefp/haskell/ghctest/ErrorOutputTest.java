@@ -40,5 +40,14 @@ public class ErrorOutputTest extends CompilationTestCase {
 				                      "[^`]*`fac'\r?\n";
 		assertCompilationMatches(expectedOutput, file, "");
 	}
+	
+	@Test public void shouldNotIndicateRangeForOneCharErrors() throws IOException {
+		File file = createSourceFile("Main.hs",
+                                     "module Main where\n" +
+                                     "\n" +
+                                     "main = putStrLn $ show $ f 8");
+		final String expectedOutput = "Main.hs:3:25:";
+		assertCompilationMatches(expectedOutput, file, "-ferror-spans");
+	}
 
 }
