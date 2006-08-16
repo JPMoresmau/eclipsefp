@@ -20,8 +20,6 @@ public class StreamMultiplexer extends Thread {
 
 	private List<Writer> fOutputs;
 
-	private Exception ex;
-
 	public StreamMultiplexer(final String name, final InputStream in,
 			final Writer... outs) {
 		super(name);
@@ -30,25 +28,24 @@ public class StreamMultiplexer extends Thread {
 		setPriority(Thread.MAX_PRIORITY - 1);
 	}
 
-	public Exception getException() {
-		return ex;
-	}
-
 	// interface methods of java.lang.Thread
 	// //////////////////////////////////////
 
 	public void run() {
+		char[] cbuf = new char[BUFFER_SIZE];
+		int count;
 		try {
-			char[] cbuf = new char[BUFFER_SIZE];
-			int count;
 			while ((count = fInput.read(cbuf, 0, BUFFER_SIZE)) >= 0) {
 				for (Writer output : fOutputs) {
-					output.write(cbuf, 0, count);
-					output.flush();
+					try {
+						output.write(cbuf, 0, count);
+					} catch (IOException ex) {
+						//ignore error for this output and procede to next
+					}
 				}
 			}
 		} catch (IOException ex) {
-			this.ex = ex;
+			//reading error, abort multiplexing
 		}
 	}
 }
