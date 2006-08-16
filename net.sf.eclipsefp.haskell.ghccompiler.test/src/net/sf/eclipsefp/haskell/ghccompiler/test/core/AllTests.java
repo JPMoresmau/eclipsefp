@@ -10,6 +10,7 @@ public class AllTests {
 				"Test for net.sf.eclipsefp.haskell.ghccompiler.test.core");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(GhcOutputParserTest.class);
+		suite.addTestSuite(ProcessRunnerTest.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -15,6 +15,7 @@ import static org.easymock.EasyMock.*;
 import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.*;
 
 import java.io.File;
+import java.io.Writer;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
@@ -31,7 +32,7 @@ public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 	
 	public void testParseOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
-		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
+		expect(procRunner.execute((File) anyObject(), (Writer) anyObject(), (Writer) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
 			.andReturn("\nMain.hs:1:25-27: Not in scope: `fat'\n");
 		replay(procRunner);
 		
@@ -48,7 +49,7 @@ public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 	
 	public void testParseMakeFlagOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
-		expect(procRunner.execute((File) anyObject(),(String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
+		expect(procRunner.execute((File) anyObject(), (Writer) anyObject(), (Writer) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
 			.andReturn("Chasing modules from: Main.hs\n" +
 					   "Compiling Main             ( Main.hs, Main.o )\n" +
 					   "\n" +

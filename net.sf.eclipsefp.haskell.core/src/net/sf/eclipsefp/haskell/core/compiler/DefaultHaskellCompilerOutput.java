@@ -1,13 +1,9 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.core.compiler.defaultcompiler;
+package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
-
 
 /** <p>Default implementation for a practically empty compiler output.</p>
   *

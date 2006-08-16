@@ -2,25 +2,38 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.common.core.util.StreamRedirect;
+import net.sf.eclipsefp.common.core.util.StreamMultiplexer;
 
-class ProcessRunner implements IProcessRunner {
+public class ProcessRunner implements IProcessRunner {
 
-	public String execute(File workingDir, String... args) {
+	private IProcessFactory fProcessFactory;
+
+	public ProcessRunner() {
+		this(new ProcessFactory());
+	}
+	
+	public ProcessRunner(IProcessFactory factory) {
+		fProcessFactory = factory;
+	}
+
+	public String execute(File workingDir, Writer out,
+			              Writer err, String... args)
+	{
 		List<Exception> excList = new ArrayList<Exception>();
 		StringWriter output = new StringWriter();
 		StringWriter errors = new StringWriter();
 		try {
-			Process proc = Runtime.getRuntime().exec(args, null, workingDir);
-			StreamRedirect outRedirect = new StreamRedirect("output_redirect",
-															proc.getInputStream(),
-															output);
-			StreamRedirect errRedirect = new StreamRedirect("error_redirect",
-															proc.getErrorStream(),
-															errors);
+			Process proc = fProcessFactory.startProcess(workingDir, args);
+			Thread outRedirect = new StreamMultiplexer("output_redirect",
+					  							       proc.getInputStream(),
+													   output, out);
+			Thread errRedirect = new StreamMultiplexer("error_redirect",
+                                                       proc.getErrorStream(),
+													   errors, err);
 			outRedirect.start();
 			errRedirect.start();
 			proc.waitFor(); // wait for compiler to finish
@@ -33,7 +46,7 @@ class ProcessRunner implements IProcessRunner {
 			errors.flush();
 		}
 
-		return errors.toString() + "\n" + output.toString();
+		return errors.toString() + output.toString();
 	}
 
 }

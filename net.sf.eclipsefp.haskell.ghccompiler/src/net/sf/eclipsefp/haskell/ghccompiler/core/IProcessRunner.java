@@ -12,9 +12,10 @@
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
+import java.io.Writer;
 
 public interface IProcessRunner {
 
-  String execute(File workingDir, String... args);
+  String execute(File workingDir, Writer out, Writer err, String... args);
 
 }

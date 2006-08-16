@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 import net.sf.eclipsefp.haskell.core.HaskellCoreException;
-import net.sf.eclipsefp.haskell.core.compiler.defaultcompiler.DefaultHaskellCompiler;
 
 
 /** <p>manages the Haskell compilers.</p>

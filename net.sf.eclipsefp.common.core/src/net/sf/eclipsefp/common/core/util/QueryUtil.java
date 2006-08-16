@@ -23,9 +23,9 @@ public class QueryUtil {
     try {
       StringWriter output = new StringWriter();
       Process proc = Runtime.getRuntime().exec( cmdLine );
-      StreamRedirect outRedirect = new StreamRedirect( "output_redirect", 
-                                                       proc.getInputStream(), 
-                                                       output );
+      Thread outRedirect = new StreamMultiplexer("output_redirect", 
+                                                 proc.getInputStream(), 
+                                                 output );
       outRedirect.start();
       proc.waitFor(); // wait for command to finish
       outRedirect.join();      // wait until out stream content is redirected

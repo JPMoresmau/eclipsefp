@@ -2,10 +2,11 @@
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
+import java.io.Writer;
 import java.util.ArrayList;
 
+import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.TracingUtil;
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @author Leif Frenzel
  */
-public class GhcCompiler implements IHaskellCompiler {
+public class GhcCompiler extends DefaultHaskellCompiler {
 
 	private static boolean trace = GhcCompilerPlugin.isTracing();
 
@@ -42,17 +43,17 @@ public class GhcCompiler implements IHaskellCompiler {
 		fProcessRunner = procRunner;
 	}
 
-	public ICompilerOutput compile(IFile file) {
+	public ICompilerOutput compile(IFile file, Writer outputWriter, Writer errorWriter) {
 		final IProject project = file.getProject();
 		IHaskellProject hsProject = HaskellProjectManager.get(project);
 		String[] cmdLine = buildCommandLine(file, hsProject);
 		IPath src = project.getLocation().append(hsProject.getSourcePath());
 		String output = fProcessRunner.execute(
-			new File(src.toOSString()), cmdLine);
+			new File(src.toOSString()), outputWriter, errorWriter, cmdLine);
 		return parse(output);
 	}
 
-	public String[] buildCommandLine(final IFile file,
+	private String[] buildCommandLine(final IFile file,
 			final IHaskellProject haskellProject) {
 		if (trace) {
 			System.out.println("Constructing command line for file " + file);
