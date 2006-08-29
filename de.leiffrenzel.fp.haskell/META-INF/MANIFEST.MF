@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Bundle-Name: EclipseFP: Haskell
-Bundle-SymbolicName: de.leiffrenzel.fp.haskell; singleton=true
+Bundle-SymbolicName: de.leiffrenzel.fp.haskell;singleton:=true
 Bundle-Version: 0.11.0
-Bundle-ClassPath: haskell.jar
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
 Require-Bundle: net.sf.eclipsefp.haskell.ui,
  net.sf.eclipsefp.haskell.haddock,
  org.eclipse.ui.cheatsheets,
  net.sf.eclipsefp.common.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
