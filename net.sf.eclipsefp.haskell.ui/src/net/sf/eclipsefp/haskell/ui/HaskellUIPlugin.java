@@ -15,8 +15,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.ui.console.CompilerListener;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.editor.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
@@ -57,7 +59,12 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     super.stop( context );
   }
   
-  /** <p>returns the shared instance.</p> */
+  public void start( final BundleContext context ) throws Exception {
+	super.start(context);
+	CompilerManager.getInstance().addCompilerListener(new CompilerListener());
+  }
+
+/** <p>returns the shared instance.</p> */
   public static HaskellUIPlugin getDefault() {
     return plugin;
   }

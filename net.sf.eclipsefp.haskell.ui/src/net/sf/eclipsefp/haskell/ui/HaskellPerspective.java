@@ -6,7 +6,6 @@ import net.sf.eclipsefp.common.ui.FPPerspective;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 
-import net.sf.eclipsefp.haskell.ui.views.coview.CompilerOutputView;
 import net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser;
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
 
@@ -23,7 +22,6 @@ public class HaskellPerspective extends FPPerspective {
     // Add to "Open Perspective" menu    
     layout.addPerspectiveShortcut( HaskellPerspective.class.getName() );
     // add to "Show View" menu
-    layout.addShowViewShortcut( CompilerOutputView.ID );
     layout.addShowViewShortcut( ModuleBrowser.ID );
 //    layout.addShowViewShortcut( ModuleDependenciesView.ID );
   }
@@ -32,12 +30,6 @@ public class HaskellPerspective extends FPPerspective {
     super.addLeftViews( left );
     left.addView( ModuleBrowser.ID );
 //    left.addView( ModuleDependenciesView.ID );
-  }
-  
-  protected void addBottomViews( final IFolderLayout bottom ) {
-    // add the standard views
-    super.addBottomViews( bottom );
-    bottom.addView( CompilerOutputView.ID );
   }
   
   protected void addNewShortcuts( final IPageLayout layout ) {

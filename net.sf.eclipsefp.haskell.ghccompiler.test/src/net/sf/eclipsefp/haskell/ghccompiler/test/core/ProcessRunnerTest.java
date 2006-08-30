@@ -39,7 +39,7 @@ public class ProcessRunnerTest extends TestCase {
 	}
 
 	public void testRedirectsOutputStreams() throws IOException {
-		final String expectedOut = "standard error stream contents\n";
+		final String expectedOut = "standard output stream contents\n";
 		final String expectedErr = "standard error stream contents\n";
 		IProcessFactory factory = createProcessFactory(expectedOut, expectedErr);
 

@@ -1,7 +1,6 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.compiler;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
@@ -40,18 +39,13 @@ public class CompilerManager {
     * key   - compiler id
     * value - the compiler object (which implements IHaskellCompiler)
     */
-  private Hashtable htInstalledCompilers;
+  private Hashtable<String, ListenableCompilerDecorator> htInstalledCompilers;
 
-  /** contains ICompilerOutputListeners that have registered with the
-    * compiler manager to get informed about output produced by compilers. */
-  private ArrayList alListeners;
-  
   /** creates the singleton instance of CompilerManager. Private in order
     * to ensure the singleton pattern. */ 
-  private CompilerManager() {
-    htInstalledCompilers = new Hashtable();
+  public CompilerManager() {
+    htInstalledCompilers = new Hashtable<String, ListenableCompilerDecorator>();
     htRegisteredCompilers = new Hashtable();
-    alListeners = new ArrayList();
     initDefaultCompiler();
   }
   
@@ -76,7 +70,7 @@ public class CompilerManager {
   
   /** <p>returns the currently used Haskell compiler.</p> */
   public IHaskellCompiler getCompiler() {
-    return ( IHaskellCompiler )htInstalledCompilers.get( selectedCompiler );
+    return htInstalledCompilers.get( selectedCompiler );
   }
   
   /** <p>if the compiler specified by id is known in the compiler manager,
@@ -109,29 +103,6 @@ public class CompilerManager {
     htRegisteredCompilers.put( id, info );
   }
 
-  /** <p>registers the passed listener with the compiler manager. The 
-    * listener is notified about compiler output that has been produced
-    * when the currently selected compiler compiled.</p> */
-  public void addCompilerOutputListener( final ICompilerOutputListener li ) {
-    alListeners.add( li );
-  }
-
-  /** <p>removes the passed listener from the list of listeners that are
-    * notifed about compiler output.</p> */
-  public void removeCompilerOutputListener( final ICompilerOutputListener li ) {
-    alListeners.remove( li );
-  }
-
-  /** <p>notifies all compiler output listeners that have registered with the
-    * CompilerManager that the passed output has been produced.</p> */
-  public void notifyListeners( final ICompilerOutput output ) {
-    for( int i = 0; i < alListeners.size(); i++ ) {
-      Object obj = alListeners.get( i );
-      ICompilerOutputListener li = ( ICompilerOutputListener )obj;
-      li.outputProduced( output );
-    }
-  }
-  
   /** <p>returns the human-readable name for the compiler with the specified
     * id (if it is a registered compiler).</p> */
   public String getCompilerName( final String id ) {
@@ -151,8 +122,7 @@ public class CompilerManager {
   //////////////////
   
   private void initDefaultCompiler() {
-    IHaskellCompiler defaultCompiler = new DefaultHaskellCompiler();
-    htInstalledCompilers.put( DEFAULT, defaultCompiler );
+    installCompiler(DEFAULT, new DefaultHaskellCompiler());
   }
   
   private void installCompiler( final String id ) throws HaskellCoreException {
@@ -176,10 +146,23 @@ public class CompilerManager {
                 + "' must implement" 
                 + IHaskellCompiler.class.getName() );
     }
-    htInstalledCompilers.put( id, compiler );
+    IHaskellCompiler haskellCompiler = (IHaskellCompiler) compiler;
+	installCompiler(id, haskellCompiler);
+  }
+
+  public void installCompiler(final String id, IHaskellCompiler haskellCompiler) {
+	htInstalledCompilers.put(id, new ListenableCompilerDecorator(haskellCompiler));
   }
 
   private void fireHCEx( final String message ) throws HaskellCoreException {
     throw new HaskellCoreException( message );
+  }
+
+  public void addCompilerListener(ICompilerListener listener) {
+    getSelectedCompilerDecorator().addListener(listener);
+  }
+
+  private ListenableCompilerDecorator getSelectedCompilerDecorator() {
+	return htInstalledCompilers.get(selectedCompiler);
   }
 }

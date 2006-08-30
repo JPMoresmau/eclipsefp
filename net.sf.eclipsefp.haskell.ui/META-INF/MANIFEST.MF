@@ -6,7 +6,7 @@ Bundle-ClassPath: haskellui.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.ui.HaskellUIPlugin
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: net.sf.eclipsefp.haskell.core,
+Require-Bundle: org.eclipse.ui.console,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.jface.text,
@@ -17,6 +17,7 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.debug.ui,
  org.eclipse.debug.core,
  org.eclipse.core.runtime,
+ net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.common.core,
  net.sf.eclipsefp.common.ui
 Eclipse-AutoStart: true

@@ -38,7 +38,7 @@ public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
 		verify(getFactory());
 	}
 	
-	public void testDelegatesProjectEventsToMonitors() throws CoreException {
+	public void testDelegatesProjectEventsToCorrespondingMonitor() throws CoreException {
 		IResourceChangeListener fstMonitor = createNiceMock(IResourceChangeListener.class);
 		IResourceChangeListener sndMonitor = createNiceMock(IResourceChangeListener.class);
 		expect(getFactory().createProjectChangeMonitor((IProject) anyObject())).
@@ -50,15 +50,16 @@ public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
 		TestHaskellProject fstPrj = new TestHaskellProject("fisrt-project");
 		TestHaskellProject sndPrj = new TestHaskellProject("second-project");
 		
-		fstMonitor.resourceChanged((IResourceChangeEvent) anyObject());
-		replay(fstMonitor, sndMonitor);
-		
-		fstPrj.createSourceFile("Factorial.hs", "module Factorial where\n\n");
-		
-		verify(getFactory(), fstMonitor, sndMonitor);
-		
-		fstPrj.destroy();
-		sndPrj.destroy();
+		try {
+			fstMonitor.resourceChanged((IResourceChangeEvent) anyObject());
+			replay(fstMonitor, sndMonitor);
+			fstPrj.createSourceFile("Factorial.hs",
+					"module Factorial where\n\n");
+			verify(getFactory(), fstMonitor, sndMonitor);
+		} finally {
+			fstPrj.destroy();
+			sndPrj.destroy();
+		}		
 	}
 	
 	public void testCreatesProjectMonitorsForLoadedWorkspace()

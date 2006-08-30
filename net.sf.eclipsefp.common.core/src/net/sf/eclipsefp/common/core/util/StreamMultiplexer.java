@@ -1,8 +1,11 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.common.core.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * <p>
@@ -18,13 +21,13 @@ public class StreamMultiplexer extends Thread {
 
 	private Reader fInput;
 
-	private List<Writer> fOutputs;
+	private Writer fOutput;
 
 	public StreamMultiplexer(final String name, final InputStream in,
 			final Writer... outs) {
 		super(name);
 		fInput = new InputStreamReader(in);
-		fOutputs = Arrays.asList(outs);
+		fOutput = new MultiplexedWriter(outs);
 		setPriority(Thread.MAX_PRIORITY - 1);
 	}
 
@@ -36,14 +39,9 @@ public class StreamMultiplexer extends Thread {
 		int count;
 		try {
 			while ((count = fInput.read(cbuf, 0, BUFFER_SIZE)) >= 0) {
-				for (Writer output : fOutputs) {
-					try {
-						output.write(cbuf, 0, count);
-					} catch (IOException ex) {
-						//ignore error for this output and procede to next
-					}
-				}
+				fOutput.write(cbuf, 0, count);
 			}
+			fOutput.flush();
 		} catch (IOException ex) {
 			//reading error, abort multiplexing
 		}

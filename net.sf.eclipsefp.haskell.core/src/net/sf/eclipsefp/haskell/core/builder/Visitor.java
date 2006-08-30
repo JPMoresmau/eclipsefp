@@ -43,7 +43,6 @@ abstract class Visitor {
     // TODO should do sth. with the progress monitor
 	IHaskellProject hsProject = HaskellProjectManager.get(file.getProject());
 	ICompilerOutput out = hsProject.compile(file);
-    CompilerManager.getInstance().notifyListeners( out );
     deleteMarkers( file );
     markResource( file, out.getErrors());
   }

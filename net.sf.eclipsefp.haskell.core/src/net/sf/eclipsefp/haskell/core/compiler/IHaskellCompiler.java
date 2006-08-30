@@ -8,8 +8,6 @@ import org.eclipse.core.resources.IFile;
 /**
  * Implementations know how to compile a haskell file.
  * 
- * This interface 
- * 
  * @author Leif Frenzel
  * @author Thiago Arrais
  */

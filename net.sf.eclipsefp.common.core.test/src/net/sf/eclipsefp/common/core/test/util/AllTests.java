@@ -9,7 +9,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.common.core.test.util");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(StreamMultiplexerTest.class);
+		suite.addTestSuite(MultiplexedWriterTest.class);
 		//$JUnit-END$
 		return suite;
 	}

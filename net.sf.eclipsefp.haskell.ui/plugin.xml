@@ -93,13 +93,6 @@
             class="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser"
             id="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser">
       </view>
-      <view
-            name="Haskell Compiler Output"
-            icon="icons/full/cview16/coview.gif"
-            category="net.sf.eclipsefp.common.ui.fpViews"
-            class="net.sf.eclipsefp.haskell.ui.views.coview.CompilerOutputView"
-            id="net.sf.eclipsefp.haskell.ui.views.coview.CompilerOutputView">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

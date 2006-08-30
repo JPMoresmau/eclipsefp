@@ -9,7 +9,9 @@ public class AllTests {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.core.test.compiler");
 		//$JUnit-BEGIN$
+		suite.addTestSuite(CompilerManagerTest.class);
 		suite.addTestSuite(CompilerOutputItemTest.class);
+		suite.addTestSuite(ListenableCompilerDecoratorTest.class);
 		//$JUnit-END$
 		return suite;
 	}
