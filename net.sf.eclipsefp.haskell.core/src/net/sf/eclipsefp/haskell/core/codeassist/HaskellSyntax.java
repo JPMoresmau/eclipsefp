@@ -11,9 +11,10 @@ public final class HaskellSyntax {
   // TODO will be made configurable later from a Pref page;
   // even later we should base all of the content assist on the language model
   private static final String[] KEYWORDS = new String[] {
-    "case", "class", "data", "else", "if", "import", "in", "infix", "infixl", 
-    "infixr", "instance", "let", "module", "of", "primitive", "then", "type", 
-    "where", "do", "newtype"
+    "as", "case", "class", "data", "default", "deriving", "else", "hiding",
+    "if", "import", "in", "infix", "infixl", "infixr", "instance", "let",
+    "module", "of", "primitive", "qualified", "then", "type", "where", "do",
+    "newtype"
   };
 
   private static final String[] FUNCTIONS = new String[] {
