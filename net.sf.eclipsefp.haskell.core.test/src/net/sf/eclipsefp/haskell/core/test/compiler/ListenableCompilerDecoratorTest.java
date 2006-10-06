@@ -1,6 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2006 Thiago Arrais and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Leif Frenzel - Initial API and implementation
+ *     Thiago Arrais - Reestructuring and documentation
+ *******************************************************************************/
 package net.sf.eclipsefp.haskell.core.test.compiler;
 
 import static net.sf.eclipsefp.haskell.core.test.compiler.CompilerTestUtil.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
+import java.io.StringWriter;
 
 import org.eclipse.core.resources.IFile;
 
@@ -59,6 +78,34 @@ public class ListenableCompilerDecoratorTest extends TestCase {
 	
 		testedCompiler.compile((IFile) null);
 		assertReceivedExpectedOutput(otherListener);
+	}
+	
+	public void testFiresCompilationStartingEvent() {
+		IHaskellCompiler realCompiler = new StubCompiler();
+		ICompilerListener listener = createMockListener();
+		
+		listener.startingCompilation();
+		expectLastCall().once();
+		
+		replay(listener);
+		
+		ListenableCompilerDecorator testedCompiler =
+			new ListenableCompilerDecorator(realCompiler);
+		testedCompiler.addListener(listener);
+		
+		testedCompiler.compile((IFile) null);		
+
+		verify(listener);
+	}
+
+	private ICompilerListener createMockListener() {
+		ICompilerListener listener = createMock(ICompilerListener.class);
+		
+		final StringWriter out = new StringWriter();
+		final StringWriter err = new StringWriter();
+		expect(listener.getOutputWriter()).andReturn(out).anyTimes();
+		expect(listener.getErrorWriter()).andReturn(err).anyTimes();
+		return listener;
 	}
 
 }
