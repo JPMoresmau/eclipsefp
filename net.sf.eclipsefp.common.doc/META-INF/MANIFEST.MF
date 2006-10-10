@@ -1,7 +1,8 @@
 Manifest-Version: 1.0
 Bundle-Name: FP Documentation
-Bundle-SymbolicName: net.sf.eclipsefp.common.doc; singleton=true
+Bundle-SymbolicName: net.sf.eclipsefp.common.doc;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
+Bundle-ManifestVersion: 2

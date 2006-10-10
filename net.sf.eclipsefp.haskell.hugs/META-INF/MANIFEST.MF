@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-Name: Hugs support
-Bundle-SymbolicName: net.sf.eclipsefp.haskell.hugs; singleton=true
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.hugs;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-ClassPath: hugs.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.hugs.HugsPlugin
@@ -13,5 +13,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  org.eclipse.core.resources,
  net.sf.eclipsefp.common.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.hugs.ui.launch
+Bundle-ManifestVersion: 2

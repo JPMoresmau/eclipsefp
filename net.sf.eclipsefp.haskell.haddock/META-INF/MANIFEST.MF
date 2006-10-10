@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-Name: Haddock support
-Bundle-SymbolicName: net.sf.eclipsefp.haskell.haddock; singleton=true
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.haddock;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-ClassPath: haddock.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.haddock.HaddockPlugin
@@ -16,4 +16,5 @@ Require-Bundle: org.eclipse.ui,
  net.sf.eclipsefp.haskell.ui,
  org.eclipse.ui.ide,
  net.sf.eclipsefp.common.core
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
+Bundle-ManifestVersion: 2

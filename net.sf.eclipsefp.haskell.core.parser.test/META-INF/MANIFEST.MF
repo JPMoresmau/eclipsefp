@@ -12,6 +12,6 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.junit
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsefp.haskell.core.parser,
  net.sf.eclipsefp.haskell.core.parser.test.util

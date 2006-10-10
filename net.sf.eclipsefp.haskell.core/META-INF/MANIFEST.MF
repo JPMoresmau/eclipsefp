@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-Name: Haskell Core Plug-in
-Bundle-SymbolicName: net.sf.eclipsefp.haskell.core; singleton=true
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.core;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-ClassPath: haskellcore.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.core.HaskellCorePlugin
@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.jface,
  org.eclipse.jface.text,
  net.sf.eclipsefp.common.core
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.core.builder,
  net.sf.eclipsefp.haskell.core.code,
@@ -28,3 +28,4 @@ Provide-Package: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.core.project,
  net.sf.eclipsefp.haskell.core.util,
  net.sf.eclipsefp.haskell.core.codeassist;x-friends:="net.sf.eclipsefp.haskell.core.test"
+Bundle-ManifestVersion: 2

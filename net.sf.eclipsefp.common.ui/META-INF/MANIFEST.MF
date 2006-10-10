@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-Name: FP Common UI
-Bundle-SymbolicName: net.sf.eclipsefp.common.ui; singleton=true
+Bundle-SymbolicName: net.sf.eclipsefp.common.ui;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-ClassPath: commonui.jar
 Bundle-Activator: net.sf.eclipsefp.common.ui.CommonUIPlugin
@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  org.eclipse.ui.console,
  net.sf.eclipsefp.common.core
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.common.ui,
  net.sf.eclipsefp.common.ui.dialog,
  net.sf.eclipsefp.common.ui.preferences,
@@ -21,3 +21,4 @@ Provide-Package: net.sf.eclipsefp.common.ui,
  net.sf.eclipsefp.common.ui.util,
  net.sf.eclipsefp.common.ui.wizards,
  net.sf.eclipsefp.common.ui.configurator
+Bundle-ManifestVersion: 2
