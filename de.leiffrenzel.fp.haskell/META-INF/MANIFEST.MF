@@ -5,8 +5,8 @@ Bundle-SymbolicName: de.leiffrenzel.fp.haskell;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: net.sf.eclipsefp.haskell.ui,
- net.sf.eclipsefp.haskell.haddock,
- org.eclipse.ui.cheatsheets,
- net.sf.eclipsefp.common.ui
+Require-Bundle: org.eclipse.ui.cheatsheets;bundle-version="[3.2.0,4.0.0)",
+ net.sf.eclipsefp.haskell.ui;bundle-version="[0.11.0,1.0.0)",
+ net.sf.eclipsefp.haskell.haddock;bundle-version="[0.11.0,1.0.0)",
+ net.sf.eclipsefp.common.ui;bundle-version="[0.11.0,1.0.0)"
 Eclipse-LazyStart: true

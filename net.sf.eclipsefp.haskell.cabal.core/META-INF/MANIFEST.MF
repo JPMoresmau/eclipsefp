@@ -7,7 +7,7 @@ Bundle-ClassPath: cabalcore.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.cabal.core.internal.CabalCorePlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsefp.haskell.cabal.core,
  net.sf.eclipsefp.haskell.cabal.core.model

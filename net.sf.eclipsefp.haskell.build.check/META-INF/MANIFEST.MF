@@ -5,4 +5,4 @@ Bundle-SymbolicName: net.sf.eclipsefp.haskell.build.check;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
