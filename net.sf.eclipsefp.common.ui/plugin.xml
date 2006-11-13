@@ -30,14 +30,6 @@
       </category>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="Functional Programming"
-            class="net.sf.eclipsefp.common.ui.preferences.FPPreferencePage"
-            id="net.sf.eclipsefp.common.ui.preferences.FPPreferencePage">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <category
             name="Functional Programming"

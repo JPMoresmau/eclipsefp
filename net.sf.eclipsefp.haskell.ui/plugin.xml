@@ -98,7 +98,6 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="Haskell"
-            category="net.sf.eclipsefp.common.ui.preferences.FPPreferencePage"
             class="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
