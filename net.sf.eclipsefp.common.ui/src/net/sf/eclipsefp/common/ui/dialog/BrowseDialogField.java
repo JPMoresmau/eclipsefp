@@ -81,7 +81,6 @@ abstract class BrowseDialogField extends DialogField {
     GridData gd = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
     gd.widthHint = DialogUtil.convertWidthInCharsToPixels( text, width + 1 ); 
     text.setLayoutData( gd );
-    text.setTextLimit( width );
   }
   
   private void addFileField() {
