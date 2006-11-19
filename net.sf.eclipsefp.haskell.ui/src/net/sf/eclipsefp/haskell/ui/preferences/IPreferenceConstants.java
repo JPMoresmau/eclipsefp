@@ -18,4 +18,7 @@ public interface IPreferenceConstants {
   String INSERT_COMPLETION      = "INSERT_COMPLETION";
   String ORDER_PROPOSALS        = "ORDER_PROPOSALS";
   String SHOW_VISIBLE_PROPOSALS = "SHOW_VISIBLE_PROPOSALS";
+  
+  // Build console
+  String CLEAR_BUILD_CONSOLE    = "CLEAR_BUILD_CONSOLE";
 }

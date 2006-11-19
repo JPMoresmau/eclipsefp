@@ -71,7 +71,7 @@ public class NewHaskellProjectPP extends PreferencePage
     };
   }
 
-  public static void initDefaults( final IPreferenceStore store ) {
+  public static void initializeDefaults( final IPreferenceStore store ) {
     store.setDefault( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
     store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" );
     store.setDefault( ICorePreferenceNames.FOLDERS_BIN, "bin" );

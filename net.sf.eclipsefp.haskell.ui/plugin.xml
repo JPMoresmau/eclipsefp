@@ -262,4 +262,10 @@
                id="de.leiffrenzel.fp.haskell.editor.actions.firstChar"/>
       </editorContribution>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.sf.eclipsefp.haskell.ui.HaskellUIPreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>
