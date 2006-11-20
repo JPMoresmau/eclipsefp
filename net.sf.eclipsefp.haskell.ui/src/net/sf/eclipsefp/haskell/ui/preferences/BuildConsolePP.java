@@ -56,18 +56,36 @@ public class BuildConsolePP extends PreferencePage implements
 		fChkCleanConsole = new Button(composite, SWT.CHECK);
 		fChkCleanConsole.setText("Always clear console before building");
 		
+		createListeners();
+		fillValuesInControls();
+		return composite;
+	}
+
+	private void createListeners() {
 		fChkCleanConsole.addSelectionListener(new SelectionListener() {
 
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				//ignore event
+			}
 
 			public void widgetSelected(SelectionEvent e) {
 				fStore.setValue(CLEAR_BUILD_CONSOLE, fChkCleanConsole.getSelection());
 			}
 			
 		});
-		
+	}
+
+	private void fillValuesInControls() {
 		fChkCleanConsole.setSelection(fStore.getBoolean(CLEAR_BUILD_CONSOLE));
-		return composite;
+	}
+
+	
+	@Override
+	protected void performDefaults() {
+		super.performDefaults();
+		
+		fStore.setToDefault(CLEAR_BUILD_CONSOLE);
+		fillValuesInControls();
 	}
 
 	@Override
