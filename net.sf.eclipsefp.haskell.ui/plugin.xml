@@ -125,6 +125,12 @@
             class="net.sf.eclipsefp.haskell.ui.preferences.NewHaskellProjectPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.NewHaskellProjectPP">
       </page>
+      <page
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
+            class="net.sf.eclipsefp.haskell.ui.preferences.BuildConsolePP"
+            id="net.sf.eclipsefp.haskell.ui.preferences.BuildConsolePP"
+            name="Build Console">
+      </page>
    </extension>
    <extension
          name="Import Libraries"

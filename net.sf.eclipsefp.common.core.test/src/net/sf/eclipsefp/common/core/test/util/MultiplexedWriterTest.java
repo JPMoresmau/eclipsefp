@@ -76,6 +76,17 @@ public class MultiplexedWriterTest extends TestCase {
 		multiplexer.close();
 		assertTrue(out.closed);
 	}
+	
+	public void testDoNotMultiplexToRemovedOutput() throws IOException {
+		final StringWriter output = new StringWriter();
+		MultiplexedWriter multiplexer = new MultiplexedWriter();
+		
+		multiplexer.addOutput(output);
+		multiplexer.removeOutput(output);
+		multiplexer.write("This should not be outputed to the removed writer");
+
+		assertEquals(0, output.toString().length());
+	}
 
 	private void multiplexTo(Writer... outputs) throws InterruptedException, IOException {
 		Writer multiplexer = new MultiplexedWriter(outputs);

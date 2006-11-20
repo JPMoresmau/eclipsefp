@@ -31,8 +31,9 @@ import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.editor.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
+import net.sf.eclipsefp.haskell.ui.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-import net.sf.eclipsefp.haskell.ui.console.CompilerListener;
+
 /**
  * <p>
  * The main plugin class to be used in the desktop.
@@ -49,6 +50,8 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 	private static HaskellUIPlugin plugin;
 	// Resource bundle.
 	private ResourceBundle resourceBundle;
+
+	private HaskellPreferenceManager fPreferenceManager;
 
 	public HaskellUIPlugin() {
 		plugin = this;
@@ -69,7 +72,15 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
-		CompilerManager.getInstance().addCompilerListener(new CompilerListener());
+		getPreferenceManager().activateBuildConsolePreferences();
+	}
+
+	public HaskellPreferenceManager getPreferenceManager() {
+		if (null == fPreferenceManager) {
+			fPreferenceManager = new HaskellPreferenceManager(
+			    CompilerManager.getInstance(), getPreferenceStore());
+		}
+		return fPreferenceManager;
 	}
 
 	/**

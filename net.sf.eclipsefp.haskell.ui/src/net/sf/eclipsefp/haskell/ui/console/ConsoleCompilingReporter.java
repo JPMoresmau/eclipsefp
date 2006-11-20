@@ -25,13 +25,19 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
-public class CompilerListener implements ICompilerListener {
+public class ConsoleCompilingReporter implements ICompilerListener {
 
 	private OutputStreamWriter fErrorWriter;
 	private OutputStreamWriter fOutputWriter;
 	private IOConsole fConsole;
+	private IConsoleCleaner fCleaner;
 
-	public CompilerListener() {
+	public ConsoleCompilingReporter(IConsoleCleaner cleaner) {
+		fCleaner = cleaner;
+		createIOStreams();
+	}
+
+	private void createIOStreams() {
 		IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
 		fConsole = new IOConsole("GHC Compiler Output", null);
 		mgr.addConsoles(new IConsole[] {fConsole});
@@ -44,7 +50,7 @@ public class CompilerListener implements ICompilerListener {
 		fOutputWriter = new OutputStreamWriter(outputStream);
 		fErrorWriter = new OutputStreamWriter(errorStream);
 	}
-	
+
 	public Writer getErrorWriter() {
 		return fErrorWriter;
 	}
@@ -54,7 +60,7 @@ public class CompilerListener implements ICompilerListener {
 	}
 
 	public void startingCompilation() {
-		fConsole.clearConsole();
+		fCleaner.clean(fConsole);
 	}
 
 }

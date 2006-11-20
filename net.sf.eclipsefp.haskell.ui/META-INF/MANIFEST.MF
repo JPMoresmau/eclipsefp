@@ -34,3 +34,4 @@ Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskel
  net.sf.eclipsefp.haskell.ui.util.text,
  net.sf.eclipsefp.haskell.ui.wizards;x-friends:="net.sf.eclipsefp.haskell.ui.test"
 Bundle-ManifestVersion: 2
+Export-Package: net.sf.eclipsefp.haskell.ui.console;x-friends:="net.sf.eclipsefp.haskell.ui.test"

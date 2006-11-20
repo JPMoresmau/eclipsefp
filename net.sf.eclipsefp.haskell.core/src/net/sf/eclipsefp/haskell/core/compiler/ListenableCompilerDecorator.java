@@ -38,6 +38,12 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 		fErrWriter.addOutput(listener.getErrorWriter());
 	}
 
+	public void removeListener(ICompilerListener listener) {
+		fListeners.remove(listener);
+		fOutWriter.removeOutput(listener.getOutputWriter());
+		fErrWriter.removeOutput(listener.getErrorWriter());
+	}
+	
 	public ICompilerOutput compile(IFile file, Writer outputWriter, Writer errorWriter) {
 		// TODO Auto-generated method stub
 		return null;
@@ -50,5 +56,5 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 		
 		return fUnderlyingCompiler.compile(file, fOutWriter, fErrWriter);
 	}
-	
+
 }

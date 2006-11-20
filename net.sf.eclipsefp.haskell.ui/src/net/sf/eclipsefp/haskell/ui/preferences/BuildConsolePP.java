@@ -11,10 +11,13 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.preferences;
 
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -30,17 +33,19 @@ public class BuildConsolePP extends PreferencePage implements
 	}
 
 	private Button fChkCleanConsole;
+	private IPreferenceStore fStore;
+	private HaskellPreferenceManager fManager;
 
 	public BuildConsolePP() {
-		//placeholder
+		this(HaskellUIPlugin.getDefault().getPreferenceManager(),
+		     HaskellUIPlugin.getDefault().getPreferenceStore());
 	}
-
-	public BuildConsolePP(String title) {
-		super(title);
-	}
-
-	public BuildConsolePP(String title, ImageDescriptor image) {
-		super(title, image);
+	
+	public BuildConsolePP(HaskellPreferenceManager manager,
+			              IPreferenceStore store)
+	{
+		fManager = manager;
+		fStore = store;
 	}
 
 	@Override
@@ -51,23 +56,29 @@ public class BuildConsolePP extends PreferencePage implements
 		fChkCleanConsole = new Button(composite, SWT.CHECK);
 		fChkCleanConsole.setText("Always clear console before building");
 		
-		fChkCleanConsole.setSelection(true);
+		fChkCleanConsole.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				fStore.setValue(CLEAR_BUILD_CONSOLE, fChkCleanConsole.getSelection());
+			}
+			
+		});
+		
+		fChkCleanConsole.setSelection(fStore.getBoolean(CLEAR_BUILD_CONSOLE));
 		return composite;
-	}
-
-	public void init(IWorkbench workbench) {
-	}
-
-	@Override
-	protected void performDefaults() {
-		// TODO Auto-generated method stub
-		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
-		// TODO Auto-generated method stub
-		return super.performOk();
+		fManager.activateBuildConsolePreferences();
+		
+		return true;
+	}
+
+	public void init(IWorkbench workbench) {
+		//no need for initialization
 	}
 
 }

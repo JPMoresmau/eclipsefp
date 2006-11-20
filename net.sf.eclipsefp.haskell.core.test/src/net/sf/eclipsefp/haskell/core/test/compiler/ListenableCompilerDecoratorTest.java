@@ -89,13 +89,47 @@ public class ListenableCompilerDecoratorTest extends TestCase {
 		
 		replay(listener);
 		
+		ListenableCompilerDecorator underTestCompiler =
+			new ListenableCompilerDecorator(realCompiler);
+		underTestCompiler.addListener(listener);
+		
+		underTestCompiler.compile((IFile) null);		
+
+		verify(listener);
+	}
+	
+	public void testDoNotReportCompilationStartToRemovedListeners() {
+		IHaskellCompiler realCompiler = new StubCompiler();
+		ICompilerListener listener = createMockListener();
+		
+		listener.startingCompilation();
+		expectLastCall().once();
+		replay(listener);
+		
+		ListenableCompilerDecorator underTestCompiler =
+			new ListenableCompilerDecorator(realCompiler);
+
+		underTestCompiler.addListener(listener);
+		underTestCompiler.compile((IFile) null);		
+
+		underTestCompiler.removeListener(listener);
+		underTestCompiler.compile((IFile) null);		
+
+		verify(listener);
+	}
+
+	public void testDoNotWriteToRemovedListenersStreams() {
+		IHaskellCompiler realCompiler = new StubCompiler();
+		ICompilerListener listener = createListener();
+		
 		ListenableCompilerDecorator testedCompiler =
 			new ListenableCompilerDecorator(realCompiler);
 		testedCompiler.addListener(listener);
+		testedCompiler.removeListener(listener);
 		
-		testedCompiler.compile((IFile) null);		
-
-		verify(listener);
+		testedCompiler.compile((IFile) null);
+		assertEquals(0, listener.getOutputWriter().toString().length());
+		assertEquals(0, listener.getErrorWriter().toString().length());
 	}
 
 	private ICompilerListener createMockListener() {
