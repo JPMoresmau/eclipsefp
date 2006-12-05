@@ -16,6 +16,7 @@
             icon="icons/full/etool16/haddock.gif"
             class="net.sf.eclipsefp.haskell.haddock.ui.wizard.HaddockExportWizard"
             name="%haddockWizard.name"
+            category="net.sf.eclipsefp.common.ui.exportWizardCategory"
             id="net.sf.eclipsefp.haskell.haddock.ui.wizard.HaddockExportWizard">
          <description>%haddockWizard.description</description>
       </wizard>

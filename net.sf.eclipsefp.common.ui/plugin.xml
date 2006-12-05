@@ -30,6 +30,13 @@
       </category>
    </extension>
    <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            name="Functional Programming"
+            id="net.sf.eclipsefp.common.ui.exportWizardCategory">
+      </category>
+   </extension>
+   <extension
          point="org.eclipse.ui.views">
       <category
             name="Functional Programming"
