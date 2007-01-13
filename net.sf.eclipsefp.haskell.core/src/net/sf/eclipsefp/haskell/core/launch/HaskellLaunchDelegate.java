@@ -133,7 +133,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     String defaultValue = null;
     String location = config.getAttribute( ILaunchAttributes.EXECUTABLE,
                                            defaultValue );
-    if( isExistingFile( location ) ) {
+    if( isEmpty( location ) ) {
       String msg = "Could not locate the project's executable.";
       String pluginId = HaskellCorePlugin.getPluginId();
       IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
@@ -142,10 +142,9 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     return new Path( location );
   }
 
-  private boolean isExistingFile( final String location ) {
+  private boolean isEmpty( final String location ) {
     return    location == null 
-           || location.trim().length() == 0 
-           || !( new File( location ).exists() );
+           || location.trim().length() == 0;
   }
 
   private boolean isBackground( final ILaunchConfiguration config ) 

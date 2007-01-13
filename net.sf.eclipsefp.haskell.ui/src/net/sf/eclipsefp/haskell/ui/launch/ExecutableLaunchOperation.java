@@ -1,16 +1,27 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.launch;
 
-import java.util.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.sf.eclipsefp.haskell.core.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 
 
 /** <p>encapsulates the work involved in finding a launch configuration 
@@ -88,7 +99,13 @@ class ExecutableLaunchOperation extends LaunchOperation {
   }
 
   private String getExePath( final IFile executable ) {
-    return executable.getLocation().toOSString();
+    String result = executable.getLocation().toOSString();
+    if( !new File( result ).exists() ) {
+      String msg =   "Could not locate the project executable - supposed to be "
+    	           + result;
+      HaskellUIPlugin.log( msg, IStatus.ERROR );
+    }
+	return result;
   }
 
   private List findConfiguration( final IFile file ) throws CoreException {
