@@ -1,8 +1,11 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.properties;
 
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
+import net.sf.eclipsefp.haskell.ui.properties.viewerpart.CheckboxTablePart;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -11,11 +14,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
-import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.properties.viewerpart.CheckboxTablePart;
 
 /** <p>The property page for import libraries on Haskell projects.</p>
   * 
@@ -67,11 +65,7 @@ public class ImportLibrariesPP extends PropertyPage
   }
 
   public boolean performOk() {
-    try {
-      list.save();
-    } catch( CoreException ex ) {
-      HaskellUIPlugin.log( "Could not save import libraries list.", ex );
-    }
+    list.save();
     return super.performOk();
   }
 

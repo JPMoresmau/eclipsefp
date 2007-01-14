@@ -3,12 +3,18 @@ package net.sf.eclipsefp.haskell.core.project;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 
 /** <p>Encapsulates a list of import libraries that can be read from and 
@@ -18,33 +24,36 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
   */
 public class ImportLibrariesList {
   
-  private static final String PLUGIN_ID = HaskellCorePlugin.getPluginId(); 
   private static final String KEY = "PROJECT_IMPORT_LIBRARIES";
   
-  private ArrayList importLibList;
+  private final List<IImportLibrary> importLibList;
+  private final IProject project;
   private IImportLibrary[] lastPersisted;
-
-  private IProject project;
 
 
   /** constructs an import libraries list for use in the global workspace. */
   public ImportLibrariesList( final IProject project ) {
     this.project = project;
-    importLibList = new ArrayList();
+    importLibList = new ArrayList<IImportLibrary>();
     load();
   }
   
   /** <p>saves the content of this ImportLibrariesList to the core 
     * preferences.</p> */
-  public void save() throws CoreException {
-    ProjectPropertiesEvent event = createProjectPropertiesEvent();
-    
-    project.setPersistentProperty( getQName(), encodeImportLibraries() );
-    
-    HaskellProjectManager.getInstance().broadcast( event );
-    lastPersisted = getAll();
+  public void save() {
+    try {
+      ProjectPropertiesEvent event = createProjectPropertiesEvent();
+      Preferences prefs = createPrefs();
+      prefs.put( KEY, encodeImportLibraries() );
+      prefs.flush();
+      HaskellProjectManager.getInstance().broadcast( event );
+      lastPersisted = getAll();
+	} catch( final BackingStoreException basox ) {
+      String msg =   "Could not store import libraries for project "
+                   + project.getName();
+      HaskellCorePlugin.log( msg, basox );
+	}
   }
-  
 
   public IImportLibrary[] getAll() {
     IImportLibrary[] result = new IImportLibrary[ importLibList.size() ];
@@ -61,7 +70,7 @@ public class ImportLibrariesList {
   public boolean contains( final IImportLibrary library ) {
     boolean result = false;
     for( int i = 0; !result && i < importLibList.size(); i++ ) {
-      IImportLibrary lib = ( IImportLibrary )importLibList.get( i );
+      IImportLibrary lib = importLibList.get( i );
       result = lib.equals( library );
     }
     return result;
@@ -119,24 +128,49 @@ public class ImportLibrariesList {
            + ( lib.isUsed() ? "t" : "f" );
   }
   
-  private QualifiedName getQName() {
-    return new QualifiedName( PLUGIN_ID, KEY );
+  private void load(){
+    String property = createPrefs().get( KEY, "" );
+    if( property != null && property.length() > 0 ) {
+      parseImportLibs( property );
+    } else {
+      // load prefs from legacy mechanism - we had in the past stored it to
+      // project properties in the workspace store, and users may still have
+      // something there which should be preserved
+      String legacyProp = loadFromLegacy();
+      if( legacyProp != null && legacyProp.length() > 0 ) {
+        parseImportLibs( legacyProp );
+        // save them to store for new mechanism
+        save();
+        // clear the legacy store
+        clearLegacyStore();
+      }
+    }
+    this.lastPersisted = getAll();
+  }
+
+  private void clearLegacyStore() {
+    try {
+      project.setPersistentProperty( getQName(), null );
+	} catch( final CoreException cex ) {
+      // suppress; we don't want to store there anymore anyway
+	}
   }
   
-  private void load(){
-    String property = null;
+  private String loadFromLegacy() {
+    String result = null;
     try {
-      property = project.getPersistentProperty( getQName() );
+      result = project.getPersistentProperty( getQName() );
     } catch( CoreException cex ) {
       String msg = "Could not read import libraries property for " + project;
       HaskellCorePlugin.log( msg, cex );
     }
-    if( property != null && property.length() > 0 ) {
-      parseImportLibs( property );
-    }
-    this.lastPersisted = getAll();
+	return result; 
   }
-  
+
+  private QualifiedName getQName() {
+	return new QualifiedName( HaskellCorePlugin.getPluginId(), KEY );
+  }
+
   private ProjectPropertiesEvent createProjectPropertiesEvent() {
     IHaskellProject hsProject = HaskellProjectManager.get( project );
     String id = IHaskellProject.PROPERTY_IMPORT_LIBRARIES;
@@ -144,5 +178,9 @@ public class ImportLibrariesList {
     event.setOldValue( lastPersisted );
     event.setNewValue( getAll() );
     return event;
+  }
+  
+  private Preferences createPrefs() {
+    return new ProjectScope( project ).getNode( HaskellCorePlugin.getPluginId() );
   }
 }
