@@ -42,7 +42,7 @@ public class ImportLibrariesList {
     * preferences.</p> */
   public void save() {
     try {
-      ProjectPropertiesEvent event = createProjectPropertiesEvent();
+      IProjectPropertiesEvent event = createProjectPropertiesEvent();
       Preferences prefs = createPrefs();
       prefs.put( KEY, encodeImportLibraries() );
       prefs.flush();
@@ -168,10 +168,14 @@ public class ImportLibrariesList {
   }
 
   private QualifiedName getQName() {
-	return new QualifiedName( HaskellCorePlugin.getPluginId(), KEY );
+	return new QualifiedName( haskellCorePluginId(), KEY );
   }
 
-  private ProjectPropertiesEvent createProjectPropertiesEvent() {
+  protected String haskellCorePluginId() {
+    return HaskellCorePlugin.getPluginId();
+  }
+
+  protected IProjectPropertiesEvent createProjectPropertiesEvent() {
     IHaskellProject hsProject = HaskellProjectManager.get( project );
     String id = IHaskellProject.PROPERTY_IMPORT_LIBRARIES;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( hsProject, id );
@@ -180,7 +184,7 @@ public class ImportLibrariesList {
     return event;
   }
   
-  private Preferences createPrefs() {
-    return new ProjectScope( project ).getNode( HaskellCorePlugin.getPluginId() );
+  protected Preferences createPrefs() {
+    return new ProjectScope( project ).getNode( haskellCorePluginId() );
   }
 }
