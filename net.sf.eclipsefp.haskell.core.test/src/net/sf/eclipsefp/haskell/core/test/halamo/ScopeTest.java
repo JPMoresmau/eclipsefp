@@ -1,10 +1,7 @@
 package net.sf.eclipsefp.haskell.core.test.halamo;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.swt.events.TypedEvent;
 
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
