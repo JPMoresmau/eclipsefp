@@ -38,6 +38,11 @@ public abstract class PackageDescriptionStanza {
   
   @Override
   public String toString() {
-    return getName() + " (line " + startLine + "-" + endLine + ")";
+    return   getName() 
+           + " (line "  //$NON-NLS-1$
+           + startLine 
+           + "-"  //$NON-NLS-1$
+           + endLine 
+           + ")"; //$NON-NLS-1$
   }
 }

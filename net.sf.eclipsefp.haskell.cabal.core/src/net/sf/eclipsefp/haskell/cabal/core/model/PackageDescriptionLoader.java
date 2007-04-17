@@ -103,7 +103,7 @@ public class PackageDescriptionLoader {
   private static String getPlainName( final List<String> content ) {
     String result = getValue( content, CabalSyntax.FIELD_NAME );
     if( result == null ) {
-      result = "Unknown";
+      result = "Unknown"; //$NON-NLS-1$
     }
     return result;
   }
