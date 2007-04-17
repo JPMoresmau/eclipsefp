@@ -36,11 +36,12 @@ import org.eclipse.swt.graphics.Image;
   */
 public class CabalCompletionProcessor implements IContentAssistProcessor {
   
+  private static final String ID_CONTEXT   
+    = "cabalPackageDescriptionTemplates"; //$NON-NLS-1$
+  
   // interface methods of IContentAssistProcessor
   ///////////////////////////////////////////////
   
-  private static final String ID_CONTEXT = "cabalPackageDescriptionTemplates";
-
   public ICompletionProposal[] computeCompletionProposals( final ITextViewer tv,
                                                            final int offset ) {
     ICompletionProposal[] result = new ICompletionProposal[ 0 ];
@@ -152,7 +153,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
   }
   
   private String getPrefix( final ITextViewer viewer, final int offset ) {
-    String result = "";
+    String result = ""; //$NON-NLS-1$
     int index = offset;
     IDocument document = viewer.getDocument();
     if( index <= document.getLength() ) {

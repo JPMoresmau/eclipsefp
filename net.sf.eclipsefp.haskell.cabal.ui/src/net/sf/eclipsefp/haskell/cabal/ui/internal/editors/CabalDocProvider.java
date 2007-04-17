@@ -19,7 +19,7 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
   */
 public class CabalDocProvider extends FileDocumentProvider {
 
-  public static final String COMMENT_CONTENT_TYPE = "__comment";
+  public static final String COMMENT_CONTENT_TYPE = "__comment"; //$NON-NLS-1$
   
   private static final String[] TOKEN_TYPES = new String[] { 
     IDocument.DEFAULT_CONTENT_TYPE,
@@ -30,6 +30,7 @@ public class CabalDocProvider extends FileDocumentProvider {
   // interface methods of IDocumentProvider
   /////////////////////////////////////////
   
+  @Override
   protected IDocument createDocument( final Object elem ) throws CoreException {
     IDocument result = super.createDocument( elem );
     if( result != null ) {

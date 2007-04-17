@@ -1,7 +1,7 @@
-#Tue Aug 29 13:26:36 BRT 2006
+#Tue Feb 27 13:04:42 CET 2007
 eclipse.preferences.version=1
 formatter_profile=org.eclipse.jdt.ui.default.eclipse_profile
-formatter_settings_version=10
+formatter_settings_version=11
 internal.default.compliance=default
 org.eclipse.jdt.ui.exception.name=ex
 org.eclipse.jdt.ui.gettersetter.use.is=true

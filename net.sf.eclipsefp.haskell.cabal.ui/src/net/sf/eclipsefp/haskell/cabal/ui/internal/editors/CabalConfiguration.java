@@ -40,6 +40,7 @@ class CabalConfiguration extends SourceViewerConfiguration {
   // interface methods of SourceViewerConfiguration
   /////////////////////////////////////////////////
   
+  @Override
   public IPresentationReconciler getPresentationReconciler( final ISourceViewer sv ) {
     PresentationReconciler result= new PresentationReconciler();
     
@@ -54,6 +55,7 @@ class CabalConfiguration extends SourceViewerConfiguration {
     return result;
   }
 
+  @Override
   public IReconciler getReconciler( final ISourceViewer sourceViewer ) {
     CabalReconcilingStrategy strategy = new CabalReconcilingStrategy( editor );
     MonoReconciler result = new MonoReconciler( strategy, false );
@@ -61,6 +63,7 @@ class CabalConfiguration extends SourceViewerConfiguration {
     return result;
   }
 
+  @Override
   public IContentAssistant getContentAssistant( final ISourceViewer sv ) {
     ContentAssistant result = new ContentAssistant();
     IContentAssistProcessor processor = new CabalCompletionProcessor();

@@ -18,7 +18,8 @@ public class CabalPartitionScanner extends RuleBasedPartitionScanner {
   public CabalPartitionScanner() {
     IPredicateRule[] rules = new IPredicateRule[] {
       // rule for single line comments
-      new EndOfLineRule( "--", new Token( CabalDocProvider.COMMENT_CONTENT_TYPE ) )
+      new EndOfLineRule( "--",  //$NON-NLS-1$
+    		             new Token( CabalDocProvider.COMMENT_CONTENT_TYPE ) )
     };
     setPredicateRules( rules );
   }

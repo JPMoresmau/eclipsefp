@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -21,9 +20,9 @@ import org.eclipse.swt.widgets.Display;
   */
 public class ColorProvider {
 
-  static final String COMMENT = "COMMENT";
-  static final String KEYWORD = "KEYWORD";
-  static final String OTHER   = "OTHER";
+  static final String COMMENT = "COMMENT"; //$NON-NLS-1$
+  static final String KEYWORD = "KEYWORD"; //$NON-NLS-1$
+  static final String OTHER   = "OTHER"; //$NON-NLS-1$
 
   private static final RGB DEFAULT_COMMENT           = new RGB( 128, 128, 192 );
   private static final RGB DEFAULT_KEYWORD           = new RGB( 128, 0, 86 );
@@ -52,16 +51,19 @@ public class ColorProvider {
 
   /** <p>releases all of the color resources held by this ColorProvider.</p> */ 
   public void dispose() {
-    Iterator it = colors.values().iterator();
+    Iterator<Color> it = colors.values().iterator();
     while( it.hasNext() ) {
-      ( ( Color )it.next() ).dispose();
+      it.next().dispose();
     }
   }
 
   public Color getColor( final String key ) {
-    RGB rgb = ( RGB )rgbs.get( key );
-    Assert.isNotNull( rgb );
-    return getColor( rgb );
+    Color result = null;
+    RGB rgb = rgbs.get( key );
+    if( rgbs.containsKey( key ) ) {
+      result = getColor( rgb );
+    }
+    return result;
   }
   
 
@@ -69,7 +71,7 @@ public class ColorProvider {
   //////////////////
 
   private Color getColor( final RGB rgb ) {
-    Color color = ( Color )colors.get( rgb );
+    Color color = colors.get( rgb );
     if( color == null ) {
       color = new Color( Display.getCurrent(), rgb );
       colors.put( rgb, color );

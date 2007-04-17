@@ -18,6 +18,8 @@ import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
   */
 public class TemplateProvider {
 
+  private static final String TEMPLATE_STORE_KEY = "templates"; //$NON-NLS-1$
+  
   private static ContributionContextTypeRegistry contextTypeRegistry;
   private static TemplateStore templateStore;
   
@@ -26,11 +28,11 @@ public class TemplateProvider {
       IPreferenceStore prefs = CabalUIPlugin.getDefault().getPreferenceStore();
       templateStore = new ContributionTemplateStore( getContextTypeRegistry(), 
                                                      prefs, 
-                                                     "templates" );
+                                                     TEMPLATE_STORE_KEY );
       try {
         templateStore.load();
       } catch( final IOException ioex ) {
-        CabalUIPlugin.log( "Unable to load templates.", ioex );
+        CabalUIPlugin.log( "Unable to load templates.", ioex ); //$NON-NLS-1$
       }
     }
 
@@ -40,7 +42,8 @@ public class TemplateProvider {
   public static ContextTypeRegistry getContextTypeRegistry() {
     if( contextTypeRegistry == null ) {
       contextTypeRegistry = new ContributionContextTypeRegistry();
-      contextTypeRegistry.addContextType( "cabalPackageDescriptionTemplates" );
+      String key = "cabalPackageDescriptionTemplates"; //$NON-NLS-1$
+	  contextTypeRegistry.addContextType( key );
     }
     return contextTypeRegistry;
   }

@@ -68,6 +68,7 @@ public class CabalEditor extends TextEditor {
   // interface methods of TextEditor
   //////////////////////////////////
   
+  @Override
   protected ISourceViewer createSourceViewer( final Composite parent, 
                                               final IVerticalRuler ruler, 
                                               final int styles ) {
@@ -79,6 +80,7 @@ public class CabalEditor extends TextEditor {
     return viewer;
   }
   
+  @Override
   public void createPartControl( final Composite parent ) {
     super.createPartControl( parent );
 
@@ -90,23 +92,25 @@ public class CabalEditor extends TextEditor {
     pv.doOperation( ProjectionViewer.TOGGLE );
   }
   
+  @Override
   protected void createActions() {
     super.createActions();
     IAction action = new TextOperationAction(
         ResourceBundle.getBundle( CabalEditor.class.getName() ),
-        "ContentAssistProposal.",
+        "ContentAssistProposal.", //$NON-NLS-1$
         this,
         ISourceViewer.CONTENTASSIST_PROPOSALS );
     String adi = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
     action.setActionDefinitionId( adi );
-    setAction( "ContentAssist.", action );
-    markAsStateDependentAction( "ContentAssist.", true );
+    setAction( "ContentAssist.", action ); //$NON-NLS-1$
+    markAsStateDependentAction( "ContentAssist.", true ); //$NON-NLS-1$
   }
   
   
   // interface methods of IAdaptable
   //////////////////////////////////
   
+  @Override
   public Object getAdapter( final Class adapterType ) {
     Object result = null;
     if( IContentOutlinePage.class.equals( adapterType ) ) {

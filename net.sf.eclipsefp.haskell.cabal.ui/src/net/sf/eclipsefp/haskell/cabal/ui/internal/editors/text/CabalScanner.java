@@ -44,7 +44,7 @@ public class CabalScanner extends RuleBasedScanner {
     IToken token= new Token( new TextAttribute( keyColor, null, SWT.BOLD ) );
     WordRule wordRule= new CaseInsensitiveWordRule( new SimpleWordDetector() );
     for( String keyword: KEYWORDS ) {
-      wordRule.addWord( keyword + ":", token );
+      wordRule.addWord( keyword + ":", token ); //$NON-NLS-1$
     }
     wordRule.setColumnConstraint( 0 ); // only react if this is at the line beginning
     return wordRule;

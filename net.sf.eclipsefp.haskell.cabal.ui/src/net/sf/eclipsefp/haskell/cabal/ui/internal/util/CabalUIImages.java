@@ -29,24 +29,25 @@ public class CabalUIImages implements IImageNames {
   private static URL baseUrl;
 
   static {
-    String pathSuffix = "icons/";
+    String pathSuffix = "icons/"; //$NON-NLS-1$
     try {
       Bundle bundle = CabalUIPlugin.getDefault().getBundle();
-      baseUrl = new URL( bundle.getEntry( "/" ), pathSuffix );
+      baseUrl = new URL( bundle.getEntry( "/" ), pathSuffix ); //$NON-NLS-1$
     } catch( MalformedURLException e ) {
       // do nothing
     }
   }
 
-  private final static String OBJECT = "obj16/";   // basic colors - size 16x16
+  // basic colors - size 16x16
+  private final static String OBJECT = "obj16/";    //$NON-NLS-1$
 
 
   private static void declareImages() {
     // objects
-    declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" );
-    declare( LIBRARY_STANZA,    OBJECT + "librarystanza.gif" );
-    declare( GENERAL_STANZA,    OBJECT + "generalstanza.gif" );
-    declare( TEMPLATE,          OBJECT + "template.gif" );
+    declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
+    declare( LIBRARY_STANZA,    OBJECT + "librarystanza.gif" ); //$NON-NLS-1$
+    declare( GENERAL_STANZA,    OBJECT + "generalstanza.gif" ); //$NON-NLS-1$
+    declare( TEMPLATE,          OBJECT + "template.gif" ); //$NON-NLS-1$
   }
 
   private final static void declare( final String key, 
@@ -55,7 +56,7 @@ public class CabalUIImages implements IImageNames {
     try {
       desc = ImageDescriptor.createFromURL( makeIconFileURL( path ) );
     } catch( MalformedURLException mux ) {
-      CabalUIPlugin.log( "Problem loading image.", mux );
+      CabalUIPlugin.log( "Problem loading image.", mux ); //$NON-NLS-1$
     }
     imageRegistry.put( key, desc );
     imageDescriptors.put( key, desc );
@@ -87,7 +88,7 @@ public class CabalUIImages implements IImageNames {
     if( imageDescriptors == null ) {
       initializeImageRegistry();
     }
-    return ( ImageDescriptor )imageDescriptors.get( key );
+    return imageDescriptors.get( key );
   }
   
   private static URL makeIconFileURL( final String iconPath ) 

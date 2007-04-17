@@ -13,8 +13,8 @@ public interface IImageNames {
   // prefix all constants with the plugin id
   String ID = CabalUIPlugin.getPluginId();
   
-  String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA";
-  String LIBRARY_STANZA    = ID + ".LIBRARY_STANZA";
-  String GENERAL_STANZA    = ID + ".GENERAL_STANZA";
-  String TEMPLATE          = ID + ".TEMPLATE";
+  String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA"; //$NON-NLS-1$
+  String LIBRARY_STANZA    = ID + ".LIBRARY_STANZA"; //$NON-NLS-1$
+  String GENERAL_STANZA    = ID + ".GENERAL_STANZA"; //$NON-NLS-1$
+  String TEMPLATE          = ID + ".TEMPLATE"; //$NON-NLS-1$
 }
