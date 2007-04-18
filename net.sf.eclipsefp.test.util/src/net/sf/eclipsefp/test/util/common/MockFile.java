@@ -482,8 +482,12 @@ public class MockFile implements IFile {
 	}
 
 	public IResourceProxy createProxy() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int findMaxProblemSeverity(String type, boolean includeSubtypes,
+			int depth) throws CoreException {
+		return 0;
 	}
 
 }
