@@ -19,3 +19,4 @@ Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test",
  net.sf.eclipsefp.haskell.ghccompiler.ui.launch
 Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

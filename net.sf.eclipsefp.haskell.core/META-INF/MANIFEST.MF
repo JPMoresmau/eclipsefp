@@ -29,3 +29,4 @@ Provide-Package: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.core.util,
  net.sf.eclipsefp.haskell.core.codeassist;x-friends:="net.sf.eclipsefp.haskell.core.test"
 Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

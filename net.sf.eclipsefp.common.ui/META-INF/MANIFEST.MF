@@ -22,3 +22,4 @@ Provide-Package: net.sf.eclipsefp.common.ui,
  net.sf.eclipsefp.common.ui.wizards,
  net.sf.eclipsefp.common.ui.configurator
 Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
