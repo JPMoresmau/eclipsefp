@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EclipseFP Haskell JParser
+Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.jparser; singleton:=true
 Bundle-Version: 0.11.0
 Bundle-Localization: plugin
@@ -9,7 +9,7 @@ Require-Bundle: org.antlr;bundle-version="[2.7.6,3.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  net.sf.eclipsefp.haskell.core;bundle-version="[0.11.0,1.0.0)",
  net.sf.eclipsefp.haskell.ui;bundle-version="[0.11.0,1.0.0)"
-Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Vendor: %bundleVendor
 Bundle-Activator: net.sf.eclipsefp.haskell.core.jparser.JParserPlugin
 Export-Package: net.sf.eclipsefp.haskell.core.jparser,
  net.sf.eclipsefp.haskell.core.jparser.ast;x-friends:="net.sf.eclipsefp.haskell.core.jparser.test,net.sf.eclipsefp.haskell.core.test"
