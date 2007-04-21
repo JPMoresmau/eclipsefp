@@ -48,6 +48,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="de.leiffrenzel.fp.haskell"
          download-size="0"
          install-size="0"
+         unpack="false"
          version="0.0.0"/>
 
    <plugin
