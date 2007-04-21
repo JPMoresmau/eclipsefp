@@ -17,13 +17,13 @@
 <listEntry value="/net.sf.eclipsefp.test/src/net/sf/eclipsefp/test/AllAllTests_PDESuite.java"/>
 </listAttribute>
 <booleanAttribute key="automaticValidate" value="false"/>
-<stringAttribute key="deselected_workspace_plugins" value="net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.haskell.build.check,de.leiffrenzel.fp.haskell.doc.user,net.sf.eclipsefp.haskell.cabal.ui,net.sf.eclipsefp.haskell.cabal.core,net.sf.eclipsefp.haskell.hugs,net.sf.eclipsefp.common.doc,de.leiffrenzel.fp.haskell"/>
+<stringAttribute key="deselected_workspace_plugins" value="de.leiffrenzel.fp.haskell.doc.user,net.sf.eclipsefp.haskell.cabal.ui,net.sf.eclipsefp.haskell.cabal.core,net.sf.eclipsefp.haskell.hugs,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.haskell.build.check,net.sf.eclipsefp.haskell.haddock,de.leiffrenzel.fp.haskell"/>
 <booleanAttribute key="askclear" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.sf.eclipsefp.test.AllAllTests_PDESuite"/>
 <stringAttribute key="product" value="org.eclipse.platform.ide"/>
 <booleanAttribute key="includeOptional" value="true"/>
-<booleanAttribute key="useProduct" value="false"/>
 <booleanAttribute key="default" value="false"/>
+<booleanAttribute key="useProduct" value="false"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit3"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
