@@ -10,8 +10,8 @@
    <extension
          point="net.sf.eclipsefp.haskell.core.haskellCompilers">
       <compiler
-            name="Glasgow Haskell Compiler (ghc)"
-            description="Glasgow Haskell Compiler wrapper for ghc support."
+            name="%ghc_name"
+            description="%ghc_desc"
             class="net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler"
             mode="make"
             id="ghcCompiler">
@@ -20,13 +20,13 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="GHC compiler"
+            name="%compilerPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP"
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage"
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage">
       </page>
       <page
-            name="GHCi (interactive)"
+            name="%interpreterPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage"
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage">
@@ -35,7 +35,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="GHCi session"
+            label="%shortcut_label"
             icon="icons/full/etool16/ghci16.gif"
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut"
             modes="run"
@@ -50,7 +50,7 @@
                </with>
             </enablement>
             <contextLabel
-                  label="Run GHCi session"
+                  label="%contextLabel_label"
                   mode="run">
             </contextLabel>
          </contextualLaunch>
