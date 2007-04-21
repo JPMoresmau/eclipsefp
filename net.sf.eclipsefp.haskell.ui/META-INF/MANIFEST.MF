@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
-Bundle-Name: Haskell UI Plug-in
+Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ui;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-ClassPath: haskellui.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.ui.HaskellUIPlugin
-Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

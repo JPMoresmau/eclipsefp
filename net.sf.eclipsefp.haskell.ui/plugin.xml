@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            name="Haskell Project"
+            name="%newProjectWizard_name"
             icon="icons/hsicon16.gif"
             category="net.sf.eclipsefp.common.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"
@@ -13,14 +13,14 @@
             project="true"
             id="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard">
          <description>
-            Create a new Haskell project.
+            %newProjectWizard_desc
          </description>
       </wizard>
       <primaryWizard
             id="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard">
       </primaryWizard>
       <wizard
-            name="Haskell Module"
+            name="%newModuleWizard_name"
             icon="icons/full/obj16/module.gif"
             category="net.sf.eclipsefp.common.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard"
@@ -28,14 +28,14 @@
             project="false"
             id="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard">
          <description>
-            Create a new Haskell module.
+            %newModuleWizard_desc
          </description>
       </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="Haskell Editor"
+            name="%haskellEditor_name"
             extensions="hs,lhs"
             icon="icons/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor"
@@ -63,7 +63,7 @@
          point="org.eclipse.ui.decorators">
       <decorator
             adaptable="true"
-            label="Haskell Project Folders"
+            label="%haskellDecorator_name"
             class="net.sf.eclipsefp.haskell.ui.decorators.ProjectFoldersDecorator"
             state="true"
             id="net.sf.eclipsefp.haskell.ui.decorators.ProjectFoldersDecorator">
@@ -71,14 +71,14 @@
               <objectClass name="org.eclipse.core.resources.IFolder	"/> 
             </enablement>
          <description>
-            Decorates source and binary folders in Haskell projects.
+            %haskellDecorator_desc
          </description>
       </decorator>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Haskell"
+            name="%haskellPerspective_name"
             icon="icons/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
@@ -87,7 +87,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Module Browser"
+            name="%moduleBrowser_name"
             icon="icons/full/cview16/mbview.gif"
             category="net.sf.eclipsefp.common.ui.fpViews"
             class="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser"
@@ -97,30 +97,30 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Haskell"
+            name="%haskellPP_name"
             class="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
       <page
-            name="Compiler"
+            name="%compilerPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP">
       </page>
       <page
-            name="Interpreter"
+            name="%interpreterPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP">
       </page>
       <page
-            name="Editor"
+            name="%editorPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.preferences.editor.HaskellEditorPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.editor.HaskellEditorPP">
       </page>
       <page
-            name="New Project"
+            name="%projectWizardPP"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.preferences.NewHaskellProjectPP"
             id="net.sf.eclipsefp.haskell.ui.preferences.NewHaskellProjectPP">
@@ -129,16 +129,16 @@
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.preferences.BuildConsolePP"
             id="net.sf.eclipsefp.haskell.ui.preferences.BuildConsolePP"
-            name="Build Console">
+            name="%buildConsolePP_name">
       </page>
    </extension>
    <extension
-         name="Import Libraries"
+         name="%importLibsPP_name"
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
-            name="Import Libraries"
+            name="%projectImportLibsPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP"
             id="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP">
          <filter
@@ -153,7 +153,7 @@
       <page
             adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
-            name="Haskell Compiler"
+            name="%haskellCompilerPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.CompilerPP"
             id="net.sf.eclipsefp.haskell.ui.properties.CompilerPP">
          <filter
@@ -185,7 +185,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="Haskell Application"
+            label="%appLaunchShortcut_label"
             icon="icons/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.launch.ExecutableLaunchShortcut"
             modes="run"
@@ -205,7 +205,7 @@
                </with>
             </enablement>
             <contextLabel
-                  label="Run Haskell Application"
+                  label="%appLaunchContextLabel_label"
                   mode="run">
             </contextLabel>
          </contextualLaunch>
@@ -217,22 +217,22 @@
   <extension
          point="org.eclipse.ui.commands">
       <category
-            description="Haskell editor category"
-            name="Haskell editor commands"
+            description="%haskellEditorCategory_desc"
+            name="%haskellEditorCategory_name"
             id="net.sf.eclipsefp.haskell.ui.category.source"/>
       <command
-            description="Goes to the first non space char or first char of the line depending on the cursor position."
+            description="%firstCharCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="First char"
+            name="%firstCharCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"/>
       <keyBinding
             commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Home"/>
       <command
-            description="Comments code line (Adds -- to beginning of the line)"
+            description="%commentCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="Comment"
+            name="%commentCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.comment"/>
       <keyBinding
             commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment"
@@ -243,9 +243,9 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Ctrl+7"/>
       <command
-            description="Uncomments line (Removes -- from the beggining of the line)"
+            description="%uncommentCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="Uncomment"
+            name="%uncommentCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"/>
       <keyBinding
             commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"
@@ -262,7 +262,7 @@
             targetID="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor"
             id="net.sf.eclipsefp.haskell.ui.editor.editorContribution">
          <action
-               label="First Char"
+               label="%firstCharAction_label"
                definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
                class="net.sf.eclipsefp.haskell.ui.editor.actions.FirstCharAction"
                id="de.leiffrenzel.fp.haskell.editor.actions.firstChar"/>
