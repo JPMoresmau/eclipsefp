@@ -2,12 +2,12 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension-point id="haskellCompilers" name="Haskell Compilers" schema="schema/haskellCompilers.exsd"/>
-   <extension-point id="haskellParsers" name="Haskell Parsers" schema="schema/haskellParsers.exsd"/>
+   <extension-point id="haskellCompilers" name="%extPtCompilers_name" schema="schema/haskellCompilers.exsd"/>
+   <extension-point id="haskellParsers" name="%extPtParsers_name" schema="schema/haskellParsers.exsd"/>
 
    <extension
          id="project.HaskellNature"
-         name="Haskell project nature"
+         name="%haskellNature_name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
@@ -17,7 +17,7 @@
    </extension>
    <extension
          id="builder.HaskellBuilder"
-         name="Haskell Builder"
+         name="%haskellBuilder_name"
          point="org.eclipse.core.resources.builders">
       <builder>
          <run
@@ -34,7 +34,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="Haskell application"
+            name="%haskellApplicationLaunchType_name"
             delegate="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
             modes="run"
             id="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate">
@@ -63,7 +63,7 @@
    </extension>
    <extension
          id="problem"
-         name="Haskell Problem"
+         name="%haskellProblem_name"
          point="org.eclipse.core.resources.markers">
       <persistent value="true"/>
       <super type="org.eclipse.core.resources.problemmarker"/>
