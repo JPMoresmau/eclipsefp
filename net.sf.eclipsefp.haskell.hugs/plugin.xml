@@ -9,7 +9,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
-      <page name="Hugs 98"
+      <page name="%hugsPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
             class="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage"
             id="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage">
@@ -18,7 +18,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="Hugs 98 session"
+            label="%shortcut_label"
             icon="icons/full/etool16/hugs16.gif"
             class="net.sf.eclipsefp.haskell.hugs.ui.launch.HugsLaunchShortcut"
             modes="run"
@@ -33,7 +33,7 @@
                </with>
             </enablement>
             <contextLabel
-                  label="Run Hugs 98 session"
+                  label="%contextLabel_label"
                   mode="run">
             </contextLabel>
          </contextualLaunch>
