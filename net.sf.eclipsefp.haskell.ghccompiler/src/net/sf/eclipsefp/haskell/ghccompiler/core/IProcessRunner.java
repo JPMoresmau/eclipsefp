@@ -16,6 +16,6 @@ import java.io.Writer;
 
 public interface IProcessRunner {
 
-  String execute(File workingDir, Writer out, Writer err, String... args);
+  String execute(File workingDir, Writer out, String... args);
 
 }

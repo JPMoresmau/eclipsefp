@@ -27,32 +27,24 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 public class ConsoleCompilingReporter implements ICompilerListener {
 
-	private OutputStreamWriter fErrorWriter;
 	private OutputStreamWriter fOutputWriter;
 	private IOConsole fConsole;
 	private IConsoleCleaner fCleaner;
 
 	public ConsoleCompilingReporter(IConsoleCleaner cleaner) {
 		fCleaner = cleaner;
-		createIOStreams();
+		createIOStream();
 	}
 
-	private void createIOStreams() {
+	private void createIOStream() {
 		IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
 		fConsole = new IOConsole("GHC Compiler Output", null);
 		mgr.addConsoles(new IConsole[] {fConsole});
 		
 		IOConsoleOutputStream outputStream = fConsole.newOutputStream();
-		IOConsoleOutputStream errorStream = fConsole.newOutputStream();
 		outputStream.setColor(new Color(HaskellUIPlugin.getStandardDisplay(), 0, 0, 255));
-		errorStream.setColor(new Color(HaskellUIPlugin.getStandardDisplay(), 255, 0, 0));
 		
 		fOutputWriter = new OutputStreamWriter(outputStream);
-		fErrorWriter = new OutputStreamWriter(errorStream);
-	}
-
-	public Writer getErrorWriter() {
-		return fErrorWriter;
 	}
 
 	public Writer getOutputWriter() {

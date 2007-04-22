@@ -24,7 +24,6 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 
 	private IHaskellCompiler fUnderlyingCompiler;
 	private MultiplexedWriter fOutWriter = new MultiplexedWriter();
-	private MultiplexedWriter fErrWriter = new MultiplexedWriter();
 	private List<ICompilerListener> fListeners =
 		new ArrayList<ICompilerListener>();
 
@@ -35,16 +34,14 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 	public void addListener(ICompilerListener listener) {
 		fListeners.add(listener);
 		fOutWriter.addOutput(listener.getOutputWriter());
-		fErrWriter.addOutput(listener.getErrorWriter());
 	}
 
 	public void removeListener(ICompilerListener listener) {
 		fListeners.remove(listener);
 		fOutWriter.removeOutput(listener.getOutputWriter());
-		fErrWriter.removeOutput(listener.getErrorWriter());
 	}
 	
-	public ICompilerOutput compile(IFile file, Writer outputWriter, Writer errorWriter) {
+	public ICompilerOutput compile(IFile file, Writer outputWriter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -54,7 +51,7 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 			listener.startingCompilation();
 		}
 		
-		return fUnderlyingCompiler.compile(file, fOutWriter, fErrWriter);
+		return fUnderlyingCompiler.compile(file, fOutWriter);
 	}
 
 }

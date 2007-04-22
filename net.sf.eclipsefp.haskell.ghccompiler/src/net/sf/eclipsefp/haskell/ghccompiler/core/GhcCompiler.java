@@ -43,13 +43,13 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 		fProcessRunner = procRunner;
 	}
 
-	public ICompilerOutput compile(IFile file, Writer outputWriter, Writer errorWriter) {
+	public ICompilerOutput compile(IFile file, Writer outputWriter) {
 		final IProject project = file.getProject();
 		IHaskellProject hsProject = HaskellProjectManager.get(project);
 		String[] cmdLine = buildCommandLine(file, hsProject);
 		IPath src = project.getLocation().append(hsProject.getSourcePath());
 		String output = fProcessRunner.execute(
-			new File(src.toOSString()), outputWriter, errorWriter, cmdLine);
+			new File(src.toOSString()), outputWriter, cmdLine);
 		return parse(output);
 	}
 

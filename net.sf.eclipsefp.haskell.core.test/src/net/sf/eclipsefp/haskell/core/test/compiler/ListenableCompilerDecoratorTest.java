@@ -129,16 +129,13 @@ public class ListenableCompilerDecoratorTest extends TestCase {
 		
 		testedCompiler.compile((IFile) null);
 		assertEquals(0, listener.getOutputWriter().toString().length());
-		assertEquals(0, listener.getErrorWriter().toString().length());
 	}
 
 	private ICompilerListener createMockListener() {
 		ICompilerListener listener = createMock(ICompilerListener.class);
 		
 		final StringWriter out = new StringWriter();
-		final StringWriter err = new StringWriter();
 		expect(listener.getOutputWriter()).andReturn(out).anyTimes();
-		expect(listener.getErrorWriter()).andReturn(err).anyTimes();
 		return listener;
 	}
 

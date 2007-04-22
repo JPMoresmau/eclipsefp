@@ -17,7 +17,7 @@ public interface IHaskellCompiler {
 	 * Compiles the specified file redirecting any compiler output to the given
 	 * streams.
 	 */
-    ICompilerOutput compile(IFile file, Writer outputWriter, Writer errorWriter);
+    ICompilerOutput compile(IFile file, Writer outputWriter);
 
 	/**
 	 * Compiles the specified file.

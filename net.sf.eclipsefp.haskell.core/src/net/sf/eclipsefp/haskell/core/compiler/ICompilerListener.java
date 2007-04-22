@@ -6,8 +6,6 @@ public interface ICompilerListener {
 
 	Writer getOutputWriter();
 
-	Writer getErrorWriter();
-
 	void startingCompilation();
 
 }

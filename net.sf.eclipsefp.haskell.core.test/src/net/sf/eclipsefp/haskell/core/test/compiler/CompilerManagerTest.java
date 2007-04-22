@@ -48,7 +48,6 @@ public class CompilerManagerTest extends TestCase {
 		
 		manager.getCompiler().compile((IFile) null);
 		
-		assertEquals(0, listener.getErrorWriter().toString().length());
 		assertEquals(0, listener.getOutputWriter().toString().length());
 	}
 

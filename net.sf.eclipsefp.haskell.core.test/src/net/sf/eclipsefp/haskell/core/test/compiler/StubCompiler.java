@@ -13,12 +13,11 @@ public class StubCompiler extends DefaultHaskellCompiler {
 	public static final String EXPECTED_STANDARD_ERROR = "expected standard error output";
 	public static final String EXPECTED_STANDARD_OUTPUT = "expected standard output";
 
-	public ICompilerOutput compile(IFile workingDir, Writer output, Writer error) {
+	public ICompilerOutput compile(IFile workingDir, Writer output) {
 		try {
 			output.write(EXPECTED_STANDARD_OUTPUT);
+			output.write(EXPECTED_STANDARD_ERROR);
 			output.flush();
-			error.write(EXPECTED_STANDARD_ERROR);
-			error.flush();
 		} catch (IOException e) {
 			// ignore error
 		}

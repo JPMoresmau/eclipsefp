@@ -20,12 +20,9 @@ public class ProcessRunner implements IProcessRunner {
 		fProcessFactory = factory;
 	}
 
-	public String execute(File workingDir, Writer out,
-			              Writer err, String... args)
-	{
+	public String execute(File workingDir, Writer out, String... args) {
 		List<Exception> excList = new ArrayList<Exception>();
 		StringWriter returnedOut = new StringWriter();
-		StringWriter returnedErr = new StringWriter();
 		try {
 			Process proc = fProcessFactory.startProcess(workingDir, args);
 			Thread outRedirect = new StreamMultiplexer("output_redirect",
@@ -33,7 +30,7 @@ public class ProcessRunner implements IProcessRunner {
 													   returnedOut, out);
 			Thread errRedirect = new StreamMultiplexer("error_redirect",
                                                        proc.getErrorStream(),
-													   returnedErr, err);
+                                                       returnedOut, out);
 			outRedirect.start();
 			errRedirect.start();
 			proc.waitFor(); // wait for compiler to finish
@@ -43,10 +40,9 @@ public class ProcessRunner implements IProcessRunner {
 			excList.add(e);
 		} finally {
 			returnedOut.flush();
-			returnedErr.flush();
 		}
 
-		return returnedErr.toString() + returnedOut.toString();
+		return returnedOut.toString();
 	}
 
 }

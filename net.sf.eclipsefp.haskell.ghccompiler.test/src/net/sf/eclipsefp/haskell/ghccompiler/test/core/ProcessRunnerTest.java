@@ -21,7 +21,6 @@ public class ProcessRunnerTest extends TestCase {
 		ProcessRunner runner = new ProcessRunner(factory);
 		String actualResult = runner.execute(new File("unimportant"),
 				                             new NullWriter(),
-				                             new NullWriter(),
 				                             "unimportant");
 		assertEquals(expectedResult, actualResult);
 	}
@@ -33,23 +32,21 @@ public class ProcessRunnerTest extends TestCase {
 		ProcessRunner runner = new ProcessRunner(factory);
 		String actualResult = runner.execute(new File("unimportant"),
                                              new NullWriter(),
-                                             new NullWriter(),
 				                             "unimportant");
 		assertEquals(expectedResult, actualResult);
 	}
 
-	public void testRedirectsOutputStreams() throws IOException {
+	public void testMergesOutputStreams() throws IOException {
 		final String expectedOut = "standard output stream contents\n";
 		final String expectedErr = "standard error stream contents\n";
 		IProcessFactory factory = createProcessFactory(expectedOut, expectedErr);
 
 		ProcessRunner runner = new ProcessRunner(factory);
 		final StringWriter out = new StringWriter();
-		final StringWriter err = new StringWriter();
-		runner.execute(new File("unimportant"), out, err, "unimportant");
+		runner.execute(new File("unimportant"), out, "unimportant");
 
-		assertEquals(expectedOut, out.toString());
-		assertEquals(expectedErr, err.toString());
+		assertTrue(out.toString().contains(expectedOut));
+		assertTrue(out.toString().contains(expectedErr));
 	}
 
 	private IProcessFactory createProcessFactory(String stdout, String stderr) throws IOException {
