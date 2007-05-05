@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.cabal.core;
   */
 public class CabalSyntax {
 
+  public static final String FIELD_CATEGORY        = "category"; //$NON-NLS-1$
   public static final String FIELD_EXECUTABLE      = "executable"; //$NON-NLS-1$
   public static final String FIELD_EXPOSED_MODULES = "exposed-modules"; //$NON-NLS-1$
   public static final String FIELD_NAME            = "name"; //$NON-NLS-1$
