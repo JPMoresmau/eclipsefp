@@ -10,5 +10,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsefp.haskell.cabal.core,
+ net.sf.eclipsefp.haskell.cabal.core.internal;x-friends:="net.sf.eclipsefp.haskell.cabal.ui",
  net.sf.eclipsefp.haskell.cabal.core.model
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
