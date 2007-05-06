@@ -19,14 +19,14 @@ import org.eclipse.swt.graphics.Color;
 public class CabalScanner extends RuleBasedScanner {
 
   private static final String[] KEYWORDS = new String[] {
-    "name", "version", "cabal-version", "license", "license-file", "copyright", 
-    "author", "maintainer", "stability", "homepage", "package-url", "synopsis", 
-    "description", "category", "tested-with", "build-depends", "data-files", 
-    "extra-source-files", "extra-tmp-files", "exposed-modules", "executable",
-    "main-is", "buildable", "other-modules", "hs-source-dirs", "extensions", 
-    "ghc-options", "ghc-prof-options", "hugs-options", "nhc-options", "includes", 
-    "include-dirs", "c-sources", "extra-libraries", "extra-lib-dirs", "cc-options", 
-    "ld-options", "frameworks"
+    "name", "version", "cabal-version", "license", "license-file", "copyright",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+    "author", "maintainer", "stability", "homepage", "package-url", "synopsis",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$ //$NON-NLS-6$
+    "description", "category", "tested-with", "build-depends", "data-files",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
+    "extra-source-files", "extra-tmp-files", "exposed-modules", "executable", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    "main-is", "buildable", "other-modules", "hs-source-dirs", "extensions",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
+    "ghc-options", "ghc-prof-options", "hugs-options", "nhc-options", "includes",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    "include-dirs", "c-sources", "extra-libraries", "extra-lib-dirs", "cc-options",   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$//$NON-NLS-5$
+    "ld-options", "frameworks"  //$NON-NLS-1$//$NON-NLS-2$
   };
 
 

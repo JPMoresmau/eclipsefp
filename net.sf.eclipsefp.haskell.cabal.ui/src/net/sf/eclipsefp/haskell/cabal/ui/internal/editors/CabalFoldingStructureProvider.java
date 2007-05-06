@@ -64,7 +64,7 @@ class CabalFoldingStructureProvider {
 	private Annotation[] diff( final ProjectionAnnotationModel model,
                              final Set<Position> current) {
 		List<ProjectionAnnotation> deletions= new ArrayList<ProjectionAnnotation>();
-    Iterator it = model.getAnnotationIterator();
+    Iterator<?> it = model.getAnnotationIterator();
 		while( it.hasNext() ) {
 			Object annotation = it.next();
 			if( annotation instanceof ProjectionAnnotation ) {

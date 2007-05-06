@@ -98,7 +98,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
       if( selection instanceof ITextSelection ) {
         ITextSelection textSel = ( ITextSelection )selection;
         // name of the selection variables {line, word}_selection
-        context.setVariable( "selection", textSel.getText() ); 
+        context.setVariable( "selection", textSel.getText() );  //$NON-NLS-1$
         
         Template[] templates = getTemplates( context );
         List<TemplateProposal> matches = new ArrayList<TemplateProposal>();

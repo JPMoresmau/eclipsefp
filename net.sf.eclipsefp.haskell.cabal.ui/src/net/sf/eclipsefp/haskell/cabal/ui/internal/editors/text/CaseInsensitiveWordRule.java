@@ -10,7 +10,8 @@ import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 
-/** <p>a modified WordRule that also detects words if they are in different case.</p> 
+/** <p>a modified WordRule that also detects words if they are in different 
+  * case.</p> 
   *
   * @author Leif Frenzel
   */
@@ -64,7 +65,7 @@ public class CaseInsensitiveWordRule extends WordRule {
     String content = sb.toString();
     IToken result = ( IToken )fWords.get( content );
     if( result == null ) {
-      Iterator it = fWords.keySet().iterator();
+      Iterator<?> it = fWords.keySet().iterator();
       while( result == null && it.hasNext() ) {
         String candidate = ( String )it.next();
         if( candidate.equalsIgnoreCase( content ) ) {

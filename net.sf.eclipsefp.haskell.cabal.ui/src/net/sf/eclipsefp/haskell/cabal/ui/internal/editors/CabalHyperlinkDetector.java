@@ -3,6 +3,7 @@
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
 
 import net.sf.eclipsefp.haskell.cabal.core.CabalSyntax;
+import net.sf.eclipsefp.haskell.cabal.ui.internal.util.UITexts;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -144,7 +145,7 @@ class CabalHyperlinkDetector implements IHyperlinkDetector {
         IDE.openEditor( page, file );
       } catch( PartInitException paix ) {
         Shell shell = window.getShell();
-        String title = "Error occured";
+        String title = UITexts.cabalHyperLinkDetector_errorTitle;
         String msg = paix.getMessage();
         ErrorDialog.openError( shell, title, msg, paix.getStatus() );
       }
