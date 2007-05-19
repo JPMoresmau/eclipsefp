@@ -54,9 +54,6 @@
                   mode="run">
             </contextLabel>
          </contextualLaunch>
-         <perspective
-               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
-         </perspective>
       </shortcut>
    </extension>
    <!-- configurator page to simplify setting the ghc executable -->   
