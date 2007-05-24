@@ -42,11 +42,11 @@
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut">
          <contextualLaunch>
             <enablement>
-               <with
-                     variable="selection">
-                  <count
-                        value="*">
-                  </count>
+               <with variable="selection">
+                 <count value="1" />
+                 <iterate>
+                   <test property="net.sf.eclipsefp.haskell.core.isHaskellFile"/>
+                 </iterate>
                </with>
             </enablement>
             <contextLabel

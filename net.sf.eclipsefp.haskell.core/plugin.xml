@@ -54,7 +54,7 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
