@@ -1,0 +1,293 @@
+
+New patches:
+
+[GHCi session shortcut only for Haskell files
+thiago.arrais@gmail.com**20070524033437
+ 
+ Pretty much works, but need some notes:
+ 
+ * Still need to test if the files are inside a Haskell project (it seems like files outside Haskell projects won't be loaded properly)
+ 
+ * Maybe it will also be possible to load multiple modules into GHCi with the current code. Need to take a look at that to avoid restricting too much the enablement expression.
+] {
+hunk ./net.sf.eclipsefp.haskell.core/plugin.xml 57
+-            properties="isProjectExecutable, isSourceFolder"
++            properties="isProjectExecutable, isSourceFolder, isHaskellFile"
+hunk ./net.sf.eclipsefp.haskell.core/src/net/sf/eclipsefp/haskell/core/expressions/HaskellPropertyTester.java 11
+-
+-/** <p>For plugins that have to check some properties of elements in
+-  * the workspace, e.g. whether they are the project executable or the
+-  * source folder of a Haskell project.</p>
+-  * 
+-  * <p>This is used in the XML Expression language.</p>
+-  * 
+-  * @author Leif Frenzel
+-  */
++/**
++ * <p>
++ * For plugins that have to check some properties of elements in the workspace,
++ * e.g. whether they are the project executable or the source folder of a
++ * Haskell project.
++ * </p>
++ * 
++ * <p>
++ * This is used in the XML Expression language.
++ * </p>
++ * 
++ * @author Leif Frenzel
++ */
+hunk ./net.sf.eclipsefp.haskell.core/src/net/sf/eclipsefp/haskell/core/expressions/HaskellPropertyTester.java 26
+-  
+-  // interface methods of PropertyTester
+-  //////////////////////////////////////
+-  
+-  public boolean test( final Object receiver, 
+-                       final String property, 
+-                       final Object[] args,
+-                       final Object expectedValue ) {
+-    IResource resource = ( IResource )receiver;
+-    boolean result = false;
+-    if( property.equals( "isProjectExecutable" ) ) {
+-      result =    resource instanceof IFile
+-               && ResourceUtil.isInHaskellProject( resource )
+-               && ResourceUtil.isProjectExecutable( ( IFile )resource );
+-    } else if( property.equals( "isSourceFolder" ) ) {
+-      result =    resource instanceof IFolder
+-               && ResourceUtil.isInHaskellProject( resource )
+-               && ResourceUtil.isSourceFolder( ( IFolder )resource );
+-    }
+-    return result;
+-  }
++	// interface methods of PropertyTester
++	// ////////////////////////////////////
++
++	public boolean test(final Object receiver, final String property,
++			final Object[] args, final Object expectedValue)
++	{
++		IResource resource = (IResource) receiver;
++		if (property.equals("isProjectExecutable")) {
++			return resource instanceof IFile
++				&& ResourceUtil.isInHaskellProject(resource)
++				&& ResourceUtil.isProjectExecutable((IFile) resource);
++		} else if (property.equals("isSourceFolder")) {
++			return resource instanceof IFolder
++				&& ResourceUtil.isInHaskellProject(resource)
++				&& ResourceUtil.isSourceFolder((IFolder) resource);
++		} else if ("isHaskellFile".equals(property)) {
++			return resource instanceof IFile
++				&& (   ((IFile) resource).getName().endsWith(".hs")
++					|| ((IFile) resource).getName().endsWith(".lhs"));
++		}
++		return false;
++	}
+hunk ./net.sf.eclipsefp.haskell.core.test/META-INF/MANIFEST.MF 13
++ org.eclipse.core.expressions,
+hunk ./net.sf.eclipsefp.haskell.core.test/src/net/sf/eclipsefp/haskell/core/test/AllAllTests.java 15
++		suite.addTest(net.sf.eclipsefp.haskell.core.test.expressions.AllTests.suite());
+hunk ./net.sf.eclipsefp.haskell.core.test/src/net/sf/eclipsefp/haskell/core/test/AllAllTests_PDESuite.java 19
++		suite.addTest(net.sf.eclipsefp.haskell.core.test.expressions.AllTests.suite());
+hunk ./net.sf.eclipsefp.haskell.ghccompiler/plugin.xml 45
+-               <with
+-                     variable="selection">
+-                  <count
+-                        value="*">
+-                  </count>
++               <with variable="selection">
++                 <count value="1" />
++                 <iterate>
++                   <test property="net.sf.eclipsefp.haskell.core.isHaskellFile"/>
++                 </iterate>
+}
+
+Context:
+
+[Launch Shortcut's perspective element is deprecated
+thiago.arrais@gmail.com**20070519171158] 
+[Removes error writer from all over the build console stack
+thiago.arrais@gmail.com**20070422124200
+ 
+ GHC only uses the error stream anyway. There is no need to
+ keep track of two separate streams beyond the code that deals
+ with the external process
+] 
+[Creates launch configuration for 3.3M6 testing
+thiago.arrais@gmail.com**20070421174257] 
+[specified Java 1.5 as minimun execution environment in all plugins
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421155614] 
+[settings adjustment to 1.5
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421154509] 
+[make the branding plugin a jarred plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421154438] 
+[some extra settings to suppress yellowness in build helper plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421154332] 
+[externalized strings in manifests in common ui plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421154130] 
+[externalized strings in manifests in common.doc plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421153800] 
+[added manifest compiler settings
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421153623] 
+[externalized strings in manifests in Haskell UI plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421153344] 
+[externalized strings in manifests in hugs plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421145714] 
+[externalized strings in manifests in haddock plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421145536] 
+[externalized strings in manifests in ghc compiler plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421145226] 
+[externalized strings in manifests for jparser plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421144709] 
+[externalized strings in manifests for haskell.core plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421144643] 
+[externalized strings in manifests for user docs plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421144612] 
+[externalized strings in manifests in main branding plugin
+Leif Frenzel <leiffrenzel@googlemail.com>**20070421142815] 
+[externalized strings in bundle manifest
+Leif Frenzel <leiffrenzel@googlemail.com>**20070417200347] 
+[added some more compiler warnings and resolved warnings
+Leif Frenzel <leiffrenzel@googlemail.com>**20070417190253] 
+[resolved some trivial warnings
+Leif Frenzel <leiffrenzel@googlemail.com>**20070417185013] 
+[switched on a few more compiler warnings
+Leif Frenzel <leiffrenzel@googlemail.com>**20070417184829] 
+[Compatibility update with Eclipse 3.3M6
+thiago.arrais@gmail.com**20070418195719] 
+[Fixes unused imports warnings
+thiago.arrais@gmail.com**20070123173906] 
+[Reformatting
+thiago.arrais@gmail.com**20070123173826] 
+[Adds (very) weak testing for changes on ImportLibrariesList patch
+thiago.arrais@gmail.com**20070123172136] 
+[changed the mechanism for storing import libs for a Haskell project to OSGi prefs store
+Leif Frenzel <leiffrenzel@googlemail.com>**20070114183644] 
+[Updates project classpaths
+thiago.arrais@gmail.com**20070123162833] 
+[Reformats code and fixes generic collections usage
+thiago.arrais@gmail.com**20070115112244] 
+[fixed bug in launching ghci
+Leif Frenzel <leiffrenzel@googlemail.com>**20070113130108] 
+[added an export wizard category to common.ui and used it for Haddock export wizard
+Leif Frenzel <leiffrenzel@googlemail.com>**20061205131849] 
+[Hugs Executable Check
+jp@moresmau.fr**20061129121814
+ Checks for the presence of the Hugs executable entered by the user and displays the version number
+] 
+[Activated restore defaults button for preference page
+thiago.arrais@gmail.com**20061120200104] 
+[Started build console preference page with clean before build option
+thiago.arrais@gmail.com**20061120181253] 
+[Preference initialization code updated to Eclipse 3.2
+thiago.arrais@gmail.com**20061119184544] 
+[Removed size limit for file name field.
+Andriy Palamarchuk <apa3a@yahoo.com>**20061116215507] 
+[Removed 'Functional Programming' preference page
+thiago.arrais@gmail.com**20061113171719] 
+[Requiring at least 3.2 plugins
+thiago.arrais@gmail.com**20061011023651] 
+[Setting 3.2-only manifest options
+thiago.arrais@gmail.com**20061010171841
+ 
+ AutoStart was changed for LazyStart and singleton is
+ no longer an attribute, but a directive.
+] 
+[Porting build script to Eclipse 3.2.1
+thiago.arrais@gmail.com**20061006203113] 
+[Now cleaning compiler output console between compilations
+thiago.arrais@gmail.com**20061006185457] 
+[Added some keywords (patch by Imam Tashdid ul Alam)
+thiago.arrais@gmail.com**20060903122354
+ 
+ Received from Imam Tashdid ul Alam on Sat, 2 Sep 2006 11:07:15 -0700 (PDT):
+ "this is a very minor patch to add 3/4 keywords to the keywords list."
+] 
+[Show compiler output on console view
+thiago.arrais@gmail.com**20060830194918
+ 
+ Still needs some work: the console screen is never cleaned;
+ output is generated in back ground; the color cant be changed.
+ 
+ We need a preferences tab for all of those above.
+] 
+[Cleaning ghost jar from MANIFEST.MF
+thiago.arrais@gmail.com**20060829145258] 
+[StreamMultiplexer now deals with writing errors properly
+thiago.arrais@gmail.com**20060816185153] 
+[Preparing GHC adapter to redirect output to console
+thiago.arrais@gmail.com**20060816175813] 
+[Fixed bug for one character error spans
+thiago.arrais@gmail.com**20060815142138] 
+[Testing for GHC error messages
+thiago.arrais@gmail.com**20060814201933] 
+[Testing for GHC --make behaviour with already compiled code
+thiago.arrais@gmail.com**20060814191011] 
+[Testing GHC output for multifile compile with make
+thiago.arrais@gmail.com**20060813140730] 
+[Compiler tests adapted to Windows-style linebreaks
+thiago.arrais@gmail.com**20060813140646] 
+[Cheking for ghc --make output
+thiago.arrais@gmail.com**20060813140540
+ 
+ Still need testing on Windows. Much probably there are file system and/or
+ linebreaking issues.
+] 
+[ Pining down ferror-spans flag behavior
+thiago.arrais@gmail.com**20060813140230] 
+[Now checking for 'ghc --version'
+thiago.arrais@gmail.com**20051109191455] 
+[CommandRunner returns empty result when command fails
+thiago.arrais@gmail.com**20051109155150] 
+[Started pinning the GHC output down by writing the CommandRunner
+thiago.arrais@gmail.com**20060808200909] 
+[Now accepting Windows-style file paths
+thiago.arrais@gmail.com**20060731163701] 
+[Test for windows line breaks on the ghc output parser
+thiago.arrais@gmail.com**20060728194847] 
+[Reinserted the make flag on the ghc command line
+thiago.arrais@gmail.com**20060724170218] 
+[Build script changed due to addition of ghc output parser
+thiago.arrais@gmail.com**20060724124941] 
+[Now highlighting multiple errors
+thiago.arrais@gmail.com**20060724124328] 
+[GHC Output parser test passing
+thiago.arrais@gmail.com**20060724013338] 
+[Tests for the ghc output parser
+thiago.arrais@gmail.com**20060722132909] 
+[Win32 test launches updated to include the new ghccompiler test plugin
+thiago.arrais@gmail.com**20060718114937] 
+[Updated the win32 launches to the new ghccompiler plugin
+thiago.arrais@gmail.com**20060712173100] 
+[Reverting some changes mad by the previous patch
+thiago.arrais@gmail.com**20060718024701] 
+[Refactoring and tiding up
+thiago.arrais@gmail.com**20060717202411] 
+[Some refactoring after the mess
+thiago.arrais@gmail.com**20060717200939] 
+[Now parsing simple output from the compiler
+thiago.arrais@gmail.com**20060717191501
+ 
+ This is a destructive patch. Some (untested) functionality can stop working
+ like dependency compiling and showing multiple compiler errors. These features
+ will be re-inserted by upcoming patches.
+] 
+[Testing projects now use the default (do-nothing) compiler
+thiago.arrais@gmail.com**20060714205606] 
+[Moved some functionality into ICompilerOutputItem
+thiago.arrais@gmail.com**20060713202546] 
+[Modified document provider for compiler error annotation
+thiago.arrais@gmail.com**20060713195112] 
+[Renaming de.leiffrenzel.fp.haskell.ghccompiler plugin to net.sf.eclipsefp.haskell.ghccompiler
+thiago.arrais@gmail.com**20060711135258] 
+[Now showing where the suggestion came from
+thiago.arrais@gmail.com**20060707175959] 
+[Fixed duplicated entries for type signatures
+thiago.arrais@gmail.com**20060705194039] 
+[Some overlooked updates to version number
+thiago.arrais@gmail.com**20060705124423] 
+[Upgrading plugin versions
+thiago.arrais@gmail.com**20060704200634] 
+[Adjusting build script to Eclipse 3.2 (final) and branch 0.11.0
+thiago.arrais@gmail.com**20060703184448] 
+[TAG release 0.10.0
+thiago.arrais@gmail.com**20060628174642] 
+Patch bundle hash:
+22663e1b14353add95c87c21ba3e0f693a3cf3e0
