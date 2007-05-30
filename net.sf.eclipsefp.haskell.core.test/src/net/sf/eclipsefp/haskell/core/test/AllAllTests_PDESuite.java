@@ -12,11 +12,11 @@ public class AllAllTests_PDESuite {
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.code.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.codeassist.AllTests_PDESuite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.core.test.expressions.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.compiler.AllTests.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.halamo.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.project.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.util.AllTests.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.core.test.expressions.AllTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

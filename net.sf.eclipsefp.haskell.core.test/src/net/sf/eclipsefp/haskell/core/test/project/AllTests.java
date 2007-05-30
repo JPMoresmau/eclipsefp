@@ -10,6 +10,7 @@ public class AllTests {
 				"Test for net.sf.eclipsefp.haskell.core.test.project");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(ImportLibrariesListTest.class);
+		suite.addTestSuite(HaskellResourceTest.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -1,12 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.BundleContext;
 
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester;
 import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
@@ -53,6 +55,9 @@ public class HaskellCorePlugin extends Plugin {
 					+ "language model.";
 			HaskellCorePlugin.log(message, ex);
 		}
+		
+		Platform.getAdapterManager()
+			.registerAdapters(new HaskellPropertyTester(), IResource.class);
 	}
 	
 	public HaskellModelManager getModelManager() {
