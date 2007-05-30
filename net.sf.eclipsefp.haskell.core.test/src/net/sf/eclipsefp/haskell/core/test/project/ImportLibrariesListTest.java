@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.core.test.project;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IProject;
 import org.osgi.service.prefs.Preferences;
 
@@ -18,7 +20,8 @@ public class ImportLibrariesListTest extends TestCase {
 		list.add(list.createLibrary("/usr/lib", true));
 		list.save();
 		Preferences prefs = list.getPreferences();
-		assertEquals("/usr/lib,t", prefs.get("PROJECT_IMPORT_LIBRARIES", ""));
+		assertEquals("/usr/lib,t".replace('/', File.separatorChar),
+				prefs.get("PROJECT_IMPORT_LIBRARIES", ""));
 	}
 
 }
