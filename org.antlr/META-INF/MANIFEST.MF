@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ANTLR Parser Generator
+Bundle-Name: %bundleName
 Bundle-SymbolicName: org.antlr
 Bundle-Version: 2.7.6
-Bundle-Vendor: eclipsefp.sourceforge.net
+Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Bundle-ClassPath: lib/antlr.jar
 Export-Package: antlr,
