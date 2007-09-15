@@ -12,7 +12,7 @@ echo using ECLIPSEFP_HOME: ${ECLIPSEFP_HOME:?must be set}
 echo using ECLIPSE_HOME: $ECLIPSE_HOME
 echo
 pdeBuildPluginVersion=3.2.1.r321_v20060823
-branchID="0.11.0"
+branchID="1.100.0"
 buildDirectory=${ECLIPSEFP_BUILD_TARGET_DIR:-/tmp/eclipsefp-build}
 vm=${ECLIPSEFP_JAVA_INTERPRETER:-java}
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.cabal.core
-Bundle-Version: 0.11.0
+Bundle-Version: 1.100.0
 Bundle-ClassPath: cabalcore.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.cabal.core.internal.CabalCorePlugin
 Bundle-Vendor: %bundleVendor

@@ -46,64 +46,64 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell"
          download-size="0"
          install-size="0"
-         version="0.11.0"
+         version="1.100.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.common.core"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="de.leiffrenzel.fp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="0.11.0"
+         version="1.100.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.haddock"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.common.doc"
          download-size="0"
          install-size="0"
-         version="0.11.0"
+         version="1.100.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.common.ui"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="org.antlr"
@@ -115,18 +115,18 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.cabal.core"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.cabal.ui"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="0.11.0"/>
+         version="1.100.0"/>
 
 </feature>

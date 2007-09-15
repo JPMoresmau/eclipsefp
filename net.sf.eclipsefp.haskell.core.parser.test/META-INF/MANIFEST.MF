@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Parser Tests
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.parser.test; singleton:=true
-Bundle-Version: 0.11.0
+Bundle-Version: 1.100.0
 Bundle-ClassPath: haskellcoreparsertest.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.core.parser.test.TestPlugin
 Bundle-Vendor: eclipsefp.sourcefourge.net
@@ -10,8 +10,9 @@ Bundle-Localization: plugin
 Require-Bundle: org.junit;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
- net.sf.eclipsefp.haskell.core;bundle-version="[0.11.0,1.0.0)",
- net.sf.eclipsefp.test.util;bundle-version="[0.11.0,1.0.0)"
+ net.sf.eclipsefp.haskell.core,
+ net.sf.eclipsefp.test.util
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsefp.haskell.core.parser,
  net.sf.eclipsefp.haskell.core.parser.test.util
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
