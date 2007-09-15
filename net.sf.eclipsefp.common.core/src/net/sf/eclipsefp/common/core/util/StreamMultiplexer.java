@@ -34,6 +34,7 @@ public class StreamMultiplexer extends Thread {
 	// interface methods of java.lang.Thread
 	// //////////////////////////////////////
 
+	@Override
 	public void run() {
 		char[] cbuf = new char[BUFFER_SIZE];
 		int count;

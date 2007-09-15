@@ -83,9 +83,7 @@ public class ProjectCreationOperation implements IRunnableWithProgress {
 		IProject result = root.getProject(projectName);
 		IProjectDescription desc = null;
 
-		if (isDefaultLocation(projectLocation)) {
-			desc = null;
-		} else {
+		if (!isDefaultLocation(projectLocation)) {
 			desc = result.getWorkspace().newProjectDescription(projectName);
 			desc.setLocation(new Path(projectLocation));
 		}
