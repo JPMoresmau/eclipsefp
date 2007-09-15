@@ -4,7 +4,6 @@ Bundle-Name: Plug-in for testing Haskell Core
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.test
 Bundle-Version: 1.100.0
 Bundle-Vendor: eclipsefp.sourceforge.net
-Bundle-Localization: plugin
 Require-Bundle: org.antlr;bundle-version="[2.7.6,3.0.0)",
  org.easymock;bundle-version="[2.2.0,3.0.0)",
  org.junit;bundle-version="[3.8.0,4.0.0)",

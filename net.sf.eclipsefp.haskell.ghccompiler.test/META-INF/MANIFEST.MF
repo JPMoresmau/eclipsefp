@@ -4,7 +4,6 @@ Bundle-Name: Test Plug-in
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ghccompiler.test
 Bundle-Version: 1.100.0
 Bundle-Vendor: eclipsefp.sourceforge.net
-Bundle-Localization: plugin
 Require-Bundle: org.easymock;bundle-version="[2.2.0,3.0.0)",
  org.junit;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

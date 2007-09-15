@@ -4,7 +4,6 @@ Bundle-Name: EclipseFP Test Suite Plug-in
 Bundle-SymbolicName: net.sf.eclipsefp.test
 Bundle-Version: 1.100.0
 Bundle-Vendor: eclipsefp.sourceforge.net
-Bundle-Localization: plugin
 Require-Bundle: org.junit;bundle-version="[3.8.0,4.0.0)",
  net.sf.eclipsefp.common.core.test,
  net.sf.eclipsefp.haskell.core.parser.test,
