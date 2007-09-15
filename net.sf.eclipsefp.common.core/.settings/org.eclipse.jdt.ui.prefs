@@ -1,8 +1,7 @@
-#Tue Feb 27 13:04:42 CET 2007
+#Sat Sep 15 21:25:37 CEST 2007
 eclipse.preferences.version=1
 formatter_profile=org.eclipse.jdt.ui.default.eclipse_profile
 formatter_settings_version=11
-internal.default.compliance=default
 org.eclipse.jdt.ui.exception.name=ex
 org.eclipse.jdt.ui.gettersetter.use.is=true
 org.eclipse.jdt.ui.ignorelowercasenames=true
