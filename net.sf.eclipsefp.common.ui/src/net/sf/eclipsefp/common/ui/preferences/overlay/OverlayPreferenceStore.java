@@ -20,13 +20,13 @@ public class OverlayPreferenceStore implements IPreferenceStore {
   /** The underlying preference store. */
   private final IPreferenceStore store;
   /** The keys of this store. */
-  private final List overlayKeys;
+  private final List<OverlayKey> overlayKeys;
   private IPropertyChangeListener propertyListener;
 
 
   public OverlayPreferenceStore( final IPreferenceStore parent ) {
     this.parent = parent;
-    overlayKeys = new ArrayList();
+    overlayKeys = new ArrayList<OverlayKey>();
     store = new PreferenceStore();
   }
 
@@ -62,23 +62,23 @@ public class OverlayPreferenceStore implements IPreferenceStore {
    * Propagates all overlay keys from this store to the parent store.
    */
   public void propagate() {
-    for( Iterator i = overlayKeys.iterator(); i.hasNext(); ) {
-      propagateProperty( store, ( OverlayKey )i.next(), parent );
+    for( Iterator<OverlayKey> i = overlayKeys.iterator(); i.hasNext(); ) {
+      propagateProperty( store, i.next(), parent );
     }
   }
 
   public void load() {
-    Iterator iter = overlayKeys.iterator();
+    Iterator<OverlayKey> iter = overlayKeys.iterator();
     while( iter.hasNext() ) {
-      OverlayKey key = ( OverlayKey )iter.next();
+      OverlayKey key = iter.next();
       Loader.loadProperty( parent, key, store, true );
     }
   }
 
   public void loadDefaults() {
-    Iterator iter = overlayKeys.iterator();
+    Iterator<OverlayKey> iter = overlayKeys.iterator();
     while( iter.hasNext() ) {
-      OverlayKey key = ( OverlayKey )iter.next();
+      OverlayKey key = iter.next();
       setToDefault( key.getKey() );
     }
   }
@@ -275,9 +275,9 @@ public class OverlayPreferenceStore implements IPreferenceStore {
    */
   protected OverlayKey findOverlayKey( final String key ) {
     OverlayKey result = null;
-    Iterator iter = overlayKeys.iterator();
+    Iterator<OverlayKey> iter = overlayKeys.iterator();
     while( iter.hasNext() ) {
-      OverlayKey overlayKey = ( OverlayKey )iter.next();
+      OverlayKey overlayKey = iter.next();
       if( overlayKey.getKey().equals( key ) ) {
         result = overlayKey;
       }

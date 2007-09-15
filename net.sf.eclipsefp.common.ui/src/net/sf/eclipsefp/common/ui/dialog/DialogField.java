@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Composite;
   */
 public abstract class DialogField extends Composite {
 
-  private final List listeners;
+  private final List<IDialogFieldListener> listeners;
   
   public DialogField( final Composite parent ) {
     super( parent, SWT.NONE );
-    listeners = new ArrayList();
+    listeners = new ArrayList<IDialogFieldListener>();
   }
   
   
@@ -28,8 +28,7 @@ public abstract class DialogField extends Composite {
   
   protected void notifyListeners( final Object newInfo ) {
     for( int i = 0; i < listeners.size(); i++ ) {
-      IDialogFieldListener li = ( IDialogFieldListener )listeners.get( i );
-      li.infoChanged( newInfo );
+      listeners.get( i ).infoChanged( newInfo );
     }
   }
   

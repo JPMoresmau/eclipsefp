@@ -32,7 +32,7 @@ class PageLoader {
   
    
   static IWizardPage[] createPages() {
-    List list = new ArrayList();
+    List<IWizardPage> list = new ArrayList<IWizardPage>();
     System.out.println();
     IConfigurationElement[] elems = collectContributions();
     for( int i = 0; i < elems.length; i++ ) {
@@ -56,7 +56,7 @@ class PageLoader {
   }
 
   private static void load( final IConfigurationElement element, 
-                            final List list ) {
+                            final List<IWizardPage> list ) {
     if( isOk( element ) ) {
       final IConfiguratorPage cfgPage = loadConfiguratorPage( element );
       if( cfgPage != null ) {
@@ -76,7 +76,7 @@ class PageLoader {
 
   private static ImageDescriptor getImgDesc( final IConfigurationElement ce ) {
     String imgName = ce.getAttribute( ATT_BANNER_IMAGE );
-    String pluginId = ce.getDeclaringExtension().getNamespace();
+    String pluginId = ce.getDeclaringExtension().getContributor().getName();
     ImageDescriptor result = null;
     if( imgName != null && !imgName.equals( "" ) ) {
       result = AbstractUIPlugin.imageDescriptorFromPlugin( pluginId, imgName );
@@ -127,13 +127,13 @@ class PageLoader {
     return result;
   }
 
-  private static void log( final IConfigurationElement element, 
+  private static void log( final IConfigurationElement elem, 
                            final String what,
                            final CoreException cex ) {
     String message =   "Could not load " + what + " from plugin " 
-                     + element.getDeclaringExtension().getNamespace()
+                     + elem.getDeclaringExtension().getContributor().getName()
                      + " with id "
-                     + element.getAttribute( ATT_ID );
+                     + elem.getAttribute( ATT_ID );
     CommonUIPlugin.log( message, cex );
   }
 

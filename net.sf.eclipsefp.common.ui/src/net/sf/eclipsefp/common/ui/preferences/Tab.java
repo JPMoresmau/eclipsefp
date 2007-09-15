@@ -21,15 +21,15 @@ import org.eclipse.swt.widgets.*;
 public abstract class Tab {
 
   private final IPreferenceStore preferenceStore;
-  private final Map checkBoxes = new HashMap();
-  private final Map labels = new HashMap();
-  private final Map textFields = new HashMap();
+  private final Map<Button, String> checkBoxes = new HashMap<Button, String>();
+  private final Map<Control, Control> labels = new HashMap<Control, Control>();
+  private final Map<Text, String> textFields = new HashMap<Text, String>();
   
   private final SelectionListener fCheckBoxListener = new SelectionAdapter() {
     @Override
     public void widgetSelected( final SelectionEvent event ) {
       Button button = ( Button )event.widget;
-      String key = ( String )checkBoxes.get( button );
+      String key = checkBoxes.get( button );
       getPreferenceStore().setValue( key, button.getSelection() );
     }
   };
@@ -37,7 +37,7 @@ public abstract class Tab {
   private final ModifyListener fTextFieldListener = new ModifyListener() {
     public void modifyText( final ModifyEvent event ) {
       Text text = ( Text )event.widget;
-      String key = ( String )textFields.get( text );
+      String key = textFields.get( text );
       getPreferenceStore().setValue( key, text.getText() );
     }
   };
@@ -54,7 +54,7 @@ public abstract class Tab {
   }
 
   protected Control getLabel( final Control field ) {
-    return ( Control )labels.get( field );
+    return labels.get( field );
   }
 
   protected IPreferenceStore getPreferenceStore() {
@@ -137,19 +137,19 @@ public abstract class Tab {
   }
   
   private void initializeTexts() {
-    Iterator iter = textFields.keySet().iterator();
+    Iterator<Text> iter = textFields.keySet().iterator();
     while( iter.hasNext() ) {
-      Text text = ( Text )iter.next();
-      String key = ( String )textFields.get( text );
+      Text text = iter.next();
+      String key = textFields.get( text );
       text.setText( getPreferenceStore().getString( key ) );
     }
   }
 
   private void initializeCheckboxes() {
-    Iterator iter = checkBoxes.keySet().iterator();
+    Iterator<Button> iter = checkBoxes.keySet().iterator();
     while( iter.hasNext() ) {
-      Button button = ( Button )iter.next();
-      String key = ( String )checkBoxes.get( button );
+      Button button = iter.next();
+      String key = checkBoxes.get( button );
       button.setSelection( getPreferenceStore().getBoolean( key ) );
     }
   }

@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /** <p>a dialog field that allows the selection of a directory.</p>
  * 
@@ -46,7 +46,7 @@ public class WSFileDialogField extends BrowseDialogField {
     dialog.setTitle( "Select a file" );
     addFilter( dialog );
     dialog.setInput( root );
-    dialog.setSorter( new ResourceSorter( ResourceSorter.NAME ) );
+    dialog.setComparator( new ResourceComparator( ResourceComparator.NAME ) );
     //  dialog.setInitialSelection(focus);
     return openDialog( dialog );
   }
