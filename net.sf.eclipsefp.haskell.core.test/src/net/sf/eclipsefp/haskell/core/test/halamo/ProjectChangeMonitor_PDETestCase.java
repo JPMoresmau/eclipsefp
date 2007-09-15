@@ -1,6 +1,13 @@
 package net.sf.eclipsefp.haskell.core.test.halamo;
 
-import java.io.StringBufferInputStream;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
@@ -12,8 +19,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
-import static org.easymock.EasyMock.*;
 
 /**
  * The ResourceChangeMonitor is responsible for keeping the language model
@@ -52,8 +57,9 @@ public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase
 		replay(getLanguageModel());
 		
 		IFile file = createSourceFile("module QuickSort where\n\n", "QuickSort.hs");
-		
-		file.setContents(new StringBufferInputStream("module QuickSort where\n\n"), true, false, null);
+		byte[] bytes = "module QuickSort where\n\n".getBytes();
+    InputStream is = new ByteArrayInputStream( bytes );
+		file.setContents( is, true, false, null );
 		
 		verify(getLanguageModel());
 	}

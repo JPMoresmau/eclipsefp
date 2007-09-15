@@ -10,8 +10,9 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.test.editor;
 
-import java.io.StringBufferInputStream;
+import java.io.ByteArrayInputStream;
 
+import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellAnnotationModel;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellDocumentProvider;
@@ -26,8 +27,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
-
-import junit.framework.TestCase;
 
 /**
  * @author Thiago Arrais - thiago.arrais@gmail.com
@@ -46,11 +45,11 @@ public class HaskellDocumentProvider_PDETestCase extends TestCase {
 		fProject.create(null);
 		fProject.open(null);
 		fFile = fProject.getFile("myHaskellSourceCode.txt");
-		final String sourceCode = "\n" +
+		final String code = "\n" +
 				                  "module Main where\n" +
 				                  "\n" +
 				                  "main = putStrLn $ show $ fat 4\n";
-		fFile.create(new StringBufferInputStream(sourceCode ), true, null);
+		fFile.create(new ByteArrayInputStream( code.getBytes() ), true, null );
 		//what platform ui would do for us...
 		fProvider = new HaskellDocumentProvider();
 		fEditorInput = new FileEditorInput(fFile);

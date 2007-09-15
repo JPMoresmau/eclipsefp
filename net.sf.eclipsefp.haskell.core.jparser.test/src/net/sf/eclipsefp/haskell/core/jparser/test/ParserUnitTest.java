@@ -7,7 +7,6 @@ import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
 import net.sf.eclipsefp.haskell.core.halamo.IImport;
 import net.sf.eclipsefp.haskell.core.halamo.IMatch;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
-import antlr.CommonToken;
 import antlr.RecognitionException;
 import antlr.Token;
 import antlr.TokenStream;

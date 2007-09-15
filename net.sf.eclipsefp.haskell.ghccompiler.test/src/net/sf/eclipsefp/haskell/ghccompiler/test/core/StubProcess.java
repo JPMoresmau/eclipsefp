@@ -11,10 +11,10 @@
  * *****************************************************************************/
 package net.sf.eclipsefp.haskell.ghccompiler.test.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
 
 public class StubProcess extends Process {
 
@@ -37,8 +37,8 @@ public class StubProcess extends Process {
 	private InputStream fErrInputStream;
 
 	public StubProcess(String processStdOutput, String processErrOutput) {
-		fStdInputStream = new StringBufferInputStream(processStdOutput);
-		fErrInputStream = new StringBufferInputStream(processErrOutput);
+		fStdInputStream = new ByteArrayInputStream(processStdOutput.getBytes());
+		fErrInputStream = new ByteArrayInputStream(processErrOutput.getBytes());
 	}
 
 	public StubProcess(IOException exception) {

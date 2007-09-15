@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.test.util.common;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.StringBufferInputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Vector;
@@ -90,7 +90,7 @@ public class MockFile implements IFile {
 
 	public InputStream getContents() throws CoreException {
 		MockInputStream stream = new MockInputStream(
-				                     new StringBufferInputStream(fContents));
+				                     new ByteArrayInputStream(fContents.getBytes()));
 		fOpenStreams.add(stream);
 		return stream;
 	}
@@ -447,7 +447,6 @@ public class MockFile implements IFile {
 	}
 
 	public Object getAdapter(Class adapter) {
-		
 		return null;
 	}
 

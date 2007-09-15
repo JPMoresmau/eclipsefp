@@ -24,7 +24,6 @@ public class HaskellProjectCreationOperation_PDETest extends
 
 	private Preferences fStore;
 
-	@Override
 	protected ProjectCreationOperation createOperation() {
 		fStore = new Preferences();
 		fStore.setValue(ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true);
