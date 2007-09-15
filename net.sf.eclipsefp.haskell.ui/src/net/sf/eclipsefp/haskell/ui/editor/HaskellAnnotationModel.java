@@ -9,12 +9,12 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 public class HaskellAnnotationModel extends ResourceMarkerAnnotationModel {
 
-	public HaskellAnnotationModel(IResource resource) {
+	public HaskellAnnotationModel(final IResource resource) {
 		super(resource);
 	}
 
 	@Override
-	protected Position createPositionFromMarker(IMarker marker) {
+	protected Position createPositionFromMarker(final IMarker marker) {
 
 		int start= MarkerUtilities.getCharStart(marker);
 		int end= MarkerUtilities.getCharEnd(marker);

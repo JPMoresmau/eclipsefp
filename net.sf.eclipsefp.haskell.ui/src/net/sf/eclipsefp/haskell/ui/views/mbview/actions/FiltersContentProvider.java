@@ -14,7 +14,7 @@ import net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowserFilter;
   */
 class FiltersContentProvider implements IStructuredContentProvider {
 
-  private ModuleBrowserFilter filter;
+  private final ModuleBrowserFilter filter;
   
   FiltersContentProvider( final ModuleBrowserFilter filter ) {
     this.filter = filter;

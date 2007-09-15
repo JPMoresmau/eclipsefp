@@ -39,13 +39,13 @@ public class HaskellPropertyTester extends PropertyTester
 		if (null == resource) return false;
 		try {
 			Method method = resource.getClass().getMethod(property);
-			return (Boolean) method.invoke(resource);
+			return ( ( Boolean )method.invoke( resource ) ).booleanValue();
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	public Object getAdapter(Object adaptable, Class adapter) {
+	public Object getAdapter(final Object adaptable, final Class adapter) {
 		if ( adaptable instanceof IResource &&
 		     adapter.equals(HaskellResource.class))
 		{

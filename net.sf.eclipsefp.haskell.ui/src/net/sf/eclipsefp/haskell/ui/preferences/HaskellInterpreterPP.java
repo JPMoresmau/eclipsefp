@@ -21,6 +21,7 @@ public class HaskellInterpreterPP extends PreferencePage
   // interface methods of PreferencePage
   //////////////////////////////////////
   
+  @Override
   protected Control createContents( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout() );

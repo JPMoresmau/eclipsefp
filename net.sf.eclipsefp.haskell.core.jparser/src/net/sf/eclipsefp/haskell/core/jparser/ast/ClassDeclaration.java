@@ -8,17 +8,17 @@ import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
 
 public class ClassDeclaration extends Declaration implements IClassDeclaration {
 
-	private List<ITypeSignature> fSignatures = new Vector<ITypeSignature>();
+	private final List<ITypeSignature> fSignatures = new Vector<ITypeSignature>();
 
 	public ITypeSignature[] getTypeSignatures() {
 		return fSignatures.toArray(new ITypeSignature[fSignatures.size()]);
 	}
 
-	public boolean accepts(ITypeSignature tsig) {
+	public boolean accepts(final ITypeSignature tsig) {
 		return true;
 	}
 
-	public void addTypeSignature(ITypeSignature tsig) {
+	public void addTypeSignature(final ITypeSignature tsig) {
 		fSignatures.add(tsig);
 	}
 

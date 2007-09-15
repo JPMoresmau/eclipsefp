@@ -53,6 +53,7 @@ abstract class FilterCriterion {
   ////////////////
   
   private static class SourceFile extends FilterCriterion {
+    @Override
     boolean matches( final Object element ) {
       boolean result = true;
       if( element instanceof IFile ) {
@@ -64,16 +65,19 @@ abstract class FilterCriterion {
       return result;
     }
 
+    @Override
     public String getId() {
       return "SOURCE_FILE";
     }
     
+    @Override
     public String toString() {
       return "Haskell source files (extension .hs)";
     }
   }
   
   private static class LiterateSourceFile extends FilterCriterion {
+    @Override
     boolean matches( final Object element ) {
       boolean result = true;
       if( element instanceof IFile ) {
@@ -85,30 +89,36 @@ abstract class FilterCriterion {
       return result;
     }
 
+    @Override
     String getId() {
       return "LITERATE_SOURCE_FILE";
     }
     
+    @Override
     public String toString() {
       return "Literate Haskell source files (extension .lhs)";
     }
   }
 
   private static class ImportLibrary extends FilterCriterion {
+    @Override
     boolean matches( final Object element ) {
       return !( element instanceof IImportLibrary );
     }
 
+    @Override
     String getId() {
       return "IMPORT_LIBRARY";
     }
     
+    @Override
     public String toString() {
       return "Import libraries";
     }
   }
   
   private static class Executable extends FilterCriterion {
+    @Override
     boolean matches( final Object element ) {
       boolean result = true;
       if(    element instanceof IFile 
@@ -118,10 +128,12 @@ abstract class FilterCriterion {
       return result;
     }
 
+    @Override
     String getId() {
       return "PROJECT_EXECUTABLE";
     }
     
+    @Override
     public String toString() {
       return "Project executables";
     }

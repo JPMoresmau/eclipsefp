@@ -24,6 +24,7 @@ public class ConfiguratorWizard extends Wizard {
   // interface methods of Wizard
   //////////////////////////////
   
+  @Override
   public void addPages() {
     pages = PageLoader.createPages();
     if( pages.length == 0 ) {
@@ -35,6 +36,7 @@ public class ConfiguratorWizard extends Wizard {
     }
   }
   
+  @Override
   public boolean performFinish() {
     for( int i = 0; i < pages.length; i++ ) {
       ConfiguratorWizardPage wizardPage = ( ConfiguratorWizardPage )pages[ i ];

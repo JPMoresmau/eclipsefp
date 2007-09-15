@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
   */
 public class OpenNewModuleWizard extends AbstractOpenAction {
 
+  @Override
   public void run() {
     try {
       Wizard wizard = new NewModuleWizard();

@@ -20,7 +20,7 @@ class FilterActionGroup extends ActionGroup {
 
   protected IResourceNavigator navigator;
   
-  private FilterSelectionAction filterAction;
+  private final FilterSelectionAction filterAction;
 
   public FilterActionGroup( final ModuleBrowser moduleBrowser ) {
     filterAction = new FilterSelectionAction( moduleBrowser );
@@ -33,6 +33,7 @@ class FilterActionGroup extends ActionGroup {
   // interface methods of ActionGroup
   ///////////////////////////////////
   
+  @Override
   public void fillActionBars( final IActionBars actionBars ) {
     IMenuManager menu = actionBars.getMenuManager();
     menu.add( filterAction );

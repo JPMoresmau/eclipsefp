@@ -12,7 +12,7 @@ import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 public class HaskellLanguageElement implements IHaskellLanguageElement {
 
 	private String fName = "";
-	private SourceLocation fLocation = new SourceLocation();
+	private final SourceLocation fLocation = new SourceLocation();
 
 	protected HaskellLanguageElement() {
 	}
@@ -21,7 +21,7 @@ public class HaskellLanguageElement implements IHaskellLanguageElement {
 		return fName;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		fName = name;
 	}
 
@@ -39,12 +39,12 @@ public class HaskellLanguageElement implements IHaskellLanguageElement {
 		return fLocation;
 	}
 
-	public void setLocation(int line, int column, long offset) {
+	public void setLocation(final int line, final int column, final long offset) {
 		fLocation.setPoint(line, column);
 		fLocation.setOffset(offset);
 	}
 
-	public void setLocation(ISourceLocation srcLoc) {
+	public void setLocation(final ISourceLocation srcLoc) {
 		setLocation(srcLoc.getLine(), srcLoc.getColumn(), srcLoc.getOffset());
 	}
 

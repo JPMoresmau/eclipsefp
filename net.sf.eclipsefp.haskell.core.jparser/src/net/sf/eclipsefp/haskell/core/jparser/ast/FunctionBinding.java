@@ -12,17 +12,17 @@ import net.sf.eclipsefp.haskell.core.halamo.IPatternBinding;
 // removed when the parser evolves
 public class FunctionBinding extends Declaration implements IFunctionBinding, IPatternBinding {
 
-	private List<IMatch> fMatches = new Vector<IMatch>();
+	private final List<IMatch> fMatches = new Vector<IMatch>();
 	
 	public IMatch[] getMatches() {
 		return fMatches.toArray(new IMatch[fMatches.size()]);
 	}
 
-	public boolean acceptsMatch(IMatch match) {
+	public boolean acceptsMatch(final IMatch match) {
 		return match.getName().equals(this.getName());
 	}
 
-	public void addMatch(IMatch match) {
+	public void addMatch(final IMatch match) {
 		if (acceptsMatch(match)) {
 			fMatches.add(match);
 		} else {

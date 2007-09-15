@@ -26,7 +26,7 @@ class DescriptorFile implements IXMLNames {
 	private String fOutputPath;
 	private String fBinPath;
 	private String fTargetName;
-	private String fCompiler;
+	private final String fCompiler;
 
 	// TODO must reduce ugliness here
 

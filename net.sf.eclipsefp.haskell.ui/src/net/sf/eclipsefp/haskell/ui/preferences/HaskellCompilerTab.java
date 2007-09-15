@@ -27,6 +27,7 @@ class HaskellCompilerTab extends Tab implements IPreferenceConstants {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout( 1, false ) );

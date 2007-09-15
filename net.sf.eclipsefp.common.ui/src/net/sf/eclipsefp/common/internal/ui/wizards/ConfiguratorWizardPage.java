@@ -15,11 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -74,6 +70,7 @@ class ConfiguratorWizardPage extends WizardPage {
     ToolBar tb = new ToolBar( probeComposite, SWT.FLAT );
     ToolItem item = new ToolItem( tb, SWT.FLAT );
     item.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         runOperation( createOp( probe ) );
       }
@@ -120,8 +117,7 @@ class ConfiguratorWizardPage extends WizardPage {
   
   private IRunnableWithProgress createOp( final IProbe probe ) {
     return new IRunnableWithProgress() {
-      public void run( final IProgressMonitor monitor )
-                      throws InvocationTargetException, InterruptedException {
+      public void run( final IProgressMonitor monitor ) {
         Object result = probe.execute( monitor );
         configuratorPage.probed( result );
       }

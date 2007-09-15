@@ -18,7 +18,7 @@ public class CompilerOutput implements ICompilerOutput {
 
 	private String output;
 
-	private Collection<ICompilerOutputItem> fErrors =
+	private final Collection<ICompilerOutputItem> fErrors =
 		new ArrayList<ICompilerOutputItem>();
 
 	private List exceptions;
@@ -34,6 +34,7 @@ public class CompilerOutput implements ICompilerOutput {
 		//placeholder constructor
 	}
 
+	@Override
 	public String toString() {
 		return "Compiler output [ " + exceptions.size() + " Exceptions ]\n"
 				+ output + "\n" + fErrors;
@@ -58,7 +59,7 @@ public class CompilerOutput implements ICompilerOutput {
 		return exceptions;
 	}
 
-	public void addError(CompilerOutputItem item) {
+	public void addError(final CompilerOutputItem item) {
 		fErrors.add(item);
 	}
 }

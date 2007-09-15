@@ -5,7 +5,7 @@ import net.sf.eclipsefp.common.ui.dialog.DialogField;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.UITexts;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,10 +38,12 @@ public class LevelSelectionDialogField extends DialogField
   // interface methods of DialogField
   ///////////////////////////////////
   
+  @Override
   public Object getInfo() {
     return new Integer( selected );
   }
 
+  @Override
   public void setInfo( final Object info ) {
     int newSelected = ( ( Integer )info ).intValue();
     Assert.isTrue( newSelected >= -1 && newSelected <= 2 );
@@ -78,6 +80,7 @@ public class LevelSelectionDialogField extends DialogField
     buttons[ 2 ] = createButton( this, OPT_O1 );
     buttons[ 3 ] = createButton( this, OPT_O2 );
     SelectionListener li = new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         Widget widget = evt.widget;
         int newSelected = -1;

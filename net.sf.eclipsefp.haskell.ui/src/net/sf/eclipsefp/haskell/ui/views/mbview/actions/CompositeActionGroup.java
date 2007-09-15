@@ -2,7 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.views.mbview.actions;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
@@ -42,6 +42,7 @@ class CompositeActionGroup extends ActionGroup {
     }
   }
   
+  @Override
   public void dispose() {
     super.dispose();
     if( fGroups != null ) {
@@ -51,6 +52,7 @@ class CompositeActionGroup extends ActionGroup {
     }
   }
 
+  @Override
   public void fillActionBars( final IActionBars actionBars ) {
     super.fillActionBars( actionBars );
     if( fGroups != null ) {
@@ -60,6 +62,7 @@ class CompositeActionGroup extends ActionGroup {
     }
   }
 
+  @Override
   public void fillContextMenu( final IMenuManager menu ) {
     super.fillContextMenu( menu );
     if( fGroups != null ) {
@@ -69,6 +72,7 @@ class CompositeActionGroup extends ActionGroup {
     }
   }
 
+  @Override
   public void setContext( final ActionContext context ) {
     super.setContext( context );
     if( fGroups != null ) {
@@ -78,6 +82,7 @@ class CompositeActionGroup extends ActionGroup {
     }
   }
 
+  @Override
   public void updateActionBars() {
     super.updateActionBars();
     if( fGroups != null ) {

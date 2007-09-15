@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.ClassDeclaration;
 class NullClassDeclaration extends ClassDeclaration {
 
 	@Override
-	public boolean accepts(ITypeSignature tsig) {
+	public boolean accepts(final ITypeSignature tsig) {
 		return false;
 	}
 

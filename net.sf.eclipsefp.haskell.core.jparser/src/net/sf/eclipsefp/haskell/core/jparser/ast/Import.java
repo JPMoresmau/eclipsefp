@@ -10,7 +10,7 @@ import net.sf.eclipsefp.haskell.core.halamo.IModule;
 public class Import extends HaskellLanguageElement implements IImport {
 
 	private String fImportedElementName;
-	private List<IImportSpecification> fSpecifications = new Vector<IImportSpecification>();
+	private final List<IImportSpecification> fSpecifications = new Vector<IImportSpecification>();
 	private boolean fHiding;
 
 	public IModule getModule() {
@@ -30,19 +30,19 @@ public class Import extends HaskellLanguageElement implements IImport {
 		return fHiding;
 	}
 
-	public void addSpecifications(List<ImportSpecification> specs) {
+	public void addSpecifications(final List<ImportSpecification> specs) {
 		for (ImportSpecification spec : specs) {
 			spec.setImport(this);
 			fSpecifications.add(spec);
 		}
 	}
 
-	public void setElementName(String name) {
+	public void setElementName(final String name) {
 		fImportedElementName = name;
 		setName(name);
 	}
 
-	public void setHiding(boolean b) {
+	public void setHiding(final boolean b) {
 		fHiding = true;
 	}
 

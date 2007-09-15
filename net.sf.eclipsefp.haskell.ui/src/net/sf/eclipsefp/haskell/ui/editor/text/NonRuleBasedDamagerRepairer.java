@@ -20,7 +20,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager,
 
   /** The document this object works on */
   protected IDocument document;
-  private boolean literate;
+  private final boolean literate;
 
   public NonRuleBasedDamagerRepairer( final boolean literate ) {
     this.literate = literate;

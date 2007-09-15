@@ -16,7 +16,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
   */
 class PropertiesActionGroup extends ActionGroup {
 
-  private PropertyDialogAction dlgOpenProperties;
+  private final PropertyDialogAction dlgOpenProperties;
 
   PropertiesActionGroup( final IWorkbenchSite site ) {
     ISelectionProvider selectionProvider = site.getSelectionProvider();
@@ -38,11 +38,13 @@ class PropertiesActionGroup extends ActionGroup {
   // interface methods of ActionGroup
   ///////////////////////////////////
   
+  @Override
   public void fillActionBars( final IActionBars actionBar ) {
     super.fillActionBars( actionBar );
     setGlobalActionHandlers( actionBar );
   }
   
+  @Override
   public void fillContextMenu( final IMenuManager menu ) {
     super.fillContextMenu( menu );
     IStructuredSelection selection = getStructuredSelection();

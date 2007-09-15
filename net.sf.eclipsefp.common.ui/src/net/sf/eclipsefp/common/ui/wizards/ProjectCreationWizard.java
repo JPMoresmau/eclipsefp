@@ -34,9 +34,9 @@ public abstract class ProjectCreationWizard
 
 	private IConfigurationElement configElement;
 	
-	private ProjectCreationOperation fOperation;
+	private final ProjectCreationOperation fOperation;
 
-	public ProjectCreationWizard(ProjectCreationOperation operation) {
+	public ProjectCreationWizard(final ProjectCreationOperation operation) {
 		super();
 		fOperation = operation;
 		setDialogSettings(CommonUIPlugin.getDefault().getDialogSettings());
@@ -44,14 +44,16 @@ public abstract class ProjectCreationWizard
 		setNeedsProgressMonitor(true);
 	}
 
-	public void addPages() {
+	@Override
+  public void addPages() {
   	    super.addPages();
 	    page = new ProjectCreationWizardPage(
                        getPageTitle(), getPageDescrition());
 	    addPage(page);
 	}
 
-	public boolean performFinish() {
+	@Override
+  public boolean performFinish() {
 		fOperation.setProjectName(page.getProjectName());
 		fOperation.setProjectLocation(page.getLocationPath().toString());
 

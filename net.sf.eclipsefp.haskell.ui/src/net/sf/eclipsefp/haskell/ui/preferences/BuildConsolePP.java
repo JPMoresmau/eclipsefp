@@ -28,28 +28,28 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class BuildConsolePP extends PreferencePage implements
 		IWorkbenchPreferencePage, IPreferenceConstants {
 
-	public static void initializeDefaults(IPreferenceStore store) {
+	public static void initializeDefaults(final IPreferenceStore store) {
 		store.setDefault(CLEAR_BUILD_CONSOLE, true);
 	}
 
 	private Button fChkCleanConsole;
-	private IPreferenceStore fStore;
-	private HaskellPreferenceManager fManager;
+	private final IPreferenceStore fStore;
+	private final HaskellPreferenceManager fManager;
 
 	public BuildConsolePP() {
 		this(HaskellUIPlugin.getDefault().getPreferenceManager(),
 		     HaskellUIPlugin.getDefault().getPreferenceStore());
 	}
 	
-	public BuildConsolePP(HaskellPreferenceManager manager,
-			              IPreferenceStore store)
+	public BuildConsolePP(final HaskellPreferenceManager manager,
+			              final IPreferenceStore store)
 	{
 		fManager = manager;
 		fStore = store;
 	}
 
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		
 		composite.setLayout(new RowLayout());
@@ -64,11 +64,11 @@ public class BuildConsolePP extends PreferencePage implements
 	private void createListeners() {
 		fChkCleanConsole.addSelectionListener(new SelectionListener() {
 
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(final SelectionEvent e) {
 				//ignore event
 			}
 
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				fStore.setValue(CLEAR_BUILD_CONSOLE, fChkCleanConsole.getSelection());
 			}
 			
@@ -95,7 +95,7 @@ public class BuildConsolePP extends PreferencePage implements
 		return true;
 	}
 
-	public void init(IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		//no need for initialization
 	}
 

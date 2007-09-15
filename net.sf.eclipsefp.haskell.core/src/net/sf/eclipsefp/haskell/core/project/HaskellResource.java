@@ -8,9 +8,9 @@ import org.eclipse.core.resources.IResource;
 
 public class HaskellResource {
 
-	private IResource fResource;
+	private final IResource fResource;
 
-	public HaskellResource(IResource resource) {
+	public HaskellResource(final IResource resource) {
 		fResource = resource;
 	}
 

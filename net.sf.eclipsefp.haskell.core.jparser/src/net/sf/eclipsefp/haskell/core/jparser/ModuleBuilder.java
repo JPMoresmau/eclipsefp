@@ -28,7 +28,7 @@ public class ModuleBuilder {
 		return fModule;
 	}
 
-	public void addFunctionMatch(IMatch match) {
+	public void addFunctionMatch(final IMatch match) {
 		if (!fCurrentFunction.acceptsMatch(match)) {
 			fCurrentFunction = createFunctionBinding();
 			fCurrentFunction.setName(match.getName());
@@ -43,22 +43,22 @@ public class ModuleBuilder {
 		return function;
 	}
 
-	public IModule startModule(String moduleName) {
+	public IModule startModule(final String moduleName) {
 		fModule = new Module();
 		fModule.setName(moduleName);
 		
 		return fModule;
 	}
 
-	public void addDeclaration(IDeclaration declaration) {
+	public void addDeclaration(final IDeclaration declaration) {
 		fModule.addDeclaration(declaration);
 	}
 
-	public void addExport(IExportSpecification export) {
+	public void addExport(final IExportSpecification export) {
 		fModule.addExport(export);
 	}
 
-	public void addImport(IImport theImport) {
+	public void addImport(final IImport theImport) {
 		fModule.addImport(theImport);
 	}
 
@@ -68,7 +68,7 @@ public class ModuleBuilder {
 		return fClassDeclaration;
 	}
 
-	public void addTypeSignature(ITypeSignature tsig) {
+	public void addTypeSignature(final ITypeSignature tsig) {
 		if (fClassDeclaration.accepts(tsig)) {
 			fClassDeclaration.addTypeSignature(tsig);
 		} else {
@@ -86,7 +86,7 @@ public class ModuleBuilder {
 		return fDataDeclaration;
 	}
 
-	public void addConstructor(IConstructor cons) {
+	public void addConstructor(final IConstructor cons) {
 		if (fDataDeclaration.accepts(cons)) {
 			fDataDeclaration.addConstructor(cons);
 		}

@@ -16,17 +16,17 @@ import java.util.Map;
  */
 public class HaskellLanguageModel implements IHaskellModel {
 
-	private Map<String, IModule> fModules = new Hashtable<String, IModule>();
+	private final Map<String, IModule> fModules = new Hashtable<String, IModule>();
 
 	public HaskellLanguageModel() {
 		//no need to do anything
 	}
 
-	public void putModule(IModule module) {
+	public void putModule(final IModule module) {
 		fModules.put(module.getName(), module);
 	}
 
-	public IModule getModule(String name) {
+	public IModule getModule(final String name) {
 		return fModules.get(name);
 	}
 
@@ -34,11 +34,11 @@ public class HaskellLanguageModel implements IHaskellModel {
 		return new ArrayList<IModule>(fModules.values());
 	}
 
-	public Scope getScopeFor(IModule module) {
+	public Scope getScopeFor(final IModule module) {
 		return new Scope(module, this);
 	}
 
-	public void removeModule(String name) {
+	public void removeModule(final String name) {
 		fModules.remove(name);
 	}
 

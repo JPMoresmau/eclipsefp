@@ -22,7 +22,8 @@ class ImportLibrary implements IImportLibrary {
   // interface methods of java.lang.Object
   ////////////////////////////////////////
   
-  public boolean equals( final Object obj ) {
+  @Override
+public boolean equals( final Object obj ) {
     boolean result = false;
     if( obj instanceof ImportLibrary ) {
       ImportLibrary object = ( ImportLibrary )obj;
@@ -31,7 +32,8 @@ class ImportLibrary implements IImportLibrary {
     return result;
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     return path.toOSString();
   }
  

@@ -45,6 +45,7 @@ public class NewModuleWizard extends Wizard implements INewWizard {
     this.selection = selection ;
   }
   
+  @Override
   public void addPages() {
     super.addPages();
     page = new NewModuleWizardPage();
@@ -52,6 +53,7 @@ public class NewModuleWizard extends Wizard implements INewWizard {
     page.init( selection );
   }
 
+  @Override
   public boolean performFinish() {
     ModuleCreationOperation mco = page.getOperation();
     IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( mco );

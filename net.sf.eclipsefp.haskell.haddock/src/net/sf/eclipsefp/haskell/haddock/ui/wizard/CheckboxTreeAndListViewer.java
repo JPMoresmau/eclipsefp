@@ -23,15 +23,15 @@ public class CheckboxTreeAndListViewer implements ICheckStateListener,
 
   private Object fRoot;
   private Object fCurrentTreeSelection;
-  private List fExpandedTreeNodes= new ArrayList();
-  private Map fCheckedStateStore= new HashMap(9);
-  private List fWhiteCheckedTreeItems= new ArrayList();
-  private List fListeners= new ArrayList();
+  private final List fExpandedTreeNodes= new ArrayList();
+  private final Map fCheckedStateStore= new HashMap(9);
+  private final List fWhiteCheckedTreeItems= new ArrayList();
+  private final List fListeners= new ArrayList();
 
-  private ITreeContentProvider fTreeContentProvider;
-  private IStructuredContentProvider fListContentProvider;
-  private ILabelProvider fTreeLabelProvider;
-  private ILabelProvider fListLabelProvider;
+  private final ITreeContentProvider fTreeContentProvider;
+  private final IStructuredContentProvider fListContentProvider;
+  private final ILabelProvider fTreeLabelProvider;
+  private final ILabelProvider fListLabelProvider;
 
   // UI elements
   private CheckboxTreeViewer treeViewer;

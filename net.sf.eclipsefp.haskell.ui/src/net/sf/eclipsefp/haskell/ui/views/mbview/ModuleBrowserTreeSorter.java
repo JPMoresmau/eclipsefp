@@ -14,6 +14,7 @@ public class ModuleBrowserTreeSorter extends ViewerSorter {
   private static final int CATEGORY_FOLDER = 1;
   private static final int CATEGORY_FILE   = 2;
   
+  @Override
   public int category( final Object element ) {
     int result = super.category( element );
     if( element instanceof IFolder ) {

@@ -19,6 +19,7 @@ public class HaskellAutoIndentStrategy extends DefaultAutoIndentStrategy {
   // interface methods of IAutoIndentStrategy
   ///////////////////////////////////////////
   
+  @Override
   public void customizeDocumentCommand( final IDocument document, 
                                         final DocumentCommand command ) {
     super.customizeDocumentCommand( document, command );

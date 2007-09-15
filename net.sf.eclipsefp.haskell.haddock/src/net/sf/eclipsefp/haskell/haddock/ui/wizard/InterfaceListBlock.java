@@ -39,6 +39,7 @@ public class InterfaceListBlock extends Composite {
     createButtonsBlock();
   }
   
+  @Override
   public void setEnabled( final boolean enabled ) {
     super.setEnabled( enabled );
     viewer.getControl().setEnabled( enabled );
@@ -76,6 +77,7 @@ public class InterfaceListBlock extends Composite {
 
     Button btnAdd = createButton( buttonBar, "Add" );
     btnAdd.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         handleAdd();
       }
@@ -83,6 +85,7 @@ public class InterfaceListBlock extends Composite {
     btnRemove = createButton( buttonBar, "Remove" );
     btnRemove.setEnabled( false );
     btnRemove.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         handleRemove();
       }
@@ -91,6 +94,7 @@ public class InterfaceListBlock extends Composite {
     createEmptySpace( buttonBar );
     Button btnSelectAll = createButton( buttonBar, "Select all" );
     btnSelectAll.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         info.getReadInterfaceFiles().selectAll();
         viewer.setAllChecked( true );
@@ -98,6 +102,7 @@ public class InterfaceListBlock extends Composite {
     } );
     Button btnDeselectAll = createButton( buttonBar, "Deselect all" );
     btnDeselectAll.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         info.getReadInterfaceFiles().deselectAll();
         viewer.setAllChecked( false );
@@ -168,11 +173,13 @@ public class InterfaceListBlock extends Composite {
   ////////////////
   
   private class InterfaceListLP extends LabelProvider {
+    @Override
     public Image getImage( final Object element ) {
       String key = ISharedImages.IMG_OBJ_FILE;
       return PlatformUI.getWorkbench().getSharedImages().getImage( key );
     }
 
+    @Override
     public String getText( final Object element ) {
       return ( ( InterfaceListEntry )element ).getFileName();
     }

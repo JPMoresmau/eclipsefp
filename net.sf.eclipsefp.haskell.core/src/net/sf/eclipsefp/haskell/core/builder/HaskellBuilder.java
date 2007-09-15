@@ -17,7 +17,8 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
   public static final String BUILDER_ID = HaskellBuilder.class.getName();
 
-  protected IProject[] build( final int kind, 
+  @Override
+protected IProject[] build( final int kind, 
                               final Map args, 
                               final IProgressMonitor monitor )
                                                           throws CoreException {
@@ -58,7 +59,8 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
   private void scheduleRefresh() {
     Job job = new Job( "Refreshing resources..." ) {
-      public IStatus run( final IProgressMonitor monitor ) {
+      @Override
+	public IStatus run( final IProgressMonitor monitor ) {
         IStatus result = Status.OK_STATUS;
         try {
           getProject().refreshLocal( IResource.DEPTH_INFINITE, monitor );

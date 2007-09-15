@@ -19,7 +19,8 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
   // interface methods of AbstractPreferenceInitializer
   /////////////////////////////////////////////////////
   
-  public void initializeDefaultPreferences() {
+  @Override
+public void initializeDefaultPreferences() {
     Preferences preferences = getPreferences();    
 //    store.setDefault( SELECTED_COMPILER, 
 //                      DefaultHaskellCompiler.class.getName() );

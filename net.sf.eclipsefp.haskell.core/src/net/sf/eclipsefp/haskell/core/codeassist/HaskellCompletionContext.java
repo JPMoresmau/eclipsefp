@@ -23,9 +23,9 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		//placeholder constructor
 	}
 	
-	public HaskellCompletionContext(ICompilationUnit unit,
-									IHaskellModel model,
-									int offset)
+	public HaskellCompletionContext(final ICompilationUnit unit,
+									final IHaskellModel model,
+									final int offset)
 	{
 		setCompilationUnit(unit);
 		setLanguageModel(model);
@@ -40,15 +40,15 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return fCompilationUnit;
 	}
 
-	protected void setLanguageModel(IHaskellModel model) {
+	protected void setLanguageModel(final IHaskellModel model) {
 		this.fLanguageModel = model;
 	}
 
-	protected void setCompilationUnit(ICompilationUnit unit) {
+	protected void setCompilationUnit(final ICompilationUnit unit) {
 		this.fCompilationUnit = unit;
 	}
 
-	protected void setOffset(int fOffset) {
+	protected void setOffset(final int fOffset) {
 		this.fOffset = fOffset;
 	}
 
@@ -72,15 +72,15 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return new ICompletionProposal[0];
 	}
 	
-	private void searchPreludeAndKeywords(String prefix,
-		List<ICompletionProposal> result)
+	private void searchPreludeAndKeywords(final String prefix,
+		final List<ICompletionProposal> result)
 	{
 		searchStringList(prefix, HaskellSyntax.getClasses(), result);
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
 	}
 
-	private void searchStringList(String prefix, String[] names,
-		List<ICompletionProposal> result)
+	private void searchStringList(final String prefix, final String[] names,
+		final List<ICompletionProposal> result)
 	{
 		final int offset = getOffset();
 		final int plength = prefix.length();
@@ -95,8 +95,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		}
 	}
 
-	private void searchImportableModules(String prefix,
-		List<ICompletionProposal> result)
+	private void searchImportableModules(final String prefix,
+		final List<ICompletionProposal> result)
 	{
 		final int offset = getOffset();
 		final int plength = prefix.length();
@@ -111,7 +111,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		}
 	}
 
-	private void searchScope(String prefix, List<ICompletionProposal> result) {
+	private void searchScope(final String prefix, final List<ICompletionProposal> result) {
 		if (prefix.length() == 0) {
 			return;
 		}
@@ -127,9 +127,9 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		}
 	}
 
-	private void searchDeclarations(String prefix,
-		List<ICompletionProposal> result,
-		IModule module)
+	private void searchDeclarations(final String prefix,
+		final List<ICompletionProposal> result,
+		final IModule module)
 	{
 		final String moduleName = module.getName();
 		final int offset = getOffset();
@@ -180,7 +180,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return result;
 	}
 
-	private boolean isIdentifierChar(char ch) {
+	private boolean isIdentifierChar(final char ch) {
 		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1;
 	}
 

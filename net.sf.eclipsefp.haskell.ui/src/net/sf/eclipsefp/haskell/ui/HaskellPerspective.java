@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
   */
 public class HaskellPerspective extends FPPerspective {
 
+  @Override
   protected void defineActions( final IPageLayout layout ) {
     // defines common layout from the FP perspectives superclass
     super.defineActions( layout );
@@ -26,12 +27,14 @@ public class HaskellPerspective extends FPPerspective {
 //    layout.addShowViewShortcut( ModuleDependenciesView.ID );
   }
   
+  @Override
   protected void addLeftViews( final IFolderLayout left ) {
     super.addLeftViews( left );
     left.addView( ModuleBrowser.ID );
 //    left.addView( ModuleDependenciesView.ID );
   }
   
+  @Override
   protected void addNewShortcuts( final IPageLayout layout ) {
     layout.addNewWizardShortcut( NewModuleWizard.ID );
     super.addNewShortcuts( layout );

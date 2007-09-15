@@ -11,9 +11,9 @@ import net.sf.eclipsefp.haskell.core.halamo.IModule;
 
 public class Module extends HaskellLanguageElement implements IModule {
 
-	private List<IExportSpecification> fExports;
-	private List<IImport> fImports;
-	private List<IDeclaration> fDecls;
+	private final List<IExportSpecification> fExports;
+	private final List<IImport> fImports;
+	private final List<IDeclaration> fDecls;
 
 	public Module() {
 		fExports = new Vector<IExportSpecification>();
@@ -33,20 +33,21 @@ public class Module extends HaskellLanguageElement implements IModule {
 		return fDecls.toArray(new IDeclaration[fDecls.size()]);
 	}
 
-	public ICompilationUnit getCompilationUnit() {
+	@Override
+  public ICompilationUnit getCompilationUnit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void addDeclaration(IDeclaration decl) {
+	public void addDeclaration(final IDeclaration decl) {
 		fDecls.add(decl);
 	}
 
-	public void addExport(IExportSpecification export) {
+	public void addExport(final IExportSpecification export) {
 		fExports.add(export);
 	}
 
-	public void addImport(IImport theImport) {
+	public void addImport(final IImport theImport) {
 		fImports.add(theImport);
 	}
 

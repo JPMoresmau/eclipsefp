@@ -27,7 +27,7 @@ class InteractiveLaunchOperation extends LaunchOperation {
   // debug/debug.ui plugins, and let interactive environment interfacing
   // only declare the specific stuff
 
-  private IInteractiveLaunchOperationDelegate delegate;
+  private final IInteractiveLaunchOperationDelegate delegate;
   
   InteractiveLaunchOperation( final IInteractiveLaunchOperationDelegate del ) {
     this.delegate = del;

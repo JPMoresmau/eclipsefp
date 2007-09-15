@@ -19,6 +19,7 @@ public class CompilerPP extends PropertyPage
   // interface methods of IDialogPage
   ///////////////////////////////////
   
+  @Override
   public Control createContents( final Composite parent ) {
     Composite container = new Composite( parent, SWT.NULL );
     GridLayout layout = new GridLayout();
@@ -40,10 +41,12 @@ public class CompilerPP extends PropertyPage
     // unused
   }
 
+  @Override
   public boolean performOk() {
     return super.performOk();
   }
 
+  @Override
   public void performDefaults() {
     super.performDefaults();
   }

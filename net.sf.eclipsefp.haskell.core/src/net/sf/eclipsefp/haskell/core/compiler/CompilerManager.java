@@ -38,7 +38,7 @@ public class CompilerManager implements ICompilerManager {
 	 * keys - compiler id value - compiler information as provided in the
 	 * plugin.xml
 	 */
-	private Hashtable<String, IConfigurationElement> htRegisteredCompilers;
+	private final Hashtable<String, IConfigurationElement> htRegisteredCompilers;
 
 	/**
 	 * installed compilers in the compiler manager. A compiler is installed
@@ -48,7 +48,7 @@ public class CompilerManager implements ICompilerManager {
 	 * key - compiler id value - the compiler object (which implements
 	 * IHaskellCompiler)
 	 */
-	private Hashtable<String, ListenableCompilerDecorator> htInstalledCompilers;
+	private final Hashtable<String, ListenableCompilerDecorator> htInstalledCompilers;
 
 	/**
 	 * creates the singleton instance of CompilerManager. Private in order to
@@ -177,7 +177,7 @@ public class CompilerManager implements ICompilerManager {
 	}
 
 	public void installCompiler(final String id,
-			IHaskellCompiler haskellCompiler) {
+			final IHaskellCompiler haskellCompiler) {
 		htInstalledCompilers.put(id, new ListenableCompilerDecorator(
 				haskellCompiler));
 	}
@@ -186,11 +186,11 @@ public class CompilerManager implements ICompilerManager {
 		throw new HaskellCoreException(message);
 	}
 
-	public void addCompilerListener(ICompilerListener listener) {
+	public void addCompilerListener(final ICompilerListener listener) {
 		getSelectedCompilerDecorator().addListener(listener);
 	}
 
-	public void removeCompilerListener(ICompilerListener listener) {
+	public void removeCompilerListener(final ICompilerListener listener) {
 		getSelectedCompilerDecorator().removeListener(listener);
 	}
 

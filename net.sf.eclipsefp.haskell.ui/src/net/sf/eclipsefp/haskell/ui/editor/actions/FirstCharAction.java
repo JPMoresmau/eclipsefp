@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
  * @author Leif Frenzel (changed formatting and minor refactorings)
  */
 public class FirstCharAction extends AbstractAction {
-    public void run(IAction action) {
+    public void run(final IAction action) {
         final IDocument document =
             getTextEditor().getDocumentProvider().getDocument(getTextEditor().getEditorInput());
         final ITextSelection selection =
@@ -32,7 +32,8 @@ public class FirstCharAction extends AbstractAction {
         }
     }
 
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+    public void selectionChanged(final IAction action, final ISelection selection) {
         //does nothing
     }
 
@@ -42,7 +43,7 @@ public class FirstCharAction extends AbstractAction {
      * @param doc
      * @param cursorOffset
      */
-    protected void gotoFirstChar(IDocument doc, int cursorOffset) {
+    protected void gotoFirstChar(final IDocument doc, final int cursorOffset) {
         try {
             IRegion region = doc.getLineInformationOfOffset(cursorOffset);
             int offset = region.getOffset();
@@ -58,7 +59,7 @@ public class FirstCharAction extends AbstractAction {
      * @param doc
      * @param cursorOffset
      */
-    protected void gotoFirstVisibleChar(IDocument doc, int cursorOffset) {
+    protected void gotoFirstVisibleChar(final IDocument doc, final int cursorOffset) {
         try {
             setCaretPosition(getFirstCharPosition(doc, cursorOffset));
         } catch (BadLocationException e) {
@@ -82,7 +83,7 @@ public class FirstCharAction extends AbstractAction {
      * @param doc
      * @param cursorOffset
      */
-    protected boolean isAtFirstVisibleChar(IDocument doc, int cursorOffset) {
+    protected boolean isAtFirstVisibleChar(final IDocument doc, final int cursorOffset) {
         try {
             return getFirstCharPosition(doc, cursorOffset) == cursorOffset;
         } catch (BadLocationException e) {
@@ -100,7 +101,7 @@ public class FirstCharAction extends AbstractAction {
      *         absolute offset)
      * @throws BadLocationException
      */
-    private static int getFirstCharPosition(IDocument doc, int cursorOffset)
+    private static int getFirstCharPosition(final IDocument doc, final int cursorOffset)
             throws BadLocationException {
         IRegion region;
         region = doc.getLineInformationOfOffset(cursorOffset);

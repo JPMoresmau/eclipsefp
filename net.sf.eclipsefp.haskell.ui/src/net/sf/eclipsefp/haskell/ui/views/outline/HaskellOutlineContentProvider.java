@@ -23,12 +23,12 @@ import net.sf.eclipsefp.haskell.core.halamo.*;
 public class HaskellOutlineContentProvider implements ITreeContentProvider {
 
   public final static String POS_CAT_MODULE = "__haskell_module";
-  private IPositionUpdater positionUpdater 
+  private final IPositionUpdater positionUpdater 
     = new DefaultPositionUpdater( POS_CAT_MODULE );
     
   private ArrayList<IModule> content = new ArrayList<IModule>( 10 );
 
-  private IDocumentProvider documentProvider;
+  private final IDocumentProvider documentProvider;
   private Object input;
 
 

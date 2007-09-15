@@ -34,10 +34,10 @@ public class HaskellProjectManager {
   
   /** contains IHaskellProject info objects (values) for project resources
     * (keys) in the workspace. */  
-  private Hashtable htHaskellProjects;
+  private final Hashtable htHaskellProjects;
   /** contains the project property change listeners registered with
     * this HaskellProjectManager. */
-  private Vector listeners;
+  private final Vector listeners;
   
   /** the singleton instance of HaskellProjectManager. Private in order
     * to ensure the singleton pattern. */
@@ -168,7 +168,8 @@ public class HaskellProjectManager {
 
   private IHaskellProject createNew( final IFile descFile ) {
     Job job = new Job( "Create Haskell project descriptor." ) {
-      protected IStatus run( final IProgressMonitor monitor ) {
+      @Override
+	protected IStatus run( final IProgressMonitor monitor ) {
         IStatus result = Status.OK_STATUS;
         try {
           byte[] contents = createEmptyDescriptorContent().getBytes();

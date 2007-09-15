@@ -29,11 +29,11 @@ import org.eclipse.core.resources.IFile;
  */
 public class DefaultHaskellCompiler implements IHaskellCompiler {
 
-	public ICompilerOutput compile(IFile file, Writer outputWriter) {
+	public ICompilerOutput compile(final IFile file, final Writer outputWriter) {
 		return new DefaultHaskellCompilerOutput(file.getName());
 	}
 
-	public ICompilerOutput compile(IFile file) {
+	public ICompilerOutput compile(final IFile file) {
 		return compile(file, new NullWriter());
 	}
 

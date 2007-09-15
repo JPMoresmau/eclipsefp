@@ -44,6 +44,7 @@ public class HaddockExportWizard extends Wizard implements IExportWizard {
     DialogSettingsUtil.load( getDialogSettings(), info );
   }
 
+  @Override
   public boolean performFinish() {
     DialogSettingsUtil.save( getDialogSettings(), info );
     // TODO
@@ -53,11 +54,13 @@ System.out.println( new GenerateDocs( info ).run() );
     return true;
   }
   
+  @Override
   public boolean performCancel() {
     DialogSettingsUtil.save( getDialogSettings(), info );
     return true;
   }
   
+  @Override
   public void addPages() {
     addPage( new SelectionPage( info ) );
     addPage( new OptionsPage( info ) );

@@ -19,9 +19,9 @@ public class StreamMultiplexer extends Thread {
 
 	private static final int BUFFER_SIZE = 2048;
 
-	private Reader fInput;
+	private final Reader fInput;
 
-	private Writer fOutput;
+	private final Writer fOutput;
 
 	public StreamMultiplexer(final String name, final InputStream in,
 			final Writer... outs) {

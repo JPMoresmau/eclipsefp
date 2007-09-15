@@ -19,6 +19,7 @@ public class RunConfigurator extends Action {
   // interface methods of Action
   //////////////////////////////
   
+  @Override
   public void run() {
     IWizard wizard = new ConfiguratorWizard();
     WizardDialog dlg = new WizardDialog( getShell(), wizard );

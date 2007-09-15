@@ -18,6 +18,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
   // interface methods of AbstractPreferenceInitializer
   /////////////////////////////////////////////////////
   
+  @Override
   public void initializeDefaultPreferences() {
     Preferences prefs = HugsPlugin.getDefault().getPluginPreferences();
     initializeDefaultValues( prefs );

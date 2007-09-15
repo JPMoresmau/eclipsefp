@@ -20,6 +20,7 @@ public abstract class RootPreferencePage extends FieldEditorPreferencePage
     noDefaultAndApplyButton();
   }
   
+  @Override
   public void createFieldEditors() {
     // empty implementation
   }

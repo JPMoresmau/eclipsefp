@@ -17,7 +17,7 @@ public class ImportSpecification extends HaskellLanguageElement implements IImpo
 		return fImport;
 	}
 
-	public void setImport(Import imp) {
+	public void setImport(final Import imp) {
 		fImport = imp;
 	}
 

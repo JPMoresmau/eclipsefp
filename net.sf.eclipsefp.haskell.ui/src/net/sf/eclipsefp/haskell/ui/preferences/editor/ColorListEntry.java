@@ -8,8 +8,8 @@ package net.sf.eclipsefp.haskell.ui.preferences.editor;
   */
 class ColorListEntry {
   
-  private String label;
-  private String colorKey;
+  private final String label;
+  private final String colorKey;
   private String boldKey;
 
   ColorListEntry( final String label, 

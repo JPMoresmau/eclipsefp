@@ -36,6 +36,7 @@ public class WSFileDialogField extends BrowseDialogField {
   // interface methods of BrowseDialogField
   /////////////////////////////////////////
 
+  @Override
   String openDialog( final Shell shell ) {
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     // TODO initial selection
@@ -75,6 +76,7 @@ public class WSFileDialogField extends BrowseDialogField {
   private void addFilter( final ElementTreeSelectionDialog dialog ) {
     if( extension != null ) {
       dialog.addFilter( new ViewerFilter() {
+        @Override
         public boolean select( final Viewer viewer, 
                                final Object parentElement,
                                final Object element ) {

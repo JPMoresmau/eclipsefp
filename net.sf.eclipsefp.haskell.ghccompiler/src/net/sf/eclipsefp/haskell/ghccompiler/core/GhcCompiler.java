@@ -28,9 +28,9 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 
 	private static boolean trace = GhcCompilerPlugin.isTracing();
 
-	private CompilerParams compilerParams = new CompilerParams();
+	private final CompilerParams compilerParams = new CompilerParams();
 
-	private IProcessRunner fProcessRunner;
+	private final IProcessRunner fProcessRunner;
 
 	public GhcCompiler() {
 		this(new ProcessRunner());
@@ -39,11 +39,12 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 	/**
 	 * Constructor for testing
 	 */
-	public GhcCompiler(IProcessRunner procRunner) {
+	public GhcCompiler(final IProcessRunner procRunner) {
 		fProcessRunner = procRunner;
 	}
 
-	public ICompilerOutput compile(IFile file, Writer outputWriter) {
+	@Override
+  public ICompilerOutput compile(final IFile file, final Writer outputWriter) {
 		final IProject project = file.getProject();
 		IHaskellProject hsProject = HaskellProjectManager.get(project);
 		String[] cmdLine = buildCommandLine(file, hsProject);
@@ -90,7 +91,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 	// helping methods
 	// ////////////////
 
-	private ICompilerOutput parse(String messages) {
+	private ICompilerOutput parse(final String messages) {
 		return GhcOutputParser.parse(messages);
 	}
 

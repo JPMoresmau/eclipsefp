@@ -10,14 +10,14 @@ public class TypeSignature extends Declaration implements ITypeSignature {
 		return fIdentifiers;
 	}
 
-	public void setIdentifiers(String[] ids) {
+	public void setIdentifiers(final String[] ids) {
 		assert null != ids;
 		fIdentifiers = ids.clone();
 
 		setName(assembleName(ids));
 	}
 
-	private String assembleName(String[] ids) {
+	private String assembleName(final String[] ids) {
 		assert 0 < ids.length;
 
 		StringBuffer buf = new StringBuffer();

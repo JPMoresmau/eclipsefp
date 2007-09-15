@@ -28,7 +28,7 @@ class AnnotationsTab extends Tab {
 
   private List colorList;
 
-  private String[][] colorListModel;
+  private final String[][] colorListModel;
   private ColorSelector colorSelector;
   private Button cbShowInText;
   private Button cbShowInOverviewRuler;
@@ -43,6 +43,7 @@ class AnnotationsTab extends Tab {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
@@ -98,6 +99,7 @@ class AnnotationsTab extends Tab {
                                                                    8 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         handleAnnotationColorListSelection();
       }
@@ -111,6 +113,7 @@ class AnnotationsTab extends Tab {
     gridData.horizontalAlignment = GridData.BEGINNING;
     foregroundColorButton.setLayoutData( gridData );
     foregroundColorButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ][ 1 ];
@@ -150,6 +153,7 @@ class AnnotationsTab extends Tab {
     gridData.horizontalSpan = 2;
     cbShowInOverviewRuler.setLayoutData( gridData );
     cbShowInOverviewRuler.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ][ 3 ];
@@ -167,6 +171,7 @@ class AnnotationsTab extends Tab {
     gridData.horizontalSpan = 2;
     cbShowInText.setLayoutData( gridData );
     cbShowInText.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ][ 2 ];

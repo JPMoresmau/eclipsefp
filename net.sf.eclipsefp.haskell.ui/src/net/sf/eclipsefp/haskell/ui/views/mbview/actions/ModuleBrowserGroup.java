@@ -21,7 +21,7 @@ public class ModuleBrowserGroup extends CompositeActionGroup
   public static final String GROUP_ADDITIONS  = "additions";
   public static final String GROUP_PROPERTIES = "GROUP_PROPERTIES";
   
-  private ModuleBrowser moduleBrowser;
+  private final ModuleBrowser moduleBrowser;
 
   
   public ModuleBrowserGroup( final ModuleBrowser moduleBrowser ) {
@@ -41,6 +41,7 @@ public class ModuleBrowserGroup extends CompositeActionGroup
     provider.addSelectionChangedListener( this );
   }
 
+  @Override
   public void dispose() {
     ISelectionProvider provider = getSite().getSelectionProvider();
     provider.removeSelectionChangedListener( this );
@@ -59,6 +60,7 @@ public class ModuleBrowserGroup extends CompositeActionGroup
   // action bars
   //////////////
 
+  @Override
   public void fillActionBars( final IActionBars actionBars ) {
     super.fillActionBars( actionBars );
     fillViewMenu( actionBars.getMenuManager() );
@@ -68,6 +70,7 @@ public class ModuleBrowserGroup extends CompositeActionGroup
     addStandardAdditionsMenu( menu );
   }
 
+  @Override
   public void fillContextMenu( final IMenuManager menu ) {
     addStandardAdditionsMenu( menu );
     // more, if necessary

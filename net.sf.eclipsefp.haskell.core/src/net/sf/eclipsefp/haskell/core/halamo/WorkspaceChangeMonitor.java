@@ -24,13 +24,13 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 
 	private class DeltaVisitor implements IResourceDeltaVisitor {
 
-		private IResourceChangeEvent fOriginalEvent;
+		private final IResourceChangeEvent fOriginalEvent;
 
-		public DeltaVisitor(IResourceChangeEvent event) {
+		public DeltaVisitor(final IResourceChangeEvent event) {
 			fOriginalEvent = event;
 		}
 
-		public boolean visit(IResourceDelta delta) {
+		public boolean visit(final IResourceDelta delta) {
 			if (IResource.PROJECT == delta.getResource().getType()) {
 				IProject project = (IProject) delta.getResource();
 
@@ -55,26 +55,26 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 
 	}
 	
-	private IProjectChangeMonitorFactory fProjectMonitorFactory; 
+	private final IProjectChangeMonitorFactory fProjectMonitorFactory; 
 
-	private Map<IProject, IResourceChangeListener> fProjectMonitors =
+	private final Map<IProject, IResourceChangeListener> fProjectMonitors =
 		new Hashtable<IProject, IResourceChangeListener>();
 
 	public WorkspaceChangeMonitor() {
 		this(new IProjectChangeMonitorFactory() {
 			public IResourceChangeListener createProjectChangeMonitor(
-					IProject project)
+					final IProject project)
 			{
 				return new ProjectChangeMonitor(project);
 			}
 		});
 	}
 
-	public WorkspaceChangeMonitor(IProjectChangeMonitorFactory factory) {
+	public WorkspaceChangeMonitor(final IProjectChangeMonitorFactory factory) {
 		fProjectMonitorFactory = factory;
 	}
 
-	public void resourceChanged(IResourceChangeEvent event) {
+	public void resourceChanged(final IResourceChangeEvent event) {
 		try {
 			event.getDelta().accept(new DeltaVisitor(event));
 		} catch (CoreException exc) {
@@ -82,16 +82,16 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 		}
 	}
 
-	public IResourceChangeListener createProjectChangeMonitor(IProject project) {
+	public IResourceChangeListener createProjectChangeMonitor(final IProject project) {
 		return fProjectMonitorFactory.createProjectChangeMonitor(project);
 	}
 
-	public void observeChangesOn(IWorkspace workspace) {
+	public void observeChangesOn(final IWorkspace workspace) {
 		createProjectMonitorsFor(workspace);
 		workspace.addResourceChangeListener(this, TYPES);
 	}
 
-	private void createProjectMonitorsFor(IWorkspace workspace) {
+	private void createProjectMonitorsFor(final IWorkspace workspace) {
 		for(IProject project : workspace.getRoot().getProjects()) {
 			fProjectMonitors.put(project, createProjectChangeMonitor(project));
 		}

@@ -20,7 +20,7 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
   */
 public class NewWizardsActionGroup extends ActionGroup {
 
-  private IWorkbenchSite site;
+  private final IWorkbenchSite site;
   
   public NewWizardsActionGroup( final IWorkbenchSite site ) {
     this.site = site;
@@ -30,6 +30,7 @@ public class NewWizardsActionGroup extends ActionGroup {
   // interface methods of ActionGroup
   ///////////////////////////////////
   
+  @Override
   public void fillContextMenu( final IMenuManager menu ) {
     super.fillContextMenu( menu );
     

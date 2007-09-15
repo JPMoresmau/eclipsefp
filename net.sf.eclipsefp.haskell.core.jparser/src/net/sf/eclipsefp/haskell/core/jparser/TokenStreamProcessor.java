@@ -9,10 +9,10 @@ import antlr.TokenStreamException;
 
 public class TokenStreamProcessor implements TokenStream {
 
-	private Queue<Token> fInsertedTokens = new LinkedList<Token>();
-	private LookaheadTokenStream fInput;
+	private final Queue<Token> fInsertedTokens = new LinkedList<Token>();
+	private final LookaheadTokenStream fInput;
 
-	public TokenStreamProcessor(TokenStream input) {
+	public TokenStreamProcessor(final TokenStream input) {
 		fInput = new LookaheadTokenStream(input);
 	}
 	
@@ -37,7 +37,7 @@ public class TokenStreamProcessor implements TokenStream {
 		return fInput.peekToken();
 	}
 
-	protected Token peekToken(int pos) throws TokenStreamException {
+	protected Token peekToken(final int pos) throws TokenStreamException {
 		return fInput.peekToken(pos);
 	}
 
@@ -45,7 +45,7 @@ public class TokenStreamProcessor implements TokenStream {
 		return !fInsertedTokens.isEmpty();
 	}
 
-	protected void insertToken(Token token) {
+	protected void insertToken(final Token token) {
 		fInsertedTokens.offer(token);
 	}
 

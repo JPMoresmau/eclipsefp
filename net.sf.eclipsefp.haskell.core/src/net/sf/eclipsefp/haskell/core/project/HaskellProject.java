@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  */
 final class HaskellProject implements IHaskellProject {
 
-	private IProject fProject;
+	private final IProject fProject;
 
 	private String sourcePath = "";
 
@@ -162,14 +162,11 @@ final class HaskellProject implements IHaskellProject {
 		return fCompiler;
 	}
 
-	public void setCompiler(IHaskellCompiler compiler) {
-		if (null == compiler) {
-			compiler = new DefaultHaskellCompiler();
-		}
-		fCompiler = compiler; 
+	public void setCompiler( final IHaskellCompiler comp ) {
+		fCompiler = ( comp == null ) ? new DefaultHaskellCompiler() : comp; 
 	}
 
-	public ICompilerOutput compile(IFile file) {
+	public ICompilerOutput compile(final IFile file) {
 		return getCompiler().compile(file);
 	}
 }

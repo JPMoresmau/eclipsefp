@@ -12,8 +12,8 @@ import org.eclipse.swt.graphics.*;
   */
 class DecoratorImageDescriptor extends CompositeImageDescriptor {
 
-  private Image baseImage;
-  private ImageData overlayImageData;
+  private final Image baseImage;
+  private final ImageData overlayImageData;
   
   DecoratorImageDescriptor( final Image baseImage, 
                             final ImageData overlayImageData ) {
@@ -22,6 +22,7 @@ class DecoratorImageDescriptor extends CompositeImageDescriptor {
     this.overlayImageData = overlayImageData;
   }
 
+  @Override
   protected void drawCompositeImage( final int width, final int height ) {
     drawImage( baseImage.getImageData(), 0, 0 );  
     int xValue = baseImage.getBounds().width - overlayImageData.width; 
@@ -29,6 +30,7 @@ class DecoratorImageDescriptor extends CompositeImageDescriptor {
     drawImage( overlayImageData, xValue, yValue );  
   }
 
+  @Override
   protected Point getSize() {
     return new Point( baseImage.getBounds().width,
                       baseImage.getBounds().height );

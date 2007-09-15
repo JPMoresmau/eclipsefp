@@ -10,7 +10,7 @@ import java.util.*;
   */
 public class InterfaceList {
 
-  private List list = new ArrayList();
+  private final List list = new ArrayList();
   
   public void add( final InterfaceListEntry entry ) {
     if(     entry != null 

@@ -47,7 +47,7 @@ public class CabalOutlinePage extends ContentOutlinePage {
     tv.setContentProvider( new CabalOutlinePageCP() );
     tv.setAutoExpandLevel( AbstractTreeViewer.ALL_LEVELS );
     tv.addSelectionChangedListener( new ISelectionChangedListener() {
-      public void selectionChanged(SelectionChangedEvent event) {
+      public void selectionChanged(final SelectionChangedEvent event) {
         if( event.getSelection() instanceof IStructuredSelection ) {
           IStructuredSelection ssel = ( IStructuredSelection )event.getSelection();
           if( ssel.size() == 1 ) {

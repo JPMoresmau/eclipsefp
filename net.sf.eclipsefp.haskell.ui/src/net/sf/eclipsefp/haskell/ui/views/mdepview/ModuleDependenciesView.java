@@ -37,6 +37,7 @@ public class ModuleDependenciesView extends ViewPart {
   // interface methods of IViewPart
   /////////////////////////////////
   
+  @Override
   public void createPartControl( final Composite parent ) {
     // TODO if no dependencies have been selected yet, show a label with
     // a hint (like JDT type hierarchy)
@@ -54,6 +55,7 @@ public class ModuleDependenciesView extends ViewPart {
     contributeToActionBars();
   }
 
+  @Override
   public void setFocus() {
     viewer.getControl().setFocus();
   }
@@ -108,6 +110,7 @@ public class ModuleDependenciesView extends ViewPart {
 
   private void makeActions() {
     actionImports =  new Action() {
+      @Override
       public void run() {
         showMessage( "Imports" );
       }
@@ -119,6 +122,7 @@ public class ModuleDependenciesView extends ViewPart {
                IImageNames.DEP_VIEW_IMPORTS );
 
     importedByAction = new Action() {
+      @Override
       public void run() {
         showMessage( "Imported by - not yet implemented" );
       }

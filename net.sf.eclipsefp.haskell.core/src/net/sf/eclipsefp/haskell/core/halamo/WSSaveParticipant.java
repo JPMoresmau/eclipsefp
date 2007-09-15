@@ -45,7 +45,7 @@ class WSSaveParticipant implements ISaveParticipant {
     // TODO Auto-generated method stub
   }
 
-  public void prepareToSave( final ISaveContext context ) throws CoreException {
+  public void prepareToSave( final ISaveContext context ) {
     // TODO Auto-generated method stub
   }
 
@@ -53,7 +53,7 @@ class WSSaveParticipant implements ISaveParticipant {
     // TODO Auto-generated method stub
   }
 
-  public void saving( final ISaveContext context ) throws CoreException {
+  public void saving( final ISaveContext context ) {
     // TODO do the actual saving
     
     // request a resource delta to be used on next startup

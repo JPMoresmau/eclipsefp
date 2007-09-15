@@ -22,12 +22,13 @@ import net.sf.eclipsefp.haskell.ui.views.common.HaskellLabelProvider;
 public class HaskellOutlinePage extends ContentOutlinePage {
   
   private Object input;
-  private ITextEditor textEditor;
+  private final ITextEditor textEditor;
 
   public HaskellOutlinePage( final ITextEditor textEditor ) {
     this.textEditor = textEditor;
   }
   
+  @Override
   public void createControl( final Composite parent ) {
     super.createControl( parent );
 
@@ -42,6 +43,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     }
   }
   
+  @Override
   public void selectionChanged( final SelectionChangedEvent event ) {
     super.selectionChanged( event );
 

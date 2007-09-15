@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard;
   */
 public class OpenNewProjectWizard extends AbstractOpenAction {
 
+  @Override
   public void run() {
     try {
       Wizard wizard = new NewHaskellProjectWizard();

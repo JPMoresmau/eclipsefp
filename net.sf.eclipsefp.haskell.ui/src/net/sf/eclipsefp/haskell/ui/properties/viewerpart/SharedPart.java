@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.*;
 public abstract class SharedPart {
 
   private boolean enabled;
-  private String[] buttonLabels;
+  private final String[] buttonLabels;
   private Control[] controls;
   private Composite buttonContainer;
 
@@ -133,7 +133,7 @@ public abstract class SharedPart {
   
   private class SelectionHandler implements SelectionListener {
     
-    private SharedPart part;
+    private final SharedPart part;
     
     private SelectionHandler( final SharedPart part ) {
       this.part = part;

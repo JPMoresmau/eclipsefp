@@ -28,6 +28,7 @@ class GhciTab extends Tab implements IGhcPreferenceNames {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout( 1, false ) );

@@ -8,8 +8,8 @@ package net.sf.eclipsefp.common.ui.preferences.overlay;
   */
 class OverlayKey {
 
-  private OverlayType type;
-  private String key;
+  private final OverlayType type;
+  private final String key;
 
   OverlayKey( final OverlayType type, final String key ) {
     this.type = type;

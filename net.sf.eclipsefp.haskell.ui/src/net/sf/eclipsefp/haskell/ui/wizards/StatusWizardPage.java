@@ -27,6 +27,7 @@ public abstract class StatusWizardPage extends WizardPage {
   // interface methods of WizardPage
   //////////////////////////////////
   
+  @Override
   public void setVisible( final boolean visible ) {
     super.setVisible( visible );
     pageVisible = visible;

@@ -9,11 +9,11 @@ public class EclipseFPToken extends CommonToken {
 	public EclipseFPToken() {
 	}
 	
-	public EclipseFPToken(int type) {
+	public EclipseFPToken(final int type) {
 		this(type, "<no text>");
 	}
 
-	public EclipseFPToken(int type, String text) {
+	public EclipseFPToken(final int type, final String text) {
 		super(type, text);
 	}
 
@@ -21,7 +21,7 @@ public class EclipseFPToken extends CommonToken {
 		return fOffset;
 	}
 
-	public void setOffset(long offset) {
+	public void setOffset(final long offset) {
 		fOffset = offset;
 	}
 

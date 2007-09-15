@@ -38,11 +38,11 @@ class UIState implements IUIState {
   /** the currently set layout type (flat or hierarchical). */
   private int layout = FLAT;
 
-  private ModuleBrowser moduleBrowser;
+  private final ModuleBrowser moduleBrowser;
   private TreeViewer viewer;
 
   /** the memento from which this UIState was initialized. */
-  private IMemento memento;
+  private final IMemento memento;
   
   UIState( final ModuleBrowser moduleBrowser, final IMemento memento ) {
     this.moduleBrowser = moduleBrowser;

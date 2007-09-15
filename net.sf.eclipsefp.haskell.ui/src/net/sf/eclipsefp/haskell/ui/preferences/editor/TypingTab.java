@@ -22,6 +22,7 @@ class TypingTab extends EditorTab implements IEditorPreferenceNames {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
 

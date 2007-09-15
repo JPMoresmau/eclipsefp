@@ -24,6 +24,7 @@ public class FileDialogField extends BrowseDialogField {
   // interface methods of BrowseDialogField
   /////////////////////////////////////////
   
+  @Override
   String openDialog( final Shell shell ) {
     FileDialog dialog = new FileDialog( shell );
     dialog.setText( "Select a file" );

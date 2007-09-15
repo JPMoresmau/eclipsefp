@@ -9,7 +9,7 @@ import net.sf.eclipsefp.haskell.core.halamo.IExportThingWithComponent;
 public class ExportThingWith extends ExportSpecification implements
 		IExportThingWith {
 
-	private List<IExportThingWithComponent> fComponents =
+	private final List<IExportThingWithComponent> fComponents =
 		new Vector<IExportThingWithComponent>();
 	
 	public IExportThingWithComponent[] getComponents() {
@@ -17,7 +17,7 @@ public class ExportThingWith extends ExportSpecification implements
 				new IExportThingWithComponent[fComponents.size()]);
 	}
 
-	public void addComponent(ExportThingWithComponent component) {
+	public void addComponent(final ExportThingWithComponent component) {
 		fComponents.add(component);
 	}
 

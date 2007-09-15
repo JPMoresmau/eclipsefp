@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class HaskellModelManager implements IHaskellModelManager {
 
-	private Map<IProject, HaskellLanguageModel> fLanguageModels = new Hashtable<IProject, HaskellLanguageModel>();
+	private final Map<IProject, HaskellLanguageModel> fLanguageModels = new Hashtable<IProject, HaskellLanguageModel>();
 
-	private IWorkspace fWorkspace;
+	private final IWorkspace fWorkspace;
 	
-	public HaskellModelManager(IWorkspace workspace) {
+	public HaskellModelManager(final IWorkspace workspace) {
 		fWorkspace = workspace;
 	}
 
@@ -41,7 +41,7 @@ public class HaskellModelManager implements IHaskellModelManager {
 	 * 
 	 * @see buildModelFor
 	 */
-	public IHaskellModel getModelFor(IProject project) {
+	public IHaskellModel getModelFor(final IProject project) {
 		HaskellLanguageModel result = fLanguageModels.get(project);
 		if (null == result) {
 			result = new HaskellLanguageModel();

@@ -9,7 +9,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
  */
 public class ProjectCreationWizardPage extends WizardNewProjectCreationPage {
 
-  public ProjectCreationWizardPage(String title, String description) {
+  public ProjectCreationWizardPage(final String title, final String description) {
     super( "ProjectCreationWizardPage" );
     setTitle(title);
     setDescription(description);

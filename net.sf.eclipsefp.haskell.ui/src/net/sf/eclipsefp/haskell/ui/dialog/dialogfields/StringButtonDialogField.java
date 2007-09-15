@@ -10,7 +10,7 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.dialog.dialogfields;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,11 +26,11 @@ public class StringButtonDialogField extends StringDialogField {
 
   private String fBrowseButtonLabel;
 
-  private IStringButtonAdapter fStringButtonAdapter;
+  private final IStringButtonAdapter fStringButtonAdapter;
 
   private boolean fButtonEnabled;
 
-  public StringButtonDialogField(IStringButtonAdapter adapter) {
+  public StringButtonDialogField(final IStringButtonAdapter adapter) {
     super();
     fStringButtonAdapter = adapter;
     fBrowseButtonLabel = "!Browse...!"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class StringButtonDialogField extends StringDialogField {
   /**
    * Sets the label of the button.
    */
-  public void setButtonLabel(String label) {
+  public void setButtonLabel(final String label) {
     fBrowseButtonLabel = label;
   }
 
@@ -58,7 +58,8 @@ public class StringButtonDialogField extends StringDialogField {
   /*
    * @see DialogField#doFillIntoGrid
    */
-  public Control[] doFillIntoGrid(Composite parent, int nColumns) {
+  @Override
+  public Control[] doFillIntoGrid(final Composite parent, final int nColumns) {
     Assert.isTrue(nColumns >= getNumberOfControls(),
         "given number of columns is too small");
 
@@ -72,6 +73,7 @@ public class StringButtonDialogField extends StringDialogField {
     return new Control[] { label, text, button };
   }
 
+  @Override
   public int getNumberOfControls() {
     return 3;
   }
@@ -93,7 +95,7 @@ public class StringButtonDialogField extends StringDialogField {
    *          The parent composite or <code>null</code> if the widget has
    *          already been created.
    */
-  public Button getChangeControl(Composite parent) {
+  public Button getChangeControl(final Composite parent) {
     if (fBrowseButton == null) {
       Assert.isNotNull(parent,
           "uncreated control requested with composite null");
@@ -102,11 +104,11 @@ public class StringButtonDialogField extends StringDialogField {
       fBrowseButton.setText(fBrowseButtonLabel);
       fBrowseButton.setEnabled(isEnabled() && fButtonEnabled);
       fBrowseButton.addSelectionListener(new SelectionListener() {
-        public void widgetDefaultSelected(SelectionEvent e) {
+        public void widgetDefaultSelected(final SelectionEvent e) {
           changeControlPressed();
         }
 
-        public void widgetSelected(SelectionEvent e) {
+        public void widgetSelected(final SelectionEvent e) {
           changeControlPressed();
         }
       });
@@ -120,7 +122,7 @@ public class StringButtonDialogField extends StringDialogField {
   /**
    * Sets the enable state of the button.
    */
-  public void enableButton(boolean enable) {
+  public void enableButton(final boolean enable) {
     if (isOkToUse(fBrowseButton)) {
       fBrowseButton.setEnabled(isEnabled() && enable);
     }
@@ -130,6 +132,7 @@ public class StringButtonDialogField extends StringDialogField {
   /*
    * @see DialogField#updateEnableState
    */
+  @Override
   protected void updateEnableState() {
     super.updateEnableState();
     if (isOkToUse(fBrowseButton)) {

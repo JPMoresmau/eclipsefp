@@ -17,7 +17,7 @@ public class ParserManager {
 
   private static ParserManager _instance;
   
-  private Hashtable htParsers;
+  private final Hashtable htParsers;
   
   private ParserManager() {
     // prevent instantiation from outside this class

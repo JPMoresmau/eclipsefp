@@ -71,6 +71,7 @@ public class HaddockConfiguratorPage implements IConfiguratorPage,
   private void createExecutableDialogField( final Composite parent ) {
     String labelText = "Haddock executable";
     dlgField = new ExecutableDialogField( parent, labelText ) {
+      @Override
       protected String createDisplayContent( final String info ) {
         return HaddockUtil.queryHaddockExecutable( info );
       }

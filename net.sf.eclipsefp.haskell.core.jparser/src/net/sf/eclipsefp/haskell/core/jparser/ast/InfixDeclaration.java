@@ -9,7 +9,7 @@ public class InfixDeclaration extends Declaration implements IInfixDeclaration {
 
 	private int fAssociativity;
 	private int fPrecedence = 9;
-	private List<String> fOperators = new Vector<String>();
+	private final List<String> fOperators = new Vector<String>();
 
 	public int getAssociativity() {
 		return fAssociativity;
@@ -23,15 +23,15 @@ public class InfixDeclaration extends Declaration implements IInfixDeclaration {
 		return fOperators .toArray(new String[fOperators.size()]);
 	}
 
-	public void setAssociativity(int associativity) {
+	public void setAssociativity(final int associativity) {
 		fAssociativity = associativity;
 	}
 
-	public void setPrecedence(int precedence) {
+	public void setPrecedence(final int precedence) {
 		fPrecedence = precedence;
 	}
 
-	public void addOperators(List<String> operators) {
+	public void addOperators(final List<String> operators) {
 		fOperators.addAll(operators);
 	}
 

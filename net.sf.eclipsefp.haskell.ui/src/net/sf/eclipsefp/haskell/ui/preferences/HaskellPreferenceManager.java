@@ -10,12 +10,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 public class HaskellPreferenceManager implements IPreferenceConstants {
 
-	private ICompilerManager fCompilerManager;
-	private IPreferenceStore fPreferenceStore;
+	private final ICompilerManager fCompilerManager;
+	private final IPreferenceStore fPreferenceStore;
 	private ConsoleCompilingReporter fReporter = null;
 
-	public HaskellPreferenceManager(ICompilerManager manager,
-			                        IPreferenceStore store)
+	public HaskellPreferenceManager(final ICompilerManager manager,
+			                        final IPreferenceStore store)
 	{
 		fCompilerManager = manager;
 		fPreferenceStore = store;

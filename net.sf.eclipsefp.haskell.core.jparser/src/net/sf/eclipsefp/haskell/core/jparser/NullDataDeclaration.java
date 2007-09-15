@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.DataDeclaration;
 class NullDataDeclaration extends DataDeclaration {
 
 	@Override
-	public boolean accepts(IConstructor cons) {
+	public boolean accepts(final IConstructor cons) {
 		return false;
 	}
 

@@ -12,7 +12,8 @@ public class HaskellNature extends FPNature {
 
   public static final String NATURE_ID = HaskellNature.class.getName();
 
-  protected String getBuilderID() {
+  @Override
+protected String getBuilderID() {
     return HaskellBuilder.BUILDER_ID;
   }
 }

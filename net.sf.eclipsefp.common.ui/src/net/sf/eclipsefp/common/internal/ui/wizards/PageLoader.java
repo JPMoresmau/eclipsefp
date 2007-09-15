@@ -8,10 +8,7 @@ import net.sf.eclipsefp.common.ui.CommonUIPlugin;
 import net.sf.eclipsefp.common.ui.configurator.IConfiguratorPage;
 import net.sf.eclipsefp.common.ui.configurator.IProbe;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;

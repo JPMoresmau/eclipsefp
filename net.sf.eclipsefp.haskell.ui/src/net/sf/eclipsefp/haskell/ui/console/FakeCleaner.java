@@ -4,7 +4,7 @@ import org.eclipse.ui.console.TextConsole;
 
 public class FakeCleaner implements IConsoleCleaner {
 
-	public void clean(TextConsole console) {
+	public void clean(final TextConsole console) {
 		//fake cleaner does not clean anything
 	}
 

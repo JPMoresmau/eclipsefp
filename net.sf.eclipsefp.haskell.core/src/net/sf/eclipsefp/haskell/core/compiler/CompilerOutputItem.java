@@ -35,8 +35,8 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 		fComment = comment.trim();
 	}
 
-	public CompilerOutputItem(String fileName, int lineNumber, int startColumn,
-		                      int endColumn, String comment)
+	public CompilerOutputItem(final String fileName, final int lineNumber, final int startColumn,
+		                      final int endColumn, final String comment)
 	{
 		fFileName = fileName;
 		fLineNumber = lineNumber;
@@ -51,6 +51,7 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 		this.fComment = start + commentAddition.trim();
 	}
 
+	@Override
 	public String toString() {
 		return "CompilerOutputItem:" + "\n  file   : " + fFileName
 				+ "\n  line   : " + fLineNumber + "\n  comment: " + fComment;
@@ -75,7 +76,7 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 		return fComment;
 	}
 
-	public void populateMarker(IMarker marker) throws CoreException {
+	public void populateMarker(final IMarker marker) throws CoreException {
         marker.setAttribute(IMarker.MESSAGE, fComment);
         marker.setAttribute(IMarker.LINE_NUMBER, fLineNumber);
         marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
@@ -83,23 +84,23 @@ public class CompilerOutputItem implements ICompilerOutputItem {
         marker.setAttribute(IMarker.CHAR_END, fEndColumn);
 	}
 
-	public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 		fFileName = fileName;
 	}
 
-	public void setLine(int line) {
+	public void setLine(final int line) {
 		fLineNumber = line;
 	}
 
-	public void setStartColumn(int column) {
+	public void setStartColumn(final int column) {
 		fStartColumn = column;
 	}
 
-	public void setEndColumn(int column) {
+	public void setEndColumn(final int column) {
 		fEndColumn = column;
 	}
 
-	public void setComment(String comment) {
+	public void setComment(final String comment) {
 		fComment = comment;
 	}
 

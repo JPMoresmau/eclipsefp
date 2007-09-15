@@ -9,11 +9,12 @@ public class PreprocessedTokenStream extends TokenStreamProcessor {
 
 	private boolean fIsFirstCall = true;
 	
-	public PreprocessedTokenStream(TokenStream stream) {
+	public PreprocessedTokenStream(final TokenStream stream) {
 		super(stream);
 	}
 	
-	protected void insertTokensAsNeeded() throws TokenStreamException {
+	@Override
+  protected void insertTokensAsNeeded() throws TokenStreamException {
 		if (hasInsertedTokens())
 			return;
 		
@@ -49,21 +50,21 @@ public class PreprocessedTokenStream extends TokenStreamProcessor {
 		fIsFirstCall = false;
 	}
 
-	private void insertOpenBlock(int column) throws TokenStreamException {
+	private void insertOpenBlock(final int column) throws TokenStreamException {
 		insertControlToken(HaskellLexerExtendedTokenTypes.OPENBLOCK, column);
 	}
 
-	private void insertLineBreak(int column) throws TokenStreamException {
+	private void insertLineBreak(final int column) throws TokenStreamException {
 		insertControlToken(HaskellLexerExtendedTokenTypes.LINEBREAK, column);
     }
 
-	private void insertControlToken(int tokenType, int column) {
+	private void insertControlToken(final int tokenType, final int column) {
 		Token controlToken = new CommonToken(tokenType, "<<special token>>");
 		controlToken.setColumn(column);
 		insertToken(controlToken);
 	}
 
-	private boolean isEOF(Token token) {
+	private boolean isEOF(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.EOF;
 	}
 
@@ -78,35 +79,35 @@ public class PreprocessedTokenStream extends TokenStreamProcessor {
 		return peekToken();
 	}
 
-	private boolean isLineBreak(Token token) throws TokenStreamException {
+	private boolean isLineBreak(final Token token) throws TokenStreamException {
 		return token.getType() == HaskellLexerExtendedTokenTypes.NEWLINE;
 	}
 	
-	private boolean isBlockOpener(Token token) {
+	private boolean isBlockOpener(final Token token) {
 		return isWhere(token) || isLet(token) || isDo(token) || isOf(token);
 	}
 
-	private boolean isLet(Token token) {
+	private boolean isLet(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.LET;
 	}
 
-	private boolean isDo(Token token) {
+	private boolean isDo(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.DO;
 	}
 
-	private boolean isOf(Token token) {
+	private boolean isOf(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.OF;
 	}
 
-	private boolean isWhere(Token token) {
+	private boolean isWhere(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.WHERE;
 	}
 
-	private boolean isLeftCurly(Token theToken) {
+	private boolean isLeftCurly(final Token theToken) {
 		return theToken.getType() == HaskellLexerTokenTypes.LEFT_CURLY;
 	}
 	
-	private boolean isModule(Token token) {
+	private boolean isModule(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.MODULE;
 	}
 	

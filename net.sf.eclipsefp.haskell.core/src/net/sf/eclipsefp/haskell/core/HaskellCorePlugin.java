@@ -29,7 +29,7 @@ public class HaskellCorePlugin extends Plugin {
 
 	private static HaskellCorePlugin plugin;
 
-	private IWorkspace fWorkspace;
+	private final IWorkspace fWorkspace;
 
 	private HaskellModelManager fModelManager;
 
@@ -37,11 +37,12 @@ public class HaskellCorePlugin extends Plugin {
 		this(ResourcesPlugin.getWorkspace());
 	}
 
-	public HaskellCorePlugin(IWorkspace workspace) {
+	public HaskellCorePlugin(final IWorkspace workspace) {
 		plugin = this;
 		fWorkspace = workspace;
 	}
 
+	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 

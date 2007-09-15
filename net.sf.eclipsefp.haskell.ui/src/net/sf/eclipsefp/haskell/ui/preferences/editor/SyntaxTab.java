@@ -24,7 +24,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
   private Button cbBold;
   private List colorList;
 
-  private ColorListEntry[] colorListModel = new ColorListEntry[] {
+  private final ColorListEntry[] colorListModel = new ColorListEntry[] {
     new ColorListEntry( "Comments", EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ),
     new ColorListEntry( "Literate Comments", 
                         EDITOR_LITERATE_COMMENT_COLOR, 
@@ -45,6 +45,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout() );
@@ -65,6 +66,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     return composite;
   }
 
+  @Override
   public void initializeFields() {
     super.initializeFields();
     IPreferenceStore ps = getPreferenceStore();
@@ -88,6 +90,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
                                                                    5 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         handleSyntaxColorListSelection();
       }
@@ -113,6 +116,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     gridData.horizontalSpan = 2;
     cbBold.setLayoutData( gridData );
     cbBold.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ].getBoldKey();
@@ -144,6 +148,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     backgroundComposite.setLayout( new RowLayout() );
     backgroundComposite.setText( "Background color" );
     SelectionListener bgSelectionListener = new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         boolean custom = rbBackgroundCustom.getSelection();
         backgroundColorSelector.setEnabled( custom );
@@ -165,6 +170,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     backgroundColorSelector = new ColorSelector( parent );
     Button backgroundColorButton = backgroundColorSelector.getButton();
     backgroundColorButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         String name = IEditorPreferenceNames.EDITOR_BACKGROUND_COLOR;
         RGB colorValue = backgroundColorSelector.getColorValue();
@@ -180,6 +186,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     gridData.horizontalAlignment = GridData.BEGINNING;
     foregroundColorButton.setLayoutData( gridData );
     foregroundColorButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ].getColorKey();

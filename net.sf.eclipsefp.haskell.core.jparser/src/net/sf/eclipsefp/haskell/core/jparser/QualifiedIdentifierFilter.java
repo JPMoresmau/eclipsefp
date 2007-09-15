@@ -26,11 +26,12 @@ public class QualifiedIdentifierFilter extends TokenStreamProcessor implements H
 		QUALIFIED_TYPE_TABLE.put(VARSYM, QVARSYM);
 	}
 	
-	public QualifiedIdentifierFilter(TokenStream input) {
+	public QualifiedIdentifierFilter(final TokenStream input) {
 		super(new LookaheadTokenStream(input));
 	}
 
-	protected void insertTokensAsNeeded() throws TokenStreamException {
+	@Override
+  protected void insertTokensAsNeeded() throws TokenStreamException {
 		if (!(isConstructorId(peekToken(1)) && isDot(peekToken(2))))
 			return;
 		
@@ -55,7 +56,7 @@ public class QualifiedIdentifierFilter extends TokenStreamProcessor implements H
 		insertToken(qualifiedId);
 	}
 
-	private int getQualifiedType(Token id) throws TokenStreamException {
+	private int getQualifiedType(final Token id) throws TokenStreamException {
 		Integer result = QUALIFIED_TYPE_TABLE.get(id.getType());
 		if (result == null) {
 			final String msg = String.format(
@@ -66,12 +67,12 @@ public class QualifiedIdentifierFilter extends TokenStreamProcessor implements H
 		return result;
 	}
 
-	private boolean isDot(Token aToken) {
+	private boolean isDot(final Token aToken) {
 		return aToken.getType() == HaskellLexerTokenTypes.VARSYM
 		    && ".".equals(aToken.getText());
 	}
 
-	private boolean isConstructorId(Token aToken) {
+	private boolean isConstructorId(final Token aToken) {
 		return aToken.getType() == HaskellLexerTokenTypes.CONSTRUCTOR_ID;
 	}
 

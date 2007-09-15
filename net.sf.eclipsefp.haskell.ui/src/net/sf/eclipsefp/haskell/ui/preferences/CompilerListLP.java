@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
   */
 public class CompilerListLP extends LabelProvider {
 
+  @Override
   public String getText( final Object element ) {
     String compilerId = ( String )element;
     return CompilerManager.getInstance().getCompilerName( compilerId );

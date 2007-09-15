@@ -68,6 +68,7 @@ class InterfacePage extends HaddockExportWizardPage {
     txtPackage.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     
     cbPackage.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbPackage.getSelection();
         txtPackage.setEnabled( selected );
@@ -101,6 +102,7 @@ class InterfacePage extends HaddockExportWizardPage {
     fdf.setEnabled( getInfo().isDumpInterface() );
   
     cbDump.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbDump.getSelection();
         fdf.setEnabled( selected );
@@ -121,6 +123,7 @@ class InterfacePage extends HaddockExportWizardPage {
     ilBlock.setEnabled( getInfo().isReadInterfaces() );
 
     cbRead.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbRead.getSelection();
         ilBlock.setEnabled( selected );
@@ -138,6 +141,7 @@ class InterfacePage extends HaddockExportWizardPage {
                                       getInfo().isUseIndexURL() );
     
     cbIndex.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbIndex.getSelection();
         txtIndex.setEnabled( selected );
@@ -164,6 +168,7 @@ class InterfacePage extends HaddockExportWizardPage {
                                          getInfo().isUseContentsURL() );
     
     cbContents.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbContents.getSelection();
         txtContents.setEnabled( selected );

@@ -57,6 +57,7 @@ class OptionsPage extends HaddockExportWizardPage {
     txtTitle.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     
     cbTitle.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbTitle.getSelection();
         txtTitle.setEnabled( selected );
@@ -83,6 +84,7 @@ class OptionsPage extends HaddockExportWizardPage {
     dlgField.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     
     cbCSS.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbCSS.getSelection();
         dlgField.setEnabled( selected );
@@ -108,6 +110,7 @@ class OptionsPage extends HaddockExportWizardPage {
     dlgField.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     
     cbPrologue.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         boolean selected = cbPrologue.getSelection();
         dlgField.setEnabled( selected );

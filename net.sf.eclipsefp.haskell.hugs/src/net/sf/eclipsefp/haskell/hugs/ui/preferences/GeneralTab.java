@@ -30,11 +30,13 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     String labelText = "HUGS executable";
     ExecutableDialogField dlgField = new ExecutableDialogField( parent, 
                                                                 labelText ){
     	
+      @Override
       protected String createDisplayContent( final String info ) {
     	  try {
     		  	File f=new File(info);

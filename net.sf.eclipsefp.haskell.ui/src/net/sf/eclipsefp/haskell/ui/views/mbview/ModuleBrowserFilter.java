@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
   */
 public class ModuleBrowserFilter extends ViewerFilter {
   
-  private List activeCriteria = new ArrayList();
+  private final List activeCriteria = new ArrayList();
   
   public Object[] getActiveCriteria() {
     return activeCriteria.toArray();
@@ -38,6 +38,7 @@ public class ModuleBrowserFilter extends ViewerFilter {
   ////////////////////////////////////
   
   /** returns whether the given element makes it through this filter. */
+  @Override
   public boolean select( final Viewer viewer, 
                          final Object parentElement, 
                          final Object element ) {

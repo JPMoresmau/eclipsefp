@@ -8,15 +8,16 @@ import antlr.TokenStreamException;
 
 public class HaskellFormatter extends TokenStreamProcessor {
 
-	private Stack<Integer> fLayoutContextStack = new Stack<Integer>();
+	private final Stack<Integer> fLayoutContextStack = new Stack<Integer>();
 	
-	public HaskellFormatter(TokenStream in) {
+	public HaskellFormatter(final TokenStream in) {
 		super(new PreprocessedTokenStream(
 				new HaskellCommentFilter(
 					new QualifiedIdentifierFilter(in))));
 	}
 
-	protected void insertTokensAsNeeded() throws TokenStreamException {
+	@Override
+  protected void insertTokensAsNeeded() throws TokenStreamException {
 		if (hasInsertedTokens())
 			return;
 		
@@ -58,15 +59,15 @@ public class HaskellFormatter extends TokenStreamProcessor {
 		
 	}
 
-	private boolean isLineBreak(Token token) {
+	private boolean isLineBreak(final Token token) {
 		return token.getType() == HaskellLexerExtendedTokenTypes.LINEBREAK;
 	}
 
-	private boolean isOpenBlock(Token token) {
+	private boolean isOpenBlock(final Token token) {
 		return token.getType() == HaskellLexerExtendedTokenTypes.OPENBLOCK;
 	}
 
-	private boolean isEof(Token token) {
+	private boolean isEof(final Token token) {
 		return token.getType() == HaskellLexerTokenTypes.EOF;
 	}
 

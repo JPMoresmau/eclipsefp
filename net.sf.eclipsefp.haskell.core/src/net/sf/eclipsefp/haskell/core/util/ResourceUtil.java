@@ -246,7 +246,7 @@ public class ResourceUtil {
 		return HaskellProjectManager.get(project);
 	}
 
-	public static String getModuleName(String fileName) {
+	public static String getModuleName(final String fileName) {
 		return fileName.substring(0, fileName.lastIndexOf('.'));
 	}
 

@@ -12,7 +12,7 @@ import java.util.List;
   */
 public class PackageDescription {
 
-  private List<PackageDescriptionStanza> stanzas;
+  private final List<PackageDescriptionStanza> stanzas;
   
   PackageDescription() {
     stanzas = new ArrayList<PackageDescriptionStanza>();

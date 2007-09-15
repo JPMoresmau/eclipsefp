@@ -9,10 +9,10 @@ import antlr.TokenStreamException;
 
 public class LookaheadTokenStream implements TokenStream {
 
-	private TokenStream fInput;
-	private List<Token> fLookaheadBuffer = new LinkedList<Token>();
+	private final TokenStream fInput;
+	private final List<Token> fLookaheadBuffer = new LinkedList<Token>();
 	
-	public LookaheadTokenStream(TokenStream stream) {
+	public LookaheadTokenStream(final TokenStream stream) {
 		fInput = stream;
 	}
 
@@ -38,7 +38,7 @@ public class LookaheadTokenStream implements TokenStream {
 		return fLookaheadBuffer.get(realPos);
 	}
 
-	private void lookAhead(int numTokens) throws TokenStreamException {
+	private void lookAhead(final int numTokens) throws TokenStreamException {
 		for(int i = 0; i < numTokens; ++i) {
 			fLookaheadBuffer.add(fInput.nextToken());
 		}

@@ -18,7 +18,7 @@ public class StringDialogField extends DialogField {
 
   private String info;
   // UI components
-  private Text textField;
+  private final Text textField;
 
   public StringDialogField( final Composite parent, 
                             final String text ) {
@@ -44,11 +44,13 @@ public class StringDialogField extends DialogField {
   // interface methods of DialogField
   ///////////////////////////////////
 
+  @Override
   public void setInfo( final Object info ) {
     this.info = ( String )info;
     textField.setText( this.info );
   }
   
+  @Override
   public Object getInfo() {
     return info;
   }

@@ -23,7 +23,7 @@ public class CabalEditorContributor extends BasicTextEditorActionContributor {
 	private static final String CONTENTASSIST_ACTION 
 	  = "org.eclipse.ui.examples.recipeeditor.ContentAssist"; //$NON-NLS-1$
 	
-	private RetargetTextEditorAction action;
+	private final RetargetTextEditorAction action;
 	
 	public CabalEditorContributor() {
 		ResourceBundle rb = ResourceBundle.getBundle( CabalEditor.class.getName() );

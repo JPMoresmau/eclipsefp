@@ -20,12 +20,13 @@ import org.eclipse.swt.widgets.*;
   */
 public abstract class Tab {
 
-  private IPreferenceStore preferenceStore;
-  private Map checkBoxes = new HashMap();
-  private Map labels = new HashMap();
-  private Map textFields = new HashMap();
+  private final IPreferenceStore preferenceStore;
+  private final Map checkBoxes = new HashMap();
+  private final Map labels = new HashMap();
+  private final Map textFields = new HashMap();
   
-  private SelectionListener fCheckBoxListener = new SelectionAdapter() {
+  private final SelectionListener fCheckBoxListener = new SelectionAdapter() {
+    @Override
     public void widgetSelected( final SelectionEvent event ) {
       Button button = ( Button )event.widget;
       String key = ( String )checkBoxes.get( button );
@@ -33,7 +34,7 @@ public abstract class Tab {
     }
   };
 
-  private ModifyListener fTextFieldListener = new ModifyListener() {
+  private final ModifyListener fTextFieldListener = new ModifyListener() {
     public void modifyText( final ModifyEvent event ) {
       Text text = ( Text )event.widget;
       String key = ( String )textFields.get( text );

@@ -19,7 +19,7 @@ import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
   */
 class HaskellFoldingStructureProvider {
 
-  private HaskellEditor editor;
+  private final HaskellEditor editor;
   private IDocument document;
   private IProgressMonitor progressMonitor;
   

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
   */
 class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
-  private ColorListEntry[] colorListModel = new ColorListEntry[] {
+  private final ColorListEntry[] colorListModel = new ColorListEntry[] {
     new ColorListEntry( "Line number foreground",
                         EDITOR_LINE_NUMBER_RULER_COLOR ),
     new ColorListEntry( "Matching brackets highlight",
@@ -38,6 +38,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite control = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
@@ -69,6 +70,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     gridData.horizontalAlignment = GridData.BEGINNING;
     foregroundColorButton.setLayoutData( gridData );
     foregroundColorButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ].getColorKey();
@@ -98,6 +100,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( parent, 8 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         handleColorListSelection();
       }

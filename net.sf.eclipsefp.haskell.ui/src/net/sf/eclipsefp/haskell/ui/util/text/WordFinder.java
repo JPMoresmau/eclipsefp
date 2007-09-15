@@ -16,7 +16,7 @@ import org.eclipse.jface.text.*;
   */
 public class WordFinder {
   
-  private DocumentCharacterIterator docIter = new DocumentCharacterIterator();
+  private final DocumentCharacterIterator docIter = new DocumentCharacterIterator();
   
   public IRegion findWord( final IDocument document, final int position ) {
     IRegion result = null;

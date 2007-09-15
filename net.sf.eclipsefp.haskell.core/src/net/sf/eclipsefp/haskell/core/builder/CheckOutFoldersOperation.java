@@ -18,7 +18,7 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
   */
 public class CheckOutFoldersOperation implements IWorkspaceRunnable {
 
-  private IProject project;
+  private final IProject project;
   
   CheckOutFoldersOperation( final IProject project ) {
     this.project = project;

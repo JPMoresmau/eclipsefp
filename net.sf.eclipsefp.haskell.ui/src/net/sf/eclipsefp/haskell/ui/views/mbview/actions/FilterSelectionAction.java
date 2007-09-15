@@ -16,7 +16,7 @@ import net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowserFilter;
   */
 class FilterSelectionAction extends SelectionProviderAction {
   
-  private ModuleBrowser moduleBrowser;
+  private final ModuleBrowser moduleBrowser;
   
   public FilterSelectionAction( final ModuleBrowser moduleBrowser ) {
     super( moduleBrowser.getSelectionProvider(), "&Filters..." );
@@ -29,6 +29,7 @@ class FilterSelectionAction extends SelectionProviderAction {
   // interface methods of IAction
   ///////////////////////////////
   
+  @Override
   public void run() {
     ModuleBrowserFilter filter = moduleBrowser.getFilter();
     String msg 

@@ -7,7 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.*;
 
 import net.sf.eclipsefp.haskell.core.project.*;
@@ -26,7 +26,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
 
   private static final Object[] EMPTY = new Object[ 0 ];
   
-  private UIState uiState;
+  private final UIState uiState;
 
   ModuleBrowserContentProvider( final UIState uiState ) {
     this.uiState = uiState;

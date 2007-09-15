@@ -8,7 +8,7 @@ public class Scope {
 	
 	private IHaskellModel fModel;
 	private IModule fModule = new NullModule();
-	private List<IModule> fAvailableModules = new ArrayList<IModule>();
+	private final List<IModule> fAvailableModules = new ArrayList<IModule>();
 
 	/**
 	 * Creates an empty scope
@@ -23,7 +23,7 @@ public class Scope {
 	 * 
 	 * @param model	to be used when 
 	 */
-	public Scope(IModule module, IHaskellModel model) {
+	public Scope(final IModule module, final IHaskellModel model) {
 		fModel = model;
 		fModule = module;
 		addImportedModules(module);
@@ -33,11 +33,11 @@ public class Scope {
 		return new ArrayList<IModule>(fAvailableModules);
 	}
 
-	public void addAvailableModule(IModule mod) {
+	public void addAvailableModule(final IModule mod) {
 		fAvailableModules.add(mod);
 	}
 
-	public void addAvailableModules(List<IModule> modules) {
+	public void addAvailableModules(final List<IModule> modules) {
 		fAvailableModules.addAll(modules);
 	}
 	
@@ -50,7 +50,7 @@ public class Scope {
 		return decls;
 	}
 
-	private void addImportedModules(IModule module) {
+	private void addImportedModules(final IModule module) {
 		for (IImport imp : module.getImports()) {
 			final IModule foreignModule = fModel.getModule(imp.getImportedElement());
 			if (foreignModule != null) {

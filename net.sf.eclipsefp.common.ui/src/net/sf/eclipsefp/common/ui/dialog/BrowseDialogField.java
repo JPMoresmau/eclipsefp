@@ -19,7 +19,7 @@ abstract class BrowseDialogField extends DialogField {
   private String info;
 
   // UI components
-  private Text text;
+  private final Text text;
   private Button btnBrowse;
   
   public BrowseDialogField( final Composite parent, 
@@ -35,6 +35,7 @@ abstract class BrowseDialogField extends DialogField {
     addFileField();
   }
   
+  @Override
   public void setEnabled( final boolean enabled ) {
     super.setEnabled( enabled );
     text.setEnabled( enabled );
@@ -45,10 +46,12 @@ abstract class BrowseDialogField extends DialogField {
   // interface methods of DialogField 
   ///////////////////////////////////
 
+  @Override
   public Object getInfo() {
     return info;
   }  
    
+  @Override
   public void setInfo( final Object info ) {
     this.info = ( String )info;
     text.setText( this.info );  
@@ -90,6 +93,7 @@ abstract class BrowseDialogField extends DialogField {
     gd.widthHint = DialogUtil.convertWidthInCharsToPixels( btnBrowse, 13 );
     btnBrowse.setLayoutData( gd );
     btnBrowse.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         String selectedFile = openDialog( text.getShell() );
         if( selectedFile != null ) {

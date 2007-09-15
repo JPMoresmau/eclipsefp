@@ -52,8 +52,8 @@ class Parser implements IXMLNames {
 	// helping methods
 	// ////////////////
 
-	private static void setupCompiler(HaskellProject project,
-		Element rootElement)
+	private static void setupCompiler(final HaskellProject project,
+		final Element rootElement)
 	{
 		final NodeList list = rootElement.getElementsByTagName(COMPILER_ELEMENT);
 		if (list.getLength() > 0) {

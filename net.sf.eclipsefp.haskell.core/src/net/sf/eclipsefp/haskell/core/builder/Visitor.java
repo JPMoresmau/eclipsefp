@@ -10,10 +10,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
-import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 

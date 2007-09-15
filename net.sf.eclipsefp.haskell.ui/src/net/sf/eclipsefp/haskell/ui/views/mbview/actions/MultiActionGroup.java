@@ -61,9 +61,9 @@ public class MultiActionGroup extends ActionGroup {
   private class ActionContributionItem extends ContributionItem {
 
     private final int j;
-    private MultiActionGroup group;
-    private String text;
-    private ImageDescriptor imgDesc;
+    private final MultiActionGroup group;
+    private final String text;
+    private final ImageDescriptor imgDesc;
 
     private ActionContributionItem( final MultiActionGroup group,
                                     final String text,
@@ -76,6 +76,7 @@ public class MultiActionGroup extends ActionGroup {
       this.j = j;
     }
 
+    @Override
     public void fill( final Menu menu, final int index ) {
       MenuItem menuItem = new MenuItem( menu, SWT.CHECK, index );
       menuItem.setImage( imgDesc.createImage() );
@@ -84,6 +85,7 @@ public class MultiActionGroup extends ActionGroup {
       group.setMenuItem( menuItem, j );
       menuItem.setSelection( currentSelection == j );
       menuItem.addSelectionListener( new SelectionAdapter() {
+        @Override
         public void widgetSelected( final SelectionEvent e ) {
           if( currentSelection == j ) {
             items[ currentSelection ].setSelection( true );

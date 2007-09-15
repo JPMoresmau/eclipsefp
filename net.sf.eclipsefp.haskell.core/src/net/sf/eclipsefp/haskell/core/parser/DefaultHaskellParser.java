@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.core.parser;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
@@ -21,12 +20,12 @@ class DefaultHaskellParser implements IHaskellParser {
 
 	// interface methods of IHaskellParser
 	// ////////////////////////////////////
-	public ICompilationUnit parse(final IFile file) throws CoreException {
+	public ICompilationUnit parse(final IFile file) {
 		return createDummyCompilationUnit();
 	}
 
-	public ICompilationUnit parse(IFile file,
-		String sourceCode) throws CoreException
+	public ICompilationUnit parse(final IFile file,
+		final String sourceCode)
 	{
 		return createDummyCompilationUnit();
 	}

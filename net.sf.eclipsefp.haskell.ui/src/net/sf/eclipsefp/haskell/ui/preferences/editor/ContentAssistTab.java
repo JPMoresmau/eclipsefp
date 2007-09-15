@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
   */
 class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
-  private ColorListEntry[] colorListModel = new ColorListEntry[] {
+  private final ColorListEntry[] colorListModel = new ColorListEntry[] {
     new ColorListEntry( "Completion proposal background",
                         CA_PROPOSALS_BACKGROUND ),
     new ColorListEntry( "Completion proposal foreground",
@@ -37,6 +37,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
   // interface methods of Tab
   ///////////////////////////
 
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
@@ -68,6 +69,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
                                                                    8 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         handleColorListSelection();
       }
@@ -81,6 +83,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     gridData.horizontalAlignment = GridData.BEGINNING;
     colorButton.setLayoutData( gridData );
     colorButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         int i = colorList.getSelectionIndex();
         String key = colorListModel[ i ].getColorKey();
@@ -135,6 +138,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     // TODO change this to the generic dialogfields mechanism
     Button autoActButton = addBooleanField( parent, aaText, aaKey, 0 );
     autoActButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         updateAutoactivationControls();
       }

@@ -64,6 +64,7 @@ class SelectionPage extends HaddockExportWizardPage {
     String labelText = "Haddock executable";
     ExecutableDialogField dlgField = new ExecutableDialogField( composite, 
                                                                 labelText ) {
+      @Override
       protected String createDisplayContent( final String info ) {
         return HaddockUtil.queryHaddockExecutable( info );
       }

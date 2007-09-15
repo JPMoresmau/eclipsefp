@@ -8,6 +8,8 @@ package net.sf.eclipsefp.haskell.core;
   */
 public class HaskellCoreException extends Exception {
 
+  private static final long serialVersionUID = -721302438783076582L;
+
   /** <p>constructs a new HaskellCoreException with the specified 
     * message.</p> */
   public HaskellCoreException( final String message ) {

@@ -16,9 +16,9 @@ import net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator;
   */
 public class SourceFileGenerator {
 
-  private CodeGenerator fCodeGenerator;
+  private final CodeGenerator fCodeGenerator;
   
-  public SourceFileGenerator( CodeGenerator codeGenerator ) {
+  public SourceFileGenerator( final CodeGenerator codeGenerator ) {
     fCodeGenerator = codeGenerator;
   }
 
@@ -99,7 +99,7 @@ public class SourceFileGenerator {
     return ( path == null ) ? new String[ 0 ] : path.segments();
   }
 
-  private static String createFileName(EHaskellCommentStyle style, final String moduleName ) {
+  private static String createFileName(final EHaskellCommentStyle style, final String moduleName ) {
     return moduleName + "." + style.getFileExtension();
   }
 }

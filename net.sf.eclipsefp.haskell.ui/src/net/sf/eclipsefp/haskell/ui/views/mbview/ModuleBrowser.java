@@ -27,7 +27,7 @@ public class ModuleBrowser extends ViewPart implements IMenuListener {
   private TreeViewer viewer;
   private UIState uiState;
   private Refresher refresher;
-  private ModuleBrowserFilter filter = new ModuleBrowserFilter();
+  private final ModuleBrowserFilter filter = new ModuleBrowserFilter();
   private ModuleBrowserGroup actionGroup;
   private Menu contextMenu;
   
@@ -50,6 +50,7 @@ public class ModuleBrowser extends ViewPart implements IMenuListener {
   // overrriden methods of IViewPart
   //////////////////////////////////
   
+  @Override
   public void init( final IViewSite site, 
                     final IMemento memento ) throws PartInitException {
     super.init( site, memento );
@@ -57,10 +58,12 @@ public class ModuleBrowser extends ViewPart implements IMenuListener {
     this.refresher = new Refresher( this );
   }
   
+  @Override
   public void saveState( final IMemento memento ) {
     uiState.saveState( memento );
   }
   
+  @Override
   public void dispose() {
     refresher.dispose();
     super.dispose();
@@ -70,6 +73,7 @@ public class ModuleBrowser extends ViewPart implements IMenuListener {
   // interface methods of ViewPart
   ////////////////////////////////
   
+  @Override
   public void createPartControl( final Composite parent ) {
     viewer = new TreeViewer( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
     viewer.setUseHashlookup( true );
@@ -100,6 +104,7 @@ public class ModuleBrowser extends ViewPart implements IMenuListener {
     hookDoubleClickAction();
   }
 
+  @Override
   public void setFocus() {
     if( viewer != null ) {
       viewer.getControl().setFocus();
@@ -125,6 +130,7 @@ public class ModuleBrowser extends ViewPart implements IMenuListener {
     return uiState;
   }
 
+  @Override
   public Object getAdapter( final Class key ) {
     Object result = null;
     if( key.equals( ISelectionProvider.class ) ) {

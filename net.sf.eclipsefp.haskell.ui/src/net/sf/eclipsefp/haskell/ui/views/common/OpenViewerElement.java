@@ -18,7 +18,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
   */
 public class OpenViewerElement extends Action {
 
-  private Object element;
+  private final Object element;
 
   public OpenViewerElement( final DoubleClickEvent event ) {
     Viewer viewer = event.getViewer();
@@ -30,6 +30,7 @@ public class OpenViewerElement extends Action {
   // interface methods of IAction
   ///////////////////////////////
 
+  @Override
   public void run() {
     if( element instanceof IHaskellLanguageElement ) {  
       HaskellUIPlugin.showInEditor( ( IHaskellLanguageElement )element );

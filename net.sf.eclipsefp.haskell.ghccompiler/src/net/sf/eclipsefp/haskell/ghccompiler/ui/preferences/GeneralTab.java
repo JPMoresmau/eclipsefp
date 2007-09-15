@@ -37,6 +37,7 @@ public class GeneralTab extends Tab implements IGhcParameters,
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout() );
@@ -78,6 +79,7 @@ public class GeneralTab extends Tab implements IGhcParameters,
     text.setEnabled( selected );
     
     cbActive.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         boolean selected = cbActive.getSelection();
         text.setEnabled( selected );
@@ -90,6 +92,7 @@ public class GeneralTab extends Tab implements IGhcParameters,
     String labelText = "GHC executable";
     ExecutableDialogField dlgField = new ExecutableDialogField( parent, 
                                                                 labelText ) {
+      @Override
       protected String createDisplayContent( final String info ) {
         return Util.queryGHCExecutable( info );
       }

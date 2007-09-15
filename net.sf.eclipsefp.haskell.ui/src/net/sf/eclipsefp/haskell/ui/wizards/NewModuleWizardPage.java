@@ -35,7 +35,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
   private IStatus folderStatus;
   private IStatus nameStatus;
   
-  private ModuleCreationInfo currentInfo;
+  private final ModuleCreationInfo currentInfo;
   private Button chkUseLiterate;
   private Group grpLiterate;
   private Button rdoLiterate;
@@ -129,6 +129,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     } 
   }   
   
+  @Override
   public void setVisible( final boolean visible ) {
     super.setVisible( visible );
     if( visible ) {
@@ -157,12 +158,12 @@ public class NewModuleWizardPage extends StatusWizardPage {
     Dialog.applyDialogFont( composite );
   }
 
-  private void createLiterateControls( Composite composite ) {
+  private void createLiterateControls( final Composite composite ) {
     createUseLiterateCheckBox( composite );
     createLiterateBlock(composite);
   }
 
-  private void createUseLiterateCheckBox( Composite composite ) {
+  private void createUseLiterateCheckBox( final Composite composite ) {
     GridData gd = new GridData();
     gd.horizontalAlignment = GridData.FILL;
     gd.grabExcessHorizontalSpace = false;
@@ -173,24 +174,24 @@ public class NewModuleWizardPage extends StatusWizardPage {
     
     chkUseLiterate.addSelectionListener(new SelectionListener() {
 
-      public void widgetSelected( SelectionEvent e ) {
+      public void widgetSelected( final SelectionEvent e ) {
         enableLiterateGroup(chkUseLiterate.getSelection());
       }
 
-      public void widgetDefaultSelected( SelectionEvent e ) {
+      public void widgetDefaultSelected( final SelectionEvent e ) {
         widgetSelected( e );
       }
       
     });
   }
 
-  private void createLiterateBlock( Composite composite ) {
+  private void createLiterateBlock( final Composite composite ) {
     createLiterateGroup( composite );  
     createLiterateRadio();
     createTexStyleRadio();
   }
 
-  private void createLiterateGroup( Composite composite ) {
+  private void createLiterateGroup( final Composite composite ) {
     grpLiterate = new Group(composite, SWT.NONE);
     grpLiterate.setText("Literate Haskell");
     grpLiterate.setEnabled( false );
@@ -394,7 +395,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
   // inner classes
   ////////////////
 
-  private void enableLiterateGroup(boolean enabled) {
+  private void enableLiterateGroup(final boolean enabled) {
     grpLiterate.setEnabled(enabled);
     for(Control child : grpLiterate.getChildren()) {
       child.setEnabled( enabled );

@@ -56,7 +56,7 @@ public class ProjectCreationOperation implements IRunnableWithProgress {
 		}
 	}
 
-	public void setProjectName(String name) {
+	public void setProjectName(final String name) {
 		fProjectName = name;
 	}
 	
@@ -64,7 +64,7 @@ public class ProjectCreationOperation implements IRunnableWithProgress {
 		return fProjectName;
 	}
 
-	public void setProjectLocation(String location) {
+	public void setProjectLocation(final String location) {
 		fLocation = location;
 	}
 

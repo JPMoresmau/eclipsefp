@@ -32,6 +32,7 @@ public class GHCConfiguratorPage implements IConfiguratorPage,
     String labelText = "GHC executable";
     ExecutableDialogField dlgField = new ExecutableDialogField( parent, 
                                                                 labelText ) {
+      @Override
       protected String createDisplayContent( final String info ) {
         return Util.queryGHCExecutable( info );
       }

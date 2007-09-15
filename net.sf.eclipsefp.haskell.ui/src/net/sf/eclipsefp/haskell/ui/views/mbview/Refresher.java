@@ -18,7 +18,7 @@ import net.sf.eclipsefp.haskell.core.project.IProjectPropertiesListener;
 class Refresher implements IResourceChangeListener, IProjectPropertiesListener {
 
   private TreeViewer viewer;
-  private ModuleBrowser moduleBrowser;
+  private final ModuleBrowser moduleBrowser;
 
   Refresher( final ModuleBrowser moduleBrowser ) {
     this.moduleBrowser = moduleBrowser;

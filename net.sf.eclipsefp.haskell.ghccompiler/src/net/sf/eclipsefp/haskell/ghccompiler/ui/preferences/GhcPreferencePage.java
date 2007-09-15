@@ -33,6 +33,7 @@ public class GhcPreferencePage extends PreferencePage
   // interface methods of PreferencePage
   //////////////////////////////////////
   
+  @Override
   protected Control createContents( final Composite parent ) {
     TabFolder folder = new TabFolder( parent, SWT.NONE );
 
@@ -55,6 +56,7 @@ public class GhcPreferencePage extends PreferencePage
     return folder;
   }
 
+  @Override
   public void dispose() {
     if( overlayStore != null ) {
       overlayStore.stopListening();
@@ -63,12 +65,14 @@ public class GhcPreferencePage extends PreferencePage
     super.dispose();
   }
 
+  @Override
   public boolean performOk() {
     overlayStore.propagate();
     GhcCompilerPlugin.getDefault().savePluginPreferences();
     return true;
   }
 
+  @Override
   protected void performDefaults() {
     overlayStore.loadDefaults();
     super.performDefaults();

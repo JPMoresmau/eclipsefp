@@ -9,13 +9,13 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 
 public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 
-	private Preferences fPreferences;
+	private final Preferences fPreferences;
 
 	public HaskellProjectCreationOperation() {
 		this(HaskellCorePlugin.getDefault().getPluginPreferences());
 	}
 
-	public HaskellProjectCreationOperation(Preferences prefs) {
+	public HaskellProjectCreationOperation(final Preferences prefs) {
 		fPreferences = prefs;
 	}
 

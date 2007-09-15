@@ -22,7 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class GhciLaunchOperationDelegate 
        implements IInteractiveLaunchOperationDelegate {
   
-  private CompilerParams compilerParams = new CompilerParams();
+  private final CompilerParams compilerParams = new CompilerParams();
   
   // interface methods of IInteractiveLaunchOperationDelegate
   ///////////////////////////////////////////////////////////

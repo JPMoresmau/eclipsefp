@@ -19,6 +19,7 @@ public class DirectoryDialogField extends BrowseDialogField {
   // interface methods of BrowseDialogField
   /////////////////////////////////////////
   
+  @Override
   String openDialog( final Shell shell ) {
     DirectoryDialog dialog = new DirectoryDialog( shell );
     dialog.setText( "Select a directory" );

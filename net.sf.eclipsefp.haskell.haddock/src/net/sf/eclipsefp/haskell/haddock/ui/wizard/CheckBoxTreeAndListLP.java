@@ -24,6 +24,7 @@ class CheckBoxTreeAndListLP extends DialogLabelProvider {
   // interface methods of LabelProvider
   /////////////////////////////////////
 
+  @Override
   public Image getImage( final Object element ) {
     Image result = super.getImage( element );
     if( element instanceof IProject ) {

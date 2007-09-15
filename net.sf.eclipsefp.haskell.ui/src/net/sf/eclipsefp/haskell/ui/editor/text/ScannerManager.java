@@ -29,13 +29,13 @@ public class ScannerManager implements IEditorPreferenceNames {
   private HaskellCommentScanner commentScanner;
   private HaskellCommentScanner literateCommentScanner;
   
-  private HashMap propertyChangeHandlers;
+  private final HashMap propertyChangeHandlers;
   private IPropertyChangeListener propertyChangeListener;  
 
   private TextAttribute commentAttribute;
   private TextAttribute literateCommentAttribute;
   
-  private Map tokens = new Hashtable(); 
+  private final Map tokens = new Hashtable(); 
   
   private ScannerManager() {
     // prevent instantiation
@@ -161,6 +161,7 @@ public class ScannerManager implements IEditorPreferenceNames {
                                                                boldKey );
     final Token result = new Token( textAtt );
     PropertyChangeHandler colorHandler = new PropertyChangeHandler() {
+      @Override
       void handleChange( final PropertyChangeEvent event ) {
         handleColorChange( result, event.getProperty() );
       }
@@ -168,6 +169,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     putHandler( colorKey, colorHandler );
 
     PropertyChangeHandler boldHandler = new PropertyChangeHandler() {
+      @Override
       void handleChange( final PropertyChangeEvent event ) {
         handleBoldChange( result, event );
       }

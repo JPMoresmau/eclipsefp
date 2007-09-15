@@ -10,17 +10,17 @@ import net.sf.eclipsefp.common.core.util.StreamMultiplexer;
 
 public class ProcessRunner implements IProcessRunner {
 
-	private IProcessFactory fProcessFactory;
+	private final IProcessFactory fProcessFactory;
 
 	public ProcessRunner() {
 		this(new ProcessFactory());
 	}
 	
-	public ProcessRunner(IProcessFactory factory) {
+	public ProcessRunner(final IProcessFactory factory) {
 		fProcessFactory = factory;
 	}
 
-	public String execute(File workingDir, Writer out, String... args) {
+	public String execute(final File workingDir, final Writer out, final String... args) {
 		List<Exception> excList = new ArrayList<Exception>();
 		StringWriter returnedOut = new StringWriter();
 		try {

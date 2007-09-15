@@ -16,11 +16,13 @@ class HaskellLanguageElementSorter extends ViewerSorter {
   // interface methods of ViewerSorter
   ////////////////////////////////////
   
+  @Override
   public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
     return compare( ( IHaskellLanguageElement )e1, 
                     ( IHaskellLanguageElement )e2 );
   }
 
+  @Override
   public boolean isSorterProperty( final Object element, final String prop ) {
     return true;
   }

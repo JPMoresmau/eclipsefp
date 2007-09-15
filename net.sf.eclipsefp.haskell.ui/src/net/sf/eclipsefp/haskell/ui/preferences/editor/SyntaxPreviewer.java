@@ -48,6 +48,7 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
     setDocument( document );
   }
   
+  @Override
   protected void handleDispose() {
     if( store != null ) {
       if( propertyChangeListener != null ) {

@@ -49,7 +49,7 @@ public class ModuleCreationInfo {
     return fCommentStyle;
   }
   
-  public void setCommentStyle( EHaskellCommentStyle style ) {
+  public void setCommentStyle( final EHaskellCommentStyle style ) {
     fCommentStyle = style;
   }
 }

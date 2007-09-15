@@ -10,7 +10,7 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.dialog.dialogfields;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -25,7 +25,7 @@ public class Separator extends DialogField {
 
   private Label fSeparator;
 
-  private int fStyle;
+  private final int fStyle;
 
   public Separator() {
     this(SWT.NONE);
@@ -35,7 +35,7 @@ public class Separator extends DialogField {
    * @param style
    *          of the separator. See <code>Label</code> for possible styles.
    */
-  public Separator(int style) {
+  public Separator(final int style) {
     super();
     fStyle = style;
   }
@@ -48,7 +48,7 @@ public class Separator extends DialogField {
    * @param height
    *          The height of the separator
    */
-  public Control[] doFillIntoGrid(Composite parent, int nColumns, int height) {
+  public Control[] doFillIntoGrid(final Composite parent, final int nColumns, final int height) {
     Assert.isTrue(nColumns >= getNumberOfControls(),
         "given number of columns is too small");
 
@@ -61,18 +61,20 @@ public class Separator extends DialogField {
   /*
    * @see DialogField#doFillIntoGrid
    */
-  public Control[] doFillIntoGrid(Composite parent, int nColumns) {
+  @Override
+  public Control[] doFillIntoGrid(final Composite parent, final int nColumns) {
     return doFillIntoGrid(parent, nColumns, 4);
   }
 
   /*
    * @see DialogField#getNumberOfControls
    */
+  @Override
   public int getNumberOfControls() {
     return 1;
   }
 
-  protected static GridData gridDataForSeperator(int span, int height) {
+  protected static GridData gridDataForSeperator(final int span, final int height) {
     GridData gd = new GridData();
     gd.horizontalAlignment = GridData.FILL;
     gd.verticalAlignment = GridData.BEGINNING;
@@ -90,7 +92,7 @@ public class Separator extends DialogField {
    *          The parent composite or <code>null</code> if the widget has
    *          already been created.
    */
-  public Control getSeparator(Composite parent) {
+  public Control getSeparator(final Composite parent) {
     if (fSeparator == null) {
       Assert.isNotNull(parent,
           "uncreated control requested with composite null");

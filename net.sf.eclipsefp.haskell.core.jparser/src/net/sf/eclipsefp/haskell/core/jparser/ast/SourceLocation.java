@@ -11,7 +11,7 @@ public class SourceLocation implements ISourceLocation {
 	public SourceLocation() {
 	}
 
-	public SourceLocation(int line, int column) {
+	public SourceLocation(final int line, final int column) {
 		setPoint(line, column);
 	}
 
@@ -35,12 +35,12 @@ public class SourceLocation implements ISourceLocation {
 	}
 	
 	
-    public void setPoint(int line, int column) {
+    public void setPoint(final int line, final int column) {
 		fLine = line;
 		fColumn = column;
 	}
 
-	public void setOffset(long offset) {
+	public void setOffset(final long offset) {
 		fOffset = offset;
 	}
 
@@ -51,7 +51,7 @@ public class SourceLocation implements ISourceLocation {
 	// helping methods
 	//////////////////
 	
-	private boolean isEqual( ISourceLocation anotherLocation ) {
+	private boolean isEqual( final ISourceLocation anotherLocation ) {
 		return fLine == anotherLocation.getLine()
 		    && fColumn == anotherLocation.getColumn();
 	}

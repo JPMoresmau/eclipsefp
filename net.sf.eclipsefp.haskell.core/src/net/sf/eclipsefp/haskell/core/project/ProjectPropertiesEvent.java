@@ -9,8 +9,8 @@ package net.sf.eclipsefp.haskell.core.project;
   */
 class ProjectPropertiesEvent implements IProjectPropertiesEvent {
 
-  private IHaskellProject source;
-  private String propertyName;
+  private final IHaskellProject source;
+  private final String propertyName;
   private Object oldValue;
   private Object newValue;
 

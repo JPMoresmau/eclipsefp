@@ -1,7 +1,8 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.common.ui;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 

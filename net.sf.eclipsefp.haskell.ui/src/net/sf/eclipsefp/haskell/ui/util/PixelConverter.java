@@ -16,7 +16,7 @@ public class PixelConverter {
   // the same thing is in org.eclipse.pde.internal.ui.util
   // is there something like this in public API in 3.0??
   
-  private FontMetrics fFontMetrics;
+  private final FontMetrics fFontMetrics;
   
   public PixelConverter( final Control control ) {
     GC gc = new GC( control );

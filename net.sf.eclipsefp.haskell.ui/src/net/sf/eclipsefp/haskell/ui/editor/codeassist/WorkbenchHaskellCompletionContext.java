@@ -20,22 +20,22 @@ import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 
 public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext {
 
-	public WorkbenchHaskellCompletionContext(ITextViewer viewer, int offset) throws CoreException {
+	public WorkbenchHaskellCompletionContext(final ITextViewer viewer, final int offset) throws CoreException {
 		this(HaskellCorePlugin.getDefaultModelManager(), viewer, offset);
 	}
 
-	public WorkbenchHaskellCompletionContext(IHaskellModelManager manager, ITextViewer viewer, int offset) throws CoreException {
+	public WorkbenchHaskellCompletionContext(final IHaskellModelManager manager, final ITextViewer viewer, final int offset) throws CoreException {
 		this(manager, ParserManager.getInstance().getParser(), viewer, offset);
 	}
 
-	public WorkbenchHaskellCompletionContext(IHaskellParser parser, ITextViewer viewer, int offset) throws CoreException {
+	public WorkbenchHaskellCompletionContext(final IHaskellParser parser, final ITextViewer viewer, final int offset) throws CoreException {
 		this(HaskellCorePlugin.getDefaultModelManager(), parser, viewer, offset);
 	}
 	
-	protected WorkbenchHaskellCompletionContext(IHaskellModelManager manager,
-												IHaskellParser parser,
-												ITextViewer viewer,
-												int offset) throws CoreException
+	protected WorkbenchHaskellCompletionContext(final IHaskellModelManager manager,
+												final IHaskellParser parser,
+												final ITextViewer viewer,
+												final int offset) throws CoreException
 	{
 		super(parser.parse(getFile(viewer), viewer.getDocument().get()),
 				manager.getModelFor(getFile(viewer).getProject()),

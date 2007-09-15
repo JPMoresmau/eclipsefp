@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
@@ -19,7 +19,7 @@ import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
   */
 public class ModuleCreationOperation implements IRunnableWithProgress {
 
-  private ModuleCreationInfo info;
+  private final ModuleCreationInfo info;
   // the file that is finally generated in this operation
   private IFile generatedFile;
 

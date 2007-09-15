@@ -16,11 +16,13 @@ class ImportLibrariesLabelProvider extends LabelProvider {
   // interface methods of LabelProvider
   /////////////////////////////////////
   
+  @Override
   public String getText( final Object element ) {
     IImportLibrary library = ( IImportLibrary )element;
     return library.getPath().toOSString();
   }
 
+  @Override
   public Image getImage( final Object element ) {
     String key = ISharedImages.IMG_OBJ_FOLDER;
     return PlatformUI.getWorkbench().getSharedImages().getImage( key );

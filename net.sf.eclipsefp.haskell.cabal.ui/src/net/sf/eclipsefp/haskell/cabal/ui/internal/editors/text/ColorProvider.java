@@ -31,8 +31,8 @@ public class ColorProvider {
   /** the singleton instance of ColorProvider. */
   private static ColorProvider _instance;
 
-  private Map<RGB, Color> colors;
-  private Map<String, RGB> rgbs;
+  private final Map<RGB, Color> colors;
+  private final Map<String, RGB> rgbs;
 
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */

@@ -21,7 +21,7 @@ public class NullCompilationUnit implements ICompilationUnit {
 		return new IModule[0];
 	}
 
-	public ISourceLocation getNextLocation(ISourceLocation srcLoc) {
+	public ISourceLocation getNextLocation(final ISourceLocation srcLoc) {
 		return null;
 	}
 
@@ -33,7 +33,7 @@ public class NullCompilationUnit implements ICompilationUnit {
 		return null;
 	}
 
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(final Class adapter) {
 		return null;
 	}
 

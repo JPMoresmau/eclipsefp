@@ -21,10 +21,12 @@ public class DialogLabelProvider extends LabelProvider {
   // interface methods of ILabelProvider
   //////////////////////////////////////
   
+  @Override
   public String getText( final Object element ) {
     return ResourceUtil.findResource( element ).getName();
   }
     
+  @Override
   public Image getImage( final Object element ) {
     Image result = null; 
     if( element instanceof IHaskellProject ) {

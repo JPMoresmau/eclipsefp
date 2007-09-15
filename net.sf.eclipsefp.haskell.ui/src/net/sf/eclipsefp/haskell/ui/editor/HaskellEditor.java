@@ -3,27 +3,35 @@ package net.sf.eclipsefp.haskell.ui.editor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.projection.ProjectionSupport;
-import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.texteditor.*;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import net.sf.eclipsefp.haskell.core.halamo.*;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.views.outline.HaskellOutlinePage;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
+import org.eclipse.ui.texteditor.TextOperationAction;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /** <p>The main editor class for the Haskell editor.</p>
   * 
@@ -59,6 +67,7 @@ public class HaskellEditor extends TextEditor
   // interface methods of TextEditor
   //////////////////////////////////
   
+  @Override
   protected void initializeEditor() {
     super.initializeEditor();
     setSourceViewerConfiguration( new HaskellConfiguration( this ) );
@@ -68,11 +77,13 @@ public class HaskellEditor extends TextEditor
   }
 
   
+  @Override
   protected boolean affectsTextPresentation( final PropertyChangeEvent evt ) {
     String prop = evt.getProperty();
     return super.affectsTextPresentation( evt ) || isAffectingProperty( prop );
   }
   
+  @Override
   protected void configureSourceViewerDecorationSupport( 
       final SourceViewerDecorationSupport support ) {
     super.configureSourceViewerDecorationSupport( support );
@@ -83,6 +94,7 @@ public class HaskellEditor extends TextEditor
     support.setSymbolicFontName( getFontPropertyPreferenceKey() );
   }
   
+  @Override
   public void editorContextMenuAboutToShow( final IMenuManager menu ) {
     super.editorContextMenuAboutToShow( menu );
     if (isEditable()) {
@@ -92,6 +104,7 @@ public class HaskellEditor extends TextEditor
     menu.add( new Separator( "net.sf.eclipsefp.haskell.ui.refactoring.menu" ) );
   }
   
+  @Override
   protected void createActions() {
     super.createActions();
 
@@ -110,6 +123,7 @@ public class HaskellEditor extends TextEditor
                         IActionDefinitionIds.UNCOMMENT );
   }
   
+  @Override
   protected ISourceViewer createSourceViewer( final Composite parent, 
                                               final IVerticalRuler ruler, 
                                               final int styles ) {
@@ -127,6 +141,7 @@ public class HaskellEditor extends TextEditor
     return viewer;
   }
   
+  @Override
   public void createPartControl( final Composite parent ) {
     super.createPartControl( parent );
     ProjectionViewer projectionViewer = ( ProjectionViewer )getSourceViewer();
@@ -138,6 +153,7 @@ public class HaskellEditor extends TextEditor
   }
 
   /** <p>if we are asked for a ContentOutlinePage, we show what we have.</p> */ 
+  @Override
   public Object getAdapter( final Class required ) {
     Object result = null;
     // adapt the displayed source file to the outline viewer
@@ -163,6 +179,7 @@ public class HaskellEditor extends TextEditor
   // needed because we have an attached outline page
   /////////////////////////////////////////////////////////////////
   
+  @Override
   public void dispose() {
     if( outlinePage != null ) {
       outlinePage.setInput( null );
@@ -170,6 +187,7 @@ public class HaskellEditor extends TextEditor
     super.dispose();
   }
   
+  @Override
   public void doRevertToSaved() {
     super.doRevertToSaved();
     if( outlinePage != null ) {
@@ -177,6 +195,7 @@ public class HaskellEditor extends TextEditor
     }
   }
   
+  @Override
   public void doSave( final IProgressMonitor monitor ) {
     super.doSave( monitor );
     if( outlinePage != null ) {
@@ -184,6 +203,7 @@ public class HaskellEditor extends TextEditor
     }
   }
   
+  @Override
   public void doSaveAs() {
     super.doSaveAs();
     if( outlinePage != null ) {
@@ -191,6 +211,7 @@ public class HaskellEditor extends TextEditor
     }
   }
   
+  @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
     super.doSetInput( input );
     if( outlinePage != null ) {

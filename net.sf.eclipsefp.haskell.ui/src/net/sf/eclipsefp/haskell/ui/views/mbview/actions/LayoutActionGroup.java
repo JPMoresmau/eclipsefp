@@ -27,6 +27,7 @@ class LayoutActionGroup extends MultiActionGroup {
   // interface methods of IActionGroup
   ////////////////////////////////////
   
+  @Override
   public void fillActionBars( final IActionBars actionBars ) {
     super.fillActionBars( actionBars );
     contributeToViewMenu( actionBars.getMenuManager() );
@@ -87,9 +88,9 @@ class LayoutActionGroup extends MultiActionGroup {
   /** action for toggling the flat/hierarchical layout */
   private class LayoutAction extends Action implements IAction {
   
-    private IUIState uiState;
+    private final IUIState uiState;
     /** whether this actions switches to flat layout or not. */
-    private boolean makeFlat;
+    private final boolean makeFlat;
   
     public LayoutAction( final IUIState uiState, final boolean makeFlat ) {
       this.uiState = uiState;
@@ -100,6 +101,7 @@ class LayoutActionGroup extends MultiActionGroup {
     // interface methods of IAction
     ///////////////////////////////
     
+    @Override
     public void run() {
       if( uiState.isFlatLayout() != makeFlat ) {
         uiState.toggleLayout();

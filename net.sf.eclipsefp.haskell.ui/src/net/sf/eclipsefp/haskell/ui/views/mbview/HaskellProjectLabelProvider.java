@@ -23,7 +23,7 @@ import net.sf.eclipsefp.haskell.ui.views.common.HaskellLabelProvider;
 public class HaskellProjectLabelProvider extends HaskellLabelProvider
                                          implements IImageNames {
 
-  private UIState uiState;
+  private final UIState uiState;
 
   HaskellProjectLabelProvider( final UIState uiState ) {
     this.uiState = uiState;
@@ -33,6 +33,7 @@ public class HaskellProjectLabelProvider extends HaskellLabelProvider
   // interface methods
   ////////////////////
   
+  @Override
   public String getText( final Object element ) {
     String result;
     if( element instanceof IHaskellProject ) {
@@ -47,6 +48,7 @@ public class HaskellProjectLabelProvider extends HaskellLabelProvider
     return result;
   }
   
+  @Override
   public Image getImage( final Object element ) {
     Image result = null;
     if( element instanceof IHaskellLanguageElement ) {

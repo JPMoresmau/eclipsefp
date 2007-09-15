@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class ProcessFactory implements IProcessFactory {
 
-	public Process startProcess(File workingDir, String[] commandLine) throws IOException {
+	public Process startProcess(final File workingDir, final String[] commandLine) throws IOException {
 		return Runtime.getRuntime().exec(commandLine, null, workingDir);
 	}
 

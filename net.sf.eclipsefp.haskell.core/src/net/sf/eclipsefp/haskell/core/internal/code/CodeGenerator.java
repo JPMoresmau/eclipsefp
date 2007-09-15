@@ -13,7 +13,7 @@ public class CodeGenerator {
   // TODO honor code template for generating this
   public String createModuleContent( final String[] folderNames,
                                      final String name,
-                                     EHaskellCommentStyle style )
+                                     final EHaskellCommentStyle style )
   {
     StringBuffer sb = new StringBuffer();
     sb.append( getLineDelimiter() );
@@ -31,7 +31,7 @@ public class CodeGenerator {
   }
 
 
-  private static String getSuffixFor( EHaskellCommentStyle style ) {
+  private static String getSuffixFor( final EHaskellCommentStyle style ) {
     if (EHaskellCommentStyle.TEX == style) {
       return "\\end{code}";
     }
@@ -40,7 +40,7 @@ public class CodeGenerator {
   }
 
 
-  private static String getPrefixFor(EHaskellCommentStyle style) {
+  private static String getPrefixFor(final EHaskellCommentStyle style) {
     if (EHaskellCommentStyle.LITERATE == style) {
       return "> ";
     } else if (EHaskellCommentStyle.TEX == style) {

@@ -29,9 +29,9 @@ public class ConsoleCompilingReporter implements ICompilerListener {
 
 	private OutputStreamWriter fOutputWriter;
 	private IOConsole fConsole;
-	private IConsoleCleaner fCleaner;
+	private final IConsoleCleaner fCleaner;
 
-	public ConsoleCompilingReporter(IConsoleCleaner cleaner) {
+	public ConsoleCompilingReporter(final IConsoleCleaner cleaner) {
 		fCleaner = cleaner;
 		createIOStream();
 	}

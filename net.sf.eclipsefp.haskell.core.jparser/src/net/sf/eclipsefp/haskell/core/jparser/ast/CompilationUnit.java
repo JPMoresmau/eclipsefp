@@ -9,11 +9,11 @@ import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 
 public class CompilationUnit implements ICompilationUnit {
 
-	private IModule fModule;
+	private final IModule fModule;
 	private IFile fFile;
 	private String fOriginalSourceCode;
 
-	public CompilationUnit(IModule module) {
+	public CompilationUnit(final IModule module) {
 		fModule = module;
 	}
 
@@ -48,7 +48,7 @@ public class CompilationUnit implements ICompilationUnit {
 	}
 	
 	private <T extends IHaskellLanguageElement> ISourceLocation
-		searchNextLocation(T[] elems, final ISourceLocation srcLoc)
+		searchNextLocation(final T[] elems, final ISourceLocation srcLoc)
 	{
 		for (T elem : elems) {
 			final ISourceLocation expLoc = elem.getSourceLocation();
@@ -59,14 +59,14 @@ public class CompilationUnit implements ICompilationUnit {
 		return null;
 	}
 
-	private boolean isEmptyUntitledModule(IModule module) {
+	private boolean isEmptyUntitledModule(final IModule module) {
 		return "".equals(module.getName())
 		    && 0 == module.getDeclarations().length
 		    && 0 == module.getExportSpecifications().length
 		    && 0 == module.getImports().length;
 	}
 
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(final Class adapter) {
 		// TODO relax the need for implementing the IAdaptable interface
 		// or provide a real implementation for this method
 		return null;
@@ -76,7 +76,7 @@ public class CompilationUnit implements ICompilationUnit {
 		return fFile;
 	}
 
-	public void setUnderlyingResource(IFile file) {
+	public void setUnderlyingResource(final IFile file) {
 		fFile = file;
 	}
 
@@ -84,7 +84,7 @@ public class CompilationUnit implements ICompilationUnit {
 		return fOriginalSourceCode;
 	}
 	
-	public void setOriginalSourceCode(String code) {
+	public void setOriginalSourceCode(final String code) {
 		fOriginalSourceCode = code;
 	}
 	  

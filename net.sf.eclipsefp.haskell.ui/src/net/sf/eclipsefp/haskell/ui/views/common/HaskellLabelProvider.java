@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.util.IImageNames;
   */
 public class HaskellLabelProvider extends LabelProvider implements IImageNames {
 
+  @Override
   public String getText( final Object element ) {
     String result;
     if( element instanceof IImport ) {
@@ -39,6 +40,7 @@ public class HaskellLabelProvider extends LabelProvider implements IImageNames {
     return result;
   }
   
+  @Override
   public Image getImage( final Object element ) {
     Image result = null;
     if( element instanceof IModule ) {

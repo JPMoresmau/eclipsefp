@@ -19,7 +19,7 @@ import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 
 public class JavaParserBridge implements IHaskellParser {
 
-	public ICompilationUnit parse(IFile file) throws CoreException {
+	public ICompilationUnit parse(final IFile file) throws CoreException {
 		String sourceCode = "";
 		Reader originalInput = new InputStreamReader(file.getContents()); 
 		try {
@@ -37,7 +37,7 @@ public class JavaParserBridge implements IHaskellParser {
 		return parse(file, sourceCode);
 	}
 
-	public ICompilationUnit parse(IFile file, String sourceCode) throws CoreException {
+	public ICompilationUnit parse(final IFile file, final String sourceCode) throws CoreException {
 		Reader input;
 		if (isLiterate(file)) {
 			input = new LiterateHaskellReader(
@@ -51,7 +51,7 @@ public class JavaParserBridge implements IHaskellParser {
 		return result;
 	}
 
-	private CompilationUnit parse(Reader input, String sourceCode, String fileName) throws CoreException {
+	private CompilationUnit parse(final Reader input, final String sourceCode, final String fileName) throws CoreException {
 		HaskellParser parser = new HaskellParser(input);
 		CompilationUnit result = null;
 		try {
@@ -71,7 +71,7 @@ public class JavaParserBridge implements IHaskellParser {
 		return result;
 	}
 
-	private String readFully(Reader input) throws IOException {
+	private String readFully(final Reader input) throws IOException {
 		StringBuffer buffer = new StringBuffer(1024);
 		final int CBUF_SIZE = 256;
 		char[] cbuf = new char[CBUF_SIZE];
@@ -86,7 +86,7 @@ public class JavaParserBridge implements IHaskellParser {
 		return buffer.toString();
 	}
 
-	private void raiseCoreException(Throwable cause, String msg)
+	private void raiseCoreException(final Throwable cause, final String msg)
 		throws CoreException
 	{
 		throw new CoreException(
@@ -94,7 +94,7 @@ public class JavaParserBridge implements IHaskellParser {
 						   -1, msg, cause ));
 	}
 
-	private boolean isLiterate(IFile file) {
+	private boolean isLiterate(final IFile file) {
 		final String fileName = file.getName();
 		return fileName != null && fileName.endsWith("lhs");
 	}

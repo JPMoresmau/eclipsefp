@@ -18,7 +18,7 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
 
   private final CabalEditor editor;
   private IDocument document;
-  private CabalFoldingStructureProvider foldingStructureProvider;
+  private final CabalFoldingStructureProvider foldingStructureProvider;
   
   CabalReconcilingStrategy( final CabalEditor editor ) {
     this.editor = editor;

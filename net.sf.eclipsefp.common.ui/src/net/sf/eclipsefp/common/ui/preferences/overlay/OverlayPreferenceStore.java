@@ -16,11 +16,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class OverlayPreferenceStore implements IPreferenceStore {
 
   /** The parent preference store. */
-  private IPreferenceStore parent;
+  private final IPreferenceStore parent;
   /** The underlying preference store. */
-  private IPreferenceStore store;
+  private final IPreferenceStore store;
   /** The keys of this store. */
-  private List overlayKeys;
+  private final List overlayKeys;
   private IPropertyChangeListener propertyListener;
 
 

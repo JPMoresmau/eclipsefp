@@ -7,7 +7,7 @@ import java.util.Iterator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -35,8 +35,8 @@ public class ColorProvider implements IEditorPreferenceNames {
   /** the singleton instance of ColorProvider. */
   private static ColorProvider _instance;
 
-  private HashMap colors;
-  private HashMap rgbs;
+  private final HashMap colors;
+  private final HashMap rgbs;
 
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */

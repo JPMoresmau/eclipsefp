@@ -28,6 +28,7 @@ public class OptimizationTab extends GhcCompilerTab implements IGhcParameters {
   // interface methods of Tab
   ///////////////////////////
   
+  @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout() );

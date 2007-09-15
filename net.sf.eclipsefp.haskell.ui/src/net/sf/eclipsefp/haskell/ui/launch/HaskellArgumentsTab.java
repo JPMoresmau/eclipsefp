@@ -41,7 +41,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 
   private SelectionAdapter selectionAdapter;
   
-  private ModifyListener modifyListener = new ModifyListener() {
+  private final ModifyListener modifyListener = new ModifyListener() {
     public void modifyText( final ModifyEvent e ) {
       updateLaunchConfigurationDialog();
     }
@@ -102,6 +102,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     }
   }
 
+  @Override
   public boolean isValid( final ILaunchConfiguration launchConfig ) {
     setErrorMessage( null );
     setMessage( null );
@@ -112,10 +113,12 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     return "Arguments";
   }
 
+  @Override
   public Image getImage() {
     return HaskellUIImages.getImage( IImageNames.LAUNCH_TAB_ARGUMENTS );
   }
   
+  @Override
   public boolean canSave() {
     return isValid( null );
   }
@@ -167,6 +170,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     btnWorkingDirWorkspace 
       = createPushButton( buttonComposite, browseWS, null );
     btnWorkingDirWorkspace.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         handleWorkspaceWorkingDirectoryButtonSelected();
       }
@@ -174,6 +178,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     String browseFs = "Browse File System";
     btnWorkingDirFile = createPushButton( buttonComposite, browseFs, null );
     btnWorkingDirFile.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent evt ) {
         handleFileWorkingDirectoryButtonSelected();
       }
@@ -307,6 +312,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   private SelectionListener getSelectionAdapter() {
     if( selectionAdapter == null ) {
       selectionAdapter= new SelectionAdapter() {
+        @Override
         public void widgetSelected( final SelectionEvent e ) {
           updateLaunchConfigurationDialog();
         }

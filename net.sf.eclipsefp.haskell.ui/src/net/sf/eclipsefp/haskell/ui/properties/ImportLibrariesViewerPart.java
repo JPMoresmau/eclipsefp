@@ -33,6 +33,7 @@ class ImportLibrariesViewerPart extends CheckboxTablePart {
                           "Deselect All" } );
   }
 
+  @Override
   protected void buttonSelected( final Button button, final int index ) {
     switch( index ) {
       case 0:
@@ -50,6 +51,7 @@ class ImportLibrariesViewerPart extends CheckboxTablePart {
     }
   }
 
+  @Override
   protected Button createButton( final Composite parent, 
                                  final String label, 
                                  final int index ) {
@@ -58,6 +60,7 @@ class ImportLibrariesViewerPart extends CheckboxTablePart {
     return button;
   }
 
+  @Override
   protected void createMainLabel( final Composite parent, final int span ) {
     Label label = new Label( parent, SWT.NULL );
     GridData gd = new GridData( GridData.FILL );
@@ -65,10 +68,12 @@ class ImportLibrariesViewerPart extends CheckboxTablePart {
     label.setLayoutData( gd );
   }
 
+  @Override
   protected void selectionChanged( final IStructuredSelection selection ) {
     setButtonEnabled( 1, !selection.isEmpty() );
   }
 
+  @Override
   protected void elementChecked( final Object element, final boolean checked ) {
     ( ( IImportLibrary )element ).setUsed( checked );
   }

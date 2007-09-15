@@ -9,8 +9,8 @@ package net.sf.eclipsefp.common.core.project;
   */
 public class DescriptorFileInfo {
 
-  private String name;
-  private String content;
+  private final String name;
+  private final String content;
 
   public DescriptorFileInfo( final String name, final String content ) {
     this.name = name;

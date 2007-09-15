@@ -63,14 +63,16 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	public void stop(final BundleContext context) throws Exception {
+	@Override
+  public void stop(final BundleContext context) throws Exception {
 		HaskellUIImages.disposeImageDescriptorRegistry();
 		ColorProvider.getInstance().dispose();
 		ScannerManager.getInstance().dispose();
 		super.stop(context);
 	}
 
-	public void start(final BundleContext context) throws Exception {
+	@Override
+  public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		getPreferenceManager().activateBuildConsolePreferences();
 	}
@@ -119,7 +121,8 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 		return display;
 	}
 
-	protected ImageRegistry createImageRegistry() {
+	@Override
+  protected ImageRegistry createImageRegistry() {
 		return HaskellUIImages.initializeImageRegistry();
 	}
 

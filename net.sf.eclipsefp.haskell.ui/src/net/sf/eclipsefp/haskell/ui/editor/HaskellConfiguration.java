@@ -42,13 +42,13 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	}
 
 	private final HaskellEditor fEditor;
-	private IContentAssistantFactory fFactory;
+	private final IContentAssistantFactory fFactory;
 
 	public HaskellConfiguration(final HaskellEditor editor) {
 		this(editor, new ContentAssistantFactory());
 	}
 
-	public HaskellConfiguration(final HaskellEditor editor, IContentAssistantFactory factory) {
+	public HaskellConfiguration(final HaskellEditor editor, final IContentAssistantFactory factory) {
 		fEditor = editor;
 		fFactory = factory;
 	}
@@ -56,21 +56,25 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	// interface methods of SourceViewerConfiguration
 	// ///////////////////////////////////////////////
 
-	public IAutoIndentStrategy getAutoIndentStrategy(final ISourceViewer sv,
+	@Override
+  public IAutoIndentStrategy getAutoIndentStrategy(final ISourceViewer sv,
 			final String contentType) {
 		return new HaskellAutoIndentStrategy();
 	}
 
-	public String[] getConfiguredContentTypes(final ISourceViewer sv) {
+	@Override
+  public String[] getConfiguredContentTypes(final ISourceViewer sv) {
 		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, // plain text
 				IPartitionTypes.HS_LITERATE_COMMENT, IPartitionTypes.HS_COMMENT };
 	}
 
-	public int getTabWidth(final ISourceViewer sourceViewer) {
+	@Override
+  public int getTabWidth(final ISourceViewer sourceViewer) {
 		return getPreferenceStore().getInt(EDITOR_TAB_WIDTH);
 	}
 
-	public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
+	@Override
+  public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
 
 		ContentAssistant result = fFactory.createAssistant();
 		result.setContentAssistProcessor(new HaskellCAProcessor(),
@@ -86,7 +90,8 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	}
 
 	/** the presentation reconciler is responsible for syntax coloring. */
-	public IPresentationReconciler getPresentationReconciler(
+	@Override
+  public IPresentationReconciler getPresentationReconciler(
 			final ISourceViewer sv) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
@@ -111,17 +116,20 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return reconciler;
 	}
 
-	public IAnnotationHover getAnnotationHover(final ISourceViewer sv) {
+	@Override
+  public IAnnotationHover getAnnotationHover(final ISourceViewer sv) {
 		return new AnnotationHover();
 	}
 
-	public String[] getDefaultPrefixes(final ISourceViewer sourceViewer,
+	@Override
+  public String[] getDefaultPrefixes(final ISourceViewer sourceViewer,
 			final String contentType) {
 
 		return new String[] { "--" };
 	}
 
-	public String[] getIndentPrefixes(final ISourceViewer sourceViewer,
+	@Override
+  public String[] getIndentPrefixes(final ISourceViewer sourceViewer,
 			final String contentType) {
 		List<String> list = new ArrayList<String>();
 		int tabWidth = getTabWidth(sourceViewer);
@@ -151,7 +159,8 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return result;
 	}
 
-	public IReconciler getReconciler(final ISourceViewer sourceViewer) {
+	@Override
+  public IReconciler getReconciler(final ISourceViewer sourceViewer) {
 		MonoReconciler result = null;
 		// the editor may be null if this configuration is used in a preview
 		// (source viewer without editor)

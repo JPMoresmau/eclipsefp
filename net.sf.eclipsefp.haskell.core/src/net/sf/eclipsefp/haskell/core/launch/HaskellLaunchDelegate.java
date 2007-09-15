@@ -67,9 +67,9 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     if( proc != null ) {
       String loc = location.toOSString();
       process = DebugPlugin.newProcess( launch, proc, loc, processAttrs );
+      process.setAttribute( IProcess.ATTR_CMDLINE, 
+                            CommandLineUtil.renderCommandLine( cmdLine ) );
     }
-    process.setAttribute( IProcess.ATTR_CMDLINE, 
-                          CommandLineUtil.renderCommandLine( cmdLine ) );
     return process;
   }
 
@@ -93,10 +93,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     String attribute = config.getAttribute( name, ( String )null );
     File result = null;
     if( attribute != null ) {
-      IPath workingDirectory = new Path( attribute );
-      if( workingDirectory != null ) {
-        result = workingDirectory.toFile();
-      }
+      result = new Path( attribute ).toFile();
     }
     return result;
   }
@@ -153,7 +150,9 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
   }
 
   private class LaunchCancelledException extends RuntimeException {
-    private LaunchCancelledException() {
+	private static final long serialVersionUID = 1912643423745032866L;
+
+	private LaunchCancelledException() {
       super();
     }
   }

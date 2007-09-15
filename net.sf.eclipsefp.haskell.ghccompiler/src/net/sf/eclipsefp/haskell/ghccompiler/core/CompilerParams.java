@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Preferences;
   */
 public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
 
-  private Preferences preferences;
+  private final Preferences preferences;
   
   public CompilerParams() {
     preferences = GhcCompilerPlugin.getDefault().getPluginPreferences();

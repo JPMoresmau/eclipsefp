@@ -29,6 +29,7 @@ public class GhciPreferencePage extends PreferencePage
   // interface methods of PreferencePage
   //////////////////////////////////////
   
+  @Override
   protected Control createContents( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout( 1, false ) );
@@ -45,6 +46,7 @@ public class GhciPreferencePage extends PreferencePage
     return composite;
   }
 
+  @Override
   public void dispose() {
     if( overlayStore != null ) {
       overlayStore.stopListening();
@@ -53,12 +55,14 @@ public class GhciPreferencePage extends PreferencePage
     super.dispose();
   }
 
+  @Override
   public boolean performOk() {
     overlayStore.propagate();
     GhcCompilerPlugin.getDefault().savePluginPreferences();
     return true;
   }
 
+  @Override
   protected void performDefaults() {
     overlayStore.loadDefaults();
     super.performDefaults();

@@ -25,6 +25,7 @@ public abstract class CheckboxTablePart extends SharedPart {
     return viewer.getControl();
   }
 
+  @Override
   protected void createMainControl( final Composite parent, 
                                     final int style, 
                                     final int span ) {
@@ -71,6 +72,7 @@ public abstract class CheckboxTablePart extends SharedPart {
     return tableViewer;
   }
 
+  @Override
   protected void updateEnabledState() {
     getControl().setEnabled( isEnabled() );
     super.updateEnabledState();

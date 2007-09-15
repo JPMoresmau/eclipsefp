@@ -40,8 +40,8 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 	private static class WorkbenchContextFactory implements
 			ICompletionContextFactory {
 
-		public IHaskellCompletionContext createContext(ITextViewer viewer,
-													  int offset)
+		public IHaskellCompletionContext createContext(final ITextViewer viewer,
+													  final int offset)
 		{
 			try {
 				return new WorkbenchHaskellCompletionContext(viewer, offset);
@@ -54,13 +54,13 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
 	}
 
-	private ICompletionContextFactory fContextFactory;
+	private final ICompletionContextFactory fContextFactory;
 
 	public HaskellCAProcessor() {
 		this(new WorkbenchContextFactory());
 	}
 
-	public HaskellCAProcessor(ICompletionContextFactory factory) {
+	public HaskellCAProcessor(final ICompletionContextFactory factory) {
 		fContextFactory = factory;
 	}
 

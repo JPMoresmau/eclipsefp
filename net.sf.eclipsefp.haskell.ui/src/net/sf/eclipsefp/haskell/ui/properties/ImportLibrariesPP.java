@@ -34,6 +34,7 @@ public class ImportLibrariesPP extends PropertyPage
   // interface methods of IDialogPage
   ///////////////////////////////////
   
+  @Override
   public Control createContents( final Composite parent ) {
     Composite container = new Composite( parent, SWT.NULL );
     GridLayout layout = new GridLayout();
@@ -64,11 +65,13 @@ public class ImportLibrariesPP extends PropertyPage
     // unused
   }
 
+  @Override
   public boolean performOk() {
     list.save();
     return super.performOk();
   }
 
+  @Override
   public void performDefaults() {
     // uncheck all libs by default
     IImportLibrary[] libs = list.getAll();

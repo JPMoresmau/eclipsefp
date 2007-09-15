@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.editor.text;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /** <p>The pair matcher implementation used for matching parentheses etc.</p>
   * 
@@ -61,7 +61,7 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
 
   private IRegion matchPair(final IDocument document,
                             final int initialOffset,
-                            int searchDirection)
+                            final int searchDirection)
     throws BadLocationException
   {
     final Reader reader = new Reader(document, initialOffset, searchDirection);
@@ -115,7 +115,7 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     return false;
   }
 
-  private char pairFor(char c) {
+  private char pairFor(final char c) {
     for(int i = 0; i < PAIRS.length; ++i ) {
       if (PAIRS[i] == c) {
         if (i % 2 == 0) {
@@ -130,12 +130,12 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
   
   private static class Reader {
 
-    private IDocument fSourceDoc;
-    private int fInitialOffset;
-    private int fIncrement;
+    private final IDocument fSourceDoc;
+    private final int fInitialOffset;
+    private final int fIncrement;
     private int fLastOffset;
 
-    public Reader(IDocument document, int initialOffset, int increment) {
+    public Reader(final IDocument document, final int initialOffset, final int increment) {
       fSourceDoc = document; 
       fInitialOffset = initialOffset;
       fIncrement = increment;

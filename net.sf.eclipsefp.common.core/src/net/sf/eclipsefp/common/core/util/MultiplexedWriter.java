@@ -19,13 +19,13 @@ import java.util.List;
 
 public class MultiplexedWriter extends Writer {
 
-	private List<Writer> fOutputs = new ArrayList<Writer>();
+	private final List<Writer> fOutputs = new ArrayList<Writer>();
 
-	public MultiplexedWriter(Writer... outputs) {
+	public MultiplexedWriter(final Writer... outputs) {
 		fOutputs.addAll(Arrays.asList(outputs));
 	}
 	
-	public void addOutput(Writer out) {
+	public void addOutput(final Writer out) {
 		fOutputs.add(out);
 	}
 
@@ -52,7 +52,7 @@ public class MultiplexedWriter extends Writer {
 	}
 
 	@Override
-	public void write(char[] cbuf, int off, int len) throws IOException {
+	public void write(final char[] cbuf, final int off, final int len) throws IOException {
 		for (Writer output : fOutputs) {
 			try {
 				output.write(cbuf, off, len);
@@ -62,7 +62,7 @@ public class MultiplexedWriter extends Writer {
 		}
 	}
 
-	public void removeOutput(Writer out) {
+	public void removeOutput(final Writer out) {
 		fOutputs.remove(out);
 	}
 

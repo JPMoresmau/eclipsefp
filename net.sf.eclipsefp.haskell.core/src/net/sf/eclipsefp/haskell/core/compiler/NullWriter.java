@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.compiler;
 
-import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -11,12 +10,12 @@ import java.io.Writer;
 public class NullWriter extends Writer {
 
 	@Override
-	public void close() throws IOException { /* ignore */ }
+	public void close() { /* ignore */ }
 
 	@Override
-	public void flush() throws IOException { /* ignore */ }
+	public void flush() { /* ignore */ }
 
 	@Override
-	public void write(char[] cbuf, int off, int len) { /* ignore */ }
+	public void write(final char[] cbuf, final int off, final int len) { /* ignore */ }
 
 }

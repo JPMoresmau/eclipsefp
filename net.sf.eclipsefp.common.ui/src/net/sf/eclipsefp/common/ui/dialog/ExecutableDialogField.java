@@ -44,10 +44,12 @@ public abstract class ExecutableDialogField extends DialogField {
   // interface methods of DialogField 
   ///////////////////////////////////
 
+  @Override
   public Object getInfo() {
     return info;
   }  
    
+  @Override
   public void setInfo( final Object info ) {
     this.info = ( String )info;
     text.setText( this.info );  
@@ -98,6 +100,7 @@ public abstract class ExecutableDialogField extends DialogField {
     gd.widthHint = DialogUtil.convertWidthInCharsToPixels( btnBrowse, 13 );
     btnBrowse.setLayoutData( gd );
     btnBrowse.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         FileDialog dialog = new FileDialog( text.getShell() );
         dialog.setText( "Browse to the executable." );

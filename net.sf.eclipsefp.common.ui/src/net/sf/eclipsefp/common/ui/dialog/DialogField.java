@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Composite;
   */
 public abstract class DialogField extends Composite {
 
-  private List listeners;
+  private final List listeners;
   
   public DialogField( final Composite parent ) {
     super( parent, SWT.NONE );

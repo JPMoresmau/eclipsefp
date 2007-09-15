@@ -10,7 +10,7 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.dialog.dialogfields;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -37,7 +37,8 @@ public class StringDialogField extends DialogField {
   /*
    * @see DialogField#doFillIntoGrid
    */
-  public Control[] doFillIntoGrid(Composite parent, int nColumns) {
+  @Override
+  public Control[] doFillIntoGrid(final Composite parent, final int nColumns) {
     Assert.isTrue(nColumns >= getNumberOfControls(),
         "given number of columns is too small");
 
@@ -52,6 +53,7 @@ public class StringDialogField extends DialogField {
   /*
    * @see DialogField#getNumberOfControls
    */
+  @Override
   public int getNumberOfControls() {
     return 2;
   }
@@ -69,6 +71,7 @@ public class StringDialogField extends DialogField {
   /*
    * @see DialogField#setFocus
    */
+  @Override
   public boolean setFocus() {
     if (isOkToUse(txtControl)) {
       txtControl.setFocus();
@@ -86,7 +89,7 @@ public class StringDialogField extends DialogField {
    *          The parent composite or <code>null</code> when the widget has
    *          already been created.
    */
-  public Text getTextControl(Composite parent) {
+  public Text getTextControl(final Composite parent) {
     if (txtControl == null) {
       Assert.isNotNull(parent,
           "uncreated control requested with composite null");
@@ -119,6 +122,7 @@ public class StringDialogField extends DialogField {
   /*
    * @see DialogField#updateEnableState
    */
+  @Override
   protected void updateEnableState() {
     super.updateEnableState();
     if (isOkToUse(txtControl)) {

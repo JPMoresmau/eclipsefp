@@ -22,31 +22,31 @@ import org.eclipse.core.resources.IFile;
 
 public class ListenableCompilerDecorator implements IHaskellCompiler {
 
-	private IHaskellCompiler fUnderlyingCompiler;
-	private MultiplexedWriter fOutWriter = new MultiplexedWriter();
-	private List<ICompilerListener> fListeners =
+	private final IHaskellCompiler fUnderlyingCompiler;
+	private final MultiplexedWriter fOutWriter = new MultiplexedWriter();
+	private final List<ICompilerListener> fListeners =
 		new ArrayList<ICompilerListener>();
 
-	public ListenableCompilerDecorator(IHaskellCompiler compiler) {
+	public ListenableCompilerDecorator(final IHaskellCompiler compiler) {
 		fUnderlyingCompiler = compiler;
 	}
 
-	public void addListener(ICompilerListener listener) {
+	public void addListener(final ICompilerListener listener) {
 		fListeners.add(listener);
 		fOutWriter.addOutput(listener.getOutputWriter());
 	}
 
-	public void removeListener(ICompilerListener listener) {
+	public void removeListener(final ICompilerListener listener) {
 		fListeners.remove(listener);
 		fOutWriter.removeOutput(listener.getOutputWriter());
 	}
 	
-	public ICompilerOutput compile(IFile file, Writer outputWriter) {
+	public ICompilerOutput compile(final IFile file, final Writer outputWriter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public ICompilerOutput compile(IFile file) {
+	public ICompilerOutput compile(final IFile file) {
 		for (ICompilerListener listener : fListeners) {
 			listener.startingCompilation();
 		}

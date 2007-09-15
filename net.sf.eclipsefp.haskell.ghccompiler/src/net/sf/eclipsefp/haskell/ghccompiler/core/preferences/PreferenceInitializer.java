@@ -19,6 +19,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
   // interface methods of AbstractPreferenceInitializer
   /////////////////////////////////////////////////////
   
+  @Override
   public void initializeDefaultPreferences() {
     Preferences prefs = GhcCompilerPlugin.getDefault().getPluginPreferences();
     initializeDefaultValues( prefs );

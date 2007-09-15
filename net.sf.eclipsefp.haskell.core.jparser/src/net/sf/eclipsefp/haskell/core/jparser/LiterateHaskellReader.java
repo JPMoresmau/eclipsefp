@@ -9,9 +9,9 @@ import java.util.Arrays;
 
 public class LiterateHaskellReader extends Reader {
 
-	private BufferedReader fInput;
+	private final BufferedReader fInput;
 	private Reader fProcessedInput ;
-	private PipedWriter fProcessedOutput;
+	private final PipedWriter fProcessedOutput;
 	private boolean fBeginOfLine = true;
 	private boolean fProgramLine = false;
 	private int fCurrentExpectedChar = 0;
@@ -20,7 +20,7 @@ public class LiterateHaskellReader extends Reader {
 	private static final char[] TEX_BEGIN_STRING = "\\begin{code}\n".toCharArray();
 	private static final char[] TEX_END_STRING = "\\end{code}".toCharArray();
 
-	public LiterateHaskellReader(Reader reader) {
+	public LiterateHaskellReader(final Reader reader) {
 		fInput = new BufferedReader(reader);
 		fProcessedOutput = new PipedWriter();
 		try {
@@ -111,7 +111,7 @@ public class LiterateHaskellReader extends Reader {
 		return numAvailableChars;
 	}
 
-	private boolean checkTexStyleBegin(char c) {
+	private boolean checkTexStyleBegin(final char c) {
 		if (c == TEX_BEGIN_STRING[fCurrentExpectedChar]) {
 			fCurrentExpectedChar++;
 			if (fCurrentExpectedChar == TEX_BEGIN_STRING.length) {
@@ -125,7 +125,7 @@ public class LiterateHaskellReader extends Reader {
 		}
 	}
 
-	private boolean isLiterateStartChar(char c) {
+	private boolean isLiterateStartChar(final char c) {
 		return c == '>';
 	}
 

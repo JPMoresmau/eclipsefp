@@ -33,7 +33,7 @@ public class HaskellDocumentProvider extends TextFileDocumentProvider {
   }
   
   @Override
-  protected IAnnotationModel createAnnotationModel(IFile file) {
+  protected IAnnotationModel createAnnotationModel(final IFile file) {
 	  return new HaskellAnnotationModel(file);
   }
   

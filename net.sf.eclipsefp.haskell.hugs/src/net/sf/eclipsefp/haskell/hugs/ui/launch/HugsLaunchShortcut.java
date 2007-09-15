@@ -17,6 +17,7 @@ public class HugsLaunchShortcut extends InteractiveLaunchShortcut {
   // interface methods of InteractiveLaunchOperation
   //////////////////////////////////////////////////
 
+  @Override
   public IInteractiveLaunchOperationDelegate getDelegate() {
     if( delegate == null ) {
       delegate = new HugsLaunchOperationDelegate();

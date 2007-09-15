@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
   */
 public class OpenHaskellPerspective extends AbstractOpenAction {
   
+  @Override
   public void run() {
     IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
     IWorkbenchPage page = window.getActivePage();

@@ -27,15 +27,15 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
  */
 public class ProjectChangeMonitor implements IResourceChangeListener {
 
-	private IResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
+	private final IResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
 
-	private IHaskellModel fLanguageModel;
+	private final IHaskellModel fLanguageModel;
 
-	public ProjectChangeMonitor(IProject project) {
+	public ProjectChangeMonitor(final IProject project) {
 		this(HaskellCorePlugin.getDefaultModelManager().getModelFor(project));
 	}
 	
-	public ProjectChangeMonitor(IHaskellModel model) {
+	public ProjectChangeMonitor(final IHaskellModel model) {
 		fLanguageModel = model;
 	}
 

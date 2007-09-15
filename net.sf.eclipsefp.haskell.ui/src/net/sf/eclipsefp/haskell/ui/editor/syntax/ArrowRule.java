@@ -9,7 +9,7 @@ import org.eclipse.jface.text.rules.*;
  */
 public class ArrowRule extends WordRule implements IPredicateRule {
     
-  private IToken successToken;
+  private final IToken successToken;
     
   public ArrowRule( final IToken successToken ) {
     super( new IWordDetector() {

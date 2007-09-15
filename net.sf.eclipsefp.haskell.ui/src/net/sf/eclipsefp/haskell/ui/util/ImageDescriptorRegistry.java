@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -19,8 +19,8 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
   */
 class ImageDescriptorRegistry {
 
-  private HashMap registry;
-  private Display display;
+  private final HashMap registry;
+  private final Display display;
   
   
   /** <p>creates a new image descriptor registry for the given display. 

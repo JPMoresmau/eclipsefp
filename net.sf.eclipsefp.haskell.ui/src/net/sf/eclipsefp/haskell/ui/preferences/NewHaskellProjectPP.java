@@ -33,11 +33,11 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 public class NewHaskellProjectPP extends PreferencePage
                                  implements IWorkbenchPreferencePage {
 
-  private ArrayList<Button> alRadioButtons;
-  private ArrayList<Text> alTextControls;
+  private final ArrayList<Button> alRadioButtons;
+  private final ArrayList<Text> alTextControls;
 
-  private SelectionListener selectionListener;
-  private ModifyListener modifyListener;
+  private final SelectionListener selectionListener;
+  private final ModifyListener modifyListener;
 
   private Text txtBinFolderName;
   private Text txtSrcFolderName;
@@ -133,6 +133,7 @@ public class NewHaskellProjectPP extends PreferencePage
     return result;
   }
 
+  @Override
   protected Control createContents( final Composite parent ) {
     initializeDialogUnits( parent );
 
@@ -284,6 +285,7 @@ public class NewHaskellProjectPP extends PreferencePage
   }
 
   /* @see PreferencePage#performDefaults() */
+  @Override
   protected void performDefaults() {
     IPreferenceStore store = getPreferenceStore();
     for( int i = 0; i < alRadioButtons.size(); i++ ) {
@@ -302,6 +304,7 @@ public class NewHaskellProjectPP extends PreferencePage
   }
 
   /* @see IPreferencePage#performOk() */
+  @Override
   public boolean performOk() {
     IPreferenceStore store = getPreferenceStore();
     for( int i = 0; i < alRadioButtons.size(); i++ ) {

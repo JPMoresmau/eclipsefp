@@ -95,6 +95,7 @@ class DocumentCharacterIterator implements CharacterIterator {
     return index;
   }
   
+  @Override
   public Object clone() {
     DocumentCharacterIterator result = new DocumentCharacterIterator();
     result.document = document;
