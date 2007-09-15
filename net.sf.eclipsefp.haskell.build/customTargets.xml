@@ -6,7 +6,7 @@
 <target name="allElements">
 	<ant antfile="${genericTargets}" target="${target}" >
 		<property name="type" value="feature" />
-		<property name="id" value="de.leiffrenzel.fp.haskell" />
+		<property name="id" value="net.sf.eclipsefp.haskell" />
 	</ant>
 </target>
 
@@ -17,7 +17,7 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.de.leiffrenzel.fp.haskell">
+<target name="assemble.net.sf.eclipsefp.haskell">
 	<property name="archiveName" value="net.sf.eclipsefp.haskell-${buildId}.zip"/>
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 </target>
@@ -54,12 +54,12 @@
 	<move todir="${buildDirectory}/plugins">
 		<fileset dir="${buildDirectory}/eclipsefp">
 			<exclude name="_darcs" />
-			<exclude name="de.leiffrenzel.fp.haskell-feature/**" />
+			<exclude name="net.sf.eclipsefp.haskell-feature/**" />
 			<exclude name="net.sf.eclipsefp.updatesite/**" />
 		</fileset>
 	</move>
-	<move file="${buildDirectory}/eclipsefp/de.leiffrenzel.fp.haskell-feature"
-	      tofile="${buildDirectory}/features/de.leiffrenzel.fp.haskell"/>
+	<move file="${buildDirectory}/eclipsefp/net.sf.eclipsefp.haskell-feature"
+	      tofile="${buildDirectory}/features/net.sf.eclipsefp.haskell"/>
 	<move file="${buildDirectory}/eclipsefp/net.sf.eclipsefp.updatesite"
 	      tofile="${buildDirectory}/sites/net.sf.eclipsefp.updatesite"/>
 	<delete dir="${buildDirectory}/eclipsefp" />
@@ -203,7 +203,7 @@
 		  failonerror="true" >
 		<arg line="-application  org.eclipse.update.core.standaloneUpdate" />
 	    <arg line="-command install" />
-		<arg line="-featureId de.leiffrenzel.fp.haskell" />
+		<arg line="-featureId net.sf.eclipsefp.haskell" />
 		<arg line="-version 0.11.0" />
 		<arg line="-from file://${update.site.staging.loc}/" />
 	</java>

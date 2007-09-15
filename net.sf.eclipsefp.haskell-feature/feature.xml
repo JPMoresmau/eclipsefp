@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.sf.eclipsefp.haskell"
+      label="FP: Haskell support for Eclipse"
+      version="1.100.0"
+      provider-name="eclipsefp.sourceforge.net">
+
+   <description>
+      Adds tools for the Haskell programming language to the Eclipse IDE.
+   </description>
+
+   <copyright>
+      Copyright (c) 2003-2007 by the EclipseFP contributors
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      This content is made available by the project eclipsefp.sourceforge.net
+under the terms of the Eclipse Public License Version 1.0 (EPL).
+A copy of the EPL is provided with this content and is also 
+available at http://www.eclipse.org/legal/epl-v10.html.
+   </license>
+
+   <includes
+         id="net.sf.eclipsefp.haskell.source"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.jface" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.console" version="3.1.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.ide" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.views" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.editors" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
+      <import plugin="net.sf.eclipsefp.haskell.cabal.core"/>
+   </requires>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.common.core"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.core"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="de.leiffrenzel.fp.haskell.doc.user"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.ui"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.haddock"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.hugs"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.common.doc"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.common.ui"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.core.jparser"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="org.antlr"
+         download-size="0"
+         install-size="0"
+         version="2.7.6"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.cabal.core"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.cabal.ui"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.ghccompiler"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"/>
+
+</feature>

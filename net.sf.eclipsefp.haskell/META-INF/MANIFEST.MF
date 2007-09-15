@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
-Bundle-SymbolicName: de.leiffrenzel.fp.haskell;singleton:=true
+Bundle-SymbolicName: net.sf.eclipsefp.haskell;singleton:=true
 Bundle-Version: 0.11.0
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
