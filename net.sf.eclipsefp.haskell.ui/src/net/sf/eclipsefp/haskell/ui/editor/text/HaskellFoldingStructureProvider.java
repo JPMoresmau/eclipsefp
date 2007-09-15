@@ -38,14 +38,14 @@ class HaskellFoldingStructureProvider {
   void updateFoldingRegions( final ICompilationUnit cu ) { 
     ProjectionAnnotationModel model = getAnnModel();
     if( model != null ) {
-      Set currentRegions = new HashSet();
+      Set<Position> currentRegions = new HashSet<Position>();
       addFoldingRegions( cu, currentRegions );
       updateFoldingRegions( model, currentRegions );
     }
   }
 
   private void addFoldingRegions( final ICompilationUnit cu, 
-                                  final Set regions ) {
+                                  final Set<Position> regions ) {
     IModule[] modules = cu.getModules();
     for( int i = 0; i < modules.length; i++ ) {
       IModule module = modules[ i ];
@@ -57,7 +57,7 @@ class HaskellFoldingStructureProvider {
 
   private void addFunctionBindings( final ICompilationUnit cu, 
                                     final IModule module, 
-                                    final Set regions ) {
+                                    final Set<Position> regions ) {
     IDeclaration[] decls = module.getDeclarations();
     for( int i = 0; i < decls.length; i++ ) {
       if( decls[ i ] instanceof IFunctionBinding ) {
@@ -77,7 +77,7 @@ class HaskellFoldingStructureProvider {
 
   private void addImports( final ICompilationUnit cu, 
                            final IModule module, 
-                           final Set regions ) {
+                           final Set<Position> regions ) {
     IImport[] imports = module.getImports();
     if( imports.length > 0 ) {
       int startLine = imports[ 0 ].getSourceLocation().getLine();
@@ -93,7 +93,7 @@ class HaskellFoldingStructureProvider {
 
   private void addMultiLineDeclarations( final ICompilationUnit cu, 
                                          final IModule module, 
-                                         final Set regions ) {
+                                         final Set<Position> regions ) {
     ISourceLocation loc = module.getSourceLocation();
     ISourceLocation nextLoc = cu.getNextLocation( loc );
     while( nextLoc != null ) {
@@ -108,7 +108,7 @@ class HaskellFoldingStructureProvider {
 
   private void handleSection( final int startLine, 
                               final int endLine, 
-                              final Set regions ) {
+                              final Set<Position> regions ) {
     int newEndLine = endLine;
     if( newEndLine > 0 ) {
       newEndLine--;
@@ -153,12 +153,12 @@ class HaskellFoldingStructureProvider {
   }
 
   private ProjectionAnnotationModel getAnnModel() {
-    Class cls = ProjectionAnnotationModel.class;
+    Class<ProjectionAnnotationModel> cls = ProjectionAnnotationModel.class;
     return ( ProjectionAnnotationModel )editor.getAdapter( cls );
   }
   
   private void updateFoldingRegions( final ProjectionAnnotationModel model, 
-                                     final Set currentRegions ) {
+                                     final Set<Position> currentRegions ) {
     Annotation[] deletions = computeDifferences( model, currentRegions );
     
     Map additionsMap = new HashMap();
@@ -178,8 +178,8 @@ class HaskellFoldingStructureProvider {
   }
   
   private Annotation[] computeDifferences( final ProjectionAnnotationModel mdl, 
-                                           final Set current ) {
-    List deletions= new ArrayList();
+                                           final Set<Position> current ) {
+    List<ProjectionAnnotation> deletions= new ArrayList<ProjectionAnnotation>();
     Iterator iter = mdl.getAnnotationIterator();
     while( iter.hasNext() ) {
       Object annotation = iter.next();
@@ -188,11 +188,10 @@ class HaskellFoldingStructureProvider {
         if( current.contains( position ) ) {
           current.remove( position );
         } else {
-          deletions.add( annotation );
+          deletions.add( (ProjectionAnnotation) annotation );
         }
       }
     }
-    Annotation[] result = new Annotation[ deletions.size() ];
-    return ( Annotation[] )deletions.toArray( result );
+    return deletions.toArray( new Annotation[ deletions.size() ] );
   }
 }

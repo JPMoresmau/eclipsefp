@@ -4,6 +4,7 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
@@ -63,7 +64,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 		IProject project = haskellProject.getResource();
 		String outDir = getAbsPath(project, haskellProject.getOutputPath());
 
-		ArrayList<String> cmdLine = new ArrayList<String>();
+		List<String> cmdLine = new ArrayList<String>();
 		// command and special options
 		cmdLine.add(Util.getCompilerExecutable());
 		String libPath = Util.constructLibPath(haskellProject);

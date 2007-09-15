@@ -95,7 +95,7 @@ class UIState implements IUIState {
   private void restoreFilterState() {
     IMemento childMem = memento.getChild( TAG_FILTER_CRITERIA );
     if( childMem != null ) {
-      List list = new ArrayList();
+      List<FilterCriterion> list = new ArrayList<FilterCriterion>();
       IMemento[] elementMem = childMem.getChildren( TAG_CRITERION );
       for( int i = 0; i < elementMem.length; i++ ) {
         String id = elementMem[ i ].getString( TAG_ID );
@@ -152,13 +152,13 @@ class UIState implements IUIState {
   private void restoreSelectionState() {
     IMemento childMem = memento.getChild( TAG_SELECTION );
     if( childMem != null ) {
-      List list = readElements( childMem );
+      List<Object> list = readElements( childMem );
       viewer.setSelection( new StructuredSelection( list ) );
     }
   }
   
-  private List readElements( final IMemento childMem ) {
-    List list = new ArrayList();
+  private List<Object> readElements( final IMemento childMem ) {
+    List<Object> list = new ArrayList<Object>();
     IMemento[] elementMem = childMem.getChildren( TAG_ELEMENT );
     for( int i = 0; i < elementMem.length; i++ ) {
       String entry = elementMem[ i ].getString( TAG_PATH );

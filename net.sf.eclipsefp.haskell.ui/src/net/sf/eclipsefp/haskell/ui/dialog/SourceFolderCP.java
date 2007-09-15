@@ -4,14 +4,15 @@ package net.sf.eclipsefp.haskell.ui.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 
 /** the content provider for the source folder selection dialog.
   * 
@@ -24,7 +25,7 @@ class SourceFolderCP implements ITreeContentProvider {
   }
 
   public Object[] getChildren( final Object parentElement ) {
-    List list = new ArrayList();
+    List<IFolder> list = new ArrayList<IFolder>();
     if( parentElement instanceof IHaskellProject ) {
       IHaskellProject hsProject = ( IHaskellProject )parentElement;
       IPath sourcePath = hsProject.getSourcePath();

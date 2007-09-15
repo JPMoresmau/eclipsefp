@@ -50,7 +50,7 @@ public class CheckboxListCP implements IStructuredContentProvider {
     Object[] result = new Object[ 0 ];
     try {
       IResource[] ress = container.members();
-      List list = new ArrayList();
+      List<IResource> list = new ArrayList<IResource>();
       for( int i = 0; i < ress.length; i++ ) {
         if( ress[ i ] instanceof IFile
             && ResourceUtil.hasHaskellExtension( ress[ i ] ) ) {

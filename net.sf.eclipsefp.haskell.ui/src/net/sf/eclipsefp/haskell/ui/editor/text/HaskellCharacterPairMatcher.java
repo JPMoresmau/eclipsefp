@@ -153,13 +153,7 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     }
 
     public boolean eof() {
-      if (fIncrement < 0) {
-        return fLastOffset < 0;
-      } else {
-        return fLastOffset >= fSourceDoc.getLength();
-      }
+      return (fIncrement < 0) ? fLastOffset < 0 : fLastOffset >= fSourceDoc.getLength();
     }
-    
   }
-
 }

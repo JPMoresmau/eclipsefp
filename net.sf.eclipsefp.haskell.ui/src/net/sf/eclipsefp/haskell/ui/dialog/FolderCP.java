@@ -24,7 +24,7 @@ class FolderCP implements ITreeContentProvider {
   
   public Object[] getChildren( final Object parentElement ) {
     IResource[] members = getMembers( parentElement );
-    List list = new ArrayList();
+    List<IResource> list = new ArrayList<IResource>();
     for( int i = 0; i < members.length; i++ ) {
       IResource member = members[ i ];
       if( member.exists() && member instanceof IFolder ) {

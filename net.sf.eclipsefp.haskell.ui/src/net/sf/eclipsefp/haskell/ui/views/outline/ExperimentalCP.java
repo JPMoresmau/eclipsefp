@@ -22,14 +22,14 @@ public class ExperimentalCP implements ITreeContentProvider {
 
   private Object input;
   // maps from modules to their import groups
-  private final Map importGroups;
+  private final Map<IModule, ImportGroup> importGroups;
   // maps from modules to their export groups  
-  private final Map exportGroups;
+  private final Map<IModule, ExportGroup> exportGroups;
 
   
   public ExperimentalCP() {
-    importGroups = new HashMap();
-    exportGroups = new HashMap();
+    importGroups = new HashMap<IModule, ImportGroup>();
+    exportGroups = new HashMap<IModule, ExportGroup>();
   }
   
   
@@ -59,7 +59,7 @@ public class ExperimentalCP implements ITreeContentProvider {
   public Object[] getChildren( final Object parentElement ) {
     Object[] result = new Object[ 0 ];
     if( parentElement instanceof IModule ) {
-      List children = new ArrayList();
+      List<Object> children = new ArrayList<Object>();
       IModule module = ( IModule )parentElement;
       if( module.getExportSpecifications().length > 0 ) {
         children.add( getExportGroup( module ) );
@@ -160,7 +160,7 @@ public class ExperimentalCP implements ITreeContentProvider {
   }
 
   private ImportGroup getImportGroup( final IModule module ) {
-    ImportGroup result = ( ImportGroup )importGroups.get( module );
+    ImportGroup result = importGroups.get( module );
     if( result == null ) {
       result = new ImportGroup( module );
       importGroups.put( module, result );
@@ -169,7 +169,7 @@ public class ExperimentalCP implements ITreeContentProvider {
   }
 
   private ExportGroup getExportGroup( final IModule module ) {
-    ExportGroup result = ( ExportGroup )exportGroups.get( module );
+    ExportGroup result = exportGroups.get( module );
     if( result == null ) {
       result = new ExportGroup( module );
       exportGroups.put( module, result );

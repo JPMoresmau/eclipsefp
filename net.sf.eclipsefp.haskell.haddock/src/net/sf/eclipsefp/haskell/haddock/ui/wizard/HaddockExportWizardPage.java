@@ -66,7 +66,7 @@ abstract class HaddockExportWizardPage extends WizardPage {
   // validation
   /////////////
   
-  void apply( final List list ) {
+  void apply( final List<IStatus> list ) {
     IStatus[] states = new IStatus[ list.size() ];
     list.toArray( states );
     IStatus mostSevere = StatusUtil.getMostSevere( states );

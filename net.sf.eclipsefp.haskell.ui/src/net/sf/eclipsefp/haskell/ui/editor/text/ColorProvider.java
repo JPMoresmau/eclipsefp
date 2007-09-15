@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.editor.text;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -35,14 +36,14 @@ public class ColorProvider implements IEditorPreferenceNames {
   /** the singleton instance of ColorProvider. */
   private static ColorProvider _instance;
 
-  private final HashMap colors;
-  private final HashMap rgbs;
+  private final Map<RGB, Color> colors;
+  private final Map<String, RGB> rgbs;
 
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */
   private ColorProvider() {
-    colors = new HashMap( 10 );
-    rgbs = new HashMap( 10 );
+    colors = new HashMap<RGB, Color>( 10 );
+    rgbs = new HashMap<String, RGB>( 10 );
     initializeRgbs();
   }
 
@@ -55,20 +56,20 @@ public class ColorProvider implements IEditorPreferenceNames {
 
   /** <p>releases all of the color resources held by this ColorProvider.</p> */ 
   public void dispose() {
-    Iterator it = colors.values().iterator();
+    Iterator<Color> it = colors.values().iterator();
     while( it.hasNext() ) {
-      ( ( Color )it.next() ).dispose();
+      it.next().dispose();
     }
   }
 
   public Color getColor( final String key ) {
-    RGB rgb = ( RGB )rgbs.get( key );
+    RGB rgb = rgbs.get( key );
     Assert.isNotNull( rgb );
     return getColor( rgb );
   }
 
   void changeColor( final String key, final Object newValue ) {
-    RGB oldRgb = ( RGB )rgbs.get( key );
+    RGB oldRgb = rgbs.get( key );
     if( oldRgb != null ) {
       RGB newRgb = getNewRgb( newValue );
       if( newRgb != null ) {
@@ -92,7 +93,7 @@ public class ColorProvider implements IEditorPreferenceNames {
   }
 
   private Color getColor( final RGB rgb ) {
-    Color color = ( Color )colors.get( rgb );
+    Color color = colors.get( rgb );
     if( color == null ) {
       color = new Color( Display.getCurrent(), rgb );
       colors.put( rgb, color );

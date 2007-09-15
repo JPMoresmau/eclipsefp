@@ -1,17 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.haddock.ui.wizard;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import net.sf.eclipsefp.common.ui.dialog.DirectoryDialogField;
-import net.sf.eclipsefp.common.ui.dialog.ExecutableDialogField;
-import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
+import net.sf.eclipsefp.common.ui.dialog.*;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockUtil;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.swt.SWT;
@@ -94,7 +91,7 @@ class SelectionPage extends HaddockExportWizardPage {
                                        height );
     ctalViewer.addCheckStateListener( new ICheckStateListener() {
       public void checkStateChanged( final CheckStateChangedEvent event ) {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         Iterator it = ctalViewer.getAllCheckedListItems();
         while( it.hasNext() ) {
           IFile file = ( IFile )it.next();
@@ -125,7 +122,7 @@ class SelectionPage extends HaddockExportWizardPage {
   //////////////////
   
   private void validate() {
-    List statusList = new ArrayList();
+    List<IStatus> statusList = new ArrayList<IStatus>();
     statusList.add( validateDirectory( getInfo().getOutputDir(), 
                                        "Output directory" ) );
     statusList.add( validateNonEmptyString( getInfo().getExecutable(), 

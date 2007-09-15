@@ -10,7 +10,7 @@ import java.util.*;
   */
 public class InterfaceList {
 
-  private final List list = new ArrayList();
+  private final List<InterfaceListEntry> list = new ArrayList<InterfaceListEntry>();
   
   public void add( final InterfaceListEntry entry ) {
     if(     entry != null 
@@ -43,17 +43,17 @@ public class InterfaceList {
   //////////////////
 
   private void setAll( final boolean toWhat ) {
-    Iterator it = list.iterator();
+    Iterator<InterfaceListEntry> it = list.iterator();
     while( it.hasNext() ) {
-      ( ( InterfaceListEntry )it.next() ).setUsed( toWhat );
+      it.next().setUsed( toWhat );
     }
   }
   
   private boolean contains( final InterfaceListEntry entry ) {
     boolean result = false;
-    Iterator it = list.iterator();
+    Iterator<InterfaceListEntry> it = list.iterator();
     while( !result && it.hasNext() ) {
-      InterfaceListEntry next = ( InterfaceListEntry )it.next();
+      InterfaceListEntry next = it.next();
       result = entry.getFileName().equals( next.getFileName() );
     }
     return result;

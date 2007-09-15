@@ -10,9 +10,9 @@ import java.util.List;
   */
 public class TracingUtil {
 
-  public static void dump( final List cmdLine ) {
+  public static void dump( final List<String> cmdLine ) {
     StringBuffer sb = new StringBuffer();
-    Iterator iter = cmdLine.iterator();
+    Iterator<String> iter = cmdLine.iterator();
     while( iter.hasNext() ) {
       sb.append( iter.next() );
       sb.append( " " );

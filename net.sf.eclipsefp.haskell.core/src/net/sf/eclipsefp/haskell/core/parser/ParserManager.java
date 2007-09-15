@@ -17,11 +17,11 @@ public class ParserManager {
 
   private static ParserManager _instance;
   
-  private final Hashtable htParsers;
+  private final Hashtable<String, IHaskellParser> htParsers;
   
   private ParserManager() {
     // prevent instantiation from outside this class
-    htParsers = new Hashtable();
+    htParsers = new Hashtable<String, IHaskellParser>();
   }
   
   public static synchronized ParserManager getInstance() {
@@ -37,9 +37,9 @@ public class ParserManager {
     // get a valid reference here, always! Therefore provide a dummy at least
     IHaskellParser result = new DefaultHaskellParser();
 
-    Iterator iterator = htParsers.keySet().iterator();
+    Iterator<String> iterator = htParsers.keySet().iterator();
     if( iterator.hasNext() ) {
-      result = ( IHaskellParser )htParsers.get( iterator.next() );
+      result = htParsers.get( iterator.next() );
     }
     return result;
   }
@@ -49,7 +49,7 @@ public class ParserManager {
                                                           throws CoreException {
     Object parser = element.createExecutableExtension( "class" );
     if( parser instanceof IHaskellParser ) {
-      htParsers.put( parserId, parser );
+      htParsers.put( parserId, ( IHaskellParser )parser );
     } else {
       String msg =   "Putative Haskell parser '" 
                    + parserId 

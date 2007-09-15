@@ -19,15 +19,15 @@ public class AnnotationHover implements IAnnotationHover {
   public String getHoverInfo( final ISourceViewer sv, final int line ) {
     String result = null;
     
-    List annotations = getAnnotations( sv, line );
+    List<Annotation> annotations = getAnnotations( sv, line );
     if( annotations != null ) {
       if( annotations.size() == 1 ) {
-        Annotation annotation = ( Annotation )annotations.get( 0 );
+        Annotation annotation = annotations.get( 0 );
         result = formatAnnotation( annotation );
       } else {
-        List messages = collectMessages( annotations );
+        List<String> messages = collectMessages( annotations );
         if( messages.size() == 1 ) {
-          result = ( ( String )messages.get( 0 ) );
+          result = messages.get( 0 );
         } else {
           result = formatMultipleMessages( messages );
         }
@@ -49,20 +49,19 @@ public class AnnotationHover implements IAnnotationHover {
     return result;
   }
 
-  private List collectMessages( final List annotations ) {
-    List result = new ArrayList();
-    Iterator it = annotations.iterator();
+  private List<String> collectMessages( final List<Annotation> annotations ) {
+    List<String> result = new ArrayList<String>();
+    Iterator<Annotation> it = annotations.iterator();
     while( it.hasNext() ) {
-      Annotation annotation = ( Annotation )it.next();
-      result.add( formatAnnotation( annotation ) );
+      result.add( formatAnnotation( it.next() ) );
     }
     return result;
   }
 
-  private String formatMultipleMessages( final List messages ) {
+  private String formatMultipleMessages( final List<String> messages ) {
     StringBuffer sb = new StringBuffer();
     sb.append( "Multiple markers at this line:\n" );
-    Iterator iter = messages.iterator();
+    Iterator<String> iter = messages.iterator();
     while( iter.hasNext() ) {
       sb.append( "\n  - " );
       sb.append( iter.next() );
@@ -93,11 +92,11 @@ public class AnnotationHover implements IAnnotationHover {
     return result;
   }
 
-  private List getAnnotations( final ISourceViewer viewer, final int line ) {
-    List result = null;
+  private List<Annotation> getAnnotations( final ISourceViewer viewer, final int line ) {
+    List<Annotation> result = null;
     IAnnotationModel model = viewer.getAnnotationModel();
     if( model != null ) {
-      result = new ArrayList();
+      result = new ArrayList<Annotation>();
       IDocument document = viewer.getDocument();
   
       Iterator it = model.getAnnotationIterator();
@@ -117,7 +116,7 @@ public class AnnotationHover implements IAnnotationHover {
   
           switch( compareRulerLine( position, document, line ) ) {
           case 1:
-            result.add( obj );
+            result.add( ( Annotation ) obj );
             break;
           }
         }

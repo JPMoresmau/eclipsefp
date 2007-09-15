@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.core.launch;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>parses command line arguments out of one big string into
@@ -38,7 +39,7 @@ public class CommandLineUtil {
   static String[] parse( final String content ) {
     String[] result = new String[ 0 ]; 
     if( content != null && content.length() > 0 ) {
-      ArrayList alResult = new ArrayList();
+      List<String> alResult = new ArrayList<String>();
       boolean inQuotes = false;
       int start = 0;
       int end = content.length();

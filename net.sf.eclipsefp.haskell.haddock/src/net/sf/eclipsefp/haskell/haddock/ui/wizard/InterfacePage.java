@@ -8,6 +8,7 @@ import net.sf.eclipsefp.common.ui.dialog.FileDialogField;
 import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -200,7 +201,7 @@ class InterfacePage extends HaddockExportWizardPage {
   //////////////////
   
   private void validate() {
-    List statusList = new ArrayList();
+    List<IStatus> statusList = new ArrayList<IStatus>();
     if( getInfo().isUseContentsURL() ) {
       statusList.add( validateURL( getInfo().getContentsURL() ) );
     }

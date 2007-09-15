@@ -18,7 +18,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   public static final String BUILDER_ID = HaskellBuilder.class.getName();
 
   @Override
-protected IProject[] build( final int kind, 
+  protected IProject[] build( final int kind, 
                               final Map args, 
                               final IProgressMonitor monitor )
                                                           throws CoreException {

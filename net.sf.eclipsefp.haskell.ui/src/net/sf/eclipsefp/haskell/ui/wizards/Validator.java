@@ -101,7 +101,7 @@ class Validator {
   }
   
   private static String[] getSegments( final String content ) {
-    List list = new ArrayList();
+    List<String> list = new ArrayList<String>();
     StringTokenizer tokenizer = new StringTokenizer( content, ".", false );
     while( tokenizer.hasMoreTokens() ) {
       list.add( tokenizer.nextToken() );

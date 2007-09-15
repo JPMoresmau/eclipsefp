@@ -103,7 +103,7 @@ class CheckboxTreeCP implements ITreeContentProvider {
   }
 
   private Object[] filterHsProjects( final IProject[] projects ) {
-    List list = new ArrayList();
+    List<Object> list = new ArrayList<Object>();
     for( int i = 0; i < projects.length; i++ ) {
       IProject project = projects[ i ];
       try {
@@ -121,7 +121,7 @@ class CheckboxTreeCP implements ITreeContentProvider {
     Object[] result = new Object[ 0 ];
     try {
       IResource[] ress = container.members();
-      List list = new ArrayList();
+      List<IResource> list = new ArrayList<IResource>();
       for( int i = 0; i < ress.length; i++ ) {
         if( ress[ i ] instanceof IFolder ) {
           list.add( ress[ i ] );

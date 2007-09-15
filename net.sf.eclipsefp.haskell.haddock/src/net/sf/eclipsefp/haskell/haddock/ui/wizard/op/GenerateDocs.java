@@ -81,16 +81,10 @@ public class GenerateDocs {
   }
 
   private String[] getCmdLine() {
-    List args = info.createCommand();
+    List<String> args = info.createCommand();
     if( trace ) {
       TracingUtil.dump( args );
     }
-    return toArray( args );
-  }
-
-  private final String[] toArray( final List list ) {
-    String[] result = new String[ list.size() ];
-    list.toArray( result );
-    return result;
+    return args.toArray( new String[ args.size() ] );
   }
 }

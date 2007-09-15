@@ -43,8 +43,8 @@ public class HaddockInfo implements IHaddockParameters {
   
   /** <p>creates the Haddock command with the information contained in this
     * <code>HaddockInfo</code>.</p> */
-  public List createCommand() {
-    List list = new ArrayList();
+  public List<String> createCommand() {
+    List<String> list = new ArrayList<String>();
     list.add( executable );
     list.add( FORMAT_HTML ); // this is the only format currently supported
     list.add( OH_DEAR );
@@ -246,14 +246,14 @@ public class HaddockInfo implements IHaddockParameters {
   private void addParam( final boolean selected, 
                          final String name, 
                          final String value, 
-                         final List list ) {
+                         final List<String> list ) {
     if( selected && value != null && !value.trim().equals( "" ) ) {
       list.add( name );
       list.add( value );
     }
   }
   
-  private void addReadInterfaces( final List list ) {
+  private void addReadInterfaces( final List<String> list ) {
     InterfaceListEntry[] entries = readInterfaceFiles.getAll();
     for( int i = 0; i < entries.length; i++ ) {
       if( entries[ i ].isUsed() ) {

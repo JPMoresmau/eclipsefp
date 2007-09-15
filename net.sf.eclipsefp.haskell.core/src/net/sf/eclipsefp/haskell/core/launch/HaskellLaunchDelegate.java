@@ -60,7 +60,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
                                   final String[] cmdLine, 
                                   final File workingDir ) throws CoreException {
     Process proc = DebugPlugin.exec( cmdLine, workingDir );
-    Map processAttrs = new HashMap();
+    Map<String, String> processAttrs = new HashMap<String, String>();
     String programName = determineProgramName( location );
     processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
     IProcess process = null;

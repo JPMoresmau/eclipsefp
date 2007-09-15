@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
   */
 public class ModuleBrowserFilter extends ViewerFilter {
   
-  private final List activeCriteria = new ArrayList();
+  private final List<FilterCriterion> activeCriteria = new ArrayList<FilterCriterion>();
   
   public Object[] getActiveCriteria() {
     return activeCriteria.toArray();
@@ -24,7 +24,7 @@ public class ModuleBrowserFilter extends ViewerFilter {
     activeCriteria.clear();
     for( int i = 0; i < criteria.length; i++ ) {
       if( criteria[ i ] instanceof FilterCriterion ) {
-        activeCriteria.add( criteria[ i ] );
+        activeCriteria.add( ( FilterCriterion )criteria[ i ] );
       }
     }
   }
@@ -43,10 +43,9 @@ public class ModuleBrowserFilter extends ViewerFilter {
                          final Object parentElement, 
                          final Object element ) {
     boolean result = true;
-    Iterator iter = activeCriteria.iterator();
+    Iterator<FilterCriterion> iter = activeCriteria.iterator();
     while( result && iter.hasNext() ) {
-      FilterCriterion criterion = ( FilterCriterion )iter.next();
-      result = criterion.matches( element );
+      result = iter.next().matches( element );
     }
     return result;
   }

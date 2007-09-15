@@ -17,6 +17,6 @@ public interface ICompilerOutput {
   /** <p>returns what the compiler wrote to the error stream.</p> */
   Collection<ICompilerOutputItem> getErrors();
   /** <p>returns exceptions that occured in the compiler wrapper.</p> */
-  List getExceptions();
+  List<Exception> getExceptions();
 
 }

@@ -18,11 +18,11 @@ class DefaultHaskellCompilerOutput implements ICompilerOutput {
   }
   
   public Collection<ICompilerOutputItem> getErrors() {
-    return new ArrayList<ICompilerOutputItem>(0);
+    return new ArrayList<ICompilerOutputItem>();
   }
 
-  public List getExceptions() {
-    return new ArrayList( 0 );
+  public List<Exception> getExceptions() {
+    return new ArrayList<Exception>();
   }
 
   public int getExitStatus() {

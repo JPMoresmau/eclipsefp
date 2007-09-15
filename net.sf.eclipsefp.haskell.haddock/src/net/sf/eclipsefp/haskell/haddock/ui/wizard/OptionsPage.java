@@ -8,6 +8,7 @@ import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.dialog.WSFileDialogField;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -131,7 +132,7 @@ class OptionsPage extends HaddockExportWizardPage {
   //////////////////
   
   private void validate() {
-    List statusList = new ArrayList();
+    List<IStatus> statusList = new ArrayList<IStatus>();
     if( getInfo().isUseCssFile() ) {
       statusList.add( validateFile( getInfo().getCssFile(), "Css file" ) );
     }

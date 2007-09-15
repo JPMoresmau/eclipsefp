@@ -2,8 +2,7 @@
 package net.sf.eclipsefp.haskell.haddock.ui.wizard;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsefp.haskell.haddock.HaddockPlugin;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
@@ -72,10 +71,10 @@ System.out.println( new GenerateDocs( info ).run() );
   //////////////////
   
   private void applySelection( final IStructuredSelection ssel ) {
-    ArrayList list = new ArrayList();
-    Iterator iter = ssel.iterator();
-    while( iter.hasNext() ) {
-      IResource res = ResourceUtil.findResource( iter.next() );
+    List<IResource> list = new ArrayList<IResource>();
+    Object[] elems = ssel.toArray();
+    for( Object elem: elems ) {
+      IResource res = ResourceUtil.findResource( elem );
       if( res != null && res instanceof IProject ) {
         list.add( res );
       }

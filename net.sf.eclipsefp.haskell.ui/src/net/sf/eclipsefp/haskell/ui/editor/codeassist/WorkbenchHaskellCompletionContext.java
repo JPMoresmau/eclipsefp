@@ -65,10 +65,8 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 		if (input instanceof IFileEditorInput) {
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			return fileInput.getFile();
-		} else {
-			//TODO what to do when there isn't a file editor opened?
-			return null;
-		}
-
+		} 
+    //TODO what to do when there isn't a file editor opened?
+		return null;
 	}
 }

@@ -21,10 +21,10 @@ public class CompilerOutput implements ICompilerOutput {
 	private final Collection<ICompilerOutputItem> fErrors =
 		new ArrayList<ICompilerOutputItem>();
 
-	private List exceptions;
+	private List<Exception> exceptions;
 
 	public CompilerOutput(final int exitStatus, final String output,
-			final List exceptions) {
+			final List<Exception> exceptions) {
 		this.exitStatus = exitStatus;
 		this.output = output;
 		this.exceptions = exceptions;
@@ -55,7 +55,7 @@ public class CompilerOutput implements ICompilerOutput {
 		return new ArrayList<ICompilerOutputItem>(fErrors);
 	}
 
-	public List getExceptions() {
+	public List<Exception> getExceptions() {
 		return exceptions;
 	}
 

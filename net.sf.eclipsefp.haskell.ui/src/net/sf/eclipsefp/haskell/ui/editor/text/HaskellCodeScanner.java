@@ -2,14 +2,20 @@
 package net.sf.eclipsefp.haskell.ui.editor.text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
-
-import org.eclipse.jface.text.rules.*;
-
-import net.sf.eclipsefp.haskell.ui.editor.syntax.*;
+import net.sf.eclipsefp.haskell.ui.editor.syntax.ArrowRule;
+import net.sf.eclipsefp.haskell.ui.editor.syntax.WhitespaceDetector;
 import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.util.text.WordDetector;
+
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.WordRule;
 
 
 /** <p>Tokenizes Haskell code into keywords, whitespaces, string and number 
@@ -30,7 +36,7 @@ public class HaskellCodeScanner extends RuleBasedScanner
                                           EDITOR_STRING_BOLD );
     IToken defaultToken = man.createToken( EDITOR_DEFAULT_COLOR, 
                                            EDITOR_DEFAULT_BOLD );
-    ArrayList list = new ArrayList();
+    List<IRule> list = new ArrayList<IRule>();
 
     // strings and characters
     list.add( new SingleLineRule( "\"", "\"", stringToken, '\\' ) );
@@ -67,7 +73,7 @@ public class HaskellCodeScanner extends RuleBasedScanner
     return result;
   }
 
-  private void applyRulesList( final ArrayList list ) {
+  private void applyRulesList( final List<IRule> list ) {
     IRule[] rules = new IRule[ list.size() ];
     list.toArray( rules );
     setRules( rules );

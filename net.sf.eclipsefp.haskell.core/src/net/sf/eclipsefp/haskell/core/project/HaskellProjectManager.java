@@ -34,16 +34,16 @@ public class HaskellProjectManager {
   
   /** contains IHaskellProject info objects (values) for project resources
     * (keys) in the workspace. */  
-  private final Hashtable htHaskellProjects;
+  private final Hashtable<IResource, IHaskellProject> htHaskellProjects;
   /** contains the project property change listeners registered with
     * this HaskellProjectManager. */
-  private final Vector listeners;
+  private final Vector<IProjectPropertiesListener> listeners;
   
   /** the singleton instance of HaskellProjectManager. Private in order
     * to ensure the singleton pattern. */
   private HaskellProjectManager() {
-    htHaskellProjects = new Hashtable();
-    listeners = new Vector();
+    htHaskellProjects = new Hashtable<IResource, IHaskellProject>();
+    listeners = new Vector<IProjectPropertiesListener>();
   }
 
   /** <p>returns a reference to the singleton instance of 
@@ -113,7 +113,7 @@ public class HaskellProjectManager {
   /** <p>returns an array of all Haskell Projects in the specified 
     * workspace.</p> */
   public static IHaskellProject[] getAll( final IWorkspaceRoot root ) {
-    List list = new ArrayList();
+    List<IHaskellProject> list = new ArrayList<IHaskellProject>();
     IProject[] projects = root.getProjects();
     for( int i = 0; i < projects.length; i++ ) {
       try {
@@ -163,7 +163,7 @@ public class HaskellProjectManager {
       }
       htHaskellProjects.put( project, newHsProject );
     }
-    return ( IHaskellProject )htHaskellProjects.get( project );
+    return htHaskellProjects.get( project );
   }
 
   private IHaskellProject createNew( final IFile descFile ) {

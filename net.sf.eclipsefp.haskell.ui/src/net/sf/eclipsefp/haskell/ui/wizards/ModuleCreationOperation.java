@@ -37,8 +37,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
   /////////////////////////////////////////////
   
   public void run( final IProgressMonitor monitor ) 
-                                              throws InvocationTargetException,
-                                                     InterruptedException {
+                                              throws InvocationTargetException {
     Assert.isNotNull( info );
     try {
       generatedFile = new SourceFileGenerator().createFile( monitor, info );
