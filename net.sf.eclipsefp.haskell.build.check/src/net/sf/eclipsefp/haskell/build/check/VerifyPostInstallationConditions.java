@@ -13,7 +13,7 @@ public class VerifyPostInstallationConditions implements IPlatformRunnable {
 			assertPluginExistence("net.sf.eclipsefp.haskell.core");
 			assertSourceCodePlugin("net.sf.eclipsefp.haskell.source");
 			assertDocumentationPlugin("net.sf.eclipsefp.common.doc");
-			assertDocumentationPlugin("de.leiffrenzel.fp.haskell.doc.user");
+			assertDocumentationPlugin("net.sf.eclipsefp.haskell.doc.user");
 			return 0;
 		} catch (Exception e) {
 			final String message = "Bad installation. " + e.getMessage();

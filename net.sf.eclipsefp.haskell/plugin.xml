@@ -8,7 +8,7 @@
             category="net.sf.eclipsefp.common.ui.fpCheatSheets"
             contentFile="cheatsheets/gettingstarted.xml"
             name="%cheatSheet_name"
-            id="de.leiffrenzel.fp.haskell.cheatsheets.GettingStarted"/>
+            id="net.sf.eclipsefp.haskell.cheatsheets.GettingStarted"/>
    </extension>
 
 </plugin>

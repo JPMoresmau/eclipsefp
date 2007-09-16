@@ -12,7 +12,7 @@
 <booleanAttribute key="automaticAdd" value="false"/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="includeFragments" value="false"/>
-<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.core,net.sf.eclipsefp.common.ui,de.leiffrenzel.fp.haskell.doc.user,org.antlr,net.sf.eclipsefp.haskell.ghccompiler,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.cabal.core,org.easymock,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,de.leiffrenzel.fp.haskell,net.sf.eclipsefp.haskell.core.jparser,net.sf.eclipsefp.haskell.cabal.ui,net.sf.eclipsefp.haskell.hugs"/>
+<stringAttribute key="selected_workspace_plugins" value="net.sf.eclipsefp.haskell.core,net.sf.eclipsefp.common.ui,net.sf.eclipsefp.haskell.doc.user,org.antlr,net.sf.eclipsefp.haskell.ghccompiler,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.common.core,net.sf.eclipsefp.haskell.cabal.core,org.easymock,net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.common.doc,net.sf.eclipsefp.haskell,net.sf.eclipsefp.haskell.core.jparser,net.sf.eclipsefp.haskell.cabal.ui,net.sf.eclipsefp.haskell.hugs"/>
 <stringAttribute key="location" value="tmp/runtime-workspace"/>
 <stringAttribute key="configLocation" value=""/>
 <booleanAttribute key="clearws" value="false"/>

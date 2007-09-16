@@ -17,4 +17,5 @@ This is the initial version to kick off the experimental branch.
   not recommended to run an Eclipse installation with both EclipseFP 0.x 
   versions and EclipseFP 1.100.x versions. Please use separate Eclipse 
   installations or uninstall any older versions of EclipseFP.
+- The documentation plugin for the Haskell part has also been renamed.
 - I have started regular snapshot builds from this branch.

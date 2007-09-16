@@ -62,7 +62,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          version="1.100.0"/>
 
    <plugin
-         id="de.leiffrenzel.fp.haskell.doc.user"
+         id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
          version="1.100.0"

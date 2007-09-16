@@ -12,7 +12,7 @@
 </intro>
 
 <item
-	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/compilersInterpreters.html"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/compilersInterpreters.html"
 	title="Configure commands"
 	skip="true">
 	<action
@@ -42,7 +42,7 @@
 </item>
 
 <item
-	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/wizards.html#newProject"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/wizards.html#newProject"
 	title="Create a Haskell project"
 	skip="true">
 	<action
@@ -59,7 +59,7 @@
 </item>
 
 <item
-	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/wizards.html#newModule"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/wizards.html#newModule"
 	title="Create a Main module"
 	skip="true">
 	<action
@@ -77,7 +77,7 @@
 </item>
 
 <item
-	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/gettingStarted.html#createSource"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/gettingStarted.html#createSource"
 	title="Write some code">
 	<description>
 		In the source of the module, write the following line right below
@@ -88,7 +88,7 @@
 </item>
 
 <item
-	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/gettingStarted.html#run"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/gettingStarted.html#run"
 	title="Launch the executable">
 	<description>
 	    The executable is located in the bin/ folder of the project.
@@ -99,7 +99,7 @@
 </item>
 
 <item
-	href="/de.leiffrenzel.fp.haskell.doc.user/html/haskell/userGuide/haddock.html"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/haddock.html"
 	title="Generate documentation (Haddock)">
 	<description>
 	  If you want to use Haddock to generate documentation from your sources,
