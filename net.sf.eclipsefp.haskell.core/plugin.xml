@@ -70,4 +70,15 @@
       <super type="org.eclipse.core.resources.textmarker"/>
    </extension>
 
+   <!-- Refactoring support -->
+   
+   <extension
+        point="de.leiffrenzel.cohatoe.server.core.haskellFunctions">
+     <haskellFunction
+           implementation="net.sf.eclipsefp.haskell.core.internal.refactoring.functions.MakePointFree"
+           interface="net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IMakePointFree"
+           name="%pfRefactoring_name"
+           codeFile="$os$/obj/MakePointFree.o">
+     </haskellFunction>
+  </extension>
 </plugin>

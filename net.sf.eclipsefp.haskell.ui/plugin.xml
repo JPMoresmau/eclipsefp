@@ -274,4 +274,17 @@
             class="net.sf.eclipsefp.haskell.ui.HaskellUIPreferenceInitializer">
       </initializer>
    </extension>
+   
+  <!-- Refactoring support -->
+
+  <!-- put a menu item into the context menu of the Haskell source editor -->
+  <extension point="org.eclipse.ui.popupMenus">
+    <viewerContribution targetID="#HaskellEditorContext"
+                        id="net.sf.eclipsefp.haskell.refactoring.pf.makePointFree">
+      <action label="%refPF_label"
+              class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree" 
+              menubarPath="additions"
+              id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree"/>
+    </viewerContribution>
+  </extension>
 </plugin>
