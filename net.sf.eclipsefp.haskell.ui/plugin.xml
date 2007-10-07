@@ -265,7 +265,7 @@
                label="%firstCharAction_label"
                definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
                class="net.sf.eclipsefp.haskell.ui.editor.actions.FirstCharAction"
-               id="de.leiffrenzel.fp.haskell.editor.actions.firstChar"/>
+               id="net.sf.eclipsefp.haskell.editor.actions.firstChar"/>
       </editorContribution>
    </extension>
    <extension
