@@ -20,10 +20,6 @@ A copy of the EPL is provided with this content and is also
 available at http://www.eclipse.org/legal/epl-v10.html.
    </license>
 
-   <includes
-         id="net.sf.eclipsefp.haskell.source"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
