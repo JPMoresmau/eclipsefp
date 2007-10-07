@@ -15,8 +15,6 @@
              href="html/haskell/userGuide/mbview.html"/>
       <topic label="Compilers and Interpreters" 
              href="html/haskell/userGuide/compilersInterpreters.html"/>
-      <!--topic label="Module Dependencies View" 
-                href="html/haskell/userGuide/mdepview.html"/-->
       <topic label="Generating documentation (Haddock)" 
              href="html/haskell/userGuide/haddock.html"/>
     </topic>
