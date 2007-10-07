@@ -1,0 +1,21 @@
+Test plan for EclipseFP
+=======================
+
+This plan should be worked through for each milestone release and full release,
+with every deliverable. It contains a basic checklist for making sure that all
+functionality is in the build and is not severely broken. This is only a smoke
+test of course (just run and see if it smokes). It must be supplemented by the
+automated unit tests and manual feature tests.
+
+- Verify build completeness
+
+  - Run Eclipse and check that the EclipseFP shows up in the About dialog, 
+    with the correct version number.
+  - Check that the Haskell perspective and root preference page are there.
+  - Create a Haskell project, create a source file with a Hello-World, make 
+    sure the program can be run and gives its output.
+
+- Haddock support
+
+  - Create a project and open the Haddock wizard; the wizard should be in the 
+    FP category, not under 'Other'.
