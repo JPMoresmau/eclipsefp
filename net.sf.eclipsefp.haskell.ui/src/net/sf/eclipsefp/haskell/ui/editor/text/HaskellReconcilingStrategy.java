@@ -2,6 +2,12 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.editor.text;
 
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences;
+import net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrenceComputer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -14,98 +20,103 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 
-import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
-import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
-import net.sf.eclipsefp.haskell.core.parser.ParserManager;
-import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
-
-/**
- * <p>
- * helper class that defines the model reconciling for the Haskell editor.
- * </p>
- * 
- * @author Leif Frenzel
- */
+/** <p> helper class that defines the model reconciling for the Haskell 
+  * editor.</p>
+  * 
+  * @author Leif Frenzel
+  */
 public class HaskellReconcilingStrategy implements IReconcilingStrategy,
-		IReconcilingStrategyExtension {
+                                                   IReconcilingStrategyExtension {
 
-	private final HaskellEditor editor;
+  private final HaskellEditor editor;
 
-	private final HaskellFoldingStructureProvider foldingStructureProvider;
+  private final HaskellFoldingStructureProvider foldingStructureProvider;
 
-	public HaskellReconcilingStrategy(final HaskellEditor editor) {
-		this.editor = editor;
-		foldingStructureProvider = new HaskellFoldingStructureProvider(editor);
-	}
+  private MarkOccurrenceComputer markOccurrencesComputer;
 
-	// interface methods of IReconcilingStrategy
-	// //////////////////////////////////////////
+  public HaskellReconcilingStrategy( final HaskellEditor editor ) {
+    this.editor = editor;
+    foldingStructureProvider = new HaskellFoldingStructureProvider( editor );
+  }
 
-	public void setDocument(final IDocument document) {
-		foldingStructureProvider.setDocument(document);
-	}
+  
+  // interface methods of IReconcilingStrategy
+  // //////////////////////////////////////////
 
-	public void reconcile(final DirtyRegion dirtyRegion, final IRegion subRegion) {
-		reconcile();
-	}
+  public void setDocument( final IDocument document ) {
+    foldingStructureProvider.setDocument( document );
+    if( markOccurrencesComputer != null ) {
+      markOccurrencesComputer.setDocument( document );
+    }
+  }
 
-	public void reconcile(final IRegion partition) {
-		reconcile();
-	}
+  public void reconcile( final DirtyRegion dirtyRegion, 
+                         final IRegion subRegion ) {
+    reconcile();
+  }
 
-	// interface methods of IReconcilingStrategyExtension
-	// ///////////////////////////////////////////////////
+  public void reconcile( final IRegion partition ) {
+    reconcile();
+  }
 
-	public void setProgressMonitor(final IProgressMonitor monitor) {
-		foldingStructureProvider.setProgressMonitor(monitor);
-	}
+  
+  // interface methods of IReconcilingStrategyExtension
+  // ///////////////////////////////////////////////////
 
-	public void initialReconcile() {
-		reconcile();
-	}
+  public void setProgressMonitor( final IProgressMonitor monitor ) {
+    foldingStructureProvider.setProgressMonitor( monitor );
+  }
 
-	// helping methods
-	// ////////////////
+  public void initialReconcile() {
+    reconcile();
+  }
 
-	private void reconcile() {
-		IEditorInput input = editor.getEditorInput();
-		if (input != null && input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) input).getFile();
+  
+  // helping methods
+  // ////////////////
 
-			//TODO this is here for when the reconciler gets called but the
-			//file has already been deleted
-			//check to see if we can use a PlatformJob or something to run
-			//this in safe state
-			if (!file.exists())
-				return;
+  private void reconcile() {
+    IEditorInput input = editor.getEditorInput();
+    if( input != null && input instanceof IFileEditorInput ) {
+      IFile file = ( ( IFileEditorInput )input ).getFile();
 
-			final ICompilationUnit cu = parse(file);
-			if (cu != null) {
-				Shell shell = editor.getSite().getShell();
-				if (shell != null && !shell.isDisposed()) {
-					shell.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							editor.setModel(cu);
-						}
-					});
-					foldingStructureProvider.updateFoldingRegions(cu);
-				}
-			}
-		}
-	}
+      // TODO this is here for when the reconciler gets called but the
+      // file has already been deleted
+      // check to see if we can use a PlatformJob or something to run
+      // this in safe state
+      if( file.exists() ) {
 
-	private ICompilationUnit parse(final IFile file) {
-		ICompilationUnit result = null;
-		ParserManager manager = ParserManager.getInstance();
-		IHaskellParser parser = manager.getParser();
-		if (parser != null && parser.canParse()) {
-			try {
-				result = parser.parse(file);
-			} catch (final CoreException cex) {
-				// TODO what error handling here?
-				cex.printStackTrace();
-			}
-		}
-		return result;
-	}
+        final ICompilationUnit cu = parse( file );
+        if( cu != null ) {
+          Shell shell = editor.getSite().getShell();
+          if( shell != null && !shell.isDisposed() ) {
+            shell.getDisplay().asyncExec( new Runnable() {  
+              public void run() {
+                editor.setModel( cu );
+                if( markOccurrencesComputer != null ) {
+                  markOccurrencesComputer.compute();
+                }
+              }
+            } );
+            foldingStructureProvider.updateFoldingRegions( cu );
+          }
+        }
+      }
+    }
+  }
+
+  private ICompilationUnit parse( final IFile file ) {
+    ICompilationUnit result = null;
+    ParserManager manager = ParserManager.getInstance();
+    IHaskellParser parser = manager.getParser();
+    if( parser != null && parser.canParse() ) {
+      try {
+        result = parser.parse( file );
+      } catch( final CoreException cex ) {
+        // TODO what error handling here?
+        cex.printStackTrace();
+      }
+    }
+    return result;
+  }
 }

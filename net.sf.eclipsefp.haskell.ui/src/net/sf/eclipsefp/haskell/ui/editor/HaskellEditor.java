@@ -2,15 +2,15 @@
 package net.sf.eclipsefp.haskell.ui.editor;
 
 import java.util.ResourceBundle;
-
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
+import net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences;
+import net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.views.outline.HaskellOutlinePage;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +25,8 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -32,6 +34,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>The main editor class for the Haskell editor.</p>
   * 
@@ -46,6 +49,7 @@ public class HaskellEditor extends TextEditor
   
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
+  private MarkOccurrenceComputer markOccurrencesComputer;
 
   private ICompilationUnit model;
   
@@ -74,8 +78,8 @@ public class HaskellEditor extends TextEditor
     setEditorContextMenuId( "#HaskellEditorContext" );
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
+    initMarkOccurrences();
   }
-
   
   @Override
   protected boolean affectsTextPresentation( final PropertyChangeEvent evt ) {
@@ -150,6 +154,17 @@ public class HaskellEditor extends TextEditor
                                                getSharedColors() );
     projectionSupport.install();
     projectionViewer.doOperation( ProjectionViewer.TOGGLE );
+    
+    if( markOccurrencesComputer != null ) {
+      ISelectionChangedListener listener = new ISelectionChangedListener() {
+        public void selectionChanged( final SelectionChangedEvent event ) {
+          IDocument doc = getSourceViewer().getDocument();
+          markOccurrencesComputer.setDocument( doc );
+          markOccurrencesComputer.compute();
+        }
+      };
+      projectionViewer.addPostSelectionChangedListener( listener );
+    }
   }
 
   /** <p>if we are asked for a ContentOutlinePage, we show what we have.</p> */ 
@@ -261,5 +276,15 @@ public class HaskellEditor extends TextEditor
     action.setActionDefinitionId( actionDefinitionId );
     setAction( name, action );
     markAsStateDependentAction( name, true );
+  }
+  
+  private void initMarkOccurrences() {
+    CohatoeServer server = CohatoeServer.getInstance();
+    // TODO lf this is generic from Cohatoe 0.6, so we don't need the cast 
+    Object obj = server.createFunction( IMarkOccurrences.class );
+    if( obj != null ) {
+      IMarkOccurrences mo = ( IMarkOccurrences )obj;
+      markOccurrencesComputer = new MarkOccurrenceComputer( this, mo );
+    }
   }
 }

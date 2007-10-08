@@ -268,6 +268,43 @@
                id="net.sf.eclipsefp.haskell.editor.actions.firstChar"/>
       </editorContribution>
    </extension>
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+      <type name="net.sf.eclipsefp.haskell.ui.occurrences" />
+   </extension>
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="net.sf.eclipsefp.haskell.ui.occurrences"
+            label="%haskellOccurrence_label"
+            icon="icons/full/obj16/searchm_obj.gif"
+            textPreferenceKey="occurrenceIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="occurrenceHighlighting"
+            highlightPreferenceValue="true"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="occurrenceIndicationColor"
+            colorPreferenceValue="212,212,212"
+            presentationLayer="4"
+            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+   </extension>   
+      <extension
+         point="de.leiffrenzel.cohatoe.server.core.haskellFunctions">
+      <haskellFunction
+            implementation="net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrences"
+            interface="net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences"
+            name="%markOccurrences_name"
+            codeFile="$os$/obj/MarkOccurrences.o" />
+   </extension>
+   
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
