@@ -23,7 +23,8 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
 		return fProject.getPlatformProject();
 	}
 
-	protected final void setUp() throws Exception {
+	@Override
+  protected final void setUp() throws Exception {
 		fProject = new TestHaskellProject("TestProject-1");
 		setUpMore();
 	}
@@ -34,6 +35,7 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
 	 * @throws Exception
 	 */
 	protected void setUpMore() throws Exception {
+	  // unused
 	}
 
 	/**
@@ -42,9 +44,11 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
 	 * @throws Exception
 	 */
 	protected void doTearDown() throws Exception {
+	  // unused
 	}
 
-	protected final void tearDown() throws Exception {
+	@Override
+  protected final void tearDown() throws Exception {
 		doTearDown();
 		fProject.destroy();
 	}
