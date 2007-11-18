@@ -312,15 +312,14 @@
       </initializer>
    </extension>
    
-  <!-- Refactoring support -->
+  <!-- Editor context menu: Coding and Refactoring actions-->
 
-  <!-- put a menu item into the context menu of the Haskell source editor -->
   <extension point="org.eclipse.ui.popupMenus">
     <viewerContribution targetID="#HaskellEditorContext"
                         id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions">
       <menu
             id="refactor"
-            label="%refMenu_label"
+            label="%ctxMenu_refactor_label"
             path="group.edit">
          <separator name="codingGroup" />
       </menu>

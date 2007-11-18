@@ -14,10 +14,9 @@ import net.sf.eclipsefp.haskell.ui.views.outline.HaskellOutlinePage;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.internal.ui.sourcelookup.AddSourceContainerDialog;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -104,8 +103,10 @@ public class HaskellEditor extends TextEditor
   public void editorContextMenuAboutToShow( final IMenuManager menu ) {
     super.editorContextMenuAboutToShow( menu );
     if( isEditable() ) {
-      addAction( menu, ITextEditorActionConstants.GROUP_EDIT, "Comment" );
-      addAction( menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment" );
+      IMenuManager mmSource = new MenuManager( "Source", "source" );
+      menu.prependToGroup( ITextEditorActionConstants.GROUP_EDIT, mmSource );
+      addAction( mmSource, "Comment" );
+      addAction( mmSource, "Uncomment" );
     }
   }
   
