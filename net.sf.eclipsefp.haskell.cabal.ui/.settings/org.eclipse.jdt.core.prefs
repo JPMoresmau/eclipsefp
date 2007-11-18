@@ -1,4 +1,4 @@
-#Sat Sep 15 21:31:28 CEST 2007
+#Sun Nov 18 17:35:06 CET 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
 org.eclipse.jdt.core.compiler.compliance=1.5
@@ -34,7 +34,7 @@ org.eclipse.jdt.core.compiler.problem.overridingPackageDefaultMethod=warning
 org.eclipse.jdt.core.compiler.problem.parameterAssignment=warning
 org.eclipse.jdt.core.compiler.problem.possibleAccidentalBooleanAssignment=warning
 org.eclipse.jdt.core.compiler.problem.potentialNullReference=warning
-org.eclipse.jdt.core.compiler.problem.rawTypeReference=warning
+org.eclipse.jdt.core.compiler.problem.rawTypeReference=ignore
 org.eclipse.jdt.core.compiler.problem.redundantNullCheck=warning
 org.eclipse.jdt.core.compiler.problem.specialParameterHidingField=disabled
 org.eclipse.jdt.core.compiler.problem.staticAccessReceiver=warning
