@@ -187,14 +187,14 @@ public class InterfaceListBlock extends Composite {
 
   private class InterfaceListCP implements IStructuredContentProvider {
     
-    private HaddockInfo info;
+    private HaddockInfo haddockInfo;
     
     
     // interface methods of IStructuredContentProvider
     //////////////////////////////////////////////////
     
     public Object[] getElements( final Object inputElement ) {
-      return info.getReadInterfaceFiles().getAll();
+      return haddockInfo.getReadInterfaceFiles().getAll();
     }
 
     public void dispose() {
@@ -204,7 +204,7 @@ public class InterfaceListBlock extends Composite {
     public void inputChanged( final Viewer viewer, 
                               final Object oldInput, 
                               final Object newInput ) {
-      info = ( HaddockInfo )newInput;
+      haddockInfo = ( HaddockInfo )newInput;
     }
   }
 }
