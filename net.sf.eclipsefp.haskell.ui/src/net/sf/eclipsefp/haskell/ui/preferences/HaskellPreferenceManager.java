@@ -14,28 +14,24 @@ public class HaskellPreferenceManager implements IPreferenceConstants {
 	private final IPreferenceStore fPreferenceStore;
 	private ConsoleCompilingReporter fReporter = null;
 
-	public HaskellPreferenceManager(final ICompilerManager manager,
-			                        final IPreferenceStore store)
-	{
-		fCompilerManager = manager;
-		fPreferenceStore = store;
-	}
+	public HaskellPreferenceManager( final ICompilerManager manager,
+                                   final IPreferenceStore store ) {
+    fCompilerManager = manager;
+    fPreferenceStore = store;
+  }
 
 	public void activateBuildConsolePreferences() {
-		if (null != fReporter) {
-			fCompilerManager.removeCompilerListener(fReporter);
-		}
-		
-		fReporter = new ConsoleCompilingReporter(createCleaner());
-		fCompilerManager.addCompilerListener(fReporter);
-	}
+    if( null != fReporter ) {
+      fCompilerManager.removeCompilerListener( fReporter );
+    }
+
+    fReporter = new ConsoleCompilingReporter( createCleaner() );
+    fCompilerManager.addCompilerListener( fReporter );
+  }
 
 	private IConsoleCleaner createCleaner() {
-		if (fPreferenceStore.getBoolean(CLEAR_BUILD_CONSOLE)) {
-			return new RealCleaner();
-		} else {
-			return new FakeCleaner();
-		}
+		return   fPreferenceStore.getBoolean( CLEAR_BUILD_CONSOLE ) 
+		       ? new RealCleaner() 
+		       : new FakeCleaner();
 	}
-	
 }
