@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="FP: Haskell support for Eclipse"
-      version="1.100.0"
+      version="1.101.0"
       provider-name="eclipsefp.sourceforge.net">
 
    <description>
@@ -22,13 +22,20 @@ available at http://www.eclipse.org/legal/epl-v10.html.
 
    <requires>
       <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
+      <import plugin="net.sf.eclipsefp.haskell.ui"/>
+      <import plugin="net.sf.eclipsefp.haskell.haddock"/>
+      <import plugin="net.sf.eclipsefp.common.ui"/>
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.jface" version="3.2.0" match="compatible"/>
+      <import plugin="de.leiffrenzel.cohatoe.server.core"/>
+      <import plugin="net.sf.eclipsefp.common.core"/>
       <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
+      <import plugin="net.sf.eclipsefp.haskell.core"/>
       <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ltk.core.refactoring"/>
+      <import plugin="org.eclipse.ltk.ui.refactoring"/>
       <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.console" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.ui.editors" version="3.2.0" match="compatible"/>
@@ -36,78 +43,70 @@ available at http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.ui.views" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.2.0" match="compatible"/>
       <import plugin="net.sf.eclipsefp.haskell.cabal.core"/>
-      <import plugin="net.sf.eclipsefp.haskell.ui"/>
-      <import plugin="net.sf.eclipsefp.haskell.haddock"/>
-      <import plugin="net.sf.eclipsefp.common.ui"/>
-      <import plugin="de.leiffrenzel.cohatoe.server.core"/>
-      <import plugin="net.sf.eclipsefp.common.core"/>
-      <import plugin="org.eclipse.ltk.core.refactoring"/>
-      <import plugin="net.sf.eclipsefp.haskell.core"/>
-      <import plugin="org.eclipse.ltk.ui.refactoring"/>
    </requires>
 
    <plugin
          id="net.sf.eclipsefp.haskell"
          download-size="0"
          install-size="0"
-         version="1.100.0"
+         version="1.101.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.common.core"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="1.100.0"
+         version="1.101.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.haddock"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.common.doc"
          download-size="0"
          install-size="0"
-         version="1.100.0"
+         version="1.101.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.common.ui"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="org.antlr"
@@ -119,18 +118,18 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.cabal.core"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.cabal.ui"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="1.100.0"/>
+         version="1.101.0"/>
 
 </feature>

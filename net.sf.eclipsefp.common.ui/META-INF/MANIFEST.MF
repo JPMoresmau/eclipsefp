@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.common.ui;singleton:=true
-Bundle-Version: 1.100.0
+Bundle-Version: 1.101.0
 Bundle-ClassPath: commonui.jar
 Bundle-Activator: net.sf.eclipsefp.common.ui.CommonUIPlugin
 Bundle-Vendor: %bundleVendor
