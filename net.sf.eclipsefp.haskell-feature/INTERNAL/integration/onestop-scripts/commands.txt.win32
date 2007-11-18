@@ -1,0 +1,1 @@
+[Unzip "eclipse-platform*.zip",UnzipToEclipse "de.leiffrenzel.cohatoe*.zip",UnzipToEclipse "net.sf.eclipsefp*.zip",CreateBuild "1.100.1",Clean]
