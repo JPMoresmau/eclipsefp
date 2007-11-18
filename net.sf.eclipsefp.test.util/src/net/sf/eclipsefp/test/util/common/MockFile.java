@@ -34,72 +34,78 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 public class MockFile implements IFile {
 
-	private List<MockInputStream> fOpenStreams = new Vector<MockInputStream>();
-	private String fContents;
-	private String fFileName;
+	private final List<MockInputStream> fOpenStreams = new Vector<MockInputStream>();
+	private final String fContents;
+	private final String fFileName;
 	private IProject fProject;
 	
-	public MockFile(String contents) {
+	public MockFile(final String contents) {
 		this("Mock.hs", contents);
 	}
 
-	public MockFile(String filename, String contents) {
+	public MockFile(final String filename, final String contents) {
 		fContents = contents;
 		fFileName = filename;
 	}
 
-	public void appendContents(InputStream source, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void appendContents(final InputStream source, final boolean force,
+			final boolean keepHistory, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void appendContents(InputStream source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
+	public void appendContents(final InputStream source, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void create(InputStream source, boolean force,
-			IProgressMonitor monitor) throws CoreException {
+	public void create(final InputStream source, final boolean force,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void create(InputStream source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
+	public void create(final InputStream source, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void createLink(IPath localLocation, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
+	public void createLink(final IPath localLocation, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void delete(boolean force, boolean keepHistory,
-			IProgressMonitor monitor) throws CoreException {
+	public void delete(final boolean force, final boolean keepHistory,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public String getCharset() throws CoreException {
+	public String getCharset() {
 		return null;
 	}
 
-	public String getCharset(boolean checkImplicit) throws CoreException {
+	public String getCharset(final boolean checkImplicit) {
 		return null;
 	}
 
-	public String getCharsetFor(Reader reader) throws CoreException {
+	public String getCharsetFor(final Reader reader) {
 		return null;
 	}
 
-	public IContentDescription getContentDescription() throws CoreException {
+	public IContentDescription getContentDescription() {
 		return null;
 	}
 
-	public InputStream getContents() throws CoreException {
+	public InputStream getContents() {
 		MockInputStream stream = new MockInputStream(
 				                     new ByteArrayInputStream(fContents.getBytes()));
 		fOpenStreams.add(stream);
 		return stream;
 	}
 
-	public InputStream getContents(boolean force) throws CoreException {
+	public InputStream getContents(final boolean force) {
 		return getContents();
 	}
 
-	public int getEncoding() throws CoreException {
+	public int getEncoding() {
 		return 0;
 	}
 
@@ -107,8 +113,7 @@ public class MockFile implements IFile {
 		return null;
 	}
 
-	public IFileState[] getHistory(IProgressMonitor monitor)
-			throws CoreException {
+	public IFileState[] getHistory(final IProgressMonitor monitor) {
 		return null;
 	}
 
@@ -121,174 +126,137 @@ public class MockFile implements IFile {
 		return false;
 	}
 
-	public void move(IPath destination, boolean force, boolean keepHistory,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void move(final IPath destination, final boolean force, final boolean keepHistory,
+			final IProgressMonitor monitor) {
+		// unused
 	}
 
-	public void setCharset(String newCharset) throws CoreException {
-		
-
+	public void setCharset(final String newCharset) {
+	  // unused
 	}
 
-	public void setCharset(String newCharset, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void setCharset(final String newCharset, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void setContents(InputStream source, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-		
-
+	public void setContents(final InputStream source, final boolean force,
+			final boolean keepHistory, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void setContents(IFileState source, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-		
-
+	public void setContents(final IFileState source, final boolean force,
+			final boolean keepHistory, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void setContents(InputStream source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void setContents(final InputStream source, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void setContents(IFileState source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void setContents(final IFileState source, final int updateFlags,
+			final IProgressMonitor monitor) {
+    // unused		
 	}
 
-	public void accept(IResourceProxyVisitor visitor, int memberFlags)
-			throws CoreException {
-		
-
+	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) {
+	  // unused		
 	}
 
-	public void accept(IResourceVisitor visitor) throws CoreException {
-		
-
+	public void accept(final IResourceVisitor visitor) {
+	  // unused		
 	}
 
-	public void accept(IResourceVisitor visitor, int depth,
-			boolean includePhantoms) throws CoreException {
-		
-
+	public void accept(final IResourceVisitor visitor, final int depth,
+			final boolean includePhantoms) {
+	  // unused
 	}
 
-	public void accept(IResourceVisitor visitor, int depth, int memberFlags)
-			throws CoreException {
-		
-
+	public void accept(final IResourceVisitor visitor, final int depth, final int memberFlags) {
+	  // unused		
 	}
 
-	public void clearHistory(IProgressMonitor monitor) throws CoreException {
-		
-
+	public void clearHistory(final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void copy(IPath destination, boolean force, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void copy(final IPath destination, final boolean force, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void copy(IPath destination, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void copy(final IPath destination, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void copy(IProjectDescription description, boolean force,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void copy(final IProjectDescription description, final boolean force,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void copy(IProjectDescription description, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void copy(final IProjectDescription description, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public IMarker createMarker(String type) throws CoreException {
-		
+	public IMarker createMarker(final String type) {
 		return null;
 	}
 
-	public void delete(boolean force, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void delete(final boolean force, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void delete(int updateFlags, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void delete(final int updateFlags, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void deleteMarkers(String type, boolean includeSubtypes, int depth)
-			throws CoreException {
-		
-
+	public void deleteMarkers(final String type, final boolean includeSubtypes, final int depth) {
+	  // unused
 	}
 
 	public boolean exists() {
-		
 		return false;
 	}
 
-	public IMarker findMarker(long id) throws CoreException {
+	public IMarker findMarker(final long id) {
 		
 		return null;
 	}
 
-	public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth)
-			throws CoreException {
-		
+	public IMarker[] findMarkers(final String type, final boolean includeSubtypes, final int depth) {
 		return null;
 	}
 
 	public String getFileExtension() {
-		
 		return null;
 	}
 
 	public long getLocalTimeStamp() {
-		
 		return 0;
 	}
 
 	public IPath getLocation() {
-		
 		return null;
 	}
 
-	public IMarker getMarker(long id) {
-		
+	public IMarker getMarker(final long id) {
 		return null;
 	}
 
 	public long getModificationStamp() {
-		
 		return 0;
 	}
 
 	public IContainer getParent() {
-		
 		return null;
 	}
 
-	public String getPersistentProperty(QualifiedName key) throws CoreException {
-		
+	public String getPersistentProperty(final QualifiedName key) {
 		return null;
 	}
 
-	public void setProject(IProject project) {
+	public void setProject(final IProject project) {
 		fProject = project;
 	}
 
@@ -297,22 +265,18 @@ public class MockFile implements IFile {
 	}
 
 	public IPath getProjectRelativePath() {
-		
 		return null;
 	}
 
 	public IPath getRawLocation() {
-		
 		return null;
 	}
 
 	public ResourceAttributes getResourceAttributes() {
-		
 		return null;
 	}
 
-	public Object getSessionProperty(QualifiedName key) throws CoreException {
-		
+	public Object getSessionProperty(final QualifiedName key) {
 		return null;
 	}
 
@@ -336,7 +300,7 @@ public class MockFile implements IFile {
 		return false;
 	}
 
-	public boolean isLocal(int depth) {
+	public boolean isLocal(final int depth) {
 		
 		return false;
 	}
@@ -351,7 +315,7 @@ public class MockFile implements IFile {
 		return false;
 	}
 
-	public boolean isSynchronized(int depth) {
+	public boolean isSynchronized(final int depth) {
 		
 		return false;
 	}
@@ -361,105 +325,84 @@ public class MockFile implements IFile {
 		return false;
 	}
 
-	public void move(IPath destination, boolean force, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void move(final IPath destination, final boolean force, final IProgressMonitor monitor) {
+    // unused
 	}
 
-	public void move(IPath destination, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void move(final IPath destination, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void move(IProjectDescription description, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-		
-
+	public void move(final IProjectDescription description, final boolean force,
+			final boolean keepHistory, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void move(IProjectDescription description, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-		
-
+	public void move(final IProjectDescription description, final int updateFlags,
+			final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void refreshLocal(int depth, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void refreshLocal(final int depth, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public void revertModificationStamp(long value) throws CoreException {
-		
-
+	public void revertModificationStamp(final long value) {
+	  // unused
 	}
 
-	public void setDerived(boolean isDerived) throws CoreException {
-		
-
+	public void setDerived(final boolean isDerived) {
+	  // unused
 	}
 
-	public void setLocal(boolean flag, int depth, IProgressMonitor monitor)
-			throws CoreException {
-		
-
+	public void setLocal(final boolean flag, final int depth, final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public long setLocalTimeStamp(long value) throws CoreException {
-		
+	public long setLocalTimeStamp(final long value) {
 		return 0;
 	}
 
-	public void setPersistentProperty(QualifiedName key, String value)
-			throws CoreException {
-		
-
+	public void setPersistentProperty(final QualifiedName key, final String value) {
+	  // unused
 	}
 
-	public void setReadOnly(boolean readOnly) {
-		
-
+	public void setReadOnly(final boolean readOnly) {
+	  // unused
 	}
 
-	public void setResourceAttributes(ResourceAttributes attributes)
-			throws CoreException {
-		
-
+	public void setResourceAttributes(final ResourceAttributes attributes) {
+		// unused
 	}
 
-	public void setSessionProperty(QualifiedName key, Object value)
-			throws CoreException {
-		
-
+	public void setSessionProperty(final QualifiedName key, final Object value) {
+	  // unused
 	}
 
-	public void setTeamPrivateMember(boolean isTeamPrivate)
-			throws CoreException {
-		
-
+	public void setTeamPrivateMember(final boolean isTeamPrivate) {
+	  // unused
 	}
 
-	public void touch(IProgressMonitor monitor) throws CoreException {
-		
-
+	public void touch(final IProgressMonitor monitor) {
+	  // unused
 	}
 
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(final Class adapter) {
 		return null;
 	}
 
-	public boolean contains(ISchedulingRule rule) {
+	public boolean contains(final ISchedulingRule rule) {
 		
 		return false;
 	}
 
-	public boolean isConflicting(ISchedulingRule rule) {
+	public boolean isConflicting(final ISchedulingRule rule) {
 		return false;
 	}
 
-	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	public void createLink(final URI location, final int updateFlags, final IProgressMonitor monitor) {
+	  // unused
 	}
 
 	public URI getLocationURI() {
@@ -470,7 +413,7 @@ public class MockFile implements IFile {
 		return null;
 	}
 
-	public boolean isLinked(int options) {
+	public boolean isLinked(final int options) {
 		return false;
 	}
 
@@ -484,8 +427,8 @@ public class MockFile implements IFile {
 		return null;
 	}
 
-	public int findMaxProblemSeverity(String type, boolean includeSubtypes,
-			int depth) throws CoreException {
+	public int findMaxProblemSeverity(final String type, final boolean includeSubtypes,
+			final int depth) {
 		return 0;
 	}
 
