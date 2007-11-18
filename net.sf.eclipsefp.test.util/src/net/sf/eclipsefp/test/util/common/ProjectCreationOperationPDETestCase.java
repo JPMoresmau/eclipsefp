@@ -1,10 +1,8 @@
 package net.sf.eclipsefp.test.util.common;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
+import junit.framework.TestCase;
 import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -12,8 +10,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.TestCase;
 
 public class ProjectCreationOperationPDETestCase extends TestCase {
 
@@ -41,7 +37,7 @@ public class ProjectCreationOperationPDETestCase extends TestCase {
 		return fWorkspaceRoot;
 	}
 
-	protected void runOperation() throws InvocationTargetException, InterruptedException {
+	protected void runOperation() {
 		fOperation.run(new NullProgressMonitor());
 	}
 
