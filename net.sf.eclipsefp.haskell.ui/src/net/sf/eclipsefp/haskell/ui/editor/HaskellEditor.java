@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.ui.views.outline.HaskellOutlinePage;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.internal.ui.sourcelookup.AddSourceContainerDialog;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -101,11 +103,10 @@ public class HaskellEditor extends TextEditor
   @Override
   public void editorContextMenuAboutToShow( final IMenuManager menu ) {
     super.editorContextMenuAboutToShow( menu );
-    if (isEditable()) {
-      addAction( menu, "Comment" );
-      addAction( menu, "Uncomment" );
+    if( isEditable() ) {
+      addAction( menu, ITextEditorActionConstants.GROUP_EDIT, "Comment" );
+      addAction( menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment" );
     }
-    menu.add( new Separator( "net.sf.eclipsefp.haskell.ui.refactoring.menu" ) );
   }
   
   @Override
