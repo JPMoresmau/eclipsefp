@@ -6,7 +6,6 @@ import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences;
 import net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrenceComputer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
