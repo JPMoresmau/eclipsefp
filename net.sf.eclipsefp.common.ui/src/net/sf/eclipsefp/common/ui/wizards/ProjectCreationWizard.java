@@ -54,23 +54,20 @@ public abstract class ProjectCreationWizard
 
 	@Override
   public boolean performFinish() {
-		fOperation.setProjectName(page.getProjectName());
-		fOperation.setProjectLocation(page.getLocationPath().toString());
-
-		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(
-				fOperation);
-		boolean result = true;
-		try {
-			getContainer().run(false, true, op);
-		} catch (InvocationTargetException e) {
-			handleException(e.getTargetException());
-			result = false;
-		} catch (InterruptedException e) {
-			result = false;
-		}
-		BasicNewProjectResourceWizard.updatePerspective(configElement);
-		return result;
-	}
+    IRunnableWithProgress rwp = configureOperation();
+    IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( rwp );
+    boolean result = true;
+    try {
+      getContainer().run( false, true, op );
+    } catch( InvocationTargetException e ) {
+      handleException( e.getTargetException() );
+      result = false;
+    } catch( InterruptedException e ) {
+      result = false;
+    }
+    BasicNewProjectResourceWizard.updatePerspective( configElement );
+    return result;
+  }
     
     /**
      * Returns a descriptor for the banner image (the one on the top right
@@ -104,25 +101,37 @@ public abstract class ProjectCreationWizard
 	}
 
 	// helping methods
-	// ////////////////
+  // ////////////////
 
-	private void initializePageImageDescriptor() {
-		ImageDescriptor bannerImage = getBannerImage();
-		if (bannerImage != null) {
-			setDefaultPageImageDescriptor(bannerImage);
-		}
-	}
+  private void initializePageImageDescriptor() {
+    ImageDescriptor bannerImage = getBannerImage();
+    if( bannerImage != null ) {
+      setDefaultPageImageDescriptor( bannerImage );
+    }
+  }
 
-  private void handleException(final Throwable target) {
-		String title = "A problem occured.";
-		String message = "Could not create project.";
-		if (target instanceof CoreException) {
-			IStatus status = ((CoreException) target).getStatus();
-			ErrorDialog.openError(getShell(), title, message, status);
-			CommonUIPlugin.log(status);
-		} else {
-			MessageDialog.openError(getShell(), title, target.getMessage());
-			CommonUIPlugin.log(target.getMessage(), target);
-		}
-	}
+  private void handleException( final Throwable target ) {
+    String title = "A problem occured.";
+    String message = "Could not create project.";
+    if( target instanceof CoreException ) {
+      IStatus status = ( ( CoreException )target ).getStatus();
+      ErrorDialog.openError( getShell(), title, message, status );
+      CommonUIPlugin.log( status );
+    } else {
+      MessageDialog.openError( getShell(), title, target.getMessage() );
+      CommonUIPlugin.log( target.getMessage(), target );
+    }
+  }
+  
+  private IRunnableWithProgress configureOperation() {
+    fOperation.setProjectName( page.getProjectName() );
+    fOperation.setProjectLocation( page.getLocationPath().toString() );
+
+    IRunnableWithProgress rwp = new IRunnableWithProgress() {
+      public void run( final IProgressMonitor monitor ) {
+        fOperation.run( monitor );
+      }
+    };
+    return rwp;
+  }
 }

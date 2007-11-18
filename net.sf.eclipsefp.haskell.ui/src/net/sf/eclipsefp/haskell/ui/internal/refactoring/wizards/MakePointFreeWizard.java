@@ -2,7 +2,7 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards;
 
-import net.sf.eclipsefp.haskell.core.internal.refactoring.MakePointFreeRefactoring;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeRefactoring;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 

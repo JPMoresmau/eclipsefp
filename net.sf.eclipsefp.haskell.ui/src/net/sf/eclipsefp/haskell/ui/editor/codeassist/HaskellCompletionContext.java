@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.codeassist;
+package net.sf.eclipsefp.haskell.ui.editor.codeassist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
+import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;

@@ -10,10 +10,7 @@ Require-Bundle: de.leiffrenzel.cohatoe.server.core,
  net.sf.eclipsefp.common.core,
  org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.jface,
- org.eclipse.jface.text,
- org.eclipse.ltk.core.refactoring
+ org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.core.builder,

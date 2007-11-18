@@ -11,6 +11,7 @@ public class AllTests_PDESuite {
 		//$JUnit-BEGIN$
 		suite.addTestSuite(HaskellContentAssistProcessor_PDETest.class);
 		suite.addTestSuite(WorkbenchHaskellCompletionContext_PDETest.class);
+		suite.addTestSuite(CompletionContext_PDETest.class);
 		//$JUnit-END$
 		return suite;
 	}

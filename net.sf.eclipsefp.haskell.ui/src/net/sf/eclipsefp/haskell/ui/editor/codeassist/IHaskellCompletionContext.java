@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.codeassist;
+package net.sf.eclipsefp.haskell.ui.editor.codeassist;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 

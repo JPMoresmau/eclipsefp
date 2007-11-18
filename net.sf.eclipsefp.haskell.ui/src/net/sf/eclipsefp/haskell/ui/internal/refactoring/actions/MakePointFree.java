@@ -2,9 +2,9 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
-import net.sf.eclipsefp.haskell.core.internal.refactoring.MakePointFreeInfo;
-import net.sf.eclipsefp.haskell.core.internal.refactoring.MakePointFreeProcessor;
-import net.sf.eclipsefp.haskell.core.internal.refactoring.MakePointFreeRefactoring;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeInfo;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeProcessor;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeRefactoring;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.MakePointFreeWizard;
 import org.eclipse.core.resources.IFile;

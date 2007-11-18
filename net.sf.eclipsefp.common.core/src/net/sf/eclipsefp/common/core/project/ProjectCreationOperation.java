@@ -3,13 +3,22 @@ package net.sf.eclipsefp.common.core.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsefp.common.core.CommonCorePlugin;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * <p>
@@ -18,13 +27,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * 
  * @author Leif Frenzel
  */
-public class ProjectCreationOperation implements IRunnableWithProgress {
+public class ProjectCreationOperation {
 
 	private String fProjectName;
 	private String fLocation;
 
-	public void run(final IProgressMonitor passedMon)
-			throws InvocationTargetException, InterruptedException {
+	public void run( final IProgressMonitor passedMon ) {
 		IProgressMonitor mon = (passedMon == null) ? new NullProgressMonitor()
 				: passedMon;
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {

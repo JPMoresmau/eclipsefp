@@ -16,12 +16,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModelManager;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.ui.editor.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.ui.editor.codeassist.WorkbenchHaskellCompletionContext;
 import net.sf.eclipsefp.haskell.ui.test.editor.codeassist.doubles.StubViewer;
 import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;

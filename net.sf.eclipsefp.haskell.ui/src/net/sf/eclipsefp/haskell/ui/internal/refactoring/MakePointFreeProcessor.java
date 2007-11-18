@@ -1,6 +1,6 @@
 // Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.core.internal.refactoring;
+package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -32,7 +32,7 @@ public class MakePointFreeProcessor extends RefactoringProcessor {
 
   @Override
   public Object[] getElements() {
-    return new Object[] { CoreTexts.mkPointFreeProcessor_elem };
+    return new Object[] { UITexts.mkPointFreeProcessor_elem };
   }
 
   @Override
@@ -42,7 +42,7 @@ public class MakePointFreeProcessor extends RefactoringProcessor {
 
   @Override
   public String getProcessorName() {
-    return CoreTexts.mkPointFreeProcessor_name;
+    return UITexts.mkPointFreeProcessor_name;
   }
 
   @Override

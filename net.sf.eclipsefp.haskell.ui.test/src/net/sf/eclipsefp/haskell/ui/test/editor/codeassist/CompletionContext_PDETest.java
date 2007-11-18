@@ -1,14 +1,14 @@
-package net.sf.eclipsefp.haskell.core.test.codeassist;
+package net.sf.eclipsefp.haskell.ui.test.editor.codeassist;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubHalamo;
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.StubModule;
 import net.sf.eclipsefp.haskell.core.test.internal.util.CompletionProposalTestCase;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.ui.editor.codeassist.HaskellCompletionContext;
 
 public class CompletionContext_PDETest extends Parser_PDETestCase {
 	

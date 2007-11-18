@@ -1,6 +1,6 @@
 // Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.core.internal.refactoring;
+package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import org.eclipse.core.resources.IFile;
 

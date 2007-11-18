@@ -11,15 +11,7 @@ import org.eclipse.osgi.util.NLS;
 public class CoreTexts {
 
   // message fields
-  public static String mkPointFreeProcessor_elem;
-  public static String mkPointFreeProcessor_name;
 
-  public static String mkPointFreeDelegate_checking;
-  public static String mkPointFreeDelegate_collectingChanges;
-  public static String mkPointFreeDelegate_noSelection;
-  public static String mkPointFreeDelegate_noSourceFile;
-  public static String mkPointFreeDelegate_notApplicable;
-  public static String mkPointFreeDelegate_roFile;
 
   
   // init stuff

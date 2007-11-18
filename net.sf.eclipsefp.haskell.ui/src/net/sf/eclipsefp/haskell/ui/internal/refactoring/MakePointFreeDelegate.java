@@ -1,6 +1,6 @@
 // Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.core.internal.refactoring;
+package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IMakePointFree;
 
@@ -35,11 +35,11 @@ class MakePointFreeDelegate {
     RefactoringStatus result = new RefactoringStatus();
     IFile sourceFile = info.getSourceFile();
     if( sourceFile == null || !sourceFile.exists() ) {
-      result.addFatalError( CoreTexts.mkPointFreeDelegate_noSourceFile );
+      result.addFatalError( UITexts.mkPointFreeDelegate_noSourceFile );
     } else if( info.getSourceFile().isReadOnly() ) {
-      result.addFatalError( CoreTexts.mkPointFreeDelegate_roFile );
+      result.addFatalError( UITexts.mkPointFreeDelegate_roFile );
     } else if( isEmpty( info.getText() ) ) {
-      result.addFatalError( CoreTexts.mkPointFreeDelegate_noSelection );
+      result.addFatalError( UITexts.mkPointFreeDelegate_noSelection );
     }
     return result;
   }
@@ -48,7 +48,7 @@ class MakePointFreeDelegate {
                                           final CheckConditionsContext ctxt ) {
     RefactoringStatus result = new RefactoringStatus();
     try {
-      pm.beginTask( CoreTexts.mkPointFreeDelegate_checking, 100 );
+      pm.beginTask( UITexts.mkPointFreeDelegate_checking, 100 );
       if( ctxt != null ) {
         IConditionChecker checker = ctxt.getChecker( ValidateEditChecker.class );
         ValidateEditChecker editChecker = ( ValidateEditChecker )checker;
@@ -56,7 +56,7 @@ class MakePointFreeDelegate {
       }
       change = createRenameChange();
       if( change == null ) {
-        result.addFatalError( CoreTexts.mkPointFreeDelegate_notApplicable );
+        result.addFatalError( UITexts.mkPointFreeDelegate_notApplicable );
       }
     } finally {
       pm.done();
@@ -67,7 +67,7 @@ class MakePointFreeDelegate {
   void createChange( final IProgressMonitor pm, 
                      final CompositeChange rootChange ) {
     try {
-      pm.beginTask( CoreTexts.mkPointFreeDelegate_collectingChanges, 100 );
+      pm.beginTask( UITexts.mkPointFreeDelegate_collectingChanges, 100 );
       if( change == null ) {
         throw new IllegalStateException();
       } 

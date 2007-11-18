@@ -13,7 +13,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.codeassist.HaskellCompletionContext;
 import net.sf.eclipsefp.haskell.core.halamo.*;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
