@@ -79,9 +79,17 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 	public void populateMarker(final IMarker marker) throws CoreException {
         marker.setAttribute(IMarker.MESSAGE, fComment);
         marker.setAttribute(IMarker.LINE_NUMBER, fLineNumber);
-        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+        marker.setAttribute(IMarker.SEVERITY, getSeverity());
         marker.setAttribute(IMarker.CHAR_START, fStartColumn);
         marker.setAttribute(IMarker.CHAR_END, fEndColumn);
+	}
+
+	private int getSeverity() {
+		int result = IMarker.SEVERITY_ERROR;
+		if( fComment != null && fComment.trim().startsWith( "Warning") ) {
+			result = IMarker.SEVERITY_WARNING;
+		}
+		return result;
 	}
 
 	public void setFileName(final String fileName) {
