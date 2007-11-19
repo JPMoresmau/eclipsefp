@@ -19,3 +19,22 @@ automated unit tests and manual feature tests.
 
   - Create a project and open the Haddock wizard; the wizard should be in the 
     FP category, not under 'Other'.
+
+- Basic functionality
+
+  - create a Haskell project
+  - create a module in the source folder
+  - check the outline works (shows top-level declarations)
+  - check the mark-occurrences function in the editor works 
+  - create a Hello-World program and execute the executable
+
+- Help
+
+  - verify the Help system shows the Haskell entry
+  - verify the changelog entry for the tested milestone
+
+- About
+
+  - the EclipseFP 32x32 icon is there
+  - the feature is listed, about information is displayed
+  - about information of plugins in the 'Plugin Details' list is correct
