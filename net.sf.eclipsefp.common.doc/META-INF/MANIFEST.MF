@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Name: %bundleName
-Bundle-SymbolicName: net.sf.eclipsefp.common.doc;singleton:=true
-Bundle-Version: 1.102.0
-Bundle-Vendor: %bundleVendor
-Bundle-Localization: plugin
-Eclipse-LazyStart: true
-Bundle-ManifestVersion: 2
-Bundle-RequiredExecutionEnvironment: J2SE-1.5

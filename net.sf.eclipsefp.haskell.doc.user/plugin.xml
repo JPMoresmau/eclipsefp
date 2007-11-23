@@ -3,9 +3,6 @@
 <plugin>
    <extension
          point="org.eclipse.help.toc">
-      <toc
-            file="toc_haskell.xml">
-      </toc>
+      <toc file="toc_haskell.xml" primary="true" />
    </extension>
-
 </plugin>
