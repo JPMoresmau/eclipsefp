@@ -33,6 +33,6 @@ class HaskellLanguageElementSorter extends ViewerSorter {
   
   private int compare( final IHaskellLanguageElement elem1, 
                        final IHaskellLanguageElement elem2 ) {
-    return collator.compare( elem1.getName(), elem2.getName() );
+    return getComparator().compare( elem1.getName(), elem2.getName() );
   }
 }
