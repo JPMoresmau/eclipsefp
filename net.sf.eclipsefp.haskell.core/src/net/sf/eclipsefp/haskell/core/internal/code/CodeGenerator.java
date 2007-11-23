@@ -13,8 +13,7 @@ public class CodeGenerator {
   // TODO honor code template for generating this
   public String createModuleContent( final String[] folderNames,
                                      final String name,
-                                     final EHaskellCommentStyle style )
-  {
+                                     final EHaskellCommentStyle style ) {
     StringBuffer sb = new StringBuffer();
     sb.append( getLineDelimiter() );
     sb.append(getPrefixFor( style ));
@@ -30,30 +29,24 @@ public class CodeGenerator {
     return sb.toString();
   }
 
-
-  private static String getSuffixFor( final EHaskellCommentStyle style ) {
-    if (EHaskellCommentStyle.TEX == style) {
-      return "\\end{code}";
-    }
-    
-    return "";
-  }
-
-
-  private static String getPrefixFor(final EHaskellCommentStyle style) {
-    if (EHaskellCommentStyle.LITERATE == style) {
-      return "> ";
-    } else if (EHaskellCommentStyle.TEX == style) {
-      return "\\begin{code}\n";
-    } 
-
-    return "";
-  }
-
   
   // helping methods
   //////////////////
   
+  private static String getSuffixFor( final EHaskellCommentStyle style ) {
+    return ( EHaskellCommentStyle.TEX == style ) ? "\\end{code}" : "";
+  }
+
+  private static String getPrefixFor( final EHaskellCommentStyle style ) {
+    String result = "";
+    if( EHaskellCommentStyle.LITERATE == style ) {
+      result = "> ";
+    } else if( EHaskellCommentStyle.TEX == style ) {
+      result = "\\begin{code}\n";
+    }
+    return result;
+  }
+
   private static String getLineDelimiter() {
     return System.getProperty( "line.separator", "\n" );    
   }
