@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Utilities Plug-In
 Bundle-SymbolicName: net.sf.eclipsefp.test.util
-Bundle-Version: 1.100.0
+Bundle-Version: 1.102.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Require-Bundle: org.junit;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

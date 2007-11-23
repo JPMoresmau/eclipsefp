@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.common.core.test
-Bundle-Version: 1.100.0
+Bundle-Version: 1.102.0
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.junit,

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.doc.user;singleton:=true
-Bundle-Version: 1.101.0
+Bundle-Version: 1.102.0
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
