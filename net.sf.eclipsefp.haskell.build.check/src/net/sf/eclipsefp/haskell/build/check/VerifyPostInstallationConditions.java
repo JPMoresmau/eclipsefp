@@ -3,12 +3,17 @@ package net.sf.eclipsefp.haskell.build.check;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 
-public class VerifyPostInstallationConditions implements IPlatformRunnable {
+public class VerifyPostInstallationConditions implements IApplication {
 
-	public Object run(Object args) throws Exception {
+  
+  // interface methods of IApplication
+  ////////////////////////////////////
+  
+	public Object start( IApplicationContext context ) throws Exception {
 		try {
 			assertPluginExistence("net.sf.eclipsefp.haskell.core");
 			assertSourceCodePlugin("net.sf.eclipsefp.haskell.source");
@@ -22,6 +27,15 @@ public class VerifyPostInstallationConditions implements IPlatformRunnable {
 		}
 	}
 
+	public void stop() {
+	  // unused
+	  
+	}
+	
+	
+	// helping functions
+	////////////////////
+	
 	private void assertPluginExistence(final String pluginName) throws Exception {
 		Object bundle = Platform.getBundle(pluginName);
 		if (bundle == null) {
@@ -48,14 +62,15 @@ public class VerifyPostInstallationConditions implements IPlatformRunnable {
 	 * @param extension the declared extension
 	 * @return
 	 */
-	private boolean checkDeclaredExtension(final String declaringPlugin, String extension) {
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint point = reg.getExtensionPoint(extension);
-		for (IExtension ext : point.getExtensions()) {
-			if (declaringPlugin.equals(ext.getNamespace())) {
-				return true;
-			}
-		}
-		return false;
-	}
+	private boolean checkDeclaredExtension( final String declaringPlugin,
+                                          final String extension ) {
+    IExtensionRegistry reg = Platform.getExtensionRegistry();
+    IExtensionPoint point = reg.getExtensionPoint( extension );
+    for( IExtension ext: point.getExtensions() ) {
+      if( declaringPlugin.equals( ext.getContributor().getName() ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
