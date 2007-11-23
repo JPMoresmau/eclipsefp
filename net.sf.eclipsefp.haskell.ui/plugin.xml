@@ -7,7 +7,7 @@
       <wizard
             name="%newProjectWizard_name"
             icon="icons/hsicon16.gif"
-            category="net.sf.eclipsefp.common.ui.newWizardCategory"
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             project="true"
@@ -22,7 +22,7 @@
       <wizard
             name="%newModuleWizard_name"
             icon="icons/full/obj16/module.gif"
-            category="net.sf.eclipsefp.common.ui.newWizardCategory"
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             project="false"
@@ -89,7 +89,7 @@
       <view
             name="%moduleBrowser_name"
             icon="icons/full/cview16/mbview.gif"
-            category="net.sf.eclipsefp.common.ui.fpViews"
+            category="net.sf.eclipsefp.haskell.ui.haskellViews"
             class="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser"
             id="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser">
       </view>
@@ -311,6 +311,36 @@
             class="net.sf.eclipsefp.haskell.ui.HaskellUIPreferenceInitializer">
       </initializer>
    </extension>
+
+   <!-- some common categories for eclipsefp subprojects to dock on -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="%newWizardCategory_name"
+            id="net.sf.eclipsefp.haskell.ui.newWizardCategory">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            name="%exportWizardCategory_name"
+            id="net.sf.eclipsefp.haskell.ui.exportWizardCategory">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%viewCategory_name"
+            id="net.sf.eclipsefp.haskell.ui.haskellViews">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <category
+            name="Haskell"
+            id="net.sf.eclipsefp.haskell.ui.haskellCheatSheets"/>
+   </extension>
+
    
   <!-- Editor context menu: Coding and Refactoring actions-->
 

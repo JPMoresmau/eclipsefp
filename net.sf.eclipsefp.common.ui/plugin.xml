@@ -20,33 +20,4 @@
                id="net.sf.eclipsefp.common.internal.ui.actions.RunConfiguratorDelegate"/>
       </actionSet>
    </extension>   
-   
-   <!-- some common categories for eclipsefp subprojects to dock on -->
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            name="%newWizardCategory_name"
-            id="net.sf.eclipsefp.common.ui.newWizardCategory">
-      </category>
-   </extension>
-   <extension
-         point="org.eclipse.ui.exportWizards">
-      <category
-            name="%exportWizardCategory_name"
-            id="net.sf.eclipsefp.common.ui.exportWizardCategory">
-      </category>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="%viewCategory_name"
-            id="net.sf.eclipsefp.common.ui.fpViews">
-      </category>
-   </extension>
-   <extension
-         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
-      <category
-            name="Functional Programming"
-            id="net.sf.eclipsefp.common.ui.fpCheatSheets"/>
-   </extension>
 </plugin>

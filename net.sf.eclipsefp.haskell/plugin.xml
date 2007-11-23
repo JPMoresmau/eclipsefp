@@ -5,7 +5,7 @@
      <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
-            category="net.sf.eclipsefp.common.ui.fpCheatSheets"
+            category="net.sf.eclipsefp.haskell.ui.haskellCheatSheets"
             contentFile="cheatsheets/gettingstarted.xml"
             name="%cheatSheet_name"
             id="net.sf.eclipsefp.haskell.cheatsheets.GettingStarted"/>
