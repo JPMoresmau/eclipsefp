@@ -9,8 +9,6 @@
              href="html/haskell/userGuide/editor.html"/>      
       <topic label="Cabal Package Description Editor" 
              href="html/haskell/userGuide/cabaleditor.html"/>      
-      <topic label="Compiler Output View" 
-             href="html/haskell/userGuide/coview.html"/>
       <topic label="Module Browser" 
              href="html/haskell/userGuide/mbview.html"/>
       <topic label="Compilers and Interpreters" 
