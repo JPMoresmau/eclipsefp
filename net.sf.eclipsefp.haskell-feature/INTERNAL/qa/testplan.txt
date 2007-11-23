@@ -14,11 +14,12 @@ automated unit tests and manual feature tests.
   - Check that the Haskell perspective and root preference page are there.
   - Create a Haskell project, create a source file with a Hello-World, make 
     sure the program can be run and gives its output.
+  - for one-stop builds, make sure that features are in folders (not jars)
 
 - Haddock support
 
   - Create a project and open the Haddock wizard; the wizard should be in the 
-    FP category, not under 'Other'.
+    Haskell category, not under 'Other'.
 
 - Basic functionality
 
@@ -32,6 +33,7 @@ automated unit tests and manual feature tests.
 
   - verify the Help system shows the Haskell entry
   - verify the changelog entry for the tested milestone
+  - open the cheatsheet under the Haskell category and work through it
 
 - About
 
