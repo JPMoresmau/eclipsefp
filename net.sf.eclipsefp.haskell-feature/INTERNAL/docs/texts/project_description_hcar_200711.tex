@@ -1,0 +1,39 @@
+\begin{hcarentry}[updated]{Haskell support for the Eclipse IDE}
+\label{eclipsefp}
+\report{Leif Frenzel}
+\status{working, though alpha}
+\entry{updated}
+\makeheader
+
+The Eclipse platform is an extremely extensible framework for IDEs, developed 
+by an Open Source Project. Our project extends it with tools to support Haskell
+development.
+
+The aim is to develop an IDE for Haskell that provides the set of features and
+the user experience known from the Eclipse Java IDE (the flagship of the 
+Eclipse project), and integrates a broad range of Haskell development tools. 
+Long-term goals include support for language-aware IDE features, like 
+refactoring and structural search.
+
+The current version is 0.10. The project is maintained by Thiago Arrais.
+
+A new subproject, called Cohatoe - 'Contributing Haskell (code) to Eclipse' - 
+has developed a framework that allows to partially implement Eclipse Plugins
+in Haskell. Building on this framework, an EclipseFP 2 branch has been opened
+where EclipseFP functionality is gradually re-implemented in Haskell, and new
+functionality is added that integrates existing Haskell tools. Milestone 
+builds from the EclipseFP 2 branch are available for download (the latest 
+milestone version is 1.102). The Cohatoe subproject and the EclipseFP 2 
+branch are maintained by Leif Frenzel.
+
+Every help is very welcome, be it in the form of code contributions, docs or 
+tutorials, or just any feedback if you use the IDE. If you want to 
+participate, please subscribe to the development mailing list (see below).
+
+\FurtherReading
+\begin{compactitem}
+\item \url{http://eclipse.org}
+\item \url{http://lists.sourceforge.net/lists/listinfo/eclipsefp-develop}
+\item Project homepage: \url{http://eclipsefp.sf.net}
+\end{compactitem}
+\end{hcarentry}
