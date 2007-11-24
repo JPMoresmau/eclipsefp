@@ -139,7 +139,6 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
   }
 
   private void addFields( final Composite parent ) {
-    addTextField( parent, "Displayed &tab width:", EDITOR_TAB_WIDTH, 3, 0 );
     String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
     addTextField( parent, "Print margin col&umn:", pmKey, 3, 0 );
     String orKey = EDITOR_OVERVIEW_RULER;

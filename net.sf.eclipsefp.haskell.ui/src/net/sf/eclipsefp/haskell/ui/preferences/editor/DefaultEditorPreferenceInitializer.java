@@ -54,7 +54,8 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
   }
 
   private static void initTyping( final IPreferenceStore store ) {
-    store.setDefault( EDITOR_TAB_WIDTH, 4 );
+    // the tab width is specified by the Haskell report to be always 8
+    store.setDefault( EDITOR_TAB_WIDTH, 8 );
     store.setDefault( EDITOR_SPACES_FOR_TABS, false );
     store.setDefault( EDITOR_CLOSE_STRINGS, true );
     store.setDefault( EDITOR_CLOSE_BRACKETS_AND_PARENS, true );
