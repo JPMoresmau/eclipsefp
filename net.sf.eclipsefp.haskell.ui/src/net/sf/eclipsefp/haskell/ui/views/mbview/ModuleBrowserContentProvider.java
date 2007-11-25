@@ -3,38 +3,44 @@ package net.sf.eclipsefp.haskell.ui.views.mbview;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.*;
-
-import net.sf.eclipsefp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 
-/** <p>the content provider for the Module browser. Content is the set of 
+/** <p>the content provider for the Module browser. Content is the set of
   * Haskell projects in the workspace, with specifically viewing source
   * folders, libraries, Haskell sources etc.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 class ModuleBrowserContentProvider implements IContentProvider,
                                               ITreeContentProvider {
 
   private static final Object[] EMPTY = new Object[ 0 ];
-  
+
   private final UIState uiState;
 
   ModuleBrowserContentProvider( final UIState uiState ) {
     this.uiState = uiState;
   }
-  
+
   // interface methods
   ////////////////////
-  
+
   public Object[] getElements( final Object inputElement ) {
     Assert.isTrue( inputElement instanceof IWorkspaceRoot );
     IWorkspaceRoot root = ( IWorkspaceRoot )inputElement;
@@ -44,7 +50,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
   public Object[] getChildren( final Object element ) {
     Object[] result = EMPTY;
     if( element instanceof IHaskellProject ) {
-      ArrayList list = new ArrayList();
+      List<Object> list = new ArrayList<Object>();
       IHaskellProject hsProject = ( IHaskellProject )element;
       addSourceFolder( hsProject, list );
       if( isSourceFolder( hsProject.getResource() ) ) {
@@ -52,7 +58,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
       }
       addImportLibraries( hsProject, list );
       addProjectExecutable( hsProject, list );
-      result = list.toArray(); 
+      result = list.toArray();
     } else if( element instanceof IFolder ) {
       result = getFolderChildren( ( IFolder )element );
     }
@@ -70,19 +76,19 @@ class ModuleBrowserContentProvider implements IContentProvider,
   public void dispose() {
     // unused
   }
-  
-  public void inputChanged( final Viewer viewer, 
-                            final Object oldInput, 
+
+  public void inputChanged( final Viewer viewer,
+                            final Object oldInput,
                             final Object newInput ) {
     // unused
   }
-  
-  
+
+
   // helping methods
   //////////////////
-  
-  private void addSourceFolder( final IHaskellProject hsProject, 
-                                final ArrayList list ) {
+
+  private void addSourceFolder( final IHaskellProject hsProject,
+                                final List<Object> list ) {
     IPath sourcePath = hsProject.getSourcePath();
     if( sourcePath.segmentCount() > 0 ) {
       IProject project = hsProject.getResource();
@@ -91,8 +97,8 @@ class ModuleBrowserContentProvider implements IContentProvider,
     }
   }
 
-  private void addProjectExecutable( final IHaskellProject hsProject, 
-                                     final ArrayList list ) {
+  private void addProjectExecutable( final IHaskellProject hsProject,
+                                     final List<Object> list ) {
     IProject project = hsProject.getResource();
     try {
       IFile projectExecutable = ResourceUtil.getProjectExecutable( project );
@@ -105,9 +111,9 @@ class ModuleBrowserContentProvider implements IContentProvider,
       HaskellUIPlugin.log( msg, ex );
     }
   }
-  
+
   private void addImportLibraries( final IHaskellProject hsProject,
-                                   final ArrayList list ) {
+                                   final List<Object> list ) {
     IImportLibrary[] libs = hsProject.getImportLibraries();
     for( int i = 0; i < libs.length; i++ ) {
       if( libs[ i ].isUsed() ) {
@@ -115,12 +121,12 @@ class ModuleBrowserContentProvider implements IContentProvider,
       }
     }
   }
-  
-  private void addMembers( final IFolder folder, final List list ) {
+
+  private void addMembers( final IFolder folder, final List<IResource> list ) {
     try {
       IResource[] members = ( folder ).members();
       for( int i = 0; i < members.length; i++ ) {
-        if(    members[ i ].getType() == IResource.FOLDER 
+        if(    members[ i ].getType() == IResource.FOLDER
             || ResourceUtil.hasHaskellExtension( members[ i ] ) ) {
           list.add( members[ i ] );
         }
@@ -131,7 +137,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
       HaskellUIPlugin.log( msg, ex );
     }
   }
-  
+
   // this can only be the source folder or some of its subfolders
   private Object[] getFolderChildren( final IFolder folder ) {
     Object[] result = EMPTY;
@@ -145,13 +151,13 @@ class ModuleBrowserContentProvider implements IContentProvider,
         HaskellUIPlugin.log( msg, cex );
       }
     } else {
-      List list = new ArrayList();
+      List<IResource> list = new ArrayList<IResource>();
       addMembers( folder, list );
       result = list.toArray();
     }
     return result;
   }
-  
+
   private boolean isSourceFolder( final IProject project ) {
     boolean result = false;
     try {
@@ -161,20 +167,20 @@ class ModuleBrowserContentProvider implements IContentProvider,
     }
     return result;
   }
-  
-  private void addHaskellSources( final IHaskellProject hsProject, 
-                                  final List list ) {
+
+  private void addHaskellSources( final IHaskellProject hsProject,
+                                  final List<Object> list ) {
     try {
       IResource[] ress = hsProject.getResource().members();
       for( int i = 0; i < ress.length; i++ ) {
-        if(    ress[ i ]  instanceof IFile 
+        if(    ress[ i ]  instanceof IFile
             && ResourceUtil.hasHaskellExtension( ress[ i ] ) ) {
           list.add( ress[ i ] );
         }
       }
     } catch( CoreException cex ) {
-      String msg =   "Problem with children of '" 
-                   + hsProject.getResource().getName() 
+      String msg =   "Problem with children of '"
+                   + hsProject.getResource().getName()
                    + "'.";
       HaskellUIPlugin.log( msg, cex );
     }
