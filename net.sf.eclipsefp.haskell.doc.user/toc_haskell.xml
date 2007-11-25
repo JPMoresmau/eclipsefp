@@ -8,8 +8,6 @@
            href="html/userGuide/editor.html"/>      
     <topic label="Cabal Package Description Editor" 
            href="html/userGuide/cabaleditor.html"/>      
-    <topic label="Module Browser" 
-           href="html/userGuide/mbview.html"/>
     <topic label="Compilers and Interpreters" 
            href="html/userGuide/compilersInterpreters.html"/>
     <topic label="Generating documentation (Haddock)" 
