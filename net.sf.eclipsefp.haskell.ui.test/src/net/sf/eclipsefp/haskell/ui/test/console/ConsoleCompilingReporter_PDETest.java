@@ -18,7 +18,7 @@ import net.sf.eclipsefp.haskell.ui.console.ConsoleCompilingReporter;
 import net.sf.eclipsefp.haskell.ui.console.IConsoleCleaner;
 import junit.framework.TestCase;
 
-public class ConsoleCompilingReporterTest extends TestCase {
+public class ConsoleCompilingReporter_PDETest extends TestCase {
 	
 	public void testAskCleanerToCleanConsoleWhenStartingCompilation() {
 		IConsoleCleaner cleaner = createMock(IConsoleCleaner.class);

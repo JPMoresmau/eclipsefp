@@ -31,7 +31,7 @@ import org.eclipse.ui.part.FileEditorInput;
 /**
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-public class HaskellDocumentProvider_PDETestCase extends TestCase {
+public class HaskellDocumentProvider_PDETest extends TestCase {
 	
 	private HaskellDocumentProvider fProvider;
 	private IEditorInput fEditorInput;

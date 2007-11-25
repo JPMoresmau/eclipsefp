@@ -11,7 +11,7 @@ public class AllAllTests {
 		suite.addTest(net.sf.eclipsefp.haskell.core.jparser.test.AllAllTests.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.AllAllTests.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ghccompiler.test.AllAllTests.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.ui.test.AllAllTests.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.ui.test.AllTests_Suite.suite());
 		suite.addTest(net.sf.eclipsefp.common.core.test.AllAllTests.suite());
 		//$JUnit-END$
 		return suite;

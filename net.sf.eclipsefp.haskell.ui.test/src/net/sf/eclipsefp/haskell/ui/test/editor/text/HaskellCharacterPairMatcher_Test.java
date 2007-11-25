@@ -9,15 +9,23 @@ import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
 
 import junit.framework.TestCase;
 
-public class HaskellCharacterPairMatcherTest extends TestCase {
+public class HaskellCharacterPairMatcher_Test extends TestCase {
 	
 	private ICharacterPairMatcher fMatcher;
 
+	
+	// interface methods of TestCase
+	////////////////////////////////
+	
 	@Override
 	protected void setUp() throws Exception {
 		fMatcher = new HaskellCharacterPairMatcher();
 	}
 
+	
+	// test cases
+	/////////////
+	
 	public void testMatchesGivenClosingParentheses() {
 		assertMatches(6, 6, "qsort (a:as) = ", 12);
 		assertAnchor(ICharacterPairMatcher.RIGHT);
@@ -61,6 +69,10 @@ public class HaskellCharacterPairMatcherTest extends TestCase {
 		assertNull(fMatcher.match(doc, 4));
 	}
 
+	
+	// helping functions
+	////////////////////
+	
 	private void assertMatches(int expectedOffset, int expectedLength, String contents, int start) {
 		IDocument doc = createDocument(contents);
 		IRegion actual = fMatcher.match(doc, start);
