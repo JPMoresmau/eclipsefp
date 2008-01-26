@@ -106,7 +106,9 @@ public class HaskellModelManager implements IHaskellModelManager {
 	                            				.getParser();
 					try {
 						ICompilationUnit unit = parser.parse(file);
-						prjModel.putModule(unit.getModules()[0]);
+						if( unit.getModules().length > 0 ) {
+                          prjModel.putModule(unit.getModules()[0]);
+						}
 					} catch (CoreException e) {
 						//ignore parsing exception and go on
 					}
