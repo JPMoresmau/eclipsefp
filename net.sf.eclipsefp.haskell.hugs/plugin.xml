@@ -42,12 +42,4 @@
          </perspective>
       </shortcut>
    </extension>
-   <!-- configurator page to simplify setting the ghc executable -->   
-   <extension point="net.sf.eclipsefp.haskell.ui.configuratorPages">
-     <configuratorPage id="net.sf.eclipsefp.haskell.hugs.ui.configuratorpage.HugsConfiguratorPage"
-                       title="%configuratorPage.title"
-                       description="%configuratorPage.description"
-                       bannerImage="icons/full/wizban/hugs.png"
-                       class="net.sf.eclipsefp.haskell.hugs.ui.configuratorpage.HugsConfiguratorPage" />
-   </extension>
 </plugin>
