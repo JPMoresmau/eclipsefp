@@ -2,8 +2,8 @@
 -- build the object files (declared in plugin.xml) from the Haskell
 -- sources (in hs-src/).
 Name:            cohatoe-plugin
-Version:         1.100.0
-Build-depends:   base, cohatoe-api, mtl, parsec
+Version:         1.102.0
+Build-depends:   base, cohatoe-api, mtl, containers, parsec, array
 Hs-Source-Dirs:  ../../hs-src
-Ghc-options:     -Wall
+Ghc-options:     -Wall -package-name main
 Exposed-modules: MakePointFree
