@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.test.util.common;
+package net.sf.eclipsefp.haskell.core.test.project.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.util.List;
 import java.util.Vector;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -25,9 +26,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * A mocked IFile.
- * 
+ *
  * Verifies if the underlying inputstream is closed.
- * 
+ *
  * @author Thiago Arrais - thiago.arrais@gmailcom
  */
 public class MockFile implements IFile {
@@ -36,7 +37,7 @@ public class MockFile implements IFile {
 	private final String fContents;
 	private final String fFileName;
 	private IProject fProject;
-	
+
 	public MockFile(final String contents) {
 		this("Mock.hs", contents);
 	}
@@ -120,7 +121,7 @@ public class MockFile implements IFile {
 	}
 
 	public boolean isReadOnly() {
-		
+
 		return false;
 	}
 
@@ -154,15 +155,15 @@ public class MockFile implements IFile {
 
 	public void setContents(final IFileState source, final int updateFlags,
 			final IProgressMonitor monitor) {
-    // unused		
+    // unused
 	}
 
 	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) {
-	  // unused		
+	  // unused
 	}
 
 	public void accept(final IResourceVisitor visitor) {
-	  // unused		
+	  // unused
 	}
 
 	public void accept(final IResourceVisitor visitor, final int depth,
@@ -171,7 +172,7 @@ public class MockFile implements IFile {
 	}
 
 	public void accept(final IResourceVisitor visitor, final int depth, final int memberFlags) {
-	  // unused		
+	  // unused
 	}
 
 	public void clearHistory(final IProgressMonitor monitor) {
@@ -218,7 +219,7 @@ public class MockFile implements IFile {
 	}
 
 	public IMarker findMarker(final long id) {
-		
+
 		return null;
 	}
 
@@ -279,47 +280,47 @@ public class MockFile implements IFile {
 	}
 
 	public int getType() {
-		
+
 		return 0;
 	}
 
 	public IWorkspace getWorkspace() {
-		
+
 		return null;
 	}
 
 	public boolean isAccessible() {
-		
+
 		return false;
 	}
 
 	public boolean isDerived() {
-		
+
 		return false;
 	}
 
 	public boolean isLocal(final int depth) {
-		
+
 		return false;
 	}
 
 	public boolean isLinked() {
-		
+
 		return false;
 	}
 
 	public boolean isPhantom() {
-		
+
 		return false;
 	}
 
 	public boolean isSynchronized(final int depth) {
-		
+
 		return false;
 	}
 
 	public boolean isTeamPrivateMember() {
-		
+
 		return false;
 	}
 
@@ -391,7 +392,7 @@ public class MockFile implements IFile {
 	}
 
 	public boolean contains(final ISchedulingRule rule) {
-		
+
 		return false;
 	}
 

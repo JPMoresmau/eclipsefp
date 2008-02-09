@@ -12,7 +12,7 @@ import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
 import net.sf.eclipsefp.haskell.core.halamo.ProjectChangeMonitor;
-import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
+import net.sf.eclipsefp.haskell.core.test.internal.project.HaskellProject_PDETestCase;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeListener;

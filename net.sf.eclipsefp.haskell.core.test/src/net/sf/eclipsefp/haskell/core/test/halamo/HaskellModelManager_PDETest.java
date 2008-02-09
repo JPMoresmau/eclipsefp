@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.core.test.halamo;
 import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IModule;
-import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
+import net.sf.eclipsefp.haskell.core.test.internal.util.TestHaskellProject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;

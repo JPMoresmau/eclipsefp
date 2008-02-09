@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
+import net.sf.eclipsefp.haskell.core.test.internal.project.HaskellProject_PDETestCase;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IProcessRunner;
-import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
 
 public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
 	

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import net.sf.eclipsefp.haskell.core.halamo.IProjectChangeMonitorFactory;
 import net.sf.eclipsefp.haskell.core.halamo.WorkspaceChangeMonitor;
-import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
+import net.sf.eclipsefp.haskell.core.test.internal.util.TestHaskellProject;
 import junit.framework.TestCase;
 
 public class WorkspaceChangeMonitor_PDETest extends TestCase {

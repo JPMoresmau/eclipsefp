@@ -1,6 +1,8 @@
 // Copyright (c) 2004-2005 by Leif Frenzel
 // See http://leiffrenzel.de
-package net.sf.eclipsefp.test.util.haskell;
+package net.sf.eclipsefp.haskell.core.test.internal.project;
+
+import net.sf.eclipsefp.haskell.core.test.internal.util.TestHaskellProject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

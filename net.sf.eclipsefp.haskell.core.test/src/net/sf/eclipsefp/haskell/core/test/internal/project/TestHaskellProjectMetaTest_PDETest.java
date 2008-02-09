@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.test.util.haskell.metatest;
+package net.sf.eclipsefp.haskell.core.test.internal.project;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,11 +14,11 @@ import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
+import net.sf.eclipsefp.haskell.core.test.internal.util.TestHaskellProject;
 import junit.framework.TestCase;
 
-public class TestHaskellProjectMetaTest_PDETestCase extends TestCase {
-	
+public class TestHaskellProjectMetaTest_PDETest extends TestCase {
+	 
 	public void testConstructorCreatesProject() throws CoreException {
 		new TestHaskellProject("testing-project");
 		

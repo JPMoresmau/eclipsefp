@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsefp.haskell.core.test.internal.doubles.MockCodeGenerator;
-import net.sf.eclipsefp.test.util.haskell.HaskellProject_PDETestCase;
+import net.sf.eclipsefp.haskell.core.test.internal.project.HaskellProject_PDETestCase;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;

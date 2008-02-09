@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.test.util.common;
+package net.sf.eclipsefp.haskell.core.test.project.util;
 
 import java.io.IOException;
 import java.io.InputStream;

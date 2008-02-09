@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.test.util.haskell;
+package net.sf.eclipsefp.haskell.core.test.internal.util;
 
 import java.io.ByteArrayInputStream;
 
@@ -45,7 +45,6 @@ public class TestHaskellProject implements ICorePreferenceNames {
 		return preferences;
 	}
 
-	@SuppressWarnings("deprecation")
 	public IFile createSourceFile(String fileName, final String contents) throws CoreException {
 		IFile file = fSourceFolder.getFile(fileName);
 		file.create(new ByteArrayInputStream(contents.getBytes()), true, null);
