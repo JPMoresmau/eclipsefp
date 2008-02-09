@@ -36,8 +36,7 @@ Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskel
  net.sf.eclipsefp.haskell.ui.util.text,
  net.sf.eclipsefp.haskell.ui.wizards;x-friends:="net.sf.eclipsefp.haskell.ui.test"
 Bundle-ManifestVersion: 2
-Export-Package: net.sf.eclipsefp.common.ui.configurator,
- net.sf.eclipsefp.common.ui.dialog,
+Export-Package: net.sf.eclipsefp.common.ui.dialog,
  net.sf.eclipsefp.common.ui.preferences,
  net.sf.eclipsefp.common.ui.preferences.overlay,
  net.sf.eclipsefp.common.ui.util,

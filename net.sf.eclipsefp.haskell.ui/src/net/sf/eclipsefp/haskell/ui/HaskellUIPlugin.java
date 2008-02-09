@@ -15,16 +15,6 @@ package net.sf.eclipsefp.haskell.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
-
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
@@ -34,16 +24,29 @@ import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
+
 /**
  * <p>
  * The main plugin class to be used in the desktop.
  * </p>
- * 
+ *
  * @author the mighty PDE wizard
  */
 public class HaskellUIPlugin extends AbstractUIPlugin {
-	
-	public static final String EXT_POINT_CONFIGURATOR_PAGES = "configuratorPages";
+
 	public static final String ID_PERSPECTIVE = HaskellPerspective.class
 			.getName();
 

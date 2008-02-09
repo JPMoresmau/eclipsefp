@@ -12,20 +12,6 @@
 </intro>
 
 <item
-	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/compilersInterpreters.html"
-	title="Configure commands"
-	skip="true">
-	<action
-		pluginId="net.sf.eclipsefp.common.ui"
-		class="net.sf.eclipsefp.common.internal.ui.actions.RunConfigurator" />
-	<description>
-	  The IDE must know about the location of some commands on your system
-	  (like the compiler executable). To configure these, you can use the
-	  configurator wizard.
-	</description>
-</item>
-
-<item
 	href="/org.eclipse.platform.doc.user/concepts/concepts-4.htm"
 	title="Open the Haskell Perspective">
 	<action

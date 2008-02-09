@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
-   <!-- MOVED FROM COMMON -->
-   <extension-point id="configuratorPages" name="%extPtConfiguratorPages_name" schema="schema/configuratorPages.exsd"/>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%configuratorSet_label"
-            description="%configuratorSet_desc"
-            visible="true"
-            id="net.sf.eclipsefp.common.ui.configurator.actionSet">
-         <action
-               disabledIcon="icons/full/dtool16/configurator.gif"
-               toolbarPath="eclipsefpConfigurator"
-               label="%configuratorAction_label"
-               class="net.sf.eclipsefp.common.internal.ui.actions.RunConfiguratorDelegate"
-               tooltip="%configuratorAction_tooltip"
-               icon="icons/full/etool16/configurator.gif"
-               style="push"
-               id="net.sf.eclipsefp.common.internal.ui.actions.RunConfiguratorDelegate"/>
-      </actionSet>
-   </extension> 
-
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
