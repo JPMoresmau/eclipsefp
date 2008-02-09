@@ -2,11 +2,7 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 

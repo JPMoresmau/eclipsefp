@@ -1,11 +1,11 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.project;
 
-import net.sf.eclipsefp.common.core.util.Assert;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
+import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

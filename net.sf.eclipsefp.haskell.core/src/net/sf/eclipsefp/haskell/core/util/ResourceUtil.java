@@ -3,12 +3,12 @@ package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.*;
 
-import net.sf.eclipsefp.common.core.util.Assert;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.*;
 
 /**

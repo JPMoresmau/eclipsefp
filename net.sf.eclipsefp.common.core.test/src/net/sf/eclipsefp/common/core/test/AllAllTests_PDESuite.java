@@ -10,7 +10,6 @@ public class AllAllTests_PDESuite {
 				"Test for net.sf.eclipsefp.common.core.test");
 		//$JUnit-BEGIN$
 		suite.addTest(net.sf.eclipsefp.common.core.test.project.AllTests_PDESuite.suite());
-		suite.addTest(net.sf.eclipsefp.common.core.test.util.AllTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.common.core.util;
+package net.sf.eclipsefp.haskell.core.internal.util;
 
 
 /** <p>some simple assertion facilities.</p>

@@ -1,7 +1,8 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.common.core.util;
+package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.StringWriter;
+import net.sf.eclipsefp.haskell.core.internal.util.StreamMultiplexer;
 
 
 /** <p>provides helping functionality to query an external tool for
@@ -15,8 +16,9 @@ import java.io.StringWriter;
 public class QueryUtil {
 
   public static String query( final String command, final String param ) {
-    Assert.isNotNull( command );
-    Assert.isTrue( !command.equals( "" ) );
+    if( command == null || command.trim().length() == 0 ) {
+      throw new IllegalArgumentException();
+    }
     
     String result = "";
     String[] cmdLine = new String[] { command, param };

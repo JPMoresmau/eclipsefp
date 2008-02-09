@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core;
 
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -49,7 +51,7 @@ public class HaskellCorePlugin extends Plugin {
 		collectCompilerInfo();
 		collectParserInfo();
 		try {
-			fModelManager = new HaskellModelManager(getWorkspace());
+			fModelManager = new HaskellModelManager(fWorkspace);
 			fModelManager.initialize();
 		} catch (CoreException ex) {
 			String message = "Serious problem: could not initialize the Haskell "
@@ -84,6 +86,7 @@ public class HaskellCorePlugin extends Plugin {
 		return getDefault().getBundle().getSymbolicName();
 	}
 
+
 	// logging and tracing
 	// ////////////////////
 
@@ -112,10 +115,15 @@ public class HaskellCorePlugin extends Plugin {
 		return value != null && value.equals("true");
 	}
 
-	public IWorkspace getWorkspace() {
-		return fWorkspace;
-	}
-	
+	public static void dump( final List<String> cmdLine ) {
+    StringBuffer sb = new StringBuffer();
+    Iterator<String> iter = cmdLine.iterator();
+    while( iter.hasNext() ) {
+      sb.append( iter.next() );
+      sb.append( " " );
+    }
+    System.out.println( sb.toString() );
+  }
 	
 	
 	// helping methods
@@ -168,5 +176,4 @@ public class HaskellCorePlugin extends Plugin {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		return registry.getConfigurationElementsFor(getPluginId(), key);
 	}
-
 }

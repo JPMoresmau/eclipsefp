@@ -5,13 +5,13 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 
-import net.sf.eclipsefp.common.core.util.Assert;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 
 
 /** <p>The HaskellProjectManager manages Haskell project specific information 

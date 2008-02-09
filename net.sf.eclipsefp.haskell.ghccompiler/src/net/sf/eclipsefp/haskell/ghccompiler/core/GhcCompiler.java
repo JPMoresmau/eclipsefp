@@ -6,11 +6,11 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 
 import org.eclipse.core.resources.IFile;
@@ -84,7 +84,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 		cmdLine.addAll(compilerParams.construct());
 		cmdLine.add(getFileName(file, haskellProject));
 		if (trace) {
-			TracingUtil.dump(cmdLine);
+			HaskellCorePlugin.dump(cmdLine);
 		}
 		return cmdLine.toArray(new String[cmdLine.size()]);
 	}

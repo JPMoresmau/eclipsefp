@@ -16,7 +16,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.common.core.util.MultiplexedWriter;
+import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
 
 import org.eclipse.core.resources.IFile;
 

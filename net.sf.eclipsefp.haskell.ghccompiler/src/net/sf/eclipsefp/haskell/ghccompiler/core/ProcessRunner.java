@@ -6,7 +6,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.common.core.util.StreamMultiplexer;
+import net.sf.eclipsefp.haskell.core.internal.util.StreamMultiplexer;
 
 public class ProcessRunner implements IProcessRunner {
 

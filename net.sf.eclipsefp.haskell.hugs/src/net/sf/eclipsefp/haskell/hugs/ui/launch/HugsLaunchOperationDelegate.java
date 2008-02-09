@@ -9,8 +9,8 @@ import net.sf.eclipsefp.haskell.hugs.core.Util;
 
 import org.eclipse.core.resources.IFile;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 import net.sf.eclipsefp.haskell.ui.launch.IInteractiveLaunchOperationDelegate;
 
 /** <p>implements a delegate for launching HUGS.</p>
@@ -36,7 +36,7 @@ public class HugsLaunchOperationDelegate
     cmdLine.toArray( result );
     if( HugsPlugin.isTracing() ) {
       System.out.println( "Launching HUGS with arguments:" );
-      TracingUtil.dump( cmdLine );
+      HaskellCorePlugin.dump( cmdLine );
     }
     return result;
   }

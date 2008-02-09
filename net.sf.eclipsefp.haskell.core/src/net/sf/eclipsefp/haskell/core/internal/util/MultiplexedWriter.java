@@ -9,7 +9,7 @@
  * Contributors:
  *     Thiago Arrais - Initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsefp.common.core.util;
+package net.sf.eclipsefp.haskell.core.internal.util;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -30,7 +30,7 @@ public class MultiplexedWriter extends Writer {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		for (Writer output : fOutputs) {
 			try {
 				output.close();
@@ -41,7 +41,7 @@ public class MultiplexedWriter extends Writer {
 	}
 
 	@Override
-	public void flush() throws IOException {
+	public void flush() {
 		for (Writer output : fOutputs) {
 			try {
 				output.flush();
@@ -52,7 +52,7 @@ public class MultiplexedWriter extends Writer {
 	}
 
 	@Override
-	public void write(final char[] cbuf, final int off, final int len) throws IOException {
+	public void write(final char[] cbuf, final int off, final int len) {
 		for (Writer output : fOutputs) {
 			try {
 				output.write(cbuf, off, len);

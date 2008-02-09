@@ -13,9 +13,9 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.launch.CommandLineUtil;
 import net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate;
-import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 
 /** <p>the operation that performs the actual Haddock run.</p>
   *
@@ -83,7 +83,7 @@ public class GenerateDocs {
   private String[] getCmdLine() {
     List<String> args = info.createCommand();
     if( trace ) {
-      TracingUtil.dump( args );
+      HaskellCorePlugin.dump( args );
     }
     return args.toArray( new String[ args.size() ] );
   }

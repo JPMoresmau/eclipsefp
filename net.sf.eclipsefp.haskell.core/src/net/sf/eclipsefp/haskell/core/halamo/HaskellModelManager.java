@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.core.halamo;
 import java.util.Hashtable;
 import java.util.Map;
 
-import net.sf.eclipsefp.common.core.util.Assert;
+import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;

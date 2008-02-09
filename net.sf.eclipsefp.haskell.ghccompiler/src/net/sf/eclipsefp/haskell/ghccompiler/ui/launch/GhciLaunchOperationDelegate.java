@@ -4,8 +4,8 @@ package net.sf.eclipsefp.haskell.ghccompiler.ui.launch;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.core.util.TracingUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.CompilerParams;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
@@ -45,7 +45,7 @@ public class GhciLaunchOperationDelegate
     cmdLine.toArray( result );
     if( GhcCompilerPlugin.isTracing() ) {
       System.out.println( "Launching interactive session with arguments:" );
-      TracingUtil.dump( cmdLine );
+      HaskellCorePlugin.dump( cmdLine );
     }
     return result;
   }

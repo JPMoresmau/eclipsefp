@@ -1,13 +1,13 @@
-package net.sf.eclipsefp.common.core.test.util;
+package net.sf.eclipsefp.haskell.core.test.internal.util;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import net.sf.eclipsefp.common.core.util.MultiplexedWriter;
+import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
 import junit.framework.TestCase;
 
-public class MultiplexedWriterTest extends TestCase {
+public class MultiplexedWriter_Test extends TestCase {
 
 	private static class ProblematicWriter extends Writer {
 

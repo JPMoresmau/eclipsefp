@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.views.mbview;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
