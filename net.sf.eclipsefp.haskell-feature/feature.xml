@@ -24,14 +24,12 @@ available at http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
       <import plugin="net.sf.eclipsefp.haskell.ui"/>
       <import plugin="net.sf.eclipsefp.haskell.haddock"/>
-      <import plugin="net.sf.eclipsefp.common.ui"/>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
       <import plugin="de.leiffrenzel.cohatoe.server.core"/>
-      <import plugin="net.sf.eclipsefp.common.core"/>
       <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
       <import plugin="net.sf.eclipsefp.haskell.core"/>
+      <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
@@ -43,6 +41,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.ui.views" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.2.0" match="compatible"/>
       <import plugin="net.sf.eclipsefp.haskell.cabal.core"/>
+      <import plugin="org.eclipse.ui.navigator"/>
    </requires>
 
    <plugin
@@ -51,12 +50,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          install-size="0"
          version="1.102.0"
          unpack="false"/>
-
-   <plugin
-         id="net.sf.eclipsefp.common.core"
-         download-size="0"
-         install-size="0"
-         version="1.102.0"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core"
@@ -85,12 +78,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
-         download-size="0"
-         install-size="0"
-         version="1.102.0"/>
-
-   <plugin
-         id="net.sf.eclipsefp.common.ui"
          download-size="0"
          install-size="0"
          version="1.102.0"/>
