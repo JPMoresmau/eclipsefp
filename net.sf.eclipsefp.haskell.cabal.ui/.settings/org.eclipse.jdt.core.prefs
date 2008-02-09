@@ -1,4 +1,4 @@
-#Sun Nov 18 17:35:06 CET 2007
+#Sat Feb 09 22:18:58 CET 2008
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
 org.eclipse.jdt.core.compiler.compliance=1.5
@@ -23,7 +23,7 @@ org.eclipse.jdt.core.compiler.problem.incompleteEnumSwitch=warning
 org.eclipse.jdt.core.compiler.problem.indirectStaticAccess=warning
 org.eclipse.jdt.core.compiler.problem.localVariableHiding=ignore
 org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=warning
-org.eclipse.jdt.core.compiler.problem.missingDeprecatedAnnotation=warning
+org.eclipse.jdt.core.compiler.problem.missingDeprecatedAnnotation=ignore
 org.eclipse.jdt.core.compiler.problem.missingOverrideAnnotation=warning
 org.eclipse.jdt.core.compiler.problem.missingSerialVersion=warning
 org.eclipse.jdt.core.compiler.problem.noEffectAssignment=warning
