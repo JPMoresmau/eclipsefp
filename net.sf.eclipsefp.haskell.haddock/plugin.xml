@@ -21,16 +21,4 @@
          <description>%haddockWizard.description</description>
       </wizard>
    </extension>
-
-   <!-- configurator page to simplify setting the Haddock executable -->   
-   <extension point="net.sf.eclipsefp.haskell.ui.configuratorPages">
-     <configuratorPage
-           bannerImage="icons/full/wizban/haddockexport.gif"
-           title="%configuratorPage.title"
-           class="net.sf.eclipsefp.haskell.haddock.ui.configuratorpage.HaddockConfiguratorPage"
-           description="%configuratorPage.description"
-           probeClass="net.sf.eclipsefp.haskell.haddock.ui.configuratorpage.HaddockExecutableProbe"
-           id="net.sf.eclipsefp.haskell.haddock.ui.configuratorpage.HaddockConfiguratorPage"/>
-   </extension>
-   
 </plugin>
