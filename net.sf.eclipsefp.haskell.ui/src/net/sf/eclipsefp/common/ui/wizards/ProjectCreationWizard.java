@@ -4,9 +4,13 @@ package net.sf.eclipsefp.common.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
-import net.sf.eclipsefp.common.ui.CommonUIPlugin;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -39,7 +43,7 @@ public abstract class ProjectCreationWizard
 	public ProjectCreationWizard(final ProjectCreationOperation operation) {
 		super();
 		fOperation = operation;
-		setDialogSettings(CommonUIPlugin.getDefault().getDialogSettings());
+		setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
 		setWindowTitle("Choose project name");
 		setNeedsProgressMonitor(true);
 	}
@@ -116,10 +120,10 @@ public abstract class ProjectCreationWizard
     if( target instanceof CoreException ) {
       IStatus status = ( ( CoreException )target ).getStatus();
       ErrorDialog.openError( getShell(), title, message, status );
-      CommonUIPlugin.log( status );
+      HaskellUIPlugin.log( status.getMessage(), status.getSeverity() );
     } else {
       MessageDialog.openError( getShell(), title, target.getMessage() );
-      CommonUIPlugin.log( target.getMessage(), target );
+      HaskellUIPlugin.log( target.getMessage(), target );
     }
   }
   

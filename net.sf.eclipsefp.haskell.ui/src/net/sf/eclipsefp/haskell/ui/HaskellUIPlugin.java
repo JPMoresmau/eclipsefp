@@ -42,7 +42,8 @@ import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
  * @author the mighty PDE wizard
  */
 public class HaskellUIPlugin extends AbstractUIPlugin {
-
+	
+	public static final String EXT_POINT_CONFIGURATOR_PAGES = "configuratorPages";
 	public static final String ID_PERSPECTIVE = HaskellPerspective.class
 			.getName();
 

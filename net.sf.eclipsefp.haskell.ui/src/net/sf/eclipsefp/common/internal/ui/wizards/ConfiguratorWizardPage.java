@@ -107,10 +107,10 @@ class ConfiguratorWizardPage extends WizardPage {
     try {
       getWizard().getContainer().run( false, true, op );
     } catch( InvocationTargetException itex ) {
-      // TODO
+      // TODO lf
       itex.printStackTrace();
     } catch( InterruptedException iex ) {
-      // TODO Auto-generated catch block
+      // TODO lf Auto-generated catch block
       iex.printStackTrace();
     }
   }

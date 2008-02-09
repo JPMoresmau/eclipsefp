@@ -23,7 +23,7 @@
    </extension>
 
    <!-- configurator page to simplify setting the Haddock executable -->   
-   <extension point="net.sf.eclipsefp.common.ui.configuratorPages">
+   <extension point="net.sf.eclipsefp.haskell.ui.configuratorPages">
      <configuratorPage
            bannerImage="icons/full/wizban/haddockexport.gif"
            title="%configuratorPage.title"

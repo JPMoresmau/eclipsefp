@@ -4,11 +4,14 @@ package net.sf.eclipsefp.common.internal.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.common.ui.CommonUIPlugin;
 import net.sf.eclipsefp.common.ui.configurator.IConfiguratorPage;
 import net.sf.eclipsefp.common.ui.configurator.IProbe;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -50,8 +53,8 @@ class PageLoader {
   
   private static IConfigurationElement[] collectContributions() {
     IExtensionRegistry registry = Platform.getExtensionRegistry();
-    String pluginId = CommonUIPlugin.getPluginId();
-    String extPointId = CommonUIPlugin.EXT_POINT_CONFIGURATOR_PAGES;
+    String pluginId = HaskellUIPlugin.getPluginId();
+    String extPointId = HaskellUIPlugin.EXT_POINT_CONFIGURATOR_PAGES;
     return registry.getConfigurationElementsFor( pluginId, extPointId );
   }
 
@@ -134,7 +137,7 @@ class PageLoader {
                      + elem.getDeclaringExtension().getContributor().getName()
                      + " with id "
                      + elem.getAttribute( ATT_ID );
-    CommonUIPlugin.log( message, cex );
+    HaskellUIPlugin.log( message, cex );
   }
 
   private static boolean isOk( final IConfigurationElement element ) {

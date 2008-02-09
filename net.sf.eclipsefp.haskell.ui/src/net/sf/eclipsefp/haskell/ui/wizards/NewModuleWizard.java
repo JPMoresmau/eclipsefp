@@ -1,7 +1,9 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
-import net.sf.eclipsefp.common.ui.CommonUIPlugin;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -11,14 +13,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 
 
 /** <p>The wizard for creating a new Haskell module.</p>
@@ -37,7 +40,7 @@ public class NewModuleWizard extends Wizard implements INewWizard {
     setNeedsProgressMonitor( true );
     setWindowTitle( "New Haskell Module" );
     initBannerImage();
-    setDialogSettings( CommonUIPlugin.getDefault().getDialogSettings() );
+    setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
   }
 
   public void init( final IWorkbench workbench, 
@@ -88,13 +91,25 @@ public class NewModuleWizard extends Wizard implements INewWizard {
   }
 
   private void selectAndReveal( final IResource newResource ) {
-    IWorkbenchPage page = CommonUIPlugin.getActiveWorkbenchPage();
-    IWorkbenchWindow workbenchWindow = page.getWorkbenchWindow();
-    BasicNewResourceWizard.selectAndReveal( newResource, workbenchWindow );
+    IWorkbenchPage page = getPage();
+    if( page != null ) {
+      IWorkbenchWindow workbenchWindow = page.getWorkbenchWindow();
+      BasicNewResourceWizard.selectAndReveal( newResource, workbenchWindow );
+    }
+  }
+  
+  private IWorkbenchPage getPage() {
+    IWorkbenchPage result = null;
+    IWorkbench workbench = PlatformUI.getWorkbench();
+	IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+    if( window != null ) {
+      result = window.getActivePage();
+    }
+    return result;
   }
   
   private void openResource( final IFile resource ) {
-    final IWorkbenchPage activePage = CommonUIPlugin.getActiveWorkbenchPage();
+    final IWorkbenchPage activePage = getPage();
     if( activePage != null ) {
       final Display display = getShell().getDisplay();
       if( display != null ) {
