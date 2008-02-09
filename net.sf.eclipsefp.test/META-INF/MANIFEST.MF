@@ -5,7 +5,6 @@ Bundle-SymbolicName: net.sf.eclipsefp.test
 Bundle-Version: 1.102.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Require-Bundle: org.junit;bundle-version="[3.8.0,4.0.0)",
- net.sf.eclipsefp.common.core.test,
  net.sf.eclipsefp.haskell.core.parser.test,
  net.sf.eclipsefp.haskell.core.jparser.test,
  net.sf.eclipsefp.haskell.core.test,

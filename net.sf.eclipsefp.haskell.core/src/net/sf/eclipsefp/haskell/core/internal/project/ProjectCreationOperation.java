@@ -1,11 +1,9 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.common.core.project;
+package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
-import net.sf.eclipsefp.common.core.CommonCorePlugin;
-
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -58,7 +56,7 @@ public class ProjectCreationOperation {
 		try {
 			ResourcesPlugin.getWorkspace().run(operation, mon);
 		} catch (CoreException cex) {
-			CommonCorePlugin.log("Problem creating new project.", cex);
+			HaskellCorePlugin.log("Problem creating new project.", cex);
 		} finally {
 			mon.done();
 		}

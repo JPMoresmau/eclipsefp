@@ -2,7 +2,7 @@ package net.sf.eclipsefp.test.util.haskell;
 
 import java.io.ByteArrayInputStream;
 
-import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 

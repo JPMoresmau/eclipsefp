@@ -3,7 +3,7 @@ package net.sf.eclipsefp.common.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
-import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 import org.eclipse.core.runtime.CoreException;

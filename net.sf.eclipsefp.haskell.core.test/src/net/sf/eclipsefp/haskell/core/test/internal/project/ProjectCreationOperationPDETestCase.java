@@ -1,8 +1,9 @@
-package net.sf.eclipsefp.test.util.common;
+package net.sf.eclipsefp.haskell.core.test.internal.project;
 
 import java.io.IOException;
 import junit.framework.TestCase;
-import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;

@@ -12,12 +12,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 
-import net.sf.eclipsefp.common.core.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.test.util.common.ProjectCreationOperationPDETestCase;
+import net.sf.eclipsefp.haskell.core.test.internal.project.ProjectCreationOperationPDETestCase;
 
 public class HaskellProjectCreationOperation_PDETest extends
 		ProjectCreationOperationPDETestCase {

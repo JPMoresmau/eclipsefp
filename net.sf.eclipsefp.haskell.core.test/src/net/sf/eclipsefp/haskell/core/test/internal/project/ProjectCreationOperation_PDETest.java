@@ -1,9 +1,8 @@
-package net.sf.eclipsefp.common.core.test.project;
+package net.sf.eclipsefp.haskell.core.test.internal.project;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import net.sf.eclipsefp.test.util.common.ProjectCreationOperationPDETestCase;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
