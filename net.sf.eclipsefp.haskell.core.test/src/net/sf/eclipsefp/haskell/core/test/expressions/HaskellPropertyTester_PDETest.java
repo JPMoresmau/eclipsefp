@@ -6,7 +6,7 @@ import org.eclipse.core.resources.IFile;
 import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester;
 import junit.framework.TestCase;
 
-public class HaskellPropertyTesterTest extends TestCase {
+public class HaskellPropertyTester_PDETest extends TestCase {
 	
 	private HaskellPropertyTester tester;
 	private IFile haskellFile;

@@ -28,7 +28,7 @@ import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ListenableCompilerDecorator;
 import junit.framework.TestCase;
 
-public class ListenableCompilerDecoratorTest extends TestCase {
+public class ListenableCompilerDecorator_Test extends TestCase {
 	
 	public void testRedirectsCompilerOutputToOneListener() {
 		IHaskellCompiler realCompiler = new StubCompiler();

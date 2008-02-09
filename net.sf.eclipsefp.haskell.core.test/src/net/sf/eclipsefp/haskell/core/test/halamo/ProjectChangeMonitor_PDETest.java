@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
-public class ProjectChangeMonitor_PDETestCase extends HaskellProject_PDETestCase {
+public class ProjectChangeMonitor_PDETest extends HaskellProject_PDETestCase {
 	
 	private IHaskellModel fLanguageModel;
 	private IResourceChangeListener fMonitor;

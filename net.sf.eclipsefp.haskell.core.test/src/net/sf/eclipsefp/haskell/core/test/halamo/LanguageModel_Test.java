@@ -23,7 +23,7 @@ import net.sf.eclipsefp.haskell.core.jparser.HaskellParser;
 
 import net.sf.eclipsefp.haskell.core.test.internal.util.HalamoAssert;
 
-public class LanguageModelTest extends TestCase {
+public class LanguageModel_Test extends TestCase {
 	
 	private IHaskellModel fLangModel = new HaskellLanguageModel();
 

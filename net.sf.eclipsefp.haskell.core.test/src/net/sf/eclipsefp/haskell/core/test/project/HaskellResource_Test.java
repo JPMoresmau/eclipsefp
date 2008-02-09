@@ -9,7 +9,7 @@ import org.eclipse.core.resources.IFile;
 
 import junit.framework.TestCase;
 
-public class HaskellResourceTest extends TestCase {
+public class HaskellResource_Test extends TestCase {
 	
 	private IFile haskellFile;
 	private IFile literateHaskellFile;

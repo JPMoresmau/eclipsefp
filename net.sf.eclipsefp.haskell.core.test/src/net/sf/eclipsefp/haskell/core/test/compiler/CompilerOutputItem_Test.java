@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.core.test.compiler;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import junit.framework.TestCase;
 
-public class CompilerOutputItemTest extends TestCase {
+public class CompilerOutputItem_Test extends TestCase {
 	
 	public void testAddComment() {
 		CompilerOutputItem createdItem = new CompilerOutputItem("test.hs", 1, "0:");

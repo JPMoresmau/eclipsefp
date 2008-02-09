@@ -20,7 +20,7 @@ import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import junit.framework.TestCase;
 
-public class CompilerManagerTest extends TestCase {
+public class CompilerManager_Test extends TestCase {
 
 	private ICompilerManager manager;
 

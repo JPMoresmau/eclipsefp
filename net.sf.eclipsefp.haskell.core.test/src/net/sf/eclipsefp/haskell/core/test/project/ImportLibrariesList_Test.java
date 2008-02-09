@@ -13,7 +13,7 @@ import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
 import net.sf.eclipsefp.haskell.core.test.project.util.NullProjectPropertiesEvent;
 import net.sf.eclipsefp.haskell.core.test.project.util.PreferencesStub;
 
-public class ImportLibrariesListTest extends TestCase {
+public class ImportLibrariesList_Test extends TestCase {
 	
 	public void testSavesToOsgiPreferences() {
 		TestingLibrariesList list = new TestingLibrariesList();

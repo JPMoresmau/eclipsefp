@@ -15,7 +15,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.Module;
 import net.sf.eclipsefp.haskell.core.jparser.ast.TypeSignature;
 import junit.framework.TestCase;
 
-public class ScopeTest extends TestCase {
+public class Scope_Test extends TestCase {
 	
 	public void testFlattenDeclarationLists() {
 		Scope scope = new Scope();

@@ -14,8 +14,8 @@ import junit.framework.TestCase;
 
 import static org.easymock.EasyMock.*;
 
-public class HaskellModelManager_PDETestCase extends TestCase {
-	
+public class HaskellModelManager_PDETest extends TestCase {
+	 
 	public void testCreatesModelsForNewProjects() {
 		IWorkspace workspace = createMock(IWorkspace.class);
 		IProject project = createMock(IProject.class);

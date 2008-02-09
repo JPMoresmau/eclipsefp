@@ -19,7 +19,7 @@ import net.sf.eclipsefp.haskell.core.halamo.WorkspaceChangeMonitor;
 import net.sf.eclipsefp.test.util.haskell.TestHaskellProject;
 import junit.framework.TestCase;
 
-public class WorkspaceChangeMonitor_PDETestCase extends TestCase {
+public class WorkspaceChangeMonitor_PDETest extends TestCase {
 	
 	private IProjectChangeMonitorFactory fFactory;
 	private WorkspaceChangeMonitor fMonitor;
