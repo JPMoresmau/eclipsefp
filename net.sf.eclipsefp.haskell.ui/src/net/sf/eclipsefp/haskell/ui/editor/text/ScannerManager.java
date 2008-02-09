@@ -29,17 +29,17 @@ public class ScannerManager implements IEditorPreferenceNames {
   private HaskellCommentScanner commentScanner;
   private HaskellCommentScanner literateCommentScanner;
   
-  private final HashMap propertyChangeHandlers;
+  private final Map<String, PropertyChangeHandler> propertyChangeHandlers;
   private IPropertyChangeListener propertyChangeListener;  
 
   private TextAttribute commentAttribute;
   private TextAttribute literateCommentAttribute;
   
-  private final Map tokens = new Hashtable(); 
+  private final Map<String, IToken> tokens = new Hashtable<String, IToken>(); 
   
   private ScannerManager() {
     // prevent instantiation
-    propertyChangeHandlers = new HashMap();
+    propertyChangeHandlers = new HashMap<String, PropertyChangeHandler>();
     initializePropertyListener();
   }
 
@@ -152,7 +152,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private IToken getTokenInternal( final String colorKey, 
                                    final String boldKey ) {
-    return ( IToken )tokens.get( colorKey + boldKey );    
+    return tokens.get( colorKey + boldKey );    
   }
   
   private Token createTokenInternal( final String colorKey, 

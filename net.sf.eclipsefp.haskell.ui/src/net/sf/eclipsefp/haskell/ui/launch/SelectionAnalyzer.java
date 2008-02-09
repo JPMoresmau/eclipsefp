@@ -48,12 +48,12 @@ class SelectionAnalyzer {
   private static IFile[] collectAllSources( final IProject project ) 
                                                           throws CoreException {
     IContainer sourceContainer = ResourceUtil.getSourceFolder( project );
-    List list = new ArrayList();
+    List<IResource> list = new ArrayList<IResource>();
     collectAllSourcesRec( list, sourceContainer );
     return toArray( list );
   }
  
-  private static void collectAllSourcesRec( final List list, 
+  private static void collectAllSourcesRec( final List<IResource> list, 
                                             final IContainer container ) 
                                                           throws CoreException {
     IResource[] members = container.members();
@@ -74,7 +74,7 @@ class SelectionAnalyzer {
 
   private static IFile[] filterHsFiles( final IResource[] resources ) 
                                                           throws CoreException {
-    List list = new ArrayList();
+    ArrayList<IResource> list = new ArrayList<IResource>();
     for (int i = 0; i < resources.length; i++) {
       IResource res = resources[ i ];
       if( isHsFile( res ) ) {
@@ -112,7 +112,7 @@ class SelectionAnalyzer {
     return result;
   }
   
-  private static IFile[] toArray( final List list ) {
+  private static IFile[] toArray( final List<IResource> list ) {
     IFile[] result = new IFile[ list.size() ];
     list.toArray( result );
     return result;

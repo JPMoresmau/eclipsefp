@@ -23,7 +23,7 @@ public class HaskellUIImages implements IImageNames {
   private static ImageDescriptorRegistry imageDescriptorRegistry;
   
   /** <p>a table of all the <code>ImageDescriptor</code>s.</p> */
-  private static Map imageDescriptors;
+  private static Map<String, ImageDescriptor> imageDescriptors;
 
   private static URL baseUrl;
 
@@ -111,7 +111,7 @@ public class HaskellUIImages implements IImageNames {
 
   public static ImageRegistry initializeImageRegistry() {
     imageRegistry = new ImageRegistry( HaskellUIPlugin.getStandardDisplay() );
-    imageDescriptors = new HashMap( 30 );
+    imageDescriptors = new HashMap<String, ImageDescriptor>( 30 );
     declareImages();
     return imageRegistry;
   }
@@ -128,7 +128,7 @@ public class HaskellUIImages implements IImageNames {
     if( imageDescriptors == null ) {
       initializeImageRegistry();
     }
-    return ( ImageDescriptor )imageDescriptors.get( key );
+    return imageDescriptors.get( key );
   }
   
   private static URL makeIconFileURL( final String iconPath ) 

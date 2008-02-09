@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.util;
  
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.core.runtime.Assert;
@@ -19,7 +20,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
   */
 class ImageDescriptorRegistry {
 
-  private final HashMap registry;
+  private final Map<ImageDescriptor, Image> registry;
   private final Display display;
   
   
@@ -27,7 +28,7 @@ class ImageDescriptorRegistry {
     * All images managed by this registry will be disposed when the display 
     * gets disposed.</p> */
   public ImageDescriptorRegistry() {
-    this.registry = new HashMap();
+    this.registry = new HashMap<ImageDescriptor, Image>();
     this.display = HaskellUIPlugin.getStandardDisplay();
     hookDisplay();
   }
@@ -38,7 +39,7 @@ class ImageDescriptorRegistry {
       desc = ImageDescriptor.getMissingImageDescriptor();
     }
       
-    Image result = ( Image )registry.get( desc );
+    Image result = registry.get( desc );
     if( result == null ) {
       Assert.isTrue( display == HaskellUIPlugin.getStandardDisplay(), 
                      "Allocating image for wrong display." );

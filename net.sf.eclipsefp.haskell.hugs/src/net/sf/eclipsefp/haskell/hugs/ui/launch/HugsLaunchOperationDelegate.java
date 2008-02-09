@@ -25,15 +25,12 @@ public class HugsLaunchOperationDelegate
   
   public String[] createArguments( final IHaskellProject hsProject,
                                    final IFile[] selectedFiles ) {
-    List cmdLine = new ArrayList();
+    List<String> cmdLine = new ArrayList<String>();
 
     String libPath = Util.constructLibPath( hsProject );
     if( !libPath.equals( "" ) ) {
       cmdLine.add( libPath );
     }
-//    if( isUseGhcOptions() ) {
-//      cmdLine.addAll( compilerParams.construct() );
-//    }
     addAll( cmdLine, selectedFiles );
     String[] result = new String[ cmdLine.size() ];
     cmdLine.toArray( result );
@@ -44,7 +41,8 @@ public class HugsLaunchOperationDelegate
     return result;
   }
   
-  private void addAll( final List cmdLine, final IFile[] selectedFiles ) {
+  private void addAll( final List<String> cmdLine, 
+                       final IFile[] selectedFiles ) {
     for( int i = 0; i < selectedFiles.length; i++ ) {
       String path = selectedFiles[ i ].getLocation().toOSString();
       cmdLine.add( "\"" + path + "\"" );

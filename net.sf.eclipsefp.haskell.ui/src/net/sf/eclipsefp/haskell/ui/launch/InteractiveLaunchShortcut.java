@@ -43,7 +43,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
   public void launch( final ISelection selection, final String mode ) {
     // launched from workbench selection
     if( selection != null && selection instanceof IStructuredSelection ) {
-      List list = new ArrayList();
+      List<IResource> list = new ArrayList<IResource>();
       IStructuredSelection ssel = ( IStructuredSelection )selection;
       Iterator iter = ssel.iterator();  
       while( iter.hasNext() ) {
@@ -81,7 +81,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
     }
   }
   
-  private IResource[] toArray( final List list ) {
+  private IResource[] toArray( final List<IResource> list ) {
     IResource[] result = new IResource[ list.size() ];
     list.toArray( result );
     return result;

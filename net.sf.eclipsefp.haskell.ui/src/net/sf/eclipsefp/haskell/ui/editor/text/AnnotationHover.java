@@ -92,7 +92,8 @@ public class AnnotationHover implements IAnnotationHover {
     return result;
   }
 
-  private List<Annotation> getAnnotations( final ISourceViewer viewer, final int line ) {
+  private List<Annotation> getAnnotations( final ISourceViewer viewer, 
+		                                   final int line ) {
     List<Annotation> result = null;
     IAnnotationModel model = viewer.getAnnotationModel();
     if( model != null ) {

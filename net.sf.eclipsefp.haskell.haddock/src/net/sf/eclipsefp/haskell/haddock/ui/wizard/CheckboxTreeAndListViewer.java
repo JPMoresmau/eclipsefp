@@ -214,10 +214,10 @@ public class CheckboxTreeAndListViewer implements ICheckStateListener,
    *  @return java.util.Vector
    */
   public Iterator getAllCheckedListItems() {
-    Set result = new HashSet();
-    Iterator listCollectionsEnum = checkedStateStore.values().iterator();
+    Set<Object> result = new HashSet<Object>();
+    Iterator<List<Object>> listCollectionsEnum = checkedStateStore.values().iterator();
     while( listCollectionsEnum.hasNext() ) {
-      result.addAll( ( List )listCollectionsEnum.next() );
+      result.addAll( listCollectionsEnum.next() );
     }
     return result.iterator();
   }
@@ -415,7 +415,7 @@ public class CheckboxTreeAndListViewer implements ICheckStateListener,
 
     if( state ) {
       Object[] listItems = getListElements( treeElement );
-      List listItemsChecked = new ArrayList();
+      List<Object> listItemsChecked = new ArrayList<Object>();
       for( int i = 0; i < listItems.length; ++i ) {
         listItemsChecked.add( listItems[ i ] );
       }

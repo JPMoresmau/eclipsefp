@@ -161,8 +161,9 @@ class HaskellFoldingStructureProvider {
                                      final Set<Position> currentRegions ) {
     Annotation[] deletions = computeDifferences( model, currentRegions );
     
-    Map additionsMap = new HashMap();
-    Iterator it = currentRegions.iterator();
+    Map<ProjectionAnnotation, Position> additionsMap 
+      = new HashMap<ProjectionAnnotation, Position>();
+    Iterator<Position> it = currentRegions.iterator();
     while( it.hasNext() ) {
       additionsMap.put( new ProjectionAnnotation(), it.next() );
     }

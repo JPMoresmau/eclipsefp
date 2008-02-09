@@ -59,7 +59,7 @@ class InteractiveLaunchOperation extends LaunchOperation {
   private ILaunchConfiguration getConfiguration( final IResource[] resources, 
                                                  final IFile[] files ) 
                                                           throws CoreException {
-    List configurations = findConfig( resources );
+    List<ILaunchConfiguration> configurations = findConfig( resources );
     ILaunchConfiguration result = null;
     int count = configurations.size();
     if( count < 1 ) {
@@ -69,7 +69,7 @@ class InteractiveLaunchOperation extends LaunchOperation {
     } else if( count == 1 ) {
       // If there is exactly one config associated with the ICompilationUnit, 
       // return it.      
-      result = ( ILaunchConfiguration )configurations.get( 0 );
+      result = configurations.get( 0 );
     } else {
       // Otherwise, if there is more than one config associated with the 
       // ICompilationUnit, prompt the user to choose one.      
@@ -100,10 +100,11 @@ class InteractiveLaunchOperation extends LaunchOperation {
     return wc.doSave();   
   }
 
-  private List findConfig( final IResource[] resources ) throws CoreException {
-    List result = Collections.EMPTY_LIST;
+  private List<ILaunchConfiguration> findConfig( final IResource[] resources ) 
+                                                          throws CoreException {
+    List<ILaunchConfiguration> result = Collections.emptyList();
     ILaunchConfiguration[] configurations = getConfigurations();
-    result = new ArrayList( configurations.length ); 
+    result = new ArrayList<ILaunchConfiguration>( configurations.length );
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
       String exePath = delegate.getExecutable();
