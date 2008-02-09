@@ -15,7 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.eclipsefp.haskell.ui.test.console.ConsoleCompilingReporter_PDETest;
 import net.sf.eclipsefp.haskell.ui.test.editor.HaskellDocumentProvider_PDETest;
-import net.sf.eclipsefp.haskell.ui.test.editor.Partitioning_PETest;
+import net.sf.eclipsefp.haskell.ui.test.editor.Partitioning_PDETest;
 import net.sf.eclipsefp.haskell.ui.test.editor.SyntaxColoring_PDETest;
 import net.sf.eclipsefp.haskell.ui.test.editor.codeassist.CompletionContext_PDETest;
 import net.sf.eclipsefp.haskell.ui.test.editor.codeassist.HaskellContentAssistProcessor_PDETest;
@@ -35,7 +35,7 @@ public class AllTests_PDESuite {
     suite.addTestSuite( HaskellDocumentProvider_PDETest.class );
 
     // coloring
-    suite.addTestSuite( Partitioning_PETest.class );
+    suite.addTestSuite( Partitioning_PDETest.class );
     suite.addTestSuite( SyntaxColoring_PDETest.class );
     
     // code assist
