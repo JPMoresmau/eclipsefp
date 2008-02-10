@@ -11,105 +11,69 @@
  * *****************************************************************************/
 package net.sf.eclipsefp.haskell.ghccompiler.test.core;
 
-import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.*;
-
+import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.assertContains;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
-
+import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcOutputParser;
-import junit.framework.TestCase;
 
 public class GhcOutputParserTest extends TestCase {
-	
-	public void testOneSingleLineError() {
-		ICompilerOutput output = GhcOutputParser.parse(
-		    "\nMain.hs:3:25-27: Not in scope: `fac'\n");
-		
+
+	public void testOneSingleLineError() throws IOException {
+		ICompilerOutput output = GhcOutputParser.parse( readFile( "001" ) );
 		assertContains(3, 25, 27, "Not in scope: `fac'", output.getErrors());
 	}
-	
-	public void testOneCharacterErrorSpan() {
-		ICompilerOutput output = GhcOutputParser.parse(
-		    "\nMain.hs:3:25: Not in scope: `f'\n");
-		
+
+	public void testOneCharacterErrorSpan() throws IOException {
+		ICompilerOutput output = GhcOutputParser.parse( readFile( "002" ) );
 		assertContains(3, 25, 25, "Not in scope: `f'", output.getErrors());
 	}
 
-	public void testWoirdCompilingAppearsOnErrorMessage() {
-		ICompilerOutput output = GhcOutputParser.parse(
-		    "\nMain.hs:3:25-33: Not in scope: `Compiling'\n");
-		
+	public void testWoirdCompilingAppearsOnErrorMessage() throws IOException {
+	  ICompilerOutput output = GhcOutputParser.parse( readFile( "003" ) );
 		assertContains(3, 25, 33, "Not in scope: `Compiling'", output.getErrors());
 	}
 
-	public void testMultipleErrors() {
-		ICompilerOutput output = GhcOutputParser.parse(
-		    "\nMain.hs:4:26-28: Not in scope: `fac'\n" +
-		    "\n" +
-		    "Main.hs:4:32-34: Not in scope: `fib'\n");
-
+	public void testMultipleErrors() throws IOException {
+	  ICompilerOutput output = GhcOutputParser.parse( readFile( "004" ) );
 		assertContains(4, 26, 28, "Not in scope: `fac'", output.getErrors());
 		assertContains(4, 32, 34, "Not in scope: `fib'", output.getErrors());
 	}
-	
-	public void testIgnoresSingleLineMakeFlagOutput() {
-		ICompilerOutput output = GhcOutputParser.parse(
-			"Chasing modules from: Main.hs\n" +
-			"Compiling Main             ( Main.hs, Main.o )\n" +
-			"\n" +
-			"Main.hs:4:25-27: Not in scope: `fac'\n");
-		
-		final Collection<ICompilerOutputItem> errors = output.getErrors();
+
+	public void testIgnoresSingleLineMakeFlagOutput() throws IOException {
+	  ICompilerOutput output = GhcOutputParser.parse( readFile( "005" ) );
+		Collection<ICompilerOutputItem> errors = output.getErrors();
 		assertEquals(1, errors.size());
 		assertContains(4, 25, 27, "Not in scope: `fac'", errors);
 	}
-	
-	public void testIgnoresMultiLineMakeFlagOutput() {
-		ICompilerOutput output = GhcOutputParser.parse(
-		    "Chasing modules from: Main.hs\n" +
-		    "Compiling Factorial        ( ./Factorial.hs, ./Factorial.o )\n" +
-		    "Compiling Main             ( Main.hs, Main.o )\n" +
-		    "\n" +
-		    "Main.hs:6:25-27: Not in scope: `fib'\n");
-		
+
+	public void testIgnoresMultiLineMakeFlagOutput() throws IOException {
+	  ICompilerOutput output = GhcOutputParser.parse( readFile( "006" ) );
 		assertContains(6, 25, 27, "Not in scope: `fib'", output.getErrors());
 	}
-	
-	public void testIgnoresSkippedModulesOnMakeFlagOutput() {
-		ICompilerOutput output = GhcOutputParser.parse(
-			    "Chasing modules from: Main.hs\n" +
-			    "Skipping  Factorial        ( ./Factorial.hs, ./Factorial.o )\n" +
-			    "Compiling Main             ( Main.hs, Main.o )\n" +
-			    "\n" +
-			    "Main.hs:6:25-27: Not in scope: `fib'\n");
-			
-			assertContains(6, 25, 27, "Not in scope: `fib'", output.getErrors());
+
+	public void testIgnoresSkippedModulesOnMakeFlagOutput() throws IOException {
+	  ICompilerOutput output = GhcOutputParser.parse( readFile( "007" ) );
+		assertContains(6, 25, 27, "Not in scope: `fib'", output.getErrors());
 	}
-	
-	public void testParseInputWithWindowsStyleFilePaths() {
-		ICompilerOutput output = GhcOutputParser.parse(
-			    "Chasing modules from: Main.hs\r\n" +
-			    "Compiling Main             ( Main.hs, C:\\programas\\eclipse\\platform\\3.2\\eclipse\\tmp\\runtime-workspace\\qsort\\out/Main.o )\r\n" +
-			    "\r\n" +
-			    "Main.hs:4:28-30: Not in scope: `fac'\r\n\n");	
-		
+
+	public void testParseInputWithWindowsStyleFilePaths() throws IOException {
+	  ICompilerOutput output = GhcOutputParser.parse( readFile( "008" ) );
 		assertContains(4, 28, 30, "Not in scope: `fac'", output.getErrors());
 	}
-	
-	//TODO parse multi-line errors like this:
-//
-//	Main.hs:4:0-15:
-//	    Failed to load interface for `Factorial':
-//	        Could not find module `Factorial':
-//	          use -v to see a list of the files searched for
-	
-	//TODO the make flag output may not be followed by the Compiling or Skipping
-	//lines, like this: (here Factorial.hs didn't exist)
-//	Chasing modules from: Main.hs
-//	Could not find module `Factorial':
-//	  use -v to see a list of the files searched for
-//	  (imported from Main.hs)
-	
-	
+
+
+	// helping functions
+	////////////////////
+
+	private String readFile( final String name ) throws IOException {
+	  ClassLoader cl = getClass().getClassLoader();
+    String resName = "res/" + name;
+    InputStream is = cl.getResourceAsStream( resName );
+	  return ResourceUtil.readStream( is );
+	}
 }

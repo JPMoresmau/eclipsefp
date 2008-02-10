@@ -1,0 +1,4 @@
+	Chasing modules from: Main.hs
+	Could not find module `Factorial':
+	  use -v to see a list of the files searched for
+	  (imported from Main.hs)

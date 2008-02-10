@@ -1,15 +1,16 @@
 package net.sf.eclipsefp.haskell.ghccompiler.test;
 
+import net.sf.eclipsefp.haskell.ghccompiler.test.core.GhcCompilerTest_PDETest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllAllTests {
+public class AllTests_PDESuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
-				"Test for net.sf.eclipsefp.haskell.ghccompiler.test");
+				"Test for net.sf.eclipsefp.haskell.ghccompiler.test.core");
 		//$JUnit-BEGIN$
-        suite.addTest(net.sf.eclipsefp.haskell.ghccompiler.test.core.AllTests.suite());
+		suite.addTestSuite(GhcCompilerTest_PDETest.class);
 		//$JUnit-END$
 		return suite;
 	}

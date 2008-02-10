@@ -28,7 +28,7 @@ import net.sf.eclipsefp.haskell.core.test.internal.project.HaskellProject_PDETes
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IProcessRunner;
 
-public class GhcCompilerTest_PDETestCase extends HaskellProject_PDETestCase {
+public class GhcCompilerTest_PDETest extends HaskellProject_PDETestCase {
 	
 	public void testParseOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);

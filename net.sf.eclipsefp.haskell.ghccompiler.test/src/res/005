@@ -1,0 +1,4 @@
+Chasing modules from: Main.hs
+Compiling Main             ( Main.hs, Main.o )
+
+Main.hs:4:25-27: Not in scope: `fac'
