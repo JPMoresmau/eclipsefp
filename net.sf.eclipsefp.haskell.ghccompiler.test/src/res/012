@@ -1,0 +1,11 @@
+Chasing modules from: Main.hs
+Compiling Main             ( Main.hs, C:\workspaces\GHCOutputParser\GHCOutputParser\out/Main.o )
+
+Main.hs:4:0: Warning: Definition but no type signature for `main'
+
+Main.hs:4:13-14:
+    Warning: Defaulting the following constraint(s) to type `Integer'
+	     `Num a' arising from the literal `42' at Main.hs:4:13-14
+	     In the first argument of `print', namely `42'
+	     In the definition of `main': main = print 42
+Linking ...
