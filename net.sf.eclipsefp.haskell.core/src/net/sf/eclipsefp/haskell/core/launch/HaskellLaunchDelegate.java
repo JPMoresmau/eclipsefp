@@ -5,18 +5,25 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 
 
-
-/** <p>Implements the launching functionality for Haskell launch 
+/** <p>Implements the launching functionality for Haskell launch
   * configurations.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
@@ -55,9 +62,9 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     }
   }
 
-  private IProcess createProcess( final ILaunch launch, 
-                                  final IPath location, 
-                                  final String[] cmdLine, 
+  private IProcess createProcess( final ILaunch launch,
+                                  final IPath location,
+                                  final String[] cmdLine,
                                   final File workingDir ) throws CoreException {
     Process proc = DebugPlugin.exec( cmdLine, workingDir );
     Map<String, String> processAttrs = new HashMap<String, String>();
@@ -67,13 +74,13 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     if( proc != null ) {
       String loc = location.toOSString();
       process = DebugPlugin.newProcess( launch, proc, loc, processAttrs );
-      process.setAttribute( IProcess.ATTR_CMDLINE, 
+      process.setAttribute( IProcess.ATTR_CMDLINE,
                             CommandLineUtil.renderCommandLine( cmdLine ) );
     }
     return process;
   }
 
-  private String[] createCmdLine( final IPath location, 
+  private String[] createCmdLine( final IPath location,
                                   final String[] arguments ) {
     int cmdLineLength = 1;
     if( arguments != null ) {
@@ -87,7 +94,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     return cmdLine;
   }
 
-  private File determineWorkingDir( final ILaunchConfiguration config ) 
+  private File determineWorkingDir( final ILaunchConfiguration config )
                                                           throws CoreException {
     String name = ILaunchAttributes.WORKING_DIRECTORY;
     String attribute = config.getAttribute( name, ( String )null );
@@ -98,9 +105,9 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     return result;
   }
 
-  private String[] determineArguments( final ILaunchConfiguration config ) 
+  private String[] determineArguments( final ILaunchConfiguration config )
                                                           throws CoreException {
-    String args = config.getAttribute( ILaunchAttributes.ARGUMENTS, 
+    String args = config.getAttribute( ILaunchAttributes.ARGUMENTS,
                                        ( String )null );
     return CommandLineUtil.parse( args );
   }
@@ -120,12 +127,12 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     }
     return programName.toLowerCase();
   }
-  
-  
+
+
   // helping methods
   //////////////////
-  
-  public IPath getLocation( final ILaunchConfiguration config ) 
+
+  public IPath getLocation( final ILaunchConfiguration config )
                                                           throws CoreException {
     String defaultValue = null;
     String location = config.getAttribute( ILaunchAttributes.EXECUTABLE,
@@ -140,19 +147,19 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
   }
 
   private boolean isEmpty( final String location ) {
-    return    location == null 
+    return    location == null
            || location.trim().length() == 0;
   }
 
-  private boolean isBackground( final ILaunchConfiguration config ) 
+  private boolean isBackground( final ILaunchConfiguration config )
                                                           throws CoreException {
     return config.getAttribute( ILaunchAttributes.RUN_IN_BACKGROUND, true );
   }
 
   private class LaunchCancelledException extends RuntimeException {
-	private static final long serialVersionUID = 1912643423745032866L;
+    private static final long serialVersionUID = 1912643423745032866L;
 
-	private LaunchCancelledException() {
+    private LaunchCancelledException() {
       super();
     }
   }

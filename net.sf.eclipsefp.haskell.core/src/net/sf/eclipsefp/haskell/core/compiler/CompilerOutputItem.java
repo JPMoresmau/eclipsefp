@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException;
  * Default implementation for the information that was parsed out of the
  * compiler output.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class CompilerOutputItem implements ICompilerOutputItem {

@@ -76,7 +76,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 		cmdLine.add(outDir);
 		cmdLine.add("-hidir");
 		cmdLine.add(outDir);
-		cmdLine.add("-ferror-spans"); //TODO supported by GHC 6.4.2 but not by every GHC
+		cmdLine.add("-ferror-spans");
 
 		String binDir = getAbsPath(project, haskellProject.getBinPath());
 		cmdLine.add("-o");
