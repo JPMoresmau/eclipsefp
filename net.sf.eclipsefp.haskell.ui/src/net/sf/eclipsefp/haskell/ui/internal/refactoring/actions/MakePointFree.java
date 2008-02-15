@@ -5,8 +5,9 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeInfo;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeRefactoring;
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.MakePointFreeWizard;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -26,9 +27,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-/** <p>an action for triggering the PointFree-refactoring on a text 
+/** <p>an action for triggering the PointFree-refactoring on a text
   * selection.</p>
-  * 
+  *
   * <p>This action is declared in the <code>plugin.xml</code>.</p>
   *
   * @author Leif Frenzel
@@ -39,19 +40,19 @@ public class MakePointFree implements IEditorActionDelegate {
   private IEditorPart targetEditor;
   private boolean haveFile;
 
-  private MakePointFreeInfo info = new MakePointFreeInfo();
-  
-  
+  private final MakePointFreeInfo info = new MakePointFreeInfo();
+
+
   // interface methods of IEditorActionDelegate
   /////////////////////////////////////////////
 
-  public void setActiveEditor( final IAction action, 
+  public void setActiveEditor( final IAction action,
                                final IEditorPart targetEditor ) {
     this.targetEditor = targetEditor;
     haveFile = false;
     if( getFile() != null ) {
       haveFile = true;
-    }                           
+    }
   }
 
   public void run( final IAction action ) {
@@ -67,12 +68,12 @@ public class MakePointFree implements IEditorActionDelegate {
     }
   }
 
-  public void selectionChanged( final IAction action, 
+  public void selectionChanged( final IAction action,
                                 final ISelection selection ) {
     this.selection = selection;
   }
-  
-  
+
+
   // helping methods
   //////////////////
 
@@ -92,12 +93,12 @@ public class MakePointFree implements IEditorActionDelegate {
     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
     return IDE.saveAllEditors( new IResource[] { workspaceRoot }, false );
   }
-  
+
   private void openWizard() {
     RefactoringProcessor processor = new MakePointFreeProcessor( info );
     MakePointFreeRefactoring ref = new MakePointFreeRefactoring( processor );
     MakePointFreeWizard wizard = new MakePointFreeWizard( ref );
-    RefactoringWizardOpenOperation op 
+    RefactoringWizardOpenOperation op
       = new RefactoringWizardOpenOperation( wizard );
     try {
       String titleForFailedChecks = ""; //$NON-NLS-1$
@@ -116,7 +117,7 @@ public class MakePointFree implements IEditorActionDelegate {
     }
     return result;
   }
-  
+
   private final IFile getFile() {
     IFile result = null;
     if( targetEditor instanceof ITextEditor )  {

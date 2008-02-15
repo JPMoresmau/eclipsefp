@@ -12,7 +12,8 @@ Require-Bundle: org.antlr;bundle-version="[2.7.6,3.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.ui;bundle-version="[3.2.0,4.0.0)",
  net.sf.eclipsefp.haskell.core,
- net.sf.eclipsefp.haskell.ui
+ net.sf.eclipsefp.haskell.ui,
+ de.leiffrenzel.cohatoe.server.core
 Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test",
  net.sf.eclipsefp.haskell.ghccompiler.ui.launch

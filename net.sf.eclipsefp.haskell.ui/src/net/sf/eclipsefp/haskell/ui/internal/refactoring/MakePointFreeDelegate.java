@@ -3,6 +3,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IMakePointFree;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,14 +24,14 @@ import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
   * @author Leif Frenzel
   */
 class MakePointFreeDelegate {
-  
+
   private final MakePointFreeInfo info;
   private Change change;
 
   MakePointFreeDelegate( final MakePointFreeInfo info ) {
     this.info = info;
   }
-  
+
   RefactoringStatus checkInitialConditions() {
     RefactoringStatus result = new RefactoringStatus();
     IFile sourceFile = info.getSourceFile();
@@ -43,8 +44,8 @@ class MakePointFreeDelegate {
     }
     return result;
   }
-  
-  RefactoringStatus checkFinalConditions( final IProgressMonitor pm, 
+
+  RefactoringStatus checkFinalConditions( final IProgressMonitor pm,
                                           final CheckConditionsContext ctxt ) {
     RefactoringStatus result = new RefactoringStatus();
     try {
@@ -63,21 +64,21 @@ class MakePointFreeDelegate {
     }
     return result;
   }
-  
-  void createChange( final IProgressMonitor pm, 
+
+  void createChange( final IProgressMonitor pm,
                      final CompositeChange rootChange ) {
     try {
       pm.beginTask( UITexts.mkPointFreeDelegate_collectingChanges, 100 );
       if( change == null ) {
         throw new IllegalStateException();
-      } 
+      }
       rootChange.add( change );
     } finally {
       pm.done();
     }
   }
-  
-  
+
+
   // helping methods
   //////////////////
 
@@ -90,23 +91,23 @@ class MakePointFreeDelegate {
       IMakePointFree primeFun = ( IMakePointFree )fun;
       replacement = primeFun.makePointFree( info.getText() );
     }
-    if(    replacement != null 
+    if(    replacement != null
         && !replacement.trim().equals( info.getText().trim() ) ) {
       IFile file = info.getSourceFile();
       result = new TextFileChange( file.getName(), file );
       // a file change contains a tree of edits, first add the root of them
       MultiTextEdit fileChangeRootEdit = new MultiTextEdit();
-      result.setEdit( fileChangeRootEdit );    
-      // edit object for the text replacement in the file, 
+      result.setEdit( fileChangeRootEdit );
+      // edit object for the text replacement in the file,
       // this is the only child
-      ReplaceEdit edit = new ReplaceEdit( info.getOffset(), 
-                                          info.getText().length(), 
+      ReplaceEdit edit = new ReplaceEdit( info.getOffset(),
+                                          info.getText().length(),
                                           replacement );
       fileChangeRootEdit.addChild( edit );
     }
     return result;
   }
-  
+
   private boolean isEmpty( final String candidate ) {
     return candidate == null || candidate.trim().length() == 0;
   }

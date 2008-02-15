@@ -2,15 +2,16 @@
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 /** <p>contains constant defintions for command line paramters of GHC.</p>
-  * 
+  *
   * <p>Section references are to sections in the GHC manual.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public interface IGhcParameters {
-  
-  String VERSION = "--version";
-  String PRINT_LIBDIR = "--print-libdir"; 
+
+  String VERSION         = "--version";
+  String NUMERIC_VERSION = "--numeric-version";
+  String PRINT_LIBDIR    = "--print-libdir";
 
   // Language options (Section 7.1)
   String LANG_GLASGOW_EXTS                = "-fglasgow-exts";
@@ -18,19 +19,19 @@ public interface IGhcParameters {
   String LANG_FFI                         = "-fffi";
   String LANG_WITH                        = "-fwith";
   String LANG_NO_MONOMORPHISM_RESTRICTION = "-fno-monomorphism-restriction";
-  String LANG_ALLOW_OVERLAPPING_INSTANCES = "-fallow-overlapping-instances"; 
-  String LANG_ALLOW_UNDECIDABLE_INSTANCES = "-fallow-undecidable-instances"; 
+  String LANG_ALLOW_OVERLAPPING_INSTANCES = "-fallow-overlapping-instances";
+  String LANG_ALLOW_UNDECIDABLE_INSTANCES = "-fallow-undecidable-instances";
   String LANG_ALLOW_INCOHERENT_INSTANCES  = "-fallow-incoherent-instances";
   String LANG_CONTEXT_STACK               = "-fcontext-stack";
   String LANG_INLINE_PHRASE               = "-finline-phase";
   String LANG_GENERICS                    = "-fgenerics";
   String LANG_NO_IMPLICIT_PRELUDE         = "-fno-implicit-prelude";
-  
+
   // General Optimisation (Section 4.11.1)
   String OPT_O0 = "-O0";
   String OPT_O1 = "-O1";
   String OPT_O2 = "-O2";
-  
+
   // Individual optimisations (Section 4.11.2)
   String OPT_CASE_MERGE                   = "-fcase-merge";
   String OPT_DICTS_STRICT                 = "-fdicts-strict";

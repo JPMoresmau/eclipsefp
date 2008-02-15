@@ -20,6 +20,12 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            name="%implementationsPP_name"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.impls.InstalledImplementationsPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.impls.InstalledImplementationsPP">
+      </page>
+      <page
             name="%compilerPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP"
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage"
