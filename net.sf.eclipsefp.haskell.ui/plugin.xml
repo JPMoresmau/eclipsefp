@@ -107,18 +107,6 @@
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP">
       </page>
       <page
-            name="%compilerPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
-            class="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellCompilerPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellCompilerPP">
-      </page>
-      <page
-            name="%interpreterPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
-            class="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellInterpreterPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellInterpreterPP">
-      </page>
-      <page
             name="%editorPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"

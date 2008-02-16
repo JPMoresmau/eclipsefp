@@ -27,7 +27,7 @@
       </page>
       <page
             name="%interpreterPP_name"
-            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage"
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage">
       </page>

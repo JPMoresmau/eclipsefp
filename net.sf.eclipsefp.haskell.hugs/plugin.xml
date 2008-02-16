@@ -10,7 +10,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page name="%hugsPP_name"
-            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
             class="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage"
             id="net.sf.eclipsefp.haskell.hugs.ui.preferences.HugsPreferencePage">
       </page>

@@ -3,14 +3,11 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences;
 
 
 /** <p>contains constants for preference names in the Haskell UI.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public interface IPreferenceConstants {
 
-  // Haskell compiler
-  String SHOW_COMPILER_LOG = "SHOW_COMPILER_LOG";
-  
   // code assist
   String AUTO_ACTIVATION_DELAY  = "AUTO_ACTIVATION_DELAY";
   String AUTO_INSERT            = "AUTO_INSERT";
@@ -18,7 +15,7 @@ public interface IPreferenceConstants {
   String INSERT_COMPLETION      = "INSERT_COMPLETION";
   String ORDER_PROPOSALS        = "ORDER_PROPOSALS";
   String SHOW_VISIBLE_PROPOSALS = "SHOW_VISIBLE_PROPOSALS";
-  
+
   // Build console
   String CLEAR_BUILD_CONSOLE    = "CLEAR_BUILD_CONSOLE";
 }
