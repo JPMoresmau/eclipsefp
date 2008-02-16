@@ -4,9 +4,8 @@ package net.sf.eclipsefp.haskell.core.launch;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-
+import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -138,7 +137,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     String location = config.getAttribute( ILaunchAttributes.EXECUTABLE,
                                            defaultValue );
     if( isEmpty( location ) ) {
-      String msg = "Could not locate the project's executable.";
+      String msg = CoreTexts.haskellLaunchDelegate_noExe;
       String pluginId = HaskellCorePlugin.getPluginId();
       IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
       throw new CoreException( status );

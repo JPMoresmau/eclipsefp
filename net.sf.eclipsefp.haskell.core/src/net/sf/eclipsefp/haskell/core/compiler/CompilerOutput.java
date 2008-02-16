@@ -9,7 +9,7 @@ import java.util.List;
  * <p>
  * Default implementation for a compiler's output.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class CompilerOutput implements ICompilerOutput {
@@ -36,8 +36,8 @@ public class CompilerOutput implements ICompilerOutput {
 
 	@Override
 	public String toString() {
-		return "Compiler output [ " + exceptions.size() + " Exceptions ]\n"
-				+ output + "\n" + fErrors;
+		return "Compiler output [ " + exceptions.size() + " Exceptions ]\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ output + "\n" + fErrors; //$NON-NLS-1$
 	}
 
 	// interface methods of ICompilerOutput

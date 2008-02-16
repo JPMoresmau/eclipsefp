@@ -3,22 +3,22 @@ package net.sf.eclipsefp.haskell.core.project;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.eclipse.core.resources.IFile;
-import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import org.eclipse.core.resources.IFile;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * <p>
  * A mini parser to get the project descriptor information from the .hsproject
  * file into an IHaskellProject.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 class Parser implements IXMLNames {
@@ -35,18 +35,18 @@ class Parser implements IXMLNames {
 						.newDocumentBuilder();
 				InputSource inputSource = new InputSource(reader);
 				rootElement = parser.parse(inputSource).getDocumentElement();
-			} catch (Exception ex) {
-				HaskellCorePlugin
-						.log("Problem when parsing .hsproject file.\n", ex);
+			} catch( Exception ex ) {
+        String msg = "Problem when parsing .hsproject file.\n"; //$NON-NLS-1$
+        HaskellCorePlugin.log( msg, ex );
 			} finally {
 				reader.close();
 			}
 			applyPaths(project, rootElement);
 			setupCompiler(project, rootElement);
-		} catch (Exception ex) {
-			HaskellCorePlugin
-					.log("Problem when reading .hsproject file.\n", ex);
-		}
+		} catch( Exception ex ) {
+      String msg = "Problem when reading .hsproject file.\n"; //$NON-NLS-1$
+      HaskellCorePlugin.log( msg, ex );
+    }
 	}
 
 	// helping methods
@@ -57,7 +57,7 @@ class Parser implements IXMLNames {
 	{
 		final NodeList list = rootElement.getElementsByTagName(COMPILER_ELEMENT);
 		if (list.getLength() > 0) {
-			if ("null".equals(list.item(0).getTextContent())) {
+			if ("null".equals(list.item(0).getTextContent())) { //$NON-NLS-1$
 				project.setCompiler(null);
 			}
 		}
@@ -67,7 +67,7 @@ class Parser implements IXMLNames {
 		final String tagName,
 		final String attributeName)
 	{
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		NodeList list = rootElement.getElementsByTagName(tagName);
 		if (list.getLength() > 0) {
 			// we use only the first entry for each path type

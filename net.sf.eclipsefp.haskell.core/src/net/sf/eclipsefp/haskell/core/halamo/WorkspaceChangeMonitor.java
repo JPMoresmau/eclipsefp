@@ -2,9 +2,7 @@ package net.sf.eclipsefp.haskell.core.halamo;
 
 import java.util.Hashtable;
 import java.util.Map;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -40,22 +38,22 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 					fProjectMonitors.put(project, prjMon);
 					return false;
 				}
-				
+
 				IResourceChangeListener prjMon = fProjectMonitors.get(project);
 				if (null != prjMon) {
 					prjMon.resourceChanged(fOriginalEvent);
 				}
-				
+
 				return false;
 			}
-			
+
 			return true;
 		}
 
 
 	}
-	
-	private final IProjectChangeMonitorFactory fProjectMonitorFactory; 
+
+	private final IProjectChangeMonitorFactory fProjectMonitorFactory;
 
 	private final Map<IProject, IResourceChangeListener> fProjectMonitors =
 		new Hashtable<IProject, IResourceChangeListener>();
@@ -78,7 +76,7 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 		try {
 			event.getDelta().accept(new DeltaVisitor(event));
 		} catch (CoreException exc) {
-			HaskellCorePlugin.log("Error when exploring workspace delta", exc);
+			HaskellCorePlugin.log("Error when exploring workspace delta", exc); //$NON-NLS-1$
 		}
 	}
 

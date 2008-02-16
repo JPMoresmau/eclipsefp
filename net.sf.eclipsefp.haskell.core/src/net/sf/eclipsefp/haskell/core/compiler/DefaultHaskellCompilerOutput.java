@@ -7,16 +7,16 @@ import java.util.List;
 
 /** <p>Default implementation for a practically empty compiler output.</p>
   *
-  * @author Leif Frenzel 
+  * @author Leif Frenzel
   */
 class DefaultHaskellCompilerOutput implements ICompilerOutput {
-  
+
   String name;
 
   DefaultHaskellCompilerOutput( final String name ) {
     this.name = name;
   }
-  
+
   public Collection<ICompilerOutputItem> getErrors() {
     return new ArrayList<ICompilerOutputItem>();
   }
@@ -30,6 +30,6 @@ class DefaultHaskellCompilerOutput implements ICompilerOutput {
   }
 
   public String getOutput() {
-    return "I didn't compile: " + name;
+    return "I didn't compile: " + name; //$NON-NLS-1$
   }
 }

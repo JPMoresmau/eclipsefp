@@ -1,19 +1,24 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.parser;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.halamo.*;
 
 /**
  * <p>
  * The default implementation for the Haskell parser. This is a dummy
  * implementation which does actually no parsing at all.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 class DefaultHaskellParser implements IHaskellParser {
@@ -39,21 +44,21 @@ class DefaultHaskellParser implements IHaskellParser {
 	// ////////////////
 
 	private ICompilationUnit createDummyCompilationUnit() {
-		String msg = "Parsing should not have been invoked on default parser, "
-				+ "check canParse() before calling parser.";
-		HaskellCorePlugin.log(msg, IStatus.WARNING);
+    String msg = "Parsing should not have been invoked on default parser, " //$NON-NLS-1$
+        + "check canParse() before calling parser."; //$NON-NLS-1$
+    HaskellCorePlugin.log( msg, IStatus.WARNING );
 
-		DummyCompilationUnit result = new DummyCompilationUnit();
-		result.setModules(parseModules(result));
-		return result;
-	}
+    DummyCompilationUnit result = new DummyCompilationUnit();
+    result.setModules( parseModules( result ) );
+    return result;
+  }
 
-	private IModule[] parseModules(final ICompilationUnit compilationUnit) {
-		String msg = "Parsing should not have been invoked on default parser, "
-				+ "check canParse() before calling parser.";
-		HaskellCorePlugin.log(msg, IStatus.WARNING);
-		return createDummyModules(compilationUnit);
-	}
+  private IModule[] parseModules( final ICompilationUnit compilationUnit ) {
+    String msg = "Parsing should not have been invoked on default parser, " //$NON-NLS-1$
+        + "check canParse() before calling parser."; //$NON-NLS-1$
+    HaskellCorePlugin.log( msg, IStatus.WARNING );
+    return createDummyModules( compilationUnit );
+  }
 
 	private IModule[] createDummyModules(final ICompilationUnit cu) {
 		return new IModule[] { new IModule() {
@@ -74,7 +79,7 @@ class DefaultHaskellParser implements IHaskellParser {
 			}
 
 			public String getName() {
-				return "[Could not parse anything, no parser found.]";
+				return "[Could not parse anything, no parser found.]"; //$NON-NLS-1$
 			}
 
 			public ISourceLocation getSourceLocation() {
@@ -165,7 +170,7 @@ class DefaultHaskellParser implements IHaskellParser {
 		}
 
 		public String getOriginalSourceCode() {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 	}

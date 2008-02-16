@@ -2,22 +2,24 @@
 package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.util.Hashtable;
-
+import net.sf.eclipsefp.haskell.core.HaskellCoreException;
+import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-
-import net.sf.eclipsefp.haskell.core.HaskellCoreException;
 
 /**
  * <p>
  * manages the Haskell compilers.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class CompilerManager implements ICompilerManager {
 
-	/** the singleton instance of CompilerManager. */
+	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+  private static final String ATT_NAME = "name"; //$NON-NLS-1$
+
+  /** the singleton instance of CompilerManager. */
 	private static ICompilerManager _instance;
 
 	private static final String DEFAULT = DefaultHaskellCompiler.class
@@ -34,7 +36,7 @@ public class CompilerManager implements ICompilerManager {
 
 	/**
 	 * registered compilers.
-	 * 
+	 *
 	 * keys - compiler id value - compiler information as provided in the
 	 * plugin.xml
 	 */
@@ -44,7 +46,7 @@ public class CompilerManager implements ICompilerManager {
 	 * installed compilers in the compiler manager. A compiler is installed
 	 * (objects are created, inits are performed) only if it is used. Then it is
 	 * cached here.
-	 * 
+	 *
 	 * key - compiler id value - the compiler object (which implements
 	 * IHaskellCompiler)
 	 */
@@ -109,13 +111,13 @@ public class CompilerManager implements ICompilerManager {
 			try {
 				installCompiler(id);
 			} catch (HaskellCoreException hcEex) {
-				throw new Exception("Could not install compiler '" + id
-						+ "'.\n", hcEex);
+				throw new Exception("Could not install compiler '" + id //$NON-NLS-1$
+						+ "'.\n", hcEex); //$NON-NLS-1$
 			}
 			selectedCompiler = id;
 			result = true;
 		} else {
-			fireHCEx("No Haskell compiler registered for ID '" + id + "'.");
+			fireHCEx("No Haskell compiler registered for ID '" + id + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}
@@ -137,16 +139,16 @@ public class CompilerManager implements ICompilerManager {
 	 * (if it is a registered compiler).
 	 * </p>
 	 */
-	public String getCompilerName(final String id) {
-		String result;
-		if (id.equals(DEFAULT)) {
-			result = "No compiler";
-		} else {
-			IConfigurationElement elem = htRegisteredCompilers.get(id);
-			result = elem.getAttribute("name");
-		}
-		return result;
-	}
+	public String getCompilerName( final String id ) {
+    String result;
+    if( id.equals( DEFAULT ) ) {
+      result = CoreTexts.compilerManager_noNamePlaceHolder;
+    } else {
+      IConfigurationElement elem = htRegisteredCompilers.get( id );
+      result = elem.getAttribute( ATT_NAME );
+    }
+    return result;
+  }
 
 	// helping methods
 	// ////////////////
@@ -164,12 +166,12 @@ public class CompilerManager implements ICompilerManager {
 			final IConfigurationElement elem) throws HaskellCoreException {
 		Object compiler = null;
 		try {
-			compiler = elem.createExecutableExtension("class");
+			compiler = elem.createExecutableExtension(ATT_CLASS);
 		} catch (CoreException cex) {
 			fireHCEx(cex.getMessage());
 		}
 		if (!(compiler instanceof IHaskellCompiler)) {
-			fireHCEx("Putative Haskell compiler '" + id + "' must implement"
+			fireHCEx("Putative Haskell compiler '" + id + "' must implement" //$NON-NLS-1$ //$NON-NLS-2$
 					+ IHaskellCompiler.class.getName());
 		}
 		IHaskellCompiler haskellCompiler = (IHaskellCompiler) compiler;

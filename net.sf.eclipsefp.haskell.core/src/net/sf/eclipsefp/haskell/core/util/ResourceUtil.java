@@ -1,22 +1,30 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.util;
 
-import java.io.*;
-
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
-import net.sf.eclipsefp.haskell.core.project.*;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * <p>
  * contains static helping functionality to work on file resources in the
  * workspace.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class ResourceUtil {
@@ -26,14 +34,14 @@ public class ResourceUtil {
 	 * the file extension of Haskell source files.
 	 * </p>
 	 */
-	public static final String EXTENSION_HS = "hs";
+	public static final String EXTENSION_HS = "hs"; //$NON-NLS-1$
 
 	/**
 	 * <p>
 	 * the file extension of literate Haskell source files.
 	 * </p>
 	 */
-	public static final String EXTENSION_LHS = "lhs";
+	public static final String EXTENSION_LHS = "lhs"; //$NON-NLS-1$
 
 	/**
 	 * <p>
@@ -41,9 +49,9 @@ public class ResourceUtil {
 	 * recognized by the file extensions '.hs' and '.lhs'.
 	 * </p>
 	 */
-	public static boolean hasHaskellExtension(final IResource resource) {
-		return has(resource, EXTENSION_HS) || has(resource, EXTENSION_LHS);
-	}
+	public static boolean hasHaskellExtension( final IResource resource ) {
+    return has( resource, EXTENSION_HS ) || has( resource, EXTENSION_LHS );
+  }
 
 	/**
 	 * <p>
@@ -163,7 +171,7 @@ public class ResourceUtil {
 			// the code. It is no problem as long as all source positions we get
 			// from the parser are in terms of line/column, but it would make a
 			// difference if we got them in terms of offset/length
-			sbResult.append("\n");
+			sbResult.append("\n"); //$NON-NLS-1$
 			line = br.readLine();
 		}
 		br.close();
@@ -194,18 +202,17 @@ public class ResourceUtil {
 	 * returns whether the specified file is the project executable of its
 	 * project.
 	 */
-	public static boolean isProjectExecutable(final IFile file) {
-		boolean result = false;
-		try {
-			IFile exe = ResourceUtil.getProjectExecutable(file.getProject());
-			result = file.equals(exe);
-		} catch (CoreException ex) {
-			String msg = "Problem determining project executable for "
-					+ file.getName();
-			HaskellCorePlugin.log(msg, ex);
-		}
-		return result;
-	}
+	public static boolean isProjectExecutable( final IFile file ) {
+    boolean result = false;
+    try {
+      IFile exe = ResourceUtil.getProjectExecutable( file.getProject() );
+      result = file.equals( exe );
+    } catch( CoreException ex ) {
+      String msg = "Problem determining project executable for "; //$NON-NLS-1$
+      HaskellCorePlugin.log( msg + file.getName(), ex );
+    }
+    return result;
+  }
 
 	/**
 	 * <p>
@@ -213,13 +220,13 @@ public class ResourceUtil {
 	 * (Haskell) project.
 	 * </p>
 	 */
-	public static boolean isSourceFolder(final IFolder folder) {
-		IProject project = folder.getProject();
-		IHaskellProject hsProject = HaskellProjectManager.get(project);
-		IPath sourcePath = hsProject.getSourcePath();
-		IPath folderPath = folder.getProjectRelativePath();
-		return sourcePath.equals(folderPath);
-	}
+	public static boolean isSourceFolder( final IFolder folder ) {
+    IProject project = folder.getProject();
+    IHaskellProject hsProject = HaskellProjectManager.get( project );
+    IPath sourcePath = hsProject.getSourcePath();
+    IPath folderPath = folder.getProjectRelativePath();
+    return sourcePath.equals( folderPath );
+  }
 
 	public static boolean isInHaskellProject(final IResource resource) {
 		boolean result = false;
@@ -232,22 +239,20 @@ public class ResourceUtil {
 		return result;
 	}
 
+
 	// helping methods
 	// ////////////////
 
-	private static boolean has(final IResource resource,
-		final String extension)
-	{
-		String resExt = resource.getFileExtension();
-		return resExt != null && resExt.equalsIgnoreCase(extension);
-	}
+	private static boolean has( final IResource resource, final String extension ) {
+    String resExt = resource.getFileExtension();
+    return resExt != null && resExt.equalsIgnoreCase( extension );
+  }
 
-	private static IHaskellProject getHsProject(final IProject project) {
-		return HaskellProjectManager.get(project);
-	}
+  private static IHaskellProject getHsProject( final IProject project ) {
+    return HaskellProjectManager.get( project );
+  }
 
-	public static String getModuleName(final String fileName) {
-		return fileName.substring(0, fileName.lastIndexOf('.'));
-	}
-
+  public static String getModuleName( final String fileName ) {
+    return fileName.substring( 0, fileName.lastIndexOf( '.' ) );
+  }
 }

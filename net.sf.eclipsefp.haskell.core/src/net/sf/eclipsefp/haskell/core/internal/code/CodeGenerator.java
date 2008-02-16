@@ -17,37 +17,37 @@ public class CodeGenerator {
     StringBuffer sb = new StringBuffer();
     sb.append( getLineDelimiter() );
     sb.append(getPrefixFor( style ));
-    sb.append( "module " );
+    sb.append( "module " ); //$NON-NLS-1$
     for( int i = 0; i < folderNames.length; i++ ) {
       sb.append( folderNames[ i ] );
-      sb.append( "." );
+      sb.append( "." ); //$NON-NLS-1$
     }
     sb.append( name );
-    sb.append( " where" );
+    sb.append( " where" ); //$NON-NLS-1$
     sb.append( getLineDelimiter() );
     sb.append( getSuffixFor(style) );
     return sb.toString();
   }
 
-  
+
   // helping methods
   //////////////////
-  
+
   private static String getSuffixFor( final EHaskellCommentStyle style ) {
-    return ( EHaskellCommentStyle.TEX == style ) ? "\\end{code}" : "";
+    return ( EHaskellCommentStyle.TEX == style ) ? "\\end{code}" : ""; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   private static String getPrefixFor( final EHaskellCommentStyle style ) {
-    String result = "";
+    String result = ""; //$NON-NLS-1$
     if( EHaskellCommentStyle.LITERATE == style ) {
-      result = "> ";
+      result = "> "; //$NON-NLS-1$
     } else if( EHaskellCommentStyle.TEX == style ) {
-      result = "\\begin{code}\n";
+      result = "\\begin{code}\n"; //$NON-NLS-1$
     }
     return result;
   }
 
   private static String getLineDelimiter() {
-    return System.getProperty( "line.separator", "\n" );    
+    return System.getProperty( "line.separator", "\n" );     //$NON-NLS-1$ //$NON-NLS-2$
   }
 }

@@ -9,7 +9,7 @@ public class NullCompilationUnit implements ICompilationUnit {
 	private NullCompilationUnit() {
 		//hide default constructor for singleton
 	}
-	
+
 	public static ICompilationUnit getInstance() {
 		if (null == instance) {
 			instance = new NullCompilationUnit();
@@ -26,7 +26,7 @@ public class NullCompilationUnit implements ICompilationUnit {
 	}
 
 	public String getOriginalSourceCode() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public IFile getUnderlyingResource() {

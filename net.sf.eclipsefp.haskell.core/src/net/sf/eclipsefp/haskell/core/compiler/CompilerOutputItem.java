@@ -47,14 +47,14 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 
 
 	public void addToComment(final String commentAddition) {
-		String start = (fComment.equals("")) ? fComment : fComment + "\n";
+		String start = (fComment.equals("")) ? fComment : fComment + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		this.fComment = start + commentAddition.trim();
 	}
 
 	@Override
 	public String toString() {
-		return "CompilerOutputItem:" + "\n  file   : " + fFileName
-				+ "\n  line   : " + fLineNumber + "\n  comment: " + fComment;
+		return "CompilerOutputItem:" + "\n  file   : " + fFileName //$NON-NLS-1$ //$NON-NLS-2$
+				+ "\n  line   : " + fLineNumber + "\n  comment: " + fComment; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	// attribute setters and getters
@@ -86,7 +86,7 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 
 	private int getSeverity() {
 		int result = IMarker.SEVERITY_ERROR;
-		if( fComment != null && fComment.indexOf( "Warning") != -1 ) {
+		if( fComment != null && fComment.indexOf( "Warning") != -1 ) { //$NON-NLS-1$
 			result = IMarker.SEVERITY_WARNING;
 		}
 		return result;

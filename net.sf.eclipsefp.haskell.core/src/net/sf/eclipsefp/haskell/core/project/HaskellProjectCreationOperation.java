@@ -1,11 +1,10 @@
 package net.sf.eclipsefp.haskell.core.project;
 
-import org.eclipse.core.runtime.Preferences;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.project.DescriptorFileInfo;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import org.eclipse.core.runtime.Preferences;
 
 public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 
@@ -44,7 +43,7 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 
 	private String createDescriptorContent() {
 		if (! createFolders() ) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		return HaskellProjectManager.createDescriptorContent(
 			       getPreference(ICorePreferenceNames.FOLDERS_SRC),
@@ -62,7 +61,7 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 	private String getPreference(final String name) {
 		return getStore().getString(name);
 	}
-	
+
 	private Preferences getStore() {
 		return fPreferences;
 	}

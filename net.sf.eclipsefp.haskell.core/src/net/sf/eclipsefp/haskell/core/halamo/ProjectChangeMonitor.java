@@ -1,5 +1,12 @@
 package net.sf.eclipsefp.haskell.core.halamo;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -9,20 +16,12 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
-import net.sf.eclipsefp.haskell.core.parser.ParserManager;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-
 /**
  * Watches for changes on an specific project and updates the internal language
  * model when needed
- * 
+ *
  * @see WorkspaceChangeMonitor
- * 
+ *
  * @author Thiago Arrais
  */
 public class ProjectChangeMonitor implements IResourceChangeListener {
@@ -34,7 +33,7 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 	public ProjectChangeMonitor(final IProject project) {
 		this(HaskellCorePlugin.getDefaultModelManager().getModelFor(project));
 	}
-	
+
 	public ProjectChangeMonitor(final IHaskellModel model) {
 		fLanguageModel = model;
 	}
@@ -62,8 +61,8 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 				}
 			}
 		} catch (CoreException cex) {
-			String msg = "Could not process resource changes in the Haskell "
-					+ "language model.\n" + "Project: " + project.getName();
+			String msg = "Could not process resource changes in the Haskell " //$NON-NLS-1$
+					+ "language model.\n" + "Project: " + project.getName();  //$NON-NLS-1$//$NON-NLS-2$
 			HaskellCorePlugin.log(msg, cex);
 		}
 	}
@@ -118,7 +117,7 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 		private boolean isDeletion(final IResourceDelta delta) {
 			return (delta.getKind() & (IResourceDelta.REMOVED)) != 0;
 		}
-	
+
 	}
 
 	public IHaskellModel getLanguageModel() {

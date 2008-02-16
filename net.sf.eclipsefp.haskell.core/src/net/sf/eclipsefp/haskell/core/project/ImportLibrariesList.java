@@ -5,9 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -21,12 +19,12 @@ import org.osgi.service.prefs.Preferences;
  * Encapsulates a list of import libraries that can be read from and saved to
  * the core plugin preferences.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class ImportLibrariesList {
 
-	private static final String KEY = "PROJECT_IMPORT_LIBRARIES";
+	private static final String KEY = "PROJECT_IMPORT_LIBRARIES"; //$NON-NLS-1$
 
 	private final List<IImportLibrary> importLibList;
 	private final IProject project;
@@ -53,7 +51,7 @@ public class ImportLibrariesList {
 			HaskellProjectManager.getInstance().broadcast(event);
 			lastPersisted = getAll();
 		} catch (final BackingStoreException basox) {
-			String msg = "Could not store import libraries for project "
+			String msg = "Could not store import libraries for project " //$NON-NLS-1$
 					     + project.getName();
 			HaskellCorePlugin.log(msg, basox);
 		}
@@ -106,7 +104,7 @@ public class ImportLibrariesList {
 
 	private void parseImportLibs(final String text) {
 		String markedText = text.replace(File.pathSeparatorChar, ';');
-		StringTokenizer stok = new StringTokenizer(markedText, ";");
+		StringTokenizer stok = new StringTokenizer(markedText, ";"); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			ImportLibrary impLib = parse(token.trim());
@@ -136,11 +134,11 @@ public class ImportLibrariesList {
 	}
 
 	private String encodeImportLibrary(final IImportLibrary lib) {
-		return lib.getPath().toOSString() + "," + (lib.isUsed() ? "t" : "f");
+		return lib.getPath().toOSString() + "," + (lib.isUsed() ? "t" : "f");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	private void load() {
-		String property = createPrefs().get(KEY, "");
+		String property = createPrefs().get(KEY, ""); //$NON-NLS-1$
 		if (property != null && property.length() > 0) {
 			parseImportLibs(property);
 		} else {
@@ -174,7 +172,7 @@ public class ImportLibrariesList {
 		try {
 			result = project.getPersistentProperty(getQName());
 		} catch (CoreException cex) {
-			String msg = "Could not read import libraries property for "
+			String msg = "Could not read import libraries property for " //$NON-NLS-1$
 					     + project;
 			HaskellCorePlugin.log(msg, cex);
 		}

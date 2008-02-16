@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.IOException;
 import java.io.StringWriter;
-
 import net.sf.eclipsefp.haskell.core.internal.util.StreamMultiplexer;
 
 
@@ -22,12 +21,12 @@ public class QueryUtil {
       throw new IllegalArgumentException();
     }
 
-    String result = "";
+    String result = ""; //$NON-NLS-1$
     String[] cmdLine = new String[] { command, param };
     try {
       StringWriter output = new StringWriter();
       Process proc = Runtime.getRuntime().exec( cmdLine );
-      Thread outRedirect = new StreamMultiplexer("output_redirect",
+      Thread outRedirect = new StreamMultiplexer("output_redirect", //$NON-NLS-1$
                                                  proc.getInputStream(),
                                                  output );
       outRedirect.start();
@@ -46,16 +45,16 @@ public class QueryUtil {
       throw new IllegalArgumentException();
     }
 
-    String result = "";
+    String result = ""; //$NON-NLS-1$
     String[] cmdLine = new String[] { command, param };
 
     StringWriter output = new StringWriter();
     StringWriter errors = new StringWriter();
     Process proc = Runtime.getRuntime().exec( cmdLine );
-    Thread outRedirect = new StreamMultiplexer( "output_redirect",
+    Thread outRedirect = new StreamMultiplexer( "output_redirect", //$NON-NLS-1$
                                                 proc.getInputStream(),
                                                 output );
-    Thread errRedirect = new StreamMultiplexer( "error_redirect",
+    Thread errRedirect = new StreamMultiplexer( "error_redirect", //$NON-NLS-1$
                                                 proc.getInputStream(),
                                                 errors );
     outRedirect.start();

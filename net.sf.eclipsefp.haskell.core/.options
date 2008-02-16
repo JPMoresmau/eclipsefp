@@ -1,2 +1,2 @@
 # Tracing messages of the Haskell Language Model
-net.sf.eclipsefp.haskell.core/trace/halamo = false
+net.sf.eclipsefp.haskell.core/halamo = false

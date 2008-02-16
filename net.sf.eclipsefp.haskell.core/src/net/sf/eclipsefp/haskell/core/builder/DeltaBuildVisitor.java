@@ -1,21 +1,25 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
-import org.eclipse.core.resources.*;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 
-
-/** <p>Visits the resource delta tree to incrementally build Haskell 
+/** <p>Visits the resource delta tree to incrementally build Haskell
   * projects.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
-  
+
   DeltaBuildVisitor( final IProgressMonitor monitor ) {
     super( monitor );
   }
@@ -27,9 +31,10 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
     if( res instanceof IProject ) {
       IProject project = ( IProject )res;
       try {
-        result = project.hasNature( HaskellNature.NATURE_ID ); 
+        result = project.hasNature( HaskellNature.NATURE_ID );
       } catch( CoreException cex ) {
-        HaskellCorePlugin.log( "Error checking Haskell project nature.", cex );
+        String msg = "Error checking Haskell project nature."; //$NON-NLS-1$
+        HaskellCorePlugin.log( msg, cex );
         result = false;
       }
     } else if( res instanceof IFolder ) {
@@ -54,7 +59,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
           result = true;
           break;
       }
-    } 
+    }
     return result;
   }
 }

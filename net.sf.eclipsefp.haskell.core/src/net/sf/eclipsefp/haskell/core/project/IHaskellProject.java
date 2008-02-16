@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -16,20 +15,16 @@ import org.eclipse.core.runtime.IPath;
  * project in the workspace. The project is expected to have the
  * {@link HaskellNature Haskell project nature}.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public interface IHaskellProject extends IAdaptable {
 
-	String PROPERTY_SOURCE_PATH = "sourcePath";
-
-	String PROPERTY_OUTPUT_PATH = "outputPath";
-
-	String PROPERTY_BIN_PATH = "binPath";
-
-	String PROPERTY_TARGET_NAME = "targetName";
-
-	String PROPERTY_IMPORT_LIBRARIES = "importLibraries";
+	String PROPERTY_SOURCE_PATH = "sourcePath"; //$NON-NLS-1$
+	String PROPERTY_OUTPUT_PATH = "outputPath"; //$NON-NLS-1$
+	String PROPERTY_BIN_PATH = "binPath"; //$NON-NLS-1$
+	String PROPERTY_TARGET_NAME = "targetName"; //$NON-NLS-1$
+	String PROPERTY_IMPORT_LIBRARIES = "importLibraries"; //$NON-NLS-1$
 
 	/**
 	 * <p>

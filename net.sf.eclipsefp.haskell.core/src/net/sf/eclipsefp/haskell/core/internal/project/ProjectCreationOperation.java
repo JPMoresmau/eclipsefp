@@ -4,6 +4,7 @@ package net.sf.eclipsefp.haskell.core.internal.project;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * <p>
  * creates the new project.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class ProjectCreationOperation {
@@ -36,27 +37,27 @@ public class ProjectCreationOperation {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 			public void run(final IProgressMonitor monitor)
 					throws CoreException {
-				monitor.beginTask("Creating project ...",
-						          getDirectories().length + 3);
+			  String msg = CoreTexts.projectCreationOperation_creating;
+				monitor.beginTask( msg, getDirectories().length + 3);
 
-				monitor.subTask("Inializing resources ...");
+				monitor.subTask( CoreTexts.projectCreationOperation_init );
 				IProject project = createProjectResource();
 				monitor.worked(1);
 
-				monitor.subTask("Adding natures ...");
+				monitor.subTask( CoreTexts.projectCreationOperation_natures );
 				addNatures(monitor, project);
 
-				monitor.subTask("Creating directory structure ...");
+				monitor.subTask( CoreTexts.projectCreationOperation_dirs );
 				createDirectories(monitor, project);
 
-				monitor.subTask("Updating project settings ...");
+				monitor.subTask( CoreTexts.projectCreationOperation_settings );
 				createDescriptionFile(monitor, project);
 			}
 		};
 		try {
 			ResourcesPlugin.getWorkspace().run(operation, mon);
 		} catch (CoreException cex) {
-			HaskellCorePlugin.log("Problem creating new project.", cex);
+			HaskellCorePlugin.log("Problem creating new project.", cex); //$NON-NLS-1$
 		} finally {
 			mon.done();
 		}
@@ -65,7 +66,7 @@ public class ProjectCreationOperation {
 	public void setProjectName(final String name) {
 		fProjectName = name;
 	}
-	
+
 	public String getProjectName() {
 		return fProjectName;
 	}
@@ -104,7 +105,7 @@ public class ProjectCreationOperation {
 	}
 
 	private boolean isDefaultLocation(final String projectLocation) {
-		return null == projectLocation || "".equals(projectLocation)
+		return null == projectLocation || "".equals(projectLocation) //$NON-NLS-1$
 				|| Platform.getLocation().toString().equals(projectLocation);
 	}
 
@@ -118,7 +119,7 @@ public class ProjectCreationOperation {
 	/**
 	 * Returns an array of project nature ids to be added to the created
 	 * project.
-	 * 
+	 *
 	 * This method should be overriden by clients.
 	 */
 	protected String[] getProjectNatures() {
@@ -127,16 +128,16 @@ public class ProjectCreationOperation {
 
 	/**
 	 * Returns an array of directory names to be created inside the project.
-	 * 
+	 *
 	 * This method should be overriden by clients.
 	 */
 	protected String[] getDirectories() {
 		return new String[0];
 	}
-	
+
 	/**
 	 * Returns an object describing the project descriptor file
-	 * 
+	 *
 	 * This method should be overriden by clients.
 	 */
 	protected DescriptorFileInfo getDescFileInfo() {
@@ -147,7 +148,7 @@ public class ProjectCreationOperation {
 			final IProject proj) throws CoreException {
 		String[] directories = getDirectories();
 		for (int i = 0; i < directories.length; i++) {
-			if (!directories[i].equals("")) {
+			if (!"".equals(directories[i])) { //$NON-NLS-1$
 				IFolder dir = proj.getFolder(directories[i]);
 				dir.create(true, true, new SubProgressMonitor(mon, 1));
 			}
@@ -157,7 +158,7 @@ public class ProjectCreationOperation {
 	private void createDescriptionFile(final IProgressMonitor monitor,
 			final IProject project) throws CoreException {
 		DescriptorFileInfo descFileInfo = getDescFileInfo();
-		if (descFileInfo != null && !descFileInfo.getName().equals("")) {
+		if (descFileInfo != null && !"".equals(descFileInfo.getName())) { //$NON-NLS-1$
 			IFile file = project.getFile(descFileInfo.getName());
 			String content = descFileInfo.getContent();
 			InputStream is = new ByteArrayInputStream(content.getBytes());

@@ -1,39 +1,35 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.preferences;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 
-
-/** <p>initializer for the core preferences (declared in the 
+/** <p>initializer for the core preferences (declared in the
   * <code>plugin.xml</code>).</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class CorePreferenceInitializer extends AbstractPreferenceInitializer
                                        implements ICorePreferenceNames {
 
-  
+
   // interface methods of AbstractPreferenceInitializer
   /////////////////////////////////////////////////////
-  
+
   @Override
-public void initializeDefaultPreferences() {
-    Preferences preferences = getPreferences();    
-//    store.setDefault( SELECTED_COMPILER, 
-//                      DefaultHaskellCompiler.class.getName() );
-    // TODO for the moment hardcoded ghc
-    preferences.setDefault(SELECTED_COMPILER, "ghcCompiler");
-    preferences.setDefault(FOLDERS_SRC, "src");		
-    preferences.setDefault(FOLDERS_OUT, "out");
-    preferences.setDefault(FOLDERS_BIN, "bin");		
-    preferences.setDefault(TARGET_BINARY, "theResult");		
-    preferences.setDefault(FOLDERS_IN_NEW_PROJECT, true);
+  public void initializeDefaultPreferences() {
+    Preferences preferences = getPreferences();
+    preferences.setDefault( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
+    preferences.setDefault( FOLDERS_SRC, "src" ); //$NON-NLS-1$
+    preferences.setDefault( FOLDERS_OUT, "out" ); //$NON-NLS-1$
+    preferences.setDefault( FOLDERS_BIN, "bin" ); //$NON-NLS-1$
+    preferences.setDefault( TARGET_BINARY, "theResult" ); //$NON-NLS-1$
+    preferences.setDefault( FOLDERS_IN_NEW_PROJECT, true );
   }
-  
-  
+
+
   // helping methods
   //////////////////
 
