@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.util.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 
 public class HaskellPreferenceProvider implements IHaskellPreferenceProvider,
                                                   IEditorPreferenceNames

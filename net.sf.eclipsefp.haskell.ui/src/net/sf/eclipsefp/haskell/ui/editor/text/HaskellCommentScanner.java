@@ -4,7 +4,7 @@ package net.sf.eclipsefp.haskell.ui.editor.text;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 
 
 /** <p>a degenerated rule based scanner that returns always the comment (or

@@ -101,33 +101,39 @@
             id="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
       <page
-            name="%compilerPP_name"
+            name="%implementationsPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
-            class="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP"
-            id="net.sf.eclipsefp.haskell.ui.preferences.HaskellCompilerPP">
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP">
+      </page>
+      <page
+            name="%compilerPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellCompilerPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellCompilerPP">
       </page>
       <page
             name="%interpreterPP_name"
-            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
-            class="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP"
-            id="net.sf.eclipsefp.haskell.ui.preferences.HaskellInterpreterPP">
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellInterpreterPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellInterpreterPP">
       </page>
       <page
             name="%editorPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
-            class="net.sf.eclipsefp.haskell.ui.preferences.editor.HaskellEditorPP"
-            id="net.sf.eclipsefp.haskell.ui.preferences.editor.HaskellEditorPP">
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP">
       </page>
       <page
             name="%projectWizardPP"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
-            class="net.sf.eclipsefp.haskell.ui.preferences.NewHaskellProjectPP"
-            id="net.sf.eclipsefp.haskell.ui.preferences.NewHaskellProjectPP">
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP">
       </page>
       <page
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
-            class="net.sf.eclipsefp.haskell.ui.preferences.BuildConsolePP"
-            id="net.sf.eclipsefp.haskell.ui.preferences.BuildConsolePP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP"
             name="%buildConsolePP_name">
       </page>
    </extension>

@@ -13,7 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 
 
 /** <p>A singleton to manage scanner utilities (like tokens etc.)</p>

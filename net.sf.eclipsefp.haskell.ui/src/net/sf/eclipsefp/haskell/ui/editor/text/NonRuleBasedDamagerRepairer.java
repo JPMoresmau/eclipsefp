@@ -6,7 +6,7 @@ import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.swt.custom.StyleRange;
 
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 
 
 /** <p>simple damager and repairer that uses no scanner rules, but knows

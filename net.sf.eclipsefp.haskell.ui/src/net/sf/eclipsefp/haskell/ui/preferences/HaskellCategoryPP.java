@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 
 /** <p>the root preference page for the Haskell tools.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class HaskellCategoryPP extends RootPreferencePage {

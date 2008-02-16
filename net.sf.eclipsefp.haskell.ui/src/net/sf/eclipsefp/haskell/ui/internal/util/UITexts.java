@@ -12,6 +12,28 @@ import org.eclipse.osgi.util.NLS;
 public final class UITexts extends NLS {
 
   // message fields
+  public static String hsImplementationDialog_binDir;
+  public static String hsImplementationDialog_btnBrowse;
+  public static String hsImplementationDialog_dlgBrowse;
+  public static String hsImplementationDialog_duplicate;
+  public static String hsImplementationDialog_libDir;
+  public static String hsImplementationDialog_name;
+  public static String hsImplementationDialog_type;
+  public static String hsImplementationDialog_version;
+
+  public static String implementationsBlock_btnAdd;
+  public static String implementationsBlock_btnEdit;
+  public static String implementationsBlock_btnRemove;
+  public static String implementationsBlock_colName;
+  public static String implementationsBlock_colType;
+  public static String implementationsBlock_colVersion;
+  public static String implementationsBlock_dlgAdd;
+  public static String implementationsBlock_dlgEdit;
+  public static String implementationsBlock_installed;
+
+  public static String installedImplementationsPP_msg;
+  public static String installedImplementationsPP_nothingSelected;
+
   public static String mkPointFree_refuseDlg_title;
   public static String mkPointFree_refuseDlg_message;
 

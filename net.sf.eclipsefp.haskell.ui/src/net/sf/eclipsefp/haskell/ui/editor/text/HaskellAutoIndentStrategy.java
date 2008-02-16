@@ -2,7 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.editor.text;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;

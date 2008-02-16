@@ -7,7 +7,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.ui.editor.syntax.ArrowRule;
 import net.sf.eclipsefp.haskell.ui.editor.syntax.WhitespaceDetector;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.util.text.WordDetector;
 
 import org.eclipse.jface.text.rules.IRule;

@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 
 
 /** <p>Provides colors for syntax coloring in the editor.</p>

@@ -21,7 +21,7 @@ import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.editor.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
-import net.sf.eclipsefp.haskell.ui.preferences.HaskellPreferenceManager;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 
 import org.eclipse.core.resources.IFile;

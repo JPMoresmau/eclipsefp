@@ -1,11 +1,23 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.compiler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCoreException;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationPersister;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
  * <p>
@@ -52,6 +64,8 @@ public class CompilerManager implements ICompilerManager {
 	 */
 	private final Hashtable<String, ListenableCompilerDecorator> htInstalledCompilers;
 
+	private IHsImplementation currentHsImplementation;
+
 	/**
 	 * creates the singleton instance of CompilerManager. Private in order to
 	 * ensure the singleton pattern.
@@ -60,9 +74,16 @@ public class CompilerManager implements ICompilerManager {
 		htInstalledCompilers = new Hashtable<String, ListenableCompilerDecorator>();
 		htRegisteredCompilers = new Hashtable<String, IConfigurationElement>();
 		initDefaultCompiler();
+		initHsImplementation();
+    if( currentHsImplementation == null ) {
+      String msg =   "No valid Haskell implementation found. Possibly none " //$NON-NLS-1$
+                   + "was configured in the Haskell preferences."; //$NON-NLS-1$
+      HaskellCorePlugin.log( msg, IStatus.WARNING );
+    }
+		listenForImplPref();
 	}
 
-	/**
+  /**
 	 * <p>
 	 * returns a reference to the singleton instance of CompilerManager.
 	 * </p>
@@ -150,6 +171,11 @@ public class CompilerManager implements ICompilerManager {
     return result;
   }
 
+	public IHsImplementation getCurrentHsImplementation() {
+	  return currentHsImplementation;
+	}
+
+
 	// helping methods
 	// ////////////////
 
@@ -200,4 +226,39 @@ public class CompilerManager implements ICompilerManager {
 		return htInstalledCompilers.get(selectedCompiler);
 	}
 
+  private void initHsImplementation() {
+    String key = ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION;
+    String currentImplName = getPrefs().getString( key );
+    if( currentImplName != null ) {
+      Map<String, IHsImplementation> impls = loadImpls();
+      this.currentHsImplementation = impls.get( currentImplName );
+    }
+  }
+
+  private Preferences getPrefs() {
+    return HaskellCorePlugin.getDefault().getPluginPreferences();
+  }
+
+  private Map<String, IHsImplementation> loadImpls() {
+    List<IHsImplementation> impls = new ArrayList<IHsImplementation>();
+    String xml = getPrefs().getString( ICorePreferenceNames.HS_IMPLEMENTATIONS );
+    HsImplementationPersister.fromXML( xml, impls );
+    Map<String, IHsImplementation> result = new HashMap<String, IHsImplementation>();
+    for( IHsImplementation impl: impls ) {
+      result.put( impl.getName(), impl );
+    }
+    return result;
+  }
+
+  private void listenForImplPref() {
+    getPrefs().addPropertyChangeListener( new IPropertyChangeListener() {
+      public void propertyChange( final PropertyChangeEvent event ) {
+        String prop = event.getProperty();
+        if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( prop )
+            || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( prop ) ) {
+          initHsImplementation();
+        }
+      }
+    } );
+  }
 }

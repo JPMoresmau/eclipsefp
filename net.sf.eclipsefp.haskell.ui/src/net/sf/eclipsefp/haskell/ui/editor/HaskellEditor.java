@@ -9,7 +9,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences;
 import net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrenceComputer;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.views.outline.HaskellOutlinePage;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;

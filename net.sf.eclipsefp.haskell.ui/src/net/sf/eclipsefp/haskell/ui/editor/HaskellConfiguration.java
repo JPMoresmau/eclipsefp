@@ -10,7 +10,7 @@ import net.sf.eclipsefp.haskell.ui.editor.text.HaskellAutoIndentStrategy;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCommentScanner;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellReconcilingStrategy;
 import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
