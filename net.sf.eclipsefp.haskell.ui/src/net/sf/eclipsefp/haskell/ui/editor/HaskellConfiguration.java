@@ -3,31 +3,37 @@ package net.sf.eclipsefp.haskell.ui.editor;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.editor.codeassist.HaskellCAProcessor;
+import net.sf.eclipsefp.haskell.ui.editor.text.AnnotationHover;
+import net.sf.eclipsefp.haskell.ui.editor.text.HaskellAutoIndentStrategy;
+import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCommentScanner;
+import net.sf.eclipsefp.haskell.ui.editor.text.HaskellReconcilingStrategy;
+import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
+import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.reconciler.*;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
-import org.eclipse.jface.text.source.*;
-
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.editor.codeassist.HaskellCAProcessor;
-import net.sf.eclipsefp.haskell.ui.editor.text.*;
-import net.sf.eclipsefp.haskell.ui.preferences.editor.IEditorPreferenceNames;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
  * <p>
  * The source viewer configuration provides strategies for functionality of the
  * Haskell editor.
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class HaskellConfiguration extends SourceViewerConfiguration implements
@@ -57,10 +63,10 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	// ///////////////////////////////////////////////
 
 	@Override
-  public IAutoIndentStrategy getAutoIndentStrategy(final ISourceViewer sv,
-			final String contentType) {
-		return new HaskellAutoIndentStrategy();
-	}
+  public IAutoEditStrategy[] getAutoEditStrategies(
+      final ISourceViewer sv, final String contentType ) {
+    return new IAutoEditStrategy[] { new HaskellAutoIndentStrategy() };
+  }
 
 	@Override
   public String[] getConfiguredContentTypes(final ISourceViewer sv) {

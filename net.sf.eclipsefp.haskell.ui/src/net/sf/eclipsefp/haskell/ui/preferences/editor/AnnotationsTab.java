@@ -3,26 +3,30 @@ package net.sf.eclipsefp.haskell.ui.preferences.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
 /** <p>Tab for the annotation color preference settings.</p>
   *
-  * @author Leif Frenzel  
+  * @author Leif Frenzel
   */
 class AnnotationsTab extends Tab {
 
@@ -33,16 +37,16 @@ class AnnotationsTab extends Tab {
   private Button cbShowInText;
   private Button cbShowInOverviewRuler;
 
-  
+
   AnnotationsTab( final IPreferenceStore store ) {
     super( store );
     colorListModel = createAnnotationTypeListModel();
   }
 
-  
+
   // interface methods of Tab
   ///////////////////////////
-  
+
   @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
@@ -75,7 +79,7 @@ class AnnotationsTab extends Tab {
     }
   }
 
-  
+
   // UI initialization methods
   ////////////////////////////
 
@@ -90,12 +94,12 @@ class AnnotationsTab extends Tab {
     return optionsComposite;
   }
 
-  private void initializeColorList( final Composite composite, 
+  private void initializeColorList( final Composite composite,
                                     final Composite parent ) {
     colorList = new List( parent, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER );
     GridData gridData = new GridData(   GridData.VERTICAL_ALIGN_BEGINNING
                                       | GridData.FILL_HORIZONTAL );
-    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( composite, 
+    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( composite,
                                                                    8 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
@@ -105,7 +109,7 @@ class AnnotationsTab extends Tab {
       }
     } );
   }
-  
+
   private void initializeColorSelector( final Composite parent ) {
     colorSelector = new ColorSelector( parent );
     Button foregroundColorButton = colorSelector.getButton();
@@ -180,11 +184,11 @@ class AnnotationsTab extends Tab {
       }
     } );
   }
-  
+
 
   // helping methods
   //////////////////
-  
+
   private void handleAnnotationColorListSelection() {
     int i = colorList.getSelectionIndex();
     String key = colorListModel[ i ][ 1 ];
@@ -199,15 +203,15 @@ class AnnotationsTab extends Tab {
 
   private String[][] createAnnotationTypeListModel() {
     MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
-    ArrayList listModelItems = new ArrayList();
+    ArrayList<String[]> listModelItems = new ArrayList<String[]>();
     Iterator i = preferences.getAnnotationPreferences().iterator();
     while( i.hasNext() ) {
       AnnotationPreference info = ( AnnotationPreference )i.next();
-      listModelItems.add( new String[] { 
+      listModelItems.add( new String[] {
         info.getPreferenceLabel(),
-        info.getColorPreferenceKey(), 
+        info.getColorPreferenceKey(),
         info.getTextPreferenceKey(),
-        info.getOverviewRulerPreferenceKey() } 
+        info.getOverviewRulerPreferenceKey() }
       );
     }
 

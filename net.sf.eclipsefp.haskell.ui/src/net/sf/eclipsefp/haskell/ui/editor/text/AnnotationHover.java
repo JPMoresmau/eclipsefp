@@ -1,12 +1,22 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.editor.text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
-
-/** <p>Determines all markers for the given line and collects, concatenates, 
+/** <p>Determines all markers for the given line and collects, concatenates,
   * and formats their messages.</p>
   *
   * @author Leif Frenzel
@@ -15,10 +25,10 @@ public class AnnotationHover implements IAnnotationHover {
 
   // interface methods of IAnnotationHover
   ////////////////////////////////////////
-  
+
   public String getHoverInfo( final ISourceViewer sv, final int line ) {
     String result = null;
-    
+
     List<Annotation> annotations = getAnnotations( sv, line );
     if( annotations != null ) {
       if( annotations.size() == 1 ) {
@@ -35,8 +45,8 @@ public class AnnotationHover implements IAnnotationHover {
     }
     return result;
   }
-  
-  
+
+
   // helping methods
   //////////////////
 
@@ -70,9 +80,9 @@ public class AnnotationHover implements IAnnotationHover {
   }
 
   // TODO refactor
-  
-  private int compareRulerLine( final Position position, 
-                                final IDocument document, 
+
+  private int compareRulerLine( final Position position,
+                                final IDocument document,
                                 final int line ) {
     int result = 0;
     if( position.getOffset() > -1 && position.getLength() > -1 ) {
@@ -92,16 +102,16 @@ public class AnnotationHover implements IAnnotationHover {
     return result;
   }
 
-  private List<Annotation> getAnnotations( final ISourceViewer viewer, 
-		                                   final int line ) {
+  private List<Annotation> getAnnotations( final ISourceViewer viewer,
+		                                       final int line ) {
     List<Annotation> result = null;
     IAnnotationModel model = viewer.getAnnotationModel();
     if( model != null ) {
       result = new ArrayList<Annotation>();
       IDocument document = viewer.getDocument();
-  
+
       Iterator it = model.getAnnotationIterator();
-      Map messagesAtPosition = new HashMap();
+      Map<Position, Set<String>> msgs = new HashMap<Position, Set<String>>();
       while( it.hasNext() ) {
         Object obj = it.next();
         if( obj instanceof Annotation ) {
@@ -109,12 +119,12 @@ public class AnnotationHover implements IAnnotationHover {
           if( position == null ) {
             continue;
           }
-  
+
           String text = ( ( Annotation )obj ).getText();
-          if( isDuplicate( messagesAtPosition, position, text ) ) {
+          if( isDuplicate( msgs, position, text ) ) {
             continue;
           }
-  
+
           switch( compareRulerLine( position, document, line ) ) {
           case 1:
             result.add( ( Annotation ) obj );
@@ -126,30 +136,21 @@ public class AnnotationHover implements IAnnotationHover {
     return result;
   }
 
-  private boolean isDuplicate( final Map messagesAtPosition,
-                               final Position position, 
-                               final String message ) {
+  // side-effect! this doesn't just check, it also adds new msgs by default
+  private boolean isDuplicate(
+      final Map<Position, Set<String>> messagesAtPosition,
+      final Position position,
+      final String message ) {
+    boolean result = false;
     if( messagesAtPosition.containsKey( position ) ) {
-      Object value = messagesAtPosition.get( position );
-      if( message.equals( value ) ) {
-        return true;
-      }
-
-      if( value instanceof List ) {
-        List messages = ( List )value;
-        if( messages.contains( message ) ) {
-          return true;
-        }
-        messages.add( message );
-      } else {
-        ArrayList messages = new ArrayList();
-        messages.add( value );
-        messages.add( message );
-        messagesAtPosition.put( position, messages );
-      }
+      Set<String> msgs = messagesAtPosition.get( position );
+      result = msgs.contains( message );
+      msgs.add( message );
     } else {
-      messagesAtPosition.put( position, message );
+      Set<String> msgs = new HashSet<String>();
+      msgs.add( message );
+      messagesAtPosition.put( position, msgs );
     }
-    return false;
+    return result;
   }
 }

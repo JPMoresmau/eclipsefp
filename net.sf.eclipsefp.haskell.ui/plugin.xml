@@ -67,7 +67,7 @@
             state="true"
             id="net.sf.eclipsefp.haskell.ui.decorators.ProjectFoldersDecorator">
             <enablement>
-              <objectClass name="org.eclipse.core.resources.IFolder	"/> 
+              <objectClass name="org.eclipse.core.resources.IFolder"/> 
             </enablement>
          <description>
             %haskellDecorator_desc
@@ -135,8 +135,6 @@
          name="%importLibsPP_name"
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
             name="%projectImportLibsPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP"
             id="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP">
@@ -148,10 +146,11 @@
                name="open"
                value="true">
          </filter>
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject" />
+         </enabledWhen>
       </page>
       <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
             name="%haskellCompilerPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.CompilerPP"
             id="net.sf.eclipsefp.haskell.ui.properties.CompilerPP">
@@ -163,6 +162,9 @@
                name="open"
                value="true">
          </filter>
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject" />
+         </enabledWhen>
       </page>
    </extension>
    <extension
@@ -224,36 +226,37 @@
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%firstCharCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"/>
-      <keyBinding
-            commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Home"/>
       <command
             description="%commentCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%commentCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.comment"/>
-      <keyBinding
-            commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+/"/>
-      <keyBinding
-            commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+7"/>
       <command
             description="%uncommentCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%uncommentCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"/>
-      <keyBinding
-            commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+Shift+/"/>
-      <keyBinding
-            commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+ß"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+         <!-- keys for Comment -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="Ctrl+/"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="Ctrl+7"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
+         <!-- keys for Uncomment -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="Ctrl+Shift+/"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="Ctrl+ß"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+         <!-- other keys -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
+              sequence="Home"/>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
