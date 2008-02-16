@@ -10,7 +10,7 @@ import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
   *
   * @author Leif Frenzel
   */
-public class UITexts implements IGhcParameters {
+public class ParamsUITexts implements IGhcParameters {
 
   private static final String SHORT_DESC = "ShortParamDescriptions"; //$NON-NLS-1$
   private static ResourceBundle bundle = initBundle();
@@ -43,7 +43,7 @@ public class UITexts implements IGhcParameters {
   private static ResourceBundle initBundle() {
     ResourceBundle result = null;
     try {
-      String name = UITexts.class.getPackage().getName() + "." + SHORT_DESC; //$NON-NLS-1$
+      String name = ParamsUITexts.class.getPackage().getName() + "." + SHORT_DESC; //$NON-NLS-1$
       result = ResourceBundle.getBundle( name );
     } catch( Exception ex ) {
       log( "Could not init resource bundle.", ex ); //$NON-NLS-1$

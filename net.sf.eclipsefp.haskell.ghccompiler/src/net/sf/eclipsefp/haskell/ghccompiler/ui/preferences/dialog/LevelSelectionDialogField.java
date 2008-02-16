@@ -3,7 +3,8 @@ package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.dialog;
 
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
-import net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.UITexts;
+import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.ParamsUITexts;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -55,8 +56,8 @@ public class LevelSelectionDialogField extends DialogField
   //////////////////////
 
   private Button createButton( final Composite parent, final String prefKey ) {
-    String text = UITexts.getShortDescription( prefKey );
-    String tooltip = text + "\n" + UITexts.getOption( prefKey ); //$NON-NLS-1$
+    String text = ParamsUITexts.getShortDescription( prefKey );
+    String tooltip = text + "\n" + ParamsUITexts.getOption( prefKey ); //$NON-NLS-1$
     return createButton( parent, text, tooltip );
   }
 
@@ -70,8 +71,9 @@ public class LevelSelectionDialogField extends DialogField
   }
 
   private void createButtons() {
-    String text = "Do not specify an optimization level.";
-    String tooltip = text + "\nPass no -O* option.";
+
+    String text = UITexts.levelSelectionDialogField_zeroText;
+    String tooltip = UITexts.levelSelectionDialogField_zeroTooltip;
 
     buttons = new Button[ 4 ];
     buttons[ 0 ] = createButton( this, text, tooltip );
@@ -101,9 +103,7 @@ public class LevelSelectionDialogField extends DialogField
 
   private void createLabel() {
     Label label = new Label( this, SWT.WRAP );
-    String info =   "These options specify convenient \"packages\" "
-                  + "of optimization flags.";
-    label.setText( info );
+    label.setText( UITexts.levelSelectionDialogField_levelInfo );
   }
 
 

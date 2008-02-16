@@ -27,7 +27,7 @@ public abstract class GhcCompilerTab extends Tab {
   ///////////////////////////////
 
   DialogField createBooleanField( final Composite parent, final String name ) {
-    String text = UITexts.getShortDescription( name );
+    String text = ParamsUITexts.getShortDescription( name );
     String tooltip = text + "\n" + name; //$NON-NLS-1$
     BooleanDialogField result = new BooleanDialogField( parent, text, tooltip );
     result.addDialogFieldListener( new IDialogFieldListener() {
