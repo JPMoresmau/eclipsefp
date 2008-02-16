@@ -63,7 +63,6 @@ public class SourceLocation implements ISourceLocation {
 
 
   public long getOffset() {
-    // TODO Auto-generated method stub
     return 0;
   }
 }
