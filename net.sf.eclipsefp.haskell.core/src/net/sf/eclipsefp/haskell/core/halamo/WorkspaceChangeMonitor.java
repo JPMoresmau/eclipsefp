@@ -72,13 +72,16 @@ public class WorkspaceChangeMonitor implements IResourceChangeListener {
 		fProjectMonitorFactory = factory;
 	}
 
-	public void resourceChanged(final IResourceChangeEvent event) {
-		try {
-			event.getDelta().accept(new DeltaVisitor(event));
-		} catch (CoreException exc) {
-			HaskellCorePlugin.log("Error when exploring workspace delta", exc); //$NON-NLS-1$
-		}
-	}
+	public void resourceChanged( final IResourceChangeEvent event ) {
+    try {
+      IResourceDelta delta = event.getDelta();
+      if( delta != null ) {
+        delta.accept( new DeltaVisitor( event ) );
+      }
+    } catch( CoreException exc ) {
+      HaskellCorePlugin.log( "Error when exploring workspace delta", exc ); //$NON-NLS-1$
+    }
+  }
 
 	public IResourceChangeListener createProjectChangeMonitor(final IProject project) {
 		return fProjectMonitorFactory.createProjectChangeMonitor(project);
