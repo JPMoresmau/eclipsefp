@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/net.sf.eclipsefp.haskell_1.100.0.jar" id="net.sf.eclipsefp.haskell" version="1.100.0">
-      <category name="FP"/>
-   </feature>
-   <category-def name="EclipseFP" label="EclipseFP"/>
-</site>
