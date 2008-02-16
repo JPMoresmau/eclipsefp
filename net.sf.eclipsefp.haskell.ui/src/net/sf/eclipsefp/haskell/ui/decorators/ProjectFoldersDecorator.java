@@ -1,25 +1,28 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.decorators;
 
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
-import net.sf.eclipsefp.haskell.core.project.*;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-
 
 /** <p>decorates project folders in Haskell projects.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
-public class ProjectFoldersDecorator extends LabelProvider  
+public class ProjectFoldersDecorator extends LabelProvider
                                      implements ILabelDecorator {
 
 
@@ -33,13 +36,14 @@ public class ProjectFoldersDecorator extends LabelProvider
     if( folder != null ) {
       try {
         IProject project = folder.getProject();
-        if( project.hasNature( HaskellNature.NATURE_ID ) ) {
-          result = decorate( folder.getProjectRelativePath(), 
+        if(    project.isOpen()
+            && project.hasNature( HaskellNature.NATURE_ID ) ) {
+          result = decorate( folder.getProjectRelativePath(),
                              HaskellProjectManager.get( project ),
                              baseImage );
         }
       } catch( CoreException cex ) {
-        HaskellUIPlugin.log( "Could not decorate Haskell project folders.", 
+        HaskellUIPlugin.log( "Could not decorate Haskell project folders.",
                              cex );
       }
     }
@@ -50,11 +54,11 @@ public class ProjectFoldersDecorator extends LabelProvider
     // no special text decorations
     return text;
   }
-  
-  
+
+
   // helping methods
   //////////////////
-  
+
   private IFolder getFolder( final Object element ) {
     IFolder result = null;
     if( element instanceof IFolder ) {
@@ -67,8 +71,8 @@ public class ProjectFoldersDecorator extends LabelProvider
     }
     return result;
   }
-  
-  private Image decorate( final IPath folderPath, 
+
+  private Image decorate( final IPath folderPath,
                           final IHaskellProject hsProject,
                           final Image baseImage ) {
     Image result = null;
@@ -83,12 +87,12 @@ public class ProjectFoldersDecorator extends LabelProvider
   private Image getImage( final Image baseImage, final String name ) {
     // TODO use ImageRegistry from the plugin
     ImageData data = getImageData( name );
-    DecoratorImageDescriptor did = new DecoratorImageDescriptor( baseImage, 
+    DecoratorImageDescriptor did = new DecoratorImageDescriptor( baseImage,
                                                                  data );
-    return did.createImage(); 
+    return did.createImage();
   }
-  
+
   private ImageData getImageData( final String name ) {
     return HaskellUIImages.getImageDescriptor( name ).getImageData();
-  } 
+  }
 }
