@@ -1,2 +1,2 @@
 # Turn on tracing for the ghccompiler plugin
-net.sf.eclipsefp.haskell.ghccompiler/trace/compiling = false
+net.sf.eclipsefp.haskell.ghccompiler/compiling = false
