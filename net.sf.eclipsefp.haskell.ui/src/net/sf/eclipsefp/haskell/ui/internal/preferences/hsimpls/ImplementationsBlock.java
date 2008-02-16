@@ -168,11 +168,6 @@ class ImplementationsBlock implements ISelectionProvider {
     viewer.refresh();
   }
 
-  IHsImplementation[] getInstallations() {
-    int size = installations.size();
-    return installations.toArray( new IHsImplementation[ size ] );
-  }
-
   void saveColumnSettings( final IDialogSettings settings,
                            final String qualifier ) {
     int columnCount = table.getColumnCount();
@@ -471,20 +466,15 @@ class ImplementationsBlock implements ISelectionProvider {
 
   private void autoSelectSingle( final IStructuredSelection prev ) {
     IStructuredSelection curr = ( IStructuredSelection )getSelection();
-    if( !curr.equals( prev ) ) {
-      IHsImplementation[] installs = getInstallations();
-      if( curr.size() == 0 && installs.length == 1 ) {
+    if( !curr.equals( prev ) || curr.isEmpty() ) {
+      if( curr.size() == 0 && installations.size() == 1 ) {
         // pick a default automatically
-        setSelection( new StructuredSelection( installs[ 0 ] ) );
-      } else {
-        fireSelectionChanged();
+        setSelection( new StructuredSelection( installations.get( 0 ) ) );
       }
+    } else {
+      fireSelectionChanged();
     }
   }
-
-
-  // inner classes
-  ////////////////
 
   private final class Comparator_Version extends ViewerComparator {
 

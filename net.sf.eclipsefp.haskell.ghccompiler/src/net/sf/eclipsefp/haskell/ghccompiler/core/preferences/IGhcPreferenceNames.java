@@ -8,7 +8,6 @@ package net.sf.eclipsefp.haskell.ghccompiler.core.preferences;
   */
 public interface IGhcPreferenceNames {
 
-  String EXECUTABLE_NAME       = "EXECUTABLE_NAME"; //$NON-NLS-1$
   String EXTRA_OPTIONS         = "EXTRA_OPTIONS"; //$NON-NLS-1$
   String USE_EXTRA_OPTIONS     = "USE_EXTRA_OPTIONS"; //$NON-NLS-1$
   String OPTIMIZATION_LEVEL    = "OPTIMIZATION_LEVEL"; //$NON-NLS-1$

@@ -64,8 +64,8 @@ public class HsImplementationDialog extends StatusDialog {
 		  currentImpl = new HsImplementation();
 		} else {
       currentImpl = impl;
-		  currentImpl.setType( HsImplementationType.GHC );
 		}
+		currentImpl.setType( HsImplementationType.GHC );
 	}
 
 

@@ -1,13 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
-import net.sf.eclipsefp.haskell.core.util.QueryUtil;
-import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /** <p>contains common helping functionality.</p>
   *
@@ -16,23 +17,18 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class Util implements IGhcParameters {
 
   public static String getCompilerExecutable() {
-    IPreferenceStore ps = GhcCompilerPlugin.getDefault().getPreferenceStore();
-    String pref = ps.getString( IGhcPreferenceNames.EXECUTABLE_NAME );
+    IPath result = null;
 
-    String result = "ghc"; //$NON-NLS-1$
-    if( pref != null && !pref.equals( "" ) ) { //$NON-NLS-1$
-      result = pref;
+    ICompilerManager msn = CompilerManager.getInstance();
+    IHsImplementation impl = msn.getCurrentHsImplementation();
+    if( impl != null && impl.getBinDir() != null ) {
+      result = new Path( impl.getBinDir() );
+      result = result.append( "ghc" ); //$NON-NLS-1$
+      if( Platform.OS_WIN32.equals( Platform.getOS() ) ) {
+        result = result.addFileExtension( "exe" ); //$NON-NLS-1$
+      }
     }
-    return result;
-  }
-
-  public static String queryGHCExecutable( final String name ) {
-    StringBuffer sb = new StringBuffer();
-    String executable = ( name == null ) ? "" : name; //$NON-NLS-1$
-    sb.append( QueryUtil.query( executable, VERSION ) );
-    sb.append( "\r\n" ); //$NON-NLS-1$
-    sb.append( QueryUtil.query( executable, PRINT_LIBDIR ) );
-    return sb.toString();
+    return result == null ? "ghc" : result.toOSString(); //$NON-NLS-1$
   }
 
   public static String constructLibPath( final IHaskellProject hsProject ) {

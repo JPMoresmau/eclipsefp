@@ -120,9 +120,9 @@ public class GhcPreferencePage extends PreferencePage
   }
 
   private void addGeneralPreferences( final OverlayPreferenceStore store ) {
-    store.addStringKey( EXECUTABLE_NAME );
     store.addStringKey( EXTRA_OPTIONS );
     store.addBooleanKey( USE_EXTRA_OPTIONS );
+    store.addBooleanKey( GHCI_USES_GHC_OPTIONS );
   }
 
   private void addLanguagePrefs( final OverlayPreferenceStore store ) {

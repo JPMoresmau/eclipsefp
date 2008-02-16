@@ -25,12 +25,6 @@
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage"
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage">
       </page>
-      <page
-            name="%interpreterPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP"
-            class="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage"
-            id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhciPreferencePage">
-      </page>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">

@@ -144,22 +144,6 @@
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
       </page>
-      <page
-            name="%haskellCompilerPP_name"
-            class="net.sf.eclipsefp.haskell.ui.properties.CompilerPP"
-            id="net.sf.eclipsefp.haskell.ui.properties.CompilerPP">
-         <filter
-               name="nature"
-               value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
-         </filter>
-         <filter
-               name="open"
-               value="true">
-         </filter>
-         <enabledWhen>
-            <adapt type="org.eclipse.core.resources.IProject" />
-         </enabledWhen>
-      </page>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">

@@ -1,11 +1,10 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences;
 
-import net.sf.eclipsefp.common.ui.dialog.ExecutableDialogField;
+import net.sf.eclipsefp.common.ui.dialog.BooleanDialogField;
 import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
-import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -20,6 +19,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /** <p>The tab on the Ghc compiler preference page that displays general
@@ -40,10 +40,22 @@ public class GeneralTab extends Tab implements IGhcParameters,
   @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
-    composite.setLayout( new GridLayout() );
+    composite.setLayout( new GridLayout( 1, false ) );
 
-    createExecutableField( composite );
     createExtraOptionsField( composite );
+
+    String text = UITexts.ghciTab_options;
+    BooleanDialogField result = new BooleanDialogField( composite, text );
+    result.addDialogFieldListener( new IDialogFieldListener() {
+      public void infoChanged( final Object newInfo ) {
+        boolean selected = ( ( Boolean )newInfo ).booleanValue();
+        getPreferenceStore().setValue( GHCI_USES_GHC_OPTIONS, selected );
+      }
+    } );
+    result.setInfo( getFromStore( GHCI_USES_GHC_OPTIONS ) );
+
+    Label lblNote = new Label( composite, SWT.WRAP );
+    lblNote.setText( UITexts.ghciTab_note );
 
     return composite;
   }
@@ -86,22 +98,8 @@ public class GeneralTab extends Tab implements IGhcParameters,
     } );
   }
 
-  private void createExecutableField( final Composite parent ) {
-    String labelText = "GHC executable";
-    ExecutableDialogField dlgField = new ExecutableDialogField( parent,
-                                                                labelText ) {
-      @Override
-      protected String createDisplayContent( final String info ) {
-        return Util.queryGHCExecutable( info );
-      }
-    };
-
-    dlgField.setInfo( getPreferenceStore().getString( EXECUTABLE_NAME ) );
-
-    dlgField.addDialogFieldListener( new IDialogFieldListener() {
-      public void infoChanged( final Object newInfo ) {
-        getPreferenceStore().setValue( EXECUTABLE_NAME, ( String )newInfo );
-      }
-    } );
+  private Boolean getFromStore( final String name ) {
+    boolean value = getPreferenceStore().getBoolean( name );
+    return ( value ) ? Boolean.TRUE : Boolean.FALSE;
   }
 }

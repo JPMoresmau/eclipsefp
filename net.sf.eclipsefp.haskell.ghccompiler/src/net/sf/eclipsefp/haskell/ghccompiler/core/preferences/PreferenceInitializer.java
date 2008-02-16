@@ -29,7 +29,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
   //////////////////
 
   private void initializeDefaultValues( final Preferences prefs ) {
-    prefs.setDefault( EXECUTABLE_NAME, "ghc" ); //$NON-NLS-1$
     prefs.setDefault( EXTRA_OPTIONS, "" ); //$NON-NLS-1$
     prefs.setDefault( USE_EXTRA_OPTIONS, false );
     prefs.setDefault( OPTIMIZATION_LEVEL, -1 );
