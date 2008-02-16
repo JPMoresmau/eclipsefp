@@ -59,7 +59,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 	private String[] buildCommandLine(final IFile file,
 			final IHaskellProject haskellProject) {
 		if (trace) {
-			System.out.println("Constructing command line for file " + file);
+			System.out.println("Constructing command line for file " + file); //$NON-NLS-1$
 		}
 
 		IProject project = haskellProject.getResource();
@@ -69,18 +69,18 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 		// command and special options
 		cmdLine.add(Util.getCompilerExecutable());
 		String libPath = Util.constructLibPath(haskellProject);
-		if (!libPath.equals("")) {
+		if (!libPath.equals("")) { //$NON-NLS-1$
 			cmdLine.add(libPath);
 		}
-		cmdLine.add("--make");
-		cmdLine.add("-odir");
+		cmdLine.add("--make"); //$NON-NLS-1$
+		cmdLine.add("-odir"); //$NON-NLS-1$
 		cmdLine.add(outDir);
-		cmdLine.add("-hidir");
+		cmdLine.add("-hidir"); //$NON-NLS-1$
 		cmdLine.add(outDir);
-		cmdLine.add("-ferror-spans");
+		cmdLine.add("-ferror-spans"); //$NON-NLS-1$
 
 		String binDir = getAbsPath(project, haskellProject.getBinPath());
-		cmdLine.add("-o");
+		cmdLine.add("-o"); //$NON-NLS-1$
 		cmdLine.add(binDir + File.separator + getTargetName(haskellProject));
 		cmdLine.addAll(compilerParams.construct());
 		cmdLine.add(getFileName(file, haskellProject));
@@ -111,8 +111,8 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 
 	private String getTargetName(final IHaskellProject haskellProject) {
 		String targetName = haskellProject.getTargetName();
-		if (targetName.equals("")) {
-			targetName = "theResult";
+		if (targetName.equals("")) { //$NON-NLS-1$
+			targetName = "theResult"; //$NON-NLS-1$
 		}
 		return targetName;
 	}

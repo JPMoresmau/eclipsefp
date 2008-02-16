@@ -39,10 +39,10 @@ public class GhcOutputParser {
 
   private static CompilerOutputItem getNewItem( final String line ) {
     CompilerOutputItem result = null;
-    int index = line.indexOf( ":" );
+    int index = line.indexOf( ":" ); //$NON-NLS-1$
     if( index != -1 ) {
       String fileName = line.substring( 0, index );
-      int secondIndex = line.indexOf( ":", index + 1 );
+      int secondIndex = line.indexOf( ":", index + 1 ); //$NON-NLS-1$
       int lineNum = -1;
       if( hasHsExtension( fileName ) ) {
         if( secondIndex != -1 ) {
@@ -58,7 +58,7 @@ public class GhcOutputParser {
           }
         } else {
           int unspec = ICompilerOutputItem.LINE_UNSPECIFIED;
-          result = new CompilerOutputItem( fileName, unspec, "" );
+          result = new CompilerOutputItem( fileName, unspec, "" ); //$NON-NLS-1$
         }
       }
     }
@@ -66,13 +66,13 @@ public class GhcOutputParser {
   }
 
   private static boolean hasHsExtension( final String fileName ) {
-    return    fileName.endsWith( ".hs" )
-           || fileName.endsWith( ".lhs" );
+    return    fileName.endsWith( ".hs" ) //$NON-NLS-1$
+           || fileName.endsWith( ".lhs" ); //$NON-NLS-1$
   }
 
   private static String[] getLines( final String output ) {
     Vector<String> vecLines = new Vector<String>();
-    StringTokenizer tokenizer = new StringTokenizer( output, "\r\n", false );
+    StringTokenizer tokenizer = new StringTokenizer( output, "\r\n", false ); //$NON-NLS-1$
     while( tokenizer.hasMoreTokens() ) {
       vecLines.add( tokenizer.nextToken().trim() );
     }

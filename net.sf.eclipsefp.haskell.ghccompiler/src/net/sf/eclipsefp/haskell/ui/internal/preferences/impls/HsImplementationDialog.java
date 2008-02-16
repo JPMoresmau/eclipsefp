@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.impls;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementation;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationType;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.IStatus;
@@ -40,8 +41,8 @@ public class HsImplementationDialog extends StatusDialog {
 
   private static final String DIALOG_SETTINGS_ID
     = HsImplementationDialog.class.getName();
-	private static final String KEY_DIALOG_HEIGHT = "DIALOG_HEIGHT";
-  private static final String KEY_DIALOG_WIDTH = "DIALOG_WIDTH";
+	private static final String KEY_DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
+  private static final String KEY_DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 
 	private Combo cmbImplementationType;
 	private Text txtName;
@@ -76,18 +77,18 @@ public class HsImplementationDialog extends StatusDialog {
     Composite composite = ( Composite )super.createDialogArea( parent );
     ( ( GridLayout )composite.getLayout() ).numColumns = 3;
 
-    createLabel( composite, "Implementation type", 1 );
+    createLabel( composite, UITexts.hsImplementationDialog_type, 1 );
 	  String[] types = new String[] { HsImplementationType.GHC.toString() };
     cmbImplementationType = createCombo( composite, types );
-    createLabel( composite, "Name", 1 );
+    createLabel( composite, UITexts.hsImplementationDialog_name, 1 );
     txtName = createSingleText( composite, 2 );
-    createLabel( composite, "Executable folder", 1 );
+    createLabel( composite, UITexts.hsImplementationDialog_binDir, 1 );
     txtBinFolder = createSingleText( composite, 1 );
     createBrowseButton( composite );
-    createLabel( composite, "Version", 1 );
-    lblVersion = createLabel( composite, "", 2 );
-    createLabel( composite, "Library folder", 1 );
-    lblLibDir = createLabel( composite, "", 2 );
+    createLabel( composite, UITexts.hsImplementationDialog_version, 1 );
+    lblVersion = createLabel( composite, "", 2 ); //$NON-NLS-1$
+    createLabel( composite, UITexts.hsImplementationDialog_libDir, 1 );
+    lblLibDir = createLabel( composite, "", 2 ); //$NON-NLS-1$
 
     initializeFields();
     txtName.addModifyListener( new ModifyListener() {
@@ -161,7 +162,7 @@ public class HsImplementationDialog extends StatusDialog {
 
   private void validate() {
     if( implementationsBlock.isDuplicateName( txtName.getText() ) ) {
-      String msg = "An installation named ''{0}'' exists already.";
+      String msg = UITexts.hsImplementationDialog_duplicate;
       DefaultStatus status = new DefaultStatus();
       status.setError( NLS.bind( msg, new String[] { txtName.getText() } ) );
       updateStatus( status );
@@ -183,13 +184,14 @@ public class HsImplementationDialog extends StatusDialog {
   }
 
   private void createBrowseButton( final Composite composite ) {
-    Button browse = SWTUtil.createPushButton( composite, "Browse" );
+    String text = UITexts.hsImplementationDialog_btnBrowse;
+    Button browse = SWTUtil.createPushButton( composite, text );
     browse.addSelectionListener( new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
         DirectoryDialog dialog = new DirectoryDialog( getShell() );
         dialog.setFilterPath( txtBinFolder.getText() );
-        dialog.setMessage( "Select the folder containing the executable" );
+        dialog.setMessage( UITexts.hsImplementationDialog_dlgBrowse );
         String newPath = dialog.open();
         if( newPath != null ) {
           txtBinFolder.setText( newPath );
@@ -242,12 +244,12 @@ public class HsImplementationDialog extends StatusDialog {
   private void updateFields() {
     String vs = currentImpl.getVersion();
     if( vs == null ) {
-      vs = "";
+      vs = ""; //$NON-NLS-1$
     }
     lblVersion.setText( vs.trim() );
     String ld = currentImpl.getLibDir();
     if( ld == null ) {
-      ld = "";
+      ld = ""; //$NON-NLS-1$
     }
     lblLibDir.setText( ld.trim() );
   }

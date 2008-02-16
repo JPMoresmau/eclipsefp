@@ -31,9 +31,9 @@ public class GhcCompilerPlugin extends AbstractUIPlugin {
   }
 
   public static boolean isTracing() {
-    String option = getPluginId() + "/compiling";
+    String option = getPluginId() + "/compiling"; //$NON-NLS-1$
     String value = Platform.getDebugOption( option );
-    return value != null && value.equals( "true" );
+    return value != null && "true".equals( value ); //$NON-NLS-1$
   }
 
 

@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.internal.util.StreamMultiplexer;
 
 public class ProcessRunner implements IProcessRunner {
@@ -15,7 +14,7 @@ public class ProcessRunner implements IProcessRunner {
 	public ProcessRunner() {
 		this(new ProcessFactory());
 	}
-	
+
 	public ProcessRunner(final IProcessFactory factory) {
 		fProcessFactory = factory;
 	}
@@ -25,10 +24,10 @@ public class ProcessRunner implements IProcessRunner {
 		StringWriter returnedOut = new StringWriter();
 		try {
 			Process proc = fProcessFactory.startProcess(workingDir, args);
-			Thread outRedirect = new StreamMultiplexer("output_redirect",
+			Thread outRedirect = new StreamMultiplexer("output_redirect", //$NON-NLS-1$
 					  							       proc.getInputStream(),
 													   returnedOut, out);
-			Thread errRedirect = new StreamMultiplexer("error_redirect",
+			Thread errRedirect = new StreamMultiplexer("error_redirect", //$NON-NLS-1$
                                                        proc.getErrorStream(),
                                                        returnedOut, out);
 			outRedirect.start();

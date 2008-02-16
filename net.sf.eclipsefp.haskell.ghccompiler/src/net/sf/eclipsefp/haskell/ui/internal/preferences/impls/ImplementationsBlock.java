@@ -51,8 +51,8 @@ import org.eclipse.swt.widgets.TableColumn;
   */
 class ImplementationsBlock implements ISelectionProvider {
 
-  private static final String KEY_COLUMN_WIDTH = ".columnWidth";
-  private static final String KEY_SORT_COLUMN = ".sortColumn";
+  private static final String KEY_COLUMN_WIDTH = ".columnWidth"; //$NON-NLS-1$
+  private static final String KEY_SORT_COLUMN = ".sortColumn"; //$NON-NLS-1$
 
   private final List<IHsImplementation> installations
     = new ArrayList<IHsImplementation>();
@@ -437,7 +437,7 @@ class ImplementationsBlock implements ISelectionProvider {
     IStructuredSelection prev = ( IStructuredSelection )getSelection();
     HsImplementationDialog dialog
       = new HsImplementationDialog( table.getShell(), this, null );
-    dialog.setTitle( "Add a new Haskell implementation" );
+    dialog.setTitle( UITexts.implementationsBlock_dlgAdd );
     if( dialog.open() == Window.OK ) {
       viewer.refresh();
       autoSelectSingle( prev );
@@ -451,7 +451,7 @@ class ImplementationsBlock implements ISelectionProvider {
       HsImplementation impl = ( HsImplementation )ssel.getFirstElement();
       Shell shell = table.getShell();
       HsImplementationDialog dlg = new HsImplementationDialog( shell, this, impl );
-      dlg.setTitle( "Edit Haskell implementation" );
+      dlg.setTitle( UITexts.implementationsBlock_dlgEdit );
       if( dlg.open() == Window.OK ) {
         viewer.refresh( impl );
       }

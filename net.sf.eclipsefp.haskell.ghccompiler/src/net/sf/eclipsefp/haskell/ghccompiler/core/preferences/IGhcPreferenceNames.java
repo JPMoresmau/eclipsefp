@@ -8,10 +8,10 @@ package net.sf.eclipsefp.haskell.ghccompiler.core.preferences;
   */
 public interface IGhcPreferenceNames {
 
-  String EXECUTABLE_NAME       = "EXECUTABLE_NAME";
-  String EXTRA_OPTIONS         = "EXTRA_OPTIONS";
-  String USE_EXTRA_OPTIONS     = "USE_EXTRA_OPTIONS";
-  String OPTIMIZATION_LEVEL    = "OPTIMIZATION_LEVEL";
+  String EXECUTABLE_NAME       = "EXECUTABLE_NAME"; //$NON-NLS-1$
+  String EXTRA_OPTIONS         = "EXTRA_OPTIONS"; //$NON-NLS-1$
+  String USE_EXTRA_OPTIONS     = "USE_EXTRA_OPTIONS"; //$NON-NLS-1$
+  String OPTIMIZATION_LEVEL    = "OPTIMIZATION_LEVEL"; //$NON-NLS-1$
 
-  String GHCI_USES_GHC_OPTIONS = "GHCI_USES_GHC_OPTIONS";
+  String GHCI_USES_GHC_OPTIONS = "GHCI_USES_GHC_OPTIONS"; //$NON-NLS-1$
 }

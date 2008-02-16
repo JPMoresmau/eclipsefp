@@ -4,7 +4,6 @@ package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.dialog;
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.UITexts;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -17,27 +16,27 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 
 /** <p>dialog field for the selection of compiler optimization levels.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
-public class LevelSelectionDialogField extends DialogField 
+public class LevelSelectionDialogField extends DialogField
                                        implements IGhcParameters {
 
   private int selected = -1;
   // ui elements
   private Button[] buttons;
-  
+
   public LevelSelectionDialogField( final Composite parent ) {
     super( parent );
     setLayout( new GridLayout( 1, false ) );
     createLabel();
     createButtons();
   }
-  
+
 
   // interface methods of DialogField
   ///////////////////////////////////
-  
+
   @Override
   public Object getInfo() {
     return new Integer( selected );
@@ -50,18 +49,18 @@ public class LevelSelectionDialogField extends DialogField
     selected = newSelected;
     applySelection();
   }
-  
-  
+
+
   // UI creation methods
   //////////////////////
-  
+
   private Button createButton( final Composite parent, final String prefKey ) {
     String text = UITexts.getShortDescription( prefKey );
-    String tooltip = text + "\n" + UITexts.getOption( prefKey );
+    String tooltip = text + "\n" + UITexts.getOption( prefKey ); //$NON-NLS-1$
     return createButton( parent, text, tooltip );
   }
-  
-  private Button createButton( final Composite parent, 
+
+  private Button createButton( final Composite parent,
                                final String text,
                                final String tooltip) {
     Button result = new Button( parent, SWT.RADIO | SWT.LEFT );
@@ -69,11 +68,11 @@ public class LevelSelectionDialogField extends DialogField
     result.setToolTipText( tooltip );
     return result;
   }
-  
+
   private void createButtons() {
     String text = "Do not specify an optimization level.";
     String tooltip = text + "\nPass no -O* option.";
-    
+
     buttons = new Button[ 4 ];
     buttons[ 0 ] = createButton( this, text, tooltip );
     buttons[ 1 ] = createButton( this, OPT_O0 );
@@ -106,11 +105,11 @@ public class LevelSelectionDialogField extends DialogField
                   + "of optimization flags.";
     label.setText( info );
   }
-  
-  
+
+
   // helping methods
   //////////////////
-  
+
   private void applySelection() {
     buttons[ selected + 1 ].setSelection( true );
   }
