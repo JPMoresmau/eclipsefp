@@ -86,7 +86,7 @@ public class CompilerOutputItem implements ICompilerOutputItem {
 
 	private int getSeverity() {
 		int result = IMarker.SEVERITY_ERROR;
-		if( fComment != null && fComment.trim().startsWith( "Warning") ) {
+		if( fComment != null && fComment.indexOf( "Warning") != -1 ) {
 			result = IMarker.SEVERITY_WARNING;
 		}
 		return result;

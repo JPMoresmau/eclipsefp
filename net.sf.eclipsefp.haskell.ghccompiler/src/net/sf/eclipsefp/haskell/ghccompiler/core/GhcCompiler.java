@@ -5,14 +5,15 @@ import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerOutput;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  * Implements the compiler specific parts for the Glasgow Haskell compiler
  * (ghc).
  * </p>
- * 
+ *
  * @author Leif Frenzel
  */
 public class GhcCompiler extends DefaultHaskellCompiler {
@@ -36,7 +37,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 	public GhcCompiler() {
 		this(new ProcessRunner());
 	}
-	
+
 	/**
 	 * Constructor for testing
 	 */
@@ -93,7 +94,14 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 	// ////////////////
 
 	private ICompilerOutput parse(final String messages) {
-		return GhcOutputParser.parse(messages);
+	  List<ICompilerOutputItem> list = GhcOutputParser.parse(messages);
+
+		CompilerOutput output
+		  = new CompilerOutput( 0, messages, new ArrayList<Exception>() );
+		for( ICompilerOutputItem item: list ) {
+      output.addError( ( CompilerOutputItem )item );
+    }
+		return output;
 	}
 
 	private String getAbsPath(final IProject project, final IPath path) {
