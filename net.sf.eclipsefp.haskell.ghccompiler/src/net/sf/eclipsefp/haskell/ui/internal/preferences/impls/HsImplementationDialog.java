@@ -4,6 +4,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.impls;
 
 
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementation;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationType;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;

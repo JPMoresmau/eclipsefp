@@ -10,6 +10,8 @@ public interface ICorePreferenceNames {
 
   String SELECTED_COMPILER = "SELECTED_COMPILER"; //$NON-NLS-1$
 
+  String HS_IMPLEMENTATIONS = "HS_IMPLEMENTATIONS"; //$NON-NLS-1$
+
   // new Haskell project
   String TARGET_BINARY = "TARGET_BINARY"; //$NON-NLS-1$
   String FOLDERS_BIN = "FOLDERS_BIN"; //$NON-NLS-1$

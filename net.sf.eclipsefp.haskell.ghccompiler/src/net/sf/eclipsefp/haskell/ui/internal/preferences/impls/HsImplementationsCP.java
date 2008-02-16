@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.impls;
 
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 

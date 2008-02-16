@@ -3,8 +3,9 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.preferences.impls;
 
-import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.Preferences;
@@ -72,11 +73,10 @@ public class InstalledImplementationsPP extends PreferencePage
 
   @Override
   public boolean performOk() {
-    Preferences prefs = GhcCompilerPlugin.getDefault().getPluginPreferences();
-    prefs.setValue( IGhcPreferenceNames.HS_IMPLEMENTATIONS,
-                    implementationsBlock.getPref() );
+    String key = ICorePreferenceNames.HS_IMPLEMENTATIONS;
+    getPrefs().setValue( key, implementationsBlock.getPref() );
+    HaskellCorePlugin.getDefault().savePluginPreferences();
 
-    GhcCompilerPlugin.getDefault().savePluginPreferences();
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     implementationsBlock.saveColumnSettings( settings, DIALOG_SETTINGS_ID );
     return true;
@@ -135,8 +135,12 @@ public class InstalledImplementationsPP extends PreferencePage
   }
 
   private void applyInitialValue() {
-    Preferences prefs = GhcCompilerPlugin.getDefault().getPluginPreferences();
-    String value = prefs.getString( IGhcPreferenceNames.HS_IMPLEMENTATIONS );
+    String key = ICorePreferenceNames.HS_IMPLEMENTATIONS;
+    String value = getPrefs().getString( key );
     implementationsBlock.applyPref( value );
+  }
+
+  private Preferences getPrefs() {
+    return HaskellCorePlugin.getDefault().getPluginPreferences();
   }
 }

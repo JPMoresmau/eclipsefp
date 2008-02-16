@@ -1,13 +1,13 @@
 // Copyright (c) 2006-2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.ui.internal.preferences.impls;
+package net.sf.eclipsefp.haskell.core.internal.hsimpl;
 
 import java.io.File;
 import java.io.IOException;
+import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.core.internal.util.DefaultStatus;
 import net.sf.eclipsefp.haskell.core.util.QueryUtil;
-import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
-import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 
 
-class HsImplementation implements IHsImplementation {
+public class HsImplementation implements IHsImplementation {
 
   private String name;
   private HsImplementationType type;
@@ -28,26 +28,26 @@ class HsImplementation implements IHsImplementation {
 
   private IStatus[] statuss;
 
-  void setVersion( final String version ) {
+  public void setVersion( final String version ) {
     this.version = version;
   }
 
-  void setType( final HsImplementationType type ) {
+  public void setType( final HsImplementationType type ) {
     invalidate();
     this.type = type;
   }
 
-  void setName( final String name ) {
+  public void setName( final String name ) {
     invalidate();
     this.name = name;
   }
 
-  void setBinDir( final String binDir ) {
+  public void setBinDir( final String binDir ) {
     invalidate();
     this.binDir = binDir;
   }
 
-  IStatus[] validate() {
+  public IStatus[] validate() {
     if( statuss == null ) {
       internalValidate();
     }
@@ -91,12 +91,12 @@ class HsImplementation implements IHsImplementation {
   private IStatus validateName() {
     DefaultStatus result = new DefaultStatus();
     if( name == null || name.trim().length() == 0 ) {
-      result.setError( "Please enter a name for this installation" );
+      result.setError( CoreTexts.hsImplementation_noName );
     } else {
       IWorkspace workspace = ResourcesPlugin.getWorkspace();
       IStatus tempStatus = workspace.validateName( name, IResource.FILE );
       if( !tempStatus.isOK() ) {
-        String msg = "Name must be a valid file name. {0}";
+        String msg = CoreTexts.hsImplementation_invalidName;
         String binding = tempStatus.getMessage();
         result.setError( NLS.bind( msg, new String[] { binding } ) );
       }
@@ -108,11 +108,11 @@ class HsImplementation implements IHsImplementation {
     DefaultStatus result = new DefaultStatus();
     File file = null;
     if( binDir == null || binDir.length() == 0 ) {
-      result.setError( "Please enter a location" );
+      result.setError( CoreTexts.hsImplementation_noLocation );
     } else {
       file = new File( binDir );
       if( !file.exists() || !file.isDirectory() ) {
-        result.setError( "Location does not exist or is not a directory" );
+        result.setError( CoreTexts.hsImplementation_invalidLocation );
       }
     }
     return result;
@@ -121,12 +121,12 @@ class HsImplementation implements IHsImplementation {
   private IStatus validateExecutable() {
     DefaultStatus result = new DefaultStatus();
     IPath path = new Path( binDir );
-    path = path.append( "ghc" );
+    path = path.append( type.getExecutableCommand() );
     if( Platform.getOS().equals( Platform.OS_WIN32 ) ) {
-      path.addFileExtension( "exe" );
+      path.addFileExtension( "exe" ); //$NON-NLS-1$
     }
     try {
-      String param = IGhcParameters.NUMERIC_VERSION;
+      String param = type.getVersionOption();
       String query = QueryUtil.queryEx( path.toOSString(), param );
       if( query != null && query.trim().length() > 0 ) {
         this.version = query.trim();
@@ -137,7 +137,7 @@ class HsImplementation implements IHsImplementation {
 
     if( result.isOK() ) {
       try {
-        String param = IGhcParameters.PRINT_LIBDIR;
+        String param = type.getLibDirOption();
         String query = QueryUtil.queryEx( path.toOSString(), param );
         if( query != null && query.trim().length() > 0 ) {
           this.libDir = query.trim();

@@ -1,14 +1,14 @@
 // Copyright (c) 2006-2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.ui.internal.preferences.impls;
+package net.sf.eclipsefp.haskell.core.internal.hsimpl;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -20,33 +20,33 @@ import org.w3c.dom.NodeList;
   * @author Leif Frenzel
   *
   */
-class HsImplementationPersister {
+public class HsImplementationPersister {
 
   private static final String PREAMBLE
-    = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  private static final String ELEM_TOP_LEVEL = "hsImpls";
-  private static final String ELEM_HS_IMPL = "hsImpl";
+    = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"; //$NON-NLS-1$
+  private static final String ELEM_TOP_LEVEL = "hsImpls"; //$NON-NLS-1$
+  private static final String ELEM_HS_IMPL = "hsImpl"; //$NON-NLS-1$
 
-  private static final String ATT_NAME    = "name";
-  private static final String ATT_BIN_DIR = "binDir";
-  private static final String ATT_VERSION = "version";
-  private static final String ATT_TYPE    = "type";
+  private static final String ATT_NAME    = "name"; //$NON-NLS-1$
+  private static final String ATT_BIN_DIR = "binDir"; //$NON-NLS-1$
+  private static final String ATT_VERSION = "version"; //$NON-NLS-1$
+  private static final String ATT_TYPE    = "type"; //$NON-NLS-1$
 
-  static String toXML( final List<IHsImplementation> impls ) {
+  public static String toXML( final List<IHsImplementation> impls ) {
     StringBuilder sb = new StringBuilder( PREAMBLE );
-    sb.append( "<" );
+    sb.append( "<" ); //$NON-NLS-1$
     sb.append( ELEM_TOP_LEVEL );
-    sb.append( ">\n" );
+    sb.append( ">\n" ); //$NON-NLS-1$
     for( IHsImplementation impl: impls ) {
       toXML( impl, sb );
     }
-    sb.append( "</" );
+    sb.append( "</" ); //$NON-NLS-1$
     sb.append( ELEM_TOP_LEVEL );
-    sb.append( ">\n" );
+    sb.append( ">\n" ); //$NON-NLS-1$
     return sb.toString();
   }
 
-  static void fromXML( final String xml, final List<IHsImplementation> impls ) {
+  public static void fromXML( final String xml, final List<IHsImplementation> impls ) {
     if( !isEmpty( xml ) ) {
       try {
         DocumentBuilder parser = DocumentBuilderFactory.newInstance()
@@ -57,7 +57,7 @@ class HsImplementationPersister {
           load( rootElement, impls );
         }
       } catch( final Exception ex ) {
-        GhcCompilerPlugin.log( "Parsing Haskell Implementations", ex );
+        HaskellCorePlugin.log( "Parsing Haskell Implementations", ex ); //$NON-NLS-1$
       }
     }
   }
@@ -68,23 +68,23 @@ class HsImplementationPersister {
 
   private static void toXML( final IHsImplementation impl,
                              final StringBuilder sb ) {
-    sb.append( "  <" );
+    sb.append( "  <" ); //$NON-NLS-1$
     sb.append( ELEM_HS_IMPL );
     appendAtt( ATT_NAME, impl.getName(), sb );
     appendAtt( ATT_BIN_DIR, impl.getBinDir(), sb );
     appendAtt( ATT_VERSION, impl.getVersion(), sb );
     appendAtt( ATT_TYPE, impl.getType().name(), sb );
-    sb.append( "/>\n" );
+    sb.append( "/>\n" ); //$NON-NLS-1$
   }
 
   private static void appendAtt( final String att,
                                  final String value,
                                  final StringBuilder sb ) {
-    sb.append( " " );
+    sb.append( " " ); //$NON-NLS-1$
     sb.append( att );
-    sb.append( "=\"" );
+    sb.append( "=\"" ); //$NON-NLS-1$
     sb.append(  value );
-    sb.append( "\"" );
+    sb.append( "\"" ); //$NON-NLS-1$
   }
 
   private static void load( final Element rootElement,
