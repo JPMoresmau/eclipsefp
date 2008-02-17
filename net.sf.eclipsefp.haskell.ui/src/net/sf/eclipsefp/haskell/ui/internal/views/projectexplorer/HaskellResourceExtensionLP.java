@@ -1,34 +1,29 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.ui.views.mbview;
+// Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
+// All rights reserved.
+package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-import net.sf.eclipsefp.haskell.ui.views.common.HaskellLabelProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-
 
 /** <p>the label provider for elements in a Haskell project. Functionality
   * for language elements is inherited.</p>
   *
   * @author Leif Frenzel
   */
-public class HaskellProjectLabelProvider extends HaskellLabelProvider
-                                         implements IImageNames {
-
-  private final UIState uiState;
-
-  HaskellProjectLabelProvider( final UIState uiState ) {
-    this.uiState = uiState;
-  }
+public class HaskellResourceExtensionLP extends LabelProvider {
 
 
   // interface methods
@@ -39,8 +34,10 @@ public class HaskellProjectLabelProvider extends HaskellLabelProvider
     String result;
     if( element instanceof IHaskellProject ) {
       result = ( ( IHaskellProject )element ).getResource().getName();
+    } else if( element instanceof ITreeElement ) {
+      result = ( ( ITreeElement )element ).getText();
     } else if( element instanceof IFolder ) {
-      result = getFolderText( ( IFolder )element );
+      result = ( ( IFolder )element ).getName();
     } else if( element instanceof IFile ) {
       result = ( ( IResource )element ).getName();
     } else {
@@ -54,10 +51,13 @@ public class HaskellProjectLabelProvider extends HaskellLabelProvider
     Image result = null;
     if( element instanceof IHaskellLanguageElement ) {
       result = super.getImage( element );
+    } else if( element instanceof ITreeElement ) {
+      String key = ( ( ITreeElement )element ).getImageKey();
+      result = HaskellUIImages.getImage( key );
     } else if( element instanceof IHaskellProject ) {
-      result = HaskellUIImages.getImage( HASKELL_PROJECT );
+      result = HaskellUIImages.getImage( IImageNames.HASKELL_PROJECT );
     } else if( element instanceof IImportLibrary ) {
-      result = HaskellUIImages.getImage( IMPORT_LIBRARY );
+      result = HaskellUIImages.getImage( IImageNames.IMPORT_LIBRARY );
     } else if( element instanceof IFolder ) {
       result = getFolderImage( ( IFolder )element );
     } else if( element instanceof IFile ) {
@@ -71,41 +71,37 @@ public class HaskellProjectLabelProvider extends HaskellLabelProvider
   //////////////////
 
   private Image getFileImage( final IFile file ) {
-    String id;
-    // this is either the project executable or some Haskell source file
-    if( ResourceUtil.isProjectExecutable( file ) ) {
-      id = PROJECT_EXECUTABLE;
-    } else {
-      String ext = file.getFileExtension();
-      if( ext.equals( ResourceUtil.EXTENSION_HS ) ) {
-        id = SOURCE_FILE;
-      } else if( ext.equals( ResourceUtil.EXTENSION_LHS ) ) {
-        id = LITERATE_SOURCE_FILE;
-      } else {
-        // other resources in the source folder
-        id = IImageNames.MODULE;
+    Image result = null;
+    try {
+      if( file.getProject().hasNature( HaskellNature.NATURE_ID ) ) {
+        if( ResourceUtil.isProjectExecutable( file ) ) {
+          result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
+        } else {
+          String ext = file.getFileExtension();
+          if( ext.equals( ResourceUtil.EXTENSION_HS ) ) {
+            result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
+          } else if( ext.equals( ResourceUtil.EXTENSION_LHS ) ) {
+            String key = IImageNames.LITERATE_SOURCE_FILE;
+            result = HaskellUIImages.getImage( key );
+          }
+        }
       }
+    } catch( final CoreException cex ) {
+      HaskellUIPlugin.log( "Unexpected: ", cex );
     }
-    return HaskellUIImages.getImage( id );
+    return result;
   }
 
   private Image getFolderImage( final IFolder folder ) {
-    // this is either the source folder or some package fragment
-    String id = ResourceUtil.isSourceFolder( folder ) ? SOURCE_FOLDER : PACKAGE;
-    return HaskellUIImages.getImage( id );
-  }
-
-  private String getFolderText( final IFolder folder ) {
-    String result = folder.getName();
-    if(    !uiState.isFlatLayout()
-        && Util.applyHierarchicalLayout( folder ) ) {
-      try {
-        IFolder subFolder = ( IFolder )folder.members()[ 0 ];
-        result = result + "." + getFolderText( subFolder );
-      } catch( CoreException cex ) {
-        String msg = "Problem with children of '" + folder.getName() + "'.";
-        HaskellUIPlugin.log( msg, cex );
+    Image result = null;
+    try {
+      if(    folder.getProject().hasNature( HaskellNature.NATURE_ID )
+          && ResourceUtil.isSourceFolder( folder ) ) {
+        String id = IImageNames.SOURCE_FOLDER;
+        result = HaskellUIImages.getImage( id );
       }
+    } catch( final CoreException cex ) {
+      HaskellUIPlugin.log( "Unexpected: ", cex );
     }
     return result;
   }

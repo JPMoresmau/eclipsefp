@@ -5,23 +5,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.eclipse.jface.resource.*;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 /** <p>contains the image registry for images in the Haskell Ui plugin.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class HaskellUIImages implements IImageNames {
 
   private static ImageRegistry imageRegistry;
-  
+
   private static ImageDescriptorRegistry imageDescriptorRegistry;
-  
+
   /** <p>a table of all the <code>ImageDescriptor</code>s.</p> */
   private static Map<String, ImageDescriptor> imageDescriptors;
 
@@ -62,7 +62,7 @@ public class HaskellUIImages implements IImageNames {
     declare( MB_VIEW_HIERARCHICAL, ACTION + "mb_hierarchical.gif" );
     declare( MB_VIEW_FILTER,       ACTION + "mb_filter.gif" );
     declare( CO_VIEW_CLEAR,        ACTION + "co_clear.gif" );
-    
+
     // language element representation
     declare( HS_NAME,               OBJECT + "hsname.gif" );
     declare( MODULE,                OBJECT + "module.gif" );
@@ -72,6 +72,9 @@ public class HaskellUIImages implements IImageNames {
     declare( EXPORT_MODULE_CONTENT, OBJECT + "exportmodulecontent.gif" );
     declare( EXPORT_SPECIFICATION,  OBJECT + "exportspecification.gif" );
     declare( PACKAGE,               OBJECT + "package.gif" );
+    declare( PACKAGE_CONF,          OBJECT + "packageconf.gif" );
+    declare( PACKAGE_FOLDER,        OBJECT + "packagefolder.gif" );
+    declare( HIDDEN_PACKAGE,        OBJECT + "hiddenpackage.gif" );
     declare( FUNCTION_BINDING,      OBJECT + "functionbinding.gif" );
     declare( PATTERN_BINDING,       OBJECT + "patternbinding.gif" );
     declare( DATA_DECL,             OBJECT + "datadecl.gif" );
@@ -84,13 +87,13 @@ public class HaskellUIImages implements IImageNames {
     declare( INFIXNONE_DECL,        OBJECT + "infixnone.gif" );
     declare( INFIXL_DECL,           OBJECT + "infixl.gif" );
     declare( INFIXR_DECL,           OBJECT + "infixr.gif" );
-    
+
     // wizard banners
     declare( NEW_PROJECT, WIZARD + "newproject.gif" );
     declare( NEW_MODULE, WIZARD  + "newmodule.png" );
   }
 
-  private final static void declare( final String key, 
+  private final static void declare( final String key,
                                                   final String path ) {
     ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
     try {
@@ -101,7 +104,7 @@ public class HaskellUIImages implements IImageNames {
     imageRegistry.put( key, desc );
     imageDescriptors.put( key, desc );
   }
-  
+
   private static ImageRegistry getImageRegistry() {
     if( imageRegistry == null ) {
       initializeImageRegistry();
@@ -121,7 +124,7 @@ public class HaskellUIImages implements IImageNames {
   public static Image getImage( final String key ) {
     return getImageRegistry().get( key );
   }
-  
+
   /** <p>returns the <code>ImageDescriptor<code> identified by the given key,
     * or <code>null</code> if it does not exist.</p> */
   public static ImageDescriptor getImageDescriptor( final String key ) {
@@ -130,29 +133,29 @@ public class HaskellUIImages implements IImageNames {
     }
     return imageDescriptors.get( key );
   }
-  
-  private static URL makeIconFileURL( final String iconPath ) 
+
+  private static URL makeIconFileURL( final String iconPath )
                                                   throws MalformedURLException {
     if( baseUrl == null ) {
       throw new MalformedURLException();
     }
     return new URL( baseUrl, iconPath );
   }
- 
+
 
   // composite images
   ///////////////////
-  
+
   public static Image getImage( final CompositeImageDescriptor imgDescriptor ) {
     if( imageDescriptorRegistry == null ) {
-      imageDescriptorRegistry = new ImageDescriptorRegistry();  
+      imageDescriptorRegistry = new ImageDescriptorRegistry();
     }
     return imageDescriptorRegistry.get( imgDescriptor );
   }
-  
+
   public static void disposeImageDescriptorRegistry() {
     if( imageDescriptorRegistry != null ) {
-      imageDescriptorRegistry.dispose(); 
+      imageDescriptorRegistry.dispose();
     }
   }
 }

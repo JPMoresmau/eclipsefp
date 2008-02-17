@@ -84,16 +84,6 @@
       </perspective>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            name="%moduleBrowser_name"
-            icon="icons/full/cview16/mbview.gif"
-            category="net.sf.eclipsefp.haskell.ui.haskellViews"
-            class="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser"
-            id="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser">
-      </view>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             name="%haskellPP_name"
@@ -308,13 +298,6 @@
       </category>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="%viewCategory_name"
-            id="net.sf.eclipsefp.haskell.ui.haskellViews">
-      </category>
-   </extension>
-   <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             name="Haskell"
@@ -339,4 +322,66 @@
               id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree"/>
     </viewerContribution>
   </extension>
+  
+  <!-- [Views] -->
+  <extension point="org.eclipse.ui.views">
+    <category name="%viewCategory_name"
+              id="net.sf.eclipsefp.haskell.ui.haskellViews" />
+    <!-- legacy module browser view -->
+    <view name="%moduleBrowser_name"
+          icon="icons/full/cview16/mbview.gif"
+          category="net.sf.eclipsefp.haskell.ui.haskellViews"
+          class="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser"
+          id="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser" />
+  </extension>
+  
+  <!-- [Views] Project Explorer -->
+  
+  <extension point="org.eclipse.ui.navigator.viewer">
+    <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+      <includes>
+        <contentExtension pattern="net.sf.eclipsefp.haskell.ui.haskellContent" />
+        <contentExtension pattern="net.sf.eclipsefp.haskell.ui.internal.views.filters.*" />	
+      </includes>
+    </viewerContentBinding>
+  </extension>
+  
+  <extension point="org.eclipse.ui.navigator.navigatorContent">
+    <navigatorContent
+      name="%navigatorContent_name"
+      icon="$nl$/icons/hsicon16.gif"
+      activeByDefault="true"
+      contentProvider="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionCP"
+      labelProvider="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionLP"   
+      id="net.sf.eclipsefp.haskell.ui.haskellContent"
+      priority="high">
+      <triggerPoints>
+        <or>
+          <adapt type="org.eclipse.core.resources.IProject">
+            <test property="org.eclipse.core.resources.projectNature" 
+                  value="net.sf.eclipsefp.haskell.core.project.HaskellNature"/>
+          </adapt>
+          <instanceof value="org.eclipse.core.resources.IWorkspaceRoot" /> 
+          <instanceof value="org.eclipse.core.resources.IProject" />  
+          <instanceof value="org.eclipse.core.resources.IFolder" /> 
+        </or>
+      </triggerPoints>
+      <possibleChildren>
+        <or>         
+          <instanceof value="org.eclipse.core.resources.IWorkspaceRoot" /> 
+          <instanceof value="org.eclipse.core.resources.IProject" /> 
+          <instanceof value="org.eclipse.core.resources.IResource" /> 
+          <instanceof value="org.eclipse.core.resources.IFolder" />
+          <instanceof value="org.eclipse.core.resources.IFile" /> 
+        </or>
+      </possibleChildren>
+    </navigatorContent>
+    <commonFilter
+        activeByDefault="false"
+        class="net.sf.eclipsefp.haskell.ui.internal.views.common.ProjectExecutableFilter"
+        name="%projectExecutableFilter_name"
+        description="%projectExecutableFilter_desc"
+        id="net.sf.eclipsefp.haskell.ui.internal.views.filters.ProjectExecutableFilter"/>
+  </extension>
+  
 </plugin>

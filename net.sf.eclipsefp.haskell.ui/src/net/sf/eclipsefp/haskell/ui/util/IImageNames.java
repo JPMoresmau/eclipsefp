@@ -4,16 +4,16 @@ package net.sf.eclipsefp.haskell.ui.util;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 
 /** <p>contains constant names for images in the Haskell UI.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public interface IImageNames {
-  
+
   // prefix all constants with the plugin id
   String ID = HaskellUIPlugin.getPluginId();
-  
+
   String LAUNCH_TAB_ARGUMENTS = ID + ".LAUNCH_TAB_ARGUMENTS";
-  
+
   String SRC_FOLDER_DECORATOR = ID + ".SRC_FOLDER_DECORATOR";
   String BIN_FOLDER_DECORATOR = ID + ".BIN_FOLDER_DECORATOR";
 
@@ -24,7 +24,7 @@ public interface IImageNames {
   String MB_VIEW_HIERARCHICAL = ID + ".MB_VIEW_HIERARCHICAL";
   String MB_VIEW_FILTER       = ID + ".MB_VIEW_FILTER";
   String CO_VIEW_CLEAR        = ID + ".CO_VIEW_CLEAR";
-  
+
   // Haskell project elements
   String HASKELL_PROJECT      = ID + ".HASKELL_PROJECT";
   String SOURCE_FOLDER        = ID + ".SOURCE_FOLDER";
@@ -32,7 +32,7 @@ public interface IImageNames {
   String LITERATE_SOURCE_FILE = ID + ".LITERATE_SOURCE_FILE";
   String IMPORT_LIBRARY       = ID + ".IMPORT_LIBRARY";
   String PROJECT_EXECUTABLE   = ID + ".PROJECT_EXECUTABLE";
-  
+
   // Haskell language elements
   String HS_NAME               = ID + ".HS_NAME";
   String MODULE                = ID + ".MODULE";
@@ -42,6 +42,9 @@ public interface IImageNames {
   String EXPORT_MODULE_CONTENT = ID + ".EXPORT_MODULE_CONTENT";
   String EXPORT_SPECIFICATION  = ID + ".EXPORT_SPECIFICATION";
   String PACKAGE               = ID + ".PACKAGE";
+  String PACKAGE_CONF          = ID + ".PACKAGE_CONF";
+  String PACKAGE_FOLDER        = ID + ".PACKAGE_FOLDER";
+  String HIDDEN_PACKAGE        = ID + ".HIDDEN_PACKAGE";
   String FUNCTION_BINDING      = ID + ".FUNCTION_BINDING";
   String PATTERN_BINDING       = ID + ".PATTERN_BINDING";
   String DATA_DECL             = ID + ".DATA_DECL";
@@ -54,7 +57,7 @@ public interface IImageNames {
   String INFIXNONE_DECL        = ID + ".INFIXNONE_DECL";
   String INFIXL_DECL           = ID + ".INFIXL_DECL";
   String INFIXR_DECL           = ID + ".INFIXR_DECL";
-  
+
   // wizard banners
   String NEW_PROJECT = ID + ".NEW_PROJECT";
   String NEW_MODULE = ID + ".NEW_MODULE";
