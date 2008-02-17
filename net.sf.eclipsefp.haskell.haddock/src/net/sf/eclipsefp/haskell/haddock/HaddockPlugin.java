@@ -29,7 +29,7 @@ public class HaddockPlugin extends AbstractUIPlugin {
   }
 
   public static boolean isTracing() {
-    String option = getPluginId() + "/trace/commandline";
+    String option = getPluginId() + "/commandline";
     String value = Platform.getDebugOption( option );
     return value != null && value.equals( "true" );
   }
