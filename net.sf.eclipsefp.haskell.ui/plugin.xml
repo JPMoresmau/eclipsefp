@@ -5,7 +5,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             name="%newProjectWizard_name"
-            icon="icons/hsicon16.gif"
+            icon="icons/etool16/hsicon16.gif"
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
@@ -20,7 +20,7 @@
       </primaryWizard>
       <wizard
             name="%newModuleWizard_name"
-            icon="icons/full/obj16/module.gif"
+            icon="icons/obj16/module.gif"
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
@@ -36,7 +36,7 @@
       <editor
             name="%haskellEditor_name"
             extensions="hs,lhs"
-            icon="icons/hsicon16.gif"
+            icon="icons/etool16/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor">
@@ -53,7 +53,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/haskellNature.gif"
+            icon="icons/etool16/haskellNature.gif"
             natureId="net.sf.eclipsefp.haskell.core.project.HaskellNature"
             id="net.sf.eclipsefp.haskell.core.project.haskellNatureImage">
       </image>
@@ -78,7 +78,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%haskellPerspective_name"
-            icon="icons/hsicon16.gif"
+            icon="icons/etool16/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
       </perspective>
@@ -138,7 +138,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/hsicon16.gif"
+            icon="icons/etool16/hsicon16.gif"
             configTypeID="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
       </launchConfigurationTypeImage>
@@ -155,7 +155,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             label="%appLaunchShortcut_label"
-            icon="icons/hsicon16.gif"
+            icon="icons/etool16/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.launch.ExecutableLaunchShortcut"
             modes="run"
             id="net.sf.eclipsefp.haskell.ui.launch.ExecutableLaunchShortcut">
@@ -245,7 +245,7 @@
       <specification
             annotationType="net.sf.eclipsefp.haskell.ui.occurrences"
             label="%haskellOccurrence_label"
-            icon="icons/full/obj16/searchm_obj.gif"
+            icon="icons/obj16/searchm_obj.gif"
             textPreferenceKey="occurrenceIndication"
             textPreferenceValue="false"
             highlightPreferenceKey="occurrenceHighlighting"
@@ -329,7 +329,7 @@
               id="net.sf.eclipsefp.haskell.ui.haskellViews" />
     <!-- legacy module browser view -->
     <view name="%moduleBrowser_name"
-          icon="icons/full/cview16/mbview.gif"
+          icon="icons/cview16/mbview.gif"
           category="net.sf.eclipsefp.haskell.ui.haskellViews"
           class="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser"
           id="net.sf.eclipsefp.haskell.ui.views.mbview.ModuleBrowser" />
@@ -349,7 +349,7 @@
   <extension point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
       name="%navigatorContent_name"
-      icon="$nl$/icons/hsicon16.gif"
+      icon="$nl$/icons/etool16/hsicon16.gif"
       activeByDefault="true"
       contentProvider="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionCP"
       labelProvider="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionLP"   

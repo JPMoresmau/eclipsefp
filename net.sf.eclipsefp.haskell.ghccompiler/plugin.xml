@@ -30,7 +30,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             label="%shortcut_label"
-            icon="icons/full/etool16/ghci16.gif"
+            icon="icons/etool16/ghci16.gif"
             class="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut"
             modes="run"
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut">

@@ -28,7 +28,7 @@ public class HaskellUIImages implements IImageNames {
   private static URL baseUrl;
 
   static {
-    String pathSuffix = "icons/full/";
+    String pathSuffix = "icons/";
     try {
       Bundle bundle = HaskellUIPlugin.getDefault().getBundle();
       baseUrl = new URL( bundle.getEntry( "/" ), pathSuffix );

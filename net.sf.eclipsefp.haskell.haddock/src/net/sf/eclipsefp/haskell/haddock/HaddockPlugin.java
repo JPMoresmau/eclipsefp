@@ -6,8 +6,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /** <p>The main plugin class for the Haddock support.</p>
-  * 
-  * @author The mighty PDE wizard 
+  *
+  * @author The mighty PDE wizard
   */
 public class HaddockPlugin extends AbstractUIPlugin {
 
@@ -22,7 +22,7 @@ public class HaddockPlugin extends AbstractUIPlugin {
   public static HaddockPlugin getDefault() {
     return plugin;
   }
-  
+
   /** <p>returns the unique identifier for the HaddockPlugin.</p> */
   public static String getPluginId() {
     return getDefault().getBundle().getSymbolicName();
@@ -35,28 +35,28 @@ public class HaddockPlugin extends AbstractUIPlugin {
   }
 
   public static ImageDescriptor getBanner() {
-    return imageDescriptorFromPlugin( getPluginId(), 
-                                      "icons/full/wizban/haddockexport.gif" );
+    return imageDescriptorFromPlugin( getPluginId(),
+                                      "icons/wizban/haddockexport.gif" );
   }
-  
-  
+
+
   // logging
   //////////
-  
+
   public static void log( final String message, final int severity ) {
-    Status status = new Status( severity, 
-                                getPluginId(), 
-                                IStatus.OK, 
-                                message, 
+    Status status = new Status( severity,
+                                getPluginId(),
+                                IStatus.OK,
+                                message,
                                 null );
     getDefault().getLog().log( status );
   }
 
   public static void log( final String message, final Throwable throwable ) {
-    Status status = new Status( IStatus.ERROR, 
-                                getPluginId(), 
-                                IStatus.OK, 
-                                message, 
+    Status status = new Status( IStatus.ERROR,
+                                getPluginId(),
+                                IStatus.OK,
+                                message,
                                 throwable );
     getDefault().getLog().log( status );
   }

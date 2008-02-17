@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.ui.exportWizards">
       <wizard
-            icon="icons/full/etool16/haddock.gif"
+            icon="icons/etool16/haddock.gif"
             class="net.sf.eclipsefp.haskell.haddock.ui.wizard.HaddockExportWizard"
             name="%haddockWizard.name"
             category="net.sf.eclipsefp.haskell.ui.exportWizardCategory"
