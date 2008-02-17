@@ -94,17 +94,18 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 				return true;
 			}
 
-			if (isAdditionOrChange(delta)) {
-				IHaskellParser parser = ParserManager.getInstance().getParser();
-				ICompilationUnit unit = parser.parse((IFile) resource);
-				getLanguageModel().putModule(unit.getModules()[0]);
-			} else if (isDeletion(delta)) {
-				//TODO we are assuming fileName = moduleName + .hs
-				//is this always true?
-				String moduleName = ResourceUtil.getModuleName(
-				                        resource.getName());
-				getLanguageModel().removeModule(moduleName);
-			}
+			if( isAdditionOrChange( delta ) ) {
+        IHaskellParser parser = ParserManager.getInstance().getParser();
+        ICompilationUnit unit = parser.parse( ( IFile )resource );
+        if( unit.getModules().length > 0 ) {
+          getLanguageModel().putModule( unit.getModules()[ 0 ] );
+        }
+      } else if( isDeletion( delta ) ) {
+        // TODO we are assuming fileName = moduleName + .hs
+        // is this always true?
+        String moduleName = ResourceUtil.getModuleName( resource.getName() );
+        getLanguageModel().removeModule( moduleName );
+      }
 			return true;
 		}
 
