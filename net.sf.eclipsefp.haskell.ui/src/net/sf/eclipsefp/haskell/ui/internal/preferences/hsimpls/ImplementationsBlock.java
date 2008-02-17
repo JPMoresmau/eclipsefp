@@ -445,11 +445,10 @@ class ImplementationsBlock implements ISelectionProvider {
       = new HsImplementationDialog( table.getShell(), this, null );
     dialog.setTitle( UITexts.implementationsBlock_dlgAdd );
     if( dialog.open() == Window.OK ) {
-      viewer.refresh();
+      add( dialog.getResult() );
       autoSelectSingle( prev );
     }
   }
-
 
   private void editHsImplementation() {
     IStructuredSelection ssel = ( IStructuredSelection )viewer.getSelection();
@@ -459,7 +458,9 @@ class ImplementationsBlock implements ISelectionProvider {
       HsImplementationDialog dlg = new HsImplementationDialog( shell, this, impl );
       dlg.setTitle( UITexts.implementationsBlock_dlgEdit );
       if( dlg.open() == Window.OK ) {
-        viewer.refresh( impl );
+        installations.remove( 0 );
+        add( dlg.getResult() );
+        autoSelectSingle( ssel );
       }
     }
   }

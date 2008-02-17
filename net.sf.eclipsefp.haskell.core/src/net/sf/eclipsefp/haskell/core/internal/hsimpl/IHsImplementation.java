@@ -18,4 +18,5 @@ public interface IHsImplementation {
     * this installed implementation.</p> */
   String getName();
   String getBinDir();
+  String getLibDir();
 }

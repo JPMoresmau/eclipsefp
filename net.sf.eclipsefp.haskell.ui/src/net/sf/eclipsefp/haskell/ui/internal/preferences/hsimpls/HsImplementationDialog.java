@@ -60,12 +60,16 @@ public class HsImplementationDialog extends StatusDialog {
     setShellStyle( getShellStyle() | SWT.RESIZE );
 
 		this.implementationsBlock = implementationsBlock;
-		if( impl == null ) {
-		  currentImpl = new HsImplementation();
-		} else {
-      currentImpl = impl;
+		currentImpl = new HsImplementation();
+		if( impl != null ) {
+		  currentImpl.setName( impl.getName() );
+      currentImpl.setBinDir( impl.getBinDir() );
 		}
 		currentImpl.setType( HsImplementationType.GHC );
+	}
+
+	HsImplementation getResult() {
+	  return currentImpl;
 	}
 
 
@@ -150,12 +154,6 @@ public class HsImplementationDialog extends StatusDialog {
     txtName.setFocus();
   }
 
-  @Override
-  protected void okPressed() {
-    implementationsBlock.add( currentImpl );
-    super.okPressed();
-  }
-
 
   // helping functions
   ////////////////////
@@ -234,8 +232,10 @@ public class HsImplementationDialog extends StatusDialog {
   }
 
   private void initializeFields() {
-    txtName.setText( "" ); //$NON-NLS-1$
-    txtBinFolder.setText( "" ); //$NON-NLS-1$
+    String name = currentImpl.getName() == null ? "" : currentImpl.getName(); //$NON-NLS-1$
+    String binDir = currentImpl.getBinDir() == null ? "" : currentImpl.getBinDir(); //$NON-NLS-1$
+    txtName.setText( name );
+    txtBinFolder.setText( binDir );
     cmbImplementationType.setEnabled( false );
     validate();
     updateFields();
