@@ -1,13 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
-Bundle-SymbolicName: net.sf.eclipsefp.haskell.cabal.core
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.cabal.core;singleton:=true
 Bundle-Version: 1.102.0
 Bundle-ClassPath: cabalcore.jar
 Bundle-Activator: net.sf.eclipsefp.haskell.cabal.core.internal.CabalCorePlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
+Require-Bundle: net.sf.eclipsefp.common.core,
+ net.sf.eclipsefp.haskell.core,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsefp.haskell.cabal.core,
  net.sf.eclipsefp.haskell.cabal.core.internal;x-friends:="net.sf.eclipsefp.haskell.cabal.ui",

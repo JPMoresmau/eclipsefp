@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="CabalBuilder"
+         name="%cabalBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="false"
+            hasNature="false">
+         <run class="net.sf.eclipsefp.haskell.cabal.core.CabalBuilder" />
+      </builder>
+   </extension>
+</plugin>
