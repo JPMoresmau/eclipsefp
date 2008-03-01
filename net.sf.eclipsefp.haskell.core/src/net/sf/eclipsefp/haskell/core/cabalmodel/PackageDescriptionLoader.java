@@ -1,6 +1,6 @@
 // Copyright (c) 2006 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.cabal.core.model;
+package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,15 +8,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 
-import net.sf.eclipsefp.haskell.cabal.core.CabalSyntax;
-import net.sf.eclipsefp.haskell.cabal.core.internal.CabalCorePlugin;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-/** <p>contains helping functionality for loading a {@link PackageDescription 
-  * PackageDescription model}.</p> 
+/** <p>contains helping functionality for loading a {@link PackageDescription
+  * PackageDescription model}.</p>
   *
   * @author Leif Frenzel
   */
@@ -29,7 +24,7 @@ public class PackageDescriptionLoader {
         parse( content, result );
       } catch( final IOException ioex ) {
         // very unlikely
-        log( ioex );
+        HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
       }
     }
     return result;
@@ -38,13 +33,13 @@ public class PackageDescriptionLoader {
 
   // helping methods
   //////////////////
-  
-  private static void parse( final String content, 
+
+  private static void parse( final String content,
                              final PackageDescription pd ) throws IOException {
     List<StanzaInfo> stanzas = new ArrayList<StanzaInfo>();
     StanzaInfo lastStanza = new StanzaInfo();
     stanzas.add( lastStanza );
-    
+
     BufferedReader br = new BufferedReader( new StringReader( content ) );
     int count = 0;
     boolean contentStarted = false;
@@ -73,21 +68,21 @@ public class PackageDescriptionLoader {
     applyStanzas( stanzas, pd );
   }
 
-  private static void applyStanzas( final List<StanzaInfo> stanzas, 
+  private static void applyStanzas( final List<StanzaInfo> stanzas,
                                     final PackageDescription pd ) {
     Iterator<StanzaInfo> it = stanzas.iterator();
     while( it.hasNext() ) {
       StanzaInfo info = it.next();
       if( !info.getContent().isEmpty() ) {
-        pd.addStanza( create( info.getStart(), 
-                              info.getEnd(), 
+        pd.addStanza( create( info.getStart(),
+                              info.getEnd(),
                               info.getContent() ) );
       }
     }
   }
 
-  private static PackageDescriptionStanza create( final int start, 
-                                                  final int end, 
+  private static PackageDescriptionStanza create( final int start,
+                                                  final int end,
                                                   final List<String> content ) {
     PackageDescriptionStanza result;
     if( isExecutable( content ) ) {
@@ -116,7 +111,7 @@ public class PackageDescriptionLoader {
     return getValue( content, CabalSyntax.FIELD_EXECUTABLE );
   }
 
-  private static String getValue( final List<String> content, 
+  private static String getValue( final List<String> content,
                                   final String fieldName ) {
     String result = null;
     Iterator<String> it = content.iterator();
@@ -139,7 +134,7 @@ public class PackageDescriptionLoader {
     return containsLineStart( content, CabalSyntax.FIELD_EXECUTABLE );
   }
 
-  private static boolean containsLineStart( final List<String> content, 
+  private static boolean containsLineStart( final List<String> content,
                                             final String start ) {
     boolean result = false;
     Iterator<String> it = content.iterator();
@@ -157,25 +152,17 @@ public class PackageDescriptionLoader {
   private static boolean isComment( final String line ) {
     return line.startsWith( "--" ); //$NON-NLS-1$
   }
-  
-  private static void log( final IOException ex ) {
-    String msg = ex.getMessage() == null ? "[No details]"  //$NON-NLS-1$
-                                         : ex.getMessage();
-    String pluginId = CabalCorePlugin.getPluginId();
-    IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, ex );
-    CabalCorePlugin.getDefault().getLog().log( status );
-  }
-  
-  
+
+
   // inner classes
   ////////////////
-  
+
   private static class StanzaInfo {
-    
+
     private final List<String> content;
     private int start = 0;
     private int end = 1;
-    
+
     StanzaInfo() {
       this.content = new ArrayList<String>();
     }
@@ -195,7 +182,7 @@ public class PackageDescriptionLoader {
     void setStart( final int start ) {
       this.start = start;
     }
-    
+
     int getStart() {
       return start;
     }

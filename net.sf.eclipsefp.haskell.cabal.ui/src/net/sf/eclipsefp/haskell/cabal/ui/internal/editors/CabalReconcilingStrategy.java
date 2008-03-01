@@ -2,8 +2,8 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
 
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;

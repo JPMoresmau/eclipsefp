@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;

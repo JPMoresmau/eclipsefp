@@ -1,9 +1,10 @@
 // Copyright (c) 2006-2007 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.cabal.core;
+package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -16,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class CabalBuilder extends IncrementalProjectBuilder {
+
+  public static final String BUILDER_ID = CabalBuilder.class.getName();
 
   // interface methods of IncrementalProjectBuilder
   /////////////////////////////////////////////////
@@ -44,7 +47,7 @@ public class CabalBuilder extends IncrementalProjectBuilder {
     if( !cabalFile.exists() ) {
       String id = HaskellCorePlugin.ID_PROJECT_PROBLEM_MARKER;
       IMarker marker = getProject().createMarker( id );
-      marker.setAttribute( IMarker.MESSAGE, "No cabal file in this project (or cabal file has a different name)" );
+      marker.setAttribute( IMarker.MESSAGE, CoreTexts.cabalBuilder_noCabal );
       marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_WARNING );
     }
   }

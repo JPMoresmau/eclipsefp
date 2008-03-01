@@ -2,8 +2,8 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
 
-import net.sf.eclipsefp.haskell.cabal.core.CabalSyntax;
 import net.sf.eclipsefp.haskell.cabal.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

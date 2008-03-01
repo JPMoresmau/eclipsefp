@@ -2,8 +2,8 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline;
 
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
 import net.sf.eclipsefp.haskell.cabal.ui.internal.editors.CabalEditor;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

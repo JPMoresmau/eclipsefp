@@ -4,9 +4,9 @@ package net.sf.eclipsefp.haskell.cabal.ui.internal.editors;
 
 import java.util.ResourceBundle;
 
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescription;
-import net.sf.eclipsefp.haskell.cabal.core.model.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline.CabalOutlinePage;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;

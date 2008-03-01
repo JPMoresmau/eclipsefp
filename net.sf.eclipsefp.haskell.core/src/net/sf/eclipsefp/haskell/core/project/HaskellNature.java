@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.builder.HaskellBuilder;
+import net.sf.eclipsefp.haskell.core.internal.project.CabalBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -15,11 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 public class HaskellNature implements IProjectNature {
 
   public static final String NATURE_ID = HaskellNature.class.getName();
-
-  // TODO lf bad design (tacit dependency to a plugin we not openy depend on)
-  private static final String CABAL_BUILDER_ID
-    = "net.sf.eclipsefp.haskell.cabal.core.CabalBuilder"; //$NON-NLS-1$
-
   private IProject project;
 
 
@@ -28,11 +24,11 @@ public class HaskellNature implements IProjectNature {
 
   public void configure() throws CoreException {
     addBuilder( HaskellBuilder.BUILDER_ID );
-    addBuilder( CABAL_BUILDER_ID );
+    addBuilder( CabalBuilder.BUILDER_ID );
   }
 
   public void deconfigure() throws CoreException {
-    removeBuilder( CABAL_BUILDER_ID );
+    removeBuilder( CabalBuilder.BUILDER_ID );
     removeBuilder( HaskellBuilder.BUILDER_ID );
   }
 

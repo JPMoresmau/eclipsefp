@@ -2,11 +2,11 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.cabal.ui.internal.editors.outline;
 
-import net.sf.eclipsefp.haskell.cabal.core.model.ExecutableStanza;
-import net.sf.eclipsefp.haskell.cabal.core.model.GeneralStanza;
-import net.sf.eclipsefp.haskell.cabal.core.model.LibraryStanza;
 import net.sf.eclipsefp.haskell.cabal.ui.internal.util.CabalUIImages;
 import net.sf.eclipsefp.haskell.cabal.ui.internal.util.IImageNames;
+import net.sf.eclipsefp.haskell.core.cabalmodel.ExecutableStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.GeneralStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.LibraryStanza;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

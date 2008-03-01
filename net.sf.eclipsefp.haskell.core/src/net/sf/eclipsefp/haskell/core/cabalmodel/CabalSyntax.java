@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.cabal.core;
+package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 /** <p>contains constant definitions for the elements of the Cabal
   * syntax.</p> 

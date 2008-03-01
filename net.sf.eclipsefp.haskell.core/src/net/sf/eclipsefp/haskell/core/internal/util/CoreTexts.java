@@ -12,6 +12,8 @@ import org.eclipse.osgi.util.NLS;
 public final class CoreTexts extends NLS {
 
   // message fields
+  public static String cabalBuilder_noCabal;
+
   public static String checkOutFoldersOperation_checkingBin;
   public static String checkOutFoldersOperation_checkingOutput;
   public static String checkOutFoldersOperation_cleaning;

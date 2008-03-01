@@ -1,6 +1,6 @@
 // Copyright (c) 2006 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
-package net.sf.eclipsefp.haskell.cabal.core.model;
+package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 /** <p>a stanza for an executable.</p> 
   *
