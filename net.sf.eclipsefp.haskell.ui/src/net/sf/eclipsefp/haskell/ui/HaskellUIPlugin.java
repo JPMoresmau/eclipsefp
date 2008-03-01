@@ -14,7 +14,6 @@ package net.sf.eclipsefp.haskell.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
@@ -23,7 +22,6 @@ import net.sf.eclipsefp.haskell.ui.editor.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.editor.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -145,17 +143,18 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 	// logging
 	// ////////
 
-	public static void log(final String message, final int severity) {
-		Status status = new Status(severity, getPluginId(), IStatus.OK,
-				message, null);
-		getDefault().getLog().log(status);
+	public static void log( final String message, final int severity ) {
+	  logg( message, severity, null );
+  }
+
+	public static void log( final Throwable throwable ) {
+	  logg( throwable.getMessage(), IStatus.ERROR, throwable );
 	}
 
-	public static void log(final String message, final Throwable throwable) {
-		Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK,
-				message, throwable);
-		getDefault().getLog().log(status);
-	}
+	public static void log( final String message, final Throwable thr ) {
+	  logg( message, IStatus.ERROR, thr );
+  }
+
 
 	// convenience methods for the Haskell UI
 	// ///////////////////////////////////////
@@ -191,4 +190,11 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage();
 	}
+
+  private static void logg( final String message, final int severity,
+      final Throwable thr ) {
+    String msg = message == null ? "[No details]" : message;
+    Status status = new Status( severity, getPluginId(), IStatus.OK, msg, thr );
+    getDefault().getLog().log( status );
+  }
 }

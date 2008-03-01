@@ -45,12 +45,9 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
       } else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
         result.addAll( treeElement.getChildren() );
-      } else {
-        System.out.println( "HaskellResourceExtensionCP.getChildren() " + parentElement );
       }
     } catch( final CoreException cex ) {
-      // TODO lf
-      cex.printStackTrace();
+      HaskellUIPlugin.log( cex );
     }
     return result.toArray();
   }
@@ -121,8 +118,8 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         list.add( projectExecutable );
       }
     } catch( CoreException ex ) {
-      String msg = "Problem determining project executable for "
-          + project.getName();
+      String msg =   "Problem determining project executable for "
+                   + project.getName();
       HaskellUIPlugin.log( msg, ex );
     }
   }
