@@ -29,19 +29,9 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ResourceUtil {
 
-	/**
-	 * <p>
-	 * the file extension of Haskell source files.
-	 * </p>
-	 */
 	public static final String EXTENSION_HS = "hs"; //$NON-NLS-1$
-
-	/**
-	 * <p>
-	 * the file extension of literate Haskell source files.
-	 * </p>
-	 */
 	public static final String EXTENSION_LHS = "lhs"; //$NON-NLS-1$
+	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
 
 	/**
 	 * <p>

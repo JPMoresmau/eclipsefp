@@ -54,7 +54,7 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 	}
 
 	private boolean createFolders() {
-	    final String prefKey = ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT;
+	  String prefKey = ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT;
 		return getStore().getBoolean(prefKey);
 	}
 
