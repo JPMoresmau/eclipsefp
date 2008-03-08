@@ -414,6 +414,20 @@
         name="%projectExecutableFilter_name"
         description="%projectExecutableFilter_desc"
         id="net.sf.eclipsefp.haskell.ui.internal.views.filters.ProjectExecutableFilter"/>
+    <commonWizard
+		  menuGroupId="net.sf.eclipsefp.haskell.ui"
+		  type="new"
+		  wizardId="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard">
+		  <enablement>
+		    <or>
+		      <adapt type="org.eclipse.core.resources.IFolder" />
+		      <adapt type="org.eclipse.core.resources.IProject">
+		        <test property="org.eclipse.core.resources.projectNature" 
+		              value="net.sf.eclipsefp.haskell.core.project.HaskellNature"/>
+		      </adapt>
+		    </or>
+      </enablement>
+    </commonWizard>
   </extension>
   
 </plugin>
