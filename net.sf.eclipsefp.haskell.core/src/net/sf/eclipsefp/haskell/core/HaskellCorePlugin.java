@@ -114,6 +114,11 @@ public class HaskellCorePlugin extends Plugin {
     getDefault().getLog().log( status );
   }
 
+  public static void log( final Throwable thr ) {
+    String msg = thr.getMessage() == null ? "[No detail]" : thr.getMessage(); //$NON-NLS-1$
+    log( msg, thr );
+  }
+
   public static boolean isTracing( final String optionId ) {
     String option = getPluginId() + "/" + optionId; //$NON-NLS-1$
     String value = Platform.getDebugOption( option );
