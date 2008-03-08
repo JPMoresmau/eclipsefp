@@ -94,12 +94,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          version="2.7.6"/>
 
    <plugin
-         id="net.sf.eclipsefp.haskell.cabal.ui"
-         download-size="0"
-         install-size="0"
-         version="1.102.0"/>
-
-   <plugin
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"

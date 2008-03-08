@@ -58,6 +58,12 @@ public interface IImageNames {
   String INFIXL_DECL           = ID + ".INFIXL_DECL";
   String INFIXR_DECL           = ID + ".INFIXR_DECL";
 
+  // Cabal elements
+  String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA"; //$NON-NLS-1$
+  String LIBRARY_STANZA    = ID + ".LIBRARY_STANZA"; //$NON-NLS-1$
+  String GENERAL_STANZA    = ID + ".GENERAL_STANZA"; //$NON-NLS-1$
+  String TEMPLATE          = ID + ".TEMPLATE"; //$NON-NLS-1$
+
   // wizard banners
   String NEW_PROJECT = ID + ".NEW_PROJECT";
   String NEW_MODULE = ID + ".NEW_MODULE";

@@ -12,6 +12,8 @@ import org.eclipse.osgi.util.NLS;
 public final class UITexts extends NLS {
 
   // message fields
+  public static String cabalHyperLinkDetector_errorTitle;
+
   public static String hsImplementationDialog_binDir;
   public static String hsImplementationDialog_btnBrowse;
   public static String hsImplementationDialog_dlgBrowse;

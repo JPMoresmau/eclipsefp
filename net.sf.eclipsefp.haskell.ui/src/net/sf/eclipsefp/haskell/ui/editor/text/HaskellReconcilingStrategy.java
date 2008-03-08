@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrenceComputer;
+import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 
-/** <p> helper class that defines the model reconciling for the Haskell 
+/** <p> helper class that defines the model reconciling for the Haskell
   * editor.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class HaskellReconcilingStrategy implements IReconcilingStrategy,
@@ -38,7 +38,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     foldingStructureProvider = new HaskellFoldingStructureProvider( editor );
   }
 
-  
+
   // interface methods of IReconcilingStrategy
   // //////////////////////////////////////////
 
@@ -49,7 +49,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     }
   }
 
-  public void reconcile( final DirtyRegion dirtyRegion, 
+  public void reconcile( final DirtyRegion dirtyRegion,
                          final IRegion subRegion ) {
     reconcile();
   }
@@ -58,7 +58,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     reconcile();
   }
 
-  
+
   // interface methods of IReconcilingStrategyExtension
   // ///////////////////////////////////////////////////
 
@@ -70,7 +70,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     reconcile();
   }
 
-  
+
   // helping methods
   // ////////////////
 
@@ -89,7 +89,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
         if( cu != null ) {
           Shell shell = editor.getSite().getShell();
           if( shell != null && !shell.isDisposed() ) {
-            shell.getDisplay().asyncExec( new Runnable() {  
+            shell.getDisplay().asyncExec( new Runnable() {
               public void run() {
                 editor.setModel( cu );
                 if( markOccurrencesComputer != null ) {

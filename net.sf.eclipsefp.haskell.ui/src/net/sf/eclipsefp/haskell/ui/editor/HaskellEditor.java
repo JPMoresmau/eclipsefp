@@ -7,8 +7,8 @@ import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.text.HaskellCharacterPairMatcher;
-import net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences;
-import net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrenceComputer;
+import net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences;
+import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.views.outline.HaskellOutlinePage;
 import org.eclipse.core.runtime.Assert;
@@ -38,22 +38,22 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>The main editor class for the Haskell editor.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
-public class HaskellEditor extends TextEditor 
+public class HaskellEditor extends TextEditor
                            implements IEditorPreferenceNames {
 
-  
+
   /** <p>the id under which the Haskell editor is declared.</p> */
   public static final String ID = HaskellEditor.class.getName();
-  
+
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private MarkOccurrenceComputer markOccurrencesComputer;
 
   private ICompilationUnit model;
-  
+
   public void reveal( final IHaskellLanguageElement element ) {
     Assert.isNotNull( element );
     IDocument doc = getSourceViewer().getDocument();
@@ -68,10 +68,10 @@ public class HaskellEditor extends TextEditor
     getSourceViewer().revealRange( offset, length );
   }
 
-  
+
   // interface methods of TextEditor
   //////////////////////////////////
-  
+
   @Override
   protected void initializeEditor() {
     super.initializeEditor();
@@ -81,15 +81,15 @@ public class HaskellEditor extends TextEditor
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
   }
-  
+
   @Override
   protected boolean affectsTextPresentation( final PropertyChangeEvent evt ) {
     String prop = evt.getProperty();
     return super.affectsTextPresentation( evt ) || isAffectingProperty( prop );
   }
-  
+
   @Override
-  protected void configureSourceViewerDecorationSupport( 
+  protected void configureSourceViewerDecorationSupport(
       final SourceViewerDecorationSupport support ) {
     super.configureSourceViewerDecorationSupport( support );
     support.setCharacterPairMatcher( new HaskellCharacterPairMatcher() );
@@ -98,7 +98,7 @@ public class HaskellEditor extends TextEditor
     support.setMatchingCharacterPainterPreferenceKeys( bracketsKey, colorKey );
     support.setSymbolicFontName( getFontPropertyPreferenceKey() );
   }
-  
+
   @Override
   public void editorContextMenuAboutToShow( final IMenuManager menu ) {
     super.editorContextMenuAboutToShow( menu );
@@ -109,54 +109,54 @@ public class HaskellEditor extends TextEditor
       addAction( mmSource, "Uncomment" );
     }
   }
-  
+
   @Override
   protected void createActions() {
     super.createActions();
 
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
-    createTextOpAction( "ContentAssistProposal", 
-                        ISourceViewer.CONTENTASSIST_PROPOSALS, 
+    createTextOpAction( "ContentAssistProposal",
+                        ISourceViewer.CONTENTASSIST_PROPOSALS,
                         defId );
 
     // comment/uncomment
-    createTextOpAction( "Comment", 
-                        ITextOperationTarget.PREFIX, 
+    createTextOpAction( "Comment",
+                        ITextOperationTarget.PREFIX,
                         IActionDefinitionIds.COMMENT );
-    createTextOpAction( "Uncomment", 
-                        ITextOperationTarget.STRIP_PREFIX, 
+    createTextOpAction( "Uncomment",
+                        ITextOperationTarget.STRIP_PREFIX,
                         IActionDefinitionIds.UNCOMMENT );
   }
-  
+
   @Override
-  protected ISourceViewer createSourceViewer( final Composite parent, 
-                                              final IVerticalRuler ruler, 
+  protected ISourceViewer createSourceViewer( final Composite parent,
+                                              final IVerticalRuler ruler,
                                               final int styles ) {
     // copied this from the super class, replaced source viewer with
     // projection viewer
     fAnnotationAccess = createAnnotationAccess();
     fOverviewRuler = createOverviewRuler( getSharedColors() );
-    ISourceViewer viewer = new ProjectionViewer( parent, 
-                                                 ruler, 
-                                                 getOverviewRuler(), 
-                                                 isOverviewRulerVisible(), 
+    ISourceViewer viewer = new ProjectionViewer( parent,
+                                                 ruler,
+                                                 getOverviewRuler(),
+                                                 isOverviewRulerVisible(),
                                                  styles);
     // ensure decoration support has been created and configured.
     getSourceViewerDecorationSupport(viewer);
     return viewer;
   }
-  
+
   @Override
   public void createPartControl( final Composite parent ) {
     super.createPartControl( parent );
     ProjectionViewer projectionViewer = ( ProjectionViewer )getSourceViewer();
     projectionSupport = new ProjectionSupport( projectionViewer,
-                                               getAnnotationAccess(), 
+                                               getAnnotationAccess(),
                                                getSharedColors() );
     projectionSupport.install();
     projectionViewer.doOperation( ProjectionViewer.TOGGLE );
-    
+
     if( markOccurrencesComputer != null ) {
       ISelectionChangedListener listener = new ISelectionChangedListener() {
         public void selectionChanged( final SelectionChangedEvent event ) {
@@ -169,7 +169,7 @@ public class HaskellEditor extends TextEditor
     }
   }
 
-  /** <p>if we are asked for a ContentOutlinePage, we show what we have.</p> */ 
+  /** <p>if we are asked for a ContentOutlinePage, we show what we have.</p> */
   @Override
   public Object getAdapter( final Class required ) {
     Object result = null;
@@ -185,7 +185,7 @@ public class HaskellEditor extends TextEditor
     } else if ( projectionSupport != null ) {
       result = projectionSupport.getAdapter( getSourceViewer(), required );
     }
-    
+
     if( result == null ) {
       result = super.getAdapter( required );
     }
@@ -195,7 +195,7 @@ public class HaskellEditor extends TextEditor
   // supplement some TextEditor funtionality with specific handling
   // needed because we have an attached outline page
   /////////////////////////////////////////////////////////////////
-  
+
   @Override
   public void dispose() {
     if( outlinePage != null ) {
@@ -203,7 +203,7 @@ public class HaskellEditor extends TextEditor
     }
     super.dispose();
   }
-  
+
   @Override
   public void doRevertToSaved() {
     super.doRevertToSaved();
@@ -211,7 +211,7 @@ public class HaskellEditor extends TextEditor
       outlinePage.update();
     }
   }
-  
+
   @Override
   public void doSave( final IProgressMonitor monitor ) {
     super.doSave( monitor );
@@ -219,7 +219,7 @@ public class HaskellEditor extends TextEditor
       outlinePage.update();
     }
   }
-  
+
   @Override
   public void doSaveAs() {
     super.doSaveAs();
@@ -227,7 +227,7 @@ public class HaskellEditor extends TextEditor
       outlinePage.update();
     }
   }
-  
+
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
     super.doSetInput( input );
@@ -236,19 +236,19 @@ public class HaskellEditor extends TextEditor
     }
   }
 
-  
+
   // attribute setters and getters
   ////////////////////////////////
-  
+
   public ICompilationUnit getModel() {
     return model;
   }
 
   public void setModel( final ICompilationUnit model ) {
     this.model = model;
-  }  
+  }
 
-  
+
   // helping methods
   //////////////////
 
@@ -256,7 +256,7 @@ public class HaskellEditor extends TextEditor
     return    property.equals( EDITOR_COMMENT_COLOR )
            || property.equals( EDITOR_COMMENT_BOLD )
            || property.equals( EDITOR_LITERATE_COMMENT_COLOR )
-           || property.equals( EDITOR_LITERATE_COMMENT_BOLD )           
+           || property.equals( EDITOR_LITERATE_COMMENT_BOLD )
            || property.equals( EDITOR_DEFAULT_COLOR )
            || property.equals( EDITOR_DEFAULT_BOLD )
            || property.equals( EDITOR_FUNCTION_COLOR )
@@ -267,25 +267,23 @@ public class HaskellEditor extends TextEditor
            || property.equals( EDITOR_STRING_BOLD );
   }
 
-  private void createTextOpAction( final String name, 
+  private void createTextOpAction( final String name,
                                    final int targetId,
                                    final String actionDefinitionId ) {
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
-    Action action = new TextOperationAction( bundle, 
-                                             name + ".", 
-                                             this, 
+    Action action = new TextOperationAction( bundle,
+                                             name + ".",
+                                             this,
                                              targetId );
     action.setActionDefinitionId( actionDefinitionId );
     setAction( name, action );
     markAsStateDependentAction( name, true );
   }
-  
+
   private void initMarkOccurrences() {
     CohatoeServer server = CohatoeServer.getInstance();
-    // TODO lf this is generic from Cohatoe 0.6, so we don't need the cast 
-    Object obj = server.createFunction( IMarkOccurrences.class );
-    if( obj != null ) {
-      IMarkOccurrences mo = ( IMarkOccurrences )obj;
+    IMarkOccurrences mo = server.createFunction( IMarkOccurrences.class );
+    if( mo != null ) {
       markOccurrencesComputer = new MarkOccurrenceComputer( this, mo );
     }
   }

@@ -31,6 +31,8 @@
          </description>
       </wizard>
    </extension>
+   
+   <!-- [Editors] Haskell code editor -->
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -50,6 +52,36 @@
             id="net.sf.eclipsefp.haskell.ui.editor.HaskellDocumentProvider">
       </provider>
    </extension>
+
+   <!-- [Editors] Cabal editor -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditorContributor"
+            default="true"
+            extensions="cabal"
+            icon="$nl$/icons/eview16/cabal.gif"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor"
+            name="%cabalEditor_name"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            extensions="cabal"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalDocProvider"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalDocProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            name="%templateContext_name"
+            id="cabalPackageDescriptionTemplates"/>
+      <include file="templates/templates.xml"/>
+   </extension>
+
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
@@ -269,8 +301,8 @@
       <extension
          point="de.leiffrenzel.cohatoe.server.core.haskellFunctions">
       <haskellFunction
-            implementation="net.sf.eclipsefp.haskell.ui.internal.editor.text.MarkOccurrences"
-            interface="net.sf.eclipsefp.haskell.ui.internal.editor.text.IMarkOccurrences"
+            implementation="net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrences"
+            interface="net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences"
             name="%markOccurrences_name"
             codeFile="$os$/obj/MarkOccurrences.o" />
    </extension>
