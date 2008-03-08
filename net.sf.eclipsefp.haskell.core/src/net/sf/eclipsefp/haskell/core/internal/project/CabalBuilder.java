@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2007 by Leif Frenzel <himself@leiffrenzel.de>
+// Copyright (c) 2006-2008 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.internal.project;
 

@@ -1,4 +1,4 @@
--- Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
+-- Copyright (c) 2007-2008 by Leif Frenzel <himself@leiffrenzel.de>
 -- All rights reserved.
 --
 -- This is just a bridge to the code that does the real work, which was taken
