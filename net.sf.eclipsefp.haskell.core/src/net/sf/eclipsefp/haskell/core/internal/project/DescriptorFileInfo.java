@@ -2,9 +2,9 @@
 package net.sf.eclipsefp.haskell.core.internal.project;
 
 /** <p>Encapsulates information about and contents of the descriptor file
-  * that is created in the project. FP Projects store informations like 
-  * path settings etc. in these descriptor files.</p> 
-  * 
+  * that is created in the project. FP Projects store informations like
+  * path settings etc. in these descriptor files.</p>
+  *
   * @author Leif Frenzel
   */
 public class DescriptorFileInfo {
@@ -20,7 +20,7 @@ public class DescriptorFileInfo {
 
   // getters
   //////////
-  
+
   String getName() {
     return name;
   }

@@ -86,9 +86,6 @@
       <persistent value="true"/>
       <super type="net.sf.eclipsefp.haskell.core.problem"/>
    </extension>
-
-   <!-- Refactoring support -->
-   
    <extension
         point="de.leiffrenzel.cohatoe.server.core.haskellFunctions">
      <haskellFunction
@@ -97,5 +94,11 @@
            name="%pfRefactoring_name"
            codeFile="$os$/obj/MakePointFree.o">
      </haskellFunction>
-  </extension>
+     <haskellFunction
+           implementation="net.sf.eclipsefp.haskell.core.internal.project.ValidateCabalFile"
+           interface="net.sf.eclipsefp.haskell.core.internal.project.IValidateCabalFile"
+           name="%validateCabalFile_name"
+           codeFile="$os$/obj/ValidateCabalFile.o">
+     </haskellFunction>
+   </extension>
 </plugin>

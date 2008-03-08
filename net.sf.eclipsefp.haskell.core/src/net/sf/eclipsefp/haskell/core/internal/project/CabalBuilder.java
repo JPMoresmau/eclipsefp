@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 public class CabalBuilder extends IncrementalProjectBuilder {
 
@@ -26,16 +27,26 @@ public class CabalBuilder extends IncrementalProjectBuilder {
   @Override
   protected IProject[] build( final int kind,
                               final Map args,
-                              final IProgressMonitor monitor )
-                                                          throws CoreException {
+                              final IProgressMonitor pm ) throws CoreException {
     deleteAllMarkers();
     checkCabalFileExists();
+    checkCabalFile();
     return null; // null means no deltas requested from other projects
   }
 
 
   // helping functions
   ////////////////////
+
+  private void checkCabalFile() throws CoreException {
+    if( getCabalFile().exists() ) {
+      CohatoeServer server = CohatoeServer.getInstance();
+      IValidateCabalFile vc = server.createFunction( IValidateCabalFile.class );
+      if( vc != null ) {
+        vc.validate( getCabalFile() );
+      }
+    }
+  }
 
   private void deleteAllMarkers() throws CoreException {
     String id = HaskellCorePlugin.ID_PROJECT_PROBLEM_MARKER;
