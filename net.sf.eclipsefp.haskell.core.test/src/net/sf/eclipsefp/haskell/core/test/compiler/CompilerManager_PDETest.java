@@ -11,16 +11,15 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.core.test.compiler;
 
-import static net.sf.eclipsefp.haskell.core.test.compiler.CompilerTestUtil.*;
-
-import org.eclipse.core.resources.IFile;
-
+import static net.sf.eclipsefp.haskell.core.test.compiler.CompilerTestUtil.assertReceivedExpectedOutput;
+import static net.sf.eclipsefp.haskell.core.test.compiler.CompilerTestUtil.createListener;
+import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
-import junit.framework.TestCase;
+import org.eclipse.core.resources.IFile;
 
-public class CompilerManager_Test extends TestCase {
+public class CompilerManager_PDETest extends TestCase {
 
 	private ICompilerManager manager;
 
@@ -35,19 +34,19 @@ public class CompilerManager_Test extends TestCase {
 	public void testNotifiesCompilerListeners() {
 		ICompilerListener listener = createListener();
 		manager.addCompilerListener(listener);
-		
+
 		manager.getCompiler().compile((IFile) null);
-		
+
 		assertReceivedExpectedOutput(listener);
 	}
-	
+
 	public void testDoNotNotifyRemovedListeners() {
 		ICompilerListener listener = createListener();
 		manager.addCompilerListener(listener);
 		manager.removeCompilerListener(listener);
-		
+
 		manager.getCompiler().compile((IFile) null);
-		
+
 		assertEquals(0, listener.getOutputWriter().toString().length());
 	}
 

@@ -2,7 +2,6 @@ package net.sf.eclipsefp.haskell.core.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.sf.eclipsefp.haskell.core.test.compiler.CompilerManager_Test;
 import net.sf.eclipsefp.haskell.core.test.compiler.CompilerOutputItem_Test;
 import net.sf.eclipsefp.haskell.core.test.compiler.ListenableCompilerDecorator_Test;
 import net.sf.eclipsefp.haskell.core.test.halamo.LanguageModel_Test;
@@ -17,7 +16,6 @@ public class AllTests_Suite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTestSuite( CompilerManager_Test.class );
 		suite.addTestSuite( CompilerOutputItem_Test.class );
 		suite.addTestSuite( ListenableCompilerDecorator_Test.class );
 		suite.addTestSuite( ResourceUtil_Test.class );
