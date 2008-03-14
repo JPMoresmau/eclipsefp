@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fglasgow-exts #-}
 {-# OPTIONS -fvia-C -O2 -optc-O3 #-}
-module Plugin.Pl.Optimize (
+module Plugin.Pl.Op (
     optimize,
   ) where
 

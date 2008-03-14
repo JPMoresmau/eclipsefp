@@ -12,10 +12,11 @@ module MakePointFree where
 import Cohatoe.API
 
 import Plugin.Pl.Common
-import Plugin.Pl.Optimize
+import Plugin.Pl.Op
 import Plugin.Pl.Parser
 import Plugin.Pl.Transform
 
+resource :: Interface
 resource = plugin {
   pluginMain = performMakePointFree
 }

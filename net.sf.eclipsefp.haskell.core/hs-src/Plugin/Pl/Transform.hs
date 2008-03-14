@@ -1,4 +1,4 @@
-{-# OPTIONS -fvia-C -O2 -optc-O3 #-}
+{-# OPTIONS -fvia-C -O2 -optc-O3 -XPatternGuards #-}
 module Plugin.Pl.Transform (
     transform,
   ) where
