@@ -54,7 +54,8 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="1.102.0"/>
+         version="1.102.0"
+         unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.doc.user"
@@ -67,25 +68,29 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="1.102.0"/>
+         version="1.102.0"
+         unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.haddock"
          download-size="0"
          install-size="0"
-         version="1.102.0"/>
+         version="1.102.0"
+         unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="1.102.0"/>
+         version="1.102.0"
+         unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
-         version="1.102.0"/>
+         version="1.102.0"
+         unpack="false"/>
 
    <plugin
          id="org.antlr"
@@ -97,6 +102,45 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="1.102.0"/>
+         version="1.102.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.core.linux.gtk.x86"
+         os="linux"
+         ws="gtk"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="1.102.0"
+         fragment="true"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.core.macosx.carbon.x86"
+         os="macosx"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="1.102.0"
+         fragment="true"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.ui.linux.gtk.x86"
+         os="linux"
+         ws="gtk"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="1.102.0"
+         fragment="true"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.ui.macosx.carbon.x86"
+         os="macosx"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="1.102.0"
+         fragment="true"/>
 
 </feature>
