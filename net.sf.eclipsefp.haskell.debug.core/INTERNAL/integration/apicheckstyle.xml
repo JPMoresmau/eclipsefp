@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!--This configuration file was written by the eclipse-cs plugin configuration editor-->
+
+<!--
+api:
+
+-->
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+<property name="severity" value="warning"/>
+<module name="TreeWalker">
+<module name="JavadocType">
+<property name="scope" value="public"/>
+</module>
+<module name="JavadocMethod">
+<property name="scope" value="protected"/>
+<property name="allowUndeclaredRTE" value="true"/>
+</module>
+<module name="JavadocStyle">
+<property name="excludeScope" value="nothing"/>
+<property name="checkEmptyJavadoc" value="true"/>
+</module>
+<module name="JavadocType">
+<property name="scope" value="protected"/>
+</module>
+<module name="JavadocVariable">
+<property name="scope" value="protected"/>
+</module>
+</module>
+<module name="PackageHtml">
+</module>
+</module>

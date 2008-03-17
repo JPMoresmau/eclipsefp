@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!--This configuration file was written by the eclipse-cs plugin configuration editor-->
+
+<!--
+basic:
+
+-->
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+<property name="severity" value="warning"/>
+<module name="TreeWalker">
+<module name="ArrayTypeStyle">
+</module>
+<module name="FinalParameters">
+<property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+</module>
+<module name="UpperEll">
+</module>
+<module name="DeclarationOrder">
+</module>
+<module name="EmptyStatement">
+</module>
+<module name="FallThrough">
+</module>
+<module name="HiddenField">
+<property name="severity" value="ignore"/>
+<property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+<property name="ignoreConstructorParameter" value="true"/>
+<property name="ignoreSetter" value="true"/>
+</module>
+<module name="InnerAssignment">
+<property name="tokens" value="ASSIGN, BAND_ASSIGN, BOR_ASSIGN, BSR_ASSIGN, BXOR_ASSIGN, DIV_ASSIGN, MINUS_ASSIGN, MOD_ASSIGN, PLUS_ASSIGN, SL_ASSIGN, SR_ASSIGN, STAR_ASSIGN"/>
+</module>
+<module name="NestedIfDepth">
+<property name="max" value="3"/>
+</module>
+<module name="PackageDeclaration">
+</module>
+<module name="ReturnCount">
+<property name="max" value="1"/>
+</module>
+<module name="OperatorWrap">
+<property name="tokens" value="BAND, BOR, BSR, BXOR, COLON, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR"/>
+</module>
+<module name="TabCharacter">
+<metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="No tabs"/>
+<property name="severity" value="error"/>
+</module>
+<module name="RegexpHeader">
+<property name="header" value="^// Copyright \(c\) (\d\d\d\d-)?2008 by Leif Frenzel. All rights reserved.$\n^// This code is made available under the terms of the Eclipse Public License,$\n^// version 1.0 \(EPL\). See http://www.eclipse.org/legal/epl-v10.html$"/>
+</module>
+<module name="JavadocType">
+<property name="scope" value="public"/>
+</module>
+<module name="CyclomaticComplexity">
+<property name="max" value="7"/>
+</module>
+</module>
+</module>

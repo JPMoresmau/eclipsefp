@@ -42,15 +42,6 @@
       </initializer>
    </extension>
    <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            name="%haskellApplicationLaunchType_name"
-            delegate="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
-            modes="run"
-            id="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate">
-      </launchConfigurationType>
-   </extension>
-   <extension
          point="org.eclipse.team.core.fileTypes">
       <fileTypes
             type="text"

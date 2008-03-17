@@ -26,30 +26,4 @@
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchShortcuts">
-      <shortcut
-            label="%shortcut_label"
-            icon="icons/etool16/ghci16.gif"
-            class="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut"
-            modes="run"
-            id="net.sf.eclipsefp.haskell.ghccompiler.ui.launch.GhciLaunchShortcut">
-         <contextualLaunch>
-            <enablement>
-               <with variable="selection">
-                 <count value="1" />
-                 <iterate>
-                   <adapt type="org.eclipse.core.resources.IResource">
-                     <test property="net.sf.eclipsefp.haskell.core.isHaskellFile"/>
-                   </adapt>
-                 </iterate>
-               </with>
-            </enablement>
-            <contextLabel
-                  label="%contextLabel_label"
-                  mode="run">
-            </contextLabel>
-         </contextualLaunch>
-      </shortcut>
-   </extension>
 </plugin>

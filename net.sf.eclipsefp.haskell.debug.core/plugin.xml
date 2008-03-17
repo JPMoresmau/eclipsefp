@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="%haskellApplicationLaunchType_name"
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate">
+      </launchConfigurationType>
+   </extension>
+</plugin>

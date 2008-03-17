@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/etool16/hsicon16.gif"
+            configTypeID="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HaskellLaunchTabGroup"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HaskellLaunchTabGroup">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="%appLaunchShortcut_label"
+            icon="icons/etool16/hsicon16.gif"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
+                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%appLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+         <perspective
+               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
+            label="%ghciShortcut_label"
+            icon="icons/etool16/ghci16.gif"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                 <count value="1" />
+                 <iterate>
+                   <adapt type="org.eclipse.core.resources.IResource">
+                     <test property="net.sf.eclipsefp.haskell.core.isHaskellFile"/>
+                   </adapt>
+                 </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%ghciContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+</plugin>

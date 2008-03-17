@@ -167,54 +167,6 @@
          </enabledWhen>
       </page>
    </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            icon="icons/etool16/hsicon16.gif"
-            configTypeID="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
-            id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
-      </launchConfigurationTypeImage>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            type="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
-            class="net.sf.eclipsefp.haskell.ui.launch.HaskellLaunchTabGroup"
-            id="net.sf.eclipsefp.haskell.ui.launch.HaskellLaunchTabGroup">
-      </launchConfigurationTabGroup>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchShortcuts">
-      <shortcut
-            label="%appLaunchShortcut_label"
-            icon="icons/etool16/hsicon16.gif"
-            class="net.sf.eclipsefp.haskell.ui.launch.ExecutableLaunchShortcut"
-            modes="run"
-            id="net.sf.eclipsefp.haskell.ui.launch.ExecutableLaunchShortcut">
-         <contextualLaunch>
-            <enablement>
-               <with
-                     variable="selection">
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <test
-                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
-                     </test>
-                  </iterate>
-               </with>
-            </enablement>
-            <contextLabel
-                  label="%appLaunchContextLabel_label"
-                  mode="run">
-            </contextLabel>
-         </contextualLaunch>
-         <perspective
-               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
-         </perspective>
-      </shortcut>
-   </extension>
   <extension
          point="org.eclipse.ui.commands">
       <category
