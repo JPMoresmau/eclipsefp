@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
@@ -132,17 +133,8 @@ public class ResourceUtil {
 	 * </p>
 	 */
 	public static IContainer getSourceFolder(final IProject project)
-			throws CoreException
 	{
-		Assert.isTrue(project.hasNature(HaskellNature.NATURE_ID));
-		IContainer result;
-		IPath sourcePath = getHsProject(project).getSourcePath();
-		if (sourcePath.equals(project.getProjectRelativePath())) {
-			result = project;
-		} else {
-			result = project.getFolder(sourcePath);
-		}
-		return result;
+		return getHsProject(project).getSourceFolder();
 	}
 
 	/**
@@ -206,16 +198,15 @@ public class ResourceUtil {
 
 	/**
 	 * <p>
-	 * returns whether the specified folder is the source folder of its
+	 * returns whether the specified folder is one of the source folders of its
 	 * (Haskell) project.
 	 * </p>
 	 */
 	public static boolean isSourceFolder( final IFolder folder ) {
     IProject project = folder.getProject();
     IHaskellProject hsProject = HaskellProjectManager.get( project );
-    IPath sourcePath = hsProject.getSourcePath();
     IPath folderPath = folder.getProjectRelativePath();
-    return sourcePath.equals( folderPath );
+    return hsProject.getSourcePaths().contains( folderPath );
   }
 
 	public static boolean isInHaskellProject(final IResource resource) {
@@ -228,6 +219,36 @@ public class ResourceUtil {
 		}
 		return result;
 	}
+
+	/** <p>returns the path of the specified workspace file relative to the
+	  * source folder in the Haskell project.</p>
+	  *
+	  * @param file  a workspace file, must not be <code>null</code>
+	  * @param hp    a haskell project, must not be <code>null</code>
+	  */
+	public static String getSourceDirRelativeName( final IFile file,
+                                                 final IHaskellProject hp ) {
+    if( file == null || hp == null ) {
+      throw new IllegalArgumentException();
+    }
+    IPath projectRelPath = file.getProjectRelativePath();
+    String result = null;
+	  Iterator<IPath> it = hp.getSourcePaths().iterator();
+	  while( result == null && it.hasNext() ) {
+	    IPath sourcePath = it.next();
+	    if( sourcePath.isPrefixOf( projectRelPath ) ) {
+	      int num = projectRelPath.matchingFirstSegments( sourcePath );
+	      result = projectRelPath.removeFirstSegments( num ).toOSString();
+	    }
+	  }
+    if( result == null ) {
+      String msg =   file.getFullPath()
+                   + " is in no source folder in project " //$NON-NLS-1$
+                   + hp.getResource().getName();
+      throw new IllegalArgumentException( msg );
+    }
+    return result;
+  }
 
 
 	// helping methods

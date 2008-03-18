@@ -1,62 +1,36 @@
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.test.internal.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.test.PDETestUtil;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
 
-public class CabalBuilder_PDETest extends TestCase {
-
-  private static final String PROJECT_NAME = "p1";
-  private IProject project;
-
-  @Override
-  protected void setUp() throws Exception {
-    ProjectCreationOperation op = new ProjectCreationOperation();
-    op.setProjectName( PROJECT_NAME );
-    op.run( null );
-
-    IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
-    project = wsRoot.getProject( PROJECT_NAME );
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    project.delete( true, null );
-  }
-
-
-  // actual test cases
-  ////////////////////
+public class CabalBuilder_PDETest extends TestCaseWithProject {
 
   public void testNoCabalFileWarning() throws CoreException {
     assertTrue( project.exists() );
     assertFalse( project.getFile(  PROJECT_NAME + ".cabal" ).exists() );
-    waitForAutoBuild();
+    PDETestUtil.waitForAutoBuild();
 
     // no cabal file -> warning
-    assertMarker( IMarker.SEVERITY_WARNING, "Cabal file" );
+    assertMarker( IMarker.SEVERITY_WARNING, "No cabal file" );
     // cabal file -> no warning
     IFile cabalFile = createCabalFile();
-    waitForAutoBuild();
-    assertEquals( 0, getAllMarkers().length );
+    PDETestUtil.waitForAutoBuild();
+    assertNoMarkerWithMsg( IMarker.SEVERITY_WARNING, "No cabal file" );
 
     // again no cabal file -> warning
     cabalFile.delete( true, null );
-    waitForAutoBuild();
-    assertMarker( IMarker.SEVERITY_WARNING, "Cabal file" );
+    PDETestUtil.waitForAutoBuild();
+    assertMarker( IMarker.SEVERITY_WARNING, "No cabal file" );
   }
 
   private IFile createCabalFile() throws CoreException {
@@ -73,17 +47,37 @@ public class CabalBuilder_PDETest extends TestCase {
 
   // there is a marker on the project or one of its resources with the
   // specified severity and the message snipped is part or the marker message
-  private boolean assertMarker( final int severity,
-                                final String msg ) throws CoreException {
-    IMarker[] markers = getAllMarkers();
+  private void assertMarker( final int severity,
+                             final String msg ) throws CoreException {
+    List<IMarker> markers = getAllMarkers( severity );
     boolean result = false;
+    for( IMarker marker: markers ) {
+      String message = marker.getAttribute( IMarker.MESSAGE, "" );
+      result |= message.indexOf( msg ) != -1;
+    }
+    assertTrue( "Expecting marker containing: " + msg, result );
+  }
+
+  private void assertNoMarkerWithMsg( final int severity,
+                                      final String msg ) throws CoreException {
+    List<IMarker> markers = getAllMarkers( severity );
+    boolean result = true;
+    for( IMarker marker: markers ) {
+      String message = marker.getAttribute( IMarker.MESSAGE, "" );
+      result &= message.indexOf( msg ) == -1;
+    }
+    assertTrue( "Must have no marker containing: " + msg, result );
+  }
+
+  private List<IMarker> getAllMarkers( final int severity ) throws CoreException {
+    IMarker[] markers = getAllMarkers();
+    List<IMarker> result = new ArrayList<IMarker>();
     for( IMarker marker: markers ) {
       Object sev = marker.getAttribute( IMarker.SEVERITY );
       if( sev instanceof Integer ) {
         Integer integer = ( Integer )sev;
         if( integer.intValue() == severity ) {
-          String message = marker.getAttribute( IMarker.MESSAGE, "" );
-          result |= message.indexOf( msg ) != -1;
+          result.add( marker );
         }
       }
     }
@@ -93,24 +87,5 @@ public class CabalBuilder_PDETest extends TestCase {
   private IMarker[] getAllMarkers() throws CoreException {
     String id = HaskellCorePlugin.ID_PROJECT_PROBLEM_MARKER;
     return project.findMarkers( id, true, IResource.DEPTH_INFINITE );
-  }
-
-  private void waitForAutoBuild() throws CoreException {
-    IWorkspace workspace = ResourcesPlugin.getWorkspace();
-    workspace.build( IncrementalProjectBuilder.CLEAN_BUILD, null );
-    System.out.print( "  Waiting for autobuild to complete ..." ); //$NON-NLS-1$
-    IJobManager jobMan = Job.getJobManager();
-    boolean retry = true;
-    while( retry ) {
-      try {
-        jobMan.join( ResourcesPlugin.FAMILY_AUTO_REFRESH, null );
-        jobMan.join( ResourcesPlugin.FAMILY_AUTO_BUILD, null );
-        jobMan.join( ResourcesPlugin.FAMILY_MANUAL_BUILD, null );
-        retry = false;
-      } catch (Exception exc) {
-        // ignore and retry
-      }
-    }
-    System.out.print( " OK.\n" ); //$NON-NLS-1$
   }
 }

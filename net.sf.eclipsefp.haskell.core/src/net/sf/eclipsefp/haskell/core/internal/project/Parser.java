@@ -1,5 +1,5 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.core.project;
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -21,9 +21,9 @@ import org.xml.sax.InputSource;
  *
  * @author Leif Frenzel
  */
-class Parser implements IXMLNames {
+public class Parser implements IXMLNames {
 
-	static void readIn(final IFile projectDescriptor,
+	public static void readIn(final IFile projectDescriptor,
 		final HaskellProject project)
 	{
 		try {
@@ -83,7 +83,7 @@ class Parser implements IXMLNames {
 	{
 		if (rootElement != null
 				&& rootElement.getNodeName().equalsIgnoreCase(DOCUMENT_ELEMENT)) {
-			project.setSourcePath(getValue(rootElement, SOURCE_PATH_ELEMENT,
+			project.addSourcePath(getValue(rootElement, SOURCE_PATH_ELEMENT,
 											PATH_ATT));
 			project.setOutputPath(getValue(rootElement, OUTPUT_PATH_ELEMENT,
 											PATH_ATT));

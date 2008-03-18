@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectPropertiesEvent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +49,7 @@ public class ImportLibrariesList {
 			Preferences prefs = createPrefs();
 			prefs.put(KEY, encodeImportLibraries());
 			prefs.flush();
-			HaskellProjectManager.getInstance().broadcast(event);
+			HaskellProjectManager.broadcast(event);
 			lastPersisted = getAll();
 		} catch (final BackingStoreException basox) {
 			String msg = "Could not store import libraries for project " //$NON-NLS-1$

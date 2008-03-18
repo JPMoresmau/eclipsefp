@@ -78,7 +78,7 @@ public class ProjectFoldersDecorator extends LabelProvider
     Image result = null;
     if( folderPath.equals( hsProject.getBinPath() ) ) {
       result = getImage( baseImage, IImageNames.BIN_FOLDER_DECORATOR );
-    } else if( folderPath.equals( hsProject.getSourcePath() ) ) {
+    } else if( folderPath.equals( hsProject.getSourcePaths() ) ) {
       result = getImage( baseImage, IImageNames.SRC_FOLDER_DECORATOR );
     }
     return result;

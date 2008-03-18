@@ -1,5 +1,5 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.core.project;
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+package net.sf.eclipsefp.haskell.core.internal.project;
 
 /**
  * <p>
@@ -10,7 +10,7 @@ package net.sf.eclipsefp.haskell.core.project;
  *
  * @author Leif Frenzel
  */
-class DescriptorFile implements IXMLNames {
+public class DescriptorFile implements IXMLNames {
 
 	private static final String OPEN_TAG = "<haskellProject>"; //$NON-NLS-1$
 
@@ -86,14 +86,14 @@ class DescriptorFile implements IXMLNames {
     fTargetName = targetName;
   }
 
-  static String createDescriptorContent( final String sourcePath,
+  public static String createDescriptorContent( final String sourcePath,
       final String outputPath, final String binPath, final String targetName,
       final String compiler ) {
     return new DescriptorFile( sourcePath, outputPath, binPath, targetName,
         compiler ).toXML();
   }
 
-	static String createEmptyDescriptorContent() {
+	public static String createEmptyDescriptorContent() {
     return createDescriptorContent( "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
   }
 

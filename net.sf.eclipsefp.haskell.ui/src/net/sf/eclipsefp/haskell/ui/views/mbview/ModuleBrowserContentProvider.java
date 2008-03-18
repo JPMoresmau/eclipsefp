@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.ui.views.mbview;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
@@ -90,7 +89,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
 
   private void addSourceFolder( final IHaskellProject hsProject,
                                 final List<Object> list ) {
-    IPath sourcePath = hsProject.getSourcePath();
+    IPath sourcePath = hsProject.getSourcePaths().iterator().next();
     if( sourcePath.segmentCount() > 0 ) {
       IProject project = hsProject.getResource();
       IFolder sourceFolder = project.getFolder( sourcePath );
@@ -160,13 +159,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
   }
 
   private boolean isSourceFolder( final IProject project ) {
-    boolean result = false;
-    try {
-      result = ResourceUtil.getSourceFolder( project ) == project;
-    } catch( CoreException cex ) {
-      HaskellUIPlugin.log( "Unexpected problem", cex );
-    }
-    return result;
+    return ResourceUtil.getSourceFolder( project ) == project;
   }
 
   private void addHaskellSources( final IHaskellProject hsProject,

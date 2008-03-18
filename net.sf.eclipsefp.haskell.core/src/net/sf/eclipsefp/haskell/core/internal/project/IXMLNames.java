@@ -1,5 +1,5 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.core.project;
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+package net.sf.eclipsefp.haskell.core.internal.project;
 
 /** <p>contains common names used in the <code>.hsProject</code> descriptor
   * file (like tag names, attribute names etc.).</p>

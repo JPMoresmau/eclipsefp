@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.core.test.halamo.ProjectChangeMonitor_PDETest;
 import net.sf.eclipsefp.haskell.core.test.halamo.WorkspaceChangeMonitor_PDETest;
 import net.sf.eclipsefp.haskell.core.test.internal.project.CabalBuilder_PDETest;
 import net.sf.eclipsefp.haskell.core.test.internal.project.ProjectCreationOperation_PDETest;
+import net.sf.eclipsefp.haskell.core.test.internal.util.ResourceUtil_PDETest;
 import net.sf.eclipsefp.haskell.core.test.project.HaskellProjectCreationOperation_PDETest;
 import net.sf.eclipsefp.haskell.core.test.project.HaskellResource_PDETest;
 import net.sf.eclipsefp.haskell.core.test.project.ImportLibraries_PDETest;
@@ -23,13 +24,14 @@ public class AllTests_PDESuite {
 		suite.addTestSuite( SourceFileGenerator_PDETest.class );
 		suite.addTestSuite( HaskellPropertyTester_PDETest.class );
 		suite.addTestSuite( HaskellModelManager_PDETest.class );
-		suite.addTestSuite( HaskellResource_PDETest.class );
-		suite.addTestSuite( ProjectChangeMonitor_PDETest.class );
-		suite.addTestSuite( WorkspaceChangeMonitor_PDETest.class );
-		suite.addTestSuite( ProjectCreationOperation_PDETest.class );
 		suite.addTestSuite( HaskellProjectCreationOperation_PDETest.class );
-		suite.addTestSuite( ImportLibraries_PDETest.class );
 		suite.addTestSuite( ProjectCreationOperation_PDETest.class );
+		suite.addTestSuite( HaskellResource_PDETest.class );
+		suite.addTestSuite( ImportLibraries_PDETest.class );
+		suite.addTestSuite( ProjectChangeMonitor_PDETest.class );
+		suite.addTestSuite( ProjectCreationOperation_PDETest.class );
+    suite.addTestSuite( ResourceUtil_PDETest.class );
+		suite.addTestSuite( WorkspaceChangeMonitor_PDETest.class );
 		return suite;
 	}
 

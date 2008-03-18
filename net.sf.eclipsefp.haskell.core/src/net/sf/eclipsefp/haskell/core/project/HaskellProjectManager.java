@@ -8,6 +8,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.project.DescriptorFile;
+import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
+import net.sf.eclipsefp.haskell.core.internal.project.Parser;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IFile;
@@ -142,16 +145,19 @@ public class HaskellProjectManager {
   }
 
 
-  // (instance) methods used by classes of this package
-  /////////////////////////////////////////////////////
+  // (internal) methods used by classes of this plugin
+  ////////////////////////////////////////////////////
 
   /** <p>notifies all listeners that have registered with the
-    * HaskellProjectManager about the passed event.</p> */
-  void broadcast( final IProjectPropertiesEvent event ) {
-    for( int i = 0; i < listeners.size(); i++ ) {
-      Object obj = listeners.get( i );
-      IProjectPropertiesListener listener = ( IProjectPropertiesListener )obj;
-      listener.projectPropertyChanged( event );
+    * HaskellProjectManager about the passed event.</p>
+    *
+    * <p>Note: this is only for INTERNAL use. Clients are not supposed to
+    * call this method.</p>
+    */
+  public static void broadcast( final IProjectPropertiesEvent event ) {
+    Vector<IProjectPropertiesListener> lis = getInstance().listeners;
+    for( IProjectPropertiesListener li: lis ) {
+      li.projectPropertyChanged( event );
     }
   }
 

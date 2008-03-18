@@ -1,3 +1,4 @@
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.util.List;

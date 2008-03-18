@@ -1,3 +1,4 @@
+// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.test.project;
 
 import java.io.BufferedReader;
@@ -5,26 +6,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
-
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.test.internal.project.ProjectCreationOperationPDETestCase;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 
 public class HaskellProjectCreationOperation_PDETest extends
 		ProjectCreationOperationPDETestCase {
 
 	private Preferences fStore;
 
-	protected ProjectCreationOperation createOperation() {
+	@Override
+  protected ProjectCreationOperation createOperation() {
 		fStore = new Preferences();
 		fStore.setValue(ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true);
 		return new HaskellProjectCreationOperation(fStore);
@@ -84,17 +84,17 @@ public class HaskellProjectCreationOperation_PDETest extends
 		fStore.setValue(ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, false);
 
 		runOperation();
-		
+
 		IProject prj = getWorkspaceRoot().getProject(PROJECT_NAME);
 		//should only contain the project descriptors (.project and .hsproject)
 		assertEquals(2, prj.members().length);
-		
+
 		IFile f = prj.getFile(HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR);
 		assertValid(f);
 		assertEquals("", readContents(f));
 	}
 
-	private String readContents(IFile file) throws CoreException, IOException {
+	private String readContents(final IFile file) throws CoreException, IOException {
 		StringBuffer buf = new StringBuffer(1024);
 		InputStream input = file.getContents();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -107,7 +107,7 @@ public class HaskellProjectCreationOperation_PDETest extends
 		return buf.toString();
 	}
 
-	private void assertValid(IResource res) {
+	private void assertValid(final IResource res) {
 		assertNotNull(res);
 		assertTrue("Resource does not exist", res.exists());
 	}

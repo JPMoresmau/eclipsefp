@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.core.halamo;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
@@ -15,6 +18,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Watches for changes on an specific project and updates the internal language
@@ -50,28 +54,36 @@ public class ProjectChangeMonitor implements IResourceChangeListener {
 	// helping methods
 	// ////////////////
 
-	private void process(final IResourceDelta projectDelta) {
-		IProject project = (IProject) projectDelta.getResource();
-		try {
-			if (project.exists() && project.isOpen()
-					&& project.hasNature(HaskellNature.NATURE_ID)) {
-				IResourceDelta sourceDelta = getSourceDelta(projectDelta);
-				if (sourceDelta != null) {
-					sourceDelta.accept(visitor);
-				}
-			}
-		} catch (CoreException cex) {
-			String msg = "Could not process resource changes in the Haskell " //$NON-NLS-1$
-					+ "language model.\n" + "Project: " + project.getName();  //$NON-NLS-1$//$NON-NLS-2$
-			HaskellCorePlugin.log(msg, cex);
-		}
-	}
+	private void process( final IResourceDelta projectDelta ) {
+    IProject project = ( IProject )projectDelta.getResource();
+    try {
+      if(    project.isAccessible()
+          && project.hasNature( HaskellNature.NATURE_ID ) ) {
+        List<IResourceDelta> sourceDeltas = getSourceDeltas( projectDelta );
+        for( IResourceDelta sourceDelta: sourceDeltas ) {
+          if( sourceDelta != null ) {
+            sourceDelta.accept( visitor );
+          }
+        }
+      }
+    } catch( CoreException cex ) {
+      String msg = "Could not process resource changes in the Haskell " //$NON-NLS-1$
+          + "language model.\n" + "Project: " + project.getName(); //$NON-NLS-1$//$NON-NLS-2$
+      HaskellCorePlugin.log( msg, cex );
+    }
+  }
 
-	private IResourceDelta getSourceDelta(final IResourceDelta projectDelta) {
-		IProject project = (IProject) projectDelta.getResource();
-		IHaskellProject hp = HaskellProjectManager.get(project);
-		return projectDelta.findMember(hp.getSourcePath());
-	}
+	private List<IResourceDelta> getSourceDeltas( final IResourceDelta projectDelta ) {
+	  List<IResourceDelta> result = new ArrayList<IResourceDelta>();
+    IProject project = ( IProject )projectDelta.getResource();
+    IHaskellProject hp = HaskellProjectManager.get( project );
+    Set<IPath> sourcePaths = hp.getSourcePaths();
+    for( IPath sourcePath: sourcePaths ) {
+      IResourceDelta delta = projectDelta.findMember( sourcePath );
+      result.add( delta );
+    }
+    return result;
+  }
 
 	private IResourceDelta[] getProjectDeltas(final IResourceDelta rootDelta) {
 		return rootDelta.getAffectedChildren(WorkspaceChangeMonitor.TYPES, IResource.PROJECT);

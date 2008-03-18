@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.project;
 
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import org.eclipse.core.resources.IContainer;
@@ -35,10 +36,10 @@ public interface IHaskellProject extends IAdaptable {
 
 	/**
 	 * <p>
-	 * returns the path to the source folder of this IHaskellProject.
+	 * returns the paths to the source folders of this IHaskellProject.
 	 * </p>
 	 */
-	IPath getSourcePath();
+	Set<IPath> getSourcePaths();
 
 	/**
 	 * <p>
