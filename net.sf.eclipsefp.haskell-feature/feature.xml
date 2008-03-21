@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="FP: Haskell support for Eclipse"
-      version="1.102.0"
+      version="1.103.0"
       provider-name="eclipsefp.sourceforge.net">
 
    <description>
@@ -47,49 +47,49 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.haddock"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
@@ -102,7 +102,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
@@ -112,7 +112,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          arch="x86"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          fragment="true"/>
 
    <plugin
@@ -121,7 +121,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          arch="x86"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          fragment="true"/>
 
    <plugin
@@ -131,7 +131,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          arch="x86"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          fragment="true"/>
 
    <plugin
@@ -140,21 +140,21 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          arch="x86"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          fragment="true"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="1.102.0"
+         version="1.103.0"
          unpack="false"/>
 
 </feature>

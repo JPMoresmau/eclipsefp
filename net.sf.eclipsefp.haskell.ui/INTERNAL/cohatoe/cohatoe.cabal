@@ -2,7 +2,7 @@
 -- build the object files (declared in plugin.xml) from the Haskell
 -- sources (in hs-src/).
 Name:            cohatoe-plugin
-Version:         1.102.0
+Version:         1.103.0
 Build-depends:   base, cohatoe-api, haskell98
 Hs-Source-Dirs:  ../../hs-src
 Ghc-options:     -Wall -package-name main
