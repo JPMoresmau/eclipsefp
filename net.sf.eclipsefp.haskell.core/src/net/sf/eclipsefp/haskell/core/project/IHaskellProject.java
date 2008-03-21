@@ -41,6 +41,10 @@ public interface IHaskellProject extends IAdaptable {
 	 */
 	Set<IPath> getSourcePaths();
 
+	/** <p>returns the paths to the targets (executables or libs) of this
+	  * IHaskellProject.</p> */
+	Set<IPath> getTargetNames();
+
 	/**
 	 * <p>
 	 * returns the path to the output folder of this IHaskellProject.
@@ -55,14 +59,6 @@ public interface IHaskellProject extends IAdaptable {
 	 * </p>
 	 */
 	IPath getBinPath();
-
-	/**
-	 * <p>
-	 * returns the name of the target binary for this Haskell project. The
-	 * target name may be empty, but must not be null.
-	 * </p>
-	 */
-	String getTargetName();
 
 	/**
 	 * <p>

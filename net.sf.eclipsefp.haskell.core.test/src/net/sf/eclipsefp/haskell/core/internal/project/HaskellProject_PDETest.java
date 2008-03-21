@@ -1,18 +1,33 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.internal.project;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 
 public class HaskellProject_PDETest extends TestCaseWithProject {
 
-  public void testSingleSourcePath() {
-    HaskellProject hp = new HaskellProject( project );
-    assertEquals( 0, hp.getSourcePaths().size() );
-    assertEquals( project, hp.getSourceFolder() );
+  // interface methods of TestCase
+  ////////////////////////////////
 
-    hp.addSourcePath( "src" );
+  @Override
+  protected void tearDown() throws Exception {
+    HaskellProjectManager.clear();
+    super.tearDown();
+  }
+
+
+  // test cases
+  /////////////
+
+  public void testSingleSourcePath() {
+    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
     assertEquals( 1, hp.getSourcePaths().size() );
     assertEquals( project.getFolder( "src" ), hp.getSourceFolder() );
 
@@ -22,11 +37,7 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
   }
 
   public void testMultipleSourcePaths() {
-    HaskellProject hp = new HaskellProject( project );
-    assertEquals( 0, hp.getSourcePaths().size() );
-    assertEquals( project, hp.getSourceFolder() );
-
-    hp.addSourcePath( "src" );
+    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
     hp.addSourcePath( "test" );
     assertEquals( 2, hp.getSourcePaths().size() );
     // TODO lf we should really get two here
@@ -35,5 +46,37 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     assertTrue( ResourceUtil.isSourceFolder( project.getFolder( "src" ) ) );
     assertTrue( ResourceUtil.isSourceFolder( project.getFolder( "test" ) ) );
     assertFalse( ResourceUtil.isSourceFolder( project.getFolder( "crs" ) ) );
+  }
+
+  public void testTargetExecutable_single() throws CoreException {
+    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
+    assertEquals( 0, hp.getTargetNames().size() );
+
+    IPath path = new Path( "bla.exe" );
+    InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
+    project.getFile( path ).create( is, true, null );
+    hp.addTargetName( path );
+    assertEquals( 1, hp.getTargetNames().size() );
+
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
+  }
+
+  public void testTargetExecutable_multiple() throws CoreException {
+    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
+    assertEquals( 0, hp.getTargetNames().size() );
+
+    IPath path = new Path( "bin/bli.exe" );
+    IPath path2 = new Path( "bla.exe" );
+    InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
+    project.getFile( path ).create( is, true, null );
+    project.getFile( path2 ).create( is, true, null );
+    hp.addTargetName( path );
+    hp.addTargetName( path2 );
+    assertEquals( 2, hp.getTargetNames().size() );
+
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bin/bli.exe" ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
   }
 }

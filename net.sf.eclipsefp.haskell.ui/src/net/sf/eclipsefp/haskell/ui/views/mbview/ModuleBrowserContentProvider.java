@@ -101,7 +101,7 @@ class ModuleBrowserContentProvider implements IContentProvider,
                                      final List<Object> list ) {
     IProject project = hsProject.getResource();
     try {
-      IFile projectExecutable = ResourceUtil.getProjectExecutable( project );
+      IFile projectExecutable = ResourceUtil.getProjectExecutables( project )[ 0 ];
       if( projectExecutable != null ) {
         list.add( projectExecutable );
       }

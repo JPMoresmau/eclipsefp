@@ -31,9 +31,9 @@ public final class HaskellProject implements IHaskellProject {
 
 	private final IProject project;
 	private final Set<IPath> sourcePaths = new HashSet<IPath>();
+	private final Set<IPath> targetNames = new HashSet<IPath>();
 	private String outputPath = ""; //$NON-NLS-1$
 	private String binPath = ""; //$NON-NLS-1$
-	private String targetName = ""; //$NON-NLS-1$
 	private IHaskellCompiler compiler;
 
 	public HaskellProject( final IProject project ) {
@@ -53,16 +53,16 @@ public final class HaskellProject implements IHaskellProject {
     return Collections.unmodifiableSet( sourcePaths );
   }
 
+	public Set<IPath> getTargetNames() {
+	  return Collections.unmodifiableSet( targetNames );
+	}
+
 	public IPath getOutputPath() {
 		return getProjectRelativePath(outputPath);
 	}
 
 	public IPath getBinPath() {
 		return getProjectRelativePath(binPath);
-	}
-
-	public String getTargetName() {
-		return targetName;
 	}
 
 	public IImportLibrary[] getImportLibraries() {
@@ -122,17 +122,16 @@ public final class HaskellProject implements IHaskellProject {
     HaskellProjectManager.broadcast( event );
   }
 
-  public void setTargetName( final String targetName ) {
-    check( targetName );
-
+  public void addTargetName( final IPath targetName ) {
     String name = IHaskellProject.PROPERTY_TARGET_NAME;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
-    event.setOldValue( getTargetName() );
+    event.setOldValue( getTargetNames() );
 
-    this.targetName = targetName;
+    targetNames.add( targetName );
 
-    event.setNewValue( getTargetName() );
+    event.setNewValue( getTargetNames() );
     HaskellProjectManager.broadcast( event );
+
   }
 
   public IContainer getSourceFolder() {

@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -90,8 +91,8 @@ public class Parser implements IXMLNames {
 			project
 					.setBinPath(getValue(rootElement, BIN_PATH_ELEMENT,
 											PATH_ATT));
-			project.setTargetName(getValue(rootElement, TARGET_NAME_ELEMENT,
-											NAME_ATT));
+			project.addTargetName( new Path( getValue(rootElement, TARGET_NAME_ELEMENT,
+											NAME_ATT)));
 		}
 	}
 }

@@ -5,7 +5,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
@@ -60,29 +63,21 @@ public class ResourceUtil {
 	 * project must have the Haskell nature.
 	 * </p>
 	 */
-	public static IFile getProjectExecutable(final IProject project)
-			throws CoreException
-	{
-		Assert.isTrue(project.hasNature(HaskellNature.NATURE_ID));
+	public static IFile[] getProjectExecutables( final IProject project )
+      throws CoreException {
+    Assert.isTrue( project.hasNature( HaskellNature.NATURE_ID ) );
 
-		IFile result = null;
-		IHaskellProject hsProject = getHsProject(project);
-
-		IPath binPath = hsProject.getBinPath();
-		IContainer binContainer = project;
-		if (binPath.segmentCount() > 0) {
-			binContainer = project.getFolder(binPath);
-		}
-		IResource[] members = binContainer.members();
-		for (int i = 0; i < members.length; i++) {
-			String targetName = hsProject.getTargetName();
-			if (members[i].getType() == IResource.FILE
-					&& members[i].getName().startsWith(targetName)) {
-				result = (IFile) members[i];
-			}
-		}
-		return result;
-	}
+    List<IFile> result = new ArrayList<IFile>();
+    IHaskellProject hsProject = HaskellProjectManager.get( project );
+    Set<IPath> targetNames = hsProject.getTargetNames();
+    for( IPath path: targetNames ) {
+      IFile file = project.getFile( path );
+      if( file.exists() ) {
+        result.add( file );
+      }
+    }
+    return result.toArray( new IFile[ result.size() ] );
+  }
 
 	/**
 	 * <p>
@@ -185,10 +180,15 @@ public class ResourceUtil {
 	 * project.
 	 */
 	public static boolean isProjectExecutable( final IFile file ) {
+	  if( file == null ) {
+	    throw new IllegalArgumentException();
+	  }
     boolean result = false;
     try {
-      IFile exe = ResourceUtil.getProjectExecutable( file.getProject() );
-      result = file.equals( exe );
+      IFile[] exes = getProjectExecutables( file.getProject() );
+      for( IFile exe: exes ) {
+        result |= file.equals( exe );
+      }
     } catch( CoreException ex ) {
       String msg = "Problem determining project executable for "; //$NON-NLS-1$
       HaskellCorePlugin.log( msg + file.getName(), ex );

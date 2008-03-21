@@ -56,9 +56,11 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
 
   private void deleteExe( final IProgressMonitor mon ) throws CoreException {
     mon.subTask( CoreTexts.cleanOutFoldersOperation_removingExes );
-    IFile file = ResourceUtil.getProjectExecutable( project );
-    if( file != null ) {
-      file.delete( true, new SubProgressMonitor( mon, 3 ) );
+    IFile[] files = ResourceUtil.getProjectExecutables( project );
+    for( IFile file: files ) {
+      if( file != null && file.isAccessible() ) {
+        file.delete( true, new SubProgressMonitor( mon, 3 ) );
+      }
     }
   }
 

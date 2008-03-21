@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
@@ -113,10 +114,8 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   private void addProjectExecutable( final IProject project,
                                      final List<Object> list ) {
     try {
-      IFile projectExecutable = ResourceUtil.getProjectExecutable( project );
-      if( projectExecutable != null ) {
-        list.add( projectExecutable );
-      }
+      IFile[] executables = ResourceUtil.getProjectExecutables( project );
+      list.addAll( Arrays.asList( executables ) );
     } catch( CoreException ex ) {
       String msg =   "Problem determining project executable for "
                    + project.getName();

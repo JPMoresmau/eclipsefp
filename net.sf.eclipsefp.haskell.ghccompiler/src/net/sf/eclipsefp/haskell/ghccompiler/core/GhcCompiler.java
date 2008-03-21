@@ -121,11 +121,12 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 				+ path.toOSString();
 	}
 
-	private String getTargetName(final IHaskellProject haskellProject) {
-		String targetName = haskellProject.getTargetName();
-		if (targetName.equals("")) { //$NON-NLS-1$
-			targetName = "theResult"; //$NON-NLS-1$
-		}
-		return targetName;
-	}
+	private String getTargetName( final IHaskellProject haskellProject ) {
+    String result = "theResult"; //$NON-NLS-1$
+	  Set<IPath> targetNames = haskellProject.getTargetNames();
+    if( targetNames.size() > 0 ) {
+      result = targetNames.iterator().next().toOSString();
+	  }
+    return result;
+  }
 }

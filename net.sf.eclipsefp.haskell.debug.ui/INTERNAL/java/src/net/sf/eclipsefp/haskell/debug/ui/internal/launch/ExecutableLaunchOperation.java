@@ -53,7 +53,16 @@ class ExecutableLaunchOperation extends LaunchOperation {
   //////////////////
 
   private IFile findExecutable( final IResource res ) throws CoreException {
-    IFile result = ResourceUtil.getProjectExecutable( res.getProject() );
+    IFile result = null;
+    IFile[] exes = ResourceUtil.getProjectExecutables( res.getProject() );
+    for( IFile exe: exes ) {
+      if( res.equals( exe ) ) {
+        result = exe;
+      }
+    }
+    if( result == null && exes.length == 1 ) {
+      result = exes[ 0 ];
+    }
     if( result == null ) {
       String pattern = UITexts.executableLaunchOperations_errorMsg;
       String msg = NLS.bind( pattern, res.getName() );
