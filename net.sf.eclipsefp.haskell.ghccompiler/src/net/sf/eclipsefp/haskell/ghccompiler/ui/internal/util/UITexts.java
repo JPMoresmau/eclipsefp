@@ -17,6 +17,7 @@ public final class UITexts extends NLS {
 
   public static String ghciTab_note;
   public static String ghciTab_options;
+  public static String ghciTab_srcFolders;
 
   public static String ghcPreferencePage_desc;
   public static String ghcPreferencePage_general;
