@@ -8,7 +8,7 @@ import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import de.leiffrenzel.cohatoe.server.core.util.GHCSyntax;
 
 /** <p>contains common helping functionality.</p>
   *
@@ -23,12 +23,9 @@ public class Util implements IGhcParameters {
     IHsImplementation impl = msn.getCurrentHsImplementation();
     if( impl != null && impl.getBinDir() != null ) {
       result = new Path( impl.getBinDir() );
-      result = result.append( "ghc" ); //$NON-NLS-1$
-      if( Platform.OS_WIN32.equals( Platform.getOS() ) ) {
-        result = result.addFileExtension( "exe" ); //$NON-NLS-1$
-      }
+      result = result.append( GHCSyntax.GHC );
     }
-    return result == null ? "ghc" : result.toOSString(); //$NON-NLS-1$
+    return result == null ? GHCSyntax.GHC : result.toOSString();
   }
 
   public static String constructLibPath( final IHaskellProject hsProject ) {
