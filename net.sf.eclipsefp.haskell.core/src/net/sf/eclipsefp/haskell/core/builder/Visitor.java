@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import java.util.Collection;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
@@ -12,6 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
@@ -35,11 +37,25 @@ abstract class Visitor {
     return ResourceUtil.hasHaskellExtension( file );
   }
 
+  boolean isInSourceFolder( final IFile file ) {
+    if( file == null || !file.isAccessible() ) {
+      throw new IllegalArgumentException();
+    }
+    boolean result = false;
+    IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
+    Set<IPath> sourcePaths = hsProject.getSourcePaths();
+    for( IPath sourcePath: sourcePaths ) {
+      IPath src = file.getProject().getFullPath().append( sourcePath );
+      result |= src.isPrefixOf( file.getFullPath() );
+    }
+    return result;
+  }
+
   void compileFile( final IFile file ) {
-	IHaskellProject hsProject = HaskellProjectManager.get(file.getProject());
-	ICompilerOutput out = hsProject.compile(file);
+    IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
+    ICompilerOutput out = hsProject.compile( file );
     deleteMarkers( file );
-    markResource( file, out.getErrors());
+    markResource( file, out.getErrors() );
   }
 
   private void markResource( final IFile file,

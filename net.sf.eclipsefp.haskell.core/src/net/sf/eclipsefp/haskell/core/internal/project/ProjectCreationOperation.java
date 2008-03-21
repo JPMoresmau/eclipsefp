@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IFile;
@@ -13,6 +14,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -28,40 +30,47 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class ProjectCreationOperation {
 
+  private static final String ENC = "UTF-8"; //$NON-NLS-1$
+  private static final String EXT_CABAL = "cabal"; //$NON-NLS-1$
+  private static final String SETUP_HS = "Setup.hs"; //$NON-NLS-1$
+  private static final String NL = "\n"; //$NON-NLS-1$
+
 	private String fProjectName;
 	private String fLocation;
 
 	public void run( final IProgressMonitor passedMon ) {
-		IProgressMonitor mon = (passedMon == null) ? new NullProgressMonitor()
-				: passedMon;
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			public void run(final IProgressMonitor monitor)
-					throws CoreException {
-			  String msg = CoreTexts.projectCreationOperation_creating;
-				monitor.beginTask( msg, getDirectories().length + 3);
+    IProgressMonitor mon = ( passedMon == null ) ? new NullProgressMonitor()
+        : passedMon;
+    IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 
-				monitor.subTask( CoreTexts.projectCreationOperation_init );
-				IProject project = createProjectResource();
-				monitor.worked(1);
+      public void run( final IProgressMonitor monitor ) throws CoreException {
+        String msg = CoreTexts.projectCreationOperation_creating;
+        monitor.beginTask( msg, getDirectories().length + 6 );
 
-				monitor.subTask( CoreTexts.projectCreationOperation_natures );
-				addNatures(monitor, project);
+        monitor.subTask( CoreTexts.projectCreationOperation_init );
+        IProject project = createProjectResource();
+        monitor.worked( 1 );
 
-				monitor.subTask( CoreTexts.projectCreationOperation_dirs );
-				createDirectories(monitor, project);
+        monitor.subTask( CoreTexts.projectCreationOperation_natures );
+        addNatures( monitor, project );
 
-				monitor.subTask( CoreTexts.projectCreationOperation_settings );
-				createDescriptionFile(monitor, project);
-			}
-		};
-		try {
-			ResourcesPlugin.getWorkspace().run(operation, mon);
-		} catch (CoreException cex) {
-			HaskellCorePlugin.log("Problem creating new project.", cex); //$NON-NLS-1$
-		} finally {
-			mon.done();
-		}
-	}
+        monitor.subTask( CoreTexts.projectCreationOperation_dirs );
+        createDirectories( monitor, project );
+
+        monitor.subTask( CoreTexts.projectCreationOperation_settings );
+        createDescriptionFile( monitor, project );
+        createProjectModelFiles( monitor, project );
+      }
+
+    };
+    try {
+      ResourcesPlugin.getWorkspace().run( operation, mon );
+    } catch( CoreException cex ) {
+      HaskellCorePlugin.log( "Problem creating new project.", cex ); //$NON-NLS-1$
+    } finally {
+      mon.done();
+    }
+  }
 
 	public void setProjectName(final String name) {
 		fProjectName = name;
@@ -83,38 +92,38 @@ public class ProjectCreationOperation {
 	// ////////////////
 
 	private IProject createProjectResource() throws CoreException {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final String projectName = getProjectName();
-		final String projectLocation = getProjectLocation();
+    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    final String projectName = getProjectName();
+    final String projectLocation = getProjectLocation();
 
-		IProject result = root.getProject(projectName);
-		IProjectDescription desc = null;
+    IProject result = root.getProject( projectName );
+    IProjectDescription desc = null;
 
-		if (!isDefaultLocation(projectLocation)) {
-			desc = result.getWorkspace().newProjectDescription(projectName);
-			desc.setLocation(new Path(projectLocation));
-		}
+    if( !isDefaultLocation( projectLocation ) ) {
+      desc = result.getWorkspace().newProjectDescription( projectName );
+      desc.setLocation( new Path( projectLocation ) );
+    }
 
-		if (!result.exists()) {
-			result.create(desc, null);
-		}
-		if (!result.isOpen()) {
-			result.open(null);
-		}
-		return result;
-	}
+    if( !result.exists() ) {
+      result.create( desc, null );
+    }
+    if( !result.isOpen() ) {
+      result.open( null );
+    }
+    return result;
+  }
 
-	private boolean isDefaultLocation(final String projectLocation) {
-		return null == projectLocation || "".equals(projectLocation) //$NON-NLS-1$
-				|| Platform.getLocation().toString().equals(projectLocation);
-	}
+	private boolean isDefaultLocation( final String projectLocation ) {
+    return null == projectLocation || "".equals( projectLocation ) //$NON-NLS-1$
+        || Platform.getLocation().toString().equals( projectLocation );
+  }
 
-	private void addNatures(final IProgressMonitor mon, final IProject project)
-			throws CoreException {
-		IProjectDescription desc = project.getDescription();
-		desc.setNatureIds(getProjectNatures());
-		project.setDescription(desc, new SubProgressMonitor(mon, 1));
-	}
+  private void addNatures( final IProgressMonitor mon, final IProject project )
+      throws CoreException {
+    IProjectDescription desc = project.getDescription();
+    desc.setNatureIds( getProjectNatures() );
+    project.setDescription( desc, new SubProgressMonitor( mon, 1 ) );
+  }
 
 	/**
 	 * Returns an array of project nature ids to be added to the created
@@ -123,8 +132,8 @@ public class ProjectCreationOperation {
 	 * This method should be overriden by clients.
 	 */
 	protected String[] getProjectNatures() {
-		return new String[0];
-	}
+    return new String[ 0 ];
+  }
 
 	/**
 	 * Returns an array of directory names to be created inside the project.
@@ -166,4 +175,35 @@ public class ProjectCreationOperation {
 		}
 	}
 
+	private void createProjectModelFiles( final IProgressMonitor mo,
+	                                      final IProject project )
+	                                                        throws CoreException {
+    createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
+    IPath cabalFile = new Path( getProjectName() ).addFileExtension( EXT_CABAL );
+    createFile( project, cabalFile, getCabalFileContent(), mo  );
+	}
+
+  private String getCabalFileContent() {
+    return   "Name:           " + getProjectName() + NL //$NON-NLS-1$
+           + "Version:        0.1 \n" //$NON-NLS-1$
+           + "Hs-Source-Dirs: src\n"; //$NON-NLS-1$
+  }
+
+  private void createFile( final IProject project,
+                           final IPath fileName,
+                           final String content,
+                           final IProgressMonitor mo ) throws CoreException {
+    try {
+      IProgressMonitor monitor = new SubProgressMonitor( mo, 1 );
+      IFile file = project.getFile( fileName );
+      InputStream is = new ByteArrayInputStream( content.getBytes( ENC ) );
+      file.create( is, true, monitor );
+    } catch( UnsupportedEncodingException uex ) {
+      HaskellCorePlugin.log( uex );
+    }
+  }
+
+  private String getSetupFileContent() {
+    return "import Distribution.Simple\nmain = defaultMain\n"; //$NON-NLS-1$
+  }
 }
