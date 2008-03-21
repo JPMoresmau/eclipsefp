@@ -33,6 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
     prefs.setDefault( USE_EXTRA_OPTIONS, false );
     prefs.setDefault( OPTIMIZATION_LEVEL, -1 );
     prefs.setDefault( GHCI_USES_GHC_OPTIONS, false );
+    prefs.setDefault( GHCI_SOURCE_FOLDERS, true );
     initializeLanguageDefaults( prefs );
     initializeOptimizationDefaults( prefs );
     initializeMoreOptimizationDefaults( prefs );

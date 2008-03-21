@@ -5,7 +5,11 @@ Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.ui.test
 Bundle-Version: 1.102.0
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.ui.test.internal.Activator
 Bundle-Vendor: The EclipseFP Project
-Require-Bundle: net.sf.eclipsefp.haskell.debug.ui,
+Require-Bundle: net.sf.eclipsefp.haskell.core,
+ net.sf.eclipsefp.haskell.core.test,
+ net.sf.eclipsefp.haskell.debug.ui,
+ net.sf.eclipsefp.haskell.ghccompiler,
+ org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.junit

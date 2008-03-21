@@ -13,4 +13,5 @@ public interface IGhcPreferenceNames {
   String OPTIMIZATION_LEVEL    = "OPTIMIZATION_LEVEL"; //$NON-NLS-1$
 
   String GHCI_USES_GHC_OPTIONS = "GHCI_USES_GHC_OPTIONS"; //$NON-NLS-1$
+  String GHCI_SOURCE_FOLDERS   = "GHCI_SOURCE_FOLDERS"; //$NON-NLS-1$
 }

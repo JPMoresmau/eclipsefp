@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
@@ -13,7 +14,8 @@ import net.sf.eclipsefp.haskell.ghccompiler.core.CompilerParams;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Preferences;
 
 /** <p>implements a delegate for launching GHCi.</p>
   *
@@ -37,8 +39,14 @@ public class GhciLaunchOperationDelegate
     if( !"".equals( libPath ) ) { //$NON-NLS-1$
       cmdLine.add(libPath);
     }
-    if( isUseGhcOptions() ) {
+    if( isPrefSet( IGhcPreferenceNames.GHCI_USES_GHC_OPTIONS ) ) {
       cmdLine.addAll( compilerParams.construct() );
+    }
+    if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
+      Set<IPath> sourcePaths = hsProject.getSourcePaths();
+      for( IPath path: sourcePaths ) {
+        cmdLine.add( "-i" + path.toString() ); //$NON-NLS-1$
+      }
     }
     addAll( cmdLine, selectedFiles );
     String[] result = new String[ cmdLine.size() ];
@@ -58,9 +66,9 @@ public class GhciLaunchOperationDelegate
   // helping methods
   //////////////////
 
-  private boolean isUseGhcOptions() {
-    IPreferenceStore ps = GhcCompilerPlugin.getDefault().getPreferenceStore();
-    return ps.getBoolean( IGhcPreferenceNames.GHCI_USES_GHC_OPTIONS );
+  private boolean isPrefSet( final String name ) {
+    Preferences prefs = GhcCompilerPlugin.getDefault().getPluginPreferences();
+    return prefs.getBoolean( name );
   }
 
   private void addAll( final List<String> cmdLine, final IFile[] selectedFiles ) {

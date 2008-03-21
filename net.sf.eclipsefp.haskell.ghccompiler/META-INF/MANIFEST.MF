@@ -17,5 +17,5 @@ Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.ec
  net.sf.eclipsefp.haskell.ghccompiler.ui.launch
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: net.sf.eclipsefp.haskell.ghccompiler;x-friends:="net.sf.eclipsefp.haskell.debug.ui",
- net.sf.eclipsefp.haskell.ghccompiler.core.preferences;x-friends:="net.sf.eclipsefp.haskell.debug.ui"
+Export-Package: net.sf.eclipsefp.haskell.ghccompiler;x-friends:="net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.ui.test",
+ net.sf.eclipsefp.haskell.ghccompiler.core.preferences;x-friends:="net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.ui.test"
