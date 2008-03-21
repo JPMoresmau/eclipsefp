@@ -28,6 +28,13 @@ automated unit tests and manual feature tests.
   - check the outline works (shows top-level declarations)
   - check the mark-occurrences function in the editor works 
   - create a Hello-World program and execute the executable
+  - check that the Project Explorer shows the GHC installation (Haskell impl)
+    as node
+
+- Cohatoe-based functionality
+
+  - try the point-free refactoring
+  - check that invalid Cabal files are markered
 
 - Help
 
