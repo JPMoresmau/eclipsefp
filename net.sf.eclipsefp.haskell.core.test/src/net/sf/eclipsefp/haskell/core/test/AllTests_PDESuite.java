@@ -2,18 +2,18 @@ package net.sf.eclipsefp.haskell.core.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.sf.eclipsefp.haskell.core.test.code.SourceFileGenerator_PDETest;
-import net.sf.eclipsefp.haskell.core.test.compiler.CompilerManager_PDETest;
-import net.sf.eclipsefp.haskell.core.test.expressions.HaskellPropertyTester_PDETest;
-import net.sf.eclipsefp.haskell.core.test.halamo.HaskellModelManager_PDETest;
-import net.sf.eclipsefp.haskell.core.test.halamo.ProjectChangeMonitor_PDETest;
-import net.sf.eclipsefp.haskell.core.test.halamo.WorkspaceChangeMonitor_PDETest;
-import net.sf.eclipsefp.haskell.core.test.internal.project.CabalBuilder_PDETest;
-import net.sf.eclipsefp.haskell.core.test.internal.project.ProjectCreationOperation_PDETest;
-import net.sf.eclipsefp.haskell.core.test.internal.util.ResourceUtil_PDETest;
-import net.sf.eclipsefp.haskell.core.test.project.HaskellProjectCreationOperation_PDETest;
-import net.sf.eclipsefp.haskell.core.test.project.HaskellResource_PDETest;
-import net.sf.eclipsefp.haskell.core.test.project.ImportLibraries_PDETest;
+import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator_PDETest;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager_PDETest;
+import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester_PDETest;
+import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager_PDETest;
+import net.sf.eclipsefp.haskell.core.halamo.ProjectChangeMonitor_PDETest;
+import net.sf.eclipsefp.haskell.core.halamo.WorkspaceChangeMonitor_PDETest;
+import net.sf.eclipsefp.haskell.core.internal.project.CabalBuilder_PDETest;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation_PDETest;
+import net.sf.eclipsefp.haskell.core.internal.util.ResourceUtil_PDETest;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation_PDETest;
+import net.sf.eclipsefp.haskell.core.project.HaskellResource_PDETest;
+import net.sf.eclipsefp.haskell.core.project.ImportLibraries_PDETest;
 
 public class AllTests_PDESuite {
 

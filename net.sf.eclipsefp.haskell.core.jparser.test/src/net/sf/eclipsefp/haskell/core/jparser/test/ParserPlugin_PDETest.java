@@ -6,10 +6,8 @@ import net.sf.eclipsefp.haskell.core.jparser.JavaParserBridge;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
-import net.sf.eclipsefp.haskell.core.test.project.util.MockFile;
-
+import net.sf.eclipsefp.haskell.core.project.util.MockFile;
 import org.eclipse.core.runtime.CoreException;
-
 import antlr.TokenStreamException;
 
 /**

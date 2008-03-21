@@ -11,42 +11,43 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ghccompiler.test.core;
 
-import static org.easymock.EasyMock.*;
-import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.*;
-
+import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.assertContains;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import java.io.File;
 import java.io.Writer;
 import java.util.Collection;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
-import net.sf.eclipsefp.haskell.core.test.internal.project.HaskellProject_PDETestCase;
+import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject_PDETestCase;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IProcessRunner;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 public class GhcCompilerTest_PDETest extends HaskellProject_PDETestCase {
-	
+
 	public void testParseOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
 		expect(procRunner.execute((File) anyObject(), (Writer) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
 			.andReturn("\nMain.hs:1:25-27: Not in scope: `fat'\n");
 		replay(procRunner);
-		
+
 		IFile f = createSourceFile("main = putStrLn $ show $ fat 4", "Main.hs");
 		IHaskellCompiler compiler = new GhcCompiler(procRunner);
 		ICompilerOutput output = compiler.compile(f);
 		Collection<ICompilerOutputItem> errors = output.getErrors();
-		
+
 		assertEquals(1, errors.size());
 		assertContains(1, 25, 27, "Not in scope: `fat'", errors);
-		
+
 		verify(procRunner);
 	}
-	
+
 	public void testParseMakeFlagOneErrorResult() throws CoreException {
 		IProcessRunner procRunner = createMock(IProcessRunner.class);
 		expect(procRunner.execute((File) anyObject(), (Writer) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
@@ -60,9 +61,9 @@ public class GhcCompilerTest_PDETest extends HaskellProject_PDETestCase {
 		IHaskellCompiler compiler = new GhcCompiler(procRunner);
 		ICompilerOutput output = compiler.compile(f);
 		Collection<ICompilerOutputItem> errors = output.getErrors();
-	
+
 		assertEquals(1, errors.size());
 		assertContains(6, 25, 27, "Not in scope: `fac'", errors);
 	}
-	
+
 }
