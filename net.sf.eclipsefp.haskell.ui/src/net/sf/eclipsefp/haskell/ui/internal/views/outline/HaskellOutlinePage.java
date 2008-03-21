@@ -1,39 +1,41 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.ui.views.outline;
+package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.HaskellLabelProvider;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
-import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
-import net.sf.eclipsefp.haskell.ui.views.common.HaskellLabelProvider;
-
 
 /** <p>The outline page for the Haskell editor.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class HaskellOutlinePage extends ContentOutlinePage {
-  
+
   private Object input;
   private final ITextEditor textEditor;
 
   public HaskellOutlinePage( final ITextEditor textEditor ) {
     this.textEditor = textEditor;
   }
-  
+
   @Override
   public void createControl( final Composite parent ) {
     super.createControl( parent );
 
     TreeViewer viewer = getTreeViewer();
-    ExperimentalCP provider = new ExperimentalCP(); 
+    ExperimentalCP provider = new ExperimentalCP();
     viewer.setContentProvider( provider );
     viewer.setLabelProvider( new HaskellLabelProvider() );
     viewer.addSelectionChangedListener( this );
@@ -42,7 +44,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
       viewer.setInput( input );
     }
   }
-  
+
   @Override
   public void selectionChanged( final SelectionChangedEvent event ) {
     super.selectionChanged( event );
@@ -75,13 +77,13 @@ public class HaskellOutlinePage extends ContentOutlinePage {
       }
     }
   }
-  
+
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final Object input ) {
     this.input = input;
     update();
   }
-  
+
   /** <p>updates the outline page.</p> */
   public void update() {
     TreeViewer viewer = getTreeViewer();

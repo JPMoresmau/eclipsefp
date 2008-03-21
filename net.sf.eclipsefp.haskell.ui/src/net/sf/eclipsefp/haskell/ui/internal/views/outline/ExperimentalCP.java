@@ -1,21 +1,34 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.ui.views.outline;
+package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.sf.eclipsefp.haskell.core.halamo.IClassDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
+import net.sf.eclipsefp.haskell.core.halamo.IDataDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IExportThingWith;
+import net.sf.eclipsefp.haskell.core.halamo.IFunctionBinding;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IInfixDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
+import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.parser.ParserManager;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.ExportGroup;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.ImportGroup;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IFileEditorInput;
 
-import net.sf.eclipsefp.haskell.core.halamo.*;
-import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
-import net.sf.eclipsefp.haskell.core.parser.ParserManager;
-import net.sf.eclipsefp.haskell.ui.views.common.ExportGroup;
-import net.sf.eclipsefp.haskell.ui.views.common.ImportGroup;
-
 /** <p>temporary content provider for the outline.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class ExperimentalCP implements ITreeContentProvider {
@@ -23,19 +36,19 @@ public class ExperimentalCP implements ITreeContentProvider {
   private Object input;
   // maps from modules to their import groups
   private final Map<IModule, ImportGroup> importGroups;
-  // maps from modules to their export groups  
+  // maps from modules to their export groups
   private final Map<IModule, ExportGroup> exportGroups;
 
-  
+
   public ExperimentalCP() {
     importGroups = new HashMap<IModule, ImportGroup>();
     exportGroups = new HashMap<IModule, ExportGroup>();
   }
-  
-  
+
+
   // interface methods of ITreeContentProvider
   ////////////////////////////////////////////
-  
+
   public Object[] getElements( final Object inputElement ) {
     Object[] result = new Object[ 0 ];
     if( input != null && input instanceof IFileEditorInput ) {
@@ -97,7 +110,7 @@ public class ExperimentalCP implements ITreeContentProvider {
     } else if( element instanceof IModule ) {
       result = input;
     } else if( element instanceof IHaskellLanguageElement ) {
-      result = ( ( IHaskellLanguageElement )element ).getParent(); 
+      result = ( ( IHaskellLanguageElement )element ).getParent();
     }
     return result;
   }
@@ -105,23 +118,23 @@ public class ExperimentalCP implements ITreeContentProvider {
   public boolean hasChildren( final Object element ) {
     return getChildren( element ).length > 0;
   }
-  
+
   public void dispose() {
     // unused
   }
-  
-  public void inputChanged( final Viewer viewer, 
-                            final Object oldInput, 
+
+  public void inputChanged( final Viewer viewer,
+                            final Object oldInput,
                             final Object newInput ) {
     this.input = newInput;
-    importGroups.clear();    
+    importGroups.clear();
     exportGroups.clear();
   }
 
-  
+
   // helping methods
   //////////////////
-  
+
   private Object[] getDeclarationChildren( final Object parentElement ) {
     Object[] result = new Object[ 0 ];
     if( parentElement instanceof IDataDeclaration ) {
@@ -147,7 +160,7 @@ public class ExperimentalCP implements ITreeContentProvider {
     } else if( parentElement instanceof ITypeSignature ) {
       ITypeSignature signature = ( ITypeSignature )parentElement;
       // policy for type signatures: if only one identifier is bound in the
-      // type signature, display that identifier directly; in that case, we 
+      // type signature, display that identifier directly; in that case, we
       // return no children
       if( signature.getIdentifiers().length > 1 ) {
         result = signature.getIdentifiers();

@@ -1,17 +1,32 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.ui.views.common;
+package net.sf.eclipsefp.haskell.ui.internal.views.common;
 
+import net.sf.eclipsefp.haskell.core.halamo.IClassDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IConstructor;
+import net.sf.eclipsefp.haskell.core.halamo.IDataDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IDefaultDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IExportModuleContent;
+import net.sf.eclipsefp.haskell.core.halamo.IExportSpecification;
+import net.sf.eclipsefp.haskell.core.halamo.IFunctionBinding;
+import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.halamo.IImport;
+import net.sf.eclipsefp.haskell.core.halamo.IInfixDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IInstanceDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IMatch;
+import net.sf.eclipsefp.haskell.core.halamo.IModule;
+import net.sf.eclipsefp.haskell.core.halamo.INewTypeDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.IPatternBinding;
+import net.sf.eclipsefp.haskell.core.halamo.ITypeDeclaration;
+import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import net.sf.eclipsefp.haskell.core.halamo.*;
-import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-
 /** <p>A label provider for Haskell language elements in views.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class HaskellLabelProvider extends LabelProvider implements IImageNames {
@@ -39,7 +54,7 @@ public class HaskellLabelProvider extends LabelProvider implements IImageNames {
     }
     return result;
   }
-  
+
   @Override
   public Image getImage( final Object element ) {
     Image result = null;
@@ -90,19 +105,19 @@ public class HaskellLabelProvider extends LabelProvider implements IImageNames {
 
   // helping methods
   //////////////////
-  
+
   private Image getDefaultImage() {
     String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
     return PlatformUI.getWorkbench().getSharedImages().getImage( imageKey );
   }
-  
+
   private String getTypeSignatureText( final ITypeSignature signature ) {
     String result = signature.getName();
     // policy for type signatures: if only one identifier is bound in the
     // type signature, display that identifier directly
     if( signature.getIdentifiers().length == 1 ) {
       result = signature.getIdentifiers()[ 0 ];
-    } 
+    }
     return result;
   }
 
@@ -112,17 +127,17 @@ public class HaskellLabelProvider extends LabelProvider implements IImageNames {
     // type signature, display that identifier directly
     if( decl.getOperators().length == 1 ) {
       result = decl.getOperators()[ 0 ];
-    } 
+    }
     return result;
   }
 
   private String getFunctionBindingText( final IFunctionBinding funBind ) {
     String result = funBind.getName();
-    // policy for function bindings: if only one identifier is bound, display 
+    // policy for function bindings: if only one identifier is bound, display
     // it directly
     if( funBind.getMatches().length == 1 ) {
       result = funBind.getMatches()[ 0 ].getName();
-    } 
+    }
     return result;
   }
   private Image getInfixImage( final IInfixDeclaration declaration ) {
