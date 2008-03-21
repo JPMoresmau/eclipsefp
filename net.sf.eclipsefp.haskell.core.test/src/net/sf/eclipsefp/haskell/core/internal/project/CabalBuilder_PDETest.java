@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.test.PDETestUtil;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -18,18 +17,18 @@ public class CabalBuilder_PDETest extends TestCaseWithProject {
   public void testNoCabalFileWarning() throws CoreException {
     assertTrue( project.exists() );
     assertFalse( project.getFile(  PROJECT_NAME + ".cabal" ).exists() );
-    PDETestUtil.waitForAutoBuild();
+    waitForAutoBuild();
 
     // no cabal file -> warning
     assertMarker( IMarker.SEVERITY_WARNING, "No cabal file" );
     // cabal file -> no warning
     IFile cabalFile = createCabalFile();
-    PDETestUtil.waitForAutoBuild();
+    waitForAutoBuild();
     assertNoMarkerWithMsg( IMarker.SEVERITY_WARNING, "No cabal file" );
 
     // again no cabal file -> warning
     cabalFile.delete( true, null );
-    PDETestUtil.waitForAutoBuild();
+    waitForAutoBuild();
     assertMarker( IMarker.SEVERITY_WARNING, "No cabal file" );
   }
 
