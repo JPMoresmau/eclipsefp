@@ -78,9 +78,9 @@ public class HaskellResourceExtensionLP extends LabelProvider {
           result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
         } else {
           String ext = file.getFileExtension();
-          if( ext.equals( ResourceUtil.EXTENSION_HS ) ) {
+          if( ResourceUtil.EXTENSION_HS.equals( ext ) ) {
             result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
-          } else if( ext.equals( ResourceUtil.EXTENSION_LHS ) ) {
+          } else if( ResourceUtil.EXTENSION_LHS.equals( ext ) ) {
             String key = IImageNames.LITERATE_SOURCE_FILE;
             result = HaskellUIImages.getImage( key );
           }
