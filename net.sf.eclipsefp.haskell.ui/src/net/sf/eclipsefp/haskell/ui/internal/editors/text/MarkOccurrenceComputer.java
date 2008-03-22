@@ -25,6 +25,9 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
   */
 public class MarkOccurrenceComputer {
 
+  private static final String ANNOTATION_TYPE
+    = "net.sf.eclipsefp.haskell.ui.occurrences"; //$NON-NLS-1$
+
   private final HaskellEditor editor;
   private IDocument document;
   private final IMarkOccurrences markOccurrences;
@@ -56,8 +59,7 @@ public class MarkOccurrenceComputer {
           Occurrence[] occs = markOccurrences.mark( content, line + 1, col );
           Map<Annotation, Position> map = computeAnnotations( occs );
           IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
-          amx.removeAllAnnotations();
-          amx.replaceAnnotations( new Annotation[ 0 ], map );
+          amx.replaceAnnotations( collectToRemove( model ), map );
         }
       } catch( final BadLocationException badlox ) {
         // this means we could not properly get information from the
@@ -69,6 +71,21 @@ public class MarkOccurrenceComputer {
 
   // helping functions
   ////////////////////
+
+  private Annotation[] collectToRemove( final IAnnotationModel model ) {
+    List<Annotation> result = new ArrayList<Annotation>();
+    Iterator iterator = model.getAnnotationIterator();
+    while( iterator.hasNext() ) {
+      Object next = iterator.next();
+      if( next instanceof Annotation ) {
+        Annotation annotation = ( Annotation )next;
+        if( ANNOTATION_TYPE.equals( annotation.getType() ) ) {
+          result.add( annotation );
+        }
+      }
+    }
+    return result.toArray( new Annotation[ result.size() ] );
+  }
 
   private IAnnotationModel getAnnotationModel( final HaskellEditor editor ) {
     IAnnotationModel result = null;
@@ -106,9 +123,7 @@ public class MarkOccurrenceComputer {
     Iterator<Position> it = poss.iterator();
     while( it.hasNext() ) {
       Position pos = it.next();
-      String key = "net.sf.eclipsefp.haskell.ui.occurrences"; //$NON-NLS-1$
-      Annotation ann = new Annotation( key, false, "" ); //$NON-NLS-1$
-      result.put( ann, pos );
+      result.put( new Annotation( ANNOTATION_TYPE, false, "" ), pos ); //$NON-NLS-1$
     }
     return result;
   }

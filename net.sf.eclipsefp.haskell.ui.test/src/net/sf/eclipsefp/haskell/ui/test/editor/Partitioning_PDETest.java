@@ -1,10 +1,11 @@
-// Copyright (c) 2007 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2007-2008 by Leif Frenzel. All rights reserved.
+// This code is made available under the terms of the Eclipse Public License,
+// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.test.editor;
 
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.ui.editor.HaskellDocumentProvider;
 import net.sf.eclipsefp.haskell.ui.editor.IPartitionTypes;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
