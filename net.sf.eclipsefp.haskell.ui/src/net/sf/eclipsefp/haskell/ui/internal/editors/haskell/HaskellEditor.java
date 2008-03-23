@@ -266,7 +266,9 @@ public class HaskellEditor extends TextEditor
            || property.equals( EDITOR_KEYWORD_COLOR )
            || property.equals( EDITOR_KEYWORD_BOLD )
            || property.equals( EDITOR_STRING_COLOR )
-           || property.equals( EDITOR_STRING_BOLD );
+           || property.equals( EDITOR_STRING_BOLD )
+           || property.equals( EDITOR_CHAR_COLOR )
+           || property.equals( EDITOR_CHAR_BOLD );
   }
 
   private void createTextOpAction( final String name,

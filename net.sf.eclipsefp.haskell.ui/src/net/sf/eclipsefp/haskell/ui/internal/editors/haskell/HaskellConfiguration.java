@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCommentScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcilingStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellStringScanner;
@@ -76,6 +77,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
     return new String[] { IDocument.DEFAULT_CONTENT_TYPE, // plain text
       IPartitionTypes.HS_LITERATE_COMMENT,
       IPartitionTypes.HS_COMMENT,
+      IPartitionTypes.HS_CHARACTER,
       IPartitionTypes.HS_STRING
     };
   }
@@ -123,6 +125,11 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
     DefaultDamagerRepairer sndr = new DefaultDamagerRepairer( stringScanner );
     reconciler.setDamager( sndr, IPartitionTypes.HS_STRING );
     reconciler.setRepairer( sndr, IPartitionTypes.HS_STRING );
+    // character literals
+    HaskellCharacterScanner charScanner = man.getCharacterScanner();
+    DefaultDamagerRepairer chndr = new DefaultDamagerRepairer( charScanner );
+    reconciler.setDamager( chndr, IPartitionTypes.HS_CHARACTER );
+    reconciler.setRepairer( chndr, IPartitionTypes.HS_CHARACTER );
     // literate comments
     HaskellCommentScanner litScanner = man.getLiterateCommentScanner();
     DefaultDamagerRepairer lcndr = new DefaultDamagerRepairer( litScanner );

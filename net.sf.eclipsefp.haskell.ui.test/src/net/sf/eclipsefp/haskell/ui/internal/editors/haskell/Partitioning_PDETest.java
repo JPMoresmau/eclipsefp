@@ -119,6 +119,27 @@ public class Partitioning_PDETest extends TestCase {
     asserPartitionType( document, 21, IDocument.DEFAULT_CONTENT_TYPE );
   }
 
+  // [ 1837352 ] [Editor] Highlighting quotations inside apostrophies
+  public void testQuotesInSingleQuotes() throws Exception {
+    IDocument document = createDocument( "putStrLn ['\"', '\"']\n" );
+    asserPartitionType( document, 9, IDocument.DEFAULT_CONTENT_TYPE );
+    asserPartitionType( document, 10, IPartitionTypes.HS_CHARACTER );
+    asserPartitionType( document, 12, IPartitionTypes.HS_CHARACTER );
+    asserPartitionType( document, 13, IDocument.DEFAULT_CONTENT_TYPE );
+    asserPartitionType( document, 15, IPartitionTypes.HS_CHARACTER );
+    asserPartitionType( document, 18, IDocument.DEFAULT_CONTENT_TYPE );
+  }
+
+  public void testSingleQuotesInQuotes() throws Exception {
+    IDocument document = createDocument( "putStrLn [\"'\", \"'\"]\n" );
+    asserPartitionType( document, 9, IDocument.DEFAULT_CONTENT_TYPE );
+    asserPartitionType( document, 10, IPartitionTypes.HS_STRING );
+    asserPartitionType( document, 12, IPartitionTypes.HS_STRING );
+    asserPartitionType( document, 13, IDocument.DEFAULT_CONTENT_TYPE );
+    asserPartitionType( document, 15, IPartitionTypes.HS_STRING );
+    asserPartitionType( document, 18, IDocument.DEFAULT_CONTENT_TYPE );
+  }
+
 
   // helping functions
   ////////////////////

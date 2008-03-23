@@ -31,6 +31,7 @@ public class ColorProvider implements IEditorPreferenceNames {
   public static final RGB DEFAULT_KEYWORD           = new RGB( 0, 0, 196 );
   public static final RGB DEFAULT_FUNCTION          = new RGB( 64, 192, 192 );
   public static final RGB DEFAULT_STRING            = new RGB( 128, 64, 64 );
+  public static final RGB DEFAULT_CHAR              = new RGB( 96, 96, 96 );
   public static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
   /** the singleton instance of ColorProvider. */

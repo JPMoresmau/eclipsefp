@@ -3,17 +3,27 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 
 /** <p>tab for syntax coloring preference settings.</p>
   *
-  * @author Leif Frenzel  
+  * @author Leif Frenzel
   */
 class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
@@ -26,17 +36,18 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
     new ColorListEntry( "Comments", EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ),
-    new ColorListEntry( "Literate Comments", 
-                        EDITOR_LITERATE_COMMENT_COLOR, 
+    new ColorListEntry( "Literate Comments",
+                        EDITOR_LITERATE_COMMENT_COLOR,
                         EDITOR_LITERATE_COMMENT_BOLD ),
     new ColorListEntry( "Strings", EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ),
-    new ColorListEntry( "Functions", 
-                        EDITOR_FUNCTION_COLOR, 
+    new ColorListEntry( "Characters", EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ),
+    new ColorListEntry( "Functions",
+                        EDITOR_FUNCTION_COLOR,
                         EDITOR_FUNCTION_BOLD ),
     new ColorListEntry( "Keywords", EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ),
     new ColorListEntry( "Others", EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
 
-  
+
   SyntaxTab( final IPreferenceStore store ) {
     super( store );
   }
@@ -44,7 +55,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
   // interface methods of Tab
   ///////////////////////////
-  
+
   @Override
   public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
@@ -62,7 +73,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
     createPreviewer( composite );
     initialize();
-    
+
     return composite;
   }
 
@@ -78,15 +89,15 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     backgroundColorSelector.setEnabled( !defaultBackgroud );
   }
 
-  
+
   // ui initialization methods
   ////////////////////////////
-  private void initializeColorList( final Composite composite, 
+  private void initializeColorList( final Composite composite,
                                     final Composite editorComposite ) {
-    colorList = new List( editorComposite, 
+    colorList = new List( editorComposite,
                           SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER );
     GridData gridData = new GridData( GridData.FILL_BOTH );
-    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( composite, 
+    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( composite,
                                                                    5 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
@@ -136,7 +147,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     editorComposite.setLayoutData( gridData );
     return editorComposite;
   }
-  
+
   private void initializeForeGroundLabel( final Composite parent ) {
     Label label = new Label( parent, SWT.LEFT );
     label.setText( "Foreground:" );
@@ -152,7 +163,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
       public void widgetSelected( final SelectionEvent e ) {
         boolean custom = rbBackgroundCustom.getSelection();
         backgroundColorSelector.setEnabled( custom );
-        getPreferenceStore().setValue( 
+        getPreferenceStore().setValue(
             IEditorPreferenceNames.EDITOR_BACKGROUND_DEFAULT_COLOR, !custom );
       }
     };
@@ -205,7 +216,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     previewer.getControl().setLayoutData( gridData );
   }
 
-  
+
   // helping methods
   //////////////////
 

@@ -27,6 +27,11 @@ public class HaskellPartitionScanner extends RuleBasedPartitionScanner {
                           "\"",
                           new Token( IPartitionTypes.HS_STRING ),
                           '\\' ),
+      // rule for character literals
+      new SingleLineRule( "'",
+                          "'",
+                          new Token( IPartitionTypes.HS_CHARACTER ),
+                          '\\' ),
       // rule for multi line comments
       new MultiLineRule( "{-", "-}", new Token( IPartitionTypes.HS_COMMENT ) ),
     };

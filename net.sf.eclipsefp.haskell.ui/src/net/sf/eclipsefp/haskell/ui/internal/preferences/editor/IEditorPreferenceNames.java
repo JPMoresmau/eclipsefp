@@ -5,36 +5,36 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /** <p>contains the preference names for the Haskell editor.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public interface IEditorPreferenceNames {
 
   // Inherited constants
-  String EDITOR_CURRENT_LINE 
+  String EDITOR_CURRENT_LINE
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
-  String EDITOR_CURRENT_LINE_COLOR 
+  String EDITOR_CURRENT_LINE_COLOR
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
-  String EDITOR_LINE_NUMBER_RULER 
+  String EDITOR_LINE_NUMBER_RULER
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
-  String EDITOR_LINE_NUMBER_RULER_COLOR 
+  String EDITOR_LINE_NUMBER_RULER_COLOR
     = AbstractDecoratedTextEditorPreferenceConstants
         .EDITOR_LINE_NUMBER_RULER_COLOR;
-  String EDITOR_PRINT_MARGIN 
+  String EDITOR_PRINT_MARGIN
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
-  String EDITOR_PRINT_MARGIN_COLOR 
+  String EDITOR_PRINT_MARGIN_COLOR
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
-  String EDITOR_PRINT_MARGIN_COLUMN 
+  String EDITOR_PRINT_MARGIN_COLUMN
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
-  String EDITOR_OVERVIEW_RULER 
+  String EDITOR_OVERVIEW_RULER
     = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
-  String EDITOR_BACKGROUND_DEFAULT_COLOR 
+  String EDITOR_BACKGROUND_DEFAULT_COLOR
     = AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT;
-  String EDITOR_BACKGROUND_COLOR 
+  String EDITOR_BACKGROUND_COLOR
     = AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND;
-  String EDITOR_FOREGROUND_COLOR 
+  String EDITOR_FOREGROUND_COLOR
     = AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND;
-  String EDITOR_FOREGROUND_DEFAULT_COLOR 
+  String EDITOR_FOREGROUND_DEFAULT_COLOR
    = AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT;
 
   // Custom constants
@@ -51,6 +51,8 @@ public interface IEditorPreferenceNames {
   String EDITOR_KEYWORD_BOLD               = "keywordBold";
   String EDITOR_STRING_COLOR               = "stringColor";
   String EDITOR_STRING_BOLD                = "stringBold";
+  String EDITOR_CHAR_COLOR                 = "charColor";
+  String EDITOR_CHAR_BOLD                  = "charBold";
   String EDITOR_DEFAULT_COLOR              = "defaultColor";
   String EDITOR_DEFAULT_BOLD               = "defaultBold";
   String EDITOR_SPACES_FOR_TABS            = "spacesForTabs";
