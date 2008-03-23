@@ -37,6 +37,8 @@ public final class CoreTexts extends NLS {
   public static String hsImplementation_noLocation;
   public static String hsImplementation_noName;
 
+  public static String invalidCabalFileException_noDetail;
+
   public static String projectCreationOperation_creating;
   public static String projectCreationOperation_dirs;
   public static String projectCreationOperation_init;

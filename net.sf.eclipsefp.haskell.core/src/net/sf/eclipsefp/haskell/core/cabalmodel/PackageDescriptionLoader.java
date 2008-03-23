@@ -17,6 +17,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
   */
 public class PackageDescriptionLoader {
 
+  // TODO lf also used in folding -> eliminate
   public static PackageDescription load( final String content ) {
     PackageDescription result = new PackageDescription();
     if( content != null && content.trim().length() > 0 ) {

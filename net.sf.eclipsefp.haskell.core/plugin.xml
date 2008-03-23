@@ -91,5 +91,11 @@
            name="%validateCabalFile_name"
            codeFile="$os$/obj/ValidateCabalFile.o">
      </haskellFunction>
+     <haskellFunction
+           codeFile="$os$/obj/ManipulateCabalFile.o"
+           implementation="net.sf.eclipsefp.haskell.core.internal.project.ManipulateCabalFile"
+           interface="net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile"
+           name="%manipulateCabalFile_name">
+      </haskellFunction>
    </extension>
 </plugin>

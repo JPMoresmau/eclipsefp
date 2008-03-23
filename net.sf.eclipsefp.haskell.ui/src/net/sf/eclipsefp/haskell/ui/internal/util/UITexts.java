@@ -12,7 +12,21 @@ import org.eclipse.osgi.util.NLS;
 public final class UITexts extends NLS {
 
   // message fields
+  public static String cabalFormEditor_tabSource;
+
   public static String cabalHyperLinkDetector_errorTitle;
+
+  public static String descriptionSection_entryDescription;
+  public static String descriptionSection_entryCategory;
+  public static String descriptionSection_entryHomepage;
+  public static String descriptionSection_entrySynopsis;
+  public static String descriptionSection_title;
+
+  public static String generalSection_entryAuthor;
+  public static String generalSection_entryMaintainer;
+  public static String generalSection_entryName;
+  public static String generalSection_entryVersion;
+  public static String generalSection_title;
 
   public static String hsImplementationDialog_binDir;
   public static String hsImplementationDialog_btnBrowse;
@@ -36,6 +50,11 @@ public final class UITexts extends NLS {
   public static String installedImplementationsPP_msg;
   public static String installedImplementationsPP_nothingSelected;
 
+  public static String legalSection_entryCopyright;
+  public static String legalSection_entryLicense;
+  public static String legalSection_entryLicenseFile;
+  public static String legalSection_title;
+
   public static String mkPointFree_refuseDlg_title;
   public static String mkPointFree_refuseDlg_message;
 
@@ -49,6 +68,7 @@ public final class UITexts extends NLS {
   public static String mkPointFreeDelegate_notApplicable;
   public static String mkPointFreeDelegate_roFile;
 
+  public static String overviewPage_title;
 
 
   private static final String BUNDLE_NAME

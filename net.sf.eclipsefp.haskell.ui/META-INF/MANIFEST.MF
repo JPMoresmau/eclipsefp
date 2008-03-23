@@ -20,7 +20,8 @@ Require-Bundle: de.leiffrenzel.cohatoe.server.core,
  org.eclipse.ui.navigator,
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.debug.ui
+ org.eclipse.debug.ui,
+ org.eclipse.ui.forms
 Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.dialog,

@@ -35,6 +35,14 @@ public class CabalEditor extends TextEditor {
     setSourceViewerConfiguration( new CabalConfiguration( this ) );
   }
 
+  IDocument getDocument() {
+    IDocument result = null;
+    if( getSourceViewer() != null ) {
+      result = getSourceViewer().getDocument();
+    }
+    return result;
+  }
+
   public void setPackageDescription( final PackageDescription packageDescription ) {
     this.packageDescription = packageDescription;
     if( outlinePage != null ) {

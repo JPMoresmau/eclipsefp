@@ -54,15 +54,14 @@
    </extension>
 
    <!-- [Editors] Cabal editor -->
-   <extension
-         point="org.eclipse.ui.editors">
+   <extension point="org.eclipse.ui.editors">
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor"
             contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditorContributor"
             default="true"
             extensions="cabal"
             icon="$nl$/icons/eview16/cabal.gif"
-            id="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor"
             name="%cabalEditor_name"/>
    </extension>
    <extension

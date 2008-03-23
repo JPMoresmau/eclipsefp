@@ -16,12 +16,12 @@ public class AllTests_Suite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite( CompilerOutputItem_Test.class );
-		suite.addTestSuite( ListenableCompilerDecorator_Test.class );
-		suite.addTestSuite( MultiplexedWriter_Test.class );
-		suite.addTestSuite( MarkerDesc_Test.class );
-		suite.addTestSuite( LanguageModel_Test.class );
-		suite.addTestSuite( Scope_Test.class );
 		suite.addTestSuite( ImportLibrariesList_Test.class );
+		suite.addTestSuite( LanguageModel_Test.class );
+		suite.addTestSuite( ListenableCompilerDecorator_Test.class );
+		suite.addTestSuite( MarkerDesc_Test.class );
+		suite.addTestSuite( MultiplexedWriter_Test.class );
+		suite.addTestSuite( Scope_Test.class );
 		return suite;
 	}
 
