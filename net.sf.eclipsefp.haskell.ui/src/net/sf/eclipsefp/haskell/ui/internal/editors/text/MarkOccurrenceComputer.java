@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.ui.editor.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;

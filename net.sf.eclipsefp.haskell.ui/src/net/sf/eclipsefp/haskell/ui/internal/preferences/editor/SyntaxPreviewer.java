@@ -1,12 +1,20 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+// This code is made available under the terms of the Eclipse Public License,
+// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.io.InputStream;
-
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellConfiguration;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -17,28 +25,23 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.editor.HaskellConfiguration;
-import net.sf.eclipsefp.haskell.ui.editor.HaskellDocumentProvider;
-
 /** <p>A source viewer that uses the Haskell editor's presentation helpers
-  * in order to display a preview of the current presentation preference 
+  * in order to display a preview of the current presentation preference
   * settings.</p>
   *
-  * @author Leif Frenzel 
+  * @author Leif Frenzel
   */
 class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
 
   private IPreferenceStore store;
-  private IPropertyChangeListener propertyChangeListener;  
+  private IPropertyChangeListener propertyChangeListener;
   private Color bgColor;
 
   SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
     super( parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     this.store = store;
     initializePropertyListener();
-    
+
     configure( new HaskellConfiguration( null ) );
     setEditable( false );
     getTextWidget().setFont( JFaceResources.getTextFont() );
@@ -47,7 +50,7 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
     setupDocument( document, IDocumentExtension3.DEFAULT_PARTITIONING );
     setDocument( document );
   }
-  
+
   @Override
   protected void handleDispose() {
     if( store != null ) {
@@ -64,20 +67,20 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
     super.handleDispose();
   }
 
-  
+
   // helping methods
   //////////////////
-  
+
   private boolean affectsPresentation( final PropertyChangeEvent event ) {
     String p = event.getProperty();
-    if(    EDITOR_BACKGROUND_COLOR.equals( p ) 
+    if(    EDITOR_BACKGROUND_COLOR.equals( p )
         || EDITOR_BACKGROUND_DEFAULT_COLOR.equals( p ) ) {
       return true;
     }
     return false;
   }
 
-  /** Creates a color from the information stored in the given preference 
+  /** Creates a color from the information stored in the given preference
    * store.   */
   private Color createColor( final String key, final Display display ) {
     Color color = null;
@@ -120,7 +123,7 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
       this.bgColor = color;
     }
   }
-  
+
   private void initializePropertyListener() {
     propertyChangeListener = new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
@@ -132,8 +135,8 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
     };
     store.addPropertyChangeListener( this.propertyChangeListener );
   }
-  
-  private void setupDocument( final IDocument document, 
+
+  private void setupDocument( final IDocument document,
                               final String partitioning ) {
     IDocumentPartitioner partitioner = getPartitioner();
     if( document instanceof IDocumentExtension3 ) {

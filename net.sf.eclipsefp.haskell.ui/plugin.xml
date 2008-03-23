@@ -39,17 +39,17 @@
             name="%haskellEditor_name"
             extensions="hs,lhs"
             icon="icons/etool16/hsicon16.gif"
-            class="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            id="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor">
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
       </editor>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">
       <provider
             extensions="hs,lhs"
-            class="net.sf.eclipsefp.haskell.ui.editor.HaskellDocumentProvider"
-            id="net.sf.eclipsefp.haskell.ui.editor.HaskellDocumentProvider">
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider">
       </provider>
    </extension>
 
@@ -217,8 +217,8 @@
          <action
                label="%firstCharAction_label"
                definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
-               class="net.sf.eclipsefp.haskell.ui.editor.actions.FirstCharAction"
-               id="net.sf.eclipsefp.haskell.editor.actions.firstChar"/>
+               class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.FirstCharAction"
+               id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.FirstCharAction"/>
       </editorContribution>
    </extension>
    <extension point="org.eclipse.ui.editors.annotationTypes">

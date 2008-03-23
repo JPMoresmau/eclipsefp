@@ -5,8 +5,8 @@ package net.sf.eclipsefp.haskell.ui.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.sf.eclipsefp.haskell.ui.test.editor.HaskellConfiguration_Test;
-import net.sf.eclipsefp.haskell.ui.test.editor.text.HaskellCharacterPairMatcher_Test;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellConfiguration_Test;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher_Test;
 
 /** collects all non-PDE test cases in this project.
   *

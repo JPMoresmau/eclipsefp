@@ -1,16 +1,15 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 
-import net.sf.eclipsefp.haskell.ui.editor.text.ColorProvider;
-
 
 /** <p>runs initialization code for default preference settings for the
   * Haskell editor.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
@@ -25,14 +24,14 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
   private static void initColors( final IPreferenceStore store ) {
     store.setDefault( EDITOR_FOREGROUND_DEFAULT_COLOR, true );
     store.setDefault( EDITOR_BACKGROUND_DEFAULT_COLOR, true );
-    
+
     conv( store, EDITOR_COMMENT_COLOR, ColorProvider.DEFAULT_COMMENT );
     store.setDefault( EDITOR_COMMENT_BOLD, false );
-    conv( store, 
-          EDITOR_LITERATE_COMMENT_COLOR, 
+    conv( store,
+          EDITOR_LITERATE_COMMENT_COLOR,
           ColorProvider.DEFAULT_LITERATE_COMMENT );
     store.setDefault( EDITOR_LITERATE_COMMENT_BOLD, false );
-    
+
     conv( store, EDITOR_FUNCTION_COLOR, ColorProvider.DEFAULT_FUNCTION );
     store.setDefault( EDITOR_FUNCTION_BOLD, true );
     conv( store, EDITOR_KEYWORD_COLOR, ColorProvider.DEFAULT_KEYWORD );
@@ -71,12 +70,12 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     store.setDefault( EDITOR_MATCHING_BRACKETS, true );
     store.setDefault( EDITOR_CURRENT_LINE, true );
     store.setDefault( EDITOR_PRINT_MARGIN, true );
-    
+
     conv( store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB( 192, 192, 192 ) );
   }
-  
-  private static void conv( final IPreferenceStore store, 
-                            final String key, 
+
+  private static void conv( final IPreferenceStore store,
+                            final String key,
                             final RGB rgb ) {
     PreferenceConverter.setDefault( store, key, rgb );
   }
