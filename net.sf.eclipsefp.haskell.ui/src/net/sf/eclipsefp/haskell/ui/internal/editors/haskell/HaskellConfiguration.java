@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCommentScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcilingStrategy;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellStringScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -71,10 +72,13 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
   }
 
 	@Override
-  public String[] getConfiguredContentTypes(final ISourceViewer sv) {
-		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, // plain text
-				IPartitionTypes.HS_LITERATE_COMMENT, IPartitionTypes.HS_COMMENT };
-	}
+  public String[] getConfiguredContentTypes( final ISourceViewer sv ) {
+    return new String[] { IDocument.DEFAULT_CONTENT_TYPE, // plain text
+      IPartitionTypes.HS_LITERATE_COMMENT,
+      IPartitionTypes.HS_COMMENT,
+      IPartitionTypes.HS_STRING
+    };
+  }
 
 	@Override
   public int getTabWidth(final ISourceViewer sourceViewer) {
@@ -104,22 +108,26 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		// for every content type we need a damager and a repairer:
-		// plain text between tags
 		ScannerManager man = ScannerManager.getInstance();
-		ITokenScanner codeScanner = man.getCodeScanner();
-		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(codeScanner);
-		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		// comments
-		HaskellCommentScanner commentScanner = man.getCommentScanner();
-		DefaultDamagerRepairer cndr = new DefaultDamagerRepairer(commentScanner);
-		reconciler.setDamager(cndr, IPartitionTypes.HS_COMMENT);
-		reconciler.setRepairer(cndr, IPartitionTypes.HS_COMMENT);
-		// literate comments
-		HaskellCommentScanner litScanner = man.getLiterateCommentScanner();
-		DefaultDamagerRepairer lcndr = new DefaultDamagerRepairer(litScanner);
-		reconciler.setDamager(lcndr, IPartitionTypes.HS_LITERATE_COMMENT);
-		reconciler.setRepairer(lcndr, IPartitionTypes.HS_LITERATE_COMMENT);
+    ITokenScanner codeScanner = man.getCodeScanner();
+    DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
+    reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
+    reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
+    // comments
+    HaskellCommentScanner commentScanner = man.getCommentScanner();
+    DefaultDamagerRepairer cndr = new DefaultDamagerRepairer( commentScanner );
+    reconciler.setDamager( cndr, IPartitionTypes.HS_COMMENT );
+    reconciler.setRepairer( cndr, IPartitionTypes.HS_COMMENT );
+    // string literals
+    HaskellStringScanner stringScanner = man.getStringScanner();
+    DefaultDamagerRepairer sndr = new DefaultDamagerRepairer( stringScanner );
+    reconciler.setDamager( sndr, IPartitionTypes.HS_STRING );
+    reconciler.setRepairer( sndr, IPartitionTypes.HS_STRING );
+    // literate comments
+    HaskellCommentScanner litScanner = man.getLiterateCommentScanner();
+    DefaultDamagerRepairer lcndr = new DefaultDamagerRepairer( litScanner );
+    reconciler.setDamager( lcndr, IPartitionTypes.HS_LITERATE_COMMENT );
+    reconciler.setRepairer( lcndr, IPartitionTypes.HS_LITERATE_COMMENT );
 
 		return reconciler;
 	}

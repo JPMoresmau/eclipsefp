@@ -11,5 +11,6 @@ public interface IPartitionTypes {
 
   String HS_COMMENT          = "__hs_comment";
   String HS_LITERATE_COMMENT = "__hs_literate_comment";
+  String HS_STRING           = "__hs_string";
 
 }

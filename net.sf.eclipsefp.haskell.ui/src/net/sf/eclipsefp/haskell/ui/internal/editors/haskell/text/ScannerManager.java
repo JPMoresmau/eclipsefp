@@ -29,6 +29,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private HaskellCodeScanner codeScanner;
   private HaskellCommentScanner commentScanner;
+  private HaskellStringScanner stringScanner;
   private HaskellCommentScanner literateCommentScanner;
 
   private final Map<String, PropertyChangeHandler> propertyChangeHandlers;
@@ -69,6 +70,13 @@ public class ScannerManager implements IEditorPreferenceNames {
       commentScanner = new HaskellCommentScanner( false );
     }
     return commentScanner;
+  }
+
+  public HaskellStringScanner getStringScanner() {
+    if( stringScanner == null ) {
+      stringScanner = new HaskellStringScanner();
+    }
+    return stringScanner;
   }
 
   public HaskellCommentScanner getLiterateCommentScanner() {

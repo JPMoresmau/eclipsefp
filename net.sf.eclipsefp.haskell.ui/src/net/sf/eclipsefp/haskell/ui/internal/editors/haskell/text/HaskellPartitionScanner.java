@@ -8,6 +8,7 @@ import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
 /** <p>A PartitionScanner divides up a document into non-overlapping
@@ -19,10 +20,15 @@ import org.eclipse.jface.text.rules.Token;
 public class HaskellPartitionScanner extends RuleBasedPartitionScanner {
   public HaskellPartitionScanner() {
     IPredicateRule[] rules = new IPredicateRule[] {
+      // rule for single line comments
+      new EndOfLineRule( "--", new Token( IPartitionTypes.HS_COMMENT ) ),
+      // rule for strings
+      new SingleLineRule( "\"",
+                          "\"",
+                          new Token( IPartitionTypes.HS_STRING ),
+                          '\\' ),
       // rule for multi line comments
       new MultiLineRule( "{-", "-}", new Token( IPartitionTypes.HS_COMMENT ) ),
-      // rule for single line comments
-      new EndOfLineRule( "--", new Token( IPartitionTypes.HS_COMMENT ) )
     };
     setPredicateRules( rules );
   }

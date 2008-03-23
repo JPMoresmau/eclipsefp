@@ -27,6 +27,7 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
   private static final String[] TOKEN_TYPES = new String[] {
     IDocument.DEFAULT_CONTENT_TYPE,
     IPartitionTypes.HS_COMMENT,
+    IPartitionTypes.HS_STRING,
     IPartitionTypes.HS_LITERATE_COMMENT
   };
 

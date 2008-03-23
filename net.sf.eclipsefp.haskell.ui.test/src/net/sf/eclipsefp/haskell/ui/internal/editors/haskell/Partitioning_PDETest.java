@@ -37,11 +37,10 @@ public class Partitioning_PDETest extends TestCase {
     asserPartitionType( document, 6, IDocument.DEFAULT_CONTENT_TYPE );
   }
 
-  // TODO lf breaks, reported in
   // [1838106][Editor] Wrong coloring of comments in string literals
   public void testSLCInStringLiteral() throws Exception {
     IDocument document = createDocument( "main = putStrLn \"-- a\"\n" );
-    asserPartitionType( document, 17, IDocument.DEFAULT_CONTENT_TYPE );
+    asserPartitionType( document, 17, IPartitionTypes.HS_STRING );
   }
 
 
@@ -102,11 +101,10 @@ public class Partitioning_PDETest extends TestCase {
     asserPartitionType( document, 15, IDocument.DEFAULT_CONTENT_TYPE );
   }
 
-  // TODO lf breaks, reported in
   // [1838106][Editor] Wrong coloring of comments in string literals
   public void testMLCInStringLiteral() throws Exception {
     IDocument document = createDocument( "main = putStrLn \"{-- a --}\"\n" );
-    asserPartitionType( document, 17, IDocument.DEFAULT_CONTENT_TYPE );
+    asserPartitionType( document, 17, IPartitionTypes.HS_STRING );
   }
 
   // TODO lf breaks, reported in
