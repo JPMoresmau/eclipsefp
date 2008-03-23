@@ -266,25 +266,21 @@
    </extension>
 
    <!-- some common categories for eclipsefp subprojects to dock on -->
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            name="%newWizardCategory_name"
-            id="net.sf.eclipsefp.haskell.ui.newWizardCategory">
-      </category>
+   <extension point="org.eclipse.ui.newWizards">
+      <category name="%newWizardCategory_name"
+                id="net.sf.eclipsefp.haskell.ui.newWizardCategory" />
    </extension>
-   <extension
-         point="org.eclipse.ui.exportWizards">
-      <category
-            name="%exportWizardCategory_name"
-            id="net.sf.eclipsefp.haskell.ui.exportWizardCategory">
-      </category>
+   <extension point="org.eclipse.ui.exportWizards">
+      <category name="%exportWizardCategory_name"
+                id="net.sf.eclipsefp.haskell.ui.exportWizardCategory" />
    </extension>
-   <extension
-         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
-      <category
-            name="Haskell"
-            id="net.sf.eclipsefp.haskell.ui.haskellCheatSheets"/>
+   <extension point="org.eclipse.ui.importWizards">
+      <category name="%importWizardCategory_name"
+                id="net.sf.eclipsefp.haskell.ui.importWizardCategory" />
+   </extension>
+   <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <category name="Haskell"
+                id="net.sf.eclipsefp.haskell.ui.haskellCheatSheets"/>
    </extension>
 
    
