@@ -2,63 +2,59 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.util.Iterator;
-
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
-
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 
 /** <p>the preference page for the Haskell editor.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
-public class HaskellEditorPP extends PreferencePage 
-                             implements IWorkbenchPreferencePage, 
+public class HaskellEditorPP extends PreferencePage
+                             implements IWorkbenchPreferencePage,
                                         IEditorPreferenceNames {
 
   private OverlayPreferenceStore overlayStore;
 
-  
+
   public static void initializeDefaultValues( final IPreferenceStore store ) {
     TextEditorPreferenceConstants.initializeDefaultValues( store );
     DefaultEditorPreferenceInitializer.initializeDefaultValues( store );
   }
-  
+
 
   // interface methods of PreferencePage
   //////////////////////////////////////
-  
+
   @Override
   protected Control createContents( final Composite parent ) {
     TabFolder folder = new TabFolder( parent, SWT.NONE );
 
     Tab appearanceTab = new AppearanceTab( overlayStore );
     createTab( folder, "Appeara&nce", appearanceTab.createControl( folder ) );
-    
+
     Tab syntaxTab = new SyntaxTab( overlayStore );
     createTab( folder, "Synta&x", syntaxTab.createControl( folder ) );
 
-    // TODO use this when reasonable completions can be made
-//    Tab caTab = new ContentAssistTab( overlayStore );
-//    createTab( folder, "&Content Assist", caTab.createControl( folder ) );
-    
     Tab annotationsTab = new AnnotationsTab( overlayStore );
     createTab( folder, "Annotation&s", annotationsTab.createControl( folder ) );
 
     Tab typingTab = new TypingTab( overlayStore );
     createTab( folder, "T&yping", typingTab.createControl( folder ) );
-    
+
     return folder;
   }
 
@@ -84,10 +80,10 @@ public class HaskellEditorPP extends PreferencePage
     super.performDefaults();
   }
 
-  
+
   // interface methods of IWorkbenchPreferencePage
   ////////////////////////////////////////////////
-  
+
   public void init( final IWorkbench workbench ) {
     setDescription( "Haskell Editor settings:" );
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
@@ -101,14 +97,14 @@ public class HaskellEditorPP extends PreferencePage
   // helping methods
   //////////////////
 
-  private void createTab( final TabFolder folder, 
-                          final String label, 
+  private void createTab( final TabFolder folder,
+                          final String label,
                           final Control control ) {
     TabItem tab = new TabItem( folder, SWT.NONE );
     tab.setText( label );
     tab.setControl( control );
   }
-  
+
   private OverlayPreferenceStore createOverlayStore() {
     MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
     IPreferenceStore prefStore = getPreferenceStore();
@@ -173,8 +169,8 @@ public class HaskellEditorPP extends PreferencePage
     store.addBooleanKey( EDITOR_LINE_NUMBER_RULER );
   }
 
-  private void addAnnotationPreferences( 
-        final MarkerAnnotationPreferences preferences, 
+  private void addAnnotationPreferences(
+        final MarkerAnnotationPreferences preferences,
         final OverlayPreferenceStore store ) {
     Iterator iter = preferences.getAnnotationPreferences().iterator();
     while( iter.hasNext() ) {
