@@ -5,14 +5,14 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="icons/etool16/hsicon16.gif"
-            configTypeID="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
       </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="net.sf.eclipsefp.haskell.core.launch.HaskellLaunchDelegate"
+            type="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HaskellLaunchTabGroup"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HaskellLaunchTabGroup">
       </launchConfigurationTabGroup>
