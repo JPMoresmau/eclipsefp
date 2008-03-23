@@ -76,6 +76,9 @@ public class HaskellProjectManager {
     * resource. The passed IProject must have the {@link HaskellNature
     * Haskell project nature}.</p> */
   public static IHaskellProject get( final IProject project ) {
+    if( project == null || !project.isAccessible() ) {
+      throw new IllegalArgumentException();
+    }
     try {
       Assert.isTrue( project.hasNature( HaskellNature.NATURE_ID ),
                        "Project " //$NON-NLS-1$

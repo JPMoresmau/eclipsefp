@@ -1,4 +1,6 @@
-// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2008 by Leif Frenzel - see http://leiffrenzel.de
+// This code is made available under the terms of the Eclipse Public License,
+// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.io.ByteArrayInputStream;
@@ -16,7 +18,11 @@ public class CabalBuilder_PDETest extends TestCaseWithProject {
 
   public void testNoCabalFileWarning() throws CoreException {
     assertTrue( project.exists() );
-    assertFalse( project.getFile(  PROJECT_NAME + ".cabal" ).exists() );
+    // a Cabal file was created by default
+    assertTrue( project.getFile( PROJECT_NAME + ".cabal" ).exists() );
+    waitForAutoBuild();
+
+    project.getFile( PROJECT_NAME + ".cabal" ).delete( true, null );
     waitForAutoBuild();
 
     // no cabal file -> warning
