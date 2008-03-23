@@ -9,7 +9,7 @@
  * Contributors:
  *     Thiago Arrais - Initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsefp.haskell.ui.test.console;
+package net.sf.eclipsefp.haskell.ui.console;
 
 import static org.easymock.EasyMock.*;
 import org.eclipse.ui.console.TextConsole;
