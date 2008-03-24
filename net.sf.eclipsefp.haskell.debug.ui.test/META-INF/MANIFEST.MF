@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Haskell Debug UI Tests
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.ui.test
-Bundle-Version: 1.103.0
+Bundle-Version: 1.104.0
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.ui.test.internal.Activator
 Bundle-Vendor: The EclipseFP Project
 Require-Bundle: net.sf.eclipsefp.haskell.core,
