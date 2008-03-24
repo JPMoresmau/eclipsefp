@@ -44,6 +44,60 @@ public class ManipulateCabalFile_PDETest extends TestCase {
     assertContains( newBuf, "name: Blubb" );
   }
 
+  public void testGetAllSourceDirs() throws Exception {
+    // none
+    String buf = "Name: Bla\nVersion: 1\n";
+    assertEquals( 0, getManipulator().getAllSourceDirs( buf ).length );
+
+    // one (library)
+    buf = "Name: Bla\nVersion: 1\n\nExecutable a\n  hs-source-dirs: src\nMain-is: A.hs\n  Build-depends: base\n";
+    String[] srcDirs = getManipulator().getAllSourceDirs( buf );
+    assertEquals( 1, srcDirs.length );
+    assertEquals( "src", srcDirs[ 0 ] );
+
+    // path
+    buf = "Name: Bla\nVersion: 1\nhs-source-dirs: some/Path/src\n";
+    srcDirs = getManipulator().getAllSourceDirs( buf );
+    assertEquals( 1, srcDirs.length );
+    assertEquals( "some/Path/src", srcDirs[ 0 ] );
+
+    // multiple
+    buf = "Name: Bla\nVersion: 1\nhs-source-dirs: src1, src2\n";
+    srcDirs = getManipulator().getAllSourceDirs( buf );
+    assertEquals( 2, srcDirs.length );
+    assertEquals( "src1", srcDirs[ 0 ] );
+    assertEquals( "src2", srcDirs[ 1 ] );
+
+    // TODO lf multiple in multiple libs/exes/stanzas
+  }
+
+
+//  private String createTestCabalFile() {
+//    return   "Name:            cohatoe-plugin\n"
+//           + "Version:         1.103.0\n"
+//           + "Build-depends:   base, cohatoe-api, haskell98\n"
+//           + "Hs-Source-Dirs:  ../../hs-src\n"
+//           + "Ghc-options:     -Wall -package-name main\n"
+//           + "Exposed-modules: MarkOccurrences";
+//    return   "Name:           TestPackage\n"
+//           + "Version:        0.0\n"
+//           + "Cabal-Version:  >= 1.2\n"
+//           + "License:        BSD3\n"
+//           + "Author:         Angela Author\n"
+//           + "Synopsis:       Small package with two programs\n"
+//           + "Build-Type:     Simple\n"
+//           + "\n"
+//           + "Executable program1\n"
+//           + "  Build-Depends:  HUnit\n"
+//           + "  Main-Is:        Main.hs\n"
+//           + "  Hs-Source-Dirs: prog1\n"
+//           + "  \n"
+//           + "Executable program2\n"
+//           + "  Main-Is:        Main.hs\n"
+//           + "  Build-Depends:  HUnit\n"
+//           + "  Hs-Source-Dirs: prog2\n"
+//           + "  Other-Modules:  Utils\n";
+//  }
 
   // helping methods
   //////////////////

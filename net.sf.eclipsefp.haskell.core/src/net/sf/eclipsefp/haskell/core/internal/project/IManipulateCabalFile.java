@@ -15,7 +15,7 @@ public interface IManipulateCabalFile {
   public enum Accessor {
     GET_NAME, GET_VERSION, GET_COPYRIGHT, GET_LICENSE, GET_LICENSE_FILE,
     GET_DESCRIPTION, GET_SYNOPSIS, GET_HOMEPAGE, GET_CATEGORY, GET_AUTHOR,
-    GET_MAINTAINER
+    GET_MAINTAINER, GET_ALL_SOURCE_DIRS
   }
 
   public enum Mutator {
@@ -26,4 +26,5 @@ public interface IManipulateCabalFile {
 
   String get( String buffer, Accessor acc ) throws CoreException;
   String set( String buffer, Mutator mut, String newValue ) throws CoreException;
+  String[] getAllSourceDirs( String buffer ) throws CoreException;
 }

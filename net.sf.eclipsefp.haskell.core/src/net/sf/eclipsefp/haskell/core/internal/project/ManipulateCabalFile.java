@@ -33,6 +33,26 @@ public class ManipulateCabalFile implements IManipulateCabalFile {
     return runFunction( new String[] { buffer, mut.toString(), newValue } );
   }
 
+  public String[] getAllSourceDirs( final String buffer ) throws CoreException {
+    if( buffer == null ) {
+      throw new IllegalArgumentException();
+    }
+    String[] result = new String[ 0 ];
+    String[] params = new String[] {
+        buffer, Accessor.GET_ALL_SOURCE_DIRS.toString()
+    };
+    CohatoeServer server = CohatoeServer.getInstance();
+    String[] retVal = server.evaluate( IManipulateCabalFile.class, params );
+    if( retVal != null ) {
+      if( retVal[ 0 ].trim().length() == 0 ) {
+        String msg = retVal.length > 1 ? retVal[ 1 ] : "No message"; //$NON-NLS-1$
+        throw new InvalidCabalFileException( msg );
+      }
+      result = retVal;
+    }
+    return result;
+  }
+
 
   // helping functions
   ////////////////////

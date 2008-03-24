@@ -23,7 +23,7 @@ public class TestCaseWithProject extends TestCase {
   protected static final String PROJECT_NAME = "p1";
   protected IProject project;
 
-  protected void waitForAutoBuild() throws CoreException {
+  public static void waitForAutoBuild() throws CoreException {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
     workspace.build( IncrementalProjectBuilder.CLEAN_BUILD, null );
     System.out.print( "  Waiting for autobuild to complete ..." ); //$NON-NLS-1$

@@ -14,7 +14,10 @@ import Distribution.PackageDescription(
   parsePackageDescription,
   showPackageDescription,
   PackageDescription(..),
-  GenericPackageDescription(..) )
+  GenericPackageDescription(..),
+  Library(..),
+  Executable(..),
+  BuildInfo(..) )
 import Distribution.InstalledPackageInfo( ParseResult(..) )
 import Distribution.ParseUtils( locatedErrorMsg )
 import Text.ParserCombinators.ReadP( readP_to_S )
@@ -35,17 +38,18 @@ performManipulateCabaFile args = do
     ParseFailed err -> [ "", snd $ locatedErrorMsg err ]
     ParseOk _ (GenericPackageDescription pd _ _ _) -> case cmd of
       -- accessors
-      "GET_NAME"         -> [pkgName $ package pd]
-      "GET_VERSION"      -> [showVersion $ pkgVersion $ package pd]
-      "GET_COPYRIGHT"    -> [copyright pd]
-      "GET_LICENSE"      -> [show $ license pd]
-      "GET_LICENSE_FILE" -> [licenseFile pd]
-      "GET_DESCRIPTION"  -> [description pd]
-      "GET_SYNOPSIS"     -> [synopsis pd]
-      "GET_HOMEPAGE"     -> [homepage pd]
-      "GET_CATEGORY"     -> [category pd]
-      "GET_AUTHOR"       -> [author pd]
-      "GET_MAINTAINER"   -> [maintainer pd]
+      "GET_NAME"            -> [pkgName $ package pd]
+      "GET_VERSION"         -> [showVersion $ pkgVersion $ package pd]
+      "GET_COPYRIGHT"       -> [copyright pd]
+      "GET_LICENSE"         -> [show $ license pd]
+      "GET_LICENSE_FILE"    -> [licenseFile pd]
+      "GET_DESCRIPTION"     -> [description pd]
+      "GET_SYNOPSIS"        -> [synopsis pd]
+      "GET_HOMEPAGE"        -> [homepage pd]
+      "GET_CATEGORY"        -> [category pd]
+      "GET_AUTHOR"          -> [author pd]
+      "GET_MAINTAINER"      -> [maintainer pd]
+      "GET_ALL_SOURCE_DIRS" -> collectSourceDirs pd
       -- mutators
       -- TODO lf shouldn't use fromJust
       "SET_NAME"         -> setName pd param
@@ -85,7 +89,13 @@ setLicense pd (Just param)
 update :: PackageDescription -> Maybe String -> [String]
 update _ Nothing    = ["", "No param!"]
 update newPkgDesc _ = [showPackageDescription $ newPkgDesc]
-  
+
+collectSourceDirs :: PackageDescription -> [String]
+collectSourceDirs pd = (collectFromLib $ library pd) ++ (concatMap collectFromExe (executables pd)) where
+  collectFromLib Nothing = []
+  collectFromLib (Just (Library _ bi)) = hsSourceDirs bi
+  collectFromExe (Executable _ _ bi)   = hsSourceDirs bi
+
 readArgs :: [String] -> (String, String, Maybe String)
 readArgs (s1:s2:s3:_) = (s1, s2, Just s3)
 readArgs (s1:s2:_) = (s1, s2, Nothing)
