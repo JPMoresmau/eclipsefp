@@ -127,11 +127,7 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 	private ITextEditor createEditorFor(final IFile file) throws PartInitException {
 		FileEditorInput input = new FileEditorInput(file);
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-
-v v v v v v v
-		ITextEditor editor = (ITextEditor) activePage.openEditor(input, "net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor");
-^ ^ ^ ^ ^ ^ ^
-		return editor;
+		return (ITextEditor) activePage.openEditor(input, "net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor");
 	}
 
 }
