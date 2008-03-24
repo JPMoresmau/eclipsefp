@@ -31,10 +31,9 @@ public class CheckOutFoldersOperation implements IWorkspaceRunnable {
   //////////////////////////////////////////
 
   public void run( final IProgressMonitor monitor ) throws CoreException {
-    monitor.beginTask( CoreTexts.checkOutFoldersOperation_cleaning, 15 );
+    monitor.beginTask( CoreTexts.checkOutFoldersOperation_cleaning, 50 );
     try {
       checkOutFolder( monitor ); // (50)
-      checkBinFolder( monitor ); // (50)
     } finally {
       monitor.done();
     }
@@ -49,13 +48,6 @@ public class CheckOutFoldersOperation implements IWorkspaceRunnable {
     monitor.subTask( CoreTexts.checkOutFoldersOperation_checkingOutput );
     IContainer outFolder = ResourceUtil.getOutFolder( project );
     create( outFolder, monitor );
-  }
-
-  private void checkBinFolder( final IProgressMonitor monitor )
-                                                          throws CoreException {
-    monitor.subTask( CoreTexts.checkOutFoldersOperation_checkingBin );
-    IContainer binFolder = ResourceUtil.getBinFolder( project );
-    create( binFolder, monitor );
   }
 
   private void create( final IContainer container,

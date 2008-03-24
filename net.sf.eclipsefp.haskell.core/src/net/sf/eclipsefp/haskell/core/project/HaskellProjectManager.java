@@ -94,12 +94,10 @@ public class HaskellProjectManager {
     * specified path settings for the project.</p> */
   public static String createDescriptorContent( final String sourcePath,
                                                 final String outputPath,
-                                                final String binPath,
                                                 final String targetName,
                                                 final String compiler) {
     return DescriptorFile.createDescriptorContent( sourcePath,
                                                    outputPath,
-                                                   binPath,
                                                    targetName,
                                                    compiler);
   }

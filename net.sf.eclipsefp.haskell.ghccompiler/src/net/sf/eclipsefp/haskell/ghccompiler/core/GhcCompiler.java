@@ -18,7 +18,9 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * <p>
@@ -91,9 +93,17 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     cmdLine.add( outDir );
     cmdLine.add( "-ferror-spans" ); //$NON-NLS-1$
 
-    String binDir = getAbsPath( project, haskellProject.getBinPath() );
     cmdLine.add( "-o" ); //$NON-NLS-1$
-    cmdLine.add( binDir + File.separator + getTargetName( haskellProject ) );
+    IPath targetName = getTargetName( haskellProject );
+    if( targetName.segmentCount() > 1 ) {
+      try {
+        ResourceUtil.mkdirs( targetName.removeLastSegments( 1 ), project );
+      } catch( final CoreException cex ) {
+        String msg = "Could not create folders for target executable"; //$NON-NLS-1$
+        GhcCompilerPlugin.log( msg, cex );
+      }
+    }
+    cmdLine.add( project.getLocation().append( targetName ).toOSString() );
     cmdLine.addAll( compilerParams.construct() );
     cmdLine.add( ResourceUtil.getSourceDirRelativeName( file, haskellProject ) );
     if( trace ) {
@@ -121,12 +131,12 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 				+ path.toOSString();
 	}
 
-	private String getTargetName( final IHaskellProject haskellProject ) {
+	private IPath getTargetName( final IHaskellProject haskellProject ) {
     String result = "theResult"; //$NON-NLS-1$
 	  Set<IPath> targetNames = haskellProject.getTargetNames();
     if( targetNames.size() > 0 ) {
       result = targetNames.iterator().next().toOSString();
 	  }
-    return result;
+    return new Path( result );
   }
 }

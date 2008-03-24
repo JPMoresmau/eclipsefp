@@ -88,9 +88,6 @@ public class Parser implements IXMLNames {
 											PATH_ATT));
 			project.setOutputPath(getValue(rootElement, OUTPUT_PATH_ELEMENT,
 											PATH_ATT));
-			project
-					.setBinPath(getValue(rootElement, BIN_PATH_ELEMENT,
-											PATH_ATT));
 			project.addTargetName( new Path( getValue(rootElement, TARGET_NAME_ELEMENT,
 											NAME_ATT)));
 		}

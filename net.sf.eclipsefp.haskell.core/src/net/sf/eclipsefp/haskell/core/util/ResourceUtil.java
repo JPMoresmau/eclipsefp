@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * <p>
@@ -96,27 +98,6 @@ public class ResourceUtil {
 			result = project;
 		} else {
 			result = project.getFolder(outputPath);
-		}
-		return result;
-	}
-
-	/**
-	 * <p>
-	 * returns the binary folder of the passed project as resource. The project
-	 * must have the Haskell nature.
-	 * </p>
-	 */
-	public static IContainer getBinFolder(final IProject project)
-			throws CoreException
-	{
-		Assert.isTrue(project.hasNature(HaskellNature.NATURE_ID));
-
-		IPath binPath = getHsProject(project).getBinPath();
-		IContainer result;
-		if (binPath.equals(project.getProjectRelativePath())) {
-			result = project;
-		} else {
-			result = project.getFolder(binPath);
 		}
 		return result;
 	}
@@ -246,6 +227,22 @@ public class ResourceUtil {
                    + " is in no source folder in project " //$NON-NLS-1$
                    + hp.getResource().getName();
       throw new IllegalArgumentException( msg );
+    }
+    return result;
+  }
+
+  public static IFolder mkdirs( final IPath folderPath,
+                                final IProject project ) throws CoreException {
+    IFolder result = project.getFolder( folderPath );
+    List<IFolder> parents = new ArrayList<IFolder>();
+    IContainer container = result;
+    while( container instanceof IFolder && !container.exists() ) {
+      parents.add( ( IFolder )container );
+      container = container.getParent();
+    }
+    Collections.reverse( parents );
+    for( IFolder folder: parents ) {
+      folder.create( true, true, new NullProgressMonitor() );
     }
     return result;
   }

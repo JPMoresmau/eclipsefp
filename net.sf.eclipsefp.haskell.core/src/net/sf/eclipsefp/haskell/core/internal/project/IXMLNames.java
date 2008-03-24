@@ -18,9 +18,6 @@ interface IXMLNames {
   /** <p>the element in the <code>.hsproject</code> file that names the output
     * path of the project.</p> */
   String OUTPUT_PATH_ELEMENT = "outputPath"; //$NON-NLS-1$
-  /** <p>the element in the <code>.hsproject</code> file that names the
-    * binaries path of the project.</p> */
-  String BIN_PATH_ELEMENT = "binPath"; //$NON-NLS-1$
   /** <p>the element in the <code>.hsproject</code> file that names the target
     * binary name of the project.</p> */
   String TARGET_NAME_ELEMENT = "targetBinary"; //$NON-NLS-1$

@@ -24,18 +24,16 @@ public class DescriptorFile implements IXMLNames {
 
 	private String fSourcePath;
 	private String fOutputPath;
-	private String fBinPath;
 	private String fTargetName;
 	private final String fCompiler;
 
 
 	DescriptorFile(final String sourcePath, final String outputPath,
-			final String binPath, final String targetName,
+			final String targetName,
 			final String compiler)
 	{
 		fSourcePath = sourcePath;
 		fOutputPath = outputPath;
-		fBinPath = binPath;
 		fTargetName = targetName;
 		fCompiler = compiler;
 	}
@@ -54,7 +52,6 @@ public class DescriptorFile implements IXMLNames {
 
     renderTag( result, SOURCE_PATH_ELEMENT, PATH_ATT, fSourcePath );
     renderTag( result, OUTPUT_PATH_ELEMENT, PATH_ATT, fOutputPath );
-    renderTag( result, BIN_PATH_ELEMENT, PATH_ATT, fBinPath );
     renderTag( result, TARGET_NAME_ELEMENT, NAME_ATT, fTargetName );
     result.append( "<" ); //$NON-NLS-1$
     result.append( COMPILER_ELEMENT );
@@ -77,23 +74,19 @@ public class DescriptorFile implements IXMLNames {
     fOutputPath = outputPath;
   }
 
-  void setBinPath( final String binPath ) {
-    fBinPath = binPath;
-  }
-
   void setTargetName( final String targetName ) {
     fTargetName = targetName;
   }
 
   public static String createDescriptorContent( final String sourcePath,
-      final String outputPath, final String binPath, final String targetName,
+      final String outputPath, final String targetName,
       final String compiler ) {
-    return new DescriptorFile( sourcePath, outputPath, binPath, targetName,
+    return new DescriptorFile( sourcePath, outputPath, targetName,
         compiler ).toXML();
   }
 
 	public static String createEmptyDescriptorContent() {
-    return createDescriptorContent( "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    return createDescriptorContent( "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   }
 
 	// helping methods

@@ -33,7 +33,7 @@ public final class HaskellProject implements IHaskellProject {
 	private final Set<IPath> sourcePaths = new HashSet<IPath>();
 	private final Set<IPath> targetNames = new HashSet<IPath>();
 	private String outputPath = ""; //$NON-NLS-1$
-	private String binPath = ""; //$NON-NLS-1$
+	private final String binPath = ""; //$NON-NLS-1$
 	private IHaskellCompiler compiler;
 
 	public HaskellProject( final IProject project ) {
@@ -110,18 +110,6 @@ public final class HaskellProject implements IHaskellProject {
     HaskellProjectManager.broadcast( event );
   }
 
-  public void setBinPath( final String binPath ) {
-    check( binPath );
-    String name = IHaskellProject.PROPERTY_BIN_PATH;
-    ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
-    event.setOldValue( getBinPath() );
-
-    this.binPath = binPath;
-
-    event.setNewValue( getBinPath() );
-    HaskellProjectManager.broadcast( event );
-  }
-
   public void addTargetName( final IPath targetName ) {
     String name = IHaskellProject.PROPERTY_TARGET_NAME;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
@@ -131,7 +119,6 @@ public final class HaskellProject implements IHaskellProject {
 
     event.setNewValue( getTargetNames() );
     HaskellProjectManager.broadcast( event );
-
   }
 
   public IContainer getSourceFolder() {

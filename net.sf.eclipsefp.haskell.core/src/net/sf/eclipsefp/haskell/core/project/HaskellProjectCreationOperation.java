@@ -30,8 +30,7 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 		}
 		String sourcePath = getPreference(ICorePreferenceNames.FOLDERS_SRC);
 		String outputPath = getPreference(ICorePreferenceNames.FOLDERS_OUT);
-		String binPath = getPreference(ICorePreferenceNames.FOLDERS_BIN);
-		return new String[] { sourcePath, outputPath, binPath };
+		return new String[] { sourcePath, outputPath };
 	}
 
 	@Override
@@ -48,7 +47,6 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 		return HaskellProjectManager.createDescriptorContent(
 			       getPreference(ICorePreferenceNames.FOLDERS_SRC),
 			       getPreference(ICorePreferenceNames.FOLDERS_OUT),
-			       getPreference(ICorePreferenceNames.FOLDERS_BIN),
 			       getPreference(ICorePreferenceNames.TARGET_BINARY),
 			       getPreference(ICorePreferenceNames.SELECTED_COMPILER));
 	}

@@ -24,8 +24,7 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
     preferences.setDefault( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
     preferences.setDefault( FOLDERS_SRC, "src" ); //$NON-NLS-1$
     preferences.setDefault( FOLDERS_OUT, "out" ); //$NON-NLS-1$
-    preferences.setDefault( FOLDERS_BIN, "bin" ); //$NON-NLS-1$
-    preferences.setDefault( TARGET_BINARY, "theResult" ); //$NON-NLS-1$
+    preferences.setDefault( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
     preferences.setDefault( FOLDERS_IN_NEW_PROJECT, true );
   }
 

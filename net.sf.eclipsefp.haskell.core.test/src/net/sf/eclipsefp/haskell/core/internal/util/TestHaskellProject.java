@@ -33,15 +33,14 @@ public class TestHaskellProject implements ICorePreferenceNames {
 	}
 
 	private Preferences preferences() {
-		Preferences preferences = new Preferences();
-	    preferences.setValue(SELECTED_COMPILER, "null");
-	    preferences.setValue(FOLDERS_SRC, "src");
-	    preferences.setValue(FOLDERS_OUT, "out");
-	    preferences.setValue(FOLDERS_BIN, "bin");
-	    preferences.setValue(TARGET_BINARY, "theResult");
-	    preferences.setValue(FOLDERS_IN_NEW_PROJECT, true);
-		return preferences;
-	}
+    Preferences preferences = new Preferences();
+    preferences.setValue( SELECTED_COMPILER, "null" );
+    preferences.setValue( FOLDERS_SRC, "src" );
+    preferences.setValue( FOLDERS_OUT, "out" );
+    preferences.setValue( TARGET_BINARY, "bin/theResult" );
+    preferences.setValue( FOLDERS_IN_NEW_PROJECT, true );
+    return preferences;
+  }
 
 	public IFile createSourceFile(final String fileName, final String contents) throws CoreException {
 		IFile file = fSourceFolder.getFile(fileName);

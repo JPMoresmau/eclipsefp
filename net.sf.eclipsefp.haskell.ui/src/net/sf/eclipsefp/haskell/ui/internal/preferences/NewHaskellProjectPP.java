@@ -2,8 +2,12 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences;
 
 import java.util.ArrayList;
-
-import org.eclipse.core.resources.*;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -12,22 +16,28 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
-
 
 /** <p>the preference page for new Haskell projects. The user can pre-define
   * settings here that apply when the 'New Haskell Project' wizard creates
-  * a new project.</p>  
-  * 
+  * a new project.</p>
+  *
   * @author Leif Frenzel
   */
 public class NewHaskellProjectPP extends PreferencePage
@@ -39,7 +49,6 @@ public class NewHaskellProjectPP extends PreferencePage
   private final SelectionListener selectionListener;
   private final ModifyListener modifyListener;
 
-  private Text txtBinFolderName;
   private Text txtSrcFolderName;
   private Text txtOutFolderName;
   private Text txtTargetBinaryName;
@@ -74,19 +83,18 @@ public class NewHaskellProjectPP extends PreferencePage
   public static void initializeDefaults( final IPreferenceStore store ) {
     store.setDefault( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
     store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" );
-    store.setDefault( ICorePreferenceNames.FOLDERS_BIN, "bin" );
     store.setDefault( ICorePreferenceNames.FOLDERS_OUT, "out" );
-    store.setDefault( ICorePreferenceNames.TARGET_BINARY, "theResult" );
+    store.setDefault( ICorePreferenceNames.TARGET_BINARY, "bin/theResult" );
   }
 
   public void init( final IWorkbench workbench ) {
     // empty implementation
   }
 
-  
+
   // helping methods
   //////////////////
-  
+
   private Button addRadioButton( final Composite parent,
                                  final String label,
                                  final String key,
@@ -114,7 +122,7 @@ public class NewHaskellProjectPP extends PreferencePage
                                final int indent ) {
     Label label = new Label( parent, SWT.NONE );
     label.setText( labelText );
-                                 
+
     GridData gd = new GridData();
     gd.horizontalIndent = indent;
 
@@ -160,12 +168,12 @@ public class NewHaskellProjectPP extends PreferencePage
     GridLayout layout = new GridLayout();
     layout.numColumns = 2;
     folderGroup.setLayout( layout );
-    
+
     GridData gd = new GridData( GridData.FILL_HORIZONTAL );
     gd.horizontalSpan = 2;
     folderGroup.setLayoutData( gd );
     folderGroup.setText( "Source and output folders" );
-    
+
     createRadios( folderGroup );
     createTexts( folderGroup );
   }
@@ -173,37 +181,33 @@ public class NewHaskellProjectPP extends PreferencePage
   private void createRadios( final Group folderGroup ) {
     int indent = 0;
     String prefFolders = ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT;
-    btnProjectAsSourceFolder = addRadioButton( folderGroup, 
+    btnProjectAsSourceFolder = addRadioButton( folderGroup,
                                                "Project",
-                                               prefFolders, 
-                                               IPreferenceStore.FALSE, 
+                                               prefFolders,
+                                               IPreferenceStore.FALSE,
                                                indent );
     btnProjectAsSourceFolder.addSelectionListener( selectionListener );
-    btnFoldersAsSourceFolder = addRadioButton( folderGroup, 
+    btnFoldersAsSourceFolder = addRadioButton( folderGroup,
                                                "Folders",
-                                               prefFolders, 
-                                               IPreferenceStore.TRUE, 
+                                               prefFolders,
+                                               IPreferenceStore.TRUE,
                                                indent );
     btnFoldersAsSourceFolder.addSelectionListener( selectionListener );
   }
 
   private void createTexts( final Group folderGroup ) {
     int indent = convertWidthInCharsToPixels( 4 );
-    txtSrcFolderName = addTextControl( folderGroup, 
-                                         "Source folder name:", 
-                                         ICorePreferenceNames.FOLDERS_SRC, 
+    txtSrcFolderName = addTextControl( folderGroup,
+                                         "Source folder name:",
+                                         ICorePreferenceNames.FOLDERS_SRC,
                                          indent );
-    txtOutFolderName = addTextControl( folderGroup, 
-                                         "Output folder name:", 
-                                         ICorePreferenceNames.FOLDERS_OUT, 
+    txtOutFolderName = addTextControl( folderGroup,
+                                         "Output folder name:",
+                                         ICorePreferenceNames.FOLDERS_OUT,
                                          indent );
-    txtBinFolderName = addTextControl( folderGroup, 
-                                         "Binaries folder name:", 
-                                         ICorePreferenceNames.FOLDERS_BIN, 
-                                         indent );
-    txtTargetBinaryName = addTextControl( folderGroup, 
-                                          "Target binary name:", 
-                                          ICorePreferenceNames.TARGET_BINARY, 
+    txtTargetBinaryName = addTextControl( folderGroup,
+                                          "Target binary name:",
+                                          ICorePreferenceNames.TARGET_BINARY,
                                          indent );
   }
 
@@ -211,7 +215,6 @@ public class NewHaskellProjectPP extends PreferencePage
     boolean useFolders = btnFoldersAsSourceFolder.getSelection();
     txtSrcFolderName.setEnabled( useFolders );
     txtOutFolderName.setEnabled( useFolders );
-    txtBinFolderName.setEnabled( useFolders );
     txtTargetBinaryName.setEnabled( useFolders );
 
     boolean valid = true;
@@ -227,30 +230,28 @@ public class NewHaskellProjectPP extends PreferencePage
 
   private boolean validateFolders() {
     boolean result;
-    if(    txtBinFolderName.getText().length() == 0 
-        && txtSrcFolderName.getText().length() == 0 
+    if(    txtSrcFolderName.getText().length() == 0
         && txtOutFolderName.getText().length() == 0 ) {
       updateNonOkStatus( "Folder names are empty." );
       result = false;
     } else {
       IProject dmy = getWorkspace().getRoot().getProject( "project" );
       result =    isValidPath( txtSrcFolderName.getText(), "source", dmy )
-               && isValidPath( txtOutFolderName.getText(), "output", dmy )
-               && isValidPath( txtBinFolderName.getText(), "binaries", dmy );
+               && isValidPath( txtOutFolderName.getText(), "output", dmy );
     }
     return result;
   }
 
   private boolean isValidPath( final String folderName,
-                               final String name, 
+                               final String name,
                                final IProject dmy ) {
     boolean result = true;
     IPath path = dmy.getFullPath().append( folderName );
     if( folderName.length() != 0 ) {
-      IStatus status = getWorkspace().validatePath( path.toString(), 
+      IStatus status = getWorkspace().validatePath( path.toString(),
                                                     IResource.FOLDER );
       if( !status.isOK() ) {
-        String message =   "Invalid " + name + " path name:" 
+        String message =   "Invalid " + name + " path name:"
                          + status.getMessage();
         updateNonOkStatus( message );
         result = false;
@@ -262,7 +263,7 @@ public class NewHaskellProjectPP extends PreferencePage
   private IWorkspace getWorkspace() {
     return ResourcesPlugin.getWorkspace();
   }
-  
+
   private void updateNonOkStatus( final String message ) {
     setValid( false );
     setMessage( message, NONE );
@@ -270,15 +271,14 @@ public class NewHaskellProjectPP extends PreferencePage
   }
 
   private void controlChanged( final Widget widget ) {
-    if(    widget == btnFoldersAsSourceFolder 
+    if(    widget == btnFoldersAsSourceFolder
         || widget == btnProjectAsSourceFolder ) {
       validate();
     }
   }
 
   private void controlModified( final Widget widget ) {
-    if(    widget == txtSrcFolderName 
-        || widget == txtBinFolderName
+    if(    widget == txtSrcFolderName
         || widget == txtOutFolderName ) {
       validate();
     }
@@ -329,6 +329,6 @@ public class NewHaskellProjectPP extends PreferencePage
 			         HaskellCorePlugin.getDefault()
 			             .getBundle().getSymbolicName());
   }
-  
-  
+
+
 }

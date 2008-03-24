@@ -76,9 +76,7 @@ public class ProjectFoldersDecorator extends LabelProvider
                           final IHaskellProject hsProject,
                           final Image baseImage ) {
     Image result = null;
-    if( folderPath.equals( hsProject.getBinPath() ) ) {
-      result = getImage( baseImage, IImageNames.BIN_FOLDER_DECORATOR );
-    } else if( folderPath.equals( hsProject.getSourcePaths() ) ) {
+    if( folderPath.equals( hsProject.getSourcePaths() ) ) {
       result = getImage( baseImage, IImageNames.SRC_FOLDER_DECORATOR );
     }
     return result;

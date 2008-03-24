@@ -59,7 +59,6 @@ public class HaskellUIImages implements IImageNames {
 
     // decorators
     declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" );
-    declare( BIN_FOLDER_DECORATOR, OVR + "binaryFolder.gif" );
     // views
     declare( DEP_VIEW_IMPORTS,     ACTION + "mdep_imports.gif" );
     declare( DEP_VIEW_IMPORTEDBY,  ACTION + "mdep_importedby.gif" );

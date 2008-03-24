@@ -23,7 +23,6 @@ public interface IHaskellProject extends IAdaptable {
 
 	String PROPERTY_SOURCE_PATH = "sourcePath"; //$NON-NLS-1$
 	String PROPERTY_OUTPUT_PATH = "outputPath"; //$NON-NLS-1$
-	String PROPERTY_BIN_PATH = "binPath"; //$NON-NLS-1$
 	String PROPERTY_TARGET_NAME = "targetName"; //$NON-NLS-1$
 	String PROPERTY_IMPORT_LIBRARIES = "importLibraries"; //$NON-NLS-1$
 
@@ -51,14 +50,6 @@ public interface IHaskellProject extends IAdaptable {
 	 * </p>
 	 */
 	IPath getOutputPath();
-
-	/**
-	 * <p>
-	 * returns the path to the binaries folder of this IHaskellProject (the path
-	 * where the built executables are).
-	 * </p>
-	 */
-	IPath getBinPath();
 
 	/**
 	 * <p>
