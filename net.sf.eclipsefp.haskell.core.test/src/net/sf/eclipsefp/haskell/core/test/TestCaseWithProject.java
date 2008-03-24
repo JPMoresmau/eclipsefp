@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.test;
 
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -49,6 +50,7 @@ public class TestCaseWithProject extends TestCase {
   @Override
   protected void setUp() throws Exception {
     ProjectCreationOperation op = new HaskellProjectCreationOperation();
+    op.setExtraOperation( new ProjectModelFilesOp() );
     op.setProjectName( PROJECT_NAME );
     op.run( null );
 

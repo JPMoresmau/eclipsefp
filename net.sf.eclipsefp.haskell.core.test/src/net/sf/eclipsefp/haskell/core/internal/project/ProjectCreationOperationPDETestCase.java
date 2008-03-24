@@ -25,7 +25,9 @@ public class ProjectCreationOperationPDETestCase extends TestCase {
 	}
 
 	protected ProjectCreationOperation createOperation() {
-		return new ProjectCreationOperation();
+		ProjectCreationOperation result = new ProjectCreationOperation();
+		result.setExtraOperation( new ProjectModelFilesOp() );
+    return result;
 	}
 
 	protected ProjectCreationOperation getOperation() {

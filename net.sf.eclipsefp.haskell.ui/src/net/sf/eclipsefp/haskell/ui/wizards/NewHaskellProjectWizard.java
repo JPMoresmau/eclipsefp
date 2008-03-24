@@ -3,10 +3,10 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.wizards;
 
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.wizards.ProjectCreationWizard;
-import net.sf.eclipsefp.haskell.ui.internal.wizards.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.resource.ImageDescriptor;

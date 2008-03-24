@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperationPDETestCase;
+import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -23,7 +24,10 @@ public class HaskellProjectCreationOperation_PDETest extends
   protected ProjectCreationOperation createOperation() {
     fStore = new Preferences();
     fStore.setValue( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
-    return new HaskellProjectCreationOperation( fStore );
+    HaskellProjectCreationOperation result
+      = new HaskellProjectCreationOperation( fStore );
+    result.setExtraOperation( new ProjectModelFilesOp() );
+    return result;
   }
 
   public void testAddsHaskellNature() throws InvocationTargetException,
@@ -44,7 +48,6 @@ public class HaskellProjectCreationOperation_PDETest extends
 
     assertValid( prj.getFolder( "customSrc" ) );
     assertValid( prj.getFolder( "customOut" ) );
-    assertValid( prj.getFolder( "customBin" ) );
   }
 
 	public void testCreatesDescriptorFile() throws InvocationTargetException,

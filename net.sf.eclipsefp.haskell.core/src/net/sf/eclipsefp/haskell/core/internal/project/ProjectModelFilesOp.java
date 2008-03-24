@@ -1,13 +1,12 @@
 // Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.ui.internal.wizards;
+package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.internal.project.IProjectCreationOperationExtraOp;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
