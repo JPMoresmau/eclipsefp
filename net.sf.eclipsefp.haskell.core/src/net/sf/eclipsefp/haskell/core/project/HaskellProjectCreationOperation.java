@@ -11,12 +11,12 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 	private final Preferences fPreferences;
 
 	public HaskellProjectCreationOperation() {
-		this(HaskellCorePlugin.getDefault().getPluginPreferences());
-	}
+    this( HaskellCorePlugin.getDefault().getPluginPreferences() );
+  }
 
-	public HaskellProjectCreationOperation(final Preferences prefs) {
-		fPreferences = prefs;
-	}
+  public HaskellProjectCreationOperation( final Preferences prefs ) {
+    fPreferences = prefs;
+  }
 
 	@Override
 	protected String[] getProjectNatures() {
