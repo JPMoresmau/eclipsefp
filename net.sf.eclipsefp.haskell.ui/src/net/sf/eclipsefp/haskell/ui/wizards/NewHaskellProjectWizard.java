@@ -1,8 +1,11 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+// This code is made available under the terms of the Eclipse Public License,
+// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.wizards;
 
-import net.sf.eclipsefp.common.ui.wizards.ProjectCreationWizard;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.internal.wizards.ProjectCreationWizard;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -27,15 +30,12 @@ public class NewHaskellProjectWizard extends ProjectCreationWizard {
   }
 
 	@Override
-	protected String getPageDescrition() {
-		return "Create a new Haskell project in the workspace.";
+	protected String getPageDescription() {
+		return UITexts.newHaskellProjectWizard_pageDesc;
 	}
 
 	@Override
 	protected String getPageTitle() {
-		return "Haskell project";
+		return UITexts.newHaskellProjectWizard_pageTitle;
 	}
-
-
-
 }

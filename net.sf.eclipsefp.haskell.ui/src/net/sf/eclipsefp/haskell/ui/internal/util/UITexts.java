@@ -16,6 +16,9 @@ public final class UITexts extends NLS {
 
   public static String cabalHyperLinkDetector_errorTitle;
 
+  public static String cabalPackageImportWizard_pageDesc;
+  public static String cabalPackageImportWizard_pageTitle;
+
   public static String descriptionSection_entryDescription;
   public static String descriptionSection_entryCategory;
   public static String descriptionSection_entryHomepage;
@@ -67,6 +70,9 @@ public final class UITexts extends NLS {
   public static String mkPointFreeDelegate_noSourceFile;
   public static String mkPointFreeDelegate_notApplicable;
   public static String mkPointFreeDelegate_roFile;
+
+  public static String newHaskellProjectWizard_pageDesc;
+  public static String newHaskellProjectWizard_pageTitle;
 
   public static String overviewPage_title;
 

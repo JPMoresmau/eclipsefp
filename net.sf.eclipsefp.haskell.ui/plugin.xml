@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.newWizards">
+   <!-- [Wizards] project and module creation -->
+   <extension point="org.eclipse.ui.newWizards">
       <wizard
             name="%newProjectWizard_name"
             icon="icons/etool16/hsicon16.gif"
@@ -30,6 +30,18 @@
             %newModuleWizard_desc
          </description>
       </wizard>
+   </extension>
+   <extension point="org.eclipse.ui.importWizards">
+     <wizard
+           category="net.sf.eclipsefp.haskell.ui.importWizardCategory"
+           class="net.sf.eclipsefp.haskell.ui.internal.wizards.CabalPackageImportWizard"
+           icon="icons/etool16/hsicon16.gif"
+           id="net.sf.eclipsefp.haskell.ui.internal.wizards.CabalPackageImportWizard"
+           name="%importCabalPackageWizard_name">
+        <description>
+           %importCabalPackageWizard_desc
+        </description>
+     </wizard>
    </extension>
    
    <!-- [Editors] Haskell code editor -->

@@ -65,6 +65,8 @@ public interface IImageNames {
   String TEMPLATE          = ID + ".TEMPLATE"; //$NON-NLS-1$
 
   // wizard banners
-  String NEW_PROJECT = ID + ".NEW_PROJECT";
-  String NEW_MODULE = ID + ".NEW_MODULE";
+  String NEW_PROJECT          = ID + ".NEW_PROJECT";
+  String NEW_MODULE           = ID + ".NEW_MODULE";
+  String IMPORT_CABAL_PACKAGE = ID + "IMPORT_CABAL_PACKAGE";
+
 }

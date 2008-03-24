@@ -96,6 +96,7 @@ public class HaskellUIImages implements IImageNames {
     // wizard banners
     declare( NEW_PROJECT, WIZARD + "newproject.gif" );
     declare( NEW_MODULE, WIZARD  + "newmodule.png" );
+    declare( IMPORT_CABAL_PACKAGE, WIZARD + "importcabalpkg.png" );
   }
 
   private final static void declare( final String key,

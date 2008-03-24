@@ -37,6 +37,7 @@ public class ProjectCreationOperation {
 
 	private String fProjectName;
 	private String fLocation;
+  private IProjectCreationOperationExtraOp extraOp;
 
 	public void run( final IProgressMonitor passedMon ) {
     IProgressMonitor mon = ( passedMon == null ) ? new NullProgressMonitor()
@@ -45,7 +46,7 @@ public class ProjectCreationOperation {
 
       public void run( final IProgressMonitor monitor ) throws CoreException {
         String msg = CoreTexts.projectCreationOperation_creating;
-        monitor.beginTask( msg, getDirectories().length + 6 );
+        monitor.beginTask( msg, getDirectories().length + 8 );
 
         monitor.subTask( CoreTexts.projectCreationOperation_init );
         IProject project = createProjectResource();
@@ -60,8 +61,8 @@ public class ProjectCreationOperation {
         monitor.subTask( CoreTexts.projectCreationOperation_settings );
         createDescriptionFile( monitor, project );
         createProjectModelFiles( monitor, project );
+        executeExtraOperation( monitor, project );
       }
-
     };
     try {
       ResourcesPlugin.getWorkspace().run( operation, mon );
@@ -72,7 +73,7 @@ public class ProjectCreationOperation {
     }
   }
 
-	public void setProjectName(final String name) {
+  public void setProjectName(final String name) {
 		fProjectName = name;
 	}
 
@@ -87,6 +88,11 @@ public class ProjectCreationOperation {
 	public String getProjectLocation() {
 		return fLocation;
 	}
+
+	public void setExtraOperation( final IProjectCreationOperationExtraOp op ) {
+	  this.extraOp = op;
+	}
+
 
 	// helping methods
 	// ////////////////
@@ -205,5 +211,14 @@ public class ProjectCreationOperation {
 
   private String getSetupFileContent() {
     return "import Distribution.Simple\nmain = defaultMain\n"; //$NON-NLS-1$
+  }
+
+  protected void executeExtraOperation(
+      final IProgressMonitor monitor,
+      final IProject project ) throws CoreException {
+    if( extraOp != null ) {
+      IProgressMonitor subMon = new SubProgressMonitor( monitor, 2 );
+      extraOp.run( project, subMon );
+    }
   }
 }

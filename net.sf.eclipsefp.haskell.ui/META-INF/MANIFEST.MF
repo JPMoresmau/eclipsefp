@@ -21,7 +21,8 @@ Require-Bundle: de.leiffrenzel.cohatoe.server.core,
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.ui,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.apache.ant
 Eclipse-LazyStart: true
 Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.dialog,
@@ -40,7 +41,6 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog,
  net.sf.eclipsefp.common.ui.preferences,
  net.sf.eclipsefp.common.ui.preferences.overlay,
  net.sf.eclipsefp.common.ui.util,
- net.sf.eclipsefp.common.ui.wizards,
  net.sf.eclipsefp.haskell.ui.console;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions;x-friends:="net.sf.eclipsefp.haskell.ui.test",
