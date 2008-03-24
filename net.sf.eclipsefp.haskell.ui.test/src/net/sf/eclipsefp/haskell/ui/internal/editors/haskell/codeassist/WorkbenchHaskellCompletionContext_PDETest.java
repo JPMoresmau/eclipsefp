@@ -128,7 +128,9 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
 		FileEditorInput input = new FileEditorInput(file);
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-		ITextEditor editor = (ITextEditor) activePage.openEditor(input, "net.sf.eclipsefp.haskell.ui.editor.HaskellEditor");
+v v v v v v v
+		ITextEditor editor = (ITextEditor) activePage.openEditor(input, "net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor");
+^ ^ ^ ^ ^ ^ ^
 		return editor;
 	}
 
