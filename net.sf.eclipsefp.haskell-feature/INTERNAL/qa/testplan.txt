@@ -16,10 +16,12 @@ automated unit tests and manual feature tests.
     sure the program can be run and gives its output.
   - for one-stop builds, make sure that features are in folders (not jars)
 
-- Haddock support
+- Wizards (Haddock support, Cabal package import)
 
   - Create a project and open the Haddock wizard; the wizard should be in the 
     Haskell category, not under 'Other'.
+  - import a cabalized package into a new workspace project using the Cabal
+    import wizard
 
 - Basic functionality
 
