@@ -1,0 +1,9 @@
+Chasing modules from: Main.hs
+Compiling Main             ( Main.hs, C:\workspaces\GHCOutputParser\GHCOutputParser\out/Main.o )
+
+Main.hs:4:0:
+    Expecting a function type, but found `IO a'
+      Expected type: IO a
+      Inferred type: a1 -> IO ()
+    In the first argument of `GHC.TopHandler.runMainIO', namely `main'
+    When checking the type of the main function `main'

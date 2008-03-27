@@ -6,6 +6,7 @@ rm -r tmp
 ./AllTests_Suite 
 hpc markup AllTests_Suite \
   --exclude=ValidateCabalFile_Test \
+  --exclude=GHCOutputParser_Test \
   --srcdir=$SRC \
   --srcdir=. \
   --destdir=coverage_report

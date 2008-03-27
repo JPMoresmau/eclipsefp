@@ -9,5 +9,9 @@
 import Test.HUnit
 
 import ValidateCabalFile_Test
+import GHCOutputParser_Test
 
-main = runTestTT $ TestList [ ValidateCabalFile_Test.tests ]
+main = runTestTT $ TestList [ 
+    ValidateCabalFile_Test.tests,
+    GHCOutputParser_Test.tests 
+  ]

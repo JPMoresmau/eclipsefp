@@ -1,0 +1,4 @@
+[2 of 2] Compiling GHCOutputParser  ( GHCOutputParser.hs, /Users/leif/workspaces/eclipsefp/ghcparser/out/GHCOutputParser.o )
+
+GHCOutputParser.hs:4:29-34:
+    Warning: Imported from `Control.Monad' but not used: `liftM2'
