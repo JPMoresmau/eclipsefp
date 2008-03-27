@@ -15,9 +15,7 @@ package net.sf.eclipsefp.haskell.core.compiler;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
-
 import org.eclipse.core.resources.IFile;
 
 public class ListenableCompilerDecorator implements IHaskellCompiler {
@@ -40,18 +38,15 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 		fListeners.remove(listener);
 		fOutWriter.removeOutput(listener.getOutputWriter());
 	}
-	
-	public ICompilerOutput compile(final IFile file, final Writer outputWriter) {
+
+	public void compile(final IFile file, final Writer outputWriter) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
-	public ICompilerOutput compile(final IFile file) {
+	public void compile(final IFile file) {
 		for (ICompilerListener listener : fListeners) {
 			listener.startingCompilation();
 		}
-		
-		return fUnderlyingCompiler.compile(file, fOutWriter);
+		fUnderlyingCompiler.compile(file, fOutWriter);
 	}
-
 }

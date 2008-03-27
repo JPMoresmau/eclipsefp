@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.core.project;
 
 import java.util.Set;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -62,5 +61,5 @@ public interface IHaskellProject extends IAdaptable {
 
 	IHaskellCompiler getCompiler();
 
-	ICompilerOutput compile(IFile file);
+	void compile( IFile file );
 }

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ghccompiler.test.core;
 
-import static net.sf.eclipsefp.haskell.ghccompiler.test.util.AssertCompilerOutput.assertContains;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -19,9 +18,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import java.io.File;
 import java.io.Writer;
-import java.util.Collection;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject_PDETestCase;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler;
@@ -39,31 +35,7 @@ public class GhcCompilerTest_PDETest extends HaskellProject_PDETestCase {
 
 		IFile f = createSourceFile("main = putStrLn $ show $ fat 4", "Main.hs");
 		IHaskellCompiler compiler = new GhcCompiler(procRunner);
-		ICompilerOutput output = compiler.compile(f);
-		Collection<ICompilerOutputItem> errors = output.getErrors();
-
-		assertEquals(1, errors.size());
-		assertContains(1, 25, 27, "Not in scope: `fat'", errors);
-
+		compiler.compile(f);
 		verify(procRunner);
 	}
-
-	public void testParseMakeFlagOneErrorResult() throws CoreException {
-		IProcessRunner procRunner = createMock(IProcessRunner.class);
-		expect(procRunner.execute((File) anyObject(), (Writer) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject(), (String) anyObject()))
-			.andReturn("Chasing modules from: Main.hs\n" +
-					   "Compiling Main             ( Main.hs, Main.o )\n" +
-					   "\n" +
-					   "Main.hs:6:25-27: Not in scope: `fac'\n");
-		replay(procRunner);
-
-		IFile f = createSourceFile("main = putStrLn $ show $ fac 4", "Main.hs");
-		IHaskellCompiler compiler = new GhcCompiler(procRunner);
-		ICompilerOutput output = compiler.compile(f);
-		Collection<ICompilerOutputItem> errors = output.getErrors();
-
-		assertEquals(1, errors.size());
-		assertContains(6, 25, 27, "Not in scope: `fac'", errors);
-	}
-
 }

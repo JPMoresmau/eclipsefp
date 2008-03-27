@@ -13,28 +13,26 @@
 package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.io.Writer;
-
 import org.eclipse.core.resources.IFile;
 
 /**
  * <p>Default implementation for an IHaskellCompiler. This class can be used
  * as a base for other implementations.</p>
- * 
+ *
  * <p>The default {@link #compile(IFile, Writer, Writer)} does no compiling
  * and returns an almost empty output. Subclasses are supposed to override it to
  * provide implementation specific behaviour.</p>
- * 
- * @author Leif Frenzel  
+ *
+ * @author Leif Frenzel
  * @author Thiago Arrais - thiago.arrais@gmail.com
  */
 public class DefaultHaskellCompiler implements IHaskellCompiler {
 
-	public ICompilerOutput compile(final IFile file, final Writer outputWriter) {
-		return new DefaultHaskellCompilerOutput(file.getName());
+	public void compile(final IFile file, final Writer outputWriter) {
+	  // unused
 	}
 
-	public ICompilerOutput compile(final IFile file) {
-		return compile(file, new NullWriter());
+	public void compile(final IFile file) {
+		compile(file, new NullWriter());
 	}
-
 }

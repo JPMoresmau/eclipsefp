@@ -62,24 +62,22 @@ public class MarkerDesc implements ICohatoeData {
     this.markerID = id;
   }
 
+  public void applyToResource( final IResource res ) throws CoreException {
+    if( markerID == null ) {
+      throw new IllegalStateException( "No marker ID set" ); //$NON-NLS-1$
+    }
+    internalApplyToResource( res );
+  }
+
   public void applyToResource() throws CoreException {
     if( markerID == null ) {
       throw new IllegalStateException( "No marker ID set" ); //$NON-NLS-1$
     }
     List<IResource> ress = findResource( Path.fromOSString( fileName ) );
     for( IResource resource: ress ) {
-      if( resource != null && resource.isAccessible() ) {
-        IMarker marker = resource.createMarker( markerID );
-        marker.setAttribute( IMarker.MESSAGE, message );
-        marker.setAttribute( IMarker.LINE_NUMBER, line );
-        marker.setAttribute( IMarker.CHAR_START, charStart );
-        marker.setAttribute( IMarker.CHAR_END, charEnd );
-        marker.setAttribute( IMarker.SEVERITY, severity );
-      }
+      internalApplyToResource( resource );
     }
   }
-
-
 
 
   // attribute getters and setters
@@ -205,5 +203,18 @@ public class MarkerDesc implements ICohatoeData {
     result.addAll( Arrays.asList( files ) );
     result.addAll( Arrays.asList( conts ) );
     return result;
+  }
+
+
+  private void internalApplyToResource( final IResource resource )
+      throws CoreException {
+    if( resource != null && resource.isAccessible() ) {
+      IMarker marker = resource.createMarker( markerID );
+      marker.setAttribute( IMarker.MESSAGE, message );
+      marker.setAttribute( IMarker.LINE_NUMBER, line );
+      marker.setAttribute( IMarker.CHAR_START, charStart );
+      marker.setAttribute( IMarker.CHAR_END, charEnd );
+      marker.setAttribute( IMarker.SEVERITY, severity );
+    }
   }
 }

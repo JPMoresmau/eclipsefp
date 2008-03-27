@@ -1,5 +1,0 @@
-
-Main.hs:4:26-28: Not in scope: `fac'
-
-Main.hs:4:32-34: Not in scope: `fib'
-

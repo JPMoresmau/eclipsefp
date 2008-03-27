@@ -1,5 +1,0 @@
-Chasing modules from: Main.hs
-Skipping  Factorial        ( ./Factorial.hs, ./Factorial.o )
-Compiling Main             ( Main.hs, Main.o )
-
-Main.hs:6:25-27: Not in scope: `fib'

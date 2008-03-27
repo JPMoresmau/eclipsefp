@@ -10,7 +10,7 @@ public class StubCompiler extends DefaultHaskellCompiler {
 	public static final String EXPECTED_STANDARD_OUTPUT = "expected standard output";
 
 	@Override
-  public ICompilerOutput compile(final IFile workingDir, final Writer output) {
+  public void compile(final IFile workingDir, final Writer output) {
 		try {
 			output.write(EXPECTED_STANDARD_OUTPUT);
 			output.write(EXPECTED_STANDARD_ERROR);
@@ -18,7 +18,6 @@ public class StubCompiler extends DefaultHaskellCompiler {
 		} catch (IOException e) {
 			// ignore error
 		}
-		return null;
 	}
 
 }

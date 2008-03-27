@@ -7,11 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
+import net.sf.eclipsefp.haskell.core.internal.compiler.TemporaryCompilerHelper;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -50,7 +47,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 	}
 
 	@Override
-  public ICompilerOutput compile( final IFile file, final Writer outputWriter ) {
+  public void compile( final IFile file, final Writer outputWriter ) {
     final IProject project = file.getProject();
     IHaskellProject hsProject = HaskellProjectManager.get( project );
     String[] cmdLine = buildCommandLine( file, hsProject );
@@ -67,7 +64,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
       throw new IllegalStateException();
     }
     String output = fProcessRunner.execute( workDir, outputWriter, cmdLine );
-    return parse( output );
+    TemporaryCompilerHelper.applyOutput( output, file );
   }
 
 	private String[] buildCommandLine( final IFile file,
@@ -114,17 +111,6 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 
 	// helping methods
 	// ////////////////
-
-	private ICompilerOutput parse(final String messages) {
-	  List<ICompilerOutputItem> list = GhcOutputParser.parse(messages);
-
-		CompilerOutput output
-		  = new CompilerOutput( 0, messages, new ArrayList<Exception>() );
-		for( ICompilerOutputItem item: list ) {
-      output.addError( ( CompilerOutputItem )item );
-    }
-		return output;
-	}
 
 	private String getAbsPath(final IProject project, final IPath path) {
 		return project.getLocation().toOSString() + File.separator

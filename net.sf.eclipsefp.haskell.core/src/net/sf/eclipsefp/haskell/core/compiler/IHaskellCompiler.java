@@ -2,12 +2,11 @@
 package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.io.Writer;
-
 import org.eclipse.core.resources.IFile;
 
 /**
  * Implementations know how to compile a haskell file.
- * 
+ *
  * @author Leif Frenzel
  * @author Thiago Arrais
  */
@@ -17,13 +16,13 @@ public interface IHaskellCompiler {
 	 * Compiles the specified file redirecting any compiler output to the given
 	 * streams.
 	 */
-    ICompilerOutput compile(IFile file, Writer outputWriter);
+    void compile(IFile file, Writer outputWriter);
 
 	/**
-	 * Compiles the specified file.
-	 * 
-	 * Any output is ignored.
-	 */
-	ICompilerOutput compile(IFile file);
+	  * Compiles the specified file.
+	  *
+	  * Any output is ignored.
+	  */
+	 void compile(IFile file);
 
 }

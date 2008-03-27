@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
@@ -140,8 +139,8 @@ public final class HaskellProject implements IHaskellProject {
     compiler = ( comp == null ) ? new DefaultHaskellCompiler() : comp;
   }
 
-  public ICompilerOutput compile( final IFile file ) {
-    return getCompiler().compile( file );
+  public void compile( final IFile file ) {
+    getCompiler().compile( file );
   }
 
 	// helping methods

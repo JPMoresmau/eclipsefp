@@ -97,5 +97,11 @@
            interface="net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile"
            name="%manipulateCabalFile_name">
       </haskellFunction>
+      <haskellFunction
+            codeFile="$os$/obj/ParseGHCOutput.o"
+            implementation="net.sf.eclipsefp.haskell.core.internal.compiler.ParseGHCOutput"
+            interface="net.sf.eclipsefp.haskell.core.internal.compiler.IParseGHCOutput"
+            name="%parseGHCOutput_name">
+      </haskellFunction>
    </extension>
 </plugin>

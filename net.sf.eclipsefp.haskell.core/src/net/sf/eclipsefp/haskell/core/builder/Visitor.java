@@ -1,11 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
-import java.util.Collection;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutput;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerOutputItem;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -53,24 +50,8 @@ abstract class Visitor {
 
   void compileFile( final IFile file ) {
     IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
-    ICompilerOutput out = hsProject.compile( file );
     deleteMarkers( file );
-    markResource( file, out.getErrors() );
-  }
-
-  private void markResource( final IFile file,
-                             final Collection<ICompilerOutputItem> items ) {
-    try {
-      for(ICompilerOutputItem item : items) {
-        IMarker marker = file.createMarker( HaskellCorePlugin.ID_PROBLEM_MARKER );
-        if( marker.exists() ) {
-        	item.populateMarker(marker);
-        }
-      }
-    } catch( CoreException cex ) {
-      String msg = "Could not create markers for compiler output."; //$NON-NLS-1$
-      HaskellCorePlugin.log( msg, cex );
-    }
+    hsProject.compile( file );
   }
 
   private void deleteMarkers( final IFile file ) {
