@@ -1,0 +1,7 @@
+[2 of 2] Compiling Main             ( Main.hs, /Users/leif/workspaces/runtime-New_configuration/demo/out/Main.o )
+
+Main.hs:4:0-9:
+    Warning: Module `Gro' is imported, but nothing from it is used,
+               except perhaps instances visible in `Gro'
+             To suppress this warning, use: import Gro()
+Linking /Users/leif/workspaces/runtime-New_configuration/demo/bin/theResult ...

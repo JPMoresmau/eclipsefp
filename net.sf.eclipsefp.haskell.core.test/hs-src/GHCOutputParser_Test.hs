@@ -36,7 +36,8 @@ tests = TestList [
         MarkerDesc "Main.hs" 3 " Defaulting the following constraint(s) to type `Integer'" 22 23 Warning,
         MarkerDesc "Main.hs" 5 " Definition but no type signature for `ladida'" 0 18 Warning
       ],
-    testCase "014" [MarkerDesc "GHCOutputParser.hs" 4 " Imported from `Control.Monad' but not used: `liftM2'" 29 34 Warning]
+    testCase "014" [MarkerDesc "GHCOutputParser.hs" 4 " Imported from `Control.Monad' but not used: `liftM2'" 29 34 Warning],
+    testCase "015" [MarkerDesc "Main.hs" 4 " Module `Gro' is imported, but nothing from it is used," 0 9 Warning]
   ]
   
 
