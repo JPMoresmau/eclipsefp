@@ -4,9 +4,12 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
@@ -14,6 +17,8 @@ import net.sf.eclipsefp.haskell.ghccompiler.core.CompilerParams;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
 
@@ -42,12 +47,7 @@ public class GhciLaunchOperationDelegate
     if( isPrefSet( IGhcPreferenceNames.GHCI_USES_GHC_OPTIONS ) ) {
       cmdLine.addAll( compilerParams.construct() );
     }
-    if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
-      Set<IPath> sourcePaths = hsProject.getSourcePaths();
-      for( IPath path: sourcePaths ) {
-        cmdLine.add( "-i" + path.toString() ); //$NON-NLS-1$
-      }
-    }
+    collectImportDirs( hsProject, cmdLine );
     addAll( cmdLine, selectedFiles );
     String[] result = new String[ cmdLine.size() ];
     cmdLine.toArray( result );
@@ -65,6 +65,40 @@ public class GhciLaunchOperationDelegate
 
   // helping methods
   //////////////////
+
+  private void collectImportDirs( final IHaskellProject hsProject,
+                                  final List<String> cmdLine ) {
+    if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
+      try {
+        Set<IHaskellProject> visited = new HashSet<IHaskellProject>();
+        visited.add( hsProject );
+        collectImportDirsRec( hsProject, cmdLine, visited );
+      } catch( final CoreException cex ) {
+        HaskellCorePlugin.log( cex );
+      }
+    }
+  }
+
+  private void collectImportDirsRec(
+      final IHaskellProject hsProject,
+      final List<String> cmdLine,
+      final Set<IHaskellProject> visited ) throws CoreException {
+    Set<IPath> sourcePaths = hsProject.getSourcePaths();
+    for( IPath sourcePath: sourcePaths ) {
+      IPath loc = hsProject.getResource().getLocation().append( sourcePath );
+      cmdLine.add( "-i\"" + loc.toOSString() + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    IProject[] refs = hsProject.getResource().getReferencedProjects();
+    for( IProject ref: refs ) {
+      if( ref.hasNature( HaskellNature.NATURE_ID ) ) {
+        IHaskellProject refHsProject = HaskellProjectManager.get( ref );
+        if( !visited.contains( refHsProject ) ) {
+          collectImportDirsRec( refHsProject, cmdLine, visited );
+          visited.add( refHsProject );
+        }
+      }
+    }
+  }
 
   private boolean isPrefSet( final String name ) {
     Preferences prefs = GhcCompilerPlugin.getDefault().getPluginPreferences();
