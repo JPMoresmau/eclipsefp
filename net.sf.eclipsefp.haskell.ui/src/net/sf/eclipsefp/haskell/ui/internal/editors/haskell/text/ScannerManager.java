@@ -59,9 +59,9 @@ public class ScannerManager implements IEditorPreferenceNames {
     getPreferenceStore().removePropertyChangeListener( propertyChangeListener );
   }
 
-  public HaskellCodeScanner getCodeScanner() {
+  public HaskellCodeScanner getCodeScanner( final boolean latexLiterate ) {
     if( codeScanner == null ) {
-      codeScanner = new HaskellCodeScanner();
+      codeScanner = new HaskellCodeScanner( latexLiterate );
     }
     return codeScanner;
   }

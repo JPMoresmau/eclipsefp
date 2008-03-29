@@ -10,8 +10,13 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.syntax.ArrowRule;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.syntax.WhitespaceDetector;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.util.text.WordDetector;
+import org.eclipse.jface.text.rules.EndOfLineRule;
+import org.eclipse.jface.text.rules.ICharacterScanner;
+import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.WhitespaceRule;
@@ -28,18 +33,27 @@ public class HaskellCodeScanner extends RuleBasedScanner
 
   /** <p>constructs a new HaskellCodeScanner and specifies the scanning
    * rules.</p> */
-  public HaskellCodeScanner() {
+  public HaskellCodeScanner( final boolean latexLiterate ) {
     ScannerManager man = ScannerManager.getInstance();
     IToken keywordToken = man.createToken( EDITOR_KEYWORD_COLOR,
                                            EDITOR_KEYWORD_BOLD );
     IToken stringToken = man.createToken( EDITOR_STRING_COLOR,
                                           EDITOR_STRING_BOLD );
+    IToken commentToken = man.createToken( EDITOR_COMMENT_COLOR,
+                                           EDITOR_COMMENT_BOLD );
     IToken defaultToken = man.createToken( EDITOR_DEFAULT_COLOR,
                                            EDITOR_DEFAULT_BOLD );
     List<IRule> list = new ArrayList<IRule>();
 
-    // strings and characters
+    if( latexLiterate ) {
+      list.add( new LiterateRule() );
+    }
+
+    // strings and characters, comments
     list.add( new SingleLineRule( "\"", "\"", stringToken, '\\' ) );
+    list.add( new EndOfLineRule( "--", commentToken ) );
+    list.add( new MultiLineRule( "{-", "-}", commentToken ) );
+
     // generic whitespace rule
     list.add( new WhitespaceRule( new WhitespaceDetector() ) );
 
@@ -77,5 +91,41 @@ public class HaskellCodeScanner extends RuleBasedScanner
     IRule[] rules = new IRule[ list.size() ];
     list.toArray( rules );
     setRules( rules );
+  }
+
+
+  // inner classes
+  ////////////////
+
+  public class LiterateRule extends WordRule implements IPredicateRule {
+
+    private final IToken successToken;
+
+    public LiterateRule() {
+      super( new IWordDetector() {
+        public boolean isWordStart( final char c ) {
+          return( c == '\\' );
+        }
+
+        public boolean isWordPart( final char c ) {
+          return    "\\begin{code}".indexOf( c ) != -1
+                 || "\\end{code}".indexOf( c ) != -1;
+        }
+      } );
+      ScannerManager man = ScannerManager.getInstance();
+      this.successToken = man.createToken( EDITOR_COMMENT_COLOR,
+                                           EDITOR_COMMENT_BOLD );
+      addWord( "\\begin{code}", successToken );
+      addWord( "\\end{code}", successToken );
+    }
+
+    public IToken evaluate( final ICharacterScanner scanner,
+                            final boolean resume ) {
+      return super.evaluate( scanner );
+    }
+
+    public IToken getSuccessToken() {
+      return successToken;
+    }
   }
 }

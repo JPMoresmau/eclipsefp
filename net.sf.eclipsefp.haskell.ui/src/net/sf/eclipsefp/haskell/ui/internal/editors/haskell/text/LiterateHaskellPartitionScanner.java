@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.IPartitionTypes;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IPredicateRule;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
@@ -18,12 +19,29 @@ import org.eclipse.jface.text.rules.Token;
   */
 public class LiterateHaskellPartitionScanner extends RuleBasedPartitionScanner {
 
-  public LiterateHaskellPartitionScanner() {
+  public LiterateHaskellPartitionScanner( final boolean latex ) {
+    IPredicateRule[] rules = latex ? createLatexRules() : createBirdRules();
+    setPredicateRules( rules );
+    setDefaultReturnToken( new Token( IPartitionTypes.HS_LITERATE_COMMENT ) );
+  }
+
+
+  // helping methods
+  //////////////////
+
+  private IPredicateRule[] createLatexRules() {
+    IPredicateRule[] rules = new IPredicateRule[] {
+      new MultiLineRule( "\\begin{code}", "\\end{code}",
+                         new Token( IDocument.DEFAULT_CONTENT_TYPE ) ),
+    };
+    return rules;
+  }
+
+  private IPredicateRule[] createBirdRules() {
     IPredicateRule[] rules = new IPredicateRule[] {
       // rule for single line comments
       new EndOfLineRule( ">", new Token( IDocument.DEFAULT_CONTENT_TYPE ) )
     };
-    setPredicateRules( rules );
-    setDefaultReturnToken( new Token( IPartitionTypes.HS_LITERATE_COMMENT ) );
+    return rules;
   }
 }

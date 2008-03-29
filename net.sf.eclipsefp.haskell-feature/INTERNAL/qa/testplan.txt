@@ -32,6 +32,11 @@ automated unit tests and manual feature tests.
   - check that the Project Explorer shows the GHC installation (Haskell impl)
     as node
 
+- Editor
+  
+  - create a Haskell module and literate Haskell modules (traditional and TeX),
+    check that basic syntax coloring and partitioning are in place 
+
 - Cohatoe-based functionality
 
   - try the point-free refactoring

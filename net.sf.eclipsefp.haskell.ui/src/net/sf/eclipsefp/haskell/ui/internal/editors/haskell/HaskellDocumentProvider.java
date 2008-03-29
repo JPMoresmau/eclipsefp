@@ -3,12 +3,13 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellPartitionScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.LiterateHaskellPartitionScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
@@ -38,7 +39,8 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
   }
 
   public static void connectToPartitioner( final Object element,
-                                           final IDocument document ) {
+                                           final IDocument document )
+                                                          throws CoreException {
     IDocumentPartitioner partitioner = getPartitioner( element );
     partitioner.connect( document );
     document.setDocumentPartitioner( partitioner );
@@ -77,23 +79,22 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
   // helping methods
   //////////////////
 
-  private static IDocumentPartitioner getPartitioner( final Object elem ) {
-    IPartitionTokenScanner partitionScanner;
-    if( isLiterate( elem ) ) {
-      partitionScanner = new LiterateHaskellPartitionScanner();
-    } else {
-      partitionScanner = new HaskellPartitionScanner();
-    }
-    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
-  }
+  private static IDocumentPartitioner getPartitioner( final Object elem )
+                                                          throws CoreException {
+    IPartitionTokenScanner partitionScanner = new HaskellPartitionScanner();
 
-  private static boolean isLiterate( final Object elem ) {
-    boolean isLiterate = false;
     if( elem instanceof IFileEditorInput ) {
       IFile input = ( ( IFileEditorInput )elem ).getFile();
-      String literateExt = ResourceUtil.EXTENSION_LHS;
-      isLiterate = input.getFileExtension().equals( literateExt );
+      IContentDescription contentDesc = input.getContentDescription();
+      if( contentDesc != null ) {
+        Object sty = contentDesc.getProperty( LiterateContentDescriber.STYLE );
+        if( LiterateContentDescriber.LATEX.equals( sty ) ) {
+          partitionScanner = new LiterateHaskellPartitionScanner( true );
+        } else if( LiterateContentDescriber.BIRD.equals( sty ) ) {
+          partitionScanner = new LiterateHaskellPartitionScanner( false );
+        }
+      }
     }
-    return isLiterate;
+    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
   }
 }

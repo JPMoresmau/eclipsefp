@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
@@ -15,7 +16,10 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcil
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellStringScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -31,6 +35,7 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.IFileEditorInput;
 
 /**
  * <p>
@@ -83,9 +88,9 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
   }
 
 	@Override
-  public int getTabWidth(final ISourceViewer sourceViewer) {
-		return getPreferenceStore().getInt(EDITOR_TAB_WIDTH);
-	}
+  public int getTabWidth( final ISourceViewer sourceViewer ) {
+    return getPreferenceStore().getInt( EDITOR_TAB_WIDTH );
+  }
 
 	@Override
   public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
@@ -111,7 +116,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
 		// for every content type we need a damager and a repairer:
 		ScannerManager man = ScannerManager.getInstance();
-    ITokenScanner codeScanner = man.getCodeScanner();
+    ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
@@ -139,7 +144,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return reconciler;
 	}
 
-	@Override
+  @Override
   public IAnnotationHover getAnnotationHover(final ISourceViewer sv) {
 		return new AnnotationHover();
 	}
@@ -183,19 +188,18 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	}
 
 	@Override
-  public IReconciler getReconciler(final ISourceViewer sourceViewer) {
-		MonoReconciler result = null;
-		// the editor may be null if this configuration is used in a preview
-		// (source viewer without editor)
-		if (fEditor != null) {
-			IReconcilingStrategy strategy = new HaskellReconcilingStrategy(
-					fEditor);
-			result = new MonoReconciler(strategy, false);
-			result.setProgressMonitor(new NullProgressMonitor());
-			result.setDelay(500);
-		}
-		return result;
-	}
+  public IReconciler getReconciler( final ISourceViewer sourceViewer ) {
+    MonoReconciler result = null;
+    // the editor may be null if this configuration is used in a preview
+    // (source viewer without editor)
+    if( fEditor != null ) {
+      IReconcilingStrategy strategy = new HaskellReconcilingStrategy( fEditor );
+      result = new MonoReconciler( strategy, false );
+      result.setProgressMonitor( new NullProgressMonitor() );
+      result.setDelay( 500 );
+    }
+    return result;
+  }
 
 	// helping methods
 	// ////////////////
@@ -204,10 +208,26 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return HaskellUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	// experimental from here
-
 	private boolean isSpacesForTabs() {
-		String key = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-		return getPreferenceStore().getBoolean(key);
-	}
+    String key = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
+    return getPreferenceStore().getBoolean( key );
+  }
+
+  private boolean isLatexLiterate() {
+    boolean result = false;
+    if( fEditor.getEditorInput() instanceof IFileEditorInput ) {
+      IFileEditorInput fei = ( IFileEditorInput )fEditor.getEditorInput();
+      IFile file = fei.getFile();
+      try {
+        if( file != null && file.getContentDescription() != null ) {
+          QualifiedName name = LiterateContentDescriber.STYLE;
+          Object property = file.getContentDescription().getProperty( name );
+          result = LiterateContentDescriber.LATEX.equals( property );
+        }
+      } catch( final CoreException cex ) {
+        HaskellUIPlugin.log( cex );
+      }
+    }
+    return result;
+  }
 }
