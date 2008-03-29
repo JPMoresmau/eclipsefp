@@ -41,17 +41,27 @@
             class="net.sf.eclipsefp.haskell.core.preferences.CorePreferenceInitializer">
       </initializer>
    </extension>
-   <extension
-         point="org.eclipse.team.core.fileTypes">
-      <fileTypes
-            type="text"
-            extension="hs">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="lhs">
-      </fileTypes>
+   
+   <!-- content types and file types -->
+   <extension point="org.eclipse.team.core.fileTypes">
+     <fileTypes type="text" extension="hs" />
+     <fileTypes type="text" extension="lhs" />
    </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+     <content-type base-type="org.eclipse.core.runtime.text"
+                   file-extensions="hs"
+                   id="net.sf.eclipsefp.haskell.contenttypes.haskell"
+                   name="%contenttype_haskell_name"
+                   priority="normal" />
+     <content-type base-type="org.eclipse.core.runtime.text"
+                   file-extensions="lhs"
+                   id="net.sf.eclipsefp.haskell.contenttypes.literateHaskell"
+                   name="%contenttype_literate_name"
+                   priority="normal">
+       <describer class="net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber" />
+     </content-type>
+   </extension>
+
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester

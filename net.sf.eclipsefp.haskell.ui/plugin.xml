@@ -54,6 +54,8 @@
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
+        <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.haskell" />
+        <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.literateHaskell" />
       </editor>
    </extension>
    <extension
