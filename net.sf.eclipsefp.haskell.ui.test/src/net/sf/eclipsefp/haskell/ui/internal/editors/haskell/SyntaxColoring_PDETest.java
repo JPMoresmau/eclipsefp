@@ -33,17 +33,6 @@ public class SyntaxColoring_PDETest extends TestCase {
     assertColor( tokenize( " X\n" ), ColorProvider.DEFAULT_OTHER );
   }
 
-  public void testQuotedQuote() throws CoreException {
-    // see [1837352] the problem is that the first quotation char is taken to
-    // be the beginning of a string literal that goes until the word 'test'
-    // begins
-    IDocument document = createDocument( "putStrLn ['\"', \"test\" ,'\"']\n" );
-    ITokenScanner scanner = new HaskellCodeScanner( false );
-    scanner.setRange( document, 0, document.getLength() );
-    assertColor( scanner.nextToken(), ColorProvider.DEFAULT_FUNCTION );
-    // TODO lf asserts (what do we expect here in terms of TextAttributes?
-  }
-
   public void testLiterateSequences() throws CoreException {
     IDocument document = createDocument( "A\\begin{code}B\\end{code}C\n" );
     // scanner should not know about literate stuff
