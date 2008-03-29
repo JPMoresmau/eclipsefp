@@ -72,4 +72,26 @@
          </contextualLaunch>
       </shortcut>
    </extension>
+   <extension point="org.eclipse.ui.commands">
+      <command
+            name="%runGHCiShortcut_name"
+            description="%runGHCiShortcut_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchShortcut.run">
+      </command>
+      <command
+            name="%runHaskellShortcut_name"
+            description="%runHaskellShortcut_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run">
+      </command>
+   </extension>
+   <extension point="org.eclipse.ui.bindings">
+      <key sequence="M3+M2+X G"
+           commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchShortcut.run"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key sequence="M3+M2+X H"
+           commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
 </plugin>
