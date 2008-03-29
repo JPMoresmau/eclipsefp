@@ -11,7 +11,17 @@ ticket IDs.)</p>
 <h4>Changes from version 1.103 to version 1.104 (M4)</h4>
 
 <ul>
-  <li></li>
+  <li>[ 1808974 ] re-implemented GHC Output parser in Haskell agains the 
+  existing test cases. This fixes also:
+    <ul>
+      <li>[ 1353319 ] warnings are not filtered out</li>
+      <li>[ 1353336 ] compiler not finding file is not reported</li>
+    </ul>
+  </li>
+  <li>[ 1386207 ] [Launch] searching for files in referenced projects. When 
+  launching GHCi, source folders of project references are now automatically 
+  added to the search path using the -i option.</li>
+  <li>[ 1928520 ] [Editor] syntax highlighting in latex code block</li>
 </ul>
 
 <h4>Changes from version 1.102 to version 1.103 (M3)</h4>
