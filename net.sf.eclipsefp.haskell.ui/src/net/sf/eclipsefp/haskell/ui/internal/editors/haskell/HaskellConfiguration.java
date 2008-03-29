@@ -56,17 +56,20 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
 	}
 
-	private final HaskellEditor fEditor;
+	private final HaskellEditor editor;
 	private final IContentAssistantFactory fFactory;
 
-	public HaskellConfiguration(final HaskellEditor editor) {
-		this(editor, new ContentAssistantFactory());
-	}
+	public HaskellConfiguration( final HaskellEditor editor ) {
+    this( editor, new ContentAssistantFactory() );
+  }
 
-	public HaskellConfiguration(final HaskellEditor editor, final IContentAssistantFactory factory) {
-		fEditor = editor;
-		fFactory = factory;
-	}
+  public HaskellConfiguration(
+      final HaskellEditor editor,
+      final IContentAssistantFactory factory ) {
+    this.editor = editor;
+    fFactory = factory;
+  }
+
 
 	// interface methods of SourceViewerConfiguration
 	// ///////////////////////////////////////////////
@@ -192,8 +195,8 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
     MonoReconciler result = null;
     // the editor may be null if this configuration is used in a preview
     // (source viewer without editor)
-    if( fEditor != null ) {
-      IReconcilingStrategy strategy = new HaskellReconcilingStrategy( fEditor );
+    if( editor != null ) {
+      IReconcilingStrategy strategy = new HaskellReconcilingStrategy( editor );
       result = new MonoReconciler( strategy, false );
       result.setProgressMonitor( new NullProgressMonitor() );
       result.setDelay( 500 );
@@ -215,8 +218,8 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
   private boolean isLatexLiterate() {
     boolean result = false;
-    if( fEditor.getEditorInput() instanceof IFileEditorInput ) {
-      IFileEditorInput fei = ( IFileEditorInput )fEditor.getEditorInput();
+    if( editor != null && editor.getEditorInput() instanceof IFileEditorInput ) {
+      IFileEditorInput fei = ( IFileEditorInput )editor.getEditorInput();
       IFile file = fei.getFile();
       try {
         if( file != null && file.getContentDescription() != null ) {
