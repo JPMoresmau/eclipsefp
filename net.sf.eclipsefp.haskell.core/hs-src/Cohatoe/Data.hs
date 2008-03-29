@@ -9,7 +9,7 @@ class CohatoeData a where
   
 instance CohatoeData MarkerDesc where
   marshal md = [
-      fileName md, show $ line md, message md, 
+      fileName md, show $ lineStart md, show $ lineEnd md, message md, 
       show $ charStart md, show $ charEnd md, show $ severity md
     ]
   unmarshal []      = Nothing

@@ -10,7 +10,8 @@ module Cohatoe.Data.MarkerDesc (
 
 data MarkerDesc = MarkerDesc {
   fileName :: String,
-  line :: Int,
+  lineStart :: Int,
+  lineEnd :: Int,
   message :: String,
   charStart :: Int,
   charEnd :: Int,
@@ -26,4 +27,4 @@ unspecified = -1
 -- convenience function for making a warning with file name and message,
 -- locations unspecified
 mkWarning :: FilePath -> String -> MarkerDesc
-mkWarning fp msg = MarkerDesc fp unspecified msg unspecified unspecified Warning
+mkWarning fp msg = MarkerDesc fp unspecified unspecified msg unspecified unspecified Warning

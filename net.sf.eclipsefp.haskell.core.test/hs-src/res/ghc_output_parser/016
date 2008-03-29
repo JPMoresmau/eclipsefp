@@ -1,0 +1,15 @@
+[1 of 1] Compiling Bla              ( Main.hs, /Users/leif/workspaces/eclipsefp/organize_imports/out/Bla.o )
+
+Main.hs:7:15: Warning: Defined but not used: `n'
+
+Main.hs:(13,0)-(14,17):
+    Warning: Definition but no type signature for `prop_MkTestCaseName_len'
+             Inferred type: prop_MkTestCaseName_len :: Int -> Bool
+
+Main.hs:14:2: Warning: Defined but not used: `types'
+
+Main.hs:16:0-68:
+    Warning: Definition but no type signature for `prop_MkTestCaseName_suffix'
+             Inferred type: prop_MkTestCaseName_suffix :: Int -> Bool
+Warning: output was redirected with -o, but no output will be generated
+because there is no Main module.

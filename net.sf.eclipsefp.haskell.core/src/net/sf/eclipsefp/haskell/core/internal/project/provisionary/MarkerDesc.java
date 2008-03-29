@@ -31,7 +31,8 @@ public class MarkerDesc implements ICohatoeData {
   }
 
   private String fileName;
-  private int line = UNSPECIFIED;
+  private int lineStart = UNSPECIFIED;
+  private int lineEnd = UNSPECIFIED;
   private String message = ""; //$NON-NLS-1$
   private int charStart = UNSPECIFIED;
   private int charEnd = UNSPECIFIED;
@@ -49,7 +50,7 @@ public class MarkerDesc implements ICohatoeData {
         if( md != null ) {
           result.add( md );
         }
-        index += 6;
+        index += 7;
       }
     }
     return result;
@@ -87,8 +88,12 @@ public class MarkerDesc implements ICohatoeData {
     return fileName;
   }
 
-  public int getLine() {
-    return line;
+  public int getLineStart() {
+    return lineStart;
+  }
+
+  public int getLineEnd() {
+    return lineEnd;
   }
 
   public String getMessage() {
@@ -113,7 +118,8 @@ public class MarkerDesc implements ICohatoeData {
   public List<String> marshal() {
     List<String> result = new ArrayList<String>();
     result.add( fileName );
-    result.add( String.valueOf( line ) );
+    result.add( String.valueOf( lineStart ) );
+    result.add( String.valueOf( lineEnd ) );
     result.add( message );
     result.add( String.valueOf( charStart ) );
     result.add( String.valueOf( charEnd ) );
@@ -144,7 +150,10 @@ public class MarkerDesc implements ICohatoeData {
       result.fileName = args[ index++ ];
 
       if( args.length > index ) {
-        result.line = readInt( args[ index++ ] );
+        result.lineStart = readInt( args[ index++ ] );
+      }
+      if( args.length > index ) {
+        result.lineEnd = readInt( args[ index++ ] );
       }
       if( args.length > index ) {
         result.message = args[ index++ ];
@@ -205,13 +214,12 @@ public class MarkerDesc implements ICohatoeData {
     return result;
   }
 
-
   private void internalApplyToResource( final IResource resource )
       throws CoreException {
     if( resource != null && resource.isAccessible() ) {
       IMarker marker = resource.createMarker( markerID );
       marker.setAttribute( IMarker.MESSAGE, message );
-      marker.setAttribute( IMarker.LINE_NUMBER, line );
+      marker.setAttribute( IMarker.LINE_NUMBER, lineStart );
       marker.setAttribute( IMarker.CHAR_START, charStart );
       marker.setAttribute( IMarker.CHAR_END, charEnd );
       marker.setAttribute( IMarker.SEVERITY, severity );

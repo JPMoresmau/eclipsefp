@@ -14,11 +14,11 @@ public class MarkerDesc_Test extends TestCase {
   }
 
   public void testUnmarshal_singleCompleteMarker() {
-    String[] args = new String[] { "/a", "1", "Bla", "-1", "-1", "Error" };
+    String[] args = new String[] { "/a", "1", "-1", "Bla", "-1", "-1", "Error" };
     List<MarkerDesc> result = MarkerDesc.unmarshal( args );
     assertEquals( 1, result.size() );
     assertEquals( "/a", result.get( 0 ).getFileName() );
-    assertEquals( 1, result.get( 0 ).getLine() );
+    assertEquals( 1, result.get( 0 ).getLineStart() );
     assertEquals( "Bla", result.get( 0 ).getMessage() );
     assertEquals( MarkerDesc.UNSPECIFIED, result.get( 0 ).getCharStart() );
     assertEquals( MarkerDesc.UNSPECIFIED, result.get( 0 ).getCharEnd() );
@@ -27,8 +27,8 @@ public class MarkerDesc_Test extends TestCase {
 
   public void testUnmarshal_incompleteMarker() {
     String[] args = new String[] {
-      "/a", "1", "Bla", "-1", "1", "Error",
-      "/a", "1", "Bla", "3"
+      "/a", "1", "-1", "Bla", "-1", "1", "Error",
+      "/a", "1", "-1", "Bla", "3"
     };
     List<MarkerDesc> result = MarkerDesc.unmarshal( args );
     assertEquals( 2, result.size() );
@@ -40,9 +40,9 @@ public class MarkerDesc_Test extends TestCase {
 
   public void testUnmarshal_multipleCompleteMarkers() {
     String[] args = new String[] {
-        "/a", "1", "Bli", "-1", "-1", "Info",
-        "/a", "2", "Bla", "-1", "-1", "Warning",
-        "/a", "3", "Blubb", "-1", "-1", "Error"
+        "/a", "1", "-1", "Bli", "-1", "-1", "Info",
+        "/a", "2", "-1", "Bla", "-1", "-1", "Warning",
+        "/a", "3", "-1", "Blubb", "-1", "-1", "Error"
     };
     List<MarkerDesc> result = MarkerDesc.unmarshal( args );
     assertEquals( 3, result.size() );

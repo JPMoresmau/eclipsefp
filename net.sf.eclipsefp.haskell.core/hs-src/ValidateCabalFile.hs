@@ -30,5 +30,5 @@ validateCabalFile fpath = do
     ParseFailed err -> do
       let (lineNo, msg) = locatedErrorMsg err
       let ln = fromMaybe (-1) lineNo
-      return [ MarkerDesc fpath ln msg unspecified unspecified Error ]
+      return [ MarkerDesc fpath ln unspecified msg unspecified unspecified Error ]
     ParseOk warns _ -> return $ map (mkWarning fpath) warns
