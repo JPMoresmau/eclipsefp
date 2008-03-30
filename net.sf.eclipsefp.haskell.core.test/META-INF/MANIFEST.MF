@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Plug-in for testing Haskell Core
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.test
-Bundle-Version: 1.104.0
+Bundle-Version: 1.105.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Require-Bundle: org.antlr;bundle-version="[2.7.6,3.0.0)",
  org.easymock;bundle-version="[2.2.0,3.0.0)",
