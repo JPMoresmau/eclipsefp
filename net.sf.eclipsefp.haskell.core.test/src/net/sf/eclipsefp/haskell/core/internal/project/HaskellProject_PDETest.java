@@ -50,13 +50,14 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
 
   public void testTargetExecutable_single() throws CoreException {
     HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
-    assertEquals( 0, hp.getTargetNames().size() );
+    // atm one target exe is added automatically during project creation
+    assertEquals( 1, hp.getTargetNames().size() );
 
     IPath path = new Path( "bla.exe" );
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
     project.getFile( path ).create( is, true, null );
     hp.addTargetName( path );
-    assertEquals( 1, hp.getTargetNames().size() );
+    assertEquals( 2, hp.getTargetNames().size() );
 
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
     assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
@@ -64,16 +65,18 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
 
   public void testTargetExecutable_multiple() throws CoreException {
     HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
-    assertEquals( 0, hp.getTargetNames().size() );
+    // atm one target exe is added automatically during project creation
+    assertEquals( 1, hp.getTargetNames().size() );
 
     IPath path = new Path( "bin/bli.exe" );
     IPath path2 = new Path( "bla.exe" );
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
+    project.getFolder( "bin" ).create( true, true, null );
     project.getFile( path ).create( is, true, null );
     project.getFile( path2 ).create( is, true, null );
     hp.addTargetName( path );
     hp.addTargetName( path2 );
-    assertEquals( 2, hp.getTargetNames().size() );
+    assertEquals( 3, hp.getTargetNames().size() );
 
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bin/bli.exe" ) ) );

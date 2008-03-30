@@ -8,6 +8,9 @@ import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 
@@ -17,39 +20,61 @@ import org.eclipse.core.runtime.Preferences;
   */
 public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
 
-
   public void testAddSourceFolders_single() throws Exception {
+    // what we expect to show up in the command lines
+    String locOfSrc = putInQuotes( project.getLocation().append( "src" ) );
+
     // source folders added by default
     HaskellProject hp = new HaskellProject( project );
     hp.addSourcePath( "src" );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
-    assertContains( "-isrc", del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
 
     // unset the pref - no source folders
     setPref( false );
-    assertContainsNot( "-isrc", del.createArguments( hp, files ) );
+    assertContainsNot( "-i" + locOfSrc, del.createArguments( hp, files ) );
 
     // set the pref again - source folders again
     setPref( true );
-    assertContains( "-isrc", del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
   }
 
   public void testAddSourceFolders_multi() throws Exception {
+    // what we expect to show up in the command lines
+    String locOfSrc = putInQuotes( project.getLocation().append( "src" ) );
+    String locOfBlaSrc
+      = putInQuotes( project.getLocation().append( new Path( "bla/src2" ) ) );
+
     HaskellProject hp = new HaskellProject( project );
     hp.addSourcePath( "src" );
     hp.addSourcePath( "bla/src2" );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
-    assertContains( "-isrc", del.createArguments( hp, files ) );
-    assertContains( "-ibla/src2", del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfBlaSrc, del.createArguments( hp, files ) );
+  }
+
+  public void testAddLinkedSourceFolder() throws Exception {
+    IFolder folder = project.getFolder( "lsrc" );
+    folder.createLink( new Path( "/tmp/lsrc/" ), IResource.ALLOW_MISSING_LOCAL, null );
+
+    HaskellProject hp = new HaskellProject( project );
+    hp.addSourcePath( "lsrc" );
+    IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
+    GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
+    assertContains( "-i\"/tmp/lsrc/\"", del.createArguments( hp, files ) );
   }
 
 
   // helping methods
   //////////////////
+
+  private String putInQuotes( final IPath path ) {
+    return "\"" + path.toOSString() + "\"";
+  }
 
   private void assertContains( final String candidate, final String[] args ) {
     boolean cntns = contains( candidate, args );

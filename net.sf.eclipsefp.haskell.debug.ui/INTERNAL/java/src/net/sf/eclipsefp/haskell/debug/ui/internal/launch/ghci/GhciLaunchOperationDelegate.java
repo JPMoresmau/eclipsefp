@@ -17,9 +17,11 @@ import net.sf.eclipsefp.haskell.ghccompiler.core.CompilerParams;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 
 /** <p>implements a delegate for launching GHCi.</p>
@@ -85,7 +87,9 @@ public class GhciLaunchOperationDelegate
       final Set<IHaskellProject> visited ) throws CoreException {
     Set<IPath> sourcePaths = hsProject.getSourcePaths();
     for( IPath sourcePath: sourcePaths ) {
-      IPath loc = hsProject.getResource().getLocation().append( sourcePath );
+      IFolder folder = hsProject.getResource().getFolder( sourcePath );
+      // getRawLocation gives us the real FS path even if the resource is linked
+      IPath loc = new Path( folder.getLocationURI().getPath() );
       cmdLine.add( "-i\"" + loc.toOSString() + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
     IProject[] refs = hsProject.getResource().getReferencedProjects();
