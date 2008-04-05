@@ -59,13 +59,13 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
 
   public void testAddLinkedSourceFolder() throws Exception {
     IFolder folder = project.getFolder( "lsrc" );
-    folder.createLink( new Path( "/tmp/lsrc/" ), IResource.ALLOW_MISSING_LOCAL, null );
+    folder.createLink( new Path( "/bla/lsrc/" ), IResource.ALLOW_MISSING_LOCAL, null );
 
     HaskellProject hp = new HaskellProject( project );
     hp.addSourcePath( "lsrc" );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
-    assertContains( "-i\"/tmp/lsrc/\"", del.createArguments( hp, files ) );
+    assertContains( "-i\"/bla/lsrc\"", del.createArguments( hp, files ) );
   }
 
 
