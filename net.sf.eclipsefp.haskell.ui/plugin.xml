@@ -303,8 +303,7 @@
   <extension point="org.eclipse.ui.popupMenus">
     <viewerContribution targetID="#HaskellEditorContext"
                         id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions">
-      <menu
-            id="refactor"
+      <menu id="refactor"
             label="%ctxMenu_refactor_label"
             path="group.edit">
          <separator name="codingGroup" />
@@ -313,6 +312,10 @@
               class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree" 
               menubarPath="refactor/codingGroup"
               id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree"/>
+      <action label="%optimizeImports_name"
+              class="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports" 
+              menubarPath="source/organize"
+              id="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports"/>
     </viewerContribution>
   </extension>
   
@@ -378,5 +381,4 @@
       </enablement>
     </commonWizard>
   </extension>
-  
 </plugin>

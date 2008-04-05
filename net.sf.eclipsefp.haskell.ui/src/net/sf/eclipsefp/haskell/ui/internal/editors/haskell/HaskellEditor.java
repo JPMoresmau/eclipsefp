@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -70,6 +71,10 @@ public class HaskellEditor extends TextEditor
     getSourceViewer().revealRange( offset, length );
   }
 
+  public IDocument getDocument() {
+    return getSourceViewer() == null ? null : getSourceViewer().getDocument();
+  }
+
 
   // interface methods of TextEditor
   //////////////////////////////////
@@ -107,8 +112,11 @@ public class HaskellEditor extends TextEditor
     if( isEditable() ) {
       IMenuManager mmSource = new MenuManager( "Source", "source" );
       menu.prependToGroup( ITextEditorActionConstants.GROUP_EDIT, mmSource );
-      addAction( mmSource, "Comment" );
-      addAction( mmSource, "Uncomment" );
+      mmSource.add(  new Separator( "comments" ) );
+      mmSource.add(  new Separator( "formatting" ) );
+      mmSource.add(  new Separator( "organize" ) );
+      addAction( mmSource, "comments", "Comment" );
+      addAction( mmSource, "comments", "Uncomment" );
     }
   }
 
@@ -171,7 +179,6 @@ public class HaskellEditor extends TextEditor
     }
   }
 
-  /** <p>if we are asked for a ContentOutlinePage, we show what we have.</p> */
   @Override
   public Object getAdapter( final Class required ) {
     Object result = null;

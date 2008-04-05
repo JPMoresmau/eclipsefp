@@ -1,18 +1,19 @@
-// Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
-// All rights reserved.
+// Copyright (c) 2007-2008 by Leif Frenzel - see http://leiffrenzel.de
+// This code is made available under the terms of the Eclipse Public License,
+// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards;
 
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeRefactoring;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 
-/** <p>The wizard that is shown to the user during the pointfree 
+/** <p>The wizard that is shown to the user during the pointfree
   * refactoring.</p>
-  * 
-  * <p>The wizard class is primarily needed for deciding which pages are 
-  * shown to the user. The actual user interface creation goes on the 
+  *
+  * <p>The wizard class is primarily needed for deciding which pages are
+  * shown to the user. The actual user interface creation goes on the
   * pages.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class MakePointFreeWizard extends RefactoringWizard {

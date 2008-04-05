@@ -1,10 +1,10 @@
-// Copyright (c) 2007 by Leif Frenzel <himself@leiffrenzel.de>
-// All rights reserved.
+// Copyright (c) 2007-2008 by Leif Frenzel - see http://leiffrenzel.de
+// This code is made available under the terms of the Eclipse Public License,
+// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IMakePointFree;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -16,7 +16,6 @@ import org.eclipse.ltk.core.refactoring.participants.IConditionChecker;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
-
 import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>delegate object that contains the logic used by the processor.</p>
