@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-Vendor: %bundleVendor
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ui.linux.gtk.x86
-Bundle-Version: 1.105.0
-Fragment-Host: net.sf.eclipsefp.haskell.ui;bundle-version="1.105.0"
+Bundle-Version: 1.106.0
+Fragment-Host: net.sf.eclipsefp.haskell.ui;bundle-version="1.106.0"
 Bundle-Localization: fragment_net.sf.eclipsefp.haskell.ui.linux.gtk.x86
