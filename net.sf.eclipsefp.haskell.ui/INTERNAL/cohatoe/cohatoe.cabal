@@ -3,7 +3,7 @@
 -- sources (in hs-src/).
 Name:            cohatoe-plugin
 Version:         1.106.0
-Build-depends:   base, cohatoe-api, haskell98
+Build-depends:   base, cohatoe-api, haskell98, containers
 Hs-Source-Dirs:  ../../hs-src
 Ghc-options:     -Wall -package-name main
-Exposed-modules: MarkOccurrences
+Exposed-modules: MarkOccurrences, CodeFolding

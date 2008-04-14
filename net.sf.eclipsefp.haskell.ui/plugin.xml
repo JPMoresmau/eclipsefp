@@ -270,6 +270,11 @@
             interface="net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences"
             name="%markOccurrences_name"
             codeFile="$os$/obj/MarkOccurrences.o" />
+      <haskellFunction
+           codeFile="$os$/obj/CodeFolding.o"
+           implementation="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.CodeFolding"
+           interface="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ICodeFolding"
+           name="%codeFolding_name" />
    </extension>
    
    <extension
