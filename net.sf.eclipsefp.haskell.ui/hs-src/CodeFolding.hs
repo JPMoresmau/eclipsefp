@@ -14,6 +14,7 @@ import System.IO
 
 import Cohatoe.API
 
+resource :: Interface
 resource = plugin {
   pluginMain = performCodeFolding
 }
@@ -24,13 +25,14 @@ performCodeFolding (content:_) = return $ marshal $ computeFoldingRegions conten
 
 marshal :: [FoldingRegion] -> [String]
 marshal = concatMap mfr where
+  mfr (NoFoldingRegion)         = []
   mfr (FoldingRegion start end) = [show start, show end]
 
 -- | see http://leiffrenzel.de/eclipse/wiki/doku.php?id=editorcodefolding
 data FoldingRegion 
      = FoldingRegion Int Int -- ^ start and end line region
      | NoFoldingRegion
-    deriving ( Show )
+    deriving ( Eq, Show )
 
 computeFoldingRegions :: String -> [FoldingRegion]
 computeFoldingRegions buffer = 
