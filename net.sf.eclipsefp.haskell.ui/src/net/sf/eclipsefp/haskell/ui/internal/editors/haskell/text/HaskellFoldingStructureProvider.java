@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ICodeFolding.ICodeFoldingRegion;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,7 +43,7 @@ class HaskellFoldingStructureProvider {
     this.document = document;
   }
 
-  void updateFoldingRegions( final ICompilationUnit cu ) {
+  void updateFoldingRegions( final String buffer ) {
     ProjectionAnnotationModel model = getAnnModel();
     if( model != null ) {
       CohatoeServer server = CohatoeServer.getInstance();
@@ -52,9 +51,10 @@ class HaskellFoldingStructureProvider {
       if( codeFolding != null ) {
         Set<Position> currentRegions = new HashSet<Position>();
         List<ICodeFoldingRegion> regions
-          = codeFolding.performCodeFolding( cu.getOriginalSourceCode() );
+          = codeFolding.performCodeFolding( buffer );
         for( ICodeFoldingRegion region: regions ) {
-          Position pos = createPosition( region.getStartLine(), region.getEndLine() );
+          int endLine = region.getEndLine() > 0 ? region.getEndLine() : 0;
+          Position pos = createPosition( region.getStartLine(), endLine );
           currentRegions.add( pos );
         }
         updateFoldingRegions( model, currentRegions );
@@ -69,7 +69,7 @@ class HaskellFoldingStructureProvider {
       int end =   document.getLineOffset( endLine )
                 + document.getLineLength( endLine );
       result = new Position( start, end - start );
-    } catch( final BadLocationException  badlox ) {
+    } catch( final BadLocationException badlox ) {
       // ignored
       badlox.printStackTrace();
     }

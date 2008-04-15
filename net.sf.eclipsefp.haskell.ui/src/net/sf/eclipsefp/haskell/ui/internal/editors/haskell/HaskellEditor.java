@@ -4,7 +4,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ResourceBundle;
-import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -54,8 +53,6 @@ public class HaskellEditor extends TextEditor
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private MarkOccurrenceComputer markOccurrencesComputer;
-
-  private ICompilationUnit model;
 
   public void reveal( final IHaskellLanguageElement element ) {
     Assert.isNotNull( element );
@@ -243,18 +240,6 @@ public class HaskellEditor extends TextEditor
     if( outlinePage != null ) {
       outlinePage.setInput( input );
     }
-  }
-
-
-  // attribute setters and getters
-  ////////////////////////////////
-
-  public ICompilationUnit getModel() {
-    return model;
-  }
-
-  public void setModel( final ICompilationUnit model ) {
-    this.model = model;
   }
 
 
