@@ -430,4 +430,29 @@ public class MockFile implements IFile {
 		return 0;
 	}
 
+	public Map getPersistentProperties() throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map getSessionProperties() throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean isDerived(final int options) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isHidden() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setHidden(final boolean isHidden) throws CoreException {
+		// TODO Auto-generated method stub
+
+	}
+
 }

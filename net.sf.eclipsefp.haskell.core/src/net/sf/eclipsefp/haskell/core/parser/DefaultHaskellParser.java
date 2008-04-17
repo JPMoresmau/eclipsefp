@@ -163,7 +163,7 @@ class DefaultHaskellParser implements IHaskellParser {
 
 		public Object getAdapter(final Class adapter) {
 			Object result = null;
-			if (adapter.getClass() == IResource.class) {
+			if (adapter.getClass().equals(IResource.class)) {
 				result = file;
 			}
 			return result;
