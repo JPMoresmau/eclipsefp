@@ -159,32 +159,32 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 	// convenience methods for the Haskell UI
 	// ///////////////////////////////////////
 
-	public static void showInEditor(final ICompilationUnit compilationUnit) {
-		openEditor(compilationUnit);
-	}
+	public static void showInEditor( final ICompilationUnit compilationUnit ) {
+    openEditor( compilationUnit );
+  }
 
-	public static void showInEditor(final IHaskellLanguageElement element) {
-		ICompilationUnit compilationUnit = element.getCompilationUnit();
-		IEditorPart part = openEditor(compilationUnit);
-		if (part != null) {
-			((HaskellEditor) part).reveal(element);
-		}
-	}
+  public static void showInEditor( final IHaskellLanguageElement element ) {
+    ICompilationUnit compilationUnit = element.getCompilationUnit();
+    IEditorPart part = openEditor( compilationUnit );
+    if( part != null ) {
+      ( ( HaskellEditor )part ).reveal( element );
+    }
+  }
 
 	// helping methods
 	// ////////////////
 
-	private static IEditorPart openEditor(final ICompilationUnit cu) {
-		IFile file = cu.getUnderlyingResource();
-		IEditorInput input = new FileEditorInput(file);
-		IEditorPart part = null;
-		try {
-			part = getPage().openEditor(input, HaskellEditor.ID, true);
-		} catch (PartInitException ex) {
-			log("Could not open editor for " + cu.toString() + ".", ex);
-		}
-		return part;
-	}
+	private static IEditorPart openEditor( final ICompilationUnit cu ) {
+    IFile file = cu.getUnderlyingResource();
+    IEditorInput input = new FileEditorInput( file );
+    IEditorPart part = null;
+    try {
+      part = getPage().openEditor( input, HaskellEditor.ID, true );
+    } catch( PartInitException ex ) {
+      log( "Could not open editor for " + cu.toString() + ".", ex );
+    }
+    return part;
+  }
 
 	private static IWorkbenchPage getPage() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow()
