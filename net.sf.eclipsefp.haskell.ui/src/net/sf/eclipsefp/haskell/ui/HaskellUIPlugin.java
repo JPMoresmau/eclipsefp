@@ -15,24 +15,14 @@ package net.sf.eclipsefp.haskell.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -156,40 +146,9 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   }
 
 
-	// convenience methods for the Haskell UI
-	// ///////////////////////////////////////
-
-	public static void showInEditor( final ICompilationUnit compilationUnit ) {
-    openEditor( compilationUnit );
-  }
-
-  public static void showInEditor( final IHaskellLanguageElement element ) {
-    ICompilationUnit compilationUnit = element.getCompilationUnit();
-    IEditorPart part = openEditor( compilationUnit );
-    if( part != null ) {
-      ( ( HaskellEditor )part ).reveal( element );
-    }
-  }
 
 	// helping methods
 	// ////////////////
-
-	private static IEditorPart openEditor( final ICompilationUnit cu ) {
-    IFile file = cu.getUnderlyingResource();
-    IEditorInput input = new FileEditorInput( file );
-    IEditorPart part = null;
-    try {
-      part = getPage().openEditor( input, HaskellEditor.ID, true );
-    } catch( PartInitException ex ) {
-      log( "Could not open editor for " + cu.toString() + ".", ex );
-    }
-    return part;
-  }
-
-	private static IWorkbenchPage getPage() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage();
-	}
 
   private static void logg( final String message, final int severity,
       final Throwable thr ) {
