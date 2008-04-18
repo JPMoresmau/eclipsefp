@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.util.QueryUtil;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;

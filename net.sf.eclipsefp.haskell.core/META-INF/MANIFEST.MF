@@ -32,7 +32,7 @@ Export-Package: net.sf.eclipsefp.haskell.core.cabalmodel,
  net.sf.eclipsefp.haskell.core.internal.contenttypes;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.internal.hsimpl;x-friends:="net.sf.eclipsefp.haskell.ghccompiler,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.internal.project;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.debug.ui.test",
- net.sf.eclipsefp.haskell.core.internal.project.provisionary;x-friends:="net.sf.eclipsefp.haskell.core.test",
+ net.sf.eclipsefp.haskell.core.internal.project.provisionary;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.internal.refactoring.functions;x-friends:="net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.internal.util;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ghccompiler",
  net.sf.eclipsefp.haskell.core.util;uses:="org.eclipse.core.resources"

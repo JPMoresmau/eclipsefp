@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model;
 
+import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import org.eclipse.core.runtime.IPath;
 
 

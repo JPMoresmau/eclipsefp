@@ -48,5 +48,7 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog,
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.preferences;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.internal.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test"
+ net.sf.eclipsefp.haskell.ui.internal.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.internal.views.common;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.internal.views.outline.provisionary;x-friends:="net.sf.eclipsefp.haskell.ui.test"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

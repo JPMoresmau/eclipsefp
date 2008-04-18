@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.runtime.IPath;
 
