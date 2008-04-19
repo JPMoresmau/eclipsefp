@@ -2,9 +2,11 @@
 
 module Rename where
 
+import Marshal
+
 import RenameInfo
 import ReplaceEdit
-import SrcLoc
+
 
 
 
@@ -17,19 +19,16 @@ resource = plugin {
 }
 
 
-     	        
-
-
-
 -- TODO: Here's what we actually do when someone calls us.
 performRename :: [String] -> IO [String]
-performRename = fmap marshal . refactor . unmarshal 
-
-unmarshal :: [ String ] -> RenameInfo
-unmarshal = undefined
-
-marshal :: [ ReplaceEdit ] -> [ String ]
-marshal = undefined
+performRename input = do
+    let ri = unmarshal input
+    re <- refactor ri
+    return $ concat $ map marshal re
 
 refactor :: RenameInfo -> IO [ ReplaceEdit ]
 refactor = undefined
+
+    
+    
+    
