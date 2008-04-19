@@ -1,4 +1,4 @@
-{-# OPTIONS -fglasgow-exts -cpp #-}
+{-# OPTIONS -fglasgow-exts -cpp -w#-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.Haskell.Parser
@@ -20,7 +20,7 @@ import Language.Haskell.Syntax
 import Language.Haskell.ParseMonad
 import Language.Haskell.Lexer
 import Language.Haskell.ParseUtils
-import Array
+import Data.Array
 #if __GLASGOW_HASKELL__ >= 503
 import GHC.Exts
 #else

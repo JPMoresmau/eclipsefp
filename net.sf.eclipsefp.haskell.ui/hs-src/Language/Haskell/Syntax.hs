@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -fglasgow-exts -cpp #-}
+{-# OPTIONS_GHC -fglasgow-exts -cpp -w#-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.Haskell.Syntax
