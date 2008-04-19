@@ -17,7 +17,8 @@ tests = TestList [
     testCase "002" [],
     testCase "003" [FoldingRegion 5 7],
     testCase "004" [FoldingRegion 2 5],
-    testCase "005" [FoldingRegion 4 6]
+    testCase "005" [FoldingRegion 4 6],
+    testCase "006" [FoldingRegion 4 6]
   ]
   
 
