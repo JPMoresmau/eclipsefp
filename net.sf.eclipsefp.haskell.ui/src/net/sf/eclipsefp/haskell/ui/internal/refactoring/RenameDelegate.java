@@ -3,7 +3,12 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IRename;
+import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.Rename.IReplaceEditDesc;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -73,23 +78,39 @@ public class RenameDelegate extends RefDelegate {
     TextFileChange result = null;
     CohatoeServer server = CohatoeServer.getInstance();
     IRename fun = server.createFunction( IRename.class );
-    String replacement = null;
     if( fun != null ) {
-      replacement = fun.performRename( info.getText() );
+      List<IReplaceEditDesc> descs = fun.performRename( info.getText() );
+      Map<IFile, List<IReplaceEditDesc>> map = mapByFile( descs );
+      for( IFile file: map.keySet() ) {
+        result = new TextFileChange( file.getName(), file );
+        // a file change contains a tree of edits, first add the root of them
+        MultiTextEdit fileChangeRootEdit = new MultiTextEdit();
+        result.setEdit( fileChangeRootEdit );
+        // edit object for the text replacement in the file,
+        // this is the only child
+        List<IReplaceEditDesc> editDescs = map.get( file );
+        for( IReplaceEditDesc editDesc: editDescs ) {
+          ReplaceEdit edit = new ReplaceEdit( editDesc.getOffset(),
+                                              editDesc.getLength(),
+                                              editDesc.getReplacement() );
+          fileChangeRootEdit.addChild( edit );
+        }
+      }
     }
-    if(    replacement != null
-        && !replacement.trim().equals( info.getText().trim() ) ) {
-      IFile file = info.getSourceFile();
-      result = new TextFileChange( file.getName(), file );
-      // a file change contains a tree of edits, first add the root of them
-      MultiTextEdit fileChangeRootEdit = new MultiTextEdit();
-      result.setEdit( fileChangeRootEdit );
-      // edit object for the text replacement in the file,
-      // this is the only child
-      ReplaceEdit edit = new ReplaceEdit( info.getOffset(),
-                                          info.getText().length(),
-                                          replacement );
-      fileChangeRootEdit.addChild( edit );
+    return result;
+  }
+
+  private Map<IFile, List<IReplaceEditDesc>> mapByFile(
+      final List<IReplaceEditDesc> editDescs ) {
+    Map<IFile, List<IReplaceEditDesc>> result
+      = new HashMap<IFile, List<IReplaceEditDesc>>();
+    for( IReplaceEditDesc editDesc: editDescs ) {
+      List<IReplaceEditDesc> list = result.get( editDesc.getFile() );
+      if( list == null ) {
+        list = new ArrayList<IReplaceEditDesc>();
+        result.put( editDesc.getFile(), list );
+      }
+      list.add( editDesc );
     }
     return result;
   }
