@@ -275,6 +275,11 @@
            implementation="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.CodeFolding"
            interface="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ICodeFolding"
            name="%codeFolding_name" />
+      <haskellFunction
+           codeFile="$os$/obj/HaskellOutline.o"
+           implementation="net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutline"
+           interface="net.sf.eclipsefp.haskell.ui.internal.views.outline.IHaskellOutline"
+           name="%haskellOutline_name" />
    </extension>
    
    <extension

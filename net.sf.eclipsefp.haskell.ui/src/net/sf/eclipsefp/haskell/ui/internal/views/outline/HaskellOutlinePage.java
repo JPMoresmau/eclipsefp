@@ -3,7 +3,10 @@ package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
-import net.sf.eclipsefp.haskell.ui.internal.views.common.HaskellLabelProvider;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementCP;
+import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementLP;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -13,8 +16,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 
 /** <p>The outline page for the Haskell editor.</p>
@@ -24,10 +28,10 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 public class HaskellOutlinePage extends ContentOutlinePage {
 
   private Object input;
-  private final ITextEditor textEditor;
+  private final HaskellEditor editor;
 
-  public HaskellOutlinePage( final ITextEditor textEditor ) {
-    this.textEditor = textEditor;
+  public HaskellOutlinePage( final HaskellEditor textEditor ) {
+    this.editor = textEditor;
   }
 
   @Override
@@ -35,9 +39,8 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     super.createControl( parent );
 
     TreeViewer viewer = getTreeViewer();
-    ExperimentalCP provider = new ExperimentalCP();
-    viewer.setContentProvider( provider );
-    viewer.setLabelProvider( new HaskellLabelProvider() );
+    viewer.setContentProvider( new TreeElementCP() );
+    viewer.setLabelProvider( new TreeElementLP() );
     viewer.addSelectionChangedListener( this );
 
     if( input != null ) {
@@ -51,14 +54,14 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
     ISelection selection= event.getSelection();
     if( selection.isEmpty() ) {
-      textEditor.resetHighlightRange();
+      editor.resetHighlightRange();
     } else {
       IStructuredSelection sel = ( IStructuredSelection )selection;
       Object firstElement = sel.getFirstElement();
       if( firstElement instanceof IHaskellLanguageElement ) {
         IHaskellLanguageElement elem = ( IHaskellLanguageElement )firstElement;
-        IEditorInput fei = textEditor.getEditorInput();
-        IDocument doc = textEditor.getDocumentProvider().getDocument( fei );
+        IEditorInput fei = editor.getEditorInput();
+        IDocument doc = editor.getDocumentProvider().getDocument( fei );
         ISourceLocation srcLoc = elem.getSourceLocation();
         if( srcLoc != null ) {
           int offset = -1;
@@ -69,9 +72,9 @@ public class HaskellOutlinePage extends ContentOutlinePage {
           }
           int length = elem.getName().length();
           try {
-            textEditor.setHighlightRange( offset, length, true );
+            editor.setHighlightRange( offset, length, true );
           } catch( IllegalArgumentException iaex ) {
-            textEditor.resetHighlightRange();
+            editor.resetHighlightRange();
           }
         }
       }
@@ -80,8 +83,19 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final Object input ) {
-    this.input = input;
-    update();
+    if( input != null && input instanceof IFileEditorInput ) {
+      IFileEditorInput fei = ( IFileEditorInput )input;
+      IFile file = fei.getFile();
+      if( file != null && file.exists() ) {
+        IDocument doc = editor.getDocument();
+        CohatoeServer server = CohatoeServer.getInstance();
+        IHaskellOutline fun = server.createFunction( IHaskellOutline.class );
+        if( fun != null ) {
+          this.input = fun.computeOutline( doc.get() );
+          update();
+        }
+      }
+    }
   }
 
   /** <p>updates the outline page.</p> */
