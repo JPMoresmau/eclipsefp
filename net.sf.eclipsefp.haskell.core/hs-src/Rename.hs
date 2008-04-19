@@ -7,7 +7,7 @@ import Marshal
 import RenameInfo
 import ReplaceEdit
 
-
+import Prelude hiding (length )
 
 
 -- We must import Cohatoe.API and implement resource so that this code
@@ -27,8 +27,13 @@ performRename input = do
     return $ concat $ map marshal re
 
 refactor :: RenameInfo -> IO [ ReplaceEdit ]
-refactor = undefined
-
+refactor ri = do
+    return $ return $ ReplaceEdit
+           { file = RenameInfo.file ri
+    	   , offset = 5
+           , length = 2
+           , replacement = "bar"
+	   }
     
     
     

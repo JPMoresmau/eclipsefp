@@ -13,6 +13,7 @@ data ReplaceEdit = ReplaceEdit
     , length :: Int
     , replacement :: String
     }
+    deriving Show
     
 instance Marshal ReplaceEdit where
     marshal r = marshal ( file r )

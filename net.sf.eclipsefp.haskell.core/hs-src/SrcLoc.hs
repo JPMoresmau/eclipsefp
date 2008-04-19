@@ -6,7 +6,7 @@ data SrcLoc = SrcLoc
    { line :: Int
    , column :: Int      	        
    }
-
+  deriving Show
    
 instance Marshal SrcLoc where
     marshal s = marshal ( line s ) ++ marshal ( column s )

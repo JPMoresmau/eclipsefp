@@ -16,10 +16,11 @@ class UnMarshal a where
 unmarshal css = let ( x, [] ) = unmarshal_partial css in x
 
 
-instance Show a => Marshal a where
+
+instance  Marshal Int where
     marshal x = [ show x ]
 
-instance Read a => UnMarshal a where
+instance UnMarshal Int where
     unmarshal_partial (x : xs) = ( read x , xs ) 
 
 instance Marshal String where
