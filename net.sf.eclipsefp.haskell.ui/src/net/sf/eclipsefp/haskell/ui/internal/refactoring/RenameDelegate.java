@@ -22,14 +22,15 @@ import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
   *
   * @author Leif Frenzel
   */
-class RenameDelegate extends RefDelegate {
+public class RenameDelegate extends RefDelegate {
 
   private Change change;
 
-  RenameDelegate( final RefInfo info ) {
+  public RenameDelegate( final RefInfo info ) {
     super( info );
   }
 
+  @Override
   RefactoringStatus checkFinalConditions( final IProgressMonitor pm,
                                           final CheckConditionsContext ctxt ) {
     RefactoringStatus result = new RefactoringStatus();
@@ -50,6 +51,7 @@ class RenameDelegate extends RefDelegate {
     return result;
   }
 
+  @Override
   void createChange( final IProgressMonitor pm,
                      final CompositeChange rootChange ) {
     try {

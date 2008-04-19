@@ -5,14 +5,17 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 /** <p>super class for refactoring delegates, encapsulates some common
   * functionality.</p>
   *
   * @author Leif Frenzel
   */
-class RefDelegate {
+abstract class RefDelegate {
 
   protected final RefInfo info;
 
@@ -32,6 +35,12 @@ class RefDelegate {
     }
     return result;
   }
+
+  abstract RefactoringStatus checkFinalConditions(
+    final IProgressMonitor pm,
+    final CheckConditionsContext ctxt );
+
+  abstract void createChange( final IProgressMonitor pm, final CompositeChange rootChange );
 
 
   // helping methods

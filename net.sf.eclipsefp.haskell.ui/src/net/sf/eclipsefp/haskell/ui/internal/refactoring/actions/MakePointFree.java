@@ -3,9 +3,12 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeProcessor;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeDelegate;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.Ref;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.MakePointFreeWizard;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
@@ -52,5 +55,13 @@ public class MakePointFree extends RefAction implements IEditorActionDelegate {
       // operation was cancelled
     }
   }
+
+  private class MakePointFreeProcessor extends RefProcessor {
+
+    public MakePointFreeProcessor( final RefInfo info ) {
+      super( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
+    }
+  }
+
 }
 

@@ -4,8 +4,11 @@
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.Ref;
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.RenameProcessor;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefProcessor;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RenameDelegate;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.RenameWizard;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -29,6 +32,12 @@ public class Rename extends RefAction implements IEditorActionDelegate {
       op.run( getShell(), titleForFailedChecks );
     } catch( final InterruptedException irex ) {
       // operation was cancelled
+    }
+  }
+
+  private class RenameProcessor extends RefProcessor {
+    public RenameProcessor( final RefInfo info ) {
+      super( new RenameDelegate( info ), UITexts.renameProcessor_name );
     }
   }
 }

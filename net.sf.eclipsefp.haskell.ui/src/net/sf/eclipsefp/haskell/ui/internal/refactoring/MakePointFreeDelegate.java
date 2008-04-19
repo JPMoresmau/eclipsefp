@@ -22,14 +22,15 @@ import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
   *
   * @author Leif Frenzel
   */
-class MakePointFreeDelegate extends RefDelegate {
+public class MakePointFreeDelegate extends RefDelegate {
 
   private Change change;
 
-  MakePointFreeDelegate( final RefInfo info ) {
+  public MakePointFreeDelegate( final RefInfo info ) {
     super( info );
   }
 
+  @Override
   RefactoringStatus checkFinalConditions( final IProgressMonitor pm,
                                           final CheckConditionsContext ctxt ) {
     RefactoringStatus result = new RefactoringStatus();
@@ -50,6 +51,7 @@ class MakePointFreeDelegate extends RefDelegate {
     return result;
   }
 
+  @Override
   void createChange( final IProgressMonitor pm,
                      final CompositeChange rootChange ) {
     try {
