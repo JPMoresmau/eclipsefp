@@ -9,8 +9,6 @@ import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.MakePointFreeWizard;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -23,23 +21,6 @@ import org.eclipse.ui.IEditorActionDelegate;
   * @author Leif Frenzel
   */
 public class MakePointFree extends RefAction implements IEditorActionDelegate {
-
-  // interface methods of IEditorActionDelegate
-  /////////////////////////////////////////////
-
-  @Override
-  public void run( final IAction action ) {
-    if( !haveFile ) {
-      refuse();
-    } else {
-      if( selection != null && selection instanceof ITextSelection ) {
-        applySelection( ( ITextSelection )selection );
-        if( saveAll() ) {
-          openWizard();
-        }
-      }
-    }
-  }
 
   @Override
   void openWizard() {
@@ -57,7 +38,6 @@ public class MakePointFree extends RefAction implements IEditorActionDelegate {
   }
 
   private class MakePointFreeProcessor extends RefProcessor {
-
     public MakePointFreeProcessor( final RefInfo info ) {
       super( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
     }

@@ -4,12 +4,20 @@
 package net.sf.eclipsefp.haskell.core.internal.refactoring.functions;
 
 import java.util.List;
-import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.Rename.IReplaceEditDesc;
+import org.eclipse.core.resources.IFile;
 
 /** <p>interface to the Haskell code that performs the Rename refactoring.</p>
   *
   * @author Leif Frenzel
   */
 public interface IRename {
-  List<IReplaceEditDesc> performRename( String content );
+  public interface IReplaceEditDesc {
+    IFile getFile();
+    int getOffset();
+    int getLength();
+    String getReplacement();
+  }
+
+  List<IReplaceEditDesc> performRename(
+      final IFile file, final int line, final int column, final String newName );
 }

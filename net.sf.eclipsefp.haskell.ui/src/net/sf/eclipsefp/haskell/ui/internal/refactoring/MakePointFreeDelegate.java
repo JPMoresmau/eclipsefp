@@ -28,6 +28,7 @@ public class MakePointFreeDelegate extends RefDelegate {
 
   public MakePointFreeDelegate( final RefInfo info ) {
     super( info );
+    info.setAllowEmptySelection( false );
   }
 
   @Override

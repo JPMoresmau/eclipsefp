@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
 
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -12,6 +13,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -64,13 +67,31 @@ abstract class RefAction {
   // helping functions
   ////////////////////
 
-  void applySelection( final ITextSelection textSelection ) {
+  private void applySelection( final ITextSelection textSelection ) {
     info.setOffset( textSelection.getOffset() );
+    int start = textSelection.getStartLine();
+    info.setLine( start );
+    info.setColumn( computeColumn( start, textSelection.getOffset() ) );
     info.setText( textSelection.getText() );
     info.setSourceFile( getFile() );
   }
 
-  void refuse() {
+  private int computeColumn( final int start, final int offset ) {
+    int result = 0;
+    if( targetEditor instanceof HaskellEditor ) {
+      try {
+        HaskellEditor haskellEditor = ( HaskellEditor )targetEditor;
+        IDocument doc = haskellEditor.getDocument();
+        result = offset - doc.getLineOffset( start );
+      } catch( BadLocationException ex ) {
+        // TODO Auto-generated catch block
+        ex.printStackTrace();
+      }
+    }
+    return result;
+  }
+
+  private void refuse() {
     // TODO lf gen
     String title = UITexts.mkPointFree_refuseDlg_title;
     String message = UITexts.mkPointFree_refuseDlg_message;
@@ -87,7 +108,7 @@ abstract class RefAction {
     return result;
   }
 
-  IFile getFile() {
+  private IFile getFile() {
     IFile result = null;
     if( targetEditor instanceof ITextEditor )  {
       ITextEditor editor = ( ITextEditor )targetEditor;
@@ -99,7 +120,7 @@ abstract class RefAction {
     return result;
   }
 
-  static boolean saveAll() {
+  private static boolean saveAll() {
     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
     return IDE.saveAllEditors( new IResource[] { workspaceRoot }, false );
   }

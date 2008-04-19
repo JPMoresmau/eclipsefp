@@ -19,7 +19,8 @@ public abstract class RefProcessor extends RefactoringProcessor {
   protected final RefDelegate delegate;
   private final String name;
 
-  public RefProcessor( final RefDelegate delegate, final String name ) {
+  public RefProcessor( final RefDelegate delegate,
+                       final String name ) {
     this.delegate = delegate;
     this.name = name;
   }

@@ -19,9 +19,33 @@ public class RefInfo {
   private IFile sourceFile;
   // the selected code
   private String text;
+  private int line;
+  private int column;
+  private boolean allowEmptySelection;
 
-  // interface methods of IRenamePropertyInfo
-  ///////////////////////////////////////////
+  public boolean isAllowEmptySelection() {
+    return allowEmptySelection;
+  }
+
+  public void setAllowEmptySelection( final boolean allowEmptySelection ) {
+    this.allowEmptySelection = allowEmptySelection;
+  }
+
+  public int getLine() {
+    return line;
+  }
+
+  public void setLine( final int line ) {
+    this.line = line;
+  }
+
+  public int getColumn() {
+    return column;
+  }
+
+  public void setColumn( final int column ) {
+    this.column = column;
+  }
 
   public int getOffset() {
     return offset;

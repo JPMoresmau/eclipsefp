@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IRename;
-import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.Rename.IReplaceEditDesc;
+import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IRename.IReplaceEditDesc;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,6 +33,7 @@ public class RenameDelegate extends RefDelegate {
 
   public RenameDelegate( final RefInfo info ) {
     super( info );
+    info.setAllowEmptySelection( true );
   }
 
   @Override
@@ -79,7 +80,11 @@ public class RenameDelegate extends RefDelegate {
     CohatoeServer server = CohatoeServer.getInstance();
     IRename fun = server.createFunction( IRename.class );
     if( fun != null ) {
-      List<IReplaceEditDesc> descs = fun.performRename( info.getText() );
+      String newName = "I-AM-THE-NEW-NAME";
+      int line = info.getLine();
+      int column = info.getColumn();
+      List<IReplaceEditDesc> descs
+        = fun.performRename( info.getSourceFile(), line, column, newName );
       Map<IFile, List<IReplaceEditDesc>> map = mapByFile( descs );
       for( IFile file: map.keySet() ) {
         result = new TextFileChange( file.getName(), file );

@@ -15,17 +15,16 @@ import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 public class Rename implements IRename {
 
-  public interface IReplaceEditDesc {
-    IFile getFile();
-    int getOffset();
-    int getLength();
-    String getReplacement();
-  }
-
-  public List<IReplaceEditDesc> performRename( final String content ) {
+  public List<IReplaceEditDesc> performRename(
+      final IFile file, final int line, final int column, final String newName ) {
     List<IReplaceEditDesc> result = new ArrayList<IReplaceEditDesc>();
     try {
-      String[] params = new String[] { content };
+      String[] params = new String[] {
+        file.getLocation().toOSString(),
+        String.valueOf( line ),
+        String.valueOf( column ),
+        newName
+      };
       CohatoeServer server = CohatoeServer.getInstance();
       String[] retVal = server.evaluate( IRename.class, params );
       unmarshal( retVal, result );

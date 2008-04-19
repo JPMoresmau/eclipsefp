@@ -30,7 +30,7 @@ abstract class RefDelegate {
       result.addFatalError( UITexts.refDelegate_noSourceFile );
     } else if( info.getSourceFile().isReadOnly() ) {
       result.addFatalError( UITexts.refDelegate_roFile );
-    } else if( isEmpty( info.getText() ) ) {
+    } else if( !info.isAllowEmptySelection() && isEmpty( info.getText() ) ) {
       result.addFatalError( UITexts.refDelegate_noSelection );
     }
     return result;
