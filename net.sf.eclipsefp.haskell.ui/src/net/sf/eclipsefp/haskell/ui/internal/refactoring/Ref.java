@@ -13,11 +13,11 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
   *
   * @author Leif Frenzel
   */
-public class MakePointFreeRefactoring extends ProcessorBasedRefactoring {
+public class Ref extends ProcessorBasedRefactoring {
 
   private final RefactoringProcessor processor;
 
-  public MakePointFreeRefactoring( final RefactoringProcessor processor ) {
+  public Ref( final RefactoringProcessor processor ) {
     super( processor );
     this.processor = processor;
   }

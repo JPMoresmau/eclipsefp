@@ -3,7 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
-import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IMakePointFree;
+import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IRename;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,11 +22,11 @@ import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
   *
   * @author Leif Frenzel
   */
-class MakePointFreeDelegate extends RefDelegate {
+class RenameDelegate extends RefDelegate {
 
   private Change change;
 
-  MakePointFreeDelegate( final RefInfo info ) {
+  RenameDelegate( final RefInfo info ) {
     super( info );
   }
 
@@ -70,11 +70,10 @@ class MakePointFreeDelegate extends RefDelegate {
   private Change createRenameChange() {
     TextFileChange result = null;
     CohatoeServer server = CohatoeServer.getInstance();
-    Object fun = server.createFunction( IMakePointFree.class );
+    IRename fun = server.createFunction( IRename.class );
     String replacement = null;
-    if( fun instanceof IMakePointFree ) {
-      IMakePointFree primeFun = ( IMakePointFree )fun;
-      replacement = primeFun.makePointFree( info.getText() );
+    if( fun != null ) {
+      replacement = fun.performRename( info.getText() );
     }
     if(    replacement != null
         && !replacement.trim().equals( info.getText().trim() ) ) {
@@ -92,5 +91,4 @@ class MakePointFreeDelegate extends RefDelegate {
     }
     return result;
   }
-
 }

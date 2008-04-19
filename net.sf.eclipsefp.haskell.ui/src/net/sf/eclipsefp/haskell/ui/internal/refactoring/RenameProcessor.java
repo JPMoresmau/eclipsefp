@@ -20,12 +20,12 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
   *
   * @author Leif Frenzel
   */
-public class MakePointFreeProcessor extends RefactoringProcessor {
+public class RenameProcessor extends RefactoringProcessor {
 
-  private final MakePointFreeDelegate delegate;
+  private final RenameDelegate delegate;
 
-  public MakePointFreeProcessor( final RefInfo info ) {
-    delegate = new MakePointFreeDelegate( info );
+  public RenameProcessor( final RefInfo info ) {
+    delegate = new RenameDelegate( info );
   }
 
 
@@ -44,7 +44,7 @@ public class MakePointFreeProcessor extends RefactoringProcessor {
 
   @Override
   public String getProcessorName() {
-    return UITexts.mkPointFreeProcessor_name;
+    return UITexts.renameProcessor_name;
   }
 
   @Override

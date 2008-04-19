@@ -3,12 +3,11 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards;
 
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.Ref;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 
-/** <p>The wizard that is shown to the user during the pointfree
-  * refactoring.</p>
+/** <p>The wizard that is shown to the user during the Rename refactoring.</p>
   *
   * <p>The wizard class is primarily needed for deciding which pages are
   * shown to the user. The actual user interface creation goes on the
@@ -16,9 +15,9 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
   *
   * @author Leif Frenzel
   */
-public class MakePointFreeWizard extends RefactoringWizard {
+public class RenameWizard extends RefactoringWizard {
 
-  public MakePointFreeWizard( final Ref refactoring ) {
+  public RenameWizard( final Refactoring refactoring ) {
     super( refactoring, DIALOG_BASED_USER_INTERFACE );
   }
 
@@ -28,6 +27,7 @@ public class MakePointFreeWizard extends RefactoringWizard {
 
   @Override
   protected void addUserInputPages() {
+    // TODO lf page for new name
     // no particular pages - just have the usual preview page
     setDefaultPageTitle( getRefactoring().getName() );
   }

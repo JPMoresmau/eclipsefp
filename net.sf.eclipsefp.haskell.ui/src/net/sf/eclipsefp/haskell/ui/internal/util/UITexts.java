@@ -61,20 +61,24 @@ public final class UITexts extends NLS {
   public static String mkPointFree_refuseDlg_title;
   public static String mkPointFree_refuseDlg_message;
 
-  public static String mkPointFreeProcessor_elem;
   public static String mkPointFreeProcessor_name;
 
-  public static String mkPointFreeDelegate_checking;
   public static String mkPointFreeDelegate_collectingChanges;
-  public static String mkPointFreeDelegate_noSelection;
-  public static String mkPointFreeDelegate_noSourceFile;
   public static String mkPointFreeDelegate_notApplicable;
-  public static String mkPointFreeDelegate_roFile;
 
   public static String newHaskellProjectWizard_pageDesc;
   public static String newHaskellProjectWizard_pageTitle;
 
   public static String overviewPage_title;
+
+  public static String refDelegate_checking;
+  public static String refDelegate_noSelection;
+  public static String refDelegate_noSourceFile;
+  public static String refDelegate_roFile;
+
+  public static String refProcessor_elem;
+
+  public static String renameProcessor_name;
 
 
   private static final String BUNDLE_NAME

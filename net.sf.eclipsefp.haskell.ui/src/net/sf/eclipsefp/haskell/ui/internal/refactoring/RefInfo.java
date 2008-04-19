@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IFile;
   *
   * @author Leif Frenzel
   */
-public class MakePointFreeInfo {
+public class RefInfo {
 
   // the offset of the selected code portion
   private int offset;

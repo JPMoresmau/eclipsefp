@@ -114,5 +114,10 @@
             implementation="net.sf.eclipsefp.haskell.core.internal.code.OrganizeImports"
             interface="net.sf.eclipsefp.haskell.core.internal.code.IOrganizeImports"
             name="%organizeImports_name" />
+     <haskellFunction
+            codeFile="$os$/obj/Rename.o"
+            implementation="net.sf.eclipsefp.haskell.core.internal.refactoring.functions.Rename"
+            interface="net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IRename"
+            name="%rename_name" />
    </extension>
 </plugin>
