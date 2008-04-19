@@ -1,20 +1,8 @@
 
 module Typecheck (
-  typecheckFiles, GhcModule(..), getSysLibDir, getSession,
+  CheckedMod, typecheckFiles, getSysLibDir, getSession,
 ) where
 
--- import Haddock.GHC.Utils(moduleString)
--- import Haddock.Types(GhcModule(..))
--- import Haddock.Exception(throwE)
-
--- import Data.Maybe
--- import Control.Monad
--- import GHC
--- import Digraph
--- import BasicTypes
--- import SrcLoc
-
--- import Data.List
 
 import BasicTypes(failed)
 import Digraph(flattenSCC)
@@ -49,7 +37,7 @@ type FullyCheckedMod = (ParsedSource,
 
 
 -- TODO: make it handle cleanup
-typecheckFiles :: Session -> [FilePath] -> ErrorT String IO [GhcModule]
+typecheckFiles :: Session -> [FilePath] -> ErrorT String IO [CheckedMod]
 typecheckFiles session files = do
 
   -- load all argument files
@@ -65,54 +53,17 @@ typecheckFiles session files = do
 
   let mods = concatMap flattenSCC $ topSortModuleGraph False modgraph Nothing
       getModFile = fromJust . ml_hs_file . ms_location
-      mods'= [ (ms_mod modsum, ms_hspp_opts modsum, getModFile modsum) |
+      mods'= [ (ms_mod modsum, getModFile modsum) |
                modsum <- mods ]
 
       -- typecheck the argument modules
 
-  ghcMods <- forM mods' $ \(mod, flags, file) -> do
+  forM mods' $ \(mod, file) -> do
     mbMod <- liftIO $ checkModule session (moduleName mod) False
     case mbMod of
       Just (CheckedModule a (Just b) (Just c) (Just d) _)
-        -> return $ mkGhcModule (mod, file, (a,b,c,d)) flags
+        -> return (mod, file, (a,b,c,d))
       _ -> throwError $ "Failed to check module: " ++ moduleString mod
-
-  return ghcMods
-
--- | Dig out what we want from the typechecker output
-mkGhcModule :: CheckedMod -> DynFlags -> GhcModule
-mkGhcModule (mod, file, checkedMod) dynflags = GhcModule {
-  ghcModule         = mod,
-  ghcFilename       = file,
-  ghcMbDocOpts      = mbOpts,
-  ghcHaddockModInfo = info,
-  ghcMbDoc          = mbDoc,
-  ghcGroup          = group,
-  ghcMbExports      = mbExports,
-  ghcExportedNames  = modInfoExports modInfo,
-  ghcNamesInScope   = fromJust $ modInfoTopLevelScope modInfo, 
-  ghcInstances      = modInfoInstances modInfo
-}
-  where
-    HsModule _ _ _ _ _ mbOpts _ _      = unLoc parsed
-    (group, _, mbExports, mbDoc, info) = renamed
-    (parsed, renamed, _, modInfo)      = checkedMod
-
-
--- | This structure holds the module information we get from GHC's
--- type checking phase
-data GhcModule = GhcModule {
-   ghcModule         :: Module,
-   ghcFilename       :: FilePath,
-   ghcMbDocOpts      :: Maybe String,
-   ghcHaddockModInfo :: HaddockModInfo Name,
-   ghcMbDoc          :: Maybe (HsDoc Name),
-   ghcGroup          :: HsGroup Name,
-   ghcMbExports      :: Maybe [LIE Name],
-   ghcExportedNames  :: [Name],
-   ghcNamesInScope   :: [Name],
-   ghcInstances      :: [Instance]
-}
 
 
 
