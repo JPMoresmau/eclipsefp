@@ -26,15 +26,6 @@ import Data.Char (ord)
 import Data.List((++), concatMap)
 import Data.Maybe(Maybe(..), fromJust)
 
-type CheckedMod = (Module, FilePath, FullyCheckedMod)
-
-
-type FullyCheckedMod = (ParsedSource, 
-                        RenamedSource,
-                        TypecheckedSource,
-                        ModuleInfo)
-
-
 
 -- TODO: make it handle cleanup
 loadModules :: Session -> [FilePath] -> ErrorT String IO ()
