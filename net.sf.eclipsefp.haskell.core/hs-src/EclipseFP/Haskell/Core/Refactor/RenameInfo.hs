@@ -1,7 +1,9 @@
-module RenameInfo where
+--  FIXME: this should be  ... Refactor.Rename.Info
 
-import Marshal
-import SrcLoc
+module EclipseFP.Haskell.Core.Refactor.RenameInfo where
+
+import EclipseFP.Haskell.Core.Marshal
+import EclipseFP.Haskell.Core.SrcLoc
 
 data RenameInfo =
      RenameInfo { file :: FilePath 

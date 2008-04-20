@@ -1,6 +1,6 @@
 {-# language TypeSynonymInstances, OverlappingInstances, FlexibleInstances, UndecidableInstances #-}
 
-module Marshal where
+module EclipseFP.Haskell.Core.Marshal where
 
 -- | from Haskel land to Java land
 class Marshal a where 

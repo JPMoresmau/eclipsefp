@@ -1,8 +1,9 @@
+
 {-# language OverlappingInstances #-}
 
-module ReplaceEdit where
+module EclipseFP.Haskell.Core.Refactor.ReplaceEdit where
 
-import Marshal
+import EclipseFP.Haskell.Core.Marshal
 
 import Prelude hiding ( length )
 import qualified Prelude

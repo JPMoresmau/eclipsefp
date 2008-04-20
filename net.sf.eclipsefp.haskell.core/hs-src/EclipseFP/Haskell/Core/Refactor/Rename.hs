@@ -1,11 +1,14 @@
 {-# language DisambiguateRecordFields #-}
 
-module Rename where
+module EclipseFP.Haskell.Core.Refactor.Rename where
 
-import Marshal
+import EclipseFP.Haskell.Core.Marshal
 
-import RenameInfo
-import ReplaceEdit
+import EclipseFP.Haskell.Core.Refactor.RenameInfo as I
+import EclipseFP.Haskell.Core.Refactor.ReplaceEdit
+
+import Network
+import System.IO
 
 import Prelude hiding (length )
 
@@ -28,12 +31,26 @@ performRename input = do
 
 refactor :: RenameInfo -> IO [ ReplaceEdit ]
 refactor ri = do
+    clientCmd [ "new", I.file ri ]
     return $ return $ ReplaceEdit
-           { file = RenameInfo.file ri
+           { file = I.file ri
     	   , offset = 5
            , length = 2
            , replacement = "bar"
 	   }
-    
+       
+--  from HaRe/pfe_client
+clientCmd :: [String] -> IO ()
+clientCmd args = withSocketsDo $ do
+  h <- connectTo "localhost" $ PortNumber 9000
+  hSetBuffering h LineBuffering
+  hPutStrLn stderr $ "(stderr) CLIENT SEND: "++unwords args
+  putStrLn $ "(stdout) CLIENT SEND: "++unwords args
+  hPutStrLn h $ unwords args
+  hGetLine h  -- wait for acknowledgement
+  return ()
+
+
+ 
     
     

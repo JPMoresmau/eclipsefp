@@ -1,6 +1,6 @@
-module SrcLoc where
+module EclipseFP.Haskell.Core.SrcLoc where
 
-import Marshal
+import EclipseFP.Haskell.Core.Marshal
 
 data SrcLoc = SrcLoc 
    { line :: Int
