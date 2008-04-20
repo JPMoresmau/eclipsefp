@@ -20,7 +20,6 @@ public class GHCPackageFolder extends GHCPackageResource {
   ////////////////////////////////////
 
   public List<?> getChildren() {
-    // TODO lf
     return Collections.emptyList();
   }
 

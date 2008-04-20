@@ -1,15 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.dialog.dialogfields;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -17,14 +18,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.core.runtime.Assert;
-
 /**
  * Base class of all dialog fields. Dialog fields manage controls together with
  * the model, independed from the creation time of the widgets. - support for
  * automated layouting. - enable / disable, set focus a concept of the base
  * class.
- * 
+ *
  * DialogField have a label.
  */
 public class DialogField {
@@ -32,7 +31,7 @@ public class DialogField {
   private Label fLabel;
   private IDialogFieldListener fDialogFieldListener;
   protected String fLabelText;
-  
+
 
   private boolean fEnabled;
 
@@ -127,7 +126,7 @@ public class DialogField {
 
   /**
    * Creates or returns the created label widget.
-   * 
+   *
    * @param parent
    *          The parent composite or <code>null</code> if the widget has
    *          already been created.
@@ -143,7 +142,6 @@ public class DialogField {
       if (fLabelText != null && !"".equals(fLabelText)) { //$NON-NLS-1$
         fLabel.setText(fLabelText);
       } else {
-        // XXX: to avoid a 16 pixel wide empty label - revisit
         fLabel.setText("."); //$NON-NLS-1$
         fLabel.setVisible(false);
       }
@@ -153,7 +151,7 @@ public class DialogField {
 
   /**
    * Creates a spacer control.
-   * 
+   *
    * @param parent
    *          The parent composite
    */

@@ -1,17 +1,19 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.properties.viewerpart;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-/** <p>TODO</p>
-  * 
-  * @author Leif Frenzel
-  */
 public abstract class CheckboxTablePart extends SharedPart {
 
   private StructuredViewer viewer;
@@ -26,8 +28,8 @@ public abstract class CheckboxTablePart extends SharedPart {
   }
 
   @Override
-  protected void createMainControl( final Composite parent, 
-                                    final int style, 
+  protected void createMainControl( final Composite parent,
+                                    final int style,
                                     final int span ) {
     viewer = createStructuredViewer( parent, style );
     Control control = viewer.getControl();
@@ -52,10 +54,10 @@ public abstract class CheckboxTablePart extends SharedPart {
     }
   }
 
-  protected StructuredViewer createStructuredViewer( final Composite parent, 
+  protected StructuredViewer createStructuredViewer( final Composite parent,
                                                      final int style ) {
     int extendedStyle = style | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-    CheckboxTableViewer tableViewer 
+    CheckboxTableViewer tableViewer
       = CheckboxTableViewer.newCheckList( parent, extendedStyle );
     tableViewer.addSelectionChangedListener( new ISelectionChangedListener() {
       public void selectionChanged( final SelectionChangedEvent evt ) {
@@ -84,7 +86,7 @@ public abstract class CheckboxTablePart extends SharedPart {
 
   // template methods
   ///////////////////
-  
+
   protected abstract void elementChecked( Object element, boolean checked );
 
   protected abstract void selectionChanged( IStructuredSelection selection );

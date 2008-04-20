@@ -2,19 +2,24 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 
 /** <p>Tab for the content assist preference settings.</p>
-  * 
-  * @author Leif Frenzel  
+  *
+  * @author Leif Frenzel
   */
 class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
@@ -55,17 +60,17 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     return composite;
   }
 
-  
+
   // UI creation methods
   //////////////////////
-  
-  private void createColorList( final Composite composite, 
+
+  private void createColorList( final Composite composite,
                                 final Composite editorComposite ) {
     int style = SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER;
     colorList = new List( editorComposite, style );
     GridData gridData = new GridData(   GridData.VERTICAL_ALIGN_BEGINNING
                                       | GridData.FILL_HORIZONTAL );
-    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( composite, 
+    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( composite,
                                                                    8 );
     colorList.setLayoutData( gridData );
     colorList.addSelectionListener( new SelectionAdapter() {
@@ -135,7 +140,6 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     createBooleanField( parent, aoText, CA_ORDER_PROPOSALS );
     String aaText = "&Enable auto activation";
     String aaKey = CA_AUTOACTIVATION;
-    // TODO change this to the generic dialogfields mechanism
     Button autoActButton = addBooleanField( parent, aaText, aaKey, 0 );
     autoActButton.addSelectionListener( new SelectionAdapter() {
       @Override
@@ -143,17 +147,17 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
         updateAutoactivationControls();
       }
     } );
-    
+
     String adText = "Auto activation dela&y:";
     String adKey = CA_AUTOACTIVATION_DELAY;
     txtAutoActDelay = addTextField( parent, adText, adKey, 4, 0 );
-    
+
     String atText = "Auto activation &triggers:";
     String atKey = CA_AUTOACTIVATION_TRIGGERS;
     txtActTriggers = addTextField( parent, atText, atKey, 4, 0 );
   }
 
-  
+
   // helping methods
   //////////////////
 
@@ -180,7 +184,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
   }
 
   private void updateAutoactivationControls() {
-    boolean enabled = getPreferenceStore().getBoolean( 
+    boolean enabled = getPreferenceStore().getBoolean(
         IEditorPreferenceNames.CA_AUTOACTIVATION );
     txtAutoActDelay.setEnabled( enabled );
     getLabel( txtAutoActDelay ).setEnabled( enabled );

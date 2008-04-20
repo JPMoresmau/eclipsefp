@@ -27,10 +27,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 abstract class RefAction {
 
+  final RefInfo info = new RefInfo();
+
   private IEditorPart targetEditor;
-  RefInfo info = new RefInfo();
-  ISelection selection;
-  boolean haveFile;
+  private ISelection selection;
+  private boolean haveFile;
 
   abstract void openWizard();
 
@@ -84,8 +85,7 @@ abstract class RefAction {
         IDocument doc = haskellEditor.getDocument();
         result = offset - doc.getLineOffset( start );
       } catch( BadLocationException ex ) {
-        // TODO Auto-generated catch block
-        ex.printStackTrace();
+        // ignore and assume column zero
       }
     }
     return result;

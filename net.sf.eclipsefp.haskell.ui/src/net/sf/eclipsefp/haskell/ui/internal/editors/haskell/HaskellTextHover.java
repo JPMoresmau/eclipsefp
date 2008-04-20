@@ -46,8 +46,7 @@ class HaskellTextHover extends DefaultTextHover {
           result = fun.computeInfoHover( cabalFile, file, loc.getLine(), loc.getColumn() );
         }
       } catch( BadLocationException ex ) {
-        // TODO Auto-generated catch block
-        ex.printStackTrace();
+        // ignore, won't get any hover then
       }
     }
     return result;

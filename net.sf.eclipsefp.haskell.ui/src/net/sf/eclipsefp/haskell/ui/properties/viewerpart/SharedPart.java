@@ -6,12 +6,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
-/** <p>TODO</p>
-  * 
-  * @author Leif Frenzel
-  */
 public abstract class SharedPart {
 
   private boolean enabled;
@@ -23,7 +22,7 @@ public abstract class SharedPart {
     this.buttonLabels = buttonLabels;
     enabled = true;
   }
-  
+
   public void setButtonEnabled( final int index, final boolean enabled ) {
     if( controls != null && index >= 0 && controls.length > index ) {
       Control c = controls[ index ];
@@ -33,8 +32,8 @@ public abstract class SharedPart {
     }
   }
 
-  public void createControl( final Composite parent, 
-                             final int style, 
+  public void createControl( final Composite parent,
+                             final int style,
                              final int span ) {
     createMainControl( parent, style, span - 1 );
     if( buttonLabels != null && buttonLabels.length > 0 ) {
@@ -58,20 +57,20 @@ public abstract class SharedPart {
     }
   }
 
-  
+
   // template methods
   ///////////////////
-  
-  protected abstract void createMainControl( Composite parent, 
+
+  protected abstract void createMainControl( Composite parent,
                                              int style,
                                              int span );
 
   protected abstract void buttonSelected( Button button, int index );
 
   protected abstract void createMainLabel( Composite parent, int span );
-  
-  protected Button createButton( final Composite parent, 
-                                 final String label, 
+
+  protected Button createButton( final Composite parent,
+                                 final String label,
                                  final int index ) {
     Button button = new Button( parent, SWT.PUSH );
     button.setText( label );
@@ -91,17 +90,17 @@ public abstract class SharedPart {
     }
   }
 
-  
+
   // helping methods
   //////////////////
-  
+
   private GridLayout createButtonsLayout() {
     GridLayout layout = new GridLayout();
-    layout.marginWidth = 0; 
+    layout.marginWidth = 0;
     layout.marginHeight = 0;
     return layout;
   }
-  
+
   protected Label createEmptySpace( final Composite parent, final int span ) {
     Label label = new Label( parent, SWT.NULL );
     GridData gd = new GridData( GridData.VERTICAL_ALIGN_BEGINNING );
@@ -112,10 +111,10 @@ public abstract class SharedPart {
     return label;
   }
 
-  
+
   // attribute getters and setters
   ////////////////////////////////
-  
+
   public void setEnabled( final boolean enabled ) {
     if( enabled != this.enabled ) {
       this.enabled = enabled;
@@ -126,19 +125,19 @@ public abstract class SharedPart {
   public boolean isEnabled() {
     return enabled;
   }
-  
-  
+
+
   // inner classes
   ////////////////
-  
+
   private class SelectionHandler implements SelectionListener {
-    
+
     private final SharedPart part;
-    
+
     private SelectionHandler( final SharedPart part ) {
       this.part = part;
     }
-    
+
     public void widgetSelected( final SelectionEvent e ) {
       buttonSelected( e );
     }

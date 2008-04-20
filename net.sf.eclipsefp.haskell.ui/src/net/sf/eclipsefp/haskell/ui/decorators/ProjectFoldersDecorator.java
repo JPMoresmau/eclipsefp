@@ -83,7 +83,6 @@ public class ProjectFoldersDecorator extends LabelProvider
   }
 
   private Image getImage( final Image baseImage, final String name ) {
-    // TODO use ImageRegistry from the plugin
     ImageData data = getImageData( name );
     DecoratorImageDescriptor did = new DecoratorImageDescriptor( baseImage,
                                                                  data );

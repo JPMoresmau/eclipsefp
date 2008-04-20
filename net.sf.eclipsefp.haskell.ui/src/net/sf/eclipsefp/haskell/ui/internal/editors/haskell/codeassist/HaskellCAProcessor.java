@@ -77,18 +77,17 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
 	public IContextInformation[] computeContextInformation(
 			final ITextViewer viewer, final int documentOffset) {
-		// TODO Auto-generated method stub
+		// unused
 		return null;
 	}
 
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		// TODO get from pref and update on pref change
-		// return new char[] { '.' };
+	  // unused
 		return null;
 	}
 
 	public char[] getContextInformationAutoActivationCharacters() {
-		// TODO Auto-generated method stub
+	  // unused
 		return null;
 	}
 
@@ -98,7 +97,7 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 	}
 
 	public IContextInformationValidator getContextInformationValidator() {
-		// TODO Auto-generated method stub
+	  // unused
 		return null;
 	}
 

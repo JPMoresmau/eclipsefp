@@ -95,7 +95,6 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     return null;
   }
 
-  //TODO remove this method
   public int getAnchor() {
     return anchor;
   }

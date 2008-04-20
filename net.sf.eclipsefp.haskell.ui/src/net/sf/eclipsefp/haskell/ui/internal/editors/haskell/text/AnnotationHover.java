@@ -81,8 +81,6 @@ public class AnnotationHover implements IAnnotationHover {
     return sb.toString();
   }
 
-  // TODO refactor
-
   private int compareRulerLine( final Position position,
                                 final IDocument document,
                                 final int line ) {
