@@ -1,40 +1,30 @@
-module HooverType where
+module EclipseFP.Haskell.Core.GHC.Interactive where
 
-import Typecheck (getSession, typecheckFiles, )
-import Control.Monad.Error (ErrorT, liftIO, runErrorT, )
-import OutputableAdd
-
-import Bag (bagToList, )
+import SrcLoc()    -- Instances only
+import GHC(GHC.Fixity, GHC.defaultFixity, GHC.NamedThing(GHC.getName),
+           GHC.Instance, GHC.TyThing, GHC.getSessionDynFlags, GHC.getPrintUnqual,
+           GHC.getInfo, GHC.parseName, GHC.pprInstance)
+import HsBinds()    -- Instances only
+import HsExpr()    -- Instances only
+import HscTypes(implicitTyThings)
+import NameSet(NameSet.elemNameSet, NameSet.mkNameSet)
+import Outputable(Outputable(..), SDoc, vcat, text, ($$), (<+>), empty,
+                  showSDocForUser)
+import PprTyThing(PprTyThing.PrintExplicitForalls,
+                  PprTyThing.pprTyThingInContextLoc)
+import TypeRep()    -- Instances only
+import Var()    -- Instances only
+import Control.Monad.Error(Control.Monad.Trans.MonadIO, ErrorT, liftIO)
 import qualified Data.List as List
-import Data.Maybe (mapMaybe, catMaybes)
+import Data.Maybe(catMaybes)
 
-import System.FilePath ((</>))
-
-import qualified GHC
-import HscTypes		( implicitTyThings )
-import qualified NameSet
-import qualified PprTyThing
-
--- import PprCore (pprType)
-import TypeRep (pprType, )
-import qualified Var
-import HsExpr (pprFunBind, )
-import HsBinds (LHsBinds, HsBind(..), ppr_monobind, pprPrag, fun_infix, fun_matches, )
-import Outputable (Outputable, SDoc,showSDoc, showSDocForUser, showSDocUnqual, OutputableBndr, BindingSite(LetBind),
-          (<+>), ($$), empty, ppr, pprBndr, nest, vcat, hcat, text, dcolon, )
-import SrcLoc (Located(L), spans, unLoc, )
-
-
-type SrcLoc = (Int,Int)
-
-mshow :: (Outputable a) =>  a -> String
-mshow = showSDoc . ppr
-
+import EclipseFP.Haskell.Core.GHC.Session(getSession)
 
 getInfo :: FilePath -> FilePath -> String -> ErrorT String IO String
 getInfo srcRoot fileName name =
     do session <- liftIO $ getSession srcRoot
-       typecheckFiles session [fileName] 
+--       typecheckFiles session [fileName] 
+--        load modules! 
        dflags  <- liftIO $ GHC.getSessionDynFlags session
        let pefas = True 
            -- False whether to show for alls: @dopt Opt_PrintExplicitForalls dflags@

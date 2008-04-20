@@ -9,7 +9,7 @@ import Digraph(flattenSCC)
 import GHC(Module(moduleName), moduleNameString, TypecheckedSource, RenamedSource, ParsedSource,
            HsModule(..), ModuleInfo, ModSummary(ms_mod, ms_location, ms_hspp_opts),
            CheckedModule(CheckedModule), LoadHowMuch(LoadAllTargets), DynFlags,
-           setTargets, guessTarget, load, checkModule, topSortModuleGraph, getModuleGraph,
+           setTargets, addTarget, guessTarget, load, checkModule, topSortModuleGraph, getModuleGraph,
            modInfoTopLevelScope, modInfoExports, modInfoInstances, ModLocation(ml_hs_file),
            Name, LIE, Instance, HsGroup, HsDoc, HaddockModInfo, 
            Session, newSession, getSessionDynFlags, setSessionDynFlags, parseDynamicFlags, )
@@ -26,7 +26,6 @@ import Data.Char (ord)
 import Data.List((++), concatMap)
 import Data.Maybe(Maybe(..), fromJust)
 
-
 type CheckedMod = (Module, FilePath, FullyCheckedMod)
 
 
@@ -36,15 +35,14 @@ type FullyCheckedMod = (ParsedSource,
                         ModuleInfo)
 
 
+
 -- TODO: make it handle cleanup
-typecheckFiles :: Session -> [FilePath] -> ErrorT String IO [CheckedMod]
-typecheckFiles session files = do
-
+loadModules :: Session -> [FilePath] -> ErrorT String IO ()
+loadModules session files = do
   -- load all argument files
-
   targets <- mapM (\f -> liftIO $ guessTarget f Nothing) files
-  liftIO $ setTargets session targets
-
+--  liftIO $ setTargets session targets
+  liftIO $ mapM (addTarget session) targets
   flag <- liftIO $ load session LoadAllTargets
   when (failed flag)
     (throwError $ "Failed to load all needed modules")
@@ -65,12 +63,26 @@ typecheckFiles session files = do
         -> return (mod, file, (a,b,c,d))
       _ -> throwError $ "Failed to check module: " ++ moduleString mod
 
+
+
 moduleString :: Module -> String
 moduleString = moduleNameString . moduleName 
 
-getSession :: FilePath -> FilePath -> IO Session
-getSession ghcLibDir srcRoot =
-   do session <- newSession (Just ghcLibDir)
+
+getSysLibDir :: IO FilePath
+getSysLibDir = do
+    (_, out, _, pid) <- runInteractiveProcess "ghc" ["--print-libdir"] Nothing Nothing
+    libDir <- hGetLine out
+    let libDir2 = if ord (last libDir) == 13   -- Windows!
+                    then init libDir
+                    else libDir
+    waitForProcess pid
+    return (FilePath.normalise libDir2)
+
+getSession :: FilePath -> IO Session
+getSession srcRoot =
+   do libDir <- getSysLibDir
+      session <- newSession (Just libDir)
       -- we must do that otherwise GHC crashes
       -- getSessionDynFlags session >>= setSessionDynFlags session
       dynFlags0 <- getSessionDynFlags session
