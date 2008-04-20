@@ -12,9 +12,12 @@ import System.FilePath ((</>))
 -- import PprCore (pprType)
 import TypeRep (pprType, )
 import qualified Var
+import qualified Pretty
 import HsExpr (pprFunBind, )
 import HsBinds (LHsBinds, HsBind(..), ppr_monobind, pprPrag, fun_infix, fun_matches, )
-import Outputable (showSDocUnqual, OutputableBndr, BindingSite(LetBind),
+import Outputable
+         (Outputable, OutputableBndr, PprStyle,
+          showSDocUnqual, BindingSite(LetBind),
           (<+>), ppr, pprBndr, nest, vcat, hcat, text, dcolon, )
 import SrcLoc (Located(L), spans, unLoc, )
 
@@ -59,13 +62,17 @@ findTypeSignature typeCheckedMod srcLoc =
    bagToList typeCheckedMod
 
 
+pprTypedBinder :: Var.Var -> PprStyle -> Pretty.Doc
 pprTypedBinder binder =
   if Var.isTyVar binder
     then text "@" <+> pprTyVarBndr binder
     else pprIdBndr binder <+> dcolon <+> pprType (Var.idType binder)
 
+pprTyVarBndr :: a
 pprTyVarBndr = error "eclipsefp.pprTyVarBndr not implemented"
 
+pprIdBndr :: (Outputable a) =>
+   a -> Outputable.PprStyle -> Pretty.Doc
 pprIdBndr id = ppr id
 
 
