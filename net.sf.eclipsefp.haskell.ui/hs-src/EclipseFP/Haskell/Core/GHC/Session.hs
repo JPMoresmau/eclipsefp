@@ -1,6 +1,6 @@
 
 module Typecheck (
-  CheckedMod, typecheckFiles, getSession,
+  CheckedMod, typecheckFiles, getSysLibDir, getSession,
 ) where
 
 
