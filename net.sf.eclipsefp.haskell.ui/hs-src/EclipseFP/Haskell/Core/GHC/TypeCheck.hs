@@ -2,28 +2,19 @@ module EclipseFP.Haskell.Core.GHC.TypeCheck (
   CheckedMod, typeCheckFiles
 ) where
 
-
 import BasicTypes(failed)
 import Digraph(flattenSCC)
-import GHC(Module(moduleName), moduleNameString, TypecheckedSource, RenamedSource, ParsedSource,
-           HsModule(..), ModuleInfo, ModSummary(ms_mod, ms_location, ms_hspp_opts),
-           CheckedModule(CheckedModule), LoadHowMuch(LoadAllTargets), DynFlags,
-           setTargets, guessTarget, load, checkModule, topSortModuleGraph, getModuleGraph,
-           modInfoTopLevelScope, modInfoExports, modInfoInstances, ModLocation(ml_hs_file),
-           Name, LIE, Instance, HsGroup, HsDoc, HaddockModInfo, 
-           Session, newSession, getSessionDynFlags, setSessionDynFlags, parseDynamicFlags, )
-import SrcLoc(unLoc)
-
-import Control.Monad.Error (ErrorT, throwError, liftIO, )
-import Control.Monad(Monad(return), mapM, forM, when)
-
-import System.FilePath as FilePath
-import System.Process (runInteractiveProcess, waitForProcess, )
-import System.IO (hGetLine, )
-
-import Data.Char (ord)
-import Data.List((++), concatMap)
-import Data.Maybe(Maybe(..), fromJust)
+import GHC(TypecheckedSource, RenamedSource, ParsedSource, ModuleInfo,
+           Module(moduleName), ModSummary(ms_location, ms_mod),
+           CheckedModule(CheckedModule), LoadHowMuch(LoadAllTargets), Session, setTargets,
+           guessTarget, load, checkModule, topSortModuleGraph, getModuleGraph,
+           ModLocation(ml_hs_file), moduleNameString)
+import Control.Monad.Error
+          (MonadError, MonadIO, ErrorT, liftIO, throwError, )
+import System.FilePath(FilePath, )
+import Control.Monad(Monad(return), mapM, forM, when, )
+import Data.Maybe (fromMaybe, )
+import Data.List((++), concatMap, )
 
 
 type CheckedMod = (Module, FilePath, FullyCheckedMod)
@@ -51,18 +42,17 @@ typeCheckFiles session files = do
   modgraph <- liftIO $ getModuleGraph session
 
   let mods = concatMap flattenSCC $ topSortModuleGraph False modgraph Nothing
-      getModFile = fromJust . ml_hs_file . ms_location
+      getModFile = fromMaybe (error "file expected") . ml_hs_file . ms_location
       mods'= [ (ms_mod modsum, getModFile modsum) |
                modsum <- mods ]
 
-      -- typecheck the argument modules
-
-  forM mods' $ \(mod, file) -> do
-    mbMod <- liftIO $ checkModule session (moduleName mod) False
+  -- typecheck the argument modules
+  forM mods' $ \(modu, file) -> do
+    mbMod <- liftIO $ checkModule session (moduleName modu) False
     case mbMod of
       Just (CheckedModule a (Just b) (Just c) (Just d) _)
-        -> return (mod, file, (a,b,c,d))
-      _ -> throwError $ "Failed to check module: " ++ moduleString mod
+        -> return (modu, file, (a,b,c,d))
+      _ -> throwError $ "Failed to check module: " ++ moduleString modu
 
 
 
