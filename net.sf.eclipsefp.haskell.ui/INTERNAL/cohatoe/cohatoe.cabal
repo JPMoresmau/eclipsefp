@@ -4,6 +4,6 @@
 Name:            cohatoe-plugin
 Version:         1.106.0
 Build-depends:   base, cohatoe-api, array, containers
-Hs-Source-Dirs:  ../../hs-src
+Hs-Source-Dirs:  ../../hs-src, ../../../net.sf.eclipsefp.haskell.core
 Ghc-options:     -Wall -package-name main
 Exposed-modules: MarkOccurrences, CodeFolding, HaskellOutline

@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
@@ -15,14 +16,23 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCommentS
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcilingStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellStringScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.SrcLoc;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -32,10 +42,13 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /**
  * <p>
@@ -73,6 +86,59 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
 	// interface methods of SourceViewerConfiguration
 	// ///////////////////////////////////////////////
+
+  @Override
+  public ITextHover getTextHover( final ISourceViewer sourceViewer,
+                                  final String contentType ) {
+    ITextHover result = null;
+    if( IDocument.DEFAULT_CONTENT_TYPE.equals( contentType ) ) {
+      result = new DefaultTextHover( sourceViewer ) {
+        @Override
+        public String getHoverInfo( final ITextViewer textViewer,
+                                    final IRegion hoverRegion ) {
+          String result = null;
+          CohatoeServer server = CohatoeServer.getInstance();
+          IEditorTextHover fun = server.createFunction( IEditorTextHover.class );
+          if( fun != null ) {
+            try {
+              IDocument doc = textViewer.getDocument();
+              SrcLoc loc = SrcLoc.fromDocOffset( doc, hoverRegion.getOffset() );
+              IFile file = findFile();
+              if( file != null ) {
+                IFile cabalFile = getCabalFile( file.getProject() );
+                result = fun.computeInfoHover( cabalFile, file, loc.getLine(), loc.getColumn() );
+              }
+            } catch( BadLocationException ex ) {
+              // TODO Auto-generated catch block
+              ex.printStackTrace();
+            }
+          }
+          return result;
+        }
+
+        @Override
+        protected boolean isIncluded( final Annotation annotation ) {
+          return false;
+        }
+
+        private IFile findFile() {
+          IFile result = null;
+          IEditorInput input = editor.getEditorInput();
+          if( input instanceof IFileEditorInput ) {
+            result = ( ( IFileEditorInput )input ).getFile();
+          }
+          return result;
+        }
+
+        private IFile getCabalFile( final IProject project ) {
+          String ext = ResourceUtil.EXTENSION_CABAL;
+          IPath path = new Path( project.getName() ).addFileExtension( ext );
+          return project.getFile( path );
+        }
+      };
+    }
+    return result;
+  }
 
 	@Override
   public IAutoEditStrategy[] getAutoEditStrategies(

@@ -280,6 +280,11 @@
            implementation="net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutline"
            interface="net.sf.eclipsefp.haskell.ui.internal.views.outline.IHaskellOutline"
            name="%haskellOutline_name" />
+      <haskellFunction
+           codeFile="$os$/obj/EditorTextHover.o"
+           implementation="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.EditorTextHover"
+           interface="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.IEditorTextHover"
+           name="%editorTextHover_name" />
    </extension>
    
    <extension
