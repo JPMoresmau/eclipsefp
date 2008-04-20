@@ -281,10 +281,13 @@
            interface="net.sf.eclipsefp.haskell.ui.internal.views.outline.IHaskellOutline"
            name="%haskellOutline_name" />
       <haskellFunction
-           codeFile="$os$/obj/EditorTextHover.o"
+           codeFile="$os$/obj/EclipseFP/Haskell/UI/Hover/EditorTextHover.o"
            implementation="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.EditorTextHover"
            interface="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.IEditorTextHover"
-           name="%editorTextHover_name" />
+           name="%editorTextHover_name">
+           <objectCodeFolder>../net.sf.eclipsefp.haskell.core.macosx.carbon.x86/os/macosx/x86/obj</objectCodeFolder>
+           <objectCodeFolder>os/macosx/x86/obj</objectCodeFolder>
+      </haskellFunction>
    </extension>
    
    <extension

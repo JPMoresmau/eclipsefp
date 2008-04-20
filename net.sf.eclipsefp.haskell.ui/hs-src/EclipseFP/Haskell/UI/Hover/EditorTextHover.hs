@@ -31,7 +31,7 @@ performEditorTextHover args = do
 	hi  = unmarshal args
     res <- runErrorT $ getTypeSignature hi
     case res of
-        Left msg -> error msg -- FIXME
+        Left msg -> error $ "Problem was: " ++ msg -- FIXME
 	Right res -> return $ marshal res
 
 
