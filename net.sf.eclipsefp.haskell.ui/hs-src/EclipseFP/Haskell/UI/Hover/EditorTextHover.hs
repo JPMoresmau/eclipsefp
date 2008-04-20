@@ -1,11 +1,11 @@
-module EditorTextHover where
+module EclipseFP.Haskell.UI.Hover.EditorTextHover where
 
 -- We must import Cohatoe.API and implement resource so that this code
 -- can be dynamically loaded as plugin.
 import Cohatoe.API
 
-import Marshal
-import SrcLoc
+import EclipseFP.Haskell.Core.Marshal
+import EclipseFP.Haskell.Core.SrcLoc
 
 import qualified TypeSignature as T
 
@@ -15,6 +15,8 @@ resource = plugin {
   pluginMain = performEditorTextHover
 }
 
+
+--  FIXME: should go in Hover.Info module
 data HoverInfo = 
      HoverInfo { cabal :: FilePath
 	       , srcmod   :: FilePath
