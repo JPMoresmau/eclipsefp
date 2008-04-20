@@ -2,17 +2,19 @@ module EclipseFP.Haskell.Core.GHC.TypeCheck (
   CheckedMod, typeCheckFiles
 ) where
 
-import BasicTypes(failed)
+import qualified EclipseFP.Haskell.Core.GHC.Session as Session
+
 import Digraph(flattenSCC)
 import GHC(TypecheckedSource, RenamedSource, ParsedSource, ModuleInfo,
            Module(moduleName), ModSummary(ms_location, ms_mod),
-           CheckedModule(CheckedModule), LoadHowMuch(LoadAllTargets), Session, setTargets,
-           guessTarget, load, checkModule, topSortModuleGraph, getModuleGraph,
+           CheckedModule(CheckedModule), Session,
+           checkModule, topSortModuleGraph, getModuleGraph,
            ModLocation(ml_hs_file), moduleNameString)
+
 import Control.Monad.Error
           (MonadError, MonadIO, ErrorT, liftIO, throwError, )
 import System.FilePath(FilePath, )
-import Control.Monad(Monad(return), mapM, forM, when, )
+import Control.Monad(Monad(return), forM, )
 import Data.Maybe (fromMaybe, )
 import Data.List((++), concatMap, )
 
@@ -29,15 +31,7 @@ type FullyCheckedMod = (ParsedSource,
 -- TODO: make it handle cleanup
 typeCheckFiles :: Session -> [FilePath] -> ErrorT String IO [CheckedMod]
 typeCheckFiles session files = do
-
-  -- load all argument files
-
-  targets <- mapM (\f -> liftIO $ guessTarget f Nothing) files
-  liftIO $ setTargets session targets
-
-  flag <- liftIO $ load session LoadAllTargets
-  when (failed flag)
-    (throwError $ "Failed to load all needed modules")
+  Session.loadModules session files
 
   modgraph <- liftIO $ getModuleGraph session
 
