@@ -18,13 +18,12 @@ import Control.Monad.Error(Control.Monad.Trans.MonadIO, ErrorT, liftIO)
 import qualified Data.List as List
 import Data.Maybe(catMaybes)
 
-import EclipseFP.Haskell.Core.GHC.Session(getSession)
+import qualified EclipseFP.Haskell.Core.GHC.Session as Session
 
 getInfo :: FilePath -> FilePath -> String -> ErrorT String IO String
 getInfo srcRoot fileName name =
-    do session <- liftIO $ getSession srcRoot
---       typecheckFiles session [fileName] 
---        load modules! 
+    do session <- liftIO $ Session.getSession srcRoot
+       Session.loadModules session [fileName]
        dflags  <- liftIO $ GHC.getSessionDynFlags session
        let pefas = True 
            -- False whether to show for alls: @dopt Opt_PrintExplicitForalls dflags@
