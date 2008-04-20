@@ -1,6 +1,7 @@
 module TypeSignature where
 
-import Typecheck (getSession, typecheckFiles, )
+import EclipseFP.Haskell.Core.GHC.TypeCheck (typeCheckFiles, )
+import EclipseFP.Haskell.Core.GHC.Session(getSession,) 
 import Control.Monad.Error (ErrorT, liftIO, )
 
 import Bag (bagToList, )
@@ -27,7 +28,7 @@ type SrcLoc = (Int,Int)
 getTypeSignature :: FilePath -> FilePath -> FilePath -> SrcLoc -> ErrorT String IO String
 getTypeSignature ghcLibDir srcRoot fileName srcLoc =
    do session <- liftIO $ getSession ghcLibDir srcRoot
-      ghcmods <- typecheckFiles session [srcRoot </> fileName]
+      ghcmods <- typeCheckFiles session [srcRoot </> fileName]
       -- TODO: Is the current module always the last one?
       let (modul, moduleFileName, (_,_,typeCheckedMod,_)) = last ghcmods
       -- return (moduleFileName)
