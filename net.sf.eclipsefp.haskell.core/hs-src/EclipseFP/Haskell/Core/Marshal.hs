@@ -10,12 +10,8 @@ class Marshal a where
 class UnMarshal a where 
     unmarshal_partial :: [ String ] -> ( a , [ String ] )
     
-
-
 -- | complete unmarshalling
 unmarshal css = let ( x, [] ) = unmarshal_partial css in x
-
-
 
 instance  Marshal Int where
     marshal x = [ show x ]

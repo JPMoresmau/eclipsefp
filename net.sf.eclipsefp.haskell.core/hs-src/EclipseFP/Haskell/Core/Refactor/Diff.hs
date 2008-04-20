@@ -1,4 +1,4 @@
-module Diff where
+module EclipseFP.Haskell.Core.Refactor.Diff where
 
 import Prelude hiding ( Either (..))
 
@@ -55,3 +55,5 @@ compress (x:xs) =
 	    ( Keep   a, Keep   b ) -> [ Keep   ( a + b ) ]
             _ -> [ x , y ]
     in  top ++ ys
+
+test = compress $ edit "haskell" "hackathon"
