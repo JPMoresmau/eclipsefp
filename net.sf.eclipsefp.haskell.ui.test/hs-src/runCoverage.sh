@@ -1,7 +1,8 @@
 #!/bin/bash
-SRC=../../net.sf.eclipsefp.haskell.ui/hs-src
+SRC_UI=../../net.sf.eclipsefp.haskell.ui/hs-src
+SRC_CORE=../../net.sf.eclipsefp.haskell.core/hs-src
 mkdir tmp coverage_report
-ghc -i$SRC -fhpc --make -odir tmp -hidir tmp AllTests_Suite.hs 
+ghc -i$SRC_CORE -i$SRC_UI -fhpc --make -odir tmp -hidir tmp AllTests_Suite.hs 
 rm -r tmp
 ./AllTests_Suite 
 hpc markup AllTests_Suite \
