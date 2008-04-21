@@ -10,8 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ICodeFolding.ICodeFoldingRegion;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -19,6 +24,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>provides folding regions for documents in the Haskell editor.</p>
@@ -43,23 +50,48 @@ class HaskellFoldingStructureProvider {
     this.document = document;
   }
 
-  void updateFoldingRegions( final String buffer ) {
+  void updateFoldingRegions() {
     ProjectionAnnotationModel model = getAnnModel();
     if( model != null ) {
       CohatoeServer server = CohatoeServer.getInstance();
       ICodeFolding codeFolding = server.createFunction( ICodeFolding.class );
       if( codeFolding != null ) {
         Set<Position> currentRegions = new HashSet<Position>();
-        List<ICodeFoldingRegion> regions
-          = codeFolding.performCodeFolding( buffer );
-        for( ICodeFoldingRegion region: regions ) {
-          int endLine = region.getEndLine() > 0 ? region.getEndLine() : 0;
-          Position pos = createPosition( region.getStartLine(), endLine );
-          currentRegions.add( pos );
+        // TODO lf actually, we want to pass document.get() here (editor buffer)
+        // TODO lf if this is too slow, use the progress monitor
+        IFile file = computeFile();
+        if( file != null && file.exists() ) {
+          IContainer srcRoot = computeSourceRoot( file.getProject() );
+          if( srcRoot != null ) {
+            List<ICodeFoldingRegion> regions
+            = codeFolding.performCodeFolding( srcRoot, file );
+            for( ICodeFoldingRegion region: regions ) {
+              int endLine = region.getEndLine() > 0 ? region.getEndLine() : 0;
+              Position pos = createPosition( region.getStartLine(), endLine );
+              currentRegions.add( pos );
+            }
+            updateFoldingRegions( model, currentRegions );
+          }
         }
-        updateFoldingRegions( model, currentRegions );
       }
     }
+  }
+
+  private IContainer computeSourceRoot( final IProject project ) {
+    IHaskellProject haskellProject = HaskellProjectManager.get( project );
+    return haskellProject.getSourceFolder();
+  }
+
+  private IFile computeFile() {
+    IFile result = null;
+    IEditorInput input = editor.getEditorInput();
+    if( input instanceof IFileEditorInput ) {
+      IFile file = ( ( IFileEditorInput )input ).getFile();
+      if( file.exists() ) {
+        result = file;
+      }
+    }
+    return result;
   }
 
   private Position createPosition( final int startLine, final int endLine ) {

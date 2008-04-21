@@ -80,7 +80,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
         }
       } );
       if( document != null ) {
-        foldingStructureProvider.updateFoldingRegions( document.get() );
+        foldingStructureProvider.updateFoldingRegions();
       }
     }
   }

@@ -6,14 +6,19 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import de.leiffrenzel.cohatoe.server.core.CohatoeException;
 import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 public class CodeFolding implements ICodeFolding {
 
-  public List<ICodeFoldingRegion> performCodeFolding( final String param ) {
+  public List<ICodeFoldingRegion> performCodeFolding(
+      final IContainer srcRoot, final IFile file ) {
     List<ICodeFoldingRegion> result = new ArrayList<ICodeFoldingRegion>();
-    String[] params = new String[] { param };
+    String[] params = new String[] {
+      srcRoot.getLocation().toOSString(), file.getLocation().toOSString()
+    };
     CohatoeServer server = CohatoeServer.getInstance();
     try {
       String[] retVal = server.evaluate( ICodeFolding.class, params );

@@ -4,6 +4,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.util.List;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 
 /** <p>interface to the Haskell code that computes folding regions.</p>
   *
@@ -16,5 +18,7 @@ public interface ICodeFolding {
     int getEndLine();
   }
 
-  List<ICodeFoldingRegion> performCodeFolding( String param );
+  List<ICodeFoldingRegion> performCodeFolding(
+    final IContainer srcRoot,
+    final IFile file );
 }
