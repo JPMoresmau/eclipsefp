@@ -9,6 +9,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -88,7 +89,7 @@ public class HsImplementationPersister {
   }
 
   private static void load( final Element rootElement,
-                                     final List<IHsImplementation> impls) {
+                            final List<IHsImplementation> impls) {
     NodeList list = rootElement.getElementsByTagName( ELEM_HS_IMPL );
     for( int i = 0; i < list.getLength(); i++ ) {
       Node item = list.item( i );
@@ -108,6 +109,12 @@ public class HsImplementationPersister {
            hsi.setName( name );
            hsi.setBinDir( binDir );
            hsi.setVersion( version );
+           IStatus[] status = hsi.validate();
+           for( IStatus st: status ) {
+            if( st.matches( IStatus.ERROR ) ) {
+              HaskellCorePlugin.getDefault().getLog().log( st );
+            }
+           }
            impls.add( hsi );
          }
       }
