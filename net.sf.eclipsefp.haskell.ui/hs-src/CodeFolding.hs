@@ -1,6 +1,6 @@
 module CodeFolding where
 
-import Typecheck (getSession, typecheckFiles, )
+import Control.Monad( liftM )
 import Control.Monad.Error (runErrorT, ErrorT, liftIO, )
 
 import Bag (bagToList, )
@@ -16,22 +16,25 @@ import qualified SrcLoc
 
 import Cohatoe.API
 
+import Typecheck (getSession, typecheckFiles, )
+
 resource :: Interface
 resource = plugin {
   pluginMain = performCodeFolding
 }
 
-data FoldingRegion = FoldingRegion Int Int   -- start and end line of region
+-- start and end line of region
+data FoldingRegion = FoldingRegion Int Int deriving (Eq, Show)
 
 performCodeFolding :: [String] -> IO [String]
-performCodeFolding (srcRoot:file:_) = computeFoldingRegions srcRoot file
+performCodeFolding (libDir:srcRoot:file:_) = liftM marshal (computeFoldingRegions libDir srcRoot file)
 performCodeFolding _ = return []
 
-computeFoldingRegions :: FilePath -> FilePath -> IO [String]
-computeFoldingRegions srcRoot fileName =
-   fmap (either (const []) (marshal . findFoldingRegions)) $
+computeFoldingRegions :: FilePath -> FilePath -> FilePath -> IO [FoldingRegion]
+computeFoldingRegions ghcLibDir srcRoot fileName =
+   fmap (either (const []) (findFoldingRegions)) $
    runErrorT $
-   do session <- liftIO $ getSession srcRoot
+   do session <- liftIO $ getSession ghcLibDir srcRoot
       ghcmods <- typecheckFiles session [srcRoot </> fileName]
       -- TODO: Is the current module always the last one?
       let (_, _, (_,_,typeCheckedMod,_)) = last ghcmods

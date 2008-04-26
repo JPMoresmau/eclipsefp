@@ -18,7 +18,8 @@ resource = plugin {
 
 --  FIXME: should go in Hover.Info module
 data HoverInfo = 
-     HoverInfo { cabal :: FilePath
+     HoverInfo { ghcLibDir :: FilePath
+               , cabal :: FilePath
 	       , srcmod   :: FilePath
 	       , srcloc :: SrcLoc
                }
@@ -37,13 +38,14 @@ performEditorTextHover args = do
 
 getTypeSignature :: HoverInfo -> ErrorT String IO String
 getTypeSignature hi = 
-    T.getTypeSignature ( cabal hi ) ( srcmod hi ) ( line $ srcloc hi, column $ srcloc hi )
+    T.getTypeSignature ( ghcLibDir hi ) ( cabal hi ) ( srcmod hi ) ( line $ srcloc hi, column $ srcloc hi )
 
 
 instance UnMarshal HoverInfo where
     unmarshal_partial xs0 = 
-        let ( c, xs1 ) = unmarshal_partial xs0
-	    ( m, xs2 ) = unmarshal_partial xs1
-	    ( l, xs3 ) = unmarshal_partial xs2
-	in  ( HoverInfo { cabal = c, srcmod = m, srcloc = l } , xs3 )
+        let ( d, xs1 ) = unmarshal_partial xs0
+            ( c, xs2 ) = unmarshal_partial xs1
+	    ( m, xs3 ) = unmarshal_partial xs2
+	    ( l, xs4 ) = unmarshal_partial xs3
+	in  ( HoverInfo { ghcLibDir = d, cabal = c, srcmod = m, srcloc = l } , xs3 )
              

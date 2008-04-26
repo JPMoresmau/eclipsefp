@@ -24,9 +24,9 @@ import SrcLoc (Located(L), spans, unLoc, )
 
 type SrcLoc = (Int,Int)
 
-getTypeSignature :: FilePath -> FilePath -> SrcLoc -> ErrorT String IO String
-getTypeSignature srcRoot fileName srcLoc =
-   do session <- liftIO $ getSession srcRoot
+getTypeSignature :: FilePath -> FilePath -> FilePath -> SrcLoc -> ErrorT String IO String
+getTypeSignature ghcLibDir srcRoot fileName srcLoc =
+   do session <- liftIO $ getSession ghcLibDir srcRoot
       ghcmods <- typecheckFiles session [srcRoot </> fileName]
       -- TODO: Is the current module always the last one?
       let (modul, moduleFileName, (_,_,typeCheckedMod,_)) = last ghcmods

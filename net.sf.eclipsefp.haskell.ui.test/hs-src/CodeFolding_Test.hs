@@ -9,6 +9,8 @@ import Test.HUnit
 
 import CodeFolding( computeFoldingRegions, FoldingRegion(..) )
 
+ghcLibDir = "/usr/local/lib/ghc-6.8.2"
+
 tests :: Test
 tests = TestList [
     -- empty file
@@ -28,6 +30,6 @@ tests = TestList [
 
 testCase :: String -> [FoldingRegion] -> Test
 testCase name expected = TestCase $ do
-  valRes <- liftM computeFoldingRegions (readFile $ "res/code_folding/" ++ name)
+  valRes <- computeFoldingRegions ghcLibDir "res/code_folding/" name
   assertEqual ("Case " ++ name) expected valRes
   

@@ -1,6 +1,6 @@
 
 module Typecheck (
-  CheckedMod, typecheckFiles, getSysLibDir, getSession,
+  CheckedMod, typecheckFiles, getSession,
 ) where
 
 
@@ -65,26 +65,12 @@ typecheckFiles session files = do
         -> return (mod, file, (a,b,c,d))
       _ -> throwError $ "Failed to check module: " ++ moduleString mod
 
-
-
 moduleString :: Module -> String
 moduleString = moduleNameString . moduleName 
 
-
-getSysLibDir :: IO FilePath
-getSysLibDir = do
-    (_, out, _, pid) <- runInteractiveProcess "ghc" ["--print-libdir"] Nothing Nothing
-    libDir <- hGetLine out
-    let libDir2 = if ord (last libDir) == 13   -- Windows!
-                    then init libDir
-                    else libDir
-    waitForProcess pid
-    return (FilePath.normalise libDir2)
-
-getSession :: FilePath -> IO Session
-getSession srcRoot =
-   do libDir <- getSysLibDir
-      session <- newSession (Just libDir)
+getSession :: FilePath -> FilePath -> IO Session
+getSession ghcLibDir srcRoot =
+   do session <- newSession (Just ghcLibDir)
       -- we must do that otherwise GHC crashes
       -- getSessionDynFlags session >>= setSessionDynFlags session
       dynFlags0 <- getSessionDynFlags session
