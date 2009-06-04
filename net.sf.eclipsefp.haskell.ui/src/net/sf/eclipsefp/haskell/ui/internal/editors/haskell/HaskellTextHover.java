@@ -4,7 +4,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.ScionClient;
+import net.sf.eclipsefp.haskell.scion.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.SrcLoc;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -16,9 +19,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 class HaskellTextHover extends DefaultTextHover {
 
@@ -33,6 +33,7 @@ class HaskellTextHover extends DefaultTextHover {
   @Override
   public String getHoverInfo( final ITextViewer textViewer,
                               final IRegion hoverRegion ) {
+	  /*
     String result = null;
     CohatoeServer server = CohatoeServer.getInstance();
     IEditorTextHover fun = server.createFunction( IEditorTextHover.class );
@@ -50,20 +51,29 @@ class HaskellTextHover extends DefaultTextHover {
       }
     }
     return result;
+    */
+	  IFile file = editor.findFile();
+	  if (file != null) {
+		  IDocument doc = textViewer.getDocument();
+		  try {
+			  SrcLoc loc = SrcLoc.fromDocOffset(doc, hoverRegion.getOffset());
+			  ThingAtPointCommand command = new ThingAtPointCommand(file.getLocation().toOSString(), loc.getLine(), loc.getColumn());
+			  ScionClient.syncRunCommand(command, 200);
+			  if (command.isCompleted()) {
+				  return command.getThing();
+			  }
+			  return null;
+		  } catch (BadLocationException ex) {
+			  // TODO Auto-generated catch block
+			  ex.printStackTrace();
+		  }
+	  }
+	  return null;
   }
 
   @Override
   protected boolean isIncluded( final Annotation annotation ) {
     return false;
-  }
-
-  private IFile findFile() {
-    IFile result = null;
-    IEditorInput input = editor.getEditorInput();
-    if( input instanceof IFileEditorInput ) {
-      result = ( ( IFileEditorInput )input ).getFile();
-    }
-    return result;
   }
 
   private IFile getCabalFile( final IProject project ) {

@@ -6,7 +6,12 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-
+/**
+ * Represents a location in a source file in line/column format,
+ * instead of the character offset from the start of the file.
+ *
+ * @author Leif Frenzel
+ */
 public class SrcLoc {
 
   private final int line;
@@ -25,11 +30,16 @@ public class SrcLoc {
     this.column = column;
   }
 
-
+  /**
+   * Returns the line number (0-based).
+   */
   public int getLine() {
     return line;
   }
 
+  /**
+   * Returns the column within the line (0-based).
+   */
   public int getColumn() {
     return column;
   }

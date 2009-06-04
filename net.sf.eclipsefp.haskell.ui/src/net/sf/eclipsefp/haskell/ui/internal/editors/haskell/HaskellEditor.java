@@ -4,14 +4,21 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ResourceBundle;
+
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.scion.client.ScionClient;
+import net.sf.eclipsefp.haskell.scion.commands.BackgroundTypecheckFileCommand;
+import net.sf.eclipsefp.haskell.scion.commands.LoadCommand;
+import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,12 +38,14 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
 import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>The main editor class for the Haskell editor.</p>
@@ -232,6 +241,34 @@ public class HaskellEditor extends TextEditor
     if( outlinePage != null ) {
       outlinePage.update();
     }
+  }
+
+  @Override
+  protected void editorSaved() {
+    // Reload the file on the Scion server side
+	try {
+	  IFile file = findFile();
+	  if (file != null) {
+		// TODO this should be done asynchronously
+		String fileName = file.getLocation().toOSString();
+		ScionCommand command = new LoadCommand(fileName);
+		ScionClient.asyncRunCommand(command);
+		command = new BackgroundTypecheckFileCommand(fileName);
+		ScionClient.asyncRunCommand(command);
+	  }
+	} catch (Exception ex) {
+	  // We should never let Scion errors prevent the file from being saved!
+	  ex.printStackTrace(System.out); // TODO
+	}
+  }
+
+  public IFile findFile() {
+    IFile result = null;
+    IEditorInput input = getEditorInput();
+    if( input instanceof IFileEditorInput ) {
+      result = ( ( IFileEditorInput )input ).getFile();
+    }
+    return result;
   }
 
   @Override

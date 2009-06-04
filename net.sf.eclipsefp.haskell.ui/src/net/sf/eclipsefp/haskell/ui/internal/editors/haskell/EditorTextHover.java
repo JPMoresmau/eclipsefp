@@ -4,7 +4,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+
 import org.eclipse.core.resources.IFile;
+
 import de.leiffrenzel.cohatoe.server.core.CohatoeException;
 import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 

@@ -1,0 +1,5 @@
+# Tracing options for the Scion plugin
+
+# traces calls to the Scion server, including inits and function calls
+net.sf.eclipsefp.haskell.scion.client/logs = false
+
