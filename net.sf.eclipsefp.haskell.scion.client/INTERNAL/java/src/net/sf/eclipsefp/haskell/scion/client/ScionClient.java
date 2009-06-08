@@ -28,6 +28,12 @@ public class ScionClient {
 	
 	private static String CLIENT_PREFIX = "[ScionClient]";
 	
+	/**
+	 * Prevent instantiation of singleton class.
+	 */
+	private ScionClient() {
+	}
+	
 	// Server thread handling -------------------------------------------------
 	
 	/**

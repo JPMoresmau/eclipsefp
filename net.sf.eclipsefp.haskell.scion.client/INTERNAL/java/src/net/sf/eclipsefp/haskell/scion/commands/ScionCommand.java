@@ -1,5 +1,9 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
+import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
+import net.sf.eclipsefp.haskell.scion.lisp.LispList;
+import net.sf.eclipsefp.haskell.scion.lisp.LispParser;
+
 /**
  * A command that can be sent to the Scion server.
  * After being run, it can be queried for the response.
@@ -33,15 +37,13 @@ public abstract class ScionCommand {
 	protected abstract String internalLisp();
 	
 	public void receiveResponse(String response) {
-		// TODO this is really quick and dirty, just to get it working ASAP
-		int begin = response.indexOf('(', 1);
-		int end = response.lastIndexOf(')', response.length() - 3) + 1; 
-		parseInternalResponse(response.substring(begin, end));
-		
+		// (:return <real-response> <seq-no>)
+		LispExpr lisp = LispParser.parse(response);
+		parseInternalResponse(((LispList)lisp).get(1));
 		complete();
 	}
 	
-	protected abstract void parseInternalResponse(String response);
+	protected abstract void parseInternalResponse(LispExpr response);
 	
 	public synchronized void complete() {
 		completed = true;

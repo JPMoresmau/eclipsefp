@@ -99,10 +99,10 @@ public class ScionServerThread extends Thread implements UncaughtExceptionHandle
 				Trace.trace(THREAD_PREFIX, "Waiting for commands");
 				synchronized (monitor) {
 					try {
-						monitor.wait();
+						// check whether the server is up once per second
+						monitor.wait(1000);
 					} catch (InterruptedException e) {
 						// that's okay, just re-check the queue then, doesn't hurt
-						// and this case is rare anyway
 					}
 				}
 				Trace.trace(THREAD_PREFIX, "Woken up");

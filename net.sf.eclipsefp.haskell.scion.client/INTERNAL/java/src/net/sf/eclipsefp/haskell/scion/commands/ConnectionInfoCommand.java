@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
+import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
+
 
 public class ConnectionInfoCommand extends ScionCommand {
 
@@ -7,7 +9,7 @@ public class ConnectionInfoCommand extends ScionCommand {
 		return "(connection-info)";
 	}
 	
-	public void parseInternalResponse(String response) {
+	public void parseInternalResponse(LispExpr response) {
 		// TODO
 	}
 

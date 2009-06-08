@@ -1,5 +1,9 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
+import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
+import net.sf.eclipsefp.haskell.scion.lisp.LispList;
+import net.sf.eclipsefp.haskell.scion.lisp.LispString;
+
 
 public class ThingAtPointCommand extends ScionCommand {
 
@@ -21,19 +25,15 @@ public class ThingAtPointCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void parseInternalResponse(String response) {
-		// TODO really quick and dirty!
+	protected void parseInternalResponse(LispExpr response) {
 		// either (:ok (:ok nil))
 		//     or (:ok (:ok "some_string"))
-		int begin = response.indexOf('(', 1);
-		begin = response.indexOf(' ', begin) + 1;
-		int end = response.lastIndexOf(')', response.length() - 2);
-		response = response.substring(begin, end);
-		if (response.charAt(0) == '"') {
-			// quoted string
-			thing = response.substring(1, response.length() - 1);
+		LispExpr inner = ((LispList)((LispList)response).get(1)).get(1);
+		if (inner instanceof LispString) {
+			thing = ((LispString)inner).getValue();
+			if (thing == "no info")
+				thing = null;
 		} else {
-			// probably nil
 			thing = null;
 		}
 	}
