@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -105,12 +106,24 @@ public class MockFile implements IFile {
 		return getContents();
 	}
 
+	public boolean isDerived(final int options) {
+		return false;
+	}
+
 	public int getEncoding() {
 		return 0;
 	}
 
 	public IPath getFullPath() {
 		return null;
+	}
+
+	public boolean isHidden() {
+		return false;
+	}
+
+	public boolean isHidden(final int options) {
+		return false;
 	}
 
 	public IFileState[] getHistory(final IProgressMonitor monitor) {
@@ -121,14 +134,25 @@ public class MockFile implements IFile {
 		return fFileName;
 	}
 
-	public boolean isReadOnly() {
+	public Map getPersistentProperties() throws CoreException {
+		return null;
+	}
 
+	public boolean isReadOnly() {
+		return false;
+	}
+
+	public Map getSessionProperties() throws CoreException {
+		return null;
+	}
+
+	public boolean isTeamPrivateMember(final int options) {
 		return false;
 	}
 
 	public void move(final IPath destination, final boolean force, final boolean keepHistory,
 			final IProgressMonitor monitor) {
-		// unused
+	  // unused
 	}
 
 	public void setCharset(final String newCharset) {
@@ -156,7 +180,11 @@ public class MockFile implements IFile {
 
 	public void setContents(final IFileState source, final int updateFlags,
 			final IProgressMonitor monitor) {
-    // unused
+      // unused
+	}
+
+	public void setHidden(final boolean isHidden) throws CoreException {
+	  // unused
 	}
 
 	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) {
@@ -430,31 +458,6 @@ public class MockFile implements IFile {
 	public int findMaxProblemSeverity(final String type, final boolean includeSubtypes,
 			final int depth) {
 		return 0;
-	}
-
-	public Map getPersistentProperties() throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Map getSessionProperties() throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isDerived(final int options) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isHidden() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setHidden(final boolean isHidden) throws CoreException {
-		// TODO Auto-generated method stub
-
 	}
 
 }
