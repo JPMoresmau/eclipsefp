@@ -1,8 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionParseException;
 import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
-import net.sf.eclipsefp.haskell.scion.lisp.LispList;
-import net.sf.eclipsefp.haskell.scion.lisp.LispString;
 
 
 public class ThingAtPointCommand extends ScionCommand {
@@ -28,12 +27,11 @@ public class ThingAtPointCommand extends ScionCommand {
 	protected void parseInternalResponse(LispExpr response) {
 		// either (:ok (:ok nil))
 		//     or (:ok (:ok "some_string"))
-		LispExpr inner = ((LispList)((LispList)response).get(1)).get(1);
-		if (inner instanceof LispString) {
-			thing = ((LispString)inner).getValue();
+		try {
+			thing = response.asList().get(1).asList().get(1).asString().getValue();
 			if (thing == "no info")
 				thing = null;
-		} else {
+		} catch (ScionParseException ex) {
 			thing = null;
 		}
 	}

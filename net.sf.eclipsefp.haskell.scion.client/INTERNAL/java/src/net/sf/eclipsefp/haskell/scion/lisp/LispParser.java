@@ -82,14 +82,17 @@ public class LispParser {
 		return IDENT_CHARS.indexOf(cur) != -1;
 	}
 	
-	private LispIdentifier parseIdentifier() {
+	private LispExpr parseIdentifier() {
 		int start = pos;
 		while (IDENT_CHARS.indexOf(cur) != -1) {
 			next();
 		}
 		String name = new String(input, start, pos-start);
 		skipWhitespace();
-		return new LispIdentifier(name);
+		if (name.equalsIgnoreCase("nil"))
+			return new LispList();
+		else
+			return new LispIdentifier(name);
 	}
 	
 	private boolean isString() {
