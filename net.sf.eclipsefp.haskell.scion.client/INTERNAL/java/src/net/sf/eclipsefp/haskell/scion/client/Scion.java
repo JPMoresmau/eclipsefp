@@ -8,6 +8,7 @@ import java.lang.Thread.State;
 import net.sf.eclipsefp.haskell.scion.commands.CommandStatus;
 import net.sf.eclipsefp.haskell.scion.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.lisp.LispParser;
 import net.sf.eclipsefp.haskell.scion.util.ThreadUtil;
 
 /**
@@ -64,6 +65,8 @@ public class Scion {
 			Trace.trace(SCION_PREFIX, "Existing server thread exited; creating new thread");
 			createClient();
 		}
+		// Ensure that the Lisp parser classes are loaded too
+		LispParser.parse("()");
 	}
 	
 	/**
