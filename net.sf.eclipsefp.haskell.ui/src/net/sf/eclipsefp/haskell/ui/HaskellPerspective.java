@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
+
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;

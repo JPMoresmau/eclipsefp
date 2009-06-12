@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.scion.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
@@ -62,6 +63,7 @@ public class HaskellEditor extends TextEditor
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private MarkOccurrenceComputer markOccurrencesComputer;
+  private OpenDefinitionAction openDefinitionAction;
 
   public void reveal( final IHaskellLanguageElement element ) {
     Assert.isNotNull( element );
@@ -124,6 +126,7 @@ public class HaskellEditor extends TextEditor
       addAction( mmSource, "comments", "Comment" );
       addAction( mmSource, "comments", "Uncomment" );
     }
+    menu.prependToGroup(ITextEditorActionConstants.GROUP_OPEN, openDefinitionAction);
   }
 
   @Override
@@ -143,6 +146,11 @@ public class HaskellEditor extends TextEditor
     createTextOpAction( "Uncomment",
                         ITextOperationTarget.STRIP_PREFIX,
                         IActionDefinitionIds.UNCOMMENT );
+
+    // "open definition" action
+    openDefinitionAction = new OpenDefinitionAction(this);
+	openDefinitionAction.setActionDefinitionId(IActionDefinitionIds.OPEN_DEFINITION);
+	setAction("OpenDefinition", openDefinitionAction);
   }
 
   @Override

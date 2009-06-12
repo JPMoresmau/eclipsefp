@@ -3,14 +3,16 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+
 /** <p>contains constant definitions for action definition ids.</p>
   *
   * @author Leif Frenzel
   */
 interface IActionDefinitionIds {
 
-  String UNCOMMENT  = "net.sf.eclipsefp.haskell.ui.editor.actions.uncomment";
-  String COMMENT    = "net.sf.eclipsefp.haskell.ui.editor.actions.comment";
-  String FIRST_CHAR = "net.sf.eclipsefp.haskell.ui.editor.actions.firstChar";
+  String UNCOMMENT       = "net.sf.eclipsefp.haskell.ui.editor.actions.uncomment";
+  String COMMENT         = "net.sf.eclipsefp.haskell.ui.editor.actions.comment";
+  String FIRST_CHAR      = "net.sf.eclipsefp.haskell.ui.editor.actions.firstChar";
+  String OPEN_DEFINITION = "net.sf.eclipsefp.haskell.ui.actions.openDefinition";
 
 }

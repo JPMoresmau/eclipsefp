@@ -52,7 +52,7 @@
             extensions="hs,lhs"
             icon="icons/etool16/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.haskell" />
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.literateHaskell" />
@@ -201,6 +201,11 @@
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%uncommentCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"/>
+      <command
+            description="%openDefinitionCommand_desc"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%openDefinitionCommand_name"
+            id="net.sf.eclipsefp.ui.commands.navigate.openDefinition"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -218,15 +223,44 @@
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="Ctrl+ß"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+         <!-- keys for navigation -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
+              sequence="F3"/>
          <!-- other keys -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
               sequence="Home"/>
    </extension>
    <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="net.sf.eclipsefp.haskell.ui.actionSets.open"
+            label="%openActionSet_label"
+            description="%openActionSet_description"
+            visible="false">
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.openDefinition"
+            definitionId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
+            label="%openDefinitionAction_label"
+            tooltip="%openDefinitionAction_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"
+            menubarPath="navigate/open.ext"/>
+       <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="net.sf.eclipsefp.haskell.ui.actionSets.open">
+         <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
+      </actionSetPartAssociation>
+   </extension>
+   <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
-            targetID="net.sf.eclipsefp.haskell.ui.editor.HaskellEditor"
+            targetID="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
             id="net.sf.eclipsefp.haskell.ui.editor.editorContribution">
          <action
                label="%firstCharAction_label"

@@ -9,6 +9,7 @@ public class NameDefinitionsCommand extends ScionCommand {
 	private String name;
 	
 	private boolean found = false;
+	private String file;
 	private int startLine, startColumn, endLine, endColumn;
 	
 	public NameDefinitionsCommand(String name) {
@@ -32,10 +33,11 @@ public class NameDefinitionsCommand extends ScionCommand {
 				// one or more results
 				// TODO what if more than one?
 				LispList pos = list.get(0).asList();
-				startLine =  pos.get(1).asNumber().getInt();
-				startColumn = pos.get(2).asNumber().getInt();
-				endLine = pos.get(3).asNumber().getInt();
-				endColumn = pos.get(4).asNumber().getInt();
+				file = pos.get(1).asString().getValue();
+				startLine = pos.get(2).asNumber().getInt();
+				startColumn = pos.get(3).asNumber().getInt();
+				endLine = pos.get(4).asNumber().getInt();
+				endColumn = pos.get(5).asNumber().getInt();
 				found = true;
 			} else {
 				// no results
@@ -48,6 +50,10 @@ public class NameDefinitionsCommand extends ScionCommand {
 
 	public boolean isFound() {
 		return found;
+	}
+	
+	public String getFile() {
+		return file;
 	}
 
 	public int getStartLine() {
