@@ -8,17 +8,18 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.management.ThreadInfo;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
+import net.sf.eclipsefp.haskell.scion.commands.CommandStatus;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
 
 /**
- * A thread that represents the running Scion server process.
+ * A thread that acts as a client to the running Scion server process.
  * Its lifetime is coupled to the server's lifetime:
  * the thread stops running when the server dies or exits,
  * and if the thread is stopped, the server process is also killed.
@@ -35,13 +36,13 @@ import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
  * 
  * @author Thomas ten Cate
  */
-public class ScionServerThread extends Thread implements UncaughtExceptionHandler {
+public class ScionClientThread extends Thread implements UncaughtExceptionHandler {
 
 	private static final String host = null; // amounts to connecting to the loopback interface
 	private static final int MAX_RETRIES = 5;
 	private static final String ENCODING = "UTF-8";
 	private static final String
-		THREAD_PREFIX = "[ScionServerThread]",
+		THREAD_PREFIX = "[ScionClientThread]",
 		SERVER_STDOUT_PREFIX = "[scion_server]",
 		TO_SERVER_PREFIX = "[scion_server] <<",
 		FROM_SERVER_PREFIX = "[scion_server] >>";
@@ -49,15 +50,14 @@ public class ScionServerThread extends Thread implements UncaughtExceptionHandle
 	private Process process;
 	private BufferedReader serverStdOutReader;
 	private int port = -1; // negative if not yet captured from stdout
-	private boolean stopped = false; // set to true if we are to stop at the soonest possible occasion
+	private volatile boolean stopped = false; // set to true if we are to stop at the soonest possible occasion
 	
-	private Queue<ScionCommand> commandQueue = new LinkedList<ScionCommand>();
-	private Object monitor = new Object();
+	private CommandQueue commandQueue;
 
-	public ScionServerThread() {
+	public ScionClientThread(CommandQueue commandQueue) {
 		super("Scion server thread");
+		this.commandQueue = commandQueue;
 		setUncaughtExceptionHandler(this);
-		setDaemon(true);
 	}
 	
 	/**
@@ -75,38 +75,29 @@ public class ScionServerThread extends Thread implements UncaughtExceptionHandle
 			// Loop waiting for commands and running them
 			int nextSequenceNumber = 1;
 			while (!stopped) {
-				// Check on the server process
 				checkRunning();
 				
-				// Empty the queue
-				ScionCommand command;
-				do {
-					if (port < 0) {
-						capturePortNumber();
-					}
-					synchronized (commandQueue) {
-						command = commandQueue.poll();
-					}
-					if (command != null) {
-						command.setSequenceNumber(nextSequenceNumber);
-						++nextSequenceNumber;
-						syncRunCommand(command);
-						port = -1;
-					}
-				} while (command != null);
+				ScionCommand command = null;
+				if (port < 0) {
+					capturePortNumber();
+				}
 				
-				// Wait for new commands
 				Trace.trace(THREAD_PREFIX, "Waiting for commands");
-				synchronized (monitor) {
-					try {
-						// check whether the server is up once per second
-						monitor.wait(1000);
-					} catch (InterruptedException e) {
-						// that's okay, just re-check the queue then, doesn't hurt
-					}
+				try {
+					command = commandQueue.take(); // blocks until command is available
+				} catch (InterruptedException ex) {
+					// just continue
 				}
 				Trace.trace(THREAD_PREFIX, "Woken up");
+				
+				if (!stopped && command != null) {
+					command.setSequenceNumber(nextSequenceNumber);
+					++nextSequenceNumber;
+					syncRunCommand(command);
+					port = -1;
+				}
 			}
+			Trace.trace(THREAD_PREFIX, "Received stop notification");
 		} catch (Exception ex) {
 			Trace.trace(THREAD_PREFIX, ex);
 			String lastWords = lastWords();
@@ -121,21 +112,7 @@ public class ScionServerThread extends Thread implements UncaughtExceptionHandle
 	public void die() {
 		Trace.trace(THREAD_PREFIX, "Dying");
 		stopped = true;
-		wakeUp();
-	}
-	
-	public void enqueueCommand(ScionCommand command) {
-		Trace.trace(THREAD_PREFIX, "Enqueueing command");
-		synchronized (commandQueue) {
-			commandQueue.offer(command);
-		}
-		wakeUp();
-	}
-	
-	private void wakeUp() {
-		synchronized (monitor) {
-			monitor.notifyAll();
-		}
+		interrupt();
 	}
 	
 	public void uncaughtException(Thread thread, Throwable ex) {
@@ -194,6 +171,10 @@ public class ScionServerThread extends Thread implements UncaughtExceptionHandle
 		Trace.trace(THREAD_PREFIX, "Server stopped");
 	}
 	
+	/**
+	 * Attempts to check whether the server process is still running.
+	 * If not, it throws a {@link ScionServerException}.
+	 */
 	private void checkRunning() {
 		// There is no way to ask a Process directly whether it is still running,
 		// so this is the best we can do...
@@ -319,11 +300,21 @@ public class ScionServerThread extends Thread implements UncaughtExceptionHandle
 			// Send the command
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			sendCommand(command, writer);
+			command.setStatus(CommandStatus.RUNNING);
 			
 			// Receive the response
 			InputStream in = socket.getInputStream();
 			String responseLisp = receiveResponse(in);
-			command.receiveResponse(responseLisp);
+			try {
+				command.receiveResponse(responseLisp);
+				command.setStatus(CommandStatus.SUCCESS);
+			} catch (ScionParseException ex) {
+				command.setStatus(CommandStatus.FAILED);
+				Trace.trace(THREAD_PREFIX, ex);
+			}
+		} catch (IOException ex) {
+			command.setStatus(CommandStatus.FAILED);
+			throw ex;
 		} finally {
 			// Always close the socket
 			if (socket != null) {

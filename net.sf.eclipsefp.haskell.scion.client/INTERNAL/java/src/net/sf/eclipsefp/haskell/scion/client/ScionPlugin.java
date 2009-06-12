@@ -20,12 +20,12 @@ public class ScionPlugin extends Plugin {
 		super.start(context);
 		
 		// Preload the server in anticipation of its use
-		ScionClient.initializeServer();
+		Scion.initializeClient();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		ScionClient.dispose();
+		Scion.dispose();
 		
 		super.stop(context);
 	}

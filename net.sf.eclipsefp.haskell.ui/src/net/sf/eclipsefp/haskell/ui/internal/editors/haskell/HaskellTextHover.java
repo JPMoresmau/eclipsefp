@@ -4,7 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.ScionClient;
+import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.SrcLoc;
 
@@ -58,8 +58,8 @@ class HaskellTextHover extends DefaultTextHover {
 		  try {
 			  SrcLoc loc = SrcLoc.fromDocOffset(doc, hoverRegion.getOffset());
 			  ThingAtPointCommand command = new ThingAtPointCommand(file.getLocation().toOSString(), loc.getLine(), loc.getColumn());
-			  ScionClient.syncRunCommand(command, 200);
-			  if (command.isCompleted()) {
+			  Scion.syncRunCommand(command, 200);
+			  if (command.isSuccessful()) {
 				  return command.getThing();
 			  }
 			  return null;

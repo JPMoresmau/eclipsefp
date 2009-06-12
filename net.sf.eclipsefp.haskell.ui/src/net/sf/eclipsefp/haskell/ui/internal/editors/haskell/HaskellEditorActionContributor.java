@@ -24,7 +24,6 @@ public class HaskellEditorActionContributor extends TextEditorActionContributor 
 
 	@Override
 	public void setActiveEditor(final IEditorPart part) {
-		System.out.println("setActiveEditor: " + part.toString());
 		super.setActiveEditor(part);
 		if (part instanceof HaskellEditor) {
 			openDefinitionAction.setCurrentEditor((HaskellEditor)part);

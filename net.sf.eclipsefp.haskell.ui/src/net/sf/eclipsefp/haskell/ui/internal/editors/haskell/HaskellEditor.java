@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
-import net.sf.eclipsefp.haskell.scion.client.ScionClient;
+import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
@@ -260,9 +260,9 @@ public class HaskellEditor extends TextEditor
 		// TODO this should be done asynchronously
 		String fileName = file.getLocation().toOSString();
 		ScionCommand command = new LoadCommand(fileName);
-		ScionClient.asyncRunCommand(command);
+		Scion.asyncRunCommand(command);
 		command = new BackgroundTypecheckFileCommand(fileName);
-		ScionClient.asyncRunCommand(command);
+		Scion.asyncRunCommand(command);
 	  }
 	} catch (Exception ex) {
 	  // We should never let Scion errors prevent the file from being saved!

@@ -16,7 +16,7 @@ import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
 public class CommandLineClient {
 
 	public static void main(String[] args) {
-		ScionClient.initializeServer();
+		Scion.initializeClient();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			String line;
@@ -28,15 +28,15 @@ public class CommandLineClient {
 			}
 			if (line.length() == 0) {
 				System.out.println("Exit");
-				ScionClient.dispose();
+				Scion.dispose();
 				return;
 			}
 			RawCommand command = new RawCommand(line);
-			ScionClient.syncRunCommand(command, 10000);
-			if (command.isCompleted()) {
+			Scion.syncRunCommand(command, 10000);
+			if (command.isSuccessful()) {
 				System.out.println(command.getResponse().toString());
 			} else {
-				System.out.println("Timeout");
+				System.out.println("Command was unsuccessful");
 			}
 		}
 	}

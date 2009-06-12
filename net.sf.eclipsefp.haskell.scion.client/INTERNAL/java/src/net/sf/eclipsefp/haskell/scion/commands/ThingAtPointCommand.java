@@ -29,7 +29,7 @@ public class ThingAtPointCommand extends ScionCommand {
 		//     or (:ok (:ok "some_string"))
 		try {
 			thing = response.asList().get(1).asList().get(1).asString().getValue();
-			if (thing == "no info")
+			if (thing.equals("no info"))
 				thing = null;
 		} catch (ScionParseException ex) {
 			thing = null;

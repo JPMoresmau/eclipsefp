@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import java.lang.Thread.State;
 
+import net.sf.eclipsefp.haskell.scion.commands.CommandStatus;
 import net.sf.eclipsefp.haskell.scion.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.util.ThreadUtil;
@@ -19,19 +20,23 @@ import net.sf.eclipsefp.haskell.scion.util.ThreadUtil;
  * This class provides a 'best-effort' connection to the server; it tries to
  * restart the server if it dies, etcetera. However, if things do not work out,
  * the caller will not receive an exception, but rather, its commands will fail.
+ * 
+ * TODO When the server cannot be run, all commands will be waiting to time out.
+ * We should refuse them, or have them time out immediately, instead.
  *
  * @author Thomas ten Cate
  */
-public class ScionClient {
-
-	private static ScionServerThread server;
+public class Scion {
 	
-	private static String CLIENT_PREFIX = "[ScionClient]";
+	private static CommandQueue commandQueue = new CommandQueue();
+	private static ScionClientThread client;
+	
+	private static String CLIENT_PREFIX = "[Scion]";
 	
 	/**
 	 * Prevent instantiation of singleton class.
 	 */
-	private ScionClient() {
+	private Scion() {
 	}
 	
 	// Server thread handling -------------------------------------------------
@@ -40,7 +45,7 @@ public class ScionClient {
 	 * Pre-starts the server in anticipation of its use. This need not be called,
 	 * but may result in faster response times for subsequent commands.
 	 */
-	public static void initializeServer() {
+	public static void initializeClient() {
 		tryEnsureInstance();
 	}
 	
@@ -52,12 +57,12 @@ public class ScionClient {
 	 * At exit, <code>server</code> is guaranteed to be not <code>null</code>.
 	 */
 	private static void tryEnsureInstance() {
-		if (server == null) {
+		if (client == null) {
 			Trace.trace(CLIENT_PREFIX, "No server thread exists yet; creating new thread");
-			createServer();
-		} else if (server.getState() == State.TERMINATED) {
+			createClient();
+		} else if (client.getState() == State.TERMINATED) {
 			Trace.trace(CLIENT_PREFIX, "Existing server thread exited; creating new thread");
-			createServer();
+			createClient();
 		}
 	}
 	
@@ -66,9 +71,9 @@ public class ScionClient {
 	 * 
 	 * Guaranteed to succeed without exceptions.
 	 */
-	private static void createServer() {
-		server = new ScionServerThread();
-		new Thread(server).start();
+	private static void createClient() {
+		client = new ScionClientThread(commandQueue);
+		client.start();
 		checkProtocol();
 	}
 	
@@ -82,10 +87,10 @@ public class ScionClient {
 	 * @note This method is called by the framework and should not be called by clients.
 	 */
 	public static void dispose() {
-		if (server != null) {
-			Trace.trace(CLIENT_PREFIX, "Killing the server thread");
-			server.die();
-			server = null;
+		if (client != null) {
+			Trace.trace(CLIENT_PREFIX, "Killing the client thread");
+			client.die();
+			client = null;
 		}
 	}
 	
@@ -97,7 +102,7 @@ public class ScionClient {
 	 */
 	public static void asyncRunCommand(ScionCommand command) {
 		tryEnsureInstance();
-		server.enqueueCommand(command);
+		enqueueCommand(command);
 	}
 	
 	/**
@@ -109,6 +114,17 @@ public class ScionClient {
 		asyncRunCommand(command);
 		synchronized (command) {
 			ThreadUtil.waitTimeout(command, timeout);
+			if (!command.getStatus().isFinished()) {
+				command.setStatus(CommandStatus.TIMEOUT);
+			}
+		}
+	}
+	
+	private static void enqueueCommand(ScionCommand command) {
+		if (commandQueue.offer(command)) {
+			command.setStatus(CommandStatus.ENQUEUED);
+		} else {
+			command.setStatus(CommandStatus.QUEUE_FULL);
 		}
 	}
 	
@@ -117,7 +133,7 @@ public class ScionClient {
 	private static void checkProtocol() {
 		ConnectionInfoCommand command = new ConnectionInfoCommand();
 		syncRunCommand(command, 2000);
-		if (command.isCompleted()) {
+		if (command.isSuccessful()) {
 			// TODO
 		}
 	}

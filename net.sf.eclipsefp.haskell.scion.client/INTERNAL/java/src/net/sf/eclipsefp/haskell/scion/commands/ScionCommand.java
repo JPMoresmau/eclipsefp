@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionParseException;
 import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
 import net.sf.eclipsefp.haskell.scion.lisp.LispList;
 import net.sf.eclipsefp.haskell.scion.lisp.LispParser;
@@ -12,7 +13,7 @@ import net.sf.eclipsefp.haskell.scion.lisp.LispParser;
  */
 public abstract class ScionCommand {
 	
-	private boolean completed = false;
+	private CommandStatus status = CommandStatus.NEW;
 	private int sequenceNumber = 0;
 
 	public void setSequenceNumber(int sequenceNumber) {
@@ -40,18 +41,27 @@ public abstract class ScionCommand {
 		// (:return <real-response> <seq-no>)
 		LispExpr lisp = LispParser.parse(response);
 		parseInternalResponse(((LispList)lisp).get(1));
-		complete();
 	}
 	
 	protected abstract void parseInternalResponse(LispExpr response);
 	
-	public synchronized void complete() {
-		completed = true;
-		notifyAll();
+	/**
+	 * Sets the status of this command.
+	 * If this finishes the command, threads waiting on this command will be notified. 
+	 */
+	public synchronized void setStatus(CommandStatus status) {
+		this.status = status;
+		if (this.status.isFinished()) {
+			notifyAll();
+		}
 	}
 	
-	public boolean isCompleted() {
-		return completed;
+	public CommandStatus getStatus() {
+		return status;
+	}
+	
+	public boolean isSuccessful() {
+		return status == CommandStatus.SUCCESS;
 	}
 	
 }

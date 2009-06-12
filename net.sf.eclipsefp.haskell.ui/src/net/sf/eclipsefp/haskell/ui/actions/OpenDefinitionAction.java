@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.actions;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionClient;
+import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.ui.internal.actions.ActionMessages;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -51,8 +51,8 @@ public class OpenDefinitionAction extends Action implements ISelectionChangedLis
 			TextSelection textSel = (TextSelection)selection;
 			String name = textSel.getText().trim(); // TODO make work on 0-length selections too
 			NameDefinitionsCommand command = new NameDefinitionsCommand(name);
-			ScionClient.syncRunCommand(command, 500);
-			if (command.isCompleted() && command.isFound()) {
+			Scion.syncRunCommand(command, 500);
+			if (command.isSuccessful() && command.isFound()) {
 				IDocument document = currentEditor.getDocument();
 				int start;
 				try {
