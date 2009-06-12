@@ -52,7 +52,7 @@
             extensions="hs,lhs"
             icon="icons/etool16/hsicon16.gif"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
-            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditorActionContributor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.haskell" />
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.literateHaskell" />
@@ -216,6 +216,13 @@
             <visibleWhen checkEnabled="true"/>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=group.open">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -241,6 +248,29 @@
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
               sequence="Home"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <!-- handler for the Open Definition action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler"
+            commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition">
+         <activeWhen>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <!-- expression that is true when the HaskellEditor is the active part -->
+      <definition
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+         <with variable="activePartId">
+            <equals value="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
