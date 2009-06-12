@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -58,6 +59,9 @@ public class HaskellEditor extends TextEditor
 
   /** <p>the id under which the Haskell editor is declared.</p> */
   public static final String ID = HaskellEditor.class.getName();
+
+  /** The key binding context active while the Haskell editor is active */
+  private static final String CONTEXT_ID = "net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context";
 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
@@ -190,6 +194,12 @@ public class HaskellEditor extends TextEditor
       };
       projectionViewer.addPostSelectionChangedListener( listener );
     }
+    activateContext();
+  }
+
+  private void activateContext() {
+	IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+	contextService.activateContext(CONTEXT_ID);
   }
 
   @Override

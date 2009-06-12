@@ -225,6 +225,14 @@
       </menuContribution>
    </extension>
    <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="%haskellEditorContext_name"
+            description="%haskellEditorContext_desc"
+            id="net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context"
+            parentId="org.eclipse.ui.contexts.window"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.bindings">
          <!-- keys for Comment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -243,6 +251,7 @@
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context"
               sequence="F3"/>
          <!-- other keys -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"

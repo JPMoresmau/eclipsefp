@@ -307,6 +307,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 			try {
 				command.receiveResponse(responseLisp);
 				command.setStatus(CommandStatus.SUCCESS);
+				Trace.trace(THREAD_PREFIX, "Command executed successfully");
 			} catch (ScionParseException ex) {
 				command.setStatus(CommandStatus.FAILED);
 				Trace.trace(THREAD_PREFIX, ex);
