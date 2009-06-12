@@ -12,7 +12,7 @@ import net.sf.eclipsefp.haskell.scion.lisp.LispParser;
  */
 public abstract class ScionCommand {
 	
-	private CommandStatus status = CommandStatus.NEW;
+	private volatile CommandStatus status = CommandStatus.NEW;
 	private int sequenceNumber = 0;
 
 	public void setSequenceNumber(int sequenceNumber) {
@@ -46,13 +46,9 @@ public abstract class ScionCommand {
 	
 	/**
 	 * Sets the status of this command.
-	 * If this finishes the command, threads waiting on this command will be notified. 
 	 */
-	public synchronized void setStatus(CommandStatus status) {
+	public void setStatus(CommandStatus status) {
 		this.status = status;
-		if (this.status.isFinished()) {
-			notifyAll();
-		}
 	}
 	
 	public CommandStatus getStatus() {

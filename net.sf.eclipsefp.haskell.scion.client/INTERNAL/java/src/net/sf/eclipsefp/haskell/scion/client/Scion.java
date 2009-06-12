@@ -31,7 +31,7 @@ public class Scion {
 	private static CommandQueue commandQueue = new CommandQueue();
 	private static ScionClientThread client;
 	
-	private static String CLIENT_PREFIX = "[Scion]";
+	private static String SCION_PREFIX = "[Scion]";
 	
 	/**
 	 * Prevent instantiation of singleton class.
@@ -58,10 +58,10 @@ public class Scion {
 	 */
 	private static void tryEnsureInstance() {
 		if (client == null) {
-			Trace.trace(CLIENT_PREFIX, "No server thread exists yet; creating new thread");
+			Trace.trace(SCION_PREFIX, "No server thread exists yet; creating new thread");
 			createClient();
 		} else if (client.getState() == State.TERMINATED) {
-			Trace.trace(CLIENT_PREFIX, "Existing server thread exited; creating new thread");
+			Trace.trace(SCION_PREFIX, "Existing server thread exited; creating new thread");
 			createClient();
 		}
 	}
@@ -88,7 +88,7 @@ public class Scion {
 	 */
 	public static void dispose() {
 		if (client != null) {
-			Trace.trace(CLIENT_PREFIX, "Killing the client thread");
+			Trace.trace(SCION_PREFIX, "Killing the client thread");
 			client.die();
 			client = null;
 		}
@@ -115,16 +115,23 @@ public class Scion {
 		synchronized (command) {
 			ThreadUtil.waitTimeout(command, timeout);
 			if (!command.getStatus().isFinished()) {
+				Trace.trace(SCION_PREFIX, "Command in status %s timed out", command.getStatus().toString());
 				command.setStatus(CommandStatus.TIMEOUT);
+			} else {
+				Trace.trace(SCION_PREFIX, "Command status: %s", command.getStatus().toString());
 			}
 		}
 	}
 	
 	private static void enqueueCommand(ScionCommand command) {
+		// Set to ENQUEUED first, before we even know that it's successful, to avoid race condition
+		// where the client thread processes and finalizes the command before we even set it to ENQUEUED.
+		command.setStatus(CommandStatus.ENQUEUED);
 		if (commandQueue.offer(command)) {
-			command.setStatus(CommandStatus.ENQUEUED);
+			Trace.trace(SCION_PREFIX, "Command enqueued");
 		} else {
 			command.setStatus(CommandStatus.QUEUE_FULL);
+			Trace.trace(SCION_PREFIX, "Command queue full; command not enqueued");
 		}
 	}
 	

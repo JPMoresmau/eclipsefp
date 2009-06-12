@@ -310,6 +310,11 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 			} catch (ScionParseException ex) {
 				command.setStatus(CommandStatus.FAILED);
 				Trace.trace(THREAD_PREFIX, ex);
+			} finally {
+				// Wake up the sender of the command
+				synchronized (command) {
+					command.notifyAll();
+				}
 			}
 		} catch (IOException ex) {
 			command.setStatus(CommandStatus.FAILED);
@@ -346,7 +351,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		// Then the rest of the message
 		String response = read(in, length);
 		
-		Trace.trace(FROM_SERVER_PREFIX, "%s", response);
+		Trace.trace(FROM_SERVER_PREFIX, "%s", response.trim());
 
 		return response;
 	}
