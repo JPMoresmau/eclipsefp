@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionParseException;
 import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
 import net.sf.eclipsefp.haskell.scion.lisp.LispList;
 import net.sf.eclipsefp.haskell.scion.lisp.LispParser;
