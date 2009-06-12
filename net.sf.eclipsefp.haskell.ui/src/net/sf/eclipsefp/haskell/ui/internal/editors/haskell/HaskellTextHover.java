@@ -3,15 +3,11 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.SrcLoc;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IDocument;
@@ -76,9 +72,11 @@ class HaskellTextHover extends DefaultTextHover {
     return false;
   }
 
+  /*
   private IFile getCabalFile( final IProject project ) {
     String ext = ResourceUtil.EXTENSION_CABAL;
     IPath path = new Path( project.getName() ).addFileExtension( ext );
     return project.getFile( path );
   }
+  */
 }

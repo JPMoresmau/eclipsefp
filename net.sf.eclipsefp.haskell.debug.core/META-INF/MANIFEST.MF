@@ -7,7 +7,7 @@ Bundle-Activator: net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore
 Bundle-Vendor: %bundleVendor
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.core.internal.launch;x-friends:="net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.debug.ui"

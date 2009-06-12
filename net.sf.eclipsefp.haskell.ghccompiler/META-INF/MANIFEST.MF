@@ -11,10 +11,10 @@ Require-Bundle: de.leiffrenzel.cohatoe.server.core,
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)"
-Eclipse-LazyStart: true
-Provide-Package: net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test",
- net.sf.eclipsefp.haskell.ghccompiler.ui.launch
+Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.sf.eclipsefp.haskell.ghccompiler;x-friends:="net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.ui.test",
+ net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test,net.sf.eclipsefp.haskell.debug.ui",
  net.sf.eclipsefp.haskell.ghccompiler.core.preferences;x-friends:="net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.ui.test"
+

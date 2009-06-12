@@ -14,6 +14,6 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.ui,
  net.sf.eclipsefp.haskell.debug.core
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

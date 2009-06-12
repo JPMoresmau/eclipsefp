@@ -3,16 +3,12 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.actions;
 
-import net.sf.eclipsefp.haskell.core.internal.code.IOrganizeImports;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>action for triggering the import optimization on an editor buffer.</p>
   *
@@ -62,6 +58,7 @@ public class OptimizeImports implements IEditorActionDelegate {
   // helping functions
   ////////////////////
 
+  /*
   private IOrganizeImports loadFunction() {
     return CohatoeServer.getInstance().createFunction( IOrganizeImports.class );
   }
@@ -73,4 +70,5 @@ public class OptimizeImports implements IEditorActionDelegate {
     }
     return result;
   }
+  */
 }

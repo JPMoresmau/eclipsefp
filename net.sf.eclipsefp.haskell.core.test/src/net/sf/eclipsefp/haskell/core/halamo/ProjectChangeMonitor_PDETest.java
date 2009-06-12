@@ -5,9 +5,12 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject_PDETestCase;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
@@ -44,7 +47,6 @@ public class ProjectChangeMonitor_PDETest extends HaskellProject_PDETestCase {
 		verify(getLanguageModel());
 	}
 
-	@SuppressWarnings("deprecation")
 	public void testChangeModule() throws CoreException {
 		getLanguageModel().putModule((IModule) anyObject());
 		expectLastCall().times(2);

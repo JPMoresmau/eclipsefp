@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.common;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -30,6 +31,7 @@ class HaskellLanguageElementSorter extends ViewerSorter {
   // helping methods
   //////////////////
 
+  @SuppressWarnings("unchecked")
   private int compare( final IHaskellLanguageElement elem1,
                        final IHaskellLanguageElement elem2 ) {
     return getComparator().compare( elem1.getName(), elem2.getName() );

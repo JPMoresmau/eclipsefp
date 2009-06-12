@@ -8,3 +8,4 @@ Bundle-Localization: plugin
 Bundle-ClassPath: lib/easymock.jar
 Export-Package: org.easymock,
  org.easymock.internal;x-friends:="org.easymock.classextension"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

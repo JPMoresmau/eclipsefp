@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fileset-config file-format-version="1.2.0" simple-config="false">
-    <local-check-config name="Basic Checks" location="INTERNAL/integration/checkstyle.xml" type="project" description="">
-        <additional-data name="protect-config-file" value="false"/>
-    </local-check-config>
-    <local-check-config name="API Checkstyle" location="INTERNAL/integration/apicheckstyle.xml" type="project" description="">
-        <additional-data name="protect-config-file" value="false"/>
-    </local-check-config>
-    <fileset name="all" enabled="true" check-config-name="Basic Checks" local="true">
-        <file-match-pattern match-pattern="." include-pattern="true"/>
+<fileset-config file-format-version="1.2.0" simple-config="true">
+    <fileset name="all" enabled="true" check-config-name="Sun Checks" local="false">
+        <file-match-pattern match-pattern=".*" include-pattern="true"/>
     </fileset>
-    <fileset name="api" enabled="true" check-config-name="API Checkstyle" local="true">
-        <file-match-pattern match-pattern=".java$" include-pattern="true"/>
-        <file-match-pattern match-pattern=".*internal.*.java$" include-pattern="false"/>
-    </fileset>
-    <filter name="NonSrcDirs" enabled="true"/>
 </fileset-config>

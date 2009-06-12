@@ -23,25 +23,15 @@ Require-Bundle: de.leiffrenzel.cohatoe.server.core,
  org.eclipse.ui.forms,
  org.apache.ant,
  net.sf.eclipsefp.haskell.scion.client;bundle-version="0.13.0"
-Eclipse-LazyStart: true
-Provide-Package: net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.dialog,
- net.sf.eclipsefp.haskell.ui.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.editor.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.editor.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.launch,
- net.sf.eclipsefp.haskell.ui.preferences,
- net.sf.eclipsefp.haskell.ui.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.util,
- net.sf.eclipsefp.haskell.ui.util.preferences,
- net.sf.eclipsefp.haskell.ui.util.text,
- net.sf.eclipsefp.haskell.ui.wizards;x-friends:="net.sf.eclipsefp.haskell.ui.test"
+Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
 Export-Package: net.sf.eclipsefp.common.ui.dialog,
  net.sf.eclipsefp.common.ui.preferences,
  net.sf.eclipsefp.common.ui.preferences.overlay,
  net.sf.eclipsefp.common.ui.util,
+ net.sf.eclipsefp.haskell.ui;x-friends:="net.sf.eclipsefp.haskell.ui.test,net.sf.eclipsefp.haskell.debug.ui",
  net.sf.eclipsefp.haskell.ui.console;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.dialog,
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
@@ -51,5 +41,10 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog,
  net.sf.eclipsefp.haskell.ui.internal.preferences;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.views.common;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.internal.views.outline.provisionary;x-friends:="net.sf.eclipsefp.haskell.ui.test"
+ net.sf.eclipsefp.haskell.ui.internal.views.outline.provisionary;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.preferences,
+ net.sf.eclipsefp.haskell.ui.util,
+ net.sf.eclipsefp.haskell.ui.util.preferences,
+ net.sf.eclipsefp.haskell.ui.util.text,
+ net.sf.eclipsefp.haskell.ui.wizards;x-friends:="net.sf.eclipsefp.haskell.ui.test"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

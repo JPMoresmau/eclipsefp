@@ -134,10 +134,6 @@ class DefaultHaskellParser implements IHaskellParser {
 
 		private IModule[] modules;
 
-		DummyCompilationUnit(final IFile file) {
-			this.file = file;
-		}
-
 		public DummyCompilationUnit() {
 			this.file = null;
 		}

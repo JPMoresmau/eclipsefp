@@ -44,9 +44,6 @@
                   mode="run">
             </contextLabel>
          </contextualLaunch>
-         <perspective
-               id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
-         </perspective>
       </shortcut>
       <shortcut
             label="%ghciShortcut_label"
