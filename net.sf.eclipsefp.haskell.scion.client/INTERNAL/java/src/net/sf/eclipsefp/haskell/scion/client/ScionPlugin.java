@@ -3,13 +3,19 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.scion.client;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class ScionPlugin extends Plugin {
+public class ScionPlugin extends AbstractUIPlugin {
 	
+	private static final String BUNDLE_NAME = "net.sf.eclipsefp.haskell.scion.client";
 	private static ScionPlugin instance;
+	
+	private ResourceBundle resourceBundle;
 	
 	public ScionPlugin() {
 		instance = this;
@@ -18,6 +24,8 @@ public class ScionPlugin extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		resourceBundle = ResourceBundle.getBundle("plugin");
 		
 		// Preload the server in anticipation of its use
 		Scion.initializeClient();
@@ -34,7 +42,19 @@ public class ScionPlugin extends Plugin {
 		if (instance != null) {
 			return instance.getBundle().getSymbolicName();
 		} else {
-			return "net.sf.eclipsefp.haskell.scion.client"; // fallback, but bad for mantainability...
+			return BUNDLE_NAME; // fallback, but bad for mantainability...
+		}
+	}
+	
+	public static ScionPlugin getDefault() {
+		return instance;
+	}
+	
+	public String getString(String key) {
+		try {
+			return resourceBundle.getString(key);
+		} catch (MissingResourceException ex) {
+			return key;
 		}
 	}
 	
@@ -47,5 +67,5 @@ public class ScionPlugin extends Plugin {
 	    String value = Platform.getDebugOption(option);
 	    return value != null && value.equalsIgnoreCase("true");
 	}
-
+	
 }

@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.scion.client.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.scion.commands.CommandStatus;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
 
@@ -54,7 +55,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	private CommandQueue commandQueue;
 
 	public ScionClientThread(CommandQueue commandQueue) {
-		super("Scion server thread");
+		super("Scion client thread");
 		this.commandQueue = commandQueue;
 		setUncaughtExceptionHandler(this);
 	}
@@ -130,7 +131,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
   		Trace.trace(THREAD_PREFIX, "Starting server");
   		
   		// Construct the command line
-		String executable = "/home/thomas/.cabal/bin/scion_server"; // TODO autodetect, make configurable
+		String executable = ScionPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.SCION_SERVER_EXECUTABLE);
 		List<String> command = new LinkedList<String>();
 		command.add(executable);
 		
@@ -139,10 +140,13 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		builder.redirectErrorStream(true); // send server's stderr to its stdout
 		process = builder.start();
 		
+		if (process == null) {
+			throw new ScionServerException("Scion server process could not be started");
+		}
+		
 		// Connect to the process's stdout to capture messages
 		// Assume that status messages and such will be ASCII only 
 		serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
-		
 		Trace.trace(THREAD_PREFIX, "Server started");
 	}
   	
@@ -175,6 +179,8 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	 * If not, it throws a {@link ScionServerException}.
 	 */
 	private void checkRunning() {
+		if (process == null)
+			throw new ScionServerException(String.format("Scion server did not start"));
 		// There is no way to ask a Process directly whether it is still running,
 		// so this is the best we can do...
 		int exitValue;
@@ -194,6 +200,8 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	 */
 	private String lastWords() {
 		// Collect a post-mortem by reading all that's left in the server's output stream
+		if (serverStdOutReader == null)
+			return "";
 		StringBuffer lastWords = new StringBuffer();
 		String line;
 		do {

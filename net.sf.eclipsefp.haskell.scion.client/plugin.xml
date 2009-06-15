@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="net.sf.eclipsefp.haskell.scion.client.preferences.ScionPP"
+            id="net.sf.eclipsefp.haskell.scion.client.preferences.ScionPP"
+            name="%ScionPP.name"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.sf.eclipsefp.haskell.scion.client.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>
