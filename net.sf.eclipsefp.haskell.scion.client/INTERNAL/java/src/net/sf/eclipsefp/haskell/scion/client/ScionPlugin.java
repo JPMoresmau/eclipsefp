@@ -50,10 +50,16 @@ public class ScionPlugin extends AbstractUIPlugin {
 		return instance;
 	}
 	
-	public String getString(String key) {
-		try {
-			return resourceBundle.getString(key);
-		} catch (MissingResourceException ex) {
+	public static String getStringResource(String key) {
+		ScionPlugin p = getDefault();
+		if (p != null) {
+			try {
+				return p.resourceBundle.getString(key);
+			} catch (MissingResourceException ex) {
+				return key;
+			}
+		} else {
+			// plugin still loading
 			return key;
 		}
 	}

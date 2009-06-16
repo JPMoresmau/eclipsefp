@@ -1,12 +1,13 @@
 package net.sf.eclipsefp.haskell.scion.client.preferences;
 
 import java.io.File;
-import java.io.IOException;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.util.FileUtil;
 
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -21,6 +22,9 @@ import org.eclipse.swt.widgets.FileDialog;
  * with subclassing in mind. For example, it overrides {@link #checkState} with a version
  * that does not call {@link #doCheckState}, and it does not allow reading of its
  * <code>enforceAbsolute</code> setting. 
+ * 
+ * If the empty string is allowed, this is interpreted as being an optional file entry.
+ * In that case, the file must only exist and be executable in case the field is not empty.
  * 
  * @author thomas
  */
@@ -97,7 +101,8 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
      * Method declared on StringButtonFieldEditor.
      * Opens the file chooser dialog and returns the selected file.
      */
-    protected String changePressed() {
+    @Override
+	protected String changePressed() {
         File f = new File(getTextControl().getText());
         if (!f.exists()) {
 			f = null;
@@ -116,13 +121,14 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
      * @return <code>true</code> if the field value is valid,
      *   and <code>false</code> if invalid
      */
-    protected boolean checkState() {
+    @Override
+	protected boolean checkState() {
         if (getTextControl() == null) {
 			return false;
 		}
         String txt = getTextControl().getText();
 
-        boolean result = isEmptyStringAllowed() || (txt.trim().length() > 0);
+        boolean result = isEmptyStringAllowed() || txt.length() > 0;
         result = result && doCheckState();
 
         if (result) {
@@ -178,6 +184,8 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
 	@Override
 	protected boolean doCheckState() {
 		String fileName = getTextControl().getText();
+		if (isEmptyStringAllowed() && fileName.length() == 0)
+			return true;
 		File file = new File(fileName);
 		return checkFileExists(file) && checkFileAbsolute(file) && checkFileExecutable(file);
 	}
@@ -213,29 +221,15 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
 	 * Assumes that the file exists.
 	 */
 	protected boolean checkFileExecutable(File file) {
-		// if (we are on Unix) {
-		// Until Java 7, there is no way to check the executable bit of a file.
-		// Apart from writing a JNI function (hassle), this is the best we can do...
-		try {
-			Process process = Runtime.getRuntime().exec(new String[] {"test", "-x", file.getAbsolutePath()});
-			int exitValue = process.waitFor();
-			if (exitValue != 0) {
-				loadErrorMessage("ExecutableFileFieldEditor.errorNotExecutable");
-				return false;
-			}
-		} catch (IOException ex) {
-			// pretend it succeeded
-		} catch (InterruptedException ex) {
-			// pretend it succeeded
+		if (!FileUtil.isExecutable(file)) {
+			loadErrorMessage("ExecutableFileFieldEditor.errorNotExecutable");
+			return false;
 		}
-		// } else if (we are on Windows) {
-		// TODO implement this for Windows
-		// }
-		return true; // all checks succeeded
+		return true;
 	}
 	
 	private void loadErrorMessage(String key) {
-		String message = ScionPlugin.getDefault().getString(key);
+		String message = ScionPlugin.getStringResource(key);
 		setErrorMessage(message);
 	}
 	

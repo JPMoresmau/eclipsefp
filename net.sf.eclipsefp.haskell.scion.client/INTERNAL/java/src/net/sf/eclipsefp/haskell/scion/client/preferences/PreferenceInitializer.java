@@ -17,10 +17,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = ScionPlugin.getDefault().getPreferenceStore();
 		store.setDefault(SCION_SERVER_EXECUTABLE,
-				"/usr/local/bin/scion_server");
+				"");
 	}
 
 }

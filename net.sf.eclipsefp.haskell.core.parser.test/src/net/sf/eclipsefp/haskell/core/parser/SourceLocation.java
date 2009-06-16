@@ -25,7 +25,8 @@ public class SourceLocation implements ISourceLocation {
   // interface methods of Object
   //////////////////////////////
   
-  public String toString() {
+  @Override
+public String toString() {
     return "(" + line + ", " + column + ")";
   }
   

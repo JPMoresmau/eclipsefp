@@ -66,6 +66,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	 * Exits its loop when <code>stopped</code> is set to <code>true</code>,
 	 * which is done through calling the <code>stop()</code> method.
 	 */
+	@Override
 	public void run() {
 		Trace.trace(THREAD_PREFIX, "Started");
 		try {
