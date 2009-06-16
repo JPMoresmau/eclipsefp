@@ -52,7 +52,7 @@ public class NameDefinitionsCommand extends ScionCommand {
 		return found;
 	}
 	
-	public String getFile() {
+	public String getFileName() {
 		return file;
 	}
 
