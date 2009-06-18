@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 public class CabalBuilder extends IncrementalProjectBuilder {
 
@@ -40,6 +39,8 @@ public class CabalBuilder extends IncrementalProjectBuilder {
   ////////////////////
 
   private void checkCabalFile() throws CoreException {
+    // TODO replace by something not Cohatoe-based
+    /*
     if( getCabalFile().exists() ) {
       CohatoeServer server = CohatoeServer.getInstance();
       IValidateCabalFile vc = server.createFunction( IValidateCabalFile.class );
@@ -47,6 +48,7 @@ public class CabalBuilder extends IncrementalProjectBuilder {
         vc.validate( getCabalFile() );
       }
     }
+    */
   }
 
   private void deleteAllMarkers() throws CoreException {

@@ -12,7 +12,6 @@ import net.sf.eclipsefp.haskell.core.internal.contenttypes.ContentTypes_PDETest;
 import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber_PDETest;
 import net.sf.eclipsefp.haskell.core.internal.project.CabalBuilder_PDETest;
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject_PDETest;
-import net.sf.eclipsefp.haskell.core.internal.project.ManipulateCabalFile_PDETest;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation_PDETest;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModel_PDETest;
 import net.sf.eclipsefp.haskell.core.internal.project.TestHaskellProjectMetaTest_PDETest;
@@ -35,7 +34,6 @@ public class AllTests_PDESuite {
 		suite.addTestSuite( HaskellResource_PDETest.class );
 		suite.addTestSuite( ImportLibraries_PDETest.class );
 		suite.addTestSuite( LiterateContentDescriber_PDETest.class );
-		suite.addTestSuite( ManipulateCabalFile_PDETest.class );
 		suite.addTestSuite( ProjectChangeMonitor_PDETest.class );
 		suite.addTestSuite( ProjectCreationOperation_PDETest.class );
 		suite.addTestSuite( ProjectModel_PDETest.class );

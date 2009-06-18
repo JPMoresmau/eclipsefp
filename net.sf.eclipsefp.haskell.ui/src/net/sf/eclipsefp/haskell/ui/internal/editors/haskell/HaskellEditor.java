@@ -13,7 +13,6 @@ import net.sf.eclipsefp.haskell.scion.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
-import net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
@@ -46,8 +45,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>The main editor class for the Haskell editor.</p>
   *
@@ -331,10 +328,13 @@ public class HaskellEditor extends TextEditor
   }
 
   private void initMarkOccurrences() {
+	// TODO replace by something not Cohatoe-based
+	/*
     CohatoeServer server = CohatoeServer.getInstance();
     IMarkOccurrences mo = server.createFunction( IMarkOccurrences.class );
     if( mo != null ) {
       markOccurrencesComputer = new MarkOccurrenceComputer( this, mo );
     }
+    */
   }
 }

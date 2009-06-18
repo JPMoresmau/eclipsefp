@@ -6,13 +6,14 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
-import net.sf.eclipsefp.haskell.core.internal.compiler.TemporaryCompilerHelper;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -64,7 +65,8 @@ public class GhcCompiler extends DefaultHaskellCompiler {
       throw new IllegalStateException();
     }
     String output = fProcessRunner.execute( workDir, outputWriter, cmdLine );
-    TemporaryCompilerHelper.applyOutput( output, file );
+    // TODO replace by something not Cohatoe-based
+    // TemporaryCompilerHelper.applyOutput( output, file );
   }
 
 	private String[] buildCommandLine( final IFile file,

@@ -345,31 +345,6 @@
             isGoToPreviousNavigationTarget="false">
       </specification>
    </extension>   
-      <extension
-         point="de.leiffrenzel.cohatoe.server.core.haskellFunctions">
-      <haskellFunction
-            implementation="net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrences"
-            interface="net.sf.eclipsefp.haskell.ui.internal.editors.text.IMarkOccurrences"
-            name="%markOccurrences_name"
-            codeFile="$os$/obj/MarkOccurrences.o" />
-      <haskellFunction
-           codeFile="$os$/obj/CodeFolding.o"
-           implementation="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.CodeFolding"
-           interface="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ICodeFolding"
-           name="%codeFolding_name" />
-      <haskellFunction
-           codeFile="$os$/obj/HaskellOutline.o"
-           implementation="net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutline"
-           interface="net.sf.eclipsefp.haskell.ui.internal.views.outline.IHaskellOutline"
-           name="%haskellOutline_name" />
-      <haskellFunction
-           codeFile="$os$/obj/EclipseFP/Haskell/UI/Hover/EditorTextHover.o"
-           implementation="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.EditorTextHover"
-           interface="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.IEditorTextHover"
-           name="%editorTextHover_name">
-           <objectCodeFolder plugin="net.sf.eclipsefp.haskell.core">$os$/obj/</objectCodeFolder>
-      </haskellFunction>
-   </extension>
    
    <extension
          point="org.eclipse.core.runtime.preferences">

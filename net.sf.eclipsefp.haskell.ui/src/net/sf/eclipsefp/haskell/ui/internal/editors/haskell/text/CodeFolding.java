@@ -3,23 +3,23 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import de.leiffrenzel.cohatoe.server.core.CohatoeException;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 public class CodeFolding implements ICodeFolding {
 
   public List<ICodeFoldingRegion> performCodeFolding(
       final IContainer srcRoot, final IFile file ) {
     List<ICodeFoldingRegion> result = new ArrayList<ICodeFoldingRegion>();
+    // TODO replace by something not Cohatoe-based
+    /*
     String libDir = getGHCLibDir();
     if( libDir != null && new File( libDir ).exists() ) {
       String[] params = new String[] {
@@ -37,6 +37,7 @@ public class CodeFolding implements ICodeFolding {
         HaskellUIPlugin.log( cex );
       }
     }
+    */
 
     return result;
   }

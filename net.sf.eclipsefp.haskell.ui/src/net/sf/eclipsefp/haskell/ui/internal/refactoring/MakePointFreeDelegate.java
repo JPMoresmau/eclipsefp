@@ -3,9 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
-import net.sf.eclipsefp.haskell.core.internal.refactoring.functions.IMakePointFree;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.eclipse.core.resources.IFile;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -14,9 +13,6 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.IConditionChecker;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>delegate object that contains the logic used by the processor.</p>
   *
@@ -72,6 +68,8 @@ public class MakePointFreeDelegate extends RefDelegate {
 
   private Change createRenameChange() {
     TextFileChange result = null;
+    // TODO replace by something not Cohatoe-based
+    /*
     CohatoeServer server = CohatoeServer.getInstance();
     Object fun = server.createFunction( IMakePointFree.class );
     String replacement = null;
@@ -93,6 +91,7 @@ public class MakePointFreeDelegate extends RefDelegate {
                                           replacement );
       fileChangeRootEdit.addChild( edit );
     }
+    */
     return result;
   }
 

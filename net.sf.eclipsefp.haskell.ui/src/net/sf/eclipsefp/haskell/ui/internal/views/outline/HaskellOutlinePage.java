@@ -6,7 +6,7 @@ import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementCP;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementLP;
-import org.eclipse.core.resources.IFile;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -16,9 +16,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 
 /** <p>The outline page for the Haskell editor.</p>
@@ -83,6 +81,8 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final Object input ) {
+	// TODO replace by something not Cohatoe-based
+	/*
     if( input != null && input instanceof IFileEditorInput ) {
       IFileEditorInput fei = ( IFileEditorInput )input;
       IFile file = fei.getFile();
@@ -96,6 +96,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
         }
       }
     }
+    */
   }
 
   /** <p>updates the outline page.</p> */

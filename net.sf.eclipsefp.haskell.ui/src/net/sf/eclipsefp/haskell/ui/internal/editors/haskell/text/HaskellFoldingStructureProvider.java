@@ -5,15 +5,15 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ICodeFolding.ICodeFoldingRegion;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -26,7 +26,6 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import de.leiffrenzel.cohatoe.server.core.CohatoeServer;
 
 /** <p>provides folding regions for documents in the Haskell editor.</p>
   *
@@ -51,6 +50,8 @@ class HaskellFoldingStructureProvider {
   }
 
   void updateFoldingRegions() {
+	// TODO replace by something not Cohatoe-based
+	/*
     ProjectionAnnotationModel model = getAnnModel();
     if( model != null ) {
       CohatoeServer server = CohatoeServer.getInstance();
@@ -75,6 +76,7 @@ class HaskellFoldingStructureProvider {
         }
       }
     }
+    */
   }
 
   private IContainer computeSourceRoot( final IProject project ) {
