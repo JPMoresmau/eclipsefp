@@ -4,8 +4,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;

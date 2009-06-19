@@ -5,7 +5,7 @@
    <extension point="org.eclipse.ui.newWizards">
       <wizard
             name="%newProjectWizard_name"
-            icon="icons/etool16/hsicon16.gif"
+            icon="icons/etool16/newhprj_wiz.gif"
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
@@ -35,7 +35,7 @@
      <wizard
            category="net.sf.eclipsefp.haskell.ui.importWizardCategory"
            class="net.sf.eclipsefp.haskell.ui.internal.wizards.CabalPackageImportWizard"
-           icon="icons/etool16/hsicon16.gif"
+           icon="icons/etool16/impcprj_wiz.gif"
            id="net.sf.eclipsefp.haskell.ui.internal.wizards.CabalPackageImportWizard"
            name="%importCabalPackageWizard_name">
         <description>
@@ -50,7 +50,7 @@
       <editor
             name="%haskellEditor_name"
             extensions="hs,lhs"
-            icon="icons/etool16/hsicon16.gif"
+            icon="icons/obj16/hsfile_obj.gif"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
@@ -98,7 +98,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/etool16/haskellNature.gif"
+            icon="icons/ovr16/haskell_ovr.gif"
             natureId="net.sf.eclipsefp.haskell.core.project.HaskellNature"
             id="net.sf.eclipsefp.haskell.core.project.haskellNatureImage">
       </image>
@@ -123,7 +123,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%haskellPerspective_name"
-            icon="icons/etool16/hsicon16.gif"
+            icon="icons/etool16/haskell_misc.gif"
             class="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
       </perspective>
@@ -411,7 +411,7 @@
   <extension point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
       name="%navigatorContent_name"
-      icon="$nl$/icons/etool16/hsicon16.gif"
+      icon="$nl$/icons/etool16/haskell_misc.gif"
       activeByDefault="true"
       contentProvider="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionCP"
       labelProvider="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionLP"   
@@ -426,6 +426,7 @@
           <instanceof value="org.eclipse.core.resources.IWorkspaceRoot" /> 
           <instanceof value="org.eclipse.core.resources.IProject" />  
           <instanceof value="org.eclipse.core.resources.IFolder" /> 
+          <instanceof value="org.eclipse.core.resources.IFile" /> 
         </or>
       </triggerPoints>
       <possibleChildren>

@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -82,8 +83,7 @@ public class HaskellResourceExtensionLP extends LabelProvider {
           if( ResourceUtil.EXTENSION_HS.equals( ext ) ) {
             result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
           } else if( ResourceUtil.EXTENSION_LHS.equals( ext ) ) {
-            String key = IImageNames.LITERATE_SOURCE_FILE;
-            result = HaskellUIImages.getImage( key );
+            result = HaskellUIImages.getImage( IImageNames.LITERATE_SOURCE_FILE );
           }
         }
       }

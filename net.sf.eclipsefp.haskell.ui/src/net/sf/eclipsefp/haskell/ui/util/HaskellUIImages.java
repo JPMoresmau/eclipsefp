@@ -5,7 +5,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -47,9 +49,9 @@ public class HaskellUIImages implements IImageNames {
     // objects
     declare( LAUNCH_TAB_ARGUMENTS, OBJECT + "arguments_tab.gif" );
     declare( IMPORT_LIBRARY,       OBJECT + "library.gif" );
-    declare( SOURCE_FOLDER,        OBJECT + "srcfolder.gif" );
-    declare( SOURCE_FILE,          OBJECT + "srcfile.gif" );
-    declare( LITERATE_SOURCE_FILE, OBJECT + "litsrcfile.gif" );
+    declare( SOURCE_FOLDER,        OBJECT + "srcfolder_obj.gif" );
+    declare( SOURCE_FILE,          OBJECT + "hsfile_obj.gif" );
+    declare( LITERATE_SOURCE_FILE, OBJECT + "lhsfile_obj.gif" );
     declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" );
     declare( HASKELL_PROJECT,      OBJECT + "hsproject.gif" );
     declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
@@ -93,9 +95,9 @@ public class HaskellUIImages implements IImageNames {
     declare( INFIXR_DECL,           OBJECT + "infixr.gif" );
 
     // wizard banners
-    declare( NEW_PROJECT, WIZARD + "newproject.gif" );
+    declare( NEW_PROJECT, WIZARD + "newhprj_wiz.png" );
     declare( NEW_MODULE, WIZARD  + "newmodule.png" );
-    declare( IMPORT_CABAL_PACKAGE, WIZARD + "importcabalpkg.png" );
+    declare( IMPORT_CABAL_PACKAGE, WIZARD + "impcprj_wiz.png" );
   }
 
   private final static void declare( final String key,
