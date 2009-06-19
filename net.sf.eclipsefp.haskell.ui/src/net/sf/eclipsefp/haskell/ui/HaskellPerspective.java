@@ -44,6 +44,8 @@ public class HaskellPerspective implements IPerspectiveFactory {
     layout.addActionSet( IDebugUIConstants.LAUNCH_ACTION_SET );
     // Add to "Open Perspective" menu
     layout.addPerspectiveShortcut( HaskellPerspective.class.getName() );
+    // Add "Haskell Project" to the File -> New menu
+    layout.addNewWizardShortcut("net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard");
   }
 
   private void defineLayout( final IPageLayout layout ) {

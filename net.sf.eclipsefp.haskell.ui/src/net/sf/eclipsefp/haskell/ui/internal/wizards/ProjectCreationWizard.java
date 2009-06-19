@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
  * <p>
@@ -36,6 +37,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 public abstract class ProjectCreationWizard
     extends Wizard
     implements INewWizard, IExecutableExtension {
+
+	private IWorkbench workbench;
 
 	protected WizardNewProjectCreationPage page;
 
@@ -73,6 +76,7 @@ public abstract class ProjectCreationWizard
       result = false;
     }
     BasicNewProjectResourceWizard.updatePerspective( configElement );
+    BasicNewResourceWizard.selectAndReveal(page.getProjectHandle(), workbench.getActiveWorkbenchWindow());
     return result;
   }
 
@@ -100,6 +104,7 @@ public abstract class ProjectCreationWizard
   public void init(
       final IWorkbench workbench,
       final IStructuredSelection selection ) {
+	this.workbench = workbench;
     initializePageImageDescriptor();
   }
 

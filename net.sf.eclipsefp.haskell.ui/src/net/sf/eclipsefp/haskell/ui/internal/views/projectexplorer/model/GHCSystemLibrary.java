@@ -72,7 +72,6 @@ public class GHCSystemLibrary implements ITreeElement {
 
   private void parsePackageList( final String content,
                                  final List<GHCPackageConf> confs ) {
-	// Note: rewrote this to not use the Pair class from Cohatoe, but is currently untested!
     Map<String, StringBuilder> entries
       = new HashMap<String,StringBuilder>();
     try {
@@ -81,10 +80,11 @@ public class GHCSystemLibrary implements ITreeElement {
       String line = br.readLine();
       while( line != null ) {
         if( line.startsWith( "  " ) && sb != null ) {
-          sb.append(  line.trim() );
+          sb.append(line.trim());
         } else {
           sb = new StringBuilder();
-          entries.put(line, sb);
+          String withoutColon = line.substring(0, line.length() - 1);
+          entries.put(withoutColon, sb);
         }
         line = br.readLine();
       }

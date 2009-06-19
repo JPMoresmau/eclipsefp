@@ -15,9 +15,6 @@
             %newProjectWizard_desc
          </description>
       </wizard>
-      <primaryWizard
-            id="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard">
-      </primaryWizard>
       <wizard
             name="%newModuleWizard_name"
             icon="icons/obj16/module.gif"
