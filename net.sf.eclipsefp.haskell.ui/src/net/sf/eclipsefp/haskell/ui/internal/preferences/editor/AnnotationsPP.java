@@ -3,11 +3,12 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import net.sf.eclipsefp.common.ui.preferences.Tab;
+
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferencePage;
+
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -20,35 +21,36 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
-/** <p>Tab for the annotation color preference settings.</p>
+/** <p>Preference page for the annotation color preference settings.</p>
   *
   * @author Leif Frenzel
+  *
+  * TODO: Preferences probably take effect immediately, instead of waiting for Apply.
+  * TODO: Restore Defaults button does not work.
+  * TODO: There are many unnecessary items in the list.
   */
-class AnnotationsTab extends Tab {
+public class AnnotationsPP extends HaskellPreferencePage {
 
   private List colorList;
 
-  private final String[][] colorListModel;
+  private String[][] colorListModel;
   private ColorSelector colorSelector;
   private Button cbShowInText;
   private Button cbShowInOverviewRuler;
 
-
-  AnnotationsTab( final IPreferenceStore store ) {
-    super( store );
+  @Override
+  public void init(final IWorkbench workbench) {
+	super.init(workbench);
     colorListModel = createAnnotationTypeListModel();
   }
 
-
-  // interface methods of Tab
-  ///////////////////////////
-
   @Override
-  public Control createControl( final Composite parent ) {
+  public Control createContents( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
     layout.numColumns = 2;
