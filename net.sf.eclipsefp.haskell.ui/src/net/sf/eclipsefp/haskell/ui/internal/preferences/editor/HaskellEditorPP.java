@@ -1,6 +1,10 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.common.ui.preferences.CheckboxPreferenceControl;
+import net.sf.eclipsefp.common.ui.preferences.IValueChangedListener;
+import net.sf.eclipsefp.common.ui.preferences.IntegerPreferenceControl;
+import net.sf.eclipsefp.common.ui.preferences.PreferenceControl;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferencePage;
 
@@ -16,9 +20,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.forms.widgets.ColumnLayout;
 
 /** <p>the preference page for common editor preference settings.</p>
  *
@@ -31,162 +36,174 @@ import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
  */
 public class HaskellEditorPP extends HaskellPreferencePage implements IEditorPreferenceNames {
 
-  private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( "Line number foreground",
-                        EDITOR_LINE_NUMBER_RULER_COLOR ),
-    new ColorListEntry( "Matching brackets highlight",
-                        EDITOR_MATCHING_BRACKETS_COLOR ),
-    new ColorListEntry( "Current line highlight", EDITOR_CURRENT_LINE_COLOR ),
-    new ColorListEntry( "Print margin", EDITOR_PRINT_MARGIN_COLOR ) };
+	private final ColorListEntry[] colorListModel = new ColorListEntry[] {
+			new ColorListEntry( "Line number foreground",
+					EDITOR_LINE_NUMBER_RULER_COLOR ),
+					new ColorListEntry( "Matching brackets highlight",
+							EDITOR_MATCHING_BRACKETS_COLOR ),
+							new ColorListEntry( "Current line highlight", EDITOR_CURRENT_LINE_COLOR ),
+							new ColorListEntry( "Print margin", EDITOR_PRINT_MARGIN_COLOR ) };
 
-  private List colorList;
-  private ColorSelector colorSelector;
+	private IntegerPreferenceControl printMarginColumn;
+	private List colorList;
+	private ColorSelector colorSelector;
 
-  @Override
-  public Control createContents( final Composite parent ) {
-    Composite control = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 2;
-    control.setLayout( layout );
+	@Override
+	protected Control createContents( final Composite parent ) {
+		Composite control = new Composite( parent, SWT.NONE );
+		ColumnLayout layout = new ColumnLayout();
+		layout.maxNumColumns = 1;
+		control.setLayout(layout);
 
-    addFields( control );
-    createSpacer( control );
-    createAppearanceColorLabel( control );
-    Composite editorComposite = createEditorComposite( control );
-    createColorList( control, editorComposite );
-    Composite stylesComposite = createStylesComposite( editorComposite );
-    createLabel( stylesComposite, "C&olor:" );
-    createColorSelector( stylesComposite );
-    String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-    createBooleanField( control, "Ins&ert space for tabs", prefName );
+		createEditingGroup(control);
+		createAppearanceGroup(control);
+		createColorsGroup(control);
 
-    initialize();
+		initialize();
+		return control;
+	}
 
-    return control;
-  }
-
-  public static void initializeDefaultValues(final IPreferenceStore store) {
-	  TextEditorPreferenceConstants.initializeDefaultValues( store );
-	  DefaultEditorPreferenceInitializer.initializeDefaultValues( store );
-  }
+	public static void initializeDefaultValues(final IPreferenceStore store) {
+		TextEditorPreferenceConstants.initializeDefaultValues( store );
+		DefaultEditorPreferenceInitializer.initializeDefaultValues( store );
+	}
 
 
-  // UI creation methods
-  //////////////////////
+	// UI creation methods
+	//////////////////////
 
-  private void createColorSelector( final Composite parent ) {
-    colorSelector = new ColorSelector( parent );
-    Button foregroundColorButton = colorSelector.getButton();
-    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
-    gridData.horizontalAlignment = GridData.BEGINNING;
-    foregroundColorButton.setLayoutData( gridData );
-    foregroundColorButton.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        int i = colorList.getSelectionIndex();
-        String key = colorListModel[ i ].getColorKey();
-        RGB colorValue = colorSelector.getColorValue();
-        PreferenceConverter.setValue( getPreferenceStore(), key, colorValue );
-      }
-    } );
-  }
+	private Group createEditingGroup(final Composite parent) {
+		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("Editing");
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
 
-  private Composite createStylesComposite( final Composite parent ) {
-    Composite stylesComposite = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-    layout.numColumns = 2;
-    stylesComposite.setLayout( layout );
-    stylesComposite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-    return stylesComposite;
-  }
+		createCheckboxControl(group, "Ins&ert space for tabs", IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS);
 
-  private void createColorList( final Composite parent,
-                                final Composite editorComposite ) {
-    int style = SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER;
-    colorList = new List( editorComposite, style );
-    GridData gridData = new GridData(   GridData.VERTICAL_ALIGN_BEGINNING
-                                      | GridData.FILL_HORIZONTAL );
-    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( parent, 8 );
-    colorList.setLayoutData( gridData );
-    colorList.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        handleColorListSelection();
-      }
-    } );
-  }
+		return group;
+	}
 
-  private Composite createEditorComposite( final Composite parent ) {
-    Composite editorComposite = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 2;
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-    editorComposite.setLayout( layout );
-    GridData gridData = new GridData(   GridData.HORIZONTAL_ALIGN_FILL
-                                      | GridData.FILL_VERTICAL );
-    gridData.horizontalSpan = 2;
-    editorComposite.setLayoutData( gridData );
-    return editorComposite;
-  }
+	private Group createAppearanceGroup(final Composite parent) {
+		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("Appearance");
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.numColumns = 2;
+		group.setLayout(groupLayout);
 
-  private void createAppearanceColorLabel( final Composite parent ) {
-    Label label = new Label( parent, SWT.LEFT );
-    label.setText( "Appearance co&lor options:" );
-    GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-    gridData.horizontalSpan = 2;
-    label.setLayoutData( gridData );
-  }
+		CheckboxPreferenceControl spm = createCheckboxControl(group, "Sho&w print margin", EDITOR_PRINT_MARGIN);
+		printMarginColumn = createIntegerControl(group, "Print margin col&umn:", EDITOR_PRINT_MARGIN_COLUMN, 3);
+		spm.addValueChangedListener(new IValueChangedListener<Boolean>() {
+			public void valueChanged(final PreferenceControl<Boolean> control, final Boolean value) {
+				boolean enabled = value.booleanValue();
+				printMarginColumn.setEnabled(enabled);
+			}
+		}, true );
 
-  private void createSpacer( final Composite parent ) {
-    Label label = new Label( parent, SWT.LEFT );
-    GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-    gridData.horizontalSpan = 2;
-    int height = DialogUtil.convertHeightInCharsToPixels( parent, 1 );
-    gridData.heightHint = height / 2;
-    label.setLayoutData( gridData );
-  }
+		createCheckboxControl(group, "Show lin&e numbers", EDITOR_LINE_NUMBER_RULER);
+		createCheckboxControl(group, "Show overview &ruler", EDITOR_OVERVIEW_RULER);
+		createCheckboxControl(group, "Highlight &matching brackets", EDITOR_MATCHING_BRACKETS);
+		createCheckboxControl(group, "Hi&ghlight current line", EDITOR_CURRENT_LINE);
 
-  private void addFields( final Composite parent ) {
-    String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
-    addTextField( parent, "Print margin col&umn:", pmKey, 3, 0 );
-    String orKey = EDITOR_OVERVIEW_RULER;
-    createBooleanField( parent, "Show overview &ruler", orKey );
-    String lnrKey = EDITOR_LINE_NUMBER_RULER;
-    createBooleanField( parent, "Show lin&e numbers", lnrKey );
-    String mbKey = EDITOR_MATCHING_BRACKETS;
-    createBooleanField( parent, "Highlight &matching brackets", mbKey );
-    String clKey = EDITOR_CURRENT_LINE;
-    createBooleanField( parent, "Hi&ghlight current line", clKey );
-    createBooleanField( parent, "Sho&w print margin", EDITOR_PRINT_MARGIN );
-  }
+		return group;
+	}
 
+	private Group createColorsGroup(final Composite parent) {
+		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("Colors");
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.numColumns = 1;
+		group.setLayout(groupLayout);
 
-  // helping methods
-  //////////////////
+		Composite editorComposite = createEditorComposite( group );
+		createColorList( group, editorComposite );
+		Composite stylesComposite = createStylesComposite( editorComposite );
+		createLabel( stylesComposite, "C&olor:" );
+		createColorSelector( stylesComposite );
 
-  private void handleColorListSelection() {
-    int i = colorList.getSelectionIndex();
-    String key = colorListModel[ i ].getColorKey();
-    RGB rgb = PreferenceConverter.getColor( getPreferenceStore(), key );
-    colorSelector.setColorValue( rgb );
-  }
+		return group;
+	}
 
-  private void initialize() {
-    for( int i = 0; i < colorListModel.length; i++ ) {
-      colorList.add( colorListModel[ i ].getLabel() );
-    }
-    colorList.getDisplay().asyncExec( new Runnable() {
+	private void createColorSelector( final Composite parent ) {
+		colorSelector = new ColorSelector( parent );
+		Button foregroundColorButton = colorSelector.getButton();
+		GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
+		gridData.horizontalAlignment = GridData.BEGINNING;
+		foregroundColorButton.setLayoutData( gridData );
+		foregroundColorButton.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected( final SelectionEvent e ) {
+				int i = colorList.getSelectionIndex();
+				String key = colorListModel[ i ].getColorKey();
+				RGB colorValue = colorSelector.getColorValue();
+				PreferenceConverter.setValue( getPreferenceStore(), key, colorValue );
+			}
+		} );
+	}
 
-      public void run() {
-        if( ( colorList != null ) && !colorList.isDisposed() ) {
-          colorList.select( 0 );
-          handleColorListSelection();
-        }
-      }
-    } );
-    initializeFields();
-  }
+	private Composite createStylesComposite( final Composite parent ) {
+		Composite stylesComposite = new Composite( parent, SWT.NONE );
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		stylesComposite.setLayout( layout );
+		stylesComposite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+		return stylesComposite;
+	}
+
+	private void createColorList( final Composite parent,
+			final Composite editorComposite ) {
+		int style = SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER;
+		colorList = new List( editorComposite, style );
+		GridData gridData = new GridData(   GridData.VERTICAL_ALIGN_BEGINNING
+				| GridData.FILL_HORIZONTAL );
+		gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( parent, 8 );
+		colorList.setLayoutData( gridData );
+		colorList.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected( final SelectionEvent e ) {
+				handleColorListSelection();
+			}
+		} );
+	}
+
+	private Composite createEditorComposite( final Composite parent ) {
+		Composite editorComposite = new Composite( parent, SWT.NONE );
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 10;
+		editorComposite.setLayout( layout );
+		GridData gridData = new GridData(   GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.FILL_VERTICAL );
+		gridData.horizontalSpan = 2;
+		editorComposite.setLayoutData( gridData );
+		return editorComposite;
+	}
+
+	// helping methods
+	//////////////////
+
+	private void handleColorListSelection() {
+		int i = colorList.getSelectionIndex();
+		String key = colorListModel[ i ].getColorKey();
+		RGB rgb = PreferenceConverter.getColor( getPreferenceStore(), key );
+		colorSelector.setColorValue( rgb );
+	}
+
+	private void initialize() {
+		for( int i = 0; i < colorListModel.length; i++ ) {
+			colorList.add( colorListModel[ i ].getLabel() );
+		}
+		colorList.getDisplay().asyncExec( new Runnable() {
+
+			public void run() {
+				if( ( colorList != null ) && !colorList.isDisposed() ) {
+					colorList.select( 0 );
+					handleColorListSelection();
+				}
+			}
+		} );
+		loadControlValues();
+	}
 }
