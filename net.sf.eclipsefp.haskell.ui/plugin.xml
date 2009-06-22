@@ -142,32 +142,20 @@
             name="%editorPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"/>
-      <page
-            name="%syntaxColoringPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"
-            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxColoringPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxColoringPP"/>
-      <page
-            name="%annotationsPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"
-            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP"/>
-      <page
-            name="%contentAssistPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"
-            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ContentAssistPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ContentAssistPP"/>
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP">
+      </page>
       <page
             name="%projectWizardPP"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP"/>
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP">
+      </page>
       <page
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP"
-            name="%buildConsolePP_name"/>
+            name="%buildConsolePP_name">
+      </page>
    </extension>
    <extension
          name="%importLibsPP_name"

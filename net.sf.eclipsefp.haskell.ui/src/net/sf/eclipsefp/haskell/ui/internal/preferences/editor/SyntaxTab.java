@@ -1,9 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferencePage;
-
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -25,11 +24,8 @@ import org.eclipse.swt.widgets.List;
 /** <p>tab for syntax coloring preference settings.</p>
   *
   * @author Leif Frenzel
-  *
-  * TODO: The colours on this page take effect immediately, instead of waiting for Apply.
-  * TODO: The Restore Defaults button does not work.
   */
-public class SyntaxColoringPP extends HaskellPreferencePage implements IEditorPreferenceNames {
+class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
   private Button rbBackgroundDefault;
   private Button rbBackgroundCustom;
@@ -51,8 +47,17 @@ public class SyntaxColoringPP extends HaskellPreferencePage implements IEditorPr
     new ColorListEntry( "Keywords", EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ),
     new ColorListEntry( "Others", EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
 
+
+  SyntaxTab( final IPreferenceStore store ) {
+    super( store );
+  }
+
+
+  // interface methods of Tab
+  ///////////////////////////
+
   @Override
-  public Control createContents( final Composite parent ) {
+  public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout() );
 

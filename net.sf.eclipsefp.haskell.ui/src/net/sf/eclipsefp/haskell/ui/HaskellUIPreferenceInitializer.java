@@ -14,7 +14,6 @@ package net.sf.eclipsefp.haskell.ui;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP;
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 

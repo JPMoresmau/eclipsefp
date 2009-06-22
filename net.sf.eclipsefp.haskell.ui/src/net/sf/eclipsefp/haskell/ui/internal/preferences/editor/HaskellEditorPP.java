@@ -1,192 +1,183 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
-import net.sf.eclipsefp.common.ui.util.DialogUtil;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferencePage;
-
-import org.eclipse.jface.preference.ColorSelector;
+import java.util.Iterator;
+import net.sf.eclipsefp.common.ui.preferences.Tab;
+import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
-/** <p>the preference page for common editor preference settings.</p>
- *
- * @author Leif Frenzel
- *
- * TODO: Preferences take effect immediately, instead of waiting for Apply.
- * TODO: Restore Defaults button does not work.
- * TODO: Show line numbers does not seem to have any effect.
- * TODO: The layout of the preferences is strange.
- */
-public class HaskellEditorPP extends HaskellPreferencePage implements IEditorPreferenceNames {
 
-  private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( "Line number foreground",
-                        EDITOR_LINE_NUMBER_RULER_COLOR ),
-    new ColorListEntry( "Matching brackets highlight",
-                        EDITOR_MATCHING_BRACKETS_COLOR ),
-    new ColorListEntry( "Current line highlight", EDITOR_CURRENT_LINE_COLOR ),
-    new ColorListEntry( "Print margin", EDITOR_PRINT_MARGIN_COLOR ) };
+/** <p>the preference page for the Haskell editor.</p>
+  *
+  * @author Leif Frenzel
+  */
+public class HaskellEditorPP extends PreferencePage
+                             implements IWorkbenchPreferencePage,
+                                        IEditorPreferenceNames {
 
-  private List colorList;
-  private ColorSelector colorSelector;
+  private OverlayPreferenceStore overlayStore;
+
+
+  public static void initializeDefaultValues( final IPreferenceStore store ) {
+    TextEditorPreferenceConstants.initializeDefaultValues( store );
+    DefaultEditorPreferenceInitializer.initializeDefaultValues( store );
+  }
+
+
+  // interface methods of PreferencePage
+  //////////////////////////////////////
 
   @Override
-  public Control createContents( final Composite parent ) {
-    Composite control = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 2;
-    control.setLayout( layout );
+  protected Control createContents( final Composite parent ) {
+    TabFolder folder = new TabFolder( parent, SWT.NONE );
 
-    addFields( control );
-    createSpacer( control );
-    createAppearanceColorLabel( control );
-    Composite editorComposite = createEditorComposite( control );
-    createColorList( control, editorComposite );
-    Composite stylesComposite = createStylesComposite( editorComposite );
-    createLabel( stylesComposite, "C&olor:" );
-    createColorSelector( stylesComposite );
-    String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-    createBooleanField( control, "Ins&ert space for tabs", prefName );
+    Tab appearanceTab = new AppearanceTab( overlayStore );
+    createTab( folder, "Appeara&nce", appearanceTab.createControl( folder ) );
 
-    initialize();
+    Tab syntaxTab = new SyntaxTab( overlayStore );
+    createTab( folder, "Synta&x", syntaxTab.createControl( folder ) );
 
-    return control;
+    Tab annotationsTab = new AnnotationsTab( overlayStore );
+    createTab( folder, "Annotation&s", annotationsTab.createControl( folder ) );
+
+    Tab typingTab = new TypingTab( overlayStore );
+    createTab( folder, "T&yping", typingTab.createControl( folder ) );
+
+    return folder;
   }
 
-  public static void initializeDefaultValues(final IPreferenceStore store) {
-	  TextEditorPreferenceConstants.initializeDefaultValues( store );
-	  DefaultEditorPreferenceInitializer.initializeDefaultValues( store );
+  @Override
+  public void dispose() {
+    if( overlayStore != null ) {
+      overlayStore.stopListening();
+      overlayStore = null;
+    }
+    super.dispose();
+  }
+
+  @Override
+  public boolean performOk() {
+    overlayStore.propagate();
+    HaskellUIPlugin.getDefault().savePluginPreferences();
+    return true;
+  }
+
+  @Override
+  protected void performDefaults() {
+    overlayStore.loadDefaults();
+    super.performDefaults();
   }
 
 
-  // UI creation methods
-  //////////////////////
+  // interface methods of IWorkbenchPreferencePage
+  ////////////////////////////////////////////////
 
-  private void createColorSelector( final Composite parent ) {
-    colorSelector = new ColorSelector( parent );
-    Button foregroundColorButton = colorSelector.getButton();
-    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
-    gridData.horizontalAlignment = GridData.BEGINNING;
-    foregroundColorButton.setLayoutData( gridData );
-    foregroundColorButton.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        int i = colorList.getSelectionIndex();
-        String key = colorListModel[ i ].getColorKey();
-        RGB colorValue = colorSelector.getColorValue();
-        PreferenceConverter.setValue( getPreferenceStore(), key, colorValue );
-      }
-    } );
-  }
+  public void init( final IWorkbench workbench ) {
+    setDescription( "Haskell Editor settings:" );
+    setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
 
-  private Composite createStylesComposite( final Composite parent ) {
-    Composite stylesComposite = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-    layout.numColumns = 2;
-    stylesComposite.setLayout( layout );
-    stylesComposite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-    return stylesComposite;
-  }
-
-  private void createColorList( final Composite parent,
-                                final Composite editorComposite ) {
-    int style = SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER;
-    colorList = new List( editorComposite, style );
-    GridData gridData = new GridData(   GridData.VERTICAL_ALIGN_BEGINNING
-                                      | GridData.FILL_HORIZONTAL );
-    gridData.heightHint = DialogUtil.convertHeightInCharsToPixels( parent, 8 );
-    colorList.setLayoutData( gridData );
-    colorList.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        handleColorListSelection();
-      }
-    } );
-  }
-
-  private Composite createEditorComposite( final Composite parent ) {
-    Composite editorComposite = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 2;
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-    editorComposite.setLayout( layout );
-    GridData gridData = new GridData(   GridData.HORIZONTAL_ALIGN_FILL
-                                      | GridData.FILL_VERTICAL );
-    gridData.horizontalSpan = 2;
-    editorComposite.setLayoutData( gridData );
-    return editorComposite;
-  }
-
-  private void createAppearanceColorLabel( final Composite parent ) {
-    Label label = new Label( parent, SWT.LEFT );
-    label.setText( "Appearance co&lor options:" );
-    GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-    gridData.horizontalSpan = 2;
-    label.setLayoutData( gridData );
-  }
-
-  private void createSpacer( final Composite parent ) {
-    Label label = new Label( parent, SWT.LEFT );
-    GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-    gridData.horizontalSpan = 2;
-    int height = DialogUtil.convertHeightInCharsToPixels( parent, 1 );
-    gridData.heightHint = height / 2;
-    label.setLayoutData( gridData );
-  }
-
-  private void addFields( final Composite parent ) {
-    String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
-    addTextField( parent, "Print margin col&umn:", pmKey, 3, 0 );
-    String orKey = EDITOR_OVERVIEW_RULER;
-    createBooleanField( parent, "Show overview &ruler", orKey );
-    String lnrKey = EDITOR_LINE_NUMBER_RULER;
-    createBooleanField( parent, "Show lin&e numbers", lnrKey );
-    String mbKey = EDITOR_MATCHING_BRACKETS;
-    createBooleanField( parent, "Highlight &matching brackets", mbKey );
-    String clKey = EDITOR_CURRENT_LINE;
-    createBooleanField( parent, "Hi&ghlight current line", clKey );
-    createBooleanField( parent, "Sho&w print margin", EDITOR_PRINT_MARGIN );
+    overlayStore = createOverlayStore();
+    overlayStore.load();
+    overlayStore.startListening();
   }
 
 
   // helping methods
   //////////////////
 
-  private void handleColorListSelection() {
-    int i = colorList.getSelectionIndex();
-    String key = colorListModel[ i ].getColorKey();
-    RGB rgb = PreferenceConverter.getColor( getPreferenceStore(), key );
-    colorSelector.setColorValue( rgb );
+  private void createTab( final TabFolder folder,
+                          final String label,
+                          final Control control ) {
+    TabItem tab = new TabItem( folder, SWT.NONE );
+    tab.setText( label );
+    tab.setControl( control );
   }
 
-  private void initialize() {
-    for( int i = 0; i < colorListModel.length; i++ ) {
-      colorList.add( colorListModel[ i ].getLabel() );
-    }
-    colorList.getDisplay().asyncExec( new Runnable() {
+  private OverlayPreferenceStore createOverlayStore() {
+    MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
+    IPreferenceStore prefStore = getPreferenceStore();
+    OverlayPreferenceStore store = new OverlayPreferenceStore( prefStore );
 
-      public void run() {
-        if( ( colorList != null ) && !colorList.isDisposed() ) {
-          colorList.select( 0 );
-          handleColorListSelection();
-        }
-      }
-    } );
-    initializeFields();
+    addAnnotationPreferences( preferences, store );
+    addAppearancePreferences( store );
+    addSyntaxPreferences( store );
+    addCAPreferences( store );
+    addTypingPreferences( store );
+
+    return store;
+  }
+
+  private void addTypingPreferences( final OverlayPreferenceStore store ) {
+    store.addBooleanKey( EDITOR_SPACES_FOR_TABS );
+    store.addBooleanKey( EDITOR_CLOSE_STRINGS );
+    store.addBooleanKey( EDITOR_CLOSE_BRACKETS_AND_PARENS );
+    store.addBooleanKey( EDITOR_CLOSE_BRACES );
+  }
+
+  private void addCAPreferences( final OverlayPreferenceStore store ) {
+    store.addBooleanKey( CA_AUTOINSERT );
+    store.addBooleanKey( CA_ORDER_PROPOSALS );
+    store.addBooleanKey( CA_AUTOACTIVATION );
+    store.addIntKey( CA_AUTOACTIVATION_DELAY );
+    store.addStringKey( CA_AUTOACTIVATION_TRIGGERS );
+    store.addStringKey( CA_PROPOSALS_BACKGROUND );
+    store.addStringKey( CA_PROPOSALS_FOREGROUND );
+  }
+
+  private void addSyntaxPreferences( final OverlayPreferenceStore store ) {
+    store.addStringKey( EDITOR_FOREGROUND_COLOR );
+    store.addBooleanKey( EDITOR_FOREGROUND_DEFAULT_COLOR );
+    store.addStringKey( EDITOR_BACKGROUND_COLOR );
+    store.addBooleanKey( EDITOR_BACKGROUND_DEFAULT_COLOR );
+    store.addStringKey( EDITOR_COMMENT_COLOR );
+    store.addBooleanKey( EDITOR_COMMENT_BOLD );
+    store.addStringKey( EDITOR_LITERATE_COMMENT_COLOR );
+    store.addBooleanKey( EDITOR_LITERATE_COMMENT_BOLD );
+    store.addStringKey( EDITOR_STRING_COLOR );
+    store.addBooleanKey( EDITOR_STRING_BOLD );
+    store.addStringKey( EDITOR_FUNCTION_COLOR );
+    store.addBooleanKey( EDITOR_FUNCTION_BOLD );
+    store.addStringKey( EDITOR_KEYWORD_COLOR );
+    store.addBooleanKey( EDITOR_KEYWORD_BOLD );
+    store.addStringKey( EDITOR_DEFAULT_COLOR );
+    store.addBooleanKey( EDITOR_DEFAULT_BOLD );
+  }
+
+  private void addAppearancePreferences( final OverlayPreferenceStore store ) {
+    store.addIntKey( EDITOR_TAB_WIDTH );
+    store.addBooleanKey( EDITOR_CURRENT_LINE );
+    store.addStringKey( EDITOR_CURRENT_LINE_COLOR );
+    store.addBooleanKey( EDITOR_MATCHING_BRACKETS );
+    store.addStringKey( EDITOR_MATCHING_BRACKETS_COLOR );
+    store.addBooleanKey( EDITOR_PRINT_MARGIN );
+    store.addStringKey( EDITOR_PRINT_MARGIN_COLOR );
+    store.addIntKey( EDITOR_PRINT_MARGIN_COLUMN );
+    store.addBooleanKey( EDITOR_OVERVIEW_RULER );
+    store.addStringKey( EDITOR_LINE_NUMBER_RULER_COLOR );
+    store.addBooleanKey( EDITOR_LINE_NUMBER_RULER );
+  }
+
+  private void addAnnotationPreferences(
+        final MarkerAnnotationPreferences preferences,
+        final OverlayPreferenceStore store ) {
+    Iterator iter = preferences.getAnnotationPreferences().iterator();
+    while( iter.hasNext() ) {
+      AnnotationPreference info = ( AnnotationPreference )iter.next();
+      store.addStringKey( info.getColorPreferenceKey() );
+      store.addBooleanKey( info.getTextPreferenceKey() );
+      store.addBooleanKey( info.getOverviewRulerPreferenceKey() );
+    }
   }
 }

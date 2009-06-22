@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
@@ -17,9 +16,9 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
 
   static void initializeDefaultValues( final IPreferenceStore store ) {
     initAppearance( store );
-    initTyping( store );
     initColors( store );
     initCA( store );
+    initTyping( store );
   }
 
   private static void initColors( final IPreferenceStore store ) {

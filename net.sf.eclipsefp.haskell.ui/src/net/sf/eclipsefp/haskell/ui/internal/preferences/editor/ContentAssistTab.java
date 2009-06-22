@@ -2,9 +2,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferencePage;
-
 import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -18,15 +17,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 
-/** <p>Preference page for the content assist preference settings.</p>
+/** <p>Tab for the content assist preference settings.</p>
   *
   * @author Leif Frenzel
-  *
-  * TODO: None of these preferences have any effect yet, I think.
-  * TODO: Preferences take effect immediately, instead of waiting for Apply.
-  * TODO: Restore Defaults button does not work.
   */
-public class ContentAssistPP extends HaskellPreferencePage implements IEditorPreferenceNames {
+class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
     new ColorListEntry( "Completion proposal background",
@@ -39,8 +34,16 @@ public class ContentAssistPP extends HaskellPreferencePage implements IEditorPre
   private Control txtAutoActDelay;
   private Control txtActTriggers;
 
+  ContentAssistTab( final IPreferenceStore store ) {
+    super( store );
+  }
+
+
+  // interface methods of Tab
+  ///////////////////////////
+
   @Override
-  public Control createContents( final Composite parent ) {
+  public Control createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
     layout.numColumns = 2;
