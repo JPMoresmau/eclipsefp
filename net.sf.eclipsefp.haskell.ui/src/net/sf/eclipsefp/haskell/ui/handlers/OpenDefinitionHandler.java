@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.NameDefinitionsCommand;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -47,11 +48,9 @@ public class OpenDefinitionHandler extends AbstractHandler {
 				NameDefinitionsCommand command = new NameDefinitionsCommand(name);
 				Scion.syncRunCommand(command, 500);
 				if (command.isSuccessful() && command.isFound()) {
+					Location location = command.getFirstLocation();
 					try {
-						openInEditor(haskellEditor.getEditorSite().getPage(),
-								command.getFileName(),
-								command.getStartLine() - 1, command.getStartColumn(),
-								command.getEndLine() - 1, command.getEndColumn());
+						openInEditor(haskellEditor.getEditorSite().getPage(), location);
 					} catch (PartInitException ex) {
 						// too bad
 					} catch (URISyntaxException ex) {
@@ -63,21 +62,20 @@ public class OpenDefinitionHandler extends AbstractHandler {
 		return null;
 	}
 
-	protected void openInEditor(final IWorkbenchPage page, final String fileName, final int startLine, final int startColumn, final int endLine, final int endColumn) throws PartInitException, URISyntaxException {
+	protected void openInEditor(final IWorkbenchPage page, final Location location) throws PartInitException, URISyntaxException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
-		URI uri = new URI("file", "", fileName, null, null);
+		URI uri = new URI("file", "", location.getFileName(), null, null);
 		IFile[] files = root.findFilesForLocationURI(uri, IResource.FILE);
 		if (files.length > 0) {
 			IFile file = files[0]; // open only the first file; they should be the same anyway
 			IEditorPart editor = IDE.openEditor(page, file, true);
 			ITextEditor textEditor = (ITextEditor)editor;
 			IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
-			int start;
 			try {
-				start = document.getLineOffset(startLine) + startColumn;
-				int length = document.getLineOffset(endLine) + endColumn - start;
-				textEditor.selectAndReveal(start, length);
+				int startOffset = location.getStartOffset(document);
+				int length = location.getLength(document);
+				textEditor.selectAndReveal(startOffset, length);
 			} catch (BadLocationException ex) {
 				// ignore
 			}

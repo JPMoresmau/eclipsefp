@@ -5,7 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.ThingAtPointCommand;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.SrcLoc;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
@@ -50,10 +50,10 @@ class HaskellTextHover extends DefaultTextHover {
     */
 	  IFile file = editor.findFile();
 	  if (file != null) {
-		  IDocument doc = textViewer.getDocument();
+		  IDocument document = textViewer.getDocument();
 		  try {
-			  SrcLoc loc = SrcLoc.fromDocOffset(doc, hoverRegion.getOffset());
-			  ThingAtPointCommand command = new ThingAtPointCommand(file.getLocation().toOSString(), loc.getLine(), loc.getColumn());
+			  Location location = new Location(file.getLocation().toOSString(), document, hoverRegion);
+			  ThingAtPointCommand command = new ThingAtPointCommand(location);
 			  Scion.syncRunCommand(command, 200);
 			  if (command.isSuccessful()) {
 				  return command.getThing();

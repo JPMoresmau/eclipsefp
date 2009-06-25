@@ -1,43 +1,55 @@
 package net.sf.eclipsefp.haskell.scion.commands;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionParseException;
-import net.sf.eclipsefp.haskell.scion.lisp.LispExpr;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
+/**
+ * Command that returns information about the thing under the "point"
+ * (which is Emacs-speak for "cursor").
+ * 
+ * @author Thomas ten Cate
+ */
 public class ThingAtPointCommand extends ScionCommand {
 
-	private String fileName;
-	private int line, column;
+	private Location location;
 	
 	private String thing; // the response
 	
-	public ThingAtPointCommand(String file, int line, int column) {
-		this.fileName = file;
-		this.line = line;
-		this.column = column;
-	}
-	
-	@Override
-	protected String internalLisp() {
-		// TODO escape quotes
-		return String.format("(thing-at-point \"%s\" %d %d)", fileName, line + 1, column);
-	}
-
-	@Override
-	protected void parseInternalResponse(LispExpr response) {
-		// either (:ok (:ok nil))
-		//     or (:ok (:ok "some_string"))
-		try {
-			thing = response.asList().get(1).asList().get(1).asString().getValue();
-			if (thing.equals("no info"))
-				thing = null;
-		} catch (ScionParseException ex) {
-			thing = null;
-		}
+	public ThingAtPointCommand(Location location) {
+		this.location = location;
 	}
 	
 	public String getThing() {
 		return thing;
+	}
+
+	@Override
+	protected String getMethod() {
+		return "thing-at-point";
+	}
+
+	@Override
+	protected JSONObject getParams() throws JSONException {
+		JSONObject params = new JSONObject();
+		params.put("file", location.getFileName());
+		params.put("line", location.getStartLine() + 1); // Scion expects 1-based
+		params.put("column", location.getStartColumn());
+		return params;
+	}
+
+	@Override
+	protected void processResult(Object json) throws JSONException {
+		JSONObject result = (JSONObject)json;
+		if (result.has("Just")) {
+			thing = result.getString("Just");
+			if (thing.equals("no info")) {
+				thing = null; // ... yeah
+			}
+		} else {
+			thing = null;
+		}
 	}
 
 }

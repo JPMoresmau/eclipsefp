@@ -2,17 +2,16 @@ package net.sf.eclipsefp.haskell.scion.commands;
 
 import org.json.JSONException;
 
-
-public class ConnectionInfoCommand extends ScionCommand {
+public class DefinedNamesCommand extends ScionCommand {
 
 	@Override
 	protected String getMethod() {
-		return "connection-info";
+		return "defined-names";
 	}
 
 	@Override
 	protected void processResult(Object result) throws JSONException {
-		System.err.println(result);
+		// TODO
 	}
 
 }

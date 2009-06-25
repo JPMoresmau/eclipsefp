@@ -9,8 +9,11 @@ import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.BackgroundTypecheckFileCommand;
+import net.sf.eclipsefp.haskell.scion.commands.IScionCommandFinishedListener;
 import net.sf.eclipsefp.haskell.scion.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
+import net.sf.eclipsefp.haskell.scion.types.Note;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
@@ -18,6 +21,7 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -263,17 +267,62 @@ public class HaskellEditor extends TextEditor
 	try {
 	  IFile file = findFile();
 	  if (file != null) {
-		// TODO this should be done asynchronously
 		String fileName = file.getLocation().toOSString();
-		ScionCommand command = new LoadCommand(fileName);
-		Scion.asyncRunCommand(command);
-		command = new BackgroundTypecheckFileCommand(fileName);
-		Scion.asyncRunCommand(command);
+
+		LoadCommand loadCommand = new LoadCommand(fileName);
+		loadCommand.addFinishedListener(new IScionCommandFinishedListener(){
+			public void onScionCommandFinished(final ScionCommand command) {
+				if (command.isSuccessful()) {
+					addMarkers(((LoadCommand)command).getCompilationResult());
+				}
+			}
+		});
+		Scion.asyncRunCommand(loadCommand);
+
+		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(fileName);
+		typecheckCommand.addFinishedListener(new IScionCommandFinishedListener(){
+			public void onScionCommandFinished(final ScionCommand command) {
+				if (command.isSuccessful()) {
+					addMarkers(((BackgroundTypecheckFileCommand)command).getCompilationResult());
+				}
+			}
+		});
+		Scion.asyncRunCommand(typecheckCommand);
 	  }
 	} catch (Exception ex) {
 	  // We should never let Scion errors prevent the file from being saved!
 	  ex.printStackTrace(System.out); // TODO
 	}
+  }
+
+  /**
+   * TODO maybe this should be in another class?
+   * Somebody, somewhere, clears the markers too...
+   */
+  protected void addMarkers(final CompilationResult compilationResult) {
+	  IFile file = findFile();
+	  if (file != null) {
+		  for (Note note : compilationResult.getNotes()) {
+			  try {
+				  IMarker marker = file.createMarker(IMarker.PROBLEM);
+				  int severity;
+				  switch (note.getKind()) {
+					  case ERROR: severity = IMarker.SEVERITY_ERROR; break;
+					  case WARNING: severity = IMarker.SEVERITY_WARNING; break;
+					  case INFO: severity = IMarker.SEVERITY_INFO; break;
+					  default: severity = IMarker.SEVERITY_INFO; break;
+				  }
+				  marker.setAttribute(IMarker.SEVERITY, severity);
+				  marker.setAttribute(IMarker.CHAR_START, note.getLocation().getStartOffset(getDocument()));
+				  marker.setAttribute(IMarker.CHAR_END, note.getLocation().getEndOffset(getDocument()));
+				  marker.setAttribute(IMarker.MESSAGE, note.getMessage());
+			  } catch (CoreException ex) {
+				  // too bad, no marker then!
+			  } catch (BadLocationException ex) {
+				  // too bad, no marker then!
+			  }
+		  }
+	  }
   }
 
   public IFile findFile() {

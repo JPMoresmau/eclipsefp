@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.ConnectException;
@@ -17,6 +18,10 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.scion.client.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.scion.commands.CommandStatus;
 import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * A thread that acts as a client to the running Scion server process.
@@ -40,7 +45,6 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 
 	private static final String host = null; // amounts to connecting to the loopback interface
 	private static final int MAX_RETRIES = 5;
-	private static final String ENCODING = "UTF-8";
 	private static final String
 		THREAD_PREFIX = "[ScionClientThread]",
 		SERVER_STDOUT_PREFIX = "[scion_server]",
@@ -49,6 +53,11 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 
 	private Process process;
 	private BufferedReader serverStdOutReader;
+	
+	private Socket socket;
+	private BufferedWriter socketWriter;
+	private InputStream socketInputStream;
+	
 	private int port = -1; // negative if not yet captured from stdout
 	private volatile boolean stopped = false; // set to true if we are to stop at the soonest possible occasion
 	
@@ -72,6 +81,9 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		try {
 			// Start the server
 			startServerProcess();
+			capturePortNumber();
+			connectToServer();
+			startOutputSlurper();
 			
 			// Loop waiting for commands and running them
 			int nextSequenceNumber = 1;
@@ -79,10 +91,6 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 				checkRunning();
 				
 				ScionCommand command = null;
-				if (port < 0) {
-					capturePortNumber();
-				}
-				
 				Trace.trace(THREAD_PREFIX, "Waiting for commands");
 				try {
 					command = commandQueue.take(); // blocks until command is available
@@ -91,11 +99,13 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 				}
 				Trace.trace(THREAD_PREFIX, "Woken up");
 				
-				if (!stopped && command != null) {
+				// If the command is already in a finished state (e.g. timeout),
+				// we are picking up where a previous server incarnation crashed.
+				// Don't bother to run the command again.
+				if (!stopped && !command.getStatus().isFinished()) {
 					command.setSequenceNumber(nextSequenceNumber);
 					++nextSequenceNumber;
 					syncRunCommand(command);
-					port = -1;
 				}
 			}
 			Trace.trace(THREAD_PREFIX, "Received stop notification");
@@ -135,6 +145,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		String executable = ScionPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.SCION_SERVER_EXECUTABLE);
 		List<String> command = new LinkedList<String>();
 		command.add(executable);
+		command.add("--autoport");
 		
 		// Launch the process
 		ProcessBuilder builder = new ProcessBuilder(command);
@@ -142,7 +153,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		process = builder.start();
 		
 		if (process == null) {
-			throw new ScionServerException("Scion server process could not be started");
+			throw new ScionClientException("Scion server process could not be started");
 		}
 		
 		// Connect to the process's stdout to capture messages
@@ -177,11 +188,11 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	
 	/**
 	 * Attempts to check whether the server process is still running.
-	 * If not, it throws a {@link ScionServerException}.
+	 * If not, it throws a {@link ScionClientException}.
 	 */
 	private void checkRunning() {
 		if (process == null)
-			throw new ScionServerException(String.format("Scion server did not start"));
+			throw new ScionClientException(String.format("Scion server did not start"));
 		// There is no way to ask a Process directly whether it is still running,
 		// so this is the best we can do...
 		int exitValue;
@@ -191,7 +202,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 			// Still running
 			return;
 		}
-		throw new ScionServerException(String.format("Scion server has died with exit value %d", exitValue));
+		throw new ScionClientException(String.format("Scion server has died with exit value %d", exitValue));
 	}
 	
 	/**
@@ -231,15 +242,55 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		final String start = "=== Listening on port: ";
 		String line;
 		do {
-			line = serverStdOutReader.readLine();
-			if (line == null) {
-				throw new ScionServerException("Server process gave EOF before printing port number");
-			}
-			Trace.trace(SERVER_STDOUT_PREFIX, line);
+			line = readLineFromServer();
 		} while (!line.startsWith(start));
 		
 		// Parse the port number from the string
 		port = Integer.parseInt(line.substring(start.length()));
+	}
+	
+	private void connectToServer() throws IOException {
+		// Open the connection
+		socket = connectToServer(host, port);	
+		socketInputStream = socket.getInputStream();
+		socketWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+	}
+	
+	/**
+	 * Starts a thread that reads from the server's stdout (and stderr)
+	 * and sends its output to the tracer (if tracing).
+	 */
+	private void startOutputSlurper() {
+		new Thread() {
+			@Override
+			public void run() {
+				String line;
+				do {
+					line = readLineFromServer();
+				} while (line != null);
+			}
+		}.start();
+	}
+	
+	/**
+	 * Reads a line from the server's stdout (or stderr).
+	 * Blocks until a line is available.
+	 * Returns null in case of EOF or IOException.
+	 */
+	private String readLineFromServer() {
+		String line;
+		try {
+			line = serverStdOutReader.readLine();
+		} catch (IOException ex) {
+			Trace.trace(THREAD_PREFIX, ex);
+			return null;
+		}
+		if (line != null) {
+			Trace.trace(SERVER_STDOUT_PREFIX, line);
+		} else {
+			Trace.trace(THREAD_PREFIX, "Server gave EOF on stdout");
+		}
+		return line;
 	}
 	
   	/**
@@ -275,25 +326,6 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		return socket;
 	}
 	
-	/**
-	 * Reads exactly <code>length</code> bytes from the input stream.
-	 * Blocks until they are available. Then, decodes them and returns them in a <code>String</code>.
-	 * (Note that, due to encoding issues, the resulting string may be of a different length
-	 * than the number of bytes read.) 
-	 */
-	private String read(InputStream in, int length) throws IOException {
-		byte[] buffer = new byte[length];
-		int count = 0;
-		while (count < length) {
-			int read = in.read(buffer, count, length - count);
-			if (read < 0) {
-				throw new ScionServerException(String.format("Unexpected end-of-file when reading %d bytes from server", length));
-			}
-			count += read;
-		}
-		return new String(buffer, ENCODING);
-	}
-	
 	// Command handling -------------------------------------------------------
 	
 	/**
@@ -302,33 +334,20 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	private void syncRunCommand(ScionCommand command) throws IOException {
 		Socket socket = null;
 		try {
-			// Open the connection
-			socket = connectToServer(host, port);
-
-			// Send the command
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			sendCommand(command, writer);
+			sendCommand(command, socketWriter);
 			command.setStatus(CommandStatus.RUNNING);
 			
 			// Receive the response
-			InputStream in = socket.getInputStream();
-			String responseLisp = receiveResponse(in);
-			try {
-				command.receiveResponse(responseLisp);
-				command.setStatus(CommandStatus.SUCCESS);
-				Trace.trace(THREAD_PREFIX, "Command executed successfully");
-			} catch (ScionParseException ex) {
-				command.setStatus(CommandStatus.FAILED);
-				Trace.trace(THREAD_PREFIX, ex);
-			} finally {
-				// Wake up the sender of the command
-				synchronized (command) {
-					command.notifyAll();
-				}
-			}
+			Reader reader = new InputStreamReader(socketInputStream);
+			JSONObject response = receiveResponse(reader);
+			command.processResponse(response);
+			command.setStatus(CommandStatus.SUCCESS);
+			Trace.trace(THREAD_PREFIX, "Command executed successfully");
 		} catch (IOException ex) {
 			command.setStatus(CommandStatus.FAILED);
 			throw ex;
+		} catch (ScionClientException ex) {
+			command.setStatus(CommandStatus.FAILED);
 		} finally {
 			// Always close the socket
 			if (socket != null) {
@@ -338,40 +357,32 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 					// ignore, we were closing anyway
 				}
 			}
+			// Wake up the sender of the command
+			synchronized (command) {
+				command.notifyAll();
+			}
 		}
 	}
 	
 	private void sendCommand(ScionCommand command, Writer out) throws IOException {
-		String lisp = command.toLisp();
-		String length = encodeLength(lisp.length() + 1);
+		String jsonString = command.toString();
 		
-		Trace.trace(TO_SERVER_PREFIX, "%s", lisp);
+		Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
 
-		out.write(length);
-		out.write(lisp);
+		out.write(jsonString);
 		out.write("\n");
 		out.flush();
 	}
 	
-	private String receiveResponse(InputStream in) throws IOException {
-		// First, 6 hex characters encoding the length of the rest of the message
-		String lengthHex = read(in, 6);
-		int length = decodeLength(lengthHex);
-		
-		// Then the rest of the message
-		String response = read(in, length);
-		
-		Trace.trace(FROM_SERVER_PREFIX, "%s", response.trim());
-
+	private JSONObject receiveResponse(Reader reader) throws IOException {
+		JSONObject response;
+		try {
+			response = new JSONObject(new JSONTokener(reader));
+		} catch (JSONException ex) {
+			throw new ScionClientException(String.format("Unable to parse Scion response"));
+		}
+		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
 		return response;
-	}
-	
-	private String encodeLength(int length) {
-		return String.format("%06x", length);
-	}
-	
-	private int decodeLength(String length) {
-		return Integer.parseInt(length, 16);
 	}
 
 }
