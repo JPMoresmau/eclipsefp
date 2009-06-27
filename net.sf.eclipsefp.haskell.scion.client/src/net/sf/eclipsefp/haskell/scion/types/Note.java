@@ -30,6 +30,12 @@ public class Note {
 		this.message = json.getString("message");
 	}
 	
+	public Note(Kind kind, Location location, String message) {
+		this.kind = kind;
+		this.location = location;
+		this.message = message;
+	}
+	
 	public Kind getKind() {
 		return kind;
 	}
@@ -45,7 +51,6 @@ public class Note {
 	public void applyAsMarker(IResource resource) throws CoreException {
 		if (resource != null && resource.isAccessible()) {
 			IMarker marker = resource.createMarker(IMarker.PROBLEM);
-	        marker.setAttribute(IMarker.USER_EDITABLE, false);
 	        int severity;
 	        switch (kind) {
 	          case ERROR: severity = IMarker.SEVERITY_ERROR; break;

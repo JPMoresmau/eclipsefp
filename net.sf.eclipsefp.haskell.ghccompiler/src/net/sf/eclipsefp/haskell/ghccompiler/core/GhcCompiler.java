@@ -6,14 +6,12 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -65,8 +63,9 @@ public class GhcCompiler extends DefaultHaskellCompiler {
       throw new IllegalStateException();
     }
     String output = fProcessRunner.execute( workDir, outputWriter, cmdLine );
-    // TODO replace by something not Cohatoe-based
-    // TemporaryCompilerHelper.applyOutput( output, file );
+    // We cannot simply apply all markers to the file that's being compiled,
+    // because some might belong to files that it depends on.
+    GhcOutputParser.applyOutput( output, workDir );
   }
 
 	private String[] buildCommandLine( final IFile file,

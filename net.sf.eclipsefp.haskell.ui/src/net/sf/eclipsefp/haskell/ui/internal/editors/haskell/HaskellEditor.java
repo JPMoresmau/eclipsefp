@@ -4,24 +4,16 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ResourceBundle;
-
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.BackgroundTypecheckFileCommand;
-import net.sf.eclipsefp.haskell.scion.commands.IScionCommandFinishedListener;
-import net.sf.eclipsefp.haskell.scion.commands.LoadCommand;
-import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
-import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
-import net.sf.eclipsefp.haskell.scion.types.Note;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,15 +42,21 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-/** <p>The main editor class for the Haskell editor.</p>
-  *
-  * @author Leif Frenzel
-  */
-public class HaskellEditor extends TextEditor
-                           implements IEditorPreferenceNames {
+/**
+ * <p>
+ * The main editor class for the Haskell editor.
+ * </p>
+ *
+ * @author Leif Frenzel
+ */
+public class HaskellEditor extends TextEditor implements IEditorPreferenceNames {
 
 
-  /** <p>the id under which the Haskell editor is declared.</p> */
+  /**
+   * <p>
+   * the id under which the Haskell editor is declared.
+   * </p>
+   */
   public static final String ID = HaskellEditor.class.getName();
 
   /** The key binding context active while the Haskell editor is active */
@@ -88,7 +86,7 @@ public class HaskellEditor extends TextEditor
 
 
   // interface methods of TextEditor
-  //////////////////////////////////
+  // ////////////////////////////////
 
   @Override
   protected void initializeEditor() {
@@ -123,14 +121,15 @@ public class HaskellEditor extends TextEditor
     if( isEditable() ) {
       IMenuManager mmSource = new MenuManager( "Source", "source" );
       menu.prependToGroup( ITextEditorActionConstants.GROUP_EDIT, mmSource );
-      mmSource.add(  new Separator( "comments" ) );
-      mmSource.add(  new Separator( "formatting" ) );
-      mmSource.add(  new Separator( "organize" ) );
+      mmSource.add( new Separator( "comments" ) );
+      mmSource.add( new Separator( "formatting" ) );
+      mmSource.add( new Separator( "organize" ) );
       addAction( mmSource, "comments", "Comment" );
       addAction( mmSource, "comments", "Uncomment" );
     }
     // TODO
-    // menu.prependToGroup(ITextEditorActionConstants.GROUP_OPEN, openDefinitionAction);
+    // menu.prependToGroup(ITextEditorActionConstants.GROUP_OPEN,
+    // openDefinitionAction);
   }
 
   @Override
@@ -140,38 +139,31 @@ public class HaskellEditor extends TextEditor
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
     createTextOpAction( "ContentAssistProposal",
-                        ISourceViewer.CONTENTASSIST_PROPOSALS,
-                        defId );
+        ISourceViewer.CONTENTASSIST_PROPOSALS, defId );
 
     // comment/uncomment
-    createTextOpAction( "Comment",
-                        ITextOperationTarget.PREFIX,
-                        IActionDefinitionIds.COMMENT );
-    createTextOpAction( "Uncomment",
-                        ITextOperationTarget.STRIP_PREFIX,
-                        IActionDefinitionIds.UNCOMMENT );
+    createTextOpAction( "Comment", ITextOperationTarget.PREFIX,
+        IActionDefinitionIds.COMMENT );
+    createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX,
+        IActionDefinitionIds.UNCOMMENT );
 
     // "open definition" action TODO remove
-//    openDefinitionAction = new OpenDefinitionHandler(this);
-//	openDefinitionAction.setActionDefinitionId(IActionDefinitionIds.OPEN_DEFINITION);
-//	setAction("OpenDefinition", openDefinitionAction);
+    // openDefinitionAction = new OpenDefinitionHandler(this);
+    // openDefinitionAction.setActionDefinitionId(IActionDefinitionIds.OPEN_DEFINITION);
+    // setAction("OpenDefinition", openDefinitionAction);
   }
 
   @Override
   protected ISourceViewer createSourceViewer( final Composite parent,
-                                              final IVerticalRuler ruler,
-                                              final int styles ) {
+      final IVerticalRuler ruler, final int styles ) {
     // copied this from the super class, replaced source viewer with
     // projection viewer
     fAnnotationAccess = createAnnotationAccess();
     fOverviewRuler = createOverviewRuler( getSharedColors() );
-    ISourceViewer viewer = new ProjectionViewer( parent,
-                                                 ruler,
-                                                 getOverviewRuler(),
-                                                 isOverviewRulerVisible(),
-                                                 styles);
+    ISourceViewer viewer = new ProjectionViewer( parent, ruler,
+        getOverviewRuler(), isOverviewRulerVisible(), styles );
     // ensure decoration support has been created and configured.
-    getSourceViewerDecorationSupport(viewer);
+    getSourceViewerDecorationSupport( viewer );
     return viewer;
   }
 
@@ -180,13 +172,13 @@ public class HaskellEditor extends TextEditor
     super.createPartControl( parent );
     ProjectionViewer projectionViewer = ( ProjectionViewer )getSourceViewer();
     projectionSupport = new ProjectionSupport( projectionViewer,
-                                               getAnnotationAccess(),
-                                               getSharedColors() );
+        getAnnotationAccess(), getSharedColors() );
     projectionSupport.install();
     projectionViewer.doOperation( ProjectionViewer.TOGGLE );
 
     if( markOccurrencesComputer != null ) {
       ISelectionChangedListener listener = new ISelectionChangedListener() {
+
         public void selectionChanged( final SelectionChangedEvent event ) {
           IDocument doc = getSourceViewer().getDocument();
           markOccurrencesComputer.setDocument( doc );
@@ -199,8 +191,9 @@ public class HaskellEditor extends TextEditor
   }
 
   private void activateContext() {
-	IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-	contextService.activateContext(CONTEXT_ID);
+    IContextService contextService = ( IContextService )getSite().getService(
+        IContextService.class );
+    contextService.activateContext( CONTEXT_ID );
   }
 
   @Override
@@ -215,7 +208,7 @@ public class HaskellEditor extends TextEditor
         }
       }
       result = outlinePage;
-    } else if ( projectionSupport != null ) {
+    } else if( projectionSupport != null ) {
       result = projectionSupport.getAdapter( getSourceViewer(), required );
     }
 
@@ -227,7 +220,7 @@ public class HaskellEditor extends TextEditor
 
   // supplement some TextEditor funtionality with specific handling
   // needed because we have an attached outline page
-  /////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////
 
   @Override
   public void dispose() {
@@ -264,65 +257,17 @@ public class HaskellEditor extends TextEditor
   @Override
   protected void editorSaved() {
     // Reload the file on the Scion server side
-	try {
-	  IFile file = findFile();
-	  if (file != null) {
-		String fileName = file.getLocation().toOSString();
-
-		LoadCommand loadCommand = new LoadCommand(fileName);
-		loadCommand.addFinishedListener(new IScionCommandFinishedListener(){
-			public void onScionCommandFinished(final ScionCommand command) {
-				if (command.isSuccessful()) {
-					addMarkers(((LoadCommand)command).getCompilationResult());
-				}
-			}
-		});
-		Scion.asyncRunCommand(loadCommand);
-
-		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(fileName);
-		typecheckCommand.addFinishedListener(new IScionCommandFinishedListener(){
-			public void onScionCommandFinished(final ScionCommand command) {
-				if (command.isSuccessful()) {
-					addMarkers(((BackgroundTypecheckFileCommand)command).getCompilationResult());
-				}
-			}
-		});
-		Scion.asyncRunCommand(typecheckCommand);
-	  }
-	} catch (Exception ex) {
-	  // We should never let Scion errors prevent the file from being saved!
-	  ex.printStackTrace(System.out); // TODO
-	}
-  }
-
-  /**
-   * TODO maybe this should be in another class?
-   * Somebody, somewhere, clears the markers too...
-   */
-  protected void addMarkers(final CompilationResult compilationResult) {
-	  IFile file = findFile();
-	  if (file != null) {
-		  for (Note note : compilationResult.getNotes()) {
-			  try {
-				  IMarker marker = file.createMarker(IMarker.PROBLEM);
-				  int severity;
-				  switch (note.getKind()) {
-					  case ERROR: severity = IMarker.SEVERITY_ERROR; break;
-					  case WARNING: severity = IMarker.SEVERITY_WARNING; break;
-					  case INFO: severity = IMarker.SEVERITY_INFO; break;
-					  default: severity = IMarker.SEVERITY_INFO; break;
-				  }
-				  marker.setAttribute(IMarker.SEVERITY, severity);
-				  marker.setAttribute(IMarker.CHAR_START, note.getLocation().getStartOffset(getDocument()));
-				  marker.setAttribute(IMarker.CHAR_END, note.getLocation().getEndOffset(getDocument()));
-				  marker.setAttribute(IMarker.MESSAGE, note.getMessage());
-			  } catch (CoreException ex) {
-				  // too bad, no marker then!
-			  } catch (BadLocationException ex) {
-				  // too bad, no marker then!
-			  }
-		  }
-	  }
+    try {
+      IFile file = findFile();
+      if( file != null ) {
+        String fileName = file.getLocation().toOSString();
+        BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand( fileName );
+        Scion.asyncRunCommand( typecheckCommand );
+      }
+    } catch( Exception ex ) {
+      // We should never let Scion errors prevent the file from being saved!
+      ex.printStackTrace( System.out ); // TODO
+    }
   }
 
   public IFile findFile() {
@@ -344,46 +289,40 @@ public class HaskellEditor extends TextEditor
 
 
   // helping methods
-  //////////////////
+  // ////////////////
 
   private boolean isAffectingProperty( final String property ) {
-    return    property.equals( EDITOR_COMMENT_COLOR )
-           || property.equals( EDITOR_COMMENT_BOLD )
-           || property.equals( EDITOR_LITERATE_COMMENT_COLOR )
-           || property.equals( EDITOR_LITERATE_COMMENT_BOLD )
-           || property.equals( EDITOR_DEFAULT_COLOR )
-           || property.equals( EDITOR_DEFAULT_BOLD )
-           || property.equals( EDITOR_FUNCTION_COLOR )
-           || property.equals( EDITOR_FUNCTION_BOLD )
-           || property.equals( EDITOR_KEYWORD_COLOR )
-           || property.equals( EDITOR_KEYWORD_BOLD )
-           || property.equals( EDITOR_STRING_COLOR )
-           || property.equals( EDITOR_STRING_BOLD )
-           || property.equals( EDITOR_CHAR_COLOR )
-           || property.equals( EDITOR_CHAR_BOLD );
+    return property.equals( EDITOR_COMMENT_COLOR )
+        || property.equals( EDITOR_COMMENT_BOLD )
+        || property.equals( EDITOR_LITERATE_COMMENT_COLOR )
+        || property.equals( EDITOR_LITERATE_COMMENT_BOLD )
+        || property.equals( EDITOR_DEFAULT_COLOR )
+        || property.equals( EDITOR_DEFAULT_BOLD )
+        || property.equals( EDITOR_FUNCTION_COLOR )
+        || property.equals( EDITOR_FUNCTION_BOLD )
+        || property.equals( EDITOR_KEYWORD_COLOR )
+        || property.equals( EDITOR_KEYWORD_BOLD )
+        || property.equals( EDITOR_STRING_COLOR )
+        || property.equals( EDITOR_STRING_BOLD )
+        || property.equals( EDITOR_CHAR_COLOR )
+        || property.equals( EDITOR_CHAR_BOLD );
   }
 
-  private void createTextOpAction( final String name,
-                                   final int targetId,
-                                   final String actionDefinitionId ) {
+  private void createTextOpAction( final String name, final int targetId,
+      final String actionDefinitionId ) {
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
-    Action action = new TextOperationAction( bundle,
-                                             name + ".",
-                                             this,
-                                             targetId );
+    Action action = new TextOperationAction( bundle, name + ".", this, targetId );
     action.setActionDefinitionId( actionDefinitionId );
     setAction( name, action );
     markAsStateDependentAction( name, true );
   }
 
   private void initMarkOccurrences() {
-	// TODO replace by something not Cohatoe-based
-	/*
-    CohatoeServer server = CohatoeServer.getInstance();
-    IMarkOccurrences mo = server.createFunction( IMarkOccurrences.class );
-    if( mo != null ) {
-      markOccurrencesComputer = new MarkOccurrenceComputer( this, mo );
-    }
-    */
+    // TODO replace by something not Cohatoe-based
+    /*
+     * CohatoeServer server = CohatoeServer.getInstance(); IMarkOccurrences mo =
+     * server.createFunction( IMarkOccurrences.class ); if( mo != null ) {
+     * markOccurrencesComputer = new MarkOccurrenceComputer( this, mo ); }
+     */
   }
 }
