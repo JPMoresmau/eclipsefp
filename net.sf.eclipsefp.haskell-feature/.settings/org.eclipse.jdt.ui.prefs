@@ -1,5 +1,6 @@
-#Tue Feb 27 13:04:42 CET 2007
+#Sat Jun 27 14:39:26 CEST 2009
 eclipse.preferences.version=1
+formatter_profile=_EclipseFP
 formatter_settings_version=11
 org.eclipse.jdt.ui.exception.name=ex
 org.eclipse.jdt.ui.gettersetter.use.is=true
