@@ -115,6 +115,19 @@
             %haskellDecorator_desc
          </description>
       </decorator>
+      <decorator
+            label="%haskellDecorator_name"
+            lightweight="true"
+            class="net.sf.eclipsefp.haskell.ui.decorators.ProblemsLabelDecorator"
+            state="true"
+            id="net.sf.eclipsefp.haskell.ui.decorators.ProblemsLabelDecorator">
+            <enablement>
+              <objectClass name="org.eclipse.core.resources.IResource"/> 
+            </enablement>
+         <description>
+            %haskellDecorator_desc
+         </description>
+      </decorator>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

@@ -5,9 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -61,6 +59,9 @@ public class HaskellUIImages implements IImageNames {
 
     // decorators
     declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" );
+    declare( ERROR_OVERLAY,        OVR + "error_co.gif");
+    declare( WARNING_OVERLAY,      OVR + "warning_co.gif");
+
     // views
     declare( DEP_VIEW_IMPORTS,     ACTION + "mdep_imports.gif" );
     declare( DEP_VIEW_IMPORTEDBY,  ACTION + "mdep_importedby.gif" );

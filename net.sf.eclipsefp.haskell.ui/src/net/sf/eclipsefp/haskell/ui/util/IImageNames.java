@@ -68,4 +68,8 @@ public interface IImageNames {
   String NEW_MODULE           = ID + ".NEW_MODULE";
   String IMPORT_CABAL_PACKAGE = ID + "IMPORT_CABAL_PACKAGE";
 
+  // overlays
+  String ERROR_OVERLAY        = ID + ".ERROR_OVERLAY";
+  String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY";
+
 }
