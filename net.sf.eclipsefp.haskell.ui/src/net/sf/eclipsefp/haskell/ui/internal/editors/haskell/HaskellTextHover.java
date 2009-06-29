@@ -6,7 +6,8 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 import net.sf.eclipsefp.haskell.scion.client.Scion;
 import net.sf.eclipsefp.haskell.scion.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
@@ -51,18 +52,19 @@ class HaskellTextHover extends DefaultTextHover {
 	  IFile file = editor.findFile();
 	  if (file != null) {
 		  IDocument document = textViewer.getDocument();
+		  Location location;
 		  try {
-			  Location location = new Location(file.getLocation().toOSString(), document, hoverRegion);
-			  ThingAtPointCommand command = new ThingAtPointCommand(location);
-			  Scion.syncRunCommand(command, 200);
-			  if (command.isSuccessful()) {
-				  return command.getThing();
-			  }
-			  return null;
+			  location = new Location(file.getLocation().toOSString(), document, hoverRegion);
 		  } catch (BadLocationException ex) {
-			  // TODO Auto-generated catch block
-			  ex.printStackTrace();
+			  HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );
+			  return null;
 		  }
+      ThingAtPointCommand command = new ThingAtPointCommand(location);
+      Scion.syncRunCommand(command, 200);
+      if (command.isSuccessful()) {
+        return command.getThing();
+      }
+      return null;
 	  }
 	  return null;
   }

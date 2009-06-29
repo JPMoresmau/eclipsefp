@@ -33,6 +33,10 @@ public final class UITexts extends NLS {
   public static String optimizationTab_individual;
   public static String optimizationTab_individualInfo;
 
+  public static String error_launchGhc;
+  public static String error_processOutput;
+  public static String error_deleteMarkers;
+  public static String error_applyMarkers;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

@@ -2,12 +2,15 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
 import java.io.IOException;
+import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
+import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -29,7 +32,7 @@ public class GhcOutputProcessor implements IGhcOutputListener {
     try {
       file.deleteMarkers( IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
     } catch( CoreException ex ) {
-      // too bad!
+      GhcCompilerPlugin.log( UITexts.error_deleteMarkers, IStatus.WARNING, ex );
     }
   }
 
@@ -38,7 +41,7 @@ public class GhcOutputProcessor implements IGhcOutputListener {
     try {
       note.applyAsMarker( file );
     } catch( CoreException ex ) {
-      // too bad!
+      GhcCompilerPlugin.log( UITexts.error_applyMarkers, IStatus.WARNING, ex );
     }
   }
 

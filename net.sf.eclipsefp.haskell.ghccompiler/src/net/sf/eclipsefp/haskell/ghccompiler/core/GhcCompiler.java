@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
+import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -61,8 +62,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     try {
       process = builder.start();
     } catch( IOException ex ) {
-      // TODO Auto-generated catch block
-      ex.printStackTrace();
+      GhcCompilerPlugin.log( UITexts.error_launchGhc, ex );
       return;
     }
     GhcOutputProcessor outputProcessor = new GhcOutputProcessor( workDir );
@@ -70,9 +70,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     try {
       outputParser.parse();
     } catch( IOException ex ) {
-      // TODO Auto-generated catch block
-      ex.printStackTrace();
-      return;
+      GhcCompilerPlugin.log( UITexts.error_processOutput, ex );
     }
   }
 

@@ -80,6 +80,7 @@ public final class UITexts extends NLS {
 
   public static String renameProcessor_name;
 
+  public static String editor_textHover_error;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
