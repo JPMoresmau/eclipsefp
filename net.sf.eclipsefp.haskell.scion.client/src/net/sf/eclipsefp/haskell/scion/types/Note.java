@@ -13,6 +13,7 @@ public class Note {
 	private Kind kind; // error, warning, info or other
 	private Location location;
 	private String message;
+	private String additionalInfo;
 	
 	public Note(JSONObject json) throws JSONException {
 		String kind = json.getString("kind");
@@ -28,12 +29,15 @@ public class Note {
 		this.location = new Location(json.getJSONObject("location"));
 		
 		this.message = json.getString("message");
+		
+		this.additionalInfo = null;
 	}
 	
-	public Note(Kind kind, Location location, String message) {
+	public Note(Kind kind, Location location, String message, String additionalInfo) {
 		this.kind = kind;
 		this.location = location;
 		this.message = message;
+		this.additionalInfo = additionalInfo;
 	}
 	
 	public Kind getKind() {
@@ -46,6 +50,10 @@ public class Note {
 	
 	public String getMessage() {
 		return message;
+	}
+	
+	public String getAdditionalInfo() {
+		return additionalInfo;
 	}
 	
 	public void applyAsMarker(IResource resource) throws CoreException {

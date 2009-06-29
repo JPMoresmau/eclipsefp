@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,24 +29,15 @@ import org.eclipse.core.runtime.Path;
  */
 public class GhcCompiler extends DefaultHaskellCompiler {
 
-	private static boolean trace = GhcCompilerPlugin.isTracing();
+  private static boolean trace = GhcCompilerPlugin.isTracing();
 
-	private final CompilerParams compilerParams = new CompilerParams();
+  private final CompilerParams compilerParams = new CompilerParams();
 
-	private final IProcessRunner fProcessRunner;
+  public GhcCompiler() {
+    // do nothing
+  }
 
-	public GhcCompiler() {
-		this(new ProcessRunner());
-	}
-
-	/**
-	 * Constructor for testing
-	 */
-	public GhcCompiler(final IProcessRunner procRunner) {
-		fProcessRunner = procRunner;
-	}
-
-	@Override
+  @Override
   public void compile( final IFile file, final Writer outputWriter ) {
     final IProject project = file.getProject();
     IHaskellProject hsProject = HaskellProjectManager.get( project );
@@ -62,13 +54,29 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     if( workDir == null ) {
       throw new IllegalStateException();
     }
-    String output = fProcessRunner.execute( workDir, outputWriter, cmdLine );
-    // We cannot simply apply all markers to the file that's being compiled,
-    // because some might belong to files that it depends on.
-    GhcOutputParser.applyOutput( output, workDir );
+    ProcessBuilder builder = new ProcessBuilder( cmdLine );
+    builder.directory( workDir );
+    builder.redirectErrorStream( true );
+    Process process;
+    try {
+      process = builder.start();
+    } catch( IOException ex ) {
+      // TODO Auto-generated catch block
+      ex.printStackTrace();
+      return;
+    }
+    GhcOutputProcessor outputProcessor = new GhcOutputProcessor( workDir );
+    GhcOutputParser outputParser = new GhcOutputParser( process.getInputStream(), outputProcessor );
+    try {
+      outputParser.parse();
+    } catch( IOException ex ) {
+      // TODO Auto-generated catch block
+      ex.printStackTrace();
+      return;
+    }
   }
 
-	private String[] buildCommandLine( final IFile file,
+  private String[] buildCommandLine( final IFile file,
       final IHaskellProject haskellProject ) {
     if( trace ) {
       System.out.println( "Constructing command line for file " + file ); //$NON-NLS-1$
@@ -110,20 +118,20 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     return cmdLine.toArray( new String[ cmdLine.size() ] );
   }
 
-	// helping methods
-	// ////////////////
+  // helping methods
+  // ////////////////
 
-	private String getAbsPath(final IProject project, final IPath path) {
-		return project.getLocation().toOSString() + File.separator
-				+ path.toOSString();
-	}
+  private String getAbsPath( final IProject project, final IPath path ) {
+    return project.getLocation().toOSString() + File.separator
+        + path.toOSString();
+  }
 
-	private IPath getTargetName( final IHaskellProject haskellProject ) {
+  private IPath getTargetName( final IHaskellProject haskellProject ) {
     String result = "theResult"; //$NON-NLS-1$
-	  Set<IPath> targetNames = haskellProject.getTargetNames();
+    Set<IPath> targetNames = haskellProject.getTargetNames();
     if( targetNames.size() > 0 ) {
       result = targetNames.iterator().next().toOSString();
-	  }
+    }
     return new Path( result );
   }
 }

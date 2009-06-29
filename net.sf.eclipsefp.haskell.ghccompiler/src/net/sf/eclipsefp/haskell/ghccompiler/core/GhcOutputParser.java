@@ -1,210 +1,214 @@
-// Copyright (c) 2008 by Leif Frenzel - see http://leiffrenzel.de
-// This code is made available under the terms of the Eclipse Public License,
-// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.Note;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 /**
- * Parses GHC compilation output messages and turns them into {@link Note}
- * objects that can be applied to resources to indicate errors and warnings.
+ * Parser that processes the GHC compiler output as it arrives and sends it off
+ * in parsed form to an {@link IGhcOutputListener}.
  *
- * This is an ugly port of GHCOutputParser.hs.
+ * For parsing, the Parsec "grammar" from GHCOutputParser.hs is used.
  *
  * @author Thomas ten Cate
  */
 public class GhcOutputParser {
 
-  public static void applyOutput( final String output, final File workDir ) {
-    for( Note note: new GhcOutputParser( output ).parse() ) {
-      // TODO files that get compiled as dependencies of the current file
-      // do receive their markers, but old markers aren't cleared from those.
-      try {
-        // The returned file names are relative to the working directory
-        File absoluteFileName = new File(workDir, note.getLocation().getFileName());
-        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( new Path(absoluteFileName.getCanonicalPath()) );
-        note.applyAsMarker( file );
-      } catch( CoreException ex ) {
-        // well then, no marker
-      } catch( IOException ex ) {
-        // getCanonicalPath failed (file does not exist?)
+  private final BufferedReader reader;
+  private String line;
+  private int pos; // position within the line; only valid sometimes
+  private final IGhcOutputListener listener;
+
+  private final Pattern compilingPattern = Pattern
+      .compile( "^(\\[(\\d+) of (\\d+)\\]\\s*)?Compiling\\s+\\S+\\s+\\(\\s*([^,]*),\\s+.*\\s*\\)$" ); //$NON-NLS-1$
+  private static Pattern parenthesizedLocPattern = Pattern
+      .compile( "^\\((\\d+):(\\d+)\\)-\\((\\d+):(\\d+)\\)" ); //$NON-NLS-1$
+  private static Pattern sepLocsPattern = Pattern
+      .compile( "^(\\d+):(\\d+)(-(\\d+))?" ); //$NON-NLS-1$
+
+  public GhcOutputParser( final InputStream inputStream,
+      final IGhcOutputListener listener ) {
+    this.reader = new BufferedReader( new InputStreamReader( inputStream,
+        Charset.forName( "UTF-8" ) ) ); //$NON-NLS-1$
+    this.listener = listener;
+  }
+
+  /**
+   * Parses the input stream until EOF occurs.
+   */
+  public void parse() throws IOException {
+    nextLine(); // initialize
+    messages(); // main parsing method
+  }
+
+  // ///////////////////////
+  // main parsing methods
+
+  private void messages() throws IOException {
+    while( !eof() ) {
+      // abusing short-circuit ||
+      if( !( compiling() || skipping() || ghcMessage() ) ) {
+        // don't know what this is; be lenient
+        nextLine();
       }
     }
   }
 
-  private static Pattern counterPat = Pattern.compile( "^\\[\\d+ of \\d+\\]" ); //$NON-NLS-1$
-  private static Pattern parenthesizedLocPat = Pattern
-      .compile( "^\\((\\d+):(\\d+)\\)-\\((\\d+):(\\d+)\\)" ); //$NON-NLS-1$
-  private static Pattern sepLocsPat = Pattern
-      .compile( "^(\\d+):(\\d+)(-(\\d+))?" ); //$NON-NLS-1$
-
-  private final String output;
-  private String[] lines;
-  private int curLine, numLines;
-  private int curCol, numCols;
-  private List<Note> notes;
-
-  private GhcOutputParser( final String output ) {
-    this.output = output;
-    this.notes = null;
+  /**
+   * Either parses the current "[x of y] Compiling SomeFile.hs" line and returns
+   * true, or consumes no input and returns false.
+   */
+  private boolean compiling() throws IOException {
+    Matcher matcher = compilingPattern.matcher( line );
+    if( !matcher.matches() ) {
+      return false;
+    }
+    int number, total;
+    String fileName;
+    if( matcher.groupCount() == 4 ) {
+      number = Integer.parseInt( matcher.group( 2 ) );
+      total = Integer.parseInt( matcher.group( 3 ) );
+      fileName = matcher.group( 4 );
+    } else {
+      // just guessing...
+      number = 1;
+      total = 1;
+      fileName = matcher.group( 1 );
+    }
+    listener.compiling( fileName, number, total );
+    nextLine();
+    return true;
   }
 
-  private List<Note> parse() {
-    if( notes == null ) {
-      notes = new ArrayList<Note>();
-      lines = output.split( "\\n" ); //$NON-NLS-1$
-      numLines = lines.length;
-      curLine = curCol = 0;
-      ignoreLine( "Chasing modules from: " ); //$NON-NLS-1$
-      ignoreStuff();
-      Note note;
-      do {
-        try {
-          note = parseMessage();
-        } catch( IndexOutOfBoundsException ex ) {
-          // give up
-          break;
-        }
-        if( note != null ) {
-          notes.add( note );
-        }
-      } while( note != null );
-      ignoreLine( "Linking " ); //$NON-NLS-1$
+  /**
+   * Either parses the current "Skipping SomeFile.hs" line and returns true, or
+   * consumes no input and returns false.
+   */
+  private boolean skipping() throws IOException {
+    if( !line.startsWith( "Skipping " ) ) { //$NON-NLS-1$
+      return false;
     }
-    return notes;
+    nextLine();
+    return true;
   }
 
-  private Note parseMessage() {
-    skipWhitespace();
-    int fileNameEnd = curLine().indexOf( ':', curCol );
-    String fileName = curLine().substring( curCol, fileNameEnd );
-
-    curCol = fileNameEnd + 1;
-    Location location = parenthesizedLoc( fileName );
-    if (location == null) {
-      location = sepLocs( fileName );
+  /**
+   * Either parses a compiler message or warning from the current line and
+   * returns true, or consumes no input and returns false.
+   */
+  private boolean ghcMessage() throws IOException {
+    pos = line.indexOf( ':' );
+    if( pos < 0 ) {
+      return false;
     }
+    String fileName = line.substring( 0, pos );
+    ++pos; // skip the colon
+
+    Location location = location(fileName);
     if (location == null) {
-      return null;
+      return false;
     }
+    nextLine();
 
-    nextCol();
-    skipWhitespace();
-
-    String message = curLine().substring( curCol ).trim();
-    boolean isWarning = message.startsWith( "Warning:" ); //$NON-NLS-1$
-    if( isWarning ) {
+    String message = line.trim();
+    Note.Kind kind = message.startsWith( "Warning:" ) ? Note.Kind.WARNING : Note.Kind.ERROR; //$NON-NLS-1$
+    if ( kind == Note.Kind.WARNING ) {
       message = message.substring( 8 ).trim();
     }
+    nextLine();
 
-    return new Note( isWarning ? Note.Kind.WARNING : Note.Kind.ERROR, location,
-        message );
+    // Lines starting with four or more spaces form additional info
+    StringBuffer additionalInfo = new StringBuffer();
+    boolean first = true;
+    while (!eof() && line.startsWith( "    " )) { //$NON-NLS-1$
+      if (!first) {
+        additionalInfo.append( '\n' );
+      }
+      first = false;
+      additionalInfo.append( line );
+      nextLine();
+    }
+
+    Note note = new Note( kind, location, message, additionalInfo.toString() );
+    listener.message( note );
+    return true;
   }
 
   /**
-   * (12,5)-(13,20)
+   * Returns the location represented by the start of the given string.
+   * Returns null if it could not be parsed.
+   */
+  private Location location(final String fileName) {
+    Location location = parenthesizedLoc( fileName );
+    if (location != null) {
+      return location;
+    }
+    location = sepLocs( fileName );
+    if (location != null) {
+      return location;
+    }
+    return null;
+  }
+
+  /**
+   * Parses a location of the form (12,5)-(13,20) and returns it.
+   * Assumes that {@link #pos} is valid.
+   * If parsing fails, returns null and leaves {@link #pos} alone.
    */
   private Location parenthesizedLoc( final String fileName ) {
-    Matcher matcher = parenthesizedLocPat.matcher( curLine().substring( curCol ) );
+    Matcher matcher = parenthesizedLocPattern.matcher( line.substring( pos ) );
     if (matcher.lookingAt()) {
-      curCol += matcher.end();
-      return new Location( fileName, Integer.parseInt( matcher
-          .group( 1 ) ) - 1, Integer.parseInt( matcher.group( 2 ) ), Integer
-          .parseInt( matcher.group( 3 ) ) - 1, Integer.parseInt( matcher.group( 4 ) ) );
+      pos += matcher.end();
+      int startLine = Integer.parseInt( matcher.group( 1 ) ) - 1;
+      int startCol = Integer.parseInt( matcher.group( 2 ) );
+      int endLine = Integer.parseInt( matcher.group( 3 ) ) - 1;
+      int endCol = Integer.parseInt( matcher.group( 4 ) );
+      return new Location( fileName, startLine, startCol, endLine, endCol );
     }
     return null;
   }
 
   /**
-   * 12:5 or 12:5-20
+   * Parses a location of the form 12:5 or 12:5-20 and returns it.
+   * Assumes that {@link #pos} is valid.
+   * If parsing fails, returns null and leaves {@link #pos} alone.
    */
   private Location sepLocs( final String fileName ) {
-    Matcher matcher = sepLocsPat.matcher( curLine().substring( curCol ) );
+    Matcher matcher = sepLocsPattern.matcher( line.substring( pos ) );
     if (matcher.lookingAt()) {
-      curCol += matcher.end();
-    }
-    if( matcher.groupCount() == 2 ) {
-      // 12:5
-      return new Location( fileName,
-          Integer.parseInt( matcher.group( 1 ) ) - 1, Integer.parseInt( matcher
-              .group( 2 ) ), Integer.parseInt( matcher.group( 1 ) ) - 1, Integer
-              .parseInt( matcher.group( 2 ) ) );
-    } else if (matcher.groupCount() == 4 ) {
-      // 12:5-20
-      return new Location( fileName,
-          Integer.parseInt( matcher.group( 1 ) ) - 1, Integer.parseInt( matcher
-              .group( 2 ) ), Integer.parseInt( matcher.group( 1 ) ) - 1, Integer
-              .parseInt( matcher.group( 4 ) ) );
+      pos += matcher.end();
+      if( matcher.groupCount() == 2 ) {
+        // 12:5
+        int line = Integer.parseInt( matcher.group( 1 ) ) - 1;
+        int col = Integer.parseInt( matcher.group( 2 ) );
+        return new Location( fileName, line, col, line, col );
+      } else if (matcher.groupCount() == 4 ) {
+        // 12:5-20
+        int line = Integer.parseInt( matcher.group( 1 ) ) - 1;
+        int startCol = Integer.parseInt( matcher.group( 2 ) );
+        int endCol = Integer.parseInt( matcher.group( 4 ) );
+        return new Location( fileName, line, startCol, line, endCol );
+      }
     }
     return null;
   }
 
-  private void skipWhitespace() {
-    while( !eof() && " \t\r\n".indexOf( curChar() ) >= 0 ) { //$NON-NLS-1$
-      nextCol();
-    }
-  }
+  // //////////////////
+  // parsing helpers
 
-  private void nextCol() {
-    ++curCol;
-    if (curCol >= numCols) {
-      ++curLine;
-      curCol = 0;
-      numCols = (eof() ? 0 : curLine().length());
-    }
-  }
-
-  private String curLine() {
-    return lines[curLine];
-  }
-
-  private char curChar() {
-    if (curCol >= numCols) {
-      return '\n';
-    }
-    return curLine().charAt( curCol );
+  private void nextLine() throws IOException {
+    line = reader.readLine();
+    pos = 0;
   }
 
   private boolean eof() {
-    return curLine >= numLines;
-  }
-
-  private void ignoreLine( final String start ) {
-    // assumes that we're at the beginning of the line
-    while( !eof() && lines[ curLine ].startsWith( start ) ) {
-      ++curLine;
-    }
-    curCol = 0;
-  }
-
-  private void ignoreStuff() {
-    // assumes that we're at the beginning of the line
-    while( !eof()
-        && ( lines[ curLine ].startsWith( "Compiling " ) || //$NON-NLS-1$
-            stripCounter( lines[ curLine ] ).startsWith( " Compiling " ) || //$NON-NLS-1$
-        lines[ curLine ].startsWith( "Skipping " ) ) ) { //$NON-NLS-1$
-      ++curLine;
-    }
-    curCol = 0;
-  }
-
-  private String stripCounter( final String line ) {
-    Matcher matcher = counterPat.matcher( line );
-    if( matcher.lookingAt() ) {
-      return line.substring( matcher.end() );
-    }
-    return line;
+    return line == null;
   }
 
 }
