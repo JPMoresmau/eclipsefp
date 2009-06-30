@@ -50,7 +50,6 @@ abstract class Visitor {
 
   void compileFile( final IFile file ) {
     IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
-    deleteMarkers( file );
     hsProject.compile( file );
   }
 

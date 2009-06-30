@@ -14,7 +14,8 @@ package net.sf.eclipsefp.haskell.ui.console;
 
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -22,33 +23,31 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 public class ConsoleCompilingReporter implements ICompilerListener {
 
-	private OutputStreamWriter fOutputWriter;
 	private IOConsole fConsole;
 	private final IConsoleCleaner fCleaner;
 
 	public ConsoleCompilingReporter(final IConsoleCleaner cleaner) {
 		fCleaner = cleaner;
-		createIOStream();
+		createIOConsole();
 	}
 
-	private void createIOStream() {
+	private void createIOConsole() {
 		IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
 		fConsole = new IOConsole("GHC Compiler Output", null);
 		mgr.addConsoles(new IConsole[] {fConsole});
-		
-		IOConsoleOutputStream outputStream = fConsole.newOutputStream();
-		outputStream.setColor(new Color(HaskellUIPlugin.getStandardDisplay(), 0, 0, 255));
-		
-		fOutputWriter = new OutputStreamWriter(outputStream);
 	}
 
-	public Writer getOutputWriter() {
-		return fOutputWriter;
+	public Writer createOutputWriter() {
+    final IOConsoleOutputStream outputStream = fConsole.newOutputStream();
+    HaskellUIPlugin.getStandardDisplay().syncExec( new Runnable() {
+      public void run() {
+        outputStream.setColor(new Color(HaskellUIPlugin.getStandardDisplay(), 0, 0, 255));
+      }
+    });
+    Writer outputWriter = new OutputStreamWriter(outputStream);
+    return outputWriter;
 	}
 
 	public void startingCompilation() {

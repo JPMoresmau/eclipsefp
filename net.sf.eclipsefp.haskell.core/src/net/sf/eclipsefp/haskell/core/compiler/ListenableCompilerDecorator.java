@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 public class ListenableCompilerDecorator implements IHaskellCompiler {
 
 	private final IHaskellCompiler fUnderlyingCompiler;
-	private final MultiplexedWriter fOutWriter = new MultiplexedWriter();
 	private final List<ICompilerListener> fListeners =
 		new ArrayList<ICompilerListener>();
 
@@ -31,12 +30,10 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 
 	public void addListener(final ICompilerListener listener) {
 		fListeners.add(listener);
-		fOutWriter.addOutput(listener.getOutputWriter());
 	}
 
 	public void removeListener(final ICompilerListener listener) {
 		fListeners.remove(listener);
-		fOutWriter.removeOutput(listener.getOutputWriter());
 	}
 
 	public void compile(final IFile file, final Writer outputWriter) {
@@ -44,9 +41,11 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 	}
 
 	public void compile(final IFile file) {
-		for (ICompilerListener listener : fListeners) {
+	  MultiplexedWriter outWriter = new MultiplexedWriter();
+    for (ICompilerListener listener : fListeners) {
+      outWriter.addOutput( listener.createOutputWriter() );
 			listener.startingCompilation();
 		}
-		fUnderlyingCompiler.compile(file, fOutWriter);
+		fUnderlyingCompiler.compile(file, outWriter);
 	}
 }

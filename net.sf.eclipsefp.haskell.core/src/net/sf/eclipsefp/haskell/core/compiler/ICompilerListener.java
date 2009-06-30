@@ -4,7 +4,7 @@ import java.io.Writer;
 
 public interface ICompilerListener {
 
-	Writer getOutputWriter();
+	Writer createOutputWriter();
 
 	void startingCompilation();
 

@@ -24,7 +24,7 @@ public class CompilerTestUtil extends Assert {
 	public static ICompilerListener createListener() {
 		ICompilerListener listener = createMock(ICompilerListener.class);
 		final StringWriter out = new StringWriter();
-		expect(listener.getOutputWriter()).andReturn(out).anyTimes();
+		expect(listener.createOutputWriter()).andReturn(out).anyTimes();
 		listener.startingCompilation();
 		expectLastCall().anyTimes();
 		replay(listener);
@@ -33,7 +33,7 @@ public class CompilerTestUtil extends Assert {
 
 	public static void assertReceivedExpectedOutput(final ICompilerListener listener) {
 		assertEquals(StubCompiler.EXPECTED_STANDARD_OUTPUT + StubCompiler.EXPECTED_STANDARD_ERROR,
-				     listener.getOutputWriter().toString());
+				     listener.createOutputWriter().toString());
 	}
 
 }

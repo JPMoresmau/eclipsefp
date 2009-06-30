@@ -2,8 +2,9 @@
 package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
-import net.sf.eclipsefp.haskell.core.internal.util.StreamMultiplexer;
+import net.sf.eclipsefp.haskell.core.internal.util.StreamRedirect;
 
 
 /** <p>provides helping functionality to query an external tool for
@@ -11,6 +12,8 @@ import net.sf.eclipsefp.haskell.core.internal.util.StreamMultiplexer;
   *
   * <p>A typical use would be to call a command line tool and ask for its
   * version number, like 'java -version'.</p>
+  *
+  * TODO: refactor this to use ProcessRunner (and probably refactor ProcessRunner as well)
   *
   * @author Leif Frenzel
   */
@@ -26,8 +29,8 @@ public class QueryUtil {
     try {
       StringWriter output = new StringWriter();
       Process proc = Runtime.getRuntime().exec( cmdLine );
-      Thread outRedirect = new StreamMultiplexer("output_redirect", //$NON-NLS-1$
-                                                 proc.getInputStream(),
+      Thread outRedirect = new StreamRedirect("output_redirect", //$NON-NLS-1$
+                                                 new InputStreamReader(proc.getInputStream()),
                                                  output );
       outRedirect.start();
       proc.waitFor(); // wait for command to finish
@@ -51,11 +54,11 @@ public class QueryUtil {
     StringWriter output = new StringWriter();
     StringWriter errors = new StringWriter();
     Process proc = Runtime.getRuntime().exec( cmdLine );
-    Thread outRedirect = new StreamMultiplexer( "output_redirect", //$NON-NLS-1$
-                                                proc.getInputStream(),
+    Thread outRedirect = new StreamRedirect( "output_redirect", //$NON-NLS-1$
+        new InputStreamReader(proc.getInputStream()),
                                                 output );
-    Thread errRedirect = new StreamMultiplexer( "error_redirect", //$NON-NLS-1$
-                                                proc.getInputStream(),
+    Thread errRedirect = new StreamRedirect( "error_redirect", //$NON-NLS-1$
+        new InputStreamReader(proc.getErrorStream()),
                                                 errors );
     outRedirect.start();
     errRedirect.start();

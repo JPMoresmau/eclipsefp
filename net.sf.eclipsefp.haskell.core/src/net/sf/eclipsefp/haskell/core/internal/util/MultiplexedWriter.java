@@ -20,11 +20,12 @@ import java.util.List;
 public class MultiplexedWriter extends Writer {
 
 	private final List<Writer> fOutputs = new ArrayList<Writer>();
+  private final List<Writer> fClosedOutputs = new ArrayList<Writer>();
 
 	public MultiplexedWriter(final Writer... outputs) {
 		fOutputs.addAll(Arrays.asList(outputs));
 	}
-	
+
 	public void addOutput(final Writer out) {
 		fOutputs.add(out);
 	}
@@ -35,7 +36,7 @@ public class MultiplexedWriter extends Writer {
 			try {
 				output.close();
 			} catch (IOException ex) {
-				//ignore error for this output and procede to next
+				// ignore error for this output and proceed to next
 			}
 		}
 	}
@@ -46,18 +47,7 @@ public class MultiplexedWriter extends Writer {
 			try {
 				output.flush();
 			} catch (IOException ex) {
-				//ignore error for this output and procede to next
-			}
-		}
-	}
-
-	@Override
-	public void write(final char[] cbuf, final int off, final int len) {
-		for (Writer output : fOutputs) {
-			try {
-				output.write(cbuf, off, len);
-			} catch (IOException ex) {
-				//ignore error for this output and procede to next
+				// ignore error for this output and proceed to next
 			}
 		}
 	}
@@ -65,5 +55,76 @@ public class MultiplexedWriter extends Writer {
 	public void removeOutput(final Writer out) {
 		fOutputs.remove(out);
 	}
+
+	private void outputClosed(final Writer output) {
+	  fClosedOutputs.add(output);
+	}
+
+	private void removeClosedOutputs() {
+	  for (Writer output : fClosedOutputs) {
+	    fOutputs.remove( output );
+	  }
+	  fClosedOutputs.clear();
+	}
+
+  @Override
+  public void write( final char[] cbuf, final int off, final int len ) {
+    for (Writer output : fOutputs) {
+      try {
+        output.write(cbuf, off, len);
+      } catch (IOException ex) {
+        outputClosed(output);
+      }
+    }
+    removeClosedOutputs();
+  }
+
+  @Override
+  public void write( final char[] cbuf ) {
+    for (Writer output : fOutputs) {
+      try {
+        output.write(cbuf);
+      } catch (IOException ex) {
+        outputClosed(output);
+      }
+    }
+    removeClosedOutputs();
+  }
+
+  @Override
+  public void write( final int c ) {
+    for (Writer output : fOutputs) {
+      try {
+        output.write(c);
+      } catch (IOException ex) {
+        outputClosed(output);
+      }
+    }
+    removeClosedOutputs();
+  }
+
+  @Override
+  public void write( final String str, final int off, final int len ) {
+    for (Writer output : fOutputs) {
+      try {
+        output.write(str, off, len);
+      } catch (IOException ex) {
+        outputClosed(output);
+      }
+    }
+    removeClosedOutputs();
+  }
+
+  @Override
+  public void write( final String str ) {
+    for (Writer output : fOutputs) {
+      try {
+        output.write(str);
+      } catch (IOException ex) {
+        outputClosed(output);
+      }
+    }
+    removeClosedOutputs();
+  }
 
 }

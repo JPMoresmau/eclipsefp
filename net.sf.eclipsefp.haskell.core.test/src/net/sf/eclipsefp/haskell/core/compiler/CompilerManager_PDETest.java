@@ -42,7 +42,7 @@ public class CompilerManager_PDETest extends TestCase {
 
 		manager.getCompiler().compile((IFile) null);
 
-		assertEquals(0, listener.getOutputWriter().toString().length());
+		assertEquals(0, listener.createOutputWriter().toString().length());
 	}
 
 }

@@ -14,7 +14,7 @@ public interface IHaskellCompiler {
 
 	/**
 	 * Compiles the specified file redirecting any compiler output to the given
-	 * streams.
+	 * writer.
 	 */
     void compile(IFile file, Writer outputWriter);
 

@@ -2,11 +2,10 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 
@@ -15,6 +14,8 @@ import net.sf.eclipsefp.haskell.scion.types.Note;
  * in parsed form to an {@link IGhcOutputListener}.
  *
  * For parsing, the Parsec "grammar" from GHCOutputParser.hs is used.
+ *
+ * TODO this should be an {@link ICompilerListener}, I think.
  *
  * @author Thomas ten Cate
  */
@@ -32,10 +33,8 @@ public class GhcOutputParser {
   private static Pattern sepLocsPattern = Pattern
       .compile( "^(\\d+):(\\d+)(-(\\d+))?" ); //$NON-NLS-1$
 
-  public GhcOutputParser( final InputStream inputStream,
-      final IGhcOutputListener listener ) {
-    this.reader = new BufferedReader( new InputStreamReader( inputStream,
-        Charset.forName( "UTF-8" ) ) ); //$NON-NLS-1$
+  public GhcOutputParser( final Reader reader, final IGhcOutputListener listener ) {
+    this.reader = new BufferedReader( reader );
     this.listener = listener;
   }
 
@@ -110,15 +109,15 @@ public class GhcOutputParser {
     String fileName = line.substring( 0, pos );
     ++pos; // skip the colon
 
-    Location location = location(fileName);
-    if (location == null) {
+    Location location = location( fileName );
+    if( location == null ) {
       return false;
     }
     nextLine();
 
     String message = line.trim();
     Note.Kind kind = message.startsWith( "Warning:" ) ? Note.Kind.WARNING : Note.Kind.ERROR; //$NON-NLS-1$
-    if ( kind == Note.Kind.WARNING ) {
+    if( kind == Note.Kind.WARNING ) {
       message = message.substring( 8 ).trim();
     }
     nextLine();
@@ -126,8 +125,8 @@ public class GhcOutputParser {
     // Lines starting with four or more spaces form additional info
     StringBuffer additionalInfo = new StringBuffer();
     boolean first = true;
-    while (!eof() && line.startsWith( "    " )) { //$NON-NLS-1$
-      if (!first) {
+    while( !eof() && line.startsWith( "    " ) ) { //$NON-NLS-1$
+      if( !first ) {
         additionalInfo.append( '\n' );
       }
       first = false;
@@ -141,59 +140,71 @@ public class GhcOutputParser {
   }
 
   /**
-   * Returns the location represented by the start of the given string.
-   * Returns null if it could not be parsed.
+   * Returns the location represented by the start of the given string. Returns
+   * null if it could not be parsed.
    */
-  private Location location(final String fileName) {
+  private Location location( final String fileName ) {
     Location location = parenthesizedLoc( fileName );
-    if (location != null) {
+    if( location != null ) {
       return location;
     }
     location = sepLocs( fileName );
-    if (location != null) {
+    if( location != null ) {
       return location;
     }
     return null;
   }
 
   /**
-   * Parses a location of the form (12,5)-(13,20) and returns it.
-   * Assumes that {@link #pos} is valid.
-   * If parsing fails, returns null and leaves {@link #pos} alone.
+   * Parses a location of the form (12,5)-(13,20) and returns it. Assumes that
+   * {@link #pos} is valid. If parsing fails, returns null and leaves
+   * {@link #pos} alone.
    */
   private Location parenthesizedLoc( final String fileName ) {
     Matcher matcher = parenthesizedLocPattern.matcher( line.substring( pos ) );
-    if (matcher.lookingAt()) {
+    if( matcher.lookingAt() ) {
       pos += matcher.end();
-      int startLine = Integer.parseInt( matcher.group( 1 ) ) - 1;
-      int startCol = Integer.parseInt( matcher.group( 2 ) );
-      int endLine = Integer.parseInt( matcher.group( 3 ) ) - 1;
-      int endCol = Integer.parseInt( matcher.group( 4 ) );
-      return new Location( fileName, startLine, startCol, endLine, endCol );
+      try {
+        int startLine = Integer.parseInt( matcher.group( 1 ) ) - 1;
+        int startCol = Integer.parseInt( matcher.group( 2 ) );
+        int endLine = Integer.parseInt( matcher.group( 3 ) ) - 1;
+        int endCol = Integer.parseInt( matcher.group( 4 ) );
+        return new Location( fileName, startLine, startCol, endLine, endCol );
+      } catch( NumberFormatException ex ) {
+        return null;
+      }
     }
     return null;
   }
 
   /**
-   * Parses a location of the form 12:5 or 12:5-20 and returns it.
-   * Assumes that {@link #pos} is valid.
-   * If parsing fails, returns null and leaves {@link #pos} alone.
+   * Parses a location of the form 12:5 or 12:5-20 and returns it. Assumes that
+   * {@link #pos} is valid. If parsing fails, returns null and leaves
+   * {@link #pos} alone.
    */
   private Location sepLocs( final String fileName ) {
     Matcher matcher = sepLocsPattern.matcher( line.substring( pos ) );
-    if (matcher.lookingAt()) {
+    if( matcher.lookingAt() ) {
       pos += matcher.end();
       if( matcher.groupCount() == 2 ) {
         // 12:5
-        int line = Integer.parseInt( matcher.group( 1 ) ) - 1;
-        int col = Integer.parseInt( matcher.group( 2 ) );
-        return new Location( fileName, line, col, line, col );
-      } else if (matcher.groupCount() == 4 ) {
+        try {
+          int line = Integer.parseInt( matcher.group( 1 ) ) - 1;
+          int col = Integer.parseInt( matcher.group( 2 ) );
+          return new Location( fileName, line, col, line, col );
+        } catch( NumberFormatException ex ) {
+          return null;
+        }
+      } else if( matcher.groupCount() == 4 ) {
         // 12:5-20
-        int line = Integer.parseInt( matcher.group( 1 ) ) - 1;
-        int startCol = Integer.parseInt( matcher.group( 2 ) );
-        int endCol = Integer.parseInt( matcher.group( 4 ) );
-        return new Location( fileName, line, startCol, line, endCol );
+        try {
+          int line = Integer.parseInt( matcher.group( 1 ) ) - 1;
+          int startCol = Integer.parseInt( matcher.group( 2 ) );
+          int endCol = Integer.parseInt( matcher.group( 4 ) );
+          return new Location( fileName, line, startCol, line, endCol );
+        } catch( NumberFormatException ex ) {
+          return null;
+        }
       }
     }
     return null;

@@ -9,7 +9,7 @@
  * Contributors:
  *     Thiago Arrais - Initial API and implementation
  * *****************************************************************************/
-package net.sf.eclipsefp.haskell.ghccompiler.test.core;
+package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

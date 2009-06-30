@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.core.halamo.Scope_Test;
 import net.sf.eclipsefp.haskell.core.internal.project.provisionary.MarkerDesc_Test;
 import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter_Test;
 import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList_Test;
+import net.sf.eclipsefp.haskell.core.util.ProcessRunner_Test;
 
 public class AllTests_Suite {
 
@@ -22,6 +23,7 @@ public class AllTests_Suite {
 		suite.addTestSuite( MarkerDesc_Test.class );
 		suite.addTestSuite( MultiplexedWriter_Test.class );
 		suite.addTestSuite( Scope_Test.class );
+		suite.addTestSuite( ProcessRunner_Test.class );
 		return suite;
 	}
 

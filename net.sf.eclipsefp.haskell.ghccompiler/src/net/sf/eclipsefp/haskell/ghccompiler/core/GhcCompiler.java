@@ -3,14 +3,19 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
+import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.IProcessRunner;
+import net.sf.eclipsefp.haskell.core.util.ProcessRunner;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
@@ -32,10 +37,15 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 
   private static boolean trace = GhcCompilerPlugin.isTracing();
 
+  private final IProcessRunner fProcessRunner;
   private final CompilerParams compilerParams = new CompilerParams();
 
   public GhcCompiler() {
-    // do nothing
+    this.fProcessRunner = new ProcessRunner();
+  }
+
+  public GhcCompiler(final IProcessRunner processRunner) {
+    this.fProcessRunner = processRunner;
   }
 
   @Override
@@ -55,18 +65,25 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     if( workDir == null ) {
       throw new IllegalStateException();
     }
-    ProcessBuilder builder = new ProcessBuilder( cmdLine );
-    builder.directory( workDir );
-    builder.redirectErrorStream( true );
-    Process process;
+
+    PipedWriter pipedWriter = new PipedWriter();
+    PipedReader pipedReader;
     try {
-      process = builder.start();
+      pipedReader = new PipedReader(pipedWriter);
+    } catch( IOException ex ) {
+      GhcCompilerPlugin.log( UITexts.error_processOutput, ex );
+      return;
+    }
+
+    try {
+      fProcessRunner.executeNonblocking( workDir, new MultiplexedWriter( outputWriter, pipedWriter ), cmdLine );
     } catch( IOException ex ) {
       GhcCompilerPlugin.log( UITexts.error_launchGhc, ex );
       return;
     }
+
     GhcOutputProcessor outputProcessor = new GhcOutputProcessor( workDir );
-    GhcOutputParser outputParser = new GhcOutputParser( process.getInputStream(), outputProcessor );
+    GhcOutputParser outputParser = new GhcOutputParser( pipedReader, outputProcessor );
     try {
       outputParser.parse();
     } catch( IOException ex ) {
