@@ -113,14 +113,20 @@ public class GhcOutputParser {
     if( location == null ) {
       return false;
     }
+    ++pos; // skip the colon
+
+    String message = line.substring( pos ).trim();
+    if (message.length() == 0) {
+      // sometimes the message is on its own line
+      nextLine();
+      message = line.trim();
+    }
     nextLine();
 
-    String message = line.trim();
     Note.Kind kind = message.startsWith( "Warning:" ) ? Note.Kind.WARNING : Note.Kind.ERROR; //$NON-NLS-1$
     if( kind == Note.Kind.WARNING ) {
       message = message.substring( 8 ).trim();
     }
-    nextLine();
 
     // Lines starting with four or more spaces form additional info
     StringBuffer additionalInfo = new StringBuffer();
@@ -186,7 +192,7 @@ public class GhcOutputParser {
     Matcher matcher = sepLocsPattern.matcher( line.substring( pos ) );
     if( matcher.lookingAt() ) {
       pos += matcher.end();
-      if( matcher.groupCount() == 2 ) {
+      if( matcher.group(4) == null ) {
         // 12:5
         try {
           int line = Integer.parseInt( matcher.group( 1 ) ) - 1;

@@ -70,7 +70,7 @@ public class Note {
 	        marker.setAttribute(IMarker.LINE_NUMBER, location.getStartLine() + 1);
 	        marker.setAttribute(IMarker.CHAR_START, location.getStartColumn());
 	        marker.setAttribute(IMarker.CHAR_END, location.getEndColumn());
-	        marker.setAttribute(IMarker.MESSAGE, message);
+	        marker.setAttribute(IMarker.MESSAGE, message + (additionalInfo != null ? "\n" + additionalInfo : ""));
 		}
 	}
 	
