@@ -21,7 +21,8 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.debug.ui,
  org.eclipse.ui.forms,
  org.apache.ant,
- net.sf.eclipsefp.haskell.scion.client;bundle-version="0.13.0"
+ net.sf.eclipsefp.haskell.scion.client;bundle-version="0.13.0",
+ org.eclipse.core.expressions;bundle-version="3.4.100"
 Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
 Export-Package: net.sf.eclipsefp.common.ui.dialog,
