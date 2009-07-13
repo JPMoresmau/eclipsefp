@@ -19,15 +19,22 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 class HaskellTextHover extends DefaultTextHover {
 
   private final HaskellEditor editor;
 
+  private static final String ERROR_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.error";
+  private static final String WARNING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.warning";
+
+  private final DefaultMarkerAnnotationAccess fMarkerAnnotationAccess;
+
   HaskellTextHover( final HaskellEditor editor,
                     final ISourceViewer sourceViewer ) {
     super( sourceViewer );
     this.editor = editor;
+    fMarkerAnnotationAccess = new DefaultMarkerAnnotationAccess();
   }
 
   @Override
@@ -49,9 +56,13 @@ class HaskellTextHover extends DefaultTextHover {
       Iterator<Annotation> i = annotationModel.getAnnotationIterator();
       while (i.hasNext()) {
         Annotation a = i.next();
-        Position p = annotationModel.getPosition( a );
-        if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
-          return a.getText();
+        String type = a.getType();
+        if (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE ) ||
+            fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )) {
+          Position p = annotationModel.getPosition( a );
+          if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
+            return a.getText();
+          }
         }
       }
     }
