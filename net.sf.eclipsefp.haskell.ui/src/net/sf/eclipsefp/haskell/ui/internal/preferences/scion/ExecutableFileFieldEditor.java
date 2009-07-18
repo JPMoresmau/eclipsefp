@@ -1,10 +1,8 @@
-package net.sf.eclipsefp.haskell.scion.client.preferences;
+package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
-
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.util.FileUtil;
-
+import net.sf.eclipsefp.haskell.ui.internal.util.FileUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -17,15 +15,15 @@ import org.eclipse.swt.widgets.FileDialog;
  * A specialized {@link StringFieldEditor} that only allows executable files to be entered.
  * On Unix systems, this means that the file must be executable for the current user.
  * On Windows systems, it must have one of the common file extensions (.exe, .bat, ...).
- * 
+ *
  * Ideally, this would inherit from {@link FileFieldEditor}, but that class was not written
  * with subclassing in mind. For example, it overrides {@link #checkState} with a version
  * that does not call {@link #doCheckState}, and it does not allow reading of its
- * <code>enforceAbsolute</code> setting. 
- * 
+ * <code>enforceAbsolute</code> setting.
+ *
  * If the empty string is allowed, this is interpreted as being an optional file entry.
  * In that case, the file must only exist and be executable in case the field is not empty.
- * 
+ *
  * @author thomas
  */
 public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
@@ -43,38 +41,39 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
     private boolean enforceAbsolute = false;
 
     /**
-     * Creates a new file field editor 
+     * Creates a new file field editor
      */
     protected ExecutableFileFieldEditor() {
+      // nothing to do
     }
 
     /**
      * Creates a file field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
      */
-    public ExecutableFileFieldEditor(String name, String labelText, Composite parent) {
+    public ExecutableFileFieldEditor(final String name, final String labelText, final Composite parent) {
         this(name, labelText, false, parent);
     }
-    
+
     /**
      * Creates a file field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param enforceAbsolute <code>true</code> if the file path
      *  must be absolute, and <code>false</code> otherwise
      * @param parent the parent of the field editor's control
      */
-    public ExecutableFileFieldEditor(String name, String labelText, boolean enforceAbsolute, Composite parent) {
+    public ExecutableFileFieldEditor(final String name, final String labelText, final boolean enforceAbsolute, final Composite parent) {
         this(name, labelText, enforceAbsolute, VALIDATE_ON_FOCUS_LOST, parent);
     }
-    
+
     /**
      * Creates a file field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param enforceAbsolute <code>true</code> if the file path
@@ -87,11 +86,11 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
      * @see StringButtonFieldEditor#VALIDATE_ON_KEY_STROKE
      * @see StringButtonFieldEditor#VALIDATE_ON_FOCUS_LOST
      */
-    public ExecutableFileFieldEditor(String name, String labelText,
-            boolean enforceAbsolute, int validationStrategy, Composite parent) {
+    public ExecutableFileFieldEditor(final String name, final String labelText,
+            final boolean enforceAbsolute, final int validationStrategy, final Composite parent) {
         init(name, labelText);
         this.enforceAbsolute = enforceAbsolute;
-        loadErrorMessage("ExecutableFileFieldEditor.errorDoesNotExist");//$NON-NLS-1$
+        setErrorMessage(UITexts.executableFileFieldEditor_errorDoesNotExist);
         setChangeButtonText(JFaceResources.getString("openBrowse"));//$NON-NLS-1$
         setValidateStrategy(validationStrategy);
         createControl(parent);
@@ -146,7 +145,7 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
      * @return File The File the user selected or <code>null</code> if they
      * do not.
      */
-    private File getFile(File startingDirectory) {
+    private File getFile(final File startingDirectory) {
 
         FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.SHEET);
         if (startingDirectory != null) {
@@ -169,13 +168,13 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
     /**
      * Sets this file field editor's file extension filter.
      *
-     * @param extensions a list of file extension, or <code>null</code> 
+     * @param extensions a list of file extension, or <code>null</code>
      * to set the filter to the system's default value
      */
-    public void setFileExtensions(String[] extensions) {
+    public void setFileExtensions(final String[] extensions) {
         this.extensions = extensions;
     }
-    
+
 	/**
 	 * Returns true if the current value is an existing file that is executable.
 	 * If this cannot be determined with certainty, true is returned.
@@ -184,53 +183,49 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
 	@Override
 	protected boolean doCheckState() {
 		String fileName = getTextControl().getText();
-		if (isEmptyStringAllowed() && fileName.length() == 0)
-			return true;
+		if (isEmptyStringAllowed() && fileName.length() == 0) {
+      return true;
+    }
 		File file = new File(fileName);
 		return checkFileExists(file) && checkFileAbsolute(file) && checkFileExecutable(file);
 	}
-	
+
 	/**
 	 * Checks whether the file exists and is a normal file.
 	 * If not, returns false and sets the error message.
 	 */
-	protected boolean checkFileExists(File file) {
+	protected boolean checkFileExists(final File file) {
         if (!file.isFile()) {
-        	loadErrorMessage("ExecutableFileFieldEditor.errorDoesNotExist");
+        	setErrorMessage( UITexts.executableFileFieldEditor_errorDoesNotExist );
             return false;
 		}
-		return true;	
+		return true;
 	}
-	
+
 	/**
 	 * Checks wether the file path is absolute if that was requested.
 	 * If not, returns false and sets the error message.
 	 * Assumes that the file exists.
 	 */
-	protected boolean checkFileAbsolute(File file) {
+	protected boolean checkFileAbsolute(final File file) {
         if (enforceAbsolute && !file.isAbsolute()) {
-			loadErrorMessage("ExecutableFileFieldEditor.errorNotAbsolute");
+			setErrorMessage( UITexts.executableFileFieldEditor_errorNotAbsolute );
 			return false;
 		}
         return true;
 	}
-	
+
 	/**
 	 * Checks whether the file is executable.
 	 * If not, returns false and sets the error message.
 	 * Assumes that the file exists.
 	 */
-	protected boolean checkFileExecutable(File file) {
+	protected boolean checkFileExecutable(final File file) {
 		if (!FileUtil.isExecutable(file)) {
-			loadErrorMessage("ExecutableFileFieldEditor.errorNotExecutable");
+			setErrorMessage(UITexts.executableFileFieldEditor_errorNotExecutable);
 			return false;
 		}
 		return true;
 	}
-	
-	private void loadErrorMessage(String key) {
-		String message = ScionPlugin.getStringResource(key);
-		setErrorMessage(message);
-	}
-	
+
 }

@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.client.preferences;
+package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.resource.JFaceResources;

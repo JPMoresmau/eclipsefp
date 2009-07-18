@@ -1,7 +1,9 @@
-package net.sf.eclipsefp.haskell.scion.commands;
+package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +17,8 @@ public class LoadCommand extends ScionCommand {
 	private String fileName;
 	private CompilationResult compilationResult;
 
-	public LoadCommand(String fileName) {
+	public LoadCommand(ScionThreadManager manager, String fileName) {
+		super(manager, Job.BUILD);
 		this.fileName = fileName;
 	}
 	

@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.util;
+package net.sf.eclipsefp.haskell.scion.internal.util;
 
 public class ThreadUtil {
 

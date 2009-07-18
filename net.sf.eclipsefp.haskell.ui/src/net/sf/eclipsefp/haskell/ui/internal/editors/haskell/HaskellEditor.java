@@ -6,8 +6,6 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
-import net.sf.eclipsefp.haskell.scion.client.Scion;
-import net.sf.eclipsefp.haskell.scion.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
@@ -127,9 +125,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       addAction( mmSource, "comments", "Comment" );
       addAction( mmSource, "comments", "Uncomment" );
     }
-    // TODO
-    // menu.prependToGroup(ITextEditorActionConstants.GROUP_OPEN,
-    // openDefinitionAction);
   }
 
   @Override
@@ -146,11 +141,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         IActionDefinitionIds.COMMENT );
     createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX,
         IActionDefinitionIds.UNCOMMENT );
-
-    // "open definition" action TODO remove
-    // openDefinitionAction = new OpenDefinitionHandler(this);
-    // openDefinitionAction.setActionDefinitionId(IActionDefinitionIds.OPEN_DEFINITION);
-    // setAction("OpenDefinition", openDefinitionAction);
   }
 
   @Override
@@ -261,8 +251,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       IFile file = findFile();
       if( file != null ) {
         String fileName = file.getLocation().toOSString();
-        BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand( fileName );
-        Scion.asyncRunCommand( typecheckCommand );
+        HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(fileName);
       }
     } catch( Exception ex ) {
       // We should never let Scion errors prevent the file from being saved!
@@ -281,9 +270,23 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
+    // unload the previous file from Scion
+    IFile file = findFile();
+    if (file != null) {
+      String fileName = file.getLocation().toOSString();
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(fileName);
+    }
+
     super.doSetInput( input );
     if( outlinePage != null ) {
       outlinePage.setInput( input );
+    }
+
+    // load the new file into Scion
+    file = findFile();
+    if (file != null) {
+      String fileName = file.getLocation().toOSString();
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(fileName);
     }
   }
 

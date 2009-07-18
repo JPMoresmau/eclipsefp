@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.client;
+package net.sf.eclipsefp.haskell.scion.internal.client;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,9 +15,8 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.client.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.scion.commands.CommandStatus;
-import net.sf.eclipsefp.haskell.scion.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +50,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		TO_SERVER_PREFIX = "[scion_server] <<",
 		FROM_SERVER_PREFIX = "[scion_server] >>";
 
+	private String serverExecutable;
 	private Process process;
 	private BufferedReader serverStdOutReader;
 	
@@ -61,11 +61,11 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	private int port = -1; // negative if not yet captured from stdout
 	private volatile boolean stopped = false; // set to true if we are to stop at the soonest possible occasion
 	
-	private CommandQueue commandQueue;
+	private int nextSequenceNumber = 1;
 
-	public ScionClientThread(CommandQueue commandQueue) {
+	public ScionClientThread(String serverExecutable) {
 		super("Scion client thread");
-		this.commandQueue = commandQueue;
+		this.serverExecutable = serverExecutable;
 		setUncaughtExceptionHandler(this);
 	}
 	
@@ -83,32 +83,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 			startServerProcess();
 			capturePortNumber();
 			connectToServer();
-			startOutputSlurper();
-			
-			// Loop waiting for commands and running them
-			int nextSequenceNumber = 1;
-			while (!stopped) {
-				checkRunning();
-				
-				ScionCommand command = null;
-				Trace.trace(THREAD_PREFIX, "Waiting for commands");
-				try {
-					command = commandQueue.take(); // blocks until command is available
-				} catch (InterruptedException ex) {
-					// just continue
-				}
-				Trace.trace(THREAD_PREFIX, "Woken up");
-				
-				// If the command is already in a finished state (e.g. timeout),
-				// we are picking up where a previous server incarnation crashed.
-				// Don't bother to run the command again.
-				if (!stopped && !command.getStatus().isFinished()) {
-					command.setSequenceNumber(nextSequenceNumber);
-					++nextSequenceNumber;
-					syncRunCommand(command);
-				}
-			}
-			Trace.trace(THREAD_PREFIX, "Received stop notification");
+			slurpOutput();
 		} catch (Exception ex) {
 			Trace.trace(THREAD_PREFIX, ex);
 			String lastWords = lastWords();
@@ -130,7 +105,12 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		Trace.trace(THREAD_PREFIX, ex);
 	}
 	
-	// Server process handling ------------------------------------------------
+	public int makeSequenceNumber() {
+		return nextSequenceNumber++;
+	}
+	
+	////////////////////////////
+	// Server process handling
 
 	/**
 	 * Launches the external Scion server process.
@@ -142,7 +122,7 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
   		Trace.trace(THREAD_PREFIX, "Starting server");
   		
   		// Construct the command line
-		String executable = ScionPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.SCION_SERVER_EXECUTABLE);
+		String executable = serverExecutable;
 		List<String> command = new LinkedList<String>();
 		command.add(executable);
 		command.add("--autoport");
@@ -230,7 +210,8 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		return lastWords.toString();
 	}
 
-	// Server communication ---------------------------------------------------
+	/////////////////////////
+	// Server communication
 	
   	/**
   	 * Reads from the server process's stdout until the port number is printed,
@@ -260,16 +241,11 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 	 * Starts a thread that reads from the server's stdout (and stderr)
 	 * and sends its output to the tracer (if tracing).
 	 */
-	private void startOutputSlurper() {
-		new Thread() {
-			@Override
-			public void run() {
-				String line;
-				do {
-					line = readLineFromServer();
-				} while (line != null);
-			}
-		}.start();
+	private void slurpOutput() {
+		String line;
+		do {
+			line = readLineFromServer();
+		} while (!stopped && line != null);
 	}
 	
 	/**
@@ -326,42 +302,29 @@ public class ScionClientThread extends Thread implements UncaughtExceptionHandle
 		return socket;
 	}
 	
-	// Command handling -------------------------------------------------------
+	/////////////////////
+	// Command handling
 	
 	/**
 	 * Sends the command to the Scion server, and blocks waiting for it to return.
+	 * 
+	 * Note that this is being called from another thread
+	 * (in particular, some thread from the Eclipse job scheduler).
+	 * Even though the scheduler should ensure that only one command is running
+	 * at any time, we make it synchronized to be sure.
 	 */
-	private void syncRunCommand(ScionCommand command) throws IOException {
-		Socket socket = null;
-		try {
-			sendCommand(command, socketWriter);
-			command.setStatus(CommandStatus.RUNNING);
-			
-			// Receive the response
-			Reader reader = new InputStreamReader(socketInputStream);
-			JSONObject response = receiveResponse(reader);
-			command.processResponse(response);
-			command.setStatus(CommandStatus.SUCCESS);
-			Trace.trace(THREAD_PREFIX, "Command executed successfully");
-		} catch (IOException ex) {
-			command.setStatus(CommandStatus.FAILED);
-			throw ex;
-		} catch (ScionClientException ex) {
-			command.setStatus(CommandStatus.FAILED);
-		} finally {
-			// Always close the socket
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-					// ignore, we were closing anyway
-				}
-			}
-			// Wake up the sender of the command
-			synchronized (command) {
-				command.notifyAll();
-			}
-		}
+	public synchronized void syncRunCommand(ScionCommand command) throws IOException {
+		checkRunning();
+		
+		// Send the command
+		sendCommand(command, socketWriter);
+		
+		// Receive the response
+		Reader reader = new InputStreamReader(socketInputStream);
+		JSONObject response = receiveResponse(reader);
+		command.processResponse(response);
+		
+		Trace.trace(THREAD_PREFIX, "Command executed successfully");
 	}
 	
 	private void sendCommand(ScionCommand command, Writer out) throws IOException {

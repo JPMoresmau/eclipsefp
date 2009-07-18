@@ -2,12 +2,9 @@ package net.sf.eclipsefp.haskell.ui.handlers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import net.sf.eclipsefp.haskell.scion.client.Scion;
-import net.sf.eclipsefp.haskell.scion.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
@@ -41,14 +38,13 @@ public class OpenDefinitionHandler extends AbstractHandler {
 		IEditorPart editor = HandlerUtil.getActiveEditor(event);
 		if (editor instanceof HaskellEditor) {
 			HaskellEditor haskellEditor = (HaskellEditor)editor;
+			IFile file = haskellEditor.findFile();
 			ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 			if (selection instanceof TextSelection) {
 				TextSelection textSel = (TextSelection)selection;
 				String name = textSel.getText().trim(); // TODO make work on 0-length selections too
-				NameDefinitionsCommand command = new NameDefinitionsCommand(name);
-				Scion.syncRunCommand(command, 500);
-				if (command.isSuccessful() && command.isFound()) {
-					Location location = command.getFirstLocation();
+				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
+				if (location != null) {
 					try {
 						openInEditor(haskellEditor.getEditorSite().getPage(), location);
 					} catch (PartInitException ex) {

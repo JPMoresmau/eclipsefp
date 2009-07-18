@@ -18,4 +18,8 @@ public interface IPreferenceConstants {
 
   // Build console
   String CLEAR_BUILD_CONSOLE    = "CLEAR_BUILD_CONSOLE";
+
+  // Scion
+  String SCION_SERVER_EXECUTABLE = "SCION_SERVER_EXECUTABLE";
+
 }

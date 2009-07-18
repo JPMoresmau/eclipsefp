@@ -1,5 +1,8 @@
-package net.sf.eclipsefp.haskell.scion.commands;
+package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+
+import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,7 +10,8 @@ public class SetVerbosityCommand extends ScionCommand {
 
 	private int verbosity;
 	
-	public SetVerbosityCommand(int verbosity) {
+	public SetVerbosityCommand(ScionThreadManager manager, int verbosity) {
+		super(manager, Job.SHORT);
 		this.verbosity = verbosity;
 	}
 	

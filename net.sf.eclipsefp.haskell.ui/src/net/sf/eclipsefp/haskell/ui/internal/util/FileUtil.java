@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.util;
+package net.sf.eclipsefp.haskell.ui.internal.util;
 
 import java.io.File;
 import java.io.IOException;

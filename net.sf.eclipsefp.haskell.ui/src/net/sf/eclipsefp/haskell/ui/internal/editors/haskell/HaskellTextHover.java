@@ -4,8 +4,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.Iterator;
-import net.sf.eclipsefp.haskell.scion.client.Scion;
-import net.sf.eclipsefp.haskell.scion.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -80,11 +78,8 @@ class HaskellTextHover extends DefaultTextHover {
         HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );
         return null;
       }
-      ThingAtPointCommand command = new ThingAtPointCommand(location);
-      Scion.syncRunCommand(command, 200);
-      if (command.isSuccessful()) {
-        return command.getThing();
-      }
+      String thing = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).thingAtPoint(location);
+      return thing; // might be null
     }
     return null;
   }

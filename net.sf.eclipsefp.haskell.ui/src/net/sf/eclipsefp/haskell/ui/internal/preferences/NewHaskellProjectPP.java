@@ -78,6 +78,8 @@ public class NewHaskellProjectPP extends PreferencePage
         controlModified( evt.widget );
       }
     };
+
+    throw new RuntimeException();
   }
 
   public static void initializeDefaults( final IPreferenceStore store ) {

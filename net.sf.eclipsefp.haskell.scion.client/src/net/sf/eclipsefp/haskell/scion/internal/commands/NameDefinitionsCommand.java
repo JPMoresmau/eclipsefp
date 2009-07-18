@@ -1,7 +1,9 @@
-package net.sf.eclipsefp.haskell.scion.commands;
+package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +19,8 @@ public class NameDefinitionsCommand extends ScionCommand {
 	
 	private Location[] locations;
 
-	public NameDefinitionsCommand(String name) {
+	public NameDefinitionsCommand(ScionThreadManager manager, String name) {
+		super(manager, Job.INTERACTIVE);
 		this.name = name;
 	}
 	

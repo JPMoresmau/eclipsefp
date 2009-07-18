@@ -53,6 +53,16 @@ public final class UITexts extends NLS {
   public static String installedImplementationsPP_msg;
   public static String installedImplementationsPP_nothingSelected;
 
+  public static String scionServerExecutable_label;
+  public static String autodetectButton_label;
+  public static String autodetectButton_text;
+  public static String autodetectButton_errorTitle;
+  public static String autodetectButton_errorMessage;
+
+  public static String executableFileFieldEditor_errorDoesNotExist;
+  public static String executableFileFieldEditor_errorNotAbsolute;
+  public static String executableFileFieldEditor_errorNotExecutable;
+
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;
   public static String legalSection_entryLicenseFile;

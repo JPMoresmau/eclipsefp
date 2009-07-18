@@ -24,21 +24,15 @@ public class ScionPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
 		resourceBundle = ResourceBundle.getBundle("plugin");
-		
-		// Preload the server in anticipation of its use
-		Scion.initializeClient();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		Scion.dispose();
-		
 		super.stop(context);
 	}
 	
-	private static String getPluginId() {
+	public static String getPluginId() {
 		if (instance != null) {
 			return instance.getBundle().getSymbolicName();
 		} else {

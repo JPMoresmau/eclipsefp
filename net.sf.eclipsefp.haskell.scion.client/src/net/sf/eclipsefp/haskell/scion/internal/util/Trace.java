@@ -1,4 +1,6 @@
-package net.sf.eclipsefp.haskell.scion.client;
+package net.sf.eclipsefp.haskell.scion.internal.util;
+
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
 public class Trace {
 	
