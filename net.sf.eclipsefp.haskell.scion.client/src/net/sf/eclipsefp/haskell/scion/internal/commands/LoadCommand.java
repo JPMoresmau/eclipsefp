@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -17,8 +17,8 @@ public class LoadCommand extends ScionCommand {
 	private String fileName;
 	private CompilationResult compilationResult;
 
-	public LoadCommand(ScionThreadManager manager, String fileName) {
-		super(manager, Job.BUILD);
+	public LoadCommand(IScionCommandRunner runner, String fileName) {
+		super(runner, Job.BUILD);
 		this.fileName = fileName;
 	}
 	
@@ -37,7 +37,7 @@ public class LoadCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void processResult(Object result) throws JSONException {
+	protected void doProcessResult(Object result) throws JSONException {
 		compilationResult = new CompilationResult((JSONObject)result);
 	}
 	

@@ -6,14 +6,24 @@ package net.sf.eclipsefp.haskell.scion.client;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
+
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 public class ScionPlugin extends AbstractUIPlugin {
 	
 	private static final String BUNDLE_NAME = "net.sf.eclipsefp.haskell.scion.client";
 	private static ScionPlugin instance;
+	
+	/**
+	 * The version number of the Scion protocol that we support.
+	 */
+	public static final int PROTOCOL_VERSION = 1;
 	
 	private ResourceBundle resourceBundle;
 	
@@ -66,6 +76,27 @@ public class ScionPlugin extends AbstractUIPlugin {
 		String option = getPluginId() + "/" + optionId;
 	    String value = Platform.getDebugOption(option);
 	    return value != null && value.equalsIgnoreCase("true");
+	}
+	
+	public static void logWarning(String message, Throwable cause) {
+		log(Status.WARNING, message, cause);
+	}
+	
+	public static void logWarning(ScionCommand command, String message, Throwable cause) {
+		log(Status.WARNING, message + "\n" + command.getErrorInfo(), cause);
+	}
+	
+	public static void logError(String message, Throwable cause) {
+		log(Status.ERROR, message, cause);
+	}
+	
+	public static void log(int severity, String message, Throwable cause) {
+		Status status = new Status(severity, ScionPlugin.getPluginId(), severity, message, cause);
+		logStatus(status);
+	}
+	
+	public static void logStatus(IStatus status) {
+		StatusManager.getManager().handle(status);
 	}
 	
 }

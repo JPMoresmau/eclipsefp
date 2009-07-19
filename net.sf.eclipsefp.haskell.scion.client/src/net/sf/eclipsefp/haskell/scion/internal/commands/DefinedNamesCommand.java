@@ -1,14 +1,14 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
 
 public class DefinedNamesCommand extends ScionCommand {
 
-	public DefinedNamesCommand(ScionThreadManager manager) {
-		super(manager, Job.INTERACTIVE);
+	public DefinedNamesCommand(IScionCommandRunner runner) {
+		super(runner, Job.INTERACTIVE);
 	}
 
 	@Override
@@ -17,7 +17,7 @@ public class DefinedNamesCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void processResult(Object result) throws JSONException {
+	protected void doProcessResult(Object result) throws JSONException {
 		// TODO
 	}
 

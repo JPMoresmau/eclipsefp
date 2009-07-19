@@ -11,6 +11,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +27,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class ScionPP
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
+
+  public static final String PAGE_ID = "net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP";
 
 	private ExecutableFileFieldEditor serverExecutableField;
 
@@ -46,7 +49,7 @@ public class ScionPP
 		Composite parent = getFieldEditorParent();
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
-				String.format(UITexts.scionServerExecutable_label, getServerExecutableName()),
+				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
 				true, StringFieldEditor.VALIDATE_ON_KEY_STROKE, parent);
 		serverExecutableField.setEmptyStringAllowed(true);
 		addField(serverExecutableField);
@@ -69,7 +72,7 @@ public class ScionPP
 		if (server == null) {
 			MessageDialog.openError(getShell(),
 					UITexts.autodetectButton_errorTitle,
-					String.format(UITexts.autodetectButton_errorMessage, getServerExecutableName()));
+					NLS.bind(UITexts.autodetectButton_errorMessage, getServerExecutableName()));
 		} else {
 			serverExecutableField.setStringValue(server);
 		}
@@ -123,7 +126,7 @@ public class ScionPP
 		return null;
 	}
 
-	private String getServerExecutableName() {
+	public static String getServerExecutableName() {
 		// TODO Windows
 		return "scion_server";
 	}

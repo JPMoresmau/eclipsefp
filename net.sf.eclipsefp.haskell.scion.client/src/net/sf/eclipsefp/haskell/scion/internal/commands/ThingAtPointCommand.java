@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -19,8 +19,8 @@ public class ThingAtPointCommand extends ScionCommand {
 	
 	private String thing; // the response
 	
-	public ThingAtPointCommand(ScionThreadManager manager, Location location) {
-		super(manager, Job.INTERACTIVE);
+	public ThingAtPointCommand(IScionCommandRunner runner, Location location) {
+		super(runner, Job.INTERACTIVE);
 		this.location = location;
 	}
 	
@@ -43,7 +43,7 @@ public class ThingAtPointCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void processResult(Object json) throws JSONException {
+	protected void doProcessResult(Object json) throws JSONException {
 		JSONObject result = (JSONObject)json;
 		if (result.has("Just")) {
 			thing = result.getString("Just");

@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
@@ -10,8 +10,8 @@ public class SetVerbosityCommand extends ScionCommand {
 
 	private int verbosity;
 	
-	public SetVerbosityCommand(ScionThreadManager manager, int verbosity) {
-		super(manager, Job.SHORT);
+	public SetVerbosityCommand(IScionCommandRunner runner, int verbosity) {
+		super(runner, Job.SHORT);
 		this.verbosity = verbosity;
 	}
 	
@@ -28,7 +28,7 @@ public class SetVerbosityCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void processResult(Object result) throws JSONException {
+	protected void doProcessResult(Object result) throws JSONException {
 		// nothing interesting to do
 	}
 

@@ -63,6 +63,9 @@ public final class UITexts extends NLS {
   public static String executableFileFieldEditor_errorNotAbsolute;
   public static String executableFileFieldEditor_errorNotExecutable;
 
+  public static String scionServerStartupError_title;
+  public static String scionServerStartupError_message;
+
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;
   public static String legalSection_entryLicenseFile;

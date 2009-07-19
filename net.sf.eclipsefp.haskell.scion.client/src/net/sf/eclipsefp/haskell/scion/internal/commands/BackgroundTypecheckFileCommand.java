@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -13,8 +13,8 @@ public class BackgroundTypecheckFileCommand extends ScionCommand {
 	private String fileName;
 	private CompilationResult compilationResult;
 	
-	public BackgroundTypecheckFileCommand(ScionThreadManager manager, String fileName) {
-		super(manager, Job.BUILD);
+	public BackgroundTypecheckFileCommand(IScionCommandRunner runner, String fileName) {
+		super(runner, Job.BUILD);
 		this.fileName = fileName;
 	}
 
@@ -31,7 +31,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void processResult(Object json) throws JSONException {
+	protected void doProcessResult(Object json) throws JSONException {
 		JSONArray result = (JSONArray)json;
 		compilationResult = new CompilationResult(result.getJSONObject(1));
 	}

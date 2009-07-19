@@ -1,14 +1,18 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionThreadManager;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ConnectionInfoCommand extends ScionCommand {
+	
+	private int pid;
+	private int version;
 
-	public ConnectionInfoCommand(ScionThreadManager manager) {
-		super(manager, Job.SHORT);
+	public ConnectionInfoCommand(IScionCommandRunner runner) {
+		super(runner, Job.SHORT);
 	}
 
 	@Override
@@ -17,8 +21,18 @@ public class ConnectionInfoCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void processResult(Object result) throws JSONException {
-		System.err.println(result);
+	protected void doProcessResult(Object obj) throws JSONException {
+		JSONObject result = (JSONObject)obj;
+		pid = result.getInt("pid");
+		version = result.getInt("version");
+	}
+	
+	public int getPid() {
+		return pid;
+	}
+	
+	public int getVersion() {
+		return version;
 	}
 
 }

@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -15,9 +18,17 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Manages instances of Scion servers.
@@ -111,27 +122,33 @@ public class ScionManager implements IResourceChangeListener {
    * We restart all instances.
    */
   private void serverExecutableChanged() {
+    ScionServerStartupException exception = null;
     for (IProject project : instances.keySet()) {
-      stopInstance( instances.get(project) );
-      ScionInstance instance = startInstance( project );
-      instances.put(project, instance);
+      try {
+        instances.get( project ).setServerExecutable( serverExecutable );
+      } catch (ScionServerStartupException ex) {
+        exception = ex;
+      }
+    }
+    if (exception != null) {
+      // we want to bug the user about this just once, not once for every project
+      reportServerStartupError(exception);
     }
   }
 
   private boolean updateForResource( final IResource resource ) throws CoreException {
     if( resource instanceof IProject ) {
       IProject project = ( IProject )resource;
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
-        if( project.isOpen() && !instances.containsKey( project ) ) {
-          ScionInstance instance = startInstance( project );
-          instances.put( project, instance );
-        }
-        if( !project.isOpen() && instances.containsKey( project ) ) {
-          stopInstance( instances.get(project) );
-          instances.remove( project );
-        }
-        return false; // projects can't be children of other projects, can they?
+      if( project.isOpen() && !instances.containsKey( project ) && project.hasNature( HaskellNature.NATURE_ID ) ) {
+        ScionInstance instance = startInstance( project );
+        instances.put( project, instance );
       }
+      if( !project.isOpen() && instances.containsKey( project ) ) {
+        // we cannot check the nature of closed projects, but if it's in instances, stop it
+        stopInstance( instances.get(project) );
+        instances.remove( project );
+      }
+      return false; // projects can't be children of other projects, can they?
     }
     return true;
   }
@@ -142,6 +159,11 @@ public class ScionManager implements IResourceChangeListener {
    */
   private ScionInstance startInstance( final IProject project ) {
     ScionInstance instance = new ScionInstance( serverExecutable );
+    try {
+      instance.start();
+    } catch (ScionServerStartupException ex) {
+      reportServerStartupError(ex);
+    }
     return instance;
   }
 
@@ -151,6 +173,21 @@ public class ScionManager implements IResourceChangeListener {
    */
   private void stopInstance( final ScionInstance instance ) {
     instance.stop();
+  }
+
+  private void reportServerStartupError(final ScionServerStartupException ex) {
+    IStatus status = new Status(IStatus.ERROR, HaskellUIPlugin.getPluginId(), ex.getMessage(), ex);
+    StatusManager.getManager().handle( status, StatusManager.LOG );
+    HaskellUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
+      public void run() {
+        Shell parent = HaskellUIPlugin.getStandardDisplay().getActiveShell();
+        String text = NLS.bind( UITexts.scionServerStartupError_message, ScionPP.getServerExecutableName() );
+        if ( MessageDialog.openQuestion( parent, UITexts.scionServerStartupError_title, text ) ) {
+          PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn( parent, ScionPP.PAGE_ID, null, null );
+          prefDialog.open();
+        }
+      }
+    });
   }
 
 }

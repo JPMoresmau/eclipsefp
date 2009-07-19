@@ -247,15 +247,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   @Override
   protected void editorSaved() {
     // Reload the file on the Scion server side
-    try {
-      IFile file = findFile();
-      if( file != null ) {
-        String fileName = file.getLocation().toOSString();
-        HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(fileName);
-      }
-    } catch( Exception ex ) {
-      // We should never let Scion errors prevent the file from being saved!
-      ex.printStackTrace( System.out ); // TODO
+    IFile file = findFile();
+    if( file != null ) {
+      String fileName = file.getLocation().toOSString();
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(fileName);
     }
   }
 
