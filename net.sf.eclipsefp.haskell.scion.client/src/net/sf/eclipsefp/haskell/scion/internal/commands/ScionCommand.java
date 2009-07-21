@@ -117,6 +117,9 @@ public abstract class ScionCommand extends Job {
 	 */
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
+		if (!monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
 		// Jobs that finish asynchronously must specify the execution thread by calling setThread,
 		// and must indicate when they are finished by calling the method done.
 		try {
