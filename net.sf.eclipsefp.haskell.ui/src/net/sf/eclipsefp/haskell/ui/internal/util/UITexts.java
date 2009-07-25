@@ -18,6 +18,10 @@ public final class UITexts extends NLS {
 
   public static String cabalPackageImportWizard_pageDesc;
   public static String cabalPackageImportWizard_pageTitle;
+  public static String cabalPackageImportWizard_windowTitle;
+
+  public static String cabalPackageImportWP_PackageGroup_locationLabel_desc;
+  public static String cabalPackageImportWP_LocationGroup_browseButton_desc;
 
   public static String descriptionSection_entryDescription;
   public static String descriptionSection_entryCategory;
@@ -81,6 +85,23 @@ public final class UITexts extends NLS {
 
   public static String newHaskellProjectWizard_pageDesc;
   public static String newHaskellProjectWizard_pageTitle;
+  public static String newHaskellProjectWizard_windowTitle;
+
+  public static String newProjectWizardPage_NameGroup_label_text;
+  public static String newProjectWizardPage_Message_enterProjectName;
+  public static String newProjectWizardPage_Message_projectAlreadyExists;
+  public static String newProjectWizardPageMessage_invalidProjectNameForWorkspaceRoot;
+  public static String newProjectWizardPage_LocationGroup_title;
+  public static String newProjectWizardPage_LocationGroup_workspace_desc;
+  public static String newProjectWizardPage_LocationGroup_external_desc;
+  public static String newProjectWizardPage_LocationGroup_locationLabel_desc;
+  public static String newProjectWizardPage_LocationGroup_browseButton_desc;
+  public static String newProjectWizardPage_directory_message;
+  public static String newProjectWizardPage_Message_enterLocation;
+  public static String newProjectWizardPage_Message_invalidDirectory;
+  public static String newProjectWizardPage_Message_notOnWorkspaceRoot;
+  public static String newProjectWizardPage_Message_notExisingProjectOnWorkspaceRoot;
+  public static String newProjectWizardPage_Message_cannotCreateAtExternalLocation;
 
   public static String overviewPage_title;
 

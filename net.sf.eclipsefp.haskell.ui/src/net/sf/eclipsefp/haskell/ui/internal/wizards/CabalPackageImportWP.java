@@ -3,75 +3,148 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.wizards;
 
-import net.sf.eclipsefp.haskell.ui.internal.wizards.CabalPackageSelectionBlock.IErrorMessageReporter;
+import java.io.File;
+import java.util.Observable;
+import net.sf.eclipsefp.haskell.ui.dialog.Validator;
+import net.sf.eclipsefp.haskell.ui.dialog.ValidatorManager;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.DialogField;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IDialogFieldListener;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IStringButtonAdapter;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.LayoutUtil;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringButtonDialogField;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 
-/** <p>wizard page for importing a cabalized package. This is basically
-  * the page for creating a new project, but with the additional selection
-  * of the package archive from the file system..</p>
-  *
-  * @author Leif Frenzel
-  */
-class CabalPackageImportWP extends WizardNewProjectCreationPage {
+/**
+ * <p>
+ * wizard page for importing a cabalized package. This is basically the page for
+ * creating a new project, but with the additional selection of the package
+ * archive from the file system..
+ * </p>
+ *
+ * @author Leif Frenzel
+ */
+class CabalPackageImportWP extends NewProjectWizardPage {
 
-  private CabalPackageSelectionBlock cabalPackageSelectionBlock;
+  public class PackageGroup extends Observable implements IStringButtonAdapter,
+      IDialogFieldListener {
 
-  CabalPackageImportWP( final String name ) {
-    super( name );
+    private final StringButtonDialogField fLocation;
+
+    public PackageGroup() {
+      fLocation = new StringButtonDialogField( this );
+      fLocation.setDialogFieldListener( this );
+      fLocation
+          .setLabelText( UITexts.cabalPackageImportWP_PackageGroup_locationLabel_desc );
+      fLocation
+          .setButtonLabel( UITexts.cabalPackageImportWP_LocationGroup_browseButton_desc );
+    }
+
+    String getSelectedArchiveName() {
+      return fLocation.getText();
+    }
+
+
+    // helping methods
+    // ////////////////
+
+    public Control createControl( final Composite parent ) {
+      final int numColumns = 3;
+
+      final Composite composite = new Composite( parent, SWT.NONE );
+      composite.setLayout( initGridLayout( new GridLayout( 3, false ), false ) );
+
+      fLocation.doFillIntoGrid( composite, numColumns );
+      LayoutUtil.setHorizontalGrabbing( fLocation.getTextControl( null ) );
+
+      return composite;
+    }
+
+    public void changeControlPressed( final DialogField field ) {
+      FileDialog dialog = new FileDialog( getShell() );
+      dialog.setText( "Select a cabalized archive" );
+      dialog.setFilterExtensions( new String[] { "*.tar.gz" } );
+      String result = dialog.open();
+      if( result != null && result.trim().length() > 0 ) {
+        fLocation.setText( result );
+      }
+    }
+
+    public void dialogFieldChanged( final DialogField field ) {
+      setChanged();
+      notifyObservers();
+    }
+
+  }
+
+  private final class PageValidator extends Validator {
+
+    public PageValidator( final ValidatorManager manager ) {
+      super( manager );
+    }
+
+    @Override
+    protected void doUpdate() {
+      String name = fPackageGroup.getSelectedArchiveName();
+      if( name == null || name.trim().length() == 0 ) {
+        setIncomplete( "Please select a cabalized archive", false );
+        return;
+      }
+
+      File file = new File( name );
+      if( !isValidArchiveFile( file ) ) {
+        setIncomplete( "Not a valid cabal package: " + name, true );
+        return;
+      }
+    }
+
+    private boolean isValidArchiveFile( final File file ) {
+      return file.exists() && !file.isDirectory()
+          && file.getName().endsWith( ".tar.gz" );
+    }
+
+  }
+
+  private static final String PAGE_NAME = "CabalPackageImportWP";
+
+  private final PackageGroup fPackageGroup;
+  private PageValidator fPageValidator;
+
+  CabalPackageImportWP() {
+    super( PAGE_NAME );
+    fPackageGroup = new PackageGroup();
+
+    fPackageGroup.addObserver( fPageValidator );
+  }
+
+  @Override
+  protected void createValidators( final ValidatorManager manager ) {
+    fPageValidator = new PageValidator( manager );
+    super.createValidators( manager );
   }
 
   String getArchiveLocation() {
-    return cabalPackageSelectionBlock.getSelectedArchiveName();
+    return fPackageGroup.getSelectedArchiveName();
   }
 
-
-  // interface methods of IWizardPage
-  ///////////////////////////////////
+  // ////////////////////////////////////
+  // methods from NewProjectWizardPage
 
   @Override
-  public void createControl( final Composite parent ) {
-    Composite mainComposite = initMainComposite( parent );
-    Composite group = new Composite( mainComposite, SWT.NONE );
-    group.setLayout( new GridLayout() );
-    group.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    cabalPackageSelectionBlock
-      = new CabalPackageSelectionBlock( getErrorReporter(), group );
-    // let the super class create the rest of the project creation controls
-    super.createControl( mainComposite );
+  protected void createControls( final Composite parent ) {
+    createNameControl( parent );
+    createPackageControl( parent );
+    createLocationControl( parent );
   }
 
-
-  // helping methods
-  //////////////////
-
-  private Composite initMainComposite( final Composite parent ) {
-    Composite result = new Composite( parent, SWT.NULL );
-    result.setFont( parent.getFont() );
-    initializeDialogUnits( parent );
-    GridLayout gridLayout = new GridLayout();
-    gridLayout.marginTop = 0;
-    gridLayout.marginRight = 0;
-    gridLayout.marginBottom = 0;
-    gridLayout.marginLeft = 0;
-    result.setLayout( gridLayout );
-    result.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-    return result;
+  private Control createPackageControl( final Composite parent ) {
+    Control packageControl = fPackageGroup.createControl( parent );
+    packageControl.setLayoutData( horizontalFillGridData() );
+    return packageControl;
   }
 
-  private IErrorMessageReporter getErrorReporter() {
-    return new IErrorMessageReporter() {
-      public void reportError( final String errorMessage ) {
-        setErrorMessage( errorMessage );
-        boolean valid = errorMessage == null;
-        if( valid ) {
-          valid = validatePage();
-        }
-        setPageComplete( valid );
-      }
-    };
-  }
 }

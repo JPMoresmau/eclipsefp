@@ -51,7 +51,7 @@ public class CabalPackageImportWizard extends ProjectCreationWizard
 
   @Override
   public void addPages() {
-    page = new CabalPackageImportWP( "CabalPackageImportWP" ); //$NON-NLS-1$
+    page = new CabalPackageImportWP();
     page.setTitle( getPageTitle() );
     page.setDescription( getPageDescription() );
     addPage( page );
@@ -71,5 +71,10 @@ public class CabalPackageImportWizard extends ProjectCreationWizard
   @Override
   protected String getPageTitle() {
     return UITexts.cabalPackageImportWizard_pageTitle;
+  }
+
+  @Override
+  protected String getTheWindowTitle() {
+    return UITexts.cabalPackageImportWizard_windowTitle;
   }
 }

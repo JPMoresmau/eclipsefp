@@ -40,4 +40,10 @@ public class NewHaskellProjectWizard extends ProjectCreationWizard {
 	protected String getPageTitle() {
 		return UITexts.newHaskellProjectWizard_pageTitle;
 	}
+
+	@Override
+	protected String getTheWindowTitle() {
+	  return UITexts.newHaskellProjectWizard_windowTitle;
+	}
+
 }

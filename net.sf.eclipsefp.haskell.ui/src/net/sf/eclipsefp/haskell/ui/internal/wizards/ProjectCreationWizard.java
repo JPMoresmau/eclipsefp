@@ -4,10 +4,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -22,7 +20,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
@@ -40,7 +37,7 @@ public abstract class ProjectCreationWizard
 
 	private IWorkbench workbench;
 
-	protected WizardNewProjectCreationPage page;
+	protected NewProjectWizardPage page;
 
 	private IConfigurationElement configElement;
 
@@ -50,13 +47,13 @@ public abstract class ProjectCreationWizard
     super();
     this.operation = operation;
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
-    setWindowTitle( "Choose project name" );
+    setWindowTitle( getTheWindowTitle() );
     setNeedsProgressMonitor( true );
   }
 
 	@Override
   public void addPages() {
-    page = new WizardNewProjectCreationPage( "ProjectCreationWizardPage" ); //$NON-NLS-1$
+    page = new NewProjectWizardPage();
     page.setTitle( getPageTitle() );
     page.setDescription( getPageDescription() );
     addPage( page );
@@ -64,7 +61,7 @@ public abstract class ProjectCreationWizard
 
 	@Override
   public boolean performFinish() {
-    IRunnableWithProgress rwp = configureOperation();
+	  IRunnableWithProgress rwp = configureOperation();
     IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( rwp );
     boolean result = true;
     try {
@@ -85,6 +82,8 @@ public abstract class ProjectCreationWizard
   protected abstract String getPageDescription();
 
   protected abstract String getPageTitle();
+
+  protected abstract String getTheWindowTitle();
 
   protected ProjectCreationOperation getOperation() {
     return operation;
@@ -133,7 +132,7 @@ public abstract class ProjectCreationWizard
 
   private IRunnableWithProgress configureOperation() {
     operation.setProjectName( page.getProjectName() );
-    operation.setProjectLocation( page.getLocationPath().toString() );
+    operation.setProjectLocation( page.getProjectLocationPath().toString() );
 
     IRunnableWithProgress rwp = new IRunnableWithProgress() {
       public void run( final IProgressMonitor monitor ) {
