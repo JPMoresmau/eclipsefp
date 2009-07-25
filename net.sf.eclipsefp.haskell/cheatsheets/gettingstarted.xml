@@ -37,10 +37,10 @@
 	<description>
 		The first thing you will need is a Haskell Project. (If you already 
 		have one in your workspace that you would like to use, you may skip 
-		this step with the "Click to Skip" button.) Select File &gt; New &gt; 
-		Project.. and choose Haskell Project in the list. The 
-		"New Haskell Project" wizard is automatically displayed when you 
-		click the "Click to Perform" button.
+		this step with the &quot;Click to Skip&quot; button.) Select File &gt; New &gt; 
+		Haskell Project. The 
+		&quot;New Haskell Project&quot; wizard is automatically displayed when you 
+		click the &quot;Click to Perform&quot; button.
 	</description>
 </item>
 
@@ -67,9 +67,9 @@
 	title="Write some code">
 	<description>
 		In the source of the module, write the following line right below
-		the already generated code: main = putStrLn "Hello world!" Once you 
+		the already generated code: <b>main = putStrLn &quot;Hello world!&quot;</b> Once you 
 		save the file, it is automatically compiled and linked. Click the 
-		"Click to Complete" button below when finished.
+		&quot;Click to Complete&quot; button below when finished.
 	</description>
 </item>
 
@@ -78,9 +78,9 @@
 	title="Launch the executable">
 	<description>
 	    The executable is located in the bin/ folder of the project.
-	    Select it, right-click it and choose Run &gt; Haskell application
-	    from the context menu. 'Hello world!' should be printed in your 
-	    "Console" view.
+	    Select it, right-click it and choose Run As &gt; Haskell Application
+	    from the context menu. &apos;Hello world!&apos; should be printed in your 
+	    &quot;Console&quot; view.
 	</description>
 </item>
 
