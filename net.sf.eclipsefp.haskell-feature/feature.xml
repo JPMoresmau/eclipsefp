@@ -105,44 +105,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          unpack="false"/>
 
    <plugin
-         id="net.sf.eclipsefp.haskell.core.linux.gtk.x86"
-         os="linux"
-         ws="gtk"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="1.106.0"
-         fragment="true"/>
-
-   <plugin
-         id="net.sf.eclipsefp.haskell.core.macosx.carbon.x86"
-         os="macosx"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="1.106.0"
-         fragment="true"/>
-
-   <plugin
-         id="net.sf.eclipsefp.haskell.ui.linux.gtk.x86"
-         os="linux"
-         ws="gtk"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="1.106.0"
-         fragment="true"/>
-
-   <plugin
-         id="net.sf.eclipsefp.haskell.ui.macosx.carbon.x86"
-         os="macosx"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="1.106.0"
-         fragment="true"/>
-
-   <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
