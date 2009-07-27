@@ -29,7 +29,7 @@ public class TestCaseWithProject extends TestCase {
   public static void waitForAutoBuild() throws CoreException {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
     workspace.build( IncrementalProjectBuilder.CLEAN_BUILD, null );
-    System.out.print( "  Waiting for autobuild to complete ..." ); //$NON-NLS-1$
+    // System.out.print( "  Waiting for autobuild to complete ..." ); //$NON-NLS-1$
     IJobManager jobMan = Job.getJobManager();
     boolean retry = true;
     while( retry ) {
@@ -42,7 +42,7 @@ public class TestCaseWithProject extends TestCase {
         // ignore and retry
       }
     }
-    System.out.print( " OK.\n" ); //$NON-NLS-1$
+    // System.out.print( " OK.\n" ); //$NON-NLS-1$
   }
 
 

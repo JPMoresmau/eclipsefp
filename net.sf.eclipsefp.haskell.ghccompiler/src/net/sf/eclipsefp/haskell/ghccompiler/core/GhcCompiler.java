@@ -38,14 +38,17 @@ public class GhcCompiler extends DefaultHaskellCompiler {
   private static boolean trace = GhcCompilerPlugin.isTracing();
 
   private final IProcessRunner fProcessRunner;
+  private final IGhcOutputProcessor fOutputProcessor;
   private final CompilerParams compilerParams = new CompilerParams();
 
   public GhcCompiler() {
-    this.fProcessRunner = new ProcessRunner();
+    fProcessRunner = new ProcessRunner();
+    fOutputProcessor = new GhcOutputProcessor( );
   }
 
-  public GhcCompiler(final IProcessRunner processRunner) {
-    this.fProcessRunner = processRunner;
+  public GhcCompiler(final IProcessRunner processRunner, final IGhcOutputProcessor outputProcessor) {
+    fProcessRunner = processRunner;
+    fOutputProcessor = outputProcessor;
   }
 
   @Override
@@ -76,14 +79,15 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     }
 
     try {
-      fProcessRunner.executeNonblocking( workDir, new MultiplexedWriter( outputWriter, pipedWriter ), cmdLine );
+      Writer out = new MultiplexedWriter( outputWriter, pipedWriter );
+      fProcessRunner.executeNonblocking( workDir, out, out, cmdLine );
     } catch( IOException ex ) {
       GhcCompilerPlugin.log( UITexts.error_launchGhc, ex );
       return;
     }
 
-    GhcOutputProcessor outputProcessor = new GhcOutputProcessor( workDir );
-    GhcOutputParser outputParser = new GhcOutputParser( pipedReader, outputProcessor );
+    fOutputProcessor.setWorkingDir( workDir );
+    GhcOutputParser outputParser = new GhcOutputParser( pipedReader, fOutputProcessor );
     try {
       outputParser.parse();
     } catch( IOException ex ) {

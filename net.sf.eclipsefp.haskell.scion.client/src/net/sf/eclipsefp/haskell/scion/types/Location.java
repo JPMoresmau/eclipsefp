@@ -88,6 +88,18 @@ public class Location {
 	}
 	
 	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Location)) {
+			return false;
+		}
+		Location other = (Location)obj;
+		return
+			fileName.equals(other.fileName) &&
+			startLine == other.startLine && startColumn == other.startColumn &&
+			endLine == other.endLine && endColumn == other.endColumn;
+	}
+	
+	@Override
 	public String toString() {
 		return String.format("%d:%d-%d:%d", startLine, startColumn, endLine, endColumn);
 	}

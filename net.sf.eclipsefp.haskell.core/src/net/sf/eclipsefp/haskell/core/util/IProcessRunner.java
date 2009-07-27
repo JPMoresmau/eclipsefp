@@ -14,6 +14,7 @@ package net.sf.eclipsefp.haskell.core.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import net.sf.eclipsefp.haskell.core.compiler.NullWriter;
 
 public interface IProcessRunner {
 
@@ -21,22 +22,26 @@ public interface IProcessRunner {
    * Runs the program, and returns when it completes.
    *
    * @param workingDir the working directory from which the program should be started
-   * @param out the {@link Writer} to receive the process's merged stdout/stderr streams
+   * @param out the {@link Writer} to receive the process's stdout stream (may be equal to err, but not null)
+   * @param err the {@link Writer} to receive the process's stderr stream (may be equal to out, but not null)
    * @param args the command line
    *
-   * @returns all output generated on the program's stdout/stderr streams
+   * @see {@link NullWriter}
    */
-  String executeBlocking(File workingDir, Writer out, String... args);
+  void executeBlocking(File workingDir, Writer out, Writer err, String... args) throws IOException;
 
   /**
    * Runs the program and returns immediately.
    *
    * @param workingDir the working directory from which the program should be started
-   * @param outs the {@link Writer}s to receive the process's merged stdout/stderr streams
+   * @param out the {@link Writer} to receive the process's stdout stream (may be equal to err, but not null)
+   * @param err the {@link Writer} to receive the process's stderr stream (may be equal to out, but not null)
    * @param args the command line
    *
    * @return the running process
+   *
+   * @see {@link NullWriter}
    */
-  Process executeNonblocking(File workingDir, Writer out, String... args) throws IOException;
+  Process executeNonblocking(File workingDir, Writer out, Writer err, String... args) throws IOException;
 
 }

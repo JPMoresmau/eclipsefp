@@ -44,6 +44,11 @@ public class ScionManager implements IResourceChangeListener {
   private String serverExecutable = null;
   private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
 
+  /**
+   * Used to alert the user of Scion startup failure only once per session.
+   */
+  private boolean serverStartupErrorReported = false;
+
   public ScionManager() {
     // the work is done in the start() method
   }
@@ -176,18 +181,21 @@ public class ScionManager implements IResourceChangeListener {
   }
 
   private void reportServerStartupError(final ScionServerStartupException ex) {
-    IStatus status = new Status(IStatus.ERROR, HaskellUIPlugin.getPluginId(), ex.getMessage(), ex);
-    StatusManager.getManager().handle( status, StatusManager.LOG );
-    HaskellUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
-      public void run() {
-        Shell parent = HaskellUIPlugin.getStandardDisplay().getActiveShell();
-        String text = NLS.bind( UITexts.scionServerStartupError_message, ScionPP.getServerExecutableName() );
-        if ( MessageDialog.openQuestion( parent, UITexts.scionServerStartupError_title, text ) ) {
-          PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn( parent, ScionPP.PAGE_ID, null, null );
-          prefDialog.open();
+    if (!serverStartupErrorReported) {
+      IStatus status = new Status(IStatus.ERROR, HaskellUIPlugin.getPluginId(), ex.getMessage(), ex);
+      StatusManager.getManager().handle( status, StatusManager.LOG );
+      HaskellUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
+        public void run() {
+          Shell parent = HaskellUIPlugin.getStandardDisplay().getActiveShell();
+          String text = NLS.bind( UITexts.scionServerStartupError_message, ScionPP.getServerExecutableName() );
+          if ( MessageDialog.openQuestion( parent, UITexts.scionServerStartupError_title, text ) ) {
+            PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn( parent, ScionPP.PAGE_ID, null, null );
+            prefDialog.open();
+          }
         }
-      }
-    });
+      });
+      serverStartupErrorReported = true;
+    }
   }
 
 }

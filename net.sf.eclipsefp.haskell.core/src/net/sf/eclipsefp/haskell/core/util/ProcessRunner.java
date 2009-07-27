@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
 import net.sf.eclipsefp.haskell.core.internal.util.StreamRedirect;
 
 public class ProcessRunner implements IProcessRunner {
@@ -23,34 +19,32 @@ public class ProcessRunner implements IProcessRunner {
     fProcessFactory = factory;
   }
 
-  public String executeBlocking( final File workingDir, final Writer out,
-      final String ... args ) {
-    List<Exception> excList = new ArrayList<Exception>();
-    StringWriter returnedOut = new StringWriter();
-    try {
-      Writer outs = new MultiplexedWriter(returnedOut, out);
-      Process proc = doExecute( workingDir, args );
-      Thread outRedirect = redirect( new InputStreamReader(proc.getInputStream()), outs );
+  public void executeBlocking( final File workingDir, final Writer out,
+      final Writer err, final String ... args ) throws IOException {
 
+    Process proc = doExecute( workingDir, args );
+
+    Thread outRedirect = redirect( new InputStreamReader( proc.getInputStream() ), out );
+    Thread errRedirect = redirect( new InputStreamReader( proc.getErrorStream() ), err );
+
+    try {
       proc.waitFor(); // wait for process to finish
       outRedirect.join(); // wait until out stream content is redirected
-    } catch( Exception e ) {
-      excList.add( e );
-    } finally {
-      returnedOut.flush();
+      errRedirect.join(); // wait until err stream content is redirected
+    } catch (InterruptedException ex) {
+      // ignore
     }
-
-    return returnedOut.toString();
   }
 
-  public Process executeNonblocking( final File workingDir,
-      final Writer out, final String... args ) throws IOException {
+  public Process executeNonblocking( final File workingDir, final Writer out,
+      final Writer err, final String ... args ) throws IOException {
     Process proc = doExecute( workingDir, args );
-    redirect( new InputStreamReader(proc.getInputStream()), out );
+    redirect( new InputStreamReader( proc.getInputStream() ), out );
+    redirect( new InputStreamReader( proc.getErrorStream() ), err );
     return proc;
   }
 
-  private Process doExecute( final File workingDir, final String... args )
+  private Process doExecute( final File workingDir, final String ... args )
       throws IOException {
     Process proc = fProcessFactory.startProcess( workingDir, args );
     return proc;

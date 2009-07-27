@@ -1,7 +1,7 @@
 // Copyright (c) 2003-2008 by Leif Frenzel. All rights reserved.
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.debug.ui.test.internal;
+package net.sf.eclipsefp.haskell.debug.ui.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

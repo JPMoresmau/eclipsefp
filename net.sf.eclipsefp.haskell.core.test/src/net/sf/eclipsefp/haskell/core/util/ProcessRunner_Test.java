@@ -12,47 +12,48 @@ import net.sf.eclipsefp.haskell.core.compiler.NullWriter;
 
 public class ProcessRunner_Test extends TestCase {
 
-	public void testReturnsStandardOutput() throws IOException {
-		final String expectedResult = "standard output contents";
-		IProcessFactory factory = createProcessFactory(expectedResult, "");
+  public void testReturnsStandardOutput() throws IOException {
+    final String expectedResult = "standard output contents";
+    IProcessFactory factory = createProcessFactory( expectedResult, "" );
 
-		ProcessRunner runner = new ProcessRunner(factory);
-		String actualResult = runner.executeBlocking(new File("unimportant"),
-				                             new NullWriter(),
-				                             "unimportant");
-		assertEquals(expectedResult, actualResult);
-	}
+    ProcessRunner runner = new ProcessRunner( factory );
+    StringWriter actualResult = new StringWriter();
+    runner.executeBlocking( new File( "unimportant" ),
+        actualResult, new NullWriter(), "unimportant" );
+    assertEquals( expectedResult, actualResult.toString() );
+  }
 
-	public void testReturnsStandardError() throws IOException {
-		final String expectedResult = "standard error stream contents\n";
-		IProcessFactory factory = createProcessFactory("", expectedResult);
+  public void testReturnsStandardError() throws IOException {
+    final String expectedResult = "standard error stream contents\n";
+    IProcessFactory factory = createProcessFactory( "", expectedResult );
 
-		ProcessRunner runner = new ProcessRunner(factory);
-		String actualResult = runner.executeBlocking(new File("unimportant"),
-                                             new NullWriter(),
-				                             "unimportant");
-		assertEquals(expectedResult, actualResult);
-	}
+    ProcessRunner runner = new ProcessRunner( factory );
+    StringWriter actualResult = new StringWriter();
+    runner.executeBlocking( new File( "unimportant" ),
+        new NullWriter(), actualResult, "unimportant" );
+    assertEquals( expectedResult, actualResult.toString() );
+  }
 
-	public void testMergesOutputStreams() throws IOException {
-		final String expectedOut = "standard output stream contents\n";
-		final String expectedErr = "standard error stream contents\n";
-		IProcessFactory factory = createProcessFactory(expectedOut, expectedErr);
+  public void testMergesOutputStreams() throws IOException {
+    final String expectedOut = "standard output stream contents\n";
+    final String expectedErr = "standard error stream contents\n";
+    IProcessFactory factory = createProcessFactory( expectedOut, expectedErr );
 
-		ProcessRunner runner = new ProcessRunner(factory);
-		final StringWriter out = new StringWriter();
-		runner.executeBlocking(new File("unimportant"), out, "unimportant");
+    ProcessRunner runner = new ProcessRunner( factory );
+    final StringWriter actualResult = new StringWriter();
+    runner.executeBlocking( new File( "unimportant" ), actualResult, actualResult, "unimportant" );
 
-		assertTrue(out.toString().contains(expectedOut));
-		assertTrue(out.toString().contains(expectedErr));
-	}
+    assertTrue( actualResult.toString().contains( expectedOut ) );
+    assertTrue( actualResult.toString().contains( expectedErr ) );
+  }
 
-	private IProcessFactory createProcessFactory(final String stdout, final String stderr) throws IOException {
-		IProcessFactory factory = createMock(IProcessFactory.class);
-		expect(factory.startProcess((File) anyObject(), (String[]) anyObject()))
-			.andReturn(new StubProcess(stdout, stderr));
-		replay(factory);
-		return factory;
-	}
+  private IProcessFactory createProcessFactory( final String stdout,
+      final String stderr ) throws IOException {
+    IProcessFactory factory = createMock( IProcessFactory.class );
+    expect( factory.startProcess( ( File )anyObject(), ( String[] )anyObject() ) )
+        .andReturn( new StubProcess( stdout, stderr ) );
+    replay( factory );
+    return factory;
+  }
 
 }

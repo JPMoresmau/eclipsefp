@@ -19,11 +19,15 @@ import org.eclipse.core.runtime.Path;
  *
  * @author Thomas ten Cate
  */
-public class GhcOutputProcessor implements IGhcOutputListener {
+public class GhcOutputProcessor implements IGhcOutputProcessor {
 
-  private final File workingDir;
+  private File workingDir;
 
-  public GhcOutputProcessor(final File workingDir) {
+  public GhcOutputProcessor() {
+    this.workingDir = new File(""); //$NON-NLS-1$
+  }
+
+  public void setWorkingDir(final File workingDir) {
     this.workingDir = workingDir;
   }
 

@@ -3,11 +3,10 @@ package net.sf.eclipsefp.haskell.core.jparser.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests {
+public class MainTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for net.sf.eclipsefp.haskell.core.jparser.test");
+		TestSuite suite = new TestSuite();
 		//$JUnit-BEGIN$
 		suite.addTestSuite(ParserIntegrationTest.class);
 		suite.addTestSuite(LexerTest.class);

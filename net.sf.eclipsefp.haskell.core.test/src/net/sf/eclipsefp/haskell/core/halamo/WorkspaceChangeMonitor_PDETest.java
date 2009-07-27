@@ -1,10 +1,12 @@
 package net.sf.eclipsefp.haskell.core.halamo;
 
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.checkOrder;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.resetToDefault;
 import static org.easymock.EasyMock.verify;
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.internal.util.TestHaskellProject;
@@ -23,15 +25,15 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 	public void testCreatesChangeMonitorWhenProjectIsCreated()
 		throws CoreException
 	{
-		expect(getFactory().createProjectChangeMonitor((IProject) anyObject())).
-			andReturn(null).
-			atLeastOnce();
-		replay(getFactory());
+		IProjectChangeMonitorFactory factory = getFactory();
+    expect(factory.createProjectChangeMonitor((IProject) anyObject())).
+		  andReturn( createMock(IResourceChangeListener.class) );
+		replay(factory);
 
-		TestHaskellProject prj = new TestHaskellProject("testing-project");
+		TestHaskellProject prj = new TestHaskellProject("createsChangeMonitorProject");
 		prj.destroy();
 
-		verify(getFactory());
+		verify(factory);
 	}
 
 	public void testDelegatesProjectEventsToCorrespondingMonitor() throws CoreException {
@@ -43,7 +45,7 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 			andReturn(sndMonitor);
 		replay(getFactory());
 
-		TestHaskellProject fstPrj = new TestHaskellProject("fisrt-project");
+		TestHaskellProject fstPrj = new TestHaskellProject("first-project");
 		TestHaskellProject sndPrj = new TestHaskellProject("second-project");
 
 		try {
@@ -64,8 +66,12 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 
 		IProjectChangeMonitorFactory factory =
 			createMock(IProjectChangeMonitorFactory.class);
-		expect(factory.createProjectChangeMonitor(prj.getPlatformProject())).
-			andReturn(createNiceMock(IResourceChangeListener.class));
+		expect(factory.createProjectChangeMonitor(prj.getPlatformProject()))
+			.andReturn(createNiceMock(IResourceChangeListener.class));
+		expect(factory.createProjectChangeMonitor( (IProject ) anyObject() ))
+		  .andReturn( createNiceMock(IResourceChangeListener.class) )
+			.atLeastOnce(); // projects might already exist in the workspace
+		checkOrder(factory, false);
 		replay(factory);
 
 		WorkspaceChangeMonitor mon = new WorkspaceChangeMonitor(factory);
@@ -84,9 +90,17 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 
 	private IProjectChangeMonitorFactory getFactory() {
 		if (fFactory == null) {
-			fFactory = createNiceMock(IProjectChangeMonitorFactory.class);
-			fMonitor = new WorkspaceChangeMonitor(getFactory());
+		  // WorkspaceChangeMonitor.observeChangesOn() will cause some calls on IProjectChangeMonitorFactory
+		  // and expects it to return non-null
+			fFactory = createMock(IProjectChangeMonitorFactory.class);
+			expect(fFactory.createProjectChangeMonitor( (IProject ) anyObject() ))
+			  .andStubReturn( createNiceMock(IResourceChangeListener.class) );
+			replay(fFactory);
+
+			fMonitor = new WorkspaceChangeMonitor(fFactory);
 			fMonitor.observeChangesOn(getWorkspace());
+
+			resetToDefault(fFactory);
 		}
 		return fFactory;
 	}

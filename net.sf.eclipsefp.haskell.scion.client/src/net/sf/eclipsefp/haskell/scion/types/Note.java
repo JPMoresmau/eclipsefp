@@ -75,6 +75,19 @@ public class Note {
 	}
 	
 	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Note)) {
+			return false;
+		}
+		Note other = (Note)obj;
+		return
+			kind.equals(other.kind) &&
+			location.equals(other.location) &&
+			message.equals(other.message) &&
+			additionalInfo.equals(other.additionalInfo);
+	}
+	
+	@Override
 	public String toString() {
 		return String.format("%s:%s: %s", kind.toString(), location.toString(), message);
 	}

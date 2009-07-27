@@ -13,3 +13,4 @@ Require-Bundle: org.easymock;bundle-version="[2.2.0,3.0.0)",
  net.sf.eclipsefp.haskell.core.test
 Export-Package: net.sf.eclipsefp.haskell.ghccompiler.test
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: net.sf.eclipsefp.haskell.scion.types
