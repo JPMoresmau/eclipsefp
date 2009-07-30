@@ -16,9 +16,10 @@ import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSyste
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -87,16 +88,16 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   // TODO lf note to self: config -> navigator service -> can be used to
   //                       get state information from the View
   public void init( final ICommonContentExtensionSite config ) {
-    Preferences prefs = HaskellCorePlugin.getDefault().getPluginPreferences();
-    prefs.addPropertyChangeListener( new IPropertyChangeListener() {
-      public void propertyChange( final PropertyChangeEvent event ) {
-        String prop = event.getProperty();
+    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    node.addPreferenceChangeListener( new IPreferenceChangeListener() {
+      public void preferenceChange( final PreferenceChangeEvent event ) {
+        String prop = event.getKey();
         if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( prop )
             || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( prop ) ) {
           config.getService().update();
         }
       }
-    } );
+    });
   }
 
   public void restoreState( final IMemento memento ) {

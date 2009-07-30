@@ -8,7 +8,9 @@ import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -21,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 /** <p>the preference page for installed Haskell implementations. A Haskell
@@ -73,15 +76,21 @@ public class InstalledImplementationsPP extends PreferencePage
 
   @Override
   public boolean performOk() {
-    String key = ICorePreferenceNames.HS_IMPLEMENTATIONS;
-    getPrefs().setValue( key, implementationsBlock.getPref() );
+    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+
+    node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, implementationsBlock.getPref() );
     IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
     String name = "";
     if( impl != null ) {
       name = impl.getName();
     }
-    getPrefs().setValue( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
-    HaskellCorePlugin.getDefault().savePluginPreferences();
+    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
+
+    try {
+      node.flush();
+    } catch( BackingStoreException ex ) {
+      HaskellUIPlugin.log( ex );
+    }
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     implementationsBlock.saveColumnSettings( settings, DIALOG_SETTINGS_ID );
@@ -141,16 +150,11 @@ public class InstalledImplementationsPP extends PreferencePage
   }
 
   private void applyInitialValue() {
-    String key = ICorePreferenceNames.HS_IMPLEMENTATIONS;
-    String value = getPrefs().getString( key );
-    implementationsBlock.applyPref( value );
+    String impls = Platform.getPreferencesService().getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.HS_IMPLEMENTATIONS, null, null );
+    implementationsBlock.applyPref( impls );
 
-    String selKey = ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION;
-    String name = getPrefs().getString( selKey );
-    implementationsBlock.setCheckedHsImplementation( name );
+    String sel = Platform.getPreferencesService().getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, null, null );
+    implementationsBlock.setCheckedHsImplementation( sel );
   }
 
-  private Preferences getPrefs() {
-    return HaskellCorePlugin.getDefault().getPluginPreferences();
-  }
 }

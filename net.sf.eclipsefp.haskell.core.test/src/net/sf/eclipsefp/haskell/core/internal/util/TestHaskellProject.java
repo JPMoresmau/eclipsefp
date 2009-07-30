@@ -10,17 +10,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 public class TestHaskellProject implements ICorePreferenceNames {
 
 	private IProject fUnderlyingProject;
 	private IFolder fSourceFolder;
 
-	public TestHaskellProject(final String projectName) throws CoreException {
-		ProjectCreationOperation op = new HaskellProjectCreationOperation(
-                                              preferences());
+	public TestHaskellProject(final String projectName, final IEclipsePreferences corePrefs) throws CoreException {
+	  setPreferences(corePrefs);
+		ProjectCreationOperation op = new HaskellProjectCreationOperation();
 		op.setProjectName(projectName);
         try {
 			op.run(new NullProgressMonitor());
@@ -32,14 +32,12 @@ public class TestHaskellProject implements ICorePreferenceNames {
 		}
 	}
 
-	private Preferences preferences() {
-    Preferences preferences = new Preferences();
-    preferences.setValue( SELECTED_COMPILER, "null" );
-    preferences.setValue( FOLDERS_SRC, "src" );
-    preferences.setValue( FOLDERS_OUT, "out" );
-    preferences.setValue( TARGET_BINARY, "bin/theResult" );
-    preferences.setValue( FOLDERS_IN_NEW_PROJECT, true );
-    return preferences;
+	private void setPreferences(final IEclipsePreferences corePrefs) {
+	  corePrefs.put( SELECTED_COMPILER, "null" );
+    corePrefs.put( FOLDERS_SRC, "src" );
+    corePrefs.put( FOLDERS_OUT, "out" );
+    corePrefs.put( TARGET_BINARY, "bin/theResult" );
+    corePrefs.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
   }
 
 	public IFile createSourceFile(final String fileName, final String contents) throws CoreException {

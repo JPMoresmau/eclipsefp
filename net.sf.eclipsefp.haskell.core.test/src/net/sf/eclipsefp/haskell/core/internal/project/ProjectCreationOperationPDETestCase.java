@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.io.IOException;
-import junit.framework.TestCase;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -10,15 +10,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-public class ProjectCreationOperationPDETestCase extends TestCase {
+public class ProjectCreationOperationPDETestCase extends TestCaseWithPreferences {
 
 	protected static final String PROJECT_NAME = "hello.haskell.world";
 
 	private IWorkspaceRoot fWorkspaceRoot;
 	private ProjectCreationOperation fOperation;
 
+	public ProjectCreationOperationPDETestCase() {
+	  super();
+	}
+
 	@Override
-	protected void setUp() {
+	protected void setUp() throws Exception {
+	  super.setUp();
 		fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		fOperation = createOperation();
 		fOperation.setProjectName(PROJECT_NAME);
@@ -60,6 +65,7 @@ public class ProjectCreationOperationPDETestCase extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		deleteCreatedProject();
+		super.tearDown();
 	}
 
 	private void deleteCreatedProject() throws CoreException {

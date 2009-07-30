@@ -18,10 +18,19 @@ import org.eclipse.core.runtime.Path;
   */
 public class ProjectModel_PDETest extends TestCaseWithProject {
 
+  public ProjectModel_PDETest() {
+    super();
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+  }
+
   @Override
   protected void tearDown() throws Exception {
-    super.tearDown();
     HaskellProjectManager.clear();
+    super.tearDown();
   }
 
 

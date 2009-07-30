@@ -5,6 +5,7 @@ import java.util.Iterator;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -17,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 /** <p>the preference page for the Haskell editor.</p>
@@ -70,7 +72,11 @@ public class HaskellEditorPP extends PreferencePage
   @Override
   public boolean performOk() {
     overlayStore.propagate();
-    HaskellUIPlugin.getDefault().savePluginPreferences();
+    try {
+      new InstanceScope().getNode(HaskellUIPlugin.getPluginId()).flush();
+    } catch( BackingStoreException ex ) {
+      HaskellUIPlugin.log( ex );
+    }
     return true;
   }
 

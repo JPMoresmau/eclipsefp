@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 
 /** <p>implements a delegate for launching GHCi.</p>
   *
@@ -104,9 +104,8 @@ public class GhciLaunchOperationDelegate
     }
   }
 
-  private boolean isPrefSet( final String name ) {
-    Preferences prefs = GhcCompilerPlugin.getDefault().getPluginPreferences();
-    return prefs.getBoolean( name );
+  private boolean isPrefSet( final String key ) {
+    return Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), key, false, null );
   }
 
   private void addAll( final List<String> cmdLine, final IFile[] selectedFiles ) {

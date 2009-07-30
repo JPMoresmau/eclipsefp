@@ -47,7 +47,7 @@ public class ScionManager implements IResourceChangeListener {
   /**
    * Used to alert the user of Scion startup failure only once per session.
    */
-  private boolean serverStartupErrorReported = false;
+  private boolean serverStartupErrorReported = true; // TODO TtC set back to false
 
   public ScionManager() {
     // the work is done in the start() method

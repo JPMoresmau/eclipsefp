@@ -2,28 +2,24 @@
 package net.sf.eclipsefp.haskell.hugs.core;
 
 import java.io.File;
-
-import net.sf.eclipsefp.haskell.hugs.HugsPlugin;
-import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Preferences;
-
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.hugs.HugsPlugin;
+import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 /** <p>contains common helping functionality.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class Util {
 
   private static final String SEP = File.pathSeparator;
-  
+
   public static String getCompilerExecutable() {
-    Preferences prefs = HugsPlugin.getDefault().getPluginPreferences();
-    String pref = prefs.getString( IHugsPreferenceNames.EXECUTABLE_NAME );
-    
+    String pref = Platform.getPreferencesService().getString( HugsPlugin.getPluginId(), IHugsPreferenceNames.EXECUTABLE_NAME, null, null );
+
     String result = "hugs";
     if( pref != null && !pref.equals( "" ) ) {
       result = pref;

@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -17,6 +18,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.osgi.service.prefs.BackingStoreException;
 
 /** <p>The preference page for the GHC compiler preferences.</p>
   *
@@ -72,7 +74,11 @@ public class GhcPreferencePage extends PreferencePage
   @Override
   public boolean performOk() {
     overlayStore.propagate();
-    GhcCompilerPlugin.getDefault().savePluginPreferences();
+    try {
+      new InstanceScope().getNode(GhcCompilerPlugin.getPluginId()).flush();
+    } catch( BackingStoreException ex ) {
+      GhcCompilerPlugin.log( ex );
+    }
     return true;
   }
 

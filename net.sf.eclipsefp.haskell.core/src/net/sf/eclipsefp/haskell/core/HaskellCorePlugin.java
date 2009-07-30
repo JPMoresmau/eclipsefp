@@ -154,8 +154,7 @@ public class HaskellCorePlugin extends Plugin {
     }
     String pref = ""; //$NON-NLS-1$
     try {
-      String name = ICorePreferenceNames.SELECTED_COMPILER;
-      pref = getPluginPreferences().getString( name );
+      pref = Platform.getPreferencesService().getString( getPluginId(), ICorePreferenceNames.SELECTED_COMPILER, "null", null ); //$NON-NLS-1$
       CompilerManager.getInstance().selectCompiler( pref );
     } catch( Exception ex ) {
       String msg = "Problem when selecting compiler '" + pref + "'."; //$NON-NLS-1$ //$NON-NLS-2$

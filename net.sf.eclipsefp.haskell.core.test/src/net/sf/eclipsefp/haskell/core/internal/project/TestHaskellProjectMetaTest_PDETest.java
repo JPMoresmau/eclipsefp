@@ -3,22 +3,22 @@ package net.sf.eclipsefp.haskell.core.internal.project;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.internal.util.TestHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-public class TestHaskellProjectMetaTest_PDETest extends TestCase {
+public class TestHaskellProjectMetaTest_PDETest extends TestCaseWithPreferences {
 
 	public void testConstructorCreatesProject() throws CoreException {
-		new TestHaskellProject("testing-project");
+		new TestHaskellProject("testing-project", getCorePrefs());
 
 		IProject project = getProject("testing-project");
 		assertNotNull(project);
@@ -28,7 +28,7 @@ public class TestHaskellProjectMetaTest_PDETest extends TestCase {
 	}
 
 	public void testCreatingSourceFiles() throws CoreException, IOException {
-		TestHaskellProject project = new TestHaskellProject("another-project");
+		TestHaskellProject project = new TestHaskellProject("another-project", getCorePrefs());
 
 		project.createSourceFile("MyFile.txt", "These are the file contents\n");
 
@@ -40,7 +40,7 @@ public class TestHaskellProjectMetaTest_PDETest extends TestCase {
 	}
 
 	public void testDestroyProject() throws CoreException {
-		TestHaskellProject project = new TestHaskellProject("other-project");
+		TestHaskellProject project = new TestHaskellProject("other-project", getCorePrefs());
 
 		IProject underlyingProject = getProject("other-project");
 		assertNotNull(underlyingProject);
@@ -53,7 +53,7 @@ public class TestHaskellProjectMetaTest_PDETest extends TestCase {
 	}
 
 	public void testUsesDefaultCompiler() throws CoreException {
-		TestHaskellProject project = new TestHaskellProject("yet-another-project");
+		TestHaskellProject project = new TestHaskellProject("yet-another-project", getCorePrefs());
 
 		IHaskellProject hsprj = HaskellProjectManager.get(getProject("yet-another-project"));
 		assertEquals(DefaultHaskellCompiler.class, hsprj.getCompiler().getClass());

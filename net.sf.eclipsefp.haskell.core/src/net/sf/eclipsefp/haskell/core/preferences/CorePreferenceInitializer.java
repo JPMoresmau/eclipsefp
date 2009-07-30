@@ -2,8 +2,9 @@
 package net.sf.eclipsefp.haskell.core.preferences;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 
 /** <p>initializer for the core preferences (declared in the
@@ -20,19 +21,12 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
 
   @Override
   public void initializeDefaultPreferences() {
-    Preferences preferences = getPreferences();
-    preferences.setDefault( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
-    preferences.setDefault( FOLDERS_SRC, "src" ); //$NON-NLS-1$
-    preferences.setDefault( FOLDERS_OUT, "out" ); //$NON-NLS-1$
-    preferences.setDefault( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
-    preferences.setDefault( FOLDERS_IN_NEW_PROJECT, true );
+    IEclipsePreferences coreNode = new DefaultScope().getNode( HaskellCorePlugin.getPluginId() );
+    coreNode.put( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
+    coreNode.put( FOLDERS_SRC, "src" ); //$NON-NLS-1$
+    coreNode.put( FOLDERS_OUT, "out" ); //$NON-NLS-1$
+    coreNode.put( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
+    coreNode.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
   }
 
-
-  // helping methods
-  //////////////////
-
-  private Preferences getPreferences() {
-    return HaskellCorePlugin.getDefault().getPluginPreferences();
-  }
 }

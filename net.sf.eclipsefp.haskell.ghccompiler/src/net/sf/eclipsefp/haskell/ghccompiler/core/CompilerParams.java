@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 
 /** <p>a helper that constructs compiler parameters from the current settings
   * in the preferences.</p>
@@ -14,10 +14,8 @@ import org.eclipse.core.runtime.Preferences;
   */
 public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
 
-  private final Preferences preferences;
-
   public CompilerParams() {
-    preferences = GhcCompilerPlugin.getDefault().getPluginPreferences();
+    super();
   }
 
   public List<String> construct() {
@@ -74,8 +72,8 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
   }
 
   private void addExtraOptions( final List<String> list ) {
-    if( preferences.getBoolean( USE_EXTRA_OPTIONS ) ) {
-      String extras = preferences.getString( EXTRA_OPTIONS );
+    if( Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), USE_EXTRA_OPTIONS, false, null ) ) {
+      String extras = Platform.getPreferencesService().getString( GhcCompilerPlugin.getPluginId(), EXTRA_OPTIONS, null, null );
       if( extras !=  null && !extras.trim().equals( "" ) ) { //$NON-NLS-1$
         list.add( extras );
       }
@@ -83,14 +81,14 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
   }
 
   private void addBooleanParam( final String key, final List<String> list ) {
-    boolean value = preferences.getBoolean( key );
+    boolean value = Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), key, false, null );
     if( value ) {
       list.add( key );
     }
   }
 
   private void addOptimizationLevel( final List<String> list ) {
-    int level = preferences.getInt( OPTIMIZATION_LEVEL );
+    int level = Platform.getPreferencesService().getInt( GhcCompilerPlugin.getPluginId(), OPTIMIZATION_LEVEL, 0, null );
     if( level > -1 ) {
       String optLevel = "-O" + String.valueOf( level ); //$NON-NLS-1$
       list.add( optLevel );

@@ -8,8 +8,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.resetToDefault;
 import static org.easymock.EasyMock.verify;
-import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.internal.util.TestHaskellProject;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-public class WorkspaceChangeMonitor_PDETest extends TestCase {
+public class WorkspaceChangeMonitor_PDETest extends TestCaseWithPreferences {
 
 	private IProjectChangeMonitorFactory fFactory;
 	private WorkspaceChangeMonitor fMonitor;
@@ -30,7 +30,7 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 		  andReturn( createMock(IResourceChangeListener.class) );
 		replay(factory);
 
-		TestHaskellProject prj = new TestHaskellProject("createsChangeMonitorProject");
+		TestHaskellProject prj = new TestHaskellProject("createsChangeMonitorProject", getCorePrefs());
 		prj.destroy();
 
 		verify(factory);
@@ -45,8 +45,8 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 			andReturn(sndMonitor);
 		replay(getFactory());
 
-		TestHaskellProject fstPrj = new TestHaskellProject("first-project");
-		TestHaskellProject sndPrj = new TestHaskellProject("second-project");
+		TestHaskellProject fstPrj = new TestHaskellProject("first-project", getCorePrefs());
+		TestHaskellProject sndPrj = new TestHaskellProject("second-project", getCorePrefs());
 
 		try {
 			fstMonitor.resourceChanged((IResourceChangeEvent) anyObject());
@@ -62,7 +62,7 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 
 	public void testCreatesProjectMonitorsForLoadedWorkspace()
 		throws CoreException {
-		TestHaskellProject prj = new TestHaskellProject("myproject");
+		TestHaskellProject prj = new TestHaskellProject("myproject", getCorePrefs());
 
 		IProjectChangeMonitorFactory factory =
 			createMock(IProjectChangeMonitorFactory.class);
@@ -110,6 +110,7 @@ public class WorkspaceChangeMonitor_PDETest extends TestCase {
 		if (fMonitor != null) {
 			getWorkspace().removeResourceChangeListener(fMonitor);
 		}
+		super.tearDown();
 	}
 
 }

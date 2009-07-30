@@ -3,8 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.project;
 
-import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.internal.util.TestHaskellProject;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  * @author Leif Frenzel
  */
-public abstract class HaskellProject_PDETestCase extends TestCase {
+public abstract class HaskellProject_PDETestCase extends TestCaseWithPreferences {
 
 	private TestHaskellProject fProject;
 
@@ -26,7 +26,8 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
 
 	@Override
   protected final void setUp() throws Exception {
-		fProject = new TestHaskellProject("TestProject-1");
+	  super.setUp();
+		fProject = new TestHaskellProject("TestProject-1", getCorePrefs());
 		setUpMore();
 	}
 
@@ -52,6 +53,7 @@ public abstract class HaskellProject_PDETestCase extends TestCase {
   protected final void tearDown() throws Exception {
 		doTearDown();
 		fProject.destroy();
+		super.tearDown();
 	}
 
 	protected IFile createSourceFile(final String contents, final String name)

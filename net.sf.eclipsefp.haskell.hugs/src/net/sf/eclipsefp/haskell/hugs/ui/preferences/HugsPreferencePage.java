@@ -6,7 +6,7 @@ import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.haskell.hugs.HugsPlugin;
 import net.sf.eclipsefp.haskell.hugs.core.IHugsParameters;
 import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
-
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 /** <p>The preference page for the HUGS preferences.</p>
@@ -66,7 +67,11 @@ public class HugsPreferencePage extends PreferencePage
   @Override
   public boolean performOk() {
     overlayStore.propagate();
-    HugsPlugin.getDefault().savePluginPreferences();
+    try {
+      new InstanceScope().getNode(HugsPlugin.getPluginId()).flush();
+    } catch( BackingStoreException ex ) {
+      HugsPlugin.log( ex );
+    }
     return true;
   }
 

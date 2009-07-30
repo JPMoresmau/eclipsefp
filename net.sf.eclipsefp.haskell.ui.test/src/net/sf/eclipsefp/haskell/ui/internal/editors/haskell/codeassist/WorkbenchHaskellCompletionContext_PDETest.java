@@ -14,13 +14,13 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.halamo.HaskellLanguageModel;
 import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellModelManager;
 import net.sf.eclipsefp.haskell.core.internal.util.TestHaskellProject;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithPreferences;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.doubles.StubViewer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -33,21 +33,23 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class WorkbenchHaskellCompletionContext_PDETest extends TestCase {
+public class WorkbenchHaskellCompletionContext_PDETest extends TestCaseWithPreferences {
 
 	private TestHaskellProject fRightHandle;
 	private TestHaskellProject fWrongHandle;
 
 	@Override
-	protected void setUp() throws CoreException {
-		fRightHandle = new TestHaskellProject("fibb");
-		fWrongHandle = new TestHaskellProject("qsort");
+	protected void setUp() throws Exception {
+	  super.setUp();
+		fRightHandle = new TestHaskellProject("fibb", getCorePrefs());
+		fWrongHandle = new TestHaskellProject("qsort", getCorePrefs());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		fRightHandle.destroy();
 		fWrongHandle.destroy();
+		super.tearDown();
 	}
 
 	public void testFetchesCorrectLanguageModel() throws CoreException {

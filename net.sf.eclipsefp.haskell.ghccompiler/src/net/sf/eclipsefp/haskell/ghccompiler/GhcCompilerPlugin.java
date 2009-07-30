@@ -58,6 +58,15 @@ public class GhcCompilerPlugin extends AbstractUIPlugin {
     getDefault().getLog().log( status );
   }
 
+  public static void log( final Throwable throwable ) {
+    Status status = new Status( IStatus.ERROR,
+                                getPluginId(),
+                                IStatus.OK,
+                                throwable.getMessage(),
+                                throwable );
+    getDefault().getLog().log( status );
+  }
+
   public static void log( final String message, final int severity, final Throwable throwable ) {
     Status status = new Status( severity,
                                 getPluginId(),

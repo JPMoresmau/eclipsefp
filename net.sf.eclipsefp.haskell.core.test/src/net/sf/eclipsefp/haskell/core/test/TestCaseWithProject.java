@@ -3,7 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.test;
 
-import junit.framework.TestCase;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
@@ -21,10 +21,14 @@ import org.eclipse.core.runtime.jobs.Job;
   *
   * @author Leif Frenzel
   */
-public class TestCaseWithProject extends TestCase {
+public class TestCaseWithProject extends TestCaseWithPreferences {
 
   protected static final String PROJECT_NAME = "p1";
   protected IProject project;
+
+  public TestCaseWithProject() {
+    addQualifier( HaskellCorePlugin.getPluginId() );
+  }
 
   public static void waitForAutoBuild() throws CoreException {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -51,6 +55,8 @@ public class TestCaseWithProject extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
+    super.setUp();
+
     ProjectCreationOperation op = new HaskellProjectCreationOperation();
     op.setExtraOperation( new ProjectModelFilesOp() );
     op.setProjectName( PROJECT_NAME );
@@ -63,5 +69,6 @@ public class TestCaseWithProject extends TestCase {
   @Override
   protected void tearDown() throws Exception {
     project.delete( true, null );
+    super.tearDown();
   }
 }

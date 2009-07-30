@@ -15,9 +15,10 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
 /**
  * <p>
@@ -227,21 +228,16 @@ public class CompilerManager implements ICompilerManager {
 	}
 
   private void initHsImplementation() {
-    String key = ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION;
-    String currentImplName = getPrefs().getString( key );
+    String currentImplName = Platform.getPreferencesService().getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, null, null );
     if( currentImplName != null ) {
       Map<String, IHsImplementation> impls = loadImpls();
       this.currentHsImplementation = impls.get( currentImplName );
     }
   }
 
-  private Preferences getPrefs() {
-    return HaskellCorePlugin.getDefault().getPluginPreferences();
-  }
-
   private Map<String, IHsImplementation> loadImpls() {
     List<IHsImplementation> impls = new ArrayList<IHsImplementation>();
-    String xml = getPrefs().getString( ICorePreferenceNames.HS_IMPLEMENTATIONS );
+    String xml = Platform.getPreferencesService().getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.HS_IMPLEMENTATIONS, null, null );
     HsImplementationPersister.fromXML( xml, impls );
     Map<String, IHsImplementation> result = new HashMap<String, IHsImplementation>();
     for( IHsImplementation impl: impls ) {
@@ -251,14 +247,14 @@ public class CompilerManager implements ICompilerManager {
   }
 
   private void listenForImplPref() {
-    getPrefs().addPropertyChangeListener( new IPropertyChangeListener() {
-      public void propertyChange( final PropertyChangeEvent event ) {
-        String prop = event.getProperty();
-        if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( prop )
-            || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( prop ) ) {
+    new InstanceScope().getNode( HaskellCorePlugin.getPluginId() ).addPreferenceChangeListener( new IPreferenceChangeListener() {
+      public void preferenceChange( final PreferenceChangeEvent event ) {
+        String key = event.getKey();
+        if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
+            || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
           initHsImplementation();
         }
       }
-    } );
+    });
   }
 }

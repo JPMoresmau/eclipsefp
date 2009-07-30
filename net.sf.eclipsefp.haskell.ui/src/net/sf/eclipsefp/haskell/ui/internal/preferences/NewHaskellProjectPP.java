@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 /** <p>the preference page for new Haskell projects. The user can pre-define
@@ -319,7 +320,11 @@ public class NewHaskellProjectPP extends PreferencePage
       String key = ( String )text.getData();
       store.setValue( key, text.getText() );
     }
-    HaskellCorePlugin.getDefault().savePluginPreferences();
+    try {
+      new InstanceScope().getNode(HaskellCorePlugin.getPluginId()).flush();
+    } catch( BackingStoreException ex ) {
+      HaskellCorePlugin.log( ex );
+    }
     return super.performOk();
   }
 

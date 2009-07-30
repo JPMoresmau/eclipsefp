@@ -13,19 +13,15 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
 
 public class HaskellProjectCreationOperation_PDETest extends
 		ProjectCreationOperationPDETestCase {
 
-	private Preferences fStore;
-
 	@Override
   protected ProjectCreationOperation createOperation() {
-    fStore = new Preferences();
-    fStore.setValue( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
+    getCorePrefs().putBoolean( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
     HaskellProjectCreationOperation result
-      = new HaskellProjectCreationOperation( fStore );
+      = new HaskellProjectCreationOperation( );
     result.setExtraOperation( new ProjectModelFilesOp() );
     return result;
   }
@@ -40,8 +36,8 @@ public class HaskellProjectCreationOperation_PDETest extends
 
 	public void testCreatesDirectoriesFromPreferences()
       throws InvocationTargetException, InterruptedException {
-    fStore.setValue( ICorePreferenceNames.FOLDERS_SRC, "customSrc" );
-    fStore.setValue( ICorePreferenceNames.FOLDERS_OUT, "customOut" );
+	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_SRC, "customSrc" );
+	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_OUT, "customOut" );
 
     runOperation();
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
@@ -62,10 +58,10 @@ public class HaskellProjectCreationOperation_PDETest extends
   }
 
 	public void testSetsUpProjectFoldersFromPreferences() throws Exception {
-    fStore.setValue( ICorePreferenceNames.FOLDERS_SRC, "mySrc" );
-    fStore.setValue( ICorePreferenceNames.FOLDERS_OUT, "myOut" );
-    fStore.setValue( ICorePreferenceNames.TARGET_BINARY, "myBinary" );
-    fStore.setValue( ICorePreferenceNames.SELECTED_COMPILER, "null" );
+	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_SRC, "mySrc" );
+	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_OUT, "myOut" );
+	  getCorePrefs().put( ICorePreferenceNames.TARGET_BINARY, "myBinary" );
+	  getCorePrefs().put( ICorePreferenceNames.SELECTED_COMPILER, "null" );
 
     runOperation();
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
@@ -77,7 +73,7 @@ public class HaskellProjectCreationOperation_PDETest extends
   }
 
   public void testDoNotCreateFoldersWhenPreferenceDisabled() throws Exception {
-    fStore.setValue( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, false );
+    getCorePrefs().putBoolean( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, false );
 
     runOperation();
 
