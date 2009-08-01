@@ -38,7 +38,7 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
 
   public void testMultipleSourcePaths() {
     HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
-    hp.addSourcePath( "test" );
+    hp.addSourcePath( new Path("test") );
     assertEquals( 2, hp.getSourcePaths().size() );
     // TODO lf we should really get two here
 //    assertEquals( project.getFolder( "src" ), hp.getSourceFolder() );
@@ -51,22 +51,22 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
   public void testTargetExecutable_single() throws CoreException {
     HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
     // atm one target exe is added automatically during project creation
-    assertEquals( 1, hp.getTargetNames().size() );
+    assertEquals( 1, hp.getTargets().size() );
 
-    IPath path = new Path( "bla.exe" );
+    IPath path = new Path( "bla" );
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
-    project.getFile( path ).create( is, true, null );
-    hp.addTargetName( path );
-    assertEquals( 2, hp.getTargetNames().size() );
+    project.getFile( ResourceUtil.executableName( path ) ).create( is, true, null );
+    hp.addTarget( new ExecutableBuildTarget( path ) );
+    assertEquals( 2, hp.getTargets().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
-    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "bla" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "blubb" ) ) ) );
   }
 
   public void testTargetExecutable_multiple() throws CoreException {
     HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
     // atm one target exe is added automatically during project creation
-    assertEquals( 1, hp.getTargetNames().size() );
+    assertEquals( 1, hp.getTargets().size() );
 
     IPath path = new Path( "bin/bli.exe" );
     IPath path2 = new Path( "bla.exe" );
@@ -74,9 +74,9 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     project.getFolder( "bin" ).create( true, true, null );
     project.getFile( path ).create( is, true, null );
     project.getFile( path2 ).create( is, true, null );
-    hp.addTargetName( path );
-    hp.addTargetName( path2 );
-    assertEquals( 3, hp.getTargetNames().size() );
+    hp.addTarget( new ExecutableBuildTarget( path ) );
+    hp.addTarget( new ExecutableBuildTarget( path2 ) );
+    assertEquals( 3, hp.getTargets().size() );
 
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bin/bli.exe" ) ) );

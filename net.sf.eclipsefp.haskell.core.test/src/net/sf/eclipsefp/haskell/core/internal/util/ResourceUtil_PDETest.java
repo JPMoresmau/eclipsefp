@@ -4,6 +4,7 @@ import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
 
 public class ResourceUtil_PDETest extends TestCaseWithProject {
 
@@ -17,7 +18,7 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
 
   public void testGetSourceDirRelativeName() throws Exception {
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "src" );
+    hp.addSourcePath( new Path( "src" ) );
 
     IFile file = null;
     try {
@@ -47,7 +48,7 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
       // expected
     }
 
-    hp.addSourcePath( "test" );
+    hp.addSourcePath( new Path( "test" ) );
     file = project.getFile( "test/Path/A.hs" );
     assertEquals( "Path/A.hs",
                   ResourceUtil.getSourceDirRelativeName( file, hp ) );

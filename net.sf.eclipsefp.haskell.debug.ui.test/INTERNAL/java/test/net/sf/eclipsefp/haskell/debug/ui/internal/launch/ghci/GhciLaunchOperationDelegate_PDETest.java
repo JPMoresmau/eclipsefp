@@ -31,7 +31,7 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
 
     // source folders added by default
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "src" );
+    hp.addSourcePath( new Path( "src" ) );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
@@ -53,8 +53,8 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
       = putInQuotes( project.getLocation().append( new Path( "bla/src2" ) ) );
 
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "src" );
-    hp.addSourcePath( "bla/src2" );
+    hp.addSourcePath( new Path( "src" ) );
+    hp.addSourcePath( new Path( "bla/src2" ) );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
@@ -67,7 +67,7 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     folder.createLink( new Path( "/bla/lsrc/" ), IResource.ALLOW_MISSING_LOCAL, null );
 
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "lsrc" );
+    hp.addSourcePath( new Path( "lsrc" ) );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
     assertContains( "-i\"/bla/lsrc\"", del.createArguments( hp, files ) );

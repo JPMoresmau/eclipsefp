@@ -84,12 +84,12 @@ public class Parser implements IXMLNames {
 	{
 		if (rootElement != null
 				&& rootElement.getNodeName().equalsIgnoreCase(DOCUMENT_ELEMENT)) {
-			project.addSourcePath(getValue(rootElement, SOURCE_PATH_ELEMENT,
-											PATH_ATT));
-			project.setOutputPath(getValue(rootElement, OUTPUT_PATH_ELEMENT,
-											PATH_ATT));
-			project.addTargetName( new Path( getValue(rootElement, TARGET_NAME_ELEMENT,
-											NAME_ATT)));
+			project.addSourcePath(new Path(getValue(rootElement, SOURCE_PATH_ELEMENT,
+											PATH_ATT)));
+			project.setOutputPath(new Path(getValue(rootElement, OUTPUT_PATH_ELEMENT,
+											PATH_ATT)));
+			project.addTarget(new ExecutableBuildTarget(new Path(getValue(rootElement, TARGET_NAME_ELEMENT,
+											NAME_ATT))));
 		}
 	}
 }

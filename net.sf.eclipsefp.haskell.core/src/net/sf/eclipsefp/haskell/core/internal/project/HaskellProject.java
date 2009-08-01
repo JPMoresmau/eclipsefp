@@ -1,14 +1,14 @@
 // Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.internal.project;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProjectInfo;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList;
 import org.eclipse.core.resources.IContainer;
@@ -26,18 +26,16 @@ import org.eclipse.core.runtime.IPath;
  *
  * @author Leif Frenzel
  */
-public final class HaskellProject implements IHaskellProject {
+public final class HaskellProject implements IHaskellProject, IHaskellProjectInfo {
 
 	private final IProject project;
-	private final Set<IPath> sourcePaths = new HashSet<IPath>();
-	private final Set<IPath> targetNames = new HashSet<IPath>();
-	private String outputPath = ""; //$NON-NLS-1$
-	private final String binPath = ""; //$NON-NLS-1$
+  private final IHaskellProjectInfo projectInfo;
 	private IHaskellCompiler compiler;
 
 	public HaskellProject( final IProject project ) {
     compiler = CompilerManager.getInstance().getCompiler();
     this.project = project;
+    this.projectInfo = new SimpleHaskellProjectInfo(); // for now...
   }
 
 
@@ -49,19 +47,19 @@ public final class HaskellProject implements IHaskellProject {
 	}
 
 	public Set<IPath> getSourcePaths() {
-    return Collections.unmodifiableSet( sourcePaths );
+    return projectInfo.getSourcePaths();
   }
 
-	public Set<IPath> getTargetNames() {
-	  return Collections.unmodifiableSet( targetNames );
+	public Set<IBuildTarget> getTargets() {
+	  return projectInfo.getTargets();
 	}
 
 	public IPath getOutputPath() {
-		return getProjectRelativePath(outputPath);
+		return projectInfo.getOutputPath();
 	}
 
 	public IPath getBinPath() {
-		return getProjectRelativePath(binPath);
+		return projectInfo.getBinPath();
 	}
 
 	public IImportLibrary[] getImportLibraries() {
@@ -83,40 +81,47 @@ public final class HaskellProject implements IHaskellProject {
 	// internal setters
 	// /////////////////
 
-	public void addSourcePath( final String sourcePath ) {
-    check( sourcePath );
-
+	public void addSourcePath( final IPath sourcePath ) {
     String name = IHaskellProject.PROPERTY_SOURCE_PATH;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
     event.setOldValue( getSourcePaths() );
 
-    sourcePaths.add( getProjectRelativePath( sourcePath ) );
+    projectInfo.addSourcePath( sourcePath );
 
     event.setNewValue( getSourcePaths() );
     HaskellProjectManager.broadcast( event );
   }
 
-  public void setOutputPath( final String outputPath ) {
-    check( outputPath );
-
+  public void setOutputPath( final IPath outputPath ) {
     String name = IHaskellProject.PROPERTY_OUTPUT_PATH;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
     event.setOldValue( getOutputPath() );
 
-    this.outputPath = outputPath;
+    projectInfo.setOutputPath( outputPath );
 
     event.setNewValue( getOutputPath() );
     HaskellProjectManager.broadcast( event );
   }
 
-  public void addTargetName( final IPath targetName ) {
-    String name = IHaskellProject.PROPERTY_TARGET_NAME;
+  public void setBinPath( final IPath binPath ) {
+    String name = IHaskellProject.PROPERTY_BIN_PATH;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
-    event.setOldValue( getTargetNames() );
+    event.setOldValue( getBinPath() );
 
-    targetNames.add( targetName );
+    projectInfo.setBinPath( binPath );
 
-    event.setNewValue( getTargetNames() );
+    event.setNewValue( getBinPath() );
+    HaskellProjectManager.broadcast( event );
+  }
+
+  public void addTarget( final IBuildTarget target ) {
+    String name = IHaskellProject.PROPERTY_TARGET;
+    ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
+    event.setOldValue( getTargets() );
+
+    projectInfo.addTarget( target );
+
+    event.setNewValue( getTargets() );
     HaskellProjectManager.broadcast( event );
   }
 
@@ -146,7 +151,11 @@ public final class HaskellProject implements IHaskellProject {
 	// helping methods
   ///////////////////
 
-  private IPath getProjectRelativePath( final String whichPath ) {
+  /**
+   * Returns an {@link IPath} that represents the given path,
+   * relative to the project root.
+   */
+  public IPath getProjectRelativePath( final String whichPath ) {
     IPath result;
     if( "".equals( whichPath ) ) { //$NON-NLS-1$
       result = project.getProjectRelativePath();
@@ -156,9 +165,4 @@ public final class HaskellProject implements IHaskellProject {
     return result;
   }
 
-  private void check( final String candidate ) {
-    if( candidate == null ) {
-      throw new IllegalArgumentException();
-    }
-  }
 }

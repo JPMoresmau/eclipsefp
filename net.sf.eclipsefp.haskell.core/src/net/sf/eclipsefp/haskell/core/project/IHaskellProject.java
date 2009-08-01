@@ -1,13 +1,10 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.project;
 
-import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * <p>
@@ -18,11 +15,12 @@ import org.eclipse.core.runtime.IPath;
  *
  * @author Leif Frenzel
  */
-public interface IHaskellProject extends IAdaptable {
+public interface IHaskellProject extends IHaskellProjectInfo {
 
 	String PROPERTY_SOURCE_PATH = "sourcePath"; //$NON-NLS-1$
+	String PROPERTY_BIN_PATH = "binPath"; //$NON-NLS-1$
 	String PROPERTY_OUTPUT_PATH = "outputPath"; //$NON-NLS-1$
-	String PROPERTY_TARGET_NAME = "targetName"; //$NON-NLS-1$
+	String PROPERTY_TARGET = "targetName"; //$NON-NLS-1$
 	String PROPERTY_IMPORT_LIBRARIES = "importLibraries"; //$NON-NLS-1$
 
 	/**
@@ -31,24 +29,6 @@ public interface IHaskellProject extends IAdaptable {
 	 * </p>
 	 */
 	IProject getResource();
-
-	/**
-	 * <p>
-	 * returns the paths to the source folders of this IHaskellProject.
-	 * </p>
-	 */
-	Set<IPath> getSourcePaths();
-
-	/** <p>returns the paths to the targets (executables or libs) of this
-	  * IHaskellProject.</p> */
-	Set<IPath> getTargetNames();
-
-	/**
-	 * <p>
-	 * returns the path to the output folder of this IHaskellProject.
-	 * </p>
-	 */
-	IPath getOutputPath();
 
 	/**
 	 * <p>

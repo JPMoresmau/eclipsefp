@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.IProcessRunner;
 import net.sf.eclipsefp.haskell.core.util.ProcessRunner;
@@ -147,9 +148,9 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 
   private IPath getTargetName( final IHaskellProject haskellProject ) {
     String result = "theResult"; //$NON-NLS-1$
-    Set<IPath> targetNames = haskellProject.getTargetNames();
+    Set<IBuildTarget> targetNames = haskellProject.getTargets();
     if( targetNames.size() > 0 ) {
-      result = targetNames.iterator().next().toOSString();
+      result = targetNames.iterator().next().getPath().toOSString();
     }
     return new Path( result );
   }

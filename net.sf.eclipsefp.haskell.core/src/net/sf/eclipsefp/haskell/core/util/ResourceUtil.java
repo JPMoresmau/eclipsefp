@@ -11,9 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.project.IExecutableBuildTarget;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * <p>
@@ -71,11 +74,14 @@ public class ResourceUtil {
 
     List<IFile> result = new ArrayList<IFile>();
     IHaskellProject hsProject = HaskellProjectManager.get( project );
-    Set<IPath> targetNames = hsProject.getTargetNames();
-    for( IPath path: targetNames ) {
-      IFile file = project.getFile( path );
-      if( file.exists() ) {
-        result.add( file );
+    IPath binPath = hsProject.getBinPath();
+    Set<IBuildTarget> targets = hsProject.getTargets();
+    for( IBuildTarget target: targets ) {
+      if ( target instanceof IExecutableBuildTarget ) {
+        IFile file = project.getFile( binPath.append( target.getPlatformPath() ) );
+        if( file.exists() ) {
+          result.add( file );
+        }
       }
     }
     return result.toArray( new IFile[ result.size() ] );
@@ -262,5 +268,24 @@ public class ResourceUtil {
 
   public static String getModuleName( final String fileName ) {
     return fileName.substring( 0, fileName.lastIndexOf( '.' ) );
+  }
+
+  /**
+   * Returns the name of an executable corresponding to the given filename.
+   * On Unix, returns the given path without modification.
+   * On Windows, appends the ".exe" extension.
+   */
+  public static IPath executableName( final IPath path ) {
+    if ( Platform.OS_WIN32.equals( Platform.getOS() ) ) {
+      return path.addFileExtension( "exe" ); //$NON-NLS-1$
+    }
+    return path;
+  }
+
+  public static String executableName( final String path ) {
+    if ( Platform.OS_WIN32.equals( Platform.getOS() ) ) {
+      return path + ".exe"; //$NON-NLS-1$
+    }
+    return path;
   }
 }
