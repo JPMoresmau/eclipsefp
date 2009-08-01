@@ -64,7 +64,7 @@ public class ResourceUtil {
 
 	/**
 	 * <p>
-	 * returns the target executable for the passed project as resource. The
+	 * returns the target executables for the passed project as resource. The
 	 * project must have the Haskell nature.
 	 * </p>
 	 */
@@ -74,7 +74,7 @@ public class ResourceUtil {
 
     List<IFile> result = new ArrayList<IFile>();
     IHaskellProject hsProject = HaskellProjectManager.get( project );
-    IPath binPath = hsProject.getBinPath();
+    IPath binPath = hsProject.getOutputPath();
     Set<IBuildTarget> targets = hsProject.getTargets();
     for( IBuildTarget target: targets ) {
       if ( target instanceof IExecutableBuildTarget ) {

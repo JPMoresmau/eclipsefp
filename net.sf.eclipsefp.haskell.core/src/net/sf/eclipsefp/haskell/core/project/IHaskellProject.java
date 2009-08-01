@@ -31,6 +31,18 @@ public interface IHaskellProject extends IHaskellProjectInfo {
 	IProject getResource();
 
 	/**
+	 * Returns the Cabal file that this project is based upon,
+	 * or <code>null</code> if it is not based on a Cabal file.
+	 */
+	IFile getCabalFile();
+
+	/**
+	 * Sets the Cabal file that this project is based upon.
+	 * If set to <code>null</code>, the project turns back into a "simple" project.
+	 */
+	void setCabalFile(IFile file);
+
+	/**
 	 * <p>
 	 * returns the import libraries for this Haskell project.
 	 * </p>
@@ -42,4 +54,9 @@ public interface IHaskellProject extends IHaskellProjectInfo {
 	IHaskellCompiler getCompiler();
 
 	void compile( IFile file );
+
+	/**
+	 * Saves the project to the .hsproject file.
+	 */
+	void saveDescriptor();
 }

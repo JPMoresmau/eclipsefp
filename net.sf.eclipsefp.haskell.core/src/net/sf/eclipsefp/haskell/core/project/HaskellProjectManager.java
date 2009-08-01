@@ -1,27 +1,19 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.project;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.internal.project.DescriptorFile;
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.core.internal.project.Parser;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
-import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 
 /** <p>The HaskellProjectManager manages Haskell project specific information
@@ -88,24 +80,6 @@ public class HaskellProjectManager {
       HaskellCorePlugin.log( "Problem when checking out project.", cex ); //$NON-NLS-1$
     }
     return getInstance().getInternal( project );
-  }
-
-  /** <p>creates the contents of a project descriptor file with the
-    * specified path settings for the project.</p> */
-  public static String createDescriptorContent( final String sourcePath,
-                                                final String outputPath,
-                                                final String targetName,
-                                                final String compiler) {
-    return DescriptorFile.createDescriptorContent( sourcePath,
-                                                   outputPath,
-                                                   targetName,
-                                                   compiler);
-  }
-
-  /** <p>creates the content of a project descriptor file with empty path
-    * settings.</p> */
-  public static String createEmptyDescriptorContent() {
-    return DescriptorFile.createEmptyDescriptorContent();
   }
 
   /** <p>registers the specified listener for project property changes.</p> */
@@ -181,28 +155,14 @@ public class HaskellProjectManager {
   }
 
   private IHaskellProject createNew( final IFile descFile ) {
-    Job job = new Job( CoreTexts.haskellProjectManager_jobName ) {
-      @Override
-      protected IStatus run( final IProgressMonitor monitor ) {
-        IStatus result = Status.OK_STATUS;
-        try {
-          byte[] contents = createEmptyDescriptorContent().getBytes();
-          InputStream is = new ByteArrayInputStream( contents );
-          descFile.create( is, true, null );
-        } catch( CoreException cex ) {
-          result = cex.getStatus();
-        }
-        return result;
-      }
-    };
-    job.setRule( descFile.getProject() );
-    job.schedule();
-    return new HaskellProject( descFile.getProject() );
+    IHaskellProject hsProject = new HaskellProject( descFile.getProject() );
+    hsProject.saveDescriptor();
+    return hsProject;
   }
 
   private IHaskellProject readFromDescriptor( final IFile descFile ) {
     HaskellProject result = new HaskellProject( descFile.getProject() );
-    Parser.readIn( descFile, result );
+    new Parser( descFile, result ).read();
     return result;
   }
 

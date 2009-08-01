@@ -25,7 +25,8 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
     coreNode.put( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
     coreNode.put( FOLDERS_SRC, "src" ); //$NON-NLS-1$
     coreNode.put( FOLDERS_OUT, "out" ); //$NON-NLS-1$
-    coreNode.put( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
+    coreNode.put( FOLDERS_BUILD, "build" ); //$NON-NLS-1$
+    coreNode.put( TARGET_BINARY, "theResult" ); //$NON-NLS-1$
     coreNode.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
   }
 

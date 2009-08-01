@@ -56,6 +56,7 @@ public class TestHaskellProjectMetaTest_PDETest extends TestCaseWithPreferences 
 		TestHaskellProject project = new TestHaskellProject("yet-another-project", getCorePrefs());
 
 		IHaskellProject hsprj = HaskellProjectManager.get(getProject("yet-another-project"));
+		// TODO TtC this fails, but will soon be unnecessary with the new Build Configuration architecture
 		assertEquals(DefaultHaskellCompiler.class, hsprj.getCompiler().getClass());
 
 		project.destroy();

@@ -7,9 +7,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -24,8 +24,15 @@ import org.xml.sax.InputSource;
  */
 public class Parser implements IXMLNames {
 
-	public static void readIn(final IFile projectDescriptor,
-		final HaskellProject project)
+  private final IFile projectDescriptor;
+  private final HaskellProject project;
+
+  public Parser(final IFile projectDescriptor, final HaskellProject project) {
+    this.projectDescriptor = projectDescriptor;
+    this.project = project;
+  }
+
+	public void read()
 	{
 		try {
 			Reader reader = new InputStreamReader(projectDescriptor
@@ -42,8 +49,11 @@ public class Parser implements IXMLNames {
 			} finally {
 				reader.close();
 			}
-			applyPaths(project, rootElement);
-			setupCompiler(project, rootElement);
+	    if (rootElement != null && rootElement.getNodeName().equals(DOCUMENT_ELEMENT)) {
+	      applyProjectInfo(rootElement);
+	      // TODO TtC replace by BuildConfigurations
+	      // setupCompiler(rootElement);
+	    }
 		} catch( Exception ex ) {
       String msg = "Problem when reading .hsproject file.\n"; //$NON-NLS-1$
       HaskellCorePlugin.log( msg, ex );
@@ -53,43 +63,98 @@ public class Parser implements IXMLNames {
 	// helping methods
 	// ////////////////
 
-	private static void setupCompiler(final HaskellProject project,
-		final Element rootElement)
-	{
-		final NodeList list = rootElement.getElementsByTagName(COMPILER_ELEMENT);
-		if (list.getLength() > 0) {
-			if ("null".equals(list.item(0).getTextContent())) { //$NON-NLS-1$
-				project.setCompiler(null);
-			}
-		}
-	}
+  private void setupCompiler(final Element rootElement)
+  {
+    final NodeList list = rootElement.getElementsByTagName(COMPILER_ELEMENT);
+    if (list.getLength() > 0) {
+      if ("null".equals(list.item(0).getTextContent())) { //$NON-NLS-1$
+        project.setCompiler(null);
+      }
+    }
+  }
 
-	private static String getValue(final Element rootElement,
-		final String tagName,
-		final String attributeName)
-	{
-		String result = ""; //$NON-NLS-1$
-		NodeList list = rootElement.getElementsByTagName(tagName);
-		if (list.getLength() > 0) {
-			// we use only the first entry for each path type
-			NamedNodeMap attributes = list.item(0).getAttributes();
-			Node pathNode = attributes.getNamedItem(attributeName);
-			result = pathNode.getNodeValue();
-		}
-		return result;
-	}
+  private void applyProjectInfo(final Element rootElement)
+  {
+    NodeList list = rootElement.getElementsByTagName( CABAL_PROJECT_ELEMENT );
+    if (list.getLength() > 0) {
+      Node projectInfo = list.item( 0 );
+      applyCabalProjectInfo((Element)projectInfo);
+    }
+    list = rootElement.getElementsByTagName( SIMPLE_PROJECT_ELEMENT );
+    if (list.getLength() > 0) {
+      // we use only the first item
+      Node projectInfo = list.item( 0 );
+      applySimpleProjectInfo((Element)projectInfo);
+      return;
+    }
+  }
 
-	private static void applyPaths(final HaskellProject project,
-		final Element rootElement)
-	{
-		if (rootElement != null
-				&& rootElement.getNodeName().equalsIgnoreCase(DOCUMENT_ELEMENT)) {
-			project.addSourcePath(new Path(getValue(rootElement, SOURCE_PATH_ELEMENT,
-											PATH_ATT)));
-			project.setOutputPath(new Path(getValue(rootElement, OUTPUT_PATH_ELEMENT,
-											PATH_ATT)));
-			project.addTarget(new ExecutableBuildTarget(new Path(getValue(rootElement, TARGET_NAME_ELEMENT,
-											NAME_ATT))));
-		}
-	}
+  private void applyCabalProjectInfo(final Element cabalProjectElement) {
+    IPath path = Path.fromPortableString( cabalProjectElement.getTextContent() );
+    project.setCabalFile( project.getResource().getFile( path ) );
+  }
+
+  private void applySimpleProjectInfo(final Element projectInfoElement) {
+    NodeList children = projectInfoElement.getChildNodes();
+    for (int i = 0; i < children.getLength(); ++i) {
+      if (children.item( i ).getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element)children.item( i );
+        String name = el.getLocalName();
+        if (name.equals( SOURCE_PATHS_ELEMENT )) {
+          applySourcePaths(el);
+        } else if (name.equals( OUTPUT_PATH_ELEMENT )) {
+          applyOutputPath(el);
+        } else if (name.equals( BIN_PATH_ELEMENT )) {
+          applyBinPath(el);
+        } else if (name.equals( TARGETS_ELEMENT )) {
+          applyTargets(el);
+        }
+      }
+    }
+  }
+
+  private void applySourcePaths(final Element sourcePathsElement) {
+    NodeList paths = sourcePathsElement.getElementsByTagName( PATH_ELEMENT );
+    for (int i = 0; i < paths.getLength(); ++i) {
+      Element path = (Element) paths.item( i );
+      project.addSourcePath( Path.fromPortableString( path.getTextContent() ) );
+    }
+  }
+
+  private void applyOutputPath(final Element outputPathElement) {
+    project.setOutputPath( Path.fromPortableString( outputPathElement.getTextContent() ) );
+  }
+
+  private void applyBinPath(final Element binPathElement) {
+    project.setBuildPath( Path.fromPortableString( binPathElement.getTextContent() ) );
+  }
+
+  private void applyTargets(final Element targetsElement) {
+    NodeList targets = targetsElement.getChildNodes();
+    for (int i = 0; i < targets.getLength(); ++i) {
+      if (targets.item(i).getNodeType() == Node.ELEMENT_NODE) {
+        Element target = (Element) targets.item( i );
+        String name = target.getLocalName();
+        if (name.equals(EXECUTABLE_TARGET_ELEMENT)) {
+          applyExecutableTarget(target);
+        }
+      }
+    }
+  }
+
+  private void applyExecutableTarget(final Element executableTargetElement) {
+    String path = getValue(executableTargetElement, PATH_ELEMENT);
+    ExecutableBuildTarget target = new ExecutableBuildTarget( Path.fromPortableString( path ) );
+    project.addTarget( target );
+  }
+
+  private String getValue(final Element element, final String subElementName) {
+      NodeList list = element.getElementsByTagName(subElementName);
+      if (list.getLength() > 0) {
+        Element subElement = (Element) list.item( 0 );
+        return subElement.getTextContent();
+      }
+      return ""; //$NON-NLS-1$
+    }
+
 }

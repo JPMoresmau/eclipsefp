@@ -51,12 +51,12 @@ public interface IHaskellProjectInfo {
    * Returns the path to which intermediate build files should be written,
    * relative to the project root.
    */
-  public IPath getBinPath();
+  public IPath getBuildPath();
 
   /**
    * Sets the path to which intermediate build files should be written,
    * relative to the project root.
    */
-  public void setBinPath(IPath path);
+  public void setBuildPath(IPath path);
 
 }

@@ -36,7 +36,8 @@ public class TestHaskellProject implements ICorePreferenceNames {
 	  corePrefs.put( SELECTED_COMPILER, "null" );
     corePrefs.put( FOLDERS_SRC, "src" );
     corePrefs.put( FOLDERS_OUT, "out" );
-    corePrefs.put( TARGET_BINARY, "bin/theResult" );
+    corePrefs.put( FOLDERS_BUILD, "build" );
+    corePrefs.put( TARGET_BINARY, "theResult" );
     corePrefs.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
   }
 

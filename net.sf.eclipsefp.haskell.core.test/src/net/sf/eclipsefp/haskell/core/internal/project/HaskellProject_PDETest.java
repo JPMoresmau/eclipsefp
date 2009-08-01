@@ -6,6 +6,7 @@ import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -55,12 +56,14 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
 
     IPath path = new Path( "bla" );
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
-    project.getFile( ResourceUtil.executableName( path ) ).create( is, true, null );
+    IFolder out = project.getFolder( "out" );
+    out.getFile( ResourceUtil.executableName( path ) ).create( is, true, null );
     hp.addTarget( new ExecutableBuildTarget( path ) );
     assertEquals( 2, hp.getTargets().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "bla" ) ) ) );
-    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "blubb" ) ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/bla" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "bla" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/blubb" ) ) ) );
   }
 
   public void testTargetExecutable_multiple() throws CoreException {
@@ -68,18 +71,23 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     // atm one target exe is added automatically during project creation
     assertEquals( 1, hp.getTargets().size() );
 
-    IPath path = new Path( "bin/bli.exe" );
-    IPath path2 = new Path( "bla.exe" );
+    IPath path = new Path( "bli" );
+    IPath path2 = new Path( "sub/bla" );
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
-    project.getFolder( "bin" ).create( true, true, null );
-    project.getFile( path ).create( is, true, null );
-    project.getFile( path2 ).create( is, true, null );
+    IFolder out = project.getFolder( "out" );
+    out.getFolder( "sub" ).create( true, true, null );
+    out.getFile( ResourceUtil.executableName( path ) ).create( is, true, null );
+    out.getFile( ResourceUtil.executableName( path2 ) ).create( is, true, null );
     hp.addTarget( new ExecutableBuildTarget( path ) );
     hp.addTarget( new ExecutableBuildTarget( path2 ) );
     assertEquals( 3, hp.getTargets().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bin/bli.exe" ) ) );
-    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/bli" ) ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/sub/bla" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "bli" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/sub/bli" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "bla" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/bla" ) ) ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/blubb" ) ) ) );
   }
 }

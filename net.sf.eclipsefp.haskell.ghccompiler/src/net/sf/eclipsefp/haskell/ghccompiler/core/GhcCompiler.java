@@ -103,7 +103,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     }
 
     IProject project = haskellProject.getResource();
-    String outDir = getAbsPath( project, haskellProject.getOutputPath() );
+    String buildDir = getAbsPath( project, haskellProject.getBuildPath() );
 
     List<String> cmdLine = new ArrayList<String>();
     // command and special options
@@ -114,9 +114,9 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     }
     cmdLine.add( "--make" ); //$NON-NLS-1$
     cmdLine.add( "-odir" ); //$NON-NLS-1$
-    cmdLine.add( outDir );
+    cmdLine.add( buildDir );
     cmdLine.add( "-hidir" ); //$NON-NLS-1$
-    cmdLine.add( outDir );
+    cmdLine.add( buildDir );
     cmdLine.add( "-ferror-spans" ); //$NON-NLS-1$
 
     cmdLine.add( "-o" ); //$NON-NLS-1$
@@ -147,11 +147,13 @@ public class GhcCompiler extends DefaultHaskellCompiler {
   }
 
   private IPath getTargetName( final IHaskellProject haskellProject ) {
-    String result = "theResult"; //$NON-NLS-1$
+    IPath targetPath;
     Set<IBuildTarget> targetNames = haskellProject.getTargets();
     if( targetNames.size() > 0 ) {
-      result = targetNames.iterator().next().getPath().toOSString();
+      targetPath = targetNames.iterator().next().getPath();
+    } else {
+      targetPath = Path.fromPortableString( "theResult" ); //$NON-NLS-1$
     }
-    return new Path( result );
+    return haskellProject.getOutputPath().append( targetPath );
   }
 }

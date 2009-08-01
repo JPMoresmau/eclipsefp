@@ -1,7 +1,10 @@
 // Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.internal.project;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
@@ -15,6 +18,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -29,13 +33,15 @@ import org.eclipse.core.runtime.IPath;
 public final class HaskellProject implements IHaskellProject, IHaskellProjectInfo {
 
 	private final IProject project;
+	private IFile cabalFile;
   private final IHaskellProjectInfo projectInfo;
 	private IHaskellCompiler compiler;
 
 	public HaskellProject( final IProject project ) {
     compiler = CompilerManager.getInstance().getCompiler();
     this.project = project;
-    this.projectInfo = new SimpleHaskellProjectInfo(); // for now...
+    this.cabalFile = null;
+    this.projectInfo = new SimpleHaskellProjectInfo();
   }
 
 
@@ -45,6 +51,16 @@ public final class HaskellProject implements IHaskellProject, IHaskellProjectInf
 	public IProject getResource() {
 		return project;
 	}
+
+	public IFile getCabalFile() {
+	  // TODO TtC implement IHaskellProjectInfo that reads from a Cabal file
+	  return cabalFile;
+	}
+
+  public void setCabalFile(final IFile file) {
+    // TODO TtC implement IHaskellProjectInfo that reads from a Cabal file
+    cabalFile = file;
+  }
 
 	public Set<IPath> getSourcePaths() {
     return projectInfo.getSourcePaths();
@@ -58,8 +74,8 @@ public final class HaskellProject implements IHaskellProject, IHaskellProjectInf
 		return projectInfo.getOutputPath();
 	}
 
-	public IPath getBinPath() {
-		return projectInfo.getBinPath();
+	public IPath getBuildPath() {
+		return projectInfo.getBuildPath();
 	}
 
 	public IImportLibrary[] getImportLibraries() {
@@ -103,14 +119,14 @@ public final class HaskellProject implements IHaskellProject, IHaskellProjectInf
     HaskellProjectManager.broadcast( event );
   }
 
-  public void setBinPath( final IPath binPath ) {
+  public void setBuildPath( final IPath binPath ) {
     String name = IHaskellProject.PROPERTY_BIN_PATH;
     ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
-    event.setOldValue( getBinPath() );
+    event.setOldValue( getBuildPath() );
 
-    projectInfo.setBinPath( binPath );
+    projectInfo.setBuildPath( binPath );
 
-    event.setNewValue( getBinPath() );
+    event.setNewValue( getBuildPath() );
     HaskellProjectManager.broadcast( event );
   }
 
@@ -146,6 +162,17 @@ public final class HaskellProject implements IHaskellProject, IHaskellProjectInf
 
   public void compile( final IFile file ) {
     getCompiler().compile( file );
+  }
+
+  public void saveDescriptor() {
+    try {
+      DescriptorFile descriptor = new DescriptorFile( this );
+      byte[] contents = descriptor.toXMLString().getBytes();
+      InputStream is = new ByteArrayInputStream( contents );
+      getResource().getFile( HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR ).create( is, true, null );
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( ex );
+    }
   }
 
 	// helping methods

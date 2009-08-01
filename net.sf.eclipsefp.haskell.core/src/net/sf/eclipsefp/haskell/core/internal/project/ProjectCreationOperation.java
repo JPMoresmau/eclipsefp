@@ -3,11 +3,9 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.project;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import org.eclipse.core.resources.IFile;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -55,7 +53,7 @@ public class ProjectCreationOperation {
         createDirectories( monitor, project );
 
         monitor.subTask( CoreTexts.projectCreationOperation_settings );
-        createDescriptionFile( monitor, project );
+        createNatureProject( monitor, project );
         executeExtraOperation( monitor, project );
       }
     };
@@ -145,15 +143,6 @@ public class ProjectCreationOperation {
 		return new String[0];
 	}
 
-	/**
-	 * Returns an object describing the project descriptor file
-	 *
-	 * This method should be overriden by clients.
-	 */
-	protected DescriptorFileInfo getDescFileInfo() {
-		return null;
-	}
-
 	private void createDirectories(final IProgressMonitor mon,
 			final IProject proj) throws CoreException {
 		String[] directories = getDirectories();
@@ -165,15 +154,13 @@ public class ProjectCreationOperation {
 		}
 	}
 
-	private void createDescriptionFile(final IProgressMonitor monitor,
-			final IProject project) throws CoreException {
-		DescriptorFileInfo descFileInfo = getDescFileInfo();
-		if (descFileInfo != null && !"".equals(descFileInfo.getName())) { //$NON-NLS-1$
-			IFile file = project.getFile(descFileInfo.getName());
-			String content = descFileInfo.getContent();
-			InputStream is = new ByteArrayInputStream(content.getBytes());
-			file.create(is, true, new SubProgressMonitor(monitor, 1));
-		}
+	/**
+	 * Creates the nature-specific project descriptor, e.g. an {@link IHaskellProject}.
+   * @param monitor the progress monitor
+	 * @param project the project
+   */
+	protected void createNatureProject(final IProgressMonitor monitor, final IProject project) {
+	  // subclasses can implement
 	}
 
 	protected void executeExtraOperation(

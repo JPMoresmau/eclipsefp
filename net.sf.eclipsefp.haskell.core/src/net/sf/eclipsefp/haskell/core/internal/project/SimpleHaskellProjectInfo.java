@@ -16,10 +16,11 @@ import org.eclipse.core.runtime.Path;
  */
 public class SimpleHaskellProjectInfo implements IHaskellProjectInfo {
 
+  // TODO TtC read from settings
   private final Set<IPath> sourcePaths = new HashSet<IPath>();
   private final Set<IBuildTarget> targets = new HashSet<IBuildTarget>();
-  private IPath outputPath = new Path( "" ); //$NON-NLS-1$
-  private IPath binPath = new Path( "" ); //$NON-NLS-1$
+  private IPath outputPath = Path.fromPortableString( "out" ); //$NON-NLS-1$
+  private IPath binPath = Path.fromPortableString( "bin" ); //$NON-NLS-1$
 
   public void addSourcePath( final IPath path ) {
     check( path );
@@ -31,7 +32,7 @@ public class SimpleHaskellProjectInfo implements IHaskellProjectInfo {
     targets.add( target );
   }
 
-  public IPath getBinPath() {
+  public IPath getBuildPath() {
     return binPath;
   }
 
@@ -47,7 +48,7 @@ public class SimpleHaskellProjectInfo implements IHaskellProjectInfo {
     return Collections.unmodifiableSet( targets );
   }
 
-  public void setBinPath( final IPath path ) {
+  public void setBuildPath( final IPath path ) {
     check( path );
     binPath = path;
   }

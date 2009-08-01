@@ -1,6 +1,20 @@
 // Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.internal.project;
 
+import java.io.StringWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import org.eclipse.core.runtime.IPath;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * <p>
  * contains naming constants and default XML generator functionality for the
@@ -9,32 +23,16 @@ package net.sf.eclipsefp.haskell.core.internal.project;
  * </p>
  *
  * @author Leif Frenzel
+ * @author Thomas ten Cate
  */
 public class DescriptorFile implements IXMLNames {
 
-	private static final String OPEN_TAG = "<haskellProject>"; //$NON-NLS-1$
+	private final IHaskellProject project;
 
-	private static final String CLOSE_TAG = "</haskellProject>"; //$NON-NLS-1$
+	private Document document; // used while building
 
-	private static final String XML_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
-
-	private static final String NL = "\n"; //$NON-NLS-1$
-
-	private static final String INDENT = "  "; //$NON-NLS-1$
-
-	private String fSourcePath;
-	private String fOutputPath;
-	private String fTargetName;
-	private final String fCompiler;
-
-	DescriptorFile(final String sourcePath, final String outputPath,
-			final String targetName,
-			final String compiler)
-	{
-		fSourcePath = sourcePath;
-		fOutputPath = outputPath;
-		fTargetName = targetName;
-		fCompiler = compiler;
+	public DescriptorFile(final IHaskellProject haskellProject) {
+		project = haskellProject;
 	}
 
 	/**
@@ -43,64 +41,82 @@ public class DescriptorFile implements IXMLNames {
 	 * write it to the .hsproject file.
 	 * </p>
 	 */
-	String toXML() {
-    StringBuffer result = new StringBuffer( XML_PREFIX );
-    result.append( NL );
-    result.append( OPEN_TAG );
-    result.append( NL );
-
-    renderTag( result, SOURCE_PATH_ELEMENT, PATH_ATT, fSourcePath );
-    renderTag( result, OUTPUT_PATH_ELEMENT, PATH_ATT, fOutputPath );
-    renderTag( result, TARGET_NAME_ELEMENT, NAME_ATT, fTargetName );
-    result.append( "<" ); //$NON-NLS-1$
-    result.append( COMPILER_ELEMENT );
-    result.append( ">" ); //$NON-NLS-1$
-    result.append( fCompiler );
-    result.append( "</" ); //$NON-NLS-1$
-    result.append( COMPILER_ELEMENT );
-    result.append( ">" ); //$NON-NLS-1$
-
-    result.append( CLOSE_TAG );
-    result.append( NL );
-    return result.toString();
+	public String toXMLString() {
+	  DOMSource source = new DOMSource(toXML());
+	  StringWriter stringWriter = new StringWriter();
+    StreamResult result = new StreamResult(stringWriter);
+	  try {
+      TransformerFactory.newInstance().newTransformer().transform( source, result );
+    } catch( Exception ex ) {
+      HaskellCorePlugin.log( ex );
+      return null;
+    }
+	  return stringWriter.toString();
   }
 
-  void setSourcePath( final String sourcePath ) {
-    fSourcePath = sourcePath;
-  }
+	public Document toXML() {
+	  DocumentBuilder documentBuilder;
+    try {
+      documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    } catch( ParserConfigurationException e ) {
+      HaskellCorePlugin.log( e );
+      return null;
+    }
 
-  void setOutputPath( final String outputPath ) {
-    fOutputPath = outputPath;
-  }
+    document = documentBuilder.newDocument();
+    Element root = document.createElement( DOCUMENT_ELEMENT );
+    document.appendChild( root );
 
-  void setTargetName( final String targetName ) {
-    fTargetName = targetName;
-  }
+    if (project.getCabalFile() != null) {
+      createCabalProjectElement(root);
+    } else {
+      createSimpleProjectElement(root);
+    }
 
-  public static String createDescriptorContent( final String sourcePath,
-      final String outputPath, final String targetName,
-      final String compiler ) {
-    return new DescriptorFile( sourcePath, outputPath, targetName,
-        compiler ).toXML();
-  }
+    // TODO TtC replace this by Build Configurations
+//    Element compilerElement = addChild( root, COMPILER_ELEMENT );
+//    compilerElement.setTextContent( CompilerManager.getInstance().getCompilerName( project.getCompiler().getClass().getName() ) );
 
-	public static String createEmptyDescriptorContent() {
-    return createDescriptorContent( "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-  }
+    return document;
+	}
 
-	// helping methods
-	// ////////////////
+	protected void createCabalProjectElement(final Element documentElement) {
+	  Element cabalProjectElement = addChild( documentElement, CABAL_PROJECT_ELEMENT );
+	  cabalProjectElement.setTextContent( project.getCabalFile().getProjectRelativePath().toPortableString() );
+	}
 
-	private void renderTag( final StringBuffer result, final String tagName,
-      final String attName, final String value ) {
-    result.append( INDENT );
-    result.append( "<" ); //$NON-NLS-1$
-    result.append( tagName );
-    result.append( " " ); //$NON-NLS-1$
-    result.append( attName );
-    result.append( "=\"" ); //$NON-NLS-1$
-    result.append( value );
-    result.append( "\"/>" ); //$NON-NLS-1$
-    result.append( NL );
-  }
+	protected void createSimpleProjectElement(final Element documentElement) {
+	  Element simpleProjectElement = addChild( documentElement, SIMPLE_PROJECT_ELEMENT );
+
+	  Element sourcePathsElement = addChild( simpleProjectElement, SOURCE_PATHS_ELEMENT );
+    for (IPath path : project.getSourcePaths()) {
+      Element pathElement = addChild( sourcePathsElement, PATH_ELEMENT);
+      pathElement.setTextContent( path.toPortableString() );
+    }
+
+    Element binPathElement = addChild( simpleProjectElement, BIN_PATH_ELEMENT );
+    binPathElement.setTextContent( project.getBuildPath().toPortableString() );
+
+    Element outputPathElement = addChild( simpleProjectElement, OUTPUT_PATH_ELEMENT );
+    outputPathElement.setTextContent( project.getOutputPath().toPortableString() );
+
+    Element targetsElement = addChild( simpleProjectElement, TARGETS_ELEMENT );
+    for (IBuildTarget target : project.getTargets()) {
+      if (target instanceof IExecutableBuildTarget) {
+        IExecutableBuildTarget executableTarget = (IExecutableBuildTarget)target;
+        Element executableTargetElement = addChild(targetsElement, EXECUTABLE_TARGET_ELEMENT);
+        addChild( executableTargetElement, PATH_ELEMENT ).setTextContent( executableTarget.getPath().toPortableString() );
+        addChild( executableTargetElement, MAIN_ELEMENT ).setTextContent( executableTarget.getMain() );
+      } else {
+        // TODO TtC libraries
+      }
+    }
+	}
+
+	protected Element addChild( final Element parent, final String childName ) {
+	  Element child = document.createElement( childName );
+	  parent.appendChild( child );
+	  return child;
+	}
+
 }
