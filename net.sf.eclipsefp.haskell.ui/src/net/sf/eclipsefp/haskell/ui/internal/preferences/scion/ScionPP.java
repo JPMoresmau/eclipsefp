@@ -88,7 +88,7 @@ public class ScionPP
 		List<File> candidates = new ArrayList<File>(32);
 
 		// add all directories from the $PATH variable
-		// TODO this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
+		// TODO TtC this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
 		String path = System.getenv("PATH");
 		for (String dir : path.split(":")) {
 			candidates.add(new File(dir));
@@ -127,8 +127,7 @@ public class ScionPP
 	}
 
 	public static String getServerExecutableName() {
-		// TODO Windows
-		return "scion_server";
+		return FileUtil.makeExecutableName("scion_server");
 	}
 
 	/* (non-Javadoc)
@@ -139,8 +138,8 @@ public class ScionPP
 	}
 
 	public static void initializeDefaults(final IPreferenceStore store) {
-	  // TODO invoke autodetection?
-	  store.setDefault(SCION_SERVER_EXECUTABLE, "");
+	  // scion might be on the path...
+	  store.setDefault(SCION_SERVER_EXECUTABLE, getServerExecutableName());
 	}
 
 }

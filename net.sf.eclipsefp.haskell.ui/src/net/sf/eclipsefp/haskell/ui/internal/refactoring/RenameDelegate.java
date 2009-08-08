@@ -4,7 +4,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -68,7 +67,7 @@ public class RenameDelegate extends RefDelegate {
 
   private Change createRenameChange() {
     TextFileChange result = null;
-    // TODO replace by something not Cohatoe-based
+    // TODO TtC replace by something not Cohatoe-based
     /*
     CohatoeServer server = CohatoeServer.getInstance();
     IRename fun = server.createFunction( IRename.class );

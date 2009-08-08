@@ -316,7 +316,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   }
 
   private void initMarkOccurrences() {
-    // TODO replace by something not Cohatoe-based
+    // TODO TtC replace by something not Cohatoe-based
     /*
      * CohatoeServer server = CohatoeServer.getInstance(); IMarkOccurrences mo =
      * server.createFunction( IMarkOccurrences.class ); if( mo != null ) {

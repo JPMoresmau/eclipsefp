@@ -13,7 +13,7 @@ import net.sf.eclipsefp.haskell.core.internal.util.StreamRedirect;
   * <p>A typical use would be to call a command line tool and ask for its
   * version number, like 'java -version'.</p>
   *
-  * TODO: refactor this to use ProcessRunner (and probably refactor ProcessRunner as well)
+  * TODO TtC refactor this to use ProcessRunner (and probably refactor ProcessRunner as well)
   *
   * @author Leif Frenzel
   */

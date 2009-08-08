@@ -42,7 +42,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 			ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 			if (selection instanceof TextSelection) {
 				TextSelection textSel = (TextSelection)selection;
-				String name = textSel.getText().trim(); // TODO make work on 0-length selections too
+				String name = textSel.getText().trim(); // TODO TtC make work on 0-length selections too
 				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
 				if (location != null) {
 					try {

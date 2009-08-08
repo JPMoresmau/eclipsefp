@@ -15,7 +15,7 @@ import net.sf.eclipsefp.haskell.scion.types.Note;
  *
  * For parsing, the Parsec "grammar" from GHCOutputParser.hs is used.
  *
- * TODO this should be an {@link ICompilerListener}, I think.
+ * TODO TtC this should be an {@link ICompilerListener}, I think.
  *
  * @author Thomas ten Cate
  */

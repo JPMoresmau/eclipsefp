@@ -9,11 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,7 +48,7 @@ class HaskellFoldingStructureProvider {
   }
 
   void updateFoldingRegions() {
-	// TODO replace by something not Cohatoe-based
+	// TODO TtC replace by something not Cohatoe-based
 	/*
     ProjectionAnnotationModel model = getAnnModel();
     if( model != null ) {

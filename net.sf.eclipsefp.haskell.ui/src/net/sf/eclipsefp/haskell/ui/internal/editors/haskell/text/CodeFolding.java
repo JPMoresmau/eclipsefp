@@ -5,11 +5,9 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 
@@ -18,7 +16,7 @@ public class CodeFolding implements ICodeFolding {
   public List<ICodeFoldingRegion> performCodeFolding(
       final IContainer srcRoot, final IFile file ) {
     List<ICodeFoldingRegion> result = new ArrayList<ICodeFoldingRegion>();
-    // TODO replace by something not Cohatoe-based
+    // TODO TtC replace by something not Cohatoe-based
     /*
     String libDir = getGHCLibDir();
     if( libDir != null && new File( libDir ).exists() ) {

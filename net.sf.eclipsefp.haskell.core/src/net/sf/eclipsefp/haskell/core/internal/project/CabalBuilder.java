@@ -39,7 +39,7 @@ public class CabalBuilder extends IncrementalProjectBuilder {
   ////////////////////
 
   private void checkCabalFile() throws CoreException {
-    // TODO replace by something not Cohatoe-based
+    // TODO TtC replace by something not Cohatoe-based
     /*
     if( getCabalFile().exists() ) {
       CohatoeServer server = CohatoeServer.getInstance();

@@ -70,7 +70,6 @@ public class ScionPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Returns whether tracing is enabled for the specified option.
-	 * TODO this is executed for every trace call, even when tracing is off... optimize?
 	 */
 	public static boolean isTracing(String optionId) {
 		String option = getPluginId() + "/" + optionId;
