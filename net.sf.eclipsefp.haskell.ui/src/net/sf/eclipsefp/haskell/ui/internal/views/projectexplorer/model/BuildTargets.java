@@ -2,7 +2,6 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.haskell.core.internal.project.IExecutableBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
@@ -27,21 +26,9 @@ public class BuildTargets implements ITreeElement {
     this.project = project;
   }
 
-  public List<BuildTargetElement> getChildren() {
-    List<BuildTargetElement> children = new ArrayList<BuildTargetElement>();
+  public List<IBuildTarget> getChildren() {
     IHaskellProject hsProject = HaskellProjectManager.get( project );
-    for (IBuildTarget target : hsProject.getTargets()) {
-      BuildTargetElement el = null;
-      if (target instanceof IExecutableBuildTarget) {
-        el = new ExecutableBuildTargetElement( (IExecutableBuildTarget)target, this );
-      } else {
-        // TODO TtC libraries
-      }
-      if (el != null) {
-        children.add( el );
-      }
-    }
-    return children;
+    return new ArrayList<IBuildTarget>(hsProject.getTargets());
   }
 
   public String getImageKey() {

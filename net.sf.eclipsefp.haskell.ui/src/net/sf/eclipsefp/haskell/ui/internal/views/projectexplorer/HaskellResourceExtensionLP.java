@@ -4,7 +4,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
+import net.sf.eclipsefp.haskell.core.internal.project.IExecutableBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -41,6 +43,11 @@ public class HaskellResourceExtensionLP extends LabelProvider {
       result = ( ( IFolder )element ).getName();
     } else if( element instanceof IFile ) {
       result = ( ( IResource )element ).getName();
+    } else if( element instanceof IExecutableBuildTarget ) {
+      IExecutableBuildTarget target = ( IExecutableBuildTarget )element;
+      result = target.getPath().toPortableString() + " [" + target.getMain() + "]";
+    } else if( element instanceof IBuildTarget ) {
+      result = (( IBuildTarget )element).getPath().toPortableString();
     } else {
       result = super.getText( element );
     }
@@ -63,6 +70,10 @@ public class HaskellResourceExtensionLP extends LabelProvider {
       result = getFolderImage( ( IFolder )element );
     } else if( element instanceof IFile ) {
       result = getFileImage( ( IFile )element );
+    } else if( element instanceof IExecutableBuildTarget ) {
+      result = HaskellUIImages.getImage( IImageNames.EXECUTABLE_TARGET );
+    } else if( element instanceof IBuildTarget ) {
+      result = HaskellUIImages.getImage( IImageNames.BUILD_TARGET );
     }
     return result;
   }
