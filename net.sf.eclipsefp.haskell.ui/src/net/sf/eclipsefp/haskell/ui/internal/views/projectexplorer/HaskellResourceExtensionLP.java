@@ -12,7 +12,6 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -77,7 +76,7 @@ public class HaskellResourceExtensionLP extends LabelProvider {
     try {
       if( file.getProject().hasNature( HaskellNature.NATURE_ID ) ) {
         if( ResourceUtil.isProjectExecutable( file ) ) {
-          result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
+          result = HaskellUIImages.getImage( IImageNames.EXECUTABLE_TARGET );
         } else {
           String ext = file.getFileExtension();
           if( ResourceUtil.EXTENSION_HS.equals( ext ) ) {

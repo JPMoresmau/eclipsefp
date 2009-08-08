@@ -274,6 +274,7 @@ public class ResourceUtil {
    * Returns the name of an executable corresponding to the given filename.
    * On Unix, returns the given path without modification.
    * On Windows, appends the ".exe" extension.
+   * TODO TtC we have the same thing in a FileUtil class somewhere...
    */
   public static IPath executableName( final IPath path ) {
     if ( Platform.OS_WIN32.equals( Platform.getOS() ) ) {

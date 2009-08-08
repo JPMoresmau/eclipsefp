@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
+import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.BuildTargets;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSystemLibrary;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -43,7 +44,8 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           && ( ( IProject )parentElement ).isOpen()
           && ( ( IProject )parentElement ).hasNature( HaskellNature.NATURE_ID ) ) {
         result.add( new GHCSystemLibrary( ( IProject )parentElement ) );
-        addProjectExecutable( ( IProject )parentElement, result );
+        result.add( new BuildTargets( ( IProject )parentElement ) );
+        addBuildTargets( ( IProject )parentElement, result );
       } else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
         result.addAll( treeElement.getChildren() );
@@ -112,7 +114,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   // helping functions
   ////////////////////
 
-  private void addProjectExecutable( final IProject project,
+  private void addBuildTargets( final IProject project,
                                      final List<Object> list ) {
     try {
       IFile[] executables = ResourceUtil.getProjectExecutables( project );

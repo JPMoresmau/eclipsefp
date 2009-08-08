@@ -46,14 +46,17 @@ public class HaskellUIImages implements IImageNames {
   private static void declareImages() {
     // objects
     declare( LAUNCH_TAB_ARGUMENTS, OBJECT + "arguments_tab.gif" );
-    declare( IMPORT_LIBRARY,       OBJECT + "library.gif" );
+    declare( IMPORT_LIBRARY,       OBJECT + "library_obj.gif" );
     declare( SOURCE_FOLDER,        OBJECT + "srcfolder_obj.gif" );
     declare( SOURCE_FILE,          OBJECT + "hsfile_obj.gif" );
     declare( LITERATE_SOURCE_FILE, OBJECT + "lhsfile_obj.gif" );
-    declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" );
+    declare( BUILD_TARGETS,        OBJECT + "targets_obj.gif" );
+    declare( BUILD_TARGET,         OBJECT + "target_obj.gif" );
+    declare( EXECUTABLE_TARGET,    OBJECT + "executable_obj.gif" );
+    declare( LIBRARY_TARGET,       OBJECT + "library_obj.gif" );
     declare( HASKELL_PROJECT,      OBJECT + "hsproject.gif" );
-    declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
-    declare( LIBRARY_STANZA,    OBJECT + "librarystanza.gif" ); //$NON-NLS-1$
+    declare( EXECUTABLE_STANZA, OBJECT + "executable_obj.gif" ); //$NON-NLS-1$
+    declare( LIBRARY_STANZA,    OBJECT + "library_obj.gif" ); //$NON-NLS-1$
     declare( GENERAL_STANZA,    OBJECT + "generalstanza.gif" ); //$NON-NLS-1$
     declare( TEMPLATE,          OBJECT + "template.gif" ); //$NON-NLS-1$
 

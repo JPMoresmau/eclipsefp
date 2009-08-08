@@ -30,7 +30,10 @@ public interface IImageNames {
   String SOURCE_FILE          = ID + ".SOURCE_FILE";
   String LITERATE_SOURCE_FILE = ID + ".LITERATE_SOURCE_FILE";
   String IMPORT_LIBRARY       = ID + ".IMPORT_LIBRARY";
-  String PROJECT_EXECUTABLE   = ID + ".PROJECT_EXECUTABLE";
+  String BUILD_TARGETS        = ID + ".BUILD_TARGETS";
+  String BUILD_TARGET         = ID + ".BUILD_TARGET";
+  String EXECUTABLE_TARGET    = ID + ".EXECUTABLE_TARGET";
+  String LIBRARY_TARGET       = ID + ".LIBRARY_TARGET";
 
   // Haskell language elements
   String HS_NAME               = ID + ".HS_NAME";

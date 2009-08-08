@@ -15,7 +15,7 @@ interface IXMLNames {
   /** <p>the element in the <code>.hsproject</code> file that names the
     * simple project information node.</p> */
   String SIMPLE_PROJECT_ELEMENT = "simpleProject"; //$NON-NLS-1$
-  String CABAL_PROJECT_ELEMENT = "simpleProject"; //$NON-NLS-1$
+  String CABAL_PROJECT_ELEMENT = "cabalProject"; //$NON-NLS-1$
   /** <p>the element in the <code>.hsproject</code> file that names the source
     * paths of the project.</p> */
   String SOURCE_PATHS_ELEMENT = "sourcePaths"; //$NON-NLS-1$

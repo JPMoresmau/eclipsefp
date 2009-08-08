@@ -99,7 +99,7 @@ public class Parser implements IXMLNames {
     for (int i = 0; i < children.getLength(); ++i) {
       if (children.item( i ).getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)children.item( i );
-        String name = el.getLocalName();
+        String name = el.getNodeName();
         if (name.equals( SOURCE_PATHS_ELEMENT )) {
           applySourcePaths(el);
         } else if (name.equals( OUTPUT_PATH_ELEMENT )) {
@@ -134,7 +134,7 @@ public class Parser implements IXMLNames {
     for (int i = 0; i < targets.getLength(); ++i) {
       if (targets.item(i).getNodeType() == Node.ELEMENT_NODE) {
         Element target = (Element) targets.item( i );
-        String name = target.getLocalName();
+        String name = target.getNodeName();
         if (name.equals(EXECUTABLE_TARGET_ELEMENT)) {
           applyExecutableTarget(target);
         }
