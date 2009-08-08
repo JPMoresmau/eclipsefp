@@ -38,7 +38,7 @@ class HaskellTextHover extends DefaultTextHover {
   @Override
   public String getHoverInfo( final ITextViewer textViewer,
                               final IRegion hoverRegion ) {
-    // XXX: this method does not get called when hovering over a string literal
+    // TODO TtC this method does not get called when hovering over a string literal
     // which leads to potential problem annotation hovers not appearing
 	  String hoverInfo = computeProblemInfo( textViewer, hoverRegion );
 	  if (hoverInfo != null) {

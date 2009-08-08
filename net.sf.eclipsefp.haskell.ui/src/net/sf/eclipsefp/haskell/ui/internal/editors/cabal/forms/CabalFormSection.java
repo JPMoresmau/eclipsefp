@@ -5,14 +5,12 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile;
 import net.sf.eclipsefp.haskell.core.internal.project.InvalidCabalFileException;
 import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Accessor;
 import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Mutator;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.DocumentEvent;
@@ -73,7 +71,7 @@ abstract class CabalFormSection extends SectionPart {
   }
 
   IManipulateCabalFile getManipulator() {
-	// TODO replace by something not Cohatoe-based
+	// TODO TtC replace by something not Cohatoe-based
 	/*
     CohatoeServer server = CohatoeServer.getInstance();
     return server.createFunction( IManipulateCabalFile.class );

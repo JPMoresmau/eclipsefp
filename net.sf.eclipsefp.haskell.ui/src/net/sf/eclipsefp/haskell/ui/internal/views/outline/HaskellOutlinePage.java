@@ -6,7 +6,6 @@ import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementCP;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementLP;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -81,7 +80,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final Object input ) {
-	// TODO replace by something not Cohatoe-based
+	// TODO TtC replace by something not Cohatoe-based
 	/*
     if( input != null && input instanceof IFileEditorInput ) {
       IFileEditorInput fei = ( IFileEditorInput )input;

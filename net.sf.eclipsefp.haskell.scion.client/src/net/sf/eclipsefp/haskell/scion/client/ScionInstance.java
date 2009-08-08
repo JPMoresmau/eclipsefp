@@ -141,7 +141,7 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public void unloadFile(String fileName) {
-		// TODO Scion has no command for unloading yet!
+		// TODO TtC Scion has no command for unloading yet!
 		loadedFiles.remove(fileName);
 	}
 	

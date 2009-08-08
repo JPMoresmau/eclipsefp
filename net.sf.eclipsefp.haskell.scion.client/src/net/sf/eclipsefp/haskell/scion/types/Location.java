@@ -20,7 +20,7 @@ public class Location {
 	private int startLine, startColumn, endLine, endColumn;
 	
 	public Location(JSONObject json) throws JSONException {
-		// TODO this is not the complete syntax
+		// TODO TtC this is not the complete syntax
 		this.fileName = json.getString("file");
 		JSONArray region = json.getJSONArray("region");
 		startLine = region.getInt(0) - 1;
