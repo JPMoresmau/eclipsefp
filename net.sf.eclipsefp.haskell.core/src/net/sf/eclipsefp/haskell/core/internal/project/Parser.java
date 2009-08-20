@@ -144,7 +144,8 @@ public class Parser implements IXMLNames {
 
   private void applyExecutableTarget(final Element executableTargetElement) {
     String path = getValue(executableTargetElement, PATH_ELEMENT);
-    ExecutableBuildTarget target = new ExecutableBuildTarget( Path.fromPortableString( path ) );
+    String main = getValue(executableTargetElement, MAIN_ELEMENT);
+    ExecutableBuildTarget target = new ExecutableBuildTarget( Path.fromPortableString( path ), main );
     project.addTarget( target );
   }
 

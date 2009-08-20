@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -56,7 +55,8 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
  *
  * @author Thomas ten Cate
  */
-public class NewProjectWizardPage extends WizardPage {
+public class NewProjectWizardPage extends
+ValidatedWizardPage {
 
   /**
    * Request a project name. Fires an event whenever the text field is
@@ -265,7 +265,7 @@ public class NewProjectWizardPage extends WizardPage {
   /**
    * Validate this page and show appropriate warnings and error NewWizardMessages.
    */
-  private final class PageValidator extends Validator {
+  final class PageValidator extends Validator {
 
     public PageValidator( final ValidatorManager manager ) {
       super( manager );
@@ -396,8 +396,7 @@ public class NewProjectWizardPage extends WizardPage {
 
   private static final String PAGE_NAME= "NewProjectWizardPage"; //$NON-NLS-1$
 
-  private final ValidatorManager fValidatorManager;
-  private PageValidator fValidator;
+  PageValidator fValidator;
   private final NameGroup fNameGroup;
   private final LocationGroup fLocationGroup;
 
@@ -416,56 +415,33 @@ public class NewProjectWizardPage extends WizardPage {
     // initialize all elements
     fNameGroup.notifyObservers();
 
-    // create and connect validator
-    fValidatorManager= new ValidatorManager(this);
-    createValidators( fValidatorManager );
-    fNameGroup.addObserver(fValidator);
-    fLocationGroup.addObserver(fValidator);
-
     // initialize defaults
     setProjectName(""); //$NON-NLS-1$
     setProjectLocationURI(null);
   }
 
-  /**
-   * Subclasses may override to add additional validators,
-   * but must call the superclass method.
-   */
-  protected void createValidators(final ValidatorManager manager) {
-    fValidator = new PageValidator(manager);
-  }
-
-  protected ValidatorManager getValidatorManager() {
-    return fValidatorManager;
-  }
-
-  /**
-   * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-   *
-   * Subclasses should not override; rather, override {@link #createControls}.
-   */
-  public void createControl(final Composite parent) {
-    initializeDialogUnits(parent);
-
-    final Composite composite= new Composite(parent, SWT.NULL);
-    composite.setFont(parent.getFont());
-    composite.setLayout(initGridLayout(new GridLayout(1, false), true));
-    composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-
-    createControls(composite);
-
-    setControl(composite);
-
-    fValidatorManager.fullUpdate();
+  @Override
+  protected void createValidators( final ValidatorManager manager ) {
+    fValidator = new PageValidator( manager );
+    fNameGroup.addObserver(fValidator);
+    fLocationGroup.addObserver(fValidator);
   }
 
   /**
    * Creates the controls within this page.
    * Subclasses may override.
    */
-  protected void createControls(final Composite composite) {
+  @Override
+  protected Control doCreateControl( final Composite parent ) {
+    final Composite composite = new Composite(parent, SWT.NULL);
+    composite.setFont(parent.getFont());
+    composite.setLayout(initGridLayout(new GridLayout(1, false), true));
+    composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
     createNameControl(composite);
     createLocationControl(composite);
+
+    return composite;
   }
 
   /**

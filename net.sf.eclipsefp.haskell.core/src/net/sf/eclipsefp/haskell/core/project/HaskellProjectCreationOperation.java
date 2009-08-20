@@ -54,7 +54,7 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
     hsProject.addSourcePath( Path.fromPortableString( getDefaultSourcePath() ) );
     hsProject.setOutputPath( Path.fromPortableString( getDefaultOutputPath() ) );
     hsProject.setBuildPath( Path.fromPortableString( getDefaultBuildPath() ) );
-    hsProject.addTarget( new ExecutableBuildTarget( Path.fromPortableString( getDefaultTarget() ) ) );
+    hsProject.addTarget( new ExecutableBuildTarget( Path.fromPortableString( getDefaultTarget() ), "Main.main" ) ); //$NON-NLS-1$
     hsProject.saveDescriptor();
   }
 

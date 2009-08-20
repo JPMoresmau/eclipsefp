@@ -36,6 +36,11 @@ public interface IHaskellProjectInfo {
   public void addTarget(IBuildTarget target);
 
   /**
+   * Removes a build target.
+   */
+  public void removeTarget(IBuildTarget target);
+
+  /**
    * Returns the path to which build target binaries should be written,
    * relative to the project root.
    */

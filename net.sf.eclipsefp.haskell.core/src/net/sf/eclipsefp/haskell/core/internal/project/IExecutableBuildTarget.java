@@ -15,9 +15,4 @@ public interface IExecutableBuildTarget extends IBuildTarget {
    */
   public String getMain();
 
-  /**
-   * Sets the name of the main function.
-   */
-  public void setMain(String main);
-
 }

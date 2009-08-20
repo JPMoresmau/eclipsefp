@@ -141,6 +141,17 @@ public final class HaskellProject implements IHaskellProject, IHaskellProjectInf
     HaskellProjectManager.broadcast( event );
   }
 
+  public void removeTarget( final IBuildTarget target ) {
+    String name = IHaskellProject.PROPERTY_TARGET;
+    ProjectPropertiesEvent event = new ProjectPropertiesEvent( this, name );
+    event.setOldValue( getTargets() );
+
+    projectInfo.removeTarget( target );
+
+    event.setNewValue( getTargets() );
+    HaskellProjectManager.broadcast( event );
+  }
+
   public IContainer getSourceFolder() {
     IContainer result = project;
     if( !getSourcePaths().isEmpty() ) {

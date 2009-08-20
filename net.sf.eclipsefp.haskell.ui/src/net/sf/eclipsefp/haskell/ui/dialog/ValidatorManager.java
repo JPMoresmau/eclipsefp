@@ -3,6 +3,16 @@ package net.sf.eclipsefp.haskell.ui.dialog;
 import java.util.ArrayList;
 import org.eclipse.jface.wizard.WizardPage;
 
+/**
+ * Manages multiple {@link Validator}s for a wizard page.
+ * This aggregates the states from all validators, sets the page's
+ * completion state, and displays the appropriate message on the page.
+ *
+ * The page is complete if all validators indicate completion.
+ * If some validator indicates an error message, this message is shown.
+ * If not, but some validator indicates a (non-error) message, this message is shown.
+ * Otherwise, no message is shown.
+ */
 public final class ValidatorManager {
 
   private final WizardPage fWizardPage;
@@ -14,7 +24,10 @@ public final class ValidatorManager {
   }
 
   public void addValidator(final Validator validator) {
-    validators.add( validator );
+    if (!validators.contains( validator )) {
+      validators.add( validator );
+      validator.setManager( this );
+    }
   }
 
   public void updatePage() {

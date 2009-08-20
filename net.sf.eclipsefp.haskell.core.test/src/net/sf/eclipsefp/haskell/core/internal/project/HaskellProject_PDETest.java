@@ -58,7 +58,7 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
     IFolder out = project.getFolder( "out" );
     out.getFile( ResourceUtil.executableName( path ) ).create( is, true, null );
-    hp.addTarget( new ExecutableBuildTarget( path ) );
+    hp.addTarget( new ExecutableBuildTarget( path, "Main.main" ) );
     assertEquals( 2, hp.getTargets().size() );
 
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/bla" ) ) ) );
@@ -78,8 +78,8 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     out.getFolder( "sub" ).create( true, true, null );
     out.getFile( ResourceUtil.executableName( path ) ).create( is, true, null );
     out.getFile( ResourceUtil.executableName( path2 ) ).create( is, true, null );
-    hp.addTarget( new ExecutableBuildTarget( path ) );
-    hp.addTarget( new ExecutableBuildTarget( path2 ) );
+    hp.addTarget( new ExecutableBuildTarget( path, "Main.main" ) );
+    hp.addTarget( new ExecutableBuildTarget( path2, "Main.main" ) );
     assertEquals( 3, hp.getTargets().size() );
 
     assertTrue( ResourceUtil.isProjectExecutable( project.getFile( ResourceUtil.executableName( "out/bli" ) ) ) );

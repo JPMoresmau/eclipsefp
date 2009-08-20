@@ -7,10 +7,11 @@ import org.eclipse.core.runtime.IPath;
 public class ExecutableBuildTarget extends BuildTarget implements
     IExecutableBuildTarget {
 
-  private String main = "Main.main"; //$NON-NLS-1$
+  private final String main;
 
-  public ExecutableBuildTarget( final IPath path ) {
+  public ExecutableBuildTarget( final IPath path, final String main ) {
     super( path );
+    this.main = main;
   }
 
   public IPath getPlatformPath() {
@@ -19,10 +20,6 @@ public class ExecutableBuildTarget extends BuildTarget implements
 
   public String getMain() {
     return main;
-  }
-
-  public void setMain( final String main ) {
-    this.main = main;
   }
 
 }

@@ -2,8 +2,17 @@ package net.sf.eclipsefp.haskell.ui.dialog;
 
 import java.util.Observable;
 import java.util.Observer;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.DialogField;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IDialogFieldListener;
 
-public abstract class Validator implements Observer {
+/**
+ * Validates input in a wizard.
+ * This can be hooked up as a listener to dialog fields or observables.
+ * Subclasses can then implement validation logic and call the appropriate
+ * methods to set the validation state. The {@link ValidatorManager} will
+ * then take care of setting the wizard page's state.
+ */
+public abstract class Validator implements Observer, IDialogFieldListener {
 
   private ValidatorManager fManager;
 
@@ -17,6 +26,10 @@ public abstract class Validator implements Observer {
 
   public Validator( final ValidatorManager manager ) {
     setManager( manager );
+  }
+
+  public ValidatorManager getManager() {
+    return fManager;
   }
 
   public void setManager( final ValidatorManager manager ) {
@@ -80,13 +93,22 @@ public abstract class Validator implements Observer {
   public void update() {
     setComplete();
     doUpdate();
-    fManager.updatePage();
+    if (fManager != null) {
+      fManager.updatePage();
+    }
   }
 
-  // //////////////////////////
+  // /////////////////////////
   // methods from Observable
 
   public void update( final Observable o, final Object arg ) {
+    update();
+  }
+
+  // ///////////////////////////////////
+  // methods from IDialogFieldListener
+
+  public void dialogFieldChanged( final DialogField field ) {
     update();
   }
 

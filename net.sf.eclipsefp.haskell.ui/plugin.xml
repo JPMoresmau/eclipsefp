@@ -413,6 +413,69 @@
     </viewerContribution>
   </extension>
   
+  <!-- Build Target menu contributions -->
+  
+  <extension point="org.eclipse.ui.menus">
+  	<menuContribution
+         locationURI="menu:project">
+       <menu
+             label="%buildTargets_menu_label"
+             id="net.sf.eclipsefp.haskell.ui.menu.buildtargets">
+          <command
+                commandId="net.sf.eclipsefp.haskell.ui.buildtargets.add"
+                style="push">
+          </command>
+       </menu>
+  	</menuContribution>
+  	<menuContribution
+         locationURI="popup:org.eclipse.ui.popup.any">
+       <command
+             commandId="net.sf.eclipsefp.haskell.ui.buildtargets.add"
+             label="%buildTargets_add_label"
+             style="push">
+          <visibleWhen checkEnabled="false">
+       	  	 <with variable="selection">
+       	 	    <count value="1"/>
+	       		<iterate ifEmpty="false">
+             		<instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.BuildTargets"/>
+             	</iterate>
+             </with>
+          </visibleWhen>
+       </command>
+  	</menuContribution>
+  </extension>
+  
+  <extension point="org.eclipse.ui.commands">
+  	<command
+         id="net.sf.eclipsefp.haskell.ui.buildtargets.add"
+         name="%buildTargets_add_name">
+  	</command>
+  </extension>
+  
+  <extension point="org.eclipse.ui.handlers">
+  	<handler
+         commandId="net.sf.eclipsefp.haskell.ui.buildtargets.add"
+         class="net.sf.eclipsefp.haskell.ui.internal.handlers.AddBuildTargetHandler">
+       <enabledWhen>
+       <!-- enabled when exactly one project is selected and it is of Haskell nature,
+            or the Build Targets node or one of its children is selected --> 
+       	 <with variable="selection">
+       	 	<count value="1"/>
+	       	 	<iterate ifEmpty="false">
+	       	 	   <or>
+		               <adapt type="org.eclipse.core.resources.IProject">
+			               <test property="org.eclipse.core.resources.projectNature" 
+			                  value="net.sf.eclipsefp.haskell.core.project.HaskellNature"/>
+		          	   </adapt>
+	  	        	   <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.BuildTargets"/>
+	  	        	   <instanceof value="net.sf.eclipsefp.haskell.core.project.IBuildTarget"/>
+  	        	   </or>
+	        	</iterate>
+       	 </with>
+       </enabledWhen>
+  	</handler>
+  </extension>
+  
   <!-- [Views] Project Explorer -->
   
   <extension point="org.eclipse.ui.navigator.viewer">

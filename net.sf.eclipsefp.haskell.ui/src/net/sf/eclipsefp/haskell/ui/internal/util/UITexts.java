@@ -118,6 +118,20 @@ public final class UITexts extends NLS {
 
   public static String buildTargets_text;
 
+  public static String buildTargetWizardPage_title;
+  public static String buildTargetWizardPage_description;
+  public static String buildTargetType_text;
+  public static String buildTargetType_executable_text;
+  public static String buildTargetType_library_text;
+  public static String executableBuildTargetWizardPage_title;
+  public static String executableBuildTargetWizardPage_description;
+  public static String libraryBuildTargetWizardPage_title;
+  public static String libraryBuildTargetWizardPage_description;
+
+  public static String editExecutableBuildTargetDialog_title;
+  public static String buildTarget_name_text;
+  public static String executableBuildTarget_main_text;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

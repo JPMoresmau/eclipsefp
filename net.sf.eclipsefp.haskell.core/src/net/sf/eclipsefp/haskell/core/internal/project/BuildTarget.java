@@ -10,18 +10,14 @@ import org.eclipse.core.runtime.IPath;
  */
 public abstract class BuildTarget implements IBuildTarget {
 
-  private IPath path;
+  private final IPath path;
 
   public BuildTarget(final IPath path) {
-    setPath(path);
+    this.path = path;
   }
 
   public IPath getPath() {
     return path;
-  }
-
-  public void setPath( final IPath path ) {
-    this.path = path;
   }
 
 }

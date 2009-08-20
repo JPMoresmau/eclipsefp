@@ -109,22 +109,12 @@ class CabalPackageImportWP extends NewProjectWizardPage {
 
   }
 
-  private static final String PAGE_NAME = "CabalPackageImportWP";
-
   private final PackageGroup fPackageGroup;
   private PageValidator fPageValidator;
 
   CabalPackageImportWP() {
-    super( PAGE_NAME );
+    super( CabalPackageImportWP.class.getName() );
     fPackageGroup = new PackageGroup();
-
-    fPackageGroup.addObserver( fPageValidator );
-  }
-
-  @Override
-  protected void createValidators( final ValidatorManager manager ) {
-    fPageValidator = new PageValidator( manager );
-    super.createValidators( manager );
   }
 
   String getArchiveLocation() {
@@ -135,16 +125,28 @@ class CabalPackageImportWP extends NewProjectWizardPage {
   // methods from NewProjectWizardPage
 
   @Override
-  protected void createControls( final Composite parent ) {
-    createNameControl( parent );
-    createPackageControl( parent );
-    createLocationControl( parent );
+  protected Control doCreateControl( final Composite parent ) {
+    Composite composite = new Composite( parent, SWT.NONE );
+    composite.setLayout( new GridLayout( 1, false ) );
+
+    createNameControl( composite );
+    createPackageControl( composite );
+    createLocationControl( composite );
+
+    return composite;
   }
 
   private Control createPackageControl( final Composite parent ) {
     Control packageControl = fPackageGroup.createControl( parent );
     packageControl.setLayoutData( horizontalFillGridData() );
     return packageControl;
+  }
+
+  @Override
+  protected void createValidators( final ValidatorManager manager ) {
+    fPageValidator = new PageValidator( manager );
+    fPackageGroup.addObserver( fPageValidator );
+    super.createValidators( manager );
   }
 
 }

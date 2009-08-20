@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.internal.project;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.project.IBuildTarget;
@@ -32,6 +31,11 @@ public class SimpleHaskellProjectInfo implements IHaskellProjectInfo {
     targets.add( target );
   }
 
+  public void removeTarget( final IBuildTarget target ) {
+    check( target );
+    targets.remove( target );
+  }
+
   public IPath getBuildPath() {
     return binPath;
   }
@@ -41,11 +45,11 @@ public class SimpleHaskellProjectInfo implements IHaskellProjectInfo {
   }
 
   public Set<IPath> getSourcePaths() {
-    return Collections.unmodifiableSet( sourcePaths );
+    return new HashSet<IPath>( sourcePaths );
   }
 
   public Set<IBuildTarget> getTargets() {
-    return Collections.unmodifiableSet( targets );
+    return new HashSet<IBuildTarget>( targets );
   }
 
   public void setBuildPath( final IPath path ) {

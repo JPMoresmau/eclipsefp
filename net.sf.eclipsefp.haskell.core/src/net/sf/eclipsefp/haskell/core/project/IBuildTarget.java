@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * A build target: either an executable or a library.
+ * Instances must be immutable.
  *
  * @author Thomas ten Cate
  */
@@ -20,11 +21,5 @@ public interface IBuildTarget {
    * extension on operating systems that require it.
    */
   public IPath getPlatformPath();
-
-  /**
-   * Sets the path and name of the resulting file,
-   * without extension, relative to the output directory.
-   */
-  public void setPath(IPath path);
 
 }
