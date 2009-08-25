@@ -71,7 +71,7 @@ public class NewBuildTargetWizard extends Wizard {
   public boolean performFinish() {
     IBuildTarget buildTarget;
     if (commonPage.isExecutable()) {
-      buildTarget = new ExecutableBuildTarget( new Path(commonPage.getName()), executablePage.getMain() );
+      buildTarget = new ExecutableBuildTarget( new Path(commonPage.getTargetName()), executablePage.getMain() );
     } else {
       // TODO TtC implement library build targets
       buildTarget = null;
