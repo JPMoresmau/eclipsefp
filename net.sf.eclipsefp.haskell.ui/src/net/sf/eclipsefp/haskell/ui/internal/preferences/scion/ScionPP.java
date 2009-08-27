@@ -84,7 +84,7 @@ public class ScionPP
 	 * @return the filename of the Scion server, or null if it could not be found
 	 */
 	private String detectScionServer() {
-		// build up a list of directories that might contain the scion_server binary
+		// build up a list of directories that might contain the scion-server binary
 		List<File> candidates = new ArrayList<File>(32);
 
 		// add all directories from the $PATH variable
@@ -127,7 +127,7 @@ public class ScionPP
 	}
 
 	public static String getServerExecutableName() {
-		return FileUtil.makeExecutableName("scion_server");
+		return FileUtil.makeExecutableName("scion-server");
 	}
 
 	/* (non-Javadoc)

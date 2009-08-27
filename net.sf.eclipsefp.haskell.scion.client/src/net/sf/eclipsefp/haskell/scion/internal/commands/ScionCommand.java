@@ -30,7 +30,7 @@ import org.json.JSONTokener;
  */
 public abstract class ScionCommand extends Job {
 	
-	private final String TO_SERVER_PREFIX = "[scion_server] <<", FROM_SERVER_PREFIX = "[scion_server] >>";
+	private final String TO_SERVER_PREFIX = "[scion-server] <<", FROM_SERVER_PREFIX = "[scion-server] >>";
 
 	private int sequenceNumber = 0;
 	

@@ -31,7 +31,7 @@ public class ScionServer {
 	private static final int MAX_RETRIES = 5;
 	private static final String
 		CLASS_PREFIX = "[ScionServer]",
-		SERVER_STDOUT_PREFIX = "[scion_server]";
+		SERVER_STDOUT_PREFIX = "[scion-server]";
 	
 	private String serverExecutable;
 	
