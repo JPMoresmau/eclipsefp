@@ -32,8 +32,12 @@ public class BackgroundTypecheckFileCommand extends ScionCommand {
 
 	@Override
 	protected void doProcessResult(Object json) throws JSONException {
-		JSONArray result = (JSONArray)json;
-		compilationResult = new CompilationResult(result.getJSONObject(1));
+		if (json instanceof JSONArray){
+			JSONArray result = (JSONArray)json;
+			compilationResult = new CompilationResult(result.getJSONObject(1));
+		} else if (json instanceof JSONObject){
+			compilationResult = new CompilationResult(((JSONObject)json).getJSONObject("Right"));
+		}
 	}
 	
 	public CompilationResult getCompilationResult() {
