@@ -90,7 +90,7 @@ public class ScionPP
 		// add all directories from the $PATH variable
 		// TODO TtC this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
 		String path = System.getenv("PATH");
-		for (String dir : path.split(":")) {
+		for (String dir : path.split(File.pathSeparator)) {
 			candidates.add(new File(dir));
 		}
 

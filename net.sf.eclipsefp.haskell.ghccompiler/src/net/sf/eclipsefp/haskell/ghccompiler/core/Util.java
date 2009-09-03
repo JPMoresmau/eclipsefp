@@ -1,13 +1,13 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
+import java.io.File;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -36,7 +36,7 @@ public class Util implements IGhcParameters {
       if( i == 0 ) {
         sbResult.append( "-i" ); //$NON-NLS-1$
       } else {
-        sbResult.append( ":" ); //$NON-NLS-1$
+        sbResult.append( File.pathSeparator );
       }
       IPath path = libs[ i ].getPath();
       sbResult.append( path.toOSString() );
