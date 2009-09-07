@@ -32,7 +32,6 @@
       <builder
             callOnEmptyDelta="false"
             hasNature="false">
-         <run class="net.sf.eclipsefp.haskell.core.internal.project.CabalBuilder" />
       </builder>
    </extension>
    <extension
