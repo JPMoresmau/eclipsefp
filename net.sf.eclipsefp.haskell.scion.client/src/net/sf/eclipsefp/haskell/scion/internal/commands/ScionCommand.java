@@ -3,6 +3,13 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
@@ -13,6 +20,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -33,6 +41,16 @@ public abstract class ScionCommand extends Job {
 	private final String TO_SERVER_PREFIX = "[scion-server] <<", FROM_SERVER_PREFIX = "[scion-server] >>";
 
 	private int sequenceNumber = 0;
+	
+	/*private static ExecutorService exec=Executors.newCachedThreadPool(new ThreadFactory() {
+		final AtomicInteger threadNumber = new AtomicInteger(1);
+		
+		public Thread newThread(Runnable r) {
+			Thread t=new Thread(r,"ScionCommandPool"+threadNumber.getAndIncrement());
+			t.setDaemon(true);
+			return t;
+		}
+	});*/
 	
 	/**
 	 * The Scion instance used to run this command.
@@ -58,9 +76,13 @@ public abstract class ScionCommand extends Job {
 		// can't call getMethod when calling superclass constructor
 		// (even this hack is slightly evil, calling subclass methods)
 		setName("Scion command `" + getMethod() + "'");
+		setPriority(priority);
 		setRule(runner);
 		this.runner = runner;
+		
 	}
+	
+	
 	
 	/**
 	 * Schedules this command to be run, and blocks until it is completed.
@@ -123,11 +145,14 @@ public abstract class ScionCommand extends Job {
 		// Jobs that finish asynchronously must specify the execution thread by calling setThread,
 		// and must indicate when they are finished by calling the method done.
 		try {
-			runner.runCommandSync(this);
+			runner.runCommandSync(this,monitor);
 		} catch (Exception ex) {
 			Trace.trace("Exception when running command", ex);
 			IStatus status = new Status(IStatus.ERROR, ScionPlugin.getPluginId(), IStatus.ERROR, ex.getMessage(), ex);
 			ScionPlugin.logStatus(status);
+		}
+		if(monitor.isCanceled()){
+			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
 	}
@@ -145,7 +170,10 @@ public abstract class ScionCommand extends Job {
 	 * 
 	 * @throws ScionServerException if something happened to the connection
 	 */
-	public void sendCommand(Writer out) throws ScionServerException {
+	public void sendCommand(Writer out,IProgressMonitor monitor) throws ScionServerException {
+		if(monitor.isCanceled()){
+			return;
+		}
 		String jsonString = toJSONString();
 		
 		Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
@@ -165,17 +193,51 @@ public abstract class ScionCommand extends Job {
 	 * @throws ScionServerException if the response could not be read from the server
 	 * @throws ScionCommandException if something went wrong when processing
 	 */
-	public void receiveResponse(Reader reader) throws ScionCommandException, ScionServerException {
-		JSONObject response;
-		try {
-			response = new JSONObject(new JSONTokener(reader));
-		} catch (JSONException ex) {
-			// we throw a server exception, because there's no telling what state the
-			// server is in after we've received a malformed response (or end-of-stream!)
-			throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
+	public void receiveResponse(final Reader reader,IProgressMonitor monitor) throws ScionCommandException, ScionServerException {
+		if(monitor.isCanceled()){
+			return;
 		}
-		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
-		processResponse(response);
+		
+		//Future<JSONObject> fo=exec.submit(new Callable<JSONObject>() {
+		//	public JSONObject call() throws Exception {
+				JSONObject response;
+				try {
+					response = new JSONObject(new JSONTokener(reader));
+				} catch (JSONException ex) {
+					// we throw a server exception, because there's no telling what state the
+					// server is in after we've received a malformed response (or end-of-stream!)
+					throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
+				}
+		//		return response;
+		//	}
+		//});
+		
+		/*while (!fo.isDone()){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			if(monitor.isCanceled()){
+				fo.cancel(true);
+				return;
+			}
+		}
+		try {
+			response=fo.get();*/
+			Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
+			processResponse(response);			
+		/*} catch (ExecutionException ee){
+			if (ee.getCause() instanceof ScionServerException){
+				throw (ScionServerException)ee.getCause();
+			} else {
+				ee.printStackTrace();
+			}
+		} catch (InterruptedException ie){
+			
+		}*/
+
 	}
 
 	///////////////

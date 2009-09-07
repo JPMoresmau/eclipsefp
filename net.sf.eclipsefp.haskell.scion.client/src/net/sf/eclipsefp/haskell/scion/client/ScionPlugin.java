@@ -3,12 +3,18 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.scion.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -19,6 +25,11 @@ public class ScionPlugin extends AbstractUIPlugin {
 	
 	private static final String BUNDLE_NAME = "net.sf.eclipsefp.haskell.scion.client";
 	private static ScionPlugin instance;
+	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
+	public static final String ID_PROJECT_PROBLEM_MARKER = BUNDLE_NAME+".projectProblem"; //$NON-NLS-1$
+
+	private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
+
 	
 	/**
 	 * The version number of the Scion protocol that we support.
@@ -98,4 +109,13 @@ public class ScionPlugin extends AbstractUIPlugin {
 		StatusManager.getManager().handle(status);
 	}
 	
+	  public static IFile getCabalFile(final IProject p) {
+		    String ext = EXTENSION_CABAL;
+		    IPath path = new Path( p.getName() ).addFileExtension( ext );
+		    return p.getFile( path );
+		  }
+	  
+	  public Map<IProject, ScionInstance> getScionInstances() {
+		return instances;
+	}
 }

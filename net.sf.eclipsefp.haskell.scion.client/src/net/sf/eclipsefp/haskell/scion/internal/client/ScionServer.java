@@ -12,6 +12,10 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.print.attribute.standard.Severity;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerConnectException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
@@ -45,6 +49,8 @@ public class ScionServer {
 	
 	private int nextSequenceNumber = 1;
 
+	private Thread serverOutputThread;
+	
 	public ScionServer(String serverExecutable) {
 		this.serverExecutable = serverExecutable;
 	}
@@ -56,18 +62,32 @@ public class ScionServer {
 		startServerProcess();
 		capturePortNumber();
 		connectToServer();
-		slurpServerOutput();
+		serverOutputThread=new Thread(){
+			public void run(){
+				while (serverStdOutReader!=null){
+					slurpServerOutput2();
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException ie){
+						// noop
+					}
+				}
+			}
+		};
+		serverOutputThread.setDaemon(true);
+		serverOutputThread.start();
+		//slurpServerOutput();
 	}
 	
 	/**
 	 * Stops the Scion server under all circumstances.
 	 */
 	public synchronized void stopServer() {
-		try {
+		/*try {
 			slurpServerOutput();
 		} catch (Throwable ex) {
 			// ignore
-		}
+		}*/
 		stopServerProcess();
 	}
 	
@@ -225,7 +245,7 @@ public class ScionServer {
 	 * 
 	 * Errors while reading are silently ignored.
 	 */
-	private void slurpServerOutput() {
+	private void slurpServerOutput2() {
 		try {
 			while (serverHasOutput()) {
 				String line = readLineFromServer();
@@ -318,15 +338,17 @@ public class ScionServer {
 	 * @throws ScionServerException if something happened to the server connection
 	 * @throws ScionCommandException if something went wrong parsing or processing the command 
 	 */
-	public synchronized void runCommandSync(ScionCommand command) throws ScionServerException, ScionCommandException {
+	public synchronized void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
 		if (process == null || socketReader == null || socketWriter == null) {
 			throw new ScionServerException(UITexts.scionServerNotRunning_message);
 		}
 		try {
 			command.setSequenceNumber(makeSequenceNumber());
-			command.sendCommand(socketWriter);
-			command.receiveResponse(socketReader);
-			slurpServerOutput();
+			command.sendCommand(socketWriter,monitor);
+			serverOutputThread.interrupt();
+			//slurpServerOutput();
+			command.receiveResponse(socketReader,monitor);
+			//slurpServerOutput();
 			Trace.trace(CLASS_PREFIX, "Command executed successfully");
 		} catch (ScionServerException ex) {
 			ex.setLastWords(lastWords());

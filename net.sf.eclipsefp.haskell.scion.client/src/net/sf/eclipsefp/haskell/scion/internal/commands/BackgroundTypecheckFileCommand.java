@@ -2,20 +2,22 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
+import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class BackgroundTypecheckFileCommand extends ScionCommand {
+public class BackgroundTypecheckFileCommand extends ScionCommand implements ICompilerResult{
 
-	private String fileName;
+	private IFile file;
 	private CompilationResult compilationResult;
 	
-	public BackgroundTypecheckFileCommand(IScionCommandRunner runner, String fileName) {
+	public BackgroundTypecheckFileCommand(IScionCommandRunner runner, IFile file) {
 		super(runner, Job.BUILD);
-		this.fileName = fileName;
+		this.file = file;
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand {
 	@Override
 	protected JSONObject getParams() throws JSONException {
 		JSONObject params = new JSONObject();
-		params.put("file", fileName);
+		params.put("file", file.getLocation().toOSString());
 		return params;
 	}
 

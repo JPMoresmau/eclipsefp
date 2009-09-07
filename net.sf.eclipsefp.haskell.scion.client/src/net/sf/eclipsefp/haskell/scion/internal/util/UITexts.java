@@ -30,6 +30,11 @@ public class UITexts extends NLS {
 	
 	public static String scionVersionMismatch_warning;
 
+	public static String cabalFileMissing;
+	
+	  public static String error_deleteMarkers;
+	  public static String error_applyMarkers;
+	
 	private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
 	static {

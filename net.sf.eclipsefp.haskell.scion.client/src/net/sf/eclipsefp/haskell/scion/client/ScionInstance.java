@@ -3,20 +3,34 @@ package net.sf.eclipsefp.haskell.scion.client;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
+import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.internal.client.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ConfigureCabalProjectCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.OpenCabalProjectCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.osgi.util.NLS;
 
@@ -35,14 +49,21 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private ScionServer server;
 	
-	private Multiset<String> loadedFiles = new Multiset<String>();
+	private IProject project;
 	
-	public ScionInstance(String serverExecutable) {
+	private Multiset<IFile> loadedFiles = new Multiset<IFile>();
+	
+	public ScionInstance(String serverExecutable,IProject project) {
 		this.serverExecutable = serverExecutable;
+		this.project=project;
 	}
 
 	public String getServerExecutable() {
 		return serverExecutable;
+	}
+	
+	public IProject getProject() {
+		return project;
 	}
 	
 	public void setServerExecutable(String serverExecutable) throws ScionServerStartupException {
@@ -58,10 +79,77 @@ public class ScionInstance implements IScionCommandRunner {
 			server = new ScionServer(serverExecutable);
 			server.startServer();
 			checkProtocol();
+			openCabal();
 			restoreState();
 		}
 	}
 	
+	private boolean checkCabalFile(){
+		IFile cabalFile=ScionPlugin.getCabalFile(getProject());
+	    if( !cabalFile.exists() ) {
+	        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
+	        try {
+	        	IMarker marker = getProject().createMarker( id );
+	        	marker.setAttribute( IMarker.MESSAGE, UITexts.bind(UITexts.cabalFileMissing, cabalFile.getLocation().toString()));
+	        	marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_WARNING );
+	        } catch (CoreException ce){
+	        	ce.printStackTrace();
+	        }
+	    }
+	    return cabalFile.exists();
+	}
+	
+	public void configureCabal(IJobChangeListener listener) {
+		if (checkCabalFile()){
+			ConfigureCabalProjectCommand command=new ConfigureCabalProjectCommand(this,Job.BUILD,getProject());
+			if (listener!=null){
+				command.addJobChangeListener(listener);
+			}
+			command.runAsync();
+		}
+	}
+
+	public void openCabal() {
+		if (checkCabalFile()){
+			OpenCabalProjectCommand command = new OpenCabalProjectCommand(this,Job.BUILD,getProject());
+			command.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						configureCabal(null);
+					}
+				}
+			});
+			command.runAsync();
+		}
+		
+	}
+	
+	public void buildProject(){
+		deleteProblems(getProject());
+		configureCabal(new JobChangeAdapter(){
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().isOK()) {
+					final ListCabalComponentsCommand command=new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, ScionPlugin.getCabalFile(getProject()).getLocation().toOSString());
+					command.addJobChangeListener(new JobChangeAdapter() {
+						@Override
+						public void done(IJobChangeEvent event) {
+							if (event.getResult().isOK()) {
+								for (Component c:command.getComponents()){
+									LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,true);
+									loadCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
+									loadCommand.runAsync();
+								}
+							}
+						}
+					});
+					command.runAsync();
+				}
+			}
+		});
+	}
+
 	public void stop() {
 		if (server != null) {
 			server.stopServer();
@@ -72,12 +160,12 @@ public class ScionInstance implements IScionCommandRunner {
 	////////////////////////////////
 	// IScionCommandRunner methods
 	
-	public void runCommandSync(ScionCommand command) throws ScionServerException, ScionCommandException {
+	public void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
 		if (server == null) {
 			throw new ScionCommandException(command, UITexts.scionServerNotRunning_message);
 		}
 		try {
-			server.runCommandSync(command);
+			server.runCommandSync(command,monitor);
 		} catch (ScionServerException ex) {
 			// fatal server error: restart
 			stop();
@@ -115,7 +203,7 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	private void restoreState() {
-		for (String fileName : loadedFiles.uniqueSet()) {
+		for (IFile fileName : loadedFiles.uniqueSet()) {
 			loadFile(fileName);
 		}
 	}
@@ -123,24 +211,38 @@ public class ScionInstance implements IScionCommandRunner {
 	//////////////////////
 	// External commands
 
-	public void backgroundTypecheckFile(String fileName) {
-		BackgroundTypecheckFileCommand command = new BackgroundTypecheckFileCommand(this, fileName);
+	public void backgroundTypecheckFile(IFile file) {
+		deleteProblems(file);
+		BackgroundTypecheckFileCommand command = new BackgroundTypecheckFileCommand(this, file);
 		command.runAsync();
 	}
 	
-	public void loadFile(String fileName) {
+	public void loadFile(IFile fileName) {
 		loadedFiles.add(fileName);
 		reloadFile(fileName);
 	}
 	
-	public void reloadFile(String fileName) {
-		LoadCommand loadCommand = new LoadCommand(this, fileName);
-		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(this, fileName);
+	private void deleteProblems(IResource r){
+		try {
+			r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
+		} catch( CoreException ex ) {
+			ScionPlugin.logError(UITexts.error_deleteMarkers, ex);
+			ex.printStackTrace();
+		}
+	}
+	
+	public void reloadFile(IFile file) {
+		deleteProblems(file);
+		LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString()),false);
+		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(this, file);
 		loadCommand.runAsync();
+		typecheckCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
 		typecheckCommand.runAsyncAfter(loadCommand);
 	}
 	
-	public void unloadFile(String fileName) {
+
+	
+	public void unloadFile(IFile fileName) {
 		// TODO TtC Scion has no command for unloading yet!
 		loadedFiles.remove(fileName);
 	}
@@ -164,5 +266,6 @@ public class ScionInstance implements IScionCommandRunner {
 			return null;
 		}
 	}
+	
 	
 }
