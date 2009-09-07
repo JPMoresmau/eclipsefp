@@ -35,6 +35,7 @@ public final class UITexts extends NLS {
 
   public static String error_launchGhc;
   public static String error_processOutput;
+  public static String error_processError;
   public static String error_deleteMarkers;
   public static String error_applyMarkers;
 

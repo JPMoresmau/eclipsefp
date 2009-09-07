@@ -1,10 +1,12 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,22 +79,33 @@ public class GhcCompiler extends DefaultHaskellCompiler {
       GhcCompilerPlugin.log( UITexts.error_processOutput, ex );
       return;
     }
+    Writer out = new MultiplexedWriter( outputWriter, pipedWriter );
+    StringWriter sw=new StringWriter();
+    BufferedWriter err=new BufferedWriter( sw);
+      try {
 
-    try {
-      Writer out = new MultiplexedWriter( outputWriter, pipedWriter );
-      fProcessRunner.executeNonblocking( workDir, out, out, cmdLine );
-    } catch( IOException ex ) {
-      GhcCompilerPlugin.log( UITexts.error_launchGhc, ex );
-      return;
-    }
+        fProcessRunner.executeNonblocking( workDir, out, err, cmdLine );
+      } catch( IOException ex ) {
+        GhcCompilerPlugin.log( UITexts.error_launchGhc, ex );
+        return;
+      }
 
-    fOutputProcessor.setWorkingDir( workDir );
-    GhcOutputParser outputParser = new GhcOutputParser( pipedReader, fOutputProcessor );
-    try {
-      outputParser.parse();
-    } catch( IOException ex ) {
-      GhcCompilerPlugin.log( UITexts.error_processOutput, ex );
-    }
+      fOutputProcessor.setWorkingDir( workDir );
+      GhcOutputParser outputParser = new GhcOutputParser( pipedReader, fOutputProcessor );
+      try {
+        outputParser.parse();
+      } catch( IOException ex ) {
+        GhcCompilerPlugin.log( UITexts.error_processOutput, ex );
+      }
+      try {
+        err.flush();
+        String errS=sw.toString();
+        if (errS.length()>0){
+          outputWriter.write( errS );
+        }
+      } catch (IOException ioe){
+        GhcCompilerPlugin.log( UITexts.error_processError, ioe );
+      }
   }
 
   private String[] buildCommandLine( final IFile file,
