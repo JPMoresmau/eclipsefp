@@ -1,9 +1,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
-import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
@@ -42,12 +42,14 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class ScionManager implements IResourceChangeListener {
 
   private String serverExecutable = null;
-  private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
 
   /**
    * Used to alert the user of Scion startup failure only once per session.
    */
   private boolean serverStartupErrorReported = true; // TODO TtC set back to false
+
+  private final Map<IProject, ScionInstance> instances = ScionPlugin.getDefault().getScionInstances();
+
 
   public ScionManager() {
     // the work is done in the start() method
@@ -163,7 +165,7 @@ public class ScionManager implements IResourceChangeListener {
    * Does not add the instance to the instances map.
    */
   private ScionInstance startInstance( final IProject project ) {
-    ScionInstance instance = new ScionInstance( serverExecutable );
+    ScionInstance instance = new ScionInstance( serverExecutable,project );
     try {
       instance.start();
     } catch (ScionServerStartupException ex) {

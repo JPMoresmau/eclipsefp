@@ -249,8 +249,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // Reload the file on the Scion server side
     IFile file = findFile();
     if( file != null ) {
-      String fileName = file.getLocation().toOSString();
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(fileName);
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file);
     }
   }
 
@@ -268,8 +267,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // unload the previous file from Scion
     IFile file = findFile();
     if (file != null) {
-      String fileName = file.getLocation().toOSString();
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(fileName);
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(file);
     }
 
     super.doSetInput( input );
@@ -280,8 +278,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // load the new file into Scion
     file = findFile();
     if (file != null) {
-      String fileName = file.getLocation().toOSString();
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(fileName);
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
     }
   }
 
