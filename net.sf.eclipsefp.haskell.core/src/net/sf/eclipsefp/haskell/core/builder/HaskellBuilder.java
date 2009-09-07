@@ -4,6 +4,8 @@ package net.sf.eclipsefp.haskell.core.builder;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -52,7 +54,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
   private void performBuild( final int kind,
                              final IProgressMonitor mon ) throws CoreException {
-    if( kind == IncrementalProjectBuilder.FULL_BUILD ) {
+    /*if( kind == IncrementalProjectBuilder.FULL_BUILD ) {
       fullBuild( mon );
     } else {
       IResourceDelta delta = getDelta( getProject() );
@@ -61,7 +63,14 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       } else {
         incrementalBuild( delta, mon );
       }
+    }*/
+
+    ScionInstance si=ScionPlugin.getDefault().getScionInstances().get( getProject() );
+    if (si==null ){
+      new Exception("ScionInstance==null").printStackTrace(); //$NON-NLS-1$
+      return;
     }
+    si.buildProject();
   }
 
 

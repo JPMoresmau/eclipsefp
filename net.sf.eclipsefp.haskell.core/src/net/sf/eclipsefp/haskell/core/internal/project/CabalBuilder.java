@@ -6,16 +6,14 @@ package net.sf.eclipsefp.haskell.core.internal.project;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 public class CabalBuilder extends IncrementalProjectBuilder {
 
@@ -67,8 +65,6 @@ public class CabalBuilder extends IncrementalProjectBuilder {
   }
 
   private IFile getCabalFile() {
-    String ext = ResourceUtil.EXTENSION_CABAL;
-    IPath path = new Path( getProject().getName() ).addFileExtension( ext );
-    return getProject().getFile( path );
+    return ScionPlugin.getCabalFile( getProject() );
   }
 }

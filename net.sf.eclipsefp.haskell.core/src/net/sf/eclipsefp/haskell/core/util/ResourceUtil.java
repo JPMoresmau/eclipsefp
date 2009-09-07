@@ -201,6 +201,8 @@ public class ResourceUtil {
 		return result;
 	}
 
+
+
 	/** <p>returns the path of the specified workspace file relative to the
 	  * source folder in the Haskell project.</p>
 	  *
