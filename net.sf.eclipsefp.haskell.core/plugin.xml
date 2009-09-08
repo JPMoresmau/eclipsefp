@@ -26,15 +26,6 @@
       </builder>
    </extension>
    <extension
-         id="internal.project.CabalBuilder"
-         name="%cabalBuilder_name"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="false"
-            hasNature="false">
-      </builder>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="net.sf.eclipsefp.haskell.core.preferences.CorePreferenceInitializer">

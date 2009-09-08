@@ -49,6 +49,10 @@ public class ResourceUtil {
     return has( resource, EXTENSION_HS ) || has( resource, EXTENSION_LHS );
   }
 
+	 public static boolean hasCabalExtension( final IResource resource ) {
+	    return has( resource, EXTENSION_CABAL );
+	  }
+
 	/**
 	 * <p>
 	 * returns whether the passed resource is a literate Haskell source file, as

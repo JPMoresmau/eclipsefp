@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -41,6 +43,8 @@ public abstract class ScionCommand extends Job {
 	private final String TO_SERVER_PREFIX = "[scion-server] <<", FROM_SERVER_PREFIX = "[scion-server] >>";
 
 	private int sequenceNumber = 0;
+	
+	private List<ScionCommand> successors=new LinkedList<ScionCommand>();
 	
 	/*private static ExecutorService exec=Executors.newCachedThreadPool(new ThreadFactory() {
 		final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -153,6 +157,12 @@ public abstract class ScionCommand extends Job {
 		}
 		if(monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
+		}
+		for (ScionCommand sc:getSuccessors()){
+			IStatus st=sc.run(monitor);
+			if (!st.equals(Status.OK_STATUS)){
+				return st;
+			}
 		}
 		return Status.OK_STATUS;
 	}
@@ -382,6 +392,10 @@ public abstract class ScionCommand extends Job {
 			// strangely, the not pretty-printed version does not throw at all
 			return json.toString();
 		}
+	}
+	
+	public List<ScionCommand> getSuccessors() {
+		return successors;
 	}
 	
 }

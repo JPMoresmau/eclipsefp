@@ -2,14 +2,10 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import java.util.Set;
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -22,6 +18,8 @@ abstract class Visitor {
 
   private final IProgressMonitor monitor;
 
+  private boolean needBuild=false;
+
   Visitor( final IProgressMonitor monitor ) {
     this.monitor = monitor;
   }
@@ -30,8 +28,22 @@ abstract class Visitor {
     return monitor;
   }
 
+
+  public boolean isNeedBuild() {
+    return needBuild;
+  }
+
+
+  public void setNeedBuild( final boolean needBuild ) {
+    this.needBuild = needBuild;
+  }
+
   boolean isHaskellFile( final IFile file ) {
     return ResourceUtil.hasHaskellExtension( file );
+  }
+
+  boolean isCabalFile( final IFile file ) {
+    return ResourceUtil.hasCabalExtension( file );
   }
 
   boolean isInSourceFolder( final IFile file ) {
@@ -48,16 +60,5 @@ abstract class Visitor {
     return result;
   }
 
-  void compileFile( final IFile file ) {
-    IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
-    hsProject.compile( file );
-  }
 
-  private void deleteMarkers( final IFile file ) {
-    try {
-      file.deleteMarkers( IMarker.PROBLEM, true, IResource.DEPTH_ZERO );
-    } catch ( CoreException cex ) {
-      HaskellCorePlugin.log( "Could not delete markers.", cex ); //$NON-NLS-1$
-    }
-  }
 }

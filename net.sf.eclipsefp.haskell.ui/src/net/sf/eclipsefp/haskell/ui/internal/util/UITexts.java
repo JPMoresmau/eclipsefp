@@ -116,6 +116,9 @@ public final class UITexts extends NLS {
 
   public static String editor_textHover_error;
 
+  public static String scion_console_title;
+
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

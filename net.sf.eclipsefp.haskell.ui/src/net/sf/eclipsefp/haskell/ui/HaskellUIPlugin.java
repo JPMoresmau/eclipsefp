@@ -72,7 +72,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   @Override
   public void start( final BundleContext context ) throws Exception {
     super.start( context );
-    getPreferenceManager().activateBuildConsolePreferences();
+    //getPreferenceManager().activateBuildConsolePreferences();
     fScionManager = new ScionManager();
     fScionManager.start();
   }

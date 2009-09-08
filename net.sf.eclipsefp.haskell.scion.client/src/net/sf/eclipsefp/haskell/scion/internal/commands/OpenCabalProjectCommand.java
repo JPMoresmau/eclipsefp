@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 
 import org.eclipse.core.resources.IProject;
@@ -32,6 +33,8 @@ public class OpenCabalProjectCommand extends ScionCommand {
 	protected JSONObject getParams() throws JSONException {
 		JSONObject params = new JSONObject();
 		params.put("root-dir", getProject().getLocation().toOSString());
+		params.put("dist-dir",ScionPlugin.DIST_FOLDER);
+		
 		return params;
 	}
 }

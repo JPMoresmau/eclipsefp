@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.client;
 
+import java.io.Writer;
+
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
@@ -53,9 +55,12 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private Multiset<IFile> loadedFiles = new Multiset<IFile>();
 	
-	public ScionInstance(String serverExecutable,IProject project) {
+	private Writer serverOutput;
+	
+	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput) {
 		this.serverExecutable = serverExecutable;
 		this.project=project;
+		this.serverOutput=serverOutput;
 	}
 
 	public String getServerExecutable() {
@@ -76,7 +81,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public void start() throws ScionServerStartupException {
 		if (server == null) {
-			server = new ScionServer(serverExecutable);
+			server = new ScionServer(serverExecutable,serverOutput);
 			server.startServer();
 			checkProtocol();
 			openCabal();
@@ -176,7 +181,7 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public boolean contains(ISchedulingRule rule) {
-		return rule == this;
+		return rule == this || rule == getProject();
 	}
 
 	public boolean isConflicting(ISchedulingRule rule) {
@@ -187,6 +192,7 @@ public class ScionInstance implements IScionCommandRunner {
 	// Internal commands
 	
 	private void checkProtocol() {
+		
 		ConnectionInfoCommand command = new ConnectionInfoCommand(this);
 		command.addJobChangeListener(new JobChangeAdapter() {
 			@Override
@@ -235,9 +241,10 @@ public class ScionInstance implements IScionCommandRunner {
 		deleteProblems(file);
 		LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString()),false);
 		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(this, file);
-		loadCommand.runAsync();
 		typecheckCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
-		typecheckCommand.runAsyncAfter(loadCommand);
+		loadCommand.getSuccessors().add(typecheckCommand);
+		loadCommand.runAsync();
+		//typecheckCommand.runAsyncAfter(loadCommand);
 	}
 	
 

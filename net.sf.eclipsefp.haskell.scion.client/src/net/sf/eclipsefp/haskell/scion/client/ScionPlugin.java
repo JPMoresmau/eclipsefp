@@ -28,6 +28,9 @@ public class ScionPlugin extends AbstractUIPlugin {
 	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
 	public static final String ID_PROJECT_PROBLEM_MARKER = BUNDLE_NAME+".projectProblem"; //$NON-NLS-1$
 
+	// no dot so we see it in Eclipse project view
+	public static final String DIST_FOLDER="dist-scion";
+	
 	private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
 
 	

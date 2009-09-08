@@ -6,15 +6,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.print.attribute.standard.Severity;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerConnectException;
@@ -23,6 +20,8 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Representation of the Scion server on the Java side.
@@ -50,9 +49,11 @@ public class ScionServer {
 	private int nextSequenceNumber = 1;
 
 	private Thread serverOutputThread;
+	private Writer serverOutput;
 	
-	public ScionServer(String serverExecutable) {
+	public ScionServer(String serverExecutable,Writer serverOutput) {
 		this.serverExecutable = serverExecutable;
+		this.serverOutput=serverOutput;
 	}
 	
 	/**
@@ -65,7 +66,7 @@ public class ScionServer {
 		serverOutputThread=new Thread(){
 			public void run(){
 				while (serverStdOutReader!=null){
-					slurpServerOutput2();
+					slurpServerOutput();
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException ie){
@@ -245,7 +246,7 @@ public class ScionServer {
 	 * 
 	 * Errors while reading are silently ignored.
 	 */
-	private void slurpServerOutput2() {
+	private void slurpServerOutput() {
 		try {
 			while (serverHasOutput()) {
 				String line = readLineFromServer();
@@ -271,9 +272,19 @@ public class ScionServer {
 	private String readLineFromServer() throws IOException {
 		String line = serverStdOutReader.readLine();
 		if (line != null) {
-			Trace.trace(SERVER_STDOUT_PREFIX, line);
+			if (serverOutput!=null){
+				serverOutput.append(line+"\n");
+				serverOutput.flush();
+			} else {
+				Trace.trace(SERVER_STDOUT_PREFIX, line);
+			}
 		} else {
-			Trace.trace(CLASS_PREFIX, "Server gave EOF on stdout");
+			if (serverOutput!=null){
+				serverOutput.append("Server gave EOF on stdout\n");
+				serverOutput.flush();
+			} else {
+				Trace.trace(CLASS_PREFIX, "Server gave EOF on stdout");
+			}
 		}
 		return line;
 	}

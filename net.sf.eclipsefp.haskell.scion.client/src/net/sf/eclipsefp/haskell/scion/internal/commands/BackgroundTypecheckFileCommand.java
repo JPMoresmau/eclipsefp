@@ -38,7 +38,11 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 			JSONArray result = (JSONArray)json;
 			compilationResult = new CompilationResult(result.getJSONObject(1));
 		} else if (json instanceof JSONObject){
-			compilationResult = new CompilationResult(((JSONObject)json).getJSONObject("Right"));
+			JSONObject o=(JSONObject)json;
+			JSONObject cr=o.optJSONObject("Right");
+			if (cr!=null){
+				compilationResult = new CompilationResult(cr);
+			}
 		}
 	}
 	
@@ -46,4 +50,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 		return compilationResult;
 	}
 
+	public boolean hasOutput() {
+		return false;
+	}
 }

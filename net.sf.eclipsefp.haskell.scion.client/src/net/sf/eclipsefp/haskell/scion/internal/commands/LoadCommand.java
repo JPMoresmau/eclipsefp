@@ -19,12 +19,12 @@ public class LoadCommand extends ScionCommand implements ICompilerResult{
 	
 	private Component comp;
 	private CompilationResult compilationResult;
-	private boolean build;
+	private boolean output;
 	
-	public LoadCommand(IScionCommandRunner runner, Component c,boolean build) {
+	public LoadCommand(IScionCommandRunner runner, Component c,boolean output) {
 		super(runner, Job.BUILD);
 		this.comp=c;
-		this.build=build;
+		this.output=output;
 	}
 	
 	@Override
@@ -36,17 +36,22 @@ public class LoadCommand extends ScionCommand implements ICompilerResult{
 	protected JSONObject getParams() throws JSONException {
 		JSONObject params = new JSONObject();
 		params.put("component", comp.toJSON());
-		params.put("build",build);
+		params.put("output",output);
 		return params;
 	}
 
 	@Override
 	protected void doProcessResult(Object result) throws JSONException {
 		compilationResult = new CompilationResult((JSONObject)result);
+
 	}
 	
 	public CompilationResult getCompilationResult() {
 		return compilationResult;
+	}
+	
+	public boolean hasOutput() {
+		return output;
 	}
 
 }

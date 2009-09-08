@@ -22,7 +22,8 @@ class BuildVisitor extends Visitor implements IResourceVisitor {
     if( res instanceof IFile ) {
       IFile file = ( IFile )res;
       if( isHaskellFile( file ) && isInSourceFolder( file ) ) {
-        compileFile( file );
+        //compileFile( file );
+        setNeedBuild( true );
       }
     }
     return true;

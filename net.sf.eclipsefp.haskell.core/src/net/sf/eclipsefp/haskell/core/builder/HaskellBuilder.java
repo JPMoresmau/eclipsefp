@@ -6,18 +6,14 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 
 /** <p>The incremental builder for Haskell projects.</p>
   *
@@ -32,17 +28,35 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
                               final Map args,
                               final IProgressMonitor monitor )
                                                           throws CoreException {
-    checkOutFolders( new SubProgressMonitor( monitor, 5 ) );
-    performBuild( kind, new SubProgressMonitor( monitor, 95 ) );
-    scheduleRefresh();
+    //checkOutFolders( new SubProgressMonitor( monitor, 5 ) );
+    checkCabalFileExists();
+    performBuild( kind, monitor);//new SubProgressMonitor( monitor, 95 ) );
+    //scheduleRefresh();
     return null;
   }
 
 
+  private void checkCabalFileExists() throws CoreException {
+    IFile cabalFile = getCabalFile();
+    String id = HaskellCorePlugin.ID_PROJECT_PROBLEM_MARKER;
+
+    if( !cabalFile.exists() ) {
+      IMarker marker = getProject().createMarker( id );
+      marker.setAttribute( IMarker.MESSAGE, CoreTexts.cabalBuilder_noCabal );
+      marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_WARNING );
+    } else {
+      getProject().deleteMarkers( id , false, IResource.DEPTH_ZERO );
+    }
+  }
+
+  private IFile getCabalFile() {
+    return ScionPlugin.getCabalFile( getProject() );
+  }
+
   // helping methods
   //////////////////
 
-  private void checkOutFolders( final SubProgressMonitor monitor ) {
+  /*private void checkOutFolders( final SubProgressMonitor monitor ) {
     IWorkspaceRunnable op = new CheckOutFoldersOperation( getProject() );
     try {
       ResourcesPlugin.getWorkspace().run( op, monitor );
@@ -50,11 +64,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       String msg = "Problem while checking out and bin folder existence."; //$NON-NLS-1$
       HaskellCorePlugin.log( msg, cex );
     }
-  }
+  }*/
 
   private void performBuild( final int kind,
                              final IProgressMonitor mon ) throws CoreException {
-    /*if( kind == IncrementalProjectBuilder.FULL_BUILD ) {
+    if( kind == IncrementalProjectBuilder.FULL_BUILD ) {
       fullBuild( mon );
     } else {
       IResourceDelta delta = getDelta( getProject() );
@@ -63,18 +77,12 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       } else {
         incrementalBuild( delta, mon );
       }
-    }*/
-
-    ScionInstance si=ScionPlugin.getDefault().getScionInstances().get( getProject() );
-    if (si==null ){
-      new Exception("ScionInstance==null").printStackTrace(); //$NON-NLS-1$
-      return;
     }
-    si.buildProject();
+
   }
 
 
-  private void scheduleRefresh() {
+  /*private void scheduleRefresh() {
     Job job = new Job( CoreTexts.haskellBuilder_refreshing ) {
       @Override
       public IStatus run( final IProgressMonitor monitor ) {
@@ -90,18 +98,24 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       }
     };
     job.schedule();
-  }
+  }*/
 
-  private void fullBuild( final IProgressMonitor mon ) throws CoreException {
+  public void fullBuild( final IProgressMonitor mon )  {
     mon.beginTask( CoreTexts.haskellBuilder_full, 100 );
     try {
-      IWorkspaceRunnable op = new CleanOutFoldersOperation( getProject() );
+     /* IWorkspaceRunnable op = new CleanOutFoldersOperation( getProject() );
       ResourcesPlugin.getWorkspace().run( op,
                                           new SubProgressMonitor( mon, 15 ) );
 
       mon.subTask( CoreTexts.haskellBuilder_compiling );
       SubProgressMonitor subMon = new SubProgressMonitor( mon, 85 );
-      getProject().accept( new BuildVisitor( subMon ) );
+      getProject().accept( new BuildVisitor( subMon ) );*/
+      ScionInstance si=ScionPlugin.getDefault().getScionInstances().get( getProject() );
+      if (si==null ){
+        new Exception("ScionInstance==null").printStackTrace(); //$NON-NLS-1$
+        return;
+      }
+      si.buildProject();
     } finally {
       mon.done();
     }
@@ -110,6 +124,10 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   private void incrementalBuild( final IResourceDelta delta,
                                  final IProgressMonitor mon )
                                                           throws CoreException {
-    delta.accept( new DeltaBuildVisitor( mon ) );
+    DeltaBuildVisitor v=new DeltaBuildVisitor(mon ) ;
+    delta.accept(v);
+    if (v.isNeedBuild()){
+      fullBuild( mon );
+    }
   }
 }

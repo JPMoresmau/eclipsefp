@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
   */
 class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
 
-  DeltaBuildVisitor( final IProgressMonitor monitor ) {
+  DeltaBuildVisitor(final IProgressMonitor monitor ) {
     super( monitor );
   }
 
@@ -48,14 +48,15 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
   private boolean handleFileVisit( final IResourceDelta delta,
                                    final IFile file ) {
     boolean result = false;
-    if( file.exists() && isHaskellFile( file ) ) {
+    if( file.exists() && (isHaskellFile( file ) || isCabalFile( file ))) {
       switch( delta.getKind() ) {
         case IResourceDelta.ADDED:
         case IResourceDelta.CHANGED:
-          compileFile( file );
+          setNeedBuild( true );
           result = true;
           break;
         case IResourceDelta.REMOVED:
+          setNeedBuild( true );
           result = true;
           break;
       }

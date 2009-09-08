@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -27,6 +28,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -165,7 +169,10 @@ public class ScionManager implements IResourceChangeListener {
    * Does not add the instance to the instances map.
    */
   private ScionInstance startInstance( final IProject project ) {
-    ScionInstance instance = new ScionInstance( serverExecutable,project );
+	String name=NLS.bind( UITexts.scion_console_title, project.getName() );
+	HaskellConsole c=new HaskellConsole( null, name );
+
+    ScionInstance instance = new ScionInstance( serverExecutable,project,c.createOutputWriter() );
     try {
       instance.start();
     } catch (ScionServerStartupException ex) {
@@ -176,10 +183,18 @@ public class ScionManager implements IResourceChangeListener {
 
   /**
    * Stops the Scion instance for the given project.
-   * Does not remove the instance fromthe instances map.
+   * Does not remove the instance from the instances map.
    */
   private void stopInstance( final ScionInstance instance ) {
-    instance.stop();
+	instance.stop();
+	IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+	String name=NLS.bind( UITexts.scion_console_title, instance.getProject().getName() );
+	for (IConsole c:mgr.getConsoles()){
+		if (c.getName().equals(name)){
+			mgr.removeConsoles( new IConsole[]{c} );
+			break;
+		}
+	}
   }
 
   private void reportServerStartupError(final ScionServerStartupException ex) {
