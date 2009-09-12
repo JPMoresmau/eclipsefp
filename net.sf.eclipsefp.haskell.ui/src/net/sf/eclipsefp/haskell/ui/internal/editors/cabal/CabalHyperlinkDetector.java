@@ -33,10 +33,10 @@ import org.eclipse.ui.ide.IDE;
   */
 class CabalHyperlinkDetector implements IHyperlinkDetector {
 
-  private final CabalEditor editor;
+  private final CabalFormEditor editor;
 
 
-  CabalHyperlinkDetector( final CabalEditor editor ) {
+  CabalHyperlinkDetector( final CabalFormEditor editor ) {
     this.editor = editor;
   }
 
@@ -49,7 +49,7 @@ class CabalHyperlinkDetector implements IHyperlinkDetector {
     IHyperlink[] result = null;
     String line = getLine( textViewer, region );
     if( line != null ) {
-      String key = CabalSyntax.FIELD_LICENSE_FILE.toLowerCase();
+      String key = CabalSyntax.FIELD_LICENSE_FILE.getCabalName().toLowerCase();
       if( line.toLowerCase().startsWith( key ) ) {
         int index = line.indexOf( ':' );
         if( index > 0 ) {

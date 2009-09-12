@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
   * buffer content, not from the file system).</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public interface IManipulateCabalFile {
 

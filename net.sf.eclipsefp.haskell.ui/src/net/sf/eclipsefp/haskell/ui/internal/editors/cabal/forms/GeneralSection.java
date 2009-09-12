@@ -3,8 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Accessor;
-import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Mutator;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.layout.GridData;
@@ -53,14 +52,11 @@ class GeneralSection extends CabalFormSection {
 
   @Override
   void mapData() {
-    entries2accs.put( txtName, Accessor.GET_NAME );
-    entries2accs.put( txtVersion, Accessor.GET_VERSION );
-    entries2accs.put( txtAuthor, Accessor.GET_AUTHOR );
-    entries2accs.put( txtMaintainer, Accessor.GET_MAINTAINER );
+    entries2accs.put( txtName, CabalSyntax.FIELD_NAME );
+    entries2accs.put( txtVersion, CabalSyntax.FIELD_VERSION);
+    entries2accs.put( txtAuthor, CabalSyntax.FIELD_AUTHOR);
+    entries2accs.put( txtMaintainer, CabalSyntax.FIELD_MAINTAINER );
 
-    entries2muts.put( txtName, Mutator.SET_NAME );
-    entries2muts.put( txtVersion, Mutator.SET_VERSION );
-    entries2muts.put( txtAuthor, Mutator.SET_AUTHOR );
-    entries2muts.put( txtMaintainer, Mutator.SET_MAINTAINER );
+
   }
 }

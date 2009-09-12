@@ -18,10 +18,10 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 
 class CabalFoldingStructureProvider {
 
-	private final CabalEditor editor;
+	private final CabalFormEditor editor;
 	private IDocument document;
 
-	CabalFoldingStructureProvider( final CabalEditor editor ) {
+	CabalFoldingStructureProvider( final CabalFormEditor editor ) {
 		this.editor = editor;
 	}
 

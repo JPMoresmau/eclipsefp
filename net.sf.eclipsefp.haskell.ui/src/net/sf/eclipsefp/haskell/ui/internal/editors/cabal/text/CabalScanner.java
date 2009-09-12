@@ -2,6 +2,7 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text;
 
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -18,23 +19,16 @@ import org.eclipse.swt.graphics.Color;
   */
 public class CabalScanner extends RuleBasedScanner {
 
-  private static final String[] KEYWORDS = new String[] {
-    "name", "version", "cabal-version", "license", "license-file", "copyright",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-    "author", "maintainer", "stability", "homepage", "package-url", "synopsis",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$ //$NON-NLS-6$
-    "description", "category", "tested-with", "build-depends", "data-files",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
-    "extra-source-files", "extra-tmp-files", "exposed-modules", "executable", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    "main-is", "buildable", "other-modules", "hs-source-dirs", "extensions",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
-    "ghc-options", "ghc-prof-options", "hugs-options", "nhc-options", "includes",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    "include-dirs", "c-sources", "extra-libraries", "extra-lib-dirs", "cc-options",   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$//$NON-NLS-5$
-    "ld-options", "frameworks"  //$NON-NLS-1$//$NON-NLS-2$
-  };
-
 
   public CabalScanner() {
     IRule[] rules= new IRule[] { createKeywordRule() };
     setRules( rules );
   }
 
+  @Override
+  public IToken nextToken() {
+    return super.nextToken();
+  }
 
   // helping methods
   //////////////////
@@ -43,9 +37,14 @@ public class CabalScanner extends RuleBasedScanner {
     Color keyColor = ColorProvider.getInstance().getColor( ColorProvider.KEYWORD );
     IToken token= new Token( new TextAttribute( keyColor, null, SWT.BOLD ) );
     WordRule wordRule= new CaseInsensitiveWordRule( new SimpleWordDetector() );
-    for( String keyword: KEYWORDS ) {
-      wordRule.addWord( keyword + ":", token ); //$NON-NLS-1$
+    for( CabalSyntax keyword: CabalSyntax.values() ) {
+      if (keyword.isSectionHeader()){
+        wordRule.addWord( keyword.getCabalName(), token );
+      } else {
+        wordRule.addWord( keyword.getCabalName() + ":", token ); //$NON-NLS-1$
+      }
     }
+
     wordRule.setColumnConstraint( 0 ); // only react if this is at the line beginning
     return wordRule;
   }

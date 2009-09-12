@@ -3,8 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Accessor;
-import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Mutator;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.layout.GridData;
@@ -53,14 +52,11 @@ class DescriptionSection extends CabalFormSection {
 
   @Override
   void mapData() {
-    entries2accs.put( txtSynopsis, Accessor.GET_SYNOPSIS );
-    entries2accs.put( txtDescription, Accessor.GET_DESCRIPTION );
-    entries2accs.put( txtHomepage, Accessor.GET_HOMEPAGE );
-    entries2accs.put( txtCategory, Accessor.GET_CATEGORY );
+    entries2accs.put( txtSynopsis, CabalSyntax.FIELD_SYNOPSIS );
+    entries2accs.put( txtDescription, CabalSyntax.FIELD_DESCRIPTION );
+    entries2accs.put( txtHomepage, CabalSyntax.FIELD_HOMEPAGE );
+    entries2accs.put( txtCategory, CabalSyntax.FIELD_CATEGORY );
 
-    entries2muts.put( txtSynopsis, Mutator.SET_SYNOPSIS );
-    entries2muts.put( txtDescription, Mutator.SET_DESCRIPTION );
-    entries2muts.put( txtHomepage, Mutator.SET_HOMEPAGE );
-    entries2muts.put( txtCategory, Mutator.SET_CATEGORY );
+
   }
 }

@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Display;
 class CabalReconcilingStrategy implements IReconcilingStrategy,
                                                  IReconcilingStrategyExtension {
 
-  private final CabalEditor editor;
+  private final CabalFormEditor editor;
   private IDocument document;
   private final CabalFoldingStructureProvider foldingStructureProvider;
 
-  CabalReconcilingStrategy( final CabalEditor editor ) {
+  CabalReconcilingStrategy( final CabalFormEditor editor ) {
     this.editor = editor;
     foldingStructureProvider = new CabalFoldingStructureProvider( editor );
   }

@@ -30,9 +30,13 @@ public class CaseInsensitiveWordRule extends WordRule {
     // took the superclass functionality and accept now also words that have not the
     // exact same case as those in the map
     int c= scanner.read();
-    if (fDetector.isWordStart((char) c)) {
-      if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
-        StringBuffer fBuffer = new StringBuffer();
+    if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
+      while (c != ICharacterScanner.EOF && Character.isWhitespace( (char )c)){
+        c= scanner.read();
+      }
+
+      if (fDetector.isWordStart((char) c)) {
+        StringBuilder fBuffer = new StringBuilder();
         do {
           fBuffer.append((char) c);
           c= scanner.read();
@@ -60,7 +64,7 @@ public class CaseInsensitiveWordRule extends WordRule {
   // helping methods
   //////////////////
 
-  private IToken findToken( final StringBuffer sb ) {
+  private IToken findToken( final StringBuilder sb ) {
     String content = sb.toString();
     IToken result = ( IToken )fWords.get( content );
     if( result == null ) {

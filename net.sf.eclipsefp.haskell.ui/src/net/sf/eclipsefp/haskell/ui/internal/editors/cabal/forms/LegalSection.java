@@ -3,8 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Accessor;
-import net.sf.eclipsefp.haskell.core.internal.project.IManipulateCabalFile.Mutator;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.layout.GridData;
@@ -49,12 +48,10 @@ class LegalSection extends CabalFormSection {
 
   @Override
   void mapData() {
-    entries2accs.put( txtCopyright, Accessor.GET_COPYRIGHT );
-    entries2accs.put( txtLicense, Accessor.GET_LICENSE );
-    entries2accs.put( txtLicenseFile, Accessor.GET_LICENSE_FILE );
+    entries2accs.put( txtCopyright, CabalSyntax.FIELD_COPYRIGHT );
+    entries2accs.put( txtLicense, CabalSyntax.FIELD_LICENSE );
+    entries2accs.put( txtLicenseFile, CabalSyntax.FIELD_LICENSE_FILE );
 
-    entries2muts.put( txtCopyright, Mutator.SET_COPYRIGHT );
-    entries2muts.put( txtLicense, Mutator.SET_LICENSE );
-    entries2muts.put( txtLicenseFile, Mutator.SET_LICENSE_FILE );
+
   }
 }

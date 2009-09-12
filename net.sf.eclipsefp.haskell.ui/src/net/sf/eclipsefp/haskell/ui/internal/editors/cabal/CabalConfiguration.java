@@ -26,12 +26,12 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
   */
 class CabalConfiguration extends SourceViewerConfiguration {
 
-  private final CabalEditor editor;
+  private final CabalFormEditor editor;
 
   private ITokenScanner defaultScanner;
   private ITokenScanner commentScanner;
 
-  CabalConfiguration( final CabalEditor editor ) {
+  CabalConfiguration( final CabalFormEditor editor ) {
     this.editor = editor;
   }
 

@@ -3,13 +3,18 @@
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 /** <p>a stanza for general information (the first stanza in the
-  * <code>.cabal</code> file.</p> 
+  * <code>.cabal</code> file.</p>
   *
   * @author Leif Frenzel
   */
 public class GeneralStanza extends PackageDescriptionStanza {
 
-  GeneralStanza( final String name, final int startLine, final int endLine ) {
-    super( name, startLine, endLine );
+  GeneralStanza(final int startLine, final int endLine ) {
+    super( null, startLine, endLine );
+  }
+
+  @Override
+  public String getName() {
+    return getProperties().get( CabalSyntax.FIELD_NAME );
   }
 }

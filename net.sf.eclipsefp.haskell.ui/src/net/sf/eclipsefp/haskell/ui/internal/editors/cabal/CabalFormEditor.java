@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.OverviewPage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -24,7 +25,19 @@ import org.eclipse.ui.forms.editor.FormEditor;
 public class CabalFormEditor extends FormEditor {
 
   private CabalEditor cabalSourceEditor;
+  private PackageDescription packageDescription;
+  private OverviewPage overview;
 
+  public PackageDescription getPackageDescription() {
+    return packageDescription;
+  }
+
+
+  public void setPackageDescription( final PackageDescription packageDescription ) {
+    this.packageDescription = packageDescription;
+    cabalSourceEditor.setPackageDescription( packageDescription );
+    overview.setPackageDescription( packageDescription );
+  }
 
   public IDocument getModel() {
     IDocument result = null;
@@ -34,14 +47,25 @@ public class CabalFormEditor extends FormEditor {
     return result;
   }
 
+
+  public CabalEditor getCabalSourceEditor() {
+    return cabalSourceEditor;
+  }
+
+
+  public OverviewPage getOverview() {
+    return overview;
+  }
+
   // interface methdods of FormEditor
   ///////////////////////////////////
 
   @Override
   protected void addPages() {
     try {
-      addPage( new OverviewPage( this ) );
-      cabalSourceEditor = new CabalEditor();
+      overview=new OverviewPage( this );
+      addPage( overview);
+      cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
       setPageText( 1, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {

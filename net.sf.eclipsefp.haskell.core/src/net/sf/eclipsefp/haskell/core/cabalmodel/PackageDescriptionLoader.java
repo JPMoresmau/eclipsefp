@@ -56,6 +56,7 @@ public class PackageDescriptionLoader {
           stanzas.add( lastStanza );
         } else {
           lastStanza.getContent().add( line );
+          lastStanza.getLines().add( count - 1 );
         }
       } else if( !contentStarted ) {
         lastStanza.setStart( lastStanza.getStart() + 1 );
@@ -75,41 +76,119 @@ public class PackageDescriptionLoader {
     while( it.hasNext() ) {
       StanzaInfo info = it.next();
       if( !info.getContent().isEmpty() ) {
-        pd.addStanza( create( info.getStart(),
-                              info.getEnd(),
-                              info.getContent() ) );
+        pd.addStanza( create( info ) );
       }
     }
   }
 
-  private static PackageDescriptionStanza create( final int start,
-                                                  final int end,
-                                                  final List<String> content ) {
+  private static PackageDescriptionStanza create(  final StanzaInfo info ) {
     PackageDescriptionStanza result;
-    if( isExecutable( content ) ) {
-      result = new ExecutableStanza( getExecutableName( content ), start, end );
-    } else if( isLibrary( content ) ) {
-      result = new LibraryStanza( getLibraryName( content ), start, end );
+    int startLine=1;
+    if( isExecutable( info.getContent() ) ) {
+      result = new ExecutableStanza( getExecutableName( info.getContent() ),info.getStart(), info.getEnd()  );
+    } else if( isLibrary( info.getContent() ) ) {
+      result = new LibraryStanza( getLibraryName( info.getContent() ), info.getStart(), info.getEnd() );
     } else {
-      result = new GeneralStanza( getPlainName( content ), start, end );
+      result = new GeneralStanza(info.getStart(), info.getEnd() );
+      startLine=0;
     }
+    parseProperties(info,result,startLine);
     return result;
   }
 
-  private static String getPlainName( final List<String> content ) {
+  private static void parseProperties( final StanzaInfo info,
+      final PackageDescriptionStanza result, final int startLine ) {
+    String pName=null;
+    StringBuilder pValue=new StringBuilder();
+    ValuePosition vp=null;
+
+    for (int a=startLine;a<info.getContent().size();a++){
+      String s=info.getContent().get( a );
+      int line=info.getLines().get(a);
+      if (vp==null){
+        vp=new ValuePosition();
+        vp.setStartLine( line );
+        vp.setEndLine( line+1 );
+      } else {
+        vp.setEndLine( line );
+      }
+      int thisIndent=0;
+      while (thisIndent<s.length() && Character.isWhitespace( s.charAt( thisIndent ))){
+        thisIndent++;
+      }
+      if (a==startLine){
+       result.setIndent( thisIndent );
+      }
+      if (thisIndent>result.getIndent()){
+        if (thisIndent<s.length()){
+          if (pValue.length()>0){
+            pValue.append( "\n"); //$NON-NLS-1$
+          }
+          pValue.append( s.substring( thisIndent ) );
+        }
+      } else {
+        if (pName!=null && pValue.length()>0){
+          result.getProperties().put( pName.toLowerCase(), pValue.toString() );
+          result.getPositions().put(pName.toLowerCase(),vp);
+          vp=new ValuePosition();
+          vp.setStartLine( line );
+          vp.setEndLine( line +1 );
+          pValue.setLength( 0 );
+          pName=null;
+        }
+        int ix=s.indexOf( ":" ); //$NON-NLS-1$
+        if (ix>-1){
+          pName=s.substring( 0,ix ).trim();
+          ix++;
+          int valIndent=ix;
+          int subIndent=ix;
+          while (ix<s.length() && Character.isWhitespace( s.charAt( ix ))){
+            valIndent++;
+            subIndent++;
+            if (s.charAt( ix )=='\t'){
+              subIndent+=3;
+            }
+            ix++;
+          }
+          vp.setInitialIndent( valIndent );
+          vp.setSubsequentIndent( subIndent );
+          pValue.append(s.substring( ix ));
+        }
+      }
+    }
+    if (pName!=null && pValue.length()>0){
+      result.getProperties().put( pName.toLowerCase(), pValue.toString() );
+      result.getPositions().put(pName.toLowerCase(),vp);
+      pValue.setLength( 0 );
+    }
+  }
+
+
+  /*private static String getPlainName( final List<String> content ) {
     String result = getValue( content, CabalSyntax.FIELD_NAME );
     if( result == null ) {
       result = "Unknown"; //$NON-NLS-1$
     }
     return result;
-  }
+  }*/
 
   private static String getLibraryName( final List<String> content ) {
-    return getValue( content, CabalSyntax.FIELD_NAME );
+    return getValue( content, CabalSyntax.FIELD_NAME.toString() );
   }
 
   private static String getExecutableName( final List<String> content ) {
-    return getValue( content, CabalSyntax.FIELD_EXECUTABLE );
+    //return getValue( content, CabalSyntax.FIELD_EXECUTABLE );
+    if (content.size()==0){
+      return null;
+    }
+    String s=content.get( 0 );
+    if (s.toLowerCase().startsWith( CabalSyntax.SECTION_EXECUTABLE.toString() )){
+      if (s.length()>CabalSyntax.SECTION_EXECUTABLE.toString().length() ){
+        return s.substring( CabalSyntax.SECTION_EXECUTABLE.toString().length() ).trim();
+      }
+      return ""; //$NON-NLS-1$
+    }
+    return s;
   }
 
   private static String getValue( final List<String> content,
@@ -128,11 +207,11 @@ public class PackageDescriptionLoader {
   }
 
   private static boolean isLibrary( final List<String> content ) {
-    return containsLineStart( content, CabalSyntax.FIELD_EXPOSED_MODULES );
+    return containsLineStart( content, CabalSyntax.SECTION_LIBRARY.getCabalName());
   }
 
   private static boolean isExecutable( final List<String> content ) {
-    return containsLineStart( content, CabalSyntax.FIELD_EXECUTABLE );
+    return containsLineStart( content, CabalSyntax.SECTION_EXECUTABLE.getCabalName() );
   }
 
   private static boolean containsLineStart( final List<String> content,
@@ -160,16 +239,20 @@ public class PackageDescriptionLoader {
 
   private static class StanzaInfo {
 
-    private final List<String> content;
+    private final List<String> content = new ArrayList<String>();
+    private final List<Integer> lines=new ArrayList<Integer>();
     private int start = 0;
     private int end = 1;
 
     StanzaInfo() {
-      this.content = new ArrayList<String>();
     }
 
     List<String> getContent() {
       return content;
+    }
+
+    public List<Integer> getLines() {
+      return lines;
     }
 
     void setEnd( final int end ) {

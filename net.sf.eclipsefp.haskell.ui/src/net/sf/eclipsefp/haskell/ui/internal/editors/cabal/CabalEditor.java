@@ -29,10 +29,11 @@ public class CabalEditor extends TextEditor {
 
   private CabalOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
-  private PackageDescription packageDescription;
+  private final CabalFormEditor formEditor;
 
-  public CabalEditor() {
-    setSourceViewerConfiguration( new CabalConfiguration( this ) );
+  public CabalEditor(final CabalFormEditor formEditor) {
+    this.formEditor=formEditor;
+    setSourceViewerConfiguration( new CabalConfiguration( formEditor ) );
   }
 
   IDocument getDocument() {
@@ -44,7 +45,6 @@ public class CabalEditor extends TextEditor {
   }
 
   public void setPackageDescription( final PackageDescription packageDescription ) {
-    this.packageDescription = packageDescription;
     if( outlinePage != null ) {
       outlinePage.setPackageDescription( packageDescription );
     }
@@ -121,7 +121,7 @@ public class CabalEditor extends TextEditor {
     Object result = null;
     if( IContentOutlinePage.class.equals( adapterType ) ) {
       if( outlinePage == null ) {
-        outlinePage = new CabalOutlinePage( this, packageDescription );
+        outlinePage = new CabalOutlinePage( this, formEditor.getPackageDescription() );
       }
       result = outlinePage;
     } else if( projectionSupport != null ) {

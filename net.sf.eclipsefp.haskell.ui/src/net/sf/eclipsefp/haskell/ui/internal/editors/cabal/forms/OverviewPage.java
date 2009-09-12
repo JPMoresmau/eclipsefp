@@ -3,11 +3,15 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
+import net.sf.eclipsefp.haskell.core.cabalmodel.GeneralStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -52,6 +56,8 @@ public class OverviewPage extends FormPage {
   }
 
 
+
+
   // helping functions
   ////////////////////
 
@@ -70,5 +76,20 @@ public class OverviewPage extends FormPage {
     layout.horizontalSpacing = 20;
     layout.verticalSpacing = 17;
     return layout;
+  }
+
+
+  public void setPackageDescription( final PackageDescription packageDescription ) {
+    PackageDescriptionStanza stanza=null;
+    if (packageDescription.getStanzas().length>0 && packageDescription.getStanzas()[0] instanceof GeneralStanza){
+      stanza= packageDescription.getStanzas()[0];
+    }
+
+    for (IFormPart p:getManagedForm().getParts()){
+       if (p instanceof CabalFormSection){
+         ((CabalFormSection)p).setStanza( stanza );
+       }
+     }
+
   }
 }
