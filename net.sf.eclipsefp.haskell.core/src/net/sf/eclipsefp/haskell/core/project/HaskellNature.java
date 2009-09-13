@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.builder.HaskellBuilder;
-import net.sf.eclipsefp.haskell.core.internal.project.CabalBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -24,11 +23,11 @@ public class HaskellNature implements IProjectNature {
 
   public void configure() throws CoreException {
     addBuilder( HaskellBuilder.BUILDER_ID );
-    addBuilder( CabalBuilder.BUILDER_ID );
+    //addBuilder( CabalBuilder.BUILDER_ID );
   }
 
   public void deconfigure() throws CoreException {
-    removeBuilder( CabalBuilder.BUILDER_ID );
+   // removeBuilder( CabalBuilder.BUILDER_ID );
     removeBuilder( HaskellBuilder.BUILDER_ID );
   }
 

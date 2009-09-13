@@ -11,7 +11,7 @@ public enum CabalSyntax {
   SECTION_LIBRARY("library",true), //$NON-NLS-1$
   SECTION_SOURCE_REPOSITORY("source-repository",true), //$NON-NLS-1$
   SECTION_FLAG("flag",true), //$NON-NLS-1$
-  SECTION_IF("if",true),
+  SECTION_IF("if",true), //$NON-NLS-1$
 
   FIELD_CATEGORY("category"), //$NON-NLS-1$
   FIELD_EXPOSED_MODULES("exposed-modules"), //$NON-NLS-1$

@@ -56,7 +56,7 @@ public class PackageDescriptionLoader {
           stanzas.add( lastStanza );
         } else {
           lastStanza.getContent().add( line );
-          lastStanza.getLines().add( count - 1 );
+          lastStanza.getLines().add( new Integer(count - 1) );
         }
       } else if( !contentStarted ) {
         lastStanza.setStart( lastStanza.getStart() + 1 );
@@ -128,7 +128,7 @@ public class PackageDescriptionLoader {
 
     for (int a=startLine;a<info.getContent().size();a++){
       String s=info.getContent().get( a );
-      int line=info.getLines().get(a);
+      int line=info.getLines().get(a).intValue();
       if (vp==null){
         vp=new ValuePosition();
         vp.setStartLine( line );
@@ -215,7 +215,7 @@ public class PackageDescriptionLoader {
     return s;
   }*/
 
-  private static String getValue( final List<String> content,
+  /*private static String getValue( final List<String> content,
                                   final String fieldName ) {
     String result = null;
     Iterator<String> it = content.iterator();
@@ -228,7 +228,7 @@ public class PackageDescriptionLoader {
       }
     }
     return result;
-  }
+  }*/
 
   /*private static boolean isLibrary( final List<String> content ) {
     return containsLineStart( content, CabalSyntax.SECTION_LIBRARY.getCabalName());

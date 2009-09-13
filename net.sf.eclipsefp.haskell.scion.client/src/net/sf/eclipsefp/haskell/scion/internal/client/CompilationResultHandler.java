@@ -11,7 +11,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.swt.widgets.Display;
 
 public class CompilationResultHandler extends JobChangeAdapter {
 	private IProject project;

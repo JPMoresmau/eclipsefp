@@ -5,13 +5,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
@@ -22,7 +15,6 @@ import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -45,16 +37,6 @@ public abstract class ScionCommand extends Job {
 	private int sequenceNumber = 0;
 	
 	private List<ScionCommand> successors=new LinkedList<ScionCommand>();
-	
-	/*private static ExecutorService exec=Executors.newCachedThreadPool(new ThreadFactory() {
-		final AtomicInteger threadNumber = new AtomicInteger(1);
-		
-		public Thread newThread(Runnable r) {
-			Thread t=new Thread(r,"ScionCommandPool"+threadNumber.getAndIncrement());
-			t.setDaemon(true);
-			return t;
-		}
-	});*/
 	
 	/**
 	 * The Scion instance used to run this command.
@@ -208,45 +190,19 @@ public abstract class ScionCommand extends Job {
 			return;
 		}
 		
-		//Future<JSONObject> fo=exec.submit(new Callable<JSONObject>() {
-		//	public JSONObject call() throws Exception {
-				JSONObject response;
-				try {
-					response = new JSONObject(new JSONTokener(reader));
-				} catch (JSONException ex) {
-					// we throw a server exception, because there's no telling what state the
-					// server is in after we've received a malformed response (or end-of-stream!)
-					throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
-				}
-		//		return response;
-		//	}
-		//});
-		
-		/*while (!fo.isDone()){
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			if(monitor.isCanceled()){
-				fo.cancel(true);
-				return;
-			}
-		}
+
+		JSONObject response;
 		try {
-			response=fo.get();*/
-			Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
-			processResponse(response);			
-		/*} catch (ExecutionException ee){
-			if (ee.getCause() instanceof ScionServerException){
-				throw (ScionServerException)ee.getCause();
-			} else {
-				ee.printStackTrace();
-			}
-		} catch (InterruptedException ie){
-			
-		}*/
+			response = new JSONObject(new JSONTokener(reader));
+		} catch (JSONException ex) {
+			// we throw a server exception, because there's no telling what state the
+			// server is in after we've received a malformed response (or end-of-stream!)
+			throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
+		}
+
+		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
+		processResponse(response);			
+
 
 	}
 
