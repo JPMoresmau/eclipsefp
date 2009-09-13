@@ -3,7 +3,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.ca;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.text.BadLocationException;
@@ -12,6 +15,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -37,12 +41,14 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
   private static final String ID_CONTEXT
     = "cabalPackageDescriptionTemplates"; //$NON-NLS-1$
 
+
   // interface methods of IContentAssistProcessor
   ///////////////////////////////////////////////
 
   public ICompletionProposal[] computeCompletionProposals( final ITextViewer tv,
                                                            final int offset ) {
-    ICompletionProposal[] result = new ICompletionProposal[ 0 ];
+    //ICompletionProposal[] result = new ICompletionProposal[ 0 ];
+    List<ICompletionProposal> icps=new LinkedList<ICompletionProposal>();
     ISelection selection = tv.getSelectionProvider().getSelection();
     if( selection instanceof ITextSelection ) {
       ITextSelection tsel = ( ITextSelection )selection;
@@ -50,9 +56,31 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
       String prefix = getPrefix( tv, realOffset );
       Region region= new Region( realOffset - prefix.length(),
                                  prefix.length() + tsel.getLength() );
-      result = computeTemplateProposals( tv, region );
+      icps.addAll( computeTemplateProposals( tv, region ));
+
+
+      for (CabalSyntax cs:CabalSyntax.values()){
+        if (cs.getCabalName().toLowerCase().startsWith( prefix.toLowerCase() )){
+          StringBuilder sb=new StringBuilder();
+          sb.append( cs.getCabalName() );
+          if (cs.isSectionHeader()){
+            if (CabalSyntax.SECTION_LIBRARY.equals( cs )){
+              sb.append( System.getProperty( "line.separator" ) );
+            } else {
+              sb.append(" ");
+            }
+          } else {
+            sb.append(":");
+          }
+          String rep=sb.toString();
+          CompletionProposal cp=new CompletionProposal( rep, offset-prefix.length()  , prefix.length(), rep.length() );
+
+          icps.add( cp );
+        }
+      }
+
     }
-    return result;
+    return icps.toArray( new ICompletionProposal[icps.size()] );
   }
 
   public IContextInformation[] computeContextInformation( final ITextViewer viewer,
@@ -85,10 +113,9 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
   // helping methods
   //////////////////
 
-  private ICompletionProposal[] computeTemplateProposals( final ITextViewer viewer,
+  private  List<ICompletionProposal> computeTemplateProposals( final ITextViewer viewer,
                                                           final IRegion region ) {
     TemplateContext context = createContext( viewer, region );
-    TemplateProposal[] result = new TemplateProposal[ 0 ];
     if( context != null ) {
       ISelectionProvider selectionProvider = viewer.getSelectionProvider();
       ISelection selection = selectionProvider.getSelection();
@@ -98,7 +125,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
         context.setVariable( "selection", textSel.getText() );  //$NON-NLS-1$
 
         Template[] templates = getTemplates( context );
-        List<TemplateProposal> matches = new ArrayList<TemplateProposal>();
+        List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
         for( int i= 0; i < templates.length; i++ ) {
           Template template= templates[ i ];
           try {
@@ -112,10 +139,10 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
             // ignored
           }
         }
-        result = matches.toArray( new TemplateProposal[ matches.size() ] );
+        return matches;
       }
     }
-    return result;
+    return Collections.emptyList();
   }
 
   private Template[] getTemplates( final TemplateContext context ) {
