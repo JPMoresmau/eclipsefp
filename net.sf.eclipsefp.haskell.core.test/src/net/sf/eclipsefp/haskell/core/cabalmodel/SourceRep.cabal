@@ -1,0 +1,10 @@
+Name:        HUnit
+
+source-repository head
+  type:     darcs
+  location: http://darcs.haskell.org/cabal/
+
+source-repository this
+  type:     darcs
+  location: http://darcs.haskell.org/cabal-branches/cabal-1.6/
+  tag:      1.6.1
