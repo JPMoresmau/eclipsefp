@@ -14,7 +14,7 @@ import java.util.Map;
   *
   * @author Leif Frenzel
   */
-public abstract class PackageDescriptionStanza {
+public class PackageDescriptionStanza {
   private static class CabalSyntaxMap<V> extends LinkedHashMap<String, V>{
     /**
     *
@@ -39,14 +39,21 @@ public abstract class PackageDescriptionStanza {
   private int indent;
   private final Map<String, String> properties=new CabalSyntaxMap<String>();
   private final Map<String, ValuePosition> positions=new CabalSyntaxMap<ValuePosition>();
+  private final CabalSyntax type;
 
-
-  PackageDescriptionStanza( final String name,
+  PackageDescriptionStanza( final CabalSyntax type,
+                            final String name,
                             final int startLine,
                             final int endLine ) {
+    this.type=type;
     this.name = name;
     this.startLine = startLine;
     this.endLine = endLine;
+  }
+
+
+  public CabalSyntax getType() {
+    return type;
   }
 
 
@@ -153,7 +160,7 @@ public abstract class PackageDescriptionStanza {
 
   @Override
   public String toString() {
-    return   getName()
+    return   (getName()!=null?getName():String.valueOf( getType() ))
            + " (line " //$NON-NLS-1$
            + startLine
            + "-" //$NON-NLS-1$

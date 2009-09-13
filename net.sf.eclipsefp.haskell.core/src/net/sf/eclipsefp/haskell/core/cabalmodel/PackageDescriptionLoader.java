@@ -82,8 +82,8 @@ public class PackageDescriptionLoader {
   }
 
   private static PackageDescriptionStanza create(  final StanzaInfo info ) {
-    PackageDescriptionStanza result;
-    int startLine=1;
+    PackageDescriptionStanza result=null;
+    /*int startLine=1;
     if( isExecutable( info.getContent() ) ) {
       result = new ExecutableStanza( getExecutableName( info.getContent() ),info.getStart(), info.getEnd()  );
     } else if( isLibrary( info.getContent() ) ) {
@@ -91,6 +91,30 @@ public class PackageDescriptionLoader {
     } else {
       result = new GeneralStanza(info.getStart(), info.getEnd() );
       startLine=0;
+    }*/
+    int startLine=0;
+
+    if (info.getContent()!=null && info.getContent().size()>0){
+      String s=info.getContent().get( 0 ).trim();
+      for (CabalSyntax cs:CabalSyntax.values()){
+        if (cs.isSectionHeader()){
+          if (s.toLowerCase().startsWith( cs.getCabalName().toLowerCase())){
+            String name=s.substring( cs.getCabalName().length() ).trim();
+            if (name.endsWith( "{" )){ //$NON-NLS-1$
+              name=name.substring( 0,name.length()-1 ).trim();
+            }
+
+            if(cs.equals( CabalSyntax.SECTION_LIBRARY )){
+              name=null;
+            }
+            startLine=1;
+            result = new PackageDescriptionStanza(cs,name,info.getStart(), info.getEnd() );
+          }
+        }
+      }
+    }
+    if (result==null){
+      result=new GeneralStanza( info.getStart(), info.getEnd() );
     }
     parseProperties(info,result,startLine);
     return result;
@@ -172,11 +196,11 @@ public class PackageDescriptionLoader {
     return result;
   }*/
 
-  private static String getLibraryName( final List<String> content ) {
+  /*private static String getLibraryName( final List<String> content ) {
     return getValue( content, CabalSyntax.FIELD_NAME.toString() );
-  }
+  }*/
 
-  private static String getExecutableName( final List<String> content ) {
+  /*private static String getExecutableName( final List<String> content ) {
     //return getValue( content, CabalSyntax.FIELD_EXECUTABLE );
     if (content.size()==0){
       return null;
@@ -189,7 +213,7 @@ public class PackageDescriptionLoader {
       return ""; //$NON-NLS-1$
     }
     return s;
-  }
+  }*/
 
   private static String getValue( final List<String> content,
                                   final String fieldName ) {
@@ -206,7 +230,7 @@ public class PackageDescriptionLoader {
     return result;
   }
 
-  private static boolean isLibrary( final List<String> content ) {
+  /*private static boolean isLibrary( final List<String> content ) {
     return containsLineStart( content, CabalSyntax.SECTION_LIBRARY.getCabalName());
   }
 
@@ -223,7 +247,7 @@ public class PackageDescriptionLoader {
       result = next.startsWith( start.toLowerCase() );
     }
     return result;
-  }
+  }*/
 
   private static boolean isEmpty( final String line ) {
     return line.trim().length() == 0;
@@ -245,6 +269,7 @@ public class PackageDescriptionLoader {
     private int end = 1;
 
     StanzaInfo() {
+      // NOOP
     }
 
     List<String> getContent() {

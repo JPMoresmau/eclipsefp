@@ -2,13 +2,14 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
-/** <p>a stanza for a library.</p> 
+/** <p>a stanza for a library.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class LibraryStanza extends PackageDescriptionStanza {
 
   LibraryStanza( final String name, final int startLine, final int endLine ) {
-    super( name, startLine, endLine );
+    super(CabalSyntax.SECTION_LIBRARY, name, startLine, endLine );
   }
 }

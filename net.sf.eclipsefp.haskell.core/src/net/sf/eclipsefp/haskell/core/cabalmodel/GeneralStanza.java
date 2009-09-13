@@ -6,11 +6,12 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
   * <code>.cabal</code> file.</p>
   *
   * @author Leif Frenzel
+  *
   */
 public class GeneralStanza extends PackageDescriptionStanza {
 
   GeneralStanza(final int startLine, final int endLine ) {
-    super( null, startLine, endLine );
+    super(null, null, startLine, endLine );
   }
 
   @Override

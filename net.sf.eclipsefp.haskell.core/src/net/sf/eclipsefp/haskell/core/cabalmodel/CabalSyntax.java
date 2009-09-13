@@ -9,6 +9,9 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
 public enum CabalSyntax {
   SECTION_EXECUTABLE("executable",true), //$NON-NLS-1$
   SECTION_LIBRARY("library",true), //$NON-NLS-1$
+  SECTION_SOURCE_REPOSITORY("source-repository",true), //$NON-NLS-1$
+  SECTION_FLAG("flag",true), //$NON-NLS-1$
+  SECTION_IF("if",true),
 
   FIELD_CATEGORY("category"), //$NON-NLS-1$
   FIELD_EXPOSED_MODULES("exposed-modules"), //$NON-NLS-1$
@@ -48,8 +51,11 @@ public enum CabalSyntax {
   FIELD_EXTRA_LIB_DIRS("extra-lib-dirs"),//$NON-NLS-1$
   FIELD_CC_OPTIONS("cc-options"),//$NON-NLS-1$
   FIELD_LD_OPTIONS("ld-options"),//$NON-NLS-1$
-  FIELD_FRAMEWORKS("frameworks")//$NON-NLS-1$
-
+  FIELD_FRAMEWORKS("frameworks"),//$NON-NLS-1$
+  FIELD_DEFAULT("default"),//$NON-NLS-1$
+  FIELD_TYPE("type"),//$NON-NLS-1$
+  FIELD_LOCATION("location"),//$NON-NLS-1$
+  FIELD_TAG("tag")//$NON-NLS-1$
 
   ;
 

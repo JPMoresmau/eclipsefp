@@ -64,7 +64,7 @@ public class CabalModelTest extends TestCase {
       assertEquals("http://hunit.sourceforge.net/",pdss[0].getProperties().get( "Homepage"));
       assertEquals("Testing",pdss[0].getProperties().get( CabalSyntax.FIELD_CATEGORY));
 
-      assertTrue(pdss[1] instanceof LibraryStanza);
+      assertEquals(CabalSyntax.SECTION_LIBRARY,pdss[1].getType());
       assertNull(pdss[1].getName());
       assertEquals(2,pdss[1].getIndent());
       assertEquals(10,pdss[1].getStartLine());
@@ -135,7 +135,7 @@ public class CabalModelTest extends TestCase {
     assertEquals("Package with library and two programs",pdss[0].getProperties().get( "Synopsis"));
     assertEquals("Simple",pdss[0].getProperties().get( "Build-Type"));
 
-    assertTrue(pdss[1] instanceof LibraryStanza);
+    assertEquals(CabalSyntax.SECTION_LIBRARY,pdss[1].getType());
     assertNull(pdss[1].getName());
     assertEquals(8,pdss[1].getStartLine());
     assertEquals(11,pdss[1].getEndLine());
@@ -144,7 +144,7 @@ public class CabalModelTest extends TestCase {
     assertEquals("HUnit",pdss[1].getProperties().get( "Build-Depends"));
     assertEquals("A, B, C",pdss[1].getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES));
 
-    assertTrue(pdss[2] instanceof ExecutableStanza);
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss[2].getType());
     assertEquals("program1",pdss[2].getName());
     assertEquals(12,pdss[2].getStartLine());
     assertEquals(16,pdss[2].getEndLine());
@@ -155,8 +155,7 @@ public class CabalModelTest extends TestCase {
     assertEquals("A, B",pdss[2].getProperties().get( "Other-Modules"));
 
 
-
-    assertTrue(pdss[3] instanceof ExecutableStanza);
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss[3].getType());
     assertEquals("program2",pdss[3].getName());
     assertEquals(17,pdss[3].getStartLine());
     assertEquals(21,pdss[3].getEndLine());
@@ -168,5 +167,74 @@ public class CabalModelTest extends TestCase {
 
   }
 
+  public void testParseSourceRep(){
+    String content3=getContent( "SourceRep.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza[] pdss=pd.getStanzas();
+    assertNotNull(pdss);
+    assertEquals(3,pdss.length);
+    assertTrue(pdss[0] instanceof GeneralStanza);
+    assertEquals("HUnit",pdss[0].getName());
 
+    assertEquals(CabalSyntax.SECTION_SOURCE_REPOSITORY,pdss[1].getType());
+    assertEquals("head",pdss[1].getName());
+    assertEquals("darcs",pdss[1].getProperties().get("type"));
+    assertEquals("http://darcs.haskell.org/cabal/",pdss[1].getProperties().get("location"));
+
+
+    assertEquals(CabalSyntax.SECTION_SOURCE_REPOSITORY,pdss[2].getType());
+    assertEquals("this",pdss[2].getName());
+    assertEquals("darcs",pdss[2].getProperties().get("type"));
+    assertEquals("http://darcs.haskell.org/cabal-branches/cabal-1.6/",pdss[2].getProperties().get("location"));
+    assertEquals("1.6.1",pdss[2].getProperties().get( "tag" ));
+
+  }
+
+  public void testParseExample4(){
+    String content3=getContent( "Example4.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza[] pdss=pd.getStanzas();
+    assertNotNull(pdss);
+    assertEquals(8,pdss.length);
+    assertTrue(pdss[0] instanceof GeneralStanza);
+    assertEquals("Test1",pdss[0].getName());
+
+    assertEquals(CabalSyntax.SECTION_FLAG,pdss[1].getType());
+    assertEquals("Debug",pdss[1].getName());
+    assertEquals("Enable debug support",pdss[1].getProperties().get( CabalSyntax.FIELD_DESCRIPTION ));
+    assertEquals("False",pdss[1].getProperties().get( CabalSyntax.FIELD_DEFAULT ));
+
+
+    assertEquals(CabalSyntax.SECTION_FLAG,pdss[2].getType());
+    assertEquals("WebFrontend",pdss[2].getName());
+
+    assertEquals(CabalSyntax.SECTION_LIBRARY,pdss[3].getType());
+
+    assertEquals(CabalSyntax.SECTION_IF,pdss[4].getType());
+
+    assertEquals(CabalSyntax.SECTION_IF,pdss[5].getType());
+
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss[6].getType());
+
+    assertEquals(CabalSyntax.SECTION_IF,pdss[7].getType());
+  }
+
+  public void testParseExample5(){
+    String content3=getContent( "Example5.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza[] pdss=pd.getStanzas();
+    assertNotNull(pdss);
+    assertEquals(3,pdss.length);
+    assertTrue(pdss[0] instanceof GeneralStanza);
+    assertEquals("Test1",pdss[0].getName());
+
+    assertEquals(CabalSyntax.SECTION_FLAG,pdss[1].getType());
+    assertEquals("Debug",pdss[1].getName());
+    assertEquals("Enable debug support",pdss[1].getProperties().get( CabalSyntax.FIELD_DESCRIPTION ));
+    assertEquals("False",pdss[1].getProperties().get( CabalSyntax.FIELD_DEFAULT ));
+
+
+    assertEquals(CabalSyntax.SECTION_LIBRARY,pdss[2].getType());
+
+  }
 }
