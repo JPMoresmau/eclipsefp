@@ -6,8 +6,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 
 /** <p>contains helping functionality for loading a {@link PackageDescription
@@ -41,22 +43,35 @@ public class PackageDescriptionLoader {
     StanzaInfo lastStanza = new StanzaInfo();
     stanzas.add( lastStanza );
 
+    Set<String> sections=new HashSet<String>();
+    for (CabalSyntax cs:CabalSyntax.values() ){
+      if (cs.isSectionHeader()){
+        sections.add(cs.getCabalName().toLowerCase());
+      }
+    }
+
     BufferedReader br = new BufferedReader( new StringReader( content ) );
     int count = 0;
     boolean contentStarted = false;
     String line = br.readLine();
+    int empty=1;
     while( line != null ) {
       count++;
       if( !isComment( line ) ) {
         contentStarted = true;
-        if( isEmpty( line ) ) {
-          lastStanza.setEnd( count - 1 );
-          lastStanza = new StanzaInfo();
-          lastStanza.setStart( count );
-          stanzas.add( lastStanza );
-        } else {
+        if(! isEmpty( line ) ) {
+          if (empty>1 && isSectionHeader(line,sections)){
+            lastStanza.setEnd( count - empty );
+            lastStanza = new StanzaInfo();
+            lastStanza.setStart( count-1 );
+            stanzas.add( lastStanza );
+          }
+
           lastStanza.getContent().add( line );
           lastStanza.getLines().add( new Integer(count - 1) );
+          empty=1;
+        } else {
+          empty++;
         }
       } else if( !contentStarted ) {
         lastStanza.setStart( lastStanza.getStart() + 1 );
@@ -69,6 +84,16 @@ public class PackageDescriptionLoader {
     }
     applyStanzas( stanzas, pd );
   }
+
+  private static boolean isSectionHeader(String line, final Set<String> sections ) {
+    line=line.trim().toLowerCase();
+    int ix=line.indexOf( ' ' );
+    if (ix>-1){
+      line=line.substring( 0,ix );
+    }
+    return sections.contains(line);
+  }
+
 
   private static void applyStanzas( final List<StanzaInfo> stanzas,
                                     final PackageDescription pd ) {
@@ -126,6 +151,7 @@ public class PackageDescriptionLoader {
     StringBuilder pValue=new StringBuilder();
     ValuePosition vp=null;
 
+
     for (int a=startLine;a<info.getContent().size();a++){
       String s=info.getContent().get( a );
       int line=info.getLines().get(a).intValue();
@@ -146,9 +172,14 @@ public class PackageDescriptionLoader {
       if (thisIndent>result.getIndent()){
         if (thisIndent<s.length()){
           if (pValue.length()>0){
-            pValue.append( "\n"); //$NON-NLS-1$
+            pValue.append( System.getProperty( "line.separator" )); //$NON-NLS-1$
           }
-          pValue.append( s.substring( thisIndent ) );
+          String val=s.substring( thisIndent ) ;
+          if (val.trim().equals( "." )){ //$NON-NLS-1$
+            val=""; //$NON-NLS-1$
+          }
+          pValue.append(val );
+          vp.setSubsequentIndent( thisIndent );
         }
       } else {
         if (pName!=null && pValue.length()>0){

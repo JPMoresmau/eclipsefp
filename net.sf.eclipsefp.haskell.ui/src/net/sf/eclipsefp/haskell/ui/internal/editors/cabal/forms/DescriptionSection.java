@@ -39,8 +39,7 @@ class DescriptionSection extends CabalFormSection {
     String text = UITexts.descriptionSection_entrySynopsis;
     txtSynopsis = createFormEntry( toolkit, container, text );
     String text2 = UITexts.descriptionSection_entryDescription;
-    txtDescription = createFormEntry( toolkit, container, text2 );
-
+    txtDescription = createMultiLineFormEntry( toolkit, container, text2 );
     String text3 = UITexts.descriptionSection_entryHomepage;
     txtHomepage = createFormEntry( toolkit, container, text3 );
     String text4 = UITexts.descriptionSection_entryCategory;

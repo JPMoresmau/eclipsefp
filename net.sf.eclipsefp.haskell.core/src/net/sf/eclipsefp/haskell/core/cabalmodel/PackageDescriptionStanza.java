@@ -129,9 +129,19 @@ public class PackageDescriptionStanza {
           sb.append( ' ');
         }
         count++;
+        if (line.trim().length()==0){
+          line= "."+line ; //$NON-NLS-1$
+        }
         sb.append( line );
         sb.append( System.getProperty( "line.separator" ) ); //$NON-NLS-1$
         line=br.readLine();
+      }
+      if (count>1){
+        for (int a=0;a<subIndent;a++){
+          sb.insert( 0, ' ');
+        }
+        sb.insert( 0, System.getProperty( "line.separator" ) ); //$NON-NLS-1$
+
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);
       newVP.setSubsequentIndent( subIndent );

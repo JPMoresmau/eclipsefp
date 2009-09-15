@@ -78,7 +78,7 @@ public class CabalModelTest extends TestCase {
       assertEquals(17,vp.getInitialIndent());
       assertEquals(20,vp.getSubsequentIndent());
       assertEquals("CPP",pdss[1].getProperties().get( "Extensions"));
-      assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,\nTest.HUnit.Text, Test.HUnit",pdss[1].getProperties().get( "Exposed-modules"));
+      assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+System.getProperty( "line.separator" )+"Test.HUnit.Text, Test.HUnit",pdss[1].getProperties().get( "Exposed-modules"));
   }
 
   public void testModifyExample1(){
@@ -236,5 +236,33 @@ public class CabalModelTest extends TestCase {
 
     assertEquals(CabalSyntax.SECTION_LIBRARY,pdss[2].getType());
 
+  }
+
+  public void testSpaces(){
+    String content3=getContent( "Spaces.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza[] pdss=pd.getStanzas();
+    assertNotNull(pdss);
+    assertEquals(1,pdss.length);
+    assertTrue(pdss[0] instanceof GeneralStanza);
+    assertEquals("scion",pdss[0].getName());
+    assertEquals("Development",pdss[0].getProperties().get( CabalSyntax.FIELD_CATEGORY ));
+
+    String description="Scion is a Haskell library that aims to implement those parts of a"
+      +System.getProperty( "line.separator" )+"Haskell IDE which are independent of a particular front-end.  Scion"
+      +System.getProperty( "line.separator" )+"is based on the GHC API and Cabal.  It provides both a Haskell API and"
+      +System.getProperty( "line.separator" )+"a server for non-Haskell clients such as Emacs and Vim."
+      +System.getProperty( "line.separator" )
+      +System.getProperty( "line.separator" )+"See the homepage <http://code.google.com/p/scion-lib> and the README"
+      +System.getProperty( "line.separator" )+"<http://github.com/nominolo/scion/blob/master/README.markdown> for"
+      +System.getProperty( "line.separator" )+"more information.";
+    assertEquals(description,pdss[0].getProperties().get( CabalSyntax.FIELD_DESCRIPTION));
+    String newDesc="First line"+System.getProperty( "line.separator" )+System.getProperty( "line.separator" )+"Line2";
+    RealValuePosition rvp=pdss[0].update( CabalSyntax.FIELD_DESCRIPTION, newDesc );
+
+    assertEquals(System.getProperty( "line.separator" )+"  First line"+System.getProperty( "line.separator" )+"  ."+System.getProperty( "line.separator" )+"  Line2"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(12,rvp.getInitialIndent());
+    assertEquals(8,rvp.getStartLine());
+    assertEquals(18,rvp.getEndLine());
   }
 }

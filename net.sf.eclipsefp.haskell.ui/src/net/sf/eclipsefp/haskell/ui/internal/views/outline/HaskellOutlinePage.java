@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementCP;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementLP;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -15,6 +16,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 
@@ -78,24 +80,27 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     }
   }
 
+
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final Object input ) {
 	// TODO TtC replace by something not Cohatoe-based
-	/*
+
     if( input != null && input instanceof IFileEditorInput ) {
       IFileEditorInput fei = ( IFileEditorInput )input;
       IFile file = fei.getFile();
       if( file != null && file.exists() ) {
-        IDocument doc = editor.getDocument();
+
+        /*IDocument doc = editor.getDocument();
         CohatoeServer server = CohatoeServer.getInstance();
         IHaskellOutline fun = server.createFunction( IHaskellOutline.class );
         if( fun != null ) {
           this.input = fun.computeOutline( doc.get() );
           update();
-        }
+        }*/
+
       }
     }
-    */
+
   }
 
   /** <p>updates the outline page.</p> */

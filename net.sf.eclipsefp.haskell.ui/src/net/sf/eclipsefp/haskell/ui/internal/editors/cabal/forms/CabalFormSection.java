@@ -14,6 +14,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -86,6 +87,14 @@ abstract class CabalFormSection extends SectionPart {
     FormEntry result = new FormEntry( container, toolkit, label, null, false );
     result.setFormEntryListener( createFormEntryListener() );
     return result;
+  }
+
+  FormEntry createMultiLineFormEntry( final FormToolkit toolkit,
+        final Composite container,
+        final String label ) {
+  FormEntry result = new FormEntry( container, toolkit, label,SWT.MULTI );
+  result.setFormEntryListener( createFormEntryListener() );
+  return result;
   }
 
   // helping functions

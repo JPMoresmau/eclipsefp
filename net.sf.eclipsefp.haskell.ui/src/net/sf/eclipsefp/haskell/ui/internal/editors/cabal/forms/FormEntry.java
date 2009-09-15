@@ -140,6 +140,10 @@ public class FormEntry {
 			}
 			gd.grabExcessHorizontalSpace = (tspan == 1);
 			gd.widthHint = 10;
+
+	    if ((textField.getStyle() & SWT.MULTI)>0){
+	      gd.heightHint=100;
+	    }
 			textField.setLayoutData(gd);
 			if (btnBrowse != null) {
 				gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
