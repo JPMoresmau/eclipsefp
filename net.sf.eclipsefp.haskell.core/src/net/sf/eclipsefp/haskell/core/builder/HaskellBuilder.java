@@ -50,7 +50,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   }
 
   private IFile getCabalFile() {
-    return ScionPlugin.getCabalFile( getProject() );
+    return ScionInstance.getCabalFile( getProject() );
   }
 
   // helping methods

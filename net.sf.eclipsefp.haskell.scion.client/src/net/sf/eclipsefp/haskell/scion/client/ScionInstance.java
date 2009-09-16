@@ -9,12 +9,10 @@ import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.internal.client.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.ConfigureCabalProjectCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.OpenCabalProjectCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
@@ -28,9 +26,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -84,13 +83,13 @@ public class ScionInstance implements IScionCommandRunner {
 			server = new ScionServer(serverExecutable,serverOutput);
 			server.startServer();
 			checkProtocol();
-			openCabal();
+			//openCabal();
 			restoreState();
 		}
 	}
 	
 	private boolean checkCabalFile(){
-		IFile cabalFile=ScionPlugin.getCabalFile(getProject());
+		IFile cabalFile=getCabalFile(getProject());
 	    if( !cabalFile.exists() ) {
 	        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
 	        try {
@@ -104,7 +103,7 @@ public class ScionInstance implements IScionCommandRunner {
 	    return cabalFile.exists();
 	}
 	
-	public void configureCabal(IJobChangeListener listener) {
+	/*public void configureCabal(IJobChangeListener listener) {
 		if (checkCabalFile()){
 			ConfigureCabalProjectCommand command=new ConfigureCabalProjectCommand(this,Job.BUILD,getProject());
 			if (listener!=null){
@@ -128,31 +127,33 @@ public class ScionInstance implements IScionCommandRunner {
 			command.runAsync();
 		}
 		
-	}
+	}*/
 	
 	public void buildProject(){
 		deleteProblems(getProject());
-		configureCabal(new JobChangeAdapter(){
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (event.getResult().isOK()) {
-					final ListCabalComponentsCommand command=new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, ScionPlugin.getCabalFile(getProject()).getLocation().toOSString());
-					command.addJobChangeListener(new JobChangeAdapter() {
-						@Override
-						public void done(IJobChangeEvent event) {
-							if (event.getResult().isOK()) {
-								for (Component c:command.getComponents()){
-									LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,true);
-									loadCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
-									loadCommand.runAsync();
-								}
-							}
+		//configureCabal(new JobChangeAdapter(){
+		//	@Override
+		//	public void done(IJobChangeEvent event) {
+		//		if (event.getResult().isOK()) {
+		if (checkCabalFile()){
+			final ListCabalComponentsCommand command=new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, getCabalFile(getProject()).getLocation().toOSString());
+			command.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						for (Component c:command.getComponents()){
+							LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,true);
+							loadCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
+							loadCommand.runAsync();
 						}
-					});
-					command.runAsync();
+					}
 				}
-			}
-		});
+			});
+			command.runAsync();
+		}
+		//		}
+		//	}
+		//});
 	}
 
 	public void stop() {
@@ -239,7 +240,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public void reloadFile(IFile file) {
 		deleteProblems(file);
-		LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString()),false);
+		LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
 		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(this, file);
 		typecheckCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
 		loadCommand.getSuccessors().add(typecheckCommand);
@@ -274,5 +275,11 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 	}
 	
+	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
 	
+	public static IFile getCabalFile(final IProject p) {
+	    String ext = EXTENSION_CABAL;
+	    IPath path = new Path( p.getName() ).addFileExtension( ext );
+	    return p.getFile( path );
+	}
 }

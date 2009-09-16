@@ -12,23 +12,33 @@ public class Component {
 
 	private ComponentType type;
 	private String name;
+	private String cabalFileName;
 	
-	public Component(ComponentType type, String name) {
+	public Component(ComponentType type, String name,String cabalFileName) {
 		super();
 		this.type = type;
 		this.name = name;
+		this.cabalFileName=cabalFileName;
 	}
 	
-	public Component(JSONObject obj){
+	public Component(JSONObject obj) throws JSONException{
 		for (ComponentType ct:ComponentType.values()){
-			String s=obj.optString(ct.name().toLowerCase());
+			Object o=obj.opt(ct.name().toLowerCase());
+			if (o!=null){
+				type=ct;
+				if (o instanceof String){
+					name=(String)o;
+				}
+				break;
+			}
+			/*String s=obj.optString(ct.name().toLowerCase());
 			if (s.length()>0){
 				type=ct;
 				name=s;
 				break;
-			}
+			}*/
 		}
-		
+		cabalFileName=obj.getString("cabal-file");
 	}
 
 	public ComponentType getType() {
@@ -49,7 +59,8 @@ public class Component {
 	
 	public JSONObject toJSON() throws JSONException {
 		JSONObject component = new JSONObject();
-		component.put(getType().toString().toLowerCase(), getName());
+		component.put(getType().toString().toLowerCase(), getName()!=null?getName():JSONObject.NULL);
+		component.put("cabal-file", cabalFileName);
 		return component;
 	}
 	

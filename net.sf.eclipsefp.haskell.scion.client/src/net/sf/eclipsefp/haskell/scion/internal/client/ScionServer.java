@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
@@ -106,12 +107,23 @@ public class ScionServer {
 	 */
   	private void startServerProcess() throws ScionServerStartupException {
   		Trace.trace(CLASS_PREFIX, "Starting server");
-  		
+  		// by default listenOn in Scion use ReuseAddr, which is why I think it does not detect that the port is already in use
+  		// so we the check ourselves
+  		int port=4005;
+  		try {
+  			while (true){
+  				new Socket(InetAddress.getLocalHost(), port);
+  				port++;
+  			}
+  		} catch (IOException ioe){
+  			
+  		}
   		// Construct the command line
 		String executable = serverExecutable;
 		List<String> command = new LinkedList<String>();
 		command.add(executable);
-		command.add("--autoport");
+		//command.add("--autoport");
+		command.add("-p "+port);
 		
 		// Launch the process
 		ProcessBuilder builder = new ProcessBuilder(command);

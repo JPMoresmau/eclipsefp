@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.core.internal.project;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -70,6 +70,6 @@ public class CabalBuilder extends IncrementalProjectBuilder {
   }
 
   private IFile getCabalFile() {
-    return ScionPlugin.getCabalFile( getProject() );
+    return ScionInstance.getCabalFile( getProject() );
   }
 }

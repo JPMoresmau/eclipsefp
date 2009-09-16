@@ -25,7 +25,6 @@ public class ScionPlugin extends AbstractUIPlugin {
 	
 	private static final String BUNDLE_NAME = "net.sf.eclipsefp.haskell.scion.client";
 	private static ScionPlugin instance;
-	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
 	public static final String ID_PROJECT_PROBLEM_MARKER = BUNDLE_NAME+".projectProblem"; //$NON-NLS-1$
 
 	// no dot so we see it in Eclipse project view
@@ -112,11 +111,7 @@ public class ScionPlugin extends AbstractUIPlugin {
 		StatusManager.getManager().handle(status);
 	}
 	
-	  public static IFile getCabalFile(final IProject p) {
-		    String ext = EXTENSION_CABAL;
-		    IPath path = new Path( p.getName() ).addFileExtension( ext );
-		    return p.getFile( path );
-		  }
+
 	  
 	  public Map<IProject, ScionInstance> getScionInstances() {
 		return instances;
