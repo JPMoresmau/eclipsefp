@@ -168,7 +168,7 @@ public class ScionManager implements IResourceChangeListener {
    * Starts and returns a new Scion instance for the given project.
    * Does not add the instance to the instances map.
    */
-  private ScionInstance startInstance( final IProject project ) {
+  private synchronized ScionInstance startInstance( final IProject project ) {
 	String name=NLS.bind( UITexts.scion_console_title, project.getName() );
 	HaskellConsole c=new HaskellConsole( null, name );
 

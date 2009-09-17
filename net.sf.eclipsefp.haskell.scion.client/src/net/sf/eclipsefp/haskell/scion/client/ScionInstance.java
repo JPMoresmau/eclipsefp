@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.internal.client.ScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
@@ -19,7 +20,6 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -28,7 +28,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -84,6 +86,7 @@ public class ScionInstance implements IScionCommandRunner {
 			server.startServer();
 			checkProtocol();
 			//openCabal();
+			buildProject(false);
 			restoreState();
 		}
 	}
@@ -129,7 +132,7 @@ public class ScionInstance implements IScionCommandRunner {
 		
 	}*/
 	
-	public void buildProject(){
+	public void buildProject(final boolean output){
 		deleteProblems(getProject());
 		//configureCabal(new JobChangeAdapter(){
 		//	@Override
@@ -137,19 +140,37 @@ public class ScionInstance implements IScionCommandRunner {
 		//		if (event.getResult().isOK()) {
 		if (checkCabalFile()){
 			final ListCabalComponentsCommand command=new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, getCabalFile(getProject()).getLocation().toOSString());
-			command.addJobChangeListener(new JobChangeAdapter() {
+			/*command.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
 					if (event.getResult().isOK()) {
 						for (Component c:command.getComponents()){
-							LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,true);
+							LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output);
 							loadCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
-							loadCommand.runAsync();
+							loadCommand.runSync();
 						}
 					}
 				}
+			});*/
+			command.getSuccessors().add(new ArbitraryCommand(ScionInstance.this, Job.BUILD){
+				@Override
+				public IStatus run(IProgressMonitor monitor) {
+					CompilationResultHandler crh=new CompilationResultHandler(getProject());
+					
+					for (Component c:command.getComponents()){
+						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output);
+						//loadCommand.addJobChangeListener();
+						loadCommand.run(monitor);
+						crh.process(loadCommand);
+					}
+					return Status.OK_STATUS;
+				}
 			});
-			command.runAsync();
+			//if (output){
+				command.runAsync();
+			//} else {
+			//	command.runSync();
+			//}
 		}
 		//		}
 		//	}
@@ -240,11 +261,12 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public void reloadFile(IFile file) {
 		deleteProblems(file);
-		LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
+		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
 		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(this, file);
 		typecheckCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
-		loadCommand.getSuccessors().add(typecheckCommand);
-		loadCommand.runAsync();
+		typecheckCommand.runAsync();
+		//loadCommand.getSuccessors().add(typecheckCommand);
+		//loadCommand.runAsync();
 		//typecheckCommand.runAsyncAfter(loadCommand);
 	}
 	
