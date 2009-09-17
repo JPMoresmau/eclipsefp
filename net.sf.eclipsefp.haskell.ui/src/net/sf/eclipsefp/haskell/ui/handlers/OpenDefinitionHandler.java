@@ -1,19 +1,21 @@
 package net.sf.eclipsefp.haskell.ui.handlers;
 
+import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -42,14 +44,28 @@ public class OpenDefinitionHandler extends AbstractHandler {
 			ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 			if (selection instanceof TextSelection) {
 				TextSelection textSel = (TextSelection)selection;
-				String name = textSel.getText().trim(); // TODO TtC make work on 0-length selections too
+				String name = textSel.getText().trim();
+				if (name.length()==0){
+				  try {
+  				  Location l=new Location(file.getLocation().toOSString(),haskellEditor.getDocument(), new Region(textSel.getOffset(),0));
+  				  String s=HaskellUIPlugin.getDefault().getScionInstanceManager( file ).thingAtPoint( l );
+  				  if (s.length()>0){
+  				    name=s;
+  				    int ix=name.indexOf( ' ' );
+  				    if (ix>-1){
+  				      name=name.substring( 0,ix );
+  				    }
+  				  }
+				  } catch(BadLocationException ble){
+				    ble.printStackTrace();
+				  }
+				}
 				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
 				if (location != null) {
 					try {
-						openInEditor(haskellEditor.getEditorSite().getPage(), location);
+						openInEditor(haskellEditor.getEditorSite().getPage(), location,file.getProject());
 					} catch (PartInitException ex) {
-						// too bad
-					} catch (URISyntaxException ex) {
+					  ex.printStackTrace();
 						// too bad
 					}
 				}
@@ -58,13 +74,22 @@ public class OpenDefinitionHandler extends AbstractHandler {
 		return null;
 	}
 
-	protected void openInEditor(final IWorkbenchPage page, final Location location) throws PartInitException, URISyntaxException {
+	protected void openInEditor(final IWorkbenchPage page, final Location location,final IProject p) throws PartInitException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
-		URI uri = new URI("file", "", location.getFileName(), null, null);
+		URI uri = new File(location.getFileName()).toURI(); //new URI("file", "", location.getFileName(), null, null);
 		IFile[] files = root.findFilesForLocationURI(uri, IResource.FILE);
 		if (files.length > 0) {
-			IFile file = files[0]; // open only the first file; they should be the same anyway
+		  IFile file = files[0]; // open only the first file; they should be the same anyway
+
+		  if (!file.getProject().equals( p ) && files.length>1){
+		    for (IFile f:files){
+		      if (f.getProject().equals( p )){
+		        file=f;
+		        break;
+		      }
+		    }
+		  }
 			IEditorPart editor = IDE.openEditor(page, file, true);
 			ITextEditor textEditor = (ITextEditor)editor;
 			IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());

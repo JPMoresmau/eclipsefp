@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
@@ -17,7 +20,7 @@ public class NameDefinitionsCommand extends ScionCommand {
 
 	private String name;
 	
-	private Location[] locations;
+	private List<Location> locations;
 
 	public NameDefinitionsCommand(IScionCommandRunner runner, String name) {
 		super(runner, Job.INTERACTIVE);
@@ -39,22 +42,28 @@ public class NameDefinitionsCommand extends ScionCommand {
 	@Override
 	protected void doProcessResult(Object json) throws JSONException {
 		JSONArray result = (JSONArray)json;
-		locations = new Location[result.length()];
-		for (int i = 0; i < locations.length; ++i) {
-			locations[i] = new Location(result.getJSONObject(i));
+		locations = new ArrayList<Location>(result.length());
+		for (int i = 0; i < result.length(); ++i) {
+			JSONObject obj=result.getJSONObject(i);
+			if (obj.opt("no-location")==null){
+				locations.add(new Location(obj));
+			} 
 		}
 	}
 
 	public boolean isFound() {
-		return locations != null && locations.length > 0;
+		return locations != null && locations.size() > 0;
 	}
 	
-	public Location[] getLocations(int index) {
+	public List<Location> getLocations(int index) {
 		return locations;
 	}
 	
 	public Location getFirstLocation() {
-		return locations[0];
+		if (locations.isEmpty()){
+			return null;
+		}
+		return locations.iterator().next();
 	}
 
 }

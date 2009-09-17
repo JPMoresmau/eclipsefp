@@ -312,6 +312,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     markAsStateDependentAction( name, true );
   }
 
+  @Override
+  public void setFocus() {
+    super.setFocus();
+    IFile f=findFile();
+    HaskellUIPlugin.getDefault().getScionInstanceManager(f).backgroundTypecheckFile( f );
+  }
+
   private void initMarkOccurrences() {
     // TODO TtC replace by something not Cohatoe-based
     /*
