@@ -78,11 +78,13 @@ public abstract class ScionCommand extends Job {
 	public IStatus runSync() {
 		schedule();
 		while (getState() != NONE) { // alternatives: WAITING, RUNNING or SLEEPING
+			
 			try {
 				join();
 			} catch (InterruptedException e) {
 				// re-check state
 			}
+			Thread.yield();
 		}
 		return getResult();
 	}

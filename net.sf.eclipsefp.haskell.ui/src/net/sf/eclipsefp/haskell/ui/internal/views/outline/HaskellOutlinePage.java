@@ -1,11 +1,12 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
-import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
+import java.util.List;
+import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
+import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementCP;
-import net.sf.eclipsefp.haskell.ui.internal.views.common.TreeElementLP;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -38,8 +39,8 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     super.createControl( parent );
 
     TreeViewer viewer = getTreeViewer();
-    viewer.setContentProvider( new TreeElementCP() );
-    viewer.setLabelProvider( new TreeElementLP() );
+    viewer.setContentProvider( new OutlineCP() );
+    viewer.setLabelProvider( new OutlineLabelProvider());
     viewer.addSelectionChangedListener( this );
 
     if( input != null ) {
@@ -57,7 +58,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     } else {
       IStructuredSelection sel = ( IStructuredSelection )selection;
       Object firstElement = sel.getFirstElement();
-      if( firstElement instanceof IHaskellLanguageElement ) {
+      /*if( firstElement instanceof IHaskellLanguageElement ) {
         IHaskellLanguageElement elem = ( IHaskellLanguageElement )firstElement;
         IEditorInput fei = editor.getEditorInput();
         IDocument doc = editor.getDocumentProvider().getDocument( fei );
@@ -76,6 +77,27 @@ public class HaskellOutlinePage extends ContentOutlinePage {
             editor.resetHighlightRange();
           }
         }
+      }*/
+      if (firstElement instanceof OutlineDef){
+        OutlineDef od=(OutlineDef)firstElement;
+        Location srcLoc=od.getLocation();
+        if (srcLoc!=null){
+          IEditorInput fei = editor.getEditorInput();
+          IDocument doc = editor.getDocumentProvider().getDocument( fei );
+          try {
+            int offset = doc.getLineOffset( srcLoc.getStartLine() ) + srcLoc.getStartColumn();
+            int length = od.getName().length();
+            try {
+              editor.setHighlightRange( offset, length, true );
+            } catch( IllegalArgumentException iaex ) {
+              editor.resetHighlightRange();
+            }
+          } catch( final BadLocationException badlox ) {
+            // ignore
+          }
+
+        }
+
       }
     }
   }
@@ -83,21 +105,18 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final Object input ) {
-	// TODO TtC replace by something not Cohatoe-based
-
-    if( input != null && input instanceof IFileEditorInput ) {
+	  if( input != null && input instanceof IFileEditorInput ) {
       IFileEditorInput fei = ( IFileEditorInput )input;
       IFile file = fei.getFile();
       if( file != null && file.exists() ) {
+        HaskellUIPlugin.getDefault().getScionInstanceManager( file ).outline(new OutlineHandler() {
 
-        /*IDocument doc = editor.getDocument();
-        CohatoeServer server = CohatoeServer.getInstance();
-        IHaskellOutline fun = server.createFunction( IHaskellOutline.class );
-        if( fun != null ) {
-          this.input = fun.computeOutline( doc.get() );
-          update();
-        }*/
+          public void outlineResult( final List<OutlineDef> outlineDefs ) {
+            HaskellOutlinePage.this.input=outlineDefs;
+            HaskellOutlinePage.this.update();
 
+          }
+        });
       }
     }
 
@@ -105,15 +124,21 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
   /** <p>updates the outline page.</p> */
   public void update() {
-    TreeViewer viewer = getTreeViewer();
-    if( viewer != null ) {
-      Control control= viewer.getControl();
-      if( control != null && !control.isDisposed() ) {
-        control.setRedraw( false );
-        viewer.setInput( input );
-        viewer.expandToLevel( 2 );
-        control.setRedraw( true );
-      }
-    }
+   getControl().getDisplay().syncExec( new Runnable(){
+     public void run() {
+       TreeViewer viewer = getTreeViewer();
+       if( viewer != null ) {
+         Control control= viewer.getControl();
+         if( control != null && !control.isDisposed() ) {
+           control.setRedraw( false );
+           viewer.setInput( input );
+           viewer.expandToLevel( 2 );
+           control.setRedraw( true );
+         }
+       }
+     }
+
+   } );
+
   }
 }

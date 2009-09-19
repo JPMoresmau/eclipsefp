@@ -17,11 +17,14 @@ import org.json.JSONObject;
 public class Location {
 
 	private String fileName;
+	private String otherName;
+
+
 	private int startLine, startColumn, endLine, endColumn;
 	
 	public Location(JSONObject json) throws JSONException {
-		// TODO TtC this is not the complete syntax
-		this.fileName = json.getString("file");
+		this.fileName = json.optString("file");
+		this.otherName=json.optString("other");
 		JSONArray region = json.getJSONArray("region");
 		startLine = region.getInt(0) - 1;
 		startColumn = region.getInt(1);
@@ -71,6 +74,10 @@ public class Location {
 		return fileName;
 	}
 
+	public String getOtherName() {
+		return otherName;
+	}
+	
 	public int getStartLine() {
 		return startLine;
 	}

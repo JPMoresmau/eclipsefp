@@ -250,6 +250,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     IFile file = findFile();
     if( file != null ) {
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file);
+      if (outlinePage!=null){
+        outlinePage.setInput( getEditorInput() );
+      }
     }
   }
 
@@ -271,14 +274,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     }
 
     super.doSetInput( input );
-    if( outlinePage != null ) {
-      outlinePage.setInput( input );
-    }
 
     // load the new file into Scion
     file = findFile();
     if (file != null) {
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
+    }
+    if( outlinePage != null ) {
+      outlinePage.setInput( input );
     }
   }
 

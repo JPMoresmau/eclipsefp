@@ -1,6 +1,8 @@
 package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.Writer;
+import java.util.Collections;
+import java.util.List;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
@@ -14,12 +16,14 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -285,6 +289,22 @@ public class ScionInstance implements IScionCommandRunner {
       } else {
     	  return null;
       }
+	}
+	
+	public void outline(final OutlineHandler handler){
+		final OutlineCommand command=new OutlineCommand(this);
+		if (handler!=null){
+			command.addJobChangeListener(new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						handler.outlineResult(command.getOutlineDefs());
+					}
+				}
+			});
+		}
+		command.runAsync();
+
 	}
 	
 	public Location firstDefinitionLocation(String name) {
