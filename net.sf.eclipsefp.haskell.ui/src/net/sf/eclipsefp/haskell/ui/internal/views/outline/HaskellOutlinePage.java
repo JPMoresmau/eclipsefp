@@ -1,23 +1,35 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
+import java.util.Comparator;
 import java.util.List;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 
@@ -43,9 +55,19 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     viewer.setLabelProvider( new OutlineLabelProvider());
     viewer.addSelectionChangedListener( this );
 
+    IActionBars actionBars= getSite().getActionBars();
+    registerToolbarActions(actionBars);
+
     if( input != null ) {
       viewer.setInput( input );
     }
+
+  }
+
+  private void registerToolbarActions( final IActionBars actionBars ) {
+    IToolBarManager toolBarManager= actionBars.getToolBarManager();
+    toolBarManager.add(new LexicalSortingAction());
+
   }
 
   @Override
@@ -132,7 +154,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
          if( control != null && !control.isDisposed() ) {
            control.setRedraw( false );
            viewer.setInput( input );
-           viewer.expandToLevel( 2 );
+           viewer.expandToLevel( AbstractTreeViewer.ALL_LEVELS );
            control.setRedraw( true );
          }
        }
@@ -140,5 +162,61 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
    } );
 
+  }
+
+  class LexicalSortingAction extends Action {
+
+
+    public LexicalSortingAction() {
+      super();
+      PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "Outline.LexicalSortingAction");
+      setText(UITexts.outline_sortByName);
+      setImageDescriptor(HaskellUIImages.getImageDescriptor( IImageNames.ACTION_SORT ));
+      setToolTipText(UITexts.outline_sortByName_tooltip);
+      setDescription(UITexts.outline_sortByName_description);
+
+      boolean checked= HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean("Outline.LexicalSortingAction.isChecked"); //$NON-NLS-1$
+      valueChanged(checked, false);
+    }
+
+    @Override
+    public void run() {
+      valueChanged(isChecked(), true);
+    }
+
+    private void valueChanged(final boolean on, final boolean store) {
+      setChecked(on);
+      BusyIndicator.showWhile(getTreeViewer().getControl().getDisplay(), new Runnable() {
+        public void run() {
+          if (on) {
+            getTreeViewer().setComparator(new OutlineDefComparator( OutlineDef.BY_NAME));
+          } else {
+            getTreeViewer().setComparator(new OutlineDefComparator(OutlineDef.BY_LOCATION));
+          }
+        }
+      });
+
+      if (store) {
+        HaskellUIPlugin.getDefault().getPreferenceStore().setValue("Outline.LexicalSortingAction.isChecked", on); //$NON-NLS-1$
+      }
+    }
+  }
+
+  class OutlineDefComparator extends ViewerComparator{
+    private final Comparator<OutlineDef> comp;
+
+
+
+    public OutlineDefComparator( final Comparator<OutlineDef> comp ) {
+      super();
+      this.comp = comp;
+    }
+
+
+
+    @Override
+    public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
+     return comp.compare( (OutlineDef)e1, (OutlineDef)e2 );
+    }
   }
 }

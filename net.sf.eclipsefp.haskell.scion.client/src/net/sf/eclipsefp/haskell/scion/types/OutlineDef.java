@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.types;
 
+import java.util.Comparator;
+
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
 import org.json.JSONException;
@@ -20,6 +22,24 @@ public class OutlineDef {
 		SYN,
 		TYPE
 	}
+	
+	public static Comparator<OutlineDef> BY_LOCATION=new Comparator<OutlineDef>() {
+		public int compare(OutlineDef o1, OutlineDef o2) {
+			Location l1=o1.getLocation();
+			Location l2=o2.getLocation();
+			if (l1.getStartLine()==l2.getStartLine()){
+				return l1.getStartColumn()-l2.getStartColumn();
+			} else {
+				return l1.getStartLine()-l2.getStartLine();
+			}
+		}
+	};
+	
+	public static Comparator<OutlineDef> BY_NAME=new Comparator<OutlineDef>() {
+		public int compare(OutlineDef o1, OutlineDef o2) {
+			return o1.getName().compareToIgnoreCase(o2.getName());
+		}
+	};
 	
 	private OutlineDefType type=OutlineDefType.TYPE;
 	private String name;

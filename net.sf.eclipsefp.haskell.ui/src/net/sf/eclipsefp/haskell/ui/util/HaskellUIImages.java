@@ -41,6 +41,7 @@ public class HaskellUIImages implements IImageNames {
   private final static String OVR    = "ovr16/";   // basic colors - size 7x8
   private final static String ACTION = "clcl16/";  // basic colors - size 16x16
   private final static String WIZARD = "wizban/";  // wizard banners
+  private final static String ACTION_E = "elcl16/";
 
 
   private static void declareImages() {
@@ -99,6 +100,8 @@ public class HaskellUIImages implements IImageNames {
     declare( NEW_PROJECT, WIZARD + "newhprj_wiz.png" );
     declare( NEW_MODULE, WIZARD  + "newmodule.png" );
     declare( IMPORT_CABAL_PACKAGE, WIZARD + "impcprj_wiz.png" );
+
+    declare(ACTION_SORT,ACTION_E+"alphab_sort_co.png");
   }
 
   private final static void declare( final String key,

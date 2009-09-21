@@ -118,6 +118,9 @@ public final class UITexts extends NLS {
 
   public static String scion_console_title;
 
+  public static String outline_sortByName;
+  public static String outline_sortByName_tooltip;
+  public static String outline_sortByName_description;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

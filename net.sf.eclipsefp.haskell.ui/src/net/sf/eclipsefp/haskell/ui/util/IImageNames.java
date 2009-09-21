@@ -72,4 +72,5 @@ public interface IImageNames {
   String ERROR_OVERLAY        = ID + ".ERROR_OVERLAY";
   String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY";
 
+  String ACTION_SORT          = ID + ".ACTION_SORT";
 }
