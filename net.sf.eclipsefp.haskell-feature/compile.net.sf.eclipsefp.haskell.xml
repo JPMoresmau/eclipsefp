@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Compile net.sf.eclipsefp.haskell" default="main">
 	<target name="main">
-		<ant antfile="build.xml" dir="../org.antlr" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.doc.user" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.antlr" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.debug.core" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.scion.client" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.core" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.ui" target="build.jars"/>
+		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.core.jparser" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.ghccompiler" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.debug.ui" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.hugs" target="build.jars"/>
-		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.core.jparser" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.haddock" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell" target="build.jars"/>
 	</target>
