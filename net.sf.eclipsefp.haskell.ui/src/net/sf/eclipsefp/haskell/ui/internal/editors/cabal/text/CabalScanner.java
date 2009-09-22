@@ -36,10 +36,12 @@ public class CabalScanner extends RuleBasedScanner {
   private IRule createKeywordRule() {
     Color keyColor = ColorProvider.getInstance().getColor( ColorProvider.KEYWORD );
     IToken token= new Token( new TextAttribute( keyColor, null, SWT.BOLD ) );
+    Color sectionColor = ColorProvider.getInstance().getColor( ColorProvider.SECTION );
+    IToken sectionToken= new Token( new TextAttribute( sectionColor, null, SWT.BOLD ) );
     WordRule wordRule= new CaseInsensitiveWordRule( new SimpleWordDetector() );
     for( CabalSyntax keyword: CabalSyntax.values() ) {
       if (keyword.isSectionHeader()){
-        wordRule.addWord( keyword.getCabalName(), token );
+        wordRule.addWord( keyword.getCabalName(), sectionToken );
       } else {
         wordRule.addWord( keyword.getCabalName() + ":", token ); //$NON-NLS-1$
       }

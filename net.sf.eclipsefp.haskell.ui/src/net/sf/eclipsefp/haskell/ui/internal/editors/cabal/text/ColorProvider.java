@@ -21,10 +21,12 @@ public class ColorProvider {
 
   static final String COMMENT = "COMMENT"; //$NON-NLS-1$
   static final String KEYWORD = "KEYWORD"; //$NON-NLS-1$
+  static final String SECTION = "SECTION"; //$NON-NLS-1$
   static final String OTHER   = "OTHER"; //$NON-NLS-1$
 
   private static final RGB DEFAULT_COMMENT           = new RGB( 128, 128, 192 );
   private static final RGB DEFAULT_KEYWORD           = new RGB( 128, 0, 86 );
+  private static final RGB DEFAULT_SECTION           = new RGB( 0,   128, 86 );
   private static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
   /** the singleton instance of ColorProvider. */
@@ -81,6 +83,7 @@ public class ColorProvider {
   private void initRgbs() {
     rgbs.put( COMMENT, DEFAULT_COMMENT );
     rgbs.put( KEYWORD, DEFAULT_KEYWORD );
+    rgbs.put( SECTION, DEFAULT_SECTION );
     rgbs.put( OTHER, DEFAULT_OTHER );
   }
 }

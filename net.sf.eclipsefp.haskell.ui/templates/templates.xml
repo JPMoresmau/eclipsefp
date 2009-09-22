@@ -6,33 +6,34 @@
             context="cabalPackageDescriptionTemplates" 
             enabled="true">Name:           ${name}
 Version:        ${version}
+Cabal-Version:  >= 1.2 
 License:        ${license}
 Author:         ${author}
 Homepage:       http://${homepage}
 Category:       ${category}
-Build-Depends:  base
 Synopsis:       ${synopsis}
-Exposed-modules: ${exposedModules}
-Extensions:     ${extensions}
+Build-Type:     Simple
+
+Library
+  Build-Depends: base
+  Hs-Source-Dirs: src
+  Exposed-modules: ${exposedModules} 
 </template>
   <template id="executables" 
-            name="Package with Executables" 
-            description="A package containing executable programs" 
+            name="Package with Executable" 
+            description="A package containing an executable program" 
             context="cabalPackageDescriptionTemplates" 
             enabled="true">Name:           ${name}
 Version:        ${version}
+Cabal-Version:  >= 1.2 
 License:        ${license}
 Author:         ${author}
-Synopsis:       Small package with two programs
-Build-Depends:  HUnit
+Synopsis:       ${synopsis}
+Build-Type:     Simple
 
-Executable:     program1
-Main-Is:        Main.hs
-Hs-Source-Dirs: prog1
-
-Executable:     program2
-Main-Is:        Main.hs
-Hs-Source-Dirs: prog2
-Other-Modules:  Utils
+Executable ${name}
+  Main-Is:        Main.hs
+  Hs-Source-Dirs: src
+  Build-Depends:  base
 </template>
 </templates>

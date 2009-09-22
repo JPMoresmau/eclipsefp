@@ -73,7 +73,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
             sb.append(":");
           }
           String rep=sb.toString();
-          CompletionProposal cp=new CompletionProposal( rep, offset-prefix.length()  , prefix.length(), rep.length() );
+          CompletionProposal cp=new CompletionProposal( rep, offset-prefix.length()  , prefix.length(), rep.length(),null,cs.getCabalName(),null,null );
 
           icps.add( cp );
         }
