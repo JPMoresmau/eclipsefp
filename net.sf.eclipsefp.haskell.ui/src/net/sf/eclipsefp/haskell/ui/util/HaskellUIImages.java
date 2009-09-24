@@ -95,7 +95,7 @@ public class HaskellUIImages implements IImageNames {
     declare( INFIXNONE_DECL,        OBJECT + "infixnone.gif" );
     declare( INFIXL_DECL,           OBJECT + "infixl.gif" );
     declare( INFIXR_DECL,           OBJECT + "infixr.gif" );
-
+    declare( FIELD_DECL,            OBJECT + "field_public_obj.gif")  ;
     // wizard banners
     declare( NEW_PROJECT, WIZARD + "newhprj_wiz.png" );
     declare( NEW_MODULE, WIZARD  + "newmodule.png" );

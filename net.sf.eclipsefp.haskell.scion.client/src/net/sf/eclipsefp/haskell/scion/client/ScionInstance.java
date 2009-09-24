@@ -1,8 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.Writer;
-import java.util.Collections;
-import java.util.List;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
@@ -23,7 +21,6 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -291,8 +288,8 @@ public class ScionInstance implements IScionCommandRunner {
       }
 	}
 	
-	public void outline(final OutlineHandler handler){
-		final OutlineCommand command=new OutlineCommand(this);
+	public void outline(final IFile file,final OutlineHandler handler){
+		final OutlineCommand command=new OutlineCommand(file,this);
 		if (handler!=null){
 			command.addJobChangeListener(new JobChangeAdapter(){
 				@Override

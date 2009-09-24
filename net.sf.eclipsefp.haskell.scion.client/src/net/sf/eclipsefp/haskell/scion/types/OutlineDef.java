@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
+import org.eclipse.core.resources.IFile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +21,9 @@ public class OutlineDef {
 		FUNCTION,
 		PATTERN,
 		SYN,
-		TYPE
+		TYPE,
+		INSTANCE,
+		FIELD
 	}
 	
 	public static Comparator<OutlineDef> BY_LOCATION=new Comparator<OutlineDef>() {
@@ -44,15 +47,18 @@ public class OutlineDef {
 	private OutlineDefType type=OutlineDefType.TYPE;
 	private String name;
 	private Location loc;
+	private Location block;
+	private String parentName;
 	
-	public OutlineDef(String name, OutlineDefType type, Location loc) {
+	public OutlineDef(String name, OutlineDefType type, Location loc, Location block) {
 		super();
 		this.name = name;
 		this.type = type;
 		this.loc = loc;
+		this.block=block;
 	}
 	
-	public OutlineDef(JSONObject obj) throws JSONException{
+	public OutlineDef(IFile f,JSONObject obj) throws JSONException{
 		this.name=obj.getString("name");
 		String sType=obj.optString("type");
 		if (sType!=null){
@@ -62,7 +68,12 @@ public class OutlineDef {
 				ScionPlugin.logWarning(sType+" is not a valid outlinedef type", iae);
 			}
 		}
-		this.loc=new Location(obj.getJSONObject("location"));
+		this.loc=new Location(f,obj.getJSONObject("location"));
+		JSONObject b=obj.optJSONObject("block");
+		if (b!=null){
+			this.block=new Location(f,b);
+		}
+		this.parentName=obj.optString("parent",null);
 	}
 
 	public OutlineDefType getType() {
@@ -77,10 +88,17 @@ public class OutlineDef {
 		return loc;
 	}
 	
+	public Location getBlock() {
+		return block;
+	}
 	
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public String getParentName() {
+		return parentName;
 	}
 	
 }

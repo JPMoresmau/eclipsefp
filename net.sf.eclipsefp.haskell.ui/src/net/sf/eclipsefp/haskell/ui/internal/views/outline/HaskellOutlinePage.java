@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
 import java.util.Comparator;
 import java.util.List;
-import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -11,7 +10,6 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -28,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
@@ -126,42 +123,32 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
 
   /** <p>sets the input of the outline page.</p> */
-  public void setInput( final Object input ) {
-	  if( input != null && input instanceof IFileEditorInput ) {
-      IFileEditorInput fei = ( IFileEditorInput )input;
-      IFile file = fei.getFile();
-      if( file != null && file.exists() ) {
-        HaskellUIPlugin.getDefault().getScionInstanceManager( file ).outline(new OutlineHandler() {
-
-          public void outlineResult( final List<OutlineDef> outlineDefs ) {
-            HaskellOutlinePage.this.input=outlineDefs;
-            HaskellOutlinePage.this.update();
-
-          }
-        });
-      }
-    }
+  public void setInput( final List<OutlineDef> outlineDefs ) {
+     this.input=outlineDefs;
+     this.update();
 
   }
 
+
   /** <p>updates the outline page.</p> */
   public void update() {
-   getControl().getDisplay().syncExec( new Runnable(){
-     public void run() {
-       TreeViewer viewer = getTreeViewer();
-       if( viewer != null ) {
-         Control control= viewer.getControl();
-         if( control != null && !control.isDisposed() ) {
-           control.setRedraw( false );
-           viewer.setInput( input );
-           viewer.expandToLevel( AbstractTreeViewer.ALL_LEVELS );
-           control.setRedraw( true );
+    if (!getControl().isDisposed()){
+       getControl().getDisplay().syncExec( new Runnable(){
+         public void run() {
+           TreeViewer viewer = getTreeViewer();
+           if( viewer != null ) {
+             Control control= viewer.getControl();
+             if( control != null && !control.isDisposed() ) {
+               control.setRedraw( false );
+               viewer.setInput( input );
+               viewer.expandToLevel( AbstractTreeViewer.ALL_LEVELS );
+               control.setRedraw( true );
+             }
+           }
          }
-       }
-     }
 
-   } );
-
+       } );
+    }
   }
 
   class LexicalSortingAction extends Action {

@@ -5,16 +5,14 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -22,8 +20,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 
 /** <p>provides folding regions for documents in the Haskell editor.</p>
   *
@@ -47,57 +43,31 @@ class HaskellFoldingStructureProvider {
     this.document = document;
   }
 
-  void updateFoldingRegions() {
-	// TODO TtC replace by something not Cohatoe-based
-	/*
+  void updateFoldingRegions(final List<OutlineDef> outlineDefs) {
     ProjectionAnnotationModel model = getAnnModel();
-    if( model != null ) {
-      CohatoeServer server = CohatoeServer.getInstance();
-      ICodeFolding codeFolding = server.createFunction( ICodeFolding.class );
-      if( codeFolding != null ) {
-        Set<Position> currentRegions = new HashSet<Position>();
-        // TODO lf actually, we want to pass document.get() here (editor buffer)
-        // TODO lf if this is too slow, use the progress monitor
-        IFile file = computeFile();
-        if( file != null && file.exists() ) {
-          IContainer srcRoot = computeSourceRoot( file.getProject() );
-          if( srcRoot != null ) {
-            List<ICodeFoldingRegion> regions
-            = codeFolding.performCodeFolding( srcRoot, file );
-            for( ICodeFoldingRegion region: regions ) {
-              int endLine = region.getEndLine() > 0 ? region.getEndLine() : 0;
-              Position pos = createPosition( region.getStartLine(), endLine );
-              currentRegions.add( pos );
-            }
-            updateFoldingRegions( model, currentRegions );
-          }
+    if (model!=null){
+      Set<Location> blocks=new HashSet<Location>();
+      for (OutlineDef def:outlineDefs){
+        // only blocks that are more than one line long can be folded
+        if (def.getBlock()!=null && def.getBlock().getEndLine()>def.getBlock().getStartLine()){
+          blocks.add( def.getBlock() );
         }
       }
-    }
-    */
-  }
+      Set<Position> regions=new HashSet<Position>();
+      for (Location l:blocks){
+        Position p=createPosition( l.getStartLine(), l.getEndLine() );
+        regions.add( p );
 
-  private IContainer computeSourceRoot( final IProject project ) {
-    IHaskellProject haskellProject = HaskellProjectManager.get( project );
-    return haskellProject.getSourceFolder();
-  }
-
-  private IFile computeFile() {
-    IFile result = null;
-    IEditorInput input = editor.getEditorInput();
-    if( input instanceof IFileEditorInput ) {
-      IFile file = ( ( IFileEditorInput )input ).getFile();
-      if( file.exists() ) {
-        result = file;
       }
+      updateFoldingRegions( model, regions );
     }
-    return result;
+
   }
 
   private Position createPosition( final int startLine, final int endLine ) {
     Position result = null;
     try {
-      int start = document.getLineOffset( adjustForZero( startLine ) );
+      int start = document.getLineOffset( startLine );
       int end =   document.getLineOffset( endLine )
                 + document.getLineLength( endLine );
       result = new Position( start, end - start );
@@ -106,10 +76,6 @@ class HaskellFoldingStructureProvider {
       badlox.printStackTrace();
     }
     return result;
-  }
-
-  private int adjustForZero( final int line ) {
-    return line > 0 ? line - 1 : 0;
   }
 
   private ProjectionAnnotationModel getAnnModel() {

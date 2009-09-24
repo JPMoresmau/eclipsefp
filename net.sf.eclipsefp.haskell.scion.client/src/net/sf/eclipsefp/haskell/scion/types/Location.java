@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.types;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -23,8 +24,15 @@ public class Location {
 	private int startLine, startColumn, endLine, endColumn;
 	
 	public Location(JSONObject json) throws JSONException {
+		this(null,json);
+	}
+
+	public Location(IFile f,JSONObject json) throws JSONException {
 		this.fileName = json.optString("file");
 		this.otherName=json.optString("other");
+		if ((this.fileName==null || this.fileName=="")&& (this.otherName==null || this.otherName=="")&& f!=null){
+			this.fileName=f.getLocation().toOSString();
+		} 
 		JSONArray region = json.getJSONArray("region");
 		startLine = region.getInt(0) - 1;
 		startColumn = region.getInt(1);
@@ -104,6 +112,11 @@ public class Location {
 			fileName.equals(other.fileName) &&
 			startLine == other.startLine && startColumn == other.startColumn &&
 			endLine == other.endLine && endColumn == other.endColumn;
+	}
+	
+	@Override
+	public int hashCode() {
+		return fileName.hashCode()<<16+startLine<<8+startColumn;
 	}
 	
 	@Override

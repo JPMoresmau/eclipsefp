@@ -56,6 +56,7 @@ public interface IImageNames {
   String INFIXNONE_DECL        = ID + ".INFIXNONE_DECL";
   String INFIXL_DECL           = ID + ".INFIXL_DECL";
   String INFIXR_DECL           = ID + ".INFIXR_DECL";
+  String FIELD_DECL           = ID + ".FIELD_DECL";
 
   // Cabal elements
   String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA"; //$NON-NLS-1$

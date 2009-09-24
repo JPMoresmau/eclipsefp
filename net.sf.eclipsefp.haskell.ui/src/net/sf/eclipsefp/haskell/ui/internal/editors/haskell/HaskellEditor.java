@@ -193,9 +193,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if( IContentOutlinePage.class.equals( required ) ) {
       if( outlinePage == null ) {
         outlinePage = new HaskellOutlinePage( this );
-        if( getEditorInput() != null ) {
+        /*if( getEditorInput() != null ) {
           outlinePage.setInput( getEditorInput() );
-        }
+        }*/
       }
       result = outlinePage;
     } else if( projectionSupport != null ) {
@@ -223,25 +223,25 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   @Override
   public void doRevertToSaved() {
     super.doRevertToSaved();
-    if( outlinePage != null ) {
+    /*if( outlinePage != null ) {
       outlinePage.update();
-    }
+    }*/
   }
 
   @Override
   public void doSave( final IProgressMonitor monitor ) {
     super.doSave( monitor );
-    if( outlinePage != null ) {
+    /*if( outlinePage != null ) {
       outlinePage.update();
-    }
+    }*/
   }
 
   @Override
   public void doSaveAs() {
     super.doSaveAs();
-    if( outlinePage != null ) {
+    /*if( outlinePage != null ) {
       outlinePage.update();
-    }
+    }*/
   }
 
   @Override
@@ -250,9 +250,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     IFile file = findFile();
     if( file != null ) {
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file);
-      if (outlinePage!=null){
+      /*if (outlinePage!=null){
         outlinePage.setInput( getEditorInput() );
-      }
+      }*/
     }
   }
 
@@ -280,9 +280,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if (file != null) {
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
     }
-    if( outlinePage != null ) {
+    /*if( outlinePage != null ) {
       outlinePage.setInput( input );
-    }
+    }*/
   }
 
 
@@ -329,5 +329,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
      * server.createFunction( IMarkOccurrences.class ); if( mo != null ) {
      * markOccurrencesComputer = new MarkOccurrenceComputer( this, mo ); }
      */
+  }
+
+
+  public HaskellOutlinePage getOutlinePage() {
+    return outlinePage;
   }
 }
