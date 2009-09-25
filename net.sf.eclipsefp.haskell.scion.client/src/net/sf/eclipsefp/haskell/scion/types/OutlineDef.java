@@ -23,7 +23,20 @@ public class OutlineDef {
 		SYN,
 		TYPE,
 		INSTANCE,
-		FIELD
+		FIELD,
+		CONSTRUCTOR
+	}
+	
+	public static OutlineDefType parseType(JSONObject obj){
+		String sType=obj.optString("type");
+		if (sType!=null){
+			try {
+				return OutlineDefType.valueOf(sType.toUpperCase());
+			} catch (IllegalArgumentException iae){
+				ScionPlugin.logWarning(sType+" is not a valid outlinedef type", iae);
+			}
+		}
+		return OutlineDefType.TYPE;
 	}
 	
 	public static Comparator<OutlineDef> BY_LOCATION=new Comparator<OutlineDef>() {
@@ -48,7 +61,7 @@ public class OutlineDef {
 	private String name;
 	private Location loc;
 	private Location block;
-	private String parentName;
+	private String parentID;
 	
 	public OutlineDef(String name, OutlineDefType type, Location loc, Location block) {
 		super();
@@ -60,22 +73,23 @@ public class OutlineDef {
 	
 	public OutlineDef(IFile f,JSONObject obj) throws JSONException{
 		this.name=obj.getString("name");
-		String sType=obj.optString("type");
-		if (sType!=null){
-			try {
-				type=OutlineDefType.valueOf(sType.toUpperCase());
-			} catch (IllegalArgumentException iae){
-				ScionPlugin.logWarning(sType+" is not a valid outlinedef type", iae);
-			}
-		}
+		type=parseType(obj);
 		this.loc=new Location(f,obj.getJSONObject("location"));
 		JSONObject b=obj.optJSONObject("block");
 		if (b!=null){
 			this.block=new Location(f,b);
 		}
-		this.parentName=obj.optString("parent",null);
+		JSONObject parent=obj.optJSONObject("parent");
+		if (parent!=null){
+			this.parentID=parseType(parent).toString()+":"+parent.getString("name");
+		}
 	}
 
+	
+	public String getID(){
+		return type.toString()+":"+name;
+	}
+	
 	public OutlineDefType getType() {
 		return type;
 	}
@@ -97,8 +111,8 @@ public class OutlineDef {
 		return getName();
 	}
 
-	public String getParentName() {
-		return parentName;
+	public String getParentID() {
+		return parentID;
 	}
 	
 }

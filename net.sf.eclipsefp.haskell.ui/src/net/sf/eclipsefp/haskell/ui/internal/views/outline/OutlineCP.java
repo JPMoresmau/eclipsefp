@@ -19,7 +19,7 @@ public class OutlineCP implements ITreeContentProvider{
 
   public Object[] getChildren( final Object parentElement ) {
     //return input.toArray();
-    List<OutlineDef> l=input.get(((OutlineDef )parentElement).getName());
+    List<OutlineDef> l=input.get(((OutlineDef )parentElement).getID());
     if (l!=null){
       return l.toArray();
     }
@@ -53,10 +53,10 @@ public class OutlineCP implements ITreeContentProvider{
      input=new HashMap<String, List<OutlineDef>>();
      for (Object o:(List<?>)newInput){
        OutlineDef od=(OutlineDef)o;
-       List<OutlineDef> l=input.get( od.getParentName() );
+       List<OutlineDef> l=input.get( od.getParentID() );
        if(l==null){
          l=new ArrayList<OutlineDef>();
-         input.put( od.getParentName(), l );
+         input.put( od.getParentID(), l );
        }
        l.add( od );
      }

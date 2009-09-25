@@ -25,26 +25,9 @@ public class OutlineLabelProvider extends LabelProvider {
     imageKeysByType.put(OutlineDef.OutlineDefType.SYN,IImageNames.TYPE_DECL);
     imageKeysByType.put(OutlineDef.OutlineDefType.INSTANCE,IImageNames.INSTANCE_DECL);
     imageKeysByType.put(OutlineDef.OutlineDefType.FIELD,IImageNames.FIELD_DECL);
+    imageKeysByType.put(OutlineDef.OutlineDefType.CONSTRUCTOR,IImageNames.DATA_DECL);
   }
 
-  @Override
-  public String getText( final Object element ) {
-    if (element instanceof OutlineDef){
-      String s=((OutlineDef)element).getName();
-      StringBuilder sb=new StringBuilder();
-      for (String c:s.split( "\\s" )){
-        int ix=c.lastIndexOf( '.' );
-        if (ix>-1){
-          c=c.substring(ix+1);
-        }
-        sb.append(c);
-        sb.append(' ');
-      }
-
-      return sb.toString().trim();
-    }
-    return super.getText( element );
-  }
 
   @Override
   public Image getImage( final Object element ) {
