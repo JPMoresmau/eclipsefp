@@ -25,13 +25,13 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
   *
   * @author Leif Frenzel
   */
-class HaskellFoldingStructureProvider {
+public class HaskellFoldingStructureProvider {
 
   private final HaskellEditor editor;
   private IDocument document;
   private IProgressMonitor progressMonitor;
 
-  HaskellFoldingStructureProvider( final HaskellEditor editor ) {
+  public HaskellFoldingStructureProvider( final HaskellEditor editor ) {
     this.editor = editor;
   }
 
@@ -39,11 +39,11 @@ class HaskellFoldingStructureProvider {
     this.progressMonitor = progressMonitor;
   }
 
-  void setDocument( final IDocument document ) {
+  public void setDocument( final IDocument document ) {
     this.document = document;
   }
 
-  void updateFoldingRegions(final List<OutlineDef> outlineDefs) {
+  public void updateFoldingRegions(final List<OutlineDef> outlineDefs) {
     ProjectionAnnotationModel model = getAnnModel();
     if (model!=null){
       Set<Location> blocks=new HashSet<Location>();

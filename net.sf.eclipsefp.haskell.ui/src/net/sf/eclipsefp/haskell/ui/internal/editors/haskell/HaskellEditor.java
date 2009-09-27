@@ -3,11 +3,16 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+import java.util.List;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
@@ -30,6 +35,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.contexts.IContextService;
@@ -63,6 +69,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private MarkOccurrenceComputer markOccurrencesComputer;
+  private ScionInstance instance=null;
+  private HaskellFoldingStructureProvider foldingStructureProvider;
 
   public void reveal( final IHaskellLanguageElement element ) {
     Assert.isNotNull( element );
@@ -94,6 +102,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
+    foldingStructureProvider=new HaskellFoldingStructureProvider( this );
+
+  }
+
+
+  public HaskellFoldingStructureProvider getFoldingStructureProvider() {
+    return foldingStructureProvider;
   }
 
   @Override
@@ -250,9 +265,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     IFile file = findFile();
     if( file != null ) {
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file);
-      /*if (outlinePage!=null){
-        outlinePage.setInput( getEditorInput() );
-      }*/
+      synchronize();
     }
   }
 
@@ -274,12 +287,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     }
 
     super.doSetInput( input );
-
+    instance=null;
     // load the new file into Scion
     file = findFile();
     if (file != null) {
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
+      //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
+      instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
+      instance.loadFile( file );
     }
+
     /*if( outlinePage != null ) {
       outlinePage.setInput( input );
     }*/
@@ -331,6 +347,37 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
      */
   }
 
+  public void synchronize(){
+    IDocument document=getDocument();
+    foldingStructureProvider.setDocument( document );
+    if( markOccurrencesComputer != null ) {
+      markOccurrencesComputer.setDocument( document );
+    }
+
+    Shell shell = getSite().getShell();
+    if( shell != null && !shell.isDisposed() ) {
+      shell.getDisplay().asyncExec( new Runnable() {
+        public void run() {
+          if( markOccurrencesComputer != null ) {
+            markOccurrencesComputer.compute();
+          }
+        }
+      } );
+
+
+      if( instance!=null ) {
+        instance.outline(findFile(),new OutlineHandler() {
+
+          public void outlineResult( final List<OutlineDef> outlineDefs ) {
+            if(getOutlinePage()!=null){
+              getOutlinePage().setInput( outlineDefs );
+            }
+           foldingStructureProvider.updateFoldingRegions(outlineDefs);
+          }
+        });
+      }
+    }
+  }
 
   public HaskellOutlinePage getOutlinePage() {
     return outlinePage;

@@ -3,23 +3,13 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
-import java.util.List;
-import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 
 /** <p> helper class that defines the model reconciling for the Haskell
   * editor.</p>
@@ -30,16 +20,16 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
                                                    IReconcilingStrategyExtension {
 
   private final HaskellEditor editor;
-  private ScionInstance instance=null;
-  private final HaskellFoldingStructureProvider foldingStructureProvider;
+//  private ScionInstance instance=null;
+//  private final HaskellFoldingStructureProvider foldingStructureProvider;
 
-  private MarkOccurrenceComputer markOccurrencesComputer;
-  private IDocument document;
-  private IFile file;
+//  private MarkOccurrenceComputer markOccurrencesComputer;
+//  private IDocument document;
+//  private IFile file;
 
   public HaskellReconcilingStrategy( final HaskellEditor editor ) {
     this.editor = editor;
-    IEditorInput input=editor.getEditorInput();
+  /*  IEditorInput input=editor.getEditorInput();
     if( input != null && input instanceof IFileEditorInput ) {
       IFileEditorInput fei = ( IFileEditorInput )input;
       this.file = fei.getFile();
@@ -47,7 +37,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
         instance=HaskellUIPlugin.getDefault().getScionInstanceManager( file );
       }
     }
-    foldingStructureProvider = new HaskellFoldingStructureProvider( editor );
+    foldingStructureProvider = new HaskellFoldingStructureProvider( editor );*/
   }
 
 
@@ -55,11 +45,11 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   // //////////////////////////////////////////
 
   public void setDocument( final IDocument document ) {
-    this.document = document;
+   /* this.document = document;
     foldingStructureProvider.setDocument( document );
     if( markOccurrencesComputer != null ) {
       markOccurrencesComputer.setDocument( document );
-    }
+    }*/
   }
 
   public void reconcile( final DirtyRegion dirtyRegion,
@@ -76,7 +66,8 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   // ///////////////////////////////////////////////////
 
   public void setProgressMonitor( final IProgressMonitor monitor ) {
-    foldingStructureProvider.setProgressMonitor( monitor );
+    //foldingStructureProvider.setProgressMonitor( monitor );
+    editor.getFoldingStructureProvider().setProgressMonitor( monitor );
   }
 
   public void initialReconcile() {
@@ -88,7 +79,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   // ////////////////
 
   private void reconcile() {
-    Shell shell = editor.getSite().getShell();
+    /*Shell shell = editor.getSite().getShell();
     if( shell != null && !shell.isDisposed() ) {
       shell.getDisplay().asyncExec( new Runnable() {
         public void run() {
@@ -102,13 +93,16 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
             instance.outline(file,new OutlineHandler() {
 
               public void outlineResult( final List<OutlineDef> outlineDefs ) {
-               editor.getOutlinePage().setInput( outlineDefs );
+                if(editor.getOutlinePage()!=null){
+                  editor.getOutlinePage().setInput( outlineDefs );
+                }
                foldingStructureProvider.updateFoldingRegions(outlineDefs);
               }
             });
           }
 
         }
-    }
+    }*/
+    editor.synchronize();
   }
 }
