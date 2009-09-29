@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import junit.framework.TestCase;
 
 
@@ -264,5 +266,43 @@ public class CabalModelTest extends TestCase {
     assertEquals(12,rvp.getInitialIndent());
     assertEquals(8,rvp.getStartLine());
     assertEquals(18,rvp.getEndLine());
+  }
+
+  public void testList(){
+    String content3=getContent( "Example1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza[] pdss=pd.getStanzas();
+    PackageDescriptionStanza pds=pdss[1];
+    pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New" );
+    String s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+System.getProperty( "line.separator" )+"Test.HUnit.Text, Test.HUnit, Test.New",s);
+
+    pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
+    s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertEquals("Test.HUnit.Lang, Test.HUnit.Terminal, "+System.getProperty( "line.separator" )+"Test.HUnit.Text, Test.HUnit, Test.New",s);
+  }
+
+  public void testSourceDirs(){
+    String content3=getContent( "Source.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    Map<String,List<PackageDescriptionStanza>> map=pd.getStanzasBySourceDir();
+    assertEquals(3,map.size());
+    assertTrue(map.containsKey( "lib1" ));
+    assertTrue(map.containsKey( "prog1" ));
+    assertTrue(map.containsKey( "prog2" ));
+
+    List<PackageDescriptionStanza> ls=map.get("lib1");
+    assertEquals(3,ls.size());
+    assertEquals(CabalSyntax.SECTION_LIBRARY,ls.get( 0 ).getType());
+    assertEquals("program1",ls.get( 1 ).getName());
+    assertEquals("program2",ls.get( 2 ).getName());
+
+    ls=map.get("prog1");
+    assertEquals(1,ls.size());
+    assertEquals("program1",ls.get( 0 ).getName());
+
+    ls=map.get("prog2");
+    assertEquals(1,ls.size());
+    assertEquals("program2",ls.get( 0 ).getName());
   }
 }

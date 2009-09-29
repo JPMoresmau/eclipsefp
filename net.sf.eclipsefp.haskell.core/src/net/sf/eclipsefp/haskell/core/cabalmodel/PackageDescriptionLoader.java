@@ -4,13 +4,19 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 /** <p>contains helping functionality for loading a {@link PackageDescription
   * PackageDescription model}.</p>
@@ -19,12 +25,29 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
   */
 public class PackageDescriptionLoader {
 
+  public static PackageDescription load( final IFile file ) throws CoreException{
+    PackageDescription result = new PackageDescription();
+    if (file!=null && file.exists()){
+      InputStream is=file.getContents();
+      try {
+        BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ));
+        parse(br,result);
+      }  catch( final IOException ioex ) {
+        // very unlikely
+        HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
+      }
+    }
+    return result;
+  }
+
   // TODO lf also used in folding -> eliminate
   public static PackageDescription load( final String content ) {
     PackageDescription result = new PackageDescription();
     if( content != null && content.trim().length() > 0 ) {
+      BufferedReader br = new BufferedReader( new StringReader( content ) );
       try {
-        parse( content, result );
+
+        parse( br, result );
       } catch( final IOException ioex ) {
         // very unlikely
         HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
@@ -33,11 +56,25 @@ public class PackageDescriptionLoader {
     return result;
   }
 
+  public static List<String> parseList(final String value){
+    List<String> ret=new LinkedList<String>();
+
+    if (value!=null && value.length()>0){
+      StringTokenizer st=new StringTokenizer( value,", " ); //$NON-NLS-1$
+      while (st.hasMoreTokens()){
+        String t=st.nextToken();
+        if (t.length()>0){
+          ret.add(t);
+        }
+      }
+    }
+    return ret;
+  }
 
   // helping methods
   //////////////////
 
-  private static void parse( final String content,
+  private static void parse( final BufferedReader br,
                              final PackageDescription pd ) throws IOException {
     List<StanzaInfo> stanzas = new ArrayList<StanzaInfo>();
     StanzaInfo lastStanza = new StanzaInfo();
@@ -50,7 +87,7 @@ public class PackageDescriptionLoader {
       }
     }
 
-    BufferedReader br = new BufferedReader( new StringReader( content ) );
+
     int count = 0;
     boolean contentStarted = false;
     String line = br.readLine();

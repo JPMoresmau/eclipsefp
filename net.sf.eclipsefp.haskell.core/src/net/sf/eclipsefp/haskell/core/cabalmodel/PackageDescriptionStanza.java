@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -151,6 +152,46 @@ public class PackageDescriptionStanza {
       return null;
     }
   }
+
+  public RealValuePosition addToPropertyList(final CabalSyntax field,final String value){
+   String s=getProperties().get( field );
+   List<String> ls=PackageDescriptionLoader.parseList( s );
+   // short lists we hope
+   if (!ls.contains( value )){
+     StringBuilder newValue=new StringBuilder();
+     newValue.append( s );
+     if (!value.trim().endsWith( "," )){ //$NON-NLS-1$
+       newValue.append(","); //$NON-NLS-1$
+     }
+     if (!value.endsWith( " " )){ //$NON-NLS-1$
+       newValue.append(" "); //$NON-NLS-1$
+     }
+     newValue.append(value);
+     return update(field, newValue.toString() );
+   }
+   return update(field, value);
+  }
+
+  public RealValuePosition removeFromPropertyList(final CabalSyntax field,final String value){
+    String s=getProperties().get( field );
+    List<String> ls=PackageDescriptionLoader.parseList( s );
+    // short lists we hope
+    if (ls.contains( value )){
+      StringBuilder newValue=new StringBuilder();
+      for (String token:ls){
+        if (!value.equals( token )){
+          if(newValue.length()>0){
+            newValue.append( ", " ); //$NON-NLS-1$
+          }
+          newValue.append( token);
+        }
+      }
+      return update(field, newValue.toString() );
+    }
+    return update(field, value);
+   }
+
+
 
   public String getName() {
     return name;
