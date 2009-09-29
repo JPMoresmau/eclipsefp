@@ -122,13 +122,13 @@ public class PackageDescriptionLoader {
     applyStanzas( stanzas, pd );
   }
 
-  private static boolean isSectionHeader(String line, final Set<String> sections ) {
-    line=line.trim().toLowerCase();
-    int ix=line.indexOf( ' ' );
+  private static boolean isSectionHeader(final String line, final Set<String> sections ) {
+    String section=line.trim().toLowerCase();
+    int ix=section.indexOf( ' ' );
     if (ix>-1){
-      line=line.substring( 0,ix );
+      section=section.substring( 0,ix );
     }
-    return sections.contains(line);
+    return sections.contains(section);
   }
 
 
