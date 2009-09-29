@@ -1,8 +1,25 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.ui.dialog.FolderSelectionDialog;
+import net.sf.eclipsefp.haskell.ui.dialog.SourceFolderSelectionDialog;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.DialogField;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IDialogFieldListener;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IStringButtonAdapter;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.Separator;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringButtonDialogField;
+import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringDialogField;
+import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -11,54 +28,52 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
-import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
-import net.sf.eclipsefp.haskell.ui.dialog.FolderSelectionDialog;
-import net.sf.eclipsefp.haskell.ui.dialog.SourceFolderSelectionDialog;
-import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.*;
-import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 
-/** <p>The single page for the 'New Module' wizard.</p> 
-  * 
+/** <p>The single page for the 'New Module' wizard.</p>
+  *
   * @author Leif Frenzel
   */
 public class NewModuleWizardPage extends StatusWizardPage {
-  
+
   private StringButtonDialogField dlgFieldSourceFolder;
   private StringButtonDialogField dlgFieldFolders;
   private StringDialogField dlgFieldName;
-  
+
   private IStatus sourceFolderStatus;
   private IStatus folderStatus;
   private IStatus nameStatus;
-  
+
   private final ModuleCreationInfo currentInfo;
   private Button chkUseLiterate;
   private Group grpLiterate;
   private Button rdoLiterate;
   private Button rdoTex;
-  
-  
+
+
   public NewModuleWizardPage() {
     super( "NewModuleWizardPage" );
     setTitle( "Haskell Module" );
     setDescription( "Create a new Haskell module." );
-    
+
     currentInfo = new ModuleCreationInfo();
-    
+
     createDlgFieldSourceFolder();
     createDlgFieldFolder();
     createDlgFieldName();
-    
+
     sourceFolderStatus = new DefaultStatus();
     folderStatus = new DefaultStatus();
     nameStatus = new DefaultStatus();
   }
-  
-  ModuleCreationOperation getOperation() {        
+
+  ModuleCreationOperation getOperation() {
     if (chkUseLiterate.getSelection()) {
       if (rdoLiterate.getSelection()) {
         currentInfo.setCommentStyle(EHaskellCommentStyle.LITERATE);
@@ -70,17 +85,15 @@ public class NewModuleWizardPage extends StatusWizardPage {
     }
     return new ModuleCreationOperation( currentInfo );
   }
-      
+
   private void doDialogFieldChanged( final DialogField field ) {
     if( field == dlgFieldSourceFolder ) {
       IContainer sourceContainer = getCurrentlySelectedSourceContainer();
       sourceFolderStatus = Validator.validateSourceFolder( sourceContainer );
-      // TODO get sourcefolder from textfield and set it to current info
-      // it must be the source container of a Haskell project for that
-//      String text = dlgFieldSourceFolder.getText();
-//      if( sourceFolderStatus.isOK() ) {
-//        currentInfo.setSourceContainer()
-//      }
+      // do we care if it's not a source folder as such?
+      if( sourceFolderStatus.isOK() ) {
+        currentInfo.setSourceContainer(sourceContainer);
+      }
     } else if( field == dlgFieldFolders ) {
       IFolder folder = getCurrentlySelectedFolder();
       if( folder != null ) {
@@ -111,24 +124,24 @@ public class NewModuleWizardPage extends StatusWizardPage {
     }
     return result;
   }
-  
-  
+
+
   // interface methods of DialogPage
   //////////////////////////////////
 
   public void init( final IStructuredSelection selection ) {
     if( selection != null ) {
-      IContainer sourceContainer 
+      IContainer sourceContainer
         = SelectionAnalyzer.getSourceContainer( selection );
       currentInfo.setSourceContainer( sourceContainer );
       initSourceFolderField( sourceContainer );
-      
+
       IPath path = SelectionAnalyzer.getSourceRelativePath( selection );
       initFolderField( path );
       currentInfo.setFolders( path );
-    } 
-  }   
-  
+    }
+  }
+
   @Override
   public void setVisible( final boolean visible ) {
     super.setVisible( visible );
@@ -137,7 +150,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
       dlgFieldName.setFocus();
     }
   }
-  
+
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );
@@ -152,7 +165,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     createSeparator( composite, cols );
     createNameControls( composite, cols );
     createLiterateControls( composite );
-    
+
     setControl( composite );
 
     Dialog.applyDialogFont( composite );
@@ -171,7 +184,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     chkUseLiterate = new Button(composite, SWT.CHECK);
     chkUseLiterate.setText( "Use literate style" );
     chkUseLiterate.setLayoutData(gd);
-    
+
     chkUseLiterate.addSelectionListener(new SelectionListener() {
 
       public void widgetSelected( final SelectionEvent e ) {
@@ -181,12 +194,12 @@ public class NewModuleWizardPage extends StatusWizardPage {
       public void widgetDefaultSelected( final SelectionEvent e ) {
         widgetSelected( e );
       }
-      
+
     });
   }
 
   private void createLiterateBlock( final Composite composite ) {
-    createLiterateGroup( composite );  
+    createLiterateGroup( composite );
     createLiterateRadio();
     createTexStyleRadio();
   }
@@ -222,7 +235,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
 
   // UI creation
   //////////////
-  
+
   private void createDlgFieldName() {
     FieldsAdapter adapter = new FieldsAdapter();
     dlgFieldName = new StringDialogField();
@@ -245,18 +258,18 @@ public class NewModuleWizardPage extends StatusWizardPage {
     dlgFieldSourceFolder.setLabelText( "Source folder" );
     dlgFieldSourceFolder.setButtonLabel( "Browse" );
   }
-  
+
   private void initSourceFolderField( final IContainer sourceContainer ) {
     if( sourceContainer != null ) {
       String content = sourceContainer.getFullPath().toString();
       dlgFieldSourceFolder.setText( content );
     }
   }
-  
+
   private void initFolderField( final IPath path ) {
     if( path != null ) {
       String content = path.toString();
-      dlgFieldFolders.setText( content );
+      dlgFieldFolders.setText( content.replace( '/', '.' ) );
     }
   }
 
@@ -277,11 +290,11 @@ public class NewModuleWizardPage extends StatusWizardPage {
       ( ( GridData )ld ).grabExcessHorizontalSpace = true;
     }
   }
-  
+
   private void createSeparator( final Composite composite, final int cols ) {
     Separator separator = new Separator( SWT.SEPARATOR | SWT.HORIZONTAL );
     int pixels = convertHeightInCharsToPixels( 1 );
-    separator.doFillIntoGrid( composite, cols, pixels );   
+    separator.doFillIntoGrid( composite, cols, pixels );
   }
 
   private void createNameControls( final Composite parent, final int cols) {
@@ -290,11 +303,11 @@ public class NewModuleWizardPage extends StatusWizardPage {
     int pixels = convertWidthInCharsToPixels( 40 );
     setWidthHint( dlgFieldName.getTextControl( null ), pixels );
   }
-  
-  
+
+
   // event handling
   /////////////////
-  
+
   private IContainer chooseSourceFolder( final Object initElement ) {
     Shell shell = getShell();
     SourceFolderSelectionDialog dlg = new SourceFolderSelectionDialog( shell );
@@ -327,18 +340,18 @@ public class NewModuleWizardPage extends StatusWizardPage {
       }
     }
   }
-  
+
   private void doStatusUpdate() {
     IStatus[] status = new IStatus[] {
       sourceFolderStatus,
       folderStatus,
       nameStatus
     };
-    // display the most severe status and enable/disable the ok button 
+    // display the most severe status and enable/disable the ok button
     updateStatus( status );
   }
 
-  
+
   // helping methods
   //////////////////
 
@@ -346,7 +359,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     * if any, or null else (also if the specified resource does not exist). */
   private IFolder getCurrentlySelectedFolder() {
     IFolder result = null;
-    IPath foldersPath = new Path( dlgFieldFolders.getText() );
+    IPath foldersPath = new Path( dlgFieldFolders.getText().replace( '.', '/' ) );
     IResource resource = getWsRoot().findMember( foldersPath );
     if( resource != null && resource.exists() && resource instanceof IFolder ) {
       result = ( IFolder )resource;
@@ -360,8 +373,8 @@ public class NewModuleWizardPage extends StatusWizardPage {
    IContainer result = null;
    IPath path = new Path( dlgFieldSourceFolder.getText() );
    IResource resource = getWsRoot().findMember( path );
-   if(    resource != null 
-       && resource.exists() 
+   if(    resource != null
+       && resource.exists()
        && resource instanceof IContainer ) {
      result = ( IContainer )resource;
    }
@@ -379,7 +392,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     nameStatus = Validator.validateModuleName( currentInfo );
     doStatusUpdate();
   }
-  
+
   private FolderSelectionDialog createFolderSelectionDialog() {
     IContainer sourceContainer = currentInfo.getSourceContainer();
     return new FolderSelectionDialog( getShell(), sourceContainer );
@@ -391,7 +404,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
       ( ( GridData )ld ).widthHint = widthHint;
     }
   }
-  
+
   // inner classes
   ////////////////
 

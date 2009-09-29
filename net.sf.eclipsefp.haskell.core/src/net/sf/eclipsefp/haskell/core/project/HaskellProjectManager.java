@@ -145,6 +145,25 @@ public class HaskellProjectManager {
     return result;
   }
 
+  /** <p>returns an array of all Haskell Projects in the specified
+   * workspace.</p> */
+ public static IProject[] getAllStandard( final IWorkspaceRoot root ) {
+   List<IProject> list = new ArrayList<IProject>();
+   for( IProject project:root.getProjects() ) {
+     try {
+      if(  project.isOpen()
+            && project.hasNature( HaskellNature.NATURE_ID ) ) {
+         list.add( project );
+       }
+     } catch( CoreException ex ) {
+       String msg = "Problem determining Haskell projects in the workspace."; //$NON-NLS-1$
+       HaskellCorePlugin.log( msg, ex );
+     }
+   }
+   IProject[] result = new IProject[ list.size() ];
+   list.toArray( result );
+   return result;
+ }
 
   // (internal) methods used by classes of this plugin
   ////////////////////////////////////////////////////
