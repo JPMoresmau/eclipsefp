@@ -50,7 +50,7 @@ public class ScionPP
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
-				true, StringFieldEditor.VALIDATE_ON_KEY_STROKE, parent);
+				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, parent);
 		serverExecutableField.setEmptyStringAllowed(true);
 		addField(serverExecutableField);
 

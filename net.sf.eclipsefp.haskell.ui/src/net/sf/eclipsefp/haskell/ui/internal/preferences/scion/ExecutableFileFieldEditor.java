@@ -187,6 +187,16 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
       return true;
     }
 		File file = new File(fileName);
+		if (!file.exists() && !file.isAbsolute() && !enforceAbsolute){
+		  String path = System.getenv("PATH");
+	    for (String dir : path.split(File.pathSeparator)) {
+	      file=new File(dir,fileName);
+	      if (file.exists()){
+	        break;
+	      }
+	    }
+		}
+
 		return checkFileExists(file) && checkFileAbsolute(file) && checkFileExecutable(file);
 	}
 
