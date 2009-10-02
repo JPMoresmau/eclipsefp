@@ -28,14 +28,14 @@ public class ScionPP
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
 
-  public static final String PAGE_ID = "net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP";
+  public static final String PAGE_ID = "net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP"; //$NON-NLS-1$
 
 	private ExecutableFileFieldEditor serverExecutableField;
 
 	public ScionPP() {
 		super(GRID);
 		setPreferenceStore(HaskellUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Preferences related to Scion, the Haskell IDE library");
+		setDescription(UITexts.scion_preferences_title);
 	}
 
 	/**
@@ -89,20 +89,20 @@ public class ScionPP
 
 		// add all directories from the $PATH variable
 		// TODO TtC this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
-		String path = System.getenv("PATH");
+		String path = System.getenv("PATH"); //$NON-NLS-1$
 		for (String dir : path.split(File.pathSeparator)) {
 			candidates.add(new File(dir));
 		}
 
 		// add common bin directories from the user's home dir
 		String[] homes = new String[] {
-			System.getenv("HOME"),
-			System.getProperty("user.home")
+			System.getenv("HOME"), //$NON-NLS-1$
+			System.getProperty("user.home") //$NON-NLS-1$
 		};
 		String[] userBins = new String[] {
-			".cabal/bin",
-			"usr/bin",
-			"bin",
+			".cabal/bin", //$NON-NLS-1$
+			"usr/bin", //$NON-NLS-1$
+			"bin", //$NON-NLS-1$
 		};
 		for (String home : homes) {
 			for (String userBin : userBins) {
@@ -111,7 +111,7 @@ public class ScionPP
 		}
 
 		// add the current working directory
-		String pwd = System.getProperty("user.dir");
+		String pwd = System.getProperty("user.dir"); //$NON-NLS-1$
 		candidates.add(new File(pwd));
 
 		String executableName = getServerExecutableName();
@@ -127,7 +127,7 @@ public class ScionPP
 	}
 
 	public static String getServerExecutableName() {
-		return FileUtil.makeExecutableName("scion-server");
+		return FileUtil.makeExecutableName("scion-server"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

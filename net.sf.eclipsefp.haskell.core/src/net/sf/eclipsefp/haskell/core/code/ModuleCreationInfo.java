@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.code;
 
+import java.util.Set;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
 
@@ -17,6 +19,10 @@ public class ModuleCreationInfo {
   private IContainer sourceContainer;
   private EHaskellCommentStyle fCommentStyle = EHaskellCommentStyle.USUAL;
 
+  private Set<PackageDescriptionStanza> included;
+  private Set<PackageDescriptionStanza> exposed;
+
+
 
   // attribute setters and getters
   ////////////////////////////////
@@ -31,6 +37,19 @@ public class ModuleCreationInfo {
 
   public String getModuleName() {
     return this.moduleName;
+  }
+
+  public String getQualifiedModuleName(){
+    StringBuilder sb=new StringBuilder();
+    if (getFolders()!=null && getFolders().segmentCount()>0){
+      String ps=getFolders().toPortableString().replace( '/', '.' ) ;
+      sb.append(ps);
+      if (!ps.endsWith( "." )){ //$NON-NLS-1$
+          sb.append("."); //$NON-NLS-1$
+      }
+    }
+     sb.append(getModuleName());
+    return sb.toString();
   }
 
   public void setModuleName( final String moduleName ) {
@@ -52,4 +71,26 @@ public class ModuleCreationInfo {
   public void setCommentStyle( final EHaskellCommentStyle style ) {
     fCommentStyle = style;
   }
+
+
+  public Set<PackageDescriptionStanza> getIncluded() {
+    return included;
+  }
+
+
+  public void setIncluded( final Set<PackageDescriptionStanza> included ) {
+    this.included = included;
+  }
+
+
+  public Set<PackageDescriptionStanza> getExposed() {
+    return exposed;
+  }
+
+
+  public void setExposed( final Set<PackageDescriptionStanza> exposed ) {
+    this.exposed = exposed;
+  }
+
+
 }

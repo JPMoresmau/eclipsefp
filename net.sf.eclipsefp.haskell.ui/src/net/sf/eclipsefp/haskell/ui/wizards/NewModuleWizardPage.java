@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.wizards;
 
 import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.dialog.FolderSelectionDialog;
 import net.sf.eclipsefp.haskell.ui.dialog.SourceFolderSelectionDialog;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.DialogField;
@@ -73,7 +74,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     nameStatus = new DefaultStatus();
   }
 
-  ModuleCreationOperation getOperation() {
+  ModuleCreationInfo getInfo() {
     if (chkUseLiterate.getSelection()) {
       if (rdoLiterate.getSelection()) {
         currentInfo.setCommentStyle(EHaskellCommentStyle.LITERATE);
@@ -83,7 +84,8 @@ public class NewModuleWizardPage extends StatusWizardPage {
     } else {
       currentInfo.setCommentStyle(EHaskellCommentStyle.USUAL);
     }
-    return new ModuleCreationOperation( currentInfo );
+    return currentInfo;
+    //return new ModuleCreationOperation( currentInfo );
   }
 
   private void doDialogFieldChanged( final DialogField field ) {
@@ -97,7 +99,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     } else if( field == dlgFieldFolders ) {
       IFolder folder = getCurrentlySelectedFolder();
       if( folder != null ) {
-        IPath sourceRelPath = SelectionAnalyzer.getSourceRelativePath( folder );
+        IPath sourceRelPath = ResourceUtil.getSourceRelativePath( folder );
         currentInfo.setFolders( sourceRelPath );
       }
       String text = dlgFieldFolders.getText();
@@ -139,7 +141,9 @@ public class NewModuleWizardPage extends StatusWizardPage {
       IPath path = SelectionAnalyzer.getSourceRelativePath( selection );
       initFolderField( path );
       currentInfo.setFolders( path );
+
     }
+
   }
 
   @Override
@@ -170,6 +174,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
 
     Dialog.applyDialogFont( composite );
   }
+
 
   private void createLiterateControls( final Composite composite ) {
     createUseLiterateCheckBox( composite );
@@ -326,7 +331,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     if( field == dlgFieldFolders ) {
       IFolder folder = chooseFolder();
       if( folder != null ) {
-        IPath srcRelPath = SelectionAnalyzer.getSourceRelativePath( folder );
+        IPath srcRelPath = ResourceUtil.getSourceRelativePath( folder );
         currentInfo.setFolders( srcRelPath );
         String text = srcRelPath.toString();
         dlgFieldFolders.setText( text.replace( '/', '.' ) );

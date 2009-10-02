@@ -1,10 +1,10 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -25,16 +25,17 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 
 /** <p>The wizard for creating a new Haskell module.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class NewModuleWizard extends Wizard implements INewWizard {
 
   public static final String ID = NewModuleWizard.class.getName();
-  
+
   private IStructuredSelection selection;
-  private NewModuleWizardPage page;
-  
+  private NewModuleWizardPage page0;
+  private ModuleInclusionPage page1;
+
   public NewModuleWizard() {
     super();
     setNeedsProgressMonitor( true );
@@ -43,23 +44,30 @@ public class NewModuleWizard extends Wizard implements INewWizard {
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
   }
 
-  public void init( final IWorkbench workbench, 
+  public void init( final IWorkbench workbench,
                     final IStructuredSelection selection ) {
     this.selection = selection ;
   }
-  
+
   @Override
   public void addPages() {
     super.addPages();
-    page = new NewModuleWizardPage();
-    addPage( page );
-    page.init( selection );
+    page0 = new NewModuleWizardPage();
+    addPage( page0 );
+    page0.init( selection );
+    page1 = new ModuleInclusionPage();
+    addPage( page1 );
+
   }
 
   @Override
   public boolean performFinish() {
-    ModuleCreationOperation mco = page.getOperation();
-    IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( mco );
+    ModuleCreationInfo mci = page0.getInfo();
+    mci.setExposed( page1.getModuleInclusionComposite().getExposed() );
+    mci.setIncluded( page1.getModuleInclusionComposite().getIncluded() );
+    ModuleCreationOperation mco=new ModuleCreationOperation( mci ) ;
+
+    IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( mco);
     boolean result = false;
     try {
       getContainer().run( false, true, op );
@@ -72,13 +80,13 @@ public class NewModuleWizard extends Wizard implements INewWizard {
     return result;
   }
 
-  
+
   // helping methods
   //////////////////
-  
+
   private void handleFinishException( final Exception ex ) {
-    String msg =   "The following error occured: " 
-                 + ex.getLocalizedMessage() 
+    String msg =   "The following error occured: "
+                 + ex.getLocalizedMessage()
                  + "Please see workspace/.metadata/.log for more information.";
     MessageDialog.openError( getShell(), "Problem occured", msg );
   }
@@ -97,7 +105,7 @@ public class NewModuleWizard extends Wizard implements INewWizard {
       BasicNewResourceWizard.selectAndReveal( newResource, workbenchWindow );
     }
   }
-  
+
   private IWorkbenchPage getPage() {
     IWorkbenchPage result = null;
     IWorkbench workbench = PlatformUI.getWorkbench();
@@ -107,7 +115,7 @@ public class NewModuleWizard extends Wizard implements INewWizard {
     }
     return result;
   }
-  
+
   private void openResource( final IFile resource ) {
     final IWorkbenchPage activePage = getPage();
     if( activePage != null ) {
@@ -127,7 +135,7 @@ public class NewModuleWizard extends Wizard implements INewWizard {
       }
     }
   }
-  
+
   private void initBannerImage() {
     String key = IImageNames.NEW_MODULE;
     ImageDescriptor imageDescriptor = HaskellUIImages.getImageDescriptor( key );

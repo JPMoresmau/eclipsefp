@@ -11,10 +11,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -189,9 +192,26 @@ public class ResourceUtil {
 	 */
 	public static boolean isSourceFolder( final IFolder folder ) {
     IProject project = folder.getProject();
-    IHaskellProject hsProject = HaskellProjectManager.get( project );
+    /*IHaskellProject hsProject = HaskellProjectManager.get( project );
     IPath folderPath = folder.getProjectRelativePath();
     return hsProject.getSourcePaths().contains( folderPath );
+    */
+    try {
+      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+        IFile f=ScionInstance.getCabalFile( project );
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        for (String src:pd.getStanzasBySourceDir().keySet()){
+          IFolder fldr=project.getFolder( src );
+          if (fldr.equals(folder)){
+            return true;
+          }
+        }
+      }
+
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "isSourceFolder:", ex );
+    }
+    return false;
   }
 
 	public static boolean isInHaskellProject(final IResource resource) {
@@ -205,7 +225,57 @@ public class ResourceUtil {
 		return result;
 	}
 
+  public static IContainer getSourceContainer( final IResource resource ) {
+    IProject project = resource.getProject();
+    try {
+      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
 
+        IFile f=ScionInstance.getCabalFile( project );
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        for (String src:pd.getStanzasBySourceDir().keySet()){
+          IFolder fldr=project.getFolder( src );
+          if (resource.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
+            return fldr;
+          }
+        }
+      }
+
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "getSourceContainer:"+resource, ex );
+    }
+    return null;
+  }
+
+  public static IPath getSourceRelativePath( final IResource resource ) {
+    IPath result = null;
+    IContainer sourceFolder = getSourceContainer( resource );
+    if( sourceFolder != null ) {
+      if( resource != null ) {
+        result = getSourceRelativePath( sourceFolder, resource );
+      }
+    }
+    return result;
+  }
+
+  public static IPath getSourceRelativePath( final IContainer sourceContainer,
+      final IResource resource ) {
+      IPath result = null;
+      IContainer resourceContainer = getContainer( resource );
+      IPath sourcePath = sourceContainer.getProjectRelativePath();
+      IPath resourcePath = resourceContainer.getProjectRelativePath();
+      if( sourcePath.isPrefixOf( resourcePath ) ) {
+      int count = sourcePath.segmentCount();
+      result = resourcePath.removeFirstSegments( count );
+      }
+      return result;
+    }
+
+  /** returns the container this resource is in (the resource itself, if it is
+   * a container). */
+ private static IContainer getContainer( final IResource resource ) {
+   return ( resource instanceof IContainer ) ? ( IContainer )resource
+                                             : resource.getParent();
+ }
 
 	/** <p>returns the path of the specified workspace file relative to the
 	  * source folder in the Haskell project.</p>

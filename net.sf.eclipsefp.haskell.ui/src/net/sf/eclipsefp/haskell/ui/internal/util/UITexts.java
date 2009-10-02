@@ -117,10 +117,19 @@ public final class UITexts extends NLS {
   public static String editor_textHover_error;
 
   public static String scion_console_title;
+  public static String scion_preferences_title;
 
   public static String outline_sortByName;
   public static String outline_sortByName_tooltip;
   public static String outline_sortByName_description;
+
+  public static String module_inclusion_title;
+  public static String module_inclusion_field_section;
+  public static String module_inclusion_field_include;
+  public static String module_inclusion_field_expose;
+  public static String module_inclusion_page_title;
+  public static String module_inclusion_page_description;
+  public static String module_inclusion_error;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
