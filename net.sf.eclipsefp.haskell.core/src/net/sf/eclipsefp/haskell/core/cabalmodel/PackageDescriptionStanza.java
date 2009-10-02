@@ -90,8 +90,15 @@ public class PackageDescriptionStanza {
     return vp;
   }*/
 
-  public RealValuePosition update(final CabalSyntax field,final String value){
-    getProperties().put(field.getCabalName().toLowerCase(),value);
+  public RealValuePosition update(final CabalSyntax field,String value){
+    if (value!=null && value.trim().length()==0){
+      value=null;
+    }
+    if (value!=null){
+      getProperties().put(field.getCabalName().toLowerCase(),value);
+    } else {
+      getProperties().remove(field.getCabalName().toLowerCase());
+    }
     ValuePosition oldVP=getPositions().get( field );
     int indent=0;
     int subIndent=0;
@@ -118,6 +125,10 @@ public class PackageDescriptionStanza {
     } else {
       subIndent=oldVP.getSubsequentIndent();
       indent=oldVP.getInitialIndent();
+    }
+    if (value==null){
+      getPositions().remove( field.getCabalName().toLowerCase() );
+      return new RealValuePosition( oldVP,""); //$NON-NLS-1$
     }
 
     BufferedReader br=new BufferedReader( new StringReader( value ) );
@@ -152,6 +163,7 @@ public class PackageDescriptionStanza {
       return null;
     }
   }
+
 
   public RealValuePosition addToPropertyList(final CabalSyntax field,final String value){
    String s=getProperties().get( field );
@@ -188,7 +200,7 @@ public class PackageDescriptionStanza {
       }
       return update(field, newValue.toString() );
     }
-    return update(field, value);
+    return update(field, s);
    }
 
 
@@ -205,6 +217,9 @@ public class PackageDescriptionStanza {
     return endLine;
   }
 
+  public String toTypeName(){
+    return String.valueOf( getType() ) + (getName()!=null?" "+getName():"");  //$NON-NLS-1$//$NON-NLS-2$
+  }
 
   // interface methods of Object
   //////////////////////////////

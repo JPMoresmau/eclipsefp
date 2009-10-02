@@ -1,6 +1,13 @@
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 
+/**
+ *
+ * @author JP Moresmau
+ *
+ */
 public class RealValuePosition extends ValuePosition {
   private final String realValue;
 
@@ -18,4 +25,14 @@ public class RealValuePosition extends ValuePosition {
    return realValue+" "+ super.toString(); //$NON-NLS-1$
   }
 
+  public void updateDocument(final IDocument doc){
+    try {
+      int st=doc.getLineOffset( getStartLine() )+getInitialIndent();
+      int end=doc.getLineOffset( getEndLine() );
+
+      doc.replace( st, end-st,getRealValue() );
+    } catch(BadLocationException ble){
+      ble.printStackTrace();
+    }
+  }
 }

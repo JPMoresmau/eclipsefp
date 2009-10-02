@@ -87,7 +87,6 @@ public class PackageDescriptionLoader {
       }
     }
 
-
     int count = 0;
     boolean contentStarted = false;
     String line = br.readLine();

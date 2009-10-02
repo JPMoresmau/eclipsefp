@@ -305,4 +305,15 @@ public class CabalModelTest extends TestCase {
     assertEquals(1,ls.size());
     assertEquals("program2",ls.get( 0 ).getName());
   }
+
+  public void testSetNull(){
+    String content3=getContent( "Example1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza pds=pd.getStanzas()[1];
+    pds.update( CabalSyntax.FIELD_OTHER_MODULES, null );
+    assertNull(pds.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES ));
+    pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Test" );
+    assertNull(pds.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES ));
+
+  }
 }

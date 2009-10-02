@@ -10,9 +10,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -161,16 +159,8 @@ abstract class CabalFormSection extends SectionPart {
         vp=new ValuePosition(stanza.getEndLine(),stanza.getEndLine(),stanza.getIndent());
       }*/
       RealValuePosition vp=stanza.update( mutator, newValue );
+      vp.updateDocument( editor.getModel());
 
-      IDocument doc=editor.getModel();
-      try {
-        int st=doc.getLineOffset( vp.getStartLine() )+vp.getInitialIndent();
-        int end=doc.getLineOffset( vp.getEndLine() );
-
-        doc.replace( st, end-st,vp.getRealValue() );
-      } catch(BadLocationException ble){
-        ble.printStackTrace();
-      }
 
   }
 
