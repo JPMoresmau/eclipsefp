@@ -47,6 +47,9 @@ public class ProblemsLabelDecorator implements ILightweightLabelDecorator {
   }
 
   protected int computeAdornmentFlags( final Object obj ) {
+    if (obj instanceof IResource && !((IResource)obj).exists()){
+      return 0;
+    }
     try {
       if( obj instanceof IFile
           && ResourceUtil.hasHaskellExtension( ( IResource )obj ) ) {
