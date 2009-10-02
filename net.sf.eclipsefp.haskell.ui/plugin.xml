@@ -177,7 +177,6 @@
       </page>
    </extension>
    <extension
-         name="%importLibsPP_name"
          point="org.eclipse.ui.propertyPages">
       <page
             name="%projectImportLibsPP_name"
@@ -195,7 +194,18 @@
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
       </page>
+      <page
+            name="%fileExposeModulesPP_name"
+            class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
+            id="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
+            nameFilter="*.hs">
+          <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IFile" />
+         </enabledWhen>
+      </page>
    </extension>
+   
+  
   <extension
          point="org.eclipse.ui.commands">
       <category
