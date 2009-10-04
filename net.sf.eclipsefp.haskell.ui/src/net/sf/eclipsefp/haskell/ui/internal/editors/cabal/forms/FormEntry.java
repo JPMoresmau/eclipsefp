@@ -279,7 +279,7 @@ public class FormEntry {
 	////////////////////
 
   private void keyReleaseOccured( final KeyEvent evt ) {
-    if( evt.character == '\r' ) {
+    if( evt.character == '\r' && (textField.getStyle() & SWT.MULTI)==0) {
       // commit value
       if( dirty ) {
         commit();
