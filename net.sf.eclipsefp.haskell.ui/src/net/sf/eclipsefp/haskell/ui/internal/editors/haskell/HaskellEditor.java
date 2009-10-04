@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
@@ -282,15 +283,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   public void doSetInput( final IEditorInput input ) throws CoreException {
     // unload the previous file from Scion
     IFile file = findFile();
-    if (file != null) {
+    if (file != null && ResourceUtil.isInHaskellProject( file )){
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(file);
     }
 
     super.doSetInput( input );
     instance=null;
     // load the new file into Scion
-    file = findFile();
-    if (file != null) {
+    if (file != null && ResourceUtil.isInHaskellProject( file )) {
       //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
       instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
       instance.loadFile( file );

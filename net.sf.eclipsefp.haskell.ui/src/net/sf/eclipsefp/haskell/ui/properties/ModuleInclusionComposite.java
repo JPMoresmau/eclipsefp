@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -90,7 +91,7 @@ public class ModuleInclusionComposite extends Composite {
             s=pd.getProperties().get( CabalSyntax.FIELD_MAIN_IS );
             if (s!=null){
               String f=module.replace( '.', '/' );
-              if ((f+".hs").equals(s) || (f+".lhs").equals(s)){ //$NON-NLS-1$ //$NON-NLS-2$
+              if ((f+"."+ResourceUtil.EXTENSION_HS).equals(s) || (f+"."+ResourceUtil.EXTENSION_LHS).equals(s)){ //$NON-NLS-1$ //$NON-NLS-2$
                 bInclude.setEnabled( false );
               }
             }

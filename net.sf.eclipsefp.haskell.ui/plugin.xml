@@ -203,6 +203,15 @@
             <adapt type="org.eclipse.core.resources.IFile" />
          </enabledWhen>
       </page>
+       <page
+            name="%fileExposeModulesPP_name"
+            class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
+            id="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP_litt"
+            nameFilter="*.lhs">
+          <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IFile" />
+         </enabledWhen>
+      </page>
    </extension>
    
   
