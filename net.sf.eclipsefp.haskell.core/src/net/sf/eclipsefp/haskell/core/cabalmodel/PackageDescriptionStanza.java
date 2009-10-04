@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,11 +37,21 @@ public class PackageDescriptionStanza {
 
   private final String name;
   private final int startLine;
-  private final int endLine;
+  private int endLine;
   private int indent;
   private final Map<String, String> properties=new CabalSyntaxMap<String>();
   private final Map<String, ValuePosition> positions=new CabalSyntaxMap<ValuePosition>();
   private final CabalSyntax type;
+
+  private final List<PackageDescriptionStanza> stanzas=new LinkedList<PackageDescriptionStanza>();
+
+
+  PackageDescriptionStanza(final CabalSyntax type,final String name,
+      final int startLine){
+    this.type=type;
+    this.name = name;
+    this.startLine = startLine;
+  }
 
   PackageDescriptionStanza( final CabalSyntax type,
                             final String name,
@@ -52,6 +63,14 @@ public class PackageDescriptionStanza {
     this.endLine = endLine;
   }
 
+
+  public void setEndLine( final int endLine ) {
+    this.endLine = endLine;
+  }
+
+  public List<PackageDescriptionStanza> getStanzas() {
+    return stanzas;
+  }
 
   public CabalSyntax getType() {
     return type;

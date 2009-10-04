@@ -21,12 +21,9 @@ public class PackageDescription {
     stanzas = new ArrayList<PackageDescriptionStanza>();
   }
 
-  void addStanza( final PackageDescriptionStanza stanza ) {
-    stanzas.add( stanza );
-  }
 
-  public PackageDescriptionStanza[] getStanzas() {
-    return stanzas.toArray( new PackageDescriptionStanza[ stanzas.size() ] );
+  public List<PackageDescriptionStanza> getStanzas() {
+    return stanzas;
   }
 
   public Map<String, List<PackageDescriptionStanza>> getStanzasBySourceDir(){

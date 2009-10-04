@@ -10,6 +10,10 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
   */
 public class GeneralStanza extends PackageDescriptionStanza {
 
+  GeneralStanza(final int startLine) {
+    super(null, null, startLine);
+  }
+
   GeneralStanza(final int startLine, final int endLine ) {
     super(null, null, startLine, endLine );
   }

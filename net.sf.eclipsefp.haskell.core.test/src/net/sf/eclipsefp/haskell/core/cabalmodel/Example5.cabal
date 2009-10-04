@@ -13,14 +13,19 @@ Flag Debug {
 
 Library {
   Build-Depends:   base
-  Exposed-Modules: Testing.Test1
   Extensions:      CPP
+  
   if flag(debug) {
     GHC-Options: -DDEBUG
+  
     if !os(windows) {
       CC-Options: "-DDEBUG"
+  
     } else {
       CC-Options: "-DNDEBUG"
     }
   }
+  Exposed-Modules: Testing.Test1
+  
+  
 }

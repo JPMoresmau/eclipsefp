@@ -78,11 +78,10 @@ class CabalFoldingStructureProvider {
 	}
 
 	private void addFoldingRegions( final Set<Position> regions,
-                                  final PackageDescriptionStanza[] elements )
+                                  final Iterable<PackageDescriptionStanza> elements )
                                                    throws BadLocationException {
-		for( int i= 0; i < elements.length; i++ ) {
-      PackageDescriptionStanza element = elements[ i ];
-			int startLine = element.getStartLine();
+		for( PackageDescriptionStanza element:elements) {
+      int startLine = element.getStartLine();
 			int endLine = element.getEndLine();
 			if( startLine < endLine ) {
 				int start = document.getLineOffset( startLine );

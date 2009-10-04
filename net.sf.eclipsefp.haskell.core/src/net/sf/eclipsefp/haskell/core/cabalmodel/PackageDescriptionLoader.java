@@ -7,12 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IFile;
@@ -31,7 +29,7 @@ public class PackageDescriptionLoader {
       InputStream is=file.getContents();
       try {
         BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ));
-        parse(br,result);
+        new CabalParser(result).parse(br);
       }  catch( final IOException ioex ) {
         // very unlikely
         HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
@@ -47,7 +45,7 @@ public class PackageDescriptionLoader {
       BufferedReader br = new BufferedReader( new StringReader( content ) );
       try {
 
-        parse( br, result );
+        new CabalParser(result).parse( br );
       } catch( final IOException ioex ) {
         // very unlikely
         HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
@@ -71,10 +69,213 @@ public class PackageDescriptionLoader {
     return ret;
   }
 
+
+
   // helping methods
   //////////////////
 
-  private static void parse( final BufferedReader br,
+  private static class CabalParser{
+    private static final String BRACE_OPEN="{"; //$NON-NLS-1$
+    private static final String BRACE_CLOSE="}"; //$NON-NLS-1$
+    private static final String COLON=":"; //$NON-NLS-1$
+
+
+    private PackageDescriptionStanza lastStanza=null;
+    private final LinkedList<PackageDescriptionStanza> stanzaStack=new LinkedList<PackageDescriptionStanza>();
+
+    private int currentIndent=0;
+
+    private int count=0;
+    private int empty=0;
+
+    private String field=null;
+    private final StringBuilder fieldValue=new StringBuilder();
+    private ValuePosition fieldVP=null;
+
+    private final Map<String,CabalSyntax> sections=new HashMap<String, CabalSyntax>();
+
+    private final PackageDescription pd;
+
+    private int braces=0;
+
+    private CabalParser( final PackageDescription pd ){
+      this.pd=pd;
+      for (CabalSyntax cs:CabalSyntax.values() ){
+        if (cs.isSectionHeader()){
+          sections.put(cs.getCabalName().toLowerCase(),cs);
+        }
+      }
+    }
+
+    private void parse( final BufferedReader br
+       ) throws IOException {
+      String line = br.readLine();
+      while( line != null ) {
+        if (!isComment( line )){
+          if(! isEmpty( line ) ) {
+            if (lastStanza==null){
+              lastStanza=new GeneralStanza(count);
+            }
+            int indent=getIndent(line);
+            if (indent>currentIndent && field!=null && fieldVP!=null){
+              addFieldLine(line, indent);
+            } else if (line.trim().equals(BRACE_OPEN)){
+              braces++;
+            } else {
+              String trimmed=line.trim();
+              if (trimmed.startsWith( BRACE_CLOSE )){
+                braces--;
+                addField();
+                popStanza();
+                if (trimmed.length()==BRACE_CLOSE.length()){
+                  line=br.readLine();
+                  continue;
+                }
+                line=line.substring( line.indexOf( BRACE_CLOSE )+1 );
+
+              }
+
+              currentIndent=indent;
+              addField();
+
+              if (braces==0){
+                while (indent<lastStanza.getIndent() && stanzaStack.size()>0){
+                  popStanza();
+                }
+              }
+
+              String start=getSectionHeader( line );
+              CabalSyntax cs=sections.get( start );
+              if (cs != null){
+                String name=null;
+                if (line.length()>start.length()){
+                  name=line.substring( start.length() ).trim();
+                }
+                if (name!=null && name.endsWith( BRACE_OPEN )){
+                  braces++;
+                  name=name.substring( 0,name.length()-1 ).trim();
+                }
+                addStanza(cs,name);
+                //lastStanza=new PackageDescriptionStanza(cs,name,count);
+              } else {
+                int ix=line.indexOf(COLON );
+                if (ix>-1){
+                  field=line.substring( 0,ix ).trim().toLowerCase();
+                  int initialIndent=ix+1;
+                  int subsequentIndent=initialIndent;
+
+                  if (ix<line.length()){
+                    while (initialIndent<line.length() && Character.isWhitespace( line.charAt( initialIndent ))){
+                      if ( line.charAt( initialIndent )=='\t'){
+                        subsequentIndent+=3;
+                      }
+                      initialIndent++;
+                      subsequentIndent++;
+                    }
+                    fieldValue.append( line.substring( initialIndent ).trim() );
+                  }
+                  fieldVP=new ValuePosition();
+                  fieldVP.setStartLine( count );
+                  fieldVP.setInitialIndent( initialIndent );
+                  fieldVP.setSubsequentIndent( subsequentIndent );
+                  if (lastStanza.getProperties().isEmpty()){
+                    lastStanza.setIndent( indent );
+                  }
+                }
+              }
+            }
+            empty=0;
+          } else {
+            empty++;
+          }
+        }
+        line = br.readLine();
+        count++;
+
+      }
+      if (lastStanza!=null){
+        addField();
+        while (stanzaStack.size()>0){
+          popStanza();
+        }
+        addStanza(null,null);
+      }
+    }
+
+    private void addField() {
+      if(lastStanza!=null && field!=null){
+        if(fieldValue.length()>0 && fieldVP!=null){
+          lastStanza.getProperties().put( field, fieldValue.toString() );
+          fieldVP.setEndLine( count - empty);
+          lastStanza.getPositions().put( field, fieldVP );
+          fieldValue.setLength( 0 );
+          fieldVP=null;
+        }
+        field=null;
+      }
+    }
+
+    private void addStanza(final CabalSyntax type,final String name){
+      if (type!=null && (type.equals( CabalSyntax.SECTION_IF ) || type.equals( CabalSyntax.SECTION_ELSE ))){
+        stanzaStack.addLast( lastStanza );
+      } else {
+        lastStanza.setEndLine( count-empty );
+        pd.getStanzas().add(lastStanza);
+      }
+      lastStanza=new PackageDescriptionStanza(type,name,count);
+    }
+
+    private void popStanza(){
+     if (stanzaStack.size()>0){
+       PackageDescriptionStanza st=stanzaStack.removeLast();
+       lastStanza.setEndLine( count-empty );
+       st.getStanzas().add(lastStanza);
+       lastStanza=st;
+     }
+    }
+
+    private void addFieldLine(final String line,final int indent){
+      if (fieldValue.length()>0){
+        fieldValue.append( System.getProperty( "line.separator" )); //$NON-NLS-1$
+      }
+      String val=line.substring( indent ) ;
+      if (val.trim().equals( "." )){ //$NON-NLS-1$
+        val=""; //$NON-NLS-1$
+      }
+      fieldValue.append( val.trim() );
+      fieldVP.setSubsequentIndent( indent );
+    }
+
+    private static int getIndent(final String line){
+      int a=0;
+      while (line.charAt( a )==' ' && a<line.length()){
+        a++;
+      }
+      return a;
+    }
+
+    private static boolean isEmpty( final String line ) {
+      return line.trim().length() == 0;
+    }
+
+    private static boolean isComment( final String line ) {
+      return line.startsWith( "--" ); //$NON-NLS-1$
+    }
+
+    private static String getSectionHeader(final String line ) {
+      String section=line.trim().toLowerCase();
+      int ix=section.indexOf( ' ' );
+      if (ix>-1){
+        section=section.substring( 0,ix );
+      }
+      return section;
+    }
+  }
+
+
+
+
+ /* private static void parseOld( final BufferedReader br,
                              final PackageDescription pd ) throws IOException {
     List<StanzaInfo> stanzas = new ArrayList<StanzaInfo>();
     StanzaInfo lastStanza = new StanzaInfo();
@@ -97,6 +298,9 @@ public class PackageDescriptionLoader {
         contentStarted = true;
         if(! isEmpty( line ) ) {
           if (empty>1 && isSectionHeader(line,sections)){
+            if (getSectionHeader(line).equals( CabalSyntax.SECTION_IF )){
+
+            }
             lastStanza.setEnd( count - empty );
             lastStanza = new StanzaInfo();
             lastStanza.setStart( count-1 );
@@ -119,19 +323,15 @@ public class PackageDescriptionLoader {
       lastStanza.setEnd( count );
     }
     applyStanzas( stanzas, pd );
-  }
+  }*/
 
-  private static boolean isSectionHeader(final String line, final Set<String> sections ) {
-    String section=line.trim().toLowerCase();
-    int ix=section.indexOf( ' ' );
-    if (ix>-1){
-      section=section.substring( 0,ix );
-    }
-    return sections.contains(section);
-  }
+  /*private static boolean isSectionHeader(final String line, final Set<String> sections ) {
+    return sections.contains(getSectionHeader(line));
+  }*/
 
 
-  private static void applyStanzas( final List<StanzaInfo> stanzas,
+
+  /*private static void applyStanzas( final List<StanzaInfo> stanzas,
                                     final PackageDescription pd ) {
     Iterator<StanzaInfo> it = stanzas.iterator();
     while( it.hasNext() ) {
@@ -140,11 +340,11 @@ public class PackageDescriptionLoader {
         pd.addStanza( create( info ) );
       }
     }
-  }
+  }*/
 
-  private static PackageDescriptionStanza create(  final StanzaInfo info ) {
+  /*private static PackageDescriptionStanza create(  final StanzaInfo info ) {
     PackageDescriptionStanza result=null;
-    /*int startLine=1;
+    /int startLine=1;
     if( isExecutable( info.getContent() ) ) {
       result = new ExecutableStanza( getExecutableName( info.getContent() ),info.getStart(), info.getEnd()  );
     } else if( isLibrary( info.getContent() ) ) {
@@ -152,7 +352,7 @@ public class PackageDescriptionLoader {
     } else {
       result = new GeneralStanza(info.getStart(), info.getEnd() );
       startLine=0;
-    }*/
+    }/
     int startLine=0;
 
     if (info.getContent()!=null && info.getContent().size()>0){
@@ -253,7 +453,7 @@ public class PackageDescriptionLoader {
       pValue.setLength( 0 );
     }
   }
-
+*/
 
   /*private static String getPlainName( final List<String> content ) {
     String result = getValue( content, CabalSyntax.FIELD_NAME );
@@ -316,19 +516,11 @@ public class PackageDescriptionLoader {
     return result;
   }*/
 
-  private static boolean isEmpty( final String line ) {
-    return line.trim().length() == 0;
-  }
-
-  private static boolean isComment( final String line ) {
-    return line.startsWith( "--" ); //$NON-NLS-1$
-  }
-
 
   // inner classes
   ////////////////
 
-  private static class StanzaInfo {
+ /* private static class StanzaInfo {
 
     private final List<String> content = new ArrayList<String>();
     private final List<Integer> lines=new ArrayList<Integer>();
@@ -362,5 +554,5 @@ public class PackageDescriptionLoader {
     int getStart() {
       return start;
     }
-  }
+  }*/
 }
