@@ -81,8 +81,8 @@ public class OverviewPage extends FormPage {
 
   public void setPackageDescription( final PackageDescription packageDescription ) {
     PackageDescriptionStanza stanza=null;
-    if (packageDescription.getStanzas().length>0 && packageDescription.getStanzas()[0] instanceof GeneralStanza){
-      stanza= packageDescription.getStanzas()[0];
+    if (packageDescription.getStanzas().size()>0 && packageDescription.getStanzas().get(0) instanceof GeneralStanza){
+      stanza= packageDescription.getStanzas().get(0);
     }
 
     for (IFormPart p:getManagedForm().getParts()){

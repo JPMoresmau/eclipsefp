@@ -3,6 +3,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -21,7 +22,7 @@ class CabalOutlinePageCP implements ITreeContentProvider {
     Object[] result = new Object[ 0 ];
     if( inputElement instanceof PackageDescription ) {
       PackageDescription pd = ( PackageDescription )inputElement;
-      result = pd.getStanzas();
+      result = pd.getStanzas().toArray();
     }
     return result;
   }
@@ -31,6 +32,9 @@ class CabalOutlinePageCP implements ITreeContentProvider {
   }
 
   public Object[] getChildren( final Object parentElement ) {
+    if (parentElement instanceof PackageDescriptionStanza){
+      return ((PackageDescriptionStanza)parentElement).getStanzas().toArray();
+    }
     return new Object[ 0 ];
   }
 
