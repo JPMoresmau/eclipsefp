@@ -286,9 +286,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if (file != null && ResourceUtil.isInHaskellProject( file )){
       HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(file);
     }
-
-    super.doSetInput( input );
     instance=null;
+    super.doSetInput( input );
+
+    file = findFile();
     // load the new file into Scion
     if (file != null && ResourceUtil.isInHaskellProject( file )) {
       //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
