@@ -87,13 +87,14 @@ class CabalFoldingStructureProvider {
 				int start = document.getLineOffset( startLine );
         int end = document.getLength();
         try {
-  				end =   document.getLineOffset( endLine )
-                + document.getLineLength( endLine );
+  				end =   document.getLineOffset( endLine-1 )
+                + document.getLineLength( endLine-1 );
         } catch( final BadLocationException badlox ) {
           // ignore
         }
 				Position position= new Position( start, end - start );
 				regions.add( position );
+			  addFoldingRegions( regions, element.getStanzas() );
 			}
 		}
 	}

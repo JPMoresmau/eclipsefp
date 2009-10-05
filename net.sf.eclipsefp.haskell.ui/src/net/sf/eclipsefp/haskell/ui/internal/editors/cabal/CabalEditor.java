@@ -58,8 +58,8 @@ public class CabalEditor extends TextEditor {
         int offset = doc.getLineOffset( stanza.getStartLine() );
         int end = doc.getLength();
         try {
-          end =   doc.getLineOffset( stanza.getEndLine() )
-                + doc.getLineLength( stanza.getEndLine() );
+          end =   doc.getLineOffset( stanza.getEndLine()-1 )
+                + doc.getLineLength( stanza.getEndLine()-1 );
         } catch( final BadLocationException badlox ) {
           // ignore
         }
