@@ -10,9 +10,9 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
   */
 interface IActionDefinitionIds {
 
-  String UNCOMMENT       = "net.sf.eclipsefp.haskell.ui.editor.actions.uncomment";
-  String COMMENT         = "net.sf.eclipsefp.haskell.ui.editor.actions.comment";
-  String FIRST_CHAR      = "net.sf.eclipsefp.haskell.ui.editor.actions.firstChar";
-  String OPEN_DEFINITION = "net.sf.eclipsefp.haskell.ui.actions.openDefinition";
+  String UNCOMMENT       = "net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"; //$NON-NLS-1$
+  String COMMENT         = "net.sf.eclipsefp.haskell.ui.editor.actions.comment"; //$NON-NLS-1$
+  String FIRST_CHAR      = "net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"; //$NON-NLS-1$
+  String OPEN_DEFINITION = "net.sf.eclipsefp.haskell.ui.actions.openDefinition"; //$NON-NLS-1$
 
 }
