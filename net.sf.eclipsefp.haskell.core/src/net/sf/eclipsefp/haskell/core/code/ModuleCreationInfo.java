@@ -3,7 +3,9 @@ package net.sf.eclipsefp.haskell.core.code;
 
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -26,6 +28,21 @@ public class ModuleCreationInfo {
 
   // attribute setters and getters
   ////////////////////////////////
+
+  public ModuleCreationInfo() {
+    super();
+  }
+
+  public ModuleCreationInfo(final IFile f) {
+    super();
+    IContainer src=ResourceUtil.getSourceContainer( f );
+    setSourceContainer( src );
+    IPath p=ResourceUtil.getSourceRelativePath( src, f );
+    setFolders(p);
+    setModuleName( f.getProjectRelativePath().removeFileExtension().lastSegment() );
+
+  }
+
 
   public IPath getFolders() {
     return folders;

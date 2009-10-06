@@ -356,4 +356,54 @@ public class CabalModelTest extends TestCase {
     assertNull(pds.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES ));
 
   }
+
+  public void testScion(){
+    String content3=getContent( "scion.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+
+    PackageDescriptionStanza pds=pd.getStanzas().get( 4 );
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pds.getType());
+
+    String initial="Scion"
+      +System.getProperty( "line.separator" )+"Scion.Cabal"
+      +System.getProperty( "line.separator" )+"Scion.Inspect"
+      +System.getProperty( "line.separator" )+"Scion.Inspect.DefinitionSite"
+      +System.getProperty( "line.separator" )+"Scion.Session"
+      +System.getProperty( "line.separator" )+"Scion.Types"
+      +System.getProperty( "line.separator" )+"Scion.Types.Notes"
+      +System.getProperty( "line.separator" )+"Scion.Utils"
+
+      +System.getProperty( "line.separator" )+"Scion.Server.Commands"
+      +System.getProperty( "line.separator" )+"Scion.Server.ConnectionIO"
+      +System.getProperty( "line.separator" )+"Scion.Server.Generic"
+      +System.getProperty( "line.separator" )+"Scion.Server.Protocol";
+    assertEquals(initial,pds.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES ));
+
+    ValuePosition vp=pds.getPositions().get( CabalSyntax.FIELD_OTHER_MODULES );
+    assertEquals(122,vp.getStartLine());
+    assertEquals(136,vp.getEndLine());
+    assertEquals(16,vp.getInitialIndent());
+    assertEquals(4,vp.getSubsequentIndent());
+
+    RealValuePosition rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
+    assertEquals(122,rvp.getStartLine());
+    assertEquals(136,rvp.getEndLine());
+    assertEquals(16,rvp.getInitialIndent());
+    //assertEquals(4,rvp.getSubsequentIndent());
+    assertEquals(System.getProperty( "line.separator" )+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+System.getProperty( "line.separator" ),rvp.getRealValue());
+
+    rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
+    assertEquals(122,rvp.getStartLine());
+    assertEquals(134,rvp.getEndLine());
+    assertEquals(16,rvp.getInitialIndent());
+    //assertEquals(4,rvp.getSubsequentIndent());
+    assertEquals(System.getProperty( "line.separator" )+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+System.getProperty( "line.separator" ),rvp.getRealValue());
+
+    rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
+    assertEquals(122,rvp.getStartLine());
+    assertEquals(134,rvp.getEndLine());
+    assertEquals(16,rvp.getInitialIndent());
+    assertEquals(System.getProperty( "line.separator" )+"    "+initial.replaceAll( "\\n", "\n    " )+System.getProperty( "line.separator" ),rvp.getRealValue());
+
+  }
 }

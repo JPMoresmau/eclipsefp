@@ -200,7 +200,7 @@ public class PackageDescriptionStanza {
      newValue.append(value);
      return update(field, newValue.toString() );
    }
-   return update(field, value);
+   return update(field, s);
   }
 
   public RealValuePosition removeFromPropertyList(final CabalSyntax field,final String value){

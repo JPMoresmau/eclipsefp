@@ -29,9 +29,11 @@ public class RealValuePosition extends ValuePosition {
     try {
       int st=doc.getLineOffset( getStartLine() )+getInitialIndent();
       int end=doc.getLineOffset( getEndLine() );
-
-      doc.replace( st, end-st,getRealValue() );
+      if (end-st>0){
+        doc.replace( st, end-st,getRealValue() );
+      }
     } catch(BadLocationException ble){
+      System.out.println( this);
       ble.printStackTrace();
     }
   }

@@ -46,6 +46,8 @@ public class ModuleInclusionComposite extends Composite {
     for (Control c:getChildren()){
       c.dispose();
     }
+    included.clear();
+    exposed.clear();
     try {
       PackageDescription cabal=PackageDescriptionLoader.load( ScionInstance.getCabalFile( srcPath.getProject() ));
       String path=srcPath.getProjectRelativePath().toOSString();
@@ -114,8 +116,13 @@ public class ModuleInclusionComposite extends Composite {
                 }
                 bExpose.setEnabled(pd.getType().equals( CabalSyntax.SECTION_LIBRARY ) && !bInclude.getSelection() );
               }
+
             });
-            bInclude.setSelection( ls.contains( module ));
+            if (ls.contains( module )){
+              bInclude.setSelection( true);
+              included.add( pd );
+              bExpose.setSelection( false );
+            }
           }
 
           if (bExpose.isEnabled()){
@@ -133,7 +140,11 @@ public class ModuleInclusionComposite extends Composite {
                 bInclude.setEnabled( !bExpose.getSelection() );
               }
             });
-            bInclude.setSelection( ls.contains( module ));
+            if (ls.contains( module )){
+              bExpose.setSelection( true);
+              exposed.add( pd );
+              bInclude.setSelection( false );
+            }
 
           }
         }
