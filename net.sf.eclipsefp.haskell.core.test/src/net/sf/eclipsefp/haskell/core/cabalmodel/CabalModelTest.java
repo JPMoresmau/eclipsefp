@@ -319,7 +319,7 @@ public class CabalModelTest extends TestCase {
 
     pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.HUnit.Lang, Test.HUnit.Terminal, "+System.getProperty( "line.separator" )+"Test.HUnit.Text, Test.HUnit, Test.New",s);
+    assertEquals("Test.HUnit.Lang, Test.HUnit.Terminal, Test.HUnit.Text, Test.HUnit, Test.New",s);
   }
 
   public void testSourceDirs(){
@@ -403,7 +403,7 @@ public class CabalModelTest extends TestCase {
     assertEquals(122,rvp.getStartLine());
     assertEquals(134,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
-    assertEquals(System.getProperty( "line.separator" )+"    "+initial.replaceAll( "\\n", "\n    " )+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+System.getProperty( "line.separator" ),rvp.getRealValue());
 
   }
 }
