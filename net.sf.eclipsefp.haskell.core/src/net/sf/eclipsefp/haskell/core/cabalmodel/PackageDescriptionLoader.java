@@ -58,7 +58,7 @@ public class PackageDescriptionLoader {
     List<String> ret=new LinkedList<String>();
 
     if (value!=null && value.length()>0){
-      StringTokenizer st=new StringTokenizer( value,", " ); //$NON-NLS-1$
+      StringTokenizer st=new StringTokenizer( value,", "+System.getProperty( "line.separator" ) ); //$NON-NLS-1$ //$NON-NLS-2$
       while (st.hasMoreTokens()){
         String t=st.nextToken();
         if (t.length()>0){
