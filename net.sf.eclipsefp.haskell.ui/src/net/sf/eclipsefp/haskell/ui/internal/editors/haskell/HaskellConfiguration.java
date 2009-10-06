@@ -3,8 +3,6 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
@@ -167,16 +165,18 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
   public String[] getDefaultPrefixes(final ISourceViewer sourceViewer,
 			final String contentType) {
 
-		return new String[] { "--" };
+		return new String[] { "--" }; //$NON-NLS-1$
 	}
 
 	@Override
   public String[] getIndentPrefixes(final ISourceViewer sourceViewer,
 			final String contentType) {
-		List<String> list = new ArrayList<String>();
+
 		int tabWidth = getTabWidth(sourceViewer);
+		StringBuilder prefix = new StringBuilder();
+		String[] ret=new String[tabWidth+2];
 		for (int i = 0; i <= tabWidth; i++) {
-			StringBuffer prefix = new StringBuffer();
+
 			if (isSpacesForTabs()) {
 				for (int j = 0; j + i < tabWidth; j++) {
 					prefix.append(' ');
@@ -192,13 +192,11 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 					prefix.append('\t');
 				}
 			}
-			list.add(prefix.toString());
+			ret[i]=prefix.toString();
+			prefix.setLength( 0 );
 		}
-		list.add("");
-
-		String[] result = new String[list.size()];
-		list.toArray(result);
-		return result;
+		ret[tabWidth+1]=""; //$NON-NLS-1$
+		return ret;
 	}
 
 	@Override

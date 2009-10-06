@@ -115,6 +115,7 @@ public final class UITexts extends NLS {
   public static String renameProcessor_name;
 
   public static String editor_textHover_error;
+  public static String editor_actions_source;
 
   public static String scion_console_title;
   public static String scion_preferences_title;

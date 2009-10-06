@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacte
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
@@ -65,7 +66,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   public static final String ID = HaskellEditor.class.getName();
 
   /** The key binding context active while the Haskell editor is active */
-  private static final String CONTEXT_ID = "net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context";
+  private static final String CONTEXT_ID = "net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context";  //$NON-NLS-1$
 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
@@ -99,7 +100,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   protected void initializeEditor() {
     super.initializeEditor();
     setSourceViewerConfiguration( new HaskellConfiguration( this ) );
-    setEditorContextMenuId( "#HaskellEditorContext" );
+    setEditorContextMenuId( "#HaskellEditorContext" );  //$NON-NLS-1$
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
@@ -133,13 +134,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   public void editorContextMenuAboutToShow( final IMenuManager menu ) {
     super.editorContextMenuAboutToShow( menu );
     if( isEditable() ) {
-      IMenuManager mmSource = new MenuManager( "Source", "source" );
+      IMenuManager mmSource = new MenuManager( UITexts.editor_actions_source, "source" ); //$NON-NLS-1$
       menu.prependToGroup( ITextEditorActionConstants.GROUP_EDIT, mmSource );
-      mmSource.add( new Separator( "comments" ) );
-      mmSource.add( new Separator( "formatting" ) );
-      mmSource.add( new Separator( "organize" ) );
-      addAction( mmSource, "comments", "Comment" );
-      addAction( mmSource, "comments", "Uncomment" );
+      mmSource.add( new Separator( "comments" ) ); //$NON-NLS-1$
+      mmSource.add( new Separator( "formatting" ) ); //$NON-NLS-1$
+      mmSource.add( new Separator( "organize" ) ); //$NON-NLS-1$
+      addAction( mmSource, "comments", "Comment" ); //$NON-NLS-1$ //$NON-NLS-2$
+      addAction( mmSource, "comments", "Uncomment" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 
@@ -149,13 +150,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
-    createTextOpAction( "ContentAssistProposal",
+    createTextOpAction( "ContentAssistProposal", //$NON-NLS-1$
         ISourceViewer.CONTENTASSIST_PROPOSALS, defId );
 
     // comment/uncomment
-    createTextOpAction( "Comment", ITextOperationTarget.PREFIX,
+    createTextOpAction( "Comment", ITextOperationTarget.PREFIX, //$NON-NLS-1$
         IActionDefinitionIds.COMMENT );
-    createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX,
+    createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX, //$NON-NLS-1$
         IActionDefinitionIds.UNCOMMENT );
   }
 
@@ -326,7 +327,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private void createTextOpAction( final String name, final int targetId,
       final String actionDefinitionId ) {
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
-    Action action = new TextOperationAction( bundle, name + ".", this, targetId );
+    Action action = new TextOperationAction( bundle, name + ".", this, targetId );  //$NON-NLS-1$
     action.setActionDefinitionId( actionDefinitionId );
     setAction( name, action );
     markAsStateDependentAction( name, true );
