@@ -49,7 +49,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 				  try {
   				  Location l=new Location(file.getLocation().toOSString(),haskellEditor.getDocument(), new Region(textSel.getOffset(),0));
   				  String s=HaskellUIPlugin.getDefault().getScionInstanceManager( file ).thingAtPoint( l );
-  				  if (s.length()>0){
+  				  if (s!=null && s.length()>0){
   				    name=s;
   				    int ix=name.indexOf( ' ' );
   				    if (ix>-1){
