@@ -47,7 +47,7 @@ public class ThingAtPointCommand extends ScionCommand {
 		JSONObject result = (JSONObject)json;
 		if (result.has("Just")) {
 			thing = result.getString("Just");
-			if (thing.equals("no info")) {
+			if (thing.equalsIgnoreCase("no info")) {
 				thing = null; // ... yeah
 			}
 		} else {

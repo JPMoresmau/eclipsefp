@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.handlers;
 
 import java.io.File;
 import java.net.URI;
+import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -15,6 +16,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,6 +49,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 				String name = textSel.getText().trim();
 				if (name.length()==0){
 				  try {
+
   				  Location l=new Location(file.getLocation().toOSString(),haskellEditor.getDocument(), new Region(textSel.getOffset(),0));
   				  String s=HaskellUIPlugin.getDefault().getScionInstanceManager( file ).thingAtPoint( l );
   				  if (s!=null && s.length()>0){
@@ -55,19 +58,37 @@ public class OpenDefinitionHandler extends AbstractHandler {
   				    if (ix>-1){
   				      name=name.substring( 0,ix );
   				    }
+  				    ix=name.lastIndexOf( '.' );
+              if (ix>-1){
+                name=name.substring( ix+1 );
+              }
   				  }
+
 				  } catch(BadLocationException ble){
 				    ble.printStackTrace();
 				  }
+
 				}
-				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
-				if (location != null) {
-					try {
-						openInEditor(haskellEditor.getEditorSite().getPage(), location,file.getProject());
-					} catch (PartInitException ex) {
-					  ex.printStackTrace();
-						// too bad
-					}
+				if (name.length()==0){
+          try {
+            IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( textSel.getOffset() );
+            String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
+            int off=textSel.getOffset()-r.getOffset();
+            name=ParserUtils.getHaskellWord(line,off);
+          } catch(BadLocationException ble){
+            ble.printStackTrace();
+          }
+				}
+				if (name.length()>0){
+  				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
+  				if (location != null) {
+  					try {
+  						openInEditor(haskellEditor.getEditorSite().getPage(), location,file.getProject());
+  					} catch (PartInitException ex) {
+  					  ex.printStackTrace();
+  						// too bad
+  					}
+  				}
 				}
 			}
 		}
