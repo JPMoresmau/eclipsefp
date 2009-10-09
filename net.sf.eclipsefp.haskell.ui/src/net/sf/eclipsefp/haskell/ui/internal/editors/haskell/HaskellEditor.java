@@ -266,8 +266,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // Reload the file on the Scion server side
     IFile file = findFile();
     if( file != null ) {
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file);
-      synchronize();
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file,new Runnable() {
+
+        public void run() {
+          synchronize();
+        }
+      });
+
     }
   }
 
@@ -337,7 +342,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   public void setFocus() {
     super.setFocus();
     IFile f=findFile();
-    HaskellUIPlugin.getDefault().getScionInstanceManager(f).backgroundTypecheckFile( f );
+
+    //HaskellUIPlugin.getDefault().getScionInstanceManager(f).backgroundTypecheckFile( f );
   }
 
   private void initMarkOccurrences() {

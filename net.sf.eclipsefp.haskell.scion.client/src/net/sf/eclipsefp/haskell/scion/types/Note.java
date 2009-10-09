@@ -57,7 +57,12 @@ public class Note {
 	}
 	
 	public void applyAsMarker(IResource resource) throws CoreException {
+		applyAsMarker(resource,Integer.MAX_VALUE);
+	}
+	
+	public void applyAsMarker(IResource resource,int maxLines) throws CoreException {
 		if (resource != null && resource.isAccessible()) {
+			
 			IMarker marker = resource.createMarker(IMarker.PROBLEM);
 	        int severity;
 	        switch (kind) {
@@ -67,7 +72,8 @@ public class Note {
 	          default: severity = IMarker.SEVERITY_INFO; break;
 	        }
 	        marker.setAttribute(IMarker.SEVERITY, severity);
-	        marker.setAttribute(IMarker.LINE_NUMBER, location.getStartLine() + 1);
+	        int line= Math.min(location.getStartLine(),maxLines);
+	        marker.setAttribute(IMarker.LINE_NUMBER, line);
 	        marker.setAttribute(IMarker.CHAR_START, location.getStartColumn());
 	        marker.setAttribute(IMarker.CHAR_END, location.getEndColumn());
 	        marker.setAttribute(IMarker.MESSAGE, message + (additionalInfo != null ? "\n" + additionalInfo : ""));

@@ -53,4 +53,5 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	public boolean hasOutput() {
 		return false;
 	}
+	
 }

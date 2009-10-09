@@ -34,9 +34,9 @@ public class Location {
 			this.fileName=f.getLocation().toOSString();
 		} 
 		JSONArray region = json.getJSONArray("region");
-		startLine = region.getInt(0) - 1;
+		startLine = region.getInt(0);
 		startColumn = region.getInt(1);
-		endLine = region.getInt(2) - 1;
+		endLine = region.getInt(2);
 		endColumn = region.getInt(3);
 	}
 	
@@ -52,10 +52,12 @@ public class Location {
 		this.fileName = fileName;
 		int startOffset = region.getOffset();
 		int endOffset = startOffset + region.getLength();
-		this.startLine = document.getLineOfOffset(startOffset);
-		this.startColumn = startOffset - document.getLineOffset(startLine);
-		this.endLine = document.getLineOfOffset(endOffset);
-		this.endColumn = endOffset - document.getLineOffset(endLine);
+		int docLine=document.getLineOfOffset(startOffset);
+		this.startLine =docLine+1 ;
+		this.startColumn = startOffset - document.getLineOffset(docLine);
+		docLine=document.getLineOfOffset(endOffset);
+		this.endLine = docLine+1;
+		this.endColumn = endOffset - document.getLineOffset(docLine);
 	}
 	
 	/**
@@ -63,7 +65,7 @@ public class Location {
 	 * that the start of this {@link Location} object represents.
 	 */
 	public int getStartOffset(IDocument document) throws BadLocationException {
-		return document.getLineOffset(startLine) + startColumn;
+		return document.getLineOffset(startLine-1) + startColumn;
 	}
 
 	/**
@@ -71,7 +73,7 @@ public class Location {
 	 * that the end of this {@link Location} object represents.
 	 */
 	public int getEndOffset(IDocument document) throws BadLocationException {
-		return document.getLineOffset(endLine) + endColumn;
+		return document.getLineOffset(endLine-1) + endColumn;
 	}
 	
 	public int getLength(IDocument document) throws BadLocationException {

@@ -11,15 +11,23 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.text.IDocument;
 
 public class CompilationResultHandler extends JobChangeAdapter {
 	private IProject project;
+	private int maxLines=Integer.MAX_VALUE;
 	
 	public CompilationResultHandler(IProject project) {
 		super();
 		this.project = project;
 	}
 
+	public CompilationResultHandler(IProject project,IDocument doc) {
+		super();
+		this.project = project;
+		this.maxLines=doc.getNumberOfLines()-1;
+	}
+	
 	public void process(ICompilerResult r){
 		CompilationResult cr=r.getCompilationResult();
 		if (cr!=null){
@@ -32,7 +40,7 @@ public class CompilationResultHandler extends JobChangeAdapter {
 				IResource res=project.findMember(s);
 				if (res!=null){
 					try {
-						n.applyAsMarker(res);
+						n.applyAsMarker(res,maxLines);
 					}	catch( CoreException ex ) {
 						ScionPlugin.logError(UITexts.error_applyMarkers, ex);
 						ex.printStackTrace();

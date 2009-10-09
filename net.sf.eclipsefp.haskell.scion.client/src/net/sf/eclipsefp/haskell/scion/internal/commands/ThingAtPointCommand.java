@@ -37,7 +37,7 @@ public class ThingAtPointCommand extends ScionCommand {
 	protected JSONObject getParams() throws JSONException {
 		JSONObject params = new JSONObject();
 		params.put("file", location.getFileName());
-		params.put("line", location.getStartLine() + 1); // Scion expects 1-based
+		params.put("line", location.getStartLine() );
 		params.put("column", location.getStartColumn());
 		return params;
 	}

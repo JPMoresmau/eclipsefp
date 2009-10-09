@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.internal.client.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ArbitraryCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
@@ -36,6 +37,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -245,10 +247,16 @@ public class ScionInstance implements IScionCommandRunner {
 		BackgroundTypecheckFileCommand command = new BackgroundTypecheckFileCommand(this, file);
 		command.runAsync();
 	}
+
+	public void backgroundTypecheckArbitrary(IFile file,IDocument doc) {
+		deleteProblems(file);
+		BackgroundTypecheckArbitraryCommand command = new BackgroundTypecheckArbitraryCommand(this, file,doc);
+		command.runAsync();
+	}
 	
 	public void loadFile(IFile fileName) {
 		loadedFiles.add(fileName);
-		reloadFile(fileName);
+		reloadFile(fileName,null);
 	}
 	
 	private void deleteProblems(IResource r){
@@ -260,18 +268,43 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 	}
 	
-	public void reloadFile(IFile file) {
+	public void reloadFile(IFile file,Runnable after) {
 		deleteProblems(file);
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
-		BackgroundTypecheckFileCommand typecheckCommand = new BackgroundTypecheckFileCommand(this, file);
-		typecheckCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
-		typecheckCommand.runAsync();
+		BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(this, file);
+		cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
+		runAsync(cmd,after);
 		//loadCommand.getSuccessors().add(typecheckCommand);
 		//loadCommand.runAsync();
 		//typecheckCommand.runAsyncAfter(loadCommand);
 	}
 	
-
+	public void reloadFile(IFile file,IDocument doc,Runnable after) {
+		deleteProblems(file);
+		
+		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
+		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc);
+		cmd.addJobChangeListener(new CompilationResultHandler(getProject(),doc));
+		runAsync(cmd,after);
+		//loadCommand.getSuccessors().add(typecheckCommand);
+		//loadCommand.runAsync();
+		//typecheckCommand.runAsyncAfter(loadCommand);
+	}
+	
+	private void runAsync(ScionCommand cmd,final Runnable after){
+		if (after!=null){
+			cmd.addJobChangeListener(new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					
+					if (event.getResult().isOK()) {
+						after.run();
+					}
+				}
+			});
+		}
+		cmd.runAsync();
+	}
 	
 	public void unloadFile(IFile fileName) {
 		// TODO TtC Scion has no command for unloading yet!
