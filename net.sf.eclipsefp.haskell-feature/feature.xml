@@ -95,7 +95,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="org.antlr"
          download-size="0"
          install-size="0"
-         version="1.108.0"/>
+         version="2.7.6"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ghccompiler"
