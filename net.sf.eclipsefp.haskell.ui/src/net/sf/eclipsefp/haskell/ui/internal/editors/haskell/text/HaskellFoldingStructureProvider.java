@@ -56,8 +56,9 @@ public class HaskellFoldingStructureProvider {
       Set<Position> regions=new HashSet<Position>();
       for (Location l:blocks){
         Position p=createPosition( l.getStartLine(), l.getEndLine() );
-        regions.add( p );
-
+        if (p!=null){
+          regions.add( p );
+        }
       }
       updateFoldingRegions( model, regions );
     }
