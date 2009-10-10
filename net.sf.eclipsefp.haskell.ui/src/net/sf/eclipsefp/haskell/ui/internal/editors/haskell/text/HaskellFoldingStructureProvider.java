@@ -68,9 +68,9 @@ public class HaskellFoldingStructureProvider {
   private Position createPosition( final int startLine, final int endLine ) {
     Position result = null;
     try {
-      int start = document.getLineOffset( startLine );
-      int end =   document.getLineOffset( endLine )
-                + document.getLineLength( endLine );
+      int start = document.getLineOffset( startLine -1 );
+      int end =   document.getLineOffset( endLine -1)
+                + document.getLineLength( endLine -1);
       result = new Position( start, end - start );
     } catch( final BadLocationException badlox ) {
       // ignored

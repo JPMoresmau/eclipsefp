@@ -104,7 +104,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
           IEditorInput fei = editor.getEditorInput();
           IDocument doc = editor.getDocumentProvider().getDocument( fei );
           try {
-            int offset = doc.getLineOffset( srcLoc.getStartLine() ) + srcLoc.getStartColumn();
+            int offset=srcLoc.getStartOffset( doc );
             int length = od.getName().length();
             try {
               editor.setHighlightRange( offset, length, true );
@@ -156,7 +156,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
 
     public LexicalSortingAction() {
       super();
-      PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "Outline.LexicalSortingAction");
+      PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "Outline.LexicalSortingAction"); //$NON-NLS-1$
       setText(UITexts.outline_sortByName);
       setImageDescriptor(HaskellUIImages.getImageDescriptor( IImageNames.ACTION_SORT ));
       setToolTipText(UITexts.outline_sortByName_tooltip);
