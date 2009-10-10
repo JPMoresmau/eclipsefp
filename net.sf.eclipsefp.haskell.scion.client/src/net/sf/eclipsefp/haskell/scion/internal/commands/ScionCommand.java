@@ -138,6 +138,7 @@ public abstract class ScionCommand extends Job {
 			Trace.trace("Exception when running command", ex);
 			IStatus status = new Status(IStatus.ERROR, ScionPlugin.getPluginId(), IStatus.ERROR, ex.getMessage(), ex);
 			ScionPlugin.logStatus(status);
+			// we do not want to return the error status, since that will pop up an error dialog
 		}
 		if(monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
@@ -276,26 +277,31 @@ public abstract class ScionCommand extends Job {
 	}
 
 	private void processResponseResult(JSONObject response) throws ScionCommandException {
-		Object result;
 		try {
-			result = response.get("result");
+			Object result = response.get("result");
+			try {
+				doProcessResult(result);
+			} catch (JSONException ex) {
+				throw new ScionCommandException(this, UITexts.commandProcessingFailed_message, ex);
+			}
 		} catch (JSONException ex) {
 			try {
 				JSONObject error = response.getJSONObject("error");
 				String name = error.getString("name");
 				String message = error.getString("message");
+				onError(ex,name,message);
 				throw new ScionCommandException(this, NLS.bind(UITexts.commandError_message, name, message), ex);
 			} catch (JSONException ex2) {
 				throw new ScionCommandException(this, UITexts.commandErrorMissing_message, ex2);
 			}
 		}
-		try {
-			doProcessResult(result);
-		} catch (JSONException ex) {
-			throw new ScionCommandException(this, UITexts.commandProcessingFailed_message, ex);
-		}
+
 	}
 
+	protected void onError(JSONException ex,String name,String message) {
+		// NOOP
+	}
+	
 	private void checkResponseId(JSONObject response) {
 		try {
 			int id = response.getInt("id");

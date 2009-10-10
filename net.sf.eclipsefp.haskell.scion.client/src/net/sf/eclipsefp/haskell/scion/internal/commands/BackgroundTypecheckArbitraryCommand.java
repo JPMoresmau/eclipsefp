@@ -20,7 +20,6 @@ public class BackgroundTypecheckArbitraryCommand extends
 			IFile file,IDocument doc) {
 		super(runner, file);
 		this.doc=doc;
-		
 	}
 
 	@Override
@@ -34,4 +33,6 @@ public class BackgroundTypecheckArbitraryCommand extends
 		params.put("contents", doc.get());
 		return params;
 	}
+	
+
 }

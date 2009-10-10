@@ -34,11 +34,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
+import org.json.JSONException;
 
 /**
  * Manages a single instance of the Scion server.
@@ -248,10 +250,18 @@ public class ScionInstance implements IScionCommandRunner {
 		command.runAsync();
 	}
 
-	public void backgroundTypecheckArbitrary(IFile file,IDocument doc) {
+	public void backgroundTypecheckArbitrary(final IFile file,IDocument doc) {
 		deleteProblems(file);
-		BackgroundTypecheckArbitraryCommand command = new BackgroundTypecheckArbitraryCommand(this, file,doc);
-		command.runAsync();
+		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc);
+		cmd.addJobChangeListener(new JobChangeAdapter(){
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (!event.getResult().isOK()){
+					ScionInstance.this.reloadFile(file, null);
+				}
+			}
+		});
+		cmd.runAsync();
 	}
 	
 	public void loadFile(IFile fileName) {
@@ -279,13 +289,34 @@ public class ScionInstance implements IScionCommandRunner {
 		//typecheckCommand.runAsyncAfter(loadCommand);
 	}
 	
-	public void reloadFile(IFile file,IDocument doc,Runnable after) {
+	public void reloadFile(final IFile file,final IDocument doc,final Runnable after) {
 		deleteProblems(file);
 		
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
-		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc);
-		cmd.addJobChangeListener(new CompilationResultHandler(getProject(),doc));
-		runAsync(cmd,after);
+		final IJobChangeListener l=new CompilationResultHandler(getProject(),doc);
+		final IJobChangeListener l2=new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					
+					if (event.getResult().isOK()) {
+						if (after!=null){
+							after.run();
+						}
+					}
+				}
+			};
+		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc){
+			@Override
+			protected void onError(JSONException ex, String name, String message) {
+				ScionPlugin.logWarning(UITexts.warning_typecheck_arbitrary_failed, ex);
+				removeJobChangeListener(l);
+				removeJobChangeListener(l2);
+				ScionInstance.this.reloadFile(file, after);
+			}
+		};
+		cmd.addJobChangeListener(l);
+		cmd.addJobChangeListener(l2);
+		cmd.runAsync();
 		//loadCommand.getSuccessors().add(typecheckCommand);
 		//loadCommand.runAsync();
 		//typecheckCommand.runAsyncAfter(loadCommand);
