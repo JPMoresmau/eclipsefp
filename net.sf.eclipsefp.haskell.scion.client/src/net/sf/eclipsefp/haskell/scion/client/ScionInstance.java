@@ -307,11 +307,12 @@ public class ScionInstance implements IScionCommandRunner {
 			};
 		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc){
 			@Override
-			protected void onError(JSONException ex, String name, String message) {
-				ScionPlugin.logWarning(UITexts.warning_typecheck_arbitrary_failed, ex);
+			protected boolean onError(JSONException ex, String name, String message) {
+				ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
 				removeJobChangeListener(l);
 				removeJobChangeListener(l2);
 				ScionInstance.this.reloadFile(file, after);
+				return true;
 			}
 		};
 		cmd.addJobChangeListener(l);

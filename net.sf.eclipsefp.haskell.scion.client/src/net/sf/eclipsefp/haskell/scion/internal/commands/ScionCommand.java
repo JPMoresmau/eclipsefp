@@ -289,8 +289,9 @@ public abstract class ScionCommand extends Job {
 				JSONObject error = response.getJSONObject("error");
 				String name = error.getString("name");
 				String message = error.getString("message");
-				onError(ex,name,message);
-				throw new ScionCommandException(this, NLS.bind(UITexts.commandError_message, name, message), ex);
+				if (!onError(ex,name,message)){
+					throw new ScionCommandException(this, NLS.bind(UITexts.commandError_message, name, message), ex);
+				}
 			} catch (JSONException ex2) {
 				throw new ScionCommandException(this, UITexts.commandErrorMissing_message, ex2);
 			}
@@ -298,8 +299,8 @@ public abstract class ScionCommand extends Job {
 
 	}
 
-	protected void onError(JSONException ex,String name,String message) {
-		// NOOP
+	protected boolean onError(JSONException ex,String name,String message) {
+		return false;
 	}
 	
 	private void checkResponseId(JSONObject response) {
