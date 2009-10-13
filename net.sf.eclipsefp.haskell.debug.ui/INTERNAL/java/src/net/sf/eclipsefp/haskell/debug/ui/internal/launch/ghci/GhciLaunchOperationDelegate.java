@@ -8,12 +8,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.CompilerParams;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
@@ -31,7 +32,7 @@ import org.eclipse.core.runtime.Platform;
 public class GhciLaunchOperationDelegate
        implements IInteractiveLaunchOperationDelegate {
 
-  private final CompilerParams compilerParams = new CompilerParams();
+  //private final CompilerParams compilerParams = new CompilerParams();
 
   // interface methods of IInteractiveLaunchOperationDelegate
   ///////////////////////////////////////////////////////////
@@ -42,14 +43,25 @@ public class GhciLaunchOperationDelegate
 
     cmdLine.add( "--interactive" ); //$NON-NLS-1$
 
-    String libPath = Util.constructLibPath( hsProject );
+    String libPath = Util.constructLibPath( hsProject.getResource(),selectedFiles );
     if( !"".equals( libPath ) ) { //$NON-NLS-1$
       cmdLine.add(libPath);
     }
-    if( isPrefSet( IGhcPreferenceNames.GHCI_USES_GHC_OPTIONS ) ) {
+    /*if( isPrefSet( IGhcPreferenceNames.GHCI_USES_GHC_OPTIONS ) ) {
       cmdLine.addAll( compilerParams.construct() );
+    }*/
+    for (String s:ResourceUtil.getApplicableListProperty( selectedFiles, CabalSyntax.FIELD_EXTENSIONS )){
+      if (s.length()>0){
+        cmdLine.add("-X"+s); //$NON-NLS-1$
+      }
     }
-    collectImportDirs( hsProject, cmdLine );
+
+    cmdLine.addAll(ResourceUtil.getApplicableListProperty( selectedFiles, CabalSyntax.FIELD_GHC_OPTIONS ));
+
+    cmdLine.addAll(ResourceUtil.getApplicableListProperty( selectedFiles, CabalSyntax.FIELD_GHC_PROF_OPTIONS ));
+
+
+    collectImportDirs( hsProject, cmdLine ,selectedFiles );
     addAll( cmdLine, selectedFiles );
     String[] result = new String[ cmdLine.size() ];
     cmdLine.toArray( result );
@@ -69,12 +81,12 @@ public class GhciLaunchOperationDelegate
   //////////////////
 
   private void collectImportDirs( final IHaskellProject hsProject,
-                                  final List<String> cmdLine ) {
+                                  final List<String> cmdLine, final IFile[] selectedFiles) {
     if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
       try {
         Set<IHaskellProject> visited = new HashSet<IHaskellProject>();
         visited.add( hsProject );
-        collectImportDirsRec( hsProject, cmdLine, visited );
+        collectImportDirsRec( hsProject, cmdLine, visited,selectedFiles );
       } catch( final CoreException cex ) {
         HaskellCorePlugin.log( cex );
       }
@@ -84,9 +96,9 @@ public class GhciLaunchOperationDelegate
   private void collectImportDirsRec(
       final IHaskellProject hsProject,
       final List<String> cmdLine,
-      final Set<IHaskellProject> visited ) throws CoreException {
-    Set<IPath> sourcePaths = hsProject.getSourcePaths();
-    for( IPath sourcePath: sourcePaths ) {
+      final Set<IHaskellProject> visited,final IFile[] selectedFiles ) throws CoreException {
+    /*Set<IPath> sourcePaths = hsProject.getSourcePaths();*/
+    for( String sourcePath: ResourceUtil.getSourceDirs( selectedFiles ) ) {
       IFolder folder = hsProject.getResource().getFolder( sourcePath );
       // getRawLocation gives us the real FS path even if the resource is linked
       IPath loc = new Path( folder.getLocationURI().getPath() );
@@ -97,7 +109,7 @@ public class GhciLaunchOperationDelegate
       if( ref.hasNature( HaskellNature.NATURE_ID ) ) {
         IHaskellProject refHsProject = HaskellProjectManager.get( ref );
         if( !visited.contains( refHsProject ) ) {
-          collectImportDirsRec( refHsProject, cmdLine, visited );
+          collectImportDirsRec( refHsProject, cmdLine, visited,selectedFiles );
           visited.add( refHsProject );
         }
       }

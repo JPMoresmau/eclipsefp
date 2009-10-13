@@ -120,7 +120,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     List<String> cmdLine = new ArrayList<String>();
     // command and special options
     cmdLine.add( Util.getCompilerExecutable() );
-    String libPath = Util.constructLibPath( haskellProject );
+    String libPath = Util.constructLibPath( project ,file);
     if( !libPath.equals( "" ) ) { //$NON-NLS-1$
       cmdLine.add( libPath );
     }

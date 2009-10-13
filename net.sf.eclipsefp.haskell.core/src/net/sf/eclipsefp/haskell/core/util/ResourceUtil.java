@@ -6,13 +6,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
@@ -241,9 +246,85 @@ public class ResourceUtil {
       }
 
     } catch( CoreException ex ) {
-      HaskellCorePlugin.log( "getSourceContainer:"+resource, ex );
+      HaskellCorePlugin.log( "getSourceContainer:"+resource, ex ); //$NON-NLS-1$
     }
     return null;
+  }
+
+  public static Collection<String> getImportPackages(final IFile[] files){
+    if (files==null || files.length==0){
+      return Collections.emptySet();
+    }
+    Collection<String> ret=new HashSet<String>();
+
+    Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
+
+    for (PackageDescriptionStanza pds:applicable){
+      ret.addAll(pds.getDependentPackages());
+    }
+
+    return ret;
+  }
+
+  public static Collection<String> getSourceDirs(final IFile[] files){
+    if (files==null || files.length==0){
+      return Collections.emptySet();
+    }
+    Collection<String> ret=new HashSet<String>();
+
+    Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
+
+    for (PackageDescriptionStanza pds:applicable){
+      ret.addAll(pds.getSourceDirs());
+    }
+
+    return ret;
+  }
+
+  public static Collection<String> getApplicableListProperty(final IFile[] files,final CabalSyntax field){
+    if (files==null || files.length==0){
+      return Collections.emptySet();
+    }
+    Collection<String> ret=new HashSet<String>();
+
+    Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
+
+    for (PackageDescriptionStanza pds:applicable){
+      ret.addAll( PackageDescriptionLoader.parseList( pds.getProperties().get( field ) ) );
+    }
+
+    return ret;
+  }
+
+  public static Set<PackageDescriptionStanza> getApplicableStanzas(final IFile[] files){
+    if (files==null || files.length==0){
+      return Collections.emptySet();
+    }
+    IProject project = files[0].getProject();
+    try {
+      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+
+        IFile f=ScionInstance.getCabalFile( project );
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
+
+        Set<PackageDescriptionStanza> applicable=new HashSet<PackageDescriptionStanza>();
+
+        for (IFile fi:files){
+          for (String src:stzs.keySet()){
+            IFolder fldr=project.getFolder( src );
+            if (fi.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
+              applicable.addAll(stzs.get(src));
+            }
+          }
+        }
+        return applicable;
+      }
+
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "getImportLibraries:", ex ); //$NON-NLS-1$
+    }
+    return Collections.emptySet();
   }
 
   public static IPath getSourceRelativePath( final IResource resource ) {
