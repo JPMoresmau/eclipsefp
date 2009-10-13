@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -252,4 +253,39 @@ public class PackageDescriptionStanza {
            + endLine
            + ")"; //$NON-NLS-1$
   }
+
+  public Collection<String> getDependentPackages(){
+    Collection<String> ret=new HashSet<String>();
+    String val=getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS);
+    if (val!=null && val.length()>0){
+      List<String> ls=PackageDescriptionLoader.parseList( val,"," ); //$NON-NLS-1$
+      for (String s:ls){
+        int a=0;
+        for (;a<s.length();a++){
+          char c=s.charAt( a );
+          if (c == '=' || c== '>' || c== '<'){
+            break;
+          }
+        }
+        s=s.substring(0,a).trim();
+        ret.add( s);
+      }
+    }
+    return ret;
+  }
+
+  public Collection<String> getSourceDirs(){
+    Collection<String> ret=new HashSet<String>();
+    String val=getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS);
+    if (val!=null && val.length()>0){
+      ret.addAll(PackageDescriptionLoader.parseList( val));
+    }
+    // backward compatibility
+    val=getProperties().get( "hs-source-dir"); //$NON-NLS-1$
+    if (val!=null && val.length()>0){
+      ret.addAll(PackageDescriptionLoader.parseList( val));
+    }
+    return ret;
+   }
+
 }

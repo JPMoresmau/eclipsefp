@@ -54,11 +54,11 @@ public class PackageDescriptionLoader {
     return result;
   }
 
-  public static List<String> parseList(final String value){
+  public static List<String> parseList(final String value,final String seps){
     List<String> ret=new LinkedList<String>();
 
     if (value!=null && value.length()>0){
-      StringTokenizer st=new StringTokenizer( value,", "+System.getProperty( "line.separator" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+      StringTokenizer st=new StringTokenizer( value,seps );
       while (st.hasMoreTokens()){
         String t=st.nextToken();
         if (t.length()>0){
@@ -67,6 +67,11 @@ public class PackageDescriptionLoader {
       }
     }
     return ret;
+  }
+
+  public static List<String> parseList(final String value){
+    return parseList(value, ", "+System.getProperty( "line.separator" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+
   }
 
 
@@ -259,7 +264,7 @@ public class PackageDescriptionLoader {
     }
 
     private static boolean isComment( final String line ) {
-      return line.startsWith( "--" ); //$NON-NLS-1$
+      return line.trim().startsWith( "--" ); //$NON-NLS-1$
     }
 
     private static String getSectionHeader(final String line ) {

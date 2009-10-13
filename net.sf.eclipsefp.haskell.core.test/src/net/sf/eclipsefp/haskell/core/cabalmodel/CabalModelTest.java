@@ -2,8 +2,12 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import junit.framework.TestCase;
 
 
@@ -406,4 +410,39 @@ public class CabalModelTest extends TestCase {
     assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+System.getProperty( "line.separator" ),rvp.getRealValue());
 
   }
+
+  public void testDependantPackages(){
+    String content3=getContent( "scion.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza pds=pd.getStanzas().get( 3 );
+    assertEquals(CabalSyntax.SECTION_LIBRARY,pds.getType());
+    Collection<String> ss=pds.getDependentPackages();
+    Set<String> expected=new HashSet<String>();
+    expected.addAll( Arrays.asList( "base"  ,
+        "Cabal",
+        "containers",
+        "directory",
+        "filepath",
+        "ghc",
+        "ghc-paths",
+        "ghc-syb",
+        "hslogger",
+        "json",
+        "multiset",
+        "time",
+        "uniplate",
+        "list-tries",
+        "binary",
+        "array" ) );
+
+    assertEquals(expected,ss);
+
+    expected.remove("uniplate");
+    pds=pd.getStanzas().get( 4 );
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pds.getType());
+    ss=pds.getDependentPackages();
+    assertEquals(expected,ss);
+  }
+
+
 }
