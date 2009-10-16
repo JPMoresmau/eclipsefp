@@ -25,7 +25,7 @@ public class CompilationResultHandler extends JobChangeAdapter {
 	public CompilationResultHandler(IProject project,IDocument doc) {
 		super();
 		this.project = project;
-		this.maxLines=doc.getNumberOfLines()-1;
+		this.maxLines=doc.getNumberOfLines();
 	}
 	
 	public void process(ICompilerResult r){
