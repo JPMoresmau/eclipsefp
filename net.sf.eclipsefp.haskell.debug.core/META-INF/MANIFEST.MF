@@ -6,7 +6,8 @@ Bundle-Version: 1.108.0
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore
 Bundle-Vendor: %bundleVendor
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.debug.core
+ org.eclipse.debug.core,
+ net.sf.eclipsefp.haskell.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin

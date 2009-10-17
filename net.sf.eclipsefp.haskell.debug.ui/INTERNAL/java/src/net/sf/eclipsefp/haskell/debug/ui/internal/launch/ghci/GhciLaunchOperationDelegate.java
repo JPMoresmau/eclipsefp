@@ -43,7 +43,7 @@ public class GhciLaunchOperationDelegate
 
     cmdLine.add( "--interactive" ); //$NON-NLS-1$
 
-    String libPath = Util.constructLibPath( hsProject.getResource(),selectedFiles );
+    String libPath = Util.constructLibPath( selectedFiles );
     if( !"".equals( libPath ) ) { //$NON-NLS-1$
       cmdLine.add(libPath);
     }
@@ -125,5 +125,9 @@ public class GhciLaunchOperationDelegate
       String path = selectedFiles[ i ].getLocation().toOSString();
       cmdLine.add( "\"" + path + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
+  }
+
+  public String getReloadCommand() {
+    return ":r"; //$NON-NLS-1$
   }
 }

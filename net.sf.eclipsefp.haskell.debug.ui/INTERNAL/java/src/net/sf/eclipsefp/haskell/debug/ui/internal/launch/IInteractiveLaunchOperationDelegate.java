@@ -26,4 +26,10 @@ public interface IInteractiveLaunchOperationDelegate {
   /** <p>creates the command line arguments (list the modules to be loaded,
     * library paths etc.).</p> */
   String[] createArguments( IHaskellProject hsProject, IFile[] files );
+
+  /**
+   * get the reload command or null if not supported
+   * @return the reload command, or null
+   */
+  String getReloadCommand();
 }

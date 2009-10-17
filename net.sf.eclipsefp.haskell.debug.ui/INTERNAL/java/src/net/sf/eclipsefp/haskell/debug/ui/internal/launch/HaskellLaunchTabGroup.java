@@ -22,6 +22,7 @@ public class HaskellLaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
   public void createTabs( final ILaunchConfigurationDialog dialog,
                           final String mode ) {
     setTabs( new ILaunchConfigurationTab[] { new HaskellArgumentsTab(),
+                                             new HaskellAutomationTab(),
                                              new CommonTab() } );
   }
 }

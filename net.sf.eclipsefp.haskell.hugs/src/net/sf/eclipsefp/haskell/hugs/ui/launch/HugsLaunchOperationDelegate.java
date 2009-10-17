@@ -3,13 +3,11 @@ package net.sf.eclipsefp.haskell.hugs.ui.launch;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.hugs.HugsPlugin;
 import net.sf.eclipsefp.haskell.hugs.core.Util;
-
 import org.eclipse.core.resources.IFile;
 
 /** <p>implements a delegate for launching HUGS.</p>
@@ -51,4 +49,9 @@ public class HugsLaunchOperationDelegate
   public String getExecutable() {
     return Util.getCompilerExecutable();
   }
+
+  public String getReloadCommand() {
+    return ":reload";
+  }
+
 }

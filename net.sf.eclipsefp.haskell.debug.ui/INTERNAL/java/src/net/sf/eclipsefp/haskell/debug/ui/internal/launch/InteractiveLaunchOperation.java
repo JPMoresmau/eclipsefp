@@ -9,16 +9,21 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
+import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.osgi.util.NLS;
 
 
 /** <p>encapsulates the work involved in finding a launch configuration
@@ -91,8 +96,13 @@ class InteractiveLaunchOperation extends LaunchOperation {
                                                     final IFile[] files )
                                                           throws CoreException {
     ILaunchConfigurationType configType = getConfigType();
-    String id = createConfigId( resources[ 0 ].toString() );
+    IContainer src=ResourceUtil.getSourceContainer( resources[0] );
+    IPath path=ResourceUtil.getSourceDirRelativeName( resources[0] );
+    path=path.removeFileExtension();
+    String s=NLS.bind( UITexts.configuration_name, new Object[]{path.toPortableString() ,resources[0].getProject().getName(),src!=null?src.getProjectRelativePath().toPortableString():""}); //$NON-NLS-1$
+    String id = createConfigId(s);
     IProject project = resources[ 0 ].getProject();
+
 
     ILaunchConfigurationWorkingCopy wc = configType.newInstance( null, id );
     String exePath = delegate.getExecutable();
@@ -101,11 +111,11 @@ class InteractiveLaunchOperation extends LaunchOperation {
     wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, projectLocation );
     wc.setAttribute( ILaunchAttributes.ARGUMENTS,
                      getArguments( project, files ) );
-
+    wc.setAttribute(ILaunchAttributes.SYNC_STREAMS,true);
     String projectName = ILaunchAttributes.PROJECT_NAME;
     wc.setAttribute( projectName, project.getName() );
     wc.setAttribute( FIRST_SELECTED_RESOURCE, resources[ 0 ].getName() );
-
+    wc.setAttribute( ILaunchAttributes.RELOAD_COMMAND, delegate.getReloadCommand() );
     return wc.doSave();
   }
 

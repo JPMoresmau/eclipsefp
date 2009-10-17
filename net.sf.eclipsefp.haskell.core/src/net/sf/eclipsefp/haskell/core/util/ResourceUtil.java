@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -214,7 +213,7 @@ public class ResourceUtil {
       }
 
     } catch( CoreException ex ) {
-      HaskellCorePlugin.log( "isSourceFolder:", ex );
+      HaskellCorePlugin.log( "isSourceFolder:", ex ); //$NON-NLS-1$
     }
     return false;
   }
@@ -345,8 +344,8 @@ public class ResourceUtil {
       IPath sourcePath = sourceContainer.getProjectRelativePath();
       IPath resourcePath = resourceContainer.getProjectRelativePath();
       if( sourcePath.isPrefixOf( resourcePath ) ) {
-      int count = sourcePath.segmentCount();
-      result = resourcePath.removeFirstSegments( count );
+        int count = sourcePath.segmentCount();
+        result = resourcePath.removeFirstSegments( count );
       }
       return result;
     }
@@ -364,25 +363,25 @@ public class ResourceUtil {
 	  * @param file  a workspace file, must not be <code>null</code>
 	  * @param hp    a haskell project, must not be <code>null</code>
 	  */
-	public static String getSourceDirRelativeName( final IFile file,
-                                                 final IHaskellProject hp ) {
-    if( file == null || hp == null ) {
+	public static IPath getSourceDirRelativeName( final IResource file ) {
+    if( file == null  ) {
       throw new IllegalArgumentException();
     }
     IPath projectRelPath = file.getProjectRelativePath();
-    String result = null;
-	  Iterator<IPath> it = hp.getSourcePaths().iterator();
-	  while( result == null && it.hasNext() ) {
-	    IPath sourcePath = it.next();
-	    if( sourcePath.isPrefixOf( projectRelPath ) ) {
-	      int num = projectRelPath.matchingFirstSegments( sourcePath );
-	      result = projectRelPath.removeFirstSegments( num ).toOSString();
-	    }
-	  }
+    IContainer sourceContainer = getSourceContainer( file );
+    IPath result = null;
+    if( sourceContainer != null ) {
+      IPath sourcePath = sourceContainer.getProjectRelativePath();
+      if( sourcePath.isPrefixOf( projectRelPath ) ) {
+        int count = sourcePath.segmentCount();
+        result = projectRelPath.removeFirstSegments( count );
+      }
+    }
+
     if( result == null ) {
       String msg =   file.getFullPath()
                    + " is in no source folder in project " //$NON-NLS-1$
-                   + hp.getResource().getName();
+                   + file.getProject().getName();
       throw new IllegalArgumentException( msg );
     }
     return result;

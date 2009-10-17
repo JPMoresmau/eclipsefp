@@ -47,6 +47,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   private Button btnWorkingDirWorkspace;
 
   private Button runBackgroundButton;
+  private Button syncStreamsButton;
   private Text argumentField;
 
   private SelectionAdapter selectionAdapter;
@@ -75,18 +76,21 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     createArgumentComponent( mainComposite );
     createVerticalSpacer( mainComposite, 2 );
     createRunBackgroundComponent( mainComposite );
+    createSyncStreamsComponent( mainComposite );
   }
 
   public void setDefaults( final ILaunchConfigurationWorkingCopy configWc ) {
     configWc.setAttribute( ILaunchAttributes.RUN_IN_BACKGROUND, true );
     configWc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, ILaunchAttributes.EMPTY );
     configWc.setAttribute( ILaunchAttributes.ARGUMENTS, ILaunchAttributes.EMPTY );
+    configWc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
   }
 
   public void initializeFrom( final ILaunchConfiguration configuration ) {
     updateWorkingDirectory( configuration );
     updateArgument( configuration );
     updateRunBackground( configuration );
+    updateSyncStreams ( configuration );
   }
 
   public void performApply( final ILaunchConfigurationWorkingCopy configWc ) {
@@ -103,6 +107,11 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
                   configWc,
                   runBackgroundButton.getSelection(),
                   true );
+
+    setAttribute( ILaunchAttributes.SYNC_STREAMS,
+        configWc,
+        syncStreamsButton.getSelection(),
+        true );
 
     String arguments = argumentField.getText().trim();
     if( arguments.length() == 0 ) {
@@ -232,6 +241,15 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     runBackgroundButton.addSelectionListener( getSelectionAdapter() );
   }
 
+  private void createSyncStreamsComponent( final Composite parent ) {
+    syncStreamsButton = new Button( parent, SWT.CHECK );
+    syncStreamsButton.setText( UITexts.haskellArgumentsTab_syncStreams );
+    GridData data = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
+    data.horizontalSpan = 2;
+    syncStreamsButton.setLayoutData( data );
+    syncStreamsButton.setFont( parent.getFont() );
+    syncStreamsButton.addSelectionListener( getSelectionAdapter() );
+  }
 
   // helping methods
   //////////////////
@@ -268,6 +286,17 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
     }
     runBackgroundButton.setSelection( runInBackground );
+  }
+
+  private void updateSyncStreams( final ILaunchConfiguration config ) {
+    boolean syncStreams = true;
+    try {
+      syncStreams
+        = config.getAttribute( ILaunchAttributes.SYNC_STREAMS, true );
+    } catch( CoreException ce ) {
+      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+    }
+    syncStreamsButton.setSelection( syncStreams );
   }
 
   /** validates the content of the working directory field. */

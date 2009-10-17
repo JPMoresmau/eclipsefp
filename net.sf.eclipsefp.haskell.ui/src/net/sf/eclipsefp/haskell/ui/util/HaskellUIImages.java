@@ -28,80 +28,81 @@ public class HaskellUIImages implements IImageNames {
   private static URL baseUrl;
 
   static {
-    String pathSuffix = "icons/";
+    String pathSuffix = "icons/";  //$NON-NLS-1$
     try {
       Bundle bundle = HaskellUIPlugin.getDefault().getBundle();
-      baseUrl = new URL( bundle.getEntry( "/" ), pathSuffix );
+      baseUrl = new URL( bundle.getEntry( "/" ), pathSuffix ); //$NON-NLS-1$
     } catch( MalformedURLException e ) {
       // do nothing
     }
   }
 
-  private final static String OBJECT = "obj16/";   // basic colors - size 16x16
-  private final static String OVR    = "ovr16/";   // basic colors - size 7x8
-  private final static String ACTION = "clcl16/";  // basic colors - size 16x16
-  private final static String WIZARD = "wizban/";  // wizard banners
-  private final static String ACTION_E = "elcl16/";
+  private final static String OBJECT = "obj16/";   // basic colors - size 16x16 //$NON-NLS-1$
+  private final static String OVR    = "ovr16/";   // basic colors - size 7x8 //$NON-NLS-1$
+  private final static String ACTION = "clcl16/";  // basic colors - size 16x16 //$NON-NLS-1$
+  private final static String WIZARD = "wizban/";  // wizard banners //$NON-NLS-1$
+  private final static String ACTION_E = "elcl16/"; //$NON-NLS-1$
 
 
   private static void declareImages() {
     // objects
-    declare( LAUNCH_TAB_ARGUMENTS, OBJECT + "arguments_tab.gif" );
-    declare( IMPORT_LIBRARY,       OBJECT + "library.gif" );
-    declare( SOURCE_FOLDER,        OBJECT + "srcfolder_obj.gif" );
-    declare( SOURCE_FILE,          OBJECT + "hsfile_obj.gif" );
-    declare( LITERATE_SOURCE_FILE, OBJECT + "lhsfile_obj.gif" );
-    declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" );
-    declare( HASKELL_PROJECT,      OBJECT + "hsproject.gif" );
+    declare( LAUNCH_TAB_ARGUMENTS, OBJECT + "arguments_tab.gif" ); //$NON-NLS-1$
+    declare( LAUNCH_TAB_AUTOMATION, OBJECT + "automation_tab.gif" ); //$NON-NLS-1$
+    declare( IMPORT_LIBRARY,       OBJECT + "library.gif" ); //$NON-NLS-1$
+    declare( SOURCE_FOLDER,        OBJECT + "srcfolder_obj.gif" ); //$NON-NLS-1$
+    declare( SOURCE_FILE,          OBJECT + "hsfile_obj.gif" ); //$NON-NLS-1$
+    declare( LITERATE_SOURCE_FILE, OBJECT + "lhsfile_obj.gif" ); //$NON-NLS-1$
+    declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" ); //$NON-NLS-1$
+    declare( HASKELL_PROJECT,      OBJECT + "hsproject.gif" ); //$NON-NLS-1$
     declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
     declare( LIBRARY_STANZA,    OBJECT + "librarystanza.gif" ); //$NON-NLS-1$
     declare( GENERAL_STANZA,    OBJECT + "generalstanza.gif" ); //$NON-NLS-1$
     declare( TEMPLATE,          OBJECT + "template.gif" ); //$NON-NLS-1$
 
     // decorators
-    declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" );
-    declare( ERROR_OVERLAY,        OVR + "error_co.gif");
-    declare( WARNING_OVERLAY,      OVR + "warning_co.gif");
+    declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" ); //$NON-NLS-1$
+    declare( ERROR_OVERLAY,        OVR + "error_co.gif"); //$NON-NLS-1$
+    declare( WARNING_OVERLAY,      OVR + "warning_co.gif"); //$NON-NLS-1$
 
     // views
-    declare( DEP_VIEW_IMPORTS,     ACTION + "mdep_imports.gif" );
-    declare( DEP_VIEW_IMPORTEDBY,  ACTION + "mdep_importedby.gif" );
-    declare( MB_VIEW_FLAT,         ACTION + "mb_flat.gif" );
-    declare( MB_VIEW_HIERARCHICAL, ACTION + "mb_hierarchical.gif" );
-    declare( MB_VIEW_FILTER,       ACTION + "mb_filter.gif" );
-    declare( CO_VIEW_CLEAR,        ACTION + "co_clear.gif" );
+    declare( DEP_VIEW_IMPORTS,     ACTION + "mdep_imports.gif" ); //$NON-NLS-1$
+    declare( DEP_VIEW_IMPORTEDBY,  ACTION + "mdep_importedby.gif" ); //$NON-NLS-1$
+    declare( MB_VIEW_FLAT,         ACTION + "mb_flat.gif" ); //$NON-NLS-1$
+    declare( MB_VIEW_HIERARCHICAL, ACTION + "mb_hierarchical.gif" ); //$NON-NLS-1$
+    declare( MB_VIEW_FILTER,       ACTION + "mb_filter.gif" ); //$NON-NLS-1$
+    declare( CO_VIEW_CLEAR,        ACTION + "co_clear.gif" ); //$NON-NLS-1$
 
     // language element representation
-    declare( HS_NAME,               OBJECT + "hsname.gif" );
-    declare( MODULE,                OBJECT + "module.gif" );
-    declare( IMPORT,                OBJECT + "import.gif" );
-    declare( IMPORT_GROUP,          OBJECT + "importgroup.gif" );
-    declare( EXPORT_GROUP,          OBJECT + "exportgroup.gif" );
-    declare( EXPORT_MODULE_CONTENT, OBJECT + "exportmodulecontent.gif" );
-    declare( EXPORT_SPECIFICATION,  OBJECT + "exportspecification.gif" );
-    declare( PACKAGE,               OBJECT + "package.gif" );
-    declare( PACKAGE_CONF,          OBJECT + "packageconf.gif" );
-    declare( PACKAGE_FOLDER,        OBJECT + "packagefolder.gif" );
-    declare( HIDDEN_PACKAGE,        OBJECT + "hiddenpackage.gif" );
-    declare( FUNCTION_BINDING,      OBJECT + "functionbinding.gif" );
-    declare( PATTERN_BINDING,       OBJECT + "patternbinding.gif" );
-    declare( DATA_DECL,             OBJECT + "datadecl.gif" );
-    declare( TYPE_DECL,             OBJECT + "typedecl.gif" );
-    declare( NEWTYPE_DECL,          OBJECT + "typedecl.gif" );
-    declare( TYPE_SIGNATURE,        OBJECT + "typesig.gif" );
-    declare( DEFAULT_DECL,          OBJECT + "defaultdecl.gif" );
-    declare( CLASS_DECL,            OBJECT + "classdecl.gif" );
-    declare( INSTANCE_DECL,         OBJECT + "instancedecl.gif" );
-    declare( INFIXNONE_DECL,        OBJECT + "infixnone.gif" );
-    declare( INFIXL_DECL,           OBJECT + "infixl.gif" );
-    declare( INFIXR_DECL,           OBJECT + "infixr.gif" );
-    declare( FIELD_DECL,            OBJECT + "field_public_obj.gif")  ;
+    declare( HS_NAME,               OBJECT + "hsname.gif" ); //$NON-NLS-1$
+    declare( MODULE,                OBJECT + "module.gif" ); //$NON-NLS-1$
+    declare( IMPORT,                OBJECT + "import.gif" ); //$NON-NLS-1$
+    declare( IMPORT_GROUP,          OBJECT + "importgroup.gif" ); //$NON-NLS-1$
+    declare( EXPORT_GROUP,          OBJECT + "exportgroup.gif" ); //$NON-NLS-1$
+    declare( EXPORT_MODULE_CONTENT, OBJECT + "exportmodulecontent.gif" ); //$NON-NLS-1$
+    declare( EXPORT_SPECIFICATION,  OBJECT + "exportspecification.gif" ); //$NON-NLS-1$
+    declare( PACKAGE,               OBJECT + "package.gif" ); //$NON-NLS-1$
+    declare( PACKAGE_CONF,          OBJECT + "packageconf.gif" ); //$NON-NLS-1$
+    declare( PACKAGE_FOLDER,        OBJECT + "packagefolder.gif" ); //$NON-NLS-1$
+    declare( HIDDEN_PACKAGE,        OBJECT + "hiddenpackage.gif" ); //$NON-NLS-1$
+    declare( FUNCTION_BINDING,      OBJECT + "functionbinding.gif" ); //$NON-NLS-1$
+    declare( PATTERN_BINDING,       OBJECT + "patternbinding.gif" ); //$NON-NLS-1$
+    declare( DATA_DECL,             OBJECT + "datadecl.gif" ); //$NON-NLS-1$
+    declare( TYPE_DECL,             OBJECT + "typedecl.gif" ); //$NON-NLS-1$
+    declare( NEWTYPE_DECL,          OBJECT + "typedecl.gif" ); //$NON-NLS-1$
+    declare( TYPE_SIGNATURE,        OBJECT + "typesig.gif" ); //$NON-NLS-1$
+    declare( DEFAULT_DECL,          OBJECT + "defaultdecl.gif" ); //$NON-NLS-1$
+    declare( CLASS_DECL,            OBJECT + "classdecl.gif" ); //$NON-NLS-1$
+    declare( INSTANCE_DECL,         OBJECT + "instancedecl.gif" ); //$NON-NLS-1$
+    declare( INFIXNONE_DECL,        OBJECT + "infixnone.gif" ); //$NON-NLS-1$
+    declare( INFIXL_DECL,           OBJECT + "infixl.gif" ); //$NON-NLS-1$
+    declare( INFIXR_DECL,           OBJECT + "infixr.gif" ); //$NON-NLS-1$
+    declare( FIELD_DECL,            OBJECT + "field_public_obj.gif")  ; //$NON-NLS-1$
     // wizard banners
-    declare( NEW_PROJECT, WIZARD + "newhprj_wiz.png" );
-    declare( NEW_MODULE, WIZARD  + "newmodule.png" );
-    declare( IMPORT_CABAL_PACKAGE, WIZARD + "impcprj_wiz.png" );
+    declare( NEW_PROJECT, WIZARD + "newhprj_wiz.png" ); //$NON-NLS-1$
+    declare( NEW_MODULE, WIZARD  + "newmodule.png" ); //$NON-NLS-1$
+    declare( IMPORT_CABAL_PACKAGE, WIZARD + "impcprj_wiz.png" ); //$NON-NLS-1$
 
-    declare(ACTION_SORT,ACTION_E+"alphab_sort_co.png");
+    declare(ACTION_SORT,ACTION_E+"alphab_sort_co.png"); //$NON-NLS-1$
   }
 
   private final static void declare( final String key,

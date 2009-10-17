@@ -13,7 +13,10 @@ public final class CoreTexts extends NLS {
 
   // message fields
   public static String haskellLaunchDelegate_noExe;
+  public static String haskellLaunchDelegate_noProcess;
 
+  public static String commandonchange_failed;
+  public static String console_command_failed;
 
   private static final String BUNDLE_NAME
     = CoreTexts.class.getPackage().getName() + ".coretexts"; //$NON-NLS-1$

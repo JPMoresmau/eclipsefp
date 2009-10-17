@@ -12,51 +12,52 @@ public interface IImageNames {
   // prefix all constants with the plugin id
   String ID = HaskellUIPlugin.getPluginId();
 
-  String LAUNCH_TAB_ARGUMENTS = ID + ".LAUNCH_TAB_ARGUMENTS";
+  String LAUNCH_TAB_ARGUMENTS = ID + ".LAUNCH_TAB_ARGUMENTS"; //$NON-NLS-1$
+  String LAUNCH_TAB_AUTOMATION = ID + ".LAUNCH_TAB_AUTOMATION"; //$NON-NLS-1$
 
-  String SRC_FOLDER_DECORATOR = ID + ".SRC_FOLDER_DECORATOR";
+  String SRC_FOLDER_DECORATOR = ID + ".SRC_FOLDER_DECORATOR"; //$NON-NLS-1$
 
-  String DEP_VIEW_IMPORTS     = ID + ".DEP_VIEW_IMPORTS";
-  String DEP_VIEW_IMPORTEDBY  = ID + ".DEP_VIEW_IMPORTEDBY";
+  String DEP_VIEW_IMPORTS     = ID + ".DEP_VIEW_IMPORTS"; //$NON-NLS-1$
+  String DEP_VIEW_IMPORTEDBY  = ID + ".DEP_VIEW_IMPORTEDBY"; //$NON-NLS-1$
 
-  String MB_VIEW_FLAT         = ID + ".MB_VIEW_FLAT";
-  String MB_VIEW_HIERARCHICAL = ID + ".MB_VIEW_HIERARCHICAL";
-  String MB_VIEW_FILTER       = ID + ".MB_VIEW_FILTER";
-  String CO_VIEW_CLEAR        = ID + ".CO_VIEW_CLEAR";
+  String MB_VIEW_FLAT         = ID + ".MB_VIEW_FLAT"; //$NON-NLS-1$
+  String MB_VIEW_HIERARCHICAL = ID + ".MB_VIEW_HIERARCHICAL"; //$NON-NLS-1$
+  String MB_VIEW_FILTER       = ID + ".MB_VIEW_FILTER"; //$NON-NLS-1$
+  String CO_VIEW_CLEAR        = ID + ".CO_VIEW_CLEAR"; //$NON-NLS-1$
 
   // Haskell project elements
-  String HASKELL_PROJECT      = ID + ".HASKELL_PROJECT";
-  String SOURCE_FOLDER        = ID + ".SOURCE_FOLDER";
-  String SOURCE_FILE          = ID + ".SOURCE_FILE";
-  String LITERATE_SOURCE_FILE = ID + ".LITERATE_SOURCE_FILE";
-  String IMPORT_LIBRARY       = ID + ".IMPORT_LIBRARY";
-  String PROJECT_EXECUTABLE   = ID + ".PROJECT_EXECUTABLE";
+  String HASKELL_PROJECT      = ID + ".HASKELL_PROJECT"; //$NON-NLS-1$
+  String SOURCE_FOLDER        = ID + ".SOURCE_FOLDER"; //$NON-NLS-1$
+  String SOURCE_FILE          = ID + ".SOURCE_FILE"; //$NON-NLS-1$
+  String LITERATE_SOURCE_FILE = ID + ".LITERATE_SOURCE_FILE"; //$NON-NLS-1$
+  String IMPORT_LIBRARY       = ID + ".IMPORT_LIBRARY"; //$NON-NLS-1$
+  String PROJECT_EXECUTABLE   = ID + ".PROJECT_EXECUTABLE"; //$NON-NLS-1$
 
   // Haskell language elements
-  String HS_NAME               = ID + ".HS_NAME";
-  String MODULE                = ID + ".MODULE";
-  String IMPORT                = ID + ".IMPORT";
-  String IMPORT_GROUP          = ID + ".IMPORT_GROUP";
-  String EXPORT_GROUP          = ID + ".EXPORT_GROUP";
-  String EXPORT_MODULE_CONTENT = ID + ".EXPORT_MODULE_CONTENT";
-  String EXPORT_SPECIFICATION  = ID + ".EXPORT_SPECIFICATION";
-  String PACKAGE               = ID + ".PACKAGE";
-  String PACKAGE_CONF          = ID + ".PACKAGE_CONF";
-  String PACKAGE_FOLDER        = ID + ".PACKAGE_FOLDER";
-  String HIDDEN_PACKAGE        = ID + ".HIDDEN_PACKAGE";
-  String FUNCTION_BINDING      = ID + ".FUNCTION_BINDING";
-  String PATTERN_BINDING       = ID + ".PATTERN_BINDING";
-  String DATA_DECL             = ID + ".DATA_DECL";
-  String TYPE_SIGNATURE        = ID + ".TYPE_SIGNATURE";
-  String TYPE_DECL             = ID + ".TYPE_DECL";
-  String NEWTYPE_DECL          = ID + ".NEWTYPE_DECL";
-  String CLASS_DECL            = ID + ".CLASS_DECL";
-  String INSTANCE_DECL         = ID + ".INSTANCE_DECL";
-  String DEFAULT_DECL          = ID + ".DEFAULT_DECL";
-  String INFIXNONE_DECL        = ID + ".INFIXNONE_DECL";
-  String INFIXL_DECL           = ID + ".INFIXL_DECL";
-  String INFIXR_DECL           = ID + ".INFIXR_DECL";
-  String FIELD_DECL           = ID + ".FIELD_DECL";
+  String HS_NAME               = ID + ".HS_NAME"; //$NON-NLS-1$
+  String MODULE                = ID + ".MODULE"; //$NON-NLS-1$
+  String IMPORT                = ID + ".IMPORT"; //$NON-NLS-1$
+  String IMPORT_GROUP          = ID + ".IMPORT_GROUP"; //$NON-NLS-1$
+  String EXPORT_GROUP          = ID + ".EXPORT_GROUP"; //$NON-NLS-1$
+  String EXPORT_MODULE_CONTENT = ID + ".EXPORT_MODULE_CONTENT"; //$NON-NLS-1$
+  String EXPORT_SPECIFICATION  = ID + ".EXPORT_SPECIFICATION"; //$NON-NLS-1$
+  String PACKAGE               = ID + ".PACKAGE"; //$NON-NLS-1$
+  String PACKAGE_CONF          = ID + ".PACKAGE_CONF"; //$NON-NLS-1$
+  String PACKAGE_FOLDER        = ID + ".PACKAGE_FOLDER"; //$NON-NLS-1$
+  String HIDDEN_PACKAGE        = ID + ".HIDDEN_PACKAGE"; //$NON-NLS-1$
+  String FUNCTION_BINDING      = ID + ".FUNCTION_BINDING"; //$NON-NLS-1$
+  String PATTERN_BINDING       = ID + ".PATTERN_BINDING"; //$NON-NLS-1$
+  String DATA_DECL             = ID + ".DATA_DECL"; //$NON-NLS-1$
+  String TYPE_SIGNATURE        = ID + ".TYPE_SIGNATURE"; //$NON-NLS-1$
+  String TYPE_DECL             = ID + ".TYPE_DECL"; //$NON-NLS-1$
+  String NEWTYPE_DECL          = ID + ".NEWTYPE_DECL"; //$NON-NLS-1$
+  String CLASS_DECL            = ID + ".CLASS_DECL"; //$NON-NLS-1$
+  String INSTANCE_DECL         = ID + ".INSTANCE_DECL"; //$NON-NLS-1$
+  String DEFAULT_DECL          = ID + ".DEFAULT_DECL"; //$NON-NLS-1$
+  String INFIXNONE_DECL        = ID + ".INFIXNONE_DECL"; //$NON-NLS-1$
+  String INFIXL_DECL           = ID + ".INFIXL_DECL"; //$NON-NLS-1$
+  String INFIXR_DECL           = ID + ".INFIXR_DECL"; //$NON-NLS-1$
+  String FIELD_DECL           = ID + ".FIELD_DECL"; //$NON-NLS-1$
 
   // Cabal elements
   String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA"; //$NON-NLS-1$
@@ -65,13 +66,13 @@ public interface IImageNames {
   String TEMPLATE          = ID + ".TEMPLATE"; //$NON-NLS-1$
 
   // wizard banners
-  String NEW_PROJECT          = ID + ".NEW_PROJECT";
-  String NEW_MODULE           = ID + ".NEW_MODULE";
-  String IMPORT_CABAL_PACKAGE = ID + "IMPORT_CABAL_PACKAGE";
+  String NEW_PROJECT          = ID + ".NEW_PROJECT"; //$NON-NLS-1$
+  String NEW_MODULE           = ID + ".NEW_MODULE"; //$NON-NLS-1$
+  String IMPORT_CABAL_PACKAGE = ID + "IMPORT_CABAL_PACKAGE"; //$NON-NLS-1$
 
   // overlays
-  String ERROR_OVERLAY        = ID + ".ERROR_OVERLAY";
-  String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY";
+  String ERROR_OVERLAY        = ID + ".ERROR_OVERLAY"; //$NON-NLS-1$
+  String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY"; //$NON-NLS-1$
 
-  String ACTION_SORT          = ID + ".ACTION_SORT";
+  String ACTION_SORT          = ID + ".ACTION_SORT"; //$NON-NLS-1$
 }

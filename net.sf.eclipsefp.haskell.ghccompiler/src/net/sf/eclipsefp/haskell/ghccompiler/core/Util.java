@@ -7,7 +7,6 @@ import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -29,7 +28,7 @@ public class Util implements IGhcParameters {
     return result == null ? GHCSyntax.GHC : result.toOSString();
   }
 
-  public static String constructLibPath( final IProject hsProject, final IFile... files ) {
+  public static String constructLibPath( final IFile... files ) {
     StringBuilder sbResult = new StringBuilder();
     /*IImportLibrary[] libs = hsProject.getImportLibraries();
 

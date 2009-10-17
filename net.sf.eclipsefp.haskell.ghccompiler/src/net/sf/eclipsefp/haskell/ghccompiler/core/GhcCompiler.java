@@ -120,7 +120,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     List<String> cmdLine = new ArrayList<String>();
     // command and special options
     cmdLine.add( Util.getCompilerExecutable() );
-    String libPath = Util.constructLibPath( project ,file);
+    String libPath = Util.constructLibPath( file);
     if( !libPath.equals( "" ) ) { //$NON-NLS-1$
       cmdLine.add( libPath );
     }
@@ -143,7 +143,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     }
     cmdLine.add( project.getLocation().append( targetName ).toOSString() );
     cmdLine.addAll( compilerParams.construct() );
-    cmdLine.add( ResourceUtil.getSourceDirRelativeName( file, haskellProject ) );
+    cmdLine.add( ResourceUtil.getSourceDirRelativeName( file ).toOSString() );
     if( trace ) {
       HaskellCorePlugin.dump( cmdLine );
     }

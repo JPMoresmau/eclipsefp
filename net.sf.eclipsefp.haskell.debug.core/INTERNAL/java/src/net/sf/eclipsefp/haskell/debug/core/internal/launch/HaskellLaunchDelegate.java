@@ -4,10 +4,13 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 
@@ -43,7 +47,33 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
         checkCancellation( monitor );
         File workingDir = determineWorkingDir( configuration );
         checkCancellation( monitor );
-        IProcess process = createProcess( launch, loc, cmdLine, workingDir );
+        IProcess process = createProcess(configuration, launch, loc, cmdLine, workingDir );
+
+
+        /*DebugPlugin.getDefault().getLaunchManager().addLaunchListener( new ILaunchesListener() {
+
+          public void launchesRemoved( final ILaunch[] launches ) {
+            for (ILaunch l:launches){
+              System.out.println("removed:" +l.toString());
+            }
+
+          }
+
+          public void launchesChanged( final ILaunch[] launches ) {
+            for (ILaunch l:launches){
+              System.out.println("changed:" +l.toString());
+            }
+
+          }
+
+          public void launchesAdded( final ILaunch[] launches ) {
+            for (ILaunch l:launches){
+              System.out.println("added:" +l.toString());
+            }
+
+          }
+        });*/
+
         if( !isBackground( configuration ) ) {
           while( !process.isTerminated() ) {
             try {
@@ -58,27 +88,41 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
           }
         }
       } catch( LaunchCancelledException lcex ) {
-        // cancelled on user request
+        // canceled on user request
       }
     }
   }
 
-  private IProcess createProcess( final ILaunch launch,
+  private IProcess createProcess( final ILaunchConfiguration configuration,
+                                  final ILaunch launch,
                                   final IPath location,
                                   final String[] cmdLine,
                                   final File workingDir ) throws CoreException {
-    Process proc = DebugPlugin.exec( cmdLine, workingDir );
-    Map<String, String> processAttrs = new HashMap<String, String>();
-    String programName = determineProgramName( location );
-    processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
-    IProcess process = null;
-    if( proc != null ) {
-      String loc = location.toOSString();
-      process = DebugPlugin.newProcess( launch, proc, loc, processAttrs );
-      process.setAttribute( IProcess.ATTR_CMDLINE,
-                            CommandLineUtil.renderCommandLine( cmdLine ) );
+    //Process proc = DebugPlugin.exec( cmdLine, workingDir );
+    ProcessBuilder pb=new ProcessBuilder(cmdLine);
+    pb.directory( workingDir);
+    if (configuration.getAttribute( ILaunchAttributes.SYNC_STREAMS ,true)){
+      pb.redirectErrorStream( true );
     }
-    return process;
+    try {
+      Process proc=pb.start();
+      Map<String, String> processAttrs = new HashMap<String, String>();
+      String programName = determineProgramName( location );
+      processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
+      IProcess process = null;
+      if( proc != null ) {
+        String loc = location.toOSString();
+        process = DebugPlugin.newProcess( launch, proc, loc, processAttrs );
+        process.setAttribute( IProcess.ATTR_CMDLINE,
+                              CommandLineUtil.renderCommandLine( cmdLine ) );
+        registerReloadListener(configuration,launch,process);
+      }
+      return process;
+    } catch (IOException e) {
+      Status status = new Status(IStatus.ERROR, HaskellDebugCore.getPluginId(),CoreTexts.haskellLaunchDelegate_noProcess, e);
+      throw new CoreException(status);
+    }
+
   }
 
   private String[] createCmdLine( final IPath location,
@@ -162,6 +206,66 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
 
     private LaunchCancelledException() {
       super();
+    }
+  }
+
+  private void registerReloadListener(final ILaunchConfiguration configuration,final ILaunch launch,final IProcess process) throws CoreException{
+    final String command= configuration.getAttribute( ILaunchAttributes.COMMAND, (String)null );
+    commandToProcess( process, command );
+
+    final String reloadCommand=configuration.getAttribute( ILaunchAttributes.RELOAD_COMMAND, (String)null );
+    final String project=configuration.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );
+
+    if (reloadCommand!=null && configuration.getAttribute( ILaunchAttributes.RELOAD, false )){
+
+      final boolean commandOnReload= configuration.getAttribute( ILaunchAttributes.COMMAND_ON_RELOAD, false );
+
+      final CommandOnChangeListener cocl=new CommandOnChangeListener(process,project,
+          reloadCommand,
+          commandOnReload?command:null);
+
+      ResourcesPlugin.getWorkspace().addResourceChangeListener(
+         cocl, IResourceChangeEvent.PRE_BUILD );
+
+      ILaunchesListener2 ll=new ILaunchesListener2() {
+
+        public void launchesRemoved( final ILaunch[] launches ) {
+          // NOOP
+
+        }
+
+        public void launchesChanged( final ILaunch[] launches ) {
+          // NOOP
+
+        }
+
+        public void launchesAdded( final ILaunch[] launches ) {
+          // NOOP
+
+        }
+
+        public void launchesTerminated( final ILaunch[] launches ) {
+          for (ILaunch l:launches){
+            if (launch.equals( l )){
+              ResourcesPlugin.getWorkspace().removeResourceChangeListener( cocl );
+              DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+            }
+          }
+        }
+      };
+      DebugPlugin.getDefault().getLaunchManager().addLaunchListener( ll );
+    }
+  }
+
+  public static void commandToProcess(final IProcess p,final String command) throws CoreException{
+    try {
+      if (command!=null && command.length()>0){
+        p.getStreamsProxy().write( command );
+        p.getStreamsProxy().write( System.getProperty( "line.separator","\n" ) );  //$NON-NLS-1$//$NON-NLS-2$
+      }
+    } catch (IOException ioe){
+      Status status = new Status(IStatus.ERROR, HaskellDebugCore.getPluginId(),CoreTexts.console_command_failed, ioe);
+      throw new CoreException(status);
     }
   }
 }

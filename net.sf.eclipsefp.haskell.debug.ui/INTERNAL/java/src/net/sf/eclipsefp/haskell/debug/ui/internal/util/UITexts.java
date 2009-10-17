@@ -24,11 +24,18 @@ public final class UITexts extends NLS {
   public static String haskellArgumentsTab_noWorkDir;
   public static String haskellArgumentsTab_selectDir;
   public static String haskellArgumentsTab_workDir;
+  public static String haskellArgumentsTab_syncStreams;
+
+  public static String haskellAutomationTab_name;
+  public static String haskellAutomationTab_command;
+  public static String haskellAutomationTab_reload;
+  public static String haskellAutomationTab_command_reload;
+
 
   public static String launchOperation_msg;
   public static String launchOperation_title;
 
-
+  public static String configuration_name;
 
 
 
