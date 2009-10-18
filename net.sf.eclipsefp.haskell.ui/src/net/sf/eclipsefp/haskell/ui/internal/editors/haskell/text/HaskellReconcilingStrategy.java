@@ -77,7 +77,8 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   }
 
   public void initialReconcile() {
-    reconcile();
+    //reconcile();
+    editor.synchronize();
   }
 
 

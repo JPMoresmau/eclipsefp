@@ -1,10 +1,14 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
+import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.Note;
+import net.sf.eclipsefp.haskell.scion.types.Note.Kind;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,9 +19,12 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	private IFile file;
 	private CompilationResult compilationResult;
 	
-	public BackgroundTypecheckFileCommand(IScionCommandRunner runner, IFile file) {
+	private ScionInstance instance;
+	
+	public BackgroundTypecheckFileCommand(ScionInstance runner, IFile file) {
 		super(runner, Job.BUILD);
 		this.file = file;
+		this.instance=runner;
 	}
 
 	@Override
@@ -41,7 +48,15 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 			JSONObject o=(JSONObject)json;
 			JSONObject cr=o.optJSONObject("Right");
 			if (cr!=null){
+				instance.getLoadedFiles().add(file);
 				compilationResult = new CompilationResult(cr);
+			} else {
+				String err=o.optString("Left");
+				try {
+					new Note(Kind.ERROR,new Location(file.getLocation().toOSString(),1,1,1,1),err,null).applyAsMarker(file);
+				} catch (CoreException ce){
+					ce.printStackTrace();
+				}
 			}
 		}
 	}

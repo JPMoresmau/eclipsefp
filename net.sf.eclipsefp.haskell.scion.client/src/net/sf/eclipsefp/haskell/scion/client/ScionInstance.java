@@ -265,9 +265,18 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public void loadFile(IFile fileName) {
-		loadedFiles.add(fileName);
+		//loadedFiles.add(fileName);
 		reloadFile(fileName,null);
 	}
+	
+	public Multiset<IFile> getLoadedFiles() {
+		return loadedFiles;
+	}
+	
+	public boolean isLoaded(IFile f) {
+		return loadedFiles.contains(f);
+	}
+	
 	
 	private void deleteProblems(IResource r){
 		try {

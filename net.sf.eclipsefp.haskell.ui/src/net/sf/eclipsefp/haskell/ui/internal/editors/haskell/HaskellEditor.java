@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
@@ -341,7 +342,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   @Override
   public void setFocus() {
     super.setFocus();
-    IFile f=findFile();
+    //IFile f=findFile();
 
     //HaskellUIPlugin.getDefault().getScionInstanceManager(f).backgroundTypecheckFile( f );
   }
@@ -373,7 +374,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       } );
 
 
-      if( instance!=null ) {
+      if( instance!=null && instance.isLoaded( findFile() )) {
         instance.outline(findFile(),new OutlineHandler() {
 
           public void outlineResult( final List<OutlineDef> outlineDefs ) {
@@ -383,6 +384,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
            foldingStructureProvider.updateFoldingRegions(outlineDefs);
           }
         });
+      } else {
+        List<OutlineDef> outlineDefs=Collections.emptyList();
+        if(getOutlinePage()!=null){
+          getOutlinePage().setInput( outlineDefs );
+        }
+        foldingStructureProvider.updateFoldingRegions(outlineDefs);
       }
     }
   }
