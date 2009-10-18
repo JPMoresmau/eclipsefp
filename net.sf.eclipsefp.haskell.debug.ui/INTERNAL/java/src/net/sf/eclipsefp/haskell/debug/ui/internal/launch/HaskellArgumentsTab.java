@@ -260,7 +260,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       workingDir = config.getAttribute( ILaunchAttributes.WORKING_DIRECTORY,
                                         ILaunchAttributes.EMPTY );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration.", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     txtWorkDirectory.setText( workingDir );
     txtWorkDirectory.addModifyListener( modifyListener );
@@ -272,7 +272,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       String att = ILaunchAttributes.ARGUMENTS;
       arguments = configuration.getAttribute( att, ILaunchAttributes.EMPTY );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     argumentField.setText( arguments );
   }
@@ -283,7 +283,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       runInBackground
         = config.getAttribute( ILaunchAttributes.RUN_IN_BACKGROUND, true );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     runBackgroundButton.setSelection( runInBackground );
   }
@@ -294,7 +294,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       syncStreams
         = config.getAttribute( ILaunchAttributes.SYNC_STREAMS, true );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     syncStreamsButton.setSelection( syncStreams );
   }

@@ -25,7 +25,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-
+/**
+ *
+ * @author JP Moresmau
+ *
+ */
 public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
 
   private Text txtCommand;
@@ -153,7 +157,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
       String att = ILaunchAttributes.COMMAND;
       command = configuration.getAttribute( att, ILaunchAttributes.EMPTY );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     txtCommand.setText( command );
   }
@@ -164,7 +168,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
       reload
         = config.getAttribute( ILaunchAttributes.RELOAD, false );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     btnReloadSave.setSelection( reload );
   }
@@ -175,7 +179,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
       reload
         = config.getAttribute( ILaunchAttributes.COMMAND_ON_RELOAD, false );
     } catch( CoreException ce ) {
-      HaskellUIPlugin.log( "Error reading configuration", ce ); //$NON-NLS-1$
+      HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     btnReloadCommand.setSelection( reload );
   }
