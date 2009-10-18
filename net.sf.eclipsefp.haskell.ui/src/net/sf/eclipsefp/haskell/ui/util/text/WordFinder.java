@@ -2,27 +2,34 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.util.text;
 
-import java.text.BreakIterator;
-
-import org.eclipse.jface.text.*;
+import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 
 
 /** <p>A helping class for detecting words in documents.</p>
   *
-  * <p>Taken from 
+  * <p>Taken from
   * <code>org.eclipse.jface.text.DefaultTextDoubleClickStrategy</code>.</p>
   *
   * @author Leif Frenzel
   */
 public class WordFinder {
-  
-  private final DocumentCharacterIterator docIter = new DocumentCharacterIterator();
-  
-  public IRegion findWord( final IDocument document, final int position ) {
-    IRegion result = null;
+
+  //private final DocumentCharacterIterator docIter = new DocumentCharacterIterator();
+
+  public static String findWord( final IDocument document, final int position ) {
+    //IRegion result = null;
     if( position >= 0 ) {
       try {
-        IRegion line = document.getLineInformationOfOffset( position );
+        IRegion r=document.getLineInformationOfOffset( position );
+        String line=document.get( r.getOffset(), r.getLength() );
+        int off=position-r.getOffset();
+        return ParserUtils.getHaskellWord(line,off);
+
+        /*IRegion line = document.getLineInformationOfOffset( position );
+
         int lineEnd = line.getOffset() + line.getLength();
         if( position != lineEnd ) {
           BreakIterator breakIter = BreakIterator.getWordInstance();
@@ -46,11 +53,12 @@ public class WordFinder {
           if( start != end ) {
             result = new Region( start, end - start );
           }
-        }
+        }*/
       } catch( final BadLocationException badlox ) {
-        // ignored
+        badlox.printStackTrace();
       }
     }
-    return result;
+    return null;
+    //return result;
   }
 }

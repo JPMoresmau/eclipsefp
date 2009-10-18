@@ -2,10 +2,10 @@ package net.sf.eclipsefp.haskell.ui.handlers;
 
 import java.io.File;
 import java.net.URI;
-import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -70,16 +69,17 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
 				}
 				if (name.length()==0){
-          try {
+          /*try {
             IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( textSel.getOffset() );
             String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
             int off=textSel.getOffset()-r.getOffset();
             name=ParserUtils.getHaskellWord(line,off);
           } catch(BadLocationException ble){
             ble.printStackTrace();
-          }
+          }*/
+				  name=WordFinder.findWord( haskellEditor.getDocument(), textSel.getOffset() );
 				}
-				if (name.length()>0){
+				if (name!=null && name.length()>0){
   				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
   				if (location != null) {
   					try {
