@@ -444,5 +444,14 @@ public class CabalModelTest extends TestCase {
     assertEquals(expected,ss);
   }
 
+  public void testCreate(){
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+System.getProperty( "line.separator" ) );
+    PackageDescriptionStanza pds=pd.getStanzas().get(0);
+    RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
+    assertNotNull(rvp);
+    assertEquals(1,rvp.getStartLine());
+    assertEquals(1,rvp.getEndLine());
+    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+System.getProperty( "line.separator" ),rvp.getRealValue());
+  }
 
 }

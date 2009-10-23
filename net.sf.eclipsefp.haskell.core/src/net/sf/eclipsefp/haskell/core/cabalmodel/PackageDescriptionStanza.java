@@ -139,6 +139,7 @@ public class PackageDescriptionStanza {
         indent=subIndent=vp.getSubsequentIndent();
         spaces=indent-(field.getCabalName().length() +1);
       }
+      spaces=Math.max( spaces, 1 );
       for (int a=0;a<spaces;a++){
         sb.append( ' ');
       }
