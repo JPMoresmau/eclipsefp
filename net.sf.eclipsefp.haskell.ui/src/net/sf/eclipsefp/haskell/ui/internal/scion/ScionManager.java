@@ -109,6 +109,9 @@ public class ScionManager implements IResourceChangeListener {
 
     ResourcesPlugin.getWorkspace().addResourceChangeListener(
         new FileDeletionListener(), IResourceChangeEvent.PRE_BUILD );
+
+    ResourcesPlugin.getWorkspace().addResourceChangeListener(
+        new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
   }
 
   private class FileDeletionListener implements IResourceChangeListener {
@@ -120,36 +123,47 @@ public class ScionManager implements IResourceChangeListener {
           public boolean visit( final IResourceDelta delta )
               throws CoreException {
             if( delta.getKind() == IResourceDelta.REMOVED ) {
-              if( delta.getResource() instanceof IFile
-                  && ResourceUtil.hasHaskellExtension( delta.getResource() ) ) {
-                // System.out.println(delta.getFullPath());
+              if( delta.getResource() instanceof IFile){
+
                 IFile f = ( IFile )delta.getResource();
                 IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
-                PackageDescription pd = PackageDescriptionLoader.load( cabalF );
-                ModuleCreationInfo info = new ModuleCreationInfo( f );
-                List<PackageDescriptionStanza> lpds = pd
-                    .getStanzasBySourceDir().get(
-                        info.getSourceContainer().getProjectRelativePath()
-                            .toOSString() );
-                String qn = info.getQualifiedModuleName();
+                if(ResourceUtil.hasHaskellExtension( delta.getResource() ) ) {
+                  // System.out.println(delta.getFullPath());
 
-                IDocumentProvider prov = new TextFileDocumentProvider();
-                prov.connect( cabalF );
-                IDocument doc = prov.getDocument( cabalF );
 
-                for( PackageDescriptionStanza pds: lpds ) {
-                  RealValuePosition rvp = pds.removeFromPropertyList(
-                      CabalSyntax.FIELD_EXPOSED_MODULES, qn );
-                  rvp.updateDocument( doc );
-                  rvp = pds.removeFromPropertyList(
-                      CabalSyntax.FIELD_OTHER_MODULES, qn );
-                  rvp.updateDocument( doc );
+                  PackageDescription pd = PackageDescriptionLoader.load( cabalF );
+                  ModuleCreationInfo info = new ModuleCreationInfo( f );
+                  if (info.getSourceContainer()!=null){
+                    List<PackageDescriptionStanza> lpds = pd
+                        .getStanzasBySourceDir().get(
+                            info.getSourceContainer().getProjectRelativePath()
+                                .toOSString() );
+                    String qn = info.getQualifiedModuleName();
+
+                    IDocumentProvider prov = new TextFileDocumentProvider();
+                    prov.connect( cabalF );
+                    IDocument doc = prov.getDocument( cabalF );
+
+                    for( PackageDescriptionStanza pds: lpds ) {
+                      RealValuePosition rvp = pds.removeFromPropertyList(
+                          CabalSyntax.FIELD_EXPOSED_MODULES, qn );
+                      rvp.updateDocument( doc );
+                      rvp = pds.removeFromPropertyList(
+                          CabalSyntax.FIELD_OTHER_MODULES, qn );
+                      rvp.updateDocument( doc );
+                    }
+                    prov.saveDocument( null, cabalF, doc, true );
+                  }
+                  ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( f );
+                  if (si!=null){
+                    si.buildProject( false );
+                  }
+                  return false;
+                } else if (f.equals( cabalF )){
+                    stopInstance( f);
+                    return false;
+
                 }
-                prov.saveDocument( null, cabalF, doc, true );
-
-                HaskellUIPlugin.getDefault().getScionInstanceManager( f )
-                    .buildProject( false );
-                return false;
               }
 
             }
@@ -162,6 +176,15 @@ public class ScionManager implements IResourceChangeListener {
         HaskellUIPlugin.log(
             "Error when processing resource delta from ScionManager", ex );
       }
+    }
+  }
+
+  public class ProjectDeletionListener implements IResourceChangeListener{
+    public void resourceChanged( final IResourceChangeEvent event ) {
+      if (event.getResource() instanceof IProject){
+        stopInstance( event.getResource() );
+      }
+
     }
   }
 
@@ -180,10 +203,7 @@ public class ScionManager implements IResourceChangeListener {
    */
   public ScionInstance getScionInstance( final IResource resource ) {
     IProject project = resource.getProject();
-    if( instances.containsKey( project ) ) {
-      return instances.get( project );
-    }
-    return null;
+    return instances.get( project );
   }
 
   /**
@@ -277,6 +297,13 @@ public class ScionManager implements IResourceChangeListener {
         mgr.removeConsoles( new IConsole[] { c } );
         break;
       }
+    }
+  }
+
+  private void stopInstance(final IResource res){
+    ScionInstance instance=instances.remove( res.getProject() );
+    if (instance!=null){
+      stopInstance(instance);
     }
   }
 

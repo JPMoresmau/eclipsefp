@@ -37,8 +37,10 @@ public class ModuleCreationInfo {
     super();
     IContainer src=ResourceUtil.getSourceContainer( f );
     setSourceContainer( src );
-    IPath p=ResourceUtil.getSourceRelativePath( src, f );
-    setFolders(p);
+    if (src!=null){
+      IPath p=ResourceUtil.getSourceRelativePath( src, f );
+      setFolders(p);
+    }
     setModuleName( f.getProjectRelativePath().removeFileExtension().lastSegment() );
 
   }

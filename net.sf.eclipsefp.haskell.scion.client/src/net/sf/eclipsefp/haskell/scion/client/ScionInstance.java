@@ -279,11 +279,13 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	
 	private void deleteProblems(IResource r){
-		try {
-			r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
-		} catch( CoreException ex ) {
-			ScionPlugin.logError(UITexts.error_deleteMarkers, ex);
-			ex.printStackTrace();
+		if (!r.getWorkspace().isTreeLocked()){
+			try {
+				r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
+			} catch( CoreException ex ) {
+				ScionPlugin.logError(UITexts.error_deleteMarkers, ex);
+				ex.printStackTrace();
+			}
 		}
 	}
 	

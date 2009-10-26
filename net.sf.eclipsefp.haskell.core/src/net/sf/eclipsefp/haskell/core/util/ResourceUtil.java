@@ -232,7 +232,7 @@ public class ResourceUtil {
   public static IContainer getSourceContainer( final IResource resource ) {
     IProject project = resource.getProject();
     try {
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if(project.exists() && project.hasNature( HaskellNature.NATURE_ID ) ) {
 
         IFile f=ScionInstance.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);

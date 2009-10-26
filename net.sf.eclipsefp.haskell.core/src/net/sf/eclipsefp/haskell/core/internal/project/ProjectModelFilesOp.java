@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -20,7 +21,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   private static final String ENC = "UTF-8"; //$NON-NLS-1$
   private static final String EXT_CABAL = "cabal"; //$NON-NLS-1$
   private static final String SETUP_HS = "Setup.hs"; //$NON-NLS-1$
-  private static final String NL = "\n"; //$NON-NLS-1$
+  private static final String NL = System.getProperty( "line.separator","\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 
   // interface methods of IProjectCreationOperationExtraOp
@@ -39,9 +40,9 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   //////////////////
 
   private String getCabalFileContent( final String name ) {
-    return   "Name:           " + name + NL //$NON-NLS-1$
-           + "Version:        0.1 \n" //$NON-NLS-1$
-           + "Hs-Source-Dirs: src\n"; //$NON-NLS-1$
+    return   CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
+           + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL //$NON-NLS-1$
+           + CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName()+": src" + NL; //$NON-NLS-1$
   }
 
   private void createFile( final IProject project,
@@ -59,6 +60,6 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   }
 
   private String getSetupFileContent() {
-    return "import Distribution.Simple\nmain = defaultMain\n"; //$NON-NLS-1$
+    return "import Distribution.Simple"+NL+"main = defaultMain"+NL; //$NON-NLS-1$ //$NON-NLS-2$
   }
 }
