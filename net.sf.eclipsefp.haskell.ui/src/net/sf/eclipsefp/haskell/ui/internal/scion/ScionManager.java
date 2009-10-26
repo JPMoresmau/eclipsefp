@@ -101,7 +101,7 @@ public class ScionManager implements IResourceChangeListener {
       } );
     } catch( CoreException ex ) {
       HaskellUIPlugin.log(
-          "Error when processing resource delta from ScionManager", ex );
+          UITexts.scion_delta_error, ex );
     }
 
     ResourcesPlugin.getWorkspace().addResourceChangeListener( this,
@@ -174,7 +174,7 @@ public class ScionManager implements IResourceChangeListener {
 
       } catch( CoreException ex ) {
         HaskellUIPlugin.log(
-            "Error when processing resource delta from ScionManager", ex );
+            UITexts.scion_delta_error, ex );
       }
     }
   }
@@ -221,7 +221,7 @@ public class ScionManager implements IResourceChangeListener {
       } );
     } catch( CoreException ex ) {
       HaskellUIPlugin.log(
-          "Error when processing resource delta from ScionManager", ex );
+          UITexts.scion_delta_error, ex );
     }
   }
 

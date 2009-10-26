@@ -119,6 +119,7 @@ public final class UITexts extends NLS {
 
   public static String scion_console_title;
   public static String scion_preferences_title;
+  public static String scion_delta_error;
 
   public static String outline_sortByName;
   public static String outline_sortByName_tooltip;
