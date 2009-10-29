@@ -98,7 +98,7 @@ public class GhciLaunchOperationDelegate
       final List<String> cmdLine,
       final Set<IHaskellProject> visited,final IFile[] selectedFiles ) throws CoreException {
     /*Set<IPath> sourcePaths = hsProject.getSourcePaths();*/
-    for( String sourcePath: ResourceUtil.getSourceDirs( selectedFiles ) ) {
+    for( String sourcePath: ResourceUtil.getSourceFolders( selectedFiles ) ) {
       IFolder folder = hsProject.getResource().getFolder( sourcePath );
       // getRawLocation gives us the real FS path even if the resource is linked
       IPath loc = new Path( folder.getLocationURI().getPath() );

@@ -301,7 +301,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if (file != null && ResourceUtil.isInHaskellProject( file )) {
       //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
       instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
-      instance.loadFile( file );
+      instance.reloadFile( file,new Runnable() {
+
+        public void run() {
+         synchronize();
+
+        }
+      });
     }
 
     /*if( outlinePage != null ) {

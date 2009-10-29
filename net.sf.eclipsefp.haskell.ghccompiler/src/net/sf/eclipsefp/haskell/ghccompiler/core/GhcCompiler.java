@@ -143,7 +143,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     }
     cmdLine.add( project.getLocation().append( targetName ).toOSString() );
     cmdLine.addAll( compilerParams.construct() );
-    cmdLine.add( ResourceUtil.getSourceDirRelativeName( file ).toOSString() );
+    cmdLine.add( ResourceUtil.getSourceFolderRelativeName( file ).toOSString() );
     if( trace ) {
       HaskellCorePlugin.dump( cmdLine );
     }

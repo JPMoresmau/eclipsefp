@@ -22,26 +22,26 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
     IFile file = null;
     try {
       file = project.getFile( "A.hs" );
-      ResourceUtil.getSourceDirRelativeName( file );
+      ResourceUtil.getSourceFolderRelativeName( file );
       fail();
     } catch( final IllegalArgumentException illarex ) {
       // expected
 
     }
     file = project.getFile( "src/A.hs" );
-    assertEquals( "A.hs", ResourceUtil.getSourceDirRelativeName( file).toPortableString() );
+    assertEquals( "A.hs", ResourceUtil.getSourceFolderRelativeName( file).toPortableString() );
 
     file = project.getFile( "src/Bla/A.hs" );
     assertEquals( "Bla/A.hs",
-                  ResourceUtil.getSourceDirRelativeName( file ).toPortableString() );
+                  ResourceUtil.getSourceFolderRelativeName( file ).toPortableString() );
 
     file = project.getFile( "src/Some/Long/Path/A.hs" );
     assertEquals( "Some/Long/Path/A.hs",
-                  ResourceUtil.getSourceDirRelativeName( file ).toPortableString() );
+                  ResourceUtil.getSourceFolderRelativeName( file ).toPortableString() );
 
     try {
       file = project.getFile( "test/Some/Path/A.hs" );
-      ResourceUtil.getSourceDirRelativeName( file );
+      ResourceUtil.getSourceFolderRelativeName( file );
       fail();
     } catch( final IllegalArgumentException illarex ) {
       // expected
@@ -50,6 +50,6 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
     hp.addSourcePath( "test" );
     file = project.getFile( "test/Path/A.hs" );
     assertEquals( "Path/A.hs",
-                  ResourceUtil.getSourceDirRelativeName( file ).toPortableString() );
+                  ResourceUtil.getSourceFolderRelativeName( file ).toPortableString() );
   }
 }

@@ -350,6 +350,24 @@ public class CabalModelTest extends TestCase {
     assertEquals("program2",ls.get( 0 ).getName());
   }
 
+  public void testEmptySourceDir(){
+    String content3=getContent( "Example1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    Map<String,List<PackageDescriptionStanza>> map=pd.getStanzasBySourceDir();
+    assertEquals(1,map.size());
+    assertTrue(map.containsKey( "." ));
+
+    List<PackageDescriptionStanza> ls=map.get(".");
+    assertEquals(1,ls.size());
+    assertEquals(CabalSyntax.SECTION_LIBRARY,ls.get( 0 ).getType());
+    Collection<String> cs=ls.get( 0 ).getSourceDirs();
+    assertEquals(1,cs.size());
+    assertEquals(".",cs.iterator().next());
+
+    assertEquals(0,pd.getStanzas().get( 0 ).getSourceDirs().size());
+
+  }
+
   public void testSetNull(){
     String content3=getContent( "Example1.cabal" );
     PackageDescription pd=PackageDescriptionLoader.load( content3 );

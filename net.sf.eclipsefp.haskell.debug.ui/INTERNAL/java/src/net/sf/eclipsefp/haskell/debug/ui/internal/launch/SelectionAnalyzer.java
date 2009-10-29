@@ -51,9 +51,11 @@ class SelectionAnalyzer {
 
   private static IFile[] collectAllSources( final IProject project )
                                                           throws CoreException {
-    IContainer sourceContainer = ResourceUtil.getSourceFolder( project );
+    //IContainer sourceContainer = ResourceUtil.getSourceFolder( project );
     List<IResource> list = new ArrayList<IResource>();
-    collectAllSourcesRec( list, sourceContainer );
+    for (IContainer sourceContainer:ResourceUtil.getSourceFolders( project )){
+      collectAllSourcesRec( list, sourceContainer );
+    }
     return toArray( list );
   }
 

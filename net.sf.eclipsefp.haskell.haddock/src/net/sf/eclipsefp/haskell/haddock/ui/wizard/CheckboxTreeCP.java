@@ -3,11 +3,9 @@ package net.sf.eclipsefp.haskell.haddock.ui.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.haddock.HaddockPlugin;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -43,26 +41,34 @@ class CheckboxTreeCP implements ITreeContentProvider {
   }
 
   private Object[] getProjectChildFolders( final IProject project ) {
-    Object[] result = new Object[ 0 ];
-    IContainer sourceFolder = ResourceUtil.getSourceFolder( project );
-    if( sourceFolder.equals( project ) ) {
+    //Object[] result = new Object[ 0 ];
+
+    List<IContainer> ret=new ArrayList<IContainer>();
+    for(IContainer sourceFolder : ResourceUtil.getSourceFolders( project )){
+      if (!sourceFolder.equals( project )){
+        ret.add(sourceFolder);
+      }
+    }
+
+    /*if( sourceFolder.equals( project ) ) {
       result = getChildFolders( sourceFolder );
     } else {
       result = new Object[] { sourceFolder };
-    }
-    return result;
+    }*/
+    return ret.toArray();
   }
 
   public Object getParent( final Object element ) {
     Object result = null;
     if( element instanceof IFolder ) {
       IFolder folder = ( IFolder )element;
-      IContainer sourceFolder = getSourceFolder( folder );
+      /*IContainer sourceFolder = getSourceFolder( folder );
       if( folder.equals( sourceFolder ) ) {
         result = folder.getProject();
       } else {
         result = folder.getParent();
-      }
+      }*/
+      return folder.getParent();
     }
     return result;
   }
@@ -85,9 +91,9 @@ class CheckboxTreeCP implements ITreeContentProvider {
   // helping methods
   //////////////////
 
-  private IContainer getSourceFolder( final IFolder folder ) {
+  /*private IContainer getSourceFolder( final IFolder folder ) {
     return ResourceUtil.getSourceFolder( folder.getProject() );
-  }
+  }*/
 
   private Object[] filterHsProjects( final IProject[] projects ) {
     List<Object> list = new ArrayList<Object>();

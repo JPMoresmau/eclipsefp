@@ -5,8 +5,6 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -92,25 +90,26 @@ public class HaskellModelManager implements IHaskellModelManager {
 		throws CoreException
 	{
 		IHaskellModel prjModel = getModelFor(project);
-		IHaskellProject hsProject = HaskellProjectManager.get(project);
-		//TODO parametrize the sourcefolder
-		IContainer sources = hsProject.getSourceFolder();
-		for(IResource resource : sources.members()) {
-			if( resource.getType() == IResource.FILE ) {
-				IFile file = (IFile) resource;
-				if( ResourceUtil.hasHaskellExtension( file ) ) {
-					IHaskellParser parser = ParserManager.getInstance()
-	                            				.getParser();
-					try {
-						ICompilationUnit unit = parser.parse(file);
-						if( unit.getModules().length > 0 ) {
-                          prjModel.putModule(unit.getModules()[0]);
-						}
-					} catch (CoreException e) {
-						//ignore parsing exception and go on
-					}
-				}
-			}
+		//IHaskellProject hsProject = HaskellProjectManager.get(project);
+
+		for (IContainer sources : ResourceUtil.getSourceFolders( project )){
+  		for(IResource resource : sources.members()) {
+  			if( resource.getType() == IResource.FILE ) {
+  				IFile file = (IFile) resource;
+  				if( ResourceUtil.hasHaskellExtension( file ) ) {
+  					IHaskellParser parser = ParserManager.getInstance()
+  	                            				.getParser();
+  					try {
+  						ICompilationUnit unit = parser.parse(file);
+  						if( unit.getModules().length > 0 ) {
+                            prjModel.putModule(unit.getModules()[0]);
+  						}
+  					} catch (CoreException e) {
+  						//ignore parsing exception and go on
+  					}
+  				}
+  			}
+  		}
 		}
 		return prjModel;
 	}

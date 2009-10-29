@@ -286,6 +286,10 @@ public class PackageDescriptionStanza {
     if (val!=null && val.length()>0){
       ret.addAll(PackageDescriptionLoader.parseList( val));
     }
+    if (ret.isEmpty() && (getType()!=null && (getType().equals( CabalSyntax.SECTION_EXECUTABLE)
+        || getType().equals( CabalSyntax.SECTION_LIBRARY)))){
+      ret.add("."); //$NON-NLS-1$
+    }
     return ret;
    }
 

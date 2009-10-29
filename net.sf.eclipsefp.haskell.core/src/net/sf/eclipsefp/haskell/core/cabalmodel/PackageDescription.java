@@ -30,19 +30,17 @@ public class PackageDescription {
     Map<String, List<PackageDescriptionStanza>> ret=new HashMap<String, List<PackageDescriptionStanza>>();
 
     for (PackageDescriptionStanza pds:stanzas){
-      String s=pds.getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS );
-      if (s!=null && s.length()>0){
-        for (String t:PackageDescriptionLoader.parseList( s )){
-          if (t.length()>0){
-            List<PackageDescriptionStanza> pdss=ret.get( t );
-            if (pdss==null){
-              pdss=new LinkedList<PackageDescriptionStanza>();
-              ret.put( t, pdss );
-            }
-            pdss.add(pds);
+      for (String t:pds.getSourceDirs()){
+        if (t.length()>0){
+          List<PackageDescriptionStanza> pdss=ret.get( t );
+          if (pdss==null){
+            pdss=new LinkedList<PackageDescriptionStanza>();
+            ret.put( t, pdss );
           }
+          pdss.add(pds);
         }
       }
+
     }
 
     return ret;

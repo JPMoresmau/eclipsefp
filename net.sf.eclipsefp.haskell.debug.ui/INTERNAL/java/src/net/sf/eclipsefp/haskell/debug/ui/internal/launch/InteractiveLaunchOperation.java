@@ -97,7 +97,7 @@ class InteractiveLaunchOperation extends LaunchOperation {
                                                           throws CoreException {
     ILaunchConfigurationType configType = getConfigType();
     IContainer src=ResourceUtil.getSourceContainer( resources[0] );
-    IPath path=ResourceUtil.getSourceDirRelativeName( resources[0] );
+    IPath path=ResourceUtil.getSourceFolderRelativeName( resources[0] );
     path=path.removeFileExtension();
     String s=NLS.bind( UITexts.configuration_name, new Object[]{path.toPortableString() ,resources[0].getProject().getName(),src!=null?src.getProjectRelativePath().toPortableString():""}); //$NON-NLS-1$
     String id = createConfigId(s);

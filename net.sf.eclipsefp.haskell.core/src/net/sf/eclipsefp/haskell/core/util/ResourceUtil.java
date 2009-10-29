@@ -119,9 +119,28 @@ public class ResourceUtil {
 	 * must have the Haskell nature.
 	 * </p>
 	 */
-	public static IContainer getSourceFolder(final IProject project)
+	/*public static IContainer getSourceFolder(final IProject project)
 	{
 		return getHsProject(project).getSourceFolder();
+	}*/
+
+	public static Collection<IContainer> getSourceFolders(final IProject project){
+	  try {
+  	  if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+
+        IFile f=ScionInstance.getCabalFile( project );
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
+        Collection<IContainer> ret=new ArrayList<IContainer>();
+        for (String s:stzs.keySet()){
+          ret.add(getContainer( project,s ));
+        }
+
+  	  }
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "getSourceFolders:"+project, ex ); //$NON-NLS-1$
+    }
+    return Collections.emptyList();
 	}
 
 	/**
@@ -188,6 +207,10 @@ public class ResourceUtil {
     return result;
   }
 
+	private static IContainer getContainer(final IProject p,final String src){
+	  return src.equals( "." )?p:p.getFolder( src ); //$NON-NLS-1$
+	}
+
 	/**
 	 * <p>
 	 * returns whether the specified folder is one of the source folders of its
@@ -205,8 +228,8 @@ public class ResourceUtil {
         IFile f=ScionInstance.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         for (String src:pd.getStanzasBySourceDir().keySet()){
-          IFolder fldr=project.getFolder( src );
-          if (fldr.equals(folder)){
+
+         if (getContainer(project,src).equals(folder)){
             return true;
           }
         }
@@ -265,7 +288,7 @@ public class ResourceUtil {
     return ret;
   }
 
-  public static Collection<String> getSourceDirs(final IFile[] files){
+  public static Collection<String> getSourceFolders(final IFile[] files){
     if (files==null || files.length==0){
       return Collections.emptySet();
     }
@@ -311,7 +334,7 @@ public class ResourceUtil {
 
         for (IFile fi:files){
           for (String src:stzs.keySet()){
-            IFolder fldr=project.getFolder( src );
+            IContainer fldr=getContainer(project,src);
             if (fi.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
               applicable.addAll(stzs.get(src));
             }
@@ -363,7 +386,7 @@ public class ResourceUtil {
 	  * @param file  a workspace file, must not be <code>null</code>
 	  * @param hp    a haskell project, must not be <code>null</code>
 	  */
-	public static IPath getSourceDirRelativeName( final IResource file ) {
+	public static IPath getSourceFolderRelativeName( final IResource file ) {
     if( file == null  ) {
       throw new IllegalArgumentException();
     }
