@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.client;
 
+import java.io.File;
 import java.io.Writer;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
@@ -87,7 +88,8 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public void start() throws ScionServerStartupException {
 		if (server == null) {
-			server = new ScionServer(serverExecutable,serverOutput);
+			File directory=new File(project.getLocation().toOSString());
+			server = new ScionServer(serverExecutable,serverOutput,directory);
 			server.startServer();
 			checkProtocol();
 			//openCabal();

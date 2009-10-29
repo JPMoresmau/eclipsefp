@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.scion.internal.client;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -52,9 +53,12 @@ public class ScionServer {
 	private Thread serverOutputThread;
 	private Writer serverOutput;
 	
-	public ScionServer(String serverExecutable,Writer serverOutput) {
+	private File directory;
+	
+	public ScionServer(String serverExecutable,Writer serverOutput,File directory) {
 		this.serverExecutable = serverExecutable;
 		this.serverOutput=serverOutput;
+		this.directory=directory;
 	}
 	
 	/**
@@ -127,6 +131,9 @@ public class ScionServer {
 		
 		// Launch the process
 		ProcessBuilder builder = new ProcessBuilder(command);
+		if (directory!=null && directory.exists()){
+			builder.directory(directory);
+		}
 		builder.redirectErrorStream(true); // send server's stderr to its stdout
 		try {
 			process = builder.start();
