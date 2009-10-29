@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ui;singleton:=true
-Bundle-Version: 1.108.0
+Bundle-Version: 1.109.0
 Bundle-Activator: net.sf.eclipsefp.haskell.ui.HaskellUIPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
@@ -21,7 +21,7 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.debug.ui,
  org.eclipse.ui.forms,
  org.apache.ant,
- net.sf.eclipsefp.haskell.scion.client;bundle-version="0.13.0",
+ net.sf.eclipsefp.haskell.scion.client,
  org.eclipse.core.expressions;bundle-version="3.4.100"
 Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2

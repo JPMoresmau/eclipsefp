@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Plugin for testing EclipseFP Haskell JParser
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core.jparser.test;singleton:=true
-Bundle-Version: 1.106.0
+Bundle-Version: 1.109.0
 Require-Bundle: org.antlr;bundle-version="[2.7.6,3.0.0)",
  org.easymock;bundle-version="[2.2.0,3.0.0)",
  org.junit;bundle-version="[3.8.0,4.0.0)",
