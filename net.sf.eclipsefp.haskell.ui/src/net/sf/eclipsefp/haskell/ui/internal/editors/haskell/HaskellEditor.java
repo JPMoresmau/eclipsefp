@@ -3,14 +3,18 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
@@ -74,6 +78,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private MarkOccurrenceComputer markOccurrencesComputer;
   private ScionInstance instance=null;
   private HaskellFoldingStructureProvider foldingStructureProvider;
+
+  private List<OutlineDef> outline;
+  private Map<String,List<OutlineDef>> defByName;
 
   public void reveal( final IHaskellLanguageElement element ) {
     Assert.isNotNull( element );
@@ -211,9 +218,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if( IContentOutlinePage.class.equals( required ) ) {
       if( outlinePage == null ) {
         outlinePage = new HaskellOutlinePage( this );
-        /*if( getEditorInput() != null ) {
-          outlinePage.setInput( getEditorInput() );
-        }*/
+      }
+      if( outline != null ) {
+        outlinePage.setInput( outline );
       }
       result = outlinePage;
     } else if( projectionSupport != null ) {
@@ -384,6 +391,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         instance.outline(findFile(),new OutlineHandler() {
 
           public void outlineResult( final List<OutlineDef> outlineDefs ) {
+            outline=outlineDefs;
             if(getOutlinePage()!=null){
               getOutlinePage().setInput( outlineDefs );
             }
@@ -402,5 +410,30 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
   public HaskellOutlinePage getOutlinePage() {
     return outlinePage;
+  }
+
+  public synchronized Location getOutlineLocation(final String name){
+    if (defByName==null){
+      buildDefByName();
+    }
+    List<OutlineDef> l=defByName.get( name);
+    if (l!=null && l.size()>0){
+      return l.iterator().next().getLocation();
+    }
+    return null;
+  }
+
+  private void buildDefByName(){
+    if (outline!=null){
+      defByName=new HashMap<String, List<OutlineDef>>();
+      for (OutlineDef od:outline){
+        List<OutlineDef> l=defByName.get( od.getName());
+        if(l==null){
+          l=new ArrayList<OutlineDef>();
+          defByName.put( od.getName(), l );
+        }
+        l.add( od );
+      }
+    }
   }
 }

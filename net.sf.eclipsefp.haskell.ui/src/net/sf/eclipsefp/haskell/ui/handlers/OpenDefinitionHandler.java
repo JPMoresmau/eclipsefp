@@ -5,7 +5,6 @@ import java.net.URI;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -92,13 +91,11 @@ public class OpenDefinitionHandler extends AbstractHandler {
   				} else {
   				  // we try to find an id for an object not exported, that scion doesn't know
   				  // but that we have in the outline
-  				  HaskellOutlinePage p=haskellEditor.getOutlinePage();
-  				  if (p!=null){
-  				    location=p.getOutlineLocation( name );
-  				    if (location!=null){
-  				      selectAndReveal( haskellEditor, haskellEditor.getDocument(), location );
-  				    }
-  				  }
+				    location=haskellEditor.getOutlineLocation( name );
+				    if (location!=null){
+				      selectAndReveal( haskellEditor, haskellEditor.getDocument(), location );
+				    }
+
   				}
 				}
 			}

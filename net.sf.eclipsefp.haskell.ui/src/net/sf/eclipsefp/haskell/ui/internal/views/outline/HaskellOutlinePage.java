@@ -1,11 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -42,7 +39,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
   private List<OutlineDef> input;
   private final HaskellEditor editor;
 
-  private Map<String,List<OutlineDef>> defByName;
+
 
   public HaskellOutlinePage( final HaskellEditor textEditor ) {
     this.editor = textEditor;
@@ -130,7 +127,6 @@ public class HaskellOutlinePage extends ContentOutlinePage {
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final List<OutlineDef> outlineDefs ) {
      this.input=outlineDefs;
-     this.defByName=null;
      this.update();
 
   }
@@ -157,30 +153,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     }
   }
 
-  public synchronized Location getOutlineLocation(final String name){
-    if (defByName==null){
-      buildDefByName();
-    }
-    List<OutlineDef> l=defByName.get( name);
-    if (l!=null && l.size()>0){
-      return l.iterator().next().getLocation();
-    }
-    return null;
-  }
 
-  private void buildDefByName(){
-    if (input!=null){
-      defByName=new HashMap<String, List<OutlineDef>>();
-      for (OutlineDef od:input){
-        List<OutlineDef> l=defByName.get( od.getName());
-        if(l==null){
-          l=new ArrayList<OutlineDef>();
-          defByName.put( od.getName(), l );
-        }
-        l.add( od );
-      }
-    }
-  }
 
   class LexicalSortingAction extends Action {
 
