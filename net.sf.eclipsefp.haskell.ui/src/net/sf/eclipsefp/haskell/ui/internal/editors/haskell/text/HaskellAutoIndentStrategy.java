@@ -107,17 +107,17 @@ public class HaskellAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
   }
 
 
-  private int getTabWidth() {
+  protected int getTabWidth() {
     String key = IEditorPreferenceNames.EDITOR_TAB_WIDTH;
     return getPreferenceStore().getInt( key );
   }
 
-  private boolean isSpacesForTabs() {
+  protected boolean isSpacesForTabs() {
     String key = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
     return getPreferenceStore().getBoolean( key );
   }
 
-  private IPreferenceStore getPreferenceStore() {
+  protected IPreferenceStore getPreferenceStore() {
     return HaskellUIPlugin.getDefault().getPreferenceStore();
   }
 }

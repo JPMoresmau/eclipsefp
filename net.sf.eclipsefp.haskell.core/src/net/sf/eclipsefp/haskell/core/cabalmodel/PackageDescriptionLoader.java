@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IFile;
@@ -97,19 +95,17 @@ public class PackageDescriptionLoader {
     private final StringBuilder fieldValue=new StringBuilder();
     private ValuePosition fieldVP=null;
 
-    private final Map<String,CabalSyntax> sections=new HashMap<String, CabalSyntax>();
+
 
     private final PackageDescription pd;
 
     private int braces=0;
 
+
+
     private CabalParser( final PackageDescription pd ){
       this.pd=pd;
-      for (CabalSyntax cs:CabalSyntax.values() ){
-        if (cs.isSectionHeader()){
-          sections.put(cs.getCabalName().toLowerCase(),cs);
-        }
-      }
+
     }
 
     private void parse( final BufferedReader br
@@ -150,7 +146,7 @@ public class PackageDescriptionLoader {
               }
 
               String start=getSectionHeader( line );
-              CabalSyntax cs=sections.get( start );
+              CabalSyntax cs=CabalSyntax.sections.get( start );
               if (cs != null){
                 String name=null;
                 if (line.length()>start.length()){

@@ -2,9 +2,14 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
+import java.util.Arrays;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.ca.CabalCompletionProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text.CabalScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text.CommentScanner;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -86,6 +91,57 @@ class CabalConfiguration extends SourceViewerConfiguration {
   }
 
 
+  @Override
+  public String[] getIndentPrefixes( final ISourceViewer sourceViewer,
+      final String contentType ) {
+    int tabWidth = getTabWidth(sourceViewer);
+    StringBuilder prefix = new StringBuilder();
+    String[] ret=new String[tabWidth+2];
+    for (int i = 0; i <= tabWidth; i++) {
+      for (int j = 0; j + i < tabWidth; j++) {
+        prefix.append(' ');
+      }
+      if (i != 0) {
+        prefix.append(' ');
+      }
+
+      ret[i]=prefix.toString();
+      prefix.setLength( 0 );
+    }
+    ret[tabWidth+1]=""; //$NON-NLS-1$
+    return ret;
+  }
+
+
+
+  @Override
+  protected String[] getIndentPrefixesForTab( final int tabWidth ) {
+    String[] indentPrefixes= new String[tabWidth + 2];
+    for (int i= 0; i <= tabWidth; i++) {
+      char[] spaceChars= new char[i];
+      Arrays.fill(spaceChars, ' ');
+      String spaces= new String(spaceChars);
+      if (i < tabWidth) {
+        indentPrefixes[i]= spaces + ' ';
+      } else {
+        indentPrefixes[i]= new String(spaces);
+      }
+    }
+    indentPrefixes[tabWidth + 1]= ""; //$NON-NLS-1$
+    return indentPrefixes;
+  }
+
+  @Override
+  public int getTabWidth( final ISourceViewer sourceViewer ) {
+    return getPreferenceStore().getInt( IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH );
+  }
+
+  @Override
+  public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sourceViewer,
+      final String contentType ) {
+    return new IAutoEditStrategy[] { new CabalAutoIndentStrategy()};
+  }
+
   // helping methods
   //////////////////
 
@@ -102,4 +158,9 @@ class CabalConfiguration extends SourceViewerConfiguration {
     }
     return commentScanner;
   }
+
+  private IPreferenceStore getPreferenceStore() {
+    return HaskellUIPlugin.getDefault().getPreferenceStore();
+  }
+
 }

@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /** <p>contains constant definitions for the elements of the Cabal
   * syntax.</p>
@@ -96,4 +99,12 @@ public enum CabalSyntax {
     return cabalName;
   }
 
+  public static final Map<String,CabalSyntax> sections=new HashMap<String, CabalSyntax>();
+  static {
+    for (CabalSyntax cs:CabalSyntax.values() ){
+      if (cs.isSectionHeader()){
+        sections.put(cs.getCabalName().toLowerCase(),cs);
+      }
+    }
+  }
 }

@@ -163,6 +163,7 @@ public class HaskellEditorPP extends PreferencePage
 
   private void addAppearancePreferences( final OverlayPreferenceStore store ) {
     store.addIntKey( EDITOR_TAB_WIDTH );
+    store.addIntKey( EDITOR_CABAL_TAB_WIDTH );
     store.addBooleanKey( EDITOR_CURRENT_LINE );
     store.addStringKey( EDITOR_CURRENT_LINE_COLOR );
     store.addBooleanKey( EDITOR_MATCHING_BRACKETS );
