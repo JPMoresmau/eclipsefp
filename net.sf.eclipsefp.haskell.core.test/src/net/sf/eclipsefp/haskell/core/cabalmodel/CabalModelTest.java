@@ -324,6 +324,23 @@ public class CabalModelTest extends TestCase {
     pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
     assertEquals("Test.HUnit.Lang, Test.HUnit.Terminal, Test.HUnit.Text, Test.HUnit, Test.New",s);
+
+    pds.update( CabalSyntax.FIELD_EXPOSED_MODULES, null );
+    s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertNull(s);
+    pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New" );
+    s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertEquals("Test.New",s);
+
+    pds.update(  CabalSyntax.FIELD_EXPOSED_MODULES,"Test.New,");
+    pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New2" );
+    s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertEquals("Test.New, Test.New2",s);
+
+    pds.update(  CabalSyntax.FIELD_EXPOSED_MODULES,"Test.New, ");
+    pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New2" );
+    s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertEquals("Test.New, Test.New2",s);
   }
 
   public void testSourceDirs(){

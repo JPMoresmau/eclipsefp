@@ -192,12 +192,15 @@ public class PackageDescriptionStanza {
    // short lists we hope
    if (!ls.contains( value )){
      StringBuilder newValue=new StringBuilder();
-     newValue.append( s );
-     if (!value.trim().endsWith( "," )){ //$NON-NLS-1$
-       newValue.append(","); //$NON-NLS-1$
-     }
-     if (!value.endsWith( " " )){ //$NON-NLS-1$
-       newValue.append(" "); //$NON-NLS-1$
+     if (s!=null){
+       newValue.append( s );
+
+       if (!s.trim().endsWith( "," )){ //$NON-NLS-1$
+         newValue.append(","); //$NON-NLS-1$
+       }
+       if (!s.endsWith( " " )){ //$NON-NLS-1$
+         newValue.append(" "); //$NON-NLS-1$
+       }
      }
      newValue.append(value);
      return update(field, newValue.toString() );
