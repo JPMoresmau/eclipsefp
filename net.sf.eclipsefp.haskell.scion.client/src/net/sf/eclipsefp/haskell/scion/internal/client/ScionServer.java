@@ -279,6 +279,9 @@ public class ScionServer {
 	}
 	
 	private boolean serverHasOutput() throws IOException {
+		if (serverStdOutReader==null){
+			return false;
+		}
 		return serverStdOutReader.ready();
 	}
 	
