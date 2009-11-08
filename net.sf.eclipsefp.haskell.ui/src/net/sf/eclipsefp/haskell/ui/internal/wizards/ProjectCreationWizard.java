@@ -134,6 +134,9 @@ public abstract class ProjectCreationWizard
     operation.setProjectName( page.getProjectName() );
     operation.setProjectLocation( page.getProjectLocationPath().toString() );
 
+    /*operation.setExecutable( page.isExecutable() );
+    operation.setLibrary(page.isLibrary());
+     */
     IRunnableWithProgress rwp = new IRunnableWithProgress() {
       public void run( final IProgressMonitor monitor ) {
         operation.run( monitor );

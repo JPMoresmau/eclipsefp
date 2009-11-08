@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -19,10 +20,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
   private static final String ENC = "UTF-8"; //$NON-NLS-1$
-  private static final String EXT_CABAL = "cabal"; //$NON-NLS-1$
   private static final String SETUP_HS = "Setup.hs"; //$NON-NLS-1$
   private static final String NL = System.getProperty( "line.separator","\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
+  private boolean library;
+  private boolean executable;
 
   // interface methods of IProjectCreationOperationExtraOp
   ////////////////////////////////////////////////////////
@@ -31,7 +33,13 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
                    final IProgressMonitor mo ) throws CoreException {
     String name = project.getName();
     createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
-    IPath cabalFile = new Path( name ).addFileExtension( EXT_CABAL );
+
+    if (isExecutable()){
+      IPath mainFile = new Path( "src/Main" ).addFileExtension( ResourceUtil.EXTENSION_HS ); //$NON-NLS-1$
+      createFile( project, mainFile, getMainFileContent( ), mo  );
+    }
+
+    IPath cabalFile = new Path( name ).addFileExtension( ResourceUtil.EXTENSION_CABAL );
     createFile( project, cabalFile, getCabalFileContent( name ), mo  );
   }
 
@@ -39,10 +47,30 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   // helping methods
   //////////////////
 
+  private String getMainFileContent() {
+   return "module Main where"+NL+NL+"main::IO()"+NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  }
+
+
+
   private String getCabalFileContent( final String name ) {
-    return   CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
-           + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL //$NON-NLS-1$
-           + CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName()+": src" + NL; //$NON-NLS-1$
+    String s=CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
+           + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL + NL //$NON-NLS-1$
+           ;
+    if (isLibrary()){
+      s+= CabalSyntax.SECTION_LIBRARY.getCabalName() + NL
+        + "  "+ CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName()+": src" + NL + NL//$NON-NLS-1$ //$NON-NLS-2$
+      ;
+    }
+
+    if (isExecutable()){
+        s+= CabalSyntax.SECTION_EXECUTABLE.getCabalName()+" " + name + NL //$NON-NLS-1$
+           + "  "+ CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName()+": src" + NL //$NON-NLS-1$ //$NON-NLS-2$
+           + "  "+ CabalSyntax.FIELD_MAIN_IS.getCabalName()+": Main.hs"+ NL + NL; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+
+    return s;
   }
 
   private void createFile( final IProject project,
@@ -61,5 +89,25 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
   private String getSetupFileContent() {
     return "import Distribution.Simple"+NL+"main = defaultMain"+NL; //$NON-NLS-1$ //$NON-NLS-2$
+  }
+
+
+  public boolean isLibrary() {
+    return library;
+  }
+
+
+  public void setLibrary( final boolean library ) {
+    this.library = library;
+  }
+
+
+  public boolean isExecutable() {
+    return executable;
+  }
+
+
+  public void setExecutable( final boolean executable ) {
+    this.executable = executable;
   }
 }

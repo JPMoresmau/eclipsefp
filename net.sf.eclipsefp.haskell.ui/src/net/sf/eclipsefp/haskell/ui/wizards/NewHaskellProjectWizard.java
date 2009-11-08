@@ -20,11 +20,19 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @author Leif Frenzel
  */
 public class NewHaskellProjectWizard extends ProjectCreationWizard {
+  ProjectModelFilesOp op=new ProjectModelFilesOp();
 
 	public NewHaskellProjectWizard() {
     super( new HaskellProjectCreationOperation() );
-    getOperation().setExtraOperation( new ProjectModelFilesOp() );
+    getOperation().setExtraOperation( op );
   }
+
+	@Override
+	public boolean performFinish() {
+	  op.setExecutable( page.isExecutable() );
+    op.setLibrary(page.isLibrary());
+	  return super.performFinish();
+	}
 
   @Override
   protected ImageDescriptor getBannerImage() {

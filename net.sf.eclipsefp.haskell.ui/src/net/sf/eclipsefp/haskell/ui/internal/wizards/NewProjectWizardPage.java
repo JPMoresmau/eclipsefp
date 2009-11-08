@@ -262,6 +262,54 @@ public class NewProjectWizardPage extends WizardPage {
     }
   }
 
+  private final class ComponentGroup extends Observable implements IDialogFieldListener{
+    protected final SelectionButtonDialogField fExecutable;
+    protected final SelectionButtonDialogField fLibrary;
+
+    public ComponentGroup() {
+      fExecutable= new SelectionButtonDialogField(SWT.CHECK);
+      fExecutable.setDialogFieldListener(this);
+      fExecutable.setLabelText(UITexts.newProjectWizardPage_ComponentGroup_executable);
+      fExecutable.setSelection( true );
+
+      fLibrary= new SelectionButtonDialogField(SWT.CHECK);
+      fLibrary.setDialogFieldListener(this);
+      fLibrary.setLabelText(UITexts.newProjectWizardPage_ComponentGroup_library);
+
+    }
+
+    public Control createControl(final Composite composite) {
+      final int numColumns= 1;
+
+      final Group group= new Group(composite, SWT.NONE);
+      group.setLayout(initGridLayout(new GridLayout(numColumns, false), true));
+      group.setText(UITexts.newProjectWizardPage_ComponentGroup_title);
+
+      fExecutable.doFillIntoGrid(group, numColumns);
+      fLibrary.doFillIntoGrid(group, numColumns);
+
+      return group;
+    }
+
+    protected void fireEvent() {
+      setChanged();
+      notifyObservers();
+    }
+
+    public void dialogFieldChanged( final DialogField field ) {
+      fireEvent();
+
+    }
+
+    public boolean isLibrary(){
+      return fLibrary.isSelected();
+    }
+
+    public boolean isExecutable(){
+      return fExecutable.isSelected();
+    }
+  }
+
   /**
    * Validate this page and show appropriate warnings and error NewWizardMessages.
    */
@@ -400,6 +448,7 @@ public class NewProjectWizardPage extends WizardPage {
   private PageValidator fValidator;
   private final NameGroup fNameGroup;
   private final LocationGroup fLocationGroup;
+  private final ComponentGroup fComponentGroup;
 
   public NewProjectWizardPage() {
     this(PAGE_NAME);
@@ -409,10 +458,10 @@ public class NewProjectWizardPage extends WizardPage {
     super( pageName );
     fNameGroup= new NameGroup();
     fLocationGroup= new LocationGroup();
+    fComponentGroup=new ComponentGroup();
 
     // establish connections
     fNameGroup.addObserver(fLocationGroup);
-
     // initialize all elements
     fNameGroup.notifyObservers();
 
@@ -425,6 +474,7 @@ public class NewProjectWizardPage extends WizardPage {
     // initialize defaults
     setProjectName(""); //$NON-NLS-1$
     setProjectLocationURI(null);
+
   }
 
   /**
@@ -466,6 +516,7 @@ public class NewProjectWizardPage extends WizardPage {
   protected void createControls(final Composite composite) {
     createNameControl(composite);
     createLocationControl(composite);
+    createComponentControl(composite);
   }
 
   /**
@@ -490,6 +541,26 @@ public class NewProjectWizardPage extends WizardPage {
     Control locationControl = fLocationGroup.createControl(composite);
     locationControl.setLayoutData(horizontalFillGridData());
     return locationControl;
+  }
+
+  /**
+   * Creates the controls for the name field.
+   *
+   * @param composite the parent composite
+   * @return the created control
+   */
+  protected Control createComponentControl(final Composite composite) {
+    Control componentControl = fComponentGroup.createControl(composite);
+    componentControl.setLayoutData(horizontalFillGridData());
+    return componentControl;
+  }
+
+  public boolean isLibrary(){
+    return fComponentGroup.isLibrary();
+  }
+
+  public boolean isExecutable(){
+    return fComponentGroup.isExecutable();
   }
 
   /**

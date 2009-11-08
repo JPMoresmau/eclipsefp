@@ -35,6 +35,8 @@ public class ProjectCreationOperation {
 	private String fLocation;
   private IProjectCreationOperationExtraOp extraOp;
 
+
+
 	public void run( final IProgressMonitor passedMon ) {
     IProgressMonitor mon = ( passedMon == null ) ? new NullProgressMonitor()
         : passedMon;
@@ -45,7 +47,7 @@ public class ProjectCreationOperation {
         monitor.beginTask( msg, getDirectories().length + 7 );
 
         monitor.subTask( CoreTexts.projectCreationOperation_init );
-        IProject project = createProjectResource();
+        IProject project = createProjectResource(monitor);
         monitor.worked( 1 );
 
         monitor.subTask( CoreTexts.projectCreationOperation_natures );
@@ -92,7 +94,7 @@ public class ProjectCreationOperation {
 	// helping methods
 	// ////////////////
 
-	private IProject createProjectResource() throws CoreException {
+	private IProject createProjectResource(final IProgressMonitor monitor) throws CoreException {
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     final String projectName = getProjectName();
     final String projectLocation = getProjectLocation();
@@ -106,10 +108,10 @@ public class ProjectCreationOperation {
     }
 
     if( !result.exists() ) {
-      result.create( desc, null );
+      result.create( desc, monitor );
     }
     if( !result.isOpen() ) {
-      result.open( null );
+      result.open( monitor );
     }
     return result;
   }
@@ -184,4 +186,6 @@ public class ProjectCreationOperation {
       extraOp.run( project, subMon );
     }
   }
+
+
 }
