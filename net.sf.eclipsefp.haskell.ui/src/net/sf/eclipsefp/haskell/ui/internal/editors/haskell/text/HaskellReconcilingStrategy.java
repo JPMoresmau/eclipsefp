@@ -78,7 +78,8 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
 
   public void initialReconcile() {
     //reconcile();
-    editor.synchronize();
+    // done in setInput
+    //editor.synchronize();
   }
 
 
@@ -86,37 +87,15 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   // ////////////////
 
   private void reconcile() {
-    /*Shell shell = editor.getSite().getShell();
-    if( shell != null && !shell.isDisposed() ) {
-      shell.getDisplay().asyncExec( new Runnable() {
+    // on save we do typecheck and synchronize outline, so only use reconciler when dirty
+    if (editor.isDirty()) {
+      instance.reloadFile( file, editor.getDocument() ,new Runnable() {
+
         public void run() {
-          if( markOccurrencesComputer != null ) {
-            markOccurrencesComputer.compute();
-          }
-        }
-      } );
-      if( document != null ) {
-        if( instance!=null ) {
-            instance.outline(file,new OutlineHandler() {
-
-              public void outlineResult( final List<OutlineDef> outlineDefs ) {
-                if(editor.getOutlinePage()!=null){
-                  editor.getOutlinePage().setInput( outlineDefs );
-                }
-               foldingStructureProvider.updateFoldingRegions(outlineDefs);
-              }
-            });
-          }
+          editor.synchronize();
 
         }
-    }*/
-    instance.reloadFile( file, editor.getDocument() ,new Runnable() {
-
-      public void run() {
-        editor.synchronize();
-
-      }
-    });
-
+      });
+    }
   }
 }
