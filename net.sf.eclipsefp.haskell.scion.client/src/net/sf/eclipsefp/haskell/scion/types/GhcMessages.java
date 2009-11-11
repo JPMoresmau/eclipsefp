@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.resolve;
+package net.sf.eclipsefp.haskell.scion.types;
 
 /**
  * <p>GHC messages strings used for quick fixes and assist.
@@ -11,5 +11,9 @@ public interface GhcMessages {
 
   public static String WARNING_NOTYPE_CONTAINS="definition but no type signature"; //$NON-NLS-1$
 
+  public static String WARNING_USEFLAG_CONTAINS="you intended to use"; //$NON-NLS-1$
+
   public static String WARNING_INFERREDTYPE_START="inferred type:"; //$NON-NLS-1$
+
+  public static String ERROR_INTERACTIVE_DISABLED="interactive check disabled"; //$NON-NLS-1$
 }

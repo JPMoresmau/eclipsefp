@@ -62,6 +62,13 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 		}
 	}
 	
+	@Override
+	protected boolean onError(JSONException ex, String name, String message) {
+		instance.deleteProblems(file);
+		compilationResult=new CompilationResult(file.getLocation().toOSString(),message);
+		return true;
+	}
+	
 	public CompilationResult getCompilationResult() {
 		return compilationResult;
 	}

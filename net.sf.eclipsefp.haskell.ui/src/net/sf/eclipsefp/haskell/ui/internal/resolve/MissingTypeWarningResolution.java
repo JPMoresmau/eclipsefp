@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;

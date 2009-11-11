@@ -33,6 +33,6 @@ public class BackgroundTypecheckArbitraryCommand extends
 		params.put("contents", doc.get());
 		return params;
 	}
-	
+
 
 }

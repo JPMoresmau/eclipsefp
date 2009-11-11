@@ -30,6 +30,9 @@ public abstract class MarkerCompletion implements IMarkerResolution {
    */
   public abstract ICompletionProposal getCompletionProposal( final IMarker marker,final IDocument document);
 
+  /**
+   * applies the completion chosen for the given marker to the document
+   */
   public void run( final IMarker marker ) {
     try {
       IFile f=(IFile)marker.getResource();

@@ -22,6 +22,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.Component;
+import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
 import org.eclipse.core.resources.IFile;
@@ -319,11 +320,17 @@ public class ScionInstance implements IScionCommandRunner {
 		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc){
 			@Override
 			protected boolean onError(JSONException ex, String name, String message) {
-				ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
-				removeJobChangeListener(l);
-				removeJobChangeListener(l2);
-				ScionInstance.this.reloadFile(file, after);
-				return true;
+				if (message!=null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)){
+					deleteProblems(file);
+					ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
+					removeJobChangeListener(l);
+					removeJobChangeListener(l2);
+					ScionInstance.this.reloadFile(file, after);
+					
+					return true;
+				} 
+				return super.onError(ex, name, message);
+				
 			}
 		};
 		cmd.addJobChangeListener(l);
