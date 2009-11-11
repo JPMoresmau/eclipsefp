@@ -103,6 +103,10 @@ public final class UITexts extends NLS {
   public static String newProjectWizardPage_Message_notExisingProjectOnWorkspaceRoot;
   public static String newProjectWizardPage_Message_cannotCreateAtExternalLocation;
 
+  public static String newProjectWizardPage_ComponentGroup_title;
+  public static String newProjectWizardPage_ComponentGroup_executable;
+  public static String newProjectWizardPage_ComponentGroup_library;
+
   public static String overviewPage_title;
 
   public static String refDelegate_checking;
@@ -132,6 +136,9 @@ public final class UITexts extends NLS {
   public static String module_inclusion_page_title;
   public static String module_inclusion_page_description;
   public static String module_inclusion_error;
+
+  public static String quickfix_marker_annotation_name;
+  public static String resolve_missingtype;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcil
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellStringScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,6 +27,8 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
@@ -197,6 +200,15 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		}
 		ret[tabWidth+1]=""; //$NON-NLS-1$
 		return ret;
+	}
+
+	@Override
+	public IQuickAssistAssistant getQuickAssistAssistant(
+	    final ISourceViewer sourceViewer ) {
+    QuickAssistAssistant qaa=new QuickAssistAssistant();
+    qaa.setQuickAssistProcessor( new QuickAssistProcessor() );
+    return qaa;
+
 	}
 
 	@Override

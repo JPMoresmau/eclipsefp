@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -21,6 +22,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacte
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
@@ -28,14 +30,19 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -49,6 +56,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -114,6 +122,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     initMarkOccurrences();
     foldingStructureProvider=new HaskellFoldingStructureProvider( this );
 
+
   }
 
 
@@ -166,7 +175,39 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         IActionDefinitionIds.COMMENT );
     createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX, //$NON-NLS-1$
         IActionDefinitionIds.UNCOMMENT );
+
+
+    addRulerContextMenuListener( new IMenuListener() {
+
+      public void menuAboutToShow( final IMenuManager manager ) {
+       IVerticalRulerInfo service= (IVerticalRulerInfo)getAdapter(IVerticalRulerInfo.class);
+       if (service!=null){
+         int line=service.getLineOfLastMouseButtonActivity();
+
+         for (Iterator<?> it=getSourceViewer().getAnnotationModel().getAnnotationIterator();it.hasNext();){
+           Annotation ann=(Annotation)it.next();
+           if (ann instanceof MarkerAnnotation){
+             Position p=getSourceViewer().getAnnotationModel().getPosition( ann );
+             try {
+             if (p!=null && getDocument().getLineOfOffset(p.getOffset())==line){
+               if (((ProjectionViewer)getSourceViewer()).getQuickAssistAssistant().canFix( ann )){
+                 IAction action=new SelectAnnotationForQuickFix(  HaskellEditor.this , (ProjectionViewer)getSourceViewer(), (MarkerAnnotation)ann );
+                 manager.add( action );
+                 //return;
+               }
+             }
+             } catch (BadLocationException ble){
+               // ignore
+             }
+           }
+         }
+
+       }
+
+      }
+    });
   }
+
 
   @Override
   protected ISourceViewer createSourceViewer( final Composite parent,
@@ -175,8 +216,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // projection viewer
     fAnnotationAccess = createAnnotationAccess();
     fOverviewRuler = createOverviewRuler( getSharedColors() );
-    ISourceViewer viewer = new ProjectionViewer( parent, ruler,
+    ProjectionViewer viewer = new ProjectionViewer( parent, ruler,
         getOverviewRuler(), isOverviewRulerVisible(), styles );
+
     // ensure decoration support has been created and configured.
     getSourceViewerDecorationSupport( viewer );
     return viewer;
@@ -189,6 +231,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     projectionSupport = new ProjectionSupport( projectionViewer,
         getAnnotationAccess(), getSharedColors() );
     projectionSupport.install();
+    projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+    projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+
     projectionViewer.doOperation( ProjectionViewer.TOGGLE );
 
     if( markOccurrencesComputer != null ) {
@@ -203,7 +248,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       projectionViewer.addPostSelectionChangedListener( listener );
     }
     activateContext();
+
+
   }
+
+
 
   private void activateContext() {
     IContextService contextService = ( IContextService )getSite().getService(
@@ -317,10 +366,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       });
     }
 
+
     /*if( outlinePage != null ) {
       outlinePage.setInput( input );
     }*/
   }
+
 
 
   // helping methods
@@ -371,6 +422,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
   public void synchronize(){
     IDocument document=getDocument();
+
     foldingStructureProvider.setDocument( document );
     if( markOccurrencesComputer != null ) {
       markOccurrencesComputer.setDocument( document );

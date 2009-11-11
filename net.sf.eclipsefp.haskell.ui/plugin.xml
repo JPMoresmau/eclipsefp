@@ -495,4 +495,11 @@
       </enablement>
     </commonWizard>
   </extension>
+  <extension
+        point="org.eclipse.ui.ide.markerResolution">
+     <markerResolutionGenerator
+           class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
+           markerType="org.eclipse.core.resources.problemmarker">
+     </markerResolutionGenerator>
+  </extension>
 </plugin>
