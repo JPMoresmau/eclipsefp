@@ -247,13 +247,11 @@ public class ScionInstance implements IScionCommandRunner {
 	// External commands
 
 	public void backgroundTypecheckFile(IFile file) {
-		deleteProblems(file);
 		BackgroundTypecheckFileCommand command = new BackgroundTypecheckFileCommand(this, file);
 		command.runAsync();
 	}
 
 	public void backgroundTypecheckArbitrary(final IFile file,IDocument doc) {
-		deleteProblems(file);
 		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc);
 		cmd.addJobChangeListener(new JobChangeAdapter(){
 			@Override
@@ -280,7 +278,7 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	
-	private void deleteProblems(IResource r){
+	public void deleteProblems(IResource r){
 		if (!r.getWorkspace().isTreeLocked()){
 			try {
 				r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );

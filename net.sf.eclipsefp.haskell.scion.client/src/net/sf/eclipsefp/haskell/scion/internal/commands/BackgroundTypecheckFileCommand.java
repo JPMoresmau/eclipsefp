@@ -41,6 +41,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 
 	@Override
 	protected void doProcessResult(Object json) throws JSONException {
+		instance.deleteProblems(file);
 		if (json instanceof JSONArray){
 			JSONArray result = (JSONArray)json;
 			compilationResult = new CompilationResult(result.getJSONObject(1));
