@@ -141,7 +141,6 @@ public class ScionInstance implements IScionCommandRunner {
 	}*/
 	
 	public void buildProject(final boolean output){
-		deleteProblems(getProject());
 		//configureCabal(new JobChangeAdapter(){
 		//	@Override
 		//	public void done(IJobChangeEvent event) {
@@ -163,6 +162,7 @@ public class ScionInstance implements IScionCommandRunner {
 			command.getSuccessors().add(new ArbitraryCommand(ScionInstance.this, Job.BUILD){
 				@Override
 				public IStatus run(IProgressMonitor monitor) {
+					deleteProblems(getProject());
 					CompilationResultHandler crh=new CompilationResultHandler(getProject());
 					
 					for (Component c:command.getComponents()){
