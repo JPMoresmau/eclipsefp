@@ -2,6 +2,7 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -166,14 +167,14 @@ public class PackageDescriptionStanza {
           line= "."+line ; //$NON-NLS-1$
         }
         sb.append( line );
-        sb.append( System.getProperty( "line.separator" ) ); //$NON-NLS-1$
+        sb.append( NL );
         line=br.readLine();
       }
       if (count>1){
         for (int a=0;a<subIndent;a++){
           sb.insert( 0, ' ');
         }
-        sb.insert( 0, System.getProperty( "line.separator" ) ); //$NON-NLS-1$
+        sb.insert( 0, NL );
 
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);

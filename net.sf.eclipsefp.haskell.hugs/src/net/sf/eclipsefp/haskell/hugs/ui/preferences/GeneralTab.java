@@ -1,48 +1,44 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.hugs.ui.preferences;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
+import java.io.*;
 import net.sf.eclipsefp.common.ui.dialog.ExecutableDialogField;
 import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 
-/** <p>The tab on the HUGS preference page that displays general 
+/** <p>The tab on the HUGS preference page that displays general
   * information.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public class GeneralTab extends Tab implements IHugsPreferenceNames {
-  
+
   public GeneralTab( final IPreferenceStore store ) {
     super( store );
   }
 
   // interface methods of Tab
   ///////////////////////////
-  
+
   @Override
   public Control createControl( final Composite parent ) {
     String labelText = "HUGS executable";
-    ExecutableDialogField dlgField = new ExecutableDialogField( parent, 
+    ExecutableDialogField dlgField = new ExecutableDialogField( parent,
                                                                 labelText ){
-    	
+
       @Override
       protected String createDisplayContent( final String info ) {
     	  try {
     		  	File f=new File(info);
     		  	if (f.exists() && f.canRead()){
 			        Process p=Runtime.getRuntime().exec(info);
-			        
+
 			        InputStream is=p.getInputStream();
 			        // read all text given by the console till the Hugs> prompt
 			        // this rely on the > at the prompt
@@ -54,7 +50,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 			        is.read();
 			        OutputStream os=p.getOutputStream();
 			        // write version command
-			        os.write((":version"+System.getProperty("line.separator","\n")).getBytes());
+			        os.write((":version"+NL).getBytes());
 			        os.flush();
 			        StringBuffer sb=new StringBuffer();
 			        r=is.read();
@@ -68,7 +64,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 			        	is.read();
 			        }
 			        // quit
-			        os.write((":quit"+System.getProperty("line.separator","\n")).getBytes());
+			        os.write((":quit"+NL).getBytes());
 			        os.flush();
 			        os.close();
 			        is.close();
@@ -88,7 +84,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
     };
 
     dlgField.setInfo( getPreferenceStore().getString( EXECUTABLE_NAME ) );
-    
+
     dlgField.addDialogFieldListener( new IDialogFieldListener() {
       public void infoChanged( final Object newInfo ) {
         getPreferenceStore().setValue( EXECUTABLE_NAME, ( String )newInfo );

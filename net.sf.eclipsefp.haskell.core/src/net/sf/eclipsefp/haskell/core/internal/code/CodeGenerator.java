@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.code;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
 
 
@@ -17,7 +18,7 @@ public class CodeGenerator {
                                      final String name,
                                      final EHaskellCommentStyle style ) {
     StringBuffer sb = new StringBuffer();
-    sb.append( getLineDelimiter() );
+    sb.append( NL );
     sb.append(getPrefixFor( style ));
     sb.append( "module " ); //$NON-NLS-1$
     for( int i = 0; i < folderNames.length; i++ ) {
@@ -26,7 +27,7 @@ public class CodeGenerator {
     }
     sb.append( name );
     sb.append( " where" ); //$NON-NLS-1$
-    sb.append( getLineDelimiter() );
+    sb.append( NL);
     sb.append( getSuffixFor(style) );
     return sb.toString();
   }
@@ -49,7 +50,4 @@ public class CodeGenerator {
     return result;
   }
 
-  private static String getLineDelimiter() {
-    return System.getProperty( "line.separator", "\n" );     //$NON-NLS-1$ //$NON-NLS-2$
-  }
 }

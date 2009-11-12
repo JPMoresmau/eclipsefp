@@ -46,6 +46,8 @@ public class ResourceUtil {
 	public static final String EXTENSION_LHS = "lhs"; //$NON-NLS-1$
 	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
 
+	public static final String NL = System.getProperty( "line.separator","\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
 	/**
 	 * <p>
 	 * returns whether the passed resource is a Haskell source file, as

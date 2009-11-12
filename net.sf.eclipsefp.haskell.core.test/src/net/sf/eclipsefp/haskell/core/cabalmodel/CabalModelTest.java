@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -84,7 +85,7 @@ public class CabalModelTest extends TestCase {
       assertEquals(17,vp.getInitialIndent());
       assertEquals(20,vp.getSubsequentIndent());
       assertEquals("CPP",pdss.get(1).getProperties().get( "Extensions"));
-      assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+System.getProperty( "line.separator" )+"Test.HUnit.Text, Test.HUnit",pdss.get(1).getProperties().get( "Exposed-modules"));
+      assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+NL+"Test.HUnit.Text, Test.HUnit",pdss.get(1).getProperties().get( "Exposed-modules"));
   }
 
   public void testModifyExample1(){
@@ -94,24 +95,24 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pdss.get(0);
     assertEquals("HUnit",pds.getProperties().get( CabalSyntax.FIELD_NAME ));
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_NAME, "JP" );
-    assertEquals("JP"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals("JP"+NL,rvp.getRealValue());
     assertEquals(0,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
     rvp=pds.update( CabalSyntax.FIELD_NAME, "JP2" );
-    assertEquals("JP2"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals("JP2"+NL,rvp.getRealValue());
     assertEquals(0,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
 
     rvp=pds.update( CabalSyntax.FIELD_VERSION, "1.0" );
-    assertEquals(CabalSyntax.FIELD_VERSION+":     1.0"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(CabalSyntax.FIELD_VERSION+":     1.0"+NL,rvp.getRealValue());
     assertEquals(1,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
     assertEquals(0,rvp.getInitialIndent());
 
     rvp=pds.update( CabalSyntax.FIELD_VERSION, "1.1.1" );
-    assertEquals("1.1.1"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals("1.1.1"+NL,rvp.getRealValue());
     assertEquals(1,rvp.getStartLine());
     assertEquals(2,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
@@ -290,23 +291,23 @@ public class CabalModelTest extends TestCase {
     assertEquals("Development",pdss.get(0).getProperties().get( CabalSyntax.FIELD_CATEGORY ));
 
     String description="Scion is a Haskell library that aims to implement those parts of a"
-      +System.getProperty( "line.separator" )+"Haskell IDE which are independent of a particular front-end.  Scion"
-      +System.getProperty( "line.separator" )+"is based on the GHC API and Cabal.  It provides both a Haskell API and"
-      +System.getProperty( "line.separator" )+"a server for non-Haskell clients such as Emacs and Vim."
-      +System.getProperty( "line.separator" )
-      +System.getProperty( "line.separator" )+"See the homepage <http://code.google.com/p/scion-lib> and the README"
-      +System.getProperty( "line.separator" )+"<http://github.com/nominolo/scion/blob/master/README.markdown> for"
-      +System.getProperty( "line.separator" )+"more information.";
+      +NL+"Haskell IDE which are independent of a particular front-end.  Scion"
+      +NL+"is based on the GHC API and Cabal.  It provides both a Haskell API and"
+      +NL+"a server for non-Haskell clients such as Emacs and Vim."
+      +NL
+      +NL+"See the homepage <http://code.google.com/p/scion-lib> and the README"
+      +NL+"<http://github.com/nominolo/scion/blob/master/README.markdown> for"
+      +NL+"more information.";
     assertEquals(description,pdss.get(0).getProperties().get( CabalSyntax.FIELD_DESCRIPTION));
     ValuePosition vp=pdss.get(0).getPositions().get(CabalSyntax.FIELD_DESCRIPTION );
     assertEquals(12,vp.getInitialIndent());
     assertEquals(8,vp.getStartLine());
     assertEquals(17,vp.getEndLine());
 
-    String newDesc="First line"+System.getProperty( "line.separator" )+System.getProperty( "line.separator" )+"Line2";
+    String newDesc="First line"+NL+NL+"Line2";
     RealValuePosition rvp=pdss.get(0).update( CabalSyntax.FIELD_DESCRIPTION, newDesc );
 
-    assertEquals(System.getProperty( "line.separator" )+"  First line"+System.getProperty( "line.separator" )+"  ."+System.getProperty( "line.separator" )+"  Line2"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(NL+"  First line"+NL+"  ."+NL+"  Line2"+NL,rvp.getRealValue());
     assertEquals(12,rvp.getInitialIndent());
     assertEquals(8,rvp.getStartLine());
     assertEquals(17,rvp.getEndLine());
@@ -319,7 +320,7 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pdss.get(1);
     pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New" );
     String s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+System.getProperty( "line.separator" )+"Test.HUnit.Text, Test.HUnit, Test.New",s);
+    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+NL+"Test.HUnit.Text, Test.HUnit, Test.New",s);
 
     pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
@@ -404,18 +405,18 @@ public class CabalModelTest extends TestCase {
     assertEquals(CabalSyntax.SECTION_EXECUTABLE,pds.getType());
 
     String initial="Scion"
-      +System.getProperty( "line.separator" )+"Scion.Cabal"
-      +System.getProperty( "line.separator" )+"Scion.Inspect"
-      +System.getProperty( "line.separator" )+"Scion.Inspect.DefinitionSite"
-      +System.getProperty( "line.separator" )+"Scion.Session"
-      +System.getProperty( "line.separator" )+"Scion.Types"
-      +System.getProperty( "line.separator" )+"Scion.Types.Notes"
-      +System.getProperty( "line.separator" )+"Scion.Utils"
+      +NL+"Scion.Cabal"
+      +NL+"Scion.Inspect"
+      +NL+"Scion.Inspect.DefinitionSite"
+      +NL+"Scion.Session"
+      +NL+"Scion.Types"
+      +NL+"Scion.Types.Notes"
+      +NL+"Scion.Utils"
 
-      +System.getProperty( "line.separator" )+"Scion.Server.Commands"
-      +System.getProperty( "line.separator" )+"Scion.Server.ConnectionIO"
-      +System.getProperty( "line.separator" )+"Scion.Server.Generic"
-      +System.getProperty( "line.separator" )+"Scion.Server.Protocol";
+      +NL+"Scion.Server.Commands"
+      +NL+"Scion.Server.ConnectionIO"
+      +NL+"Scion.Server.Generic"
+      +NL+"Scion.Server.Protocol";
     assertEquals(initial,pds.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES ));
 
     ValuePosition vp=pds.getPositions().get( CabalSyntax.FIELD_OTHER_MODULES );
@@ -429,20 +430,20 @@ public class CabalModelTest extends TestCase {
     assertEquals(136,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(System.getProperty( "line.separator" )+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+NL,rvp.getRealValue());
 
     rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
     assertEquals(134,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(System.getProperty( "line.separator" )+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+NL,rvp.getRealValue());
 
     rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
     assertEquals(134,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
-    assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+NL,rvp.getRealValue());
 
   }
 
@@ -480,13 +481,13 @@ public class CabalModelTest extends TestCase {
   }
 
   public void testCreate(){
-    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+System.getProperty( "line.separator" ) );
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL );
     PackageDescriptionStanza pds=pd.getStanzas().get(0);
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
     assertNotNull(rvp);
     assertEquals(1,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
-    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+System.getProperty( "line.separator" ),rvp.getRealValue());
+    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
   }
 
 }

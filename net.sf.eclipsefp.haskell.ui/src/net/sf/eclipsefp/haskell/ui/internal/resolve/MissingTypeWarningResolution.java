@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -33,9 +34,9 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
     try {
 
       int offset=document.getLineOffset( line-1 );
-      String txt=type+System.getProperty("line.separator","\n"); //$NON-NLS-1$//$NON-NLS-2$
+      String txt=type+NL;
       return new CompletionProposal(txt , offset, 0, offset+txt.length(),HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
-     // doc.replace( offset, 0, type+System.getProperty("line.separator","\n") );
+     // doc.replace( offset, 0, type+NL );
 
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );

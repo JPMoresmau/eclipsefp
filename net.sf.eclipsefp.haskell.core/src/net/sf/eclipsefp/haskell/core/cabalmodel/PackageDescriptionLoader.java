@@ -2,6 +2,7 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +69,7 @@ public class PackageDescriptionLoader {
   }
 
   public static List<String> parseList(final String value){
-    return parseList(value, ", "+System.getProperty( "line.separator" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+    return parseList(value, ", "+NL ); //$NON-NLS-1$
 
   }
 
@@ -237,7 +238,7 @@ public class PackageDescriptionLoader {
 
     private void addFieldLine(final String line,final int indent){
       if (fieldValue.length()>0){
-        fieldValue.append( System.getProperty( "line.separator" )); //$NON-NLS-1$
+        fieldValue.append( NL);
       }
       String val=line.substring( indent ) ;
       if (val.trim().equals( "." )){ //$NON-NLS-1$
@@ -409,7 +410,7 @@ public class PackageDescriptionLoader {
       if (thisIndent>result.getIndent()){
         if (thisIndent<s.length()){
           if (pValue.length()>0){
-            pValue.append( System.getProperty( "line.separator" )); //$NON-NLS-1$
+            pValue.append( NL); //$NON-NLS-1$
           }
           String val=s.substring( thisIndent ) ;
           if (val.trim().equals( "." )){ //$NON-NLS-1$

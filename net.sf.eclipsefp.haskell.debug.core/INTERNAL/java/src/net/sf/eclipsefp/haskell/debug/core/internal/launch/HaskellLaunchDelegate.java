@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -261,7 +262,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     try {
       if (command!=null && command.length()>0){
         p.getStreamsProxy().write( command );
-        p.getStreamsProxy().write( System.getProperty( "line.separator","\n" ) );  //$NON-NLS-1$//$NON-NLS-2$
+        p.getStreamsProxy().write( NL );
       }
     } catch (IOException ioe){
       Status status = new Status(IStatus.ERROR, HaskellDebugCore.getPluginId(),CoreTexts.console_command_failed, ioe);

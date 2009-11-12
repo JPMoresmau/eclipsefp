@@ -2,6 +2,7 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.ca;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -65,12 +66,12 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
           sb.append( cs.getCabalName() );
           if (cs.isSectionHeader()){
             if (CabalSyntax.SECTION_LIBRARY.equals( cs )){
-              sb.append( System.getProperty( "line.separator" ) );
+              sb.append( NL );
             } else {
-              sb.append(" ");
+              sb.append(" "); //$NON-NLS-1$
             }
           } else {
-            sb.append(":");
+            sb.append(":"); //$NON-NLS-1$
           }
           String rep=sb.toString();
           CompletionProposal cp=new CompletionProposal( rep, offset-prefix.length()  , prefix.length(), rep.length(),null,cs.getCabalName(),null,null );

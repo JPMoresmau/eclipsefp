@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.project;
 
+import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -17,11 +18,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+
+
 public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
   private static final String ENC = "UTF-8"; //$NON-NLS-1$
   private static final String SETUP_HS = "Setup.hs"; //$NON-NLS-1$
-  private static final String NL = System.getProperty( "line.separator","\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
   private boolean library;
   private boolean executable;
