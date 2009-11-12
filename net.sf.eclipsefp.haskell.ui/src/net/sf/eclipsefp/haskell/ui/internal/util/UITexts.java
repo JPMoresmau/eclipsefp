@@ -139,6 +139,7 @@ public final class UITexts extends NLS {
 
   public static String quickfix_marker_annotation_name;
   public static String resolve_missingtype;
+  public static String resolve_addpragma;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

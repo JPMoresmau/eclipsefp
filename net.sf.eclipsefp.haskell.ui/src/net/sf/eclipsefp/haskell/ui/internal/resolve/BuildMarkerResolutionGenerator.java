@@ -19,15 +19,38 @@ public class BuildMarkerResolutionGenerator implements
 
   public IMarkerResolution[] getResolutions( final IMarker marker ) {
     List<IMarkerResolution> res=new ArrayList<IMarkerResolution>();
-    if (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_WARNING){
+    if (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_WARNING || (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_ERROR)){
       String msg=marker.getAttribute(IMarker.MESSAGE,""); //$NON-NLS-1$
       if (msg!=null && marker.getResource() instanceof IFile){
+        int ix=-1;
         if (msg.toLowerCase().indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
           res.add(new MissingTypeWarningResolution());
-        }
+        } else if ((ix=msg.toLowerCase().indexOf( GhcMessages.WARNING_USEFLAG_CONTAINS ))>-1){
+            int start=ix+1+GhcMessages.WARNING_USEFLAG_CONTAINS.length();
+            int ix2=msg.indexOf( ' ',start);
+            if (ix2>-1){
+              String flag=msg.substring( start,ix2 ).trim();
+              addPragma(res,flag);
+            }
+         } else if ((ix=msg.toLowerCase().indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
+           int end=ix-2;
+           int ix2=msg.lastIndexOf( ' ',end);
+           if (ix2>-1){
+             String flag=msg.substring( ix2+1,end+1 ).trim();
+             addPragma(res,flag);
+           }
+         }
+
       }
     }
+
     return res.toArray( new IMarkerResolution[res.size()] );
+  }
+
+  private void addPragma(final List<IMarkerResolution> res,final String flag){
+    if (flag!=null && flag.length()>2 && flag.startsWith( "-X" )){ //$NON-NLS-1$
+      res.add( new AddLanguagePramaResolution( flag.substring( 2 ) ) );
+    }
   }
 
 }
