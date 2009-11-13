@@ -3,8 +3,6 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
-import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -60,7 +58,7 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
         }
         ix++;
       }
-      return new CompletionProposal( repl, pragmaOffset, 0, offset,HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
+      return new CompletionProposal( repl, pragmaOffset, 0, offset,null,getLabel(),null,null );
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );
     }

@@ -75,4 +75,6 @@ public interface IImageNames {
   String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY"; //$NON-NLS-1$
 
   String ACTION_SORT          = ID + ".ACTION_SORT"; //$NON-NLS-1$
+
+  String IMPORT_REMOVE        = ID+".IMPORT_REMOVE"; //$NON-NLS-1$
 }

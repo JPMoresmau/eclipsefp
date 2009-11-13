@@ -16,5 +16,10 @@ public interface GhcMessages {
   
   public static String WARNING_INFERREDTYPE_START="inferred type:"; //$NON-NLS-1$
 
+  public static String WARNING_IMPORT_USELESS_CONTAINS="is imported, but nothing from it is used";//$NON-NLS-1$
+  public static String WARNING_IMPORT_USELESS_START="to suppress this warning, use:";//$NON-NLS-1$
+  
   public static String ERROR_INTERACTIVE_DISABLED="interactive check disabled"; //$NON-NLS-1$
+
+
 }

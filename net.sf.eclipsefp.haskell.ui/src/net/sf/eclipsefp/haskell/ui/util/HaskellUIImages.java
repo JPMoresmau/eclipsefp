@@ -103,6 +103,7 @@ public class HaskellUIImages implements IImageNames {
     declare( IMPORT_CABAL_PACKAGE, WIZARD + "impcprj_wiz.png" ); //$NON-NLS-1$
 
     declare(ACTION_SORT,ACTION_E+"alphab_sort_co.png"); //$NON-NLS-1$
+    declare(IMPORT_REMOVE,OBJECT+"correction_delete_import.gif"); //$NON-NLS-1$
   }
 
   private final static void declare( final String key,
@@ -111,7 +112,7 @@ public class HaskellUIImages implements IImageNames {
     try {
       desc = ImageDescriptor.createFromURL( makeIconFileURL( path ) );
     } catch( MalformedURLException mux ) {
-      HaskellUIPlugin.log( "Problem loading image.", mux );
+      HaskellUIPlugin.log( "Problem loading image.", mux ); //$NON-NLS-1$
     }
     imageRegistry.put( key, desc );
     imageDescriptors.put( key, desc );

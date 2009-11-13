@@ -140,6 +140,9 @@ public final class UITexts extends NLS {
   public static String quickfix_marker_annotation_name;
   public static String resolve_missingtype;
   public static String resolve_addpragma;
+  public static String resolve_import_remove;
+  public static String resolve_import_replace;
+
 
   public static String preferences_project_title;
   public static String preferences_project_description;

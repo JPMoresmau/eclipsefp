@@ -22,17 +22,25 @@ public class BuildMarkerResolutionGenerator implements
     if (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_WARNING || (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_ERROR)){
       String msg=marker.getAttribute(IMarker.MESSAGE,""); //$NON-NLS-1$
       if (msg!=null && marker.getResource() instanceof IFile){
+        String msgL=msg.toLowerCase();
         int ix=-1;
-        if (msg.toLowerCase().indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
+        if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
           res.add(new MissingTypeWarningResolution());
-        } else if ((ix=msg.toLowerCase().indexOf( GhcMessages.WARNING_USEFLAG_CONTAINS ))>-1){
+        } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
+          res.add(new RemoveImportResolution());
+          int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START );
+          if (ix2>-1){
+            String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START.length() ).trim();
+            res.add( new ReplaceImportResolution( newImport ) );
+          }
+        } else if ((ix=msgL.indexOf( GhcMessages.WARNING_USEFLAG_CONTAINS ))>-1){
             int start=ix+1+GhcMessages.WARNING_USEFLAG_CONTAINS.length();
             int ix2=msg.indexOf( ' ',start);
             if (ix2>-1){
               String flag=msg.substring( start,ix2 ).trim();
               addPragma(res,flag);
             }
-         } else if ((ix=msg.toLowerCase().indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
+         } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
            int end=ix-2;
            int ix2=msg.lastIndexOf( ' ',end);
            if (ix2>-1){
