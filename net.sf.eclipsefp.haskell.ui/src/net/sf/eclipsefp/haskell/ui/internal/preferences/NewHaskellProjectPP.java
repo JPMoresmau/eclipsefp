@@ -4,6 +4,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences;
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -15,6 +16,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -51,16 +53,16 @@ public class NewHaskellProjectPP extends PreferencePage
   private final ModifyListener modifyListener;
 
   private Text txtSrcFolderName;
-  private Text txtOutFolderName;
-  private Text txtTargetBinaryName;
+  //private Text txtOutFolderName;
+  //private Text txtTargetBinaryName;
 
   private Button btnProjectAsSourceFolder;
   private Button btnFoldersAsSourceFolder;
 
 
   public NewHaskellProjectPP() {
-    super( "New Haskell Project Preferences" );
-    setDescription(   "Specify the names of the default directories when "                    + "creating new Haskell projects." );
+    super( UITexts.preferences_project_title );
+    setDescription(  UITexts.preferences_project_description );
     alRadioButtons = new ArrayList<Button>();
     alTextControls = new ArrayList<Text>();
 
@@ -83,9 +85,9 @@ public class NewHaskellProjectPP extends PreferencePage
 
   public static void initializeDefaults( final IPreferenceStore store ) {
     store.setDefault( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
-    store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" );
-    store.setDefault( ICorePreferenceNames.FOLDERS_OUT, "out" );
-    store.setDefault( ICorePreferenceNames.TARGET_BINARY, "bin/theResult" );
+    store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" ); //$NON-NLS-1$
+//   store.setDefault( ICorePreferenceNames.FOLDERS_OUT, "out" );
+//  store.setDefault( ICorePreferenceNames.TARGET_BINARY, "bin/theResult" );
   }
 
   public void init( final IWorkbench workbench ) {
@@ -173,7 +175,7 @@ public class NewHaskellProjectPP extends PreferencePage
     GridData gd = new GridData( GridData.FILL_HORIZONTAL );
     gd.horizontalSpan = 2;
     folderGroup.setLayoutData( gd );
-    folderGroup.setText( "Source and output folders" );
+    folderGroup.setText( UITexts.preferences_project_folders );
 
     createRadios( folderGroup );
     createTexts( folderGroup );
@@ -183,13 +185,13 @@ public class NewHaskellProjectPP extends PreferencePage
     int indent = 0;
     String prefFolders = ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT;
     btnProjectAsSourceFolder = addRadioButton( folderGroup,
-                                               "Project",
+                                              UITexts.preferences_project_use_project,
                                                prefFolders,
                                                IPreferenceStore.FALSE,
                                                indent );
     btnProjectAsSourceFolder.addSelectionListener( selectionListener );
     btnFoldersAsSourceFolder = addRadioButton( folderGroup,
-                                               "Folders",
+                                               UITexts.preferences_project_use_folders,
                                                prefFolders,
                                                IPreferenceStore.TRUE,
                                                indent );
@@ -199,24 +201,30 @@ public class NewHaskellProjectPP extends PreferencePage
   private void createTexts( final Group folderGroup ) {
     int indent = convertWidthInCharsToPixels( 4 );
     txtSrcFolderName = addTextControl( folderGroup,
-                                         "Source folder name:",
+                                         UITexts.preferences_project_source,
                                          ICorePreferenceNames.FOLDERS_SRC,
                                          indent );
-    txtOutFolderName = addTextControl( folderGroup,
+ /*   txtOutFolderName = addTextControl( folderGroup,
                                          "Output folder name:",
                                          ICorePreferenceNames.FOLDERS_OUT,
                                          indent );
     txtTargetBinaryName = addTextControl( folderGroup,
                                           "Target binary name:",
                                           ICorePreferenceNames.TARGET_BINARY,
-                                         indent );
+                                         indent );*/
+    Label l=new Label(folderGroup,SWT.NONE);
+    l.setText( UITexts.preferences_project_output_note );
+    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    l.setLayoutData( gd );
+
   }
 
   private void validate() {
     boolean useFolders = btnFoldersAsSourceFolder.getSelection();
     txtSrcFolderName.setEnabled( useFolders );
-    txtOutFolderName.setEnabled( useFolders );
-    txtTargetBinaryName.setEnabled( useFolders );
+    //txtOutFolderName.setEnabled( useFolders );
+    //txtTargetBinaryName.setEnabled( useFolders );
 
     boolean valid = true;
     if( useFolders ) {
@@ -224,21 +232,21 @@ public class NewHaskellProjectPP extends PreferencePage
     }
     if( valid ) {
       setValid( true );
-      setMessage( null );
+     // setMessage( null );
       setErrorMessage( null );
     }
   }
 
   private boolean validateFolders() {
     boolean result;
-    if(    txtSrcFolderName.getText().length() == 0
-        && txtOutFolderName.getText().length() == 0 ) {
-      updateNonOkStatus( "Folder names are empty." );
+    if(txtSrcFolderName.getText().length() == 0
+        //&& txtOutFolderName.getText().length() == 0
+        ) {
+      updateNonOkStatus( UITexts.preferences_project_folders_empty );
       result = false;
     } else {
-      IProject dmy = getWorkspace().getRoot().getProject( "project" );
-      result =    isValidPath( txtSrcFolderName.getText(), "source", dmy )
-               && isValidPath( txtOutFolderName.getText(), "output", dmy );
+      IProject dmy = getWorkspace().getRoot().getProject( UITexts.preferences_project_invalid_project );
+      result = isValidPath( txtSrcFolderName.getText(), UITexts.preferences_project_invalid_source, dmy );
     }
     return result;
   }
@@ -252,7 +260,7 @@ public class NewHaskellProjectPP extends PreferencePage
       IStatus status = getWorkspace().validatePath( path.toString(),
                                                     IResource.FOLDER );
       if( !status.isOK() ) {
-        String message =   "Invalid " + name + " path name:"
+        String message =  NLS.bind( UITexts.preferences_project_invalid, name )
                          + status.getMessage();
         updateNonOkStatus( message );
         result = false;
@@ -267,7 +275,7 @@ public class NewHaskellProjectPP extends PreferencePage
 
   private void updateNonOkStatus( final String message ) {
     setValid( false );
-    setMessage( message, NONE );
+    //setMessage( message, NONE );
     setErrorMessage( message );
   }
 
@@ -280,7 +288,8 @@ public class NewHaskellProjectPP extends PreferencePage
 
   private void controlModified( final Widget widget ) {
     if(    widget == txtSrcFolderName
-        || widget == txtOutFolderName ) {
+        //|| widget == txtOutFolderName
+        ) {
       validate();
     }
   }

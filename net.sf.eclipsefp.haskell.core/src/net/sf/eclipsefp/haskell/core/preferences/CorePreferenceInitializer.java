@@ -24,8 +24,8 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
     IEclipsePreferences coreNode = new DefaultScope().getNode( HaskellCorePlugin.getPluginId() );
     coreNode.put( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
     coreNode.put( FOLDERS_SRC, "src" ); //$NON-NLS-1$
-    coreNode.put( FOLDERS_OUT, "out" ); //$NON-NLS-1$
-    coreNode.put( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
+   // coreNode.put( FOLDERS_OUT, "out" ); //$NON-NLS-1$
+   // coreNode.put( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
     coreNode.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
   }
 

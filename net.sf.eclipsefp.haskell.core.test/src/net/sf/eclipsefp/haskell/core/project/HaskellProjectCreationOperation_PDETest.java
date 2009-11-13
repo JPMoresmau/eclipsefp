@@ -37,7 +37,7 @@ public class HaskellProjectCreationOperation_PDETest extends
 	public void testCreatesDirectoriesFromPreferences()
       throws InvocationTargetException, InterruptedException {
 	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_SRC, "customSrc" );
-	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_OUT, "customOut" );
+//	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_OUT, "customOut" );
 
     runOperation();
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
@@ -59,15 +59,15 @@ public class HaskellProjectCreationOperation_PDETest extends
 
 	public void testSetsUpProjectFoldersFromPreferences() throws Exception {
 	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_SRC, "mySrc" );
-	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_OUT, "myOut" );
-	  getCorePrefs().put( ICorePreferenceNames.TARGET_BINARY, "myBinary" );
+//	  getCorePrefs().put( ICorePreferenceNames.FOLDERS_OUT, "myOut" );
+//	  getCorePrefs().put( ICorePreferenceNames.TARGET_BINARY, "myBinary" );
 	  getCorePrefs().put( ICorePreferenceNames.SELECTED_COMPILER, "null" );
 
     runOperation();
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
     IFile f = prj.getFile( HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR );
     final String expectedContents = HaskellProjectManager
-        .createDescriptorContent( "mySrc", "myOut", "myBinary", "null" );
+        .createDescriptorContent( "mySrc", "null" );
     assertEquals( expectedContents, readContents( f ) );
 
   }

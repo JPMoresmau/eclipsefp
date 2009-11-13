@@ -141,6 +141,19 @@ public final class UITexts extends NLS {
   public static String resolve_missingtype;
   public static String resolve_addpragma;
 
+  public static String preferences_project_title;
+  public static String preferences_project_description;
+  public static String preferences_project_folders;
+  public static String preferences_project_use_project;
+  public static String preferences_project_use_folders;
+  public static String preferences_project_source;
+  public static String preferences_project_folders_empty;
+  public static String preferences_project_invalid;
+  public static String preferences_project_invalid_source;
+  public static String preferences_project_invalid_project;
+  public static String preferences_project_output_note;
+
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

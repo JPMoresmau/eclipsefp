@@ -35,8 +35,8 @@ public class TestHaskellProject implements ICorePreferenceNames {
 	private void setPreferences(final IEclipsePreferences corePrefs) {
 	  corePrefs.put( SELECTED_COMPILER, "null" );
     corePrefs.put( FOLDERS_SRC, "src" );
-    corePrefs.put( FOLDERS_OUT, "out" );
-    corePrefs.put( TARGET_BINARY, "bin/theResult" );
+  //  corePrefs.put( FOLDERS_OUT, "out" );
+  //  corePrefs.put( TARGET_BINARY, "bin/theResult" );
     corePrefs.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
   }
 

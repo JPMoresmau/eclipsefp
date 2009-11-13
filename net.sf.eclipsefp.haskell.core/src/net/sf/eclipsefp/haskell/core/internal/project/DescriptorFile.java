@@ -23,17 +23,17 @@ public class DescriptorFile implements IXMLNames {
 	private static final String INDENT = "  "; //$NON-NLS-1$
 
 	private String fSourcePath;
-	private String fOutputPath;
-	private String fTargetName;
+//	private String fOutputPath;
+//	private String fTargetName;
 	private final String fCompiler;
 
-	DescriptorFile(final String sourcePath, final String outputPath,
-			final String targetName,
+	DescriptorFile(final String sourcePath,// final String outputPath,
+			//final String targetName,
 			final String compiler)
 	{
 		fSourcePath = sourcePath;
-		fOutputPath = outputPath;
-		fTargetName = targetName;
+//		fOutputPath = outputPath;
+//		fTargetName = targetName;
 		fCompiler = compiler;
 	}
 
@@ -50,8 +50,8 @@ public class DescriptorFile implements IXMLNames {
     result.append( NL );
 
     renderTag( result, SOURCE_PATH_ELEMENT, PATH_ATT, fSourcePath );
-    renderTag( result, OUTPUT_PATH_ELEMENT, PATH_ATT, fOutputPath );
-    renderTag( result, TARGET_NAME_ELEMENT, NAME_ATT, fTargetName );
+//    renderTag( result, OUTPUT_PATH_ELEMENT, PATH_ATT, fOutputPath );
+ //   renderTag( result, TARGET_NAME_ELEMENT, NAME_ATT, fTargetName );
     result.append( "<" ); //$NON-NLS-1$
     result.append( COMPILER_ELEMENT );
     result.append( ">" ); //$NON-NLS-1$
@@ -69,23 +69,23 @@ public class DescriptorFile implements IXMLNames {
     fSourcePath = sourcePath;
   }
 
-  void setOutputPath( final String outputPath ) {
+  /*void setOutputPath( final String outputPath ) {
     fOutputPath = outputPath;
   }
 
   void setTargetName( final String targetName ) {
     fTargetName = targetName;
   }
-
+*/
   public static String createDescriptorContent( final String sourcePath,
-      final String outputPath, final String targetName,
+      //final String outputPath, final String targetName,
       final String compiler ) {
-    return new DescriptorFile( sourcePath, outputPath, targetName,
+    return new DescriptorFile( sourcePath, //outputPath, targetName,
         compiler ).toXML();
   }
 
 	public static String createEmptyDescriptorContent() {
-    return createDescriptorContent( "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    return createDescriptorContent( "", "" ); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 	// helping methods

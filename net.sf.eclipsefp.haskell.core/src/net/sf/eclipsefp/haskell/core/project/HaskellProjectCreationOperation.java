@@ -25,8 +25,8 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 		}
 		IPreferencesService service = Platform.getPreferencesService();
 		String sourcePath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null );
-		String outputPath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null );
-		return new String[] { sourcePath, outputPath };
+		//String outputPath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null );
+		return new String[] { sourcePath }; // , outputPath
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 		IPreferencesService service = Platform.getPreferencesService();
 		return HaskellProjectManager.createDescriptorContent(
 		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null ),
-		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null ),
-		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.TARGET_BINARY, null, null ),
+		   // service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null ),
+		    //service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.TARGET_BINARY, null, null ),
 		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_COMPILER, null, null ));
 	}
 
