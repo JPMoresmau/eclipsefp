@@ -6,14 +6,11 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.osgi.service.prefs.BackingStoreException;
 
 /** <p>test cases for the launch operation delegate.</p>
   *
@@ -38,11 +35,11 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
 
     // unset the pref - no source folders
-    setPref( false );
-    assertContainsNot( "-i" + locOfSrc, del.createArguments( hp, files ) );
+   // setPref( false );
+   // assertContainsNot( "-i" + locOfSrc, del.createArguments( hp, files ) );
 
     // set the pref again - source folders again
-    setPref( true );
+  //  setPref( true );
     assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
   }
 
@@ -85,12 +82,12 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     boolean cntns = contains( candidate, args );
     assertTrue( candidate + " not in generated cmd line", cntns );
   }
-
+/*
   private void assertContainsNot( final String candidate, final String[] args ) {
     boolean cntns = contains( candidate, args );
     assertFalse( candidate + " must not be in generated cmd line", cntns );
   }
-
+*/
   private boolean contains( final String candidate, final String[] args ) {
     boolean result = false;
     for( String arg: args ) {
@@ -99,7 +96,7 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     return result;
   }
 
-  private void setPref( final boolean value ) {
+  /*private void setPref( final boolean value ) {
     IEclipsePreferences node = getPrefsScope().getNode( GhcCompilerPlugin.getPluginId() );
     node.putBoolean( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS, value );
     try {
@@ -107,5 +104,5 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     } catch( BackingStoreException ex ) {
       GhcCompilerPlugin.log( "Failed to store preferences", ex );
     }
-  }
+  }*/
 }

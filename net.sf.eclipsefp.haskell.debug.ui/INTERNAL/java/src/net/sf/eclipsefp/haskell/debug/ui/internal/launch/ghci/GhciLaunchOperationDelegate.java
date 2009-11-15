@@ -16,14 +16,12 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
-import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /** <p>implements a delegate for launching GHCi.</p>
   *
@@ -82,7 +80,7 @@ public class GhciLaunchOperationDelegate
 
   private void collectImportDirs( final IHaskellProject hsProject,
                                   final List<String> cmdLine, final IFile[] selectedFiles) {
-    if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
+    //if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
       try {
         Set<IHaskellProject> visited = new HashSet<IHaskellProject>();
         visited.add( hsProject );
@@ -90,7 +88,7 @@ public class GhciLaunchOperationDelegate
       } catch( final CoreException cex ) {
         HaskellCorePlugin.log( cex );
       }
-    }
+    //}
   }
 
   private void collectImportDirsRec(
@@ -116,9 +114,9 @@ public class GhciLaunchOperationDelegate
     }
   }
 
-  private boolean isPrefSet( final String key ) {
+  /*private boolean isPrefSet( final String key ) {
     return Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), key, false, null );
-  }
+  }*/
 
   private void addAll( final List<String> cmdLine, final IFile[] selectedFiles ) {
     for( int i = 0; i < selectedFiles.length; i++ ) {

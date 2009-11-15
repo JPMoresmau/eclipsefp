@@ -1,8 +1,6 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences;
 
-import net.sf.eclipsefp.common.ui.dialog.BooleanDialogField;
-import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
@@ -19,7 +17,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /** <p>The tab on the Ghc compiler preference page that displays general
@@ -44,7 +41,7 @@ public class GeneralTab extends Tab implements IGhcParameters,
 
     createExtraOptionsField( composite );
 
-    String text = UITexts.ghciTab_options;
+    /*String text = UITexts.ghciTab_options;
     BooleanDialogField fdGHCOptions = new BooleanDialogField( composite, text );
     fdGHCOptions.addDialogFieldListener( new IDialogFieldListener() {
       public void infoChanged( final Object newInfo ) {
@@ -66,7 +63,7 @@ public class GeneralTab extends Tab implements IGhcParameters,
 
     Label lblNote = new Label( composite, SWT.WRAP );
     lblNote.setText( UITexts.ghciTab_note );
-
+    */
     return composite;
   }
 
@@ -108,8 +105,8 @@ public class GeneralTab extends Tab implements IGhcParameters,
     } );
   }
 
-  private Boolean getFromStore( final String name ) {
+  /*private Boolean getFromStore( final String name ) {
     boolean value = getPreferenceStore().getBoolean( name );
     return ( value ) ? Boolean.TRUE : Boolean.FALSE;
-  }
+  }*/
 }
