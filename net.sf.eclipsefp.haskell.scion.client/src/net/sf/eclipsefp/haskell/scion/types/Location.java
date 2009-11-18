@@ -33,11 +33,13 @@ public class Location {
 		if ((this.fileName==null || this.fileName=="")&& (this.otherName==null || this.otherName=="")&& f!=null){
 			this.fileName=f.getLocation().toOSString();
 		} 
-		JSONArray region = json.getJSONArray("region");
-		startLine = region.getInt(0);
-		startColumn = region.getInt(1);
-		endLine = region.getInt(2);
-		endColumn = region.getInt(3);
+		if (json.optString("no-location").length()==0){
+			JSONArray region = json.getJSONArray("region");
+			startLine = region.getInt(0);
+			startColumn = region.getInt(1);
+			endLine = region.getInt(2);
+			endColumn = region.getInt(3);
+		}
 	}
 	
 	public Location(String fileName, int startLine, int startColumn, int endLine, int endColumn) {
