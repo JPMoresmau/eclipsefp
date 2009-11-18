@@ -43,7 +43,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           && ( ( IProject )parentElement ).isOpen()
           && ( ( IProject )parentElement ).hasNature( HaskellNature.NATURE_ID ) ) {
         result.add( new GHCSystemLibrary( ( IProject )parentElement ) );
-        addProjectExecutable( ( IProject )parentElement, result );
+        //addProjectExecutable( ( IProject )parentElement, result );
       } else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
         result.addAll( treeElement.getChildren() );
