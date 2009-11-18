@@ -6,6 +6,7 @@ import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -175,11 +176,12 @@ public class PackageDescriptionStanza {
           sb.insert( 0, ' ');
         }
         sb.insert( 0, NL );
-
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);
       newVP.setSubsequentIndent( subIndent );
       getPositions().put( field.getCabalName().toLowerCase(), newVP );
+      int diff=newVP.getEndLine()-oldVP.getEndLine();
+      setEndLine( getEndLine()+diff );
       return new RealValuePosition( oldVP,sb.toString());
     } catch (IOException ioe){
       return null;
@@ -296,5 +298,55 @@ public class PackageDescriptionStanza {
     }
     return ret;
    }
+
+  public void dump(final Writer w,final int indent) throws IOException {
+    int indent2=indent;
+    if (getType()!=null){
+      for (int a=0;a<indent;a++){
+        w.write(" "); //$NON-NLS-1$
+      }
+      w.write( toTypeName() );
+      w.write(NL);
+      indent2=indent+2;
+    }
+    int max=0;
+    for (String p:positions.keySet()){
+      max=Math.max( p.length(), max );
+    }
+
+    for (String p:positions.keySet()){
+      for (int a=0;a<indent2;a++){
+        w.write(" "); //$NON-NLS-1$
+      }
+      w.write( p );
+      ValuePosition vp=positions.get(p);
+      w.write( ":" ); //$NON-NLS-1$
+      for (int a=0;a<max+2-p.length();a++){
+        w.write(" "); //$NON-NLS-1$
+      }
+      boolean first=true;
+      String value=properties.get(p);
+      BufferedReader br=new BufferedReader( new StringReader( value ) );
+      try {
+        if (!first){
+          for (int a=0;a<vp.getSubsequentIndent();a++){
+            w.write(" "); //$NON-NLS-1$
+          }
+        } else {
+          first=false;
+        }
+        String line=br.readLine();
+        w.write(line);
+        w.write(NL);
+      } catch (IOException ignore){
+        // cannot happen
+      }
+    }
+    w.write(NL);
+    for (PackageDescriptionStanza pds:stanzas){
+      pds.dump( w, indent2 );
+    }
+
+  }
 
 }

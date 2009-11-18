@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,6 +29,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
   private boolean library;
   private boolean executable;
+
 
   // interface methods of IProjectCreationOperationExtraOp
   ////////////////////////////////////////////////////////
@@ -56,7 +59,8 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
 
   private String getCabalFileContent( final String name ) {
-    String s=CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
+
+    /*String s=CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
            + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL + NL //$NON-NLS-1$
            ;
     if (isLibrary()){
@@ -72,7 +76,20 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     }
 
 
-    return s;
+    return s;*/
+    PackageDescription pd=new PackageDescription( name );
+    pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_VERSION, "0.1" ); //$NON-NLS-1$
+    if (isLibrary()){
+      PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
+      pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" ); //$NON-NLS-1$
+    }
+
+    if (isExecutable()){
+      PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_EXECUTABLE, name );
+      pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" ); //$NON-NLS-1$
+      pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" ); //$NON-NLS-1$
+    }
+    return pd.dump();
   }
 
   private void createFile( final IProject project,
@@ -112,4 +129,5 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   public void setExecutable( final boolean executable ) {
     this.executable = executable;
   }
+
 }

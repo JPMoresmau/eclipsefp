@@ -2,7 +2,9 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -480,7 +482,7 @@ public class CabalModelTest extends TestCase {
     assertEquals(expected,ss);
   }
 
-  public void testCreate(){
+  public void testCreateField(){
     PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL );
     PackageDescriptionStanza pds=pd.getStanzas().get(0);
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
@@ -490,4 +492,53 @@ public class CabalModelTest extends TestCase {
     assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
   }
 
+  public void testCreateFromScratch(){
+    PackageDescription pd=new PackageDescription( "newProject");
+    PackageDescriptionStanza pds=pd.getStanzas().get(0);
+    assertEquals("newProject",pds.getName());
+    assertEquals(0,pds.getStartLine());
+    assertEquals(1,pds.getEndLine());
+    RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
+    assertNotNull(rvp);
+    assertEquals(1,rvp.getStartLine());
+    assertEquals(1,rvp.getEndLine());
+    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+":  JP Moresmau"+NL,rvp.getRealValue());
+    assertEquals(0,pds.getStartLine());
+    assertEquals(2,pds.getEndLine());
+    pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
+    pds.update( CabalSyntax.FIELD_EXPOSED_MODULES, "Mod1" );
+    pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+
+    pds=pd.addStanza( CabalSyntax.SECTION_EXECUTABLE, "exe" );
+    pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" );
+    pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src, exe" );
+
+    StringWriter sw=new StringWriter();
+    try {
+      pd.dump( sw );
+      String s=sw.toString();
+      System.out.println(s);
+      PackageDescription pd2=PackageDescriptionLoader.load( s );
+      assertEquals(3,pd2.getStanzas().size());
+      pds=pd.getStanzas().get(0);
+      assertEquals("newProject",pds.getName());
+      assertEquals("JP Moresmau",pds.getProperties().get( CabalSyntax.FIELD_AUTHOR ));
+
+      pds=pd.getStanzas().get(1);
+      assertNull(pds.getName());
+      assertEquals(CabalSyntax.SECTION_LIBRARY,pds.getType());
+      assertEquals("Mod1",pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES ));
+      assertEquals("src",pds.getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS ));
+
+      pds=pd.getStanzas().get(2);
+      assertEquals("exe",pds.getName());
+      assertEquals(CabalSyntax.SECTION_EXECUTABLE,pds.getType());
+      assertEquals("Main.hs",pds.getProperties().get( CabalSyntax.FIELD_MAIN_IS ));
+      assertEquals("src, exe",pds.getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS ));
+
+    } catch (IOException ioe){
+      ioe.printStackTrace();
+      fail(ioe.getLocalizedMessage());
+    }
+  }
 }

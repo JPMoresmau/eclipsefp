@@ -2,6 +2,9 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,9 +24,23 @@ public class PackageDescription {
     stanzas = new ArrayList<PackageDescriptionStanza>();
   }
 
+  public PackageDescription(final String name){
+    this();
+    PackageDescriptionStanza pds=new GeneralStanza( 0 );
+    stanzas.add( pds );
+    pds.update( CabalSyntax.FIELD_NAME,name );
+  }
 
   public List<PackageDescriptionStanza> getStanzas() {
     return stanzas;
+  }
+
+  public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
+    int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
+    PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );
+    pds.setEndLine( startLine+1 );
+    stanzas.add( pds );
+    return pds;
   }
 
   public Map<String, List<PackageDescriptionStanza>> getStanzasBySourceDir(){
@@ -44,5 +61,23 @@ public class PackageDescription {
     }
 
     return ret;
+  }
+
+  public void dump(final Writer w) throws IOException {
+    for (PackageDescriptionStanza pds:stanzas){
+      pds.dump( w, 0 );
+    }
+  }
+
+  public String dump(){
+    StringWriter sw=new StringWriter();
+    try {
+      dump( sw );
+      String s=sw.toString();
+      return s;
+    } catch (IOException ioe){
+      // cannot happen
+    }
+    return null;
   }
 }
