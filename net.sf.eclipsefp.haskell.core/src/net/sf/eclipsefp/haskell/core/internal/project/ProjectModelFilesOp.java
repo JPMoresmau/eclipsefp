@@ -8,7 +8,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalContributorManager;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.ICabalContributor;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -89,6 +91,11 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
       pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" ); //$NON-NLS-1$
       pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" ); //$NON-NLS-1$
     }
+
+    for (ICabalContributor c:CabalContributorManager.getContributors()){
+      c.contributeOnNewProject( pd );
+    }
+
     return pd.dump();
   }
 

@@ -2,7 +2,7 @@
 package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.dialog;
 
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
-import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
+import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameter;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.ParamsUITexts;
 import org.eclipse.core.runtime.Assert;
@@ -20,8 +20,7 @@ import org.eclipse.swt.widgets.Widget;
   *
   * @author Leif Frenzel
   */
-public class LevelSelectionDialogField extends DialogField
-                                       implements IGhcParameters {
+public class LevelSelectionDialogField extends DialogField {
 
   private int selected = -1;
   // ui elements
@@ -77,9 +76,9 @@ public class LevelSelectionDialogField extends DialogField
 
     buttons = new Button[ 4 ];
     buttons[ 0 ] = createButton( this, text, tooltip );
-    buttons[ 1 ] = createButton( this, OPT_O0 );
-    buttons[ 2 ] = createButton( this, OPT_O1 );
-    buttons[ 3 ] = createButton( this, OPT_O2 );
+    buttons[ 1 ] = createButton( this, GhcParameter.OPT_O0.getName() );
+    buttons[ 2 ] = createButton( this, GhcParameter.OPT_O1.getName() );
+    buttons[ 3 ] = createButton( this, GhcParameter.OPT_O2.getName() );
     SelectionListener li = new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent evt ) {

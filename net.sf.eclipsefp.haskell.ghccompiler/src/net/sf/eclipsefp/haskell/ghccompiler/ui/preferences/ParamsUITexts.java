@@ -3,14 +3,13 @@ package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences;
 
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
 
 /** <p>Helper to provide texts for the various compiler option names and
   * descriptions.</p>
   *
   * @author Leif Frenzel
   */
-public class ParamsUITexts implements IGhcParameters {
+public class ParamsUITexts {
 
   private static final String SHORT_DESC = "ShortParamDescriptions"; //$NON-NLS-1$
   private static ResourceBundle bundle = initBundle();

@@ -5,6 +5,10 @@ import net.sf.eclipsefp.common.ui.dialog.BooleanDialogField;
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
 import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationType;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
+import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 
@@ -40,6 +44,25 @@ public abstract class GhcCompilerTab extends Tab {
     return result;
   }
 
+  DialogField createBooleanField( final Composite parent, final GhcParameter p ) {
+    final String name=p.getName();
+    String displayName=name;
+    IHsImplementation impl=CompilerManager.getInstance().getCurrentHsImplementation();
+    if (impl!=null && impl.getType().equals( HsImplementationType.GHC )){
+      displayName=p.getName( impl.getVersion() );
+    }
+    String text = ParamsUITexts.getShortDescription( name );
+    String tooltip = text + "\n" + displayName; //$NON-NLS-1$
+    BooleanDialogField result = new BooleanDialogField( parent, text, tooltip );
+    result.addDialogFieldListener( new IDialogFieldListener() {
+      public void infoChanged( final Object newInfo ) {
+        boolean selected = ( ( Boolean )newInfo ).booleanValue();
+        getPreferenceStore().setValue( name, selected );
+      }
+    } );
+    result.setInfo( getFromStore( name ) );
+    return result;
+  }
 
   // helping methods
   //////////////////

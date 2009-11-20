@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences;
 
 import net.sf.eclipsefp.common.ui.preferences.Tab;
-import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,8 +23,7 @@ import org.eclipse.swt.widgets.Text;
   *
   * @author Leif Frenzel
   */
-public class GeneralTab extends Tab implements IGhcParameters,
-                                               IGhcPreferenceNames {
+public class GeneralTab extends Tab implements IGhcPreferenceNames {
 
   public GeneralTab( final IPreferenceStore store ) {
     super( store );

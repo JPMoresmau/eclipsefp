@@ -14,7 +14,11 @@ import org.eclipse.core.runtime.Path;
   *
   * @author Leif Frenzel
   */
-public class Util implements IGhcParameters {
+public class Util {
+   /**
+    * version number of GHC that deprecated -foption for -Xoption
+    */
+  public static String r6_8_1="6.8.1"; //$NON-NLS-1$
 
   public static String getCompilerExecutable() {
     IPath result = null;
@@ -47,5 +51,28 @@ public class Util implements IGhcParameters {
     }
 
     return sbResult.toString();
+  }
+
+  public static int compareTargets(final String target,final String version){
+    String[] ts=target.split( "\\." ); //$NON-NLS-1$
+    String[] vs=version.split( "\\." ); //$NON-NLS-1$
+    int a=0;
+    for (;a<vs.length;a++){
+      if (a>=ts.length){
+        return 1;
+      }
+      int it=Integer.parseInt( ts[a] );
+      int iv=Integer.parseInt( vs[a] );
+      if (iv>it){
+        return -1;
+      } else if (iv<it){
+        return 1;
+      }
+    }
+    if (a<ts.length){
+      return 1;
+    }
+
+    return 0;
   }
 }

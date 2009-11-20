@@ -26,4 +26,12 @@
             id="net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.GhcPreferencePage">
       </page>
    </extension>
+   <extension
+         point="net.sf.eclipsefp.haskell.core.cabalContributors">
+      <contributor
+            class="net.sf.eclipsefp.haskell.ghccompiler.core.GhcCabalContributor"
+            id="net.sf.eclipsefp.haskell.ghccompiler.ghccabalcontributor">
+      </contributor>
+   </extension>
+
 </plugin>

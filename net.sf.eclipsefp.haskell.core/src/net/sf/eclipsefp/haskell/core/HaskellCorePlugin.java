@@ -30,10 +30,12 @@ public class HaskellCorePlugin extends Plugin {
   // extension points
 	public static final String ID_EXT_POINT_COMPILERS = "haskellCompilers"; //$NON-NLS-1$
 	public static final String ID_EXT_POINT_PARSERS = "haskellParsers"; //$NON-NLS-1$
+	public static final String ID_EXT_POINT_CABAL_CONTRIBUTORS = "cabalContributors"; //$NON-NLS-1$
 	public static final String ID_PROBLEM_MARKER = "net.sf.eclipsefp.haskell.core.problem"; //$NON-NLS-1$
 	public static final String ID_PROJECT_PROBLEM_MARKER = "net.sf.eclipsefp.haskell.core.projectProblem"; //$NON-NLS-1$
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
 	private static HaskellCorePlugin plugin;
 
@@ -181,7 +183,7 @@ public class HaskellCorePlugin extends Plugin {
 		}
 	}
 
-	private IConfigurationElement[] getExtensions(final String key) {
+	public IConfigurationElement[] getExtensions(final String key) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		return registry.getConfigurationElementsFor(getPluginId(), key);
 	}

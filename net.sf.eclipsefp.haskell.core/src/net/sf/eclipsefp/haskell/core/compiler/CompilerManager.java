@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
  */
 public class CompilerManager implements ICompilerManager {
 
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+
   private static final String ATT_NAME = "name"; //$NON-NLS-1$
 
   /** the singleton instance of CompilerManager. */
@@ -193,7 +193,7 @@ public class CompilerManager implements ICompilerManager {
 			final IConfigurationElement elem) throws HaskellCoreException {
 		Object compiler = null;
 		try {
-			compiler = elem.createExecutableExtension(ATT_CLASS);
+			compiler = elem.createExecutableExtension(HaskellCorePlugin.ATT_CLASS);
 		} catch (CoreException cex) {
 			fireHCEx(cex.getMessage());
 		}

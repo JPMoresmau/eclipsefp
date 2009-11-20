@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
   * <p>Section references are to sections in the GHC manual.</p>
   *
   * @author Leif Frenzel
+  * @deprecated, use GhcParameter instead
   */
 public interface IGhcParameters {
 

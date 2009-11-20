@@ -2,7 +2,8 @@
 package net.sf.eclipsefp.haskell.ghccompiler.core.preferences;
 
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
+import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameter;
+import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameterType;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -13,8 +14,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
   * @author Leif Frenzel
   */
 public class PreferenceInitializer extends AbstractPreferenceInitializer
-                                   implements IGhcPreferenceNames,
-                                              IGhcParameters {
+                                   implements IGhcPreferenceNames {
 
   // interface methods of AbstractPreferenceInitializer
   /////////////////////////////////////////////////////
@@ -33,14 +33,21 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
     prefs.put( EXTRA_OPTIONS, "" ); //$NON-NLS-1$
     prefs.putBoolean( USE_EXTRA_OPTIONS, false );
     prefs.putInt( OPTIMIZATION_LEVEL, -1 );
+    for (GhcParameter p:GhcParameter.values()){
+      if (GhcParameterType.LANGUAGE.equals( p.getType() ) ||GhcParameterType.OPTIMIZATION_SPECIFIC.equals( p.getType() )){
+        prefs.putBoolean( p.getName(), false );
+      }
+    }
+
 //    prefs.putBoolean( GHCI_USES_GHC_OPTIONS, false );
 //    prefs.putBoolean( GHCI_SOURCE_FOLDERS, true );
-    initializeLanguageDefaults( prefs );
+    /*initializeLanguageDefaults( prefs );
     initializeOptimizationDefaults( prefs );
     initializeMoreOptimizationDefaults( prefs );
+    */
   }
 
-  private void initializeLanguageDefaults( final IEclipsePreferences prefs ) {
+  /*private void initializeLanguageDefaults( final IEclipsePreferences prefs ) {
     // boolean preferences use the parameter as key
     prefs.putBoolean( LANG_GLASGOW_EXTS, false );
     prefs.putBoolean( LANG_FI, false );
@@ -77,5 +84,5 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
     prefs.putBoolean( OPT_NO_PRE_INLINING, false );
     prefs.putBoolean( OPT_NUMBERS_STRICT, false );
     prefs.putBoolean( OPT_USAGESP, false );
-  }
+  }*/
 }

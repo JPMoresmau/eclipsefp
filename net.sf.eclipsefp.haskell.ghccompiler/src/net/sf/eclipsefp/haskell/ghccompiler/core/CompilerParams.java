@@ -12,18 +12,23 @@ import org.eclipse.core.runtime.Platform;
   *
   * @author Leif Frenzel
   */
-public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
+public class CompilerParams implements IGhcPreferenceNames{
 
   public CompilerParams() {
     super();
   }
 
-  public List<String> construct() {
+  public List<String> construct(final String version) {
     List<String> result = new ArrayList<String>();
     addOptimizationLevel( result );
-    addLanguageParams( result );
+   /* addLanguageParams( result );
     addOptimizationParams( result );
-    addMoreOptimizationParams( result );
+    addMoreOptimizationParams( result );*/
+    for (GhcParameter p:GhcParameter.values()){
+      if (GhcParameterType.LANGUAGE.equals( p.getType() ) ||GhcParameterType.OPTIMIZATION_SPECIFIC.equals( p.getType() )){
+        addBooleanParam( p, result,version );
+      }
+    }
     addExtraOptions( result );
     return result;
   }
@@ -32,7 +37,7 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
   // helping methods
   //////////////////
 
-  private void addLanguageParams( final List<String> result ) {
+ /* private void addLanguageParams( final List<String> result ) {
     // boolean preferences use the parameter as key
     addBooleanParam( LANG_GLASGOW_EXTS, result );
     addBooleanParam( LANG_FI, result );
@@ -69,7 +74,7 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     addBooleanParam( OPT_NO_PRE_INLINING, result );
     addBooleanParam( OPT_NUMBERS_STRICT, result );
     addBooleanParam( OPT_USAGESP, result );
-  }
+  }*/
 
   private void addExtraOptions( final List<String> list ) {
     if( Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), USE_EXTRA_OPTIONS, false, null ) ) {
@@ -80,10 +85,10 @@ public class CompilerParams implements IGhcPreferenceNames, IGhcParameters {
     }
   }
 
-  private void addBooleanParam( final String key, final List<String> list ) {
-    boolean value = Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), key, false, null );
+  private void addBooleanParam( final GhcParameter p, final List<String> list,final String version ) {
+    boolean value = Platform.getPreferencesService().getBoolean( GhcCompilerPlugin.getPluginId(), p.getName(), false, null );
     if( value ) {
-      list.add( key );
+      list.add( p.getName(version) );
     }
   }
 

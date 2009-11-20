@@ -4,7 +4,8 @@ package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
-import net.sf.eclipsefp.haskell.ghccompiler.core.IGhcParameters;
+import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameter;
+import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameterType;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -12,12 +13,16 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 import org.osgi.service.prefs.BackingStoreException;
 
 /** <p>The preference page for the GHC compiler preferences.</p>
@@ -26,8 +31,7 @@ import org.osgi.service.prefs.BackingStoreException;
   */
 public class GhcPreferencePage extends PreferencePage
                                implements IWorkbenchPreferencePage,
-                                          IGhcPreferenceNames,
-                                          IGhcParameters {
+                                          IGhcPreferenceNames {
 
   private OverlayPreferenceStore overlayStore;
 
@@ -37,7 +41,7 @@ public class GhcPreferencePage extends PreferencePage
 
   @Override
   protected Control createContents( final Composite parent ) {
-    TabFolder folder = new TabFolder( parent, SWT.NONE );
+    /*TabFolder folder = new TabFolder( parent, SWT.NONE );
 
     Tab generalTab = new GeneralTab( overlayStore );
     String sGeneral = UITexts.ghcPreferencePage_general;
@@ -59,7 +63,39 @@ public class GhcPreferencePage extends PreferencePage
     createTab( folder, sMoreOpt, moreOptControl );
 
     Dialog.applyDialogFont( folder );
-    return folder;
+    return folder;*/
+    Composite mainComp= new Composite(parent, SWT.NONE);
+    mainComp.setFont(parent.getFont());
+    GridLayout layout= new GridLayout(1,true);
+    layout.marginHeight= 0;
+    layout.marginWidth= 0;
+    mainComp.setLayout(layout);
+
+    final SharedScrolledComposite sc1 = new SharedScrolledComposite(mainComp,SWT.V_SCROLL | SWT.H_SCROLL){
+      // no impl required
+    };
+    GridData gd=new GridData(SWT.FILL,SWT.FILL,true,true);
+    sc1.setLayoutData(gd);
+    final Composite me=new Composite(sc1,SWT.NONE);
+    sc1.setExpandHorizontal(true);
+    sc1.setExpandVertical(true);
+    sc1.setContent( me );
+
+    GridLayout gl=new GridLayout(1,true);
+    me.setLayout( gl );
+    String sGeneral = UITexts.ghcPreferencePage_general;
+    createExpand( me, sGeneral, new GeneralTab( overlayStore ) );
+
+    String sLang = UITexts.ghcPreferencePage_language;
+    createExpand( me, sLang, new LanguageTab( overlayStore ));
+
+    String sOpt = UITexts.ghcPreferencePage_optimization;
+    createExpand( me, sOpt, new OptimizationTab( overlayStore ));
+
+    String sMoreOpt = UITexts.ghcPreferencePage_moreOptimization;
+    createExpand( me, sMoreOpt, new MoreOptimizationTab( overlayStore ));
+    Dialog.applyDialogFont( me );
+    return mainComp;
   }
 
   @Override
@@ -105,12 +141,25 @@ public class GhcPreferencePage extends PreferencePage
   // helping methods
   //////////////////
 
-  private void createTab( final TabFolder folder,
+  private void createExpand( final Composite folder,
                           final String label,
-                          final Control control ) {
-    TabItem tab = new TabItem( folder, SWT.NONE );
+                          final Tab tab ) {
+   /* TabItem tab = new TabItem( folder, SWT.NONE );
     tab.setText( label );
     tab.setControl( control );
+    */
+    ExpandableComposite ec=new ExpandableComposite( folder, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+    ec.setText( label );
+
+    Control languageControl = tab.createControl( ec );
+    ec.setClient( languageControl );
+    ec.addExpansionListener(new ExpansionAdapter() {
+      @Override
+      public void expansionStateChanged(final ExpansionEvent e) {
+       ((SharedScrolledComposite)folder.getParent()).reflow( true );
+      }
+    });
+
   }
 
   private OverlayPreferenceStore createOverlayStore() {
@@ -118,9 +167,16 @@ public class GhcPreferencePage extends PreferencePage
     OverlayPreferenceStore store = new OverlayPreferenceStore( prefStore );
 
     addGeneralPreferences( store );
-    addLanguagePrefs( store );
+    /*addLanguagePrefs( store );
     addOptimizationPrefs( store );
     addMoreOptimizationPrefs( store );
+     */
+    store.addIntKey( OPTIMIZATION_LEVEL );
+    for (GhcParameter p:GhcParameter.values()){
+      if (GhcParameterType.LANGUAGE.equals( p.getType() ) ||GhcParameterType.OPTIMIZATION_SPECIFIC.equals( p.getType() )){
+        store.addBooleanKey( p.getName() );
+      }
+    }
 
     return store;
   }
@@ -131,7 +187,7 @@ public class GhcPreferencePage extends PreferencePage
   //  store.addBooleanKey( GHCI_USES_GHC_OPTIONS );
   }
 
-  private void addLanguagePrefs( final OverlayPreferenceStore store ) {
+ /* private void addLanguagePrefs( final OverlayPreferenceStore store ) {
     // boolean preferences use the parameter as key
     store.addBooleanKey( LANG_GLASGOW_EXTS );
     store.addBooleanKey( LANG_FI );
@@ -169,5 +225,5 @@ public class GhcPreferencePage extends PreferencePage
     store.addBooleanKey( OPT_NO_PRE_INLINING );
     store.addBooleanKey( OPT_NUMBERS_STRICT );
     store.addBooleanKey( OPT_USAGESP );
-  }
+  }*/
 }
