@@ -89,7 +89,7 @@ public class ModuleInclusionComposite extends Composite {
           String s=pd.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES );
           List<String> ls=PackageDescriptionLoader.parseList( s );
 
-          if (pd.getType().equals(CabalSyntax.SECTION_EXECUTABLE)){
+          if (CabalSyntax.SECTION_EXECUTABLE.equals( pd.getType() )){
             s=pd.getProperties().get( CabalSyntax.FIELD_MAIN_IS );
             if (s!=null){
               String f=module.replace( '.', '/' );
@@ -102,7 +102,7 @@ public class ModuleInclusionComposite extends Composite {
 
 
           final Button bExpose=new Button(this,SWT.CHECK);
-          bExpose.setEnabled( pd.getType().equals( CabalSyntax.SECTION_LIBRARY ) );
+          bExpose.setEnabled( CabalSyntax.SECTION_LIBRARY.equals( pd.getType() ) );
 
           if (bInclude.isEnabled()){
             bInclude.addSelectionListener( new SelectionAdapter() {
@@ -114,7 +114,7 @@ public class ModuleInclusionComposite extends Composite {
                 } else {
                   included.remove( pd );
                 }
-                bExpose.setEnabled(pd.getType().equals( CabalSyntax.SECTION_LIBRARY ) && !bInclude.getSelection() );
+                bExpose.setEnabled(CabalSyntax.SECTION_LIBRARY.equals( pd.getType() ) && !bInclude.getSelection() );
               }
 
             });
