@@ -352,27 +352,34 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     instance=null;
     super.doSetInput( input );
 
-    file = findFile();
-    // load the new file into Scion
-    if (file != null && ResourceUtil.isInHaskellProject( file )) {
-      //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
-      instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
-      instance.reloadFile( file,new Runnable() {
+    ScionInstance instance=getInstance();
 
-        public void run() {
-         synchronize();
+    if (instance!=null) {
+        file = findFile();
+        instance.reloadFile( file,new Runnable() {
 
-        }
-      });
+          public void run() {
+           synchronize();
+
+          }
+        });
     }
-
-
-    /*if( outlinePage != null ) {
-      outlinePage.setInput( input );
-    }*/
   }
 
-
+  /**
+   * get the scion instance, creating it if needed
+   */
+  private ScionInstance getInstance(){
+    if (instance==null){
+      IFile file = findFile();
+      // load the new file into Scion
+      if (file != null && ResourceUtil.isInHaskellProject( file )) {
+        //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
+        instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
+      }
+    }
+    return instance;
+  }
 
   // helping methods
   // ////////////////
@@ -438,7 +445,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         }
       } );
 
-
+      ScionInstance instance=getInstance();
       if( instance!=null && instance.isLoaded( findFile() )) {
         instance.outline(findFile(),new OutlineHandler() {
 
