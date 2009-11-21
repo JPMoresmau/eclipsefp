@@ -75,7 +75,16 @@ public class Note {
 	        int line= Math.min(location.getStartLine(),maxLines);
 	        marker.setAttribute(IMarker.LINE_NUMBER, line);
 	        marker.setAttribute(IMarker.CHAR_START, location.getStartColumn());
-	        marker.setAttribute(IMarker.CHAR_END, location.getEndColumn());
+	        // we may not have any character to show
+	        int end=location.getEndColumn();
+	        if (end>location.getStartColumn()){
+	        	// exclusive
+	        	marker.setAttribute(IMarker.CHAR_END, end-1);
+	        } 
+	        // if we have startColumn==endColumn we could take end+1
+	        // BUT if end goes over the document size, the marker is not shown on the document
+	        // so it's better to just show the line without more info 
+	        
 	        marker.setAttribute(IMarker.MESSAGE, message + (additionalInfo != null ? "\n" + additionalInfo : ""));
 	        
 		}
