@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.haddock;singleton:=true
-Bundle-Version: 1.109.0
+Bundle-Version: 1.110.0
 Bundle-Activator: net.sf.eclipsefp.haskell.haddock.HaddockPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
