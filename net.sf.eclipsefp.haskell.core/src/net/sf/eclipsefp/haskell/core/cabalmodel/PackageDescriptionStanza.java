@@ -48,6 +48,11 @@ public class PackageDescriptionStanza {
 
   private final List<PackageDescriptionStanza> stanzas=new LinkedList<PackageDescriptionStanza>();
 
+  /**
+   * this field is kind of a hack, this is used to append properly to the end of a Cabal file
+   * if it doesn't end with a NL
+   */
+  boolean needNL=false;
 
   PackageDescriptionStanza(final CabalSyntax type,final String name,
       final int startLine){
@@ -116,7 +121,13 @@ public class PackageDescriptionStanza {
     if (value!=null && value.trim().length()==0){
       value=null;
     }
+    Map.Entry<String,String> eLast=null;
     if (value!=null){
+      if (needNL){
+        for (Map.Entry<String,String> e:getProperties().entrySet()){
+          eLast=e;
+        }
+      }
       getProperties().put(field.getCabalName().toLowerCase(),value);
     } else {
       getProperties().remove(field.getCabalName().toLowerCase());
@@ -140,6 +151,9 @@ public class PackageDescriptionStanza {
         ValuePosition vp=vps.iterator().next();
         indent=subIndent=vp.getSubsequentIndent();
         spaces=indent-(field.getCabalName().length() +1);
+        if (needNL && eLast!=null){
+          addLeadingNL(sb,oldVP,eLast);
+        }
       }
       spaces=Math.max( spaces, 1 );
       for (int a=0;a<spaces;a++){
@@ -181,6 +195,9 @@ public class PackageDescriptionStanza {
       newVP.setSubsequentIndent( subIndent );
       getPositions().put( field.getCabalName().toLowerCase(), newVP );
       int diff=newVP.getEndLine()-oldVP.getEndLine();
+      if (oldVP.getEndLine()==getEndLine()){
+        needNL=false;
+      }
       setEndLine( getEndLine()+diff );
       return new RealValuePosition( oldVP,sb.toString());
     } catch (IOException ioe){
@@ -188,6 +205,42 @@ public class PackageDescriptionStanza {
     }
   }
 
+  /**
+   * if the cabal file didn't end with a NL, we need to add it when we modify the document
+   * @param sb the builder for the final value
+   * @param oldVP the current position we're inserting
+   * @param eLast the entry for the last property in the stanza
+   */
+  private void addLeadingNL(final StringBuilder sb,final ValuePosition oldVP,final Map.Entry<String,String> eLast){
+    needNL=false;
+    sb.insert( 0, NL );
+    oldVP.setStartLine(oldVP.getStartLine()-1);
+    //oldVP.setEndLine(oldVP.getEndLine()-1);
+    for (CabalSyntax cs:CabalSyntax.values()){
+      if (cs.getCabalName().toLowerCase().equals( eLast.getKey() )){
+        RealValuePosition rvpLast=update(cs,eLast.getValue());
+        if (rvpLast.getStartLine()+1==rvpLast.getEndLine()){
+          oldVP.setInitialIndent(rvpLast.getInitialIndent()+rvpLast.getRealValue().length()-NL.length());
+        } else {
+          BufferedReader br=new BufferedReader( new StringReader( rvpLast.getRealValue() ) );
+          try {
+            String line=br.readLine();
+            while (line!=null){
+              String newLine=br.readLine();
+              if (newLine==null){
+                oldVP.setInitialIndent(line.length());
+              }
+              line=newLine;
+            }
+
+          } catch (IOException ioe){
+            // cannot happen
+          }
+        }
+        break;
+      }
+    }
+  }
 
   public RealValuePosition addToPropertyList(final CabalSyntax field,final String value){
    String s=getProperties().get( field );
@@ -197,12 +250,13 @@ public class PackageDescriptionStanza {
      StringBuilder newValue=new StringBuilder();
      if (s!=null){
        newValue.append( s );
-
-       if (!s.trim().endsWith( "," )){ //$NON-NLS-1$
-         newValue.append(","); //$NON-NLS-1$
-       }
-       if (!s.endsWith( " " )){ //$NON-NLS-1$
-         newValue.append(" "); //$NON-NLS-1$
+       if (s.trim().length()>0){
+         if (!s.trim().endsWith( "," )){ //$NON-NLS-1$
+           newValue.append(","); //$NON-NLS-1$
+         }
+         if (!s.endsWith( " " )){ //$NON-NLS-1$
+           newValue.append(" "); //$NON-NLS-1$
+         }
        }
      }
      newValue.append(value);

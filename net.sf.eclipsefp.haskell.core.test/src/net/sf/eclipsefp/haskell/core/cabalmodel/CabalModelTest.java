@@ -492,6 +492,42 @@ public class CabalModelTest extends TestCase {
     assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
   }
 
+  public void testCreateFieldNoNL(){
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject" );
+    PackageDescriptionStanza pds=pd.getStanzas().get(0);
+    RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
+    assertNotNull(rvp);
+    assertEquals(0,rvp.getStartLine());
+    assertEquals(1,rvp.getEndLine());
+    assertEquals(16,rvp.getInitialIndent());
+    assertEquals(-1,rvp.getSubsequentIndent());
+    assertEquals(NL+CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
+  }
+
+  public void testCreateFieldNoNLAfterMultipleLines(){
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL+"Synopsis: firstline"+NL+"  secondline" );
+    PackageDescriptionStanza pds=pd.getStanzas().get(0);
+    RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
+    assertNotNull(rvp);
+    assertEquals(2,rvp.getStartLine());
+    assertEquals(3,rvp.getEndLine());
+    assertEquals(12,rvp.getInitialIndent());
+    assertEquals(-1,rvp.getSubsequentIndent());
+    assertEquals(NL+CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
+  }
+
+  public void testCreateFieldFromEmpty(){
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL+"Author: "+NL+"Summary: Summ"+NL );
+    PackageDescriptionStanza pds=pd.getStanzas().get(0);
+    RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
+    assertNotNull(rvp);
+    assertEquals(1,rvp.getStartLine());
+    assertEquals(2,rvp.getEndLine());
+    assertEquals(8,rvp.getInitialIndent());
+    assertEquals(-1,rvp.getSubsequentIndent());
+    assertEquals("JP Moresmau"+NL,rvp.getRealValue());
+  }
+
   public void testCreateFromScratch(){
     PackageDescription pd=new PackageDescription( "newProject");
     PackageDescriptionStanza pds=pd.getStanzas().get(0);

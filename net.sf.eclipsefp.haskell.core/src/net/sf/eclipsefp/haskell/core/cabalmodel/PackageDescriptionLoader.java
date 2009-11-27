@@ -102,16 +102,61 @@ public class PackageDescriptionLoader {
 
     private int braces=0;
 
-
+    /**
+     * are we ending in NL?
+     */
+    private boolean gotNLAtEnd=true;
 
     private CabalParser( final PackageDescription pd ){
       this.pd=pd;
+    }
 
+    private final StringBuilder line=new StringBuilder();
+    private int lookup=-1;
+    /**
+     * yes I rewrote a readLine method to know if the file ends with NL or not
+     * @param br the reader
+     * @return the line read, or null of the end of the file
+     * @throws IOException
+     */
+    private String readLine( final BufferedReader br)throws IOException{
+      if (lookup>-1){
+        line.append( (char)lookup );
+      }
+      while (true){
+        lookup=br.read();
+        boolean ret=false;
+        if (lookup==-1){
+          if (line.length()>0){
+            gotNLAtEnd=false;
+            ret=true;
+          } else {
+            return null;
+          }
+        } else if (lookup=='\r'){
+          lookup=br.read();
+          if (lookup=='\n'){
+            lookup=-1;
+          }
+          ret=true;
+        }
+        else if (lookup=='\n'){
+          ret=true;
+        } else {
+          line.append( (char)lookup );
+          lookup=-1;
+        }
+        if (ret){
+          String s=line.toString();
+          line.setLength( 0 );
+          return s;
+        }
+      }
     }
 
     private void parse( final BufferedReader br
        ) throws IOException {
-      String line = br.readLine();
+      String line = readLine(br);
       while( line != null ) {
         if (!isComment( line )){
           if(! isEmpty( line ) ) {
@@ -191,7 +236,7 @@ public class PackageDescriptionLoader {
             empty++;
           }
         }
-        line = br.readLine();
+        line = readLine(br);
         count++;
 
       }
@@ -200,13 +245,17 @@ public class PackageDescriptionLoader {
         while (stanzaStack.size()>0){
           popStanza();
         }
+        if (!gotNLAtEnd){
+          lastStanza.needNL=true;
+        }
         addStanza(null,null);
       }
     }
 
     private void addField() {
       if(lastStanza!=null && field!=null){
-        if(fieldValue.length()>0 && fieldVP!=null){
+        // fieldValue.length()>0 &&
+        if(fieldVP!=null){
           lastStanza.getProperties().put( field, fieldValue.toString() );
           fieldVP.setEndLine( count - empty);
           lastStanza.getPositions().put( field, fieldVP );

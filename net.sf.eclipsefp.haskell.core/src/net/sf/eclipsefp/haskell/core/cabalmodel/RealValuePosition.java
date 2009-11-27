@@ -28,7 +28,11 @@ public class RealValuePosition extends ValuePosition {
   public void updateDocument(final IDocument doc){
     try {
       int st=doc.getLineOffset( getStartLine() )+getInitialIndent();
-      int end=doc.getLineOffset( getEndLine() );
+      int end=doc.getLength();
+      if (getEndLine()<doc.getNumberOfLines()){
+        end=doc.getLineOffset( getEndLine() );
+      }
+
       if (end-st>-1){
         doc.replace( st, end-st,getRealValue() );
       }
