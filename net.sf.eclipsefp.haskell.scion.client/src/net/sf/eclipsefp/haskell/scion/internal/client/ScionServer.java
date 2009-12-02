@@ -9,11 +9,11 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerConnectException;
@@ -46,7 +46,10 @@ public class ScionServer {
 	private BufferedReader socketReader;
 	private BufferedWriter socketWriter;
 	
-	private int port = -1; // negative if not yet captured from stdout
+	//private int port = -1; // negative if not yet captured from stdout
+	
+	// keep last port used by any server
+	private static AtomicInteger lastPort=new AtomicInteger(4004); 
 	
 	private int nextSequenceNumber = 1;
 
@@ -65,9 +68,9 @@ public class ScionServer {
 	 * Starts the Scion server.
 	 */
 	public synchronized void startServer() throws ScionServerStartupException {
-		startServerProcess();
-		capturePortNumber();
-		connectToServer();
+		int port=startServerProcess();
+		//capturePortNumber();
+		connectToServer(port);
 		serverOutputThread=new Thread(){
 			public void run(){
 				while (serverStdOutReader!=null){
@@ -109,15 +112,16 @@ public class ScionServer {
 	 * @throws ScionServerStartupException if the server could not be started;
 	 *         the inner exception will give detailed information 
 	 */
-  	private void startServerProcess() throws ScionServerStartupException {
+  	private int startServerProcess() throws ScionServerStartupException {
   		Trace.trace(CLASS_PREFIX, "Starting server");
   		// by default listenOn in Scion use ReuseAddr, which is why I think it does not detect that the port is already in use
   		// so we the check ourselves
-  		int port=4005;
+  		int port=lastPort.incrementAndGet();
   		try {
   			while (true){
-  				new Socket(InetAddress.getLocalHost(), port);
-  				port++;
+  				// use null for the loopback
+  				new Socket((String)null, port).close();
+  				port=lastPort.incrementAndGet();
   			}
   		} catch (IOException ioe){
   			
@@ -149,6 +153,7 @@ public class ScionServer {
 			// make compiler happy, because US-ASCII is always supported
 		}
 		Trace.trace(CLASS_PREFIX, "Server started");
+		return port;
 	}
   	
 	/**
@@ -239,7 +244,7 @@ public class ScionServer {
   	 * 
   	 * @throws ScionServerConnectException if the port number could not be read for some reason 
   	 */
-	private void capturePortNumber() throws ScionServerConnectException {
+	/*private void capturePortNumber() throws ScionServerConnectException {
 		try {
 			// Wait until the port number is printed
 			final String start = "=== Listening on port: ";
@@ -256,7 +261,7 @@ public class ScionServer {
 		} catch (IOException ex) {
 			throw new ScionServerConnectException(UITexts.scionServerConnectError_message, ex);
 		}
-	}	
+	}	*/
 
 	/**
 	 * Reads from the server's stdout (and stderr)
@@ -314,7 +319,7 @@ public class ScionServer {
 	////////////////////////////////
 	// Server socket communication
 	
-	private void connectToServer() throws ScionServerConnectException {
+	private void connectToServer(int port) throws ScionServerConnectException {
 		try {
 			socket = connectToServer(host, port);	
 			socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
