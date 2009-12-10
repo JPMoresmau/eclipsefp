@@ -10,18 +10,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
 import net.sf.eclipsefp.haskell.core.util.QueryUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 
 
 public class GHCSystemLibrary implements ITreeElement {
@@ -42,7 +42,7 @@ public class GHCSystemLibrary implements ITreeElement {
     if( man.getCurrentHsImplementation() != null ) {
       IPath binDir = new Path( man.getCurrentHsImplementation().getBinDir() );
       String exe =  binDir.append( GHCSyntax.GHC_PKG ).toOSString();
-      String queryResult = QueryUtil.query( exe, "list" );
+      String queryResult = QueryUtil.query( exe, "list" ); //$NON-NLS-1$
       parsePackageList( queryResult, result );
     }
     return result;
@@ -55,11 +55,11 @@ public class GHCSystemLibrary implements ITreeElement {
   public String getText() {
     ICompilerManager man = CompilerManager.getInstance();
     IHsImplementation impl = man.getCurrentHsImplementation();
-    String name = "No Haskell implementation configured!";
+    String name = UITexts.explorer_libraries_noimpl;
     if( impl != null ) {
       name = impl.getName();
     }
-    return "GHC Libraries [" + name + "]";
+    return NLS.bind( UITexts.explorer_libraries, name );
   }
 
   public String getImageKey() {
@@ -79,7 +79,7 @@ public class GHCSystemLibrary implements ITreeElement {
       StringBuilder sb = null;
       String line = br.readLine();
       while( line != null ) {
-        if( line.startsWith( "  " ) && sb != null ) {
+        if( line.startsWith( "  " ) && sb != null ) { //$NON-NLS-1$
           sb.append(line.trim());
         } else {
           sb = new StringBuilder();

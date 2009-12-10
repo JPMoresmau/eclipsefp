@@ -10,8 +10,12 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
+import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineCP;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSystemLibrary;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -25,28 +29,66 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 
-/** <p>content provider which is declared in <code>plugin.xml</code> for
-  * the project explorer view.</p>
-  *
-  * @author Leif Frenzel
-  */
+/**
+ * <p>
+ * content provider which is declared in <code>plugin.xml</code> for the project
+ * explorer view.
+ * </p>
+ *
+ * @author Leif Frenzel
+ */
 public class HaskellResourceExtensionCP implements ICommonContentProvider {
 
 
   // interface methods of ITreeContentProvider
-  ////////////////////////////////////////////
+  // //////////////////////////////////////////
 
   public Object[] getChildren( final Object parentElement ) {
-    List<Object> result = new ArrayList<Object>();
+    final List<Object> result = new ArrayList<Object>();
     try {
-      if(    parentElement instanceof IProject
+      if( parentElement instanceof IProject
           && ( ( IProject )parentElement ).isOpen()
           && ( ( IProject )parentElement ).hasNature( HaskellNature.NATURE_ID ) ) {
         result.add( new GHCSystemLibrary( ( IProject )parentElement ) );
-        //addProjectExecutable( ( IProject )parentElement, result );
+        // addProjectExecutable( ( IProject )parentElement, result );
+      } else if( parentElement instanceof IFile ) {
+        final IFile f = ( IFile )parentElement;
+        // if we have a Haskell source file, we show the same content as outline
+        // underneath
+        if( ResourceUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
+          final ScionInstance si = HaskellUIPlugin.getDefault()
+              .getScionInstanceManager( f );
+          // sync access
+          synchronized( si ) {
+            si.outlineUnopenedFile( f, new OutlineHandler() {
+
+              public void outlineResult( final List<OutlineDef> outlineDefs ) {
+                OutlineCP cp = new OutlineCP();
+                cp.inputChanged( null, null, outlineDefs );
+                for( OutlineDef def: outlineDefs ) {
+                  if( def.getParentID() == null ) {
+                    result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
+                  }
+                }
+                synchronized( si ) {
+                  si.notifyAll();
+                }
+              }
+            } );
+            try {
+              si.wait( 10000 ); // 10 seconds max
+            } catch( InterruptedException ie ) {
+              // noop
+            }
+          }
+        }
       } else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
         result.addAll( treeElement.getChildren() );
+        // outline results are wrapped in a structure keeping the tree and the file
+      } else if( parentElement instanceof ProjectExplorerOutlineDef ) {
+        ProjectExplorerOutlineDef outline = ( ProjectExplorerOutlineDef )parentElement;
+        result.addAll( outline.getChildren() );
       }
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( cex );
@@ -63,6 +105,13 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   }
 
   public boolean hasChildren( final Object element ) {
+    if( element instanceof IFile ) {
+      IFile f = ( IFile )element;
+      if( ResourceUtil.hasHaskellExtension( f ) ) {
+        return true;
+      }
+      return false;
+    }
     Object[] children = getChildren( element );
     return children == null ? false : children.length > 0;
   }
@@ -75,29 +124,30 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
     // unused
   }
 
-  public void inputChanged( final Viewer viewer,
-                            final Object oldInput,
-                            final Object newInput ) {
+  public void inputChanged( final Viewer viewer, final Object oldInput,
+      final Object newInput ) {
     // unused
   }
 
 
   // interface methods of ICommonContentProvider
-  //////////////////////////////////////////////
+  // ////////////////////////////////////////////
 
   // TODO lf note to self: config -> navigator service -> can be used to
-  //                       get state information from the View
+  // get state information from the View
   public void init( final ICommonContentExtensionSite config ) {
-    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin
+        .getPluginId() );
     node.addPreferenceChangeListener( new IPreferenceChangeListener() {
+
       public void preferenceChange( final PreferenceChangeEvent event ) {
         String prop = event.getKey();
-        if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( prop )
+        if( ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( prop )
             || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( prop ) ) {
           config.getService().update();
         }
       }
-    });
+    } );
   }
 
   public void restoreState( final IMemento memento ) {
@@ -110,16 +160,16 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
 
 
   // helping functions
-  ////////////////////
+  // //////////////////
 
   private void addProjectExecutable( final IProject project,
-                                     final List<Object> list ) {
+      final List<Object> list ) {
     try {
       IFile[] executables = ResourceUtil.getProjectExecutables( project );
       list.addAll( Arrays.asList( executables ) );
     } catch( CoreException ex ) {
-      String msg =   "Problem determining project executable for "
-                   + project.getName();
+      String msg = "Problem determining project executable for "
+          + project.getName();
       HaskellUIPlugin.log( msg, ex );
     }
   }

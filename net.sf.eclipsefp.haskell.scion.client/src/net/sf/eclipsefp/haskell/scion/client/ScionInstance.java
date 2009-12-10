@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -384,6 +385,28 @@ public class ScionInstance implements IScionCommandRunner {
 			});
 		}
 		command.runAsync();
+
+	}
+	
+	public void outlineUnopenedFile(final IFile file,final OutlineHandler handler){
+		reloadFile(file, new Runnable(){
+			public void run() {
+				final OutlineCommand command=new OutlineCommand(file,ScionInstance.this);
+				if (handler!=null){
+					command.addJobChangeListener(new JobChangeAdapter(){
+						@Override
+						public void done(IJobChangeEvent event) {
+							if (event.getResult().isOK()) {
+								handler.outlineResult(command.getOutlineDefs());
+							}
+						}
+					});
+				}
+				command.runAsync();
+				
+			}
+		});
+		
 
 	}
 	

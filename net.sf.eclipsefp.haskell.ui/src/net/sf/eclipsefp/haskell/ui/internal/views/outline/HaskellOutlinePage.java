@@ -101,23 +101,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
       }*/
       if (firstElement instanceof OutlineDef){
         OutlineDef od=(OutlineDef)firstElement;
-        Location srcLoc=od.getLocation();
-        if (srcLoc!=null){
-          IEditorInput fei = editor.getEditorInput();
-          IDocument doc = editor.getDocumentProvider().getDocument( fei );
-          try {
-            int offset=srcLoc.getStartOffset( doc );
-            int length = od.getName().length();
-            try {
-              editor.setHighlightRange( offset, length, true );
-            } catch( IllegalArgumentException iaex ) {
-              editor.resetHighlightRange();
-            }
-          } catch( final BadLocationException badlox ) {
-            // ignore
-          }
-
-        }
+        reveal(editor,od);
 
       }
     }
@@ -208,6 +192,25 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     @Override
     public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
      return comp.compare( (OutlineDef)e1, (OutlineDef)e2 );
+    }
+  }
+
+  public static void reveal(final HaskellEditor editor,final OutlineDef od){
+    Location srcLoc=od.getLocation();
+    if (srcLoc!=null){
+      IEditorInput fei = editor.getEditorInput();
+      IDocument doc = editor.getDocumentProvider().getDocument( fei );
+      try {
+        int offset=srcLoc.getStartOffset( doc );
+        int length = od.getName().length();
+        try {
+          editor.setHighlightRange( offset, length, true );
+        } catch( IllegalArgumentException iaex ) {
+          editor.resetHighlightRange();
+        }
+      } catch( final BadLocationException badlox ) {
+        // ignore
+      }
     }
   }
 }

@@ -10,14 +10,13 @@ import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
+import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineLabelProvider;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 /** <p>the label provider for elements in a Haskell project. Functionality
@@ -25,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
   *
   * @author Leif Frenzel
   */
-public class HaskellResourceExtensionLP extends LabelProvider {
+public class HaskellResourceExtensionLP extends OutlineLabelProvider {
 
 
   // interface methods
@@ -42,6 +41,8 @@ public class HaskellResourceExtensionLP extends LabelProvider {
       result = ( ( IFolder )element ).getName();
     } else if( element instanceof IFile ) {
       result = ( ( IResource )element ).getName();
+    } else if( element instanceof ProjectExplorerOutlineDef ) {
+      result =super.getText(( ( ProjectExplorerOutlineDef )element ).getOutlineDef());
     } else {
       result = super.getText( element );
     }
@@ -64,6 +65,10 @@ public class HaskellResourceExtensionLP extends LabelProvider {
       result = getFolderImage( ( IFolder )element );
     } else if( element instanceof IFile ) {
       result = getFileImage( ( IFile )element );
+    } else if( element instanceof ProjectExplorerOutlineDef ) {
+      result =super.getImage(( ( ProjectExplorerOutlineDef )element ).getOutlineDef());
+    } else {
+      result=super.getImage( element );
     }
     return result;
   }
