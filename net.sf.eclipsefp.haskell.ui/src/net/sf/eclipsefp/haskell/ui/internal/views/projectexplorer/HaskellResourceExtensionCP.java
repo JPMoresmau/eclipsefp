@@ -4,7 +4,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
@@ -162,7 +161,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   // helping functions
   // //////////////////
 
-  private void addProjectExecutable( final IProject project,
+ /* private void addProjectExecutable( final IProject project,
       final List<Object> list ) {
     try {
       IFile[] executables = ResourceUtil.getProjectExecutables( project );
@@ -172,5 +171,5 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           + project.getName();
       HaskellUIPlugin.log( msg, ex );
     }
-  }
+  }*/
 }

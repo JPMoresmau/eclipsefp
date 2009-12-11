@@ -85,6 +85,13 @@ public class OpenActionProvider extends CommonActionProvider {
       return def != null;
     }
 
+   /* @Override
+    public String getActionDefinitionId() {
+      return "net.sf.eclipsefp.haskell.ui.openCommand"; //$NON-NLS-1$
+    }
+*/
+
+
     @Override
     public void run() {
       try {

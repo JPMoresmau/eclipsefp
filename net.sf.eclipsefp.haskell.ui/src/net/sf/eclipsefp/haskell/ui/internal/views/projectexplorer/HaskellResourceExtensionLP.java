@@ -93,7 +93,7 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
         }
       }
     } catch( final CoreException cex ) {
-      HaskellUIPlugin.log( "Unexpected: ", cex );
+      HaskellUIPlugin.log( cex );
     }
     return result;
   }
@@ -107,7 +107,7 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
         result = HaskellUIImages.getImage( id );
       }
     } catch( final CoreException cex ) {
-      HaskellUIPlugin.log( "Unexpected: ", cex );
+      HaskellUIPlugin.log(  cex );
     }
     return result;
   }

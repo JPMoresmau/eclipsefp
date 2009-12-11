@@ -441,7 +441,7 @@
         <contentExtension pattern="net.sf.eclipsefp.haskell.ui.internal.views.filters.*" />	
       </includes>
     </viewerContentBinding>
-    <viewerActionBinding
+    <!--viewerActionBinding
          viewerId="org.eclipse.ui.navigator.ProjectExplorer"
          >
       <includes>
@@ -451,7 +451,7 @@
                >
          </actionExtension>
       </includes>
-   </viewerActionBinding>
+   </viewerActionBinding-->
   </extension>
   
   <extension point="org.eclipse.ui.navigator.navigatorContent">
@@ -489,7 +489,7 @@
        <actionProvider
             class="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.OpenActionProvider"
             id="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.OpenActionProvider"
-            overrides="org.eclipse.ui.navigator.resources.OpenActions">
+            ><!-- overrides="org.eclipse.ui.navigator.resources.OpenActions"-->
           <enablement>
           		<instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerOutlineDef"/>
              	
@@ -497,12 +497,21 @@
         </actionProvider>
       
     </navigatorContent>
-    <commonFilter
+    <!--commonFilter
         activeByDefault="false"
         class="net.sf.eclipsefp.haskell.ui.internal.views.common.ProjectExecutableFilter"
         name="%projectExecutableFilter_name"
         description="%projectExecutableFilter_desc"
-        id="net.sf.eclipsefp.haskell.ui.internal.views.filters.ProjectExecutableFilter"/>
+        id="net.sf.eclipsefp.haskell.ui.internal.views.filters.ProjectExecutableFilter"/-->
+   <commonFilter
+        activeByDefault="false"
+        name="%haskellElementFilter_name"
+        description="%haskellElementFilter_desc"
+        id="net.sf.eclipsefp.haskell.ui.internal.views.filters.HaskellElementFilter">
+        <filterExpression>
+  	      <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerOutlineDef"/>
+        </filterExpression>
+  </commonFilter>
     <commonWizard
 		  menuGroupId="net.sf.eclipsefp.haskell.ui"
 		  type="new"

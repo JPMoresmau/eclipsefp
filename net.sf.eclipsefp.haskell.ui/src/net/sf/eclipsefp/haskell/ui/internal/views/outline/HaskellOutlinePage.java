@@ -204,7 +204,8 @@ public class HaskellOutlinePage extends ContentOutlinePage {
         int offset=srcLoc.getStartOffset( doc );
         int length = od.getName().length();
         try {
-          editor.setHighlightRange( offset, length, true );
+          //editor.setHighlightRange( offset, length, true );
+          editor.selectAndReveal( offset, length );
         } catch( IllegalArgumentException iaex ) {
           editor.resetHighlightRange();
         }
