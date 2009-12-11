@@ -39,7 +39,13 @@ public class ModuleInclusionComposite extends Composite {
     super( parent, style );
   }
 
-
+  public void initNoSourceFolder(){
+    GridLayout gl=new GridLayout(1,false);
+    setLayout( gl );
+    Label w=new Label(this,SWT.NONE);
+    w.setText( UITexts.module_inclusion_nosourcefolder );
+    layout( true, true );
+  }
 
   public void init(final IResource srcPath, final String module){
 

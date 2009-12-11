@@ -136,6 +136,7 @@ public final class UITexts extends NLS {
   public static String module_inclusion_page_title;
   public static String module_inclusion_page_description;
   public static String module_inclusion_error;
+  public static String module_inclusion_nosourcefolder;
 
   public static String quickfix_marker_annotation_name;
   public static String resolve_missingtype;

@@ -30,32 +30,39 @@ public class ModuleInclusionPP extends PropertyPage {
   protected Control createContents( final Composite parent ) {
     mic=new ModuleInclusionComposite( parent, SWT.NONE );
     IFile f=(IFile)getElement();
-    info=new ModuleCreationInfo();
-    IContainer src=ResourceUtil.getSourceContainer( f );
-    info.setSourceContainer( src );
-    IPath p=ResourceUtil.getSourceRelativePath( src, f );
-    info.setFolders(p);
-    info.setModuleName( f.getProjectRelativePath().removeFileExtension().lastSegment() );
-    mic.init( src, info.getQualifiedModuleName() );
 
+    IContainer src=ResourceUtil.getSourceContainer( f );
+    if (src!=null){
+      info=new ModuleCreationInfo();
+      info.setSourceContainer( src );
+      IPath p=ResourceUtil.getSourceRelativePath( src, f );
+      info.setFolders(p);
+      info.setModuleName( f.getProjectRelativePath().removeFileExtension().lastSegment() );
+      mic.init( src, info.getQualifiedModuleName() );
+    } else {
+      mic.initNoSourceFolder();
+    }
     Dialog.applyDialogFont( parent );
     return mic;
   }
 
   @Override
   public boolean performOk() {
-    info.setExposed( mic.getExposed() );
-    info.setIncluded( mic.getIncluded() );
-    ModuleCreationOperation mco=new ModuleCreationOperation( info );
-    mco.setGeneratedFile( (IFile)getElement() );
+    if (info!=null){
+      info.setExposed( mic.getExposed() );
+      info.setIncluded( mic.getIncluded() );
+      ModuleCreationOperation mco=new ModuleCreationOperation( info );
+      mco.setGeneratedFile( (IFile)getElement() );
 
-    try {
-      mco.run( null );
-      return true;
-    } catch( Exception ex ) {
-      HaskellUIPlugin.log( UITexts.module_inclusion_error, ex );
-      return false;
+      try {
+        mco.run( null );
+        return true;
+      } catch( Exception ex ) {
+        HaskellUIPlugin.log( UITexts.module_inclusion_error, ex );
+        return false;
+      }
     }
+    return true;
   }
 
 
