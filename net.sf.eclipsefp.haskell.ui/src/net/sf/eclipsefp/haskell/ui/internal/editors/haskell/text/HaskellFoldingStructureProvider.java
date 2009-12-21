@@ -69,11 +69,13 @@ public class HaskellFoldingStructureProvider {
     Position result = null;
     try {
       int start = document.getLineOffset( startLine -1 );
-      int end =   document.getLineOffset( endLine -1)
-                + document.getLineLength( endLine -1);
+      int endLine2=Math.min( document.getNumberOfLines()-1, endLine -1 );
+      int end =   document.getLineOffset( endLine2)
+                + document.getLineLength( endLine2);
       result = new Position( start, end - start );
     } catch( final BadLocationException badlox ) {
       // ignored
+      System.err.println(startLine+","+endLine);
       badlox.printStackTrace();
     }
     return result;
