@@ -91,4 +91,11 @@
            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
+   <extension
+         point="net.sf.eclipsefp.haskell.ui.CabalChangeListener">
+      <listener
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.LaunchUpdater"
+            id="net.sf.eclipsefp.haskell.debug.ui.listener2">
+      </listener>
+   </extension>
 </plugin>
