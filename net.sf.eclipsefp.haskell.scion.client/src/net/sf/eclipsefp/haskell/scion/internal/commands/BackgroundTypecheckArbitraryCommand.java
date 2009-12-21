@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -34,5 +35,9 @@ public class BackgroundTypecheckArbitraryCommand extends
 		return params;
 	}
 
+	@Override
+	protected void doProcessCompilationResult(){
+		new CompilationResultHandler(file.getProject(),doc).process(this);
+	}
 
 }

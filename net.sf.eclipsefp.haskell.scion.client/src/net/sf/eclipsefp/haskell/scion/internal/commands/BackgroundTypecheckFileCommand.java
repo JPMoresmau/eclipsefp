@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
 import net.sf.eclipsefp.haskell.scion.types.Location;
@@ -16,10 +17,10 @@ import org.json.JSONObject;
 
 public class BackgroundTypecheckFileCommand extends ScionCommand implements ICompilerResult{
 
-	private IFile file;
+	protected IFile file;
 	private CompilationResult compilationResult;
 	
-	private ScionInstance instance;
+	protected ScionInstance instance;
 	
 	public BackgroundTypecheckFileCommand(ScionInstance runner, IFile file) {
 		super(runner, Job.BUILD);
@@ -60,12 +61,18 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 				}
 			}
 		}
+		doProcessCompilationResult();
+	}
+	
+	protected void doProcessCompilationResult(){
+		new CompilationResultHandler(file.getProject()).process(this);
 	}
 	
 	@Override
 	protected boolean onError(JSONException ex, String name, String message) {
 		instance.deleteProblems(file);
 		compilationResult=new CompilationResult(file.getLocation().toOSString(),message);
+		doProcessCompilationResult();
 		return true;
 	}
 	

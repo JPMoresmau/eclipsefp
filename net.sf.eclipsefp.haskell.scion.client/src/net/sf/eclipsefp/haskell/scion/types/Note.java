@@ -62,7 +62,6 @@ public class Note {
 	
 	public void applyAsMarker(IResource resource,int maxLines) throws CoreException {
 		if (resource != null && resource.isAccessible()) {
-			
 			IMarker marker = resource.createMarker(IMarker.PROBLEM);
 	        int severity;
 	        switch (kind) {
@@ -86,7 +85,7 @@ public class Note {
 	        // so it's better to just show the line without more info 
 	        
 	        marker.setAttribute(IMarker.MESSAGE, message + (additionalInfo != null ? "\n" + additionalInfo : ""));
-	        
+		  
 		}
 	}
 	

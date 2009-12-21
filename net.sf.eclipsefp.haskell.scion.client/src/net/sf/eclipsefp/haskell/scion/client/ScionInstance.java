@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -248,12 +247,12 @@ public class ScionInstance implements IScionCommandRunner {
 	//////////////////////
 	// External commands
 
-	public void backgroundTypecheckFile(IFile file) {
+	/*public void backgroundTypecheckFile(IFile file) {
 		BackgroundTypecheckFileCommand command = new BackgroundTypecheckFileCommand(this, file);
 		command.runAsync();
-	}
+	}*/
 
-	public void backgroundTypecheckArbitrary(final IFile file,IDocument doc) {
+	/*public void backgroundTypecheckArbitrary(final IFile file,IDocument doc) {
 		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc);
 		cmd.addJobChangeListener(new JobChangeAdapter(){
 			@Override
@@ -264,7 +263,7 @@ public class ScionInstance implements IScionCommandRunner {
 			}
 		});
 		cmd.runAsync();
-	}
+	}*/
 	
 	public void loadFile(IFile fileName) {
 		//loadedFiles.add(fileName);
@@ -292,10 +291,11 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public void reloadFile(IFile file,Runnable after) {
-		deleteProblems(file);
+		// done on return
+		//deleteProblems(file);
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
 		BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(this, file);
-		cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
+		//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
 		runAsync(cmd,after);
 		//loadCommand.getSuccessors().add(typecheckCommand);
 		//loadCommand.runAsync();
@@ -303,10 +303,11 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public void reloadFile(final IFile file,final IDocument doc,final Runnable after) {
-		deleteProblems(file);
+		// done on return
+		//deleteProblems(file);
 		
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
-		final IJobChangeListener l=new CompilationResultHandler(getProject(),doc);
+		//final IJobChangeListener l=new CompilationResultHandler(getProject(),doc);
 		final IJobChangeListener l2=new JobChangeAdapter(){
 				@Override
 				public void done(IJobChangeEvent event) {
@@ -324,7 +325,7 @@ public class ScionInstance implements IScionCommandRunner {
 				if (message!=null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)){
 					deleteProblems(file);
 					ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
-					removeJobChangeListener(l);
+					//removeJobChangeListener(l);
 					removeJobChangeListener(l2);
 					ScionInstance.this.reloadFile(file, after);
 					
@@ -334,7 +335,7 @@ public class ScionInstance implements IScionCommandRunner {
 				
 			}
 		};
-		cmd.addJobChangeListener(l);
+		//cmd.addJobChangeListener(l);
 		cmd.addJobChangeListener(l2);
 		cmd.runAsync();
 		//loadCommand.getSuccessors().add(typecheckCommand);
