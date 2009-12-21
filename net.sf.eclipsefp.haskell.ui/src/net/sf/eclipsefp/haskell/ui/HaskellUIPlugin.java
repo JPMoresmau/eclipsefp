@@ -22,7 +22,10 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
@@ -40,6 +43,8 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 
   public static final String ID_PERSPECTIVE = HaskellPerspective.class
       .getName();
+
+  public static final String ID_EXT_CabalChangeListener="CabalChangeListener";
 
   // The shared instance.
   private static HaskellUIPlugin plugin;
@@ -172,5 +177,10 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     String msg = message == null ? "[No details]" : message;
     Status status = new Status( severity, getPluginId(), IStatus.OK, msg, thr );
     getDefault().getLog().log( status );
+  }
+
+  public IConfigurationElement[] getExtensions(final String key) {
+    IExtensionRegistry registry = Platform.getExtensionRegistry();
+    return registry.getConfigurationElementsFor(getPluginId(), key);
   }
 }

@@ -2,11 +2,10 @@
 package net.sf.eclipsefp.haskell.hugs.core;
 
 import java.io.File;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hugs.HugsPlugin;
 import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 
 /** <p>contains common helping functionality.</p>
@@ -27,17 +26,17 @@ public class Util {
     return result;
   }
 
-  public static String constructLibPath( final IHaskellProject hsProject ) {
+  public static String constructLibPath( final IFile... files ) {
     StringBuffer sbResult = new StringBuffer();
-    IImportLibrary[] libs = hsProject.getImportLibraries();
-    for( int i = 0; i < libs.length; i++ ) {
-      if( i == 0 ) {
+
+    for (String s:ResourceUtil.getImportPackages( files )){
+      if( sbResult.length()==0 ) {
         sbResult.append( "-P" );
       } else {
         sbResult.append( SEP );
       }
-      IPath path = libs[ i ].getPath();
-      sbResult.append( path.toOSString() );
+      sbResult.append( s );
+
     }
     return sbResult.toString();
   }

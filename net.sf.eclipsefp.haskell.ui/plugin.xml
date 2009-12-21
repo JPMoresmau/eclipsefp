@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="CabalChangeListener" name="%extPtCabalChange_name" schema="schema/CabalChangeListener.exsd"/>
    <!-- [Wizards] project and module creation -->
    <extension point="org.eclipse.ui.newWizards">
       <wizard
@@ -533,5 +534,12 @@
            class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
            markerType="org.eclipse.core.resources.problemmarker">
      </markerResolutionGenerator>
+  </extension>
+  <extension
+        point="net.sf.eclipsefp.haskell.ui.CabalChangeListener">
+     <listener
+           class="net.sf.eclipsefp.haskell.ui.internal.scion.ProjectReloader"
+           id="net.sf.eclipsefp.haskell.ui.listener1">
+     </listener>
   </extension>
 </plugin>

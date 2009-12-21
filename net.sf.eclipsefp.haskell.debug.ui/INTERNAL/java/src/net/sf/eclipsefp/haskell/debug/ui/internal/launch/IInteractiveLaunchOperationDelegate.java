@@ -3,8 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 
 /** <p>Implementors tell the <code>AbstractInteractiveLaunchShortcut</code>
   * the essential things for launching an interactive environment for a
@@ -25,7 +25,7 @@ public interface IInteractiveLaunchOperationDelegate {
 
   /** <p>creates the command line arguments (list the modules to be loaded,
     * library paths etc.).</p> */
-  String[] createArguments( IHaskellProject hsProject, IFile[] files );
+  String[] createArguments( IProject hsProject, IFile[] files );
 
   /**
    * get the reload command or null if not supported

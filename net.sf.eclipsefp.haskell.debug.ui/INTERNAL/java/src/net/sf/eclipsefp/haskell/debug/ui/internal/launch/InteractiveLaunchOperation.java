@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
@@ -31,7 +29,7 @@ import org.eclipse.osgi.util.NLS;
   *
   * @author Leif Frenzel
   */
-class InteractiveLaunchOperation extends LaunchOperation {
+public class InteractiveLaunchOperation extends LaunchOperation {
 
   private static final String FIRST_SELECTED_RESOURCE
     = "FIRST_SELECTED_RESOURCE"; //$NON-NLS-1$
@@ -110,7 +108,13 @@ class InteractiveLaunchOperation extends LaunchOperation {
     String projectLocation = project.getLocation().toOSString();
     wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, projectLocation );
     wc.setAttribute( ILaunchAttributes.ARGUMENTS,
-                     getArguments( project, files ) );
+                     getArguments(delegate, project, files ) );
+    wc.setAttribute( ILaunchAttributes.DELEGATE, delegate.getClass().getName() );
+    List<String> fileNames=new ArrayList<String>(files.length);
+    for (IFile f:files){
+      fileNames.add(f.getProjectRelativePath().toPortableString());
+    }
+    wc.setAttribute(ILaunchAttributes.FILES,fileNames);
     wc.setAttribute(ILaunchAttributes.SYNC_STREAMS,true);
     String projectName = ILaunchAttributes.PROJECT_NAME;
     wc.setAttribute( projectName, project.getName() );
@@ -144,12 +148,12 @@ class InteractiveLaunchOperation extends LaunchOperation {
     return config.getAttribute( att, ILaunchAttributes.EMPTY );
   }
 
-  private String getArguments( final IProject project, final IFile[] files ) {
-    IHaskellProject hsProject = HaskellProjectManager.get( project );
-    return concatenate( delegate.createArguments( hsProject, files ) );
+  public static String getArguments(final IInteractiveLaunchOperationDelegate delegate,final IProject project, final IFile[] files ) {
+    //IHaskellProject hsProject = HaskellProjectManager.get( project );
+    return concatenate( delegate.createArguments( project, files ) );
   }
 
-  private String concatenate( final String[] args ) {
+  private static String concatenate( final String[] args ) {
     StringBuffer sb = new StringBuffer();
     if( args.length > 0 ) {
       sb.append( args[ 0 ] );

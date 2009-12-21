@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
@@ -25,16 +26,29 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
   *
   * @author Leif Frenzel
   */
-abstract class LaunchOperation {
+public abstract class LaunchOperation {
 
   static final String CONFIG_TYPE = HaskellLaunchDelegate.class.getName();
 
-  ILaunchConfiguration[] getConfigurations() throws CoreException {
+  public static ILaunchConfiguration[] getConfigurations() throws CoreException {
     ILaunchConfigurationType configType = getConfigType();
     return getLaunchManager().getLaunchConfigurations( configType );
   }
 
-  ILaunchManager getLaunchManager() {
+  public static List<ILaunchConfiguration> getConfigurationsForProject(final String projectName) throws CoreException {
+    ILaunchConfigurationType configType = getConfigType();
+    ILaunchConfiguration[] configs=getLaunchManager().getLaunchConfigurations( configType );
+    List<ILaunchConfiguration> ret=new ArrayList<ILaunchConfiguration>();
+    for (ILaunchConfiguration config:configs){
+      if (projectName.equals(getProjectName(config))){
+        ret.add(config);
+      }
+    }
+    return ret;
+  }
+
+
+  public static ILaunchManager getLaunchManager() {
     return DebugPlugin.getDefault().getLaunchManager();
   }
 
@@ -42,11 +56,11 @@ abstract class LaunchOperation {
     return getLaunchManager().generateUniqueLaunchConfigurationNameFrom( name.replace( '/', '.' ) );
   }
 
-  ILaunchConfigurationType getConfigType() {
+  public static ILaunchConfigurationType getConfigType() {
     return getLaunchManager().getLaunchConfigurationType( CONFIG_TYPE );
   }
 
-  String getProjectName( final ILaunchConfiguration configuration )
+  public static String getProjectName( final ILaunchConfiguration configuration )
                                                           throws CoreException {
     String att = ILaunchAttributes.PROJECT_NAME;
     return configuration.getAttribute( att, ILaunchAttributes.EMPTY );

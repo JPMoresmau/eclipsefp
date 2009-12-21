@@ -10,8 +10,6 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
@@ -35,7 +33,7 @@ public class GhciLaunchOperationDelegate
   // interface methods of IInteractiveLaunchOperationDelegate
   ///////////////////////////////////////////////////////////
 
-  public String[] createArguments( final IHaskellProject hsProject,
+  public String[] createArguments( final IProject hsProject,
                                    final IFile[] selectedFiles ) {
     List<String> cmdLine = new ArrayList<String>();
 
@@ -78,11 +76,11 @@ public class GhciLaunchOperationDelegate
   // helping methods
   //////////////////
 
-  private void collectImportDirs( final IHaskellProject hsProject,
+  private void collectImportDirs( final IProject hsProject,
                                   final List<String> cmdLine, final IFile[] selectedFiles) {
     //if( isPrefSet( IGhcPreferenceNames.GHCI_SOURCE_FOLDERS ) ) {
       try {
-        Set<IHaskellProject> visited = new HashSet<IHaskellProject>();
+        Set<IProject> visited = new HashSet<IProject>();
         visited.add( hsProject );
         collectImportDirsRec( hsProject, cmdLine, visited,selectedFiles );
       } catch( final CoreException cex ) {
@@ -92,23 +90,22 @@ public class GhciLaunchOperationDelegate
   }
 
   private void collectImportDirsRec(
-      final IHaskellProject hsProject,
+      final IProject hsProject,
       final List<String> cmdLine,
-      final Set<IHaskellProject> visited,final IFile[] selectedFiles ) throws CoreException {
+      final Set<IProject> visited,final IFile[] selectedFiles ) throws CoreException {
     /*Set<IPath> sourcePaths = hsProject.getSourcePaths();*/
     for( String sourcePath: ResourceUtil.getSourceFolders( selectedFiles ) ) {
-      IFolder folder = hsProject.getResource().getFolder( sourcePath );
+      IFolder folder = hsProject.getFolder( sourcePath );
       // getRawLocation gives us the real FS path even if the resource is linked
       IPath loc = new Path( folder.getLocationURI().getPath() );
       cmdLine.add( "-i\"" + loc.toOSString() + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    IProject[] refs = hsProject.getResource().getReferencedProjects();
+    IProject[] refs = hsProject.getReferencedProjects();
     for( IProject ref: refs ) {
       if( ref.hasNature( HaskellNature.NATURE_ID ) ) {
-        IHaskellProject refHsProject = HaskellProjectManager.get( ref );
-        if( !visited.contains( refHsProject ) ) {
-          collectImportDirsRec( refHsProject, cmdLine, visited,selectedFiles );
-          visited.add( refHsProject );
+        if( !visited.contains( ref ) ) {
+          collectImportDirsRec( ref, cmdLine, visited,selectedFiles );
+          visited.add( ref );
         }
       }
     }

@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -111,7 +112,37 @@ public class ScionManager implements IResourceChangeListener {
         new FileDeletionListener(), IResourceChangeEvent.PRE_BUILD );
 
     ResourcesPlugin.getWorkspace().addResourceChangeListener(
-        new CabalFileChangeListener(), IResourceChangeEvent.POST_CHANGE );
+        new IResourceChangeListener() {
+
+          public void resourceChanged( final IResourceChangeEvent event ) {
+            try {
+              event.getDelta().accept( new IResourceDeltaVisitor() {
+
+                public boolean visit( final IResourceDelta delta ) {
+                  if( delta.getKind() == IResourceDelta.CHANGED ) {
+                    if( delta.getResource() instanceof IFile ) {
+                      IFile f = ( IFile )delta.getResource();
+                      IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
+                      if( f.equals( cabalF ) ) {
+                        for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
+                          l.cabalFileChanged( f );
+                        }
+                      }
+                      return false;
+                    }
+                  }
+                  return true;
+
+                }
+              } );
+
+            } catch( CoreException ex ) {
+              HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
+            }
+          }
+        }, IResourceChangeEvent.POST_CHANGE );
+
+
 
     ResourcesPlugin.getWorkspace().addResourceChangeListener(
         new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
@@ -189,39 +220,6 @@ public class ScionManager implements IResourceChangeListener {
 
 
   /**
-   * <p>detects if the Cabal file of the project has been changed, and rebuild the project if it has</p>
-    *
-    * @author JP Moresmau
-   */
-  public class CabalFileChangeListener implements IResourceChangeListener {
-
-    public void resourceChanged( final IResourceChangeEvent event ) {
-      try {
-        event.getDelta().accept( new IResourceDeltaVisitor() {
-
-          public boolean visit( final IResourceDelta delta ) {
-            if( delta.getKind() == IResourceDelta.CHANGED ) {
-              if( delta.getResource() instanceof IFile ) {
-                IFile f = ( IFile )delta.getResource();
-                IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
-                if( f.equals( cabalF ) ) {
-                  getScionInstance( f ).buildProject( false );
-                }
-                return false;
-              }
-            }
-            return true;
-
-          }
-        } );
-
-      } catch( CoreException ex ) {
-        HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
-      }
-    }
-  }
-
-/**
  * <p>detects when a haskell project is deleted and stops the corresponding scion server</p>
   *
   * @author JP Moresmau

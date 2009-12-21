@@ -13,7 +13,6 @@ Require-Bundle: net.sf.eclipsefp.haskell.ghccompiler,
  org.eclipse.debug.ui,
  org.eclipse.ui,
  org.eclipse.ui.ide
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.ui.internal;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test",

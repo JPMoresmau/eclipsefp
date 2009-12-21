@@ -26,6 +26,7 @@ public class HaskellDebugUI extends AbstractUIPlugin {
   public void start( final BundleContext context ) throws Exception {
     super.start( context );
     plugin = this;
+
   }
 
   @Override

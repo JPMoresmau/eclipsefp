@@ -4,11 +4,11 @@ package net.sf.eclipsefp.haskell.hugs.ui.launch;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.hugs.HugsPlugin;
 import net.sf.eclipsefp.haskell.hugs.core.Util;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 
 /** <p>implements a delegate for launching HUGS.</p>
   *
@@ -20,11 +20,11 @@ public class HugsLaunchOperationDelegate
   // interface methods of IInteractiveLaunchOperationDelegate
   ///////////////////////////////////////////////////////////
 
-  public String[] createArguments( final IHaskellProject hsProject,
+  public String[] createArguments( final IProject hsProject,
                                    final IFile[] selectedFiles ) {
     List<String> cmdLine = new ArrayList<String>();
 
-    String libPath = Util.constructLibPath( hsProject );
+    String libPath = Util.constructLibPath( selectedFiles );
     if( !libPath.equals( "" ) ) {
       cmdLine.add( libPath );
     }

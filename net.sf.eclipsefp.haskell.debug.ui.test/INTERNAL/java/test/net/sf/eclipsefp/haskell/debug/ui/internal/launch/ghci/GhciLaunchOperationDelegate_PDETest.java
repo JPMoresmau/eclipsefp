@@ -32,7 +32,7 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
-    assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfSrc, del.createArguments( hp.getResource(), files ) );
 
     // unset the pref - no source folders
    // setPref( false );
@@ -40,7 +40,7 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
 
     // set the pref again - source folders again
   //  setPref( true );
-    assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfSrc, del.createArguments( hp.getResource(), files ) );
   }
 
   public void testAddSourceFolders_multi() throws Exception {
@@ -55,8 +55,8 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
-    assertContains( "-i" + locOfSrc, del.createArguments( hp, files ) );
-    assertContains( "-i" + locOfBlaSrc, del.createArguments( hp, files ) );
+    assertContains( "-i" + locOfSrc, del.createArguments( hp.getResource(), files ) );
+    assertContains( "-i" + locOfBlaSrc, del.createArguments( hp.getResource(), files ) );
   }
 
   public void testAddLinkedSourceFolder() throws Exception {
@@ -67,7 +67,7 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
     hp.addSourcePath( "lsrc" );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
-    assertContains( "-i\"/bla/lsrc\"", del.createArguments( hp, files ) );
+    assertContains( "-i\"/bla/lsrc\"", del.createArguments( hp.getResource(), files ) );
   }
 
 
