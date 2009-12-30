@@ -18,6 +18,8 @@ public final class CoreTexts extends NLS {
   public static String commandonchange_failed;
   public static String console_command_failed;
 
+  public static String breakpoint_message;
+
   private static final String BUNDLE_NAME
     = CoreTexts.class.getPackage().getName() + ".coretexts"; //$NON-NLS-1$
 

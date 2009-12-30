@@ -66,4 +66,5 @@ public class GHCSyntax {
     boolean windows = Platform.OS_WIN32.equals( Platform.getOS() );
     return windows ? command + ".exe" : command; //$NON-NLS-1$
   }
+
 }

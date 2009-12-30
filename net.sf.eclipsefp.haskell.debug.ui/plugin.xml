@@ -98,4 +98,12 @@
             id="net.sf.eclipsefp.haskell.debug.ui.listener2">
       </listener>
    </extension>
+      <extension
+         point="org.eclipse.core.runtime.adapters">
+    <factory
+    class="net.sf.eclipsefp.haskell.debug.ui.internal.debug.HaskellBreakpointAdapterFactory"
+       adaptableType="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
+       <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+    </factory>
+    </extension>
 </plugin>

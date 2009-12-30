@@ -14,6 +14,8 @@ import org.osgi.framework.BundleContext;
   */
 public class HaskellDebugCore extends Plugin {
 
+  public static final String ID_HASKELL_DEBUG_MODEL = "net.sf.eclipsefp.haskell.debug"; //$NON-NLS-1$
+
   // The shared instance
   private static HaskellDebugCore plugin;
 

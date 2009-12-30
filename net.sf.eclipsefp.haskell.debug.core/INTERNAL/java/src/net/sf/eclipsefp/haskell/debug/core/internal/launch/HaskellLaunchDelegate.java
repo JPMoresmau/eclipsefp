@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
+import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellDebugTarget;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
@@ -49,8 +51,16 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
         File workingDir = determineWorkingDir( configuration );
         checkCancellation( monitor );
         IProcess process = createProcess(configuration, launch, loc, cmdLine, workingDir );
+        if (process!=null){
+          if (mode.equals( ILaunchManager.DEBUG_MODE )){
+            HaskellDebugTarget hdt=new HaskellDebugTarget( launch, process );
 
+            launch.addDebugTarget(hdt);
+            hdt.start();
+          }
 
+          registerReloadListener(configuration,launch,process);
+        }
         /*DebugPlugin.getDefault().getLaunchManager().addLaunchListener( new ILaunchesListener() {
 
           public void launchesRemoved( final ILaunch[] launches ) {
@@ -116,7 +126,6 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
         process = DebugPlugin.newProcess( launch, proc, loc, processAttrs );
         process.setAttribute( IProcess.ATTR_CMDLINE,
                               CommandLineUtil.renderCommandLine( cmdLine ) );
-        registerReloadListener(configuration,launch,process);
       }
       return process;
     } catch (IOException e) {
