@@ -253,7 +253,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   }
 
 
-
   private void activateContext() {
     IContextService contextService = ( IContextService )getSite().getService(
         IContextService.class );
@@ -282,7 +281,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     return result;
   }
 
-  // supplement some TextEditor funtionality with specific handling
+  // supplement some TextEditor functionality with specific handling
   // needed because we have an attached outline page
   // ///////////////////////////////////////////////////////////////
 
