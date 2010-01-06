@@ -137,7 +137,7 @@ public class ResourceUtil {
         for (String s:stzs.keySet()){
           ret.add(getContainer( project,s ));
         }
-
+        return ret;
   	  }
     } catch( CoreException ex ) {
       HaskellCorePlugin.log( "getSourceFolders:"+project, ex ); //$NON-NLS-1$

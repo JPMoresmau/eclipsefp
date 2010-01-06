@@ -18,6 +18,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class HaskellBreakpoint extends LineBreakpoint {
 
+
+  public HaskellBreakpoint() {
+    //noop
+  }
+
   /**
    *
    * @param resource file on which to set the breakpoint

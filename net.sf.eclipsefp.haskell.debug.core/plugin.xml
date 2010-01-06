@@ -4,12 +4,15 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="%haskellApplicationLaunchType_name"
             delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
             modes="run, debug"
-            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate">
+            name="%haskellApplicationLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </launchConfigurationType>
    </extension>
+
    <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
@@ -27,5 +30,20 @@
       <super
             type="org.eclipse.debug.core.lineBreakpointMarker">
       </super>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+   <sourceLocator
+       name="Haskell Source Lookup Director"
+    class="net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellSourceLookupDirector"
+    id="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector">
+    </sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellSourcePathComputerDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </sourcePathComputer>
    </extension>
 </plugin>

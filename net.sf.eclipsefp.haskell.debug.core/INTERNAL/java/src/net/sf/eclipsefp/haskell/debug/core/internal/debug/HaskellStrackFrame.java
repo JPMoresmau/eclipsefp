@@ -2,6 +2,12 @@ package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -21,6 +27,7 @@ public class HaskellStrackFrame implements IStackFrame {
   private final HaskellThread thread;
   private int lineNumber=-1;
   private String name="HaskellStrackFrame";
+  private String fileName;
   private int charEnd=-1;
   private int charStart=-1;
 
@@ -29,11 +36,11 @@ public class HaskellStrackFrame implements IStackFrame {
   }
 
   public int getCharEnd() {
-    return charEnd;
+    return -1;
   }
 
   public int getCharStart() {
-    return charStart;
+    return -1;
   }
 
   public int getLineNumber() {
@@ -62,8 +69,26 @@ public class HaskellStrackFrame implements IStackFrame {
       charStart=Integer.parseInt(m.group(3));
       charEnd=-1;
     }
+    fileName=m.group( 1 );
+    try {
+      String projectName=getLaunch().getLaunchConfiguration().getAttribute( ILaunchAttributes.PROJECT_NAME ,"");
+      IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+      String projectLocation=p.getLocation().toOSString();
+      if (fileName.startsWith( projectLocation )){
+        fileName=fileName.substring( projectLocation.length()+1 );
+
+        fileName=ResourceUtil.getSourceFolderRelativeName( p.findMember( fileName.replace("\\","/") ) ).toString();
+      }
+    } catch (CoreException ce){
+      HaskellDebugCore.log( ce.getLocalizedMessage(), ce );
+    }
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
 
+  }
+
+
+  public String getFileName() {
+    return fileName;
   }
 
   public IRegisterGroup[] getRegisterGroups()  {

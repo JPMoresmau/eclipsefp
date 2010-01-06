@@ -17,8 +17,8 @@ public interface ILaunchAttributes {
   String ARGUMENTS         = "ARGUMENTS"; //$NON-NLS-1$
   String EXECUTABLE        = "EXECUTABLE"; //$NON-NLS-1$
   String PROJECT_NAME      = "PROJECT_NAME"; //$NON-NLS-1$
-  String FILES            = "FILES";
-  String DELEGATE         = "DELEGATE";
+  String FILES            = "FILES"; //$NON-NLS-1$
+  String DELEGATE         = "DELEGATE"; //$NON-NLS-1$
 
   String SYNC_STREAMS     = "SYNC_STREAMS"; //$NON-NLS-1$
   String RELOAD_COMMAND   = "RELOAD_COMMAND";//$NON-NLS-1$
