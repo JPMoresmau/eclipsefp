@@ -12,7 +12,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
  * Listener to update launch configurations when Cabal file changes
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class LaunchUpdater implements CabalFileChangeListener {

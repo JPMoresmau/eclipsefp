@@ -36,7 +36,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 /**
  * debug target for haskell interactive launch
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
@@ -307,7 +307,7 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
       List<IVariable> ret=new ArrayList<IVariable>();
       String line=br.readLine();
       while (line!=null){
-        if (line.indexOf( "::" )>-1){
+        if (line.indexOf( GHCiSyntax.TYPEOF )>-1){
           ret.add( new HaskellVariable( line, frame ) );
         }
         line=br.readLine();

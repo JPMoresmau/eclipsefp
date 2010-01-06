@@ -12,7 +12,7 @@ import org.eclipse.debug.core.model.IThread;
 
 /**
  * thread for debugging haskell. For the moment there is always one thread
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellThread implements IThread {

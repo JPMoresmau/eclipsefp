@@ -113,4 +113,6 @@ public final class HaskellSyntax {
   public static String[] getKeywords() {
     return KEYWORDS;
   }
+
+
 }

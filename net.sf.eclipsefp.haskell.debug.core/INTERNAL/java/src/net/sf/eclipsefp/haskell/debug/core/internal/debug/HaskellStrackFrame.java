@@ -14,7 +14,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 /**
  * stack frame for debugging haskell. For the moment there is always one stack frame.
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellStrackFrame implements IStackFrame {

@@ -2,7 +2,7 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 /**
  * contributor to Cabal
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public interface ICabalContributor {

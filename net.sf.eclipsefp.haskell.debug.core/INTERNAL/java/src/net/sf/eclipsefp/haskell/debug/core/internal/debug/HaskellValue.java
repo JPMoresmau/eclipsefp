@@ -8,7 +8,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 /**
  * value of an haskell binding
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellValue implements IValue {

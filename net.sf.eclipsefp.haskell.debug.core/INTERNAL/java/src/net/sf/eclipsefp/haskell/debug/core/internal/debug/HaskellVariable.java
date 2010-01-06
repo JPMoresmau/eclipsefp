@@ -9,7 +9,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 /**
  * haskell binding
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellVariable implements IVariable {

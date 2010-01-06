@@ -7,8 +7,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
- *
- * @author jean-philippem
+ * Manager for cabal contributors
+ * @author JP Moresmau
  *
  */
 public class CabalContributorManager {

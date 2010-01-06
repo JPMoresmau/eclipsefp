@@ -8,7 +8,7 @@ import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 
 /**
  * factory for breakpoint adapter
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellBreakpointAdapterFactory implements IAdapterFactory {

@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * breakpoint on haskell source file
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class HaskellBreakpoint extends LineBreakpoint {

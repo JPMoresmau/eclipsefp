@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 /**
  * GHCi syntax strings, for parsing answers
- * @author jean-philippem
+ * @author JP Moresmau
  *
  */
 public class GHCiSyntax {
@@ -24,6 +24,8 @@ public class GHCiSyntax {
   public static final String STEP_COMMAND=":step"; //$NON-NLS-1$
 
   public static final String PROMPT_END="> "; //$NON-NLS-1$
+
+  public static final String TYPEOF="::"; //$NON-NLS-1$
 
   public static String setBreakpointCommand(final String module, final int lineNumber){
    return  ":break " +module+" "+ lineNumber;  //$NON-NLS-1$//$NON-NLS-2$
