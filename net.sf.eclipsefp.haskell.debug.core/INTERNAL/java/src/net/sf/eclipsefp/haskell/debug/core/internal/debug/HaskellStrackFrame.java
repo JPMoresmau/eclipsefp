@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,10 +25,17 @@ import org.eclipse.debug.core.model.IVariable;
 public class HaskellStrackFrame implements IStackFrame {
   private final HaskellThread thread;
   private int lineNumber=-1;
-  private String name="HaskellStrackFrame";
+  private String name="HaskellStrackFrame"; //$NON-NLS-1$
+  /**
+   * relative file name
+   */
   private String fileName;
-  private int charEnd=-1;
-  private int charStart=-1;
+  /**
+   * full file name
+   */
+  private String unprocessedFileName;
+ // private int charEnd=-1;
+ // private int charStart=-1;
 
   public HaskellStrackFrame(final HaskellThread thread){
     this.thread=thread;
@@ -45,49 +51,53 @@ public class HaskellStrackFrame implements IStackFrame {
 
   public int getLineNumber() {
     return lineNumber;
-    //return thread.getBreakpoints()[0].getMarker().getAttribute( IMarker.LINE_NUMBER, 0 );
   }
 
   public String getName() {
     return name;
-   //return thread.getBreakpoints()[0].getMarker().getAttribute( IMarker.MESSAGE, "StackFrame" );
   }
 
 
   public void setLocation( final String location ) {
     name=location;
-
+    lineNumber=-1;
+    fileName=null;
+    unprocessedFileName=location;
     Matcher m=GHCiSyntax.BREAKPOINT_LOCATION_PATTERN.matcher( location );
     if (m.matches()){
       //name= m.group(1) ;
       lineNumber=Integer.parseInt( m.group(2)) ;
-      charStart=Integer.parseInt(m.group(3));
-      charEnd=Integer.parseInt(m.group(4));
+      unprocessedFileName=m.group( 1 );
+
+      // charStart=Integer.parseInt(m.group(3));
+     // charEnd=Integer.parseInt(m.group(4));
     } else {
       m=GHCiSyntax.BREAKPOINT_LOCATIONMULTILINE_PATTERN.matcher( location );
-      lineNumber=Integer.parseInt( m.group(2)) ;
-      charStart=Integer.parseInt(m.group(3));
-      charEnd=-1;
-    }
-    fileName=m.group( 1 );
-    try {
-      String projectName=getLaunch().getLaunchConfiguration().getAttribute( ILaunchAttributes.PROJECT_NAME ,"");
-      IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
-      String projectLocation=p.getLocation().toOSString();
-      if (fileName.startsWith( projectLocation )){
-        fileName=fileName.substring( projectLocation.length()+1 );
-
-        fileName=ResourceUtil.getSourceFolderRelativeName( p.findMember( fileName.replace("\\","/") ) ).toString();
+      if (m.matches()){
+        lineNumber=Integer.parseInt( m.group(2)) ;
+        unprocessedFileName=m.group( 1 );
       }
-    } catch (CoreException ce){
-      HaskellDebugCore.log( ce.getLocalizedMessage(), ce );
+     // charStart=Integer.parseInt(m.group(3));
+     // charEnd=-1;
     }
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
-
   }
 
 
-  public String getFileName() {
+  public String getFileName() throws CoreException{
+    if (fileName==null){
+      fileName=unprocessedFileName;
+      String projectName=getLaunch().getLaunchConfiguration().getAttribute( ILaunchAttributes.PROJECT_NAME ,(String)null);
+        if (projectName!=null){
+        IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+        String projectLocation=p.getLocation().toOSString();
+        if (fileName.startsWith( projectLocation )){
+          fileName=fileName.substring( projectLocation.length()+1 );
+          fileName=ResourceUtil.getSourceFolderRelativeName( p.findMember( fileName ) ).toString();
+        }
+      }
+
+    }
     return fileName;
   }
 
@@ -151,12 +161,12 @@ public class HaskellStrackFrame implements IStackFrame {
 
   }
 
-  public void stepOver() throws DebugException {
+  public void stepOver() {
    thread.stepOver();
 
   }
 
-  public void stepReturn() throws DebugException {
+  public void stepReturn()  {
     thread.stepReturn();
 
   }

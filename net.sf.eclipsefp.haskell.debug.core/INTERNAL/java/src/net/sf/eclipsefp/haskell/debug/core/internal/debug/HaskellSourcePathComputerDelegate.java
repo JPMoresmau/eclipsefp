@@ -16,7 +16,8 @@ import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 
 /**
- *
+ * Delegate source path computer: get the source paths for the project,
+ * obtained from the project name attribute of the launch configuration
  * @author JP Moresmau
  *
  */

@@ -10,10 +10,12 @@ import java.util.regex.Pattern;
 public class GHCiSyntax {
 
   public static final Pattern BREAKPOINT_SET_PATTERN=Pattern.compile( "Breakpoint (\\d+) activated at (.+)$",Pattern.MULTILINE); //$NON-NLS-1$
-  public static final Pattern BREAKPOINT_STOP_PATTERN=Pattern.compile( "^Stopped at (.+)$",Pattern.MULTILINE); //$NON-NLS-1$
+  public static final Pattern BREAKPOINT_STOP_PATTERN=Pattern.compile( "Stopped at (.+)$",Pattern.MULTILINE); //$NON-NLS-1$
   public static final Pattern BREAKPOINT_LOCATION_PATTERN=Pattern.compile( "(.+)\\:(\\d+)\\:(\\d+)\\-(\\d+)"); //$NON-NLS-1$
   public static final Pattern BREAKPOINT_LOCATIONMULTILINE_PATTERN=Pattern.compile( "(.+)\\:\\((\\d+),(\\d+)\\)\\-\\((\\d+),(\\d+)\\)");//$NON-NLS-1$
   public static final Pattern BINDING_PATTERN=Pattern.compile("(.+) \\:\\: ([^\\=]+)( \\= (.+))?"); //$NON-NLS-1$
+
+  public static final Pattern BREAKPOINT_NOT=Pattern.compile("not stopped at a breakpoint$",Pattern.MULTILINE); //$NON-NLS-1$
 
   public static final String UNRESOLVED="_";  //$NON-NLS-1$
 

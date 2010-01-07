@@ -114,7 +114,7 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
   }
 
   public Object getAdapter( final Class adapter ) {
-    if (adapter.isAssignableFrom( HaskellDebugTarget.class )){
+    if (adapter.isAssignableFrom(this.getClass() )){
       return this;
     }
     return null;
@@ -183,7 +183,7 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
     // NOOP
   }
 
-  public void breakpointAdded( final IBreakpoint breakpoint ) {
+  public synchronized void breakpointAdded( final IBreakpoint breakpoint ) {
     if (supportsBreakpoint(breakpoint)) {
       try {
         if (breakpoint.isEnabled()) {
@@ -199,12 +199,25 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
             Integer id=Integer.valueOf( s.substring( ix,ix2 ) );
             int ix3=s.indexOf( ResourceUtil.NL,ix2 );*/
             Matcher m=GHCiSyntax.BREAKPOINT_SET_PATTERN.matcher( s );
-            if (m.find()){
+            boolean found=m.find();
+            if (!found){
+              try {
+                  wait(100);
+              } catch (InterruptedException ie){
+                ie.printStackTrace();
+              }
+              s=response.toString();
+              m=GHCiSyntax.BREAKPOINT_SET_PATTERN.matcher( s );
+              found=m.find();
+            }
+            if (found){
               Integer id=Integer.valueOf(m.group( 1 ));
               String name=m.group( 2 );
               breakpointIds.put( breakpoint, id );
               breakpointNames.put(name,hb);
 
+            } else {
+              System.err.println(s);
             }
          }
       } catch (CoreException e) {
@@ -281,17 +294,30 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
      atEnd=false;
      response.append(text);
      atEnd=text.endsWith( GHCiSyntax.PROMPT_END);
-     Matcher m=GHCiSyntax.BREAKPOINT_STOP_PATTERN.matcher( text );
-     if (m.find()){
-       String location=m.group( 1 );
-       HaskellBreakpoint hb=breakpointNames.get(location );
-       if (hb!=null){
-         thread.setBreakpoint( hb );
-         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,DebugEvent.BREAKPOINT )});
-       }
-       if (thread.isSuspended()){
-         HaskellStrackFrame hsf=(HaskellStrackFrame)thread.getTopStackFrame();
-         hsf.setLocation( location );
+     if (atEnd){
+       Matcher m=GHCiSyntax.BREAKPOINT_STOP_PATTERN.matcher( response.toString() );
+       if (m.find()){
+         String location=m.group( 1 );
+         HaskellBreakpoint hb=breakpointNames.get(location );
+         if (hb!=null){
+           thread.setBreakpoint( hb );
+         } /*else {
+           System.err.println(location+" is not a breakpoint");
+         }*/
+         if (thread.isSuspended()){
+           HaskellStrackFrame hsf=(HaskellStrackFrame)thread.getTopStackFrame();
+           hsf.setLocation( location );
+         }
+         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,hb!=null?DebugEvent.UNSPECIFIED:DebugEvent.BREAKPOINT )});
+
+         response.setLength( 0 );
+       } else {
+         m=GHCiSyntax.BREAKPOINT_NOT.matcher( response.toString() );
+         if (m.find()){
+           thread.setBreakpoint(null);
+           DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.RESUME )});
+           response.setLength( 0 );
+         }
        }
      }
      notify();
