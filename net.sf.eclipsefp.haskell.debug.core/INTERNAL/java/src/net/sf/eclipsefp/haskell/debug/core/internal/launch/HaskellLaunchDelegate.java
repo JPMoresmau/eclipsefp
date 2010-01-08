@@ -85,7 +85,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
           }
         });*/
 
-        if( !isBackground( configuration ) ) {
+        if(process!=null && !isBackground( configuration ) ) {
           while( !process.isTerminated() ) {
             try {
               if( monitor.isCanceled() ) {
