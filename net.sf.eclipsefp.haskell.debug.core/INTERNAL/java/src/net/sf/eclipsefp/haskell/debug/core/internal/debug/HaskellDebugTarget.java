@@ -281,12 +281,13 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
     return false;
   }
 
-  public void start() {
+  public void start() throws DebugException{
     //waitForPrompt();
     IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(HaskellDebugCore.ID_HASKELL_DEBUG_MODEL);
     for (int i = 0; i < breakpoints.length; i++) {
       breakpointAdded(breakpoints[i]);
     }
+    sendRequest( GHCiSyntax.SET_PRINT_WITH_SHOW_COMMAND, false );
   }
 
   public synchronized void streamAppended( final String text, final IStreamMonitor monitor ) {
@@ -342,6 +343,26 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
     } catch (IOException ioe){
       throw new DebugException(new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe));
     }
+  }
+
+  public void forceVariable(final HaskellVariable var)throws DebugException{
+    sendRequest( GHCiSyntax.forceVariableCommand( var.getName() ), true );
+    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( var.getFrame(), DebugEvent.CHANGE,DebugEvent.CONTENT)});
+
+    /*String s=response.toString();
+    BufferedReader br=new BufferedReader(new StringReader( s ));
+    try {
+      String line=br.readLine();
+      while (line!=null){
+        if (line.indexOf( GHCiSyntax.TYPEOF )>-1){
+          return line;
+        }
+        line=br.readLine();
+      }
+      return null;
+    } catch (IOException ioe){
+      throw new DebugException(new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe));
+    }*/
   }
 
 }

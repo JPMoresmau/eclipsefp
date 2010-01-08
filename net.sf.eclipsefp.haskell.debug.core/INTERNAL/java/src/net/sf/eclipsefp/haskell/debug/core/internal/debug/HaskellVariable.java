@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
@@ -13,7 +14,7 @@ import org.eclipse.debug.core.model.IVariable;
  *
  */
 public class HaskellVariable implements IVariable {
-  private final String name;
+  private String name;
   private String type;
   private String value;
   private final HaskellStrackFrame frame;
@@ -31,6 +32,16 @@ public class HaskellVariable implements IVariable {
       type=line.substring(ix1+2).trim();
       value=GHCiSyntax.UNRESOLVED;
     }*/
+    processLine(line);
+
+  }
+
+
+  public HaskellStrackFrame getFrame() {
+    return frame;
+  }
+
+  private void processLine(final String line){
     Matcher m=GHCiSyntax.BINDING_PATTERN.matcher( line );
     if (m.matches()){
       name=m.group( 1 );
@@ -44,7 +55,6 @@ public class HaskellVariable implements IVariable {
       type=GHCiSyntax.UNRESOLVED;
       value=GHCiSyntax.UNRESOLVED;
     }
-
   }
 
   public String getName() {
@@ -82,24 +92,28 @@ public class HaskellVariable implements IVariable {
     return null;
   }
 
-  public void setValue( final String expression )  {
-    //NOOP
+  public void setValue( final String expression ) throws DebugException {
+    // for the time being, setting the expression is only a way of forcing the evaluation
+    ((HaskellDebugTarget)frame.getDebugTarget()).forceVariable( this );
+    /* if (line!=null){
+       processLine( line );
+     }*/
   }
 
-  public void setValue( final IValue value )  {
-    //NOOP
+  public void setValue( final IValue value ) throws DebugException {
+    setValue(value!=null?value.getValueString():""); //$NON-NLS-1$
   }
 
   public boolean supportsValueModification() {
-    return false;
+    return GHCiSyntax.UNRESOLVED.equals( value );
   }
 
   public boolean verifyValue( final String expression )  {
-    return false;
+    return GHCiSyntax.UNRESOLVED.equals( value );
   }
 
   public boolean verifyValue( final IValue val )  {
-    return false;
+    return GHCiSyntax.UNRESOLVED.equals( value );
   }
 
 }

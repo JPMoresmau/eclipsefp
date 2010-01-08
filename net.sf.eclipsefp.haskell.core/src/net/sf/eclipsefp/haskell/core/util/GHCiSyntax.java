@@ -25,6 +25,8 @@ public class GHCiSyntax {
   public static final String SHOW_BINDINGS_COMMAND=":show bindings"; //$NON-NLS-1$
   public static final String STEP_COMMAND=":step"; //$NON-NLS-1$
 
+  public static final String SET_PRINT_WITH_SHOW_COMMAND=":set -fprint-evld-with-show"; //$NON-NLS-1$
+
   public static final String PROMPT_END="> "; //$NON-NLS-1$
 
   public static final String TYPEOF="::"; //$NON-NLS-1$
@@ -35,5 +37,9 @@ public class GHCiSyntax {
 
   public static String deleteBreakpointCommand(final int breakpointNumber){
     return  ":delete " + breakpointNumber;  //$NON-NLS-1$
-   }
+  }
+
+  public static String forceVariableCommand(final String name){
+    return  ":force " + name;  //$NON-NLS-1$
+  }
 }
