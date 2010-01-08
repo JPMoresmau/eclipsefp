@@ -4,9 +4,7 @@ import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 
@@ -15,13 +13,12 @@ import org.eclipse.debug.core.model.IThread;
  * @author JP Moresmau
  *
  */
-public class HaskellThread implements IThread {
+public class HaskellThread extends HaskellDebugElement implements IThread {
   private HaskellBreakpoint breakpoint;
-  private final HaskellDebugTarget target;
   private final HaskellStrackFrame frame=new HaskellStrackFrame( this );
 
   public HaskellThread(final HaskellDebugTarget target){
-    this.target=target;
+    super( target );
   }
 
   public IBreakpoint[] getBreakpoints() {
@@ -63,26 +60,7 @@ public class HaskellThread implements IThread {
    return isSuspended();
   }
 
-  public IDebugTarget getDebugTarget() {
-    return target;
-  }
-
-  public ILaunch getLaunch() {
-   return target.getLaunch();
-  }
-
-  public String getModelIdentifier() {
-    return target.getModelIdentifier();
-  }
-
-  public Object getAdapter( final Class adapter ) {
-    if (adapter.isAssignableFrom( HaskellThread.class )){
-      return this;
-    }
-    return null;
-  }
-
-  public boolean canResume() {
+   public boolean canResume() {
     return isSuspended();
   }
 
@@ -98,8 +76,8 @@ public class HaskellThread implements IThread {
    target.resume();
   }
 
-  public void suspend() {
-    target.suspend();
+  public void suspend()  {
+    getDebugTarget().suspend();
 
   }
 
@@ -116,7 +94,6 @@ public class HaskellThread implements IThread {
   }
 
   public boolean isStepping() {
-    // TODO Auto-generated method stub
     return false;
   }
 

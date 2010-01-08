@@ -39,7 +39,7 @@ import org.eclipse.debug.core.model.IVariable;
  * @author JP Moresmau
  *
  */
-public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
+public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTarget,IStreamListener {
   // associated system process (VM)
   private final IProcess fProcess;
 
@@ -59,10 +59,12 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
   private final HaskellThread thread=new HaskellThread( this );
 
   public HaskellDebugTarget(final ILaunch launch, final IProcess process){
+    setTarget( this );
     this.fLaunch=launch;
     this.fProcess=process;
     this.fProcess.getStreamsProxy().getOutputStreamMonitor().addListener( this );
     DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+
   }
 
   public String getName(){
@@ -101,24 +103,11 @@ public class HaskellDebugTarget implements IDebugTarget,IStreamListener {
     return false;
   }
 
-  public IDebugTarget getDebugTarget() {
-    return this;
-  }
-
+  @Override
   public ILaunch getLaunch() {
     return fLaunch;
   }
 
-  public String getModelIdentifier() {
-    return HaskellDebugCore.ID_HASKELL_DEBUG_MODEL;
-  }
-
-  public Object getAdapter( final Class adapter ) {
-    if (adapter.isAssignableFrom(this.getClass() )){
-      return this;
-    }
-    return null;
-  }
 
   public boolean canTerminate() {
    return fProcess.canTerminate();

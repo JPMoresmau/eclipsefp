@@ -3,8 +3,6 @@ package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -13,13 +11,14 @@ import org.eclipse.debug.core.model.IVariable;
  * @author JP Moresmau
  *
  */
-public class HaskellVariable implements IVariable {
+public class HaskellVariable extends HaskellDebugElement implements IVariable {
   private String name;
   private String type;
   private String value;
   private final HaskellStrackFrame frame;
 
   public HaskellVariable(final String line,final HaskellStrackFrame frame){
+    super( frame.getDebugTarget() );
     this.frame=frame;
     /*
     int ix1=line.indexOf( "::" );
@@ -73,28 +72,10 @@ public class HaskellVariable implements IVariable {
     return false;
   }
 
-  public IDebugTarget getDebugTarget() {
-   return frame.getDebugTarget();
-  }
-
-  public ILaunch getLaunch() {
-    return frame.getLaunch();
-  }
-
-  public String getModelIdentifier() {
-    return frame.getModelIdentifier();
-  }
-
-  public Object getAdapter( final Class adapter ) {
-    if (adapter.isAssignableFrom(this.getClass() )){
-      return this;
-    }
-    return null;
-  }
 
   public void setValue( final String expression ) throws DebugException {
     // for the time being, setting the expression is only a way of forcing the evaluation
-    ((HaskellDebugTarget)frame.getDebugTarget()).forceVariable( this );
+    frame.getDebugTarget().forceVariable( this );
     /* if (line!=null){
        processLine( line );
      }*/

@@ -1,8 +1,6 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -11,13 +9,15 @@ import org.eclipse.debug.core.model.IVariable;
  * @author JP Moresmau
  *
  */
-public class HaskellValue implements IValue {
+public class HaskellValue extends HaskellDebugElement implements IValue {
   private final String val;
   private final HaskellVariable var;
 
   public HaskellValue(final HaskellVariable var,final String val){
+    super( var.getDebugTarget() );
     this.var=var;
     this.val=val;
+
   }
 
   public String getReferenceTypeName() {
@@ -40,23 +40,5 @@ public class HaskellValue implements IValue {
    return !GHCiSyntax.UNRESOLVED.equals(val);
   }
 
-  public IDebugTarget getDebugTarget() {
-    return var.getDebugTarget();
-  }
-
-  public ILaunch getLaunch() {
-    return var.getLaunch();
-  }
-
-  public String getModelIdentifier() {
-   return var.getModelIdentifier();
-  }
-
-  public Object getAdapter( final Class adapter ) {
-    if (adapter.isAssignableFrom(this.getClass() )){
-      return this;
-    }
-    return null;
-  }
 
 }

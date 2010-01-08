@@ -10,8 +10,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -22,7 +20,7 @@ import org.eclipse.debug.core.model.IVariable;
  * @author JP Moresmau
  *
  */
-public class HaskellStrackFrame implements IStackFrame {
+public class HaskellStrackFrame extends HaskellDebugElement implements IStackFrame {
   private final HaskellThread thread;
   private int lineNumber=-1;
   private String name="HaskellStrackFrame"; //$NON-NLS-1$
@@ -38,6 +36,7 @@ public class HaskellStrackFrame implements IStackFrame {
  // private int charStart=-1;
 
   public HaskellStrackFrame(final HaskellThread thread){
+    super(thread.getDebugTarget());
     this.thread=thread;
   }
 
@@ -110,7 +109,7 @@ public class HaskellStrackFrame implements IStackFrame {
   }
 
   public IVariable[] getVariables() throws DebugException {
-    return ((HaskellDebugTarget)getDebugTarget()).getVariables(this);
+    return getDebugTarget().getVariables(this);
   }
 
   public boolean hasRegisterGroups() {
@@ -119,25 +118,6 @@ public class HaskellStrackFrame implements IStackFrame {
 
   public boolean hasVariables() {
    return true;
-  }
-
-  public IDebugTarget getDebugTarget() {
-    return thread.getDebugTarget();
-  }
-
-  public ILaunch getLaunch() {
-   return thread.getLaunch();
-  }
-
-  public String getModelIdentifier() {
-    return thread.getModelIdentifier();
-  }
-
-  public Object getAdapter( final Class adapter ) {
-    if (adapter.isAssignableFrom(this.getClass() )){
-      return this;
-    }
-    return null;
   }
 
   public boolean canStepInto() {
