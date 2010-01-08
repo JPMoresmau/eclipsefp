@@ -51,26 +51,26 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
         }
       }
       IResource[] ress = toArray( list );
-      launch( ress );
+      launch( ress,mode );
     }
   }
 
   public void launch( final IEditorPart editor, final String mode ) {
     // launched from editor part
     IResource resource = ResourceUtil.findResource( editor.getEditorInput() );
-    launch( new IResource[] { resource } );
+    launch( new IResource[] { resource } ,mode);
   }
 
 
   // helping methods
   //////////////////
 
-  private void launch( final IResource[] resources ) {
+  private void launch( final IResource[] resources,final String mode ) {
     // TODO put this into a Job and use the progress monitor
     // also: need a public job family in core (with icon in ui)
     try {
       IProgressMonitor monitor = new NullProgressMonitor();
-      new InteractiveLaunchOperation( getDelegate() ).launch( resources,
+      new InteractiveLaunchOperation( getDelegate() ).launch( resources,mode,
                                                               monitor );
     } catch( CoreException cex ) {
       // TODO show msg box

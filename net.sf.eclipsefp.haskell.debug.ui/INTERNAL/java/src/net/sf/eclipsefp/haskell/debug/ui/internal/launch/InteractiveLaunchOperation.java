@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.osgi.util.NLS;
 
 
@@ -49,7 +48,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
   // methods called from outside
   //////////////////////////////
 
-  void launch( final IResource[] resources,
+  void launch( final IResource[] resources,final String mode,
                final IProgressMonitor monitor ) throws CoreException {
     IFile[] filesToLoad = SelectionAnalyzer.getSourcesToLoad( resources );
     if( resources.length > 0 && resources[ 0 ] != null ) {
@@ -58,7 +57,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
         ILaunchConfiguration config = getConfiguration( resources,
                                                         filesToLoad );
         if( config != null ) {
-          config.launch( ILaunchManager.RUN_MODE, monitor );
+          config.launch( mode, monitor );
         }
       }
     }

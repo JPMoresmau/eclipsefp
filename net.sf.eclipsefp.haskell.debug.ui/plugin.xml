@@ -49,7 +49,7 @@
             label="%ghciShortcut_label"
             icon="icons/etool16/ghci16.gif"
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchShortcut"
-            modes="run"
+            modes="run, debug"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchShortcut">
          <contextualLaunch>
             <enablement>
