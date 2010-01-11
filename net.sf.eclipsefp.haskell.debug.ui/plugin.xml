@@ -113,4 +113,11 @@
                id="net.sf.eclipsefp.haskell.debug">
          </debugModelPresentation>
       </extension>
+      <extension
+            point="org.eclipse.debug.ui.variableValueEditors">
+         <variableValueEditor
+               class="net.sf.eclipsefp.haskell.debug.ui.internal.debug.HaskellVariableValueEditor"
+               modelId="net.sf.eclipsefp.haskell.debug">
+         </variableValueEditor>
+      </extension>
 </plugin>

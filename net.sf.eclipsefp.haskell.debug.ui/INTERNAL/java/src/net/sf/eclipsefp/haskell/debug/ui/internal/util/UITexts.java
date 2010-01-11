@@ -39,6 +39,9 @@ public final class UITexts extends NLS {
 
   public static String error_read_configuration;
 
+  public static String debug_editor_title;
+  public static String debug_editor_text;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
