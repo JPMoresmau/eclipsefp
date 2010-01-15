@@ -176,6 +176,12 @@
             name="%scionPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
+            <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
+            name="%debugPP_name"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">

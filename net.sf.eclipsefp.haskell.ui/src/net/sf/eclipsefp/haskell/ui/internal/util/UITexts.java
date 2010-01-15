@@ -157,6 +157,12 @@ public final class UITexts extends NLS {
   public static String preferences_project_invalid_project;
   public static String preferences_project_output_note;
 
+  public static String preferences_debug_title;
+  public static String preferences_debug_description;
+  public static String preferences_debug_break_on_error;
+  public static String preferences_debug_break_on_exception;
+  public static String preferences_debug_print_with_show;
+
   public static String explorer_libraries;
   public static String explorer_libraries_noimpl;
   public static String explorer_outline_open;

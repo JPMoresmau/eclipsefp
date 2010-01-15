@@ -340,8 +340,7 @@ public class NewHaskellProjectPP extends PreferencePage
   @Override
   protected IPreferenceStore doGetPreferenceStore() {
 	  return new ScopedPreferenceStore(new InstanceScope(),
-			         HaskellCorePlugin.getDefault()
-			             .getBundle().getSymbolicName());
+	      HaskellCorePlugin.getPluginId());
   }
 
 

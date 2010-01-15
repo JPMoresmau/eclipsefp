@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
@@ -20,7 +21,9 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -276,7 +279,16 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     for (int i = 0; i < breakpoints.length; i++) {
       breakpointAdded(breakpoints[i]);
     }
-    sendRequest( GHCiSyntax.SET_PRINT_WITH_SHOW_COMMAND, false );
+    IPreferencesService service = Platform.getPreferencesService();
+    if (service.getBoolean(HaskellCorePlugin.getPluginId(), ICorePreferenceNames.DEBUG_PRINT_WITH_SHOW ,true,null)){
+      sendRequest( GHCiSyntax.SET_PRINT_WITH_SHOW_COMMAND, false );
+    }
+    if (service.getBoolean(HaskellCorePlugin.getPluginId(), ICorePreferenceNames.DEBUG_BREAK_ON_ERROR,false,null )){
+      sendRequest( GHCiSyntax.SET_BREAK_ON_ERROR_COMMAND, false );
+    }
+    if (service.getBoolean(HaskellCorePlugin.getPluginId(), ICorePreferenceNames.DEBUG_BREAK_ON_EXCEPTION,false,null )){
+      sendRequest( GHCiSyntax.SET_BREAK_ON_EXCEPTION_COMMAND, false );
+    }
   }
 
   public synchronized void streamAppended( final String text, final IStreamMonitor monitor ) {

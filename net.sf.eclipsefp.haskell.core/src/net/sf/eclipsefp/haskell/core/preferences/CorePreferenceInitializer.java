@@ -27,6 +27,10 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
    // coreNode.put( FOLDERS_OUT, "out" ); //$NON-NLS-1$
    // coreNode.put( TARGET_BINARY, "bin/theResult" ); //$NON-NLS-1$
     coreNode.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
+
+    coreNode.putBoolean( DEBUG_BREAK_ON_ERROR, false );
+    coreNode.putBoolean( DEBUG_BREAK_ON_EXCEPTION, false );
+    coreNode.putBoolean( DEBUG_PRINT_WITH_SHOW, true );
   }
 
 }

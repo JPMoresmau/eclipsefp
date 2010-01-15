@@ -12,6 +12,7 @@
 package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
@@ -28,6 +29,7 @@ public class HaskellUIPreferenceInitializer extends
 		NewHaskellProjectPP.initializeDefaults(prefs);
 		BuildConsolePP.initializeDefaults(prefs);
 		ScionPP.initializeDefaults(prefs);
+		DebugPP.initializeDefaults( prefs );
 	}
 
 }

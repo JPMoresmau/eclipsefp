@@ -27,6 +27,9 @@ public class GHCiSyntax {
 
   public static final String SET_PRINT_WITH_SHOW_COMMAND=":set -fprint-evld-with-show"; //$NON-NLS-1$
 
+  public static final String SET_BREAK_ON_ERROR_COMMAND=":set -fbreak-on-error"; //$NON-NLS-1$
+  public static final String SET_BREAK_ON_EXCEPTION_COMMAND=":set -fbreak-on-exception"; //$NON-NLS-1$
+
   public static final String PROMPT_END="> "; //$NON-NLS-1$
 
   public static final String TYPEOF="::"; //$NON-NLS-1$
