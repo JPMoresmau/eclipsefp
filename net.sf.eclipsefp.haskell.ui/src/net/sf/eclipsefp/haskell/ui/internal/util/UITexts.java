@@ -157,6 +157,20 @@ public final class UITexts extends NLS {
   public static String preferences_project_invalid_project;
   public static String preferences_project_output_note;
 
+  public static String preferences_editor_syntax_comments;
+  public static String preferences_editor_syntax_literatecomments;
+  public static String preferences_editor_syntax_strings;
+  public static String preferences_editor_syntax_characters;
+  public static String preferences_editor_syntax_functions;
+  public static String preferences_editor_syntax_keywords;
+  public static String preferences_editor_syntax_others;
+  public static String preferences_editor_syntax_color;
+  public static String preferences_editor_syntax_bold;
+  public static String preferences_editor_syntax_foreground;
+  public static String preferences_editor_syntax_background;
+  public static String preferences_editor_syntax_systemdefault;
+  public static String preferences_editor_syntax_custom;
+
   public static String preferences_debug_title;
   public static String preferences_debug_description;
   public static String preferences_debug_break_on_error;

@@ -153,6 +153,8 @@ public class HaskellEditorPP extends PreferencePage
     store.addBooleanKey( EDITOR_LITERATE_COMMENT_BOLD );
     store.addStringKey( EDITOR_STRING_COLOR );
     store.addBooleanKey( EDITOR_STRING_BOLD );
+    store.addStringKey( EDITOR_CHAR_COLOR );
+    store.addBooleanKey( EDITOR_CHAR_BOLD );
     store.addStringKey( EDITOR_FUNCTION_COLOR );
     store.addBooleanKey( EDITOR_FUNCTION_BOLD );
     store.addStringKey( EDITOR_KEYWORD_COLOR );

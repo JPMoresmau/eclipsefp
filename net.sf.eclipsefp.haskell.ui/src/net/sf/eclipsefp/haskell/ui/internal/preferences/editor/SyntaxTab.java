@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -34,18 +35,18 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
   private Button cbBold;
   private List colorList;
 
-  private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( "Comments", EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ),
-    new ColorListEntry( "Literate Comments",
+  public static final ColorListEntry[] colorListModel = new ColorListEntry[] {
+    new ColorListEntry( UITexts.preferences_editor_syntax_comments, EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_literatecomments,
                         EDITOR_LITERATE_COMMENT_COLOR,
                         EDITOR_LITERATE_COMMENT_BOLD ),
-    new ColorListEntry( "Strings", EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ),
-    new ColorListEntry( "Characters", EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ),
-    new ColorListEntry( "Functions",
+    new ColorListEntry( UITexts.preferences_editor_syntax_strings, EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_characters, EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_functions,
                         EDITOR_FUNCTION_COLOR,
                         EDITOR_FUNCTION_BOLD ),
-    new ColorListEntry( "Keywords", EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ),
-    new ColorListEntry( "Others", EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
+    new ColorListEntry( UITexts.preferences_editor_syntax_keywords, EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_others, EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
 
 
   SyntaxTab( final IPreferenceStore store ) {
@@ -67,7 +68,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     Composite editorComposite = initializeEditorComposite( composite );
     initializeColorList( composite, editorComposite );
     Composite stylesComposite = initializeStylesComposite( editorComposite );
-    createLabel( stylesComposite, "C&olor:" );
+    createLabel( stylesComposite, UITexts.preferences_editor_syntax_color );
     initializeColorSelector( stylesComposite );
     initializeBoldCheckBox( stylesComposite );
 
@@ -121,7 +122,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
   private void initializeBoldCheckBox( final Composite parent ) {
     cbBold = new Button( parent, SWT.CHECK );
-    cbBold.setText( "&Bold" );
+    cbBold.setText( UITexts.preferences_editor_syntax_bold );
     GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
     gridData.horizontalAlignment = GridData.BEGINNING;
     gridData.horizontalSpan = 2;
@@ -150,14 +151,14 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
   private void initializeForeGroundLabel( final Composite parent ) {
     Label label = new Label( parent, SWT.LEFT );
-    label.setText( "Foreground:" );
+    label.setText( UITexts.preferences_editor_syntax_foreground );
     label.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
   }
 
   private Group initializeBackgroundGroup( final Composite parent ) {
     Group backgroundComposite = new Group( parent, SWT.SHADOW_ETCHED_IN );
     backgroundComposite.setLayout( new RowLayout() );
-    backgroundComposite.setText( "Background color" );
+    backgroundComposite.setText( UITexts.preferences_editor_syntax_background );
     SelectionListener bgSelectionListener = new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
@@ -169,10 +170,10 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     };
     int style = SWT.RADIO | SWT.LEFT;
     rbBackgroundDefault = new Button( backgroundComposite, style );
-    rbBackgroundDefault.setText( "System default" );
+    rbBackgroundDefault.setText( UITexts.preferences_editor_syntax_systemdefault);
     rbBackgroundDefault.addSelectionListener( bgSelectionListener );
     rbBackgroundCustom = new Button( backgroundComposite, style );
-    rbBackgroundCustom.setText( "Custom:" );
+    rbBackgroundCustom.setText( UITexts.preferences_editor_syntax_custom );
     rbBackgroundCustom.addSelectionListener( bgSelectionListener );
     return backgroundComposite;
   }

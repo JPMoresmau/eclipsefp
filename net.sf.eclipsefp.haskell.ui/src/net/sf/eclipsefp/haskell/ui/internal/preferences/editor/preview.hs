@@ -2,4 +2,4 @@
 module Main where 
 
 main :: IO ()
-main = putStr "Hello Prefs!"
+main = putStr ('h':"ello Prefs!")

@@ -18,7 +18,7 @@ public class HaskellCharacterScanner extends RuleBasedScanner
 
   public HaskellCharacterScanner() {
     ScannerManager man = ScannerManager.getInstance();
-    IToken token = man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD );
+    IToken token = man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD );
     setDefaultReturnToken( token );
   }
 }

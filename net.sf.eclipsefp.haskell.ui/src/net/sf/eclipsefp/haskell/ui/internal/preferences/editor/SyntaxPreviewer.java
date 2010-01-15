@@ -46,7 +46,7 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
     setEditable( false );
     getTextWidget().setFont( JFaceResources.getTextFont() );
 
-    IDocument document = new Document( loadTextFromResource( "preview.hs" ) );
+    IDocument document = new Document( loadTextFromResource( "preview.hs" ) ); //$NON-NLS-1$
     setupDocument( document, IDocumentExtension3.DEFAULT_PARTITIONING );
     setDocument( document );
   }
@@ -77,6 +77,11 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
         || EDITOR_BACKGROUND_DEFAULT_COLOR.equals( p ) ) {
       return true;
     }
+    for (ColorListEntry cle:SyntaxTab.colorListModel){
+      if (p.equals(cle.getBoldKey()) || p.equals( cle.getColorKey() )){
+        return true;
+      }
+    }
     return false;
   }
 
@@ -99,12 +104,12 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
   }
 
   private String loadTextFromResource( final String name ) {
-    String result = "";
+    String result = ""; //$NON-NLS-1$
     try {
       InputStream stream = getClass().getResourceAsStream( name );
       result = ResourceUtil.readStream( stream );
     } catch( Exception ex ) {
-      HaskellUIPlugin.log( "Could not read preview file.", ex );
+      HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
     }
     return result;
   }
@@ -129,6 +134,8 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
       public void propertyChange( final PropertyChangeEvent event ) {
         if( affectsPresentation( event ) ) {
           updateColors();
+          unconfigure();
+          configure( new HaskellConfiguration( null ) );
         }
         invalidateTextPresentation();
       }

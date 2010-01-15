@@ -109,6 +109,7 @@ public class ColorProvider implements IEditorPreferenceNames {
     putRgb( EDITOR_KEYWORD_COLOR, DEFAULT_KEYWORD );
     putRgb( EDITOR_DEFAULT_COLOR, DEFAULT_OTHER );
     putRgb( EDITOR_STRING_COLOR, DEFAULT_STRING );
+    putRgb( EDITOR_CHAR_COLOR, DEFAULT_CHAR );
   }
 
   private void putRgb( final String key, final RGB defaultRgb ) {

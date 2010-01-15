@@ -49,7 +49,7 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     store.setDefault( CA_ORDER_PROPOSALS, false );
     store.setDefault( CA_AUTOACTIVATION, true );
     store.setDefault( CA_AUTOACTIVATION_DELAY, 500 );
-    store.setDefault( CA_AUTOACTIVATION_TRIGGERS, "." );
+    store.setDefault( CA_AUTOACTIVATION_TRIGGERS, "." ); //$NON-NLS-1$
     conv( store, CA_PROPOSALS_BACKGROUND, new RGB( 254, 241, 233 ) );
     conv( store, CA_PROPOSALS_FOREGROUND, new RGB( 0, 0, 0 ) );
   }
