@@ -6,6 +6,7 @@ import java.util.Iterator;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -61,7 +62,7 @@ class AnnotationsTab extends Tab {
     Composite optionsComposite = initializeOptionsComposite( editorComposite );
     initializeShowInTextCB( optionsComposite );
     initializeShowInOverviewRulerCB( optionsComposite );
-    createLabel( optionsComposite, "C&olor:" );
+    createLabel( optionsComposite, UITexts.preferences_editor_color );
     initializeColorSelector( optionsComposite );
 
     initialize();
@@ -130,7 +131,7 @@ class AnnotationsTab extends Tab {
 
   private void initializeAnnPresLabel( final Composite parent ) {
     Label label = new Label( parent, SWT.LEFT );
-    label.setText( "Annotation &presentation:" );
+    label.setText( UITexts.preferences_editor_annotations_presentation );
     GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
     gridData.horizontalSpan = 2;
     label.setLayoutData( gridData );
@@ -152,7 +153,7 @@ class AnnotationsTab extends Tab {
 
   private void initializeShowInOverviewRulerCB( final Composite parent ) {
     cbShowInOverviewRuler = new Button( parent, SWT.CHECK );
-    cbShowInOverviewRuler.setText( "Show in overview &ruler" );
+    cbShowInOverviewRuler.setText( UITexts.preferences_editor_annotations_showinruler );
     GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
     gridData.horizontalAlignment = GridData.BEGINNING;
     gridData.horizontalSpan = 2;
@@ -170,7 +171,7 @@ class AnnotationsTab extends Tab {
 
   private void initializeShowInTextCB( final Composite parent ) {
     cbShowInText = new Button( parent, SWT.CHECK );
-    cbShowInText.setText( "Show in &text" );
+    cbShowInText.setText( UITexts.preferences_editor_annotations_showintext);
     GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
     gridData.horizontalAlignment = GridData.BEGINNING;
     gridData.horizontalSpan = 2;

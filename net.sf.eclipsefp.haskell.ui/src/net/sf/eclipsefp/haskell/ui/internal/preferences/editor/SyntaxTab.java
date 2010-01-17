@@ -69,7 +69,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     Composite editorComposite = initializeEditorComposite( composite );
     initializeColorList( composite, editorComposite );
     Composite stylesComposite = initializeStylesComposite( editorComposite );
-    createLabel( stylesComposite, UITexts.preferences_editor_syntax_color );
+    createLabel( stylesComposite, UITexts.preferences_editor_color );
     initializeColorSelector( stylesComposite );
     initializeBoldCheckBox( stylesComposite );
 

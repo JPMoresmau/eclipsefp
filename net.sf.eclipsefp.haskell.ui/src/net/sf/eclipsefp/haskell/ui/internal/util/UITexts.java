@@ -157,6 +157,37 @@ public final class UITexts extends NLS {
   public static String preferences_project_invalid_project;
   public static String preferences_project_output_note;
 
+  public static String preferences_editor_description;
+  public static String preferences_editor_color;
+
+  public static String preferences_editor_annotations_title;
+  public static String preferences_editor_annotations_presentation;
+  public static String preferences_editor_annotations_showinruler;
+  public static String preferences_editor_annotations_showintext;
+
+  public static String preferences_editor_appearance_title;
+  public static String preferences_editor_appearance_line_number_color;
+  public static String preferences_editor_appearance_matching_brackets_color;
+  public static String preferences_editor_appearance_current_line_color;
+  public static String preferences_editor_appearance_print_margin_color;
+  public static String preferences_editor_appearance_color_options;
+  public static String preferences_editor_appearance_print_margin_column;
+  public static String preferences_editor_appearance_overview_ruler;
+  public static String preferences_editor_appearance_line_numbers;
+  public static String preferences_editor_appearance_matching_brackets;
+  public static String preferences_editor_appearance_current_line;
+  public static String preferences_editor_appearance_print_margin;
+
+  public static String preferences_editor_contentass_background;
+  public static String preferences_editor_contentass_foreground;
+  public static String preferences_editor_contentass_color_options;
+  public static String preferences_editor_contentass_autoinsert;
+  public static String preferences_editor_contentass_alpha;
+  public static String preferences_editor_contentass_autoactivation;
+  public static String preferences_editor_contentass_autoactivation_delay;
+  public static String preferences_editor_contentass_autoactivation_triggers;
+
+  public static String preferences_editor_syntax_title;
   public static String preferences_editor_syntax_comments;
   public static String preferences_editor_syntax_literatecomments;
   public static String preferences_editor_syntax_strings;
@@ -164,12 +195,14 @@ public final class UITexts extends NLS {
   public static String preferences_editor_syntax_functions;
   public static String preferences_editor_syntax_keywords;
   public static String preferences_editor_syntax_others;
-  public static String preferences_editor_syntax_color;
   public static String preferences_editor_syntax_bold;
   public static String preferences_editor_syntax_foreground;
   public static String preferences_editor_syntax_background;
   public static String preferences_editor_syntax_systemdefault;
   public static String preferences_editor_syntax_custom;
+
+  public static String preferences_editor_typing_title;
+  public static String preferences_editor_typing_spaces_tabs;
 
   public static String preferences_debug_title;
   public static String preferences_debug_description;

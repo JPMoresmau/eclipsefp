@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -25,12 +26,12 @@ import org.eclipse.swt.widgets.List;
 class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( "Line number foreground",
+    new ColorListEntry( UITexts.preferences_editor_appearance_line_number_color,
                         EDITOR_LINE_NUMBER_RULER_COLOR ),
-    new ColorListEntry( "Matching brackets highlight",
+    new ColorListEntry( UITexts.preferences_editor_appearance_matching_brackets_color,
                         EDITOR_MATCHING_BRACKETS_COLOR ),
-    new ColorListEntry( "Current line highlight", EDITOR_CURRENT_LINE_COLOR ),
-    new ColorListEntry( "Print margin", EDITOR_PRINT_MARGIN_COLOR ) };
+    new ColorListEntry( UITexts.preferences_editor_appearance_current_line_color, EDITOR_CURRENT_LINE_COLOR ),
+    new ColorListEntry( UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN_COLOR ) };
 
   private List colorList;
   private ColorSelector colorSelector;
@@ -57,7 +58,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     Composite editorComposite = createEditorComposite( control );
     createColorList( control, editorComposite );
     Composite stylesComposite = createStylesComposite( editorComposite );
-    createLabel( stylesComposite, "C&olor:" );
+    createLabel( stylesComposite, UITexts.preferences_editor_color);
     createColorSelector( stylesComposite );
 
     initialize();
@@ -129,7 +130,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
   private void createAppearanceColorLabel( final Composite parent ) {
     Label label = new Label( parent, SWT.LEFT );
-    label.setText( "Appearance co&lor options:" );
+    label.setText( UITexts.preferences_editor_appearance_color_options );
     GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
     gridData.horizontalSpan = 2;
     label.setLayoutData( gridData );
@@ -146,16 +147,16 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
   private void addFields( final Composite parent ) {
     String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
-    addTextField( parent, "Print margin col&umn:", pmKey, 3, 0 );
+    addTextField( parent, UITexts.preferences_editor_appearance_print_margin_column, pmKey, 3, 0 );
     String orKey = EDITOR_OVERVIEW_RULER;
-    createBooleanField( parent, "Show overview &ruler", orKey );
+    createBooleanField( parent, UITexts.preferences_editor_appearance_overview_ruler, orKey );
     String lnrKey = EDITOR_LINE_NUMBER_RULER;
-    createBooleanField( parent, "Show lin&e numbers", lnrKey );
+    createBooleanField( parent, UITexts.preferences_editor_appearance_line_numbers, lnrKey );
     String mbKey = EDITOR_MATCHING_BRACKETS;
-    createBooleanField( parent, "Highlight &matching brackets", mbKey );
+    createBooleanField( parent, UITexts.preferences_editor_appearance_matching_brackets, mbKey );
     String clKey = EDITOR_CURRENT_LINE;
-    createBooleanField( parent, "Hi&ghlight current line", clKey );
-    createBooleanField( parent, "Sho&w print margin", EDITOR_PRINT_MARGIN );
+    createBooleanField( parent, UITexts.preferences_editor_appearance_current_line, clKey );
+    createBooleanField( parent, UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN );
   }
 
   public void propertyChange( final PropertyChangeEvent event ) {

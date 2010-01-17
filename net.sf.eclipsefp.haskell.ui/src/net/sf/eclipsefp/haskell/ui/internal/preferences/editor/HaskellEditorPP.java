@@ -7,6 +7,7 @@ import java.util.List;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -48,16 +49,16 @@ public class HaskellEditorPP extends PreferencePage
     TabFolder folder = new TabFolder( parent, SWT.NONE );
 
     Tab appearanceTab = new AppearanceTab( overlayStore );
-    createTab( folder, "Appeara&nce", appearanceTab );
+    createTab( folder, UITexts.preferences_editor_appearance_title, appearanceTab );
 
     Tab syntaxTab = new SyntaxTab( overlayStore );
-    createTab( folder, "Synta&x", syntaxTab );
+    createTab( folder, UITexts.preferences_editor_syntax_title, syntaxTab );
 
     Tab annotationsTab = new AnnotationsTab( overlayStore );
-    createTab( folder, "Annotation&s", annotationsTab );
+    createTab( folder, UITexts.preferences_editor_annotations_title, annotationsTab );
 
     Tab typingTab = new TypingTab( overlayStore );
-    createTab( folder, "T&yping", typingTab);
+    createTab( folder, UITexts.preferences_editor_typing_title, typingTab);
 
     return folder;
   }
@@ -98,7 +99,7 @@ public class HaskellEditorPP extends PreferencePage
   ////////////////////////////////////////////////
 
   public void init( final IWorkbench workbench ) {
-    setDescription( "Haskell Editor settings:" );
+    setDescription( UITexts.preferences_editor_description );
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
 
     overlayStore = createOverlayStore();

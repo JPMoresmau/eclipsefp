@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -34,7 +35,7 @@ class TypingTab extends EditorTab implements IEditorPreferenceNames {
     composite.setLayout( layout );
 
     String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-    spaceForTabs=createBooleanField( composite, "Ins&ert space for tabs", prefName );
+    spaceForTabs=createBooleanField( composite, UITexts.preferences_editor_typing_spaces_tabs, prefName );
     initializeFields();
 
     return composite;

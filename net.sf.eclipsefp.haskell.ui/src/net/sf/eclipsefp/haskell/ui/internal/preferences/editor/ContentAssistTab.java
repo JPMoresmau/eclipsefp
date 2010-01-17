@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -25,9 +26,9 @@ import org.eclipse.swt.widgets.List;
 class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( "Completion proposal background",
+    new ColorListEntry( UITexts.preferences_editor_contentass_background,
                         CA_PROPOSALS_BACKGROUND ),
-    new ColorListEntry( "Completion proposal foreground",
+    new ColorListEntry( UITexts.preferences_editor_contentass_foreground,
                         CA_PROPOSALS_FOREGROUND ) };
 
   private List colorList;
@@ -55,7 +56,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     Composite editorComposite = createEditorComposite( composite );
     createColorList( composite, editorComposite );
     Composite stylesComposite = createStylesComposite( editorComposite );
-    createLabel( stylesComposite, "C&olor:" );
+    createLabel( stylesComposite, UITexts.preferences_editor_color );
     createColorSelector( stylesComposite );
     initialize();
     return composite;
@@ -127,7 +128,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
   private void createOptionsLabel( final Composite parent ) {
     Label label = new Label( parent, SWT.LEFT );
-    label.setText( "Content assist colo&r options:" );
+    label.setText( UITexts.preferences_editor_contentass_color_options );
     GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
     gridData.horizontalSpan = 2;
     label.setLayoutData( gridData );
@@ -135,11 +136,11 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
   private void createFields( final Composite parent ) {
     String aiKey = CA_AUTOINSERT;
-    String aiText = "Insert single &proposals automatically";
+    String aiText = UITexts.preferences_editor_contentass_autoinsert;
     createBooleanField( parent, aiText, aiKey );
-    String aoText = "Present proposals in &alphabetical order";
+    String aoText = UITexts.preferences_editor_contentass_alpha;
     createBooleanField( parent, aoText, CA_ORDER_PROPOSALS );
-    String aaText = "&Enable auto activation";
+    String aaText = UITexts.preferences_editor_contentass_autoactivation;
     String aaKey = CA_AUTOACTIVATION;
     Button autoActButton = addBooleanField( parent, aaText, aaKey, 0 );
     autoActButton.addSelectionListener( new SelectionAdapter() {
@@ -149,11 +150,11 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
       }
     } );
 
-    String adText = "Auto activation dela&y:";
+    String adText = UITexts.preferences_editor_contentass_autoactivation_delay;
     String adKey = CA_AUTOACTIVATION_DELAY;
     txtAutoActDelay = addTextField( parent, adText, adKey, 4, 0 );
 
-    String atText = "Auto activation &triggers:";
+    String atText = UITexts.preferences_editor_contentass_autoactivation_triggers;
     String atKey = CA_AUTOACTIVATION_TRIGGERS;
     txtActTriggers = addTextField( parent, atText, atKey, 4, 0 );
   }
