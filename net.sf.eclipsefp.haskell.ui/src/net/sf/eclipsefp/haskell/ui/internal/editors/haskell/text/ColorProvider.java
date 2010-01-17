@@ -40,6 +40,8 @@ public class ColorProvider implements IEditorPreferenceNames {
   private final Map<RGB, Color> colors;
   private final Map<String, RGB> rgbs;
 
+  private IPreferenceStore prefStore;
+
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */
   private ColorProvider() {
@@ -53,6 +55,13 @@ public class ColorProvider implements IEditorPreferenceNames {
       _instance = new ColorProvider();
     }
     return _instance;
+  }
+
+  public ColorProvider(final IPreferenceStore store){
+    prefStore=store;
+    colors = new HashMap<RGB, Color>( 10 );
+    rgbs = new HashMap<String, RGB>( 10 );
+    initializeRgbs();
   }
 
   /** <p>releases all of the color resources held by this ColorProvider.</p> */
@@ -121,6 +130,9 @@ public class ColorProvider implements IEditorPreferenceNames {
   }
 
   private IPreferenceStore getPreferenceStore() {
+    if (prefStore!=null){
+      return prefStore;
+    }
     return HaskellUIPlugin.getDefault().getPreferenceStore();
   }
 }

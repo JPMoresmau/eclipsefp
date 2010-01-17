@@ -34,15 +34,20 @@ import org.eclipse.swt.widgets.Display;
 class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
 
   private IPreferenceStore store;
+  private final HaskellConfiguration config;
   private IPropertyChangeListener propertyChangeListener;
   private Color bgColor;
 
   SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
     super( parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     this.store = store;
-    initializePropertyListener();
 
-    configure( new HaskellConfiguration( null ) );
+
+    config=new HaskellConfiguration( null );
+    config.setPreferenceStore( store );
+    configure( config );
+    //done after configure so that the text invalidation is done after the scanner manager being notified
+    initializePropertyListener();
     setEditable( false );
     getTextWidget().setFont( JFaceResources.getTextFont() );
 
@@ -58,6 +63,7 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
         store.removePropertyChangeListener( this.propertyChangeListener );
         propertyChangeListener = null;
       }
+      config.getScannerManager().dispose();
       store = null;
     }
     if( ( this.bgColor != null )
@@ -77,11 +83,11 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
         || EDITOR_BACKGROUND_DEFAULT_COLOR.equals( p ) ) {
       return true;
     }
-    for (ColorListEntry cle:SyntaxTab.colorListModel){
+    /*for (ColorListEntry cle:SyntaxTab.colorListModel){
       if (p.equals(cle.getBoldKey()) || p.equals( cle.getColorKey() )){
         return true;
       }
-    }
+    }*/
     return false;
   }
 
@@ -134,11 +140,9 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
       public void propertyChange( final PropertyChangeEvent event ) {
         if( affectsPresentation( event ) ) {
           updateColors();
-          unconfigure();
-          configure( new HaskellConfiguration( null ) );
         }
         invalidateTextPresentation();
-      }
+       }
     };
     store.addPropertyChangeListener( this.propertyChangeListener );
   }

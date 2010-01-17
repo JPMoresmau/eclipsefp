@@ -41,6 +41,9 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private final Map<String, IToken> tokens = new Hashtable<String, IToken>();
 
+  private IPreferenceStore prefStore;
+  private ColorProvider colorProvider;
+
   private ScannerManager() {
     // prevent instantiation
     propertyChangeHandlers = new HashMap<String, PropertyChangeHandler>();
@@ -57,47 +60,67 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   public void dispose() {
     getPreferenceStore().removePropertyChangeListener( propertyChangeListener );
+    if (colorProvider!=null){
+      colorProvider.dispose();
+    }
+  }
+
+  public ScannerManager(final IPreferenceStore prefStore){
+    this.prefStore=prefStore;
+    propertyChangeHandlers = new HashMap<String, PropertyChangeHandler>();
+    initializePropertyListener();
+  }
+
+
+  public ColorProvider getColorProvider() {
+    if (prefStore!=null){
+      if (colorProvider==null){
+        colorProvider=new ColorProvider( prefStore );
+      }
+      return colorProvider;
+    }
+    return ColorProvider.getInstance();
   }
 
   public HaskellCodeScanner getCodeScanner( final boolean latexLiterate ) {
     if( codeScanner == null ) {
-      codeScanner = new HaskellCodeScanner( latexLiterate );
+      codeScanner = new HaskellCodeScanner( this,latexLiterate );
     }
     return codeScanner;
   }
 
   public HaskellCommentScanner getCommentScanner() {
     if( commentScanner == null ) {
-      commentScanner = new HaskellCommentScanner( false );
+      commentScanner = new HaskellCommentScanner( this,false );
     }
     return commentScanner;
   }
 
   public HaskellStringScanner getStringScanner() {
     if( stringScanner == null ) {
-      stringScanner = new HaskellStringScanner();
+      stringScanner = new HaskellStringScanner(this);
     }
     return stringScanner;
   }
 
   public HaskellCharacterScanner getCharacterScanner() {
     if( charScanner == null ) {
-      charScanner = new HaskellCharacterScanner();
+      charScanner = new HaskellCharacterScanner(this);
     }
     return charScanner;
   }
 
   public HaskellCommentScanner getLiterateCommentScanner() {
     if( literateCommentScanner == null ) {
-      literateCommentScanner = new HaskellCommentScanner( true );
+      literateCommentScanner = new HaskellCommentScanner( this,true );
     }
     return literateCommentScanner;
   }
 
   IToken createToken( final String colorKey, final String boldKey ) {
-    IToken result = getInstance().getTokenInternal( colorKey, boldKey );
+    IToken result = getTokenInternal( colorKey, boldKey );
     if( result == null ) {
-      result = getInstance().createTokenInternal( colorKey, boldKey );
+      result = createTokenInternal( colorKey, boldKey );
     }
     return result;
   }
@@ -125,9 +148,9 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private TextAttribute createTextAttribute( final String colorKey,
                                              final String boldKey ) {
-    Color color = ColorProvider.getInstance().getColor( colorKey );
+    Color color = getColorProvider().getColor( colorKey );
     TextAttribute result;
-    if( getInstance().isBold( boldKey ) ) {
+    if( isBold( boldKey ) ) {
       result = new TextAttribute( color, null, SWT.BOLD );
     } else {
       result = new TextAttribute( color );
@@ -138,7 +161,7 @@ public class ScannerManager implements IEditorPreferenceNames {
   private void initializePropertyListener() {
     propertyChangeListener = new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
-        ColorProvider.getInstance().changeColor( event.getProperty(),
+        getColorProvider().changeColor( event.getProperty(),
                                                  event.getNewValue() );
         // now notify all tokens out there
         PropertyChangeHandler handler = getHandler( event.getProperty() );
@@ -165,6 +188,9 @@ public class ScannerManager implements IEditorPreferenceNames {
   }
 
   private IPreferenceStore getPreferenceStore() {
+    if (prefStore!=null){
+      return prefStore;
+    }
     return HaskellUIPlugin.getDefault().getPreferenceStore();
   }
 
@@ -175,7 +201,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private Token createTokenInternal( final String colorKey,
                                      final String boldKey ) {
-    TextAttribute textAtt = getInstance().createTextAttribute( colorKey,
+    TextAttribute textAtt = createTextAttribute( colorKey,
                                                                boldKey );
     final Token result = new Token( textAtt );
     PropertyChangeHandler colorHandler = new PropertyChangeHandler() {
@@ -203,7 +229,7 @@ public class ScannerManager implements IEditorPreferenceNames {
       TextAttribute oldAttribute = ( TextAttribute )data;
       Color bgColor = oldAttribute.getBackground();
       int style = oldAttribute.getStyle();
-      Color color = ColorProvider.getInstance().getColor( key );
+      Color color = getColorProvider().getColor( key );
       TextAttribute newAttribute = new TextAttribute( color, bgColor, style );
       token.setData( newAttribute );
     }
@@ -211,7 +237,11 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private void handleBoldChange( final Token token,
                                  final PropertyChangeEvent event ) {
-    boolean bold = ( ( Boolean )event.getNewValue() ).booleanValue();
+    Object o=event.getNewValue();
+
+    boolean bold = (o instanceof Boolean)?
+          ( ( Boolean )o ).booleanValue():
+            IPreferenceStore.TRUE.equals(o);
     Object data = token.getData();
     if( data instanceof TextAttribute ) {
       TextAttribute oldAttr = ( TextAttribute )data;

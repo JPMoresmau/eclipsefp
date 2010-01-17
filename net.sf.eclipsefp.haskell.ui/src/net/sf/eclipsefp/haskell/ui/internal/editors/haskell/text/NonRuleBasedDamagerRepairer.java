@@ -29,8 +29,10 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager,
   /** The document this object works on */
   protected IDocument document;
   private final boolean literate;
+  private final ScannerManager man;
 
-  public NonRuleBasedDamagerRepairer( final boolean literate ) {
+  public NonRuleBasedDamagerRepairer( final ScannerManager man,final boolean literate ) {
+    this.man=man;
     this.literate = literate;
   }
 
@@ -125,9 +127,9 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager,
   private TextAttribute getDefaultAttribute() {
     TextAttribute result;
     if( literate ) {
-      result = ScannerManager.getInstance().getLiterateCommentAttribute();
+      result = man.getLiterateCommentAttribute();
     } else {
-      result = ScannerManager.getInstance().getCommentAttribute();
+      result = man.getCommentAttribute();
     }
     return result;
   }

@@ -1,16 +1,17 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
-import net.sf.eclipsefp.common.ui.dialog.*;
+import net.sf.eclipsefp.common.ui.dialog.BooleanDialogField;
+import net.sf.eclipsefp.common.ui.dialog.DialogField;
+import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 
 
-/** <p>the superclass for all tabs on the editor preference page. 
+/** <p>the superclass for all tabs on the editor preference page.
   * Encapsulates some common functionality.</p>
-  *  
+  *
   * @author Leif Frenzel
   */
 abstract class EditorTab extends Tab {
@@ -18,11 +19,11 @@ abstract class EditorTab extends Tab {
   EditorTab( final IPreferenceStore store ) {
     super( store );
   }
-  
+
 
   // functionality for subclasses
   ///////////////////////////////
-  
+
   DialogField createBooleanField( final Composite parent,
                                   final String text,
                                   final String name ) {
@@ -37,12 +38,12 @@ abstract class EditorTab extends Tab {
     return result;
   }
 
-  
+
   // helping methods
   //////////////////
-  
-  private Boolean getFromStore( final String name ) {
+
+  Boolean getFromStore( final String name ) {
     boolean value = getPreferenceStore().getBoolean( name );
     return ( value ) ? Boolean.TRUE : Boolean.FALSE;
-  }  
+  }
 }

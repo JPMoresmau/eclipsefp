@@ -110,6 +110,10 @@ public class LevelSelectionDialogField extends DialogField {
   //////////////////
 
   private void applySelection() {
-    buttons[ selected + 1 ].setSelection( true );
+
+    for (int a=0;a<buttons.length;a++){
+      buttons[a].setSelection(a==selected+1);
+    }
+
   }
 }

@@ -2,19 +2,25 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 
 /** <p>the tab for appearance preference settings.</p>
   *
-  * @author Leif Frenzel  
+  * @author Leif Frenzel
   */
 class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
@@ -25,19 +31,19 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
                         EDITOR_MATCHING_BRACKETS_COLOR ),
     new ColorListEntry( "Current line highlight", EDITOR_CURRENT_LINE_COLOR ),
     new ColorListEntry( "Print margin", EDITOR_PRINT_MARGIN_COLOR ) };
-  
+
   private List colorList;
   private ColorSelector colorSelector;
 
-  
+
   AppearanceTab( final IPreferenceStore store ) {
     super( store );
   }
 
-  
+
   // interface methods of Tab
   ///////////////////////////
-  
+
   @Override
   public Control createControl( final Composite parent ) {
     Composite control = new Composite( parent, SWT.NONE );
@@ -59,10 +65,10 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     return control;
   }
 
-  
+
   // UI creation methods
   //////////////////////
-  
+
   private void createColorSelector( final Composite parent ) {
     colorSelector = new ColorSelector( parent );
     Button foregroundColorButton = colorSelector.getButton();
@@ -91,7 +97,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     return stylesComposite;
   }
 
-  private void createColorList( final Composite parent, 
+  private void createColorList( final Composite parent,
                                 final Composite editorComposite ) {
     int style = SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER;
     colorList = new List( editorComposite, style );
@@ -151,11 +157,21 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     createBooleanField( parent, "Hi&ghlight current line", clKey );
     createBooleanField( parent, "Sho&w print margin", EDITOR_PRINT_MARGIN );
   }
-  
-  
+
+  public void propertyChange( final PropertyChangeEvent event ) {
+    colorList.getDisplay().asyncExec( new Runnable() {
+      public void run() {
+        if( ( colorList != null ) && !colorList.isDisposed() ) {
+          handleColorListSelection();
+        }
+      }
+    } );
+
+  }
+
   // helping methods
   //////////////////
-  
+
   private void handleColorListSelection() {
     int i = colorList.getSelectionIndex();
     String key = colorListModel[ i ].getColorKey();

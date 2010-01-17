@@ -1,10 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.ui.preferences;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameter;
 import net.sf.eclipsefp.haskell.ghccompiler.core.GhcParameterType;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -17,6 +21,7 @@ import org.eclipse.swt.widgets.Control;
   * @author Leif Frenzel
   */
 public class MoreOptimizationTab extends GhcCompilerTab  {
+  private final List<DialogField> fields=new LinkedList<DialogField>();
 
   public MoreOptimizationTab( final IPreferenceStore store ) {
     super( store );
@@ -46,19 +51,30 @@ public class MoreOptimizationTab extends GhcCompilerTab  {
     */
     for (GhcParameter p:GhcParameter.values()){
       if (GhcParameterType.OPTIMIZATION_SPECIFIC.equals( p.getType() )){
-        createField( composite, p, 2 );
+        fields.add( createField( composite, p, 2 ));
       }
     }
 
     return composite;
   }
 
-  private void createField( final Composite composite,
+  private DialogField createField( final Composite composite,
                             final GhcParameter p,
                             final int span ) {
     DialogField field = createBooleanField( composite, p );
     GridData gd = new GridData();
     gd.horizontalSpan = span;
     field.setLayoutData( gd );
+    return field;
+  }
+
+  public void propertyChange( final PropertyChangeEvent event ) {
+    Iterator<DialogField> it=fields.iterator();
+    for (GhcParameter p:GhcParameter.values()){
+      if (GhcParameterType.OPTIMIZATION_SPECIFIC.equals( p.getType() )){
+        it.next().setInfo( getFromStore(p.getName()) );
+      }
+    }
+
   }
 }

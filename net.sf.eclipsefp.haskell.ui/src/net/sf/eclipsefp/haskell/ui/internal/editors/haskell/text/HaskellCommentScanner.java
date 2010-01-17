@@ -15,20 +15,21 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
   */
 public class HaskellCommentScanner extends RuleBasedScanner
                                    implements IEditorPreferenceNames {
+  private final ScannerManager man;
 
-  public HaskellCommentScanner( final boolean literate ) {
+  public HaskellCommentScanner( final ScannerManager man,final boolean literate ) {
+    this.man=man;
     IToken defaultToken = ( literate ) ? createLiterateCommentToken()
                                        : createCommentToken();
     setDefaultReturnToken( defaultToken );
   }
 
   private IToken createCommentToken() {
-    return ScannerManager.getInstance().createToken( EDITOR_COMMENT_COLOR,
+    return man.createToken( EDITOR_COMMENT_COLOR,
                                                      EDITOR_COMMENT_BOLD );
   }
 
   private IToken createLiterateCommentToken() {
-    ScannerManager man = ScannerManager.getInstance();
     return man.createToken( EDITOR_LITERATE_COMMENT_COLOR,
                             EDITOR_LITERATE_COMMENT_BOLD );
   }

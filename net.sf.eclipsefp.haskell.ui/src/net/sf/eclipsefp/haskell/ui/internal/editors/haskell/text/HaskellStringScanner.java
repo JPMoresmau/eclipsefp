@@ -16,8 +16,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 public class HaskellStringScanner extends RuleBasedScanner
                                   implements IEditorPreferenceNames {
 
-  public HaskellStringScanner() {
-    ScannerManager man = ScannerManager.getInstance();
+  public HaskellStringScanner(final ScannerManager man) {
     IToken token = man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD );
     setDefaultReturnToken( token );
   }

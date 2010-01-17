@@ -6,6 +6,7 @@ import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.preferences.dialog.LevelSelectionDialogField;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -16,6 +17,7 @@ import org.eclipse.swt.widgets.Control;
   * @author Leif Frenzel
   */
 public class OptimizationTab extends GhcCompilerTab  {
+  private DialogField dlgField;
 
   public OptimizationTab( final IPreferenceStore store ) {
     super( store );
@@ -30,7 +32,7 @@ public class OptimizationTab extends GhcCompilerTab  {
     composite.setLayout( new GridLayout() );
 
    // Group grpGeneral = createGeneralGroup( composite );
-    DialogField dlgField = new LevelSelectionDialogField( composite );
+    dlgField = new LevelSelectionDialogField( composite );
     initLevelSelection( dlgField );
 
     //Group grpIndividual = createIndividualGroup( composite );
@@ -81,4 +83,11 @@ public class OptimizationTab extends GhcCompilerTab  {
     createBooleanField( grpIndividual, OPT_NO_CPR );
     createBooleanField( grpIndividual, OPT_UNBOX_STRICT_FIELDS );
   }*/
+
+  public void propertyChange( final PropertyChangeEvent event ) {
+    String key = IGhcPreferenceNames.OPTIMIZATION_LEVEL;
+    Integer info = new Integer( getPreferenceStore().getInt( key ) );
+    dlgField.setInfo( info );
+
+  }
 }

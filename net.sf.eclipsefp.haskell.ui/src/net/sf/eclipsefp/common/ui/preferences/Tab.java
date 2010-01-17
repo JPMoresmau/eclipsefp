@@ -1,30 +1,39 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.common.ui.preferences;
 
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
-
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 
 
 
 /** <p>the super class for all tabs on a tabbed preference page.</p>
   *
-  * @author Leif Frenzel  
+  * @author Leif Frenzel
   */
-public abstract class Tab {
+public abstract class Tab implements IPropertyChangeListener{
 
   private final IPreferenceStore preferenceStore;
   private final Map<Button, String> checkBoxes = new HashMap<Button, String>();
   private final Map<Control, Control> labels = new HashMap<Control, Control>();
   private final Map<Text, String> textFields = new HashMap<Text, String>();
-  
+
   private final SelectionListener fCheckBoxListener = new SelectionAdapter() {
     @Override
     public void widgetSelected( final SelectionEvent event ) {
@@ -41,13 +50,20 @@ public abstract class Tab {
       getPreferenceStore().setValue( key, text.getText() );
     }
   };
-  
+
   public Tab( final IPreferenceStore store ) {
     this.preferenceStore = store;
+    this.preferenceStore.addPropertyChangeListener(this);
   }
 
   public abstract Control createControl( Composite parent );
-  
+
+  public void dispose(){
+    if (this.preferenceStore!=null){
+      this.preferenceStore.removePropertyChangeListener(this);
+    }
+  }
+
   public void initializeFields() {
     initializeCheckboxes();
     initializeTexts();
@@ -61,10 +77,10 @@ public abstract class Tab {
     return preferenceStore;
   }
 
-  
+
   // UI creation helping methods for subclasses
   /////////////////////////////////////////////
-  
+
   protected void createLabel( final Composite parent, final String text ) {
     Label label = new Label( parent, SWT.LEFT );
     label.setText( text );
@@ -72,10 +88,10 @@ public abstract class Tab {
     gridData.horizontalAlignment = GridData.BEGINNING;
     label.setLayoutData( gridData );
   }
-  
-  protected final Button addBooleanField( final Composite parent, 
+
+  protected final Button addBooleanField( final Composite parent,
                                           final String label,
-                                          final String key, 
+                                          final String key,
                                           final int indentation ) {
     Button checkBox = new Button( parent, SWT.CHECK );
     checkBox.setText( label );
@@ -91,33 +107,33 @@ public abstract class Tab {
     return checkBox;
   }
 
-  protected Control addIntegerField( final Composite composite, 
+  protected Control addIntegerField( final Composite composite,
                                      final String label,
-                                     final String key, 
-                                     final int textLimit, 
+                                     final String key,
+                                     final int textLimit,
                                      final int indentation ) {
     Text result = addStringField( composite, label, textLimit, indentation );
     textFields.put( result, key );
     return result;
   }
 
-  protected Control addTextField( final Composite composite, 
+  protected Control addTextField( final Composite composite,
                                   final String label,
-                                  final String key, 
-                                  final int textLimit, 
+                                  final String key,
+                                  final int textLimit,
                                   final int indentation ) {
     Text result = addStringField( composite, label, textLimit, indentation );
     textFields.put( result, key );
     result.addModifyListener( fTextFieldListener );
     return result;
   }
-  
+
   // helping methods
   //////////////////
 
-  private Text addStringField( final Composite composite, 
+  private Text addStringField( final Composite composite,
                                final String label,
-                               final int textLimit, 
+                               final int textLimit,
                                final int indentation ) {
     Label labelControl = new Label( composite, SWT.NONE );
     labelControl.setText( label );
@@ -127,7 +143,7 @@ public abstract class Tab {
 
     Text textControl = new Text( composite, SWT.BORDER | SWT.SINGLE );
     gd = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
-    gd.widthHint = DialogUtil.convertWidthInCharsToPixels( textControl, 
+    gd.widthHint = DialogUtil.convertWidthInCharsToPixels( textControl,
                                                            textLimit + 1 );
     textControl.setLayoutData( gd );
     textControl.setTextLimit( textLimit );
@@ -135,7 +151,7 @@ public abstract class Tab {
     labels.put( textControl, labelControl );
     return textControl;
   }
-  
+
   private void initializeTexts() {
     Iterator<Text> iter = textFields.keySet().iterator();
     while( iter.hasNext() ) {

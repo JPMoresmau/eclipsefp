@@ -30,11 +30,12 @@ import org.eclipse.jface.text.rules.WordRule;
   */
 public class HaskellCodeScanner extends RuleBasedScanner
                                 implements IEditorPreferenceNames {
+  private final ScannerManager man;
 
   /** <p>constructs a new HaskellCodeScanner and specifies the scanning
    * rules.</p> */
-  public HaskellCodeScanner( final boolean latexLiterate ) {
-    ScannerManager man = ScannerManager.getInstance();
+  public HaskellCodeScanner( final ScannerManager man, final boolean latexLiterate ) {
+    this.man=man;
     IToken keywordToken = man.createToken( EDITOR_KEYWORD_COLOR,
                                            EDITOR_KEYWORD_BOLD );
     IToken stringToken = man.createToken( EDITOR_STRING_COLOR,
@@ -71,7 +72,6 @@ public class HaskellCodeScanner extends RuleBasedScanner
                                        final IToken keywordToken ) {
     WordRule result = new WordRule( new WordDetector(), defaultToken );
 
-    ScannerManager man = ScannerManager.getInstance();
     IToken functionToken = man.createToken( EDITOR_FUNCTION_COLOR,
                                             EDITOR_FUNCTION_BOLD );
     String[] functions = HaskellSyntax.getFunctions();
@@ -112,7 +112,6 @@ public class HaskellCodeScanner extends RuleBasedScanner
                  || "\\end{code}".indexOf( c ) != -1;
         }
       } );
-      ScannerManager man = ScannerManager.getInstance();
       this.successToken = man.createToken( EDITOR_COMMENT_COLOR,
                                            EDITOR_COMMENT_BOLD );
       addWord( "\\begin{code}", successToken );

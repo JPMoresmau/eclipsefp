@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -217,6 +218,16 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     previewer.getControl().setLayoutData( gridData );
   }
 
+  public void propertyChange( final PropertyChangeEvent event ) {
+    colorList.getDisplay().asyncExec( new Runnable() {
+      public void run() {
+        if( ( colorList != null ) && !colorList.isDisposed() ) {
+          handleSyntaxColorListSelection();
+        }
+      }
+    } );
+
+  }
 
   // helping methods
   //////////////////

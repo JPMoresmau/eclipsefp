@@ -5,6 +5,7 @@ import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.haskell.ghccompiler.core.preferences.IGhcPreferenceNames;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.Text;
   * @author Leif Frenzel
   */
 public class GeneralTab extends Tab implements IGhcPreferenceNames {
+  private Button cbActive;
+  private Text text;
 
   public GeneralTab( final IPreferenceStore store ) {
     super( store );
@@ -78,12 +81,12 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
     group.setText( UITexts.generalTab_extra );
     group.setLayoutData( new GridData( GridData.FILL_HORIZONTAL) );
 
-    final Button cbActive = new Button( group, SWT.CHECK );
+    cbActive = new Button( group, SWT.CHECK );
     cbActive.setText( UITexts.generalTab_extraMsg );
     boolean selected = getPreferenceStore().getBoolean( USE_EXTRA_OPTIONS );
     cbActive.setSelection( selected );
 
-    final Text text = new Text( group, SWT.BORDER );
+    text = new Text( group, SWT.BORDER );
     text.setText( getPreferenceStore().getString( EXTRA_OPTIONS ) );
     text.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     text.addModifyListener( new ModifyListener() {
@@ -101,6 +104,20 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
         getPreferenceStore().setValue( USE_EXTRA_OPTIONS, selected );
       }
     } );
+  }
+
+  public void propertyChange( final PropertyChangeEvent event ) {
+    if (cbActive!=null){
+      cbActive.setSelection( getPreferenceStore().getBoolean( USE_EXTRA_OPTIONS ) );
+    }
+    if (text!=null){
+      boolean selected = cbActive.getSelection();
+      text.setEnabled( selected );
+      int c=text.getCaretPosition();
+      text.setText( getPreferenceStore().getString( EXTRA_OPTIONS ) );
+      text.setSelection( c,c );
+    }
+
   }
 
   /*private Boolean getFromStore( final String name ) {

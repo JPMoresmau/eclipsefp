@@ -2,6 +2,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -30,7 +32,7 @@ public class HaskellEditorPP extends PreferencePage
                                         IEditorPreferenceNames {
 
   private OverlayPreferenceStore overlayStore;
-
+  private final List<Tab> tabs=new LinkedList<Tab>();
 
   public static void initializeDefaultValues( final IPreferenceStore store ) {
     TextEditorPreferenceConstants.initializeDefaultValues( store );
@@ -46,16 +48,16 @@ public class HaskellEditorPP extends PreferencePage
     TabFolder folder = new TabFolder( parent, SWT.NONE );
 
     Tab appearanceTab = new AppearanceTab( overlayStore );
-    createTab( folder, "Appeara&nce", appearanceTab.createControl( folder ) );
+    createTab( folder, "Appeara&nce", appearanceTab );
 
     Tab syntaxTab = new SyntaxTab( overlayStore );
-    createTab( folder, "Synta&x", syntaxTab.createControl( folder ) );
+    createTab( folder, "Synta&x", syntaxTab );
 
     Tab annotationsTab = new AnnotationsTab( overlayStore );
-    createTab( folder, "Annotation&s", annotationsTab.createControl( folder ) );
+    createTab( folder, "Annotation&s", annotationsTab );
 
     Tab typingTab = new TypingTab( overlayStore );
-    createTab( folder, "T&yping", typingTab.createControl( folder ) );
+    createTab( folder, "T&yping", typingTab);
 
     return folder;
   }
@@ -63,6 +65,10 @@ public class HaskellEditorPP extends PreferencePage
   @Override
   public void dispose() {
     if( overlayStore != null ) {
+      for (Tab t:tabs){
+        t.dispose();
+      }
+      tabs.clear();
       overlayStore.stopListening();
       overlayStore = null;
     }
@@ -79,6 +85,7 @@ public class HaskellEditorPP extends PreferencePage
     }
     return true;
   }
+
 
   @Override
   protected void performDefaults() {
@@ -105,10 +112,11 @@ public class HaskellEditorPP extends PreferencePage
 
   private void createTab( final TabFolder folder,
                           final String label,
-                          final Control control ) {
-    TabItem tab = new TabItem( folder, SWT.NONE );
-    tab.setText( label );
-    tab.setControl( control );
+                          final Tab tab ) {
+    TabItem tabItem = new TabItem( folder, SWT.NONE );
+    tabItem.setText( label );
+    tabItem.setControl( tab.createControl( folder ) );
+    tabs.add(tab);
   }
 
   private OverlayPreferenceStore createOverlayStore() {

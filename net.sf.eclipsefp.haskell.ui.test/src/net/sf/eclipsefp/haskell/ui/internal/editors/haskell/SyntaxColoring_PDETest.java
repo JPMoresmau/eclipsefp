@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCodeScanner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -18,7 +19,7 @@ public class SyntaxColoring_PDETest extends TestCase {
 
   public void testDefaultColor() throws CoreException {
     IDocument document = createDocument( "some text\n" );
-    ITokenScanner scanner = new HaskellCodeScanner( false );
+    ITokenScanner scanner = new HaskellCodeScanner( ScannerManager.getInstance(),false );
     scanner.setRange( document, 0, 1 );
     IToken token = scanner.nextToken();
     assertColor( token, ColorProvider.DEFAULT_OTHER );
@@ -36,11 +37,11 @@ public class SyntaxColoring_PDETest extends TestCase {
   public void testLiterateSequences() throws CoreException {
     IDocument document = createDocument( "A\\begin{code}B\\end{code}C\n" );
     // scanner should not know about literate stuff
-    ITokenScanner scanner = new HaskellCodeScanner( false );
+    ITokenScanner scanner = new HaskellCodeScanner( ScannerManager.getInstance(),false );
     scanner.setRange( document, 0, document.getLength() );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_OTHER );
     // scanner should recognize literate sequences as comments
-    scanner = new HaskellCodeScanner( true );
+    scanner = new HaskellCodeScanner( ScannerManager.getInstance(),true );
     scanner.setRange( document, 0, document.getLength() );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_OTHER );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_COMMENT );
@@ -56,7 +57,7 @@ public class SyntaxColoring_PDETest extends TestCase {
   public void testSLCInLiterate() throws Exception {
     IDocument document = createDocument( "Bla\n>a--b\nBla" );
     // scanner should not know about literate stuff
-    ITokenScanner scanner = new HaskellCodeScanner( false );
+    ITokenScanner scanner = new HaskellCodeScanner( ScannerManager.getInstance(),false );
     scanner.setRange( document, 4, 5 );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_OTHER );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_OTHER );
@@ -66,7 +67,7 @@ public class SyntaxColoring_PDETest extends TestCase {
   public void testMLCInLiterate() throws Exception {
     IDocument document = createDocument( "Bla\n>a{-b-}c\nBla" );
     // scanner should not know about literate stuff
-    ITokenScanner scanner = new HaskellCodeScanner( false );
+    ITokenScanner scanner = new HaskellCodeScanner( ScannerManager.getInstance(),false );
     scanner.setRange( document, 4, 9 );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_OTHER );
     assertColor( scanner.nextToken(), ColorProvider.DEFAULT_OTHER );
@@ -91,7 +92,7 @@ public class SyntaxColoring_PDETest extends TestCase {
 
   private IToken tokenize( final String keyword ) throws CoreException {
     IDocument document = createDocument( keyword );
-    ITokenScanner scanner = new HaskellCodeScanner( false );
+    ITokenScanner scanner = new HaskellCodeScanner( ScannerManager.getInstance(),false );
     int length = keyword.trim().length();
     int offset = keyword.indexOf( keyword.trim() );
     scanner.setRange( document, offset, length );

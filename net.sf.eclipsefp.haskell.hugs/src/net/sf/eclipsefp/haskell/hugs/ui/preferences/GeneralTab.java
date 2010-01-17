@@ -8,6 +8,7 @@ import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Control;
   * @author Leif Frenzel
   */
 public class GeneralTab extends Tab implements IHugsPreferenceNames {
+  private ExecutableDialogField dlgField;
 
   public GeneralTab( final IPreferenceStore store ) {
     super( store );
@@ -29,7 +31,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
   @Override
   public Control createControl( final Composite parent ) {
     String labelText = "HUGS executable";
-    ExecutableDialogField dlgField = new ExecutableDialogField( parent,
+    dlgField = new ExecutableDialogField( parent,
                                                                 labelText ){
 
       @Override
@@ -91,5 +93,10 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
       }
     } );
     return dlgField;
+  }
+
+  public void propertyChange( final PropertyChangeEvent event ) {
+    dlgField.setInfo( getPreferenceStore().getString( EXECUTABLE_NAME ) );
+
   }
 }

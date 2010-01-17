@@ -61,6 +61,9 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	final HaskellEditor editor;
 	private final IContentAssistantFactory fFactory;
 
+	private IPreferenceStore prefStore;
+	private ScannerManager scannerManager;
+
 	public HaskellConfiguration( final HaskellEditor editor ) {
     this( editor, new ContentAssistantFactory() );
   }
@@ -72,6 +75,10 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
     fFactory = factory;
   }
 
+
+  public void setPreferenceStore( final IPreferenceStore prefStore ) {
+    this.prefStore = prefStore;
+  }
 
 	// interface methods of SourceViewerConfiguration
 	// ///////////////////////////////////////////////
@@ -123,6 +130,16 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return result;
 	}
 
+	public ScannerManager getScannerManager(){
+	    if (prefStore!=null){
+	        if (scannerManager==null){
+	          scannerManager = new ScannerManager( prefStore );
+	        }
+	        return scannerManager;
+	    }
+	    return ScannerManager.getInstance();
+	}
+
 	/** the presentation reconciler is responsible for syntax coloring. */
 	@Override
   public IPresentationReconciler getPresentationReconciler(
@@ -130,7 +147,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		// for every content type we need a damager and a repairer:
-		ScannerManager man = ScannerManager.getInstance();
+		ScannerManager man = getScannerManager();
     ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
@@ -229,6 +246,9 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	// ////////////////
 
 	private IPreferenceStore getPreferenceStore() {
+	  if (prefStore!=null){
+	    return prefStore;
+	  }
 		return HaskellUIPlugin.getDefault().getPreferenceStore();
 	}
 

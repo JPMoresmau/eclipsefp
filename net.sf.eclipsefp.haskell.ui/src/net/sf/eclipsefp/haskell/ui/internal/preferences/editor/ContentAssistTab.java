@@ -5,6 +5,7 @@ import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -157,6 +158,16 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     txtActTriggers = addTextField( parent, atText, atKey, 4, 0 );
   }
 
+  public void propertyChange( final PropertyChangeEvent event ) {
+    colorList.getDisplay().asyncExec( new Runnable() {
+      public void run() {
+        if( ( colorList != null ) && !colorList.isDisposed() ) {
+          handleColorListSelection();
+        }
+      }
+    } );
+
+  }
 
   // helping methods
   //////////////////

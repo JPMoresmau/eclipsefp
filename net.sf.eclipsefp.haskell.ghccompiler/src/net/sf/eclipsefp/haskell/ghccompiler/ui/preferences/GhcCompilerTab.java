@@ -67,7 +67,7 @@ public abstract class GhcCompilerTab extends Tab {
   // helping methods
   //////////////////
 
-  private Boolean getFromStore( final String name ) {
+  protected Boolean getFromStore( final String name ) {
     boolean value = getPreferenceStore().getBoolean( name );
     return ( value ) ? Boolean.TRUE : Boolean.FALSE;
   }
