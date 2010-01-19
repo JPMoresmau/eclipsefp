@@ -120,4 +120,48 @@
                modelId="net.sf.eclipsefp.haskell.debug">
          </variableValueEditor>
       </extension>
+      <extension
+            point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+         <toggleTargetFactory
+               class="net.sf.eclipsefp.haskell.debug.ui.internal.debug.HaskellToggleBreakpointTargetFactory"
+               id="net.sf.eclipsefp.haskell.debug.ui.internal.debug.HaskellToggleBreakpointTargetFactory">
+            <enablement>
+                       <with variable="debugContext">
+              <iterate>
+               <or>
+                  <test property="org.eclipse.debug.ui.getModelIdentifier" value="net.sf.eclipsefp.haskell.debug"/>
+                  <test property="org.eclipse.debug.ui.getModelIdentifier" value=""/>
+               </or>
+           </iterate>
+           </with>
+            <instanceof value="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
+            </enablement>
+         </toggleTargetFactory>
+      </extension>
+      <extension point="org.eclipse.ui.popupMenus">
+	     <viewerContribution id="net.sf.eclipsefp.haskell.debug.ui.RulerPopupActions"
+	                targetID="#TextRulerContext">
+	
+	      <action
+	           id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.toggleBreakpointAction" label="%toggle_breakpoint"
+	           class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+	           menubarPath="debug">
+	     </action>
+	</viewerContribution>   
+	</extension>
+      <extension
+            point="org.eclipse.ui.editorActions">
+         <editorContribution
+               id="net.sf.eclipsefp.haskell.debug.ui.editorContribution1"
+               targetID="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
+         	    <action
+	               label="%toggle_breakpoint"
+	               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+	               style="push"
+	               actionID="RulerDoubleClick"
+	               id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.doubleClickBreakpointAction"/>
+         </editorContribution>
+      </extension>
+
+      
 </plugin>

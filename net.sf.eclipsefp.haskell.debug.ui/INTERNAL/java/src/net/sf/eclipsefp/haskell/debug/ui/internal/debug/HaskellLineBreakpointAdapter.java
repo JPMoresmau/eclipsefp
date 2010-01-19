@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.debug;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellBreakpoint;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -29,7 +30,7 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
    * @return the editor being used to edit a PDA file, associated with the
    * given part, or <code>null</code> if none
    */
-  private ITextEditor getEditor(final IWorkbenchPart part) {
+  public static ITextEditor getEditor(final IWorkbenchPart part) {
     if (part instanceof ITextEditor) {
       ITextEditor editorPart = (ITextEditor) part;
       IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
@@ -42,12 +43,17 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
 
   public boolean canToggleLineBreakpoints( final IWorkbenchPart part,
       final ISelection selection ) {
-    return getEditor(part) != null;
+    if (getEditor(part) != null){
+      if (part instanceof HaskellEditor){
+        return ((HaskellEditor)part).isInOutline(selection);
+      }
+      return true;
+    }
+    return false;
   }
 
   public boolean canToggleMethodBreakpoints( final IWorkbenchPart part,
       final ISelection selection ) {
-    // TODO Auto-generated method stub
     return false;
   }
 
@@ -81,14 +87,13 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
   }
 
   public void toggleMethodBreakpoints( final IWorkbenchPart part, final ISelection selection )
-      throws CoreException {
-    // TODO Auto-generated method stub
-
+       {
+    // NOOP
   }
 
   public void toggleWatchpoints( final IWorkbenchPart part, final ISelection selection )
-      throws CoreException {
-    // TODO Auto-generated method stub
+      {
+    // NOOP
 
   }
 

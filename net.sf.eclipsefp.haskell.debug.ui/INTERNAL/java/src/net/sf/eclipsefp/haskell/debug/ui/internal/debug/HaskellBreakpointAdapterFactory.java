@@ -24,7 +24,7 @@ public class HaskellBreakpointAdapterFactory implements IAdapterFactory {
     return null;
   }
 
-  public Class[] getAdapterList() {
+  public Class<?>[] getAdapterList() {
     return new Class[]{IToggleBreakpointsTarget.class};
   }
 

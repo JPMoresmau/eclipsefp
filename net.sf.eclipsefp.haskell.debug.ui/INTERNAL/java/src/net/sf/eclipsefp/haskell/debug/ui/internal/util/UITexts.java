@@ -42,6 +42,9 @@ public final class UITexts extends NLS {
   public static String debug_editor_title;
   public static String debug_editor_text;
 
+  public static String breakpoint_toggle;
+  public static String breakpoint_toggle_description;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

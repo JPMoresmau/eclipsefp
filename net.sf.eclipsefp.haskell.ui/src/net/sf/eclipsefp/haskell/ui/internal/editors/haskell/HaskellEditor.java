@@ -38,6 +38,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -46,6 +47,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -493,5 +495,24 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         l.add( od );
       }
     }
+  }
+
+  /**
+   * is the start of the selection contained in an outline element
+   * useful to find if a selection for a breakpoint is in real code
+   */
+  public boolean isInOutline(final ISelection sel){
+    if (outline!=null && sel instanceof ITextSelection){
+      ITextSelection tsel=(ITextSelection)sel;
+      int line=tsel.getStartLine()+1;
+      for (OutlineDef od:outline){
+        // here we could filter out if inside some type of outlinedef we do not want breakpoints
+
+        if (od.getBlock().getStartLine()<=line && od.getBlock().getEndLine()>=line){
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
