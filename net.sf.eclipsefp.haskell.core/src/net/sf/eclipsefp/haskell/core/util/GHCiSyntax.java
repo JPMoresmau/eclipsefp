@@ -23,6 +23,7 @@ public class GHCiSyntax {
   public static final String QUIT_COMMAND=":q"; //$NON-NLS-1$
   public static final String DELETE_ALL_BREAKPOINTS_COMMAND=":delete *"; //$NON-NLS-1$
   public static final String SHOW_BINDINGS_COMMAND=":show bindings"; //$NON-NLS-1$
+  public static final String TYPE_LAST_RESULT_COMMAND=":t it"; //$NON-NLS-1$
   public static final String STEP_COMMAND=":step"; //$NON-NLS-1$
 
   public static final String SET_PRINT_WITH_SHOW_COMMAND=":set -fprint-evld-with-show"; //$NON-NLS-1$
@@ -33,6 +34,7 @@ public class GHCiSyntax {
   public static final String PROMPT_END="> "; //$NON-NLS-1$
 
   public static final String TYPEOF="::"; //$NON-NLS-1$
+  public static final String UNIT="()"; //$NON-NLS-1$
 
   public static String setBreakpointCommand(final String module, final int lineNumber){
    return  ":break " +module+" "+ lineNumber;  //$NON-NLS-1$//$NON-NLS-2$

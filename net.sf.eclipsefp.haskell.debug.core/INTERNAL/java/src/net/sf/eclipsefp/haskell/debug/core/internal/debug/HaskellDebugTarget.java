@@ -327,7 +327,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   }
 
-  public IVariable[] getVariables( final HaskellStrackFrame frame ) throws DebugException {
+  public synchronized IVariable[] getVariables( final HaskellStrackFrame frame ) throws DebugException {
     sendRequest( GHCiSyntax.SHOW_BINDINGS_COMMAND, true );
     String s=response.toString();
     BufferedReader br=new BufferedReader(new StringReader( s ));
@@ -366,4 +366,34 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }*/
   }
 
+  /**
+   * evaluate an arbitrary expression
+   * @param expression the expression
+   * @return the value and its type
+   * @throws DebugException
+   */
+  public synchronized HaskellValue evaluate(final String expression)throws DebugException{
+    // get rid of any previous "it" in case of evaluation error
+    sendRequest(GHCiSyntax.UNIT,true);
+    sendRequest(expression,true);
+    String val=getResultWithoutPrompt();
+    sendRequest(GHCiSyntax.TYPE_LAST_RESULT_COMMAND,true);
+    String type=getResultWithoutPrompt();
+    int ix=type.indexOf( GHCiSyntax.TYPEOF );
+    if (ix>-1){
+      type=type.substring( ix+GHCiSyntax.TYPEOF.length() ).trim();
+    } else {
+      type=""; //$NON-NLS-1$
+    }
+    return new HaskellValue(this,type,val);
+  }
+
+  private String getResultWithoutPrompt(){
+    String s=response.toString();
+    int ix=s.lastIndexOf( ResourceUtil.NL );
+    if(ix>-1){
+      s=s.substring(0,ix).trim();
+    }
+    return s;
+  }
 }

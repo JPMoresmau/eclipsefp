@@ -163,5 +163,10 @@
          </editorContribution>
       </extension>
 
+      <extension point="org.eclipse.debug.core.watchExpressionDelegates">
+   		<watchExpressionDelegate
+     		debugModel="net.sf.eclipsefp.haskell.debug"
+     		delegateClass="net.sf.eclipsefp.haskell.debug.ui.internal.debug.HaskellWatchExpressionDelegate"/>
+  	</extension>
       
 </plugin>

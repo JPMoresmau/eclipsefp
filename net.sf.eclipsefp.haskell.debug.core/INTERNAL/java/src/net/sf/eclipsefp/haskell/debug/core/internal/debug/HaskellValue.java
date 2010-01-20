@@ -11,17 +11,22 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public class HaskellValue extends HaskellDebugElement implements IValue {
   private final String val;
-  private final HaskellVariable var;
+  private final String type;
 
   public HaskellValue(final HaskellVariable var,final String val){
     super( var.getDebugTarget() );
-    this.var=var;
+    this.type=var.getReferenceTypeName();
     this.val=val;
+  }
 
+  public HaskellValue(final HaskellDebugTarget target,final String type,final String val){
+    super( target );
+    this.type=type;
+    this.val=val;
   }
 
   public String getReferenceTypeName() {
-   return var.getReferenceTypeName();
+   return type;
   }
 
   public String getValueString()  {

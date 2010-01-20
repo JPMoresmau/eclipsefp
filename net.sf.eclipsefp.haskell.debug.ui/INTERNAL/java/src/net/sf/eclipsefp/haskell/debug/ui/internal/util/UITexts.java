@@ -45,6 +45,8 @@ public final class UITexts extends NLS {
   public static String breakpoint_toggle;
   public static String breakpoint_toggle_description;
 
+  public static String evaluate_need_suspend;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
