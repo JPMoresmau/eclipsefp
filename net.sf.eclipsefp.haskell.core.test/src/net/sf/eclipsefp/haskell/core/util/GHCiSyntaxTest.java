@@ -88,15 +88,38 @@ public class GHCiSyntaxTest extends TestCase {
     Matcher m=GHCiSyntax.BINDING_PATTERN.matcher( s );
     assertTrue(m.matches());
     assertEquals("_result",m.group(1));
-    assertEquals("IO String",m.group(2));
+    assertEquals(" IO String",m.group(2));
+    assertEquals("IO String",GHCiSyntax.formatType( m.group(2)));
     assertEquals("_",m.group(4));
 
     s="_result :: IO String";
     m=GHCiSyntax.BINDING_PATTERN.matcher( s );
     assertTrue(m.matches());
     assertEquals("_result",m.group(1));
-    assertEquals("IO String",m.group(2));
+    assertEquals(" IO String",m.group(2));
+    assertEquals("IO String",GHCiSyntax.formatType( m.group(2)));
     assertNull( m.group(3));
     assertNull( m.group(4));
+  }
+
+  public void testBindingPatternMultiLine(){
+    String s="soup ::"
+      +ResourceUtil.NL+"  [Tag"
+      +ResourceUtil.NL+   "     String] = [TagOpen \"html\" [],TagClose \"html\"]";
+    Matcher m=GHCiSyntax.BINDING_PATTERN.matcher( s );
+    assertTrue(m.matches());
+    assertEquals("soup",m.group(1));
+    assertEquals(ResourceUtil.NL+"  [Tag"
+      +ResourceUtil.NL+   "     String]",m.group(2));
+    assertEquals("[Tag String]",GHCiSyntax.formatType( m.group(2)));
+    assertEquals("[TagOpen \"html\" [],TagClose \"html\"]",m.group(4));
+  }
+
+  public void testContextPattern(){
+    String s="--> main"
+      +ResourceUtil.NL+"Stopped at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\DebugP\\src\\Main.hs:16:10-21";
+    Matcher m=GHCiSyntax.CONTEXT_PATTERN.matcher( s );
+    assertTrue(m.find());
+    assertEquals("main",m.group(1));
   }
 }

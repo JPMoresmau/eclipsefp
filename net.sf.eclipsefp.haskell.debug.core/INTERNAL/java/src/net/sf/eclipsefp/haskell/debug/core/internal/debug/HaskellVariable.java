@@ -44,7 +44,7 @@ public class HaskellVariable extends HaskellDebugElement implements IVariable {
     Matcher m=GHCiSyntax.BINDING_PATTERN.matcher( line );
     if (m.matches()){
       name=m.group( 1 );
-      type=m.group( 2 );
+      type=GHCiSyntax.formatType( m.group( 2 ));
       value=m.group( 4 );
       if (value==null){
         value=GHCiSyntax.UNRESOLVED;

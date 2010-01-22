@@ -139,8 +139,10 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   }
 
   private synchronized void waitForPrompt(){
+    long timeout=10; // seconds
+    long t0=System.currentTimeMillis();
     try {
-      while(!atEnd){
+      while(!atEnd && System.currentTimeMillis()-t0<(timeout * 1000)){
         wait(100);
       }
     } catch (InterruptedException ie){
@@ -161,11 +163,12 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   }
 
   public boolean isSuspended() {
-    return thread.getBreakpoints().length>0;
+    return thread.getBreakpoints().length>0 || thread.getStopLocation()!=null;
   }
 
   public void resume() throws DebugException {
     thread.setBreakpoint( null );
+    thread.setStopLocation( null );
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.RESUME )});
     sendRequest( GHCiSyntax.CONTINUE_COMMAND, false );
 
@@ -291,28 +294,54 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }
   }
 
+  //boolean runContext=true;
   public synchronized void streamAppended( final String text, final IStreamMonitor monitor ) {
-   synchronized( response ) {
+    //boolean needContext=false;
+    synchronized( response ) {
      atEnd=false;
      response.append(text);
      atEnd=text.endsWith( GHCiSyntax.PROMPT_END);
      if (atEnd){
+       if (thread.isSuspended()){
+         Matcher m2=GHCiSyntax.CONTEXT_PATTERN.matcher( response.toString() );
+         if (m2.find()){
+           String name=m2.group( 1 );
+           thread.setName( name );
+           response.setLength( 0 );
+           DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.CHANGE,DebugEvent.STATE )});
+           notify();
+           return;
+         }
+       }
        Matcher m=GHCiSyntax.BREAKPOINT_STOP_PATTERN.matcher( response.toString() );
        if (m.find()){
          String location=m.group( 1 );
          HaskellBreakpoint hb=breakpointNames.get(location );
+         boolean wasSuspended=thread.isSuspended();
          if (hb!=null){
            thread.setBreakpoint( hb );
-         } /*else {
-           System.err.println(location+" is not a breakpoint");
-         }*/
+         } else {
+           thread.setStopLocation( location );
+         }
+         response.setLength( 0 );
          if (thread.isSuspended()){
            HaskellStrackFrame hsf=(HaskellStrackFrame)thread.getTopStackFrame();
            hsf.setLocation( location );
+           //needContext=true;
+           if (!wasSuspended){
+             try {
+               //runContext=false;
+               sendRequest( GHCiSyntax.SHOW_CONTEXT_COMMAND, false );
+
+             } catch (DebugException de){
+               HaskellCorePlugin.log( de );
+             }
+           }
          }
+
          DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,hb!=null?DebugEvent.UNSPECIFIED:DebugEvent.BREAKPOINT )});
 
-         response.setLength( 0 );
+
        } else {
          m=GHCiSyntax.BREAKPOINT_NOT.matcher( response.toString() );
          if (m.find()){
@@ -323,22 +352,43 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
        }
      }
      notify();
-  }
+   }
+    /*if (needContext)  {
+      try {
+        //runContext=false;
+        sendRequest( GHCiSyntax.SHOW_CONTEXT_COMMAND, false );
+
+      } catch (DebugException de){
+        HaskellCorePlugin.log( de );
+      } finally {
+        //runContext=true;
+      }
+    }*/
 
   }
 
   public synchronized IVariable[] getVariables( final HaskellStrackFrame frame ) throws DebugException {
     sendRequest( GHCiSyntax.SHOW_BINDINGS_COMMAND, true );
-    String s=response.toString();
+    String s=getResultWithoutPrompt();
     BufferedReader br=new BufferedReader(new StringReader( s ));
     try {
       List<IVariable> ret=new ArrayList<IVariable>();
       String line=br.readLine();
+      StringBuilder sb=new StringBuilder();
       while (line!=null){
-        if (line.indexOf( GHCiSyntax.TYPEOF )>-1){
-          ret.add( new HaskellVariable( line, frame ) );
+
+        if (line.indexOf( GHCiSyntax.TYPEOF )>-1 && sb.length()>0){
+          ret.add( new HaskellVariable( sb.toString(), frame ) );
+          sb.setLength( 0 );
         }
+        if (sb.length()>0){
+          sb.append(ResourceUtil.NL);
+        }
+        sb.append( line );
         line=br.readLine();
+      }
+      if (sb.length()>0){
+        ret.add( new HaskellVariable( sb.toString(), frame ) );
       }
       return ret.toArray( new IVariable[ret.size()] );
     } catch (IOException ioe){

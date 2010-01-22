@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
+import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -15,7 +16,9 @@ import org.eclipse.debug.core.model.IThread;
  */
 public class HaskellThread extends HaskellDebugElement implements IThread {
   private HaskellBreakpoint breakpoint;
+  private String stopLocation;
   private final HaskellStrackFrame frame=new HaskellStrackFrame( this );
+  private String name=CoreTexts.thread_default_name;
 
   public HaskellThread(final HaskellDebugTarget target){
     super( target );
@@ -33,8 +36,12 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
   }
 
   public String getName() {
-    // TODO name of the command launched?
-    return "Thread 1";
+    return name;
+  }
+
+
+  public void setName( final String name ) {
+    this.name = name;
   }
 
   public int getPriority()  {
@@ -122,6 +129,16 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
 
   public void terminate() throws DebugException {
     target.terminate();
+  }
+
+
+  public String getStopLocation() {
+    return stopLocation;
+  }
+
+
+  public void setStopLocation( final String stopLocation ) {
+    this.stopLocation = stopLocation;
   }
 
 }
