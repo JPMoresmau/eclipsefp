@@ -5,14 +5,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 
 /** <p>helper for the overlay store.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 class Loader {
 
-  static void loadProperty( final IPreferenceStore store, 
+  static void loadProperty( final IPreferenceStore store,
                             final OverlayKey key,
-                            final IPreferenceStore target, 
+                            final IPreferenceStore target,
                             final boolean forceInitialization ) {
     if( OverlayType.BOOLEAN == key.getType() ) {
       setBooleanValue( store, key, target, forceInitialization );
@@ -29,24 +29,24 @@ class Loader {
     }
   }
 
-  
+
   // helping methods
   //////////////////
-  
-  private static void setStringValue( final IPreferenceStore store, 
-                                      final OverlayKey key, 
-                                      final IPreferenceStore target, 
+
+  private static void setStringValue( final IPreferenceStore store,
+                                      final OverlayKey key,
+                                      final IPreferenceStore target,
                                       final boolean forceInitialization ) {
     if( forceInitialization ) {
-      target.setValue( key.getKey(), "1" );
+      target.setValue( key.getKey(), "1" ); //$NON-NLS-1$
     }
     target.setValue( key.getKey(), store.getString( key.getKey() ) );
     target.setDefault( key.getKey(), store.getDefaultString( key.getKey() ) );
   }
 
-  private static void setLongValue( final IPreferenceStore store, 
-                                    final OverlayKey key, 
-                                    final IPreferenceStore target, 
+  private static void setLongValue( final IPreferenceStore store,
+                                    final OverlayKey key,
+                                    final IPreferenceStore target,
                                     final boolean forceInitialization ) {
     if( forceInitialization ) {
       target.setValue( key.getKey(), 1L );
@@ -55,9 +55,9 @@ class Loader {
     target.setDefault( key.getKey(), store.getDefaultLong( key.getKey() ) );
   }
 
-  private static void setIntValue( final IPreferenceStore store, 
-                                   final OverlayKey key, 
-                                   final IPreferenceStore target, 
+  private static void setIntValue( final IPreferenceStore store,
+                                   final OverlayKey key,
+                                   final IPreferenceStore target,
                                    final boolean forceInitialization ) {
     if( forceInitialization ) {
       target.setValue( key.getKey(), 1 );
@@ -66,9 +66,9 @@ class Loader {
     target.setDefault( key.getKey(), store.getDefaultInt( key.getKey() ) );
   }
 
-  private static void setFloatValue( final IPreferenceStore orig, 
-                                     final OverlayKey key, 
-                                     final IPreferenceStore target, 
+  private static void setFloatValue( final IPreferenceStore orig,
+                                     final OverlayKey key,
+                                     final IPreferenceStore target,
                                      final boolean forceInitialization ) {
     if( forceInitialization ) {
       target.setValue( key.getKey(), 1.0F );
@@ -77,9 +77,9 @@ class Loader {
     target.setDefault( key.getKey(), orig.getDefaultFloat( key.getKey() ) );
   }
 
-  private static void setDoubleValue( final IPreferenceStore store, 
-                                      final OverlayKey key, 
-                                      final IPreferenceStore target, 
+  private static void setDoubleValue( final IPreferenceStore store,
+                                      final OverlayKey key,
+                                      final IPreferenceStore target,
                                       final boolean forceInitialization ) {
     if( forceInitialization ) {
       target.setValue( key.getKey(), 1.0D );
@@ -88,15 +88,15 @@ class Loader {
     target.setDefault( key.getKey(), store.getDefaultDouble( key.getKey() ) );
   }
 
-  private static void setBooleanValue( final IPreferenceStore store, 
-                                       final OverlayKey key, 
-                                       final IPreferenceStore target, 
+  private static void setBooleanValue( final IPreferenceStore store,
+                                       final OverlayKey key,
+                                       final IPreferenceStore target,
                                        final boolean forceInitialization ) {
     if( forceInitialization ) {
       target.setValue( key.getKey(), true );
     }
     target.setValue( key.getKey(), store.getBoolean( key.getKey() ) );
-    target.setDefault( key.getKey(), 
+    target.setDefault( key.getKey(),
                        store.getDefaultBoolean( key.getKey() ) );
   }
 }

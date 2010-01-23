@@ -31,7 +31,7 @@ public class LiterateHaskellPartitionScanner extends RuleBasedPartitionScanner {
 
   private IPredicateRule[] createLatexRules() {
     IPredicateRule[] rules = new IPredicateRule[] {
-      new MultiLineRule( "\\begin{code}", "\\end{code}",
+      new MultiLineRule( "\\begin{code}", "\\end{code}", //$NON-NLS-1$ //$NON-NLS-2$
                          new Token( IDocument.DEFAULT_CONTENT_TYPE ) ),
     };
     return rules;
@@ -40,7 +40,7 @@ public class LiterateHaskellPartitionScanner extends RuleBasedPartitionScanner {
   private IPredicateRule[] createBirdRules() {
     IPredicateRule[] rules = new IPredicateRule[] {
       // rule for single line comments
-      new EndOfLineRule( ">", new Token( IDocument.DEFAULT_CONTENT_TYPE ) )
+      new EndOfLineRule( ">", new Token( IDocument.DEFAULT_CONTENT_TYPE ) ) //$NON-NLS-1$
     };
     return rules;
   }

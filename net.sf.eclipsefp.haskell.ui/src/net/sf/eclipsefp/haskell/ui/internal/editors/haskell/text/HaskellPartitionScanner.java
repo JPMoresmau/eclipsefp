@@ -21,19 +21,19 @@ public class HaskellPartitionScanner extends RuleBasedPartitionScanner {
   public HaskellPartitionScanner() {
     IPredicateRule[] rules = new IPredicateRule[] {
       // rule for single line comments
-      new EndOfLineRule( "--", new Token( IPartitionTypes.HS_COMMENT ) ),
+      new EndOfLineRule( "--", new Token( IPartitionTypes.HS_COMMENT ) ), //$NON-NLS-1$
       // rule for strings
-      new SingleLineRule( "\"",
-                          "\"",
+      new SingleLineRule( "\"", //$NON-NLS-1$
+                          "\"", //$NON-NLS-1$
                           new Token( IPartitionTypes.HS_STRING ),
                           '\\' ),
       // rule for character literals
-      new SingleLineRule( "'",
-                          "'",
+      new SingleLineRule( "'", //$NON-NLS-1$
+                          "'", //$NON-NLS-1$
                           new Token( IPartitionTypes.HS_CHARACTER ),
                           '\\' ),
       // rule for multi line comments
-      new MultiLineRule( "{-", "-}", new Token( IPartitionTypes.HS_COMMENT ) ),
+      new MultiLineRule( "{-", "-}", new Token( IPartitionTypes.HS_COMMENT ) ), //$NON-NLS-1$ //$NON-NLS-2$
     };
     setPredicateRules( rules );
   }

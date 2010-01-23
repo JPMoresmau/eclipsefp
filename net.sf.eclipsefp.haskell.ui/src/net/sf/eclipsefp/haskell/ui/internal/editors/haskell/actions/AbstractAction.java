@@ -61,7 +61,7 @@ public abstract class AbstractAction implements IEditorActionDelegate {
     if( targetEditor instanceof ITextEditor ) {
       return ( ITextEditor )targetEditor;
     }
-    throw new AssertionError(   "Expecting text editor. Found:"
+    throw new AssertionError(   "Expecting text editor. Found:" //$NON-NLS-1$
                               + targetEditor.getClass().getName() );
   }
 

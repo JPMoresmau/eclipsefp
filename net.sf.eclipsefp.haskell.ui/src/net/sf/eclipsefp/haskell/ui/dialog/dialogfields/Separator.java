@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,11 +12,10 @@ package net.sf.eclipsefp.haskell.ui.dialog.dialogfields;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.swt.layout.GridData;
 
 /**
  * Dialog field describing a separator.
@@ -44,13 +43,13 @@ public class Separator extends DialogField {
 
   /**
    * Creates the separator and fills it in a MGridLayout.
-   * 
+   *
    * @param height
    *          The height of the separator
    */
   public Control[] doFillIntoGrid(final Composite parent, final int nColumns, final int height) {
     Assert.isTrue(nColumns >= getNumberOfControls(),
-        "given number of columns is too small");
+        "given number of columns is too small"); //$NON-NLS-1$
 
     Control separator = getSeparator(parent);
     separator.setLayoutData(gridDataForSeperator(nColumns, height));
@@ -87,7 +86,7 @@ public class Separator extends DialogField {
 
   /**
    * Creates or returns the created separator.
-   * 
+   *
    * @param parent
    *          The parent composite or <code>null</code> if the widget has
    *          already been created.
@@ -95,7 +94,7 @@ public class Separator extends DialogField {
   public Control getSeparator(final Composite parent) {
     if (fSeparator == null) {
       Assert.isNotNull(parent,
-          "uncreated control requested with composite null");
+          "uncreated control requested with composite null"); //$NON-NLS-1$
       fSeparator = new Label(parent, fStyle);
     }
     return fSeparator;

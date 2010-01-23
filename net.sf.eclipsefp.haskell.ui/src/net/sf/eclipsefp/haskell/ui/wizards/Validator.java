@@ -1,31 +1,33 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
-import java.util.*;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 
 
 /** <p>validates the settings on the 'New Module' wizard page.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 class Validator {
 
-  /** Folders must be specified as qualified expression (with dots between 
-    * segments), not as paths (no slashes allowed). Segments must be valid 
-    * module qualifiers, that is, start with uppercase letter. Empty string 
-    * is ok. */    
+  /** Folders must be specified as qualified expression (with dots between
+    * segments), not as paths (no slashes allowed). Segments must be valid
+    * module qualifiers, that is, start with uppercase letter. Empty string
+    * is ok. */
   static IStatus validateFolders( final String textFieldContent ) {
     DefaultStatus status = new DefaultStatus();
     if( textFieldContent.length() > 0 ) {
-      if(    textFieldContent.indexOf( '/' ) != -1 
+      if(    textFieldContent.indexOf( '/' ) != -1
           || textFieldContent.indexOf( '\\' ) != -1 ) {
         status.setError( "Specify folders with '.', not as path." );
       } else {
@@ -41,7 +43,7 @@ class Validator {
     }
     return status;
   }
-  
+
   static IStatus validateSourceFolder( final IContainer sourceContainer ) {
     DefaultStatus status = new DefaultStatus();
     if( sourceContainer == null ) {
@@ -49,7 +51,7 @@ class Validator {
     }
     return status;
   }
-  
+
   static IStatus validateModuleName( final ModuleCreationInfo info ) {
     String moduleName = info.getModuleName();
     DefaultStatus result = new DefaultStatus();
@@ -67,28 +69,28 @@ class Validator {
     }
     return result;
   }
-  
-  
+
+
   // helping methods
   //////////////////
-  
+
   private static boolean existsAlready( final ModuleCreationInfo info ) {
     return    existsAlreadyAs( info, ResourceUtil.EXTENSION_HS )
-           || existsAlreadyAs( info, ResourceUtil.EXTENSION_LHS ); 
+           || existsAlreadyAs( info, ResourceUtil.EXTENSION_LHS );
   }
-  
+
   private static boolean existsAlreadyAs( final ModuleCreationInfo info,
                                           final String extension ) {
-    String moduleName = info.getModuleName() + "." + extension;
+    String moduleName = info.getModuleName() + "." + extension; //$NON-NLS-1$
     IPath folders = info.getFolders();
     IPath fullPath = ( folders != null ) ? folders.append( moduleName )
                                          : new Path( moduleName );
     IResource resource = info.getSourceContainer().findMember( fullPath );
-    return resource != null && resource.exists(); 
+    return resource != null && resource.exists();
   }
-  
+
   /** Module names must start with an uppercase letter, apart from that,
-    * we use just the Java conventions here, which will be fine in 
+    * we use just the Java conventions here, which will be fine in
     * probably most of the cases. */
   private static boolean isValidModuleName( final String candidate ) {
     boolean result = true;
@@ -99,10 +101,10 @@ class Validator {
     }
     return result;
   }
-  
+
   private static String[] getSegments( final String content ) {
     List<String> list = new ArrayList<String>();
-    StringTokenizer tokenizer = new StringTokenizer( content, ".", false );
+    StringTokenizer tokenizer = new StringTokenizer( content, ".", false ); //$NON-NLS-1$
     while( tokenizer.hasMoreTokens() ) {
       list.add( tokenizer.nextToken() );
     }

@@ -214,6 +214,8 @@ public final class UITexts extends NLS {
   public static String explorer_libraries_noimpl;
   public static String explorer_outline_open;
 
+  public static String log_nodetails;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

@@ -16,7 +16,7 @@ public class FileUtil {
    * List of extensions of files that can be executed under Windows.
    * The first is the default in case we need to construct a valid executable file name.
    */
-  public static final String[] WINDOWS_EXECUTABLE_EXTENSIONS = new String[] { "exe", "bat" };
+  public static final String[] WINDOWS_EXECUTABLE_EXTENSIONS = new String[] { "exe", "bat" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private FileUtil() {
 		// do not instantiate
@@ -29,7 +29,7 @@ public class FileUtil {
 	 */
 	public static String makeExecutableName(final String baseName) {
 	  if (runningOnWindows()) {
-	    return baseName + "." + WINDOWS_EXECUTABLE_EXTENSIONS[0];
+	    return baseName + "." + WINDOWS_EXECUTABLE_EXTENSIONS[0]; //$NON-NLS-1$
 	  } else {
 	    return baseName;
 	  }
@@ -53,7 +53,7 @@ public class FileUtil {
     // Until Java 7, there is no way to check the executable bit of a file.
     // Apart from writing a JNI function (hassle), this is the best we can do...
     try {
-    	Process process = Runtime.getRuntime().exec(new String[] {"test", "-x", file.getAbsolutePath()});
+    	Process process = Runtime.getRuntime().exec(new String[] {"test", "-x", file.getAbsolutePath()}); //$NON-NLS-1$ //$NON-NLS-2$
     	int exitValue = process.waitFor();
     	if (exitValue != 0) {
     		return false;

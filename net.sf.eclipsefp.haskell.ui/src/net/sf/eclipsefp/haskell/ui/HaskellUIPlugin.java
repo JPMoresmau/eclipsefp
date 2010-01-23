@@ -20,6 +20,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -175,7 +176,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 
   private static void logg( final String message, final int severity,
       final Throwable thr ) {
-    String msg = message == null ? "[No details]" : message;
+    String msg = message == null ? UITexts.log_nodetails : message;
     Status status = new Status( severity, getPluginId(), IStatus.OK, msg, thr );
     getDefault().getLog().log( status );
   }

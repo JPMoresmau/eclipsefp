@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
-
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -33,7 +32,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     // Add to "New" menu
     addNewShortcuts( layout );
     // Add to "Show View" menu
-    layout.addShowViewShortcut( "org.eclipse.ui.navigator.ProjectExplorer" );
+    layout.addShowViewShortcut( "org.eclipse.ui.navigator.ProjectExplorer" ); //$NON-NLS-1$
     layout.addShowViewShortcut( IPageLayout.ID_BOOKMARKS );
     layout.addShowViewShortcut( IPageLayout.ID_PROBLEM_VIEW );
     layout.addShowViewShortcut( IPageLayout.ID_PROP_SHEET );
@@ -45,23 +44,23 @@ public class HaskellPerspective implements IPerspectiveFactory {
     // Add to "Open Perspective" menu
     layout.addPerspectiveShortcut( HaskellPerspective.class.getName() );
     // Add "Haskell Project" to the File -> New menu
-    layout.addNewWizardShortcut("net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard");
+    layout.addNewWizardShortcut("net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"); //$NON-NLS-1$
   }
 
   private void defineLayout( final IPageLayout layout ) {
     String editorArea = layout.getEditorArea();
 
-    IFolderLayout left = layout.createFolder( "left",
+    IFolderLayout left = layout.createFolder( "left", //$NON-NLS-1$
                                               IPageLayout.LEFT,
                                               0.26f,
                                               editorArea );
     addLeftViews( left );
-    IFolderLayout bottom = layout.createFolder( "bottom",
+    IFolderLayout bottom = layout.createFolder( "bottom", //$NON-NLS-1$
                                                 IPageLayout.BOTTOM,
                                                 0.74f,
                                                 editorArea );
     addBottomViews( bottom );
-    IFolderLayout right = layout.createFolder( "right",
+    IFolderLayout right = layout.createFolder( "right", //$NON-NLS-1$
                                                IPageLayout.RIGHT,
                                                0.80f,
                                                editorArea );
@@ -69,7 +68,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
   }
 
   private void addLeftViews( final IFolderLayout left ) {
-    left.addView( "org.eclipse.ui.navigator.ProjectExplorer" );
+    left.addView( "org.eclipse.ui.navigator.ProjectExplorer" ); //$NON-NLS-1$
   }
 
   private void addBottomViews( final IFolderLayout bottom ) {
@@ -79,8 +78,8 @@ public class HaskellPerspective implements IPerspectiveFactory {
   }
 
   private void addNewShortcuts( final IPageLayout layout ) {
-    layout.addNewWizardShortcut( "org.eclipse.ui.wizards.new.folder" );
-    layout.addNewWizardShortcut( "org.eclipse.ui.wizards.new.file" );
+    layout.addNewWizardShortcut( "org.eclipse.ui.wizards.new.folder" ); //$NON-NLS-1$
+    layout.addNewWizardShortcut( "org.eclipse.ui.wizards.new.file" ); //$NON-NLS-1$
     layout.addNewWizardShortcut( NewModuleWizard.ID );
   }
 }

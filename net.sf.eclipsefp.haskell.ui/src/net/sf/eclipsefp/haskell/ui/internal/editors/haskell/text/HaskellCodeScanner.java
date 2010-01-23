@@ -51,9 +51,9 @@ public class HaskellCodeScanner extends RuleBasedScanner
     }
 
     // strings and characters, comments
-    list.add( new SingleLineRule( "\"", "\"", stringToken, '\\' ) );
-    list.add( new EndOfLineRule( "--", commentToken ) );
-    list.add( new MultiLineRule( "{-", "-}", commentToken ) );
+    list.add( new SingleLineRule( "\"", "\"", stringToken, '\\' ) );  //$NON-NLS-1$//$NON-NLS-2$
+    list.add( new EndOfLineRule( "--", commentToken ) ); //$NON-NLS-1$
+    list.add( new MultiLineRule( "{-", "-}", commentToken ) );  //$NON-NLS-1$//$NON-NLS-2$
 
     // generic whitespace rule
     list.add( new WhitespaceRule( new WhitespaceDetector() ) );
@@ -108,14 +108,14 @@ public class HaskellCodeScanner extends RuleBasedScanner
         }
 
         public boolean isWordPart( final char c ) {
-          return    "\\begin{code}".indexOf( c ) != -1
-                 || "\\end{code}".indexOf( c ) != -1;
+          return    "\\begin{code}".indexOf( c ) != -1 //$NON-NLS-1$
+                 || "\\end{code}".indexOf( c ) != -1; //$NON-NLS-1$
         }
       } );
       this.successToken = man.createToken( EDITOR_COMMENT_COLOR,
                                            EDITOR_COMMENT_BOLD );
-      addWord( "\\begin{code}", successToken );
-      addWord( "\\end{code}", successToken );
+      addWord( "\\begin{code}", successToken ); //$NON-NLS-1$
+      addWord( "\\end{code}", successToken ); //$NON-NLS-1$
     }
 
     public IToken evaluate( final ICharacterScanner scanner,

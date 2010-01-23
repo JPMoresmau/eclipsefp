@@ -142,7 +142,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			{
 				final CompletionProposal proposal = new CompletionProposal(
 				    declName, offset - plength, plength, declName.length(), null,
-				    declName + " - " + moduleName, null, null);
+				    declName + " - " + moduleName, null, null); //$NON-NLS-1$
 				result.add(proposal);
 			}
 		}
@@ -154,8 +154,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		StringBuffer contents = readSourceTillOffset(unit, offset);
 
 		int index = offset;
-		StringBuffer sb = new StringBuffer();
-		String result = "";
+		StringBuilder sb = new StringBuilder();
+		String result = ""; //$NON-NLS-1$
 
 		boolean finished = false;
 		while( !finished && index > 0 ) {
@@ -180,7 +180,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 	}
 
 	private boolean isIdentifierChar(final char ch) {
-		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1;
+		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1; //$NON-NLS-1$
 	}
 
 	private StringBuffer readSourceTillOffset(final ICompilationUnit unit,

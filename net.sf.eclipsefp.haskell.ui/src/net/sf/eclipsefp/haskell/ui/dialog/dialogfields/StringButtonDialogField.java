@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Dialog field containing a label, text control and a button control.
@@ -61,7 +65,7 @@ public class StringButtonDialogField extends StringDialogField {
   @Override
   public Control[] doFillIntoGrid(final Composite parent, final int nColumns) {
     Assert.isTrue(nColumns >= getNumberOfControls(),
-        "given number of columns is too small");
+        "given number of columns is too small"); //$NON-NLS-1$
 
     Label label = getLabelControl(parent);
     label.setLayoutData(gridDataForLabel(1));
@@ -90,7 +94,7 @@ public class StringButtonDialogField extends StringDialogField {
 
   /**
    * Creates or returns the created buttom widget.
-   * 
+   *
    * @param parent
    *          The parent composite or <code>null</code> if the widget has
    *          already been created.
@@ -98,7 +102,7 @@ public class StringButtonDialogField extends StringDialogField {
   public Button getChangeControl(final Composite parent) {
     if (fBrowseButton == null) {
       Assert.isNotNull(parent,
-          "uncreated control requested with composite null");
+          "uncreated control requested with composite null"); //$NON-NLS-1$
 
       fBrowseButton = new Button(parent, SWT.PUSH);
       fBrowseButton.setText(fBrowseButtonLabel);

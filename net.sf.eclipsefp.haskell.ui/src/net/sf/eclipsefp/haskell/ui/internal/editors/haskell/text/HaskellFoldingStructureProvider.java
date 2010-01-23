@@ -75,7 +75,7 @@ public class HaskellFoldingStructureProvider {
       result = new Position( start, end - start );
     } catch( final BadLocationException badlox ) {
       // ignored
-      System.err.println(startLine+","+endLine);
+      System.err.println(startLine+","+endLine); //$NON-NLS-1$
       badlox.printStackTrace();
     }
     return result;

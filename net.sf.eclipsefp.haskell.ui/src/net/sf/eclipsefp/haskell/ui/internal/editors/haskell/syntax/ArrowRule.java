@@ -28,7 +28,7 @@ public class ArrowRule extends WordRule implements IPredicateRule {
       }
     } );
     this.successToken = successToken;
-    addWord( "->", successToken );
+    addWord( "->", successToken );  //$NON-NLS-1$
   }
 
   public IToken evaluate( final ICharacterScanner scanner,

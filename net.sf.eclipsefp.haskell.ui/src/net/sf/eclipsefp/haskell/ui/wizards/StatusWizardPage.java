@@ -1,15 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
+import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
+import net.sf.eclipsefp.haskell.ui.util.StatusUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.WizardPage;
 
-import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
-import net.sf.eclipsefp.haskell.ui.util.StatusUtil;
-
 /** <p>a wizard page that provides status presentation facilities for
   * subclasses.</p>
-  * 
+  *
   * @author Leif Frenzel
   */
 public abstract class StatusWizardPage extends WizardPage {
@@ -22,11 +21,11 @@ public abstract class StatusWizardPage extends WizardPage {
     pageVisible = false;
     currentStatus = new DefaultStatus();
   }
-    
-  
+
+
   // interface methods of WizardPage
   //////////////////////////////////
-  
+
   @Override
   public void setVisible( final boolean visible ) {
     super.setVisible( visible );
@@ -34,7 +33,7 @@ public abstract class StatusWizardPage extends WizardPage {
     // policy: wizards are not allowed to come up with an error message
     if( visible && currentStatus.matches( IStatus.ERROR ) ) {
       currentStatus = new DefaultStatus();
-      ( ( DefaultStatus )currentStatus ).setError( "" );
+      ( ( DefaultStatus )currentStatus ).setError( "" ); //$NON-NLS-1$
     }
     updateStatus( currentStatus );
   }
@@ -43,7 +42,7 @@ public abstract class StatusWizardPage extends WizardPage {
     updateStatus( StatusUtil.getMostSevere( status ) );
   }
 
-  
+
   // helping methods
   //////////////////
 

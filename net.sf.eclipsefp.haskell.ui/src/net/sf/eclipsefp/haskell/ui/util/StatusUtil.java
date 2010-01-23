@@ -7,7 +7,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 
 
 /** contains utility functionality related to status analysis and displaying.
-  * 
+  *
   * @author Leif Frenzel
   */
 public class StatusUtil {
@@ -31,10 +31,10 @@ public class StatusUtil {
   /**
    * Applies the status to the status line of a dialog page.
    */
-  public static void applyToStatusLine( final DialogPage page, 
+  public static void applyToStatusLine( final DialogPage page,
                                         final IStatus status ) {
     String message = status.getMessage();
-    if( message.equals( "" ) ) {
+    if( message.equals( "" ) ) { //$NON-NLS-1$
       message = null;
     }
     switch( status.getSeverity() ) {

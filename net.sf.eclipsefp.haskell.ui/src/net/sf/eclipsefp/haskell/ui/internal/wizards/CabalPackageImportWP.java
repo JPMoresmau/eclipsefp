@@ -109,7 +109,7 @@ class CabalPackageImportWP extends NewProjectWizardPage {
 
   }
 
-  private static final String PAGE_NAME = "CabalPackageImportWP";
+  private static final String PAGE_NAME = "CabalPackageImportWP"; //$NON-NLS-1$
 
   private final PackageGroup fPackageGroup;
   private PageValidator fPageValidator;

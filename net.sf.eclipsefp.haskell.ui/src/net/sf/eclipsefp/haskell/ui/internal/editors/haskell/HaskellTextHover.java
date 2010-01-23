@@ -23,8 +23,8 @@ class HaskellTextHover extends DefaultTextHover {
 
   private final HaskellEditor editor;
 
-  private static final String ERROR_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.error";
-  private static final String WARNING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.warning";
+  private static final String ERROR_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.error"; //$NON-NLS-1$
+  private static final String WARNING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.warning"; //$NON-NLS-1$
 
   private final DefaultMarkerAnnotationAccess fMarkerAnnotationAccess;
 

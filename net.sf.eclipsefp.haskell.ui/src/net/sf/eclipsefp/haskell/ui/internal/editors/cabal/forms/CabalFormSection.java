@@ -135,7 +135,7 @@ abstract class CabalFormSection extends SectionPart {
       String value=stanza.getProperties().get( acc );
       entry.setValue( value,first );
     } else {
-      entry.setValue( "" ,first);
+      entry.setValue( "" ,first);  //$NON-NLS-1$
     }
   }
 

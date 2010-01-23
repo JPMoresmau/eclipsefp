@@ -60,11 +60,11 @@ public class GHCPackageConf implements ITreeElement {
   ////////////////////
 
   private void parseContent( final List<GHCPackage> pkgs ) {
-    StringTokenizer tok = new StringTokenizer( content, ",", false );
+    StringTokenizer tok = new StringTokenizer( content, ",", false ); //$NON-NLS-1$
     while( tok.hasMoreTokens() ) {
       String token = tok.nextToken().trim();
       boolean hidden = false;
-      if( token.startsWith( "(" ) && token.endsWith( ")" ) ) {
+      if( token.startsWith( "(" ) && token.endsWith( ")" ) ) { //$NON-NLS-1$ //$NON-NLS-2$
         hidden = true;
         token = token.substring( 1, token.length() - 1 );
       }

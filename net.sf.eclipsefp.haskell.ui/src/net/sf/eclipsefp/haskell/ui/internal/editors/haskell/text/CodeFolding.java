@@ -5,9 +5,6 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 
@@ -44,7 +41,7 @@ public class CodeFolding implements ICodeFolding {
   // helping functions
   ////////////////////
 
-  private String getGHCLibDir() {
+  /*private String getGHCLibDir() {
     String result = null;
     ICompilerManager msn = CompilerManager.getInstance();
     IHsImplementation impl = msn.getCurrentHsImplementation();
@@ -72,8 +69,8 @@ public class CodeFolding implements ICodeFolding {
       }
     }
   }
-
-  private int readInt( final String str ) {
+*/
+ /* private int readInt( final String str ) {
     int result = 0;
     try {
       result = Integer.parseInt( str );
@@ -81,5 +78,5 @@ public class CodeFolding implements ICodeFolding {
       // not a number...
     }
     return result;
-  }
+  }*/
 }
