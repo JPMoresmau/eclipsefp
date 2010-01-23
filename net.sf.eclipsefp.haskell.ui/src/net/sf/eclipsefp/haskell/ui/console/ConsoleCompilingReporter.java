@@ -14,6 +14,7 @@ package net.sf.eclipsefp.haskell.ui.console;
 
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
 
+@Deprecated
 public class ConsoleCompilingReporter extends HaskellConsole implements ICompilerListener {
 
 	public ConsoleCompilingReporter(final IConsoleCleaner cleaner) {

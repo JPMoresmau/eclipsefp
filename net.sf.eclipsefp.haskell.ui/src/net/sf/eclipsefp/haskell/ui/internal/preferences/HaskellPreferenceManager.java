@@ -5,9 +5,9 @@ import net.sf.eclipsefp.haskell.ui.console.ConsoleCompilingReporter;
 import net.sf.eclipsefp.haskell.ui.console.FakeCleaner;
 import net.sf.eclipsefp.haskell.ui.console.IConsoleCleaner;
 import net.sf.eclipsefp.haskell.ui.console.RealCleaner;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 
+@Deprecated
 public class HaskellPreferenceManager implements IPreferenceConstants {
 
 	private final ICompilerManager fCompilerManager;
@@ -30,8 +30,8 @@ public class HaskellPreferenceManager implements IPreferenceConstants {
   }
 
 	private IConsoleCleaner createCleaner() {
-		return   fPreferenceStore.getBoolean( CLEAR_BUILD_CONSOLE ) 
-		       ? new RealCleaner() 
+		return   fPreferenceStore.getBoolean( CLEAR_BUILD_CONSOLE )
+		       ? new RealCleaner()
 		       : new FakeCleaner();
 	}
 }

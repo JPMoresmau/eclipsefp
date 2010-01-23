@@ -164,12 +164,12 @@
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP">
       </page>
-      <page
+      <!--page
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP"
             name="%buildConsolePP_name">
-      </page>
+      </page-->
       <page
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP"

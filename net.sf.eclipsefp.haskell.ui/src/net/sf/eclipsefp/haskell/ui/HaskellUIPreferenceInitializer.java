@@ -11,7 +11,7 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui;
 
-import net.sf.eclipsefp.haskell.ui.internal.preferences.BuildConsolePP;
+
 import net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP;
@@ -27,7 +27,7 @@ public class HaskellUIPreferenceInitializer extends
 		IPreferenceStore prefs = HaskellUIPlugin.getDefault().getPreferenceStore();
 		HaskellEditorPP.initializeDefaultValues(prefs);
 		NewHaskellProjectPP.initializeDefaults(prefs);
-		BuildConsolePP.initializeDefaults(prefs);
+		//BuildConsolePP.initializeDefaults(prefs);
 		ScionPP.initializeDefaults(prefs);
 		DebugPP.initializeDefaults( prefs );
 	}

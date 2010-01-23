@@ -12,7 +12,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -25,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+@Deprecated
 public class BuildConsolePP extends PreferencePage implements
 		IWorkbenchPreferencePage, IPreferenceConstants {
 
@@ -40,7 +40,7 @@ public class BuildConsolePP extends PreferencePage implements
 		this(HaskellUIPlugin.getDefault().getPreferenceManager(),
 		     HaskellUIPlugin.getDefault().getPreferenceStore());
 	}
-	
+
 	public BuildConsolePP(final HaskellPreferenceManager manager,
 			              final IPreferenceStore store)
 	{
@@ -51,11 +51,11 @@ public class BuildConsolePP extends PreferencePage implements
 	@Override
 	protected Control createContents(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		
+
 		composite.setLayout(new RowLayout());
 		fChkCleanConsole = new Button(composite, SWT.CHECK);
 		fChkCleanConsole.setText("Always clear console before building");
-		
+
 		createListeners();
 		fillValuesInControls();
 		return composite;
@@ -71,7 +71,7 @@ public class BuildConsolePP extends PreferencePage implements
 			public void widgetSelected(final SelectionEvent e) {
 				fStore.setValue(CLEAR_BUILD_CONSOLE, fChkCleanConsole.getSelection());
 			}
-			
+
 		});
 	}
 
@@ -79,11 +79,11 @@ public class BuildConsolePP extends PreferencePage implements
 		fChkCleanConsole.setSelection(fStore.getBoolean(CLEAR_BUILD_CONSOLE));
 	}
 
-	
+
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
-		
+
 		fStore.setToDefault(CLEAR_BUILD_CONSOLE);
 		fillValuesInControls();
 	}
@@ -91,7 +91,7 @@ public class BuildConsolePP extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		fManager.activateBuildConsolePreferences();
-		
+
 		return true;
 	}
 

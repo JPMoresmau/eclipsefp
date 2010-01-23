@@ -44,7 +44,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   public static final String ID_PERSPECTIVE = HaskellPerspective.class
       .getName();
 
-  public static final String ID_EXT_CabalChangeListener="CabalChangeListener";
+  public static final String ID_EXT_CabalChangeListener="CabalChangeListener"; //$NON-NLS-1$
 
   // The shared instance.
   private static HaskellUIPlugin plugin;
@@ -82,6 +82,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     fScionManager.start();
   }
 
+  @Deprecated
   public HaskellPreferenceManager getPreferenceManager() {
     if( null == fPreferenceManager ) {
       fPreferenceManager = new HaskellPreferenceManager( CompilerManager
