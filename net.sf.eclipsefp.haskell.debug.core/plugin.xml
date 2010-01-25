@@ -34,7 +34,7 @@
    <extension
          point="org.eclipse.debug.core.sourceLocators">
    <sourceLocator
-       name="Haskell Source Lookup Director"
+       name="%source_locator"
     class="net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellSourceLookupDirector"
     id="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector">
     </sourceLocator>
