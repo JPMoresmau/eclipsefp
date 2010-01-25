@@ -57,7 +57,7 @@ public class GHCiSyntax {
 
   public static String formatType(final String type){
     String newType=type.replaceAll( ResourceUtil.NL, "" ); //$NON-NLS-1$
-    newType=newType.replaceAll("  ",""); //$NON-NLS-2$
+    newType=newType.replaceAll("  ",""); //$NON-NLS-1$ //$NON-NLS-2$
     return newType.trim();
   }
 }
