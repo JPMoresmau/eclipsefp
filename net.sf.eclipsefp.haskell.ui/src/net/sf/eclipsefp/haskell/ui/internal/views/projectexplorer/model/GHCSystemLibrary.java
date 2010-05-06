@@ -80,8 +80,13 @@ public class GHCSystemLibrary implements ITreeElement {
       String line = br.readLine();
       while( line != null ) {
         if( line.startsWith( "  " ) && sb != null ) { //$NON-NLS-1$
-          sb.append(line.trim());
-        } else {
+          String s=line.trim();
+          sb.append(s);
+          // output has changed for 6.12
+          if (!s.endsWith( "," )){ //$NON-NLS-1$
+            sb.append(","); //$NON-NLS-1$
+          }
+        } else if (line.endsWith( ":" )){//$NON-NLS-1$
           sb = new StringBuilder();
           String withoutColon = line.substring(0, line.length() - 1);
           entries.put(withoutColon, sb);
