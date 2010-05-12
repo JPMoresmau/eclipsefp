@@ -104,10 +104,13 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
                            final String content,
                            final IProgressMonitor mo ) throws CoreException {
     try {
-      IProgressMonitor monitor = new SubProgressMonitor( mo, 1 );
       IFile file = project.getFile( fileName );
-      InputStream is = new ByteArrayInputStream( content.getBytes( ENC ) );
-      file.create( is, true, monitor );
+      // file may exist if project is created from source version control
+      if (!file.exists()){
+        InputStream is = new ByteArrayInputStream( content.getBytes( ENC ) );
+        IProgressMonitor monitor = new SubProgressMonitor( mo, 1 );
+        file.create( is, true, monitor );
+      }
     } catch( UnsupportedEncodingException uex ) {
       HaskellCorePlugin.log( uex );
     }
