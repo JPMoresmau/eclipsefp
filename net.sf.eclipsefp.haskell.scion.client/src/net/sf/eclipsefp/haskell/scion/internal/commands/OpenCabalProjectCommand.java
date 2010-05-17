@@ -8,11 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class OpenCabalProjectCommand extends ScionCommand {
-	private IProject project;
 	
-	public OpenCabalProjectCommand(IScionCommandRunner runner, int priority,IProject p) {
+	public OpenCabalProjectCommand(IScionCommandRunner runner, int priority) {
 		super(runner, priority);
-		this.project=p;
 	}
 
 	@Override
@@ -26,7 +24,7 @@ public class OpenCabalProjectCommand extends ScionCommand {
 	}
 	
 	public IProject getProject() {
-		return project;
+		return getRunner().getProject();
 	}
 
 	@Override

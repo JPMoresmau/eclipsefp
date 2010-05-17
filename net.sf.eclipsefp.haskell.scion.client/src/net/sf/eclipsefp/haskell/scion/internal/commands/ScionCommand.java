@@ -61,14 +61,16 @@ public abstract class ScionCommand extends Job {
 		super("Scion command");
 		// can't call getMethod when calling superclass constructor
 		// (even this hack is slightly evil, calling subclass methods)
-		setName("Scion command `" + getMethod() + "'");
+		setName("Scion command '" + getMethod() + "', project "+runner.getProject().getName());
 		setPriority(priority);
 		setRule(runner);
 		this.runner = runner;
 		
 	}
 	
-	
+	public IScionCommandRunner getRunner() {
+		return runner;
+	}
 	
 	/**
 	 * Schedules this command to be run, and blocks until it is completed.
