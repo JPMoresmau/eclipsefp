@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +35,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class ScionServer {
 
 	private static String host=null; // amounts to connecting to the loopback interface
-	private static final int MAX_RETRIES = 5;
+	private static final int MAX_RETRIES = 5; // number of times to try to connect or relaunch an operation on timeout
+	private static final int SOCKET_TIMEOUT= 60 * 1000; // timeout on reading from socket, in milliseconds
 	private static final String
 		CLASS_PREFIX = "[ScionServer]",
 		SERVER_STDOUT_PREFIX = "[scion-server]";
@@ -354,6 +356,7 @@ public class ScionServer {
 			// Try making the connection
 			try {
 				socket = new Socket(host, port);
+				socket.setSoTimeout(SOCKET_TIMEOUT);
 			} catch (ConnectException ex) {
 				++count;
 				if (count == MAX_RETRIES) {
@@ -388,6 +391,10 @@ public class ScionServer {
 	 * @throws ScionCommandException if something went wrong parsing or processing the command 
 	 */
 	public synchronized void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
+		runCommandSync(command, monitor,0);
+	}
+	
+	private void runCommandSync(ScionCommand command,IProgressMonitor monitor,int count) throws ScionServerException, ScionCommandException {
 		if (process == null || socketReader == null || socketWriter == null) {
 			throw new ScionServerException(UITexts.scionServerNotRunning_message);
 		}
@@ -400,8 +407,12 @@ public class ScionServer {
 			//slurpServerOutput();
 			Trace.trace(CLASS_PREFIX, "Command executed successfully");
 		} catch (ScionServerException ex) {
-			ex.setLastWords(lastWords());
-			throw ex;
+			if (count<MAX_RETRIES && ex.getCause()!=null && ex.getCause().getCause() instanceof SocketTimeoutException){
+				runCommandSync(command,monitor,count+1);
+			} else {
+				ex.setLastWords(lastWords());
+				throw ex;
+			}
 		}
 	}
 	
