@@ -29,16 +29,25 @@ public class LaunchUpdater implements CabalFileChangeListener {
            IInteractiveLaunchOperationDelegate delegate=(IInteractiveLaunchOperationDelegate)cl.loadClass( delegateClass).newInstance();
 
            List<?> fileNames=c.getAttribute( ILaunchAttributes.FILES, new ArrayList<Object>() );
-           IFile[] files=new IFile[fileNames.size()];
-           int ix=0;
+           //IFile[] files=new IFile[fileNames.size()];
+           List<IFile> files=new ArrayList<IFile>(fileNames.size());
            for(Object o:fileNames){
              IFile f=(IFile)cabalF.getProject().findMember( (String )o);
-             files[ix++]=f;
+             //file may have been moved or deleted
+             if (f!=null){
+               files.add(f);
+             }
            }
-           String args=InteractiveLaunchOperation.getArguments(delegate,cabalF.getProject(),files);
-           ILaunchConfigurationWorkingCopy wc=c.getWorkingCopy();
-           wc.setAttribute( ILaunchAttributes.ARGUMENTS,args);
-           wc.doSave();
+
+           if (files.size()>0){
+             String args=InteractiveLaunchOperation.getArguments(delegate,cabalF.getProject(),files.toArray( new IFile[files.size()]));
+             ILaunchConfigurationWorkingCopy wc=c.getWorkingCopy();
+             wc.setAttribute( ILaunchAttributes.ARGUMENTS,args);
+             wc.doSave();
+           } else {
+             // we do not find any of the files to launch: remove the configuration
+             c.delete();
+           }
          } catch (Throwable t){
            HaskellUIPlugin.log( t );
          }
