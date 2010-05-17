@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class ScionServer {
 
-	private static final String host = null; // amounts to connecting to the loopback interface
+	private static String host=null; // amounts to connecting to the loopback interface
 	private static final int MAX_RETRIES = 5;
 	private static final String
 		CLASS_PREFIX = "[ScionServer]",
@@ -57,6 +58,16 @@ public class ScionServer {
 	private Writer serverOutput;
 	
 	private File directory;
+	
+	static {
+		try {
+			// IPV6
+			InetAddress.getAllByName("::1");
+			host ="::1";
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 	public ScionServer(String serverExecutable,Writer serverOutput,File directory) {
 		this.serverExecutable = serverExecutable;
@@ -322,8 +333,8 @@ public class ScionServer {
 	private void connectToServer(int port) throws ScionServerConnectException {
 		try {
 			socket = connectToServer(host, port);	
-			socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			socketWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF8"));
+			socketWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF8"));
 		} catch (Throwable ex) {
 			throw new ScionServerConnectException(UITexts.scionServerConnectError_message, ex);
 		}
