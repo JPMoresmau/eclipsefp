@@ -57,7 +57,8 @@ public class CompilationResultHandler extends JobChangeAdapter {
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
 			} catch (CoreException ce){
-				
+				ScionPlugin.logError(UITexts.error_refreshLocal, ce);
+				ce.printStackTrace();
 			}
 		}
 	}
