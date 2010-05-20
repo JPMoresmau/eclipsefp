@@ -9,7 +9,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -34,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class ScionServer {
 
-	private static String host=null; // amounts to connecting to the loopback interface
+	private static String host="::1"; // amounts to connecting to the loopback interface in IPV6
 	private static final int MAX_RETRIES = 5; // number of times to try to connect or relaunch an operation on timeout
 	private static final int SOCKET_TIMEOUT= 60 * 1000; // timeout on reading from socket, in milliseconds
 	private static final String
@@ -61,15 +60,17 @@ public class ScionServer {
 	
 	private File directory;
 	
-	static {
+	/*static {
 		try {
 			// IPV6
+			InetAddress.getLocalHost();
+			InetAddress.getAllByName("localhost");
 			InetAddress.getAllByName("::1");
 			host ="::1";
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	public ScionServer(String serverExecutable,Writer serverOutput,File directory) {
 		this.serverExecutable = serverExecutable;
@@ -133,11 +134,15 @@ public class ScionServer {
   		try {
   			while (true){
   				// use null for the loopback
-  				new Socket((String)null, port).close();
+  				new Socket(host, port).close();
   				port=lastPort.incrementAndGet();
   			}
   		} catch (IOException ioe){
-  			
+  			// switch back to IPV4 then
+  			if ("protocol family unavailable".equalsIgnoreCase(ioe.getMessage())){
+  				host=null;
+  				return startServerProcess();
+  			}
   		}
   		// Construct the command line
 		String executable = serverExecutable;
