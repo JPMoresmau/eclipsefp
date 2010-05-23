@@ -155,9 +155,11 @@ public class HsImplementation implements IHsImplementation {
     statuss = new IStatus[] {
       validateName(), validateLocation(), new DefaultStatus()
     };
-    if(    !statuss[ 0 ].matches( IStatus.ERROR )
-        && !statuss[ 1 ].matches(  IStatus.ERROR ) ) {
+    if(   // !statuss[ 0 ].matches( IStatus.ERROR )
+        //&&
+        !statuss[ 1 ].matches(  IStatus.ERROR ) ) {
       statuss[ 2 ] = validateExecutable(); // time-consuming, do this only as needed
     }
+
   }
 }
