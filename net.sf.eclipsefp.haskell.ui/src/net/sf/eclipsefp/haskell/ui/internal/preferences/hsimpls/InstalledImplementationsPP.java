@@ -80,7 +80,7 @@ public class InstalledImplementationsPP extends PreferencePage
 
     node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, implementationsBlock.getPref() );
     IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
-    String name = "";
+    String name = ""; //$NON-NLS-1$
     if( impl != null ) {
       name = impl.getName();
     }

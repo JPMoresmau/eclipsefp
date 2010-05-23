@@ -53,6 +53,7 @@ class ImplementationsBlock implements ISelectionProvider {
 
   private static final String KEY_COLUMN_WIDTH = ".columnWidth"; //$NON-NLS-1$
   private static final String KEY_SORT_COLUMN = ".sortColumn"; //$NON-NLS-1$
+  private static final int DEFAULT_WIDTH = 100;
 
   private final List<IHsImplementation> installations
     = new ArrayList<IHsImplementation>();
@@ -121,11 +122,11 @@ class ImplementationsBlock implements ISelectionProvider {
     viewer.refresh();
   }
 
-  boolean isDuplicateName( final String name ) {
+  boolean isDuplicateName( final String name, final HsImplementation impl ) {
     boolean result = false;
     if( name != null && name.trim().length() > 0 ) {
       for( IHsImplementation inst: installations ) {
-        result |= name.equals( inst.getName() );
+        result |= inst!=impl && name.equals( inst.getName() );
       }
     }
     return result;
@@ -400,7 +401,8 @@ class ImplementationsBlock implements ISelectionProvider {
       }
 
       if( width <= 0 ) {
-        table.getColumn( i ).pack();
+        //table.getColumn( i ).pack();
+        table.getColumn( i ).setWidth( DEFAULT_WIDTH );
       } else {
         table.getColumn( i ).setWidth( width );
       }
@@ -458,7 +460,7 @@ class ImplementationsBlock implements ISelectionProvider {
       HsImplementationDialog dlg = new HsImplementationDialog( shell, this, impl );
       dlg.setTitle( UITexts.implementationsBlock_dlgEdit );
       if( dlg.open() == Window.OK ) {
-        installations.remove( 0 );
+        installations.remove( impl );
         add( dlg.getResult() );
         autoSelectSingle( ssel );
       }

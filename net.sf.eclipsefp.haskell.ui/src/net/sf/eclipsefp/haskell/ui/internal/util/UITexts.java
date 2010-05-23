@@ -43,6 +43,9 @@ public final class UITexts extends NLS {
   public static String hsImplementationDialog_name;
   public static String hsImplementationDialog_type;
   public static String hsImplementationDialog_version;
+  public static String hsImplementationDialog_name_default;
+  public static String hsImplementationDialog_name_index;
+
 
   public static String implementationsBlock_btnAdd;
   public static String implementationsBlock_btnEdit;

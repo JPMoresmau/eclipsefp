@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -49,6 +50,7 @@ public class HsImplementationDialog extends StatusDialog {
 	private Text txtBinFolder;
   private final ImplementationsBlock implementationsBlock;
 
+  private final HsImplementation origImpl;
   private final HsImplementation currentImpl;
   private Label lblVersion;
   private Label lblLibDir;
@@ -58,7 +60,7 @@ public class HsImplementationDialog extends StatusDialog {
 	                        final HsImplementation impl ) {
     super( shell );
     setShellStyle( getShellStyle() | SWT.RESIZE );
-
+    this.origImpl=impl;
 		this.implementationsBlock = implementationsBlock;
 		currentImpl = new HsImplementation();
 		if( impl != null ) {
@@ -159,7 +161,7 @@ public class HsImplementationDialog extends StatusDialog {
   ////////////////////
 
   private void validate() {
-    if( implementationsBlock.isDuplicateName( txtName.getText() ) ) {
+    if( implementationsBlock.isDuplicateName( txtName.getText(),origImpl ) ) {
       String msg = UITexts.hsImplementationDialog_duplicate;
       DefaultStatus status = new DefaultStatus();
       status.setError( NLS.bind( msg, new String[] { txtName.getText() } ) );
@@ -252,5 +254,16 @@ public class HsImplementationDialog extends StatusDialog {
       ld = ""; //$NON-NLS-1$
     }
     lblLibDir.setText( ld.trim() );
+
+    if (vs.length()>0 && (currentImpl.getName()==null ||currentImpl.getName().length()==0)){
+      String nameStub=NLS.bind( UITexts.hsImplementationDialog_name_default,currentImpl.getType().toString(),vs);
+      txtName.setText(nameStub);
+      int index=1;
+      while( implementationsBlock.isDuplicateName( txtName.getText(),origImpl ) ) {
+        txtName.setText(NLS.bind(UITexts.hsImplementationDialog_name_index,nameStub,String.valueOf(index)));
+        index++;
+      }
+      txtName.notifyListeners( SWT.Modify, new Event() );
+    }
   }
 }
