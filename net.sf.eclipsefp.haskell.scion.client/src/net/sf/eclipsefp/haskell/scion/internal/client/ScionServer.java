@@ -396,6 +396,8 @@ public class ScionServer {
 	 * @throws ScionCommandException if something went wrong parsing or processing the command 
 	 */
 	public synchronized void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
+		// set only once
+		command.setSequenceNumber(makeSequenceNumber());
 		runCommandSync(command, monitor,0);
 	}
 	
@@ -404,7 +406,6 @@ public class ScionServer {
 			throw new ScionServerException(UITexts.scionServerNotRunning_message);
 		}
 		try {
-			command.setSequenceNumber(makeSequenceNumber());
 			command.sendCommand(socketWriter,monitor);
 			serverOutputThread.interrupt();
 			//slurpServerOutput();
@@ -413,6 +414,7 @@ public class ScionServer {
 			Trace.trace(CLASS_PREFIX, "Command executed successfully");
 		} catch (ScionServerException ex) {
 			if (count<MAX_RETRIES && ex.getCause()!=null && ex.getCause().getCause() instanceof SocketTimeoutException){
+				// this will not change sequence number
 				runCommandSync(command,monitor,count+1);
 			} else {
 				ex.setLastWords(lastWords());
