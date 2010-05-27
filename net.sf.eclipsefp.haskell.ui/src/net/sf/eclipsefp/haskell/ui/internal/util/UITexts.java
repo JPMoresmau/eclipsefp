@@ -80,6 +80,8 @@ public final class UITexts extends NLS {
   public static String scionServerBuildError;
   public static String scionServerBuildFailed;
   public static String scionServerBuildSucceeded;
+  public static String scionServerBuildJob;
+  public static String scionServerChangeJob;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;

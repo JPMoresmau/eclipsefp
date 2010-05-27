@@ -39,9 +39,12 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -67,7 +70,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  *
  * This works by listening for resource changes.
  */
-public class ScionManager implements IResourceChangeListener {
+public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
 
 
@@ -100,12 +103,39 @@ public class ScionManager implements IResourceChangeListener {
     preferenceStore.addPropertyChangeListener( new IPropertyChangeListener() {
 
       public void propertyChange( final PropertyChangeEvent event ) {
-        if( event.getProperty().equals(
-            IPreferenceConstants.SCION_SERVER_EXECUTABLE ) ) {
-          if( event.getNewValue() instanceof String
-              && !( ( String )event.getNewValue() ).equals( serverExecutable ) ) {
-            serverExecutable = ( String )event.getNewValue();
-            serverExecutableChanged();
+        IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+        // built in state has change
+        if (event.getProperty().equals( IPreferenceConstants.SCION_SERVER_BUILTIN )){
+          if (event.getNewValue() instanceof Boolean){
+            // true -> build
+            if (((Boolean)event.getNewValue()).booleanValue()){
+              Job job=new Job(UITexts.scionServerBuildJob) {
+
+                @Override
+                protected IStatus run( final IProgressMonitor monitor ) {
+                  serverExecutable=buildBuiltIn();
+                  serverExecutableChanged();
+                  return Status.OK_STATUS;
+                }
+              };
+              job.setRule( ScionManager.this );
+              job.schedule();
+
+            } else {
+              // false:read property
+              serverExecutable =  preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
+              launchChangeJob();
+            }
+          }
+          // if we're not using built in
+        } else if (!preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN )){
+          if( event.getProperty().equals(
+              IPreferenceConstants.SCION_SERVER_EXECUTABLE ) ) {
+            if( event.getNewValue() instanceof String
+                && !( ( String )event.getNewValue() ).equals( serverExecutable ) ) {
+              serverExecutable = ( String )event.getNewValue();
+              launchChangeJob();
+            }
           }
         }
       }
@@ -166,6 +196,20 @@ public class ScionManager implements IResourceChangeListener {
         new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
   }
 
+  private void launchChangeJob(){
+    if (serverExecutable!=null && serverExecutable.length()>0){
+      Job job=new Job(UITexts.scionServerChangeJob){
+        @Override
+        protected IStatus run( final IProgressMonitor monitor ) {
+          serverExecutableChanged();
+          return Status.OK_STATUS;
+        }
+      };
+      job.setRule( this );
+      job.schedule();
+    }
+  }
+
   private String buildBuiltIn() {
     IPath stateLoc=ScionPlugin.getDefault().getStateLocation();
     // increment when changed
@@ -201,6 +245,8 @@ public class ScionManager implements IResourceChangeListener {
          zis.close();
        } catch (Exception e){
          HaskellUIPlugin.log(UITexts.scionServerUnzipError,e);
+         // delete so we try to unzip next time
+         FileUtil.deleteRecursively( sd );
        }
       }
     // build final exe location
@@ -502,6 +548,14 @@ public class ScionManager implements IResourceChangeListener {
       } );
       serverStartupErrorReported = true;
     }
+  }
+
+  public boolean contains(final ISchedulingRule rule) {
+    return rule == this;
+  }
+
+  public boolean isConflicting(final ISchedulingRule rule) {
+    return rule == this;
   }
 
 }

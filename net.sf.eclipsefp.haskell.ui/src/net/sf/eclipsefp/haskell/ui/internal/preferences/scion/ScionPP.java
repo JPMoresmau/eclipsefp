@@ -73,6 +73,7 @@ public class ScionPP
 		addField(autodetect);
 
 
+
 	}
 
 	@Override
@@ -121,6 +122,13 @@ public class ScionPP
 	  // scion might be on the path...
 	  //store.setDefault(SCION_SERVER_EXECUTABLE, getServerExecutableName());
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
+	}
+
+	@Override
+	protected void initialize() {
+	  super.initialize();
+	  autodetect.setEnabled( !serverBuiltInField.getBooleanValue(), parent );
+	  serverExecutableField.setEnabled(  !serverBuiltInField.getBooleanValue(), parent );
 	}
 
 }

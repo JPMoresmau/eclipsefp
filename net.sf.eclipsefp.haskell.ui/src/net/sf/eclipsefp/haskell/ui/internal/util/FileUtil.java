@@ -134,4 +134,25 @@ public class FileUtil {
     return null;
   }
 
+  /**
+   * Delete all contents including directories
+   */
+  static public boolean deleteRecursively( final File file ) {
+    if ( file == null || !file.exists() ) {
+      return true;
+    }
+
+    // If file is a file, delete it
+    if ( file.isFile() ) {
+      boolean del = file.delete();
+      return del;
+    }
+    // The file is a directory
+    File[] files = file.listFiles();
+    for (File f:files){
+      deleteRecursively(f);
+    }
+    boolean del = file.delete();
+    return del;
+  }
 }
