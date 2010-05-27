@@ -284,7 +284,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
         baos.reset();
         //"cabal build"
         if (code==0){
-          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureSucceeded,configureOutput),IStatus.INFO);
+          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureSucceeded,ResourceUtil.NL+configureOutput),IStatus.INFO);
           pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"build" ); //$NON-NLS-1$
           pb.directory( sd );
           pb.redirectErrorStream( true );
@@ -299,16 +299,16 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
             code=p.waitFor();
             String buildOutput=new String (baos.toByteArray());
             if (code==0){
-              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildSucceeded,buildOutput),IStatus.INFO);
+              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildSucceeded,ResourceUtil.NL+buildOutput),IStatus.INFO);
             } else {
-              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildFailed,buildOutput),IStatus.ERROR);
+              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildFailed,ResourceUtil.NL+ buildOutput),IStatus.ERROR);
             }
           } catch (Exception e){
             HaskellUIPlugin.log(UITexts.scionServerBuildError,e);
           }
 
         } else {
-          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureFailed,configureOutput),IStatus.ERROR);
+          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureFailed,ResourceUtil.NL+configureOutput),IStatus.ERROR);
         }
 
       } catch (Exception e){
