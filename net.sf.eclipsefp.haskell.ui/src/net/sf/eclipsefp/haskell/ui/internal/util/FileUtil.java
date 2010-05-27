@@ -1,7 +1,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.util;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
@@ -28,7 +31,7 @@ public class FileUtil {
 	 * On Windows, it appends ".exe".
 	 */
 	public static String makeExecutableName(final String baseName) {
-	  if (runningOnWindows()) {
+	  if (runningOnWindows() && !baseName.endsWith( "." + WINDOWS_EXECUTABLE_EXTENSIONS[0] )) { //$NON-NLS-1$
 	    return baseName + "." + WINDOWS_EXECUTABLE_EXTENSIONS[0]; //$NON-NLS-1$
 	  } else {
 	    return baseName;
@@ -78,6 +81,57 @@ public class FileUtil {
 
   private static boolean runningOnWindows() {
     return Platform.getOS().equals( Platform.OS_WIN32 );
+  }
+
+  public static File findExecutableInPath(final String shortFileName){
+    return findInPath(makeExecutableName( shortFileName ),new FileFilter() {
+
+      public boolean accept( final File pathname ) {
+        return FileUtil.isExecutable( pathname );
+      }
+    });
+  }
+
+  public static File findInPath(final String shortFileName,final FileFilter ff){
+    // build up a list of directories that might contain the file
+    List<File> candidates = new ArrayList<File>(32);
+
+    // add all directories from the $PATH variable
+    // TODO TtC this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
+    String path = System.getenv("PATH"); //$NON-NLS-1$
+    for (String dir : path.split(File.pathSeparator)) {
+      candidates.add(new File(dir));
+    }
+
+    // add common bin directories from the user's home dir
+    String[] homes = new String[] {
+      System.getenv("HOME"), //$NON-NLS-1$
+      System.getProperty("user.home") //$NON-NLS-1$
+    };
+    String[] userBins = new String[] {
+      ".cabal/bin", //$NON-NLS-1$
+      "usr/bin", //$NON-NLS-1$
+      "bin", //$NON-NLS-1$
+    };
+    for (String home : homes) {
+      for (String userBin : userBins) {
+        candidates.add(new File(home, userBin));
+      }
+    }
+
+    // add the current working directory
+    String pwd = System.getProperty("user.dir"); //$NON-NLS-1$
+    candidates.add(new File(pwd));
+
+
+    for (File candidate : candidates) {
+      File file = new File(candidate, shortFileName);
+      if (file.exists() && (ff==null || ff.accept( file ))) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
 }

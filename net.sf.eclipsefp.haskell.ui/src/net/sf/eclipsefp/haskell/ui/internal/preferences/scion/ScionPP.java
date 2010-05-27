@@ -1,16 +1,16 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.FileUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,6 +31,9 @@ public class ScionPP
   public static final String PAGE_ID = "net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP"; //$NON-NLS-1$
 
 	private ExecutableFileFieldEditor serverExecutableField;
+	private BooleanFieldEditor serverBuiltInField;
+	private ButtonFieldEditor autodetect;
+	private Composite parent;
 
 	public ScionPP() {
 		super(GRID);
@@ -46,7 +49,10 @@ public class ScionPP
 	 */
 	@Override
 	public void createFieldEditors() {
-		Composite parent = getFieldEditorParent();
+		parent = getFieldEditorParent();
+
+		serverBuiltInField=new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN, UITexts.scionServerBuiltIn_label, parent );
+		addField(serverBuiltInField);
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
@@ -54,7 +60,7 @@ public class ScionPP
 		serverExecutableField.setEmptyStringAllowed(true);
 		addField(serverExecutableField);
 
-		ButtonFieldEditor autodetect = new ButtonFieldEditor(
+		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
 				UITexts.autodetectButton_text,
 				new SelectionAdapter() {
@@ -65,6 +71,18 @@ public class ScionPP
 				},
 				parent);
 		addField(autodetect);
+
+
+	}
+
+	@Override
+	public void propertyChange( final PropertyChangeEvent event ) {
+	  if (event.getSource()==serverBuiltInField ){
+	    Boolean b=(Boolean)event.getNewValue();
+      autodetect.setEnabled( !b.booleanValue(), parent );
+      serverExecutableField.setEnabled(  !b.booleanValue(), parent );
+	  }
+	  super.propertyChange( event );
 	}
 
 	private void doDetectServer() {
@@ -84,46 +102,8 @@ public class ScionPP
 	 * @return the filename of the Scion server, or null if it could not be found
 	 */
 	private String detectScionServer() {
-		// build up a list of directories that might contain the scion-server binary
-		List<File> candidates = new ArrayList<File>(32);
-
-		// add all directories from the $PATH variable
-		// TODO TtC this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
-		String path = System.getenv("PATH"); //$NON-NLS-1$
-		for (String dir : path.split(File.pathSeparator)) {
-			candidates.add(new File(dir));
-		}
-
-		// add common bin directories from the user's home dir
-		String[] homes = new String[] {
-			System.getenv("HOME"), //$NON-NLS-1$
-			System.getProperty("user.home") //$NON-NLS-1$
-		};
-		String[] userBins = new String[] {
-			".cabal/bin", //$NON-NLS-1$
-			"usr/bin", //$NON-NLS-1$
-			"bin", //$NON-NLS-1$
-		};
-		for (String home : homes) {
-			for (String userBin : userBins) {
-				candidates.add(new File(home, userBin));
-			}
-		}
-
-		// add the current working directory
-		String pwd = System.getProperty("user.dir"); //$NON-NLS-1$
-		candidates.add(new File(pwd));
-
-		String executableName = getServerExecutableName();
-
-		for (File candidate : candidates) {
-			File file = new File(candidate, executableName);
-			if (file.isFile() && FileUtil.isExecutable(file)) {
-				return file.getAbsolutePath();
-			}
-		}
-
-		return null;
+	  File f=FileUtil.findExecutableInPath( getServerExecutableName());
+	  return f!=null?f.getAbsolutePath():null;
 	}
 
 	public static String getServerExecutableName() {
@@ -139,7 +119,8 @@ public class ScionPP
 
 	public static void initializeDefaults(final IPreferenceStore store) {
 	  // scion might be on the path...
-	  store.setDefault(SCION_SERVER_EXECUTABLE, getServerExecutableName());
+	  //store.setDefault(SCION_SERVER_EXECUTABLE, getServerExecutableName());
+	  store.setDefault( SCION_SERVER_BUILTIN, true );
 	}
 
 }

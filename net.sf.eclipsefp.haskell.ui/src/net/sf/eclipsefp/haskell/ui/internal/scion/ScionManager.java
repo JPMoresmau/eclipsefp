@@ -1,13 +1,21 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -17,6 +25,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
+import net.sf.eclipsefp.haskell.ui.internal.util.FileUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -29,7 +38,9 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -58,6 +69,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  */
 public class ScionManager implements IResourceChangeListener {
 
+
+
   private String serverExecutable = null;
 
   /**
@@ -77,8 +90,13 @@ public class ScionManager implements IResourceChangeListener {
   public void start() {
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault()
         .getPreferenceStore();
-    serverExecutable = preferenceStore
-        .getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
+    boolean useBuiltIn=preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
+    if (useBuiltIn){
+      serverExecutable=buildBuiltIn();
+    } else {
+      serverExecutable = preferenceStore
+          .getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
+    }
     preferenceStore.addPropertyChangeListener( new IPropertyChangeListener() {
 
       public void propertyChange( final PropertyChangeEvent event ) {
@@ -146,6 +164,117 @@ public class ScionManager implements IResourceChangeListener {
 
     ResourcesPlugin.getWorkspace().addResourceChangeListener(
         new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
+  }
+
+  private String buildBuiltIn() {
+    IPath stateLoc=ScionPlugin.getDefault().getStateLocation();
+    // increment when changed
+
+    IPath scionDir=stateLoc.append( "scion-"+ScionPlugin.SCION_VERSION);  //$NON-NLS-1$
+    File sd=scionDir.toFile();
+    if (!sd.exists()){
+
+        // extract scion from bundled zip file
+       InputStream is=ScionPlugin.class.getResourceAsStream( "scion-"+ScionPlugin.SCION_VERSION+".zip" ); //$NON-NLS-1$ //$NON-NLS-2$
+       ZipInputStream zis=new ZipInputStream( is );
+       try {
+         ZipEntry ze=zis.getNextEntry();
+         while(ze!=null){
+           int BUFFER = 2048;
+           if (!ze.isDirectory()){
+             File f=new File(sd,ze.getName());
+             f.getParentFile().mkdirs();
+             FileOutputStream fos = new FileOutputStream(f);
+             BufferedOutputStream dest = new
+               BufferedOutputStream(fos, BUFFER);
+             byte[] data=new byte[BUFFER];
+             int count=0;
+             while ((count = zis.read(data, 0, BUFFER)) != -1) {
+               //System.out.write(x);
+               dest.write(data, 0, count);
+            }
+             dest.close();
+             fos.close();
+           }
+           ze=zis.getNextEntry();
+         }
+         zis.close();
+       } catch (Exception e){
+         HaskellUIPlugin.log(UITexts.scionServerUnzipError,e);
+       }
+      }
+    // build final exe location
+    IPath exeLocation=scionDir.append( "dist" ).append( "build" ).append( "scion-server" ).append( "scion-server" );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+    if (Platform.getOS().equals( Platform.OS_WIN32 )){
+      exeLocation=exeLocation.addFileExtension( "exe" ); //$NON-NLS-1$
+    }
+    if (!exeLocation.toFile().exists()){
+      File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());
+      String cabalExe="cabal";//$NON-NLS-1$
+      if (Platform.getOS().equals( Platform.OS_WIN32 )){
+        cabalExe=cabalExe+".exe" ; //$NON-NLS-1$
+      }
+      File cabalBin=new File(binDir,cabalExe);
+      if (!cabalBin.exists()){
+        cabalBin=FileUtil.findExecutableInPath( cabalBin.getName());
+      }
+      //"cabal configure"
+      ProcessBuilder pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"configure"); //$NON-NLS-1$
+      pb.directory( sd );
+      pb.redirectErrorStream( true );
+      int code=-1;
+      ByteArrayOutputStream baos=new ByteArrayOutputStream();
+      try {
+        Process p=pb.start();
+        InputStream is=p.getInputStream();
+        int r;
+        while ((r=is.read())!=-1){
+          baos.write( r );
+          System.out.write(r);
+        }
+        code=p.waitFor();
+
+        String configureOutput=new String (baos.toByteArray());
+        baos.reset();
+        //"cabal build"
+        if (code==0){
+          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureSucceeded,configureOutput),IStatus.INFO);
+          pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"build" ); //$NON-NLS-1$
+          pb.directory( sd );
+          pb.redirectErrorStream( true );
+          code=-1;
+          try {
+            p=pb.start();
+            is=p.getInputStream();
+            while ((r=is.read())!=-1){
+              baos.write( r );
+              System.out.write(r);
+            }
+            code=p.waitFor();
+            String buildOutput=new String (baos.toByteArray());
+            if (code==0){
+              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildSucceeded,buildOutput),IStatus.INFO);
+            } else {
+              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildFailed,buildOutput),IStatus.ERROR);
+            }
+          } catch (Exception e){
+            HaskellUIPlugin.log(UITexts.scionServerBuildError,e);
+          }
+
+        } else {
+          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureFailed,configureOutput),IStatus.ERROR);
+        }
+
+      } catch (Exception e){
+        HaskellUIPlugin.log(UITexts.scionServerConfigureError,e);
+      }
+
+
+    }
+    if (exeLocation.toFile().exists()){
+      return exeLocation.toOSString();
+    }
+    return null;
   }
 
   /**

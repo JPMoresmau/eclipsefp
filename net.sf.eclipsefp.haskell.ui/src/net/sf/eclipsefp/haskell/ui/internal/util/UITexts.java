@@ -60,6 +60,7 @@ public final class UITexts extends NLS {
   public static String installedImplementationsPP_msg;
   public static String installedImplementationsPP_nothingSelected;
 
+  public static String scionServerBuiltIn_label;
   public static String scionServerExecutable_label;
   public static String autodetectButton_label;
   public static String autodetectButton_text;
@@ -72,6 +73,13 @@ public final class UITexts extends NLS {
 
   public static String scionServerStartupError_title;
   public static String scionServerStartupError_message;
+  public static String scionServerUnzipError;
+  public static String scionServerConfigureError;
+  public static String scionServerConfigureFailed;
+  public static String scionServerConfigureSucceeded;
+  public static String scionServerBuildError;
+  public static String scionServerBuildFailed;
+  public static String scionServerBuildSucceeded;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;
