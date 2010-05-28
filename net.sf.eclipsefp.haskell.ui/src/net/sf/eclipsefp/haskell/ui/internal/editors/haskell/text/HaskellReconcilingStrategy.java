@@ -88,7 +88,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
 
   private void reconcile() {
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
-    if (editor.isDirty()) {
+    if (editor.isDirty() && instance!=null) {
       instance.reloadFile( file, editor.getDocument() ,new Runnable() {
 
         public void run() {

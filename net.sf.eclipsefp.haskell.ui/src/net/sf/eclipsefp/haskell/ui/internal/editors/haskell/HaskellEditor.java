@@ -324,13 +324,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // Reload the file on the Scion server side
     IFile file = findFile();
     if( file != null ) {
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).reloadFile(file,new Runnable() {
+      ScionInstance instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
+      if (instance!=null){
+        instance.reloadFile(file,new Runnable() {
 
-        public void run() {
-          synchronize();
-        }
-      });
-
+          public void run() {
+            synchronize();
+          }
+        });
+      }
     }
   }
 
