@@ -254,7 +254,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     if (Platform.getOS().equals( Platform.OS_WIN32 )){
       exeLocation=exeLocation.addFileExtension( "exe" ); //$NON-NLS-1$
     }
-    if (!exeLocation.toFile().exists()){
+    if (!exeLocation.toFile().exists() && CompilerManager.getInstance().getCurrentHsImplementation()!=null){
       File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());
       String cabalExe="cabal";//$NON-NLS-1$
       if (Platform.getOS().equals( Platform.OS_WIN32 )){
