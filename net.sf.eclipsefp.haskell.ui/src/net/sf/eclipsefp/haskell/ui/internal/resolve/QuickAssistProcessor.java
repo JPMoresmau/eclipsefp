@@ -39,7 +39,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
       if (ann instanceof MarkerAnnotation){
         Position p=invocationContext.getSourceViewer().getAnnotationModel().getPosition( ann );
 
-        if (p.includes(invocationContext.getOffset())){
+        if (p.getOffset()==invocationContext.getOffset() || p.includes(invocationContext.getOffset())){
           IMarker marker=((MarkerAnnotation)ann ).getMarker();
           IMarkerResolution[] res1=generator.getResolutions( marker);
           for (IMarkerResolution imr:res1){

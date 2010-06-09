@@ -22,9 +22,6 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
 
   private final String pragma;
 
-
-
-
   public AddLanguagePramaResolution( final String pragma ) {
     super();
     this.pragma = pragma;

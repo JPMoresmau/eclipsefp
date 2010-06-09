@@ -39,6 +39,9 @@ public class BuildMarkerResolutionGenerator implements
             if (ix2>-1){
               String flag=msg.substring( start,ix2 ).trim();
               addPragma(res,flag);
+            } else {
+              String flag=msg.substring( start).trim();
+              addPragma(res,flag);
             }
          } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
            int end=ix-2;
