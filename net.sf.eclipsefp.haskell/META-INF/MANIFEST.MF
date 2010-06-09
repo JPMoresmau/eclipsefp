@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell;singleton:=true
-Bundle-Version: 1.111.0
+Bundle-Version: 1.112.0
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.cheatsheets;bundle-version="[3.2.0,4.0.0)",

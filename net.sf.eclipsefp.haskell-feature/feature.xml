@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="FP: Haskell support for Eclipse"
-      version="1.111.0"
+      version="1.112.0"
       provider-name="eclipsefp.sourceforge.net">
 
    <description>
@@ -49,14 +49,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
@@ -70,28 +70,28 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.haddock"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
@@ -104,28 +104,28 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.scion.client"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
 </feature>
