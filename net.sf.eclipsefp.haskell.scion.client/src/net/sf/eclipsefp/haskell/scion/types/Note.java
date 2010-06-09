@@ -99,8 +99,14 @@ public class Note {
 			kind.equals(other.kind) &&
 			location.equals(other.location) &&
 			message.equals(other.message) &&
-			additionalInfo.equals(other.additionalInfo);
+			((additionalInfo==null && other.additionalInfo==null) || (additionalInfo!=null && additionalInfo.equals(other.additionalInfo)));
 	}
+	
+	@Override
+	public int hashCode() {
+		return kind.hashCode()+location.hashCode();
+	}
+	
 	
 	@Override
 	public String toString() {

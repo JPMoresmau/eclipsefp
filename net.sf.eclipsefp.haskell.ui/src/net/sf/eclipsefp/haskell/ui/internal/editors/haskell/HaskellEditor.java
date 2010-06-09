@@ -325,6 +325,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     IFile file = findFile();
     if( file != null ) {
       ScionInstance instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
+
+      // since we call synchronize
+      // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
       if (instance!=null){
         instance.reloadFile(file,new Runnable() {
 

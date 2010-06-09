@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.scion.internal.client;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
@@ -17,6 +20,8 @@ public class CompilationResultHandler extends JobChangeAdapter {
 	private IProject project;
 	private int maxLines=Integer.MAX_VALUE;
 	
+	private Set<Note> processed=new HashSet<Note>();
+	
 	public CompilationResultHandler(IProject project) {
 		super();
 		this.project = project;
@@ -33,17 +38,19 @@ public class CompilationResultHandler extends JobChangeAdapter {
 		if (cr!=null){
 			String root=project.getLocation().toOSString();
 			for (Note n:cr.getNotes()){
-				String s=n.getLocation().getFileName();
-				if (s.startsWith(root)){
-					s=s.substring(root.length());
-				}
-				IResource res=project.findMember(s);
-				if (res!=null){
-					try {
-						n.applyAsMarker(res,maxLines);
-					}	catch( CoreException ex ) {
-						ScionPlugin.logError(UITexts.error_applyMarkers, ex);
-						ex.printStackTrace();
+				if (processed.add(n)){
+					String s=n.getLocation().getFileName();
+					if (s.startsWith(root)){
+						s=s.substring(root.length());
+					}
+					IResource res=project.findMember(s);
+					if (res!=null){
+						try {
+							n.applyAsMarker(res,maxLines);
+						}	catch( CoreException ex ) {
+							ScionPlugin.logError(UITexts.error_applyMarkers, ex);
+							ex.printStackTrace();
+						}
 					}
 				}
 			}
