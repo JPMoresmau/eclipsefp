@@ -58,26 +58,28 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           final ScionInstance si = HaskellUIPlugin.getDefault()
               .getScionInstanceManager( f );
           // sync access
-          synchronized( si ) {
-            si.outlineUnopenedFile( f, new OutlineHandler() {
+          if (si!=null){
+            synchronized( si ) {
+              si.outlineUnopenedFile( f, new OutlineHandler() {
 
-              public void outlineResult( final List<OutlineDef> outlineDefs ) {
-                OutlineCP cp = new OutlineCP();
-                cp.inputChanged( null, null, outlineDefs );
-                for( OutlineDef def: outlineDefs ) {
-                  if( def.getParentID() == null ) {
-                    result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
+                public void outlineResult( final List<OutlineDef> outlineDefs ) {
+                  OutlineCP cp = new OutlineCP();
+                  cp.inputChanged( null, null, outlineDefs );
+                  for( OutlineDef def: outlineDefs ) {
+                    if( def.getParentID() == null ) {
+                      result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
+                    }
+                  }
+                  synchronized( si ) {
+                    si.notifyAll();
                   }
                 }
-                synchronized( si ) {
-                  si.notifyAll();
-                }
+              } );
+              try {
+                si.wait( 10000 ); // 10 seconds max
+              } catch( InterruptedException ie ) {
+                // noop
               }
-            } );
-            try {
-              si.wait( 10000 ); // 10 seconds max
-            } catch( InterruptedException ie ) {
-              // noop
             }
           }
         }

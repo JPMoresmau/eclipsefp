@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -264,8 +265,11 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
       if (!cabalBin.exists()){
         cabalBin=FileUtil.findExecutableInPath( cabalBin.getName());
       }
-      //"cabal configure"
-      ProcessBuilder pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"configure"); //$NON-NLS-1$
+
+      //"cabal install"
+      // we tried to only configure/build, but only install fetches the dependencies
+      // the trick mentioned http://hackage.haskell.org/trac/hackage/ticket/411 didn't work
+      ProcessBuilder pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"install"); //$NON-NLS-1$
       pb.directory( sd );
       pb.redirectErrorStream( true );
       int code=-1;
@@ -280,46 +284,74 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
         }
         code=p.waitFor();
 
-        String configureOutput=new String (baos.toByteArray());
+        String depsOutput=new String (baos.toByteArray());
         baos.reset();
-        //"cabal build"
+
         if (code==0){
-          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureSucceeded,ResourceUtil.NL+configureOutput),IStatus.INFO);
-          pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"build" ); //$NON-NLS-1$
-          pb.directory( sd );
-          pb.redirectErrorStream( true );
-          code=-1;
-          try {
-            p=pb.start();
-            is=p.getInputStream();
-            while ((r=is.read())!=-1){
-              baos.write( r );
-              System.out.write(r);
-            }
-            code=p.waitFor();
-            String buildOutput=new String (baos.toByteArray());
-            if (code==0){
-              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildSucceeded,ResourceUtil.NL+buildOutput),IStatus.INFO);
-            } else {
-              HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildFailed,ResourceUtil.NL+ buildOutput),IStatus.ERROR);
-            }
-          } catch (Exception e){
-            HaskellUIPlugin.log(UITexts.scionServerBuildError,e);
-          }
-
+          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerInstallSucceeded,ResourceUtil.NL+depsOutput),IStatus.INFO);
         } else {
-          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureFailed,ResourceUtil.NL+configureOutput),IStatus.ERROR);
+          HaskellUIPlugin.log( NLS.bind( UITexts.scionServerInstallFailed,ResourceUtil.NL+depsOutput),IStatus.ERROR);
         }
-
       } catch (Exception e){
-        HaskellUIPlugin.log(UITexts.scionServerConfigureError,e);
+        HaskellUIPlugin.log(UITexts.scionServerInstallError,e);
       }
+        //}
+          //"cabal configure -fserver"
+        /*pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"configure","-fserver"); //$NON-NLS-1$
+        pb.directory( sd );
+        pb.redirectErrorStream( true );
+        baos=new ByteArrayOutputStream();
+        try {
+          p=pb.start();
+          is=p.getInputStream();
+          while ((r=is.read())!=-1){
+            baos.write( r );
+            System.out.write(r);
+          }
+          code=p.waitFor();
+
+          String configureOutput=new String (baos.toByteArray());
+          baos.reset();
+          //"cabal build"
+          if (code==0){
+            HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureSucceeded,ResourceUtil.NL+configureOutput),IStatus.INFO);
+            pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"build" ); //$NON-NLS-1$
+            pb.directory( sd );
+            pb.redirectErrorStream( true );
+            code=-1;
+            try {
+              p=pb.start();
+              is=p.getInputStream();
+              while ((r=is.read())!=-1){
+                baos.write( r );
+                System.out.write(r);
+              }
+              code=p.waitFor();
+              String buildOutput=new String (baos.toByteArray());
+              if (code==0){
+                HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildSucceeded,ResourceUtil.NL+buildOutput),IStatus.INFO);
+              } else {
+                HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildFailed,ResourceUtil.NL+ buildOutput),IStatus.ERROR);
+              }
+            } catch (Exception e){
+              HaskellUIPlugin.log(UITexts.scionServerBuildError,e);
+            }
+
+          } else {
+            HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureFailed,ResourceUtil.NL+configureOutput),IStatus.ERROR);
+          }
+        } catch (Exception e){
+          HaskellUIPlugin.log(UITexts.scionServerConfigureError,e);
+        }
+        */
+
 
 
     }
     if (exeLocation.toFile().exists()){
       return exeLocation.toOSString();
     }
+    HaskellUIPlugin.log( NLS.bind(UITexts.scionServerExecutableNotPresent,exeLocation.toOSString()), IStatus.ERROR );
     return null;
   }
 
@@ -451,9 +483,17 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    */
   private void serverExecutableChanged() {
     ScionServerStartupException exception = null;
-    for( IProject project: instances.keySet() ) {
+    // avoid concurrent modifs
+    List<IProject> lp=new ArrayList<IProject>(instances.keySet());
+    for( IProject project: lp ) {
       try {
-        instances.get( project ).setServerExecutable( serverExecutable );
+        ScionInstance instance=instances.get( project );
+        if (instance!=null){
+          instance.setServerExecutable( serverExecutable );
+        } else {
+          instance=startInstance( project );
+          instances.put( project, instance );
+        }
       } catch( ScionServerStartupException ex ) {
         exception = ex;
       }
@@ -490,6 +530,9 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * the instance to the instances map.
    */
   private synchronized ScionInstance startInstance( final IProject project ) {
+    if (serverExecutable==null){
+      return null;
+    }
     String name = NLS.bind( UITexts.scion_console_title, project.getName() );
     HaskellConsole c = new HaskellConsole( null, name );
 
@@ -508,6 +551,9 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * instance from the instances map.
    */
   private void stopInstance( final ScionInstance instance ) {
+    if (instance==null){
+      return;
+    }
     instance.stop();
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
     String name = NLS.bind( UITexts.scion_console_title, instance.getProject()

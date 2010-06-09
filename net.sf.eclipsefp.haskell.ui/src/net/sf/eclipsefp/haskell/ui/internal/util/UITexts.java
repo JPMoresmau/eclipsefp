@@ -74,14 +74,24 @@ public final class UITexts extends NLS {
   public static String scionServerStartupError_title;
   public static String scionServerStartupError_message;
   public static String scionServerUnzipError;
-  public static String scionServerConfigureError;
-  public static String scionServerConfigureFailed;
-  public static String scionServerConfigureSucceeded;
-  public static String scionServerBuildError;
-  public static String scionServerBuildFailed;
-  public static String scionServerBuildSucceeded;
+
+//  public static String scionServerDependenciesError;
+//  public static String scionServerDependenciesFailed;
+//  public static String scionServerDependenciesSucceeded;
+
+  public static String scionServerInstallError;
+  public static String scionServerInstallFailed;
+  public static String scionServerInstallSucceeded;
+
+//  public static String scionServerConfigureError;
+//  public static String scionServerConfigureFailed;
+//  public static String scionServerConfigureSucceeded;
+//  public static String scionServerBuildError;
+//  public static String scionServerBuildFailed;
+//  public static String scionServerBuildSucceeded;
   public static String scionServerBuildJob;
   public static String scionServerChangeJob;
+  public static String scionServerExecutableNotPresent;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;

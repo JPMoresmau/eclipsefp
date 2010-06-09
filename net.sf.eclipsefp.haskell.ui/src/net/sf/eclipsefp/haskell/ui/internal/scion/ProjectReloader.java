@@ -2,6 +2,7 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -15,6 +16,9 @@ public class ProjectReloader implements CabalFileChangeListener{
 
 
   public void cabalFileChanged( final IFile cabalF ) {
-    HaskellUIPlugin.getDefault().getScionManager().getScionInstance( cabalF ).buildProject( false );
+    ScionInstance si=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( cabalF );
+    if (si!=null){
+      si.buildProject( false );
+    }
   }
 }
