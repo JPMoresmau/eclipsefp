@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.scion.types.Note;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -19,7 +20,7 @@ import org.eclipse.jface.text.IDocument;
 public class CompilationResultHandler extends JobChangeAdapter {
 	private IProject project;
 	private int maxLines=Integer.MAX_VALUE;
-	
+	private IPath documentPath;
 	private Set<Note> processed=new HashSet<Note>();
 	
 	public CompilationResultHandler(IProject project) {
@@ -27,10 +28,11 @@ public class CompilationResultHandler extends JobChangeAdapter {
 		this.project = project;
 	}
 
-	public CompilationResultHandler(IProject project,IDocument doc) {
+	public CompilationResultHandler(IProject project,IDocument doc, IPath documentPath) {
 		super();
 		this.project = project;
 		this.maxLines=doc.getNumberOfLines();
+		this.documentPath=documentPath;
 	}
 	
 	public void process(ICompilerResult r){
@@ -45,12 +47,13 @@ public class CompilationResultHandler extends JobChangeAdapter {
 					}
 					final IResource res=project.findMember(s);
 					if (res!=null){
-							try {
-								n.applyAsMarker(res,maxLines);
-							}	catch( CoreException ex ) {
-								ScionPlugin.logError(UITexts.error_applyMarkers, ex);
-								ex.printStackTrace();
-							}
+						int max=documentPath==null || !documentPath.equals(res.getLocation())?Integer.MAX_VALUE:maxLines;
+						try {
+							n.applyAsMarker(res,max);
+						}	catch( CoreException ex ) {
+							ScionPlugin.logError(UITexts.error_applyMarkers, ex);
+							ex.printStackTrace();
+						}
 					}
 				}
 			}

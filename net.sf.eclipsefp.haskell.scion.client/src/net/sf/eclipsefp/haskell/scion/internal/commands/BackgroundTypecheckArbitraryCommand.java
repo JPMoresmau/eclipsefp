@@ -37,7 +37,7 @@ public class BackgroundTypecheckArbitraryCommand extends
 
 	@Override
 	protected void doProcessCompilationResult(){
-		new CompilationResultHandler(file.getProject(),doc).process(this);
+		new CompilationResultHandler(file.getProject(),doc,file.getLocation()).process(this);
 	}
 
 }
