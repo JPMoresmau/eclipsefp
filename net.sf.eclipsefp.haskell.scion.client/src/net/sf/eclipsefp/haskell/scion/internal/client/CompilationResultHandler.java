@@ -37,20 +37,20 @@ public class CompilationResultHandler extends JobChangeAdapter {
 		CompilationResult cr=r.getCompilationResult();
 		if (cr!=null){
 			String root=project.getLocation().toOSString();
-			for (Note n:cr.getNotes()){
+			for (final Note n:cr.getNotes()){
 				if (processed.add(n)){
 					String s=n.getLocation().getFileName();
 					if (s.startsWith(root)){
 						s=s.substring(root.length());
 					}
-					IResource res=project.findMember(s);
+					final IResource res=project.findMember(s);
 					if (res!=null){
-						try {
-							n.applyAsMarker(res,maxLines);
-						}	catch( CoreException ex ) {
-							ScionPlugin.logError(UITexts.error_applyMarkers, ex);
-							ex.printStackTrace();
-						}
+							try {
+								n.applyAsMarker(res,maxLines);
+							}	catch( CoreException ex ) {
+								ScionPlugin.logError(UITexts.error_applyMarkers, ex);
+								ex.printStackTrace();
+							}
 					}
 				}
 			}

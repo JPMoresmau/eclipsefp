@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.scion.types;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,6 +63,9 @@ public class Note {
 	
 	public void applyAsMarker(IResource resource,int maxLines) throws CoreException {
 		if (resource != null && resource.isAccessible()) {
+			if (!resource.getWorkspace().isTreeLocked()){
+				resource.refreshLocal(0, new NullProgressMonitor());
+			}
 			IMarker marker = resource.createMarker(IMarker.PROBLEM);
 	        int severity;
 	        switch (kind) {

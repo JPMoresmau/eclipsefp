@@ -211,7 +211,7 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public boolean contains(ISchedulingRule rule) {
-		return rule == this || rule == getProject();
+		return rule == this || rule == getProject() || (getProject().contains(rule));
 	}
 
 	public boolean isConflicting(ISchedulingRule rule) {

@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.core.jparser.ast.CompilationUnit;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 import antlr.RecognitionException;
@@ -20,6 +21,9 @@ import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
 public class JavaParserBridge implements IHaskellParser {
 
 	public ICompilationUnit parse(final IFile file) throws CoreException {
+	  if (!file.getWorkspace().isTreeLocked()){
+	      file.refreshLocal( 0, new NullProgressMonitor() );
+	  }
 		String sourceCode = "";
 		Reader originalInput = new InputStreamReader(file.getContents()); 
 		try {
