@@ -66,7 +66,7 @@ public class Note {
 			if (!resource.getWorkspace().isTreeLocked()){
 				resource.refreshLocal(0, new NullProgressMonitor());
 			}
-			IMarker marker = resource.createMarker(IMarker.PROBLEM);
+			
 	        int severity;
 	        switch (kind) {
 	          case ERROR: severity = IMarker.SEVERITY_ERROR; break;
@@ -74,24 +74,47 @@ public class Note {
 	          case INFO: severity = IMarker.SEVERITY_INFO; break;
 	          default: severity = IMarker.SEVERITY_INFO; break;
 	        }
-	        marker.setAttribute(IMarker.SEVERITY, severity);
 	        int line= Math.min(location.getStartLine(),maxLines);
-	        marker.setAttribute(IMarker.LINE_NUMBER, line);
-	        marker.setAttribute(IMarker.CHAR_START, location.getStartColumn());
-	        // we may not have any character to show
+	     // we may not have any character to show
+	        int start=location.getStartColumn();
 	        int end=location.getEndColumn();
-	        if (end>location.getStartColumn()){
-	        	// exclusive
-	        	marker.setAttribute(IMarker.CHAR_END, end-1);
-	        } 
-	        // if we have startColumn==endColumn we could take end+1
-	        // BUT if end goes over the document size, the marker is not shown on the document
-	        // so it's better to just show the line without more info 
+	        	        
+	        String msg= message + (additionalInfo != null ? "\n" + additionalInfo : "");
 	        
-	        marker.setAttribute(IMarker.MESSAGE, message + (additionalInfo != null ? "\n" + additionalInfo : ""));
+	        addMarker(resource, severity, line, start, end, msg);
 		  
 		}
 	}
+
+	private void addMarker(IResource resource, int severity, int line,
+			int start, int end, String msg) throws CoreException {
+		// duplicate
+		for (IMarker m:resource.findMarkers(IMarker.PROBLEM, false, 0)){
+			if (m.getAttribute(IMarker.SEVERITY, -1)==severity
+					&&  m.getAttribute(IMarker.LINE_NUMBER, -1)==line
+					&&  m.getAttribute(IMarker.CHAR_START, -1)==start
+					&&  m.getAttribute(IMarker.MESSAGE, "").equals(msg)
+					)
+				return;
+		}
+		
+		
+		IMarker marker = resource.createMarker(IMarker.PROBLEM);
+		marker.setAttribute(IMarker.SEVERITY, severity);
+		marker.setAttribute(IMarker.LINE_NUMBER, line);
+		marker.setAttribute(IMarker.CHAR_START, start);
+		// if we have startColumn==endColumn we could take end+1
+		// BUT if end goes over the document size, the marker is not shown on the document
+		// so it's better to just show the line without more info 
+		if (end>start){
+			// exclusive
+			marker.setAttribute(IMarker.CHAR_END, end-1);
+		} 
+		
+		marker.setAttribute(IMarker.MESSAGE,msg);
+	}
+	
+
 	
 	@Override
 	public boolean equals(Object obj) {
