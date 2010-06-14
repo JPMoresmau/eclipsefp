@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -282,6 +283,9 @@ public class ScionInstance implements IScionCommandRunner {
 	public void deleteProblems(IResource r){
 		if (!r.getWorkspace().isTreeLocked()){
 			try {
+				if (r instanceof IFile){
+					r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+				} 
 				r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
 			} catch( CoreException ex ) {
 				ScionPlugin.logError(UITexts.error_deleteMarkers, ex);
