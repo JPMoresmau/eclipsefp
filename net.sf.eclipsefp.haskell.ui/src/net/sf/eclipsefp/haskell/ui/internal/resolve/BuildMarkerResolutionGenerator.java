@@ -33,16 +33,8 @@ public class BuildMarkerResolutionGenerator implements
             String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START.length() ).trim();
             res.add( new ReplaceImportResolution( newImport ) );
           }
-        } else if ((ix=msgL.indexOf( GhcMessages.WARNING_USEFLAG_CONTAINS ))>-1){
-            int start=ix+1+GhcMessages.WARNING_USEFLAG_CONTAINS.length();
-            int ix2=msg.indexOf( ' ',start);
-            if (ix2>-1){
-              String flag=msg.substring( start,ix2 ).trim();
-              addPragma(res,flag);
-            } else {
-              String flag=msg.substring( start).trim();
-              addPragma(res,flag);
-            }
+        } else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2)){
+            //
          } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
            int end=ix-2;
            int ix2=msg.lastIndexOf( ' ',end);
@@ -56,6 +48,26 @@ public class BuildMarkerResolutionGenerator implements
     }
 
     return res.toArray( new IMarkerResolution[res.size()] );
+  }
+
+  private boolean addFlagPragma(final List<IMarkerResolution> res,final String msg,final String msgL,final String... toSearch){
+    int ix=-1;
+
+    for (String s:toSearch){
+      if ((ix=msgL.indexOf( s ))>-1){
+        int start=ix+1+s.length();
+        int ix2=msg.indexOf( ' ',start);
+        if (ix2>-1){
+          String flag=msg.substring( start,ix2 ).trim();
+          addPragma(res,flag);
+        } else {
+          String flag=msg.substring( start).trim();
+          addPragma(res,flag);
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
   private void addPragma(final List<IMarkerResolution> res,final String flag){
