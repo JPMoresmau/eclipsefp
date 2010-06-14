@@ -285,6 +285,8 @@ public abstract class ScionCommand extends Job {
 				doProcessResult(result);
 			} catch (JSONException ex) {
 				throw new ScionCommandException(this, UITexts.commandProcessingFailed_message, ex);
+			} catch (ClassCastException cce){
+				throw new ScionCommandException(this, NLS.bind(UITexts.commandUnexpectedResult_message, result));
 			}
 		} catch (JSONException ex) {
 			try {

@@ -25,6 +25,7 @@ public class UITexts extends NLS {
 	public static String commandError_message;
 	public static String commandErrorMissing_message;
 	public static String commandProcessingFailed_message;
+	public static String commandUnexpectedResult_message;
 	public static String scionFailedCommand_message;
 	public static String scionFailedResponse_message;
 
