@@ -14,4 +14,5 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
 Bundle-Vendor: Thomas ten Cate <ttencate@gmail.com>
 Export-Package: net.sf.eclipsefp.haskell.scion.client,
  net.sf.eclipsefp.haskell.scion.exceptions,
- net.sf.eclipsefp.haskell.scion.types
+ net.sf.eclipsefp.haskell.scion.types,
+ org.json
