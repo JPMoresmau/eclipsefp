@@ -54,10 +54,13 @@ public class HaskellUIImages implements IImageNames {
     declare( LITERATE_SOURCE_FILE, OBJECT + "lhsfile_obj.gif" ); //$NON-NLS-1$
     declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" ); //$NON-NLS-1$
     declare( HASKELL_PROJECT,      OBJECT + "hsproject.gif" ); //$NON-NLS-1$
-    declare( EXECUTABLE_STANZA, OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
-    declare( LIBRARY_STANZA,    OBJECT + "librarystanza.gif" ); //$NON-NLS-1$
-    declare( GENERAL_STANZA,    OBJECT + "generalstanza.gif" ); //$NON-NLS-1$
-    declare( TEMPLATE,          OBJECT + "template.gif" ); //$NON-NLS-1$
+    declare( EXECUTABLE_STANZA,    OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
+    declare( LIBRARY_STANZA,       OBJECT + "librarystanza.gif" ); //$NON-NLS-1$
+    declare( GENERAL_STANZA,       OBJECT + "generalstanza.gif" ); //$NON-NLS-1$
+    declare( IF_STANZA,            OBJECT + "if.gif" ); //$NON-NLS-1$
+    declare( ELSE_STANZA,          OBJECT + "else.gif" ); //$NON-NLS-1$
+    declare( FLAG_STANZA,          OBJECT + "flag.gif" ); //$NON-NLS-1$
+    declare( TEMPLATE,             OBJECT + "template.gif" ); //$NON-NLS-1$
 
     // decorators
     declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" ); //$NON-NLS-1$

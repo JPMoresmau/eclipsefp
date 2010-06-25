@@ -139,9 +139,9 @@ public class PackageDescriptionLoader {
             lookup=-1;
           }
           ret=true;
-        }
-        else if (lookup=='\n'){
+        } else if (lookup=='\n'){
           ret=true;
+          lookup=-1;
         } else {
           line.append( (char)lookup );
           lookup=-1;
@@ -195,8 +195,8 @@ public class PackageDescriptionLoader {
               CabalSyntax cs=CabalSyntax.sections.get( start );
               if (cs != null){
                 String name=null;
-                if (line.length()>start.length()){
-                  name=line.substring( start.length() ).trim();
+                if (line.length()>start.length()+indent){
+                  name=line.substring( start.length()+indent).trim();
                 }
                 if (name!=null && name.endsWith( BRACE_OPEN )){
                   braces++;

@@ -63,6 +63,9 @@ public interface IImageNames {
   String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA"; //$NON-NLS-1$
   String LIBRARY_STANZA    = ID + ".LIBRARY_STANZA"; //$NON-NLS-1$
   String GENERAL_STANZA    = ID + ".GENERAL_STANZA"; //$NON-NLS-1$
+  String IF_STANZA         = ID + ".IF_STANZA"; //$NON-NLS-1$
+  String ELSE_STANZA       = ID + ".ELSE_STANZA"; //$NON-NLS-1$
+  String FLAG_STANZA       = ID + ".FLAG_STANZA"; //$NON-NLS-1$
   String TEMPLATE          = ID + ".TEMPLATE"; //$NON-NLS-1$
 
   // wizard banners

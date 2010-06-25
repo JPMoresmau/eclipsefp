@@ -1,0 +1,112 @@
+name:               json
+version:            0.4.3
+synopsis:           Support for serialising Haskell to and from JSON
+description:
+    JSON (JavaScript Object Notation) is a lightweight data-interchange
+    format. It is easy for humans to read and write. It is easy for
+    machines to parse and generate.  It is based on a subset of the
+    JavaScript Programming Language, Standard ECMA-262 3rd Edition -
+    December 1999.
+    .
+    This library provides a parser and pretty printer for converting
+    between Haskell values and JSON.
+category:           Web
+license:            BSD3
+license-file:       LICENSE
+author:             Galois Inc.
+maintainer:         Sigbjorn Finne <sof@galois.com>
+Copyright:          (c) 2007-2009 Galois Inc.
+cabal-version:      >= 1.2.0
+build-type: Simple
+extra-source-files:
+    CHANGES
+    tests/GenericTest.hs
+    tests/HUnit.hs
+    tests/Makefile
+    tests/Parallel.hs
+    tests/QC.hs
+    tests/QuickCheckUtils.hs
+    tests/Unit.hs
+    tests/unit/fail1.json
+    tests/unit/fail10.json
+    tests/unit/fail11.json
+    tests/unit/fail12.json
+    tests/unit/fail13.json
+    tests/unit/fail14.json
+    tests/unit/fail15.json
+    tests/unit/fail16.json
+    tests/unit/fail17.json
+    tests/unit/fail18.json
+    tests/unit/fail19.json
+    tests/unit/fail2.json
+    tests/unit/fail20.json
+    tests/unit/fail21.json
+    tests/unit/fail22.json
+    tests/unit/fail23.json
+    tests/unit/fail24.json
+    tests/unit/fail25.json
+    tests/unit/fail26.json
+    tests/unit/fail27.json
+    tests/unit/fail28.json
+    tests/unit/fail29.json
+    tests/unit/fail3.json
+    tests/unit/fail30.json
+    tests/unit/fail31.json
+    tests/unit/fail32.json
+    tests/unit/fail33.json
+    tests/unit/fail4.json
+    tests/unit/fail5.json
+    tests/unit/fail6.json
+    tests/unit/fail7.json
+    tests/unit/fail8.json
+    tests/unit/fail9.json
+    tests/unit/pass1.json
+    tests/unit/pass2.json
+    tests/unit/pass3.json
+
+flag split-base
+  default: True
+  description: Use the new split base package.
+flag parsec
+  default: True
+  description: Add support for parsing with Parsec.
+flag pretty
+  default: True
+  description: Add support for using pretty printing combinators.
+flag generic
+  default: True
+  description: Add support for generic encoder.
+
+flag mapdict
+  default: False
+  description: Encode Haskell maps as JSON dicts
+
+library
+  exposed-modules: Text.JSON,
+                   Text.JSON.Types,
+                   Text.JSON.String,
+                   Text.JSON.ReadP
+  ghc-options:     -Wall -O2
+
+  if flag(split-base)
+    if flag(generic)
+      build-depends:    base >=4 && <5, syb
+
+      exposed-modules:  Text.JSON.Generic
+      Cpp-Options:      -DBASE_4
+    else
+      build-depends:    base >= 3
+
+    build-depends:   array, containers, bytestring, mtl
+
+    if flag(parsec)
+      build-depends:    parsec
+      exposed-modules:  Text.JSON.Parsec
+    if flag(pretty)
+      build-depends:    pretty
+      exposed-modules:  Text.JSON.Pretty
+  else
+    build-depends:    base < 3
+
+  if flag(mapdict)
+     cpp-options:     -DMAP_AS_DICT

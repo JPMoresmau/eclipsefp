@@ -12,12 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 public class CabalModelTest extends TestCase {
 
   public CabalModelTest( final String name ) {
     super( name );
+  }
+
+  public static TestSuite suite(){
+    TestSuite ts=new TestSuite("CabalModelTest");
+    //ts.addTest( new CabalModelTest( "testJSON" ) );
+    ts.addTestSuite( CabalModelTest.class );
+    return ts;
   }
 
   @Override
@@ -576,5 +584,30 @@ public class CabalModelTest extends TestCase {
       ioe.printStackTrace();
       fail(ioe.getLocalizedMessage());
     }
+  }
+
+  public void testJSON(){
+    String content3=getContent( "json.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    PackageDescriptionStanza pds=pd.getStanzas().get( 0 );
+    assertNull(pds.getType());
+    assertTrue(pds instanceof GeneralStanza);
+    assertEquals(0,pds.getIndent());
+    assertEquals("json",pds.getName());
+
+    pds=pd.getStanzas().get( 1 );
+    assertEquals(CabalSyntax.SECTION_FLAG,pds.getType());
+    assertEquals("split-base",pds.getName());
+
+    pds=pd.getStanzas().get( 6 );
+    assertEquals(CabalSyntax.SECTION_LIBRARY,pds.getType());
+    assertEquals(3,pds.getStanzas().size());
+    PackageDescriptionStanza pds1=pds.getStanzas().get(0 );
+    assertEquals("flag(split-base)",pds1.getName());
+    PackageDescriptionStanza pds2=pds1.getStanzas().get(1 );
+    assertNull(pds2.getName());
+
+    pds1=pds.getStanzas().get(1 );
+    assertNull(pds1.getName());
   }
 }
