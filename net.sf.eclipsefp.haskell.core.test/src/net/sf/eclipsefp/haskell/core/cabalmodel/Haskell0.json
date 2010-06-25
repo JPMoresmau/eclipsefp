@@ -1,0 +1,114 @@
+{
+  "condExecutables": [[
+    "main",
+    {
+      "condTreeComponents": [],
+      "condTreeConstraints": [
+        [
+          "containers",
+          "AnyVersion"
+        ],
+        [
+          "base",
+          "AnyVersion"
+        ]
+      ],
+      "condTreeData": {
+        "buildInfo": {
+          "buildTools": [],
+          "buildable": true,
+          "cSources": [],
+          "ccOptions": [],
+          "cppOptions": [],
+          "customFieldsBI": [],
+          "extensions": [],
+          "extraLibDirs": [],
+          "extraLibs": [],
+          "frameworks": [],
+          "ghcProfOptions": [],
+          "ghcSharedOptions": [],
+          "hsSourceDirs": ["src"],
+          "includeDirs": [],
+          "includes": [],
+          "installIncludes": [],
+          "ldOptions": [],
+          "options": [[
+            "GHC",
+            ["-Wall"]
+          ]],
+          "otherModules": [
+            ["Test1"],
+            [
+              "Folder1",
+              "Module2"
+            ],
+            ["Test"],
+            [
+              "Folder1",
+              "Module1"
+            ],
+            ["Lit"],
+            ["QSort"]
+          ],
+          "pkgconfigDepends": [],
+          "targetBuildDepends": []
+        },
+        "exeName": "",
+        "modulePath": "Main.hs"
+      }
+    }
+  ]],
+  "condLibrary": "Nothing",
+  "genPackageFlags": [],
+  "packageDescription": {
+    "author": "Angela Author",
+    "bugReports": "",
+    "buildDepends": [],
+    "buildType": {"Just": "Simple"},
+    "category": "TEST",
+    "copyright": "Copyright2004",
+    "customFieldsPD": [],
+    "dataDir": "",
+    "dataFiles": [],
+    "descCabalVersion": {"UnionVersionRanges": [
+      {"ThisVersion": {
+        "versionBranch": [
+          1,
+          2
+        ],
+        "versionTags": []
+      }},
+      {"LaterVersion": {
+        "versionBranch": [
+          1,
+          2
+        ],
+        "versionTags": []
+      }}
+    ]},
+    "description": "Scion is a Haskell library that aims to implement those parts of a\nHaskell IDE which are independent of a particular front-end.  Scion\nis based on the GHC API and Cabal.  It provides both a Haskell API and\na server for non-Haskell clients such as Emacs and Vim.\n\nSee the homepage<http://code.google.com/p/scion-lib> and the README\n<http://github.com/nominolo/scion/blob/master/README.markdown> for\nmore information.\n\nAnother line.",
+    "executables": [],
+    "extraSrcFiles": [],
+    "extraTmpFiles": [],
+    "homepage": "http://eclipsefp.sourceforge.net",
+    "library": "Nothing",
+    "license": "BSD3",
+    "licenseFile": "LICENSE",
+    "maintainer": "JP2",
+    "package": {
+      "pkgName": "Haskell0",
+      "pkgVersion": {
+        "versionBranch": [
+          0,
+          2
+        ],
+        "versionTags": []
+      }
+    },
+    "pkgUrl": "",
+    "sourceRepos": [],
+    "stability": "",
+    "synopsis": "Package with library and two programs",
+    "testedWith": []
+  }
+}

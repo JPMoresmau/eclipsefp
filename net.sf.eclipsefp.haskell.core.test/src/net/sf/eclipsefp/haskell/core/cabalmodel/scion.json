@@ -1,0 +1,1533 @@
+{
+  "condExecutables": [[
+    "scion-server",
+    {
+      "condTreeComponents": [
+        [
+          {"CNot": {"Var": {"Flag": "server"}}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": false,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": [],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ],
+        [
+          {"Var": {"Flag": "cabal_1_8"}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [[
+              "Cabal",
+              {"WildcardVersion": {
+                "versionBranch": [
+                  1,
+                  8
+                ],
+                "versionTags": []
+              }}
+            ]],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": ["-DCABAL_VERSION=108"],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          {"Just": {
+            "condTreeComponents": [],
+            "condTreeConstraints": [[
+              "Cabal",
+              {"WildcardVersion": {
+                "versionBranch": [
+                  1,
+                  6
+                ],
+                "versionTags": []
+              }}
+            ]],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": ["-DCABAL_VERSION=106"],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          }}
+        ],
+        [
+          {"Var": {"Flag": "server"}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [
+              [
+                "bytestring",
+                {"WildcardVersion": {
+                  "versionBranch": [
+                    0,
+                    9
+                  ],
+                  "versionTags": []
+                }}
+              ],
+              [
+                "network",
+                {"IntersectVersionRanges": [
+                  {"UnionVersionRanges": [
+                    {"ThisVersion": {
+                      "versionBranch": [
+                        2,
+                        1
+                      ],
+                      "versionTags": []
+                    }},
+                    {"LaterVersion": {
+                      "versionBranch": [
+                        2,
+                        1
+                      ],
+                      "versionTags": []
+                    }}
+                  ]},
+                  {"EarlierVersion": {
+                    "versionBranch": [
+                      2,
+                      3
+                    ],
+                    "versionTags": []
+                  }}
+                ]}
+              ],
+              [
+                "network-bytestring",
+                {"WildcardVersion": {
+                  "versionBranch": [
+                    0,
+                    1
+                  ],
+                  "versionTags": []
+                }}
+              ],
+              [
+                "utf8-string",
+                {"WildcardVersion": {
+                  "versionBranch": [
+                    0,
+                    3
+                  ],
+                  "versionTags": []
+                }}
+              ]
+            ],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": [],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ],
+        [
+          {"Var": {"Flag": "testing"}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [[
+              "QuickCheck",
+              {"WildcardVersion": {
+                "versionBranch": [2],
+                "versionTags": []
+              }}
+            ]],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": ["-DSCION_DEBUG"],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ],
+        [
+          {"Var": {"Impl": [
+            "GHC",
+            {"LaterVersion": {
+              "versionBranch": [
+                6,
+                11
+              ],
+              "versionTags": []
+            }}
+          ]}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": ["-DHAVE_PACKAGE_DB_MODULES"],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ],
+        [
+          {"COr": [
+            {"Var": {"Impl": [
+              "GHC",
+              {"UnionVersionRanges": [
+                {"ThisVersion": {
+                  "versionBranch": [
+                    6,
+                    11,
+                    20081113
+                  ],
+                  "versionTags": []
+                }},
+                {"LaterVersion": {
+                  "versionBranch": [
+                    6,
+                    11,
+                    20081113
+                  ],
+                  "versionTags": []
+                }}
+              ]}
+            ]}},
+            {"Var": {"Impl": [
+              "GHC",
+              {"IntersectVersionRanges": [
+                {"UnionVersionRanges": [
+                  {"ThisVersion": {
+                    "versionBranch": [
+                      6,
+                      10,
+                      2
+                    ],
+                    "versionTags": []
+                  }},
+                  {"LaterVersion": {
+                    "versionBranch": [
+                      6,
+                      10,
+                      2
+                    ],
+                    "versionTags": []
+                  }}
+                ]},
+                {"EarlierVersion": {
+                  "versionBranch": [
+                    6,
+                    11
+                  ],
+                  "versionTags": []
+                }}
+              ]}
+            ]}}
+          ]},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": ["-DRECOMPILE_BUG_FIXED"],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ],
+        [
+          {"Var": {"Impl": [
+            "GHC",
+            {"WildcardVersion": {
+              "versionBranch": [
+                6,
+                10
+              ],
+              "versionTags": []
+            }}
+          ]}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": [
+                  "-DWPINLINE",
+                  "-DGHC_VERSION=610"
+                ],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ],
+        [
+          {"Var": {"Impl": [
+            "GHC",
+            {"WildcardVersion": {
+              "versionBranch": [
+                6,
+                12
+              ],
+              "versionTags": []
+            }}
+          ]}},
+          {
+            "condTreeComponents": [],
+            "condTreeConstraints": [],
+            "condTreeData": {
+              "buildInfo": {
+                "buildTools": [],
+                "buildable": true,
+                "cSources": [],
+                "ccOptions": [],
+                "cppOptions": ["-DGHC_VERSION=612"],
+                "customFieldsBI": [],
+                "extensions": [],
+                "extraLibDirs": [],
+                "extraLibs": [],
+                "frameworks": [],
+                "ghcProfOptions": [],
+                "ghcSharedOptions": [],
+                "hsSourceDirs": [],
+                "includeDirs": [],
+                "includes": [],
+                "installIncludes": [],
+                "ldOptions": [],
+                "options": [],
+                "otherModules": [],
+                "pkgconfigDepends": [],
+                "targetBuildDepends": []
+              },
+              "exeName": "",
+              "modulePath": ""
+            }
+          },
+          "Nothing"
+        ]
+      ],
+      "condTreeConstraints": [
+        [
+          "base",
+          {"WildcardVersion": {
+            "versionBranch": [4],
+            "versionTags": []
+          }}
+        ],
+        [
+          "containers",
+          {"IntersectVersionRanges": [
+            {"UnionVersionRanges": [
+              {"ThisVersion": {
+                "versionBranch": [
+                  0,
+                  2
+                ],
+                "versionTags": []
+              }},
+              {"LaterVersion": {
+                "versionBranch": [
+                  0,
+                  2
+                ],
+                "versionTags": []
+              }}
+            ]},
+            {"EarlierVersion": {
+              "versionBranch": [
+                0,
+                4
+              ],
+              "versionTags": []
+            }}
+          ]}
+        ],
+        [
+          "directory",
+          {"WildcardVersion": {
+            "versionBranch": [
+              1,
+              0
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "filepath",
+          {"WildcardVersion": {
+            "versionBranch": [
+              1,
+              1
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "ghc",
+          {"IntersectVersionRanges": [
+            {"UnionVersionRanges": [
+              {"ThisVersion": {
+                "versionBranch": [
+                  6,
+                  10
+                ],
+                "versionTags": []
+              }},
+              {"LaterVersion": {
+                "versionBranch": [
+                  6,
+                  10
+                ],
+                "versionTags": []
+              }}
+            ]},
+            {"EarlierVersion": {
+              "versionBranch": [
+                6,
+                13
+              ],
+              "versionTags": []
+            }}
+          ]}
+        ],
+        [
+          "ghc-paths",
+          {"WildcardVersion": {
+            "versionBranch": [
+              0,
+              1
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "ghc-syb",
+          "AnyVersion"
+        ],
+        [
+          "ghc-syb-utils",
+          "AnyVersion"
+        ],
+        [
+          "hslogger",
+          {"WildcardVersion": {
+            "versionBranch": [
+              1,
+              0
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "json",
+          {"WildcardVersion": {
+            "versionBranch": [
+              0,
+              4
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "multiset",
+          {"IntersectVersionRanges": [
+            {"UnionVersionRanges": [
+              {"ThisVersion": {
+                "versionBranch": [
+                  0,
+                  1
+                ],
+                "versionTags": []
+              }},
+              {"LaterVersion": {
+                "versionBranch": [
+                  0,
+                  1
+                ],
+                "versionTags": []
+              }}
+            ]},
+            {"EarlierVersion": {
+              "versionBranch": [
+                0,
+                3
+              ],
+              "versionTags": []
+            }}
+          ]}
+        ],
+        [
+          "time",
+          {"WildcardVersion": {
+            "versionBranch": [
+              1,
+              1
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "list-tries",
+          "AnyVersion"
+        ],
+        [
+          "binary",
+          {"WildcardVersion": {
+            "versionBranch": [
+              0,
+              5
+            ],
+            "versionTags": []
+          }}
+        ],
+        [
+          "array",
+          {"IntersectVersionRanges": [
+            {"UnionVersionRanges": [
+              {"ThisVersion": {
+                "versionBranch": [
+                  0,
+                  2
+                ],
+                "versionTags": []
+              }},
+              {"LaterVersion": {
+                "versionBranch": [
+                  0,
+                  2
+                ],
+                "versionTags": []
+              }}
+            ]},
+            {"EarlierVersion": {
+              "versionBranch": [
+                0,
+                4
+              ],
+              "versionTags": []
+            }}
+          ]}
+        ],
+        [
+          "old-time",
+          {"WildcardVersion": {
+            "versionBranch": [
+              1,
+              0
+            ],
+            "versionTags": []
+          }}
+        ]
+      ],
+      "condTreeData": {
+        "buildInfo": {
+          "buildTools": [],
+          "buildable": true,
+          "cSources": [],
+          "ccOptions": [],
+          "cppOptions": [],
+          "customFieldsBI": [],
+          "extensions": [
+            "CPP",
+            "PatternGuards"
+          ],
+          "extraLibDirs": [],
+          "extraLibs": [],
+          "frameworks": [],
+          "ghcProfOptions": [],
+          "ghcSharedOptions": [],
+          "hsSourceDirs": [
+            "lib",
+            "server"
+          ],
+          "includeDirs": [],
+          "includes": [],
+          "installIncludes": [],
+          "ldOptions": [],
+          "options": [[
+            "GHC",
+            ["-Wall"]
+          ]],
+          "otherModules": [
+            ["Scion"],
+            [
+              "Scion",
+              "Cabal"
+            ],
+            [
+              "Scion",
+              "Inspect"
+            ],
+            [
+              "Scion",
+              "Inspect",
+              "DefinitionSite"
+            ],
+            [
+              "Scion",
+              "Session"
+            ],
+            [
+              "Scion",
+              "Types"
+            ],
+            [
+              "Scion",
+              "Types",
+              "Notes"
+            ],
+            [
+              "Scion",
+              "Types",
+              "Outline"
+            ],
+            [
+              "Scion",
+              "Utils"
+            ],
+            [
+              "Scion",
+              "Ghc"
+            ],
+            [
+              "Scion",
+              "Server",
+              "Commands"
+            ],
+            [
+              "Scion",
+              "Server",
+              "ConnectionIO"
+            ],
+            [
+              "Scion",
+              "Server",
+              "Generic"
+            ],
+            [
+              "Scion",
+              "Server",
+              "Protocol"
+            ]
+          ],
+          "pkgconfigDepends": [],
+          "targetBuildDepends": []
+        },
+        "exeName": "",
+        "modulePath": "Main.hs"
+      }
+    }
+  ]],
+  "condLibrary": {"Just": {
+    "condTreeComponents": [
+      [
+        {"Var": {"Flag": "cabal_1_8"}},
+        {
+          "condTreeComponents": [],
+          "condTreeConstraints": [[
+            "Cabal",
+            {"WildcardVersion": {
+              "versionBranch": [
+                1,
+                8
+              ],
+              "versionTags": []
+            }}
+          ]],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": ["-DCABAL_VERSION=108"],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        },
+        {"Just": {
+          "condTreeComponents": [],
+          "condTreeConstraints": [[
+            "Cabal",
+            {"WildcardVersion": {
+              "versionBranch": [
+                1,
+                6
+              ],
+              "versionTags": []
+            }}
+          ]],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": ["-DCABAL_VERSION=106"],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        }}
+      ],
+      [
+        {"Var": {"Flag": "testing"}},
+        {
+          "condTreeComponents": [],
+          "condTreeConstraints": [[
+            "QuickCheck",
+            {"WildcardVersion": {
+              "versionBranch": [2],
+              "versionTags": []
+            }}
+          ]],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": ["-DSCION_DEBUG"],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        },
+        "Nothing"
+      ],
+      [
+        {"Var": {"Impl": [
+          "GHC",
+          {"LaterVersion": {
+            "versionBranch": [
+              6,
+              11
+            ],
+            "versionTags": []
+          }}
+        ]}},
+        {
+          "condTreeComponents": [],
+          "condTreeConstraints": [],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": ["-DHAVE_PACKAGE_DB_MODULES"],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        },
+        "Nothing"
+      ],
+      [
+        {"COr": [
+          {"Var": {"Impl": [
+            "GHC",
+            {"UnionVersionRanges": [
+              {"ThisVersion": {
+                "versionBranch": [
+                  6,
+                  11,
+                  20081113
+                ],
+                "versionTags": []
+              }},
+              {"LaterVersion": {
+                "versionBranch": [
+                  6,
+                  11,
+                  20081113
+                ],
+                "versionTags": []
+              }}
+            ]}
+          ]}},
+          {"Var": {"Impl": [
+            "GHC",
+            {"IntersectVersionRanges": [
+              {"UnionVersionRanges": [
+                {"ThisVersion": {
+                  "versionBranch": [
+                    6,
+                    10,
+                    2
+                  ],
+                  "versionTags": []
+                }},
+                {"LaterVersion": {
+                  "versionBranch": [
+                    6,
+                    10,
+                    2
+                  ],
+                  "versionTags": []
+                }}
+              ]},
+              {"EarlierVersion": {
+                "versionBranch": [
+                  6,
+                  11
+                ],
+                "versionTags": []
+              }}
+            ]}
+          ]}}
+        ]},
+        {
+          "condTreeComponents": [],
+          "condTreeConstraints": [],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": ["-DRECOMPILE_BUG_FIXED"],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        },
+        "Nothing"
+      ],
+      [
+        {"Var": {"Impl": [
+          "GHC",
+          {"WildcardVersion": {
+            "versionBranch": [
+              6,
+              10
+            ],
+            "versionTags": []
+          }}
+        ]}},
+        {
+          "condTreeComponents": [],
+          "condTreeConstraints": [],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": [
+                "-DWPINLINE",
+                "-DGHC_VERSION=610"
+              ],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        },
+        "Nothing"
+      ],
+      [
+        {"Var": {"Impl": [
+          "GHC",
+          {"WildcardVersion": {
+            "versionBranch": [
+              6,
+              12
+            ],
+            "versionTags": []
+          }}
+        ]}},
+        {
+          "condTreeComponents": [],
+          "condTreeConstraints": [],
+          "condTreeData": {
+            "exposedModules": [],
+            "libBuildInfo": {
+              "buildTools": [],
+              "buildable": true,
+              "cSources": [],
+              "ccOptions": [],
+              "cppOptions": ["-DGHC_VERSION=612"],
+              "customFieldsBI": [],
+              "extensions": [],
+              "extraLibDirs": [],
+              "extraLibs": [],
+              "frameworks": [],
+              "ghcProfOptions": [],
+              "ghcSharedOptions": [],
+              "hsSourceDirs": [],
+              "includeDirs": [],
+              "includes": [],
+              "installIncludes": [],
+              "ldOptions": [],
+              "options": [],
+              "otherModules": [],
+              "pkgconfigDepends": [],
+              "targetBuildDepends": []
+            },
+            "libExposed": true
+          }
+        },
+        "Nothing"
+      ]
+    ],
+    "condTreeConstraints": [
+      [
+        "base",
+        {"WildcardVersion": {
+          "versionBranch": [4],
+          "versionTags": []
+        }}
+      ],
+      [
+        "containers",
+        {"IntersectVersionRanges": [
+          {"UnionVersionRanges": [
+            {"ThisVersion": {
+              "versionBranch": [
+                0,
+                2
+              ],
+              "versionTags": []
+            }},
+            {"LaterVersion": {
+              "versionBranch": [
+                0,
+                2
+              ],
+              "versionTags": []
+            }}
+          ]},
+          {"EarlierVersion": {
+            "versionBranch": [
+              0,
+              4
+            ],
+            "versionTags": []
+          }}
+        ]}
+      ],
+      [
+        "directory",
+        {"WildcardVersion": {
+          "versionBranch": [
+            1,
+            0
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "filepath",
+        {"WildcardVersion": {
+          "versionBranch": [
+            1,
+            1
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "ghc",
+        {"IntersectVersionRanges": [
+          {"UnionVersionRanges": [
+            {"ThisVersion": {
+              "versionBranch": [
+                6,
+                10
+              ],
+              "versionTags": []
+            }},
+            {"LaterVersion": {
+              "versionBranch": [
+                6,
+                10
+              ],
+              "versionTags": []
+            }}
+          ]},
+          {"EarlierVersion": {
+            "versionBranch": [
+              6,
+              13
+            ],
+            "versionTags": []
+          }}
+        ]}
+      ],
+      [
+        "ghc-paths",
+        {"WildcardVersion": {
+          "versionBranch": [
+            0,
+            1
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "ghc-syb",
+        "AnyVersion"
+      ],
+      [
+        "ghc-syb-utils",
+        "AnyVersion"
+      ],
+      [
+        "hslogger",
+        {"WildcardVersion": {
+          "versionBranch": [
+            1,
+            0
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "json",
+        {"WildcardVersion": {
+          "versionBranch": [
+            0,
+            4
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "multiset",
+        {"IntersectVersionRanges": [
+          {"UnionVersionRanges": [
+            {"ThisVersion": {
+              "versionBranch": [
+                0,
+                1
+              ],
+              "versionTags": []
+            }},
+            {"LaterVersion": {
+              "versionBranch": [
+                0,
+                1
+              ],
+              "versionTags": []
+            }}
+          ]},
+          {"EarlierVersion": {
+            "versionBranch": [
+              0,
+              3
+            ],
+            "versionTags": []
+          }}
+        ]}
+      ],
+      [
+        "time",
+        {"WildcardVersion": {
+          "versionBranch": [
+            1,
+            1
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "uniplate",
+        "AnyVersion"
+      ],
+      [
+        "list-tries",
+        "AnyVersion"
+      ],
+      [
+        "binary",
+        {"WildcardVersion": {
+          "versionBranch": [
+            0,
+            5
+          ],
+          "versionTags": []
+        }}
+      ],
+      [
+        "array",
+        {"IntersectVersionRanges": [
+          {"UnionVersionRanges": [
+            {"ThisVersion": {
+              "versionBranch": [
+                0,
+                2
+              ],
+              "versionTags": []
+            }},
+            {"LaterVersion": {
+              "versionBranch": [
+                0,
+                2
+              ],
+              "versionTags": []
+            }}
+          ]},
+          {"EarlierVersion": {
+            "versionBranch": [
+              0,
+              4
+            ],
+            "versionTags": []
+          }}
+        ]}
+      ],
+      [
+        "old-time",
+        {"WildcardVersion": {
+          "versionBranch": [
+            1,
+            0
+          ],
+          "versionTags": []
+        }}
+      ]
+    ],
+    "condTreeData": {
+      "exposedModules": [
+        [
+          "Scion",
+          "Types"
+        ],
+        [
+          "Scion",
+          "Types",
+          "ExtraInstances"
+        ],
+        [
+          "Scion",
+          "Types",
+          "Notes"
+        ],
+        [
+          "Scion",
+          "Types",
+          "Outline"
+        ],
+        [
+          "Scion",
+          "Inspect"
+        ],
+        [
+          "Scion",
+          "Inspect",
+          "Find"
+        ],
+        [
+          "Scion",
+          "Inspect",
+          "TypeOf"
+        ],
+        [
+          "Scion",
+          "Inspect",
+          "DefinitionSite"
+        ],
+        [
+          "Scion",
+          "Inspect",
+          "PackageDB"
+        ],
+        [
+          "Scion",
+          "Utils"
+        ],
+        [
+          "Scion",
+          "Session"
+        ],
+        [
+          "Scion",
+          "Cabal"
+        ],
+        [
+          "Scion",
+          "Ghc"
+        ],
+        ["Scion"]
+      ],
+      "libBuildInfo": {
+        "buildTools": [],
+        "buildable": true,
+        "cSources": [],
+        "ccOptions": [],
+        "cppOptions": [],
+        "customFieldsBI": [],
+        "extensions": [
+          "CPP",
+          "PatternGuards"
+        ],
+        "extraLibDirs": [],
+        "extraLibs": [],
+        "frameworks": [],
+        "ghcProfOptions": [],
+        "ghcSharedOptions": [],
+        "hsSourceDirs": ["lib"],
+        "includeDirs": [],
+        "includes": [],
+        "installIncludes": [],
+        "ldOptions": [],
+        "options": [[
+          "GHC",
+          ["-Wall"]
+        ]],
+        "otherModules": [],
+        "pkgconfigDepends": [],
+        "targetBuildDepends": []
+      },
+      "libExposed": true
+    }
+  }},
+  "genPackageFlags": [
+    {
+      "flagDefault": false,
+      "flagDescription": "Enable Debugging things like QuickCheck properties, etc.",
+      "flagManual": false,
+      "flagName": "testing"
+    },
+    {
+      "flagDefault": true,
+      "flagDescription": "Install the scion-server.",
+      "flagManual": false,
+      "flagName": "server"
+    },
+    {
+      "flagDefault": true,
+      "flagDescription": "",
+      "flagManual": false,
+      "flagName": "cabal_1_8"
+    }
+  ],
+  "packageDescription": {
+    "author": "Thomas Schilling <nominolo@googlemail.com>",
+    "bugReports": "",
+    "buildDepends": [],
+    "buildType": {"Just": "Simple"},
+    "category": "Development",
+    "copyright": "",
+    "customFieldsPD": [],
+    "dataDir": "",
+    "dataFiles": [
+      "emacs/*.el",
+      "vim_runtime_path/autoload/*.vim",
+      "vim_runtime_path/ftplugin/*.vim",
+      "vim_runtime_path/plugin/*.vim"
+    ],
+    "descCabalVersion": {"UnionVersionRanges": [
+      {"ThisVersion": {
+        "versionBranch": [
+          1,
+          6
+        ],
+        "versionTags": []
+      }},
+      {"LaterVersion": {
+        "versionBranch": [
+          1,
+          6
+        ],
+        "versionTags": []
+      }}
+    ]},
+    "description": "Scion is a Haskell library that aims to implement those parts of a\nHaskell IDE which are independent of a particular front-end.  Scion\nis based on the GHC API and Cabal.  It provides both a Haskell API and\na server for non-Haskell clients such as Emacs and Vim.\n\nSee the homepage <http://code.google.com/p/scion-lib> and the README\n<http://github.com/nominolo/scion/blob/master/README.markdown> for\nmore information.",
+    "executables": [],
+    "extraSrcFiles": ["README.markdown"],
+    "extraTmpFiles": [],
+    "homepage": "http://github.com/nominolo/scion",
+    "library": "Nothing",
+    "license": "BSD3",
+    "licenseFile": "docs/LICENSE",
+    "maintainer": "Thomas Schilling <nominolo@googlemail.com>",
+    "package": {
+      "pkgName": "scion",
+      "pkgVersion": {
+        "versionBranch": [
+          0,
+          1,
+          0,
+          3
+        ],
+        "versionTags": []
+      }
+    },
+    "pkgUrl": "",
+    "sourceRepos": [],
+    "stability": "provisional",
+    "synopsis": "Haskell IDE library",
+    "testedWith": []
+  }
+}

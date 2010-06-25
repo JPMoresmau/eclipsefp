@@ -5,7 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
+import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.runtime.IPath;
@@ -19,14 +19,31 @@ public class GHCPackageConf implements ITreeElement {
 
   private final IPath location;
   private final GHCSystemLibrary systemLibrary;
-  private final String content;
+//  private final String content;
+
+  private List<GHCPackage> children=null;
+//
+//  public GHCPackageConf( final GHCSystemLibrary systemLibrary,
+//                         final IPath location,
+//                         final String content ) {
+//    this.systemLibrary = systemLibrary;
+//    this.location = location;
+//    this.content = content;
+//  }
 
   public GHCPackageConf( final GHCSystemLibrary systemLibrary,
-                         final IPath location,
-                         final String content ) {
+      final IPath location,
+      final CabalPackage[] pkgs ) {
     this.systemLibrary = systemLibrary;
     this.location = location;
-    this.content = content;
+//    this.content=null;
+    children=new ArrayList<GHCPackage>();
+    for (CabalPackage pkg:pkgs){
+      // only referenced libraries!
+      if (pkg.getComponents().length>0){
+        children.add(new GHCPackage( this, pkg.getName()+"-"+pkg.getVersion(), !pkg.isExposed() ));
+      }
+    }
   }
 
   IPath getLocation() {
@@ -38,9 +55,12 @@ public class GHCPackageConf implements ITreeElement {
   ////////////////////////////////////
 
   public List<GHCPackage> getChildren() {
-    List<GHCPackage> result = new ArrayList<GHCPackage>();
-    parseContent( result );
-    return result;
+//    if (children==null){
+//      List<GHCPackage> result = new ArrayList<GHCPackage>();
+//      parseContent( result );
+//      children=result;
+//    }
+    return children;
   }
 
   public Object getParent() {
@@ -59,16 +79,16 @@ public class GHCPackageConf implements ITreeElement {
   // helping functions
   ////////////////////
 
-  private void parseContent( final List<GHCPackage> pkgs ) {
-    StringTokenizer tok = new StringTokenizer( content, ",", false ); //$NON-NLS-1$
-    while( tok.hasMoreTokens() ) {
-      String token = tok.nextToken().trim();
-      boolean hidden = false;
-      if( token.startsWith( "(" ) && token.endsWith( ")" ) ) { //$NON-NLS-1$ //$NON-NLS-2$
-        hidden = true;
-        token = token.substring( 1, token.length() - 1 );
-      }
-      pkgs.add( new GHCPackage( this, token, hidden ) );
-    }
-  }
+//  private void parseContent( final List<GHCPackage> pkgs ) {
+//    StringTokenizer tok = new StringTokenizer( content, ",", false ); //$NON-NLS-1$
+//    while( tok.hasMoreTokens() ) {
+//      String token = tok.nextToken().trim();
+//      boolean hidden = false;
+//      if( token.startsWith( "(" ) && token.endsWith( ")" ) ) { //$NON-NLS-1$ //$NON-NLS-2$
+//        hidden = true;
+//        token = token.substring( 1, token.length() - 1 );
+//      }
+//      pkgs.add( new GHCPackage( this, token, hidden ) );
+//    }
+//  }
 }

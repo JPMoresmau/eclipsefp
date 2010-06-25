@@ -185,7 +185,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
-      <page
+      <!--<page
             name="%projectImportLibsPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP"
             id="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP">
@@ -200,7 +200,7 @@
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
-      </page>
+      </page>-->
       <page
             name="%fileExposeModulesPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"

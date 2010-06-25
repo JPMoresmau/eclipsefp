@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.Map;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
@@ -12,15 +13,18 @@ import net.sf.eclipsefp.haskell.scion.internal.client.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
@@ -44,6 +48,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Manages a single instance of the Scion server.
@@ -65,6 +70,9 @@ public class ScionInstance implements IScionCommandRunner {
 	private Multiset<IFile> loadedFiles = new Multiset<IFile>();
 	
 	private Writer serverOutput;
+	
+	private JSONObject cabalDescription;
+	private Map<String,CabalPackage[]> packagesByDB;
 	
 	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput) {
 		this.serverExecutable = serverExecutable;
@@ -146,6 +154,7 @@ public class ScionInstance implements IScionCommandRunner {
 		//	@Override
 		//	public void done(IJobChangeEvent event) {
 		//		if (event.getResult().isOK()) {
+		this.cabalDescription=null;
 		if (checkCabalFile()){
 			final ListCabalComponentsCommand command=new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, getCabalFile(getProject()).getLocation().toOSString());
 			/*command.addJobChangeListener(new JobChangeAdapter() {
@@ -172,6 +181,16 @@ public class ScionInstance implements IScionCommandRunner {
 						loadCommand.run(monitor);
 						crh.process(loadCommand);
 					}
+					
+					ParseCabalCommand pcc=new ParseCabalCommand(ScionInstance.this,getCabalFile(getProject()).getLocation().toOSString());
+					pcc.run(monitor);
+					ScionInstance.this.cabalDescription=pcc.getDescription();
+					
+					CabalDependenciesCommand cdc=new CabalDependenciesCommand(ScionInstance.this,getCabalFile(getProject()).getLocation().toOSString());
+					cdc.run(monitor);
+					ScionInstance.this.packagesByDB=cdc.getPackagesByDB();
+					
+					
 					return Status.OK_STATUS;
 				}
 			});
@@ -185,6 +204,8 @@ public class ScionInstance implements IScionCommandRunner {
 		//	}
 		//});
 	}
+	
+	
 
 	public void stop() {
 		if (server != null) {
@@ -431,5 +452,13 @@ public class ScionInstance implements IScionCommandRunner {
 	    String ext = EXTENSION_CABAL;
 	    IPath path = new Path( p.getName() ).addFileExtension( ext );
 	    return p.getFile( path );
+	}
+
+	public JSONObject getCabalDescription() {
+		return cabalDescription;
+	}
+	
+	public Map<String, CabalPackage[]> getPackagesByDB() {
+		return packagesByDB;
 	}
 }

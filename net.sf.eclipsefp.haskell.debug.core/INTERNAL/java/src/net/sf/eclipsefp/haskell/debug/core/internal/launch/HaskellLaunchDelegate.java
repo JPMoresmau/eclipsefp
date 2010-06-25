@@ -198,6 +198,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
       IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
       throw new CoreException( status );
     }
+
     return new Path( location );
   }
 

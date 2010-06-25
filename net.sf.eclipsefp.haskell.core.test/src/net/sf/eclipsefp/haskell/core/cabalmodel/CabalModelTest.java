@@ -26,9 +26,9 @@ public class CabalModelTest extends TestCase {
 
   }
 
-  private String getContent(final String fileName){
+  public static String getContent(final String fileName){
     try {
-      InputStream is=getClass().getResourceAsStream( fileName);
+      InputStream is=CabalModelTest.class.getResourceAsStream( fileName);
       ByteArrayOutputStream baos=new ByteArrayOutputStream();
       int c=-1;
       while ((c=is.read())!=-1){
