@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.scion.types.Component;
+import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 
 /** <p>The root of the package description model, represents the contents of a
   * <code>.cabal</code> file.</p>
@@ -77,6 +79,18 @@ public class PackageDescription {
       return s;
     } catch (IOException ioe){
       // cannot happen
+    }
+    return null;
+  }
+
+  public PackageDescriptionStanza getComponentStanza(final Component c){
+    for (PackageDescriptionStanza pds:stanzas){
+      if (CabalSyntax.SECTION_LIBRARY.equals( pds.getType()) && c.getType().equals( ComponentType.LIBRARY )){
+        return pds;
+      }
+      if (CabalSyntax.SECTION_EXECUTABLE.equals(pds.getType()) && c.getType().equals( ComponentType.EXECUTABLE ) && pds.getName().equals(c.getName())){
+        return pds;
+      }
     }
     return null;
   }

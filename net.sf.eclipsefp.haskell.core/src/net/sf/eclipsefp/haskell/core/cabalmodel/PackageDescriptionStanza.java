@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 
 /** <p>represents a stanza in a package description.</p>
@@ -150,7 +151,7 @@ public class PackageDescriptionStanza {
       } else {
         ValuePosition vp=vps.iterator().next();
         indent=subIndent=vp.getSubsequentIndent();
-        spaces=indent-(field.getCabalName().length() +1);
+        spaces=indent-(field.getCabalName().length() +1+getIndent());
         if (needNL && eLast!=null){
           addLeadingNL(sb,oldVP,eLast);
         }
@@ -165,6 +166,8 @@ public class PackageDescriptionStanza {
     }
     if (value==null){
       getPositions().remove( field.getCabalName().toLowerCase() );
+      // remove field name to
+      oldVP.setInitialIndent( getIndent() );
       return new RealValuePosition( oldVP,""); //$NON-NLS-1$
     }
 
@@ -267,24 +270,55 @@ public class PackageDescriptionStanza {
 
   public RealValuePosition removeFromPropertyList(final CabalSyntax field,final String value){
     String s=getProperties().get( field );
-    List<String> ls=PackageDescriptionLoader.parseList( s );
-    // short lists we hope
-    if (ls.contains( value )){
-      StringBuilder newValue=new StringBuilder();
+    if (s!=null){
+      List<String> ls=PackageDescriptionLoader.parseList( s );
+
+      StringBuilder newValue=new StringBuilder(s.length());
+      boolean changed=false;
       for (String token:ls){
         if (!value.equals( token )){
           if(newValue.length()>0){
             newValue.append( ", " ); //$NON-NLS-1$
           }
           newValue.append( token);
+        } else {
+          changed=true;
         }
       }
-      return update(field, newValue.toString() );
+      if (changed){
+        return update(field, newValue.toString() );
+      }
+    }
+    return update(field, s);
+
+   }
+
+  public RealValuePosition removePrefixFromPropertyList(final CabalSyntax field,final String prefix,final String seps){
+    String s=getProperties().get( field );
+    if (s!=null){
+      List<String> ls=PackageDescriptionLoader.parseList( s,seps );
+
+      StringBuilder newValue=new StringBuilder(s.length());
+      boolean changed=false;
+      String prefixSp=prefix+" "; //$NON-NLS-1$
+      for (String token:ls){
+        if ((!prefix.equals( token.trim() )) && (!token.trim().startsWith( prefixSp ))){
+          if(newValue.length()>0){
+            newValue.append( ", " ); //$NON-NLS-1$
+          } else if (token.startsWith( ResourceUtil.NL )){
+            token=token.substring( ResourceUtil.NL.length() );
+          }
+          newValue.append( token);
+        } else {
+          changed=true;
+        }
+      }
+      if (changed){
+        return update(field, newValue.toString() );
+      }
     }
     return update(field, s);
    }
-
-
 
   public String getName() {
     return name;

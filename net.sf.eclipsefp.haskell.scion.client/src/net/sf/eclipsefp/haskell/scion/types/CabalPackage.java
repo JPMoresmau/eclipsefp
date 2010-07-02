@@ -15,6 +15,10 @@ public class CabalPackage {
 	private boolean exposed;
 	private Component[] components;
 	
+	public CabalPackage(){
+		
+	}
+	
 	public CabalPackage(JSONObject obj) throws JSONException {
 		name=obj.getString("name");
 		version=obj.getString("version");
@@ -51,6 +55,10 @@ public class CabalPackage {
 		this.components = components;
 	}
 	
+	@Override
+	public String toString() {
+		return name+((version!=null && version.length()>0)?"-"+version:"");
+	}
 	
 	
 }

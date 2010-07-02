@@ -9,7 +9,8 @@ Category:	Testing
 Synopsis:	A unit testing framework for Haskell
 
 Library
-  Build-Depends:	base
+  Build-Depends:  multiset     >= 0.1 && < 0.3,
+    base
   Exposed-modules:
     Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,
     Test.HUnit.Text, Test.HUnit

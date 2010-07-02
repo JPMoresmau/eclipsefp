@@ -148,6 +148,16 @@ public final class UITexts extends NLS {
   public static String scion_preferences_title;
   public static String scion_delta_error;
 
+  public static String libraries_description;
+  public static String libraries_add_title;
+  public static String libraries_add_available_title;
+  public static String libraries_add_component_title;
+  public static String libraries_add_component_all;
+  public static String libraries_add_component_selected;
+  public static String libraries_add_version_title;
+  public static String libraries_add_version_none;
+  public static String libraries_add_version_specific;
+
   public static String outline_sortByName;
   public static String outline_sortByName_tooltip;
   public static String outline_sortByName_description;

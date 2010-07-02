@@ -64,6 +64,9 @@ public class Component {
 		return component;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return getType().toString().toLowerCase() +" "+(getName()!=null?getName():"");
+	}
 	
 }

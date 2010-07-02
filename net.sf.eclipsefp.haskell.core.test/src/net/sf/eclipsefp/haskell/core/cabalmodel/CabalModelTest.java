@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 
 public class CabalModelTest extends TestCase {
@@ -85,20 +86,20 @@ public class CabalModelTest extends TestCase {
       assertNull(pdss.get(1).getName());
       assertEquals(2,pdss.get(1).getIndent());
       assertEquals(10,pdss.get(1).getStartLine());
-      assertEquals(16,pdss.get(1).getEndLine());
+      assertEquals(17,pdss.get(1).getEndLine());
       assertNotNull(pdss.get(1).getProperties());
       assertEquals(3,pdss.get(1).getProperties().size());
-      assertEquals("base",pdss.get(1).getProperties().get( "Build-Depends"));
-      vp=pdss.get(1).getPositions().get("Build-Depends");
+      assertEquals("multiset     >= 0.1 && < 0.3,"+ResourceUtil.NL+"base",pdss.get(1).getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS));
+      vp=pdss.get(1).getPositions().get(CabalSyntax.FIELD_BUILD_DEPENDS);
       assertEquals(11,vp.getStartLine());
-      assertEquals(12,vp.getEndLine());
-      assertEquals(17,vp.getInitialIndent());
-      assertEquals(20,vp.getSubsequentIndent());
+      assertEquals(13,vp.getEndLine());
+      assertEquals(18,vp.getInitialIndent());
+      assertEquals(4,vp.getSubsequentIndent());
       assertEquals("CPP",pdss.get(1).getProperties().get( "Extensions"));
       assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+NL+"Test.HUnit.Text, Test.HUnit",pdss.get(1).getProperties().get( "Exposed-modules"));
   }
 
-  public void testModifyExample1(){
+  public void testModifySmall(){
     String content3=getContent( "Small.cabal" );
     PackageDescription pd=PackageDescriptionLoader.load( content3 );
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
@@ -127,6 +128,23 @@ public class CabalModelTest extends TestCase {
     assertEquals(2,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
 
+
+
+  }
+
+  public void testModifyExample1(){
+    String content3=getContent( "Example1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    PackageDescriptionStanza pds=pdss.get(1);
+    RealValuePosition rvp=pds.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "multiset", "," );
+    assertEquals("base"+ResourceUtil.NL,rvp.getRealValue());
+
+    pd=PackageDescriptionLoader.load( content3 );
+    pdss=pd.getStanzas();
+    pds=pdss.get(1);
+    rvp=pds.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "base", "," );
+    assertEquals("multiset     >= 0.1 && < 0.3"+ResourceUtil.NL,rvp.getRealValue());
   }
 
   public void testParseExample3(){
@@ -455,6 +473,12 @@ public class CabalModelTest extends TestCase {
     assertEquals(16,rvp.getInitialIndent());
     assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+NL,rvp.getRealValue());
 
+    String bd=pds.getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS );
+    assertNotNull(bd);
+    assertTrue(bd.contains( "multiset     == 0.1.*" ));
+    rvp=pds.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "multiset" ,",");
+    assertFalse(rvp.getRealValue().contains("multiset") );
+    assertEquals(96,rvp.getStartLine());
   }
 
   public void testDependantPackages(){
@@ -609,5 +633,25 @@ public class CabalModelTest extends TestCase {
 
     pds1=pds.getStanzas().get(1 );
     assertNull(pds1.getName());
+  }
+
+  public void testModifyBuildDepends(){
+    String content3=getContent( "P1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+
+    PackageDescriptionStanza pds1=pd.getStanzas().get( 1 );
+    assertNull(pds1.getName());
+    RealValuePosition rvp=pds1.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "base" );
+    assertEquals("  build-depends:   base"+ResourceUtil.NL,rvp.getRealValue());
+    assertEquals(8,rvp.getStartLine());
+    assertEquals(8,rvp.getEndLine());
+
+
+    PackageDescriptionStanza pds2=pd.getStanzas().get( 2 );
+    assertEquals("P1",pds2.getName());
+    rvp=pds2.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "array","," );
+    assertEquals(14,rvp.getStartLine());
+    assertEquals(15,rvp.getEndLine());
+    assertEquals(2,rvp.getInitialIndent());
   }
 }

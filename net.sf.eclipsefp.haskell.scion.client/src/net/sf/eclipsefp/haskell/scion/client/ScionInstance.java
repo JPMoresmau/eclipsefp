@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
@@ -73,6 +74,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private JSONObject cabalDescription;
 	private Map<String,CabalPackage[]> packagesByDB;
+	private List<Component> components;
 	
 	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput) {
 		this.serverExecutable = serverExecutable;
@@ -174,8 +176,8 @@ public class ScionInstance implements IScionCommandRunner {
 				public IStatus run(IProgressMonitor monitor) {
 					deleteProblems(getProject());
 					CompilationResultHandler crh=new CompilationResultHandler(getProject());
-					
-					for (Component c:command.getComponents()){
+					components=command.getComponents();
+					for (Component c:components){
 						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output);
 						//loadCommand.addJobChangeListener();
 						loadCommand.run(monitor);
@@ -460,5 +462,9 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public Map<String, CabalPackage[]> getPackagesByDB() {
 		return packagesByDB;
+	}
+	
+	public List<Component> getComponents() {
+		return components;
 	}
 }

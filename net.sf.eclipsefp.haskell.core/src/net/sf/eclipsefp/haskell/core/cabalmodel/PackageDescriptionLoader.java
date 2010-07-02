@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /** <p>contains helping functionality for loading a {@link PackageDescription
   * PackageDescription model}.</p>
@@ -25,6 +26,9 @@ public class PackageDescriptionLoader {
   public static PackageDescription load( final IFile file ) throws CoreException{
     PackageDescription result = new PackageDescription();
     if (file!=null && file.exists()){
+      if (!file.getWorkspace().isTreeLocked()){
+        file.refreshLocal( 0, new NullProgressMonitor() );
+    }
       InputStream is=file.getContents();
       try {
         BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ));
