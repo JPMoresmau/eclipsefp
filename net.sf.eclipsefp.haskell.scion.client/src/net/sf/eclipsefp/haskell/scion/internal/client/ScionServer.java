@@ -35,7 +35,7 @@ public class ScionServer {
 
 	private static String host="::1"; // amounts to connecting to the loopback interface in IPV6
 	private static final int MAX_RETRIES = 5; // number of times to try to connect or relaunch an operation on timeout
-	private static final int SOCKET_TIMEOUT= 60 * 1000; // timeout on reading from socket, in milliseconds
+	private static final int SOCKET_TIMEOUT= 10 * 60 * 1000; // timeout on reading from socket, in milliseconds 10 minutes should leave plenty of time??
 	private static final String
 		CLASS_PREFIX = "[ScionServer]",
 		SERVER_STDOUT_PREFIX = "[scion-server]";
