@@ -38,16 +38,20 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
   public void run( final IProject project,
                    final IProgressMonitor mo ) throws CoreException {
-    String name = project.getName();
-    createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
+    // we create nothing if no component selected, probably we're getting files from source control system or something
+    if (isExecutable() || isLibrary()){
+      String name = project.getName();
+      createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
 
-    if (isExecutable()){
-      IPath mainFile = new Path( "src/Main" ).addFileExtension( ResourceUtil.EXTENSION_HS ); //$NON-NLS-1$
-      createFile( project, mainFile, getMainFileContent( ), mo  );
+      if (isExecutable()){
+        IPath mainFile = new Path( "src/Main" ).addFileExtension( ResourceUtil.EXTENSION_HS ); //$NON-NLS-1$
+        createFile( project, mainFile, getMainFileContent( ), mo  );
+      }
+
+
+      IPath cabalFile = new Path( name ).addFileExtension( ResourceUtil.EXTENSION_CABAL );
+      createFile( project, cabalFile, getCabalFileContent( name ), mo  );
     }
-
-    IPath cabalFile = new Path( name ).addFileExtension( ResourceUtil.EXTENSION_CABAL );
-    createFile( project, cabalFile, getCabalFileContent( name ), mo  );
   }
 
 
