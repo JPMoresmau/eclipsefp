@@ -112,7 +112,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private boolean checkCabalFile(){
 		IFile cabalFile=getCabalFile(getProject());
-	    if( !cabalFile.exists() ) {
+	    if( !cabalFile.exists() && !getProject().getWorkspace().isTreeLocked()) {
 	        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
 	        try {
 	        	IMarker marker = getProject().createMarker( id );
@@ -304,7 +304,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	
 	public void deleteProblems(IResource r){
-		if (!r.getWorkspace().isTreeLocked()){
+		if (!r.getWorkspace().isTreeLocked() && r.exists()){
 			try {
 				if (r instanceof IFile){
 					r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
