@@ -12,7 +12,9 @@ import org.eclipse.jface.viewers.ViewerFilter;
   * projects.</p>
   *
   * @author Leif Frenzel
+  * @deprecated, since we don't manage executables ourselves
   */
+@Deprecated
 public class ProjectExecutableFilter extends ViewerFilter {
 
 

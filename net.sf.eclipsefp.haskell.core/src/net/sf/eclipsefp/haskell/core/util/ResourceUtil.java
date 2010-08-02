@@ -86,9 +86,11 @@ public class ResourceUtil {
     IHaskellProject hsProject = HaskellProjectManager.get( project );
     Set<IPath> targetNames = hsProject.getTargetNames();
     for( IPath path: targetNames ) {
-      IFile file = project.getFile( path );
-      if( file.exists() ) {
-        result.add( file );
+      if (!path.isEmpty()){
+        IFile file = project.getFile( path );
+        if( file.exists() ) {
+          result.add( file );
+        }
       }
     }
     return result.toArray( new IFile[ result.size() ] );
@@ -191,6 +193,7 @@ public class ResourceUtil {
 	/**
 	 * returns whether the specified file is the project executable of its
 	 * project.
+	 * @deprecated
 	 */
 	public static boolean isProjectExecutable( final IFile file ) {
 	  if( file == null ) {
@@ -262,7 +265,11 @@ public class ResourceUtil {
         IFile f=ScionInstance.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         for (String src:pd.getStanzasBySourceDir().keySet()){
+          if (src!=null && src.equals( "." )) { //$NON-NLS-1$
+            return project;
+          }
           IFolder fldr=project.getFolder( src );
+
           if (resource.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
             return fldr;
           }

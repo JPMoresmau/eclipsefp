@@ -57,7 +57,9 @@ public class ModuleInclusionComposite extends Composite {
     try {
       PackageDescription cabal=PackageDescriptionLoader.load( ScionInstance.getCabalFile( srcPath.getProject() ));
       String path=srcPath.getProjectRelativePath().toOSString();
-
+      if (path.length()==0){
+        path=".";
+      }
       List<PackageDescriptionStanza> l=cabal.getStanzasBySourceDir().get( path );
       if (l!=null && l.size()>0){
         GridLayout gl=new GridLayout(3,false);

@@ -81,16 +81,16 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
     Image result = null;
     try {
       if( file.getProject().hasNature( HaskellNature.NATURE_ID ) ) {
-        if( ResourceUtil.isProjectExecutable( file ) ) {
-          result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
-        } else {
+        //if( ResourceUtil.isProjectExecutable( file ) ) {
+        //  result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
+        //} else {
           String ext = file.getFileExtension();
           if( ResourceUtil.EXTENSION_HS.equals( ext ) ) {
             result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
           } else if( ResourceUtil.EXTENSION_LHS.equals( ext ) ) {
             result = HaskellUIImages.getImage( IImageNames.LITERATE_SOURCE_FILE );
           }
-        }
+        //}
       }
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( cex );
