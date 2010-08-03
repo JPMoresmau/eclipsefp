@@ -14,11 +14,9 @@ package net.sf.eclipsefp.haskell.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -52,7 +50,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   // Resource bundle.
   private ResourceBundle resourceBundle;
 
-  private HaskellPreferenceManager fPreferenceManager;
+  // FIXME: Remove private HaskellPreferenceManager fPreferenceManager;
 
   private ScionManager fScionManager = null;
 
@@ -83,6 +81,8 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     fScionManager.start();
   }
 
+  // FIXME: Remove deprecated code
+  /*
   @Deprecated
   public HaskellPreferenceManager getPreferenceManager() {
     if( null == fPreferenceManager ) {
@@ -91,6 +91,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     }
     return fPreferenceManager;
   }
+  */
 
   /**
    * <p>

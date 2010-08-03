@@ -34,17 +34,15 @@ public class BuildConsolePP extends PreferencePage implements
 
 	private Button fChkCleanConsole;
 	private final IPreferenceStore fStore;
-	private final HaskellPreferenceManager fManager;
+	// FIXME: Remove private final HaskellPreferenceManager fManager;
 
 	public BuildConsolePP() {
-		this(HaskellUIPlugin.getDefault().getPreferenceManager(),
-		     HaskellUIPlugin.getDefault().getPreferenceStore());
+		this(HaskellUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	public BuildConsolePP(final HaskellPreferenceManager manager,
-			              final IPreferenceStore store)
+	public BuildConsolePP(final IPreferenceStore store)
 	{
-		fManager = manager;
+		// FIXME: Remove fManager = manager;
 		fStore = store;
 	}
 
@@ -90,8 +88,7 @@ public class BuildConsolePP extends PreferencePage implements
 
 	@Override
 	public boolean performOk() {
-		fManager.activateBuildConsolePreferences();
-
+		// FIXME: Remove fManager.activateBuildConsolePreferences();
 		return true;
 	}
 

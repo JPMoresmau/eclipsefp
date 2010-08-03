@@ -11,25 +11,29 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.console;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import junit.framework.TestCase;
 import org.eclipse.ui.console.TextConsole;
 
-import net.sf.eclipsefp.haskell.ui.console.ConsoleCompilingReporter;
-import net.sf.eclipsefp.haskell.ui.console.IConsoleCleaner;
-import junit.framework.TestCase;
-
 public class ConsoleCompilingReporter_PDETest extends TestCase {
-	
+
 	public void testAskCleanerToCleanConsoleWhenStartingCompilation() {
 		IConsoleCleaner cleaner = createMock(IConsoleCleaner.class);
 		cleaner.clean((TextConsole) anyObject());
 		expectLastCall().once();
 		replay(cleaner);
-		
+
+		// FIXME: Remove deprecated code
+    /*
 		ConsoleCompilingReporter reporter =
 			new ConsoleCompilingReporter(cleaner);
 		reporter.startingCompilation();
-		
+     */
+
 		verify(cleaner);
 	}
 
