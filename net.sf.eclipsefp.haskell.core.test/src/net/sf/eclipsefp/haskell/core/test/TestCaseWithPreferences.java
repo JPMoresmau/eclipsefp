@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -48,13 +49,21 @@ public class TestCaseWithPreferences extends TestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    fPrefsScope = new TestScope();
-    // add TestScope to the preferences lookup order
-    String[] lookupOrder = new String[] {
-        TestScope.SCOPE, ProjectScope.SCOPE, InstanceScope.SCOPE, ConfigurationScope.SCOPE, DefaultScope.SCOPE
-    };
-    for (String qualifier : fQualifiers) {
-      Platform.getPreferencesService().setDefaultLookupOrder( qualifier, null, lookupOrder );
+    IPreferencesService prefSvc = Platform.getPreferencesService();
+    if (prefSvc != null) {
+      fPrefsScope = new TestScope();
+      // add TestScope to the preferences lookup order
+      String[] lookupOrder = new String[] {
+          TestScope.SCOPE,
+          ProjectScope.SCOPE,
+          InstanceScope.SCOPE,
+          ConfigurationScope.SCOPE,
+          DefaultScope.SCOPE
+      };
+
+      for (String qualifier : fQualifiers) {
+        prefSvc.setDefaultLookupOrder( qualifier, null, lookupOrder );
+      }
     }
   }
 
