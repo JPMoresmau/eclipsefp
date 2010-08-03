@@ -118,18 +118,19 @@ public class PackageDescriptionStanza {
     return vp;
   }*/
 
-  public RealValuePosition update(final CabalSyntax field,String value){
+  public RealValuePosition update(final CabalSyntax field,final String value){
+    String realValue = value;
     if (value!=null && value.trim().length()==0){
-      value=null;
+      realValue=null;
     }
     Map.Entry<String,String> eLast=null;
-    if (value!=null){
+    if (realValue!=null){
       if (needNL){
         for (Map.Entry<String,String> e:getProperties().entrySet()){
           eLast=e;
         }
       }
-      getProperties().put(field.getCabalName().toLowerCase(),value);
+      getProperties().put(field.getCabalName().toLowerCase(),realValue);
     } else {
       getProperties().remove(field.getCabalName().toLowerCase());
     }
@@ -164,14 +165,14 @@ public class PackageDescriptionStanza {
       subIndent=oldVP.getSubsequentIndent();
       indent=oldVP.getInitialIndent();
     }
-    if (value==null){
+    if (realValue==null){
       getPositions().remove( field.getCabalName().toLowerCase() );
       // remove field name to
       oldVP.setInitialIndent( getIndent() );
       return new RealValuePosition( oldVP,""); //$NON-NLS-1$
     }
 
-    BufferedReader br=new BufferedReader( new StringReader( value ) );
+    BufferedReader br=new BufferedReader( new StringReader( realValue ) );
     try {
 
       String line=br.readLine();
