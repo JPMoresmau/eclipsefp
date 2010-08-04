@@ -41,7 +41,7 @@ public class CabalBuilder extends IncrementalProjectBuilder {
   // helping functions
   ////////////////////
 
-  private void checkCabalFile() throws CoreException {
+  private void checkCabalFile() /* (doesn't) throws CoreException */ {
     // TODO TtC replace by something not Cohatoe-based
     /*
     if( getCabalFile().exists() ) {

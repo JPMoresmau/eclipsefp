@@ -53,7 +53,7 @@ public abstract class LaunchOperation {
   }
 
   String createConfigId( final String name ) {
-    return getLaunchManager().generateUniqueLaunchConfigurationNameFrom( name.replace( '/', '.' ) );
+    return getLaunchManager().generateLaunchConfigurationName( name.replace( '/', '.' ) );
   }
 
   public static ILaunchConfigurationType getConfigType() {

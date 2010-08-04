@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -90,7 +91,17 @@ public class HaskellCorePlugin extends Plugin {
 	}
 
 	public static String getPluginId() {
-		return getDefault().getBundle().getSymbolicName();
+	  HaskellCorePlugin thePlugin = getDefault();
+
+	  if (thePlugin != null) {
+	    Bundle theBundle = thePlugin.getBundle();
+	    if (theBundle != null) {
+	      return theBundle.getSymbolicName();
+	    }
+	  }
+
+	  // Otherwise...
+		return "net.sf.eclipsefp.haskell.core.test"; //$NON-NLS-1$
 	}
 
 

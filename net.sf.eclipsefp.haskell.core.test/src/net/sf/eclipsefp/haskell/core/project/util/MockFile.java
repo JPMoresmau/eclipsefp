@@ -7,11 +7,11 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResourceProxy;
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -459,5 +460,24 @@ public class MockFile implements IFile {
 			final int depth) {
 		return 0;
 	}
+
+  public IPathVariableManager getPathVariableManager() {
+    IPathVariableManager result = null;
+    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    if (workspace != null) {
+      result = workspace.getPathVariableManager();
+    }
+    return result;
+  }
+
+  public boolean isVirtual() {
+    // By default, do not assume that MockFile's are virtual resources
+    return false;
+  }
+
+  public void setDerived( final boolean isDerived, final IProgressMonitor monitor )
+      throws CoreException {
+    // unused.
+  }
 
 }
