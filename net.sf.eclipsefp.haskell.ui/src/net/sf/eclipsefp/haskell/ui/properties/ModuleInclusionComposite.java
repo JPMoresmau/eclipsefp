@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -94,20 +94,11 @@ public class ModuleInclusionComposite extends Composite {
 
           final Button bInclude=new Button(this,SWT.CHECK);
 
-          String s=pd.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES );
-          List<String> ls=PackageDescriptionLoader.parseList( s );
+          ModuleInclusionType mit=pd.getModuleInclusionType( module );
 
-          if (CabalSyntax.SECTION_EXECUTABLE.equals( pd.getType() )){
-            s=pd.getProperties().get( CabalSyntax.FIELD_MAIN_IS );
-            if (s!=null){
-              String f=module.replace( '.', '/' );
-              if ((f+"."+ResourceUtil.EXTENSION_HS).equals(s) || (f+"."+ResourceUtil.EXTENSION_LHS).equals(s)){ //$NON-NLS-1$ //$NON-NLS-2$
-                bInclude.setEnabled( false );
-              }
-            }
+          if (CabalSyntax.SECTION_EXECUTABLE.equals( pd.getType() ) && ModuleInclusionType.MAIN.equals( mit )){
+             bInclude.setEnabled( false );
           }
-
-
 
           final Button bExpose=new Button(this,SWT.CHECK);
           bExpose.setEnabled( CabalSyntax.SECTION_LIBRARY.equals( pd.getType() ) );
@@ -126,7 +117,7 @@ public class ModuleInclusionComposite extends Composite {
               }
 
             });
-            if (ls.contains( module )){
+            if (ModuleInclusionType.INCLUDED.equals( mit )){
               bInclude.setSelection( true);
               included.add( pd );
               bExpose.setSelection( false );
@@ -134,8 +125,7 @@ public class ModuleInclusionComposite extends Composite {
           }
 
           if (bExpose.isEnabled()){
-            s=pd.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-            ls=PackageDescriptionLoader.parseList( s );
+
             bExpose.addSelectionListener( new SelectionAdapter() {
               @Override
               public void widgetSelected( final SelectionEvent e ) {
@@ -148,7 +138,7 @@ public class ModuleInclusionComposite extends Composite {
                 bInclude.setEnabled( !bExpose.getSelection() );
               }
             });
-            if (ls.contains( module )){
+            if (ModuleInclusionType.EXPOSED.equals( mit )){
               bExpose.setSelection( true);
               exposed.add( pd );
               bInclude.setSelection( false );

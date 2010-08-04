@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
@@ -345,7 +346,17 @@ public class ResourceUtil {
           for (String src:stzs.keySet()){
             IContainer fldr=getContainer(project,src);
             if (fi.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
-              applicable.addAll(stzs.get(src));
+
+              if (hasHaskellExtension(fi)){
+                for (PackageDescriptionStanza stz:stzs.get(src)){
+                  String module=getQualifiedModuleName( fi, fldr );
+                  if (!ModuleInclusionType.MISSING.equals( stz.getModuleInclusionType( module ) )){
+                    applicable.add(stz);
+                  }
+                }
+              } else {
+                applicable.addAll(stzs.get(src));
+              }
             }
           }
         }
@@ -357,6 +368,7 @@ public class ResourceUtil {
     }
     return Collections.emptySet();
   }
+
 
   public static IPath getSourceRelativePath( final IResource resource ) {
     IPath result = null;
@@ -450,5 +462,11 @@ public class ResourceUtil {
 
   public static String getModuleName( final String fileName ) {
     return fileName.substring( 0, fileName.lastIndexOf( '.' ) );
+  }
+
+  public static String getQualifiedModuleName (final IFile file,final IContainer source){
+    IPath path=file.getProjectRelativePath().removeFirstSegments( source.getProjectRelativePath().segmentCount() );
+    String s=path.toString();
+    return getModuleName(s).replace( '/', '.' );
   }
 }

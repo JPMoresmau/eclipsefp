@@ -654,4 +654,18 @@ public class CabalModelTest extends TestCase {
     assertEquals(15,rvp.getEndLine());
     assertEquals(2,rvp.getInitialIndent());
   }
+
+  public void testModuleInclusionType(){
+    String content3=getContent( "Example4.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    PackageDescriptionStanza lib=pdss.get( 3 );
+    assertEquals(ModuleInclusionType.EXPOSED,lib.getModuleInclusionType( "Testing.Test1" ));
+    assertEquals(ModuleInclusionType.INCLUDED,lib.getModuleInclusionType( "Testing.WebStuff" ));
+    assertEquals(ModuleInclusionType.MISSING,lib.getModuleInclusionType( "T1" ));
+    PackageDescriptionStanza exe=pdss.get( 4 );
+    assertEquals(ModuleInclusionType.INCLUDED,exe.getModuleInclusionType( "Testing.Test1" ));
+    assertEquals(ModuleInclusionType.MAIN,exe.getModuleInclusionType( "T1" ));
+    assertEquals(ModuleInclusionType.MISSING,exe.getModuleInclusionType( "Testing.Test2" ));
+  }
 }

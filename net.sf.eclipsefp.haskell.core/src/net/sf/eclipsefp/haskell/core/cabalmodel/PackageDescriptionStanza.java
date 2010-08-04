@@ -334,6 +334,7 @@ public class PackageDescriptionStanza {
   }
 
   public String toTypeName(){
+ // this is equivalent to Component toString()
     return String.valueOf( getType() ) + (getName()!=null?" "+getName():"");  //$NON-NLS-1$//$NON-NLS-2$
   }
 
@@ -436,6 +437,31 @@ public class PackageDescriptionStanza {
       pds.dump( w, indent2 );
     }
 
+  }
+
+  public ModuleInclusionType getModuleInclusionType(final String module){
+    String s=getProperties().get( CabalSyntax.FIELD_OTHER_MODULES );
+    List<String> ls=PackageDescriptionLoader.parseList( s );
+    if (ls.contains( module )){
+      return ModuleInclusionType.INCLUDED;
+    }
+    s=getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    ls=PackageDescriptionLoader.parseList( s );
+    if (ls.contains( module )){
+      return ModuleInclusionType.EXPOSED;
+    }
+    s=getProperties().get( CabalSyntax.FIELD_MAIN_IS );
+    String f=module.replace( '.', '/' );
+    if ((f+"."+ResourceUtil.EXTENSION_HS).equals(s) || (f+"."+ResourceUtil.EXTENSION_LHS).equals(s)){ //$NON-NLS-1$ //$NON-NLS-2$
+      return ModuleInclusionType.MAIN;
+    }
+    for (PackageDescriptionStanza pds:getStanzas()){
+      ModuleInclusionType inSubSection=pds.getModuleInclusionType( module );
+      if (!inSubSection.equals( ModuleInclusionType.MISSING )){
+        return inSubSection;
+      }
+    }
+    return ModuleInclusionType.MISSING;
   }
 
 }
