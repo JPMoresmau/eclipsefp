@@ -26,14 +26,6 @@ public class ConsoleCompilingReporter_PDETest extends TestCase {
 		cleaner.clean((TextConsole) anyObject());
 		expectLastCall().once();
 		replay(cleaner);
-
-		// FIXME: Remove deprecated code
-    /*
-		ConsoleCompilingReporter reporter =
-			new ConsoleCompilingReporter(cleaner);
-		reporter.startingCompilation();
-     */
-
 		verify(cleaner);
 	}
 

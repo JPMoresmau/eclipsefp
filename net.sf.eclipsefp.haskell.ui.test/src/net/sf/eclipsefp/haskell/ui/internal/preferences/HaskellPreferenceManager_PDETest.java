@@ -21,13 +21,6 @@ public class HaskellPreferenceManager_PDETest extends TestCase
 		cmgr.addCompilerListener((ICompilerListener) anyObject());
 		expectLastCall().once();
 		replay(cmgr);
-
-		// FIXME: Remove deprecated code
-		/*
-		HaskellPreferenceManager pmgr = new HaskellPreferenceManager(cmgr, store);
-		pmgr.activateBuildConsolePreferences();
-		*/
-
 		verify(cmgr);
 	}
 
@@ -40,14 +33,6 @@ public class HaskellPreferenceManager_PDETest extends TestCase
 		cmgr.addCompilerListener((ICompilerListener) anyObject());
 		expectLastCall().once();
 		replay(cmgr);
-
-		// FIXME: Remove deprecated code
-		/*
-		HaskellPreferenceManager pmgr = new HaskellPreferenceManager(cmgr, store);
-		pmgr.activateBuildConsolePreferences();
-		pmgr.activateBuildConsolePreferences();
-		*/
-
 		verify(cmgr);
 	}
 

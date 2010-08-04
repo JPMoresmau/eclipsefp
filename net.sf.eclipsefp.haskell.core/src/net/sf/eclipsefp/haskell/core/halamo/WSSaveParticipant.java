@@ -69,8 +69,9 @@ class WSSaveParticipant implements ISaveParticipant {
   private ISavedState getLastState() {
     ISavedState result = null;
     try {
+      HaskellCorePlugin plugin = HaskellCorePlugin.getDefault();
       IWorkspace ws = ResourcesPlugin.getWorkspace();
-      result = ws.addSaveParticipant( HaskellCorePlugin.getPluginId(), this );
+      result = ws.addSaveParticipant( plugin, this );
     } catch( CoreException ex ) {
       HaskellCorePlugin.log( "Could not add save participant.", ex ); //$NON-NLS-1$
     }
