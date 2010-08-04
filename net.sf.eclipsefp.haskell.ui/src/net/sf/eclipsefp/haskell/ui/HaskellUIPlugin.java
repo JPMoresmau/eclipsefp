@@ -50,8 +50,6 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   // Resource bundle.
   private ResourceBundle resourceBundle;
 
-  // FIXME: Remove private HaskellPreferenceManager fPreferenceManager;
-
   private ScionManager fScionManager = null;
 
   public HaskellUIPlugin() {
@@ -80,18 +78,6 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     fScionManager = new ScionManager();
     fScionManager.start();
   }
-
-  // FIXME: Remove deprecated code
-  /*
-  @Deprecated
-  public HaskellPreferenceManager getPreferenceManager() {
-    if( null == fPreferenceManager ) {
-      fPreferenceManager = new HaskellPreferenceManager( CompilerManager
-          .getInstance(), getPreferenceStore() );
-    }
-    return fPreferenceManager;
-  }
-  */
 
   /**
    * <p>

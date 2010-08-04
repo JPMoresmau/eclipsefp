@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
@@ -20,6 +19,34 @@ public class FileUtil {
    * The first is the default in case we need to construct a valid executable file name.
    */
   public static final String[] WINDOWS_EXECUTABLE_EXTENSIONS = new String[] { "exe", "bat" }; //$NON-NLS-1$ //$NON-NLS-2$
+  static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
+
+  static {
+    // Initialize the candidate file locations list, since this doesn't change during runtime.
+    // add all directories from the PATH environment variable
+    String path = System.getenv("PATH"); //$NON-NLS-1$
+    for (String dir : path.split(File.pathSeparator)) {
+      candidateLocations.add(new File(dir));
+    }
+
+    // add common bin directories from the user's home directory
+    String[] homes = new String[] {
+      System.getenv("HOME"), //$NON-NLS-1$
+      System.getProperty("user.home") //$NON-NLS-1$
+    };
+
+    String[] userBins = new String[] {
+      ".cabal/bin", //$NON-NLS-1$
+      "usr/bin", //$NON-NLS-1$
+      "bin", //$NON-NLS-1$
+    };
+
+    for (String home : homes) {
+      for (String userBin : userBins) {
+        candidateLocations.add(new File(home, userBin));
+      }
+    }
+  }
 
 	private FileUtil() {
 		// do not instantiate
@@ -92,37 +119,23 @@ public class FileUtil {
     });
   }
 
+  @SuppressWarnings("unchecked")
   public static File findInPath(final String shortFileName,final FileFilter ff){
-    // build up a list of directories that might contain the file
-    List<File> candidates = new ArrayList<File>(32);
+    ArrayList<File> candidates = null;
 
-    // add all directories from the $PATH variable
-    // TODO TtC this is Unix-only; Windows splits on semicolons I believe, and might do quoting/escaping?
-    String path = System.getenv("PATH"); //$NON-NLS-1$
-    for (String dir : path.split(File.pathSeparator)) {
-      candidates.add(new File(dir));
+    try {
+      // Shallow copy is sufficient in this case
+      candidates = (ArrayList<File>) candidateLocations.clone();
+    }
+    catch (ClassCastException exc) {
+      // But, in the really unexpected case when the cast actually
+      // fails (unreachable code), do something sensible.
+      candidates = new ArrayList<File>();
     }
 
-    // add common bin directories from the user's home dir
-    String[] homes = new String[] {
-      System.getenv("HOME"), //$NON-NLS-1$
-      System.getProperty("user.home") //$NON-NLS-1$
-    };
-    String[] userBins = new String[] {
-      ".cabal/bin", //$NON-NLS-1$
-      "usr/bin", //$NON-NLS-1$
-      "bin", //$NON-NLS-1$
-    };
-    for (String home : homes) {
-      for (String userBin : userBins) {
-        candidates.add(new File(home, userBin));
-      }
-    }
-
-    // add the current working directory
+    // Add the current working directory, since it might change.
     String pwd = System.getProperty("user.dir"); //$NON-NLS-1$
     candidates.add(new File(pwd));
-
 
     for (File candidate : candidates) {
       File file = new File(candidate, shortFileName);
@@ -130,7 +143,6 @@ public class FileUtil {
         return file;
       }
     }
-
     return null;
   }
 
