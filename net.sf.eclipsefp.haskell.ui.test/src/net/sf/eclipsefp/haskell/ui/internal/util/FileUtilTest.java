@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.util;
 
 import java.io.File;
 import java.io.IOException;
+import net.sf.eclipsefp.haskell.core.util.FileUtil;
 import junit.framework.TestCase;
 
 

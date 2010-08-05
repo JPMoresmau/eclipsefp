@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.test;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator_PDETest;
@@ -23,9 +24,9 @@ import net.sf.eclipsefp.haskell.core.project.ImportLibraries_PDETest;
 public class AllTests_PDESuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AllTests_PDESuite.class.getName());
 		suite.addTestSuite( CabalBuilder_PDETest.class );
-    suite.addTestSuite( CompilerManager_PDETest.class );
+		suite.addTestSuite( CompilerManager_PDETest.class );
     suite.addTestSuite( ContentTypes_PDETest.class );
 		suite.addTestSuite( HaskellModelManager_PDETest.class );
 		suite.addTestSuite( HaskellProject_PDETest.class );
@@ -41,6 +42,8 @@ public class AllTests_PDESuite {
     suite.addTestSuite( SourceFileGenerator_PDETest.class );
     suite.addTestSuite( TestHaskellProjectMetaTest_PDETest.class );
 		suite.addTestSuite( WorkspaceChangeMonitor_PDETest.class );
+
+		Assert.assertTrue(suite instanceof Test);
 		return suite;
 	}
 

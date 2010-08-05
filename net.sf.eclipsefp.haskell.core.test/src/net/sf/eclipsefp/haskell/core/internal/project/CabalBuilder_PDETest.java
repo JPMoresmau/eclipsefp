@@ -15,12 +15,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 public class CabalBuilder_PDETest extends TestCaseWithProject {
+  final static String cabalFile = PROJECT_NAME + ".cabal";
 
   public void testNoCabalFileWarning() throws CoreException {
     assertTrue( project.exists() );
     // a Cabal file was created by default
-    assertTrue( project.getFile( PROJECT_NAME + ".cabal" ).exists() );
-    project.getFile( PROJECT_NAME + ".cabal" ).delete( true, null );
+
+    assertTrue( project.getFile( cabalFile ).exists() );
+    project.getFile( cabalFile ).delete( true, null );
     waitForAutoBuild();
 
     // no cabal file -> warning
@@ -37,7 +39,7 @@ public class CabalBuilder_PDETest extends TestCaseWithProject {
   }
 
   private IFile createCabalFile() throws CoreException {
-    IFile result = project.getFile( PROJECT_NAME + ".cabal" );
+    IFile result = project.getFile( cabalFile );
     InputStream is = new ByteArrayInputStream( "".getBytes() );
     result.create( is, true, null );
     return result;

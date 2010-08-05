@@ -137,6 +137,6 @@ class ExecutableLaunchOperation extends LaunchOperation {
 
   private String createConfigId( final IFile file ) {
     String name = file.getName();
-    return getLaunchManager().generateUniqueLaunchConfigurationNameFrom( name );
+    return getLaunchManager().generateLaunchConfigurationName( name );
   }
 }

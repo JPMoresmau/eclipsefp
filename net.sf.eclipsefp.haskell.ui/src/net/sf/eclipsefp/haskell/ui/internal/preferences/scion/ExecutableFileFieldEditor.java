@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
-import net.sf.eclipsefp.haskell.ui.internal.util.FileUtil;
+import net.sf.eclipsefp.haskell.core.util.FileUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringButtonFieldEditor;

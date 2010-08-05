@@ -30,7 +30,6 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -474,10 +473,8 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 	}
 	
-	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
-	
 	public static IFile getCabalFile(final IProject p) {
-	    String ext = EXTENSION_CABAL;
+	    String ext = ".cabal"; // ResourceUtil.EXTENSION_CABAL;
 	    IPath path = new Path( p.getName() ).addFileExtension( ext );
 	    return p.getFile( path );
 	}

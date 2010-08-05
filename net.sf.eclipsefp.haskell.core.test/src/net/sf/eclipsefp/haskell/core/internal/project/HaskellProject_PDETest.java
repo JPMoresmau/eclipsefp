@@ -59,8 +59,8 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     hp.addTargetName( path );
     assertEquals( 2, hp.getTargetNames().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
-    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ));
+    assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
   }
 
   public void testTargetExecutable_multiple() throws CoreException {
@@ -78,8 +78,8 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     hp.addTargetName( path2 );
     assertEquals( 3, hp.getTargetNames().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bla.exe" ) ) );
-    assertTrue( ResourceUtil.isProjectExecutable( project.getFile( "bin/bli.exe" ) ) );
-    assertFalse( ResourceUtil.isProjectExecutable( project.getFile( "blubb.exe" ) ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ) );
+    assertTrue( ResourceUtil.isProjectExecutable( project, "bin/bli" ) );
+    assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
   }
 }
