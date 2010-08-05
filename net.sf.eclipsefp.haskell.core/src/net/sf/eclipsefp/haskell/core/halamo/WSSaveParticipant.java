@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.halamo;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ISaveContext;
@@ -9,6 +11,7 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Plugin;
 
 
 /** <p>This is Halamos task force responsible for handling the workspace save
@@ -20,9 +23,6 @@ import org.eclipse.core.runtime.CoreException;
   * @author Leif Frenzel
   */
 class WSSaveParticipant implements ISaveParticipant {
-
-  /** the singleton instance of WSSaveParticipant. */
-//  private static WSSaveParticipant _instance;
 
   /** private constructor in order to prevent instantiation from outside. */
   private WSSaveParticipant() {
@@ -38,7 +38,7 @@ class WSSaveParticipant implements ISaveParticipant {
   /** <p>returns a reference to the singleton instance of
     * WSSaveParticipant.</p> */
   static void initialize() {
-//    _instance = new WSSaveParticipant();
+    new WSSaveParticipant();
   }
 
 
@@ -67,13 +67,80 @@ class WSSaveParticipant implements ISaveParticipant {
   //////////////////
 
   private ISavedState getLastState() {
-    ISavedState result = null;
-    try {
-      IWorkspace ws = ResourcesPlugin.getWorkspace();
-      result = ws.addSaveParticipant( HaskellCorePlugin.getDefault(), this );
-    } catch( CoreException ex ) {
-      HaskellCorePlugin.log( "Could not add save participant.", ex ); //$NON-NLS-1$
-    }
-    return result;
-  }
+         /* TODO: Collapse this code to when Galileo is no longer supported:
+          *
+          * try {
+          *   ws.addSaveParticipant(HaskellCorePlugin.getPluginId(), this);
+          * } catch (CoreException e) {
+          *   HaskellCorePlugin.log("CoreException in addSaveParticipant", e);
+          * }
+          */
+          ISavedState result = null;
+          try {
+            HaskellCorePlugin plugin = HaskellCorePlugin.getDefault();
+            IWorkspace ws = ResourcesPlugin.getWorkspace();
+           Method addSaveParticipantM = addSaveParticipant_Helios(ws);
+
+           Object[] args = null;
+           if (addSaveParticipantM != null) {
+             // Helios API
+             args = new Object[] { HaskellCorePlugin.getPluginId(), this  };
+           } else {
+             // Galileo API
+             addSaveParticipantM = addSaveParticipant_Galileo(ws);
+             assert addSaveParticipantM != null;
+             args = new Object[] { plugin, this };
+           }
+           result = (ISavedState) addSaveParticipantM.invoke( ws, args );
+         } catch( IllegalArgumentException e ) {
+           HaskellCorePlugin.log("Illegal argument exception, addSaveParticipant", e); //$NON-NLS-1$
+         } catch( IllegalAccessException e ) {
+           HaskellCorePlugin.log("Illegal access exception, addSaveParticipant", e); //$NON-NLS-1$
+         } catch( InvocationTargetException e ) {
+           Throwable t = e.getCause();
+           if (t instanceof CoreException) {
+             CoreException coreExc = (CoreException) t;
+             HaskellCorePlugin.log("addSaveParticipant exception", coreExc); //$NON-NLS-1$
+           } else {
+             HaskellCorePlugin.log( "Uncaught/unknown invocation exception", t ); //$NON-NLS-1$
+           }
+         }
+         return result;
+       }
+
+       // Helios API version of addSaveParticipant
+       private Method addSaveParticipant_Helios(final IWorkspace ws)
+       {
+         Method result = null;
+         Class<? extends Object>[] parmsHelios = new Class<?>[] {
+             String.class,
+             ISaveParticipant.class
+         };
+
+         try {
+           result = ws.getClass().getMethod("addSaveParticipant", parmsHelios); //$NON-NLS-1$
+         }
+         catch (NoSuchMethodException excM) {
+           // Ignore
+         }
+         return result;
+       }
+
+       private Method addSaveParticipant_Galileo(final IWorkspace ws)
+       {
+         Method result = null;
+         Class<? extends Object>[] parmsGalileo = new Class<?>[] {
+             Plugin.class,
+             ISaveParticipant.class
+           };
+         try {
+           result = ws.getClass().getMethod("addSaveParticipant", parmsGalileo); //$NON-NLS-1$
+         }
+         catch (NoSuchMethodException excM) {
+           // Ignore
+          }
+
+          return result;
+        }
+
 }
