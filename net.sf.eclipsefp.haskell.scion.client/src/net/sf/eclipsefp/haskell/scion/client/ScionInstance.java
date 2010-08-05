@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
@@ -75,11 +76,14 @@ public class ScionInstance implements IScionCommandRunner {
 	private JSONObject cabalDescription;
 	private Map<String,CabalPackage[]> packagesByDB;
 	private List<Component> components;
+	private CabalComponentResolver resolver;
+	private Component lastLoadedComponent;
 	
-	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput) {
+	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput,CabalComponentResolver resolver) {
 		this.serverExecutable = serverExecutable;
 		this.project=project;
 		this.serverOutput=serverOutput;
+		this.resolver=resolver;
 	}
 
 	public String getServerExecutable() {
@@ -182,6 +186,7 @@ public class ScionInstance implements IScionCommandRunner {
 						//loadCommand.addJobChangeListener();
 						loadCommand.run(monitor);
 						crh.process(loadCommand);
+						lastLoadedComponent=c;
 					}
 					
 					ParseCabalCommand pcc=new ParseCabalCommand(ScionInstance.this,getCabalFile(getProject()).getLocation().toOSString());
@@ -317,13 +322,34 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 	}
 	
-	public void reloadFile(IFile file,Runnable after) {
+	public void reloadFile(final IFile file,final Runnable after) {
 		// done on return
 		//deleteProblems(file);
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
+		
+		Set<String> componentNames=resolver.getComponents(file);
+		if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
+			for (final Component compo:components){
+				if (componentNames.contains(compo.toString())){
+					LoadCommand loadCommand = new LoadCommand(ScionInstance.this,compo,false);
+					runAsync(loadCommand,new Runnable() {
+						
+						public void run() {
+							lastLoadedComponent=compo;
+							BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
+							//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
+							runAsync(cmd,after);
+						}
+					});
+					return;
+				}
+			}
+		} 
+		
 		BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(this, file);
 		//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
 		runAsync(cmd,after);
+		
 		//loadCommand.getSuccessors().add(typecheckCommand);
 		//loadCommand.runAsync();
 		//typecheckCommand.runAsyncAfter(loadCommand);

@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -19,6 +21,7 @@ import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
@@ -537,7 +540,17 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     HaskellConsole c = new HaskellConsole( null, name );
 
     ScionInstance instance = new ScionInstance( serverExecutable, project, c
-        .createOutputWriter() );
+        .createOutputWriter() ,new CabalComponentResolver() {
+
+          public Set<String> getComponents( final IFile file ) {
+            Set<PackageDescriptionStanza> pds= ResourceUtil.getApplicableStanzas( new IFile[]{file} );
+            Set<String> ret=new HashSet<String>(pds.size());
+            for (PackageDescriptionStanza pd:pds){
+              ret.add(pd.toTypeName());
+            }
+            return ret;
+          }
+        });
     try {
       instance.start();
     } catch( ScionServerStartupException ex ) {

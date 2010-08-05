@@ -66,7 +66,8 @@ public class Component {
 	
 	@Override
 	public String toString() {
-		return getType().toString().toLowerCase() +" "+(getName()!=null?getName():"");
+		// this is equivalent to PackageDescriptionStanza getTypeName()
+		return getType().toString().toLowerCase() +(getName()!=null?" "+getName():"");
 	}
 	
 }

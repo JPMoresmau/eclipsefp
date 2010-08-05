@@ -18,6 +18,7 @@ public class HaskellResource {
            && ResourceUtil.hasHaskellExtension( fResource );
   }
 
+  @Deprecated
   public boolean isProjectExecutable() {
     if( !( fResource instanceof IFile ) ) {
       return false;
