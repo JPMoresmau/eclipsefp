@@ -32,7 +32,7 @@ public class ReplaceImportResolution extends MarkerCompletion {
     try {
       IRegion r=document.getLineInformation( line-1 );
       int l=r.getLength();
-      return new CompletionProposal( newImport, r.getOffset(), l, 0,HaskellUIImages.getImage( IImageNames.IMPORT ),getLabel(),null,null );
+      return new CompletionProposal( getLineStartAddition(newImport,marker.getResource()), r.getOffset(), l, 0,HaskellUIImages.getImage( IImageNames.IMPORT ),getLabel(),null,null );
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );
     }

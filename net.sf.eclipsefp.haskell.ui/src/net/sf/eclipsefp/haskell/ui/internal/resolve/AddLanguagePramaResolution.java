@@ -55,7 +55,7 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
         }
         ix++;
       }
-      return new CompletionProposal( repl, pragmaOffset, 0, offset,null,getLabel(),null,null );
+      return new CompletionProposal( getLineStartAddition(repl,marker.getResource()), pragmaOffset, 0, offset,null,getLabel(),null,null );
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );
     }

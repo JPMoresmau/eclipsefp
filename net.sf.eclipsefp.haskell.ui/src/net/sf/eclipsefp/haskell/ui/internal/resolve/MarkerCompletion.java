@@ -1,9 +1,11 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
@@ -54,7 +56,7 @@ public abstract class MarkerCompletion implements IMarkerResolution {
         prov.connect( f );
         doc=prov.getDocument( f );
       }
-      ICompletionProposal cp=getCompletionProposal( marker,doc );
+      ICompletionProposal cp=getCompletionProposal( marker,doc);
       if (cp!=null){
         cp.apply( doc );
         if(prov!=null){
@@ -64,5 +66,12 @@ public abstract class MarkerCompletion implements IMarkerResolution {
     } catch( CoreException ex ) {
       HaskellUIPlugin.log( ex );
     }
+  }
+
+  protected String getLineStartAddition(final String added,final IResource file){
+    if (ResourceUtil.hasLiterateExtension( file )){
+      return "> "+added;
+    }
+    return added;
   }
 }
