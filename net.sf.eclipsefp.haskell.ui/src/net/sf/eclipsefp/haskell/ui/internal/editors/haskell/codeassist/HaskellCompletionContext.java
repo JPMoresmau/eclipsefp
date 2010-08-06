@@ -3,27 +3,29 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.NameHandler;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class HaskellCompletionContext implements IHaskellCompletionContext {
 
-	//private IHaskellModel fLanguageModel;
-	//private ICompilationUnit fCompilationUnit;
-  private String source;
+	private IFile file;
+	 private String source;
 	private int fOffset;
 
 	protected HaskellCompletionContext() {
 		//placeholder constructor
 	}
 
-	public HaskellCompletionContext(//final ICompilationUnit unit,
-									//final IHaskellModel model,
+	public HaskellCompletionContext(final IFile file,
 	                final String source,
 									final int offset)
 	{
-	//	setCompilationUnit(unit);
-	//	setLanguageModel(model);
+	  this.file=file;
 	  this.source=source;
 		setOffset(offset);
 	}
@@ -58,8 +60,9 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			completedToken = getQualifier(source,getOffset());
 
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
-			searchScope(completedToken, result);
-			searchImportableModules(completedToken, result);
+			//searchScope(completedToken, result);
+			//searchImportableModules(completedToken, result);
+			searchDefinedNames(completedToken, result);
 			searchPreludeAndKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
@@ -74,6 +77,34 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		searchStringList(prefix, HaskellSyntax.getClasses(), result);
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
 	}
+
+	private void searchDefinedNames(final String prefix,
+	    final List<ICompletionProposal> result){
+	if( ResourceUtil.hasHaskellExtension( file ) && ResourceUtil.isInHaskellProject( file )) {
+    final ScionInstance si = HaskellUIPlugin.getDefault()
+        .getScionInstanceManager( file );
+    // sync access
+    if (si!=null){
+      synchronized( si ) {
+        si.definedNames( new NameHandler() {
+
+          public void nameResult( final List<String> names ) {
+            searchStringList(prefix, names, result);
+            synchronized( si ) {
+              si.notifyAll();
+            }
+          }
+        } );
+        try {
+          // TODO make this a preference
+          si.wait( 10000 ); // 10 seconds max
+        } catch( InterruptedException ie ) {
+          // noop
+        }
+      }
+    }
+  }
+ }
 
 	private void searchStringList(final String prefix, final String[] names,
 		final List<ICompletionProposal> result)
@@ -91,37 +122,53 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		}
 	}
 
-	private void searchImportableModules(final String prefix,
-		final List<ICompletionProposal> result)
-	{
-		final int offset = getOffset();
-		final int plength = prefix.length();
+	 private void searchStringList(final String prefix, final Iterable<String> names,
+	     final List<ICompletionProposal> result)
+	   {
+	     final int offset = getOffset();
+	     final int plength = prefix.length();
 
-		/*for(IModule m : getLanguageModel().getModules()) {
-			final String moduleName = m.getName();
-			if (moduleName.startsWith(prefix)) {
-				result.add(new CompletionProposal(moduleName, offset - plength,
-				                                  plength,
-				                                  moduleName.length()));
-			}
-		}*/
-	}
+	     for(String name : names) {
+	       if (name.startsWith(prefix)) {
+	         result.add(new CompletionProposal(name, offset - plength,
+	                                           plength,
+	                                           name.length()));
 
-	private void searchScope(final String prefix, final List<ICompletionProposal> result) {
-		if (prefix.length() == 0) {
-			return;
-		}
+	       }
+	     }
+	   }
 
-		/*final IModule module = getCompilationUnit().getModules()[0];
-		Scope scope = getLanguageModel().getScopeFor(module);
-
-		searchDeclarations(prefix, result, module);
-
-		List<IModule> modules = scope.getAvailableModules();
-		for(IModule m : modules) {
-			searchDeclarations(prefix, result, m);
-		}*/
-	}
+//	private void searchImportableModules(final String prefix,
+//		final List<ICompletionProposal> result)
+//	{
+//		final int offset = getOffset();
+//		final int plength = prefix.length();
+//
+//		/*for(IModule m : getLanguageModel().getModules()) {
+//			final String moduleName = m.getName();
+//			if (moduleName.startsWith(prefix)) {
+//				result.add(new CompletionProposal(moduleName, offset - plength,
+//				                                  plength,
+//				                                  moduleName.length()));
+//			}
+//		}*/
+//	}
+//
+//	private void searchScope(final String prefix, final List<ICompletionProposal> result) {
+//		if (prefix.length() == 0) {
+//			return;
+//		}
+//
+//		/*final IModule module = getCompilationUnit().getModules()[0];
+//		Scope scope = getLanguageModel().getScopeFor(module);
+//
+//		searchDeclarations(prefix, result, module);
+//
+//		List<IModule> modules = scope.getAvailableModules();
+//		for(IModule m : modules) {
+//			searchDeclarations(prefix, result, m);
+//		}*/
+//	}
 
 //	private void searchDeclarations(final String prefix,
 //		final List<ICompletionProposal> result,

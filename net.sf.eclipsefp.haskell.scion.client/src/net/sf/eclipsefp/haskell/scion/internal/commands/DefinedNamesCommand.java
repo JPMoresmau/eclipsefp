@@ -1,12 +1,17 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 public class DefinedNamesCommand extends ScionCommand {
-
+	private List<String> names=new ArrayList<String>();
+	
 	public DefinedNamesCommand(IScionCommandRunner runner) {
 		super(runner, Job.INTERACTIVE);
 	}
@@ -18,7 +23,13 @@ public class DefinedNamesCommand extends ScionCommand {
 
 	@Override
 	protected void doProcessResult(Object result) throws JSONException {
-		// TODO TtC
+		JSONArray arr = (JSONArray)result;
+		for (int a=0;a<arr.length();a++){
+			names.add(arr.getString(a));
+		}
 	}
-
+	
+	public List<String> getNames() {
+		return names;
+	}
 }

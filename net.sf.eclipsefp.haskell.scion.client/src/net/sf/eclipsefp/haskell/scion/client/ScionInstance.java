@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbit
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
@@ -497,5 +498,21 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public List<Component> getComponents() {
 		return components;
+	}
+	
+	public void definedNames(final NameHandler handler){
+		final DefinedNamesCommand command=new DefinedNamesCommand(this);
+		if (handler!=null){
+			command.addJobChangeListener(new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						handler.nameResult(command.getNames());
+					}
+				}
+			});
+		}
+		command.runAsync();
+
 	}
 }

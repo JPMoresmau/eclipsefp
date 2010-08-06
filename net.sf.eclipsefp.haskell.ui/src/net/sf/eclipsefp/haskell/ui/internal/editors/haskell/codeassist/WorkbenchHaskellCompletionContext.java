@@ -19,7 +19,7 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 												final ITextViewer viewer,
 												final int offset)
 	{
-		super(viewer.getDocument().get(),
+		super(getFile( viewer ),viewer.getDocument().get(),
 				offset);
 	}
 
