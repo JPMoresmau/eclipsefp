@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IMarker;
@@ -39,11 +40,29 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
       int offset=document.getLineOffset( line-1 );
       int ix=0;
       int pragmaOffset=0;
+      int lineOffset=0;
 
+      if (ResourceUtil.hasLiterateExtension( marker.getResource() )){
+        while (ix<document.getNumberOfLines()){
+          IRegion r=document.getLineInformation( ix );
+          String l=document.get( r.getOffset(), r.getLength() ).trim();
+          if (!l.startsWith( ">" )){
+            ix++;
+          } else {
+            break;
+          }
+        }
+      }
+      if (ix>0){
+        lineOffset=document.getLineOffset( ix );
+      }
       String repl=pragmaStart+pragma+" "+pragmaEnd+NL; //$NON-NLS-1$
       while (ix<document.getNumberOfLines()){
         IRegion r=document.getLineInformation( ix );
         String l=document.get( r.getOffset(), r.getLength() ).trim();
+        if (ResourceUtil.hasLiterateExtension( marker.getResource() )){
+          l=l.substring( 1 ).trim();
+        }
         if (l.startsWith(pragmaStart)){
           int ixEnd=l.indexOf( pragmaEnd,pragmaStart.length());
           if (ixEnd>-1){
@@ -55,7 +74,15 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
         }
         ix++;
       }
-      return new CompletionProposal( getLineStartAddition(repl,marker.getResource()), pragmaOffset, 0, offset,null,getLabel(),null,null );
+
+      if (pragmaOffset==0){
+        repl=getLineStartAddition( repl, marker.getResource() );
+        if (ResourceUtil.hasLiterateExtension( marker.getResource() )){
+          repl=repl+NL;
+        }
+      }
+
+      return new CompletionProposal(repl, lineOffset+pragmaOffset, 0, offset,null,getLabel(),null,null );
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );
     }
