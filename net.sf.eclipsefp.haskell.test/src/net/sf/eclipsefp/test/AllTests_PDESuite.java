@@ -8,8 +8,6 @@ public class AllTests_PDESuite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.AllTests_PDESuite.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.core.jparser.test.AllTests_PDESuite.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.core.parser.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.debug.ui.test.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ghccompiler.test.AllTests_PDESuite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.AllTests_PDESuite.suite());

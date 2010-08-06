@@ -10,15 +10,13 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
-import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
-import net.sf.eclipsefp.haskell.core.internal.doubles.StubHalamo;
-import net.sf.eclipsefp.haskell.core.internal.doubles.StubModule;
+
+import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.internal.util.CompletionProposalTestCase;
-import net.sf.eclipsefp.haskell.core.parser.test.util.Parser_PDETestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class CompletionContext_PDETest extends Parser_PDETestCase {
+public class CompletionContext_PDETest extends TestCase{
 
 	public void testDeclarationCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest where\n" +
@@ -26,8 +24,8 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "putStr str = str\n" +
 				             "\n" +
 				             "main = pu\n";
-		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(unit, 62);
+	//	final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = createContext(input, 62);
 
 		assertEquals('u', input.charAt(62 - 1));
 
@@ -40,8 +38,8 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		final String input = "module CompletionEngineTest where\n" +
                              "\n" +
                              "fat :: N";
-		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(unit, 43);
+	//	final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = createContext(input, 43);
 
 		assertEquals('N', input.charAt(43 - 1));
 
@@ -53,8 +51,8 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 	public void testKeywordCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest wh";
 		//TODO avoid complaining about parsing error here
-		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(unit, 30);
+	//	final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = createContext(input, 30);
 
 		assertEquals('h', input.charAt(30 - 1));
 
@@ -68,8 +66,8 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (f";
-		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(unit, 48);
+		//final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = createContext(input, 48);
 
 		assertEquals('f', input.charAt(48 - 1));
 
@@ -83,8 +81,8 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (";
-		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(unit, 48);
+		//final ICompilationUnit unit = parseAsFile(input);
+		HaskellCompletionContext context = createContext(input, 48);
 
 		assertEquals('(', input.charAt(47 - 1));
 
@@ -98,8 +96,8 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "_underscore = '_'\n" +
 				             "prefixWithUnderscore str = _und";
-		final ICompilationUnit unit = parseAsFile(input);
-		final HaskellCompletionContext context = createContext(unit, 74);
+		//final ICompilationUnit unit = parseAsFile(input);
+		final HaskellCompletionContext context = createContext(input, 74);
 
 		assertEquals('d', input.charAt(74 - 1));
 
@@ -113,11 +111,11 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 				             "\n" +
 				             "main = putStr $ show $ f";
 		final int offset = input.length();
-		final ICompilationUnit unit = parseAsFile(input);
-		final StubHalamo langModel = new StubHalamo();
-		HaskellCompletionContext context = new HaskellCompletionContext(unit, langModel, offset);
+		//final ICompilationUnit unit = parseAsFile(input);
+		//final StubHalamo langModel = new StubHalamo();
+		HaskellCompletionContext context = new HaskellCompletionContext(input, offset);
 
-		langModel.setModulesInScope(new StubModule("Recursive", "fat", "fib"));
+		//langModel.setModulesInScope(new StubModule("Recursive", "fat", "fib"));
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
@@ -130,11 +128,10 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 							 "\n" +
 		                     "import Fib";
 		final int offset = input.length();
-		final ICompilationUnit unit = parseAsFile(input);
-		final StubHalamo langModel = new StubHalamo();
-		HaskellCompletionContext context = new HaskellCompletionContext(unit, langModel, offset);
+		//final StubHalamo langModel = new StubHalamo();
+		HaskellCompletionContext context = new HaskellCompletionContext(input, offset);
 
-		langModel.putModule(new StubModule("Fibonacci"));
+	//	langModel.putModule(new StubModule("Fibonacci"));
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
@@ -150,8 +147,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		                     "factorial = foldr (*) 1 . enumFromTo 1\n" +
 		                     "\n" +
 		                     "main = putStr $ show $ fac";
-		final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(unit, input.length());
+		HaskellCompletionContext context = createContext(input, input.length());
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
@@ -166,7 +162,7 @@ public class CompletionContext_PDETest extends Parser_PDETestCase {
 		return CompletionProposalTestCase.createProposal(replaced, replacement, offset);
 	}
 
-	private HaskellCompletionContext createContext(final ICompilationUnit unit, final int offset) {
-		return new HaskellCompletionContext(unit, new StubHalamo(), offset);
+	private HaskellCompletionContext createContext(final String source, final int offset) {
+		return new HaskellCompletionContext(source, offset);
 	}
 }

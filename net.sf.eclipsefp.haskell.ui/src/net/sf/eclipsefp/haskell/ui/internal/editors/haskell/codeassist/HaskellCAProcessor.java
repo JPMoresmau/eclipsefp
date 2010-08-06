@@ -3,8 +3,6 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -44,13 +42,13 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 		public IHaskellCompletionContext createContext(final ITextViewer viewer,
 													  final int offset)
 		{
-			try {
+		//	try {
 				return new WorkbenchHaskellCompletionContext(viewer, offset);
-			} catch (CoreException ex) {
-				HaskellCorePlugin.log("Error when parsing the viewer "+
-						"contents. Aborting code assistance.", ex);
-				return NullCompletionContext.getInstance();
-			}
+//			} catch (CoreException ex) {
+//				HaskellCorePlugin.log("Error when parsing the viewer "+
+//						"contents. Aborting code assistance.", ex);
+//				return NullCompletionContext.getInstance();
+//			}
 		}
 
 	}

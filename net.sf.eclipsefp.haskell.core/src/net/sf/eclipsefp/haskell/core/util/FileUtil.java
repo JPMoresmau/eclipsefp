@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.util;
+package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -60,9 +60,8 @@ public class FileUtil {
 	public static String makeExecutableName(final String baseName) {
 	  if (runningOnWindows() && !baseName.endsWith( "." + WINDOWS_EXECUTABLE_EXTENSIONS[0] )) { //$NON-NLS-1$
 	    return baseName + "." + WINDOWS_EXECUTABLE_EXTENSIONS[0]; //$NON-NLS-1$
-	  } else {
-	    return baseName;
 	  }
+	  return baseName;
 	}
 
 	/**
@@ -73,10 +72,10 @@ public class FileUtil {
 	public static boolean isExecutable(final File file) {
 		if (runningOnWindows()) {
 		  return isExecutableWindows( file );
-		} else {
-		  // Assume a UNIX flavour.
-  		return isExecutableUnix( file );
 		}
+
+		// Assume a UNIX flavour.
+  	return isExecutableUnix( file );
 	}
 
   private static boolean isExecutableUnix( final File file ) {
@@ -119,19 +118,9 @@ public class FileUtil {
     });
   }
 
-  @SuppressWarnings("unchecked")
   public static File findInPath(final String shortFileName,final FileFilter ff){
-    ArrayList<File> candidates = null;
-
-    try {
-      // Shallow copy is sufficient in this case
-      candidates = (ArrayList<File>) candidateLocations.clone();
-    }
-    catch (ClassCastException exc) {
-      // But, in the really unexpected case when the cast actually
-      // fails (unreachable code), do something sensible.
-      candidates = new ArrayList<File>();
-    }
+    // Shallow copy is sufficient in this case
+    ArrayList<File> candidates =new ArrayList<File>(candidateLocations);
 
     // Add the current working directory, since it might change.
     String pwd = System.getProperty("user.dir"); //$NON-NLS-1$

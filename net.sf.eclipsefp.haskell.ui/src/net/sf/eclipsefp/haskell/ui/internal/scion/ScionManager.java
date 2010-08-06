@@ -20,6 +20,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.FileUtil;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -29,7 +30,6 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
-import net.sf.eclipsefp.haskell.ui.internal.util.FileUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -260,10 +260,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     }
     if (!exeLocation.toFile().exists() && CompilerManager.getInstance().getCurrentHsImplementation()!=null){
       File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());
-      String cabalExe="cabal";//$NON-NLS-1$
-      if (Platform.getOS().equals( Platform.OS_WIN32 )){
-        cabalExe=cabalExe+".exe" ; //$NON-NLS-1$
-      }
+      String cabalExe= FileUtil.makeExecutableName( "cabal" );//$NON-NLS-1$
       File cabalBin=new File(binDir,cabalExe);
       if (!cabalBin.exists()){
         cabalBin=FileUtil.findExecutableInPath( cabalBin.getName());

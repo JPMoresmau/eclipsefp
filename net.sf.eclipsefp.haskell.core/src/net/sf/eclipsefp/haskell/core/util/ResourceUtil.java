@@ -59,9 +59,14 @@ public class ResourceUtil {
     return has( resource, EXTENSION_HS ) || has( resource, EXTENSION_LHS );
   }
 
-	 public static boolean hasCabalExtension( final IResource resource ) {
-	    return has( resource, EXTENSION_CABAL );
-	  }
+	/**
+	 * Predicate that determines whether the resource is a Cabal project file.
+	 * @param resource The resource
+	 * @return true if the resource is a Cabal project file.
+	 */
+	public static boolean hasCabalExtension( final IResource resource ) {
+	  return has( resource, EXTENSION_CABAL );
+	}
 
 	/**
 	 * <p>
@@ -74,16 +79,16 @@ public class ResourceUtil {
 	}
 
 	/**
-	 * <p>
-	 * returns the target executable for the passed project as resource. The
-	 * project must have the Haskell nature.
-	 * </p>
+	 * Return the project executable as an ArrayList, assuming that the
+	 * project has the Haskell nature.
 	 */
-	public static IFile[] getProjectExecutables( final IProject project )
-      throws CoreException {
+
+	public static ArrayList<IFile> getProjectExecutablesArray( final IProject project)
+	  throws CoreException
+	{
     Assert.isTrue( project.hasNature( HaskellNature.NATURE_ID ) );
 
-    List<IFile> result = new ArrayList<IFile>();
+    ArrayList<IFile> result = new ArrayList<IFile>();
     IHaskellProject hsProject = HaskellProjectManager.get( project );
     Set<IPath> targetNames = hsProject.getTargetNames();
     for( IPath path: targetNames ) {
@@ -94,7 +99,39 @@ public class ResourceUtil {
         }
       }
     }
-    return result.toArray( new IFile[ result.size() ] );
+
+    return result;
+	}
+
+	public static boolean isProjectExecutable(final IProject project, final String exeName)
+	{
+	  boolean retval = false;
+	  String theExeName = FileUtil.makeExecutableName(exeName);
+
+	  try {
+	    ArrayList<IFile> executables = getProjectExecutablesArray(project);
+	    for (IFile iter: executables) {
+	      if (iter.getName().equals( theExeName )) {
+	        retval = true;
+	      }
+	    }
+	  } catch (CoreException e) {
+	    retval = false;
+	  }
+
+	  return retval;
+	}
+
+	/**
+	 * <p>
+	 * returns the target executable for the passed project as resource. The
+	 * project must have the Haskell nature.
+	 * </p>
+	 */
+	public static IFile[] getProjectExecutables( final IProject project )
+      throws CoreException {
+	  ArrayList<IFile> executables = getProjectExecutablesArray(project);
+    return executables.toArray( new IFile[ executables.size() ] );
   }
 
 	/**
@@ -190,28 +227,6 @@ public class ResourceUtil {
 		}
 		return result;
 	}
-
-	/**
-	 * returns whether the specified file is the project executable of its
-	 * project.
-	 * @deprecated
-	 */
-	public static boolean isProjectExecutable( final IFile file ) {
-	  if( file == null ) {
-	    throw new IllegalArgumentException();
-	  }
-    boolean result = false;
-    try {
-      IFile[] exes = getProjectExecutables( file.getProject() );
-      for( IFile exe: exes ) {
-        result |= file.equals( exe );
-      }
-    } catch( CoreException ex ) {
-      String msg = "Problem determining project executable for "; //$NON-NLS-1$
-      HaskellCorePlugin.log( msg + file.getName(), ex );
-    }
-    return result;
-  }
 
 	private static IContainer getContainer(final IProject p,final String src){
 	  return src.equals( "." )?p:p.getFolder( src ); //$NON-NLS-1$

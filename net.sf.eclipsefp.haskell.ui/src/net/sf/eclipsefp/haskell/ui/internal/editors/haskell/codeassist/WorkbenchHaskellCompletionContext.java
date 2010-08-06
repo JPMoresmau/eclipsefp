@@ -1,11 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellModelManager;
-import net.sf.eclipsefp.haskell.core.parser.IHaskellParser;
-import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorInput;
@@ -18,25 +13,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext {
 
-	public WorkbenchHaskellCompletionContext(final ITextViewer viewer, final int offset) throws CoreException {
-		this(HaskellCorePlugin.getDefaultModelManager(), viewer, offset);
-	}
 
-	public WorkbenchHaskellCompletionContext(final IHaskellModelManager manager, final ITextViewer viewer, final int offset) throws CoreException {
-		this(manager, ParserManager.getInstance().getParser(), viewer, offset);
-	}
 
-	public WorkbenchHaskellCompletionContext(final IHaskellParser parser, final ITextViewer viewer, final int offset) throws CoreException {
-		this(HaskellCorePlugin.getDefaultModelManager(), parser, viewer, offset);
-	}
-
-	protected WorkbenchHaskellCompletionContext(final IHaskellModelManager manager,
-												final IHaskellParser parser,
+	public WorkbenchHaskellCompletionContext(
 												final ITextViewer viewer,
-												final int offset) throws CoreException
+												final int offset)
 	{
-		super(parser.parse(getFile(viewer), viewer.getDocument().get()),
-				manager.getModelFor(getFile(viewer).getProject()),
+		super(viewer.getDocument().get(),
 				offset);
 	}
 

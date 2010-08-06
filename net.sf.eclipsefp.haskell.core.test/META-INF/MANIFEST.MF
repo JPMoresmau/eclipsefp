@@ -6,16 +6,14 @@ Bundle-Version: 1.112.0
 Bundle-Vendor: eclipsefp.sourceforge.net
 Require-Bundle: org.antlr;bundle-version="[2.7.6,3.0.0)",
  org.easymock;bundle-version="[2.2.0,3.0.0)",
- org.junit;bundle-version="[3.8.0,4.0.0)",
+ org.junit4,
  org.eclipse.jface;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jface.text;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.expressions,
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  net.sf.eclipsefp.haskell.core,
- net.sf.eclipsefp.haskell.core.jparser,
- net.sf.eclipsefp.haskell.scion.client;bundle-version="1.112.0",
- org.junit4;bundle-version="4.5.0"
+ net.sf.eclipsefp.haskell.scion.client;bundle-version="1.112.0"
 Export-Package: net.sf.eclipsefp.haskell.core.test,
  net.sf.eclipsefp.haskell.core.internal.doubles;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.core.internal.project,

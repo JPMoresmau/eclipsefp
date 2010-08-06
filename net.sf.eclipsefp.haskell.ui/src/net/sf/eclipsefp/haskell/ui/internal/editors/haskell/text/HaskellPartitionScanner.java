@@ -30,7 +30,7 @@ public class HaskellPartitionScanner extends RuleBasedPartitionScanner {
       // rule for character literals
       new SingleLineRule( "'", //$NON-NLS-1$
                           "'", //$NON-NLS-1$
-                          new Token( IPartitionTypes.HS_CHARACTER ),
+                         new Token( IPartitionTypes.HS_CHARACTER ),
                           '\\' ),
       // rule for multi line comments
       new MultiLineRule( "{-", "-}", new Token( IPartitionTypes.HS_COMMENT ) ), //$NON-NLS-1$ //$NON-NLS-2$

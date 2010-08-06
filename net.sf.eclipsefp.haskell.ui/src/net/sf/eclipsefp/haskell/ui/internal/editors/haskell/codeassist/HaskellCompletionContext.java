@@ -3,49 +3,46 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
-import net.sf.eclipsefp.haskell.core.halamo.ICompilationUnit;
-import net.sf.eclipsefp.haskell.core.halamo.IDeclaration;
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellModel;
-import net.sf.eclipsefp.haskell.core.halamo.IModule;
-import net.sf.eclipsefp.haskell.core.halamo.ITypeSignature;
-import net.sf.eclipsefp.haskell.core.halamo.Scope;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class HaskellCompletionContext implements IHaskellCompletionContext {
 
-	private IHaskellModel fLanguageModel;
-	private ICompilationUnit fCompilationUnit;
+	//private IHaskellModel fLanguageModel;
+	//private ICompilationUnit fCompilationUnit;
+  private String source;
 	private int fOffset;
 
 	protected HaskellCompletionContext() {
 		//placeholder constructor
 	}
 
-	public HaskellCompletionContext(final ICompilationUnit unit,
-									final IHaskellModel model,
+	public HaskellCompletionContext(//final ICompilationUnit unit,
+									//final IHaskellModel model,
+	                final String source,
 									final int offset)
 	{
-		setCompilationUnit(unit);
-		setLanguageModel(model);
+	//	setCompilationUnit(unit);
+	//	setLanguageModel(model);
+	  this.source=source;
 		setOffset(offset);
 	}
 
-	public IHaskellModel getLanguageModel() {
-		return fLanguageModel;
-	}
-
-	public ICompilationUnit getCompilationUnit() {
-		return fCompilationUnit;
-	}
-
-	protected void setLanguageModel(final IHaskellModel model) {
-		this.fLanguageModel = model;
-	}
-
-	protected void setCompilationUnit(final ICompilationUnit unit) {
-		this.fCompilationUnit = unit;
-	}
+//	public IHaskellModel getLanguageModel() {
+//		return fLanguageModel;
+//	}
+//
+//	public ICompilationUnit getCompilationUnit() {
+//		return fCompilationUnit;
+//	}
+//
+//	protected void setLanguageModel(final IHaskellModel model) {
+//		this.fLanguageModel = model;
+//	}
+//
+//	protected void setCompilationUnit(final ICompilationUnit unit) {
+//		this.fCompilationUnit = unit;
+//	}
 
 	protected void setOffset(final int fOffset) {
 		this.fOffset = fOffset;
@@ -58,7 +55,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 	public ICompletionProposal[] computeProposals() {
 		String completedToken;
 		try {
-			completedToken = getQualifier(getCompilationUnit(), getOffset());
+			completedToken = getQualifier(source,getOffset());
 
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 			searchScope(completedToken, result);
@@ -100,14 +97,14 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		final int offset = getOffset();
 		final int plength = prefix.length();
 
-		for(IModule m : getLanguageModel().getModules()) {
+		/*for(IModule m : getLanguageModel().getModules()) {
 			final String moduleName = m.getName();
 			if (moduleName.startsWith(prefix)) {
 				result.add(new CompletionProposal(moduleName, offset - plength,
 				                                  plength,
 				                                  moduleName.length()));
 			}
-		}
+		}*/
 	}
 
 	private void searchScope(final String prefix, final List<ICompletionProposal> result) {
@@ -115,7 +112,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			return;
 		}
 
-		final IModule module = getCompilationUnit().getModules()[0];
+		/*final IModule module = getCompilationUnit().getModules()[0];
 		Scope scope = getLanguageModel().getScopeFor(module);
 
 		searchDeclarations(prefix, result, module);
@@ -123,35 +120,35 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		List<IModule> modules = scope.getAvailableModules();
 		for(IModule m : modules) {
 			searchDeclarations(prefix, result, m);
-		}
+		}*/
 	}
 
-	private void searchDeclarations(final String prefix,
-		final List<ICompletionProposal> result,
-		final IModule module)
-	{
-		final String moduleName = module.getName();
-		final int offset = getOffset();
-		final int plength = prefix.length();
-		final IDeclaration[] decls = module.getDeclarations();
+//	private void searchDeclarations(final String prefix,
+//		final List<ICompletionProposal> result,
+//		final IModule module)
+//	{
+//		final String moduleName = module.getName();
+//		final int offset = getOffset();
+//		final int plength = prefix.length();
+//		final IDeclaration[] decls = module.getDeclarations();
+//
+//		for(IDeclaration decl : decls) {
+//			final String declName = decl.getName();
+//			if (!(decl instanceof ITypeSignature) &&
+//				declName.startsWith(prefix))
+//			{
+//				final CompletionProposal proposal = new CompletionProposal(
+//				    declName, offset - plength, plength, declName.length(), null,
+//				    declName + " - " + moduleName, null, null); //$NON-NLS-1$
+//				result.add(proposal);
+//			}
+//		}
+//	}
 
-		for(IDeclaration decl : decls) {
-			final String declName = decl.getName();
-			if (!(decl instanceof ITypeSignature) &&
-				declName.startsWith(prefix))
-			{
-				final CompletionProposal proposal = new CompletionProposal(
-				    declName, offset - plength, plength, declName.length(), null,
-				    declName + " - " + moduleName, null, null); //$NON-NLS-1$
-				result.add(proposal);
-			}
-		}
-	}
-
-	private String getQualifier( final ICompilationUnit unit,
+	private String getQualifier( final String source,
 			                     final int offset )
 	{
-		StringBuffer contents = readSourceTillOffset(unit, offset);
+		StringBuffer contents = readSourceTillOffset(source, offset);
 
 		int index = offset;
 		StringBuilder sb = new StringBuilder();
@@ -183,10 +180,10 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1; //$NON-NLS-1$
 	}
 
-	private StringBuffer readSourceTillOffset(final ICompilationUnit unit,
+	private StringBuffer readSourceTillOffset(final String source,
 		final int offset)
 	{
-		final String source = unit.getOriginalSourceCode();
+		//final String source = unit.getOriginalSourceCode();
 		return new StringBuffer(source.substring(0, offset));
 	}
 

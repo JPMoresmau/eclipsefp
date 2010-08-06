@@ -3,7 +3,6 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
@@ -52,9 +51,7 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
   @Override
   public Image getImage( final Object element ) {
     Image result = null;
-    if( element instanceof IHaskellLanguageElement ) {
-      result = super.getImage( element );
-    } else if( element instanceof ITreeElement ) {
+    if( element instanceof ITreeElement ) {
       String key = ( ( ITreeElement )element ).getImageKey();
       result = HaskellUIImages.getImage( key );
     } else if( element instanceof IHaskellProject ) {

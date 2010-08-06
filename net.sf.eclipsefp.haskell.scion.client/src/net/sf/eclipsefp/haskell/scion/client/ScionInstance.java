@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +31,6 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -75,7 +75,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private JSONObject cabalDescription;
 	private Map<String,CabalPackage[]> packagesByDB;
-	private List<Component> components;
+	private List<Component> components=new LinkedList<Component>();
 	private CabalComponentResolver resolver;
 	private Component lastLoadedComponent;
 	
@@ -115,18 +115,25 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	private boolean checkCabalFile(){
+
 		IFile cabalFile=getCabalFile(getProject());
-	    if( !cabalFile.exists() && !getProject().getWorkspace().isTreeLocked()) {
-	        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
-	        try {
-	        	IMarker marker = getProject().createMarker( id );
-	        	marker.setAttribute( IMarker.MESSAGE, UITexts.bind(UITexts.cabalFileMissing, cabalFile.getLocation().toString()));
-	        	marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_WARNING );
-	        } catch (CoreException ce){
-	        	ce.printStackTrace();
-	        }
+		boolean exists=cabalFile.exists();
+	    if( !exists) {
+	    	String msg=UITexts.bind(UITexts.cabalFileMissing, cabalFile.getLocation().toString());
+	    	ScionPlugin.logError(msg, null);
+	    	if (!getProject().getWorkspace().isTreeLocked()){
+		        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
+		        try {
+		        	IMarker marker = getProject().createMarker( id );
+		        	marker.setAttribute( IMarker.MESSAGE, msg);
+		        	marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_WARNING );
+		        } catch (CoreException ce){
+		        	ScionPlugin.logError(msg, ce);
+		        }
+	    	} 
 	    }
-	    return cabalFile.exists();
+	    return exists;
+
 	}
 	
 	/*public void configureCabal(IJobChangeListener listener) {
@@ -206,7 +213,7 @@ public class ScionInstance implements IScionCommandRunner {
 			//} else {
 			//	command.runSync();
 			//}
-		}
+		} 
 		//		}
 		//	}
 		//});
@@ -474,10 +481,8 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 	}
 	
-	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
-	
 	public static IFile getCabalFile(final IProject p) {
-	    String ext = EXTENSION_CABAL;
+	    String ext = "cabal"; // ResourceUtil.EXTENSION_CABAL;
 	    IPath path = new Path( p.getName() ).addFileExtension( ext );
 	    return p.getFile( path );
 	}

@@ -4,9 +4,7 @@ Bundle-Name: Haskell Test Plug-In
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.test
 Bundle-Version: 1.112.0
 Require-Bundle: net.sf.eclipsefp.haskell.core.test,
- org.junit,
- net.sf.eclipsefp.haskell.core.jparser.test;bundle-version="1.106.0",
- net.sf.eclipsefp.haskell.core.parser.test;bundle-version="1.106.0",
+ org.junit4,
  net.sf.eclipsefp.haskell.debug.ui.test;bundle-version="1.106.0",
  net.sf.eclipsefp.haskell.ghccompiler.test;bundle-version="1.106.0",
  net.sf.eclipsefp.haskell.ui.test;bundle-version="1.106.0"

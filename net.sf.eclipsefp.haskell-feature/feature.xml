@@ -63,7 +63,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="1.111.0"
+         version="1.112.0"
          unpack="false"/>
 
    <plugin
@@ -82,13 +82,6 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
 
    <plugin
          id="net.sf.eclipsefp.haskell.hugs"
-         download-size="0"
-         install-size="0"
-         version="1.112.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.sf.eclipsefp.haskell.core.jparser"
          download-size="0"
          install-size="0"
          version="1.112.0"

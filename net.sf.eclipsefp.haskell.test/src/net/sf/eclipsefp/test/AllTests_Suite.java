@@ -8,7 +8,6 @@ public class AllTests_Suite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.AllTests_Suite.suite());
-		suite.addTest(net.sf.eclipsefp.haskell.core.jparser.test.AllTests_Suite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ghccompiler.test.AllTests_Suite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.AllTests_Suite.suite());
 		return suite;

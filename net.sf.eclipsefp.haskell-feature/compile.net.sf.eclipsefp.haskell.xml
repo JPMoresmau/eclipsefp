@@ -7,7 +7,6 @@
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.core" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.debug.core" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.ui" target="build.jars"/>
-		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.core.jparser" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.ghccompiler" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.debug.ui" target="build.jars"/>
 		<ant antfile="build.xml" dir="../net.sf.eclipsefp.haskell.hugs" target="build.jars"/>

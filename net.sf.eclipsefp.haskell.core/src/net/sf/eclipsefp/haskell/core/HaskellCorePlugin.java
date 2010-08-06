@@ -5,13 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester;
-import net.sf.eclipsefp.haskell.core.halamo.HaskellModelManager;
-import net.sf.eclipsefp.haskell.core.parser.ParserManager;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -40,47 +35,22 @@ public class HaskellCorePlugin extends Plugin {
 
 	private static HaskellCorePlugin plugin;
 
-	private final IWorkspace fWorkspace;
-	private HaskellModelManager fModelManager;
 
 	public HaskellCorePlugin() {
-		this(ResourcesPlugin.getWorkspace());
+	  plugin = this;
 	}
 
-	public HaskellCorePlugin(final IWorkspace workspace) {
-		plugin = this;
-		fWorkspace = workspace;
-	}
 
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 
 		collectCompilerInfo();
-		collectParserInfo();
-		try {
-			fModelManager = new HaskellModelManager(fWorkspace);
-			fModelManager.initialize();
-		} catch (CoreException ex) {
-			String message = "Serious problem: could not initialize the Haskell " //$NON-NLS-1$
-					+ "language model."; //$NON-NLS-1$
-			HaskellCorePlugin.log(message, ex);
-		}
 
 		Platform.getAdapterManager()
 			.registerAdapters(new HaskellPropertyTester(), IResource.class);
 	}
 
-	public HaskellModelManager getModelManager() {
-		return fModelManager;
-	}
-
-	/**
-	 * Returns the shared instance's model manager
-	 */
-	public static HaskellModelManager getDefaultModelManager() {
-		return getDefault().getModelManager();
-	}
 	/**
 	 * <p>
 	 * returns the shared instance.
@@ -174,25 +144,6 @@ public class HaskellCorePlugin extends Plugin {
       HaskellCorePlugin.log( msg, ex );
     }
   }
-
-	private void collectParserInfo() {
-		IConfigurationElement[] elements = getExtensions(ID_EXT_POINT_PARSERS);
-		for (int i = 0; i < elements.length; i++) {
-			try {
-				String parserId = elements[i].getAttribute(ATT_ID);
-				if (parserId == null) {
-					String msg = "Haskell parser declaration is missing id attribute " //$NON-NLS-1$
-							+ "and will be ignored."; //$NON-NLS-1$
-					log(msg, null);
-				} else {
-					ParserManager.getInstance().registerParser(parserId,
-							elements[i]);
-				}
-			} catch (final CoreException ex) {
-				getLog().log(ex.getStatus());
-			}
-		}
-	}
 
 	public IConfigurationElement[] getExtensions(final String key) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();

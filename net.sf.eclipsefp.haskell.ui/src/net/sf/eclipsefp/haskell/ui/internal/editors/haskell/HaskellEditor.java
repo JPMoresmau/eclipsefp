@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import net.sf.eclipsefp.haskell.core.halamo.IHaskellLanguageElement;
-import net.sf.eclipsefp.haskell.core.halamo.ISourceLocation;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -26,7 +24,6 @@ import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -92,19 +89,19 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private List<OutlineDef> outline;
   private Map<String,List<OutlineDef>> defByName;
 
-  public void reveal( final IHaskellLanguageElement element ) {
-    Assert.isNotNull( element );
-    IDocument doc = getSourceViewer().getDocument();
-    ISourceLocation srcLoc = element.getSourceLocation();
-    int offset = -1;
-    try {
-      offset = doc.getLineOffset( srcLoc.getLine() ) + srcLoc.getColumn();
-    } catch( final BadLocationException badlox ) {
-      // ignore
-    }
-    int length = element.getName().length();
-    getSourceViewer().revealRange( offset, length );
-  }
+//  public void reveal( final IHaskellLanguageElement element ) {
+//    Assert.isNotNull( element );
+//    IDocument doc = getSourceViewer().getDocument();
+//    ISourceLocation srcLoc = element.getSourceLocation();
+//    int offset = -1;
+//    try {
+//      offset = doc.getLineOffset( srcLoc.getLine() ) + srcLoc.getColumn();
+//    } catch( final BadLocationException badlox ) {
+//      // ignore
+//    }
+//    int length = element.getName().length();
+//    getSourceViewer().revealRange( offset, length );
+//  }
 
   public IDocument getDocument() {
     return getSourceViewer() == null ? null : getSourceViewer().getDocument();
