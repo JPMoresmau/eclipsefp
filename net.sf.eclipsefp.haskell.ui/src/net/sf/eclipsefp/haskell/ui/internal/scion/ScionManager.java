@@ -370,12 +370,10 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
               throws CoreException {
             if( delta.getKind() == IResourceDelta.REMOVED ) {
               if( delta.getResource() instanceof IFile){
-
                 IFile f = ( IFile )delta.getResource();
                 IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
-                if(ResourceUtil.hasHaskellExtension( delta.getResource() ) ) {
+                if(ResourceUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
                   // System.out.println(delta.getFullPath());
-
 
                   PackageDescription pd = PackageDescriptionLoader.load( cabalF );
                   ModuleCreationInfo info = new ModuleCreationInfo( f );
