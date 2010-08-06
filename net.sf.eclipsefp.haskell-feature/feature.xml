@@ -88,12 +88,6 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          unpack="false"/>
 
    <plugin
-         id="org.antlr"
-         download-size="0"
-         install-size="0"
-         version="2.7.6"/>
-
-   <plugin
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
