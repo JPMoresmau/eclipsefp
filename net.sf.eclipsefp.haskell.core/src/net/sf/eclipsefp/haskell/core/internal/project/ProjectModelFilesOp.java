@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.ICabalContributor;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,7 +45,13 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
       createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
 
       if (isExecutable()){
-        IPath mainFile = new Path( "src/Main" ).addFileExtension( ResourceUtil.EXTENSION_HS ); //$NON-NLS-1$
+        String mainPath="Main";//$NON-NLS-1$
+        String src=HaskellProjectCreationOperation.getSourceDir();
+        if (src!=null){
+          mainPath=src+"/"+mainPath;//$NON-NLS-1$
+        }
+
+        IPath mainFile = new Path( mainPath ).addFileExtension( ResourceUtil.EXTENSION_HS );
         createFile( project, mainFile, getMainFileContent( ), mo  );
       }
 

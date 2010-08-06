@@ -6,6 +6,7 @@ import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -55,12 +56,17 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
 
     IPath path = new Path( "bla.exe" );
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
-    project.getFile( path ).create( is, true, null );
-    hp.addTargetName( path );
-    assertEquals( 2, hp.getTargetNames().size() );
+    IFile f=project.getFile( path );
+    f.create( is, true, null );
+    try {
+      hp.addTargetName( path );
+      assertEquals( 2, hp.getTargetNames().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ));
-    assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
+      assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ));
+      assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
+    } finally {
+      f.delete( true, null );
+    }
   }
 
   public void testTargetExecutable_multiple() throws CoreException {
@@ -73,13 +79,18 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
     project.getFolder( "bin" ).create( true, true, null );
     project.getFile( path ).create( is, true, null );
-    project.getFile( path2 ).create( is, true, null );
-    hp.addTargetName( path );
-    hp.addTargetName( path2 );
-    assertEquals( 3, hp.getTargetNames().size() );
+    IFile f=project.getFile( path2 );
+    f.create( is, true, null );
+    try {
+      hp.addTargetName( path );
+      hp.addTargetName( path2 );
+      assertEquals( 3, hp.getTargetNames().size() );
 
-    assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ) );
-    assertTrue( ResourceUtil.isProjectExecutable( project, "bin/bli" ) );
-    assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
+      assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ) );
+      assertTrue( ResourceUtil.isProjectExecutable( project, "bin/bli" ) );
+      assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
+    } finally {
+      f.delete( true, null );
+    }
   }
 }

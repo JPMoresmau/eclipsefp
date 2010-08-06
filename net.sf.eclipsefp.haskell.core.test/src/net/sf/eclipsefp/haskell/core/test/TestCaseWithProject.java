@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -58,7 +59,9 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     super.setUp();
 
     ProjectCreationOperation op = new HaskellProjectCreationOperation();
-    op.setExtraOperation( new ProjectModelFilesOp() );
+    ProjectModelFilesOp modelFiles=new ProjectModelFilesOp() ;
+    modelFiles.setExecutable( true );
+    op.setExtraOperation( modelFiles);
     op.setProjectName( PROJECT_NAME );
     op.run( null );
 
@@ -68,6 +71,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
 
   @Override
   protected void tearDown() throws Exception {
+    project.close( new NullProgressMonitor() );
     project.delete( true, null );
     super.tearDown();
   }

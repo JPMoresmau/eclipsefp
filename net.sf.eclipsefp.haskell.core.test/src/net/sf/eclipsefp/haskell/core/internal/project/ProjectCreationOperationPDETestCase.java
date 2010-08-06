@@ -31,7 +31,9 @@ public class ProjectCreationOperationPDETestCase extends TestCaseWithPreferences
 
 	protected ProjectCreationOperation createOperation() {
 		ProjectCreationOperation result = new ProjectCreationOperation();
-		result.setExtraOperation( new ProjectModelFilesOp() );
+		ProjectModelFilesOp modelFiles=new ProjectModelFilesOp() ;
+		modelFiles.setExecutable( true );
+		result.setExtraOperation( modelFiles);
     return result;
 	}
 

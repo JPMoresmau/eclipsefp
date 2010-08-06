@@ -23,10 +23,19 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 		if (! createFolders() ) {
 			return new String[0];
 		}
-		IPreferencesService service = Platform.getPreferencesService();
-		String sourcePath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null );
+		//IPreferencesService service = Platform.getPreferencesService();
+		//String sourcePath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null );
 		//String outputPath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null );
-		return new String[] { sourcePath }; // , outputPath
+		return new String[] { getSourceDir() }; // , outputPath
+	}
+
+	public static String getSourceDir(){
+	  String sourcePath=null;
+	  if (createFolders() ) {
+	    IPreferencesService service = Platform.getPreferencesService();
+	    sourcePath = service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null );
+	  }
+	  return sourcePath;
 	}
 
 	@Override
@@ -48,7 +57,7 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_COMPILER, null, null ));
 	}
 
-	private boolean createFolders() {
+	public static boolean createFolders() {
 	  return Platform.getPreferencesService().getBoolean( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, false, null );
 	}
 
