@@ -2,8 +2,8 @@ package net.sf.eclipsefp.haskell.ui.internal.util;
 
 import java.io.File;
 import java.io.IOException;
-import net.sf.eclipsefp.haskell.core.util.FileUtil;
 import junit.framework.TestCase;
+import net.sf.eclipsefp.haskell.core.util.FileUtil;
 
 
 public class FileUtilTest extends TestCase{
@@ -18,6 +18,7 @@ public class FileUtilTest extends TestCase{
       File tmp=File.createTempFile( "filetogetdir", ".tmp" );
       File tmpDir=tmp.getParentFile();
       File tmpDir1=new File(tmpDir,"tmpDir");
+      tmpDir1.mkdir();
       File tmpFile1=File.createTempFile("tmpFile1",".tmp",tmpDir1);
       File tmpDir11=new File(tmpDir1,"tmpDir11");
       tmpDir11.mkdirs();
@@ -42,6 +43,7 @@ public class FileUtilTest extends TestCase{
       assertFalse(tmpDir12.exists());
       assertFalse(tmpFile121.exists());
     } catch (IOException ioe){
+      ioe.printStackTrace();
       fail(ioe.getLocalizedMessage());
     }
 
