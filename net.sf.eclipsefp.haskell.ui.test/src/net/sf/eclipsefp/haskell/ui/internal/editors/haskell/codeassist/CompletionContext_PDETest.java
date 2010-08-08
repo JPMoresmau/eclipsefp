@@ -13,6 +13,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.internal.util.CompletionProposalTestCase;
+import net.sf.eclipsefp.haskell.core.project.util.MockFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
@@ -113,7 +114,7 @@ public class CompletionContext_PDETest extends TestCase{
 		final int offset = input.length();
 		//final ICompilationUnit unit = parseAsFile(input);
 		//final StubHalamo langModel = new StubHalamo();
-		HaskellCompletionContext context = new HaskellCompletionContext(input, offset);
+		HaskellCompletionContext context = createContext(input, offset);
 
 		//langModel.setModulesInScope(new StubModule("Recursive", "fat", "fib"));
 
@@ -129,7 +130,7 @@ public class CompletionContext_PDETest extends TestCase{
 		                     "import Fib";
 		final int offset = input.length();
 		//final StubHalamo langModel = new StubHalamo();
-		HaskellCompletionContext context = new HaskellCompletionContext(input, offset);
+		HaskellCompletionContext context = createContext(input, offset);
 
 	//	langModel.putModule(new StubModule("Fibonacci"));
 
@@ -163,6 +164,6 @@ public class CompletionContext_PDETest extends TestCase{
 	}
 
 	private HaskellCompletionContext createContext(final String source, final int offset) {
-		return new HaskellCompletionContext(source, offset);
+		return new HaskellCompletionContext(new MockFile(source),source, offset);
 	}
 }
