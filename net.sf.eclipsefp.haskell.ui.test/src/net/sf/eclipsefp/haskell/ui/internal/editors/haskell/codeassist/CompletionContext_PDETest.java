@@ -11,28 +11,44 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 
-import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import net.sf.eclipsefp.haskell.core.internal.util.CompletionProposalTestCase;
-import net.sf.eclipsefp.haskell.core.project.util.MockFile;
+import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class CompletionContext_PDETest extends TestCase{
+public class CompletionContext_PDETest extends TestCaseWithProject{
 
-	public void testDeclarationCompletion() throws CoreException {
+  public static TestSuite suite(){
+    TestSuite ts=new TestSuite("CompletionContext_PDETest");
+    ts.addTestSuite( CompletionContext_PDETest.class);
+    //ts.addTest(new CompletionContext_PDETest("testDeclarationCompletion"));
+    return ts;
+  }
+
+	public CompletionContext_PDETest() {
+    super();
+  }
+
+  public CompletionContext_PDETest( final String name ) {
+    super( name );
+  }
+
+  public void testDeclarationCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest where\n" +
 				             "\n" +
-				             "putStr str = str\n" +
+				             "popStr str = str\n" +
 				             "\n" +
-				             "main = pu\n";
+				             "main = popStr\n";
 	//	final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(input, 62);
+		HaskellCompletionContext context = createContext("CompletionEngineTest",input, 62);
 
-		assertEquals('u', input.charAt(62 - 1));
+		assertEquals('o', input.charAt(62 - 1));
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
-		assertContains(createProposal("pu", "putStr", 62), proposals);
+		assertContains(createProposal("po", "popStr", 62), proposals);
 	}
 
 	public void testPreludeClassCompletion() throws CoreException {
@@ -40,7 +56,7 @@ public class CompletionContext_PDETest extends TestCase{
                              "\n" +
                              "fat :: N";
 	//	final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(input, 43);
+		HaskellCompletionContext context = createContext("CompletionEngineTest",input, 43);
 
 		assertEquals('N', input.charAt(43 - 1));
 
@@ -53,7 +69,7 @@ public class CompletionContext_PDETest extends TestCase{
 		final String input = "module CompletionEngineTest wh";
 		//TODO avoid complaining about parsing error here
 	//	final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(input, 30);
+		HaskellCompletionContext context = createContext("CompletionEngineTest",input, 30);
 
 		assertEquals('h', input.charAt(30 - 1));
 
@@ -62,13 +78,13 @@ public class CompletionContext_PDETest extends TestCase{
 		assertContains(createProposal("wh", "where", 30), proposals);
 	}
 
-	public void testDiscoverPreffixAfterLeftParen() throws CoreException {
+	public void testDiscoverPrefixAfterLeftParen() throws CoreException {
 		final String input = "module Factorial where\n" +
 				             "\n" +
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (f";
 		//final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(input, 48);
+		HaskellCompletionContext context = createContext("Factorial",input, 48);
 
 		assertEquals('f', input.charAt(48 - 1));
 
@@ -83,7 +99,7 @@ public class CompletionContext_PDETest extends TestCase{
 				             "fat 0 = 1\n" +
 				             "fat 1 = n * (";
 		//final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext(input, 48);
+		HaskellCompletionContext context = createContext("Factorial",input, 48);
 
 		assertEquals('(', input.charAt(47 - 1));
 
@@ -92,13 +108,13 @@ public class CompletionContext_PDETest extends TestCase{
 		assertEquals(0, proposals.length);
 	}
 
-	public void testCompletePreffixWithUnderscore() throws CoreException {
+	public void testCompletePrefixWithUnderscore() throws CoreException {
 		final String input = "module Underscore where\n" +
 				             "\n" +
 				             "_underscore = '_'\n" +
 				             "prefixWithUnderscore str = _und";
 		//final ICompilationUnit unit = parseAsFile(input);
-		final HaskellCompletionContext context = createContext(input, 74);
+		final HaskellCompletionContext context = createContext("Underscore",input, 74);
 
 		assertEquals('d', input.charAt(74 - 1));
 
@@ -114,7 +130,7 @@ public class CompletionContext_PDETest extends TestCase{
 		final int offset = input.length();
 		//final ICompilationUnit unit = parseAsFile(input);
 		//final StubHalamo langModel = new StubHalamo();
-		HaskellCompletionContext context = createContext(input, offset);
+		HaskellCompletionContext context = createContext("Main",input, offset);
 
 		//langModel.setModulesInScope(new StubModule("Recursive", "fat", "fib"));
 
@@ -130,7 +146,7 @@ public class CompletionContext_PDETest extends TestCase{
 		                     "import Fib";
 		final int offset = input.length();
 		//final StubHalamo langModel = new StubHalamo();
-		HaskellCompletionContext context = createContext(input, offset);
+		HaskellCompletionContext context = createContext("Main",input, offset);
 
 	//	langModel.putModule(new StubModule("Fibonacci"));
 
@@ -148,7 +164,7 @@ public class CompletionContext_PDETest extends TestCase{
 		                     "factorial = foldr (*) 1 . enumFromTo 1\n" +
 		                     "\n" +
 		                     "main = putStr $ show $ fac";
-		HaskellCompletionContext context = createContext(input, input.length());
+		HaskellCompletionContext context = createContext("Main",input, input.length());
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
@@ -163,7 +179,18 @@ public class CompletionContext_PDETest extends TestCase{
 		return CompletionProposalTestCase.createProposal(replaced, replacement, offset);
 	}
 
-	private HaskellCompletionContext createContext(final String source, final int offset) {
-		return new HaskellCompletionContext(new MockFile(source),source, offset);
+	private HaskellCompletionContext createContext(final String module,final String source, final int offset) {
+
+	  try {
+	    IFile f=addFile( module, source );
+	    return new HaskellCompletionContext(f,source, offset);
+	  } catch (Exception ce){
+	    ce.printStackTrace();
+	    fail( ce.getLocalizedMessage() );
+	  }
+	  return null;
 	}
+
+
+
 }

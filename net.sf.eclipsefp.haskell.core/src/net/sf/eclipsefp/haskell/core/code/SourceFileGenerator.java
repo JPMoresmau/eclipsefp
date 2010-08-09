@@ -38,11 +38,15 @@ public class SourceFileGenerator {
   public IFile createFile( final IProgressMonitor monitor,
                                   final ModuleCreationInfo info )
                                                           throws CoreException {
-    monitor.beginTask( CoreTexts.sourceFileGenerator_creating, 12 );
+    if (monitor!=null){
+      monitor.beginTask( CoreTexts.sourceFileGenerator_creating, 12 );
+    }
     IContainer destFolder = createFolders( info, monitor );   // (6)
     IFile result = createFile( info, destFolder, monitor );   // (4)
-    refresh( info, monitor );                                 // (2)
-    monitor.done();
+    refresh( info, monitor );         // (2)
+    if (monitor!=null){
+      monitor.done();
+    }
     return result;
   }
 
@@ -77,7 +81,7 @@ public class SourceFileGenerator {
   private void refresh( final ModuleCreationInfo info,
                                final IProgressMonitor monitor )
                                                           throws CoreException {
-    SubProgressMonitor refMon = new SubProgressMonitor( monitor, 2 );
+    SubProgressMonitor refMon = monitor==null?null:new SubProgressMonitor( monitor, 2 );
     IContainer srcContainer = info.getSourceContainer();
     srcContainer.refreshLocal( IResource.DEPTH_INFINITE, refMon );
   }
@@ -95,7 +99,7 @@ public class SourceFileGenerator {
     String fileName = createFileName( style, moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
     InputStream isContent = new ByteArrayInputStream( fileContent.getBytes() );
-    SubProgressMonitor subMon = new SubProgressMonitor( monitor, 4 );
+    SubProgressMonitor subMon = monitor==null?null:new SubProgressMonitor( monitor, 4 );
     result.create( isContent, true, subMon );
     return result;
   }

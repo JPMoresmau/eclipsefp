@@ -3,11 +3,31 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementation;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationPersister;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationType;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -16,6 +36,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
 
 /** <p>convenience super class for test cases that need a Haskell project
   * in the workspace.</p>
@@ -30,6 +53,15 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   public TestCaseWithProject() {
     addQualifier( HaskellCorePlugin.getPluginId() );
   }
+
+
+
+  public TestCaseWithProject( final String name ) {
+    super( name );
+    addQualifier( HaskellCorePlugin.getPluginId() );
+  }
+
+
 
   public static void waitForAutoBuild() throws CoreException {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -50,6 +82,56 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     // System.out.print( " OK.\n" ); //$NON-NLS-1$
   }
 
+  public IFile addFile(final String module,final String source) {
+
+    try {
+      IFile cabal=ScionInstance.getCabalFile( project );
+      waitForScion(cabal);
+      PackageDescription pd=PackageDescriptionLoader.load(cabal);
+      Map<String,List<PackageDescriptionStanza>> m=pd.getStanzasBySourceDir();
+      Map.Entry<String,List<PackageDescriptionStanza>> e=m.entrySet().iterator().next();
+      IFile f=project.getFile( e.getKey()+"/"+module+"."+ResourceUtil.EXTENSION_HS );
+      if (!f.exists()){
+        f.create( new ByteArrayInputStream( source.getBytes( "ASCII" ) ), true,  null);
+      } else {
+        f.setContents( new ByteArrayInputStream( source.getBytes( "ASCII" ) ), true, false, null );
+      }
+      if (!module.equals( "Main" )){
+        ModuleCreationInfo mci=new ModuleCreationInfo( f );
+        mci.setIncluded(Collections.singleton( e.getValue().get( 0 )));
+        mci.setExposed( Collections.<PackageDescriptionStanza>emptySet() );
+        ModuleCreationOperation mco=new ModuleCreationOperation( mci );
+        mco.setGeneratedFile( f );
+        mco.run( null );
+      }
+      waitForScion(f);
+     // waitForAutoBuild();
+      HaskellUIPlugin.getDefault().getScionInstanceManager( f ).loadFile( f );
+      waitForScion(f);
+      return f;
+    } catch (Exception ce){
+      ce.printStackTrace();
+      fail( ce.getLocalizedMessage() );
+    }
+    return null;
+  }
+
+
+  public static void waitForScion(final IResource r) throws CoreException {
+    IJobManager jobMan = Job.getJobManager();
+    Object family=HaskellUIPlugin.getDefault().getScionInstanceManager( r );
+
+    boolean retry = true;
+    while( retry ) {
+      try {
+        jobMan.join( family, null );
+
+        retry = false;
+      } catch (Exception exc) {
+        // ignore and retry
+      }
+    }
+  }
 
   // interface methods of TestCase
   ////////////////////////////////
@@ -57,6 +139,31 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
+
+    String ghc=System.getProperty( "GHC_TEST" );
+    if (ghc==null){
+      fail( "no GHC_TEST system property found (must point to GHC bin folder)" );
+    }
+    if (!new File(ghc).exists()){
+      fail( "GHC_TEST system property does not exist (must point to GHC bin folder)" );
+    }
+   // "D:\\dev\\haskell\\HaskellPlatform\\2010.1.0.0\\bin"
+    HsImplementation impl=new HsImplementation();
+    impl.setName("GHC Test");
+    impl.setType( HsImplementationType.GHC );
+    impl.setBinDir(ghc );
+   // impl.setLibDir( "D:\\dev\\haskell\\HaskellPlatform\\2010.1.0.0\\lib" );
+    impl.setVersion( "Test" );
+    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+
+    node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, HsImplementationPersister.toXML( Collections.<IHsImplementation>singletonList( impl ) ) );
+    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, impl.getName() );
+
+    try {
+      node.flush();
+    } catch( BackingStoreException ex ) {
+      fail(ex.getLocalizedMessage());
+    }
 
     ProjectCreationOperation op = new HaskellProjectCreationOperation();
     ProjectModelFilesOp modelFiles=new ProjectModelFilesOp() ;

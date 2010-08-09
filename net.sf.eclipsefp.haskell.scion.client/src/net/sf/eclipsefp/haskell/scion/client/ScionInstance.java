@@ -317,7 +317,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	
 	public void deleteProblems(IResource r){
-		if (!r.getWorkspace().isTreeLocked() && r.exists()){
+		if (!r.getWorkspace().isTreeLocked() && r.exists() && r.getProject().isOpen()){
 			try {
 				if (r instanceof IFile){
 					r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());

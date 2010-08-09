@@ -19,7 +19,7 @@ public class CompletionProposalTestCase extends TestCase {
 		String expectedContent = applyToEmptyDocument(expected);
 
 		for(ICompletionProposal prop: props) {
-			String actualContent = applyToEmptyDocument(prop);;
+			String actualContent = applyToEmptyDocument(prop);
 			if (expectedContent.equals(actualContent)) {
 				return;
 			}

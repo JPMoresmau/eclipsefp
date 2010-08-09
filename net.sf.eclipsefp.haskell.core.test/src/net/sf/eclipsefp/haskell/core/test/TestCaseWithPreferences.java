@@ -27,6 +27,11 @@ public class TestCaseWithPreferences extends TestCase {
     addQualifier( HaskellCorePlugin.getPluginId() );
   }
 
+  public TestCaseWithPreferences( final String name ) {
+    super( name );
+    addQualifier( HaskellCorePlugin.getPluginId() );
+  }
+
   /**
    * Adds a plug-in to the list of plug-ins that should use the test scope for lookups.
    * This only has an effect before setUp() is called.

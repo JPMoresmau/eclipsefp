@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -19,6 +20,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.FileUtil;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -49,6 +51,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -100,6 +105,31 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     boolean useBuiltIn=preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
     if (useBuiltIn){
       serverExecutable=buildBuiltIn();
+      if (serverExecutable==null && CompilerManager.getInstance().getCurrentHsImplementation()==null){
+        new InstanceScope().getNode( HaskellCorePlugin.getPluginId() ).addPreferenceChangeListener( new IPreferenceChangeListener() {
+          public void preferenceChange( final PreferenceChangeEvent event ) {
+            String key = event.getKey();
+            if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
+                || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
+              /*Job job=new Job(UITexts.scionServerBuildJob) {
+
+                @Override
+                protected IStatus run( final IProgressMonitor monitor ) {
+                  serverExecutable=buildBuiltIn();
+                  serverExecutableChanged();
+                  return Status.OK_STATUS;
+                }
+              };
+              job.setRule( ScionManager.this );
+              job.schedule();*/
+              if (serverExecutable==null){
+                serverExecutable=buildBuiltIn();
+                serverExecutableChanged();
+              }
+            }
+          }
+        });
+      }
     } else {
       serverExecutable = preferenceStore
           .getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
