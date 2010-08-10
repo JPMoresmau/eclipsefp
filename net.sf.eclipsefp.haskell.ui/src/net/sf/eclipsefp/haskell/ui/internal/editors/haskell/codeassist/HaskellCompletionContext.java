@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -59,10 +60,11 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		try {
 			completedToken = getQualifier(source,getOffset());
 
-			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
+			List<ICompletionProposal> result = Collections.synchronizedList( new ArrayList<ICompletionProposal>());
 			//searchScope(completedToken, result);
 			//searchImportableModules(completedToken, result);
 			searchDefinedNames(completedToken, result);
+			searchModulesNames(completedToken, result);
 			searchPreludeAndKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
@@ -90,6 +92,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 
           public void nameResult( final List<String> names ) {
             searchStringList(prefix, names, result);
+
             synchronized( si ) {
               si.notifyAll();
             }
@@ -105,6 +108,49 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
     }
   }
  }
+
+	 private void searchModulesNames(final String prefix,
+	      final List<ICompletionProposal> result){
+	  if( ResourceUtil.hasHaskellExtension( file ) && ResourceUtil.isInHaskellProject( file )) {
+	    final ScionInstance si = HaskellUIPlugin.getDefault()
+	        .getScionInstanceManager( file );
+	    // sync access
+	    if (si!=null){
+	      synchronized( si ) {
+	        si.moduleGraph( new NameHandler() {
+
+	          public void nameResult( final List<String> names ) {
+	            searchStringList(prefix, names, result);
+	            synchronized( si ) {
+	              si.notifyAll();
+	            }
+	          }
+	        } );
+	        try {
+	          // TODO make this a preference
+	          si.wait( 10000 ); // 10 seconds max
+	        } catch( InterruptedException ie ) {
+	          // noop
+	        }
+	        si.listExposedModules( new NameHandler() {
+
+            public void nameResult( final List<String> names ) {
+              searchStringList(prefix, names, result);
+              synchronized( si ) {
+                si.notifyAll();
+              }
+            }
+          } );
+          try {
+            // TODO make this a preference
+            si.wait( 10000 ); // 10 seconds max
+          } catch( InterruptedException ie ) {
+            // noop
+          }
+	      }
+	    }
+	  }
+	 }
 
 	private void searchStringList(final String prefix, final String[] names,
 		final List<ICompletionProposal> result)
@@ -133,7 +179,6 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 	         result.add(new CompletionProposal(name, offset - plength,
 	                                           plength,
 	                                           name.length()));
-
 	       }
 	     }
 	   }

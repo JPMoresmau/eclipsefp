@@ -20,7 +20,9 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ListExposedModulesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ModuleGraphCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
@@ -227,6 +229,10 @@ public class ScionInstance implements IScionCommandRunner {
 			server.stopServer();
 			server = null;
 		}
+	}
+	
+	public boolean isStopped(){
+		return server==null;
 	}
 	
 	////////////////////////////////
@@ -502,6 +508,38 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public void definedNames(final NameHandler handler){
 		final DefinedNamesCommand command=new DefinedNamesCommand(this);
+		if (handler!=null){
+			command.addJobChangeListener(new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						handler.nameResult(command.getNames());
+					}
+				}
+			});
+		}
+		command.runAsync();
+
+	}
+	
+	public void listExposedModules(final NameHandler handler){
+		final ListExposedModulesCommand command=new ListExposedModulesCommand(this);
+		if (handler!=null){
+			command.addJobChangeListener(new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						handler.nameResult(command.getNames());
+					}
+				}
+			});
+		}
+		command.runAsync();
+
+	}
+	
+	public void moduleGraph(final NameHandler handler){
+		final ModuleGraphCommand command=new ModuleGraphCommand(this);
 		if (handler!=null){
 			command.addJobChangeListener(new JobChangeAdapter(){
 				@Override

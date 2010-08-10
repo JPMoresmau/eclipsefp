@@ -36,6 +36,12 @@ public class PackageDescriptionLoader {
       }  catch( final IOException ioex ) {
         // very unlikely
         HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
+      } finally {
+        try {
+          is.close();
+        } catch ( final IOException ignore ) {
+          //NOOP
+        }
       }
     }
     return result;

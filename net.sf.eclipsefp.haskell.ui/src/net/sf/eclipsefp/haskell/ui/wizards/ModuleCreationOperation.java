@@ -67,50 +67,53 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       IFile f=ScionInstance.getCabalFile( p );
       IDocumentProvider prov=new TextFileDocumentProvider();
       prov.connect( f );
-      IDocument doc=prov.getDocument( f );
+      try {
+        IDocument doc=prov.getDocument( f );
 
-      String moduleName=info.getQualifiedModuleName();
+        String moduleName=info.getQualifiedModuleName();
 
 
-      if (onlyAdd){
-        for (PackageDescriptionStanza pds:info.getIncluded()){
-          RealValuePosition vp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
-          vp.updateDocument( doc );
-        }
-        for (PackageDescriptionStanza pds:info.getExposed()){
-          RealValuePosition vp=pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
-          vp.updateDocument( doc );
-        }
-      } else {
-        Set<String> sIncluded=new HashSet<String>();
-        for (PackageDescriptionStanza pds:info.getIncluded()){
-          sIncluded.add( pds.toTypeName() );
-        }
-        Set<String> sExposed=new HashSet<String>();
-        for (PackageDescriptionStanza pds:info.getExposed()){
-          sExposed.add( pds.toTypeName() );
-        }
-        PackageDescription pd=PackageDescriptionLoader.load( f );
-        for (PackageDescriptionStanza pds:pd.getStanzas()){
-          if (pds.getType()!=null && (pds.getType().equals( CabalSyntax.SECTION_LIBRARY ) || pds.getType().equals( CabalSyntax.SECTION_EXECUTABLE ))){
-            RealValuePosition vp=null;
-            if(sIncluded.contains( pds.toTypeName() )){
-              vp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
-            } else {
-              vp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
-            }
-            vp.updateDocument( doc );
-            if (sExposed.contains( pds.toTypeName() )){
-              vp=pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
-            } else {
-              vp=pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
-            }
+        if (onlyAdd){
+          for (PackageDescriptionStanza pds:info.getIncluded()){
+            RealValuePosition vp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
             vp.updateDocument( doc );
           }
+          for (PackageDescriptionStanza pds:info.getExposed()){
+            RealValuePosition vp=pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
+            vp.updateDocument( doc );
+          }
+        } else {
+          Set<String> sIncluded=new HashSet<String>();
+          for (PackageDescriptionStanza pds:info.getIncluded()){
+            sIncluded.add( pds.toTypeName() );
+          }
+          Set<String> sExposed=new HashSet<String>();
+          for (PackageDescriptionStanza pds:info.getExposed()){
+            sExposed.add( pds.toTypeName() );
+          }
+          PackageDescription pd=PackageDescriptionLoader.load( f );
+          for (PackageDescriptionStanza pds:pd.getStanzas()){
+            if (pds.getType()!=null && (pds.getType().equals( CabalSyntax.SECTION_LIBRARY ) || pds.getType().equals( CabalSyntax.SECTION_EXECUTABLE ))){
+              RealValuePosition vp=null;
+              if(sIncluded.contains( pds.toTypeName() )){
+                vp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
+              } else {
+                vp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
+              }
+              vp.updateDocument( doc );
+              if (sExposed.contains( pds.toTypeName() )){
+                vp=pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
+              } else {
+                vp=pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
+              }
+              vp.updateDocument( doc );
+            }
+          }
         }
+        prov.saveDocument( monitor, f, doc, true );
+      } finally {
+        prov.disconnect( f );
       }
-      prov.saveDocument( monitor, f, doc, true );
-
       HaskellUIPlugin.getDefault().getScionInstanceManager( generatedFile ).buildProject( false );
 
     } catch( CoreException ex ) {

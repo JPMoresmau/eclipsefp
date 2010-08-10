@@ -26,6 +26,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -82,6 +83,19 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     // System.out.print( " OK.\n" ); //$NON-NLS-1$
   }
 
+  protected void checkProblems() throws CoreException{
+    IMarker[] ms=project.findMarkers( IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
+    StringBuilder sb=new StringBuilder();
+    if (ms.length>0){
+      for (IMarker m:ms){
+        String s=m.getAttribute( IMarker.MESSAGE, "" );
+        sb.append( s+ResourceUtil.NL );
+        System.err.println(s);
+      }
+    }
+    assertEquals(sb.toString(),0,ms.length);
+  }
+
   public IFile addFile(final String module,final String source) {
 
     try {
@@ -108,6 +122,8 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
      // waitForAutoBuild();
       HaskellUIPlugin.getDefault().getScionInstanceManager( f ).loadFile( f );
       waitForScion(f);
+      checkProblems();
+
       return f;
     } catch (Exception ce){
       ce.printStackTrace();
@@ -120,15 +136,16 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   public static void waitForScion(final IResource r) throws CoreException {
     IJobManager jobMan = Job.getJobManager();
     Object family=HaskellUIPlugin.getDefault().getScionInstanceManager( r );
+    if (family!=null){
+      boolean retry = true;
+      while( retry ) {
+        try {
+          jobMan.join( family, null );
 
-    boolean retry = true;
-    while( retry ) {
-      try {
-        jobMan.join( family, null );
-
-        retry = false;
-      } catch (Exception exc) {
-        // ignore and retry
+          retry = false;
+        } catch (Exception exc) {
+          // ignore and retry
+        }
       }
     }
   }
@@ -172,14 +189,32 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     op.setProjectName( PROJECT_NAME );
     op.run( null );
 
+
+
     IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
     project = wsRoot.getProject( PROJECT_NAME );
+
+    IFile cabal=ScionInstance.getCabalFile( project );
+    waitForScion(cabal);
+
+    checkProblems();
   }
 
   @Override
   protected void tearDown() throws Exception {
-    project.close( new NullProgressMonitor() );
-    project.delete( true, null );
-    super.tearDown();
+    try {
+      waitForScion(project);
+      ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( project );
+      project.close( new NullProgressMonitor() );
+      waitForScion(project);
+      synchronized(this){
+        while (!si.isStopped()){
+          wait(100);
+        }
+      }
+      project.delete( true, true, null );
+    } finally {
+      super.tearDown();
+    }
   }
 }

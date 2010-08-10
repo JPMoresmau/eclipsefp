@@ -23,7 +23,7 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
   public static TestSuite suite(){
     TestSuite ts=new TestSuite("CompletionContext_PDETest");
     ts.addTestSuite( CompletionContext_PDETest.class);
-    //ts.addTest(new CompletionContext_PDETest("testDeclarationCompletion"));
+    //ts.addTest(new CompletionContext_PDETest("testDoNotProposeSameFunctionTwice"));
     return ts;
   }
 
@@ -54,7 +54,8 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 	public void testPreludeClassCompletion() throws CoreException {
 		final String input = "module CompletionEngineTest where\n" +
                              "\n" +
-                             "fat :: N";
+                             "fat :: Num a=> a\n"+
+                             "fat = 0";
 	//	final ICompilationUnit unit = parseAsFile(input);
 		HaskellCompletionContext context = createContext("CompletionEngineTest",input, 43);
 
@@ -66,7 +67,7 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 	}
 
 	public void testKeywordCompletion() throws CoreException {
-		final String input = "module CompletionEngineTest wh";
+		final String input = "module CompletionEngineTest where meth=undefined";
 		//TODO avoid complaining about parsing error here
 	//	final ICompilationUnit unit = parseAsFile(input);
 		HaskellCompletionContext context = createContext("CompletionEngineTest",input, 30);
@@ -82,41 +83,43 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 		final String input = "module Factorial where\n" +
 				             "\n" +
 				             "fat 0 = 1\n" +
-				             "fat 1 = n * (f";
+				             "fat n = n * (fat (n-1))";
 		//final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext("Factorial",input, 48);
+		int offset=input.length()-"at (n-1))".length();
+		HaskellCompletionContext context = createContext("Factorial",input, offset);
 
-		assertEquals('f', input.charAt(48 - 1));
+		assertEquals('f', input.charAt(offset - 1));
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
 		assertContains(createProposal("f", "fat", 48), proposals);
 	}
 
-	public void testDoNotCompleteOnEmptyPrefix() throws CoreException {
+	public void testDoCompleteOnEmptyPrefix() throws CoreException {
 		final String input = "module Factorial where\n" +
 				             "\n" +
 				             "fat 0 = 1\n" +
-				             "fat 1 = n * (";
+				             "fat n = n * (fat (n-1))";
 		//final ICompilationUnit unit = parseAsFile(input);
-		HaskellCompletionContext context = createContext("Factorial",input, 48);
+		HaskellCompletionContext context = createContext("Factorial",input, 47);
 
 		assertEquals('(', input.charAt(47 - 1));
 
 		ICompletionProposal[] proposals = context.computeProposals();
-
-		assertEquals(0, proposals.length);
+		assertContains(createProposal("", "fat", 47), proposals);
+		//assertEquals(0, proposals.length);
 	}
 
 	public void testCompletePrefixWithUnderscore() throws CoreException {
 		final String input = "module Underscore where\n" +
 				             "\n" +
 				             "_underscore = '_'\n" +
-				             "prefixWithUnderscore str = _und";
+				             "prefixWithUnderscore str = _underscore";
 		//final ICompilationUnit unit = parseAsFile(input);
-		final HaskellCompletionContext context = createContext("Underscore",input, 74);
+		final int offset = input.length()-"erscore".length();
+		final HaskellCompletionContext context = createContext("Underscore",input,offset);
 
-		assertEquals('d', input.charAt(74 - 1));
+		assertEquals('d', input.charAt(offset - 1));
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
@@ -124,12 +127,22 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 	}
 
 	public void testSeeAcrossModules() throws CoreException {
+	  final String inputF = "module Factorial where\n" +
+      "\n" +
+      "fat :: Int -> Int\n" +
+      "fat 0 = 1\n" +
+      "fat n = n * (fat (n-1))";
+	  addFile( "Factorial",inputF);
+
 		final String input = "module Main where\n" +
-				             "\n" +
-				             "main = putStr $ show $ f";
-		final int offset = input.length();
+
+				             "import Factorial\n" +
+				             "main = putStr (show $ fat 4)";
+		final int offset = input.length()-"at 4)".length();
 		//final ICompilationUnit unit = parseAsFile(input);
 		//final StubHalamo langModel = new StubHalamo();
+
+
 		HaskellCompletionContext context = createContext("Main",input, offset);
 
 		//langModel.setModulesInScope(new StubModule("Recursive", "fat", "fib"));
@@ -137,14 +150,22 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 		ICompletionProposal[] proposals = context.computeProposals();
 
 		assertContains(createProposal("f", "fat", offset), proposals);
-		assertEquals("fat - Recursive", proposals[0].getDisplayString());
+		//assertEquals("fat - Recursive", proposals[0].getDisplayString());
 	}
 
 	public void testCompletesModuleNames() throws CoreException {
+	  final String inputF = "module Factorial where\n" +
+      "\n" +
+      "fat 0 = 1\n" +
+      "fat n = n * (fat (n-1))";
+    addFile( "Factorial",inputF);
+
 		final String input = "module Main where\n" +
 							 "\n" +
-		                     "import Fib";
-		final int offset = input.length();
+		                     "import Factorial\n"
+							 + "main = undefined";
+		final int offset = input.length()-("torial\n"
+               + "main = undefined").length();
 		//final StubHalamo langModel = new StubHalamo();
 		HaskellCompletionContext context = createContext("Main",input, offset);
 
@@ -152,7 +173,7 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 
 		ICompletionProposal[] proposals = context.computeProposals();
 
-		assertContains(createProposal("Fib", "Fibonacci", offset), proposals);
+		assertContains(createProposal("Fac", "Factorial", offset), proposals);
 	}
 
 	//TODO do not propose an already imported module
@@ -163,8 +184,9 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 		                     "factorial :: Int -> Int\n" +
 		                     "factorial = foldr (*) 1 . enumFromTo 1\n" +
 		                     "\n" +
-		                     "main = putStr $ show $ fac";
-		HaskellCompletionContext context = createContext("Main",input, input.length());
+		                     "main = putStr (show $ factorial 5)\n";
+
+		HaskellCompletionContext context = createContext("Main",input, input.length()-"torial 5)\n".length());
 
 		ICompletionProposal[] proposals = context.computeProposals();
 

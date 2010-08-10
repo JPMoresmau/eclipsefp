@@ -250,7 +250,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
     IPath scionDir=stateLoc.append( "scion-"+ScionPlugin.SCION_VERSION);  //$NON-NLS-1$
     File sd=scionDir.toFile();
-    if (!sd.exists()){
+    if (!sd.exists() || sd.list().length==0){
 
         // extract scion from bundled zip file
        InputStream is=ScionPlugin.class.getResourceAsStream( "scion-"+ScionPlugin.SCION_VERSION+".zip" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -416,17 +416,21 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
                     IDocumentProvider prov = new TextFileDocumentProvider();
                     prov.connect( cabalF );
-                    IDocument doc = prov.getDocument( cabalF );
+                    try {
+                      IDocument doc = prov.getDocument( cabalF );
 
-                    for( PackageDescriptionStanza pds: lpds ) {
-                      RealValuePosition rvp = pds.removeFromPropertyList(
-                          CabalSyntax.FIELD_EXPOSED_MODULES, qn );
-                      rvp.updateDocument( doc );
-                      rvp = pds.removeFromPropertyList(
-                          CabalSyntax.FIELD_OTHER_MODULES, qn );
-                      rvp.updateDocument( doc );
+                      for( PackageDescriptionStanza pds: lpds ) {
+                        RealValuePosition rvp = pds.removeFromPropertyList(
+                            CabalSyntax.FIELD_EXPOSED_MODULES, qn );
+                        rvp.updateDocument( doc );
+                        rvp = pds.removeFromPropertyList(
+                            CabalSyntax.FIELD_OTHER_MODULES, qn );
+                        rvp.updateDocument( doc );
+                      }
+                      prov.saveDocument( null, cabalF, doc, true );
+                    } finally {
+                      prov.disconnect( cabalF );
                     }
-                    prov.saveDocument( null, cabalF, doc, true );
                   }
                   ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( f );
                   if (si!=null){
