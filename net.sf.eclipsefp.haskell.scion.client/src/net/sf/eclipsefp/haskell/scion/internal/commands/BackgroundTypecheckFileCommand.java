@@ -50,7 +50,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 			JSONObject o=(JSONObject)json;
 			JSONObject cr=o.optJSONObject("Right");
 			if (cr!=null){
-				instance.getLoadedFiles().add(file);
+				instance.setLoadedFile(file);
 				compilationResult = new CompilationResult(cr);
 			} else {
 				String err=o.optString("Left");

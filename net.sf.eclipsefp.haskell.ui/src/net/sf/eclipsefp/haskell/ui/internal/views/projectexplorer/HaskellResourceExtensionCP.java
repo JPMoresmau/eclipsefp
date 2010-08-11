@@ -60,7 +60,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           // sync access
           if (si!=null){
             synchronized( si ) {
-              si.outlineUnopenedFile( f, new OutlineHandler() {
+              si.outline( f, new OutlineHandler() {
 
                 public void outlineResult( final List<OutlineDef> outlineDefs ) {
                   OutlineCP cp = new OutlineCP();

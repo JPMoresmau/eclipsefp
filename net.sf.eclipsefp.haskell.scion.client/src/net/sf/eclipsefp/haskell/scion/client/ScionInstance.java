@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,12 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
-import net.sf.eclipsefp.haskell.scion.internal.util.Multiset;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -72,7 +73,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private IProject project;
 	
-	private Multiset<IFile> loadedFiles = new Multiset<IFile>();
+	private IFile loadedFile = null;
 	
 	private Writer serverOutput;
 	
@@ -191,6 +192,22 @@ public class ScionInstance implements IScionCommandRunner {
 					deleteProblems(getProject());
 					CompilationResultHandler crh=new CompilationResultHandler(getProject());
 					components=command.getComponents();
+					// if lastLoadedComponent is still present, load it last
+					if (lastLoadedComponent!=null){
+						List<Component> l=new ArrayList<Component>(components.size());
+						Component toLoadLast=null;
+						for (Component c:components){
+							if (c.toString().equals(lastLoadedComponent.toString())){
+								toLoadLast=c;
+							} else {
+								l.add(c);
+							}
+						}
+						if (toLoadLast!=null){
+							l.add(toLoadLast);
+						}
+						components=l;
+					}
 					for (Component c:components){
 						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output);
 						//loadCommand.addJobChangeListener();
@@ -207,6 +224,7 @@ public class ScionInstance implements IScionCommandRunner {
 					cdc.run(monitor);
 					ScionInstance.this.packagesByDB=cdc.getPackagesByDB();
 					
+					restoreState();
 					
 					return Status.OK_STATUS;
 				}
@@ -225,6 +243,10 @@ public class ScionInstance implements IScionCommandRunner {
 	
 
 	public void stop() {
+		cabalDescription=null;
+		components.clear();
+		packagesByDB=null;
+		lastLoadedComponent=null;
 		if (server != null) {
 			server.stopServer();
 			server = null;
@@ -282,8 +304,8 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	private void restoreState() {
-		for (IFile fileName : loadedFiles.uniqueSet()) {
-			loadFile(fileName);
+		if (loadedFile!=null){
+			loadFile(loadedFile);
 		}
 	}
 	
@@ -313,14 +335,17 @@ public class ScionInstance implements IScionCommandRunner {
 		reloadFile(fileName,null);
 	}
 	
-	public Multiset<IFile> getLoadedFiles() {
-		return loadedFiles;
+	public IFile getLoadedFile() {
+		return loadedFile;
 	}
 	
 	public boolean isLoaded(IFile f) {
-		return loadedFiles.contains(f);
+		return f.equals(loadedFile);
 	}
 	
+	public void setLoadedFile(IFile loadedFile) {
+		this.loadedFile = loadedFile;
+	}
 	
 	public void deleteProblems(IResource r){
 		if (!r.getWorkspace().isTreeLocked() && r.exists() && r.getProject().isOpen()){
@@ -426,38 +451,26 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public void unloadFile(IFile fileName) {
-		// TODO TtC Scion has no command for unloading yet!
-		loadedFiles.remove(fileName);
+		if (fileName.equals(loadedFile)){
+			loadedFile=null;
+		}
 	}
 	
 	public String thingAtPoint(Location location) {
-      ThingAtPointCommand command = new ThingAtPointCommand(this, location);
-      command.runSync();
-      if (command.getResult().isOK()) {
-    	  return command.getThing();
-      } else {
-    	  return null;
-      }
-	}
-	
-	public void outline(final IFile file,final OutlineHandler handler){
-		final OutlineCommand command=new OutlineCommand(file,this);
-		if (handler!=null){
-			command.addJobChangeListener(new JobChangeAdapter(){
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						handler.outlineResult(command.getOutlineDefs());
-					}
-				}
-			});
+
+		ThingAtPointCommand command = new ThingAtPointCommand(
+				ScionInstance.this, location);
+		command.runSync();
+		if (command.getResult().isOK()) {
+			return command.getThing();
+		} else {
+			return null;
 		}
-		command.runAsync();
 
 	}
-	
-	public void outlineUnopenedFile(final IFile file,final OutlineHandler handler){
-		reloadFile(file, new Runnable(){
+		
+	public void outline(final IFile file,final OutlineHandler handler){
+		withLoadedFile(file, new Runnable(){
 			public void run() {
 				final OutlineCommand command=new OutlineCommand(file,ScionInstance.this);
 				if (handler!=null){
@@ -474,8 +487,14 @@ public class ScionInstance implements IScionCommandRunner {
 				
 			}
 		});
-		
+	}
 
+	public void withLoadedFile(final IFile file,Runnable run){
+		if (isLoaded(file)){
+			run.run();
+		} else {
+			reloadFile(file, run);
+		}
 	}
 	
 	public Location firstDefinitionLocation(String name) {
