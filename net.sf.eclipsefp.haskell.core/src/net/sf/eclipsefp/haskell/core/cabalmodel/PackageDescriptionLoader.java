@@ -171,7 +171,7 @@ public class PackageDescriptionLoader {
         if (!isComment( line )){
           if(! isEmpty( line ) ) {
             if (lastStanza==null){
-              lastStanza=new GeneralStanza(count);
+              lastStanza=new PackagePropertiesStanza(count);
             }
             int indent=getIndent(line);
             if (indent>currentIndent && field!=null && fieldVP!=null){

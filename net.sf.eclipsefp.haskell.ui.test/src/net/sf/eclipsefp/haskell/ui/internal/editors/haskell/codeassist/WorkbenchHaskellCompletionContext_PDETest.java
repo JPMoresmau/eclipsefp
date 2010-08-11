@@ -51,7 +51,7 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCaseWithPrefe
 				"qsort [] = []");
 
 		createViewerFor(wrongFile);
-		final ITextViewer rightViewer = createViewerFor(rightFile);
+		createViewerFor(rightFile);
 
 //		final IHaskellModel model = new HaskellLanguageModel();
 //
@@ -76,7 +76,7 @@ public class WorkbenchHaskellCompletionContext_PDETest extends TestCaseWithPrefe
 
 		final ITextEditor fibbEditor = createEditorFor(fibbFile);
 		final IDocument fibbDoc = getDocumentFrom(fibbEditor);
-		final ITextViewer fibbViewer = createViewerFor(fibbDoc);
+//		final ITextViewer fibbViewer = createViewerFor(fibbDoc);
 
 		final String currentText = oldText + "fibb n = (fibb (n - 1)) + (fibb (n - 1))\n";
 		fibbDoc.set(currentText);

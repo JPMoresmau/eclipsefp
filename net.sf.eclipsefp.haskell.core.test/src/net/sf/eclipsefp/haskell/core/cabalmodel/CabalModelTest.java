@@ -58,7 +58,7 @@ public class CabalModelTest extends TestCase {
       List<PackageDescriptionStanza> pdss=pd.getStanzas();
       assertNotNull(pdss);
       assertEquals(2,pdss.size());
-      assertTrue(pdss.get(0) instanceof GeneralStanza);
+      assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
       assertEquals(0,pdss.get(0).getIndent());
       assertEquals("HUnit",pdss.get(0).getName());
       assertEquals(0,pdss.get(0).getStartLine());
@@ -153,7 +153,7 @@ public class CabalModelTest extends TestCase {
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
     assertNotNull(pdss);
     assertEquals(4,pdss.size());
-    assertTrue(pdss.get(0) instanceof GeneralStanza);
+    assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
     assertEquals("TestPackage",pdss.get(0).getName());
     assertEquals(0,pdss.get(0).getStartLine());
     assertEquals(7,pdss.get(0).getEndLine());
@@ -208,7 +208,7 @@ public class CabalModelTest extends TestCase {
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
     assertNotNull(pdss);
     assertEquals(3,pdss.size());
-    assertTrue(pdss.get(0) instanceof GeneralStanza);
+    assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
     assertEquals("HUnit",pdss.get(0).getName());
 
     assertEquals(CabalSyntax.SECTION_SOURCE_REPOSITORY,pdss.get(1).getType());
@@ -231,7 +231,7 @@ public class CabalModelTest extends TestCase {
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
     assertNotNull(pdss);
     assertEquals(5,pdss.size());
-    assertTrue(pdss.get(0) instanceof GeneralStanza);
+    assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
     assertEquals("Test1",pdss.get(0).getName());
 
     assertEquals(CabalSyntax.SECTION_FLAG,pdss.get(1).getType());
@@ -285,7 +285,7 @@ public class CabalModelTest extends TestCase {
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
     assertNotNull(pdss);
     assertEquals(3,pdss.size());
-    assertTrue(pdss.get(0) instanceof GeneralStanza);
+    assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
     assertEquals("Test1",pdss.get(0).getName());
 
     assertEquals(CabalSyntax.SECTION_FLAG,pdss.get(1).getType());
@@ -314,7 +314,7 @@ public class CabalModelTest extends TestCase {
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
     assertNotNull(pdss);
     assertEquals(1,pdss.size());
-    assertTrue(pdss.get(0) instanceof GeneralStanza);
+    assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
     assertEquals("scion",pdss.get(0).getName());
     assertEquals("Development",pdss.get(0).getProperties().get( CabalSyntax.FIELD_CATEGORY ));
 
@@ -615,7 +615,7 @@ public class CabalModelTest extends TestCase {
     PackageDescription pd=PackageDescriptionLoader.load( content3 );
     PackageDescriptionStanza pds=pd.getStanzas().get( 0 );
     assertNull(pds.getType());
-    assertTrue(pds instanceof GeneralStanza);
+    assertTrue(pds instanceof PackagePropertiesStanza);
     assertEquals(0,pds.getIndent());
     assertEquals("json",pds.getName());
 

@@ -30,9 +30,9 @@ public class PackageDescription {
 
   public PackageDescription(final String name){
     this();
-    PackageDescriptionStanza pds=new GeneralStanza( 0 );
+    PackageDescriptionStanza pds = new PackagePropertiesStanza( 0 );
     stanzas.add( pds );
-    pds.update( CabalSyntax.FIELD_NAME,name );
+    pds.update( CabalSyntax.FIELD_NAME, name );
   }
 
   public List<PackageDescriptionStanza> getStanzas() {

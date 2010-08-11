@@ -3,7 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import net.sf.eclipsefp.haskell.core.cabalmodel.GeneralStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackagePropertiesStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
@@ -81,7 +81,7 @@ public class OverviewPage extends FormPage {
 
   public void setPackageDescription( final PackageDescription packageDescription ) {
     PackageDescriptionStanza stanza=null;
-    if (packageDescription.getStanzas().size()>0 && packageDescription.getStanzas().get(0) instanceof GeneralStanza){
+    if (packageDescription.getStanzas().size()>0 && packageDescription.getStanzas().get(0) instanceof PackagePropertiesStanza){
       stanza= packageDescription.getStanzas().get(0);
     }
 

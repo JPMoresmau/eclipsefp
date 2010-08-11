@@ -2,19 +2,19 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
-/** <p>a stanza for general information (the first stanza in the
-  * <code>.cabal</code> file.</p>
+/** The Package Properties stanza for global, package properties. This corresponds
+ * to the first stanza in the <code>.cabal</code> file.
   *
   * @author Leif Frenzel
   *
   */
-public class GeneralStanza extends PackageDescriptionStanza {
+public class PackagePropertiesStanza extends PackageDescriptionStanza {
 
-  GeneralStanza(final int startLine) {
+  PackagePropertiesStanza(final int startLine) {
     super(null, null, startLine);
   }
 
-  GeneralStanza(final int startLine, final int endLine ) {
+  PackagePropertiesStanza(final int startLine, final int endLine ) {
     super(null, null, startLine, endLine );
   }
 
