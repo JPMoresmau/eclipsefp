@@ -331,7 +331,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
           public void run() {
             synchronize();
           }
-        });
+        },false);
       }
     }
   }
@@ -365,7 +365,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
            synchronize();
 
           }
-        });
+        },false);
     }
   }
 
@@ -459,7 +459,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
             }
            foldingStructureProvider.updateFoldingRegions(outlineDefs);
           }
-        });
+        },false);
       } else {
         List<OutlineDef> outlineDefs=Collections.emptyList();
         if(getOutlinePage()!=null){

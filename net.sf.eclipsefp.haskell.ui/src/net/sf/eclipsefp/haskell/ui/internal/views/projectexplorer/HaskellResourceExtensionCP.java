@@ -59,7 +59,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
               .getScionInstanceManager( f );
           // sync access
           if (si!=null){
-            synchronized( si ) {
+          //  synchronized( si ) {
               si.outline( f, new OutlineHandler() {
 
                 public void outlineResult( final List<OutlineDef> outlineDefs ) {
@@ -74,14 +74,14 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
                     si.notifyAll();
                   }
                 }
-              } );
-              try {
-             // TODO make this a preference
-                si.wait( 10000 ); // 10 seconds max
-              } catch( InterruptedException ie ) {
-                // noop
-              }
-            }
+              } ,true);
+//              try {
+//             // TODO make this a preference
+//                si.wait( 10000 ); // 10 seconds max
+//              } catch( InterruptedException ie ) {
+//                // noop
+//              }
+//            }
           }
         }
       } else if( parentElement instanceof ITreeElement ) {

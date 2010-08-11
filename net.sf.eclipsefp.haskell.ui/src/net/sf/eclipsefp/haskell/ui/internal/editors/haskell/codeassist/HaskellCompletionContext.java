@@ -63,6 +63,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			List<ICompletionProposal> result = Collections.synchronizedList( new ArrayList<ICompletionProposal>());
 			//searchScope(completedToken, result);
 			//searchImportableModules(completedToken, result);
+
 			searchDefinedNames(completedToken, result);
 			searchModulesNames(completedToken, result);
 			searchPreludeAndKeywords(completedToken, result);
@@ -87,24 +88,12 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
         .getScionInstanceManager( file );
     // sync access
     if (si!=null){
-      synchronized( si ) {
         si.definedNames( new NameHandler() {
-
           public void nameResult( final List<String> names ) {
             searchStringList(prefix, names, result);
-
-            synchronized( si ) {
-              si.notifyAll();
-            }
           }
         } );
-        try {
-          // TODO make this a preference
-          si.wait( 10000 ); // 10 seconds max
-        } catch( InterruptedException ie ) {
-          // noop
-        }
-      }
+
     }
   }
  }
@@ -116,38 +105,21 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 	        .getScionInstanceManager( file );
 	    // sync access
 	    if (si!=null){
-	      synchronized( si ) {
 	        si.moduleGraph( new NameHandler() {
 
 	          public void nameResult( final List<String> names ) {
 	            searchStringList(prefix, names, result);
-	            synchronized( si ) {
-	              si.notifyAll();
-	            }
 	          }
 	        } );
-	        try {
-	          // TODO make this a preference
-	          si.wait( 10000 ); // 10 seconds max
-	        } catch( InterruptedException ie ) {
-	          // noop
-	        }
+
 	        si.listExposedModules( new NameHandler() {
 
             public void nameResult( final List<String> names ) {
               searchStringList(prefix, names, result);
-              synchronized( si ) {
-                si.notifyAll();
-              }
             }
           } );
-          try {
-            // TODO make this a preference
-            si.wait( 10000 ); // 10 seconds max
-          } catch( InterruptedException ie ) {
-            // noop
-          }
-	      }
+
+
 	    }
 	  }
 	 }

@@ -95,7 +95,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
           editor.synchronize();
 
         }
-      });
+      },false);
     }
   }
 }

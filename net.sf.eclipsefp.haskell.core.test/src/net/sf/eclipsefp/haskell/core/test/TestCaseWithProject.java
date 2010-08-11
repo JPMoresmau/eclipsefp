@@ -120,7 +120,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
       }
       waitForScion(f);
      // waitForAutoBuild();
-      HaskellUIPlugin.getDefault().getScionInstanceManager( f ).loadFile( f );
+      HaskellUIPlugin.getDefault().getScionInstanceManager( f ).loadFile( f ,true);
       waitForScion(f);
       checkProblems();
 
