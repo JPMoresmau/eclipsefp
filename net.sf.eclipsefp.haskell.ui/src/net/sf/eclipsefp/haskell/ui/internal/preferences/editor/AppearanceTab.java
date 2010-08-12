@@ -147,7 +147,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
   private void addFields( final Composite parent ) {
     String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
-    addTextField( parent, UITexts.preferences_editor_appearance_print_margin_column, pmKey, 3, 0 );
+    addIntegerField( parent, UITexts.preferences_editor_appearance_print_margin_column, pmKey, 3, 0 );
     String orKey = EDITOR_OVERVIEW_RULER;
     createBooleanField( parent, UITexts.preferences_editor_appearance_overview_ruler, orKey );
     String lnrKey = EDITOR_LINE_NUMBER_RULER;

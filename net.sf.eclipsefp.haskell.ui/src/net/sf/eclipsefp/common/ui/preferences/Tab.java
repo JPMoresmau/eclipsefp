@@ -13,6 +13,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -48,6 +50,23 @@ public abstract class Tab implements IPropertyChangeListener{
       Text text = ( Text )event.widget;
       String key = textFields.get( text );
       getPreferenceStore().setValue( key, text.getText() );
+    }
+  };
+
+  private final VerifyListener integerVerify=new VerifyListener() {
+
+    public void verifyText( final VerifyEvent e ) {
+     try {
+       Integer.parseInt(e.text);
+       e.doit=true;
+     } catch (NumberFormatException nfe){
+       if ((e.character=='\b' || e.character==0x7F) && ((Text)e.widget).getText().length()>1){
+         e.doit=true;
+       } else {
+         e.doit=false;
+       }
+     }
+
     }
   };
 
@@ -114,6 +133,8 @@ public abstract class Tab implements IPropertyChangeListener{
                                      final int indentation ) {
     Text result = addStringField( composite, label, textLimit, indentation );
     textFields.put( result, key );
+    result.addModifyListener( fTextFieldListener );
+    result.addVerifyListener( integerVerify );
     return result;
   }
 
