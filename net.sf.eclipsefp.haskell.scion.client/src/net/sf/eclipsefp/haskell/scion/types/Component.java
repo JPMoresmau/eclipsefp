@@ -59,8 +59,14 @@ public class Component {
 	
 	public JSONObject toJSON() throws JSONException {
 		JSONObject component = new JSONObject();
-		component.put(getType().toString().toLowerCase(), getName()!=null?getName():JSONObject.NULL);
-		component.put("cabal-file", cabalFileName);
+		// non cabal based
+		if (ComponentType.FILE.equals(getType())){
+			component.put("file", cabalFileName);
+		} else {
+			// cabal based
+			component.put(getType().toString().toLowerCase(), getName()!=null?getName():JSONObject.NULL);
+			component.put("cabal-file", cabalFileName);
+		}
 		return component;
 	}
 	

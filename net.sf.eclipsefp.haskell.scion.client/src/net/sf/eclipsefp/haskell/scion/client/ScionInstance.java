@@ -35,6 +35,7 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -371,20 +372,32 @@ public class ScionInstance implements IScionCommandRunner {
 		
 		Set<String> componentNames=resolver.getComponents(file);
 		if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
-			for (final Component compo:components){
-				if (componentNames.contains(compo.toString())){
-					LoadCommand loadCommand = new LoadCommand(ScionInstance.this,compo,false);
-					run(loadCommand,new Runnable() {
-						
-						public void run() {
-							lastLoadedComponent=compo;
-							BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
-							//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
-							ScionInstance.this.run(cmd,after,sync);
-						}
-					},sync);
-					return;
+			Component toLoad=null;
+			// we have no component: we create a file one
+			if (componentNames.isEmpty()){
+				toLoad=new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
+			} else {
+				for (final Component compo:components){
+					if (componentNames.contains(compo.toString())){
+						toLoad=compo;
+						break;
+	
+					}
 				}
+			}
+			if (toLoad!=null){
+				final Component compo=toLoad;
+				LoadCommand loadCommand = new LoadCommand(ScionInstance.this,compo,false);
+				run(loadCommand,new Runnable() {
+					
+					public void run() {
+						lastLoadedComponent=compo;
+						BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
+						//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
+						ScionInstance.this.run(cmd,after,sync);
+					}
+				},sync);
+				return;		
 			}
 		} 
 		
