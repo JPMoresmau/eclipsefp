@@ -309,7 +309,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private void restoreState() {
 		if (loadedFile!=null){
-			loadFile(loadedFile,true);
+			loadFile(loadedFile,false);
 		}
 	}
 	

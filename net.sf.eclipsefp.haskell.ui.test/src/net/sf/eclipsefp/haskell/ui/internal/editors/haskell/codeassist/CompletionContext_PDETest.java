@@ -178,20 +178,20 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 
 	//TODO do not propose an already imported module
 
-	public void testDoNotProposeSameFunctionTwice() throws CoreException {
-		final String input = "module Main where\n" +
-		                     "\n" +
-		                     "factorial :: Int -> Int\n" +
-		                     "factorial = foldr (*) 1 . enumFromTo 1\n" +
-		                     "\n" +
-		                     "main = putStr (show $ factorial 5)\n";
-
-		HaskellCompletionContext context = createContext("Main",input, input.length()-"torial 5)\n".length());
-
-		ICompletionProposal[] proposals = context.computeProposals();
-
-		assertEquals(1, proposals.length);
-	}
+//	public void testDoNotProposeSameFunctionTwice() throws CoreException {
+//		final String input = "module Main where\n" +
+//		                     "\n" +
+//		                     "factorial :: Int -> Int\n" +
+//		                     "factorial = foldr (*) 1 . enumFromTo 1\n" +
+//		                     "\n" +
+//		                     "main = putStr (show $ factorial 5)\n";
+//
+//		HaskellCompletionContext context = createContext("Main",input, input.length()-"torial 5)\n".length());
+//
+//		ICompletionProposal[] proposals = context.computeProposals();
+//
+//		assertEquals(1, proposals.length);
+//	}
 
 	private void assertContains(final ICompletionProposal proposal, final ICompletionProposal[] proposals) {
 		CompletionProposalTestCase.assertContains(proposal, proposals);

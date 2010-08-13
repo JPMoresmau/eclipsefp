@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 
 /** <p>Tab for the preference setting related to typing.</p>
@@ -36,6 +37,11 @@ class TypingTab extends EditorTab implements IEditorPreferenceNames {
 
     String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
     spaceForTabs=createBooleanField( composite, UITexts.preferences_editor_typing_spaces_tabs, prefName );
+    new Label(composite,SWT.NONE);
+
+    addIntegerField( composite, UITexts.preferences_editor_typing_tab_width, IEditorPreferenceNames.EDITOR_TAB_WIDTH, 3, 0 );
+    addIntegerField( composite, UITexts.preferences_editor_typing_cabal_tab_width, IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH, 3, 0 );
+
     initializeFields();
 
     return composite;

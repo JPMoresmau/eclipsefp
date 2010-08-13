@@ -206,9 +206,9 @@ public abstract class ScionCommand extends Job {
 		}
 
 		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
-		processResponse(response);			
-
-
+		if (!processResponse(response)){
+			receiveResponse(reader,monitor);
+		}
 	}
 
 	///////////////
@@ -267,12 +267,16 @@ public abstract class ScionCommand extends Job {
 	 * 
 	 * @throws ScionCommandException if something went wrong
 	 */
-	public void processResponse(JSONObject response) throws ScionCommandException {
+	public boolean processResponse(JSONObject response) throws ScionCommandException {
 		this.response = response;
 		try {
 			checkResponseVersion(response);
-			checkResponseId(response);
-			processResponseResult(response);
+			if (checkResponseId(response)){
+				processResponseResult(response);
+				return true;
+			} else {
+				return false;
+			}
 		} finally {
 			this.response = null;
 		}
@@ -307,15 +311,21 @@ public abstract class ScionCommand extends Job {
 		return false;
 	}
 	
-	private void checkResponseId(JSONObject response) {
+	private boolean checkResponseId(JSONObject response) {
 		try {
 			int id = response.getInt("id");
 			if (id != sequenceNumber) {
 				ScionPlugin.logWarning(this, NLS.bind(UITexts.commandIdMismatch_warning, Integer.toString(id), Integer.toString(sequenceNumber)), null);
 			}
+			// last call was cancelled?
+			if (id==sequenceNumber-1){
+				return false;
+			}
+			
 		} catch (JSONException ex) {
 			ScionPlugin.logWarning(this, UITexts.errorReadingId_warning, ex);
 		}
+		return true;
 	}
 
 	private void checkResponseVersion(JSONObject response) {
