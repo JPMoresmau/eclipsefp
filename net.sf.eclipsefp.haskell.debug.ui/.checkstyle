@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fileset-config file-format-version="1.2.0" simple-config="false">
-    <local-check-config name="Basic Checks" location="INTERNAL/integration/checkstyle.xml" type="project" description="">
+    <local-check-config name="Basic Checks" location="integration/checkstyle.xml" type="project" description="">
         <additional-data name="protect-config-file" value="false"/>
     </local-check-config>
-    <local-check-config name="API Checkstyle" location="INTERNAL/integration/apicheckstyle.xml" type="project" description="">
+    <local-check-config name="API Checkstyle" location="integration/apicheckstyle.xml" type="project" description="">
         <additional-data name="protect-config-file" value="false"/>
     </local-check-config>
     <fileset name="all" enabled="true" check-config-name="Basic Checks" local="true">

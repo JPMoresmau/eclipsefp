@@ -55,6 +55,7 @@ public abstract class LaunchOperation {
 
   String createConfigId( final String name ) {
     ILaunchManager mgr = getLaunchManager();
+    // FIXME: Remove when Galileo is no longer supported.
     return ILaunchManagerCompat.generateLaunchConfigurationName( mgr, name.replace( '/', '.' ) );
   }
 
