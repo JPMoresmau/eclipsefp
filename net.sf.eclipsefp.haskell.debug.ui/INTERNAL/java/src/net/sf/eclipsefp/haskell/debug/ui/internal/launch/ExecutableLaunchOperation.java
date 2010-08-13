@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.eclipsefp.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
@@ -137,6 +138,7 @@ class ExecutableLaunchOperation extends LaunchOperation {
 
   private String createConfigId( final IFile file ) {
     String name = file.getName();
-    return getLaunchManager().generateUniqueLaunchConfigurationNameFrom( name );
+    ILaunchManager mgr = getLaunchManager();
+    return ILaunchManagerCompat.generateLaunchConfigurationName(mgr, name);
   }
 }
