@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
+import net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
