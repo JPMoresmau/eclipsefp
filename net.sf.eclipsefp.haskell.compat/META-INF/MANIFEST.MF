@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Compat
-Bundle-SymbolicName: net.sf.eclipsefp.compat; singleton:=true
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.compat;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Activator: net.sf.eclipsefp.compat.Activator
 Require-Bundle: org.eclipse.ui,
