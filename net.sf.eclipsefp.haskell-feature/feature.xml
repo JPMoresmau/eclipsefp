@@ -115,4 +115,11 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          version="1.112.0"
          unpack="false"/>
 
+   <plugin
+         id="net.sf.eclipsefp.haskell.compat"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
