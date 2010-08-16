@@ -5,7 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.io.ByteArrayInputStream;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Document;
@@ -175,11 +175,11 @@ public class Partitioning_PDETest extends TestCaseWithProject {
   ////////////////////
 
   private IDocument mkDoc ( final String input ) throws CoreException {
-    return createDocument( input, ResourceUtil.EXTENSION_HS );
+    return createDocument( input, FileUtil.EXTENSION_HS );
   }
 
   private IDocument mkLiterateDoc( final String input ) throws CoreException {
-    return createDocument( input, ResourceUtil.EXTENSION_LHS );
+    return createDocument( input, FileUtil.EXTENSION_LHS );
   }
 
   private IDocument createDocument( final String input,

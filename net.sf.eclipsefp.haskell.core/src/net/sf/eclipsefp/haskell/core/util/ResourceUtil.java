@@ -43,13 +43,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * @author Leif Frenzel
  */
 public class ResourceUtil {
-
-	public static final String EXTENSION_HS = "hs"; //$NON-NLS-1$
-	public static final String EXTENSION_LHS = "lhs"; //$NON-NLS-1$
-	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
-
-	public static final String NL = System.getProperty( "line.separator","\n"); //$NON-NLS-1$ //$NON-NLS-2$
-
 	/**
 	 * <p>
 	 * returns whether the passed resource is a Haskell source file, as
@@ -57,7 +50,7 @@ public class ResourceUtil {
 	 * </p>
 	 */
 	public static boolean hasHaskellExtension( final IResource resource ) {
-    return has( resource, EXTENSION_HS ) || has( resource, EXTENSION_LHS );
+    return has( resource, FileUtil.EXTENSION_HS ) || has( resource, FileUtil.EXTENSION_LHS );
   }
 
 	/**
@@ -66,7 +59,7 @@ public class ResourceUtil {
 	 * @return true if the resource is a Cabal project file.
 	 */
 	public static boolean hasCabalExtension( final IResource resource ) {
-	  return has( resource, EXTENSION_CABAL );
+	  return has( resource, FileUtil.EXTENSION_CABAL );
 	}
 
 	/**
@@ -76,7 +69,7 @@ public class ResourceUtil {
 	 * </p>
 	 */
 	public static boolean hasLiterateExtension(final IResource resource) {
-		return has(resource, EXTENSION_LHS);
+		return has(resource, FileUtil.EXTENSION_LHS);
 	}
 
 	/**

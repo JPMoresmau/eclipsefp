@@ -2,7 +2,6 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -79,7 +79,7 @@ public class PackageDescriptionLoader {
   }
 
   public static List<String> parseList(final String value){
-    return parseList(value, ", "+NL ); //$NON-NLS-1$
+    return parseList(value, ", "+PlatformUtil.NL ); //$NON-NLS-1$
 
   }
 
@@ -297,7 +297,7 @@ public class PackageDescriptionLoader {
 
     private void addFieldLine(final String line,final int indent){
       if (fieldValue.length()>0){
-        fieldValue.append( NL);
+        fieldValue.append( PlatformUtil.NL);
       }
       String val=line.substring( indent ) ;
       if (val.trim().equals( "." )){ //$NON-NLS-1$

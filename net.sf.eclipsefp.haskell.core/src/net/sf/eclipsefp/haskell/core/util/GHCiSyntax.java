@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.util;
 
 import java.util.regex.Pattern;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 /**
  * GHCi syntax strings, for parsing answers
@@ -57,7 +57,7 @@ public class GHCiSyntax {
   }
 
   public static String formatType(final String type){
-    String newType=type.replaceAll( ResourceUtil.NL, "" ); //$NON-NLS-1$
+    String newType=type.replaceAll( PlatformUtil.NL, "" ); //$NON-NLS-1$
     newType=newType.replaceAll("  ",""); //$NON-NLS-1$ //$NON-NLS-2$
     return newType.trim();
   }

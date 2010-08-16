@@ -1,11 +1,11 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -34,7 +34,7 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
     try {
 
       int offset=document.getLineOffset( line-1 );
-      String txt=type+NL;
+      String txt=type+PlatformUtil.NL;
       return new CompletionProposal(getLineStartAddition(txt,marker.getResource()) , offset, 0, offset+txt.length(),HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
      // doc.replace( offset, 0, type+NL );
 

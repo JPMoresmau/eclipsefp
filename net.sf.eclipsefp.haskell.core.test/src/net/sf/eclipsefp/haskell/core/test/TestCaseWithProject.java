@@ -21,10 +21,11 @@ import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
+import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -89,7 +90,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     if (ms.length>0){
       for (IMarker m:ms){
         String s=m.getAttribute( IMarker.MESSAGE, "" );
-        sb.append( s+ResourceUtil.NL );
+        sb.append( s+PlatformUtil.NL );
         System.err.println(s);
       }
     }
@@ -104,7 +105,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
       PackageDescription pd=PackageDescriptionLoader.load(cabal);
       Map<String,List<PackageDescriptionStanza>> m=pd.getStanzasBySourceDir();
       Map.Entry<String,List<PackageDescriptionStanza>> e=m.entrySet().iterator().next();
-      IFile f=project.getFile( e.getKey()+"/"+module+"."+ResourceUtil.EXTENSION_HS );
+      IFile f=project.getFile( e.getKey()+"/"+module+"."+FileUtil.EXTENSION_HS );
       if (!f.exists()){
         f.create( new ByteArrayInputStream( source.getBytes( "ASCII" ) ), true,  null);
       } else {

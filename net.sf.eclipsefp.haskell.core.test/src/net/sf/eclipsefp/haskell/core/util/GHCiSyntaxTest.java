@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.util;
 
 import java.util.regex.Matcher;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import junit.framework.TestCase;
 
 /**
@@ -16,7 +16,7 @@ public class GHCiSyntaxTest extends TestCase {
   }
 
   public void testBreakpointPattern(){
-    String s="Breakpoint 0 activated at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Main.hs:9:4-14"+ResourceUtil.NL+"*Main> ";
+    String s="Breakpoint 0 activated at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Main.hs:9:4-14"+PlatformUtil.NL+"*Main> ";
     Matcher m=GHCiSyntax.BREAKPOINT_SET_PATTERN.matcher( s );
     assertTrue(m.find());
     assertEquals("0",m.group( 1 ));
@@ -24,35 +24,35 @@ public class GHCiSyntaxTest extends TestCase {
   }
 
   public void testBreakpointPatternLong(){
-    String s="GHCi, version 6.10.4: http://www.haskell.org/ghc/  :? for help"+ResourceUtil.NL+
-    "  Loading package ghc-prim ... linking ... done."+ResourceUtil.NL+
-    "  Loading package integer ... linking ... done."+ResourceUtil.NL+
-    "  Loading package base ... linking ... done."+ResourceUtil.NL+
-    "  Loading package syb ... linking ... done."+ResourceUtil.NL+
-    "  Loading package array-0.2.0.0 ... linking ... done."+ResourceUtil.NL+
-    "  Loading package containers-0.2.0.1 ... linking ... done."+ResourceUtil.NL+
-    "  [1 of 3] Compiling Test             ( D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Test.hs, interpreted )"+ResourceUtil.NL+
-    ""+ResourceUtil.NL+
-    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Test.hs:4:0:"+ResourceUtil.NL+
-    "      Warning: Module `Data.Map' is imported, but nothing from it is used,"+ResourceUtil.NL+
-    "                 except perhaps instances visible in `Data.Map'"+ResourceUtil.NL+
-    "               To suppress this warning, use: import Data.Map()"+ResourceUtil.NL+
-    ""+ResourceUtil.NL+
-    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Test.hs:29:0:"+ResourceUtil.NL+
-    "      Warning: Pattern match(es) are overlapped"+ResourceUtil.NL+
-    "               In the definition of `testMethod': testMethod \"\" = ..."+ResourceUtil.NL+
-    "  [2 of 3] Compiling Module1          ( D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Module1.hs, interpreted )"+ResourceUtil.NL+
-    ""+ResourceUtil.NL+
-    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Module1.hs:4:0:"+ResourceUtil.NL+
-    "     Warning: Definition but no type signature for `testfunc1'"+ResourceUtil.NL+
-    "               Inferred type: testfunc1 :: [Char]"+ResourceUtil.NL+
-    ""+ResourceUtil.NL+
-    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Module1.hs:6:0:"+ResourceUtil.NL+
-    "      Warning: Definition but no type signature for `testfunc1bis'"+ResourceUtil.NL+
-    "               Inferred type: testfunc1bis :: [Char]"+ResourceUtil.NL+
-    "  [3 of 3] Compiling Main             ( D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Main.hs, interpreted )"+ResourceUtil.NL+
-    "  Ok, modules loaded: Main, Module1, Test."+ResourceUtil.NL+
-    "  *Main> Breakpoint 0 activated at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Main.hs:9:4-14"+ResourceUtil.NL+
+    String s="GHCi, version 6.10.4: http://www.haskell.org/ghc/  :? for help"+PlatformUtil.NL+
+    "  Loading package ghc-prim ... linking ... done."+PlatformUtil.NL+
+    "  Loading package integer ... linking ... done."+PlatformUtil.NL+
+    "  Loading package base ... linking ... done."+PlatformUtil.NL+
+    "  Loading package syb ... linking ... done."+PlatformUtil.NL+
+    "  Loading package array-0.2.0.0 ... linking ... done."+PlatformUtil.NL+
+    "  Loading package containers-0.2.0.1 ... linking ... done."+PlatformUtil.NL+
+    "  [1 of 3] Compiling Test             ( D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Test.hs, interpreted )"+PlatformUtil.NL+
+    ""+PlatformUtil.NL+
+    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Test.hs:4:0:"+PlatformUtil.NL+
+    "      Warning: Module `Data.Map' is imported, but nothing from it is used,"+PlatformUtil.NL+
+    "                 except perhaps instances visible in `Data.Map'"+PlatformUtil.NL+
+    "               To suppress this warning, use: import Data.Map()"+PlatformUtil.NL+
+    ""+PlatformUtil.NL+
+    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Test.hs:29:0:"+PlatformUtil.NL+
+    "      Warning: Pattern match(es) are overlapped"+PlatformUtil.NL+
+    "               In the definition of `testMethod': testMethod \"\" = ..."+PlatformUtil.NL+
+    "  [2 of 3] Compiling Module1          ( D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Module1.hs, interpreted )"+PlatformUtil.NL+
+    ""+PlatformUtil.NL+
+    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Module1.hs:4:0:"+PlatformUtil.NL+
+    "     Warning: Definition but no type signature for `testfunc1'"+PlatformUtil.NL+
+    "               Inferred type: testfunc1 :: [Char]"+PlatformUtil.NL+
+    ""+PlatformUtil.NL+
+    "  D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Module1.hs:6:0:"+PlatformUtil.NL+
+    "      Warning: Definition but no type signature for `testfunc1bis'"+PlatformUtil.NL+
+    "               Inferred type: testfunc1bis :: [Char]"+PlatformUtil.NL+
+    "  [3 of 3] Compiling Main             ( D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Main.hs, interpreted )"+PlatformUtil.NL+
+    "  Ok, modules loaded: Main, Module1, Test."+PlatformUtil.NL+
+    "  *Main> Breakpoint 0 activated at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\Haskell0\\src\\Main.hs:9:4-14"+PlatformUtil.NL+
     "  *Main> ";
     Matcher m=GHCiSyntax.BREAKPOINT_SET_PATTERN.matcher( s );
     assertTrue(m.find());
@@ -105,20 +105,20 @@ public class GHCiSyntaxTest extends TestCase {
 
   public void testBindingPatternMultiLine(){
     String s="soup ::"
-      +ResourceUtil.NL+"  [Tag"
-      +ResourceUtil.NL+   "     String] = [TagOpen \"html\" [],TagClose \"html\"]";
+      +PlatformUtil.NL+"  [Tag"
+      +PlatformUtil.NL+   "     String] = [TagOpen \"html\" [],TagClose \"html\"]";
     Matcher m=GHCiSyntax.BINDING_PATTERN.matcher( s );
     assertTrue(m.matches());
     assertEquals("soup",m.group(1));
-    assertEquals(ResourceUtil.NL+"  [Tag"
-      +ResourceUtil.NL+   "     String]",m.group(2));
+    assertEquals(PlatformUtil.NL+"  [Tag"
+      +PlatformUtil.NL+   "     String]",m.group(2));
     assertEquals("[Tag String]",GHCiSyntax.formatType( m.group(2)));
     assertEquals("[TagOpen \"html\" [],TagClose \"html\"]",m.group(4));
   }
 
   public void testContextPattern(){
     String s="--> main"
-      +ResourceUtil.NL+"Stopped at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\DebugP\\src\\Main.hs:16:10-21";
+      +PlatformUtil.NL+"Stopped at D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\DebugP\\src\\Main.hs:16:10-21";
     Matcher m=GHCiSyntax.CONTEXT_PATTERN.matcher( s );
     assertTrue(m.find());
     assertEquals("main",m.group(1));

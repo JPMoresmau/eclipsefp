@@ -3,7 +3,6 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,6 +10,7 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellDebugTarget;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -272,7 +272,7 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     try {
       if (command!=null && command.length()>0){
         p.getStreamsProxy().write( command );
-        p.getStreamsProxy().write( NL );
+        p.getStreamsProxy().write( PlatformUtil.NL );
       }
     } catch (IOException ioe){
       Status status = new Status(IStatus.ERROR, HaskellDebugCore.getPluginId(),CoreTexts.console_command_failed, ioe);

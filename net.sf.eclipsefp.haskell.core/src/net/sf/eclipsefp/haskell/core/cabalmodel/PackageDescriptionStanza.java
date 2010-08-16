@@ -2,7 +2,6 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -13,7 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 
 /** <p>represents a stanza in a package description.</p>
@@ -186,14 +186,14 @@ public class PackageDescriptionStanza {
           line= "."+line ; //$NON-NLS-1$
         }
         sb.append( line );
-        sb.append( NL );
+        sb.append( PlatformUtil.NL );
         line=br.readLine();
       }
       if (count>1){
         for (int a=0;a<subIndent;a++){
           sb.insert( 0, ' ');
         }
-        sb.insert( 0, NL );
+        sb.insert( 0, PlatformUtil.NL );
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);
       newVP.setSubsequentIndent( subIndent );
@@ -217,14 +217,14 @@ public class PackageDescriptionStanza {
    */
   private void addLeadingNL(final StringBuilder sb,final ValuePosition oldVP,final Map.Entry<String,String> eLast){
     needNL=false;
-    sb.insert( 0, NL );
+    sb.insert( 0, PlatformUtil.NL );
     oldVP.setStartLine(oldVP.getStartLine()-1);
     //oldVP.setEndLine(oldVP.getEndLine()-1);
     for (CabalSyntax cs:CabalSyntax.values()){
       if (cs.getCabalName().toLowerCase().equals( eLast.getKey() )){
         RealValuePosition rvpLast=update(cs,eLast.getValue());
         if (rvpLast.getStartLine()+1==rvpLast.getEndLine()){
-          oldVP.setInitialIndent(rvpLast.getInitialIndent()+rvpLast.getRealValue().length()-NL.length());
+          oldVP.setInitialIndent(rvpLast.getInitialIndent()+rvpLast.getRealValue().length()-PlatformUtil.NL.length());
         } else {
           BufferedReader br=new BufferedReader( new StringReader( rvpLast.getRealValue() ) );
           try {
@@ -306,8 +306,8 @@ public class PackageDescriptionStanza {
         if ((!prefix.equals( token.trim() )) && (!token.trim().startsWith( prefixSp ))){
           if(newValue.length()>0){
             newValue.append( ", " ); //$NON-NLS-1$
-          } else if (token.startsWith( ResourceUtil.NL )){
-            token=token.substring( ResourceUtil.NL.length() );
+          } else if (token.startsWith( PlatformUtil.NL )){
+            token=token.substring( PlatformUtil.NL.length() );
           }
           newValue.append( token);
         } else {
@@ -396,7 +396,7 @@ public class PackageDescriptionStanza {
         w.write(" "); //$NON-NLS-1$
       }
       w.write( toTypeName() );
-      w.write(NL);
+      w.write(PlatformUtil.NL);
       indent2=indent+2;
     }
     int max=0;
@@ -427,12 +427,12 @@ public class PackageDescriptionStanza {
         }
         String line=br.readLine();
         w.write(line);
-        w.write(NL);
+        w.write(PlatformUtil.NL);
       } catch (IOException ignore){
         // cannot happen
       }
     }
-    w.write(NL);
+    w.write(PlatformUtil.NL);
     for (PackageDescriptionStanza pds:stanzas){
       pds.dump( w, indent2 );
     }
@@ -452,7 +452,7 @@ public class PackageDescriptionStanza {
     }
     s=getProperties().get( CabalSyntax.FIELD_MAIN_IS );
     String f=module.replace( '.', '/' );
-    if ((f+"."+ResourceUtil.EXTENSION_HS).equals(s) || (f+"."+ResourceUtil.EXTENSION_LHS).equals(s)){ //$NON-NLS-1$ //$NON-NLS-2$
+    if ((f+"."+FileUtil.EXTENSION_HS).equals(s) || (f+"."+FileUtil.EXTENSION_LHS).equals(s)){ //$NON-NLS-1$ //$NON-NLS-2$
       return ModuleInclusionType.MAIN;
     }
     for (PackageDescriptionStanza pds:getStanzas()){
