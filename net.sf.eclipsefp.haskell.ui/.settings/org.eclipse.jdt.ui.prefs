@@ -1,7 +1,7 @@
-#Sat Jun 27 14:38:44 CEST 2009
+#Mon Aug 16 10:37:24 PDT 2010
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
-formatter_profile=_EclipseFP
+formatter_profile=_net.sf.eclipsefp.haskell.ui
 formatter_settings_version=11
 org.eclipse.jdt.ui.exception.name=ex
 org.eclipse.jdt.ui.gettersetter.use.is=true
