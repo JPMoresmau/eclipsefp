@@ -14,11 +14,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
   */
 public class CorePreferenceInitializer extends AbstractPreferenceInitializer
                                        implements ICorePreferenceNames {
-
-
-  // interface methods of AbstractPreferenceInitializer
-  /////////////////////////////////////////////////////
-
   @Override
   public void initializeDefaultPreferences() {
     IEclipsePreferences coreNode = new DefaultScope().getNode( HaskellCorePlugin.getPluginId() );

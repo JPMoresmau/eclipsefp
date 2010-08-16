@@ -6,6 +6,7 @@ Bundle-Activator: net.sf.eclipsefp.haskell.hugs.HugsPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: net.sf.eclipsefp.haskell.core,
+ net.sf.eclipsefp.haskell.util,
  net.sf.eclipsefp.haskell.debug.ui,
  net.sf.eclipsefp.haskell.ui,
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

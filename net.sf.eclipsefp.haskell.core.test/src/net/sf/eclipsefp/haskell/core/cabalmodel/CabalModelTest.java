@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 
 public class CabalModelTest extends TestCase {
@@ -89,14 +88,14 @@ public class CabalModelTest extends TestCase {
       assertEquals(17,pdss.get(1).getEndLine());
       assertNotNull(pdss.get(1).getProperties());
       assertEquals(3,pdss.get(1).getProperties().size());
-      assertEquals("multiset     >= 0.1 && < 0.3,"+ResourceUtil.NL+"base",pdss.get(1).getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS));
+      assertEquals("multiset     >= 0.1 && < 0.3,"+PlatformUtil.NL+"base",pdss.get(1).getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS));
       vp=pdss.get(1).getPositions().get(CabalSyntax.FIELD_BUILD_DEPENDS);
       assertEquals(11,vp.getStartLine());
       assertEquals(13,vp.getEndLine());
       assertEquals(18,vp.getInitialIndent());
       assertEquals(4,vp.getSubsequentIndent());
       assertEquals("CPP",pdss.get(1).getProperties().get( "Extensions"));
-      assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+NL+"Test.HUnit.Text, Test.HUnit",pdss.get(1).getProperties().get( "Exposed-modules"));
+      assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+PlatformUtil.NL+"Test.HUnit.Text, Test.HUnit",pdss.get(1).getProperties().get( "Exposed-modules"));
   }
 
   public void testModifySmall(){
@@ -106,24 +105,24 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pdss.get(0);
     assertEquals("HUnit",pds.getProperties().get( CabalSyntax.FIELD_NAME ));
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_NAME, "JP" );
-    assertEquals("JP"+NL,rvp.getRealValue());
+    assertEquals("JP"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(0,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
     rvp=pds.update( CabalSyntax.FIELD_NAME, "JP2" );
-    assertEquals("JP2"+NL,rvp.getRealValue());
+    assertEquals("JP2"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(0,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
 
     rvp=pds.update( CabalSyntax.FIELD_VERSION, "1.0" );
-    assertEquals(CabalSyntax.FIELD_VERSION+":     1.0"+NL,rvp.getRealValue());
+    assertEquals(CabalSyntax.FIELD_VERSION+":     1.0"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(1,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
     assertEquals(0,rvp.getInitialIndent());
 
     rvp=pds.update( CabalSyntax.FIELD_VERSION, "1.1.1" );
-    assertEquals("1.1.1"+NL,rvp.getRealValue());
+    assertEquals("1.1.1"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(1,rvp.getStartLine());
     assertEquals(2,rvp.getEndLine());
     assertEquals(13,rvp.getInitialIndent());
@@ -138,13 +137,13 @@ public class CabalModelTest extends TestCase {
     List<PackageDescriptionStanza> pdss=pd.getStanzas();
     PackageDescriptionStanza pds=pdss.get(1);
     RealValuePosition rvp=pds.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "multiset", "," );
-    assertEquals("base"+ResourceUtil.NL,rvp.getRealValue());
+    assertEquals("base"+PlatformUtil.NL,rvp.getRealValue());
 
     pd=PackageDescriptionLoader.load( content3 );
     pdss=pd.getStanzas();
     pds=pdss.get(1);
     rvp=pds.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "base", "," );
-    assertEquals("multiset     >= 0.1 && < 0.3"+ResourceUtil.NL,rvp.getRealValue());
+    assertEquals("multiset     >= 0.1 && < 0.3"+PlatformUtil.NL,rvp.getRealValue());
   }
 
   public void testParseExample3(){
@@ -319,23 +318,23 @@ public class CabalModelTest extends TestCase {
     assertEquals("Development",pdss.get(0).getProperties().get( CabalSyntax.FIELD_CATEGORY ));
 
     String description="Scion is a Haskell library that aims to implement those parts of a"
-      +NL+"Haskell IDE which are independent of a particular front-end.  Scion"
-      +NL+"is based on the GHC API and Cabal.  It provides both a Haskell API and"
-      +NL+"a server for non-Haskell clients such as Emacs and Vim."
-      +NL
-      +NL+"See the homepage <http://code.google.com/p/scion-lib> and the README"
-      +NL+"<http://github.com/nominolo/scion/blob/master/README.markdown> for"
-      +NL+"more information.";
+      +PlatformUtil.NL+"Haskell IDE which are independent of a particular front-end.  Scion"
+      +PlatformUtil.NL+"is based on the GHC API and Cabal.  It provides both a Haskell API and"
+      +PlatformUtil.NL+"a server for non-Haskell clients such as Emacs and Vim."
+      +PlatformUtil.NL
+      +PlatformUtil.NL+"See the homepage <http://code.google.com/p/scion-lib> and the README"
+      +PlatformUtil.NL+"<http://github.com/nominolo/scion/blob/master/README.markdown> for"
+      +PlatformUtil.NL+"more information.";
     assertEquals(description,pdss.get(0).getProperties().get( CabalSyntax.FIELD_DESCRIPTION));
     ValuePosition vp=pdss.get(0).getPositions().get(CabalSyntax.FIELD_DESCRIPTION );
     assertEquals(12,vp.getInitialIndent());
     assertEquals(8,vp.getStartLine());
     assertEquals(17,vp.getEndLine());
 
-    String newDesc="First line"+NL+NL+"Line2";
+    String newDesc="First line"+PlatformUtil.NL+PlatformUtil.NL+"Line2";
     RealValuePosition rvp=pdss.get(0).update( CabalSyntax.FIELD_DESCRIPTION, newDesc );
 
-    assertEquals(NL+"  First line"+NL+"  ."+NL+"  Line2"+NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+"  First line"+PlatformUtil.NL+"  ."+PlatformUtil.NL+"  Line2"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(12,rvp.getInitialIndent());
     assertEquals(8,rvp.getStartLine());
     assertEquals(17,rvp.getEndLine());
@@ -348,7 +347,7 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pdss.get(1);
     pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New" );
     String s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+NL+"Test.HUnit.Text, Test.HUnit, Test.New",s);
+    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+PlatformUtil.NL+"Test.HUnit.Text, Test.HUnit, Test.New",s);
 
     pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
@@ -433,18 +432,18 @@ public class CabalModelTest extends TestCase {
     assertEquals(CabalSyntax.SECTION_EXECUTABLE,pds.getType());
 
     String initial="Scion"
-      +NL+"Scion.Cabal"
-      +NL+"Scion.Inspect"
-      +NL+"Scion.Inspect.DefinitionSite"
-      +NL+"Scion.Session"
-      +NL+"Scion.Types"
-      +NL+"Scion.Types.Notes"
-      +NL+"Scion.Utils"
+      +PlatformUtil.NL+"Scion.Cabal"
+      +PlatformUtil.NL+"Scion.Inspect"
+      +PlatformUtil.NL+"Scion.Inspect.DefinitionSite"
+      +PlatformUtil.NL+"Scion.Session"
+      +PlatformUtil.NL+"Scion.Types"
+      +PlatformUtil.NL+"Scion.Types.Notes"
+      +PlatformUtil.NL+"Scion.Utils"
 
-      +NL+"Scion.Server.Commands"
-      +NL+"Scion.Server.ConnectionIO"
-      +NL+"Scion.Server.Generic"
-      +NL+"Scion.Server.Protocol";
+      +PlatformUtil.NL+"Scion.Server.Commands"
+      +PlatformUtil.NL+"Scion.Server.ConnectionIO"
+      +PlatformUtil.NL+"Scion.Server.Generic"
+      +PlatformUtil.NL+"Scion.Server.Protocol";
     assertEquals(initial,pds.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES ));
 
     ValuePosition vp=pds.getPositions().get( CabalSyntax.FIELD_OTHER_MODULES );
@@ -458,20 +457,20 @@ public class CabalModelTest extends TestCase {
     assertEquals(136,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
     assertEquals(134,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
     assertEquals(134,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
-    assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+NL,rvp.getRealValue());
+    assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+PlatformUtil.NL,rvp.getRealValue());
 
     String bd=pds.getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS );
     assertNotNull(bd);
@@ -515,13 +514,13 @@ public class CabalModelTest extends TestCase {
   }
 
   public void testCreateField(){
-    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL );
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+PlatformUtil.NL );
     PackageDescriptionStanza pds=pd.getStanzas().get(0);
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
     assertNotNull(rvp);
     assertEquals(1,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
-    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
+    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+PlatformUtil.NL,rvp.getRealValue());
   }
 
   public void testCreateFieldNoNL(){
@@ -533,11 +532,11 @@ public class CabalModelTest extends TestCase {
     assertEquals(1,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     assertEquals(-1,rvp.getSubsequentIndent());
-    assertEquals(NL+CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+PlatformUtil.NL,rvp.getRealValue());
   }
 
   public void testCreateFieldNoNLAfterMultipleLines(){
-    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL+"Synopsis: firstline"+NL+"  secondline" );
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+PlatformUtil.NL+"Synopsis: firstline"+PlatformUtil.NL+"  secondline" );
     PackageDescriptionStanza pds=pd.getStanzas().get(0);
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
     assertNotNull(rvp);
@@ -545,11 +544,11 @@ public class CabalModelTest extends TestCase {
     assertEquals(3,rvp.getEndLine());
     assertEquals(12,rvp.getInitialIndent());
     assertEquals(-1,rvp.getSubsequentIndent());
-    assertEquals(NL+CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+CabalSyntax.FIELD_AUTHOR.toString()+": JP Moresmau"+PlatformUtil.NL,rvp.getRealValue());
   }
 
   public void testCreateFieldFromEmpty(){
-    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+NL+"Author: "+NL+"Summary: Summ"+NL );
+    PackageDescription pd=PackageDescriptionLoader.load( "Name: newProject"+PlatformUtil.NL+"Author: "+PlatformUtil.NL+"Summary: Summ"+PlatformUtil.NL );
     PackageDescriptionStanza pds=pd.getStanzas().get(0);
     RealValuePosition rvp=pds.update( CabalSyntax.FIELD_AUTHOR , "JP Moresmau" );
     assertNotNull(rvp);
@@ -557,7 +556,7 @@ public class CabalModelTest extends TestCase {
     assertEquals(2,rvp.getEndLine());
     assertEquals(8,rvp.getInitialIndent());
     assertEquals(-1,rvp.getSubsequentIndent());
-    assertEquals("JP Moresmau"+NL,rvp.getRealValue());
+    assertEquals("JP Moresmau"+PlatformUtil.NL,rvp.getRealValue());
   }
 
   public void testCreateFromScratch(){
@@ -570,7 +569,7 @@ public class CabalModelTest extends TestCase {
     assertNotNull(rvp);
     assertEquals(1,rvp.getStartLine());
     assertEquals(1,rvp.getEndLine());
-    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+":  JP Moresmau"+NL,rvp.getRealValue());
+    assertEquals(CabalSyntax.FIELD_AUTHOR.toString()+":  JP Moresmau"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(0,pds.getStartLine());
     assertEquals(2,pds.getEndLine());
     pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
@@ -642,7 +641,7 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds1=pd.getStanzas().get( 1 );
     assertNull(pds1.getName());
     RealValuePosition rvp=pds1.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "base" );
-    assertEquals("  build-depends:   base"+ResourceUtil.NL,rvp.getRealValue());
+    assertEquals("  build-depends:   base"+PlatformUtil.NL,rvp.getRealValue());
     assertEquals(8,rvp.getStartLine());
     assertEquals(8,rvp.getEndLine());
 

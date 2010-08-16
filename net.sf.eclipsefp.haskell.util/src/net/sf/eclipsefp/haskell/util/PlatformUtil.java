@@ -14,6 +14,10 @@ import org.eclipse.core.runtime.Platform;
  */
 public class PlatformUtil {
 	/**
+	 * System newline string
+	 */
+	public static final String NL = System.getProperty( "line.separator","\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	/**
 	 * The primary Windows platform executable extension.
 	 */
 	public static final String WINDOWS_EXTENSION_EXE = "exe"; //$NON-NLS-1$

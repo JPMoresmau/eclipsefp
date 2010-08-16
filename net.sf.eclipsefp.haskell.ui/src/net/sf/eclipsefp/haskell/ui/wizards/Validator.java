@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -75,8 +75,8 @@ class Validator {
   //////////////////
 
   private static boolean existsAlready( final ModuleCreationInfo info ) {
-    return    existsAlreadyAs( info, ResourceUtil.EXTENSION_HS )
-           || existsAlreadyAs( info, ResourceUtil.EXTENSION_LHS );
+    return    existsAlreadyAs( info, FileUtil.EXTENSION_HS )
+           || existsAlreadyAs( info, FileUtil.EXTENSION_LHS );
   }
 
   private static boolean existsAlreadyAs( final ModuleCreationInfo info,

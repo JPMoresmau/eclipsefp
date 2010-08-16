@@ -1,9 +1,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -56,7 +56,7 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
       if (ix>0){
         lineOffset=document.getLineOffset( ix );
       }
-      String repl=pragmaStart+pragma+" "+pragmaEnd+NL; //$NON-NLS-1$
+      String repl=pragmaStart+pragma+" "+pragmaEnd+PlatformUtil.NL; //$NON-NLS-1$
       while (ix<document.getNumberOfLines()){
         IRegion r=document.getLineInformation( ix );
         String l=document.get( r.getOffset(), r.getLength() ).trim();
@@ -78,7 +78,7 @@ public class AddLanguagePramaResolution extends MarkerCompletion {
       if (pragmaOffset==0){
         repl=getLineStartAddition( repl, marker.getResource() );
         if (ResourceUtil.hasLiterateExtension( marker.getResource() )){
-          repl=repl+NL;
+          repl=repl+PlatformUtil.NL;
         }
       }
 

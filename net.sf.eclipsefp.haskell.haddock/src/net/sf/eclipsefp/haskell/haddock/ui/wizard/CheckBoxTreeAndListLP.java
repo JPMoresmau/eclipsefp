@@ -8,10 +8,10 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.dialog.DialogLabelProvider;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 
 
 /** <p>The label provider for the checkbox tree and list on the selection 
@@ -30,9 +30,9 @@ class CheckBoxTreeAndListLP extends DialogLabelProvider {
     if( element instanceof IProject ) {
       ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
       result = si.getImage( IDE.SharedImages.IMG_OBJ_PROJECT );
-    } else if( isSourceFile( element, ResourceUtil.EXTENSION_HS ) ) {
+    } else if( isSourceFile( element, FileUtil.EXTENSION_HS ) ) {
       result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
-    } else if( isSourceFile( element, ResourceUtil.EXTENSION_LHS ) ) {
+    } else if( isSourceFile( element, FileUtil.EXTENSION_LHS ) ) {
       result = HaskellUIImages.getImage( IImageNames.LITERATE_SOURCE_FILE );
     }
     return result;

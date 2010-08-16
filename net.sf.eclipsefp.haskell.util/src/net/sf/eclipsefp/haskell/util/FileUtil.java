@@ -13,7 +13,15 @@ import org.eclipse.core.runtime.Path;
  * @author Scott Michel (scottm@aero.org, modifications)
  */
 public class FileUtil {
-  static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
+
+	/** Normal Haskell source extension. */
+	public static final String EXTENSION_HS = "hs"; //$NON-NLS-1$
+	/** Literate Haskell (embedded TeX) source extension. */
+	public static final String EXTENSION_LHS = "lhs"; //$NON-NLS-1$
+	/** "Common Architecture for Building Applications and Libraries" (cabal) project file source extension. */
+	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
+
+	static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
 
   static {
     // Initialize the candidate file locations list, since this doesn't change during runtime.

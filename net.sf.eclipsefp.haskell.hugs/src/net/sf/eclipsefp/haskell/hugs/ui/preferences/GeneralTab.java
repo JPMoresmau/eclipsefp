@@ -1,12 +1,12 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.hugs.ui.preferences;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.*;
 import net.sf.eclipsefp.common.ui.dialog.ExecutableDialogField;
 import net.sf.eclipsefp.common.ui.dialog.IDialogFieldListener;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.haskell.hugs.core.preferences.IHugsPreferenceNames;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -52,7 +52,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 			        is.read();
 			        OutputStream os=p.getOutputStream();
 			        // write version command
-			        os.write((":version"+NL).getBytes());
+			        os.write((":version"+PlatformUtil.NL).getBytes());
 			        os.flush();
 			        StringBuffer sb=new StringBuffer();
 			        r=is.read();
@@ -66,7 +66,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 			        	is.read();
 			        }
 			        // quit
-			        os.write((":quit"+NL).getBytes());
+			        os.write((":quit"+PlatformUtil.NL).getBytes());
 			        os.flush();
 			        os.close();
 			        is.close();

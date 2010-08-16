@@ -3,7 +3,6 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.project;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -14,7 +13,8 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.ICabalContributor;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -51,12 +51,12 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
           mainPath=src+"/"+mainPath;//$NON-NLS-1$
         }
 
-        IPath mainFile = new Path( mainPath ).addFileExtension( ResourceUtil.EXTENSION_HS );
+        IPath mainFile = new Path( mainPath ).addFileExtension( FileUtil.EXTENSION_HS );
         createFile( project, mainFile, getMainFileContent( ), mo  );
       }
 
 
-      IPath cabalFile = new Path( name ).addFileExtension( ResourceUtil.EXTENSION_CABAL );
+      IPath cabalFile = new Path( name ).addFileExtension( FileUtil.EXTENSION_CABAL );
       createFile( project, cabalFile, getCabalFileContent( name ), mo  );
     }
   }
@@ -66,7 +66,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   //////////////////
 
   private String getMainFileContent() {
-   return "module Main where"+NL+NL+"main::IO()"+NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+   return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+"main::IO()"+PlatformUtil.NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 
 
@@ -129,7 +129,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   }
 
   private String getSetupFileContent() {
-    return "import Distribution.Simple"+NL+"main = defaultMain"+NL; //$NON-NLS-1$ //$NON-NLS-2$
+    return "import Distribution.Simple"+PlatformUtil.NL+"main = defaultMain"+PlatformUtil.NL; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 

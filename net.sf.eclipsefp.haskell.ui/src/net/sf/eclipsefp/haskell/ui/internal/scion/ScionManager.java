@@ -318,9 +318,9 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
         baos.reset();
 
         if (code==0){
-          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerInstallSucceeded,ResourceUtil.NL+depsOutput),IStatus.INFO);
+          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerInstallSucceeded,PlatformUtil.NL+depsOutput),IStatus.INFO);
         } else {
-          HaskellUIPlugin.log( NLS.bind( UITexts.scionServerInstallFailed,ResourceUtil.NL+depsOutput),IStatus.ERROR);
+          HaskellUIPlugin.log( NLS.bind( UITexts.scionServerInstallFailed,PlatformUtil.NL+depsOutput),IStatus.ERROR);
         }
       } catch (Exception e){
         HaskellUIPlugin.log(UITexts.scionServerInstallError,e);

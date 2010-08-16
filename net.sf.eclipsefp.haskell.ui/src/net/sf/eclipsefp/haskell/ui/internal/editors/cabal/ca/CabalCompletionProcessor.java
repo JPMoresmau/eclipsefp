@@ -2,7 +2,6 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.ca;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -10,6 +9,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -66,7 +66,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
           sb.append( cs.getCabalName() );
           if (cs.isSectionHeader()){
             if (CabalSyntax.SECTION_LIBRARY.equals( cs )){
-              sb.append( NL );
+              sb.append( PlatformUtil.NL );
             } else {
               sb.append(" "); //$NON-NLS-1$
             }

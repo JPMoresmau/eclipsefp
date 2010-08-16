@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
-import static net.sf.eclipsefp.haskell.core.util.ResourceUtil.NL;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -16,6 +15,7 @@ import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -128,7 +128,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     try {
 
       fProcess.getStreamsProxy().write(command);
-      fProcess.getStreamsProxy().write(NL);
+      fProcess.getStreamsProxy().write(PlatformUtil.NL);
       if (wait){
         waitForPrompt();
       }
@@ -382,7 +382,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
           sb.setLength( 0 );
         }
         if (sb.length()>0){
-          sb.append(ResourceUtil.NL);
+          sb.append(PlatformUtil.NL);
         }
         sb.append( line );
         line=br.readLine();
@@ -440,7 +440,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   private String getResultWithoutPrompt(){
     String s=response.toString();
-    int ix=s.lastIndexOf( ResourceUtil.NL );
+    int ix=s.lastIndexOf( PlatformUtil.NL );
     if(ix>-1){
       s=s.substring(0,ix).trim();
     }

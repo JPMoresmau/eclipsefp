@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineLabelProvider;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -82,9 +83,9 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
         //  result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
         //} else {
           String ext = file.getFileExtension();
-          if( ResourceUtil.EXTENSION_HS.equals( ext ) ) {
+          if( FileUtil.EXTENSION_HS.equals( ext ) ) {
             result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
-          } else if( ResourceUtil.EXTENSION_LHS.equals( ext ) ) {
+          } else if( FileUtil.EXTENSION_LHS.equals( ext ) ) {
             result = HaskellUIImages.getImage( IImageNames.LITERATE_SOURCE_FILE );
           }
         //}
