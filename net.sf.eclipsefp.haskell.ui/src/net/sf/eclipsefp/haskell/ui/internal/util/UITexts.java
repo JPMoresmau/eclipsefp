@@ -184,9 +184,11 @@ public final class UITexts extends NLS {
   public static String preferences_project_use_project;
   public static String preferences_project_use_folders;
   public static String preferences_project_source;
+  public static String preferences_project_documentation;
   public static String preferences_project_folders_empty;
   public static String preferences_project_invalid;
   public static String preferences_project_invalid_source;
+  public static String preferences_project_invalid_documentation;
   public static String preferences_project_invalid_project;
   public static String preferences_project_output_note;
 
