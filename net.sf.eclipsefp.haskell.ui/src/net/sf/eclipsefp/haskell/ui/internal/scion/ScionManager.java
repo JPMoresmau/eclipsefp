@@ -22,7 +22,6 @@ import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.util.FileUtil;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -34,6 +33,8 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
+import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -47,13 +48,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -285,8 +285,8 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
       }
     // build final exe location
     IPath exeLocation=scionDir.append( "dist" ).append( "build" ).append( "scion-server" ).append( "scion-server" );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
-    if (Platform.getOS().equals( Platform.OS_WIN32 )){
-      exeLocation=exeLocation.addFileExtension( "exe" ); //$NON-NLS-1$
+    if (PlatformUtil.runningOnWindows()){
+      exeLocation=exeLocation.addFileExtension( PlatformUtil.WINDOWS_EXTENSION_EXE );
     }
     if (!exeLocation.toFile().exists() && CompilerManager.getInstance().getCurrentHsImplementation()!=null){
       File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());

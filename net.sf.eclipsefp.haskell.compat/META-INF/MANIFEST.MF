@@ -3,11 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Compat
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.compat;singleton:=true
 Bundle-Version: 1.112.0
-Bundle-Activator: net.sf.eclipsefp.compat.Activator
+Bundle-Activator: net.sf.eclipsefp.haskell.compat.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: net.sf.eclipsefp.compat
+Export-Package: net.sf.eclipsefp.haskell.compat
 Import-Package: org.osgi.framework;version="1.5.0"
