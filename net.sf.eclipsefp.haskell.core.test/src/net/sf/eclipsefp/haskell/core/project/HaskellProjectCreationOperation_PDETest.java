@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperationPDETestCase;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -47,7 +48,7 @@ public class HaskellProjectCreationOperation_PDETest extends
 
 	public void testCreatesDescriptorFile() throws InvocationTargetException,
       InterruptedException {
-    getCorePrefs().put( ICorePreferenceNames.FOLDERS_SRC, "src" );
+    getCorePrefs().put( ICorePreferenceNames.FOLDERS_SRC, FileUtil.DEFAULT_FOLDER_SRC );
 	  runOperation();
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
 //    IFile f = prj.getFile( HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR );

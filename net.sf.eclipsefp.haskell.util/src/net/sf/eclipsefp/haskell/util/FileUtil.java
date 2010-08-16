@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Cross-platform file utilities.
+ * Cross-platform file utilities and container for commonly used file and folder names.
  *
  * @author Thomas ten Cate (original)
  * @author Scott Michel (scottm@aero.org, modifications)
@@ -20,7 +20,13 @@ public class FileUtil {
 	public static final String EXTENSION_LHS = "lhs"; //$NON-NLS-1$
 	/** "Common Architecture for Building Applications and Libraries" (cabal) project file source extension. */
 	public static final String EXTENSION_CABAL = "cabal"; //$NON-NLS-1$
+	
+	/** Default project source directory */
+	public static final String DEFAULT_FOLDER_SRC = "src";
+	/** Default project documentation directory */
+	public static final String DEFAULT_FOLDER_DOC = "doc";
 
+	/** Candidate locations to search for files on a path */
 	static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
 
   static {

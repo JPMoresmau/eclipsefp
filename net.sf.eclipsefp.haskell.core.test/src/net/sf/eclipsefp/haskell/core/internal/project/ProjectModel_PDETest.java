@@ -7,6 +7,7 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -43,7 +44,7 @@ public class ProjectModel_PDETest extends TestCaseWithProject {
     IHaskellProject hsProject = HaskellProjectManager.get( project );
     Set<IPath> sourcePaths = hsProject.getSourcePaths();
     assertEquals( 1, sourcePaths.size() );
-    assertEquals( new Path( "src" ), sourcePaths.iterator().next() );
+    assertEquals( new Path( FileUtil.DEFAULT_FOLDER_SRC ), sourcePaths.iterator().next() );
   }
 
   // monitoring changes on the cabal file

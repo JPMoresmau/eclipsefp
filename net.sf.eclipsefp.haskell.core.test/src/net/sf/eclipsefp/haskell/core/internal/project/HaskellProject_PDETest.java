@@ -6,6 +6,7 @@ import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -30,9 +31,9 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
   public void testSingleSourcePath() {
     HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
     assertEquals( 1, hp.getSourcePaths().size() );
-    assertEquals( project.getFolder( "src" ), hp.getSourceFolder() );
+    assertEquals( project.getFolder( FileUtil.DEFAULT_FOLDER_SRC ), hp.getSourceFolder() );
 
-    assertTrue( ResourceUtil.isSourceFolder( project.getFolder( "src" ) ) );
+    assertTrue( ResourceUtil.isSourceFolder( project.getFolder( FileUtil.DEFAULT_FOLDER_SRC ) ) );
     assertFalse( ResourceUtil.isSourceFolder( project.getFolder( "crs" ) ) );
     assertFalse( ResourceUtil.isSourceFolder( project.getFolder( "src/bla" ) ) );
   }
@@ -42,9 +43,9 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     hp.addSourcePath( "test" );
     assertEquals( 2, hp.getSourcePaths().size() );
     // TODO lf we should really get two here
-//    assertEquals( project.getFolder( "src" ), hp.getSourceFolder() );
+//    assertEquals( project.getFolder( FileUtil.DEFAULT_FOLDER_SRC ), hp.getSourceFolder() );
 
-    assertTrue( ResourceUtil.isSourceFolder( project.getFolder( "src" ) ) );
+    assertTrue( ResourceUtil.isSourceFolder( project.getFolder( FileUtil.DEFAULT_FOLDER_SRC ) ) );
     assertTrue( ResourceUtil.isSourceFolder( project.getFolder( "test" ) ) );
     assertFalse( ResourceUtil.isSourceFolder( project.getFolder( "crs" ) ) );
   }

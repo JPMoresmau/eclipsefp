@@ -1,8 +1,12 @@
 package net.sf.eclipsefp.haskell.core.code;
 
+import net.sf.eclipsefp.haskell.util.FileUtil;
+
 public enum EHaskellCommentStyle {
 
-  USUAL( "hs" ), LITERATE( "lhs" ), TEX( "lhs" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  USUAL( FileUtil.EXTENSION_HS ),
+  LITERATE( FileUtil.EXTENSION_LHS ),
+  TEX( FileUtil.EXTENSION_LHS );
 
   private String fFileExtension;
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -86,7 +87,7 @@ public class NewHaskellProjectPP extends PreferencePage
 
   public static void initializeDefaults( final IPreferenceStore store ) {
     store.setDefault( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
-    store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" ); //$NON-NLS-1$
+    store.setDefault( ICorePreferenceNames.FOLDERS_SRC, FileUtil.DEFAULT_FOLDER_SRC );
     store.setDefault( ICorePreferenceNames.FOLDERS_DOC, "doc" );
 //   store.setDefault( ICorePreferenceNames.FOLDERS_OUT, "out" );
 //  store.setDefault( ICorePreferenceNames.TARGET_BINARY, "bin/theResult" );

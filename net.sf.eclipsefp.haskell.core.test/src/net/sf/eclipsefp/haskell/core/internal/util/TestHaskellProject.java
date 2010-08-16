@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,7 +27,7 @@ public class TestHaskellProject implements ICorePreferenceNames {
 			op.run(new NullProgressMonitor());
 			fUnderlyingProject = ResourcesPlugin.getWorkspace().getRoot().
 			                         getProject(projectName);
-			fSourceFolder = fUnderlyingProject.getFolder("src");
+			fSourceFolder = fUnderlyingProject.getFolder(FileUtil.DEFAULT_FOLDER_SRC);
 		} catch (Exception e) {
 			throw new CoreException(Status.OK_STATUS);
 		}
@@ -34,7 +35,7 @@ public class TestHaskellProject implements ICorePreferenceNames {
 
 	private void setPreferences(final IEclipsePreferences corePrefs) {
 	  corePrefs.put( SELECTED_COMPILER, "null" );
-    corePrefs.put( FOLDERS_SRC, "src" );
+    corePrefs.put( FOLDERS_SRC, FileUtil.DEFAULT_FOLDER_SRC );
   //  corePrefs.put( FOLDERS_OUT, "out" );
   //  corePrefs.put( TARGET_BINARY, "bin/theResult" );
     corePrefs.putBoolean( FOLDERS_IN_NEW_PROJECT, true );
