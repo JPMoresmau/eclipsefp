@@ -53,6 +53,7 @@ public class NewHaskellProjectPP extends PreferencePage
   private final ModifyListener modifyListener;
 
   private Text txtSrcFolderName;
+  private Text txtDocFolderName;
   //private Text txtOutFolderName;
   //private Text txtTargetBinaryName;
 
@@ -86,6 +87,7 @@ public class NewHaskellProjectPP extends PreferencePage
   public static void initializeDefaults( final IPreferenceStore store ) {
     store.setDefault( ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, true );
     store.setDefault( ICorePreferenceNames.FOLDERS_SRC, "src" ); //$NON-NLS-1$
+    store.setDefault( ICorePreferenceNames.FOLDERS_DOC, "doc" );
 //   store.setDefault( ICorePreferenceNames.FOLDERS_OUT, "out" );
 //  store.setDefault( ICorePreferenceNames.TARGET_BINARY, "bin/theResult" );
   }
@@ -204,6 +206,10 @@ public class NewHaskellProjectPP extends PreferencePage
                                          UITexts.preferences_project_source,
                                          ICorePreferenceNames.FOLDERS_SRC,
                                          indent );
+    txtDocFolderName = addTextControl ( folderGroup,
+                                        UITexts.preferences_project_documentation,
+                                        ICorePreferenceNames.FOLDERS_DOC,
+                                        indent );
  /*   txtOutFolderName = addTextControl( folderGroup,
                                          "Output folder name:",
                                          ICorePreferenceNames.FOLDERS_OUT,
@@ -223,6 +229,7 @@ public class NewHaskellProjectPP extends PreferencePage
   private void validate() {
     boolean useFolders = btnFoldersAsSourceFolder.getSelection();
     txtSrcFolderName.setEnabled( useFolders );
+    txtDocFolderName.setEnabled( useFolders );
     //txtOutFolderName.setEnabled( useFolders );
     //txtTargetBinaryName.setEnabled( useFolders );
 
@@ -239,14 +246,16 @@ public class NewHaskellProjectPP extends PreferencePage
 
   private boolean validateFolders() {
     boolean result;
-    if(txtSrcFolderName.getText().length() == 0
+    if ( txtSrcFolderName.getText().length() == 0
+         || txtDocFolderName.getText().length() == 0
         //&& txtOutFolderName.getText().length() == 0
         ) {
       updateNonOkStatus( UITexts.preferences_project_folders_empty );
       result = false;
     } else {
       IProject dmy = getWorkspace().getRoot().getProject( UITexts.preferences_project_invalid_project );
-      result = isValidPath( txtSrcFolderName.getText(), UITexts.preferences_project_invalid_source, dmy );
+      result = isValidPath( txtSrcFolderName.getText(), UITexts.preferences_project_invalid_source, dmy )
+               && isValidPath (txtDocFolderName.getText(), UITexts.preferences_project_invalid_documentation, dmy);
     }
     return result;
   }
@@ -288,6 +297,7 @@ public class NewHaskellProjectPP extends PreferencePage
 
   private void controlModified( final Widget widget ) {
     if(    widget == txtSrcFolderName
+        || widget == txtDocFolderName
         //|| widget == txtOutFolderName
         ) {
       validate();
