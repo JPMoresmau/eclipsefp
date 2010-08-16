@@ -23,6 +23,7 @@ import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -135,17 +136,20 @@ public class ResourceUtil {
   }
 
 	/**
-	 * <p>
-	 * returns the output folder of the passed project as resource. The project
-	 * must have the Haskell nature.
-	 * </p>
+	 * Get the output folder of the Haskell project.
+	 *
+	 * @param project The Eclipse project object
+	 * @return The IContainer object corresponding to the project's output
+	 * folder.
 	 */
 	public static IContainer getOutFolder(final IProject project)
 			throws CoreException
 	{
+	  Assert.isNotNull( project );
 		Assert.isTrue(project.hasNature(HaskellNature.NATURE_ID));
 
-		IPath outputPath = getHsProject(project).getOutputPath();
+		IHaskellProject hsProject = getHsProject(project);
+		IPath outputPath = hsProject.getOutputPath();
 		IContainer result;
 		if (outputPath.equals(project.getProjectRelativePath())) {
 			result = project;
@@ -233,10 +237,10 @@ public class ResourceUtil {
 	}
 
 	/**
-	 * <p>
-	 * returns whether the specified folder is one of the source folders of its
-	 * (Haskell) project.
-	 * </p>
+	 * Predicate that tests if the specified folder is one of the Haskell
+	 * project's source folders.
+	 *
+	 * @return True, if the folder is a source folder in the Haskell project.
 	 */
 	public static boolean isSourceFolder( final IFolder folder ) {
     IProject project = folder.getProject();
@@ -264,11 +268,13 @@ public class ResourceUtil {
 
 	public static boolean isInHaskellProject(final IResource resource) {
 		boolean result = false;
-		IProject project = resource.getProject();
-		try {
-			result = project.hasNature(HaskellNature.NATURE_ID);
-		} catch (CoreException cex) {
-			// ignore, we must assume this is no Haskell project then
+		if (resource != null) {
+  		IProject project = resource.getProject();
+  		try {
+  			result = project.hasNature(HaskellNature.NATURE_ID);
+  		} catch (CoreException cex) {
+  			// ignore, we must assume this is not a Haskell project
+  		}
 		}
 		return result;
 	}
@@ -467,8 +473,12 @@ public class ResourceUtil {
 	// ////////////////
 
 	private static boolean has( final IResource resource, final String extension ) {
-    String resExt = resource.getFileExtension();
-    return resExt != null && resExt.equalsIgnoreCase( extension );
+	  if (resource != null) {
+      String resExt = resource.getFileExtension();
+      return resExt != null && resExt.equalsIgnoreCase( extension );
+	  }
+
+	  return false;
   }
 
   private static IHaskellProject getHsProject( final IProject project ) {

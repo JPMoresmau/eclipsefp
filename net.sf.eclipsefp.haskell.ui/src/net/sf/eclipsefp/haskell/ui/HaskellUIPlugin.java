@@ -80,9 +80,9 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   }
 
   /**
-   * <p>
-   * returns the shared instance.
-   * </p>
+   * Get the default plug-in object.
+   *
+   * @return The default plug-in object.
    */
   public static HaskellUIPlugin getDefault() {
     return plugin;

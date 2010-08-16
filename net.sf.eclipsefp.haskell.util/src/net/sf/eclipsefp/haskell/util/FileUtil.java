@@ -1,24 +1,18 @@
-package net.sf.eclipsefp.haskell.core.util;
+package net.sf.eclipsefp.haskell.util;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
- * A class with some static helper methods to work with files.
+ * Cross-platform file utilities.
  *
- * @author Thomas ten Cate
+ * @author Thomas ten Cate (original)
+ * @author Scott Michel (scottm@aero.org, modifications)
  */
 public class FileUtil {
-
-  /**
-   * List of extensions of files that can be executed under Windows.
-   * The first is the default in case we need to construct a valid executable file name.
-   */
-  public static final String[] WINDOWS_EXECUTABLE_EXTENSIONS = new String[] { "exe", "bat" }; //$NON-NLS-1$ //$NON-NLS-2$
   static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
 
   static {
@@ -30,10 +24,14 @@ public class FileUtil {
     }
 
     // add common bin directories from the user's home directory
-    String[] homes = new String[] {
-      System.getenv("HOME"), //$NON-NLS-1$
-      System.getProperty("user.home") //$NON-NLS-1$
-    };
+    ArrayList<String> homes = new ArrayList<String>();
+    final String envHome = System.getenv("HOME"); //$NON-NLS-1$
+    
+    homes.add(envHome);
+
+    final String userHome = System.getProperty("user.home"); //$NON-NLS-1$
+    if (!userHome.equals(envHome))
+      homes.add(userHome);
 
     String[] userBins = new String[] {
       ".cabal/bin", //$NON-NLS-1$
@@ -58,8 +56,8 @@ public class FileUtil {
 	 * On Windows, it appends ".exe".
 	 */
 	public static String makeExecutableName(final String baseName) {
-	  if (runningOnWindows() && !baseName.endsWith( "." + WINDOWS_EXECUTABLE_EXTENSIONS[0] )) { //$NON-NLS-1$
-	    return baseName + "." + WINDOWS_EXECUTABLE_EXTENSIONS[0]; //$NON-NLS-1$
+	  if (PlatformUtil.runningOnWindows() && !baseName.endsWith( "." + PlatformUtil.WINDOWS_EXTENSION_EXE )) { //$NON-NLS-1$
+	    return baseName + "." + PlatformUtil.WINDOWS_EXTENSION_EXE; //$NON-NLS-1$
 	  }
 	  return baseName;
 	}
@@ -70,11 +68,11 @@ public class FileUtil {
 	 * On Windows, it checks whether the file extension is that of an executable file.
 	 */
 	public static boolean isExecutable(final File file) {
-		if (runningOnWindows()) {
+		if (PlatformUtil.runningOnWindows()) {
 		  return isExecutableWindows( file );
 		}
 
-		// Assume a UNIX flavour.
+		// Assume a UNIX flavor.
   	return isExecutableUnix( file );
 	}
 
@@ -97,16 +95,12 @@ public class FileUtil {
 
   private static boolean isExecutableWindows( final File file ) {
     String fileExt = new Path(file.getPath()).getFileExtension();
-    for (String ext : WINDOWS_EXECUTABLE_EXTENSIONS) {
+    for (String ext : PlatformUtil.WINDOWS_EXECUTABLE_EXTENSIONS) {
       if (fileExt.equals( ext )) {
         return true;
       }
     }
     return false;
-  }
-
-  private static boolean runningOnWindows() {
-    return Platform.getOS().equals( Platform.OS_WIN32 );
   }
 
   public static File findExecutableInPath(final String shortFileName){

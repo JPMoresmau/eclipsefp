@@ -15,13 +15,10 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 
 
 
-	public WorkbenchHaskellCompletionContext(
-												final ITextViewer viewer,
-												final int offset)
-	{
-		super(getFile( viewer ),viewer.getDocument().get(),
-				offset);
-	}
+  public WorkbenchHaskellCompletionContext( final ITextViewer viewer,
+      final int offset ) {
+    super( getFile( viewer ), viewer.getDocument().get(), offset );
+  }
 
 	private static IFile getFile(final ITextViewer viewer) {
 		IDocument currentDocument = viewer.getDocument();
@@ -38,16 +35,14 @@ public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext 
 				IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
 				if (currentDocument.equals(doc)) {
 					input = textEditor.getEditorInput();
-					break;
+			    if (input instanceof IFileEditorInput) {
+			      IFileEditorInput fileInput = (IFileEditorInput) input;
+			      return fileInput.getFile();
+			    }
 				}
 			}
 		}
-
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
-			return fileInput.getFile();
-		}
-    //TODO what to do when there isn't a file editor opened?
+    // Return a null IFile, which is handled in HaskellCompletionContext.
 		return null;
 	}
 }

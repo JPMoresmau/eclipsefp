@@ -4,32 +4,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.NameHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class HaskellCompletionContext implements IHaskellCompletionContext {
 
-	private IFile file;
-	 private String source;
-	private int fOffset;
+  private IFile file;
+  private String source;
+  private int fOffset;
 
 	protected HaskellCompletionContext() {
 		//placeholder constructor
 	}
 
-	public HaskellCompletionContext(final IFile file,
-	                final String source,
-									final int offset)
-	{
-	  this.file=file;
-	  this.source=source;
-		setOffset(offset);
-	}
+  public HaskellCompletionContext( final IFile file, final String source,
+      final int offset ) {
+    this.file = file;
+    this.source = source;
+    setOffset( offset );
+  }
 
 //	public IHaskellModel getLanguageModel() {
 //		return fLanguageModel;
@@ -81,48 +79,53 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
 	}
 
-	private void searchDefinedNames(final String prefix,
-	    final List<ICompletionProposal> result){
-	if( ResourceUtil.hasHaskellExtension( file ) && ResourceUtil.isInHaskellProject( file )) {
-    final ScionInstance si = HaskellUIPlugin.getDefault()
-        .getScionInstanceManager( file );
-    // sync access
-    if (si!=null){
+  private void searchDefinedNames( final String prefix,
+      final List<ICompletionProposal> result ) {
+    if( file != null
+        && ResourceUtil.hasHaskellExtension( file )
+        && ResourceUtil.isInHaskellProject( file ) ) {
+      final HaskellUIPlugin plugin = HaskellUIPlugin.getDefault();
+      final ScionInstance si = plugin.getScionInstanceManager( file );
+      // sync access
+      if( si != null ) {
         si.definedNames( new NameHandler() {
+
           public void nameResult( final List<String> names ) {
-            searchStringList(prefix, names, result);
+            searchStringList( prefix, names, result );
           }
         } );
 
+      }
     }
   }
- }
 
-	 private void searchModulesNames(final String prefix,
-	      final List<ICompletionProposal> result){
-	  if( ResourceUtil.hasHaskellExtension( file ) && ResourceUtil.isInHaskellProject( file )) {
-	    final ScionInstance si = HaskellUIPlugin.getDefault()
-	        .getScionInstanceManager( file );
-	    // sync access
-	    if (si!=null){
-	        si.moduleGraph( new NameHandler() {
+  private void searchModulesNames( final String prefix,
+      final List<ICompletionProposal> result ) {
+    if( file != null
+        && ResourceUtil.hasHaskellExtension( file )
+        && ResourceUtil.isInHaskellProject( file ) ) {
+      final HaskellUIPlugin plugin = HaskellUIPlugin.getDefault();
+      final ScionInstance si = plugin.getScionInstanceManager( file );
+      // sync access
+      if( si != null ) {
+        si.moduleGraph( new NameHandler() {
 
-	          public void nameResult( final List<String> names ) {
-	            searchStringList(prefix, names, result);
-	          }
-	        } );
+          public void nameResult( final List<String> names ) {
+            searchStringList( prefix, names, result );
+          }
+        } );
 
-	        si.listExposedModules( new NameHandler() {
+        si.listExposedModules( new NameHandler() {
 
-            public void nameResult( final List<String> names ) {
-              searchStringList(prefix, names, result);
-            }
-          } );
+          public void nameResult( final List<String> names ) {
+            searchStringList( prefix, names, result );
+          }
+        } );
 
 
-	    }
-	  }
-	 }
+      }
+    }
+  }
 
 	private void searchStringList(final String prefix, final String[] names,
 		final List<ICompletionProposal> result)

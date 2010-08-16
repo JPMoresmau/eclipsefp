@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.util;
 
 import java.util.regex.Pattern;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 /**
  * GHCi syntax strings, for parsing answers

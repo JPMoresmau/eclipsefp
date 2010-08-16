@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.util;
 import java.io.File;
 import java.io.IOException;
 import junit.framework.TestCase;
-import net.sf.eclipsefp.haskell.core.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 
 
 public class FileUtilTest extends TestCase{

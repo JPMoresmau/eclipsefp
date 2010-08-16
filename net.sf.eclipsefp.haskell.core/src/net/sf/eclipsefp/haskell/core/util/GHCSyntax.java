@@ -3,6 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.util;
 
+import net.sf.eclipsefp.haskell.util.FileUtil;
+
 
 /** <p>provides public constants for the command line syntax of ghc and ghc-pkg,
   * GHCs package management tool.</p>

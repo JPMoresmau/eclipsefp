@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.util;
 
 import java.util.regex.Matcher;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import junit.framework.TestCase;
 
 /**

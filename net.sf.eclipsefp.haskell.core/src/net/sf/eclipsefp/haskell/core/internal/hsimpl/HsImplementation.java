@@ -8,13 +8,13 @@ import java.io.IOException;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.internal.util.DefaultStatus;
 import net.sf.eclipsefp.haskell.core.util.QueryUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 
 
@@ -122,8 +122,8 @@ public class HsImplementation implements IHsImplementation {
     DefaultStatus result = new DefaultStatus();
     IPath path = new Path( binDir );
     path = path.append( type.getExecutableCommand() );
-    if( Platform.getOS().equals( Platform.OS_WIN32 ) ) {
-      path.addFileExtension( "exe" ); //$NON-NLS-1$
+    if( PlatformUtil.runningOnWindows() ) {
+      path.addFileExtension( PlatformUtil.WINDOWS_EXTENSION_EXE );
     }
     try {
       String param = type.getVersionOption();

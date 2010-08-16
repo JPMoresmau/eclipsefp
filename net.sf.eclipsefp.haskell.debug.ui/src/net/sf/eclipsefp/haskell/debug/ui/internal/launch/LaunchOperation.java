@@ -5,7 +5,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.compat.ILaunchManagerCompat;
+import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;

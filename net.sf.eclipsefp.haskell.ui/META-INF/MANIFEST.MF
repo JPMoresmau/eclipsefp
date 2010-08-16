@@ -22,7 +22,8 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.ui.forms,
  org.apache.ant,
  net.sf.eclipsefp.haskell.scion.client,
- org.eclipse.core.expressions;bundle-version="3.4.100"
+ org.eclipse.core.expressions;bundle-version="3.4.100",
+ net.sf.eclipsefp.haskell.util;bundle-version="1.0.0"
 Bundle-ManifestVersion: 2
 Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets",
  net.sf.eclipsefp.common.ui.preferences;
