@@ -5,8 +5,8 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
-import net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -25,11 +25,11 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
 
   public void testAddSourceFolders_single() throws Exception {
     // what we expect to show up in the command lines
-    String locOfSrc = putInQuotes( project.getLocation().append( "src" ) );
+    String locOfSrc = putInQuotes( project.getLocation().append( FileUtil.DEFAULT_FOLDER_SRC ) );
 
     // source folders added by default
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "src" );
+    hp.addSourcePath( FileUtil.DEFAULT_FOLDER_SRC );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 
     GhciLaunchOperationDelegate del = new GhciLaunchOperationDelegate();
@@ -46,12 +46,12 @@ public class GhciLaunchOperationDelegate_PDETest extends TestCaseWithProject {
 
   public void testAddSourceFolders_multi() throws Exception {
     // what we expect to show up in the command lines
-    String locOfSrc = putInQuotes( project.getLocation().append( "src" ) );
+    String locOfSrc = putInQuotes( project.getLocation().append( FileUtil.DEFAULT_FOLDER_SRC ) );
     String locOfBlaSrc
       = putInQuotes( project.getLocation().append( new Path( "bla/src2" ) ) );
 
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "src" );
+    hp.addSourcePath( FileUtil.DEFAULT_FOLDER_SRC );
     hp.addSourcePath( "bla/src2" );
     IFile[] files = new IFile[] { project.getFile( new Path( "src/Bla.hs" ) ) };
 

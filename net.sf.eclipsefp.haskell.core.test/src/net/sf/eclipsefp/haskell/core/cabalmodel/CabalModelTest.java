@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 
@@ -574,7 +575,7 @@ public class CabalModelTest extends TestCase {
     assertEquals(2,pds.getEndLine());
     pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
     pds.update( CabalSyntax.FIELD_EXPOSED_MODULES, "Mod1" );
-    pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+    pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
 
     pds=pd.addStanza( CabalSyntax.SECTION_EXECUTABLE, "exe" );
     pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" );
@@ -595,7 +596,7 @@ public class CabalModelTest extends TestCase {
       assertNull(pds.getName());
       assertEquals(CabalSyntax.SECTION_LIBRARY,pds.getType());
       assertEquals("Mod1",pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES ));
-      assertEquals("src",pds.getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS ));
+      assertEquals(FileUtil.DEFAULT_FOLDER_SRC,pds.getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS ));
 
       pds=pd.getStanzas().get(2);
       assertEquals("exe",pds.getName());

@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.internal.util;
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 
 public class ResourceUtil_PDETest extends TestCaseWithProject {
@@ -17,7 +18,7 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
 
   public void testGetSourceDirRelativeName() throws Exception {
     HaskellProject hp = new HaskellProject( project );
-    hp.addSourcePath( "src" );
+    hp.addSourcePath( FileUtil.DEFAULT_FOLDER_SRC );
 
     IFile file = null;
     try {

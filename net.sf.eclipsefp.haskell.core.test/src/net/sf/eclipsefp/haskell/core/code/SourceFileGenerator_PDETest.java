@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import net.sf.eclipsefp.haskell.core.internal.doubles.MockCodeGenerator;
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject_PDETestCase;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -13,10 +14,10 @@ import org.eclipse.core.runtime.Path;
 
 public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 
-	private static final String SOURCE_FOLDER_NAME = "src";
+	private static final String SOURCE_FOLDER_NAME = FileUtil.DEFAULT_FOLDER_SRC;
 	private static final String MODULE_NAME = "HelloHaskell";
-	private static final String LITERATE_SUFFIX = ".lhs";
-	private static final String USUAL_SUFFIX = ".hs";
+	private static final String LITERATE_SUFFIX = FileUtil.EXTENSION_LHS;
+	private static final String USUAL_SUFFIX = FileUtil.EXTENSION_HS;
 
 	private ModuleCreationInfo fInfo;
 

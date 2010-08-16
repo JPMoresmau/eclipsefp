@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithPreferences;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -33,7 +34,7 @@ public class TestHaskellProjectMetaTest_PDETest extends TestCaseWithPreferences 
 		project.createSourceFile("MyFile.txt", "These are the file contents\n");
 
 		IProject underlyingProject = getProject("another-project");
-		IFile file = underlyingProject.getFolder("src").getFile("MyFile.txt");
+		IFile file = underlyingProject.getFolder(FileUtil.DEFAULT_FOLDER_SRC).getFile("MyFile.txt");
 		assertNotNull(file);
 		assertTrue(file.exists());
 		assertEquals("These are the file contents", readFirstLine(file));
@@ -66,7 +67,7 @@ public class TestHaskellProjectMetaTest_PDETest extends TestCaseWithPreferences 
 	}
 
 	private void assertHasSourceFolder(final IProject project) {
-		IFolder folder = project.getFolder("src");
+		IFolder folder = project.getFolder(FileUtil.DEFAULT_FOLDER_SRC);
 		assertNotNull(folder);
 		assertTrue(folder.exists());
 	}
