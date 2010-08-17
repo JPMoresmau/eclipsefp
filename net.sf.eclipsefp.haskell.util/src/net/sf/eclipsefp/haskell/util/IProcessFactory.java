@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.util;
+package net.sf.eclipsefp.haskell.util;
 
 import java.io.File;
 import java.io.IOException;

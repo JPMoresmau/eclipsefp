@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.compiler.NullWriter;
+import net.sf.eclipsefp.haskell.util.IProcessFactory;
+import net.sf.eclipsefp.haskell.util.ProcessRunner;
 
 public class ProcessRunner_Test extends TestCase {
 

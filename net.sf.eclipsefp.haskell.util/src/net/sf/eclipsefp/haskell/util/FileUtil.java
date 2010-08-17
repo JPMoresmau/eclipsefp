@@ -70,7 +70,8 @@ public class FileUtil {
 	 * On Windows, it appends ".exe".
 	 */
 	public static String makeExecutableName(final String baseName) {
-	  if (PlatformUtil.runningOnWindows() && !baseName.endsWith( "." + PlatformUtil.WINDOWS_EXTENSION_EXE )) { //$NON-NLS-1$
+	  if (PlatformUtil.runningOnWindows()
+		  && !baseName.endsWith( "." + PlatformUtil.WINDOWS_EXTENSION_EXE )) { //$NON-NLS-1$
 	    return baseName + "." + PlatformUtil.WINDOWS_EXTENSION_EXE; //$NON-NLS-1$
 	  }
 	  return baseName;

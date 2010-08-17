@@ -9,12 +9,11 @@
  * Contributors:
  *     Thiago Arrais - Initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsefp.haskell.core.util;
+package net.sf.eclipsefp.haskell.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import net.sf.eclipsefp.haskell.core.compiler.NullWriter;
 
 public interface IProcessRunner {
 
