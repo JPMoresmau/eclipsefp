@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -20,6 +21,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -284,22 +286,30 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
        }
       }
     // build final exe location
-    IPath exeLocation=scionDir.append( "dist" ).append( "build" ).append( "scion-server" ).append( "scion-server" );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
-    if (PlatformUtil.runningOnWindows()){
-      exeLocation=exeLocation.addFileExtension( PlatformUtil.WINDOWS_EXTENSION_EXE );
-    }
-    if (!exeLocation.toFile().exists() && CompilerManager.getInstance().getCurrentHsImplementation()!=null){
-      File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());
-      String cabalExe= FileUtil.makeExecutableName( "cabal" );//$NON-NLS-1$
-      File cabalBin=new File(binDir,cabalExe);
-      if (!cabalBin.exists()){
-        cabalBin=FileUtil.findExecutableInPath( cabalBin.getName());
+    IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
+    IPath exeLocation = scionDir.append( "dist" ).append( "build" ).append( "scion-server" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    exeLocation = exeLocation.append( FileUtil.makeExecutableName( "scion-server" ) );  //$NON-NLS-1$
+
+    if (!exeLocation.toFile().exists() && hsImpl != null){
+      ArrayList<String> commands = new ArrayList<String>();
+      CabalImplementation cabalImpl = new CabalImplementation();
+
+      commands.add( cabalImpl.getCabalExecutableName( hsImpl ) );
+
+      cabalImpl.probeVersion( hsImpl );
+      String cabalLibVer = cabalImpl.getLibraryVersion();
+      if (cabalLibVer.startsWith( "1.8" )) {
+        commands.add("-fcabal_1_8");
+      } else if (cabalLibVer.startsWith( "1.7" )) {
+        commands.add( "-fcabal_1_7" );
       }
+
+      commands.add("install");
 
       //"cabal install"
       // we tried to only configure/build, but only install fetches the dependencies
       // the trick mentioned http://hackage.haskell.org/trac/hackage/ticket/411 didn't work
-      ProcessBuilder pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"install"); //$NON-NLS-1$
+      ProcessBuilder pb=new ProcessBuilder( commands );
       pb.directory( sd );
       pb.redirectErrorStream( true );
       int code=-1;

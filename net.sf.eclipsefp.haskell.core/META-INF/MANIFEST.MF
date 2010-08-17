@@ -16,6 +16,7 @@ Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.sf.eclipsefp.haskell.core,
  net.sf.eclipsefp.haskell.core.builder,
+ net.sf.eclipsefp.haskell.core.cabal,
  net.sf.eclipsefp.haskell.core.cabalmodel,
  net.sf.eclipsefp.haskell.core.code,
  net.sf.eclipsefp.haskell.core.codeassist;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
