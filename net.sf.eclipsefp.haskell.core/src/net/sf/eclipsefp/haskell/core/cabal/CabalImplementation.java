@@ -27,10 +27,13 @@ public class CabalImplementation {
   public String fCabalInstallVersion;
   /** Cabal library version */
   public String fCabalLibraryVersion;
+  /** Path name to the cabal executable */
+  public String fCabalExecutablePath;
 
   /** Default constructor */
   public CabalImplementation() {
     resetVersions();
+    fCabalExecutablePath = new String();
   }
 
   /**
@@ -78,8 +81,11 @@ public class CabalImplementation {
 
   /** Return the operational cabal executable name */
   public String getCabalExecutableName(final IHsImplementation hsImpl) {
+    if (fCabalExecutablePath.length() != 0) {
+      return fCabalExecutablePath;
+    }
+
     boolean findInPath = false;
-    String retval = null;
 
     if (hsImpl != null) {
       IPath cabalBinPath = new Path(hsImpl.getBinDir());
@@ -90,7 +96,7 @@ public class CabalImplementation {
         findInPath = true;
       } else {
         try {
-          retval = cabalBin.getCanonicalPath();
+          fCabalExecutablePath = cabalBin.getCanonicalPath();
         } catch( IOException e ) {
           // Should never happen...
         }
@@ -101,14 +107,14 @@ public class CabalImplementation {
       File cabalBin = FileUtil.findExecutableInPath( CABAL_EXECUTABLE );
       if (cabalBin.exists()) {
         try {
-          retval = cabalBin.getCanonicalPath();
+          fCabalExecutablePath = cabalBin.getCanonicalPath();
         } catch( IOException e ) {
           // Should never happen...
         }
       }
     }
 
-    return retval;
+    return fCabalExecutablePath;
   }
   /** Reset the version strings to empty string */
   private void resetVersions() {
