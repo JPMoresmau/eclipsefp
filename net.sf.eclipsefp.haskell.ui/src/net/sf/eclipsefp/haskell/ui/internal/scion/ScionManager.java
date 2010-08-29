@@ -51,9 +51,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -402,7 +402,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
               if( delta.getResource() instanceof IFile){
                 IFile f = ( IFile )delta.getResource();
                 IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
-                if(ResourceUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
+                if(FileUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
                   // System.out.println(delta.getFullPath());
 
                   PackageDescription pd = PackageDescriptionLoader.load( cabalF );
@@ -486,7 +486,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * part of a currently opened project.
    */
   public ScionInstance getScionInstance( final IResource resource ) {
-    IProject project = resource.getProject();
+    IProject project = resource!=null?resource.getProject():null;
     return instances.get( project );
   }
 

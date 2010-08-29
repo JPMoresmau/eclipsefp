@@ -30,11 +30,13 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 
@@ -602,5 +604,14 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 		
 
+	}
+	
+	public List<TokenDef> tokenTypes(IFile file,String contents){
+		if (cabalDescription!=null){
+			TokenTypesCommand command=new TokenTypesCommand(this, file, contents,FileUtil.hasLiterateExtension(file));
+			command.runSync();
+			return command.getTokens();
+		}
+		return null;
 	}
 }

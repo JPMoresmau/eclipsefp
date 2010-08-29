@@ -27,10 +27,15 @@ public class ScannerManager implements IEditorPreferenceNames {
   /** the singleton instance of ScannerManager. */
   private static ScannerManager _instance;
 
+  @Deprecated
   private HaskellCodeScanner codeScanner;
+  @Deprecated
   private HaskellCommentScanner commentScanner;
+  @Deprecated
   private HaskellStringScanner stringScanner;
+  @Deprecated
   private HaskellCharacterScanner charScanner;
+  @Deprecated
   private HaskellCommentScanner literateCommentScanner;
 
   private final Map<String, PropertyChangeHandler> propertyChangeHandlers;
@@ -82,6 +87,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return ColorProvider.getInstance();
   }
 
+  @Deprecated
   public HaskellCodeScanner getCodeScanner( final boolean latexLiterate ) {
     if( codeScanner == null ) {
       codeScanner = new HaskellCodeScanner( this,latexLiterate );
@@ -89,6 +95,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return codeScanner;
   }
 
+  @Deprecated
   public HaskellCommentScanner getCommentScanner() {
     if( commentScanner == null ) {
       commentScanner = new HaskellCommentScanner( this,false );
@@ -96,6 +103,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return commentScanner;
   }
 
+  @Deprecated
   public HaskellStringScanner getStringScanner() {
     if( stringScanner == null ) {
       stringScanner = new HaskellStringScanner(this);
@@ -103,6 +111,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return stringScanner;
   }
 
+  @Deprecated
   public HaskellCharacterScanner getCharacterScanner() {
     if( charScanner == null ) {
       charScanner = new HaskellCharacterScanner(this);
@@ -110,6 +119,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return charScanner;
   }
 
+  @Deprecated
   public HaskellCommentScanner getLiterateCommentScanner() {
     if( literateCommentScanner == null ) {
       literateCommentScanner = new HaskellCommentScanner( this,true );

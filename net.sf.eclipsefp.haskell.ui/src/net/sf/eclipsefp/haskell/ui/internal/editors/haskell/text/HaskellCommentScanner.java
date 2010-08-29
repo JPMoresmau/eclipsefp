@@ -12,6 +12,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
   * literate comment) token.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class HaskellCommentScanner extends RuleBasedScanner
                                    implements IEditorPreferenceNames {

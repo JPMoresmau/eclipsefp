@@ -12,6 +12,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
   *  literal token.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class HaskellCharacterScanner extends RuleBasedScanner
                                   implements IEditorPreferenceNames {

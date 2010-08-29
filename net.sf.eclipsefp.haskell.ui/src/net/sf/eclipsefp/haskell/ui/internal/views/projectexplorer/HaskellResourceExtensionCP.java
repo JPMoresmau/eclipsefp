@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineCP;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSystemLibrary;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +55,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         final IFile f = ( IFile )parentElement;
         // if we have a Haskell source file, we show the same content as outline
         // underneath
-        if( ResourceUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
+        if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
           final ScionInstance si = HaskellUIPlugin.getDefault()
               .getScionInstanceManager( f );
           // sync access
@@ -109,7 +110,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   public boolean hasChildren( final Object element ) {
     if( element instanceof IFile ) {
       IFile f = ( IFile )element;
-      if( ResourceUtil.hasHaskellExtension( f ) ) {
+      if( FileUtil.hasHaskellExtension( f ) ) {
         return true;
       }
       return false;

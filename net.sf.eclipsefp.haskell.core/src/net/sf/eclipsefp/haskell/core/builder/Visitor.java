@@ -4,7 +4,7 @@ package net.sf.eclipsefp.haskell.core.builder;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,11 +39,11 @@ abstract class Visitor {
   }
 
   boolean isHaskellFile( final IFile file ) {
-    return ResourceUtil.hasHaskellExtension( file );
+    return FileUtil.hasHaskellExtension( file );
   }
 
   boolean isCabalFile( final IFile file ) {
-    return ResourceUtil.hasCabalExtension( file );
+    return FileUtil.hasCabalExtension( file );
   }
 
   boolean isInSourceFolder( final IFile file ) {

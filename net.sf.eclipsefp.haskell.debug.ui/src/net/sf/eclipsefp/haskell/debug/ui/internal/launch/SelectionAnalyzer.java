@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -94,7 +95,7 @@ class SelectionAnalyzer {
     return    res != null
            && res instanceof IFile
            && isInHsProject( res )
-           && ResourceUtil.hasHaskellExtension( res );
+           && FileUtil.hasHaskellExtension( res );
   }
 
   private static boolean isInHsProject( final IResource res )

@@ -395,7 +395,7 @@ public class ScionServer {
 	 * @throws ScionServerException if something happened to the server connection
 	 * @throws ScionCommandException if something went wrong parsing or processing the command 
 	 */
-	public synchronized void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
+	public void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
 		// set only once
 		command.setSequenceNumber(makeSequenceNumber());
 		runCommandSync(command, monitor,0);

@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -69,7 +69,7 @@ public abstract class MarkerCompletion implements IMarkerResolution {
   }
 
   protected String getLineStartAddition(final String added,final IResource file){
-    if (ResourceUtil.hasLiterateExtension( file )){
+    if (FileUtil.hasLiterateExtension( file )){
       return "> "+added;
     }
     return added;

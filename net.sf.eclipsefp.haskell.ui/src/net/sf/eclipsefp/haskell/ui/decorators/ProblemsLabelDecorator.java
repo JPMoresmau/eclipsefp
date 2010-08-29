@@ -4,6 +4,7 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -52,7 +53,7 @@ public class ProblemsLabelDecorator implements ILightweightLabelDecorator {
     }
     try {
       if( obj instanceof IFile
-          && ResourceUtil.hasHaskellExtension( ( IResource )obj ) ) {
+          && FileUtil.hasHaskellExtension( ( IResource )obj ) ) {
         return ( ( IResource )obj ).findMaxProblemSeverity( IMarker.PROBLEM,
             true, IResource.DEPTH_ZERO );
       } else if( obj instanceof IFolder

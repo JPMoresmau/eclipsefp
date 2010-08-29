@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
   *
   * @author Leif Frenzel
   */
-class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
+public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
 
   private IPreferenceStore store;
   private final HaskellConfiguration config;
@@ -41,7 +41,6 @@ class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
   SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
     super( parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     this.store = store;
-
 
     config=new HaskellConfiguration( null );
     config.setPreferenceStore( store );

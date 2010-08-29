@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -15,7 +16,7 @@ public class HaskellResource {
 
   public boolean isHaskellFile() {
     return    fResource instanceof IFile
-           && ResourceUtil.hasHaskellExtension( fResource );
+           && FileUtil.hasHaskellExtension( fResource );
   }
 
   public boolean isSourceFolder() {

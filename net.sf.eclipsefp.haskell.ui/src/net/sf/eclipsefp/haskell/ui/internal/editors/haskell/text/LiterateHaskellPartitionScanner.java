@@ -17,6 +17,7 @@ import org.eclipse.jface.text.rules.Token;
   *
   * @author Leif Frenzel
   */
+@Deprecated
 public class LiterateHaskellPartitionScanner extends RuleBasedPartitionScanner {
 
   public LiterateHaskellPartitionScanner( final boolean latex ) {

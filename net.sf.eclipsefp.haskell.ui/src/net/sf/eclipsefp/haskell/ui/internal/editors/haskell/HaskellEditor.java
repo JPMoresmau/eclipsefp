@@ -372,7 +372,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   /**
    * get the scion instance, creating it if needed
    */
-  private ScionInstance getInstance(){
+  public ScionInstance getInstance(){
     if (instance==null){
       IFile file = findFile();
       // load the new file into Scion

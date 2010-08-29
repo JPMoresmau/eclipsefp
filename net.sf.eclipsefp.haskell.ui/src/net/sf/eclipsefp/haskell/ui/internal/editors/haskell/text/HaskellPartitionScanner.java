@@ -16,6 +16,7 @@ import org.eclipse.jface.text.rules.Token;
   * rely on partitioning.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class HaskellPartitionScanner extends RuleBasedPartitionScanner {
   public HaskellPartitionScanner() {
