@@ -31,7 +31,7 @@ public class ColorProvider {
 
   /** The internal singleton reference to ColorProvider. */
   private static class SingletonHolder {
-    private static ColorProvider theInstance = new ColorProvider();
+    private static final ColorProvider theInstance = new ColorProvider();
   }
 
   private final Map<RGB, Color> colors;
@@ -45,7 +45,7 @@ public class ColorProvider {
     initRgbs();
   }
 
-  public static synchronized ColorProvider getInstance() {
+  public static final ColorProvider getInstance() {
     return SingletonHolder.theInstance;
   }
 

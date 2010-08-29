@@ -26,7 +26,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   /** The internal singleton reference to ScannerManager */
   private static class SingletonHolder {
-    private static ScannerManager theInstance = new ScannerManager();
+    private static final ScannerManager theInstance = new ScannerManager();
   }
 
   private HaskellCodeScanner codeScanner;
@@ -53,7 +53,7 @@ public class ScannerManager implements IEditorPreferenceNames {
   }
 
   /** <p>returns the singleton instance of ScannerManager.</p> */
-  public static ScannerManager getInstance() {
+  public static final ScannerManager getInstance() {
     return SingletonHolder.theInstance;
   }
 

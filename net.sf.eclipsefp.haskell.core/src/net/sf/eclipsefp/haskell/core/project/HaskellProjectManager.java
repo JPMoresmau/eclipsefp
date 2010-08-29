@@ -41,7 +41,7 @@ public class HaskellProjectManager {
    *  idiom for initializing singleton instances that avoids double synchronization and
    *  other nasty hacks for thread safety (see "Bill Pugh" solution.) */
   private static class SingletonHolder {
-    private static HaskellProjectManager theInstance = new HaskellProjectManager();
+    private static final HaskellProjectManager theInstance = new HaskellProjectManager();
   }
 
   // we're cautious here and use synchronized data structures: Hashtables
@@ -64,7 +64,7 @@ public class HaskellProjectManager {
     * HaskellProjectManager. This is only package private; only some of the
     * API-implementing classes of this package have the privilege of accessing
     * this instance directly.</p> */
-  static HaskellProjectManager getInstance() {
+  public static final HaskellProjectManager getInstance() {
     return SingletonHolder.theInstance;
   }
 

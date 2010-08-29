@@ -20,13 +20,12 @@ public class HaskellCAProcessor implements IContentAssistProcessor {
 
 	public static class NullCompletionContext extends HaskellCompletionContext {
 
-		private static NullCompletionContext instance = null;
+	  static private class NullCompletionContextHolder {
+	    private static final NullCompletionContext theInstance = new NullCompletionContext();
+	  }
 
-		public static NullCompletionContext getInstance() {
-			if (null == instance) {
-        instance = new NullCompletionContext();
-      }
-			return instance ;
+		public static final NullCompletionContext getInstance() {
+			return NullCompletionContextHolder.theInstance;
 		}
 
 		@Override

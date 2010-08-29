@@ -37,7 +37,7 @@ public class CompilerManager implements ICompilerManager {
    *  idiom for initializing singleton instances that avoids double synchronization and
    *  other nasty hacks for thread safety (see the "Bill Pugh" solution.) */
   private static class CompilerManagerHolder {
-    private static ICompilerManager theInstance = new CompilerManager();
+    private static final ICompilerManager theInstance = new CompilerManager();
   }
 
 	private static final String DEFAULT = DefaultHaskellCompiler.class.getName();
@@ -89,7 +89,7 @@ public class CompilerManager implements ICompilerManager {
 	}
 
   /** Get the CompilerManager instance. */
-	public static ICompilerManager getInstance() {
+	public static final ICompilerManager getInstance() {
 		return CompilerManagerHolder.theInstance;
 	}
 

@@ -36,7 +36,7 @@ public class ColorProvider implements IEditorPreferenceNames {
 
   /** The internal singleton reference to ColorProvider. */
   private static class SingletonHolder {
-    private static ColorProvider theInstance = new ColorProvider();
+    private static final ColorProvider theInstance = new ColorProvider();
   }
 
   private final Map<RGB, Color> colors;
@@ -52,7 +52,7 @@ public class ColorProvider implements IEditorPreferenceNames {
     initializeRgbs();
   }
 
-  public static ColorProvider getInstance() {
+  public static final ColorProvider getInstance() {
     return SingletonHolder.theInstance;
   }
 
