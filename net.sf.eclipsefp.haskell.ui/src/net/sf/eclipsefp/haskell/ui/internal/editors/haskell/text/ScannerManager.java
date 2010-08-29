@@ -24,8 +24,10 @@ import org.eclipse.swt.graphics.Color;
   */
 public class ScannerManager implements IEditorPreferenceNames {
 
-  /** the singleton instance of ScannerManager. */
-  private static ScannerManager _instance;
+  /** The internal singleton reference to ScannerManager */
+  private static class SingletonHolder {
+    private static ScannerManager theInstance = new ScannerManager();
+  }
 
   private HaskellCodeScanner codeScanner;
   private HaskellCommentScanner commentScanner;
@@ -51,11 +53,8 @@ public class ScannerManager implements IEditorPreferenceNames {
   }
 
   /** <p>returns the singleton instance of ScannerManager.</p> */
-  public static synchronized ScannerManager getInstance() {
-    if( _instance == null ) {
-      _instance = new ScannerManager();
-    }
-    return _instance;
+  public static ScannerManager getInstance() {
+    return SingletonHolder.theInstance;
   }
 
   public void dispose() {

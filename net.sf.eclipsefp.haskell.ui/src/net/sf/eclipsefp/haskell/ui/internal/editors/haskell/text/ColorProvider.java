@@ -17,10 +17,10 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 
-/** <p>Provides colors for syntax coloring in the editor.</p>
+/** Provides colors for syntax coloring in the editor.
   *
-  * <p>This is implemented as singleton to make it accessible from
-  * everywhere and also to reduce resource management to one single place.</p>
+  * This is implemented as singleton to make it accessible from
+  * everywhere and also to reduce resource management to one single place.
   *
   * @author Leif Frenzel
   */
@@ -34,8 +34,10 @@ public class ColorProvider implements IEditorPreferenceNames {
   public static final RGB DEFAULT_CHAR              = new RGB( 96, 96, 96 );
   public static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
-  /** the singleton instance of ColorProvider. */
-  private static ColorProvider _instance;
+  /** The internal singleton reference to ColorProvider. */
+  private static class SingletonHolder {
+    private static ColorProvider theInstance = new ColorProvider();
+  }
 
   private final Map<RGB, Color> colors;
   private final Map<String, RGB> rgbs;
@@ -50,11 +52,8 @@ public class ColorProvider implements IEditorPreferenceNames {
     initializeRgbs();
   }
 
-  public static synchronized ColorProvider getInstance() {
-    if( _instance == null ) {
-      _instance = new ColorProvider();
-    }
-    return _instance;
+  public static ColorProvider getInstance() {
+    return SingletonHolder.theInstance;
   }
 
   public ColorProvider(final IPreferenceStore store){

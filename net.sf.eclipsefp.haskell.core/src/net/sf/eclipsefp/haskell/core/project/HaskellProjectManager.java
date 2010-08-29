@@ -24,12 +24,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 
-/** <p>The HaskellProjectManager manages Haskell project specific information
+/** The HaskellProjectManager manages Haskell project specific information
   * for IProject resources that have the Haskell project nature. That
   * information is encapsulated by {@link IHaskellProject IHaskellProject}
-  * objects managed by this HaskellProjectManager.</p>
+  * objects managed by this HaskellProjectManager.
   *
-  * <p>This is a singleton to make it accessible from everywhere.</p>
+  * This is a singleton to make it accessible from everywhere.
   *
   * @author Leif Frenzel
   */
@@ -37,7 +37,12 @@ public class HaskellProjectManager {
 
   public static final String HASKELL_PROJECT_DESCRIPTOR = ".hsproject"; //$NON-NLS-1$
 
-  private static HaskellProjectManager _instance;
+  /** The singleton instance of HaskellProjectManager. Note that this uses the "lazy"
+   *  idiom for initializing singleton instances that avoids double synchronization and
+   *  other nasty hacks for thread safety (see "Bill Pugh" solution.) */
+  private static class SingletonHolder {
+    private static HaskellProjectManager theInstance = new HaskellProjectManager();
+  }
 
   // we're cautious here and use synchronized data structures: Hashtables
   // and Vectors
@@ -49,8 +54,7 @@ public class HaskellProjectManager {
     * this HaskellProjectManager. */
   private final Vector<IProjectPropertiesListener> listeners;
 
-  /** the singleton instance of HaskellProjectManager. Private in order
-    * to ensure the singleton pattern. */
+  /** Default constructor. This is private to ensure singleton properties. */
   private HaskellProjectManager() {
     htHaskellProjects = new Hashtable<IResource, IHaskellProject>();
     listeners = new Vector<IProjectPropertiesListener>();
@@ -60,11 +64,8 @@ public class HaskellProjectManager {
     * HaskellProjectManager. This is only package private; only some of the
     * API-implementing classes of this package have the privilege of accessing
     * this instance directly.</p> */
-  static synchronized HaskellProjectManager getInstance() {
-    if( _instance == null ) {
-      _instance = new HaskellProjectManager();
-    }
-    return _instance;
+  static HaskellProjectManager getInstance() {
+    return SingletonHolder.theInstance;
   }
 
   /** <p>removes all information from this HaskellProjectManager. </p> */
