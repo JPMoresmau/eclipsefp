@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import java.util.Arrays;
 import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -55,6 +56,10 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     new ColorListEntry( UITexts.preferences_editor_syntax_symbols, EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_others, EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
 
+  {
+    // order by label (see compareTo in ColorListEntry)
+    Arrays.sort( colorListModel );
+  }
 
   SyntaxTab( final IPreferenceStore store ) {
     super( store );
