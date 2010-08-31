@@ -43,10 +43,16 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
                         EDITOR_LITERATE_COMMENT_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_strings, EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_characters, EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ),
-    new ColorListEntry( UITexts.preferences_editor_syntax_functions,
-                        EDITOR_FUNCTION_COLOR,
-                        EDITOR_FUNCTION_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_numbers,
+        EDITOR_NUMBER_COLOR,
+        EDITOR_NUMBER_BOLD ),
+//    new ColorListEntry( UITexts.preferences_editor_syntax_functions,
+//                        EDITOR_FUNCTION_COLOR,
+//                        EDITOR_FUNCTION_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_keywords, EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_vars, EDITOR_VAR_COLOR, EDITOR_VAR_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_cons, EDITOR_CON_COLOR, EDITOR_CON_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_symbols, EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_others, EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
 
 

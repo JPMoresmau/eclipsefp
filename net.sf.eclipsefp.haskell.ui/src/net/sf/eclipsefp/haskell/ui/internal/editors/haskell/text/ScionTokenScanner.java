@@ -18,7 +18,11 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.json.JSONArray;
 
-
+/**
+ * <p>Uses Scion tokenTypesArbitrary function to get tokens for a haskell source</p>
+  *
+  * @author JP Moresmau
+ */
 public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPreferenceNames {
   private final ScannerManager man;
   private final ScionInstance instance;
@@ -133,9 +137,21 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     } else if ("DL".equals(td.getName())){
       return man.createToken( EDITOR_LITERATE_COMMENT_COLOR,
           EDITOR_LITERATE_COMMENT_BOLD );
-    }else if ("K".equals(td.getName()) || "EK".equals(td.getName()) ){
+    } else if ("K".equals(td.getName()) || "EK".equals(td.getName()) ){
       return man.createToken(EDITOR_KEYWORD_COLOR,
           EDITOR_KEYWORD_BOLD );
+    } else if ("LI".equals(td.getName()) || "LR".equals(td.getName()) || "LW".equals(td.getName()) || "LF".equals(td.getName()) || "LW".equals(td.getName()) ){
+      return man.createToken(EDITOR_NUMBER_COLOR,
+          EDITOR_NUMBER_BOLD );
+    } else if ("IC".equals(td.getName())){
+      return man.createToken( EDITOR_CON_COLOR,
+          EDITOR_CON_BOLD );
+    } else if ("IV".equals(td.getName())){
+      return man.createToken( EDITOR_VAR_COLOR,
+          EDITOR_VAR_BOLD );
+    } else if ("S".equals(td.getName()) || "SS".equals(td.getName()) ){
+      return man.createToken(EDITOR_SYMBOL_COLOR,
+          EDITOR_SYMBOL_BOLD );
     }
     return man.createToken( EDITOR_DEFAULT_COLOR,
         EDITOR_DEFAULT_BOLD );

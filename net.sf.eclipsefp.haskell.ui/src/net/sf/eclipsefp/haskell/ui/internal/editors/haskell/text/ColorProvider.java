@@ -32,6 +32,10 @@ public class ColorProvider implements IEditorPreferenceNames {
   public static final RGB DEFAULT_FUNCTION          = new RGB( 64, 192, 192 );
   public static final RGB DEFAULT_STRING            = new RGB( 128, 64, 64 );
   public static final RGB DEFAULT_CHAR              = new RGB( 96, 96, 96 );
+  public static final RGB DEFAULT_NUMBER            = new RGB( 0, 0, 0 );
+  public static final RGB DEFAULT_VAR               = new RGB( 0, 0, 0 );
+  public static final RGB DEFAULT_CON               = new RGB( 200, 0, 0 );
+  public static final RGB DEFAULT_SYMBOL             = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
   /** the singleton instance of ColorProvider. */
@@ -119,6 +123,10 @@ public class ColorProvider implements IEditorPreferenceNames {
     putRgb( EDITOR_DEFAULT_COLOR, DEFAULT_OTHER );
     putRgb( EDITOR_STRING_COLOR, DEFAULT_STRING );
     putRgb( EDITOR_CHAR_COLOR, DEFAULT_CHAR );
+    putRgb( EDITOR_NUMBER_COLOR, DEFAULT_NUMBER );
+    putRgb( EDITOR_VAR_COLOR, DEFAULT_VAR );
+    putRgb( EDITOR_CON_COLOR, DEFAULT_CON );
+    putRgb( EDITOR_SYMBOL_COLOR, DEFAULT_SYMBOL );
   }
 
   private void putRgb( final String key, final RGB defaultRgb ) {
