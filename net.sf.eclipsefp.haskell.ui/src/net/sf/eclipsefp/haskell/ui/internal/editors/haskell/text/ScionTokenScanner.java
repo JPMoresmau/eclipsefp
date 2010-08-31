@@ -2,8 +2,10 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
@@ -40,10 +42,44 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private int offset;
   private int length;
 
+  private final Map<String,IToken> tokenByTypes=new HashMap<String,IToken>();
+
   public ScionTokenScanner(final ScannerManager man,final ScionInstance instance,final IFile file){
     this.man=man;
     this.instance=instance;
     this.file=file;
+    buildTokensByType();
+  }
+
+  private void buildTokensByType(){
+    tokenByTypes.put( "LS", man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
+    tokenByTypes.put( "LC", man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
+    tokenByTypes.put( "D", man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
+    tokenByTypes.put( "DL", man.createToken( EDITOR_LITERATE_COMMENT_COLOR,
+        EDITOR_LITERATE_COMMENT_BOLD  ) );
+    tokenByTypes.put( "K", man.createToken( EDITOR_KEYWORD_COLOR,
+        EDITOR_KEYWORD_BOLD   ) );
+    tokenByTypes.put( "EK", man.createToken( EDITOR_KEYWORD_COLOR,
+        EDITOR_KEYWORD_BOLD   ) );
+    tokenByTypes.put( "LI", man.createToken( EDITOR_NUMBER_COLOR,
+        EDITOR_NUMBER_BOLD   ) );
+    tokenByTypes.put( "LR", man.createToken( EDITOR_NUMBER_COLOR,
+        EDITOR_NUMBER_BOLD   ) );
+    tokenByTypes.put( "LW", man.createToken( EDITOR_NUMBER_COLOR,
+        EDITOR_NUMBER_BOLD   ) );
+    tokenByTypes.put( "LF", man.createToken( EDITOR_NUMBER_COLOR,
+        EDITOR_NUMBER_BOLD   ) );
+    tokenByTypes.put( "LW", man.createToken( EDITOR_NUMBER_COLOR,
+        EDITOR_NUMBER_BOLD   ) );
+    tokenByTypes.put( "IC", man.createToken( EDITOR_CON_COLOR,
+        EDITOR_CON_BOLD  ) );
+    tokenByTypes.put( "IV", man.createToken( EDITOR_VAR_COLOR,
+        EDITOR_VAR_BOLD   ) );
+    tokenByTypes.put( "S", man.createToken( EDITOR_SYMBOL_COLOR,
+        EDITOR_SYMBOL_BOLD   ) );
+    tokenByTypes.put( "SS", man.createToken( EDITOR_SYMBOL_COLOR,
+        EDITOR_SYMBOL_BOLD   ) );
+
   }
 
   public int getTokenLength() {
@@ -127,31 +163,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   }
 
   private IToken getTokenFromTokenDef(final TokenDef td){
-    if ("LS".equals(td.getName())){
-      return man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD );
-    } else if ("LC".equals(td.getName())){
-      return man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD );
-    } else if ("D".equals(td.getName())){
-      return man.createToken( EDITOR_COMMENT_COLOR,
-          EDITOR_COMMENT_BOLD );
-    } else if ("DL".equals(td.getName())){
-      return man.createToken( EDITOR_LITERATE_COMMENT_COLOR,
-          EDITOR_LITERATE_COMMENT_BOLD );
-    } else if ("K".equals(td.getName()) || "EK".equals(td.getName()) ){
-      return man.createToken(EDITOR_KEYWORD_COLOR,
-          EDITOR_KEYWORD_BOLD );
-    } else if ("LI".equals(td.getName()) || "LR".equals(td.getName()) || "LW".equals(td.getName()) || "LF".equals(td.getName()) || "LW".equals(td.getName()) ){
-      return man.createToken(EDITOR_NUMBER_COLOR,
-          EDITOR_NUMBER_BOLD );
-    } else if ("IC".equals(td.getName())){
-      return man.createToken( EDITOR_CON_COLOR,
-          EDITOR_CON_BOLD );
-    } else if ("IV".equals(td.getName())){
-      return man.createToken( EDITOR_VAR_COLOR,
-          EDITOR_VAR_BOLD );
-    } else if ("S".equals(td.getName()) || "SS".equals(td.getName()) ){
-      return man.createToken(EDITOR_SYMBOL_COLOR,
-          EDITOR_SYMBOL_BOLD );
+    IToken tok=tokenByTypes.get(td.getName());
+    if (tok!=null){
+      return tok;
     }
     return man.createToken( EDITOR_DEFAULT_COLOR,
         EDITOR_DEFAULT_BOLD );
