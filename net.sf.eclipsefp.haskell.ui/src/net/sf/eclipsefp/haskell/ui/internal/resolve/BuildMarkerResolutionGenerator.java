@@ -33,16 +33,16 @@ public class BuildMarkerResolutionGenerator implements
             String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START.length() ).trim();
             res.add( new ReplaceImportResolution( newImport ) );
           }
-        } else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2)){
-            //
-         } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
+        } else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3)){
+          //
+        } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
            int end=ix-2;
            int ix2=msg.lastIndexOf( ' ',end);
            if (ix2>-1){
              String flag=msg.substring( ix2+1,end+1 ).trim();
              addPragma(res,flag);
            }
-         }
+        }
 
       }
     }
@@ -55,6 +55,9 @@ public class BuildMarkerResolutionGenerator implements
 
     for (String s:toSearch){
       if ((ix=msgL.indexOf( s ))>-1){
+        if (s.endsWith( " -x" )){
+          s=s.substring( s.length()-3 );
+        }
         int start=ix+1+s.length();
         int ix2=msg.indexOf( ' ',start);
         if (ix2>-1){
