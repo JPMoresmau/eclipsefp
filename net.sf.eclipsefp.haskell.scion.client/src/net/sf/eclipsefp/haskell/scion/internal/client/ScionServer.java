@@ -25,6 +25,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Representation of the Scion server on the Java side.
@@ -315,11 +316,21 @@ public class ScionServer {
 	 * Returns null in case of EOF.
 	 */
 	private String readLineFromServer() throws IOException {
-		String line = serverStdOutReader.readLine();
+		final String line = serverStdOutReader.readLine();
 		if (line != null) {
 			if (serverOutput!=null){
-				serverOutput.append(line+"\n");
-				serverOutput.flush();
+				Display.getDefault().asyncExec(new Runnable() {
+				
+					public void run() {
+						try {
+						serverOutput.append(line);
+						serverOutput.append("\n");
+						serverOutput.flush();
+						} catch (IOException ioe){
+							// ignore
+						}
+					}
+				});
 			} else {
 				Trace.trace(SERVER_STDOUT_PREFIX, line);
 			}
@@ -410,8 +421,9 @@ public class ScionServer {
 			serverOutputThread.interrupt();
 			//slurpServerOutput();
 			command.receiveResponse(socketReader,monitor);
+			serverOutputThread.interrupt();
 			//slurpServerOutput();
-			Trace.trace(CLASS_PREFIX, "Command executed successfully");
+			//Trace.trace(CLASS_PREFIX, "Command executed successfully");
 		} catch (ScionServerException ex) {
 			if (count<MAX_RETRIES && ex.getCause()!=null && ex.getCause().getCause() instanceof SocketTimeoutException){
 				// this will not change sequence number

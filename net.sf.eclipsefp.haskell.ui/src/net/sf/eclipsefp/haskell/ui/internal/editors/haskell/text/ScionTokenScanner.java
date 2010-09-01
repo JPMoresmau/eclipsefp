@@ -31,6 +31,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private final IFile file;
 
   private IDocument doc;
+  private String contents;
 
   private TokenDef currentTokenDef;
   private List<TokenDef> lTokenDefs;
@@ -136,9 +137,15 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
  //   currentToken=null;
     tokenDefs=null;
 
-      this.doc=document;
+
       if (instance!=null){
-        lTokenDefs=instance.tokenTypes(file, document.get() );
+
+        String newContents=document.get();
+        if (!document.equals( doc ) || !newContents.equals( contents )){
+          doc=document;
+          contents=newContents;
+          lTokenDefs=instance.tokenTypes(file, contents );
+        }
       } else {
         try {
           InputStream stream = SyntaxPreviewer.class.getResourceAsStream( "preview.json" );
@@ -153,7 +160,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
           HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
         }
       }
-
+      this.doc=document;
     if (lTokenDefs!=null && lTokenDefs.size()>0){
       tokenDefs=lTokenDefs.listIterator();
     }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,8 @@ public class ScionInstance implements IScionCommandRunner {
 	private CabalComponentResolver resolver;
 	private Component lastLoadedComponent;
 	private List<String> exposedModulesCache=null;
+	
+	private Map<IFile,LoadInfo> loadInfos=new HashMap<IFile, LoadInfo>();
 	
 	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput,CabalComponentResolver resolver) {
 		this.serverExecutable = serverExecutable;
@@ -372,7 +375,17 @@ public class ScionInstance implements IScionCommandRunner {
 		// done on return
 		//deleteProblems(file);
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
-		
+		final LoadInfo li=getLoadInfo(file);
+		if (li.lastCommand!=null){
+			li.lastCommand.cancel();
+			li.lastCommand=null;
+		}
+		final IJobChangeListener l2=new JobChangeAdapter(){
+			@Override
+			public void done(IJobChangeEvent event) {
+				li.lastCommand=null;
+			}
+		};
 		Set<String> componentNames=resolver.getComponents(file);
 		if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
 			Component toLoad=null;
@@ -396,6 +409,8 @@ public class ScionInstance implements IScionCommandRunner {
 					public void run() {
 						lastLoadedComponent=compo;
 						BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
+						li.lastCommand=cmd;
+						cmd.addJobChangeListener(l2);
 						//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
 						ScionInstance.this.run(cmd,after,sync);
 					}
@@ -405,6 +420,8 @@ public class ScionInstance implements IScionCommandRunner {
 		} 
 		
 		BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(this, file);
+		cmd.addJobChangeListener(l2);
+		li.lastCommand=cmd;
 		//cmd.addJobChangeListener(new CompilationResultHandler(getProject()));
 		run(cmd,after,sync);
 		
@@ -418,11 +435,18 @@ public class ScionInstance implements IScionCommandRunner {
 		//deleteProblems(file);
 		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
 		//final IJobChangeListener l=new CompilationResultHandler(getProject(),doc);
+		final LoadInfo li=getLoadInfo(file);
+		if (li.lastCommand!=null){
+			li.lastCommand.cancel();
+			li.lastCommand=null;
+		}
 		final IJobChangeListener l2=new JobChangeAdapter(){
 				@Override
 				public void done(IJobChangeEvent event) {
+					li.lastCommand=null;
 					if (event.getResult().isOK()) {
 						if (after!=null){
+							li.interactiveCheckDisabled=false;
 							after.run();
 						}
 					}
@@ -431,19 +455,25 @@ public class ScionInstance implements IScionCommandRunner {
 		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc){
 			@Override
 			protected boolean onError(JSONException ex, String name, String message) {
+				li.lastCommand=null;
 				if (message!=null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)){
 					deleteProblems(file);
-					ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
+					if (!li.interactiveCheckDisabled){
+						ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
+						li.interactiveCheckDisabled=true;
+					} 
 					//removeJobChangeListener(l);
 					removeJobChangeListener(l2);
-					ScionInstance.this.reloadFile(file, after,sync);
+					//ScionInstance.this.reloadFile(file, after,sync);
 					
 					return true;
 				} 
+				li.interactiveCheckDisabled=false;
 				return super.onError(ex, name, message);
 				
 			}
 		};
+		li.lastCommand=cmd;
 		//cmd.addJobChangeListener(l);
 		cmd.addJobChangeListener(l2);
 		run(cmd,null,sync);
@@ -613,5 +643,20 @@ public class ScionInstance implements IScionCommandRunner {
 			return command.getTokens();
 		}
 		return null;
+	}
+	
+	private synchronized LoadInfo getLoadInfo(IFile file){
+		LoadInfo li=loadInfos.get(file);
+		if (li==null){
+			li=new LoadInfo();
+			loadInfos.put(file,li);
+		}
+		return li;
+	}
+	
+	private class LoadInfo {
+		private boolean interactiveCheckDisabled=false;
+		private ScionCommand lastCommand;
+		
 	}
 }

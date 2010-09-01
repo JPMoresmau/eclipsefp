@@ -173,7 +173,7 @@ public abstract class ScionCommand extends Job {
 		}
 		String jsonString = toJSONString();
 		
-		Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
+		//Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
 
 		try {
 			out.write(jsonString);
@@ -205,7 +205,7 @@ public abstract class ScionCommand extends Job {
 			throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
 		}
 
-		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
+		//Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
 		if (!processResponse(response)){
 			receiveResponse(reader,monitor);
 		}
