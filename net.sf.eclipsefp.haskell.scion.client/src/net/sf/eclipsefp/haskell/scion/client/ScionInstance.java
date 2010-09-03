@@ -459,7 +459,7 @@ public class ScionInstance implements IScionCommandRunner {
 				if (message!=null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)){
 					deleteProblems(file);
 					if (!li.interactiveCheckDisabled){
-						ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,message), null);
+						ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,file.getProjectRelativePath(),message), null);
 						li.interactiveCheckDisabled=true;
 					} 
 					//removeJobChangeListener(l);
@@ -638,8 +638,11 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public List<TokenDef> tokenTypes(IFile file,String contents){
 		if (cabalDescription!=null){
+			long t0=System.currentTimeMillis();
 			TokenTypesCommand command=new TokenTypesCommand(this, file, contents,FileUtil.hasLiterateExtension(file));
 			command.runSync();
+			long t1=System.currentTimeMillis();
+			System.err.println("tokenTypes:"+(t1-t0));
 			return command.getTokens();
 		}
 		return null;
