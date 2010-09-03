@@ -135,8 +135,10 @@ public class ImportLibrariesPP extends PropertyPage
             if (pds!=null){
               String toAdd=cp.getName()+(cp.getVersion().length()>0?" "+cp.getVersion():"");
               RealValuePosition rvp=pds.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, toAdd );
-              rvp.updateDocument( doc );
-              pd=PackageDescriptionLoader.load( doc.get() );
+              if (rvp!=null){
+                rvp.updateDocument( doc );
+                pd=PackageDescriptionLoader.load( doc.get() );
+              }
             }
           }
         }

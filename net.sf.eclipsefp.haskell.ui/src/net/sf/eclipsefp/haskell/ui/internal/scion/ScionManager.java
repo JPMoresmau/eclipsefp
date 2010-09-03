@@ -420,12 +420,20 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
                       IDocument doc = prov.getDocument( cabalF );
 
                       for( PackageDescriptionStanza pds: lpds ) {
+                        pds=pd.getSameStanza(pds);
                         RealValuePosition rvp = pds.removeFromPropertyList(
                             CabalSyntax.FIELD_EXPOSED_MODULES, qn );
-                        rvp.updateDocument( doc );
+                        if (rvp!=null){
+                          rvp.updateDocument( doc );
+                          pd=PackageDescriptionLoader.load( doc.get() );
+                          pds=pd.getSameStanza(pds);
+                        }
                         rvp = pds.removeFromPropertyList(
                             CabalSyntax.FIELD_OTHER_MODULES, qn );
-                        rvp.updateDocument( doc );
+                        if (rvp!=null){
+                          rvp.updateDocument( doc );
+                          pd=PackageDescriptionLoader.load( doc.get() );
+                        }
                       }
                       prov.saveDocument( null, cabalF, doc, true );
                     } finally {

@@ -461,11 +461,12 @@ public class CabalModelTest extends TestCase {
     assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
-    assertEquals(122,rvp.getStartLine());
-    assertEquals(134,rvp.getEndLine());
-    assertEquals(16,rvp.getInitialIndent());
-    //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
+    assertNull(rvp);
+//    assertEquals(122,rvp.getStartLine());
+//    assertEquals(134,rvp.getEndLine());
+//    assertEquals(16,rvp.getInitialIndent());
+//    //assertEquals(4,rvp.getSubsequentIndent());
+//    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
