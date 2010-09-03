@@ -38,7 +38,7 @@ public class ModuleInclusionPP extends PropertyPage {
       IPath p=ResourceUtil.getSourceRelativePath( src, f );
       info.setFolders(p);
       info.setModuleName( f.getProjectRelativePath().removeFileExtension().lastSegment() );
-      mic.init( src, info.getQualifiedModuleName() );
+      mic.init( src, info.getQualifiedModuleName() ,false);
     } else {
       mic.initNoSourceFolder();
     }

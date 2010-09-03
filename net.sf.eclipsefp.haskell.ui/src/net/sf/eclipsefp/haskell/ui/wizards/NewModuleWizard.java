@@ -63,6 +63,10 @@ public class NewModuleWizard extends Wizard implements INewWizard {
   @Override
   public boolean performFinish() {
     ModuleCreationInfo mci = page0.getInfo();
+    // the user hasn't clicked on next
+    if (!page1.getModuleInclusionComposite().isInit()){
+      page1.setPreviousPage( page0 );
+    }
     mci.setExposed( page1.getModuleInclusionComposite().getExposed() );
     mci.setIncluded( page1.getModuleInclusionComposite().getIncluded() );
     ModuleCreationOperation mco=new ModuleCreationOperation( mci ) ;

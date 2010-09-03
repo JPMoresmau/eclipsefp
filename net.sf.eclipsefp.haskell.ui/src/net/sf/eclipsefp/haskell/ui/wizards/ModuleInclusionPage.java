@@ -43,7 +43,7 @@ public class ModuleInclusionPage extends StatusWizardPage{
     ModuleCreationInfo mci=((NewModuleWizardPage)page).getInfo();
     IContainer src=mci.getSourceContainer();
     String module=mci.getQualifiedModuleName();
-    mic.init( src, module );
+    mic.init( src, module, true );
 
   }
 }

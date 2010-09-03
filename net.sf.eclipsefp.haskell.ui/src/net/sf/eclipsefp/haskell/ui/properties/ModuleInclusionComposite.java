@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -34,6 +35,10 @@ public class ModuleInclusionComposite extends Composite {
   private final Set<PackageDescriptionStanza> included=new HashSet<PackageDescriptionStanza>();
   private final Set<PackageDescriptionStanza> exposed=new HashSet<PackageDescriptionStanza>();
 
+  /**
+   * have we init at all
+   */
+  private boolean init=false;
 
   public ModuleInclusionComposite( final Composite parent, final int style ) {
     super( parent, style );
@@ -47,8 +52,19 @@ public class ModuleInclusionComposite extends Composite {
     layout( true, true );
   }
 
-  public void init(final IResource srcPath, final String module){
 
+  public boolean isInit() {
+    return init;
+  }
+
+  /**
+   * init the composite with information from the cabal file, or if it's a new module, default inclusion
+   * @param srcPath the path to the source folder
+   * @param module the module name
+   * @param isNew is the module being created?
+   */
+  public void init(final IResource srcPath, final String module,final boolean isNew){
+    init=true;
     for (Control c:getChildren()){
       c.dispose();
     }
@@ -117,10 +133,13 @@ public class ModuleInclusionComposite extends Composite {
               }
 
             });
-            if (ModuleInclusionType.INCLUDED.equals( mit )){
+            if (ModuleInclusionType.INCLUDED.equals( mit ) || isNew){
               bInclude.setSelection( true);
               included.add( pd );
               bExpose.setSelection( false );
+              if (isNew){
+                bInclude.notifyListeners( SWT.Selection, new Event() );
+              }
             }
           }
 
@@ -138,10 +157,13 @@ public class ModuleInclusionComposite extends Composite {
                 bInclude.setEnabled( !bExpose.getSelection() );
               }
             });
-            if (ModuleInclusionType.EXPOSED.equals( mit )){
+            if (ModuleInclusionType.EXPOSED.equals( mit ) || (isNew && !bInclude.isEnabled())){
               bExpose.setSelection( true);
               exposed.add( pd );
               bInclude.setSelection( false );
+              if (isNew){
+                bInclude.notifyListeners( SWT.Selection, new Event() );
+              }
             }
 
           }
