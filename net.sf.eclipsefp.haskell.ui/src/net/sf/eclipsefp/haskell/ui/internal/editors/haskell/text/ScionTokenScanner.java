@@ -141,7 +141,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       if (instance!=null){
 
         String newContents=document.get();
-        if (!document.equals( doc ) || !newContents.equals( contents )){
+        if (!document.equals( doc ) || !newContents.equals( contents ) || lTokenDefs==null){
           doc=document;
           contents=newContents;
           lTokenDefs=instance.tokenTypes(file, contents );
