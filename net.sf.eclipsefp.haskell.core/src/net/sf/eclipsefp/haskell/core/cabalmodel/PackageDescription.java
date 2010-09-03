@@ -7,7 +7,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,13 +50,7 @@ public class PackageDescription {
     Map<String, List<PackageDescriptionStanza>> ret=new HashMap<String, List<PackageDescriptionStanza>>();
 
     for (PackageDescriptionStanza pds:stanzas){
-      if (pds instanceof PackagePropertiesStanza){
-        continue;
-      }
       Collection<String> sds=pds.getSourceDirs();
-      if (sds.isEmpty()){
-        sds=Collections.singletonList( "." ); //$NON-NLS-1$
-      }
       for (String t:sds){
         if (t.length()>0){
           List<PackageDescriptionStanza> pdss=ret.get( t );

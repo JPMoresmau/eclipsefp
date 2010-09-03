@@ -382,6 +382,9 @@ public class PackageDescriptionStanza {
     if (val!=null && val.length()>0){
       ret.addAll(PackageDescriptionLoader.parseList( val));
     }
+    for (PackageDescriptionStanza st:getStanzas()){
+      ret.addAll(st.getSourceDirs());
+    }
     if (ret.isEmpty() && (getType()!=null && (getType().equals( CabalSyntax.SECTION_EXECUTABLE)
         || getType().equals( CabalSyntax.SECTION_LIBRARY)))){
       ret.add("."); //$NON-NLS-1$
