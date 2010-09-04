@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
-import net.sf.eclipsefp.haskell.scion.types.Note.Kind;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -17,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 
+ * List token types, using GHC lexer
  * @author JP Moresmau
  *
  */
@@ -55,9 +53,9 @@ public class TokenTypesCommand extends ScionCommand {
 					tokens.add(new TokenDef(arr));
 				}
 			} else {
-				String err=o.optString("Left");
+				JSONObject err=o.optJSONObject("Left");
 				try {
-					new Note(Kind.ERROR,new Location(file.getLocation().toOSString(),1,1,1,1),err,null).applyAsMarker(file);
+					new Note(err).applyAsMarker(file);
 				} catch (CoreException ce){
 					ce.printStackTrace();
 				}
