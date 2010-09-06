@@ -442,7 +442,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
                   }
                   ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( f );
                   if (si!=null){
-                    si.buildProject( false );
+                    si.buildProject( false , true);
                   }
                   return false;
                 } else if (f.equals( cabalF )){

@@ -130,7 +130,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       } finally {
         prov.disconnect( f );
       }
-      HaskellUIPlugin.getDefault().getScionInstanceManager( generatedFile ).buildProject( false );
+      HaskellUIPlugin.getDefault().getScionInstanceManager( generatedFile ).buildProject( false , false);
 
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );

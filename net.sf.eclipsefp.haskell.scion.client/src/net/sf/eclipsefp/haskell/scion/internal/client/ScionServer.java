@@ -319,13 +319,31 @@ public class ScionServer {
 		final String line = serverStdOutReader.readLine();
 		if (line != null) {
 			if (serverOutput!=null){
+//				serverOutput.append(line+"\n");
+//				int ix=0;
+//				while (line.length()-ix>1024){
+//					serverOutput.append(line.substring(ix,ix+1024));
+//					//serverOutput.flush();
+//					ix+=1024;
+//				}
+//				serverOutput.append(line.substring(ix,line.length())+"\n");
+				// this seems to be what works the best to write to the console
+				// async in display, cut in chunks so it's not too big
 				Display.getDefault().asyncExec(new Runnable() {
 				
 					public void run() {
 						try {
-						serverOutput.append(line);
-						serverOutput.append("\n");
-						serverOutput.flush();
+							//serverOutput.append(line);
+							//serverOutput.append("\n");
+							//serverOutput.flush();
+							int ix=0;
+							while (line.length()-ix>1024){
+								serverOutput.append(line.substring(ix,ix+1024));
+								//serverOutput.flush();
+								ix+=1024;
+							}
+							serverOutput.append(line.substring(ix,line.length())+"\n");
+							serverOutput.flush();
 						} catch (IOException ioe){
 							// ignore
 						}

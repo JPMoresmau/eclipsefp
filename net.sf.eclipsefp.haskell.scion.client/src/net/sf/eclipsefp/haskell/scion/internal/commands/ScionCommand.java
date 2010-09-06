@@ -173,7 +173,7 @@ public abstract class ScionCommand extends Job {
 		}
 		String jsonString = toJSONString();
 		
-		//Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
+		Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
 
 		try {
 			out.write(jsonString);
@@ -195,8 +195,8 @@ public abstract class ScionCommand extends Job {
 			return;
 		}
 		
-
 		JSONObject response;
+		//long t0=System.currentTimeMillis();
 		try {
 			response = new JSONObject(new JSONTokener(reader));
 		} catch (JSONException ex) {
@@ -204,8 +204,9 @@ public abstract class ScionCommand extends Job {
 			// server is in after we've received a malformed response (or end-of-stream!)
 			throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
 		}
-
-		//Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
+		//long t1=System.currentTimeMillis();
+		//System.err.println("receive+parse:"+(t1-t0));
+		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
 		if (!processResponse(response)){
 			receiveResponse(reader,monitor);
 		}

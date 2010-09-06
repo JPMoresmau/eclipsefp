@@ -24,11 +24,13 @@ public class LoadCommand extends ScionCommand implements ICompilerResult{
 	private Component comp;
 	private CompilationResult compilationResult;
 	private boolean output;
+	private boolean forceRecomp;
 	
-	public LoadCommand(IScionCommandRunner runner, Component c,boolean output) {
+	public LoadCommand(IScionCommandRunner runner, Component c,boolean output,boolean forceRecomp) {
 		super(runner, Job.BUILD);
 		this.comp=c;
 		this.output=output;
+		this.forceRecomp=forceRecomp;
 	}
 	
 	@Override
@@ -40,7 +42,9 @@ public class LoadCommand extends ScionCommand implements ICompilerResult{
 	protected JSONObject getParams() throws JSONException {
 		JSONObject params = new JSONObject();
 		params.put("component", comp.toJSON());
-		params.put("output",output);
+		JSONObject options=new JSONObject();
+		options.put("output",output);
+		options.put("forcerecomp",forceRecomp);
 		return params;
 	}
 

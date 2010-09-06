@@ -143,7 +143,7 @@ public class ImportLibrariesPP extends PropertyPage
           }
         }
         prov.saveDocument( new NullProgressMonitor(), f, doc, true );
-        si.buildProject( false );
+        si.buildProject( false, true );
 
       } catch (CoreException ce){
         HaskellUIPlugin.log( ce );

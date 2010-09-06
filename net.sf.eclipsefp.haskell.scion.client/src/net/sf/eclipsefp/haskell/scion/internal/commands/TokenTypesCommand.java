@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
+import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 
@@ -25,7 +26,7 @@ public class TokenTypesCommand extends ScionCommand {
 	private List<TokenDef> tokens;
 	private boolean literate;
 	
-	public TokenTypesCommand(IScionCommandRunner runner, IFile file, String contents,boolean literate) {
+	public TokenTypesCommand(IScionCommandRunner runner,IFile file, String contents,boolean literate) {
 		super(runner, Job.INTERACTIVE);
 		this.file=file;
 		this.contents=contents;
