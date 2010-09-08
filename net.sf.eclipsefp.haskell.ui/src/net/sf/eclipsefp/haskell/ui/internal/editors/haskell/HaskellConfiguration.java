@@ -144,11 +144,25 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		// for every content type we need a damager and a repairer:
 //		ScannerManager man = getScannerManager();
     //ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
-		ScionInstance instance=editor!=null?editor.getInstance():null;
-//		  !ScionPlugin.getDefault().getScionInstances().values().isEmpty()?
-//		      ScionPlugin.getDefault().getScionInstances().values().iterator().next()
-//		      :null;
-		 IFile file=editor!=null?editor.findFile():null;
+		ScionInstance instance=null;
+		if (editor!=null){
+		  /*instance=editor.getInstance();
+		  if (instance==null) {
+		    instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
+		    // no instance, no parsing
+		    if (instance==null){
+		      return reconciler;
+		    }
+		  }*/
+		  // use global instance, that's fine for lexing
+		  instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
+		  if (instance==null){
+        return reconciler;
+      }
+		} // else no editor: we're in preview null instance is fine
+
+
+		IFile file=editor!=null?editor.findFile():null;
 		ITokenScanner codeScanner=new ScionTokenScanner(getScannerManager(),instance, file);
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );

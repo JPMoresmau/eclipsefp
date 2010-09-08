@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 

@@ -29,6 +29,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ModuleGraphCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.QuitCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
@@ -117,7 +118,10 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	public void start() throws ScionServerStartupException {
 		if (server == null) {
-			File directory=new File(project.getLocation().toOSString());
+			
+			File directory=getProject()!=null?
+				new File(getProject().getLocation().toOSString())
+				:null;
 			server = new ScionServer(serverExecutable,serverOutput,directory);
 			server.startServer();
 			checkProtocol();
@@ -128,7 +132,9 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	private boolean checkCabalFile(){
-
+		if (getProject()==null){
+			return false;
+		}
 		IFile cabalFile=getCabalFile(getProject());
 		boolean exists=cabalFile.exists();
 	    if( !exists) {
@@ -262,8 +268,16 @@ public class ScionInstance implements IScionCommandRunner {
 		lastLoadedComponent=null;
 		exposedModulesCache=null;
 		if (server != null) {
-			server.stopServer();
-			server = null;
+			
+			ScionCommand cmd=new QuitCommand(this);
+			cmd.addJobChangeListener(new JobChangeAdapter(){
+				@Override
+				public void done(IJobChangeEvent event) {
+					server.stopServer();
+					server = null;
+				}
+			});
+			cmd.runAsync();
 		}
 	}
 	
@@ -290,7 +304,7 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public boolean contains(ISchedulingRule rule) {
-		return rule == this || rule == getProject() || (getProject().contains(rule));
+		return rule == this || (getProject()!=null &&  rule == getProject()) || (getProject()!=null && (getProject().contains(rule)));
 	}
 
 	public boolean isConflicting(ISchedulingRule rule) {
@@ -640,8 +654,11 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	public List<TokenDef> tokenTypes(final IFile file,final String contents){
-		if (cabalDescription!=null){
+//		if (cabalDescription!=null){
 //			long t0=System.currentTimeMillis();
+		if (Job.getJobManager().isSuspended()){
+			return null;
+		}
 			TokenTypesCommand command=new TokenTypesCommand(ScionInstance.this,  file, contents,FileUtil.hasLiterateExtension(file));
 			command.runSync();
 //			long t1=System.currentTimeMillis();
@@ -666,8 +683,8 @@ public class ScionInstance implements IScionCommandRunner {
 //			runWithComponent(file,run,true);
 //			return run.get();
 			
-		}
-		return null;
+//		}
+//		return null;
 	}
 	
 	private synchronized LoadInfo getLoadInfo(IFile file){

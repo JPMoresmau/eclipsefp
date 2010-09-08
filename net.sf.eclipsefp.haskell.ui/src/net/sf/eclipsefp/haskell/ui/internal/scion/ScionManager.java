@@ -134,6 +134,13 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
       serverExecutable = preferenceStore
           .getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
     }
+
+    // creates the unattached instance used for lexing
+    if (serverExecutable!=null){
+      ScionInstance instance = startInstance( null );
+      instances.put( null, instance );
+    }
+
     preferenceStore.addPropertyChangeListener( new IPropertyChangeListener() {
 
       public void propertyChange( final PropertyChangeEvent event ) {
@@ -494,8 +501,10 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * part of a currently opened project.
    */
   public ScionInstance getScionInstance( final IResource resource ) {
-    IProject project = resource!=null?resource.getProject():null;
-    return instances.get( project );
+    if (resource!=null){
+      return instances.get( resource.getProject() );
+    }
+    return instances.get(null);
   }
 
   /**
@@ -524,7 +533,11 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   private void serverExecutableChanged() {
     ScionServerStartupException exception = null;
     // avoid concurrent modifs
+
     List<IProject> lp=new ArrayList<IProject>(instances.keySet());
+    if (!instances.containsKey( null )){
+     lp.add(null);
+    }
     for( IProject project: lp ) {
       try {
         ScionInstance instance=instances.get( project );
@@ -573,7 +586,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     if (serverExecutable==null){
       return null;
     }
-    String name = NLS.bind( UITexts.scion_console_title, project.getName() );
+    String name = NLS.bind( UITexts.scion_console_title, project!=null?project.getName():UITexts.noproject );
     HaskellConsole c = new HaskellConsole( null, name );
 
     ScionInstance instance = new ScionInstance( serverExecutable, project, c

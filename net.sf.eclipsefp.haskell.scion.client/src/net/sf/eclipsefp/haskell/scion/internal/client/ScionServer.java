@@ -41,6 +41,8 @@ public class ScionServer {
 		CLASS_PREFIX = "[ScionServer]",
 		SERVER_STDOUT_PREFIX = "[scion-server]";
 	
+	private static final AtomicInteger threadNb=new AtomicInteger(1);
+	
 	private String serverExecutable;
 	
 	private Process process;
@@ -86,7 +88,7 @@ public class ScionServer {
 		int port=startServerProcess();
 		//capturePortNumber();
 		connectToServer(port);
-		serverOutputThread=new Thread(){
+		serverOutputThread=new Thread(CLASS_PREFIX+(threadNb.getAndIncrement())){
 			public void run(){
 				while (serverStdOutReader!=null){
 					slurpServerOutput();
@@ -165,11 +167,11 @@ public class ScionServer {
 		}
 		
 		// Connect to the process's stdout to capture messages
-		// Assume that status messages and such will be ASCII only
+		// Assume that status messages and such will be UTF8 only
 		try {
-			serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
+			serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF8"));
 		} catch (UnsupportedEncodingException ex) {
-			// make compiler happy, because US-ASCII is always supported
+			// make compiler happy, because UTF8 is always supported
 		}
 		Trace.trace(CLASS_PREFIX, "Server started");
 		return port;
