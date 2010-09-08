@@ -653,14 +653,12 @@ public class ScionInstance implements IScionCommandRunner {
 
 	}
 	
-	public List<TokenDef> tokenTypes(final IFile file,final String contents){
+	public synchronized List<TokenDef> tokenTypes(final IFile file,final String contents){
 //		if (cabalDescription!=null){
 //			long t0=System.currentTimeMillis();
-		if (Job.getJobManager().isSuspended()){
-			return null;
-		}
+
 			TokenTypesCommand command=new TokenTypesCommand(ScionInstance.this,  file, contents,FileUtil.hasLiterateExtension(file));
-			command.runSync();
+			command.run(new NullProgressMonitor());
 //			long t1=System.currentTimeMillis();
 //			System.err.println("tokenTypes:"+(t1-t0));
 			return command.getTokens();
