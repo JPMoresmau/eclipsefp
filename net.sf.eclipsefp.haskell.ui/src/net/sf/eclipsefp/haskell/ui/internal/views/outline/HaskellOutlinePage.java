@@ -202,7 +202,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
       IDocument doc = editor.getDocumentProvider().getDocument( fei );
       try {
         int offset=srcLoc.getStartOffset( doc );
-        int length = od.getName().length();
+        int length = srcLoc.getEndOffset( doc )-offset;
         try {
           //editor.setHighlightRange( offset, length, true );
           editor.selectAndReveal( offset, length );

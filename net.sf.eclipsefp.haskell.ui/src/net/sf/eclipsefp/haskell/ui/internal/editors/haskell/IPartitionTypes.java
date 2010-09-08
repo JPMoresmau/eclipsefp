@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 /** <p>contains constants for Haskell file partition types.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public interface IPartitionTypes {
 

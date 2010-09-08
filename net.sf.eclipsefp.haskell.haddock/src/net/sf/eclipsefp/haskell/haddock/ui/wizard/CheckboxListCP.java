@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.haddock.HaddockPlugin;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 
 /** <p>content provider for the list part of the viewer on the selection 
   * page.</p>
@@ -53,7 +53,7 @@ public class CheckboxListCP implements IStructuredContentProvider {
       List<IResource> list = new ArrayList<IResource>();
       for( int i = 0; i < ress.length; i++ ) {
         if( ress[ i ] instanceof IFile
-            && ResourceUtil.hasHaskellExtension( ress[ i ] ) ) {
+            && FileUtil.hasHaskellExtension( ress[ i ] ) ) {
           list.add( ress[ i ] );
         }
       }

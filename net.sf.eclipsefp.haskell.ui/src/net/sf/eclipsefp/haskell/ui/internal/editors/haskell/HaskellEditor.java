@@ -372,7 +372,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   /**
    * get the scion instance, creating it if needed
    */
-  private ScionInstance getInstance(){
+  public ScionInstance getInstance(){
     if (instance==null){
       IFile file = findFile();
       // load the new file into Scion
@@ -401,7 +401,19 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         || property.equals( EDITOR_STRING_COLOR )
         || property.equals( EDITOR_STRING_BOLD )
         || property.equals( EDITOR_CHAR_COLOR )
-        || property.equals( EDITOR_CHAR_BOLD );
+        || property.equals( EDITOR_CHAR_BOLD )
+        || property.equals( EDITOR_NUMBER_COLOR )
+        || property.equals( EDITOR_NUMBER_BOLD )
+        || property.equals( EDITOR_VAR_COLOR )
+        || property.equals( EDITOR_VAR_BOLD )
+        || property.equals( EDITOR_CON_COLOR )
+        || property.equals( EDITOR_CON_BOLD )
+        || property.equals( EDITOR_SYMBOL_COLOR )
+        || property.equals( EDITOR_SYMBOL_BOLD )
+        || property.equals( EDITOR_CPP_COLOR )
+        || property.equals( EDITOR_CPP_BOLD )
+        || property.equals( EDITOR_TH_COLOR )
+        || property.equals( EDITOR_TH_BOLD );
   }
 
   private void createTextOpAction( final String name, final int targetId,

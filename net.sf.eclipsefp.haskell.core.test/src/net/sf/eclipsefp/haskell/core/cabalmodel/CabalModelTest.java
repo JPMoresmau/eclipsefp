@@ -429,6 +429,18 @@ public class CabalModelTest extends TestCase {
     String content3=getContent( "scion.cabal" );
     PackageDescription pd=PackageDescriptionLoader.load( content3 );
 
+    Map<String,List<PackageDescriptionStanza>> m=pd.getStanzasBySourceDir();
+    assertEquals(2,m.size());
+    List<PackageDescriptionStanza> pdLib=m.get( "lib" );
+    assertNotNull(pdLib );
+    assertEquals(2,pdLib.size());
+    assertTrue(pdLib.contains(pd.getStanzas().get( 3 )));
+    assertTrue(pdLib.contains(pd.getStanzas().get( 4 )));
+    List<PackageDescriptionStanza> pdServer=m.get( "server" );
+    assertNotNull(pdServer );
+    assertEquals(1,pdServer.size());
+    assertTrue(pdServer.contains(pd.getStanzas().get( 4 )));
+
     PackageDescriptionStanza pds=pd.getStanzas().get( 4 );
     assertEquals(CabalSyntax.SECTION_EXECUTABLE,pds.getType());
 
@@ -461,11 +473,12 @@ public class CabalModelTest extends TestCase {
     assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
-    assertEquals(122,rvp.getStartLine());
-    assertEquals(134,rvp.getEndLine());
-    assertEquals(16,rvp.getInitialIndent());
-    //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
+    assertNull(rvp);
+//    assertEquals(122,rvp.getStartLine());
+//    assertEquals(134,rvp.getEndLine());
+//    assertEquals(16,rvp.getInitialIndent());
+//    //assertEquals(4,rvp.getSubsequentIndent());
+//    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());

@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.scion.client.NameHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -82,7 +83,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
   private void searchDefinedNames( final String prefix,
       final List<ICompletionProposal> result ) {
     if( file != null
-        && ResourceUtil.hasHaskellExtension( file )
+        && FileUtil.hasHaskellExtension( file )
         && ResourceUtil.isInHaskellProject( file ) ) {
       final HaskellUIPlugin plugin = HaskellUIPlugin.getDefault();
       final ScionInstance si = plugin.getScionInstanceManager( file );
@@ -102,7 +103,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
   private void searchModulesNames( final String prefix,
       final List<ICompletionProposal> result ) {
     if( file != null
-        && ResourceUtil.hasHaskellExtension( file )
+        && FileUtil.hasHaskellExtension( file )
         && ResourceUtil.isInHaskellProject( file ) ) {
       final HaskellUIPlugin plugin = HaskellUIPlugin.getDefault();
       final ScionInstance si = plugin.getScionInstanceManager( file );

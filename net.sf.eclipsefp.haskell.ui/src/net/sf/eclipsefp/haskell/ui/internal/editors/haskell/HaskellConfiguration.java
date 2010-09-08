@@ -3,22 +3,18 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterScanner;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCommentScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcilingStrategy;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellStringScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -37,7 +33,6 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.ui.IFileEditorInput;
 
 /**
  * <p>
@@ -101,11 +96,11 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
 	@Override
   public String[] getConfiguredContentTypes( final ISourceViewer sv ) {
-    return new String[] { IDocument.DEFAULT_CONTENT_TYPE, // plain text
-      IPartitionTypes.HS_LITERATE_COMMENT,
-      IPartitionTypes.HS_COMMENT,
-      IPartitionTypes.HS_CHARACTER,
-      IPartitionTypes.HS_STRING
+    return new String[] { IDocument.DEFAULT_CONTENT_TYPE // plain text
+//      IPartitionTypes.HS_LITERATE_COMMENT,
+//      IPartitionTypes.HS_COMMENT,
+//      IPartitionTypes.HS_CHARACTER,
+//      IPartitionTypes.HS_STRING
     };
   }
 
@@ -147,31 +142,51 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		// for every content type we need a damager and a repairer:
-		ScannerManager man = getScannerManager();
-    ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
+//		ScannerManager man = getScannerManager();
+    //ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
+		ScionInstance instance=null;
+		if (editor!=null){
+		  /*instance=editor.getInstance();
+		  if (instance==null) {
+		    instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
+		    // no instance, no parsing
+		    if (instance==null){
+		      return reconciler;
+		    }
+		  }*/
+		  // use global instance, that's fine for lexing
+		  instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
+		  if (instance==null){
+        return reconciler;
+      }
+		} // else no editor: we're in preview null instance is fine
+
+
+		IFile file=editor!=null?editor.findFile():null;
+		ITokenScanner codeScanner=new ScionTokenScanner(getScannerManager(),instance, file);
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
     // comments
-    HaskellCommentScanner commentScanner = man.getCommentScanner();
-    DefaultDamagerRepairer cndr = new DefaultDamagerRepairer( commentScanner );
-    reconciler.setDamager( cndr, IPartitionTypes.HS_COMMENT );
-    reconciler.setRepairer( cndr, IPartitionTypes.HS_COMMENT );
-    // string literals
-    HaskellStringScanner stringScanner = man.getStringScanner();
-    DefaultDamagerRepairer sndr = new DefaultDamagerRepairer( stringScanner );
-    reconciler.setDamager( sndr, IPartitionTypes.HS_STRING );
-    reconciler.setRepairer( sndr, IPartitionTypes.HS_STRING );
-    // character literals
-    HaskellCharacterScanner charScanner = man.getCharacterScanner();
-    DefaultDamagerRepairer chndr = new DefaultDamagerRepairer( charScanner );
-    reconciler.setDamager( chndr, IPartitionTypes.HS_CHARACTER );
-    reconciler.setRepairer( chndr, IPartitionTypes.HS_CHARACTER );
-    // literate comments
-    HaskellCommentScanner litScanner = man.getLiterateCommentScanner();
-    DefaultDamagerRepairer lcndr = new DefaultDamagerRepairer( litScanner );
-    reconciler.setDamager( lcndr, IPartitionTypes.HS_LITERATE_COMMENT );
-    reconciler.setRepairer( lcndr, IPartitionTypes.HS_LITERATE_COMMENT );
+    //HaskellCommentScanner commentScanner = man.getCommentScanner();
+    //DefaultDamagerRepairer cndr = new DefaultDamagerRepairer( codeScanner );
+//    reconciler.setDamager( dr, IPartitionTypes.HS_COMMENT );
+//    reconciler.setRepairer( dr, IPartitionTypes.HS_COMMENT );
+//    // string literals
+//    //HaskellStringScanner stringScanner = man.getStringScanner();
+//    //DefaultDamagerRepairer sndr = new DefaultDamagerRepairer( codeScanner );
+//    reconciler.setDamager( dr, IPartitionTypes.HS_STRING );
+//   reconciler.setRepairer( dr, IPartitionTypes.HS_STRING );
+//    // character literals
+//    //HaskellCharacterScanner charScanner = man.getCharacterScanner();
+//    //DefaultDamagerRepairer chndr = new DefaultDamagerRepairer( codeScanner );
+//    reconciler.setDamager( dr, IPartitionTypes.HS_CHARACTER );
+//    reconciler.setRepairer( dr, IPartitionTypes.HS_CHARACTER );
+//    // literate comments
+//    //HaskellCommentScanner litScanner = man.getLiterateCommentScanner();
+//    //DefaultDamagerRepairer lcndr = new DefaultDamagerRepairer( codeScanner );
+//    reconciler.setDamager( dr, IPartitionTypes.HS_LITERATE_COMMENT );
+//    reconciler.setRepairer( dr, IPartitionTypes.HS_LITERATE_COMMENT );
 
 		return reconciler;
 	}
@@ -257,21 +272,21 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
     return getPreferenceStore().getBoolean( key );
   }
 
-  private boolean isLatexLiterate() {
-    boolean result = false;
-    if( editor != null && editor.getEditorInput() instanceof IFileEditorInput ) {
-      IFileEditorInput fei = ( IFileEditorInput )editor.getEditorInput();
-      IFile file = fei.getFile();
-      try {
-        if( file != null && file.getContentDescription() != null ) {
-          QualifiedName name = LiterateContentDescriber.STYLE;
-          Object property = file.getContentDescription().getProperty( name );
-          result = LiterateContentDescriber.LATEX.equals( property );
-        }
-      } catch( final CoreException cex ) {
-        HaskellUIPlugin.log( cex );
-      }
-    }
-    return result;
-  }
+//  private boolean isLatexLiterate() {
+//    boolean result = false;
+//    if( editor != null && editor.getEditorInput() instanceof IFileEditorInput ) {
+//      IFileEditorInput fei = ( IFileEditorInput )editor.getEditorInput();
+//      IFile file = fei.getFile();
+//      try {
+//        if( file != null && file.getContentDescription() != null ) {
+//          QualifiedName name = LiterateContentDescriber.STYLE;
+//          Object property = file.getContentDescription().getProperty( name );
+//          result = LiterateContentDescriber.LATEX.equals( property );
+//        }
+//      } catch( final CoreException cex ) {
+//        HaskellUIPlugin.log( cex );
+//      }
+//    }
+//    return result;
+//  }
 }

@@ -25,6 +25,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Representation of the Scion server on the Java side.
@@ -39,6 +40,8 @@ public class ScionServer {
 	private static final String
 		CLASS_PREFIX = "[ScionServer]",
 		SERVER_STDOUT_PREFIX = "[scion-server]";
+	
+	private static final AtomicInteger threadNb=new AtomicInteger(1);
 	
 	private String serverExecutable;
 	
@@ -85,7 +88,7 @@ public class ScionServer {
 		int port=startServerProcess();
 		//capturePortNumber();
 		connectToServer(port);
-		serverOutputThread=new Thread(){
+		serverOutputThread=new Thread(CLASS_PREFIX+(threadNb.getAndIncrement())){
 			public void run(){
 				while (serverStdOutReader!=null){
 					slurpServerOutput();
@@ -164,11 +167,11 @@ public class ScionServer {
 		}
 		
 		// Connect to the process's stdout to capture messages
-		// Assume that status messages and such will be ASCII only
+		// Assume that status messages and such will be UTF8 only
 		try {
-			serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
+			serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF8"));
 		} catch (UnsupportedEncodingException ex) {
-			// make compiler happy, because US-ASCII is always supported
+			// make compiler happy, because UTF8 is always supported
 		}
 		Trace.trace(CLASS_PREFIX, "Server started");
 		return port;
@@ -315,11 +318,39 @@ public class ScionServer {
 	 * Returns null in case of EOF.
 	 */
 	private String readLineFromServer() throws IOException {
-		String line = serverStdOutReader.readLine();
+		final String line = serverStdOutReader.readLine();
 		if (line != null) {
 			if (serverOutput!=null){
-				serverOutput.append(line+"\n");
-				serverOutput.flush();
+//				serverOutput.append(line+"\n");
+//				int ix=0;
+//				while (line.length()-ix>1024){
+//					serverOutput.append(line.substring(ix,ix+1024));
+//					//serverOutput.flush();
+//					ix+=1024;
+//				}
+//				serverOutput.append(line.substring(ix,line.length())+"\n");
+				// this seems to be what works the best to write to the console
+				// async in display, cut in chunks so it's not too big
+				Display.getDefault().asyncExec(new Runnable() {
+				
+					public void run() {
+						try {
+							//serverOutput.append(line);
+							//serverOutput.append("\n");
+							//serverOutput.flush();
+							int ix=0;
+							while (line.length()-ix>1024){
+								serverOutput.append(line.substring(ix,ix+1024));
+								//serverOutput.flush();
+								ix+=1024;
+							}
+							serverOutput.append(line.substring(ix,line.length())+"\n");
+							serverOutput.flush();
+						} catch (IOException ioe){
+							// ignore
+						}
+					}
+				});
 			} else {
 				Trace.trace(SERVER_STDOUT_PREFIX, line);
 			}
@@ -395,7 +426,7 @@ public class ScionServer {
 	 * @throws ScionServerException if something happened to the server connection
 	 * @throws ScionCommandException if something went wrong parsing or processing the command 
 	 */
-	public synchronized void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
+	public void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
 		// set only once
 		command.setSequenceNumber(makeSequenceNumber());
 		runCommandSync(command, monitor,0);
@@ -410,8 +441,9 @@ public class ScionServer {
 			serverOutputThread.interrupt();
 			//slurpServerOutput();
 			command.receiveResponse(socketReader,monitor);
+			serverOutputThread.interrupt();
 			//slurpServerOutput();
-			Trace.trace(CLASS_PREFIX, "Command executed successfully");
+			//Trace.trace(CLASS_PREFIX, "Command executed successfully");
 		} catch (ScionServerException ex) {
 			if (count<MAX_RETRIES && ex.getCause()!=null && ex.getCause().getCause() instanceof SocketTimeoutException){
 				// this will not change sequence number

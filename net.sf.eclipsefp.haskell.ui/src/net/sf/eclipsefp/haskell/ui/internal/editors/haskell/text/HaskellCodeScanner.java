@@ -27,6 +27,7 @@ import org.eclipse.jface.text.rules.WordRule;
   * literals etc.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class HaskellCodeScanner extends RuleBasedScanner
                                 implements IEditorPreferenceNames {

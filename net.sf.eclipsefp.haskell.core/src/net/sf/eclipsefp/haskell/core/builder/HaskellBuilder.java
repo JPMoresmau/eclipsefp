@@ -115,7 +115,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
         new Exception("ScionInstance==null").printStackTrace(); //$NON-NLS-1$
         return;
       }
-      si.buildProject(true);
+      si.buildProject(true,false);
     } finally {
       mon.done();
     }

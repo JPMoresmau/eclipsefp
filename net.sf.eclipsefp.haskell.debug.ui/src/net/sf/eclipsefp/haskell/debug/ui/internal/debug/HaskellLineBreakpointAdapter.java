@@ -1,9 +1,9 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.debug;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellBreakpoint;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -34,7 +34,7 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
     if (part instanceof ITextEditor) {
       ITextEditor editorPart = (ITextEditor) part;
       IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
-      if(resource != null && ResourceUtil.hasHaskellExtension( resource )) {
+      if(resource != null && FileUtil.hasHaskellExtension( resource )) {
          return editorPart;
       }
     }

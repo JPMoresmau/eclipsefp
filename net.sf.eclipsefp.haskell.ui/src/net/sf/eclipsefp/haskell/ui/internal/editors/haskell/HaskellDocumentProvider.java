@@ -3,17 +3,13 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellPartitionScanner;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.LiterateHaskellPartitionScanner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.DefaultPartitionScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
-import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
@@ -25,22 +21,25 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
   */
 public class HaskellDocumentProvider extends FileDocumentProvider {
 
-  private static final String[] TOKEN_TYPES = new String[] {
-    IDocument.DEFAULT_CONTENT_TYPE,
-    IPartitionTypes.HS_COMMENT,
-    IPartitionTypes.HS_CHARACTER,
-    IPartitionTypes.HS_STRING,
-    IPartitionTypes.HS_LITERATE_COMMENT
-  };
+//  private static final String[] TOKEN_TYPES = new String[] {
+//    IDocument.DEFAULT_CONTENT_TYPE,
+//    IPartitionTypes.HS_COMMENT,
+//    IPartitionTypes.HS_CHARACTER,
+//    IPartitionTypes.HS_STRING,
+//    IPartitionTypes.HS_LITERATE_COMMENT
+//  };
 
   public static IDocumentPartitioner createDocumentPartitioner() {
-    IPartitionTokenScanner partitionScanner = new HaskellPartitionScanner();
-    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
+    return new FastPartitioner( new DefaultPartitionScanner(), new String[]{IDocument.DEFAULT_CONTENT_TYPE });
+//    IFile f=(IFile)super.getConnectedElements().next();
+//
+//    IPartitionTokenScanner partitionScanner = new ScionTokenScanner(HaskellUIPlugin.getDefault().getScionInstanceManager( f ),f,true);
+//    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
   }
 
   public static void connectToPartitioner( final Object element,
                                            final IDocument document )
-                                                          throws CoreException {
+                                                         {
     IDocumentPartitioner partitioner = getPartitioner( element );
     partitioner.connect( document );
     document.setDocumentPartitioner( partitioner );
@@ -80,21 +79,25 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
   //////////////////
 
   private static IDocumentPartitioner getPartitioner( final Object elem )
-                                                          throws CoreException {
-    IPartitionTokenScanner partitionScanner = new HaskellPartitionScanner();
-
-    if( elem instanceof IFileEditorInput ) {
-      IFile input = ( ( IFileEditorInput )elem ).getFile();
-      IContentDescription contentDesc = input.getContentDescription();
-      if( contentDesc != null ) {
-        Object sty = contentDesc.getProperty( LiterateContentDescriber.STYLE );
-        if( LiterateContentDescriber.LATEX.equals( sty ) ) {
-          partitionScanner = new LiterateHaskellPartitionScanner( true );
-        } else if( LiterateContentDescriber.BIRD.equals( sty ) ) {
-          partitionScanner = new LiterateHaskellPartitionScanner( false );
-        }
-      }
-    }
-    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
+                                                           {
+    return new FastPartitioner( new DefaultPartitionScanner(), new String[]{IDocument.DEFAULT_CONTENT_TYPE });
+//    IFile file=((FileEditorInput)elem).getFile();
+//
+//    IPartitionTokenScanner partitionScanner = new ScionTokenScanner( HaskellUIPlugin.getDefault().getScionInstanceManager( file ), file, true );
+//      //new HaskellPartitionScanner();
+//
+//    if( elem instanceof IFileEditorInput ) {
+//      IFile input = ( ( IFileEditorInput )elem ).getFile();
+//      IContentDescription contentDesc = input.getContentDescription();
+//      if( contentDesc != null ) {
+//        Object sty = contentDesc.getProperty( LiterateContentDescriber.STYLE );
+//        if( LiterateContentDescriber.LATEX.equals( sty ) ) {
+//          partitionScanner = new LiterateHaskellPartitionScanner( true );
+//        } else if( LiterateContentDescriber.BIRD.equals( sty ) ) {
+//          partitionScanner = new LiterateHaskellPartitionScanner( false );
+//        }
+//      }
+//    }
+//    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
   }
 }

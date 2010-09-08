@@ -266,7 +266,7 @@ public class PackageDescriptionStanza {
      newValue.append(value);
      return update(field, newValue.toString() );
    }
-   return update(field, s);
+   return null;
   }
 
   public RealValuePosition removeFromPropertyList(final CabalSyntax field,final String value){
@@ -290,7 +290,7 @@ public class PackageDescriptionStanza {
         return update(field, newValue.toString() );
       }
     }
-    return update(field, s);
+    return null;
 
    }
 
@@ -381,6 +381,9 @@ public class PackageDescriptionStanza {
     val=getProperties().get( "hs-source-dir"); //$NON-NLS-1$
     if (val!=null && val.length()>0){
       ret.addAll(PackageDescriptionLoader.parseList( val));
+    }
+    for (PackageDescriptionStanza st:getStanzas()){
+      ret.addAll(st.getSourceDirs());
     }
     if (ret.isEmpty() && (getType()!=null && (getType().equals( CabalSyntax.SECTION_EXECUTABLE)
         || getType().equals( CabalSyntax.SECTION_LIBRARY)))){

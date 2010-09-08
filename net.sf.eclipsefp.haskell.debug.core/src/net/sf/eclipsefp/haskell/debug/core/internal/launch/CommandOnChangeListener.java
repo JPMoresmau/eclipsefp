@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -37,7 +37,7 @@ public class CommandOnChangeListener implements IResourceChangeListener {
           if (delta.getResource().getProject()==null || delta.getResource().getProject().getName().equals(projectName)){
             if( delta.getKind() == IResourceDelta.REMOVED || (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0)) {
               if( delta.getResource() instanceof IFile
-                  && ResourceUtil.hasHaskellExtension( delta.getResource() ) ) {
+                  && FileUtil.hasHaskellExtension( delta.getResource() ) ) {
                 runCommand();
                 return false;
               }

@@ -18,7 +18,7 @@ public class ProjectReloader implements CabalFileChangeListener{
   public void cabalFileChanged( final IFile cabalF ) {
     ScionInstance si=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( cabalF );
     if (si!=null){
-      si.buildProject( false );
+      si.buildProject( false,true );
     }
   }
 }

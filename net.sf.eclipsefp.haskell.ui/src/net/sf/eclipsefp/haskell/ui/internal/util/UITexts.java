@@ -228,7 +228,13 @@ public final class UITexts extends NLS {
   public static String preferences_editor_syntax_strings;
   public static String preferences_editor_syntax_characters;
   public static String preferences_editor_syntax_functions;
+  public static String preferences_editor_syntax_numbers;
+  public static String preferences_editor_syntax_vars;
+  public static String preferences_editor_syntax_cons;
   public static String preferences_editor_syntax_keywords;
+  public static String preferences_editor_syntax_symbols;
+  public static String preferences_editor_syntax_cpp;
+  public static String preferences_editor_syntax_th;
   public static String preferences_editor_syntax_others;
   public static String preferences_editor_syntax_bold;
   public static String preferences_editor_syntax_foreground;
@@ -252,6 +258,8 @@ public final class UITexts extends NLS {
   public static String explorer_outline_open;
 
   public static String log_nodetails;
+
+  public static String noproject;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

@@ -53,9 +53,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -136,6 +136,13 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
       serverExecutable = preferenceStore
           .getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
     }
+
+    // creates the unattached instance used for lexing
+    if (serverExecutable!=null){
+      ScionInstance instance = startInstance( null );
+      instances.put( null, instance );
+    }
+
     preferenceStore.addPropertyChangeListener( new IPropertyChangeListener() {
 
       public void propertyChange( final PropertyChangeEvent event ) {
@@ -421,7 +428,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
               if( delta.getResource() instanceof IFile){
                 IFile f = ( IFile )delta.getResource();
                 IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
-                if(ResourceUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
+                if(FileUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
                   // System.out.println(delta.getFullPath());
 
                   PackageDescription pd = PackageDescriptionLoader.load( cabalF );
@@ -439,12 +446,20 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
                       IDocument doc = prov.getDocument( cabalF );
 
                       for( PackageDescriptionStanza pds: lpds ) {
+                        pds=pd.getSameStanza(pds);
                         RealValuePosition rvp = pds.removeFromPropertyList(
                             CabalSyntax.FIELD_EXPOSED_MODULES, qn );
-                        rvp.updateDocument( doc );
+                        if (rvp!=null){
+                          rvp.updateDocument( doc );
+                          pd=PackageDescriptionLoader.load( doc.get() );
+                          pds=pd.getSameStanza(pds);
+                        }
                         rvp = pds.removeFromPropertyList(
                             CabalSyntax.FIELD_OTHER_MODULES, qn );
-                        rvp.updateDocument( doc );
+                        if (rvp!=null){
+                          rvp.updateDocument( doc );
+                          pd=PackageDescriptionLoader.load( doc.get() );
+                        }
                       }
                       prov.saveDocument( null, cabalF, doc, true );
                     } finally {
@@ -453,7 +468,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
                   }
                   ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( f );
                   if (si!=null){
-                    si.buildProject( false );
+                    si.buildProject( false , true);
                   }
                   return false;
                 } else if (f.equals( cabalF )){
@@ -505,8 +520,10 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * part of a currently opened project.
    */
   public ScionInstance getScionInstance( final IResource resource ) {
-    IProject project = resource.getProject();
-    return instances.get( project );
+    if (resource!=null){
+      return instances.get( resource.getProject() );
+    }
+    return instances.get(null);
   }
 
   /**
@@ -535,7 +552,11 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   private void serverExecutableChanged() {
     ScionServerStartupException exception = null;
     // avoid concurrent modifs
+
     List<IProject> lp=new ArrayList<IProject>(instances.keySet());
+    if (!instances.containsKey( null )){
+     lp.add(null);
+    }
     for( IProject project: lp ) {
       try {
         ScionInstance instance=instances.get( project );
@@ -584,7 +605,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     if (serverExecutable==null){
       return null;
     }
-    String name = NLS.bind( UITexts.scion_console_title, project.getName() );
+    String name = NLS.bind( UITexts.scion_console_title, project!=null?project.getName():UITexts.noproject );
     HaskellConsole c = new HaskellConsole( null, name );
 
     ScionInstance instance = new ScionInstance( serverExecutable, project, c

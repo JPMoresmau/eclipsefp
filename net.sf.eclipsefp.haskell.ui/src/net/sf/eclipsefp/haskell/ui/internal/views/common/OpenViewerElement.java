@@ -4,6 +4,7 @@ package net.sf.eclipsefp.haskell.ui.internal.views.common;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
@@ -41,7 +42,7 @@ public class OpenViewerElement extends Action {
   public void run() {
     IResource resource = ResourceUtil.findResource( element );
     if( resource instanceof IFile ) {
-      if( ResourceUtil.hasHaskellExtension( resource ) ) {
+      if( FileUtil.hasHaskellExtension( resource ) ) {
         openEditor( ( IFile )resource );
       }
     }

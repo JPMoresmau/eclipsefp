@@ -44,35 +44,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class ResourceUtil {
 	/**
-	 * <p>
-	 * returns whether the passed resource is a Haskell source file, as
-	 * recognized by the file extensions '.hs' and '.lhs'.
-	 * </p>
-	 */
-	public static boolean hasHaskellExtension( final IResource resource ) {
-    return has( resource, FileUtil.EXTENSION_HS ) || has( resource, FileUtil.EXTENSION_LHS );
-  }
-
-	/**
-	 * Predicate that determines whether the resource is a Cabal project file.
-	 * @param resource The resource
-	 * @return true if the resource is a Cabal project file.
-	 */
-	public static boolean hasCabalExtension( final IResource resource ) {
-	  return has( resource, FileUtil.EXTENSION_CABAL );
-	}
-
-	/**
-	 * <p>
-	 * returns whether the passed resource is a literate Haskell source file, as
-	 * recognized by the file extension '.lhs'.
-	 * </p>
-	 */
-	public static boolean hasLiterateExtension(final IResource resource) {
-		return has(resource, FileUtil.EXTENSION_LHS);
-	}
-
-	/**
 	 * Return the project executable as an ArrayList, assuming that the
 	 * project has the Haskell nature.
 	 */
@@ -361,7 +332,7 @@ public class ResourceUtil {
             IContainer fldr=getContainer(project,src);
             if (fi.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
 
-              if (hasHaskellExtension(fi)){
+              if (FileUtil.hasHaskellExtension(fi)){
                 for (PackageDescriptionStanza stz:stzs.get(src)){
                   String module=getQualifiedModuleName( fi, fldr );
                   if (!ModuleInclusionType.MISSING.equals( stz.getModuleInclusionType( module ) )){
@@ -465,16 +436,7 @@ public class ResourceUtil {
 	// helping methods
 	// ////////////////
 
-	private static boolean has( final IResource resource, final String extension ) {
-	  if (resource != null) {
-      String resExt = resource.getFileExtension();
-      return resExt != null && resExt.equalsIgnoreCase( extension );
-	  }
-
-	  return false;
-  }
-
-  private static IHaskellProject getHsProject( final IProject project ) {
+	private static IHaskellProject getHsProject( final IProject project ) {
     return HaskellProjectManager.get( project );
   }
 

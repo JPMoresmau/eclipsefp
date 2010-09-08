@@ -13,6 +13,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
   *
   * @author Leif Frenzel
   */
+@Deprecated
 public class HaskellStringScanner extends RuleBasedScanner
                                   implements IEditorPreferenceNames {
 

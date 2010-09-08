@@ -2,7 +2,9 @@
 package net.sf.eclipsefp.haskell.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
@@ -69,18 +71,24 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       prov.connect( f );
       try {
         IDocument doc=prov.getDocument( f );
-
+        PackageDescription pd=PackageDescriptionLoader.load( doc.get() );
         String moduleName=info.getQualifiedModuleName();
 
 
         if (onlyAdd){
           for (PackageDescriptionStanza pds:info.getIncluded()){
-            RealValuePosition vp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
-            vp.updateDocument( doc );
+            RealValuePosition vp=pd.getSameStanza(pds).addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
+            if (vp!=null){
+              vp.updateDocument( doc );
+              pd=PackageDescriptionLoader.load( doc.get() );
+            }
           }
           for (PackageDescriptionStanza pds:info.getExposed()){
-            RealValuePosition vp=pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
-            vp.updateDocument( doc );
+            RealValuePosition vp=pd.getSameStanza(pds).addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
+            if (vp!=null){
+              vp.updateDocument( doc );
+              pd=PackageDescriptionLoader.load( doc.get() );
+            }
           }
         } else {
           Set<String> sIncluded=new HashSet<String>();
@@ -91,22 +99,30 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
           for (PackageDescriptionStanza pds:info.getExposed()){
             sExposed.add( pds.toTypeName() );
           }
-          PackageDescription pd=PackageDescriptionLoader.load( f );
-          for (PackageDescriptionStanza pds:pd.getStanzas()){
+         List<PackageDescriptionStanza> pdss=new ArrayList<PackageDescriptionStanza>( pd.getStanzas() );
+          for (PackageDescriptionStanza pds:pdss){
             if (pds.getType()!=null && (pds.getType().equals( CabalSyntax.SECTION_LIBRARY ) || pds.getType().equals( CabalSyntax.SECTION_EXECUTABLE ))){
+              pds=pd.getSameStanza( pds );
               RealValuePosition vp=null;
               if(sIncluded.contains( pds.toTypeName() )){
                 vp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
               } else {
                 vp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, moduleName );
               }
-              vp.updateDocument( doc );
+              if (vp!=null){
+                vp.updateDocument( doc );
+                pd=PackageDescriptionLoader.load( doc.get() );
+                pds=pd.getSameStanza( pds );
+              }
               if (sExposed.contains( pds.toTypeName() )){
                 vp=pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
               } else {
                 vp=pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, moduleName );
               }
-              vp.updateDocument( doc );
+              if (vp!=null){
+                vp.updateDocument( doc );
+                pd=PackageDescriptionLoader.load( doc.get() );
+              }
             }
           }
         }
@@ -114,7 +130,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       } finally {
         prov.disconnect( f );
       }
-      HaskellUIPlugin.getDefault().getScionInstanceManager( generatedFile ).buildProject( false );
+      HaskellUIPlugin.getDefault().getScionInstanceManager( generatedFile ).buildProject( false , false);
 
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );

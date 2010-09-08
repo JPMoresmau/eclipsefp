@@ -61,7 +61,7 @@ public abstract class ScionCommand extends Job {
 		super("Scion command");
 		// can't call getMethod when calling superclass constructor
 		// (even this hack is slightly evil, calling subclass methods)
-		setName("Scion command '" + getMethod() + "', project "+runner.getProject().getName());
+		setName("Scion command '" + getMethod() + "'" + (runner.getProject()!=null?", project "+runner.getProject().getName():""));
 		setPriority(priority);
 		setRule(runner);
 		this.runner = runner;
@@ -195,8 +195,8 @@ public abstract class ScionCommand extends Job {
 			return;
 		}
 		
-
 		JSONObject response;
+		//long t0=System.currentTimeMillis();
 		try {
 			response = new JSONObject(new JSONTokener(reader));
 		} catch (JSONException ex) {
@@ -204,7 +204,8 @@ public abstract class ScionCommand extends Job {
 			// server is in after we've received a malformed response (or end-of-stream!)
 			throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
 		}
-
+		//long t1=System.currentTimeMillis();
+		//System.err.println("receive+parse:"+(t1-t0));
 		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
 		if (!processResponse(response)){
 			receiveResponse(reader,monitor);

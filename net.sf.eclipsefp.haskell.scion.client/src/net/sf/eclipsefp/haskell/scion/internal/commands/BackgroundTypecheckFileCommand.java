@@ -22,12 +22,20 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	
 	protected ScionInstance instance;
 	
+	protected boolean canceled=false;
+	
 	public BackgroundTypecheckFileCommand(ScionInstance runner, IFile file) {
 		super(runner, Job.BUILD);
 		this.file = file;
 		this.instance=runner;
 	}
 
+	@Override
+	protected void canceling() {
+		canceled=true;
+		super.canceling();
+	}
+	
 	@Override
 	protected String getMethod() {
 		return "background-typecheck-file";
@@ -42,6 +50,9 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 
 	@Override
 	protected void doProcessResult(Object json) throws JSONException {
+		if (canceled){
+			return;
+		}
 		instance.deleteProblems(file);
 		if (json instanceof JSONArray){
 			JSONArray result = (JSONArray)json;
@@ -70,6 +81,9 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	
 	@Override
 	protected boolean onError(JSONException ex, String name, String message) {
+		if (canceled){
+			return true;
+		}
 		instance.deleteProblems(file);
 		compilationResult=new CompilationResult(file.getLocation().toOSString(),message);
 		doProcessCompilationResult();

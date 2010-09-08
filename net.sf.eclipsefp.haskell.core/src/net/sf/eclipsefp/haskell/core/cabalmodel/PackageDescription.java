@@ -7,7 +7,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,9 +51,6 @@ public class PackageDescription {
 
     for (PackageDescriptionStanza pds:stanzas){
       Collection<String> sds=pds.getSourceDirs();
-      if (sds.isEmpty()){
-        sds=Collections.singletonList( "." ); //$NON-NLS-1$
-      }
       for (String t:sds){
         if (t.length()>0){
           List<PackageDescriptionStanza> pdss=ret.get( t );
@@ -95,6 +91,21 @@ public class PackageDescription {
         return pds;
       }
       if (CabalSyntax.SECTION_EXECUTABLE.equals(pds.getType()) && c.getType().equals( ComponentType.EXECUTABLE ) && pds.getName().equals(c.getName())){
+        return pds;
+      }
+    }
+    return null;
+  }
+
+  public PackageDescriptionStanza getSameStanza(final PackageDescriptionStanza p){
+    for (PackageDescriptionStanza pds:stanzas){
+      if (pds.getType()==null && p.getType()==null){
+        return pds;
+      }
+      if (CabalSyntax.SECTION_LIBRARY.equals( pds.getType()) && CabalSyntax.SECTION_LIBRARY.equals( p.getType())){
+        return pds;
+      }
+      if (CabalSyntax.SECTION_EXECUTABLE.equals(pds.getType()) && CabalSyntax.SECTION_EXECUTABLE.equals(p.getType() ) && pds.getName().equals(p.getName())){
         return pds;
       }
     }

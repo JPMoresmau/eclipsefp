@@ -54,6 +54,19 @@ public interface IEditorPreferenceNames {
   String EDITOR_STRING_BOLD                = "stringBold";  //$NON-NLS-1$
   String EDITOR_CHAR_COLOR                 = "charColor";  //$NON-NLS-1$
   String EDITOR_CHAR_BOLD                  = "charBold";  //$NON-NLS-1$
+  String EDITOR_NUMBER_COLOR               = "numberColor";  //$NON-NLS-1$
+  String EDITOR_NUMBER_BOLD                = "numberBold";  //$NON-NLS-1$
+  String EDITOR_VAR_COLOR                  = "varColor";  //$NON-NLS-1$
+  String EDITOR_VAR_BOLD                   = "varBold";  //$NON-NLS-1$
+  String EDITOR_CON_COLOR                  = "conColor";  //$NON-NLS-1$
+  String EDITOR_CON_BOLD                   = "conBold";  //$NON-NLS-1$
+  String EDITOR_SYMBOL_COLOR               = "symbolColor";  //$NON-NLS-1$
+  String EDITOR_SYMBOL_BOLD                = "symbolBold";  //$NON-NLS-1$
+  String EDITOR_CPP_COLOR                  = "cppColor";  //$NON-NLS-1$
+  String EDITOR_CPP_BOLD                   = "cppBold";  //$NON-NLS-1$
+  String EDITOR_TH_COLOR                   = "thColor";  //$NON-NLS-1$
+  String EDITOR_TH_BOLD                    = "thBold";  //$NON-NLS-1$
+
   String EDITOR_DEFAULT_COLOR              = "defaultColor";  //$NON-NLS-1$
   String EDITOR_DEFAULT_BOLD               = "defaultBold";  //$NON-NLS-1$
   String EDITOR_SPACES_FOR_TABS            = "spacesForTabs";  //$NON-NLS-1$
