@@ -299,28 +299,26 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
     if (!exeLocation.toFile().exists() && hsImpl != null){
       ArrayList<String> commands = new ArrayList<String>();
-      CabalImplementation cabalImpl = new CabalImplementation();
+      CabalImplementation cabalImpl = CabalImplementation.getInstance();
 
       commands.add( cabalImpl.getCabalExecutableName( hsImpl ) );
       cabalImpl.probeVersion( hsImpl );
+      HaskellUIPlugin.log( "cabal executable: ".concat( cabalImpl.getCabalExecutableName( hsImpl ) ),
+                           IStatus.INFO );
+      HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),
+                           IStatus.INFO );
+      HaskellUIPlugin.log( "Cabal library version ".concat( cabalImpl.getLibraryVersion() ),
+                           IStatus.INFO );
 
       String cabalLibVer = cabalImpl.getLibraryVersion();
-
-      HaskellUIPlugin.log( "cabal executable ".concat( cabalImpl
-          .getCabalExecutableName( hsImpl ) ), IStatus.INFO );
-      HaskellUIPlugin.log(
-          "cabal-install version ".concat( cabalImpl.getInstallVersion() ),
-          IStatus.INFO );
-      HaskellUIPlugin.log( "Cabal library version ".concat( cabalLibVer ),
-          IStatus.INFO );
-
-      if (cabalLibVer.startsWith( "1.8" )) {
+      if (cabalLibVer.startsWith( "1.8." )) {
         commands.add("-fcabal_1_8");
-      } else if (cabalLibVer.startsWith( "1.7" )) {
+      } else if (cabalLibVer.startsWith( "1.7." )) {
         commands.add( "-fcabal_1_7" );
       }
 
       commands.add("install");
+      commands.add("-v2");
 
       //"cabal install"
       // we tried to only configure/build, but only install fetches the dependencies

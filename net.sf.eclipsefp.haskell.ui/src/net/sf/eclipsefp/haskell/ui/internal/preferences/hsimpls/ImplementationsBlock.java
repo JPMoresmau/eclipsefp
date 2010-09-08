@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementation;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationPersister;
 import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.internal.util.UIUtils;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -70,7 +71,7 @@ class ImplementationsBlock implements ISelectionProvider {
   private ISelection lastSelection = new StructuredSelection();
 
   Composite createControl( final Composite parent ) {
-    Composite composite = createMainComposite( parent );
+    Composite composite = UIUtils.createMainComposite( parent );
 
     Label tableLabel = new Label( composite, SWT.NONE );
     tableLabel.setText( UITexts.implementationsBlock_installed );
@@ -79,7 +80,15 @@ class ImplementationsBlock implements ISelectionProvider {
     tableLabel.setLayoutData( data );
     tableLabel.setFont( parent.getFont() );
 
-    createTable( composite );
+    table = UIUtils.createTable( composite );
+    table.addKeyListener( new KeyAdapter() {
+      @Override
+      public void keyPressed(final KeyEvent event) {
+        if( event.character == SWT.DEL && event.stateMask == 0 ) {
+          removeSelectedInstallations();
+        }
+      }
+    } );
     createColumns();
     createViewer();
 
@@ -235,37 +244,6 @@ class ImplementationsBlock implements ISelectionProvider {
 
   // helping functions
   ////////////////////
-
-  private Composite createMainComposite( final Composite parent ) {
-    Composite result = new Composite( parent, SWT.NONE );
-    GridLayout gridLayout = new GridLayout( 2, false );
-    gridLayout.marginHeight = 0;
-    gridLayout.marginWidth = 0;
-    result.setLayout( gridLayout );
-    result.setFont( parent.getFont() );
-    return result;
-  }
-
-  private void createTable( final Composite parent ) {
-    int style = SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION;
-    table = new Table( parent, style );
-
-    GridData gridData = new GridData( GridData.FILL_BOTH );
-    gridData.widthHint = 450;
-    table.setLayoutData( gridData );
-    table.setFont( parent.getFont() );
-    table.setHeaderVisible( true );
-    table.setLinesVisible( true );
-
-    table.addKeyListener( new KeyAdapter() {
-      @Override
-      public void keyPressed(final KeyEvent event) {
-        if( event.character == SWT.DEL && event.stateMask == 0 ) {
-          removeSelectedInstallations();
-        }
-      }
-    } );
-  }
 
   private void fireSelectionChanged() {
     SelectionChangedEvent evt = new SelectionChangedEvent( this, getSelection() );

@@ -24,16 +24,26 @@ public class CabalImplementation {
   public final static String CABAL_EXECUTABLE = FileUtil.makeExecutableName( "cabal" ); //$NON-NLS-1$
 
   /** cabal-install version */
-  public String fCabalInstallVersion;
+  private String fCabalInstallVersion;
   /** Cabal library version */
-  public String fCabalLibraryVersion;
-  /** Cabal executable path name */
-  public IPath fCabalExecutablePath;
+  private String fCabalLibraryVersion;
+  /** Path name to the cabal executable */
+  private String fCabalExecutablePath;
+
+  /** The singleton instance holder */
+  private static final class CabalImplementationHolder {
+    private static final CabalImplementation theInstance = new CabalImplementation();
+  }
 
   /** Default constructor */
-  public CabalImplementation() {
+  private CabalImplementation() {
     resetVersions();
-    fCabalExecutablePath = null;
+    fCabalExecutablePath = new String();
+  }
+
+  /** Get the CabalImplementation singleton instance */
+  public static final CabalImplementation getInstance() {
+    return CabalImplementationHolder.theInstance;
   }
 
   /**
@@ -70,7 +80,8 @@ public class CabalImplementation {
           }
         }
       } catch( IOException e ) {
-        // Ignore, since validImpl will still be false.
+        // Paranoia: ensure validImpl is still false
+        validImpl = false;
       }
     }
 
@@ -81,12 +92,11 @@ public class CabalImplementation {
 
   /** Return the operational cabal executable name */
   public String getCabalExecutableName(final IHsImplementation hsImpl) {
-    if ( fCabalExecutablePath != null ) {
-      return fCabalExecutablePath.toOSString();
+    if (fCabalExecutablePath.length() != 0) {
+      return fCabalExecutablePath;
     }
 
     boolean findInPath = false;
-    String retval = null;
 
     if (hsImpl != null) {
       IPath cabalBinPath = new Path(hsImpl.getBinDir());
@@ -97,7 +107,7 @@ public class CabalImplementation {
         findInPath = true;
       } else {
         try {
-          fCabalExecutablePath = Path.fromOSString( cabalBin.getCanonicalPath() );
+          fCabalExecutablePath = cabalBin.getCanonicalPath();
         } catch( IOException e ) {
           // Should never happen...
         }
@@ -108,14 +118,14 @@ public class CabalImplementation {
       File cabalBin = FileUtil.findExecutableInPath( CABAL_EXECUTABLE );
       if (cabalBin.exists()) {
         try {
-          fCabalExecutablePath = Path.fromOSString( cabalBin.getCanonicalPath() ) ;
+          fCabalExecutablePath = cabalBin.getCanonicalPath();
         } catch( IOException e ) {
           // Should never happen...
         }
       }
     }
 
-    return fCabalExecutablePath.toOSString();
+    return fCabalExecutablePath;
   }
   /** Reset the version strings to empty string */
   private void resetVersions() {
