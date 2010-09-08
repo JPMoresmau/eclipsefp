@@ -8,7 +8,7 @@ import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import net.sf.eclipsefp.haskell.ui.internal.util.UIUtils;
+import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -56,8 +56,8 @@ public class InstalledImplementationsPP extends PreferencePage
     layout.marginWidth = 0;
     parent.setLayout( layout );
 
-    UIUtils.createMessageLabel( parent, UITexts.installedImplementationsPP_msg, 1, 300 );
-    UIUtils.createLineSpacer( parent, 1 );
+    SWTUtil.createMessageLabel( parent, UITexts.installedImplementationsPP_msg, 1, 300 );
+    SWTUtil.createLineSpacer( parent, 1 );
 
     implementationsBlock = new ImplementationsBlock();
     Control control = implementationsBlock.createControl( parent );

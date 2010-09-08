@@ -59,16 +59,17 @@ public final class UITexts extends NLS {
   public static String installedImplementationsPP_msg;
   public static String installedImplementationsPP_nothingSelected;
 
+  public static String cabalImplsBlock_installed;
+  public static String cabalImplsBlock_colName;
+  public static String cabalImplsBlock_colVersion;
+
+  public static String scionServer_preferences_label;
   public static String scionServerBuiltIn_label;
   public static String scionServerExecutable_label;
   public static String autodetectButton_label;
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
   public static String autodetectButton_errorMessage;
-
-  public static String cabalImplsBlock_installed;
-  public static String cabalImplsBlock_colName;
-  public static String cabalImplsBlock_colVersion;
 
   public static String executableFileFieldEditor_errorDoesNotExist;
   public static String executableFileFieldEditor_errorNotAbsolute;

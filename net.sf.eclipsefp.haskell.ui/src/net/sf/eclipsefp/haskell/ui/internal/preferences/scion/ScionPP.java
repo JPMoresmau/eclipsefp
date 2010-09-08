@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 import java.io.File;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import net.sf.eclipsefp.haskell.ui.internal.util.UIUtils;
+import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -16,6 +16,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -48,39 +49,40 @@ public class ScionPP
 	 */
 	@Override
   protected Control createContents( final Composite parent ) {
+	  final int nColumns = 3;
+
 	  initializeDialogUnits( parent );
 	  noDefaultAndApplyButton();
 
 	  prefComp = new Composite(parent, SWT.NONE);
 
-	  GridLayout glayout = new GridLayout(1, true);
+	  GridLayout glayout = new GridLayout(nColumns, false);
 	  glayout.marginHeight = 0;
 	  glayout.marginWidth = 0;
 	  prefComp.setLayout( glayout );
 
-	  UIUtils.createMessageLabel( prefComp, UITexts.scion_preferences_title, 1, SWT.DEFAULT );
-	  UIUtils.createLineSpacer( prefComp, 1 );
+	  SWTUtil.createMessageLabel( prefComp, UITexts.scion_preferences_title, 4, SWT.DEFAULT );
+	  SWTUtil.createLineSpacer( prefComp, 1 );
 
     cabalBlock = new CabalImplsBlock();
     Control control = cabalBlock.createControl( prefComp );
 
-    // GridData gdata = new GridData();
-    // gdata.horizontalAlignment = SWT.FILL;
-    // gdata.verticalAlignment = SWT.FILL;
-    // control.setLayoutData( gdata );
+    GridData gdata = new GridData( SWT.FILL, SWT.TOP, true, true );
+    gdata.horizontalSpan = nColumns;
+    control.setLayoutData( gdata );
     // IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
     // cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
-    // UIUtils.createLineSpacer( prefComp, 1 );
 
     IPreferenceStore prefStore = getPreferenceStore();
 
-    UIUtils.createMessageLabel (prefComp, UITexts.scion_preferences_title, 1, SWT.DEFAULT);
+    SWTUtil.createMessageLabel (prefComp, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
 
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
 		                                             UITexts.scionServerBuiltIn_label,
 		                                             prefComp );
 		serverBuiltInField.setPage( this );
 		serverBuiltInField.setPreferenceStore( prefStore );
+		serverBuiltInField.fillIntoGrid( prefComp, nColumns );
 		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
         Boolean b=(Boolean)event.getNewValue();
@@ -96,6 +98,7 @@ public class ScionPP
 		serverExecutableField.setEmptyStringAllowed(true);
 		serverExecutableField.setPage( this );
 		serverExecutableField.setPreferenceStore( prefStore );
+		serverExecutableField.fillIntoGrid( prefComp, nColumns );
 		serverExecutableField.load();
 
 		autodetect = new ButtonFieldEditor(
@@ -110,6 +113,7 @@ public class ScionPP
 				prefComp);
 		autodetect.setPage( this );
 		autodetect.setPreferenceStore( prefStore );
+		autodetect.fillIntoGrid( prefComp, nColumns );
 		autodetect.load();
 
 		return prefComp;

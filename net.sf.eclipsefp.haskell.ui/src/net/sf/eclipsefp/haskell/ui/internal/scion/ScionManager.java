@@ -53,9 +53,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -261,8 +261,12 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     File sd=scionDir.toFile();
     if (!sd.exists() || sd.list().length==0){
 
-        // extract scion from bundled zip file
+       // extract scion from bundled zip file
        InputStream is=ScionPlugin.class.getResourceAsStream( "scion-"+ScionPlugin.SCION_VERSION+".zip" ); //$NON-NLS-1$ //$NON-NLS-2$
+       if ( is == null ) {
+         return null;
+       }
+
        ZipInputStream zis=new ZipInputStream( is );
        try {
          ZipEntry ze=zis.getNextEntry();

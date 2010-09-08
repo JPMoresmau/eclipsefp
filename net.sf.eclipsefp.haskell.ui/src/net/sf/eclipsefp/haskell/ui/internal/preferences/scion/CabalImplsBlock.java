@@ -51,7 +51,7 @@ public class CabalImplsBlock implements ISelectionProvider {
 
   Composite createControl( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
-    final Font parentFont = parent.getFont();
+    Font parentFont = parent.getFont();
 
     GridLayout glayout = new GridLayout(2, false);
     glayout.marginHeight = 0;
@@ -66,13 +66,12 @@ public class CabalImplsBlock implements ISelectionProvider {
     tableLabel.setLayoutData( gdata );
     tableLabel.setFont( parentFont );
 
-    // table = UIUtils.createTable( composite );
     int style = SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION;
-    table = new Table( parent, style );
+    table = new Table( composite, style );
 
-    GridData gridData = new GridData( SWT.FILL, SWT.TOP, true, false );
-    gridData.widthHint = 450;
-    table.setLayoutData( gridData );
+    gdata = new GridData( SWT.FILL, SWT.TOP, true, true );
+    gdata.widthHint = 450;
+    table.setLayoutData( gdata );
     table.setFont( parentFont );
     table.setHeaderVisible( true );
     table.setLinesVisible( true );
@@ -80,7 +79,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     createColumns();
     createViewer();
 
-    Composite buttonsComp = new Composite( parent, SWT.NONE );
+    Composite buttonsComp = new Composite( composite, SWT.NONE );
 
     glayout = new GridLayout(1, true);
     glayout.marginHeight = 0;
