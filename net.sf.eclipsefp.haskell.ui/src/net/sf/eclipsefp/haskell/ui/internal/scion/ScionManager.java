@@ -292,12 +292,11 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
     if (!exeLocation.toFile().exists() && hsImpl != null){
       ArrayList<String> commands = new ArrayList<String>();
-      CabalImplementation cabalImpl = new CabalImplementation();
+      CabalImplementation cabalImpl = CabalImplementation.getInstance();
 
       commands.add( cabalImpl.getCabalExecutableName( hsImpl ) );
 
       cabalImpl.probeVersion( hsImpl );
-      HaskellUIPlugin.log( "Current PATH ".concat( System.getenv( "PATH" ) ), IStatus.INFO);
       HaskellUIPlugin.log( "cabal executable: ".concat( cabalImpl.getCabalExecutableName( hsImpl ) ),
                            IStatus.INFO );
       HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),

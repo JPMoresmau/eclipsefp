@@ -24,16 +24,26 @@ public class CabalImplementation {
   public final static String CABAL_EXECUTABLE = FileUtil.makeExecutableName( "cabal" ); //$NON-NLS-1$
 
   /** cabal-install version */
-  public String fCabalInstallVersion;
+  private String fCabalInstallVersion;
   /** Cabal library version */
-  public String fCabalLibraryVersion;
+  private String fCabalLibraryVersion;
   /** Path name to the cabal executable */
-  public String fCabalExecutablePath;
+  private String fCabalExecutablePath;
+
+  /** The singleton instance holder */
+  private static final class CabalImplementationHolder {
+    private static final CabalImplementation theInstance = new CabalImplementation();
+  }
 
   /** Default constructor */
-  public CabalImplementation() {
+  private CabalImplementation() {
     resetVersions();
     fCabalExecutablePath = new String();
+  }
+
+  /** Get the CabalImplementation singleton instance */
+  public static final CabalImplementation getInstance() {
+    return CabalImplementationHolder.theInstance;
   }
 
   /**
@@ -70,7 +80,8 @@ public class CabalImplementation {
           }
         }
       } catch( IOException e ) {
-        // Ignore, since validImpl will still be false.
+        // Paranoia: ensure validImpl is still false
+        validImpl = false;
       }
     }
 

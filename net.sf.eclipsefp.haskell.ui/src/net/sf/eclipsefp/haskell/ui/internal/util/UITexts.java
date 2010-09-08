@@ -46,7 +46,6 @@ public final class UITexts extends NLS {
   public static String hsImplementationDialog_name_default;
   public static String hsImplementationDialog_name_index;
 
-
   public static String implementationsBlock_btnAdd;
   public static String implementationsBlock_btnEdit;
   public static String implementationsBlock_btnRemove;
@@ -66,6 +65,10 @@ public final class UITexts extends NLS {
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
   public static String autodetectButton_errorMessage;
+
+  public static String cabalImplsBlock_installed;
+  public static String cabalImplsBlock_colName;
+  public static String cabalImplsBlock_colVersion;
 
   public static String executableFileFieldEditor_errorDoesNotExist;
   public static String executableFileFieldEditor_errorNotAbsolute;
