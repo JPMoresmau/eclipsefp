@@ -684,8 +684,5 @@ public class ScionInstance implements IScionCommandRunner {
 		private ScionCommand lastCommand;
 		
 	}
-	
-	private interface ReturningRunnable<T> extends Runnable {
-		T get();
-	}
+
 }
