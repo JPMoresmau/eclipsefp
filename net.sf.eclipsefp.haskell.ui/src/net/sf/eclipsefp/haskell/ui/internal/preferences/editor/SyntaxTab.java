@@ -54,8 +54,9 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     new ColorListEntry( UITexts.preferences_editor_syntax_vars, EDITOR_VAR_COLOR, EDITOR_VAR_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_cons, EDITOR_CON_COLOR, EDITOR_CON_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_symbols, EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD ),
-    new ColorListEntry( UITexts.preferences_editor_syntax_others, EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ) };
-
+    new ColorListEntry( UITexts.preferences_editor_syntax_others, EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_cpp, EDITOR_CPP_COLOR, EDITOR_CPP_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_th, EDITOR_TH_COLOR, EDITOR_TH_BOLD ) };
   {
     // order by label (see compareTo in ColorListEntry)
     Arrays.sort( colorListModel );

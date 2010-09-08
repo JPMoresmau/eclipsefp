@@ -233,6 +233,8 @@ public final class UITexts extends NLS {
   public static String preferences_editor_syntax_cons;
   public static String preferences_editor_syntax_keywords;
   public static String preferences_editor_syntax_symbols;
+  public static String preferences_editor_syntax_cpp;
+  public static String preferences_editor_syntax_th;
   public static String preferences_editor_syntax_others;
   public static String preferences_editor_syntax_bold;
   public static String preferences_editor_syntax_foreground;

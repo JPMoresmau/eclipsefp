@@ -178,6 +178,10 @@ public class HaskellEditorPP extends PreferencePage
     store.addBooleanKey( EDITOR_KEYWORD_BOLD );
     store.addStringKey( EDITOR_SYMBOL_COLOR );
     store.addBooleanKey( EDITOR_SYMBOL_BOLD );
+    store.addStringKey( EDITOR_CPP_COLOR );
+    store.addBooleanKey( EDITOR_CPP_BOLD );
+    store.addStringKey( EDITOR_TH_COLOR );
+    store.addBooleanKey( EDITOR_TH_BOLD );
     store.addStringKey( EDITOR_DEFAULT_COLOR );
     store.addBooleanKey( EDITOR_DEFAULT_BOLD );
   }

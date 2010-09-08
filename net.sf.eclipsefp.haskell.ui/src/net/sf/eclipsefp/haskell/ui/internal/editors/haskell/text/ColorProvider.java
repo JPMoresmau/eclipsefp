@@ -35,6 +35,8 @@ public class ColorProvider implements IEditorPreferenceNames {
   public static final RGB DEFAULT_NUMBER            = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_VAR               = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_CON               = new RGB( 200, 0, 0 );
+  public static final RGB DEFAULT_CPP               = new RGB( 128, 128, 192 );
+  public static final RGB DEFAULT_TH                = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_SYMBOL            = new RGB( 128, 128, 0 );
   public static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
@@ -126,6 +128,8 @@ public class ColorProvider implements IEditorPreferenceNames {
     putRgb( EDITOR_NUMBER_COLOR, DEFAULT_NUMBER );
     putRgb( EDITOR_VAR_COLOR, DEFAULT_VAR );
     putRgb( EDITOR_CON_COLOR, DEFAULT_CON );
+    putRgb( EDITOR_CPP_COLOR, DEFAULT_CPP );
+    putRgb( EDITOR_TH_COLOR, DEFAULT_TH );
     putRgb( EDITOR_SYMBOL_COLOR, DEFAULT_SYMBOL );
   }
 

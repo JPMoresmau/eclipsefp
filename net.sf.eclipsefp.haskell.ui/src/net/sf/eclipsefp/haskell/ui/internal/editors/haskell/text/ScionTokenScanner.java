@@ -80,7 +80,10 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         EDITOR_SYMBOL_BOLD   ) );
     tokenByTypes.put( "SS", man.createToken( EDITOR_SYMBOL_COLOR,
         EDITOR_SYMBOL_BOLD   ) );
-
+    tokenByTypes.put( "PP", man.createToken( EDITOR_CPP_COLOR,
+        EDITOR_CPP_BOLD   ) );
+    tokenByTypes.put( "TH", man.createToken( EDITOR_TH_COLOR,
+        EDITOR_TH_BOLD   ) );
   }
 
   public int getTokenLength() {
