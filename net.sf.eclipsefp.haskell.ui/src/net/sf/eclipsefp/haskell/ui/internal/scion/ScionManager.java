@@ -686,6 +686,10 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     return rule == this;
   }
 
+  /** Create a console name string using the project name, if available.
+   * @param project The project
+   * @return A console name
+   */
   private final String consoleName ( final IProject project ) {
     String projectName = project != null ? project.getName() : UITexts.noproject;
     return NLS.bind( UITexts.scion_console_title, projectName );
