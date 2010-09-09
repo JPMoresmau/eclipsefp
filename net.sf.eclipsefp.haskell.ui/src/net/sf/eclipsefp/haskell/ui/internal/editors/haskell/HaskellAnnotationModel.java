@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
@@ -27,12 +28,15 @@ public class HaskellAnnotationModel extends ResourceMarkerAnnotationModel {
     }
 
     try {
-      final int offset = fDocument.getLineOffset( line - 1 ) + start;
-      final int length = end - start + 1;
-      return new Position( offset, length );
+      if (fDocument!=null){
+        final int offset = fDocument.getLineOffset( line - 1 ) + start;
+        final int length = end - start + 1;
+        return new Position( offset, length );
+      }
     } catch( BadLocationException ex ) {
-      return null;
+      HaskellUIPlugin.log( ex );
     }
+    return null;
   }
 
 }

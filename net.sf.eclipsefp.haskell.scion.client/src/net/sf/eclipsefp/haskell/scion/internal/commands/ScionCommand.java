@@ -136,7 +136,7 @@ public abstract class ScionCommand extends Job {
 		// and must indicate when they are finished by calling the method done.
 		try {
 			runner.runCommandSync(this,monitor);
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			Trace.trace("Exception when running command", ex);
 			IStatus status = new Status(IStatus.ERROR, ScionPlugin.getPluginId(), IStatus.ERROR, ex.getMessage(), ex);
 			ScionPlugin.logStatus(status);

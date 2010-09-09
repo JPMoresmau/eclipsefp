@@ -108,11 +108,15 @@ public class ScionInstance implements IScionCommandRunner {
 		return project;
 	}
 	
-	public void setServerExecutable(String serverExecutable) throws ScionServerStartupException {
+	public void setServerExecutable(final String serverExecutable) throws ScionServerStartupException {
 		if (!this.serverExecutable.equals(serverExecutable)) {
-			stop();
-			this.serverExecutable = serverExecutable;
-			start();
+			restart(true,new Runnable() {
+				
+				public void run() {
+					ScionInstance.this.serverExecutable = serverExecutable;
+				}
+			});
+
 		}
 	}
 	
@@ -211,11 +215,13 @@ public class ScionInstance implements IScionCommandRunner {
 					if (lastLoadedComponent!=null){
 						List<Component> l=new ArrayList<Component>(components.size());
 						Component toLoadLast=null;
-						for (Component c:components){
-							if (c.toString().equals(lastLoadedComponent.toString())){
-								toLoadLast=c;
-							} else {
-								l.add(c);
+						synchronized (components) {
+							for (Component c:components){
+								if (c.toString().equals(lastLoadedComponent.toString())){
+									toLoadLast=c;
+								} else {
+									l.add(c);
+								}
 							}
 						}
 						if (toLoadLast!=null){
@@ -223,15 +229,18 @@ public class ScionInstance implements IScionCommandRunner {
 						}
 						components=l;
 					}
+					List<Component> cs=null;
 					synchronized (components) {
-						for (Component c:components){
-							LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output,forceRecomp);
-							//loadCommand.addJobChangeListener();
-							loadCommand.run(monitor);
-							crh.process(loadCommand);
-							lastLoadedComponent=c;
-						}
+						cs=new ArrayList<Component>(components);
 					}
+					for (Component c:cs){
+						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output,forceRecomp);
+						//loadCommand.addJobChangeListener();
+						loadCommand.run(monitor);
+						crh.process(loadCommand);
+						lastLoadedComponent=c;
+					}
+					
 					ParseCabalCommand pcc=new ParseCabalCommand(ScionInstance.this,getCabalFile(getProject()).getLocation().toOSString());
 					pcc.run(monitor);
 					ScionInstance.this.cabalDescription=pcc.getDescription();
@@ -259,6 +268,10 @@ public class ScionInstance implements IScionCommandRunner {
 	
 
 	public void stop() {
+		stop(true,null);
+	}
+	
+	private void stop(boolean cleanly,final Runnable after){
 		cabalDescription=null;
 		synchronized (components) {
 			components.clear();
@@ -268,20 +281,50 @@ public class ScionInstance implements IScionCommandRunner {
 		lastLoadedComponent=null;
 		exposedModulesCache=null;
 		if (server != null) {
-			
-			ScionCommand cmd=new QuitCommand(this);
-			cmd.addJobChangeListener(new JobChangeAdapter(){
-				@Override
-				public void done(IJobChangeEvent event) {
-					// There's a possibility that the scion server is not running...
-					if (server != null) {
-					  server.stopServer();
-					  server = null;
+			if (cleanly){
+				ScionCommand cmd=new QuitCommand(this);
+				cmd.addJobChangeListener(new JobChangeAdapter(){
+					@Override
+					public void done(IJobChangeEvent event) {
+						// server may not be running...
+						if (server != null) {
+						  server.stopServer();
+						  server = null;
+						}
+						if (after!=null){
+							after.run();
+						}
 					}
+				});
+				cmd.runAsync();
+			} else {
+				// server may not be running...
+				if (server != null) {
+				  server.stopServer();
+				  server = null;
 				}
-			});
-			cmd.runAsync();
+				if (after!=null){
+					after.run();
+				}
+			}
+		} else if (after!=null) {
+			after.run();
 		}
+	}
+	
+	public void restart(boolean cleanly,final Runnable inBetween){
+		stop(cleanly,new Runnable(){
+			public void run() {
+				if (inBetween!=null){
+					inBetween.run();
+				}
+				try {
+					start();
+				} catch (Throwable t){
+					ScionPlugin.logError(UITexts.scionServerCouldNotStart_message, t);
+				}
+			}
+		});
 	}
 	
 	public boolean isStopped(){
@@ -297,11 +340,13 @@ public class ScionInstance implements IScionCommandRunner {
 		}
 		try {
 			server.runCommandSync(command,monitor);
-		} catch (ScionServerException ex) {
+		} catch (final ScionServerException ex) {
 			// fatal server error: restart
-			stop();
-			start();
-			ScionPlugin.logWarning(UITexts.scionServerRestarted_message, ex);
+			restart(false,new Runnable(){
+				public void run() {
+					ScionPlugin.logWarning(UITexts.scionServerRestarted_message, ex);
+				}
+			});
 			throw ex;
 		}
 	}
