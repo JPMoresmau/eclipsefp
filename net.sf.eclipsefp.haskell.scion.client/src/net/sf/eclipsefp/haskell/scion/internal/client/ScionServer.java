@@ -25,6 +25,8 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -331,26 +333,36 @@ public class ScionServer {
 //				serverOutput.append(line.substring(ix,line.length())+"\n");
 				// this seems to be what works the best to write to the console
 				// async in display, cut in chunks so it's not too big
-				Display.getDefault().asyncExec(new Runnable() {
-				
-					public void run() {
-						try {
-							//serverOutput.append(line);
-							//serverOutput.append("\n");
-							//serverOutput.flush();
-							int ix=0;
-							while (line.length()-ix>1024){
-								serverOutput.append(line.substring(ix,ix+1024));
+				try {
+					Display theDisplay = Display.getDefault();
+					theDisplay.asyncExec(new Runnable() {
+						public void run() {
+							try {
+								//serverOutput.append(line);
+								//serverOutput.append("\n");
 								//serverOutput.flush();
-								ix+=1024;
+								int ix=0;
+								while (line.length()-ix>1024){
+									serverOutput.append(line.substring(ix,ix+1024));
+									//serverOutput.flush();
+									ix+=1024;
+								}
+								serverOutput.append(line.substring(ix,line.length())+"\n");
+								serverOutput.flush();
+							} catch (IOException ioe){
+								// ignore
 							}
-							serverOutput.append(line.substring(ix,line.length())+"\n");
-							serverOutput.flush();
-						} catch (IOException ioe){
-							// ignore
 						}
+					});
+				} catch (SWTException e) {
+					if (e.code == SWT.ERROR_THREAD_INVALID_ACCESS) {
+					  // UI thread is actually dead at this point, so ignore
+					  // (Note: This is actually semi-important on Mac OS X Cocoa.)
+					} else {
+					  // Re-throw the exception...
+					  throw e;
 					}
-				});
+				}
 			} else {
 				Trace.trace(SERVER_STDOUT_PREFIX, line);
 			}

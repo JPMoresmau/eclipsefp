@@ -273,8 +273,11 @@ public class ScionInstance implements IScionCommandRunner {
 			cmd.addJobChangeListener(new JobChangeAdapter(){
 				@Override
 				public void done(IJobChangeEvent event) {
-					server.stopServer();
-					server = null;
+					// There's a possibility that the scion server is not running...
+					if (server != null) {
+					  server.stopServer();
+					  server = null;
+					}
 				}
 			});
 			cmd.runAsync();
