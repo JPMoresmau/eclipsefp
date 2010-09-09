@@ -288,7 +288,7 @@ class ImplementationsBlock implements ISelectionProvider {
 
   private TableColumn createColumn( final String text,
                                     final SelectionListener listener ) {
-    TableColumn result = new TableColumn( table, SWT.NULL );
+    TableColumn result = new TableColumn( table, SWT.NONE );
     result.setText( text );
     result.addSelectionListener( listener );
     return result;
@@ -389,9 +389,7 @@ class ImplementationsBlock implements ISelectionProvider {
   private void createSpacer( final Composite buttonsComp ) {
     Label separator = new Label( buttonsComp, SWT.NONE );
     separator.setVisible( false );
-    GridData gd = new GridData();
-    gd.horizontalAlignment = GridData.FILL;
-    gd.verticalAlignment = GridData.BEGINNING;
+    GridData gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
     gd.heightHint = 4;
     separator.setLayoutData( gd );
   }

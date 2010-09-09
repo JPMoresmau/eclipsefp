@@ -30,5 +30,4 @@ public class CabalImplsCP implements IStructuredContentProvider {
   public Object[] getElements( final Object inputElement ) {
     return impls.toArray();
   }
-
 }

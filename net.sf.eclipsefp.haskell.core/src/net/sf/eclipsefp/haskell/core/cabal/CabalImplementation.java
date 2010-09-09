@@ -30,20 +30,10 @@ public class CabalImplementation {
   /** Path name to the cabal executable */
   private String fCabalExecutablePath;
 
-  /** The singleton instance holder */
-  private static final class CabalImplementationHolder {
-    private static final CabalImplementation theInstance = new CabalImplementation();
-  }
-
   /** Default constructor */
-  private CabalImplementation() {
+  public CabalImplementation() {
     resetVersions();
     fCabalExecutablePath = new String();
-  }
-
-  /** Get the CabalImplementation singleton instance */
-  public static final CabalImplementation getInstance() {
-    return CabalImplementationHolder.theInstance;
   }
 
   /**

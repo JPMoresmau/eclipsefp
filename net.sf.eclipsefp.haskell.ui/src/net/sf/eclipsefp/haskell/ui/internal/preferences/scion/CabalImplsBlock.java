@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -66,16 +67,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     tableLabel.setLayoutData( gdata );
     tableLabel.setFont( parentFont );
 
-    int style = SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION;
-    table = new Table( composite, style );
-
-    gdata = new GridData( SWT.FILL, SWT.TOP, true, true );
-    gdata.widthHint = 450;
-    table.setLayoutData( gdata );
-    table.setFont( parentFont );
-    table.setHeaderVisible( true );
-    table.setLinesVisible( true );
-
+    table = SWTUtil.createTable( composite );
     createColumns();
     createViewer();
 
@@ -88,8 +80,15 @@ public class CabalImplsBlock implements ISelectionProvider {
     buttonsComp.setLayoutData( new GridData( SWT.CENTER, SWT.TOP, false, false ) );
     buttonsComp.setFont( parentFont );
     createButtons( buttonsComp );
+    enableButtons();
 
     return composite;
+  }
+
+  private void add(final CabalImplementation impl) {
+    impls.add( impl );
+    viewer.setInput( impl );
+    viewer.refresh();
   }
 
   public void addSelectionChangedListener( final ISelectionChangedListener listener ) {
@@ -138,7 +137,7 @@ public class CabalImplsBlock implements ISelectionProvider {
 
   private TableColumn createColumn( final String text,
       final SelectionListener listener ) {
-    TableColumn result = new TableColumn( table, SWT.NULL );
+    TableColumn result = new TableColumn( table, SWT.NONE );
     result.setText( text );
     result.addSelectionListener( listener );
     return result;
@@ -149,7 +148,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     btnAdd = SWTUtil.createPushButton( buttonsComp, sAdd );
     btnAdd.addListener( SWT.Selection, new Listener() {
       public void handleEvent( final Event evt ) {
-        // TODO: Add new cabal implementation
+        addCabalImplementation();
       }
     } );
 
@@ -218,5 +217,28 @@ public class CabalImplsBlock implements ISelectionProvider {
     btnEdit.setEnabled( ssel.size() == 1 );
     boolean moreThanSelectedItem = ssel.size() > 0 && ssel.size() < viewer.getTable().getItemCount();
     btnRemove.setEnabled( moreThanSelectedItem );
+  }
+
+  private void autoSelectSingle( final IStructuredSelection prev ) {
+    IStructuredSelection curr = ( IStructuredSelection )getSelection();
+    if( !curr.equals( prev ) || curr.isEmpty() ) {
+      if( curr.size() == 0 && impls.size() == 1 ) {
+        // pick a default automatically
+        setSelection( new StructuredSelection( impls.get( 0 ) ) );
+      }
+    } else {
+      fireSelectionChanged();
+    }
+  }
+
+  private void addCabalImplementation() {
+    IStructuredSelection prev = ( IStructuredSelection )getSelection();
+    CabalImplementationDialog dialog = new CabalImplementationDialog(
+        table.getShell(), this, null );
+    dialog.setTitle( UITexts.cabalImplsBlock_dlgAdd );
+    if( dialog.open() == Window.OK ) {
+      add( dialog.getResult() );
+      autoSelectSingle( prev );
+    }
   }
 }
