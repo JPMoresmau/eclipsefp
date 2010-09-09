@@ -61,8 +61,13 @@ public final class UITexts extends NLS {
 
   public static String cabalImplsBlock_installed;
   public static String cabalImplsBlock_colName;
-  public static String cabalImplsBlock_colVersion;
+  public static String cabalImplsBlock_colCabalInstallVersion;
+  public static String cabalImplsBlock_colCabalLibraryVersion;
+  public static String cabalImplsBlock_btnAdd;
+  public static String cabalImplsBlock_btnEdit;
+  public static String cabalImplsBlock_btnRemove;
   public static String cabalImplsBlock_dlgAdd;
+  public static String cabalImplsBlock_dlgEdit;
 
   public static String cabalImplsDialog_name;
   public static String cabalImplsDialog_libVersion;

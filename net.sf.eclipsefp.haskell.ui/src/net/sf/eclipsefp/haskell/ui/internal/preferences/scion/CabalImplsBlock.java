@@ -127,7 +127,13 @@ public class CabalImplsBlock implements ISelectionProvider {
         // sortByName();
       }
     } );
-    createColumn (UITexts.cabalImplsBlock_colVersion, new SelectionAdapter() {
+    createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
+      @Override
+      public void widgetSelected ( final SelectionEvent evt ) {
+        // Insert something here.
+      }
+    } );
+    createColumn (UITexts.cabalImplsBlock_colCabalLibraryVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
         // Insert something here.
@@ -144,7 +150,7 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private void createButtons( final Composite buttonsComp ) {
-    String sAdd = UITexts.implementationsBlock_btnAdd;
+    String sAdd = UITexts.cabalImplsBlock_btnAdd;
     btnAdd = SWTUtil.createPushButton( buttonsComp, sAdd );
     btnAdd.addListener( SWT.Selection, new Listener() {
       public void handleEvent( final Event evt ) {
@@ -160,7 +166,7 @@ public class CabalImplsBlock implements ISelectionProvider {
       }
     } );
 
-    String sRemove = UITexts.implementationsBlock_btnRemove;
+    String sRemove = UITexts.cabalImplsBlock_btnRemove;
     btnRemove = SWTUtil.createPushButton( buttonsComp, sRemove );
     btnRemove.addListener( SWT.Selection, new Listener() {
       public void handleEvent( final Event evt ) {
@@ -233,8 +239,7 @@ public class CabalImplsBlock implements ISelectionProvider {
 
   private void addCabalImplementation() {
     IStructuredSelection prev = ( IStructuredSelection )getSelection();
-    CabalImplementationDialog dialog = new CabalImplementationDialog(
-        table.getShell(), this, null );
+    CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), this, null );
     dialog.setTitle( UITexts.cabalImplsBlock_dlgAdd );
     if( dialog.open() == Window.OK ) {
       add( dialog.getResult() );
