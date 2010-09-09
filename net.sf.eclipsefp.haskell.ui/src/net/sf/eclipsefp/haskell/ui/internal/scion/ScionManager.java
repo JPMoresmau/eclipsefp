@@ -619,8 +619,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     }
     instance.stop();
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-    String name = NLS.bind( UITexts.scion_console_title, instance.getProject()
-        .getName() );
+    String name = NLS.bind( UITexts.scion_console_title, instance.getProject()!=null?instance.getProject().getName():UITexts.noproject  );
     for( IConsole c: mgr.getConsoles() ) {
       if( c.getName().equals( name ) ) {
         mgr.removeConsoles( new IConsole[] { c } );

@@ -208,8 +208,6 @@ public class ScionInstance implements IScionCommandRunner {
 			command.getSuccessors().add(new ArbitraryCommand(ScionInstance.this, Job.BUILD){
 				@Override
 				public IStatus run(IProgressMonitor monitor) {
-					deleteProblems(getProject());
-					CompilationResultHandler crh=new CompilationResultHandler(getProject());
 					components=command.getComponents();
 					// if lastLoadedComponent is still present, load it last
 					if (lastLoadedComponent!=null){
@@ -233,6 +231,9 @@ public class ScionInstance implements IScionCommandRunner {
 					synchronized (components) {
 						cs=new ArrayList<Component>(components);
 					}
+					deleteProblems(getProject());
+					CompilationResultHandler crh=new CompilationResultHandler(getProject());
+					
 					for (Component c:cs){
 						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output,forceRecomp);
 						//loadCommand.addJobChangeListener();
@@ -338,11 +339,18 @@ public class ScionInstance implements IScionCommandRunner {
 			// fatal server error: restart
 			restart(false,new Runnable(){
 				public void run() {
-					ScionPlugin.logWarning(UITexts.scionServerRestarted_message, ex);
+					ScionPlugin.logWarning(NLS.bind(UITexts.scionServerRestarted_message,getProjectName()), ex);
 				}
 			});
 			throw ex;
 		}
+	}
+	
+	public String getProjectName(){
+		if (getProject()!=null){
+			return getProject().getName();
+		}
+		return UITexts.noproject;
 	}
 	
 	public boolean contains(ISchedulingRule rule) {
@@ -432,48 +440,55 @@ public class ScionInstance implements IScionCommandRunner {
 	}
 	
 	private void runWithComponent(final IFile file,final Runnable run,final boolean sync){
-		Set<String> componentNames=resolver.getComponents(file);
-		if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
-			Component toLoad=null;
-			
-			if (!componentNames.isEmpty()){
-				synchronized (components) {
-					for (final Component compo:components){
-						if (componentNames.contains(compo.toString())){
-							toLoad=compo;
-							break;
-		
+		ScionCommand cmd=new ArbitraryCommand(this, Job.BUILD){
+			@Override
+			public IStatus run(IProgressMonitor monitor) {
+				Set<String> componentNames=resolver.getComponents(file);
+				if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
+					Component toLoad=null;
+					
+					if (!componentNames.isEmpty()){
+						synchronized (components) {
+							for (final Component compo:components){
+								if (componentNames.contains(compo.toString())){
+									toLoad=compo;
+									break;
+				
+								}
+							}
 						}
 					}
-				}
-			}
-			final LoadInfo li=getLoadInfo(file);
-			// we have no component: we create a file one
-			if (toLoad==null){
-				
-				toLoad=new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
-				if (!li.useFileComponent){
-					li.useFileComponent=true;
-					ScionPlugin.logWarning(UITexts.bind(UITexts.warning_file_component,file.getProjectRelativePath()), null);
-				}
-			} else {
-				li.useFileComponent=false;
-			}
-			if (toLoad!=null){
-				final Component compo=toLoad;
-				LoadCommand loadCommand = new LoadCommand(ScionInstance.this,compo,false,false);
-				run(loadCommand,new Runnable() {
-					
-					public void run() {
-						lastLoadedComponent=compo;
-						run.run();
+					final LoadInfo li=getLoadInfo(file);
+					// we have no component: we create a file one
+					if (toLoad==null){
+						
+						toLoad=new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
+						if (!li.useFileComponent){
+							li.useFileComponent=true;
+							ScionPlugin.logWarning(UITexts.bind(UITexts.warning_file_component,file.getProjectRelativePath()), null);
+						}
+					} else {
+						li.useFileComponent=false;
 					}
-				},sync);
-				return;		
+					if (toLoad!=null){
+						final Component compo=toLoad;
+						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,compo,false,false);
+						ScionInstance.this.run(loadCommand,new Runnable() {
+							
+							public void run() {
+								lastLoadedComponent=compo;
+								run.run();
+							}
+						},sync);
+					}
+				} 
+				
+				run.run();
+				return Status.OK_STATUS;
 			}
-		} 
+		};
+		run(cmd, null, sync);
 		
-		run.run();
 	}
 	
 	public void reloadFile(final IFile file,final Runnable after,final boolean sync) {
