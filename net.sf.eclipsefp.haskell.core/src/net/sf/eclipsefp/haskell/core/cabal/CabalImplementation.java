@@ -106,7 +106,7 @@ public class CabalImplementation {
 
     if ( findInPath ) {
       File cabalBin = FileUtil.findExecutableInPath( CABAL_EXECUTABLE );
-      if (cabalBin.exists()) {
+      if (cabalBin != null && cabalBin.exists()) {
         try {
           fCabalExecutablePath = cabalBin.getCanonicalPath();
         } catch( IOException e ) {
