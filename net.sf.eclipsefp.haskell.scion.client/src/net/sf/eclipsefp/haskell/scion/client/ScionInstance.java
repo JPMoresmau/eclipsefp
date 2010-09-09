@@ -435,10 +435,8 @@ public class ScionInstance implements IScionCommandRunner {
 		Set<String> componentNames=resolver.getComponents(file);
 		if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
 			Component toLoad=null;
-			// we have no component: we create a file one
-			if (componentNames.isEmpty()){
-				toLoad=new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
-			} else {
+			
+			if (!componentNames.isEmpty()){
 				synchronized (components) {
 					for (final Component compo:components){
 						if (componentNames.contains(compo.toString())){
@@ -448,6 +446,18 @@ public class ScionInstance implements IScionCommandRunner {
 						}
 					}
 				}
+			}
+			final LoadInfo li=getLoadInfo(file);
+			// we have no component: we create a file one
+			if (toLoad==null){
+				
+				toLoad=new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
+				if (!li.useFileComponent){
+					li.useFileComponent=true;
+					ScionPlugin.logWarning(UITexts.bind(UITexts.warning_file_component,file.getProjectRelativePath()), null);
+				}
+			} else {
+				li.useFileComponent=false;
 			}
 			if (toLoad!=null){
 				final Component compo=toLoad;
@@ -738,6 +748,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private class LoadInfo {
 		private boolean interactiveCheckDisabled=false;
+		private boolean useFileComponent=false;
 		private ScionCommand lastCommand;
 		
 	}
