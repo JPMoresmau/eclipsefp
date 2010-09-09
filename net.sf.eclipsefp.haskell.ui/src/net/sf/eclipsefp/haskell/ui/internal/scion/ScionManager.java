@@ -276,8 +276,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
              File f=new File(sd,ze.getName());
              f.getParentFile().mkdirs();
              FileOutputStream fos = new FileOutputStream(f);
-             BufferedOutputStream dest = new
-               BufferedOutputStream(fos, BUFFER);
+             BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
              byte[] data=new byte[BUFFER];
              int count=0;
              while ((count = zis.read(data, 0, BUFFER)) != -1) {
@@ -303,7 +302,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
     if (!exeLocation.toFile().exists() && hsImpl != null){
       ArrayList<String> commands = new ArrayList<String>();
-      CabalImplementation cabalImpl = CabalImplementation.getInstance();
+      CabalImplementation cabalImpl = new CabalImplementation();
 
       commands.add( cabalImpl.getCabalExecutableName( hsImpl ) );
       cabalImpl.probeVersion( hsImpl );
@@ -607,9 +606,8 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     if (serverExecutable==null){
       return null;
     }
-    String name = NLS.bind( UITexts.scion_console_title, project!=null?project.getName():UITexts.noproject );
-    HaskellConsole c = new HaskellConsole( null, name );
 
+    HaskellConsole c = new HaskellConsole( null, consoleName(project) );
     ScionInstance instance = new ScionInstance( serverExecutable, project, c
         .createOutputWriter() ,new CabalComponentResolver() {
 
@@ -635,13 +633,13 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * instance from the instances map.
    */
   private void stopInstance( final ScionInstance instance ) {
-    if (instance==null){
+    if( instance == null ) {
       return;
     }
     instance.stop();
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-    String name = NLS.bind( UITexts.scion_console_title, instance.getProject()
-        .getName() );
+    IProject project = instance.getProject();
+    String name = consoleName( project);
     for( IConsole c: mgr.getConsoles() ) {
       if( c.getName().equals( name ) ) {
         mgr.removeConsoles( new IConsole[] { c } );
@@ -688,4 +686,8 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     return rule == this;
   }
 
+  private final String consoleName ( final IProject project ) {
+    String projectName = project != null ? project.getName() : UITexts.noproject;
+    return NLS.bind( UITexts.scion_console_title, projectName );
+  }
 }
