@@ -80,8 +80,13 @@ public class HaddockInfo implements IHaddockParameters {
     return projects;
   }
 
-  public void setProjects( final IProject[] projects ) {
-    this.projects = ( projects == null ) ? new IProject[ 0 ] : projects;
+  public void setProjects( final ArrayList<IProject> projects ) {
+    if (projects != null) {
+      this.projects = new IProject[projects.size()];
+      projects.toArray(this.projects);
+    } else {
+      this.projects = null;
+    }
   }
 
   public String getTitle() {

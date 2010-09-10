@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -15,12 +16,10 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.service.prefs.BackingStoreException;
@@ -57,8 +56,8 @@ public class InstalledImplementationsPP extends PreferencePage
     layout.marginWidth = 0;
     parent.setLayout( layout );
 
-    createMessageLabel( parent, UITexts.installedImplementationsPP_msg, 1, 300 );
-    createLineSpacer( parent, 1 );
+    SWTUtil.createMessageLabel( parent, UITexts.installedImplementationsPP_msg, 1, 300 );
+    SWTUtil.createLineSpacer( parent, 1 );
 
     implementationsBlock = new ImplementationsBlock();
     Control control = implementationsBlock.createControl( parent );
@@ -108,28 +107,6 @@ public class InstalledImplementationsPP extends PreferencePage
 
   // helping functions
   ////////////////////
-
-  private void createMessageLabel( final Composite parent,
-                                    final String text,
-                                    final int hspan,
-                                    final int wrapwidth ) {
-    Label label = new Label( parent, SWT.WRAP );
-    label.setFont( parent.getFont() );
-    label.setText( text );
-
-    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
-    gridData.horizontalSpan = hspan;
-    gridData.widthHint = wrapwidth;
-    label.setLayoutData( gridData );
-  }
-
-  private void createLineSpacer( final Composite parent, final int lines ) {
-    Label lbl = new Label( parent, SWT.NONE );
-
-    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
-    gridData.heightHint = lines;
-    lbl.setLayoutData( gridData );
-  }
 
   private void initLogic() {
     ISelectionChangedListener listener = new ISelectionChangedListener() {

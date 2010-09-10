@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -20,6 +21,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
+import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -136,7 +138,8 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     }
 
     // creates the unattached instance used for lexing
-    if (serverExecutable!=null){
+    if (serverExecutable!=null) {
+      HaskellUIPlugin.log( "Launching unattached scion server ".concat(serverExecutable), IStatus.INFO );
       ScionInstance instance = startInstance( null );
       instances.put( null, instance );
     }
@@ -259,8 +262,12 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     File sd=scionDir.toFile();
     if (!sd.exists() || sd.list().length==0){
 
-        // extract scion from bundled zip file
+       // extract scion from bundled zip file
        InputStream is=ScionPlugin.class.getResourceAsStream( "scion-"+ScionPlugin.SCION_VERSION+".zip" ); //$NON-NLS-1$ //$NON-NLS-2$
+       if ( is == null ) {
+         return null;
+       }
+
        ZipInputStream zis=new ZipInputStream( is );
        try {
          ZipEntry ze=zis.getNextEntry();
@@ -270,8 +277,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
              File f=new File(sd,ze.getName());
              f.getParentFile().mkdirs();
              FileOutputStream fos = new FileOutputStream(f);
-             BufferedOutputStream dest = new
-               BufferedOutputStream(fos, BUFFER);
+             BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
              byte[] data=new byte[BUFFER];
              int count=0;
              while ((count = zis.read(data, 0, BUFFER)) != -1) {
@@ -291,22 +297,37 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
        }
       }
     // build final exe location
-    IPath exeLocation=scionDir.append( "dist" ).append( "build" ).append( "scion-server" ).append( "scion-server" );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
-    if (PlatformUtil.runningOnWindows()){
-      exeLocation=exeLocation.addFileExtension( PlatformUtil.WINDOWS_EXTENSION_EXE );
-    }
-    if (!exeLocation.toFile().exists() && CompilerManager.getInstance().getCurrentHsImplementation()!=null){
-      File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());
-      String cabalExe= FileUtil.makeExecutableName( "cabal" );//$NON-NLS-1$
-      File cabalBin=new File(binDir,cabalExe);
-      if (!cabalBin.exists()){
-        cabalBin=FileUtil.findExecutableInPath( cabalBin.getName());
+    IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
+    IPath exeLocation = scionDir.append( "dist" ).append( "build" ).append( "scion-server" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    exeLocation = exeLocation.append( FileUtil.makeExecutableName( "scion-server" ) );  //$NON-NLS-1$
+
+    if (!exeLocation.toFile().exists() && hsImpl != null){
+      ArrayList<String> commands = new ArrayList<String>();
+      CabalImplementation cabalImpl = new CabalImplementation();
+
+      commands.add( cabalImpl.getCabalExecutableName( hsImpl ) );
+      cabalImpl.probeVersion( hsImpl );
+      HaskellUIPlugin.log( "cabal executable: ".concat( cabalImpl.getCabalExecutableName( hsImpl ) ),
+                           IStatus.INFO );
+      HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),
+                           IStatus.INFO );
+      HaskellUIPlugin.log( "Cabal library version ".concat( cabalImpl.getLibraryVersion() ),
+                           IStatus.INFO );
+
+      String cabalLibVer = cabalImpl.getLibraryVersion();
+      if (cabalLibVer.startsWith( "1.8." )) {
+        commands.add("-fcabal_1_8");
+      } else if (cabalLibVer.startsWith( "1.7." )) {
+        commands.add( "-fcabal_1_7" );
       }
+
+      commands.add("install");
+      commands.add("-v2");
 
       //"cabal install"
       // we tried to only configure/build, but only install fetches the dependencies
       // the trick mentioned http://hackage.haskell.org/trac/hackage/ticket/411 didn't work
-      ProcessBuilder pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"install"); //$NON-NLS-1$
+      ProcessBuilder pb=new ProcessBuilder( commands );
       pb.directory( sd );
       pb.redirectErrorStream( true );
       int code=-1;
@@ -586,9 +607,8 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     if (serverExecutable==null){
       return null;
     }
-    String name = NLS.bind( UITexts.scion_console_title, project!=null?project.getName():UITexts.noproject );
-    HaskellConsole c = new HaskellConsole( null, name );
 
+    HaskellConsole c = new HaskellConsole( null, consoleName(project) );
     ScionInstance instance = new ScionInstance( serverExecutable, project, c
         .createOutputWriter() ,new CabalComponentResolver() {
 
@@ -614,12 +634,13 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
    * instance from the instances map.
    */
   private void stopInstance( final ScionInstance instance ) {
-    if (instance==null){
+    if( instance == null ) {
       return;
     }
     instance.stop();
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-    String name = NLS.bind( UITexts.scion_console_title, instance.getProject()!=null?instance.getProject().getName():UITexts.noproject  );
+    IProject project = instance.getProject();
+    String name = consoleName( project);
     for( IConsole c: mgr.getConsoles() ) {
       if( c.getName().equals( name ) ) {
         mgr.removeConsoles( new IConsole[] { c } );
@@ -666,4 +687,12 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     return rule == this;
   }
 
+  /** Create a console name string using the project name, if available.
+   * @param project The project
+   * @return A console name
+   */
+  private final String consoleName ( final IProject project ) {
+    String projectName = project != null ? project.getName() : UITexts.noproject;
+    return NLS.bind( UITexts.scion_console_title, projectName );
+  }
 }

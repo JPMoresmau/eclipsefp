@@ -46,7 +46,6 @@ public final class UITexts extends NLS {
   public static String hsImplementationDialog_name_default;
   public static String hsImplementationDialog_name_index;
 
-
   public static String implementationsBlock_btnAdd;
   public static String implementationsBlock_btnEdit;
   public static String implementationsBlock_btnRemove;
@@ -60,6 +59,21 @@ public final class UITexts extends NLS {
   public static String installedImplementationsPP_msg;
   public static String installedImplementationsPP_nothingSelected;
 
+  public static String cabalImplsBlock_installed;
+  public static String cabalImplsBlock_colName;
+  public static String cabalImplsBlock_colCabalInstallVersion;
+  public static String cabalImplsBlock_colCabalLibraryVersion;
+  public static String cabalImplsBlock_btnAdd;
+  public static String cabalImplsBlock_btnEdit;
+  public static String cabalImplsBlock_btnRemove;
+  public static String cabalImplsBlock_dlgAdd;
+  public static String cabalImplsBlock_dlgEdit;
+
+  public static String cabalImplsDialog_name;
+  public static String cabalImplsDialog_libVersion;
+  public static String cabalImplsDialog_installVersion;
+
+  public static String scionServer_preferences_label;
   public static String scionServerBuiltIn_label;
   public static String scionServerExecutable_label;
   public static String autodetectButton_label;

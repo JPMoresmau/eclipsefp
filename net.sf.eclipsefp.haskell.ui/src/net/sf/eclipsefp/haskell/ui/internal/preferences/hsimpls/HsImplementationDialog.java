@@ -83,18 +83,18 @@ public class HsImplementationDialog extends StatusDialog {
     Composite composite = ( Composite )super.createDialogArea( parent );
     ( ( GridLayout )composite.getLayout() ).numColumns = 3;
 
-    createLabel( composite, UITexts.hsImplementationDialog_type, 1 );
+    SWTUtil.createLabel( composite, UITexts.hsImplementationDialog_type, 1 );
 	  String[] types = new String[] { HsImplementationType.GHC.toString() };
     cmbImplementationType = createCombo( composite, types );
-    createLabel( composite, UITexts.hsImplementationDialog_name, 1 );
-    txtName = createSingleText( composite, 2 );
-    createLabel( composite, UITexts.hsImplementationDialog_binDir, 1 );
-    txtBinFolder = createSingleText( composite, 1 );
+    SWTUtil.createLabel( composite, UITexts.hsImplementationDialog_name, 1 );
+    txtName = SWTUtil.createSingleText( composite, 2 );
+    SWTUtil.createLabel( composite, UITexts.hsImplementationDialog_binDir, 1 );
+    txtBinFolder = SWTUtil.createSingleText( composite, 1 );
     createBrowseButton( composite );
-    createLabel( composite, UITexts.hsImplementationDialog_version, 1 );
-    lblVersion = createLabel( composite, "", 2 ); //$NON-NLS-1$
-    createLabel( composite, UITexts.hsImplementationDialog_libDir, 1 );
-    lblLibDir = createLabel( composite, "", 2 ); //$NON-NLS-1$
+    SWTUtil.createLabel( composite, UITexts.hsImplementationDialog_version, 1 );
+    lblVersion = SWTUtil.createLabel( composite, "", 2 ); //$NON-NLS-1$
+    SWTUtil.createLabel( composite, UITexts.hsImplementationDialog_libDir, 1 );
+    lblLibDir = SWTUtil.createLabel( composite, "", 2 ); //$NON-NLS-1$
 
     initializeFields();
     txtName.addModifyListener( new ModifyListener() {
@@ -208,28 +208,6 @@ public class HsImplementationDialog extends StatusDialog {
     result.setLayoutData( gd );
     result.setItems( items );
     result.select( 0 );
-    return result;
-  }
-
-  private Label createLabel( final Composite parent,
-                             final String text,
-                             final int hspan ) {
-    Label result = new Label( parent, SWT.NONE );
-    result.setFont( parent.getFont() );
-    result.setText( text );
-    GridData gd = new GridData( GridData.FILL_HORIZONTAL );
-    gd.horizontalSpan = hspan;
-    result.setLayoutData( gd );
-    return result;
-  }
-
-  public static Text createSingleText( final Composite parent,
-                                       final int hspan ) {
-    Text result = new Text( parent, SWT.SINGLE | SWT.BORDER );
-    result.setFont( parent.getFont() );
-    GridData gd = new GridData( GridData.FILL_HORIZONTAL );
-    gd.horizontalSpan = hspan;
-    result.setLayoutData( gd );
     return result;
   }
 

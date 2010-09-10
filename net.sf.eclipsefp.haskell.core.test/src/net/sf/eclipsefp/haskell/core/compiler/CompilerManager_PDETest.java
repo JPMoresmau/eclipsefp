@@ -20,7 +20,7 @@ public class CompilerManager_PDETest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		manager = new CompilerManager();
+		manager = CompilerManager.getInstance();
 		String compilerID = "stub";
 		manager.installCompiler(compilerID, new StubCompiler());
 		manager.selectCompiler(compilerID);

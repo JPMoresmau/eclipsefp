@@ -14,10 +14,9 @@ class HsImplementationsLP extends LabelProvider implements ITableLabelProvider {
   ///////////// //////////////////////////////
 
   public String getColumnText( final Object elem, final int column ) {
-    String result = elem.toString();
+    String result = null;
     if( elem instanceof IHsImplementation ) {
-        IHsImplementation impl
-          = ( IHsImplementation ) elem;
+        IHsImplementation impl = ( IHsImplementation ) elem;
         switch( column ) {
           case 0:
             result = impl.getName();
@@ -29,6 +28,8 @@ class HsImplementationsLP extends LabelProvider implements ITableLabelProvider {
             result = impl.getVersion();
             break;
         }
+    } else {
+      result = elem.toString();
     }
     return result;
   }

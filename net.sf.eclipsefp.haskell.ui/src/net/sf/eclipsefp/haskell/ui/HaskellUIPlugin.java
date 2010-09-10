@@ -40,15 +40,14 @@ import org.osgi.framework.BundleContext;
  */
 public class HaskellUIPlugin extends AbstractUIPlugin {
 
-  public static final String ID_PERSPECTIVE = HaskellPerspective.class
-      .getName();
+  public static final String ID_PERSPECTIVE = HaskellPerspective.class.getName();
 
   public static final String ID_EXT_CabalChangeListener="CabalChangeListener"; //$NON-NLS-1$
 
   // The shared instance.
-  private static HaskellUIPlugin plugin;
+  private static HaskellUIPlugin plugin = null;
   // Resource bundle.
-  private ResourceBundle resourceBundle;
+  private ResourceBundle resourceBundle = null;
 
   private ScionManager fScionManager = null;
 

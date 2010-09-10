@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.internal.util.DefaultStatus;
-import net.sf.eclipsefp.haskell.core.util.QueryUtil;
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.QueryUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -121,10 +121,7 @@ public class HsImplementation implements IHsImplementation {
   private IStatus validateExecutable() {
     DefaultStatus result = new DefaultStatus();
     IPath path = new Path( binDir );
-    path = path.append( type.getExecutableCommand() );
-    if( PlatformUtil.runningOnWindows() ) {
-      path.addFileExtension( PlatformUtil.WINDOWS_EXTENSION_EXE );
-    }
+    path = path.append( FileUtil.makeExecutableName( type.getExecutableCommand() ) );
     try {
       String param = type.getVersionOption();
       String query = QueryUtil.queryEx( path.toOSString(), param );

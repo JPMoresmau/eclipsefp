@@ -1,20 +1,25 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -25,21 +30,16 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  */
 
 public class ScionPP
-	extends FieldEditorPreferencePage
+	extends PreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
 
-  public static final String PAGE_ID = "net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP"; //$NON-NLS-1$
+  public static final String PAGE_ID = ScionPP.class.getName();
 
 	private ExecutableFileFieldEditor serverExecutableField;
 	private BooleanFieldEditor serverBuiltInField;
 	private ButtonFieldEditor autodetect;
-	private Composite parent;
-
-	public ScionPP() {
-		super(GRID);
-		setPreferenceStore(HaskellUIPlugin.getDefault().getPreferenceStore());
-		setDescription(UITexts.scion_preferences_title);
-	}
+	private CabalImplsBlock cabalBlock;
+	private Composite prefComp;
 
 	/**
 	 * Creates the field editors. Field editors are abstractions of
@@ -48,17 +48,58 @@ public class ScionPP
 	 * restore itself.
 	 */
 	@Override
-	public void createFieldEditors() {
-		parent = getFieldEditorParent();
+  protected Control createContents( final Composite parent ) {
+	  final int nColumns = 3;
 
-		serverBuiltInField=new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN, UITexts.scionServerBuiltIn_label, parent );
-		addField(serverBuiltInField);
+	  initializeDialogUnits( parent );
+	  noDefaultAndApplyButton();
+
+	  prefComp = new Composite(parent, SWT.NONE);
+
+	  GridLayout glayout = new GridLayout(nColumns, false);
+	  glayout.marginHeight = 0;
+	  glayout.marginWidth = 0;
+	  prefComp.setLayout( glayout );
+
+	  SWTUtil.createMessageLabel( prefComp, UITexts.scion_preferences_title, 4, SWT.DEFAULT );
+	  SWTUtil.createLineSpacer( prefComp, 1 );
+
+    cabalBlock = new CabalImplsBlock();
+    Control control = cabalBlock.createControl( prefComp );
+
+    GridData gdata = new GridData( SWT.FILL, SWT.TOP, true, true );
+    gdata.horizontalSpan = nColumns;
+    control.setLayoutData( gdata );
+    // IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
+    // cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
+
+    IPreferenceStore prefStore = getPreferenceStore();
+
+    SWTUtil.createMessageLabel (prefComp, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
+
+		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
+		                                             UITexts.scionServerBuiltIn_label,
+		                                             prefComp );
+		serverBuiltInField.setPage( this );
+		serverBuiltInField.setPreferenceStore( prefStore );
+		serverBuiltInField.fillIntoGrid( prefComp, nColumns );
+		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
+      public void propertyChange( final PropertyChangeEvent event ) {
+        Boolean b=(Boolean)event.getNewValue();
+        autodetect.setEnabled( !b.booleanValue(), prefComp );
+        serverExecutableField.setEnabled(  !b.booleanValue(), prefComp );
+      }
+    });
+    serverBuiltInField.load();
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
-				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, parent);
+				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, prefComp);
 		serverExecutableField.setEmptyStringAllowed(true);
-		addField(serverExecutableField);
+		serverExecutableField.setPage( this );
+		serverExecutableField.setPreferenceStore( prefStore );
+		serverExecutableField.fillIntoGrid( prefComp, nColumns );
+		serverExecutableField.load();
 
 		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
@@ -69,21 +110,13 @@ public class ScionPP
 						doDetectServer();
 					}
 				},
-				parent);
-		addField(autodetect);
+				prefComp);
+		autodetect.setPage( this );
+		autodetect.setPreferenceStore( prefStore );
+		autodetect.fillIntoGrid( prefComp, nColumns );
+		autodetect.load();
 
-
-
-	}
-
-	@Override
-	public void propertyChange( final PropertyChangeEvent event ) {
-	  if (event.getSource()==serverBuiltInField ){
-	    Boolean b=(Boolean)event.getNewValue();
-      autodetect.setEnabled( !b.booleanValue(), parent );
-      serverExecutableField.setEnabled(  !b.booleanValue(), parent );
-	  }
-	  super.propertyChange( event );
+		return prefComp;
 	}
 
 	private void doDetectServer() {
@@ -103,19 +136,12 @@ public class ScionPP
 	 * @return the filename of the Scion server, or null if it could not be found
 	 */
 	private String detectScionServer() {
-	  File f=FileUtil.findExecutableInPath( getServerExecutableName());
+	  File f=FileUtil.findExecutableInPath( getServerExecutableName() );
 	  return f!=null?f.getAbsolutePath():null;
 	}
 
 	public static String getServerExecutableName() {
 		return FileUtil.makeExecutableName("scion-server"); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(final IWorkbench workbench) {
-	  // do nothing
 	}
 
 	public static void initializeDefaults(final IPreferenceStore store) {
@@ -124,11 +150,47 @@ public class ScionPP
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
 	}
 
+  @Override
+  public boolean performOk() {
+/*
+    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+
+    node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, implementationsBlock.getPref() );
+    IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
+    String name = ""; //$NON-NLS-1$
+    if( impl != null ) {
+      name = impl.getName();
+    }
+    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
+
+    try {
+      node.flush();
+    } catch( BackingStoreException ex ) {
+      HaskellUIPlugin.log( ex );
+    }
+
+    IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
+    implementationsBlock.saveColumnSettings( settings, DIALOG_SETTINGS_ID );
+*/
+    return super.performOk();
+  }
+
+  @Override
+  public boolean performCancel() {
+    return super.performCancel();
+  }
+
+  @Override
+  public boolean isValid() {
+    return super.isValid();
+  }
+
 	@Override
-	protected void initialize() {
-	  super.initialize();
-	  autodetect.setEnabled( !serverBuiltInField.getBooleanValue(), parent );
-	  serverExecutableField.setEnabled(  !serverBuiltInField.getBooleanValue(), parent );
+	public void dispose() {
+	  // unused
 	}
 
+  public void init( final IWorkbench workbench ) {
+    // unused
+  }
 }

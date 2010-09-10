@@ -7,8 +7,12 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 
 
 /** Utility class to simplify access to some SWT resources.
@@ -54,10 +58,77 @@ public class SWTUtil {
       button.setText( text );
     }
 
-    GridData gridData = new GridData();
+    GridData gridData = new GridData( SWT.FILL, SWT.TOP, true, false );
     gridData.widthHint = getButtonWidthHint( button );
-    gridData.horizontalAlignment = GridData.FILL;
     button.setLayoutData( gridData );
     return button;
+  }
+
+  public static void createMessageLabel( final Composite parent,
+                                    final String text,
+                                    final int hspan,
+                                    final int wrapwidth ) {
+    Label label = new Label( parent, SWT.WRAP );
+    label.setFont( parent.getFont() );
+    label.setText( text );
+
+    GridData gridData = new GridData( SWT.LEFT, SWT.TOP, false, false );
+    gridData.horizontalSpan = hspan;
+    gridData.widthHint = wrapwidth;
+    label.setLayoutData( gridData );
+  }
+
+  public static void createLineSpacer( final Composite parent, final int lines ) {
+    Label lbl = new Label( parent, SWT.NONE );
+
+    GridData gridData = new GridData( SWT.LEFT, SWT.TOP, false, false );
+    gridData.heightHint = lines;
+    lbl.setLayoutData( gridData );
+  }
+
+  public static Composite createMainComposite( final Composite parent ) {
+    Composite result = new Composite( parent, SWT.NONE );
+    GridLayout gridLayout = new GridLayout( 2, false );
+    gridLayout.marginHeight = 0;
+    gridLayout.marginWidth = 0;
+    result.setLayout( gridLayout );
+    result.setFont( parent.getFont() );
+    return result;
+  }
+
+  public static Table createTable( final Composite parent ) {
+    int style = SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION;
+    Table table = new Table( parent, style );
+
+    GridData gridData = new GridData( SWT.FILL, SWT.FILL, true, true );
+    gridData.widthHint = 450;
+    table.setLayoutData( gridData );
+    table.setFont( parent.getFont() );
+    table.setHeaderVisible( true );
+    table.setLinesVisible( true );
+
+    return table;
+  }
+
+  public static Label createLabel( final Composite parent,
+                                   final String text,
+                                   final int hspan ) {
+    Label result = new Label( parent, SWT.NONE );
+    result.setFont( parent.getFont() );
+    result.setText( text );
+    GridData gd = new GridData( SWT.FILL, SWT.TOP, true, false );
+    gd.horizontalSpan = hspan;
+    result.setLayoutData( gd );
+    return result;
+  }
+
+  public static Text createSingleText( final Composite parent,
+                                       final int hspan ) {
+    Text result = new Text( parent, SWT.SINGLE | SWT.BORDER );
+    result.setFont( parent.getFont() );
+    GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+    gd.horizontalSpan = hspan;
+    result.setLayoutData( gd );
+    return result;
   }
 }

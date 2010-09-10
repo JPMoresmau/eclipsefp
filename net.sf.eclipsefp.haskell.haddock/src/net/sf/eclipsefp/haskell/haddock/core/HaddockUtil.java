@@ -1,7 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.haddock.core;
 
-import net.sf.eclipsefp.haskell.core.util.QueryUtil;
+import net.sf.eclipsefp.haskell.util.QueryUtil;
 
 /** <p>contains some helping functionality.</p>
   *  

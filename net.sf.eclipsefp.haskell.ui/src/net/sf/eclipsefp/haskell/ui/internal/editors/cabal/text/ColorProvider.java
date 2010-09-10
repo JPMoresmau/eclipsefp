@@ -29,8 +29,10 @@ public class ColorProvider {
   private static final RGB DEFAULT_SECTION           = new RGB( 0,   128, 86 );
   private static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
-  /** the singleton instance of ColorProvider. */
-  private static ColorProvider _instance;
+  /** The internal singleton reference to ColorProvider. */
+  private static class SingletonHolder {
+    private static final ColorProvider theInstance = new ColorProvider();
+  }
 
   private final Map<RGB, Color> colors;
   private final Map<String, RGB> rgbs;
@@ -43,11 +45,8 @@ public class ColorProvider {
     initRgbs();
   }
 
-  public static synchronized ColorProvider getInstance() {
-    if( _instance == null ) {
-      _instance = new ColorProvider();
-    }
-    return _instance;
+  public static final ColorProvider getInstance() {
+    return SingletonHolder.theInstance;
   }
 
   /** <p>releases all of the color resources held by this ColorProvider.</p> */

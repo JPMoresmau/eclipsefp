@@ -16,9 +16,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 /**
  * <p>
@@ -32,11 +33,14 @@ public class CompilerManager implements ICompilerManager {
 
   private static final String ATT_NAME = "name"; //$NON-NLS-1$
 
-  /** the singleton instance of CompilerManager. */
-	private static ICompilerManager _instance;
+  /** The singleton instance of CompilerManager. Note that this uses the current "lazy"
+   *  idiom for initializing singleton instances that avoids double synchronization and
+   *  other nasty hacks for thread safety (see the "Bill Pugh" solution.) */
+  private static class CompilerManagerHolder {
+    private static final ICompilerManager theInstance = new CompilerManager();
+  }
 
-	private static final String DEFAULT = DefaultHaskellCompiler.class
-			.getName();
+	private static final String DEFAULT = DefaultHaskellCompiler.class.getName();
 
 	/**
 	 * the currently selected compiler. This is the compiler that is obtained by
@@ -65,13 +69,13 @@ public class CompilerManager implements ICompilerManager {
 	 */
 	private final Hashtable<String, ListenableCompilerDecorator> htInstalledCompilers;
 
+	/** Current Haskell implementation */
 	private IHsImplementation currentHsImplementation;
 
 	/**
-	 * creates the singleton instance of CompilerManager. Private in order to
-	 * ensure the singleton pattern.
+	 * Creates the singleton instance of CompilerManager.
 	 */
-	public CompilerManager() {
+	private CompilerManager() {
 		htInstalledCompilers = new Hashtable<String, ListenableCompilerDecorator>();
 		htRegisteredCompilers = new Hashtable<String, IConfigurationElement>();
 		initDefaultCompiler();
@@ -84,16 +88,9 @@ public class CompilerManager implements ICompilerManager {
 		listenForImplPref();
 	}
 
-  /**
-	 * <p>
-	 * returns a reference to the singleton instance of CompilerManager.
-	 * </p>
-	 */
-	public static synchronized ICompilerManager getInstance() {
-		if (_instance == null) {
-			_instance = new CompilerManager();
-		}
-		return _instance;
+  /** Get the CompilerManager instance. */
+	public static final ICompilerManager getInstance() {
+		return CompilerManagerHolder.theInstance;
 	}
 
 	/**
@@ -150,8 +147,7 @@ public class CompilerManager implements ICompilerManager {
 	 * plugin.xml with the CompilerManager.
 	 * </p>
 	 */
-	public void registerCompiler(final String id,
-			final IConfigurationElement info) {
+	public void registerCompiler(final String id, final IConfigurationElement info) {
 		htRegisteredCompilers.put(id, info);
 	}
 
@@ -228,7 +224,8 @@ public class CompilerManager implements ICompilerManager {
 	}
 
   private void initHsImplementation() {
-    String currentImplName = Platform.getPreferencesService().getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, null, null );
+    IPreferencesService prefSvc = Platform.getPreferencesService();
+    String currentImplName = prefSvc.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, null, null );
     if( currentImplName != null ) {
       Map<String, IHsImplementation> impls = loadImpls();
       this.currentHsImplementation = impls.get( currentImplName );

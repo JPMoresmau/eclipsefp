@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.core.internal.util;
+package net.sf.eclipsefp.haskell.util;
 
 import java.io.IOException;
 import java.io.Reader;

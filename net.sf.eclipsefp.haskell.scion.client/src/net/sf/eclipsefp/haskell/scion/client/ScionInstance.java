@@ -287,8 +287,11 @@ public class ScionInstance implements IScionCommandRunner {
 				cmd.addJobChangeListener(new JobChangeAdapter(){
 					@Override
 					public void done(IJobChangeEvent event) {
-						server.stopServer();
-						server = null;
+						// server may not be running...
+						if (server != null) {
+						  server.stopServer();
+						  server = null;
+						}
 						if (after!=null){
 							after.run();
 						}
@@ -296,13 +299,16 @@ public class ScionInstance implements IScionCommandRunner {
 				});
 				cmd.runAsync();
 			} else {
-				server.stopServer();
-				server = null;
+				// server may not be running...
+				if (server != null) {
+				  server.stopServer();
+				  server = null;
+				}
 				if (after!=null){
 					after.run();
 				}
 			}
-		} else if (after!=null){
+		} else if (after!=null) {
 			after.run();
 		}
 	}
