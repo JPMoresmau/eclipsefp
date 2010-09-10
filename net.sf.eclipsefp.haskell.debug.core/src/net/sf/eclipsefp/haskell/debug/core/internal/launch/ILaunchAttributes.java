@@ -15,14 +15,15 @@ public interface ILaunchAttributes {
   String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
   String WORKING_DIRECTORY = "WORKING_DIRECTORY";   //$NON-NLS-1$
   String ARGUMENTS         = "ARGUMENTS"; //$NON-NLS-1$
+  String EXTRA_ARGUMENTS   = "EXTRA_ARGUMENTS"; //$NON-NLS-1$
   String EXECUTABLE        = "EXECUTABLE"; //$NON-NLS-1$
   String PROJECT_NAME      = "PROJECT_NAME"; //$NON-NLS-1$
-  String FILES            = "FILES"; //$NON-NLS-1$
-  String DELEGATE         = "DELEGATE"; //$NON-NLS-1$
+  String FILES             = "FILES"; //$NON-NLS-1$
+  String DELEGATE          = "DELEGATE"; //$NON-NLS-1$
 
-  String SYNC_STREAMS     = "SYNC_STREAMS"; //$NON-NLS-1$
-  String RELOAD_COMMAND   = "RELOAD_COMMAND";//$NON-NLS-1$
-  String RELOAD           = "RELOAD";//$NON-NLS-1$
-  String COMMAND          = "COMMAND";//$NON-NLS-1$
-  String COMMAND_ON_RELOAD= "COMMAND_ON_RELOAD";//$NON-NLS-1$
+  String SYNC_STREAMS      = "SYNC_STREAMS"; //$NON-NLS-1$
+  String RELOAD_COMMAND    = "RELOAD_COMMAND";//$NON-NLS-1$
+  String RELOAD            = "RELOAD";//$NON-NLS-1$
+  String COMMAND           = "COMMAND";//$NON-NLS-1$
+  String COMMAND_ON_RELOAD = "COMMAND_ON_RELOAD";//$NON-NLS-1$
 }

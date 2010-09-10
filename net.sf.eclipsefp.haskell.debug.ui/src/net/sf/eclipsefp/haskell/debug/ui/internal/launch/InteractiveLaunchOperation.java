@@ -108,6 +108,8 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, projectLocation );
     wc.setAttribute( ILaunchAttributes.ARGUMENTS,
                      getArguments(delegate, project, files ) );
+    wc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
+        ILaunchAttributes.EMPTY );
     wc.setAttribute( ILaunchAttributes.DELEGATE, delegate.getClass().getName() );
     List<String> fileNames=new ArrayList<String>(files.length);
     for (IFile f:files){

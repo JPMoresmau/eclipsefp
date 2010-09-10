@@ -18,6 +18,7 @@ public final class UITexts extends NLS {
   public static String haskellArgumentsTab_browseFs;
   public static String haskellArgumentsTab_browseWs;
   public static String haskellArgumentsTab_lblArguments;
+  public static String haskellArgumentsTab_lblFullArguments;
   public static String haskellArgumentsTab_name;
   public static String haskellArgumentsTab_noDir;
   public static String haskellArgumentsTab_noteQuote;
