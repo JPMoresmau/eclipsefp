@@ -25,30 +25,22 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Representation of the Scion server on the Java side.
  * 
  * @author Thomas ten Cate
  */
-public class ScionServer {
+public class NetworkScionServer extends AbstractScionServer {
 
 	private static String host="::1"; // amounts to connecting to the loopback interface in IPV6
 	private static final int MAX_RETRIES = 5; // number of times to try to connect or relaunch an operation on timeout
 	private static final int SOCKET_TIMEOUT= 10 * 60 * 1000; // timeout on reading from socket, in milliseconds 10 minutes should leave plenty of time??
-	private static final String
-		CLASS_PREFIX = "[ScionServer]",
-		SERVER_STDOUT_PREFIX = "[scion-server]";
+	
 	
 	private static final AtomicInteger threadNb=new AtomicInteger(1);
 	
-	private String serverExecutable;
 	
-	private Process process;
-	private BufferedReader serverStdOutReader;
 	private Socket socket;
 	private BufferedReader socketReader;
 	private BufferedWriter socketWriter;
@@ -58,13 +50,9 @@ public class ScionServer {
 	// keep last port used by any server
 	private static AtomicInteger lastPort=new AtomicInteger(4004); 
 	
-	private int nextSequenceNumber = 1;
+
 
 	private Thread serverOutputThread;
-	private Writer serverOutput;
-	
-	private File directory;
-	
 	/*static {
 		try {
 			// IPV6
@@ -77,10 +65,8 @@ public class ScionServer {
 		}
 	}*/
 	
-	public ScionServer(String serverExecutable,Writer serverOutput,File directory) {
-		this.serverExecutable = serverExecutable;
-		this.serverOutput=serverOutput;
-		this.directory=directory;
+	public NetworkScionServer(String serverExecutable,Writer serverOutput,File directory) {
+		super(serverExecutable,serverOutput,directory);
 	}
 	
 	/**
@@ -313,69 +299,7 @@ public class ScionServer {
 		return serverStdOutReader.ready();
 	}
 	
-	/**
-	 * Reads a line from the server's stdout (or stderr).
-	 * Blocks until a line is available.
-	 * The returned line does not contain the newline character(s) at the end.
-	 * Returns null in case of EOF.
-	 */
-	private String readLineFromServer() throws IOException {
-		final String line = serverStdOutReader.readLine();
-		if (line != null) {
-			if (serverOutput!=null){
-//				serverOutput.append(line+"\n");
-//				int ix=0;
-//				while (line.length()-ix>1024){
-//					serverOutput.append(line.substring(ix,ix+1024));
-//					//serverOutput.flush();
-//					ix+=1024;
-//				}
-//				serverOutput.append(line.substring(ix,line.length())+"\n");
-				// this seems to be what works the best to write to the console
-				// async in display, cut in chunks so it's not too big
-				try {
-					Display theDisplay = Display.getDefault();
-					theDisplay.asyncExec(new Runnable() {
-						public void run() {
-							try {
-								//serverOutput.append(line);
-								//serverOutput.append("\n");
-								//serverOutput.flush();
-								int ix=0;
-								while (line.length()-ix>1024){
-									serverOutput.append(line.substring(ix,ix+1024));
-									//serverOutput.flush();
-									ix+=1024;
-								}
-								serverOutput.append(line.substring(ix,line.length())+"\n");
-								serverOutput.flush();
-							} catch (IOException ioe){
-								// ignore
-							}
-						}
-					});
-				} catch (SWTException e) {
-					if (e.code == SWT.ERROR_THREAD_INVALID_ACCESS) {
-					  // UI thread is actually dead at this point, so ignore
-					  // (Note: This is actually semi-important on Mac OS X Cocoa.)
-					} else {
-					  // Re-throw the exception...
-					  throw e;
-					}
-				}
-			} else {
-				Trace.trace(SERVER_STDOUT_PREFIX, line);
-			}
-		} else {
-			if (serverOutput!=null){
-				serverOutput.append("Server gave EOF on stdout\n");
-				serverOutput.flush();
-			} else {
-				Trace.trace(CLASS_PREFIX, "Server gave EOF on stdout");
-			}
-		}
-		return line;
-	}
+	
 	
 	////////////////////////////////
 	// Server socket communication
@@ -467,8 +391,6 @@ public class ScionServer {
 		}
 	}
 	
-	private int makeSequenceNumber() {
-		return nextSequenceNumber++;
-	}
+
 
 }

@@ -15,7 +15,8 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-import net.sf.eclipsefp.haskell.scion.internal.client.ScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.client.IScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.client.StdStreamScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
@@ -54,7 +55,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -76,7 +76,7 @@ public class ScionInstance implements IScionCommandRunner {
 	
 	private String serverExecutable;
 	
-	private ScionServer server;
+	private IScionServer server;
 	
 	private IProject project;
 	
@@ -126,7 +126,8 @@ public class ScionInstance implements IScionCommandRunner {
 			File directory=getProject()!=null?
 				new File(getProject().getLocation().toOSString())
 				:null;
-			server = new ScionServer(serverExecutable,serverOutput,directory);
+			server = new StdStreamScionServer(serverExecutable, serverOutput, directory);
+				//new NetworkScionServer(serverExecutable,serverOutput,directory);
 			server.startServer();
 			checkProtocol();
 			//openCabal();

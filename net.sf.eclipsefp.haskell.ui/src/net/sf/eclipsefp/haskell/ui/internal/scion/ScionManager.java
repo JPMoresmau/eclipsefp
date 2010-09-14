@@ -139,7 +139,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
     // creates the unattached instance used for lexing
     if (serverExecutable!=null) {
-      HaskellUIPlugin.log( "Launching unattached scion server ".concat(serverExecutable), IStatus.INFO );
+     // HaskellUIPlugin.log( "Launching unattached scion server ".concat(serverExecutable), IStatus.INFO );
       ScionInstance instance = startInstance( null );
       instances.put( null, instance );
     }
