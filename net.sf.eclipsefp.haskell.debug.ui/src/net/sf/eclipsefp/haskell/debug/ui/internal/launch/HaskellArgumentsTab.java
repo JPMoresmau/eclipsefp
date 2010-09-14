@@ -49,8 +49,11 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   private Button runBackgroundButton;
   private Button syncStreamsButton;
   private Text argumentField;
+  private Text fullArgumentField;
 
   private SelectionAdapter selectionAdapter;
+
+  private String forcedArguments=ILaunchAttributes.EMPTY;
 
   private final ModifyListener modifyListener = new ModifyListener() {
     public void modifyText( final ModifyEvent e ) {
@@ -82,7 +85,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   public void setDefaults( final ILaunchConfigurationWorkingCopy configWc ) {
     configWc.setAttribute( ILaunchAttributes.RUN_IN_BACKGROUND, true );
     configWc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, ILaunchAttributes.EMPTY );
-    configWc.setAttribute( ILaunchAttributes.ARGUMENTS, ILaunchAttributes.EMPTY );
+    configWc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS, ILaunchAttributes.EMPTY );
     configWc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
   }
 
@@ -115,9 +118,9 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 
     String arguments = argumentField.getText().trim();
     if( arguments.length() == 0 ) {
-      configWc.setAttribute( ILaunchAttributes.ARGUMENTS, ( String )null );
+      configWc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS, ( String )null );
     } else {
-      configWc.setAttribute( ILaunchAttributes.ARGUMENTS, arguments );
+      configWc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS, arguments );
     }
   }
 
@@ -229,6 +232,29 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     data.horizontalSpan = 2;
     instruction.setLayoutData( data );
     instruction.setFont( font );
+
+    label = new Label( parent, SWT.NONE );
+    label.setText( UITexts.haskellArgumentsTab_lblFullArguments );
+    data = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
+    data.horizontalSpan = 2;
+    label.setLayoutData( data );
+    label.setFont( font );
+
+    style = SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY;
+    fullArgumentField = new Text( parent, style );
+    data = new GridData( GridData.FILL_BOTH );
+    data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+    data.heightHint = 40;
+    fullArgumentField.setLayoutData( data );
+    fullArgumentField.setFont( font );
+
+    argumentField.addModifyListener( new ModifyListener() {
+
+      public void modifyText( final ModifyEvent e ) {
+        fullArgumentField.setText( argumentField.getText()+" "+forcedArguments); //$NON-NLS-1$
+      }
+    });
+
   }
 
   private void createRunBackgroundComponent( final Composite parent ) {
@@ -268,13 +294,18 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 
   private void updateArgument( final ILaunchConfiguration configuration ) {
     String arguments= ILaunchAttributes.EMPTY;
+    String fullArguments = ILaunchAttributes.EMPTY;
     try {
-      String att = ILaunchAttributes.ARGUMENTS;
+      String att = ILaunchAttributes.EXTRA_ARGUMENTS;
       arguments = configuration.getAttribute( att, ILaunchAttributes.EMPTY );
+      forcedArguments=configuration.getAttribute( ILaunchAttributes.ARGUMENTS, ILaunchAttributes.EMPTY );
+      fullArguments=arguments+" "+forcedArguments; //$NON-NLS-1$
     } catch( CoreException ce ) {
       HaskellUIPlugin.log( UITexts.error_read_configuration, ce );
     }
     argumentField.setText( arguments );
+    fullArgumentField.setText( fullArguments );
+
   }
 
   private void updateRunBackground( final ILaunchConfiguration config ) {
