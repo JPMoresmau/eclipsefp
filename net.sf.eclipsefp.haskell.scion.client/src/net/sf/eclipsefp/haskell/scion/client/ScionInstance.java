@@ -132,7 +132,8 @@ public class ScionInstance implements IScionCommandRunner {
 			checkProtocol();
 			//openCabal();
 			buildProject(false,true);
-			restoreState();
+			// done in buildProject
+			//restoreState();
 		}
 	}
 	
@@ -251,7 +252,7 @@ public class ScionInstance implements IScionCommandRunner {
 					cdc.run(monitor);
 					ScionInstance.this.packagesByDB=cdc.getPackagesByDB();
 					
-					restoreState();
+					restoreState(monitor);
 					
 					return Status.OK_STATUS;
 				}
@@ -388,9 +389,31 @@ public class ScionInstance implements IScionCommandRunner {
 		command.runAsync();
 	}
 	
-	private void restoreState() {
+	private void restoreState(IProgressMonitor monitor) {
 		if (loadedFile!=null){
-			loadFile(loadedFile,false);
+			//loadFile(loadedFile,false);
+			final LoadInfo li=getLoadInfo(loadedFile);
+			if (li.lastCommand!=null){
+				li.lastCommand.cancel();
+				li.lastCommand=null;
+			}
+
+			/*Runnable run=new Runnable(){
+				public void run() {
+					BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
+					li.lastCommand=cmd;
+					cmd.addJobChangeListener(l2);
+					ScionInstance.this.run(cmd,after,sync);
+				};
+			};*/
+			BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, loadedFile);
+			cmd.addAfter(new Runnable(){
+				public void run() {
+					li.lastCommand=null;
+				}
+			});
+			li.lastCommand=cmd;
+			cmd.run(monitor);
 		}
 	}
 	
