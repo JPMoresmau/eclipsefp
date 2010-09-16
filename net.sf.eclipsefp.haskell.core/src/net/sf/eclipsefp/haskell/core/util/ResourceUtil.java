@@ -302,7 +302,9 @@ public class ResourceUtil {
     if (files==null || files.length==0){
       return Collections.emptySet();
     }
-    Collection<String> ret=new HashSet<String>();
+    // if we put them in a set, it messes up options that are made of two words, like -package ghc
+    // hopefully duplication of option will not be an issue
+    Collection<String> ret=new ArrayList<String>();
 
     Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
 
