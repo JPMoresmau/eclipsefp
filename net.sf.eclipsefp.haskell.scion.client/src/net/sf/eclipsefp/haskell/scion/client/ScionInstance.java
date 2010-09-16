@@ -32,8 +32,10 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.QuitCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
+import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
@@ -130,6 +132,9 @@ public class ScionInstance implements IScionCommandRunner {
 				//new NetworkScionServer(serverExecutable,serverOutput,directory);
 			server.startServer();
 			checkProtocol();
+			if (Trace.isTracing()) {
+				setDeafening();
+			}
 			//openCabal();
 			buildProject(false,true);
 			// done in buildProject
@@ -768,6 +773,11 @@ public class ScionInstance implements IScionCommandRunner {
 		TokenTypesCommand command=new TokenTypesCommand(ScionInstance.this,  file, contents,FileUtil.hasLiterateExtension(file));
 		command.run(new NullProgressMonitor());
 		return command.getTokens();
+	}
+	
+	public synchronized void setDeafening () {
+		SetVerbosityCommand command = new SetVerbosityCommand(ScionInstance.this, 3);
+		command.run(new NullProgressMonitor());
 	}
 	
 	private synchronized LoadInfo getLoadInfo(IFile file){

@@ -9,13 +9,16 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ConnectException;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerConnectException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
@@ -25,6 +28,9 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Representation of the Scion server on the Java side.
@@ -32,38 +38,24 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Thomas ten Cate
  */
 public class NetworkScionServer extends AbstractScionServer {
-
-	private static String host="::1"; // amounts to connecting to the loopback interface in IPV6
-	private static final int MAX_RETRIES = 5; // number of times to try to connect or relaunch an operation on timeout
-	private static final int SOCKET_TIMEOUT= 10 * 60 * 1000; // timeout on reading from socket, in milliseconds 10 minutes should leave plenty of time??
+	/** Number of times to try to connect or relaunch an operation on timeout */
+	private static final int MAX_RETRIES = 5;
+	/** Socket read timeout from socket, in milliseconds. 10 minutes should leave plenty of time */
+	private static final int SOCKET_TIMEOUT = 10 * 60 * 1000;
+	/** Accept thread initial timeout, 1/2 second in milliseconds */
+	private static final int ACCEPT_INITIAL_TMO = 1000 / 2;
 	
-	
-	private static final AtomicInteger threadNb=new AtomicInteger(1);
-	
+	private static final AtomicInteger threadNb = new AtomicInteger(1);
+	private static final AtomicInteger acceptNb = new AtomicInteger(1);
 	
 	private Socket socket;
 	private BufferedReader socketReader;
 	private BufferedWriter socketWriter;
 	
-	//private int port = -1; // negative if not yet captured from stdout
-	
 	// keep last port used by any server
-	private static AtomicInteger lastPort=new AtomicInteger(4004); 
-	
-
+	private static AtomicInteger lastPort = new AtomicInteger(4004); 
 
 	private Thread serverOutputThread;
-	/*static {
-		try {
-			// IPV6
-			InetAddress.getLocalHost();
-			InetAddress.getAllByName("localhost");
-			InetAddress.getAllByName("::1");
-			host ="::1";
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-	}*/
 	
 	public NetworkScionServer(String serverExecutable,Writer serverOutput,File directory) {
 		super(serverExecutable,serverOutput,directory);
@@ -73,10 +65,9 @@ public class NetworkScionServer extends AbstractScionServer {
 	 * Starts the Scion server.
 	 */
 	public synchronized void startServer() throws ScionServerStartupException {
-		int port=startServerProcess();
-		//capturePortNumber();
-		connectToServer(port);
-		serverOutputThread=new Thread(CLASS_PREFIX+(threadNb.getAndIncrement())){
+		startServerProcess();
+		// connectToServer(port);
+		serverOutputThread=new Thread(CLASS_PREFIX + (threadNb.getAndIncrement())){
 			public void run(){
 				while (serverStdOutReader!=null){
 					slurpServerOutput();
@@ -117,52 +108,85 @@ public class NetworkScionServer extends AbstractScionServer {
 	 * @throws ScionServerStartupException if the server could not be started;
 	 *         the inner exception will give detailed information 
 	 */
-  	private int startServerProcess() throws ScionServerStartupException {
+  	private void startServerProcess() throws ScionServerStartupException {
   		Trace.trace(CLASS_PREFIX, "Starting server");
-  		// by default listenOn in Scion use ReuseAddr, which is why I think it does not detect that the port is already in use
-  		// so we the check ourselves
-  		int port=lastPort.incrementAndGet();
   		try {
-  			while (true){
-  				// use null for the loopback
-  				new Socket(host, port).close();
-  				port=lastPort.incrementAndGet();
-  			}
-  		} catch (IOException ioe){
-  			// switch back to IPV4 then
-  			if ("protocol family unavailable".equalsIgnoreCase(ioe.getMessage())){
-  				host=null;
-  				return startServerProcess();
-  			}
+  		  final ServerSocket bindSock = new ServerSocket();
+  		  bindSock.bind(null, 1);
+  		  ScionPlugin.logInfo("== bindSock = ".concat(bindSock.getLocalSocketAddress().toString()));
+  		  
+  		  AcceptThread acceptJob = new AcceptThread("scionServer-accept" + acceptNb.getAndIncrement(), this, bindSock);
+  		  
+  		  acceptJob.setDaemon(true);
+  		  acceptJob.start();
+    		
+	   	  // Construct the command line
+    	  String executable = serverExecutable;
+    	  List<String> command = new LinkedList<String>();
+    	  command.add(executable);
+    	  command.add("-c");
+    	  command.add("-p");
+    	  command.add(String.valueOf(bindSock.getLocalPort()));
+    	  
+    	  // Launch the process
+    	  ProcessBuilder builder = new ProcessBuilder(command);
+    	  if (directory!=null && directory.exists()) {
+    		  builder.directory(directory);
+    	  }
+    	  builder.redirectErrorStream(true); // send server's stderr to its stdout
+    	  try {
+    		  process = builder.start();
+    	  } catch (Throwable ex) {
+    		  throw new ScionServerStartupException(UITexts.scionServerCouldNotStart_message, ex);
+    	  }
+
+    	  // Connect to the process's stdout to capture messages
+    	  // Assume that status messages and such will be UTF8 only
+    	  try {
+    		  serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF8"));
+    	  } catch (UnsupportedEncodingException ex) {
+    		  // make compiler happy, because UTF8 is always supported
+    	  }
+    	  Trace.trace(CLASS_PREFIX, "Server launched.");
+    	  
+		  int retries = 0;
+    	  synchronized (this) {
+    		  int tmo = ACCEPT_INITIAL_TMO;
+
+    		  while (   retries < MAX_RETRIES
+    				  && socket == null) {
+    			  try {
+    				  this.wait(tmo);
+    				  tmo *= 2;
+    				  retries += 1;
+    			  } catch (InterruptedException e) {
+    				  // Ignore the interruption and continue.
+    			  }
+    		  }
+    	  }
+		  
+		  if (retries >= MAX_RETRIES || socket == null) {
+			  ScionPlugin.logInfo("== Accept thread did not receive connection, terminating.");
+			  acceptJob.setTerminate();
+			  try {
+				  acceptJob.join();
+				  ScionPlugin.logInfo("== Accept thread terminated.");
+				  throw new ScionServerStartupException(UITexts.scionServerCouldNotStart_message);
+			  } catch (InterruptedException e) {
+				  // Don't care...
+			  }
+		  }
+
+		  socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF8"));
+		  socketWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF8"));
+		  
+		  // Don't need the bind socket any more...
+		  bindSock.close();
+  		} catch (IOException e) {
+  			// Should not fail, since we're asking for an ephemeral port, but report it
+  			// nonetheless
+  			throw new ScionServerStartupException(UITexts.scionServerCouldNotStart_message, e);
   		}
-  		// Construct the command line
-		String executable = serverExecutable;
-		List<String> command = new LinkedList<String>();
-		command.add(executable);
-		//command.add("--autoport");
-		command.add("-p "+port);
-		
-		// Launch the process
-		ProcessBuilder builder = new ProcessBuilder(command);
-		if (directory!=null && directory.exists()){
-			builder.directory(directory);
-		}
-		builder.redirectErrorStream(true); // send server's stderr to its stdout
-		try {
-			process = builder.start();
-		} catch (Throwable ex) {
-			throw new ScionServerStartupException(UITexts.scionServerCouldNotStart_message, ex);
-		}
-		
-		// Connect to the process's stdout to capture messages
-		// Assume that status messages and such will be UTF8 only
-		try {
-			serverStdOutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF8"));
-		} catch (UnsupportedEncodingException ex) {
-			// make compiler happy, because UTF8 is always supported
-		}
-		Trace.trace(CLASS_PREFIX, "Server started");
-		return port;
 	}
   	
 	/**
@@ -246,32 +270,6 @@ public class NetworkScionServer extends AbstractScionServer {
 	////////////////////////////////
 	// Server stdout communication
 	
-  	/**
-  	 * Reads from the server process's stdout until the port number is printed,
-  	 * then stores it in <code>port</code>.
-  	 * This blocks until the port number is read, or throws an exception.
-  	 * 
-  	 * @throws ScionServerConnectException if the port number could not be read for some reason 
-  	 */
-	/*private void capturePortNumber() throws ScionServerConnectException {
-		try {
-			// Wait until the port number is printed
-			final String start = "=== Listening on port: ";
-			String line;
-			do {
-				line = readLineFromServer();
-				if (line == null) {
-					throw new ScionServerConnectException(UITexts.scionServerOutputReadError_message);
-				}
-			} while (!line.startsWith(start));
-			
-			// Parse the port number from the string
-			port = Integer.parseInt(line.substring(start.length()));
-		} catch (IOException ex) {
-			throw new ScionServerConnectException(UITexts.scionServerConnectError_message, ex);
-		}
-	}	*/
-
 	/**
 	 * Reads from the server's stdout (and stderr)
 	 * and sends its output to the tracer (if tracing).
@@ -293,61 +291,10 @@ public class NetworkScionServer extends AbstractScionServer {
 	}
 	
 	private boolean serverHasOutput() throws IOException {
-		if (serverStdOutReader==null){
-			return false;
-		}
-		return serverStdOutReader.ready();
+		return (   serverStdOutReader != null
+				&& serverStdOutReader.ready());
 	}
 	
-	
-	
-	////////////////////////////////
-	// Server socket communication
-	
-	private void connectToServer(int port) throws ScionServerConnectException {
-		try {
-			socket = connectToServer(host, port);	
-			socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF8"));
-			socketWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF8"));
-		} catch (Throwable ex) {
-			throw new ScionServerConnectException(UITexts.scionServerConnectError_message, ex);
-		}
-	}
-	
-	/**
-	 * Attempts to connect to the open TCP socket of the Scion server process.
-	 * 
-	 * Returns as soon as a successful connection is made. If a connection cannot
-	 * be established within a second or so, an exception is thrown.
-	 */
-	private Socket connectToServer(String host, int port) throws UnknownHostException, IOException {
-		int count = 0;
-		Socket socket = null;
-		
-		do {
-			// Try making the connection
-			try {
-				socket = new Socket(host, port);
-				socket.setSoTimeout(SOCKET_TIMEOUT);
-			} catch (ConnectException ex) {
-				++count;
-				if (count == MAX_RETRIES) {
-					// We've tried hard enough now, throw it out
-					throw ex;
-				}
-			}
-	
-			// Don't busy-wait, use incremental fallback
-			try {
-				Thread.sleep(128 * count);
-			} catch (InterruptedException ex) {
-				// that's okay, ignore
-			}
-		} while (socket == null);
-		
-		return socket;
-	}
-
   	/////////////////////
 	// Command handling
 	
@@ -391,6 +338,37 @@ public class NetworkScionServer extends AbstractScionServer {
 		}
 	}
 	
-
-
+	private class AcceptThread extends Thread {
+		private NetworkScionServer instance;
+		private ServerSocket bindSock;
+		private boolean terminateFlag;
+		
+		public AcceptThread(String name, NetworkScionServer instance, ServerSocket bindSock) {
+			super(name);
+			this.instance = instance;
+			this.bindSock = bindSock;
+			this.terminateFlag = false;
+		}
+		
+		public void run() {
+			int timeout = 1000 / 2;
+			try {
+				bindSock.setSoTimeout(timeout);
+				while (!terminateFlag) {
+					socket = bindSock.accept();
+					synchronized (instance) {
+						instance.notifyAll();
+					}
+				} 
+			} catch (SocketException e) {
+				// Yeah, yeah, accept timed out...
+			} catch (IOException e) {
+				// Retry accepting connections...
+			} 
+		}
+		
+		public void setTerminate() {
+			terminateFlag = true;
+		}
+	}
 }
