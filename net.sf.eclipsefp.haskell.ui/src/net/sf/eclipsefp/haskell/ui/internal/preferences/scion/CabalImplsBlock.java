@@ -18,15 +18,20 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -257,5 +262,56 @@ public class CabalImplsBlock implements ISelectionProvider {
       add( dialog.getResult() );
       autoSelectSingle( prev );
     }
+  }
+
+  /** The internal content provider class */
+  private class CabalImplsCP implements IStructuredContentProvider {
+    CabalImplsCP( final List<CabalImplementation> impls ) {
+      // Unused.
+    }
+
+    public void dispose() {
+      // Unused.
+    }
+
+    public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
+      // unused
+
+    }
+
+    public Object[] getElements( final Object inputElement ) {
+      return impls.toArray();
+    }
+  }
+
+  /** Internal table label provider class */
+  public class CabalImplsLP extends LabelProvider implements ITableLabelProvider {
+
+    public Image getColumnImage( final Object element, final int columnIndex ) {
+      return null;
+    }
+
+    public String getColumnText( final Object elem, final int columnIndex ) {
+      String result = null;
+      if ( elem instanceof CabalImplementation ) {
+          CabalImplementation impl = ( CabalImplementation ) elem;
+          switch( columnIndex ) {
+            case 0:
+              result = "--name--";
+              break;
+            case 1:
+              result = "--version--";
+              break;
+            case 2:
+              result = "--column3--";
+              break;
+          }
+      } else {
+        result = elem.toString();
+      }
+
+      return result;
+    }
+
   }
 }
