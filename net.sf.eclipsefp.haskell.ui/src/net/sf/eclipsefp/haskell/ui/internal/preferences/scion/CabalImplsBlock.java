@@ -8,23 +8,30 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -67,8 +74,11 @@ public class CabalImplsBlock implements ISelectionProvider {
     tableLabel.setLayoutData( gdata );
     tableLabel.setFont( parentFont );
 
-    table = SWTUtil.createTable( composite );
-    createColumns();
+    Composite tableComposite = new Composite ( composite, SWT.NONE );
+    tableComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true) );
+
+    table = SWTUtil.createTable( tableComposite );
+    createColumns( tableComposite );
     createViewer();
 
     Composite buttonsComp = new Composite( composite, SWT.NONE );
@@ -120,25 +130,32 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   // Helper methods:
-  private void createColumns() {
-    createColumn( UITexts.cabalImplsBlock_colName, new SelectionAdapter() {
+  private void createColumns(final Composite composite) {
+    TableColumn colName = createColumn( UITexts.cabalImplsBlock_colName, new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent evt ) {
         // sortByName();
       }
     } );
-    createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
+    TableColumn colInstallVErsion = createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
         // Insert something here.
       }
     } );
-    createColumn (UITexts.cabalImplsBlock_colCabalLibraryVersion, new SelectionAdapter() {
+    TableColumn colLibraryVersion = createColumn (UITexts.cabalImplsBlock_colCabalLibraryVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
         // Insert something here.
       }
     } );
+
+    TableColumnLayout tcLayout = new TableColumnLayout();
+    composite.setLayout( tcLayout );
+
+    tcLayout.setColumnData( colName, new ColumnWeightData( 50, true ) );
+    tcLayout.setColumnData( colInstallVErsion, new ColumnWeightData( 25, true ) );
+    tcLayout.setColumnData( colLibraryVersion, new ColumnWeightData( 25, true ) );
   }
 
   private TableColumn createColumn( final String text,
@@ -245,5 +262,56 @@ public class CabalImplsBlock implements ISelectionProvider {
       add( dialog.getResult() );
       autoSelectSingle( prev );
     }
+  }
+
+  /** The internal content provider class */
+  private class CabalImplsCP implements IStructuredContentProvider {
+    CabalImplsCP( final List<CabalImplementation> impls ) {
+      // Unused.
+    }
+
+    public void dispose() {
+      // Unused.
+    }
+
+    public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
+      // unused
+
+    }
+
+    public Object[] getElements( final Object inputElement ) {
+      return impls.toArray();
+    }
+  }
+
+  /** Internal table label provider class */
+  public class CabalImplsLP extends LabelProvider implements ITableLabelProvider {
+
+    public Image getColumnImage( final Object element, final int columnIndex ) {
+      return null;
+    }
+
+    public String getColumnText( final Object elem, final int columnIndex ) {
+      String result = null;
+      if ( elem instanceof CabalImplementation ) {
+          CabalImplementation impl = ( CabalImplementation ) elem;
+          switch( columnIndex ) {
+            case 0:
+              result = "--name--";
+              break;
+            case 1:
+              result = "--version--";
+              break;
+            case 2:
+              result = "--column3--";
+              break;
+          }
+      } else {
+        result = elem.toString();
+      }
+
+      return result;
+    }
+
   }
 }
