@@ -51,17 +51,15 @@ public class CabalImplementationDialog extends StatusDialog {
    * @param implementationsBlock The Cabal implementations perference page
    * @param impl The Cabal implementation
    */
-  CabalImplementationDialog ( final Shell shell,
-      final CabalImplsBlock cabalImplsBlock,
-      final CabalImplementation impl ) {
-    super (shell);
+  CabalImplementationDialog( final Shell shell,
+      final CabalImplsBlock cabalImplsBlock, final CabalImplementation impl ) {
+    super( shell );
     theBlock = cabalImplsBlock;
     currentImpl = new CabalImplementation();
-    if ( impl != null ) {
+    if( impl != null ) {
       // Fill in details as necessary.
     }
   }
-
 
   CabalImplementation getResult() {
     return currentImpl;

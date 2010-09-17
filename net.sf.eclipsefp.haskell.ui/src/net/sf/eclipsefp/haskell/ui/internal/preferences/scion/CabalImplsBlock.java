@@ -8,8 +8,10 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -67,8 +69,11 @@ public class CabalImplsBlock implements ISelectionProvider {
     tableLabel.setLayoutData( gdata );
     tableLabel.setFont( parentFont );
 
-    table = SWTUtil.createTable( composite );
-    createColumns();
+    Composite tableComposite = new Composite ( composite, SWT.NONE );
+    tableComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true) );
+
+    table = SWTUtil.createTable( tableComposite );
+    createColumns( tableComposite );
     createViewer();
 
     Composite buttonsComp = new Composite( composite, SWT.NONE );
@@ -120,25 +125,32 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   // Helper methods:
-  private void createColumns() {
-    createColumn( UITexts.cabalImplsBlock_colName, new SelectionAdapter() {
+  private void createColumns(final Composite composite) {
+    TableColumn colName = createColumn( UITexts.cabalImplsBlock_colName, new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent evt ) {
         // sortByName();
       }
     } );
-    createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
+    TableColumn colInstallVErsion = createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
         // Insert something here.
       }
     } );
-    createColumn (UITexts.cabalImplsBlock_colCabalLibraryVersion, new SelectionAdapter() {
+    TableColumn colLibraryVersion = createColumn (UITexts.cabalImplsBlock_colCabalLibraryVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
         // Insert something here.
       }
     } );
+
+    TableColumnLayout tcLayout = new TableColumnLayout();
+    composite.setLayout( tcLayout );
+
+    tcLayout.setColumnData( colName, new ColumnWeightData( 50, true ) );
+    tcLayout.setColumnData( colInstallVErsion, new ColumnWeightData( 25, true ) );
+    tcLayout.setColumnData( colLibraryVersion, new ColumnWeightData( 25, true ) );
   }
 
   private TableColumn createColumn( final String text,
