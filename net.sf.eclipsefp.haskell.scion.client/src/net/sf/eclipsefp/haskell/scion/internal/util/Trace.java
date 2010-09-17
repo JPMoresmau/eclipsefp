@@ -30,4 +30,7 @@ public class Trace {
 		System.out.print(" ");
 	}
 	
+	public static boolean isTracing() {
+		return ScionPlugin.isTracing(optionId);
+	}
 }

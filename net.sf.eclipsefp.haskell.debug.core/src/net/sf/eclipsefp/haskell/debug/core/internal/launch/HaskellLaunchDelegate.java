@@ -162,9 +162,11 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
 
   private String[] determineArguments( final ILaunchConfiguration config )
                                                           throws CoreException {
+    String extra=config.getAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
+        ILaunchAttributes.EMPTY  );
     String args = config.getAttribute( ILaunchAttributes.ARGUMENTS,
-                                       ( String )null );
-    return CommandLineUtil.parse( args );
+        ILaunchAttributes.EMPTY  );
+    return CommandLineUtil.parse( extra +" "+ args ); //$NON-NLS-1$
   }
 
   private void checkCancellation( final IProgressMonitor monitor ) {

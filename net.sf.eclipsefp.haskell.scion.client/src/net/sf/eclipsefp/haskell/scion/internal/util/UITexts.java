@@ -40,7 +40,10 @@ public class UITexts extends NLS {
 	public static String error_refreshLocal;
 	
 	public static String warning_typecheck_arbitrary_failed;
-
+	public static String warning_file_component;
+	
+	public static String noproject;
+	
 	private static final String BUNDLE_NAME = UITexts.class.getPackage()
 			.getName()
 			+ ".uitexts"; //$NON-NLS-1$

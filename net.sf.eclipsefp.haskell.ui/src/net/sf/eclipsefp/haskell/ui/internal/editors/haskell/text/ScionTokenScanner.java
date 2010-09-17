@@ -103,33 +103,33 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   public IToken nextToken() {
    if (tokenDefs!=null && tokenDefs.hasNext()){
-     TokenDef nextTokenDef=tokenDefs.next();
-     try {
-       int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
-       int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
-       int end=Math.min( offset+length,nextEnd);
+     do {
+       TokenDef nextTokenDef=tokenDefs.next();
+       try {
+         int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
+         int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
+         int end=Math.min( offset+length,nextEnd);
 
-       IToken nextToken=getTokenFromTokenDef( nextTokenDef);
-       if (currentToken!=null && currentToken.getData().equals( nextToken.getData() ) &&
-           currentOffset+currentLength<nextOffset){
-         nextOffset= currentOffset+currentLength;
-       }
-       int nextLength=end-nextOffset;
-       currentLength=nextLength;
-       currentOffset=nextOffset;
-       currentTokenDef=nextTokenDef;
-       currentToken=nextToken;
+         IToken nextToken=getTokenFromTokenDef( nextTokenDef);
+         if (currentToken!=null && currentToken.getData().equals( nextToken.getData() ) &&
+             currentOffset+currentLength<nextOffset){
+           nextOffset= currentOffset+currentLength;
+         }
+         int nextLength=end-nextOffset;
+         currentLength=nextLength;
+         currentOffset=nextOffset;
+         currentTokenDef=nextTokenDef;
+         currentToken=nextToken;
 
-       if (currentOffset<offset){
-         return nextToken();
+         if (currentOffset>offset+length)  {
+           return Token.EOF;
+         }
+
+       } catch (BadLocationException ble){
+         HaskellUIPlugin.log( ble );
        }
-       if (currentOffset>offset+length)  {
-         return Token.EOF;
-       }
-       return currentToken;
-     } catch (BadLocationException ble){
-       HaskellUIPlugin.log( ble );
-     }
+    } while(currentOffset<offset);
+    return currentToken;
    }
      return Token.EOF;
 

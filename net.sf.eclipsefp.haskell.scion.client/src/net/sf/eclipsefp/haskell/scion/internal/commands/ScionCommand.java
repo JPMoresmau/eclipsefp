@@ -32,7 +32,7 @@ import org.json.JSONTokener;
  */
 public abstract class ScionCommand extends Job {
 	
-	private final String TO_SERVER_PREFIX = "[scion-server] <<", FROM_SERVER_PREFIX = "[scion-server] >>";
+	private static final String TO_SERVER_PREFIX = "[scion-server] <<", FROM_SERVER_PREFIX = "[scion-server] >>";
 
 	private int sequenceNumber = 0;
 	
@@ -145,14 +145,38 @@ public abstract class ScionCommand extends Job {
 		if(monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
 		}
+		return runSuccessors( monitor);
+	}
+	
+	private List<Runnable> afters=new LinkedList<Runnable>();
+	public void addAfter(final Runnable r){
+		afters.add(r);
+		addJobChangeListener(new JobChangeAdapter(){
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().isOK()) {
+					r.run();
+				}
+			}
+		});
+	}
+	
+	public IStatus runSuccessors(IProgressMonitor monitor){
+		
 		for (ScionCommand sc:getSuccessors()){
 			IStatus st=sc.run(monitor);
+
 			if (!st.equals(Status.OK_STATUS)){
 				return st;
+			}
+			for (final Runnable r:sc.afters){
+				addAfter(r);
 			}
 		}
 		return Status.OK_STATUS;
 	}
+	
+	
 	
 	@Override
 	public boolean belongsTo(Object family) {

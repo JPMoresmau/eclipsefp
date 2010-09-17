@@ -53,9 +53,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -139,7 +139,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
     // creates the unattached instance used for lexing
     if (serverExecutable!=null) {
-      HaskellUIPlugin.log( "Launching unattached scion server ".concat(serverExecutable), IStatus.INFO );
+     // HaskellUIPlugin.log( "Launching unattached scion server ".concat(serverExecutable), IStatus.INFO );
       ScionInstance instance = startInstance( null );
       instances.put( null, instance );
     }

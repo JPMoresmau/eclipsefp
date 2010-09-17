@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 
 public class ScionPlugin extends AbstractUIPlugin {
 	
-	private static final String BUNDLE_NAME = "net.sf.eclipsefp.haskell.scion.client";
+	private static final String BUNDLE_NAME = ScionPlugin.class.getCanonicalName();
 	private static ScionPlugin instance;
 	public static final String ID_PROJECT_PROBLEM_MARKER = BUNDLE_NAME+".projectProblem"; //$NON-NLS-1$
 
@@ -89,6 +89,9 @@ public class ScionPlugin extends AbstractUIPlugin {
 	    return value != null && value.equalsIgnoreCase("true");
 	}
 	
+	public static void logInfo (String message) {
+		log(Status.INFO, message, null);
+	}
 	public static void logWarning(String message, Throwable cause) {
 		log(Status.WARNING, message, cause);
 	}
