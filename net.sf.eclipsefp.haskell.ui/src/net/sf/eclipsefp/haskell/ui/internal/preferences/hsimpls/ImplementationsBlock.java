@@ -21,7 +21,10 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -33,6 +36,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -530,6 +534,57 @@ class ImplementationsBlock implements ISelectionProvider {
     @Override
     public boolean isSorterProperty( final Object elem, final String prop ) {
       return true;
+    }
+  }
+
+  /** The internal content provider class */
+  class HsImplementationsCP implements IStructuredContentProvider {
+    /** Initialization */
+    HsImplementationsCP( final List<IHsImplementation> installations ) {
+      // Currently unused.
+    }
+
+    // interface methods of IStructuredContentProvider
+    //////////////////////////////////////////////////
+
+    public Object[] getElements( final Object input ) {
+      return installations.toArray();
+    }
+
+    public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
+      // unused
+    }
+
+    public void dispose() {
+      // unused
+    }
+  }
+
+  /** The internal label provider class */
+  class HsImplementationsLP extends LabelProvider implements ITableLabelProvider {
+    public String getColumnText( final Object elem, final int column ) {
+      String result = null;
+      if( elem instanceof IHsImplementation ) {
+          IHsImplementation impl = ( IHsImplementation ) elem;
+          switch( column ) {
+            case 0:
+              result = impl.getName();
+              break;
+            case 1:
+              result = impl.getType().toString();
+              break;
+            case 2:
+              result = impl.getVersion();
+              break;
+          }
+      } else {
+        result = elem.toString();
+      }
+      return result;
+    }
+
+    public Image getColumnImage( final Object elem, final int column ) {
+      return null;
     }
   }
 }

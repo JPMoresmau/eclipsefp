@@ -3,19 +3,18 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.internal.hsimpl;
 
-
 /** <p>represents an installed Haskell implementation.</p>
   *
   * @author Leif Frenzel
   */
 public interface IHsImplementation {
-
+  /** Get the Haskell implementation type */
   HsImplementationType getType();
-  /** <p>displayed to the user for informational purposes. May be empty.</p> */
+  /** displayed to the user for informational purposes. May be empty. */
   String getVersion();
-  /** <p>returns the name of this installed Haskell implementation. This
+  /** returns the name of this installed Haskell implementation. This
     * name is supplied by the user and is displayed to the user to identify
-    * this installed implementation.</p> */
+    * this installed implementation. */
   String getName();
   String getBinDir();
   String getLibDir();

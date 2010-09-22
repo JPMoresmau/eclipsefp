@@ -111,8 +111,7 @@ public class InstalledImplementationsPP extends PreferencePage
   private void initLogic() {
     ISelectionChangedListener listener = new ISelectionChangedListener() {
       public void selectionChanged( final SelectionChangedEvent event ) {
-        IHsImplementation install
-          = implementationsBlock.getCheckedHsImplementation();
+        IHsImplementation install = implementationsBlock.getCheckedHsImplementation();
         if( install == null ) {
           setValid( false );
           setErrorMessage( UITexts.installedImplementationsPP_nothingSelected );
