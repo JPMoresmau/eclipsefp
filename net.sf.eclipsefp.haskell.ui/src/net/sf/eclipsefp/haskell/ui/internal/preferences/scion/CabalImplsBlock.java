@@ -2,11 +2,15 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -42,10 +46,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-
-/** <p>TODO</p>
+/** The Cabal implementations table and associated buttons
  *
- * @author Leif Frenzel
+ * @author B. Scott Michel
  */
 public class CabalImplsBlock implements ISelectionProvider {
   private CheckboxTableViewer viewer;
@@ -53,6 +56,7 @@ public class CabalImplsBlock implements ISelectionProvider {
   private Button btnAdd;
   private Button btnRemove;
   private Button btnEdit;
+  private Button btnAutoDetect;
   private final List<CabalImplementation> impls = new ArrayList<CabalImplementation>();
   private final ListenerList selectionListeners = new ListenerList();
   private ISelection lastSelection = new StructuredSelection();
@@ -190,6 +194,14 @@ public class CabalImplsBlock implements ISelectionProvider {
         // TODO: remove selected cabal implementation
       }
     } );
+
+    String sDetect = UITexts.cabalImplsBlock_btnAutoDetect;
+    btnAutoDetect = SWTUtil.createPushButton( buttonsComp, sDetect );
+    btnAutoDetect.addListener( SWT.Selection, new Listener() {
+      public void handleEvent (final Event ev) {
+        autoDetectCabalImpls();
+      }
+    });
   }
 
   private void createViewer() {
@@ -264,6 +276,42 @@ public class CabalImplsBlock implements ISelectionProvider {
     }
   }
 
+  private void autoDetectCabalImpls() {
+    ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
+
+    viewer.remove(impls);
+    viewer.setInput( null );
+    viewer.refresh( true );
+
+    impls.clear();
+    for (File loc : candidateLocs) {
+      File[] files = loc.listFiles( new FilenameFilter() {
+        public boolean accept( final File dir, final String name ) {
+          // Catch anything starting with "cabal", because MacPorts (and others) may install
+          // "cabal-1.8.0" as a legitimate cabal executable.
+          return name.startsWith( CabalImplementation.CABAL_EXECUTABLE );
+        }
+      });
+
+      if (files != null && files.length > 0) {
+        for (File file : files) {
+          try {
+            impls.add( new CabalImplementation(file.getCanonicalFile()) );
+          } catch (IOException e) {
+            // Really ought not happen...
+          }
+        }
+      }
+    }
+
+    if (impls.size() > 0) {
+      viewer.add(impls);
+      viewer.setInput( impls.toArray() );
+    }
+
+    viewer.refresh(true);
+  }
+
   /** The internal content provider class */
   private class CabalImplsCP implements IStructuredContentProvider {
     CabalImplsCP( final List<CabalImplementation> impls ) {
@@ -297,13 +345,13 @@ public class CabalImplsBlock implements ISelectionProvider {
           CabalImplementation impl = ( CabalImplementation ) elem;
           switch( columnIndex ) {
             case 0:
-              result = "--name--";
+              result = impl.getCabalExecutableName();
               break;
             case 1:
-              result = "--version--";
+              result = impl.getInstallVersion();
               break;
             case 2:
-              result = "--column3--";
+              result = impl.getLibraryVersion();
               break;
           }
       } else {
