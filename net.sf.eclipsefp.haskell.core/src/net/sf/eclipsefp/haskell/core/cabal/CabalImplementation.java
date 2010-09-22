@@ -36,87 +36,79 @@ public class CabalImplementation {
     fCabalExecutablePath = new String();
   }
 
+  public CabalImplementation(final File cabalExec) {
+    try {
+      fCabalExecutablePath = cabalExec.getCanonicalPath();
+      probeVersionInternal(new Path(fCabalExecutablePath));
+    } catch (IOException e) {
+      resetVersions();
+      fCabalExecutablePath = new String();
+    }
+  }
+
+  public void probeVersion(final String directoryHint) {
+    probeVersionInternal(new Path(directoryHint, CABAL_EXECUTABLE));
+  }
+  public void probeVersion( final String directory, final String exeName ) {
+    probeVersionInternal( new Path(directory, exeName) );
+  }
+
+  public void probeVersion( final IHsImplementation hsImpl ) {
+    if( hsImpl != null ) {
+      IPath cabalBinPath = new Path( hsImpl.getBinDir() );
+      cabalBinPath = cabalBinPath.append( CABAL_EXECUTABLE );
+      probeVersionInternal(cabalBinPath);
+    }
+  }
+
   /**
-   * Query version identifiers from the cabal executable. Note that to do this requires that we have a
-   * valid Haskell implementation that can clue us into the binary directory.
+   * Query version identifiers from the cabal executable.
    *
    * NOTE: This method is expensive to call repeatedly because it involves forking a process to query
    * the CABAL_EXECUTABLE's version numbers, which then need to be parsed.
    */
-  public void probeVersion(final IHsImplementation hsImpl) {
+  private void probeVersionInternal( final IPath cabalExecutable ) {
     boolean validImpl = false;
 
-    if (hsImpl != null) {
-      try {
-        String version = QueryUtil.queryEx( getCabalExecutableName( hsImpl ), "--version" ); //$NON-NLS-1$
-        String[] vlines = version.split( "(\\r\\n)|\\r|\\n" ); //$NON-NLS-1$
+    try {
+      String version = QueryUtil.queryEx( cabalExecutable.toOSString(),
+          "--version" ); //$NON-NLS-1$
+      String[] vlines = version.split( "(\\r\\n)|\\r|\\n" ); //$NON-NLS-1$
 
-        if (vlines[0].startsWith( "cabal-install" ) //$NON-NLS-1$
-            && vlines[1].startsWith( "using" ) ) { //$NON-NLS-1$
-          // Looks like we might have a winner...
-          Pattern vPat = Pattern.compile( "(\\d+\\.)+\\d+" ); //$NON-NLS-1$
-          Matcher vMatch = vPat.matcher( vlines[0] );
+      if( vlines[ 0 ].startsWith( "cabal-install" ) //$NON-NLS-1$
+          && vlines[ 1 ].startsWith( "using" ) ) { //$NON-NLS-1$
+        // Looks like we might have a winner...
+        Pattern vPat = Pattern.compile( "(\\d+\\.)+\\d+" ); //$NON-NLS-1$
+        Matcher vMatch = vPat.matcher( vlines[ 0 ] );
 
-          if (vMatch.find()) {
-            fCabalInstallVersion = vMatch.group();
-          }
-          vMatch = vPat.matcher( vlines[1] );
-          if (vMatch.find()) {
-            fCabalLibraryVersion = vMatch.group();
-          }
-
-          if (fCabalInstallVersion.length() > 0 || fCabalLibraryVersion.length() > 0) {
-            validImpl = true;
-          }
+        if( vMatch.find() ) {
+          fCabalInstallVersion = vMatch.group();
         }
-      } catch( IOException e ) {
-        // Paranoia: ensure validImpl is still false
-        validImpl = false;
+        vMatch = vPat.matcher( vlines[ 1 ] );
+        if( vMatch.find() ) {
+          fCabalLibraryVersion = vMatch.group();
+        }
+
+        if( fCabalInstallVersion.length() > 0
+            || fCabalLibraryVersion.length() > 0 ) {
+          validImpl = true;
+        }
       }
+    } catch( IOException e ) {
+      // Paranoia: ensure validImpl is still false
+      validImpl = false;
     }
 
-    if (!validImpl) {
+    if( !validImpl ) {
       resetVersions();
     }
   }
 
   /** Return the operational cabal executable name */
-  public String getCabalExecutableName(final IHsImplementation hsImpl) {
-    if (fCabalExecutablePath.length() != 0) {
-      return fCabalExecutablePath;
-    }
-
-    boolean findInPath = false;
-
-    if (hsImpl != null) {
-      IPath cabalBinPath = new Path(hsImpl.getBinDir());
-      cabalBinPath = cabalBinPath.append(CABAL_EXECUTABLE);
-
-      File cabalBin = cabalBinPath.toFile();
-      if ( !cabalBin.exists() ){
-        findInPath = true;
-      } else {
-        try {
-          fCabalExecutablePath = cabalBin.getCanonicalPath();
-        } catch( IOException e ) {
-          // Should never happen...
-        }
-      }
-    }
-
-    if ( findInPath ) {
-      File cabalBin = FileUtil.findExecutableInPath( CABAL_EXECUTABLE );
-      if (cabalBin != null && cabalBin.exists()) {
-        try {
-          fCabalExecutablePath = cabalBin.getCanonicalPath();
-        } catch( IOException e ) {
-          // Should never happen...
-        }
-      }
-    }
-
+  public String getCabalExecutableName() {
     return fCabalExecutablePath;
   }
+
   /** Reset the version strings to empty string */
   private void resetVersions() {
     fCabalInstallVersion = new String();

@@ -66,6 +66,7 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_btnAdd;
   public static String cabalImplsBlock_btnEdit;
   public static String cabalImplsBlock_btnRemove;
+  public static String cabalImplsBlock_btnAutoDetect;
   public static String cabalImplsBlock_dlgAdd;
   public static String cabalImplsBlock_dlgEdit;
 

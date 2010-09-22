@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
@@ -54,6 +55,8 @@ public class ScionPP
 	  initializeDialogUnits( parent );
 	  noDefaultAndApplyButton();
 
+	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+
 	  prefComp = new Composite(parent, SWT.NONE);
 
 	  GridLayout glayout = new GridLayout(nColumns, false);
@@ -73,8 +76,6 @@ public class ScionPP
     // IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
     // cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
 
-    IPreferenceStore prefStore = getPreferenceStore();
-
     SWTUtil.createMessageLabel (prefComp, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
 
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
@@ -90,7 +91,6 @@ public class ScionPP
         serverExecutableField.setEnabled(  !b.booleanValue(), prefComp );
       }
     });
-    serverBuiltInField.load();
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
@@ -99,7 +99,6 @@ public class ScionPP
 		serverExecutableField.setPage( this );
 		serverExecutableField.setPreferenceStore( prefStore );
 		serverExecutableField.fillIntoGrid( prefComp, nColumns );
-		serverExecutableField.load();
 
 		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
@@ -114,6 +113,9 @@ public class ScionPP
 		autodetect.setPage( this );
 		autodetect.setPreferenceStore( prefStore );
 		autodetect.fillIntoGrid( prefComp, nColumns );
+
+		serverBuiltInField.load();
+    serverExecutableField.load();
 		autodetect.load();
 
 		return prefComp;

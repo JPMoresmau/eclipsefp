@@ -53,9 +53,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -305,110 +305,65 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
       ArrayList<String> commands = new ArrayList<String>();
       CabalImplementation cabalImpl = new CabalImplementation();
 
-      commands.add( cabalImpl.getCabalExecutableName( hsImpl ) );
       cabalImpl.probeVersion( hsImpl );
-      HaskellUIPlugin.log( "cabal executable: ".concat( cabalImpl.getCabalExecutableName( hsImpl ) ),
-                           IStatus.INFO );
-      HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),
-                           IStatus.INFO );
-      HaskellUIPlugin.log( "Cabal library version ".concat( cabalImpl.getLibraryVersion() ),
-                           IStatus.INFO );
+      final String cabalExecutable = cabalImpl.getCabalExecutableName();
 
-      String cabalLibVer = cabalImpl.getLibraryVersion();
-      if (cabalLibVer.startsWith( "1.8." )) {
-        commands.add("-fcabal_1_8");
-      } else if (cabalLibVer.startsWith( "1.7." )) {
-        commands.add( "-fcabal_1_7" );
-      }
+      if (cabalExecutable.length() > 0) {
+        commands.add( cabalExecutable );
+        cabalImpl.probeVersion( hsImpl );
+        HaskellUIPlugin.log( "cabal executable: ".concat( cabalImpl.getCabalExecutableName() ),
+                             IStatus.INFO );
+        HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),
+                             IStatus.INFO );
+        HaskellUIPlugin.log( "Cabal library version ".concat( cabalImpl.getLibraryVersion() ),
+                             IStatus.INFO );
 
-      commands.add("install");
-      commands.add("-v2");
-
-      //"cabal install"
-      // we tried to only configure/build, but only install fetches the dependencies
-      // the trick mentioned http://hackage.haskell.org/trac/hackage/ticket/411 didn't work
-      ProcessBuilder pb=new ProcessBuilder( commands );
-      pb.directory( sd );
-      pb.redirectErrorStream( true );
-      int code=-1;
-      ByteArrayOutputStream baos=new ByteArrayOutputStream();
-      try {
-        Process p=pb.start();
-        InputStream is=p.getInputStream();
-        int r;
-        while ((r=is.read())!=-1){
-          baos.write( r );
-          System.out.write(r);
+        String cabalLibVer = cabalImpl.getLibraryVersion();
+        if (cabalLibVer.startsWith( "1.8." )) {
+          commands.add("-fcabal_1_8");
+        } else if (cabalLibVer.startsWith( "1.7." )) {
+          commands.add( "-fcabal_1_7" );
         }
-        code=p.waitFor();
 
-        String depsOutput=new String (baos.toByteArray());
-        baos.reset();
+        commands.add("install");
+        commands.add("-v2");
 
-        if (code==0){
-          HaskellUIPlugin.log(NLS.bind( UITexts.scionServerInstallSucceeded,PlatformUtil.NL+depsOutput),IStatus.INFO);
-        } else {
-          HaskellUIPlugin.log( NLS.bind( UITexts.scionServerInstallFailed,PlatformUtil.NL+depsOutput),IStatus.ERROR);
-        }
-      } catch (Exception e){
-        HaskellUIPlugin.log(UITexts.scionServerInstallError,e);
-      }
-        //}
-          //"cabal configure -fserver"
-        /*pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"configure","-fserver"); //$NON-NLS-1$
+        //"cabal install"
+        // we tried to only configure/build, but only install fetches the dependencies
+        // the trick mentioned http://hackage.haskell.org/trac/hackage/ticket/411 didn't work
+        ProcessBuilder pb=new ProcessBuilder( commands );
         pb.directory( sd );
         pb.redirectErrorStream( true );
-        baos=new ByteArrayOutputStream();
+        int code=-1;
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
         try {
-          p=pb.start();
-          is=p.getInputStream();
+          Process p=pb.start();
+          InputStream is=p.getInputStream();
+          int r;
           while ((r=is.read())!=-1){
             baos.write( r );
             System.out.write(r);
           }
           code=p.waitFor();
 
-          String configureOutput=new String (baos.toByteArray());
+          String depsOutput=new String (baos.toByteArray());
           baos.reset();
-          //"cabal build"
-          if (code==0){
-            HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureSucceeded,ResourceUtil.NL+configureOutput),IStatus.INFO);
-            pb=new ProcessBuilder( cabalBin.getAbsolutePath(),"build" ); //$NON-NLS-1$
-            pb.directory( sd );
-            pb.redirectErrorStream( true );
-            code=-1;
-            try {
-              p=pb.start();
-              is=p.getInputStream();
-              while ((r=is.read())!=-1){
-                baos.write( r );
-                System.out.write(r);
-              }
-              code=p.waitFor();
-              String buildOutput=new String (baos.toByteArray());
-              if (code==0){
-                HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildSucceeded,ResourceUtil.NL+buildOutput),IStatus.INFO);
-              } else {
-                HaskellUIPlugin.log(NLS.bind( UITexts.scionServerBuildFailed,ResourceUtil.NL+ buildOutput),IStatus.ERROR);
-              }
-            } catch (Exception e){
-              HaskellUIPlugin.log(UITexts.scionServerBuildError,e);
-            }
 
+          if (code==0){
+            HaskellUIPlugin.log(NLS.bind( UITexts.scionServerInstallSucceeded,PlatformUtil.NL+depsOutput),IStatus.INFO);
           } else {
-            HaskellUIPlugin.log(NLS.bind( UITexts.scionServerConfigureFailed,ResourceUtil.NL+configureOutput),IStatus.ERROR);
+            HaskellUIPlugin.log( NLS.bind( UITexts.scionServerInstallFailed,PlatformUtil.NL+depsOutput),IStatus.ERROR);
           }
         } catch (Exception e){
-          HaskellUIPlugin.log(UITexts.scionServerConfigureError,e);
+          HaskellUIPlugin.log(UITexts.scionServerInstallError,e);
         }
-        */
-
-
-
+      }
     }
+
     if (exeLocation.toFile().exists()){
       return exeLocation.toOSString();
     }
+
     HaskellUIPlugin.log( NLS.bind(UITexts.scionServerExecutableNotPresent,exeLocation.toOSString()), IStatus.ERROR );
     return null;
   }
