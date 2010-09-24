@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -78,6 +79,20 @@ public class FileUtil {
       return baseName + "." + PlatformUtil.WINDOWS_EXTENSION_EXE; //$NON-NLS-1$
     }
     return baseName;
+  }
+  
+  /** Makes the given Path into a valid executable name, which is effectively a NOP on Unix, but ensures
+   * that ".exe" is appended on Windows.
+   */
+  public static IPath makeExecutableName(final IPath exePath) {
+    if (PlatformUtil.runningOnWindows()) {
+      String ext = exePath.getFileExtension();
+      if (ext == null || !ext.equals(PlatformUtil.WINDOWS_EXTENSION_EXE)) {
+        return exePath.addFileExtension(PlatformUtil.WINDOWS_EXTENSION_EXE); 
+      }
+    }
+    
+    return exePath;
   }
 
   /**

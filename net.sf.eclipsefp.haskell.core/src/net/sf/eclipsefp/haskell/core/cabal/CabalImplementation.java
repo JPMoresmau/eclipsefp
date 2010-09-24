@@ -20,43 +20,85 @@ import org.eclipse.core.runtime.Path;
  * @author Scott Michel (scottm@aero.org)
  */
 public class CabalImplementation {
-  /** Cabal's executable name */
-  public final static String CABAL_EXECUTABLE = FileUtil.makeExecutableName( "cabal" ); //$NON-NLS-1$
+  /** Base cabal executable name */
+  public final static String CABAL_BASENAME = "cabal"; //$NON-NLS-1$
+  /** Cabal's executable name (with ".exe" appended if running on Windows) */
+  public final static String CABAL_EXECUTABLE = FileUtil.makeExecutableName( CABAL_BASENAME );
 
+  /** Path to the cabal executable */
+  private IPath fCabalExecutablePath;
+  /** User identifier for this implementation */
+  private String fCabalIdentifier;
   /** cabal-install version */
   private String fCabalInstallVersion;
   /** Cabal library version */
   private String fCabalLibraryVersion;
-  /** Path name to the cabal executable */
-  private String fCabalExecutablePath;
 
   /** Default constructor */
   public CabalImplementation() {
+    fCabalIdentifier = null;
+    fCabalExecutablePath = null;
     resetVersions();
-    fCabalExecutablePath = new String();
   }
 
-  public CabalImplementation(final File cabalExec) {
+  /** Constructor with a cabal executable path */
+  public CabalImplementation(final String ident, final File cabalExec) {
     try {
-      fCabalExecutablePath = cabalExec.getCanonicalPath();
-      probeVersionInternal(new Path(fCabalExecutablePath));
+      fCabalIdentifier = ident;
+      fCabalExecutablePath = new Path(cabalExec.getCanonicalPath());
+      probeVersionInternal(fCabalExecutablePath);
     } catch (IOException e) {
       resetVersions();
-      fCabalExecutablePath = new String();
+      fCabalExecutablePath = null;
     }
   }
 
-  public void probeVersion(final String directoryHint) {
-    probeVersionInternal(new Path(directoryHint, CABAL_EXECUTABLE));
-  }
-  public void probeVersion( final String directory, final String exeName ) {
-    probeVersionInternal( new Path(directory, exeName) );
+  /** Copy constructor
+   *
+   *  @param src The source CabalImplementation object
+   */
+  public CabalImplementation (final CabalImplementation src) {
+    if (src != null) {
+      this.fCabalIdentifier = src.fCabalIdentifier;
+      this.fCabalExecutablePath = src.fCabalExecutablePath;
+      this.fCabalInstallVersion = src.fCabalInstallVersion;
+      this.fCabalLibraryVersion = src.fCabalLibraryVersion;
+    } else {
+      fCabalIdentifier = null;
+      fCabalExecutablePath = null;
+      resetVersions();
+    }
   }
 
+  /** Probe the version numbers of the "cabal" executable, in the given
+   * directory.
+   *
+   * @param directory The directory in which to search for the cabal executable.
+   */
+  public void probeVersion(final String directory) {
+    probeVersionInternal(new Path(directory).append( CABAL_EXECUTABLE ) );
+  }
+
+  /** Probe the version numbers of a proposed cabal executable, in the given
+   * directory.
+   *
+   * @param directory The directory in which to search for the cabal executable.
+   * @param exeName The name of the cabal executable.
+   */
+  public void probeVersion( final String directory, final String exeName ) {
+    probeVersionInternal( FileUtil.makeExecutableName( new Path( directory ).append( exeName ) ));
+  }
+
+  /** Probe the version numbers of a cabal executable using the binary directory
+   * of the Haskell implementation. Note that this defaults to using a cabal
+   * executable name {@link #CABAL_EXECUTABLE}.
+   *
+   * @param hsImpl The Haskell implementation
+   */
   public void probeVersion( final IHsImplementation hsImpl ) {
     if( hsImpl != null ) {
-      IPath cabalBinPath = new Path( hsImpl.getBinDir() );
-      cabalBinPath = cabalBinPath.append( CABAL_EXECUTABLE );
+      IPath cabalBinPath = new Path( hsImpl.getBinDir() ).append( CABAL_EXECUTABLE );
+      fCabalExecutablePath = cabalBinPath;
       probeVersionInternal(cabalBinPath);
     }
   }
@@ -71,27 +113,29 @@ public class CabalImplementation {
     boolean validImpl = false;
 
     try {
-      String version = QueryUtil.queryEx( cabalExecutable.toOSString(),
-          "--version" ); //$NON-NLS-1$
-      String[] vlines = version.split( "(\\r\\n)|\\r|\\n" ); //$NON-NLS-1$
+      String version = QueryUtil.queryEx( cabalExecutable.toOSString(), "--version" ); //$NON-NLS-1$
 
-      if( vlines[ 0 ].startsWith( "cabal-install" ) //$NON-NLS-1$
-          && vlines[ 1 ].startsWith( "using" ) ) { //$NON-NLS-1$
-        // Looks like we might have a winner...
-        Pattern vPat = Pattern.compile( "(\\d+\\.)+\\d+" ); //$NON-NLS-1$
-        Matcher vMatch = vPat.matcher( vlines[ 0 ] );
+      if (version != null && version.length() > 0) {
+        String[] vlines = version.split( "(\\r\\n)|\\r|\\n" ); //$NON-NLS-1$
 
-        if( vMatch.find() ) {
-          fCabalInstallVersion = vMatch.group();
-        }
-        vMatch = vPat.matcher( vlines[ 1 ] );
-        if( vMatch.find() ) {
-          fCabalLibraryVersion = vMatch.group();
-        }
+        if( vlines[ 0 ].startsWith( "cabal-install" ) //$NON-NLS-1$
+            && vlines[ 1 ].startsWith( "using" ) ) { //$NON-NLS-1$
+          // Looks like we might have a winner...
+          Pattern vPat = Pattern.compile( "(\\d+\\.)+\\d+" ); //$NON-NLS-1$
+          Matcher vMatch = vPat.matcher( vlines[ 0 ] );
 
-        if( fCabalInstallVersion.length() > 0
-            || fCabalLibraryVersion.length() > 0 ) {
-          validImpl = true;
+          if( vMatch.find() ) {
+            fCabalInstallVersion = vMatch.group();
+          }
+          vMatch = vPat.matcher( vlines[ 1 ] );
+          if( vMatch.find() ) {
+            fCabalLibraryVersion = vMatch.group();
+          }
+
+          if( fCabalInstallVersion.length() > 0
+              || fCabalLibraryVersion.length() > 0 ) {
+            validImpl = true;
+          }
         }
       }
     } catch( IOException e ) {
@@ -105,8 +149,14 @@ public class CabalImplementation {
   }
 
   /** Return the operational cabal executable name */
-  public String getCabalExecutableName() {
+  public IPath getCabalExecutableName() {
     return fCabalExecutablePath;
+  }
+
+  /** Set the operational cabal executable's name */
+  public void setCabalExecutableName(final IPath executable) {
+    fCabalExecutablePath = executable;
+    probeVersionInternal( fCabalExecutablePath );
   }
 
   /** Reset the version strings to empty string */
@@ -115,13 +165,35 @@ public class CabalImplementation {
     fCabalLibraryVersion = new String();
   }
 
+  /** Accessor for the user identifier */
+  public final String getUserIdentifier () {
+    return fCabalIdentifier;
+  }
+
+  /** Set the user identifier */
+  public void setUserIdentifier (final String identifier) {
+    fCabalIdentifier = identifier;
+  }
+
   /** Accessor for cabal-install version string */
   public final String getInstallVersion() {
     return fCabalInstallVersion;
   }
 
+  /** Set the cabal-install version string (hopefully, this was acquired
+   * via probeVersion...)
+   */
+  public void setInstallVersion(final String installVersion) {
+    fCabalInstallVersion = installVersion;
+  }
+
   /** Accessor for Cabal library version string */
   public final String getLibraryVersion() {
     return fCabalLibraryVersion;
+  }
+
+  /** Set the Cabal library version string */
+  public void setLibraryVersion(final String libVersion) {
+    fCabalLibraryVersion = libVersion;
   }
 }
