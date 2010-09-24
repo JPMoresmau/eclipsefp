@@ -45,6 +45,7 @@ public class LoadCommand extends ScionCommand implements ICompilerResult{
 		JSONObject options=new JSONObject();
 		options.put("output",output);
 		options.put("forcerecomp",forceRecomp);
+		params.put("options", options);
 		return params;
 	}
 
