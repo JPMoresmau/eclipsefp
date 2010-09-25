@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
+import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;

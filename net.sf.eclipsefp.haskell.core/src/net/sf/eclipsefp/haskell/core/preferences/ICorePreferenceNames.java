@@ -10,9 +10,11 @@ public interface ICorePreferenceNames {
 
   String SELECTED_COMPILER = "SELECTED_COMPILER"; //$NON-NLS-1$
 
+  // Preference names for the Haskell implementations
   String HS_IMPLEMENTATIONS = "HS_IMPLEMENTATIONS"; //$NON-NLS-1$
   String SELECTED_HS_IMPLEMENTATION = "SELECTED_HS_IMPLEMENTATION"; //$NON-NLS-1$
 
+  // Preference names for the Cabal implementations
   String CABAL_IMPLEMENTATIONS = "CABAL_IMPLEMENTATIONS"; //$NON-NLS-1$
   String SELECTED_CABAL_IMPLEMENTATION = "SELECTED_CABAL_IMPLEMENTATION"; //$NON-NLS-1$
 
