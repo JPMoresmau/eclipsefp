@@ -6,6 +6,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplsPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -98,6 +99,15 @@ public class CabalImplsBlock implements ISelectionProvider {
     return composite;
   }
 
+  /** Return the cabal implementations as a serialized XML string
+   *
+   */
+  public String getPref() {
+    return CabalImplsPreferenceManager.toXML( impls );
+  }
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  // Internal helper methods
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   private void add(final CabalImplementation impl) {
     impls.add( impl );
     viewer.setInput( impl );

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
+import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.QueryUtil;
 import org.eclipse.core.runtime.IPath;
