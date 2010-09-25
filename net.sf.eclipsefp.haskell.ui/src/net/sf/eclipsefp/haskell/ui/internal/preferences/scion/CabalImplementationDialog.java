@@ -6,10 +6,18 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -17,11 +25,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
 
 /** <p>TODO</p>
  *
@@ -31,16 +38,14 @@ public class CabalImplementationDialog extends StatusDialog {
   private static final String DIALOG_SETTINGS_ID = CabalImplementationDialog.class.getName();
   private static final String KEY_DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
   private static final String KEY_DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
-  /** The Cabal implementation block (preference page UI) */
-  private final CabalImplsBlock theBlock;
 
   /** The current Cabal implementation */
   private final CabalImplementation currentImpl;
 
-  /** The base name of the cabal executable */
-  private Text txtName;
-  /** Path component of the cabal executable */
-  private Text txtBinDir;
+  /** Installed Cabal executable identifier */
+  private Text txtIdent;
+  /** Path to the cabal executable */
+  private Text txtExecutablePath;
   /** Cabal library version label widget */
   private Label lblCabalLibraryVersion;
   /** Cabal version label widget */
@@ -51,19 +56,15 @@ public class CabalImplementationDialog extends StatusDialog {
    * @param implementationsBlock The Cabal implementations perference page
    * @param impl The Cabal implementation
    */
-  CabalImplementationDialog( final Shell shell,
-      final CabalImplsBlock cabalImplsBlock, final CabalImplementation impl ) {
+  CabalImplementationDialog( final Shell shell, final CabalImplementation impl ) {
     super( shell );
-    theBlock = cabalImplsBlock;
-    currentImpl = new CabalImplementation();
-    if( impl != null ) {
-      // Fill in details as necessary.
-    }
+    currentImpl = new CabalImplementation (impl);
   }
 
   CabalImplementation getResult() {
     return currentImpl;
   }
+
   @Override
   protected Control createDialogArea( final Composite parent ) {
     Composite composite = null;
@@ -77,32 +78,30 @@ public class CabalImplementationDialog extends StatusDialog {
     }
 
     SWTUtil.createLabel( composite, UITexts.cabalImplsDialog_name, 1 );
-    txtName = SWTUtil.createSingleText( composite, 2 );
-    SWTUtil.createLabel( composite, UITexts.hsImplementationDialog_binDir, 1 );
-    txtBinDir = SWTUtil.createSingleText( composite, 1 );
+    txtIdent = SWTUtil.createSingleText( composite, 2 );
+    SWTUtil.createLabel( composite, UITexts.cabalImplsDialog_executablePath, 1 );
+    txtExecutablePath = SWTUtil.createSingleText( composite, 1 );
     createBrowseButton( composite );
     SWTUtil.createLabel( composite, UITexts.cabalImplsDialog_libVersion, 1 );
     lblCabalLibraryVersion = SWTUtil.createLabel( composite, "", 2 ); //$NON-NLS-1$
     SWTUtil.createLabel( composite, UITexts.cabalImplsDialog_installVersion, 1 );
     lblCabalInstallVersion = SWTUtil.createLabel( composite, "", 2 ); //$NON-NLS-1$
 
-    /*
     initializeFields();
-    txtName.addModifyListener( new ModifyListener() {
+    validate();
+
+    txtIdent.addModifyListener( new ModifyListener() {
       public void modifyText( final ModifyEvent evt ) {
-        currentImpl.setName( txtName.getText() );
+        currentImpl.setUserIdentifier( txtIdent.getText( ).trim() );
         validate();
-        updateFields();
       }
     } );
-    txtBinFolder.addModifyListener( new ModifyListener() {
+    txtExecutablePath.addModifyListener( new ModifyListener() {
       public void modifyText( final ModifyEvent evt ) {
-        currentImpl.setBinDir( txtBinFolder.getText() );
-        validate();
-        updateFields();
+        updateExecutable();
       }
     } );
-    */
+
     applyDialogFont( composite );
     return composite;
   }
@@ -143,19 +142,109 @@ public class CabalImplementationDialog extends StatusDialog {
   }
 
   private void createBrowseButton( final Composite composite ) {
-    String text = UITexts.hsImplementationDialog_btnBrowse;
+    String text = UITexts.cabalImplsDialog_btnBrowse;
     Button browse = SWTUtil.createPushButton( composite, text );
     browse.addSelectionListener( new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
-        DirectoryDialog dialog = new DirectoryDialog( getShell() );
-        dialog.setFilterPath( txtBinDir.getText() );
-        dialog.setMessage( UITexts.hsImplementationDialog_dlgBrowse );
+        FileDialog dialog = new FileDialog( getShell(), SWT.OPEN );
+        dialog.setFilterPath( txtExecutablePath.getText() );
+        if (PlatformUtil.runningOnWindows()) {
+          dialog.setFilterNames( new String[] { "Executables" } );
+          dialog.setFilterExtensions ( new String[] { "*.".concat( PlatformUtil.WINDOWS_EXTENSION_EXE ) } );
+        } else {
+          dialog.setFilterNames( new String [] { "Files" } );
+          dialog.setFilterExtensions( new String [] { "*" } );
+        }
+        dialog.setText( UITexts.cabalImplsDialog_dlgBrowse );
         String newPath = dialog.open();
         if( newPath != null ) {
-          txtBinDir.setText( newPath );
+          txtExecutablePath.setText( newPath );
+          updateExecutable();
         }
       }
     } );
+  }
+
+  private void initializeFields () {
+    String s = currentImpl.getUserIdentifier();
+    if (s == null) {
+      s = new String();
+    }
+    txtIdent.setText( s.trim() );
+
+    IPath p = currentImpl.getCabalExecutableName();
+    if (p != null) {
+      s = p.toOSString();
+    } else {
+      s = new String();
+    }
+    txtExecutablePath.setText( s );
+
+    s = currentImpl.getInstallVersion();
+    if (s == null) {
+      s = new String();
+    }
+
+    lblCabalInstallVersion.setText( s.trim() );
+
+    s = currentImpl.getLibraryVersion();
+    if ( s == null ) {
+      s = new String();
+    }
+    lblCabalLibraryVersion.setText( s.trim() );
+  }
+
+  private void updateFields () {
+    String installVersion = currentImpl.getInstallVersion();
+    String libraryVersion = currentImpl.getLibraryVersion();
+
+    if ( installVersion == null ) {
+      installVersion = new String();
+    }
+
+    lblCabalInstallVersion.setText( installVersion.trim() );
+
+    if ( libraryVersion == null ) {
+      libraryVersion = new String();
+    }
+
+    lblCabalLibraryVersion.setText( libraryVersion.trim() );
+  }
+
+  private void updateExecutable () {
+    String exeName = txtExecutablePath.getText();
+    if ( exeName.length() > 0 ) {
+      IPath exePath = FileUtil.makeExecutableName( new Path(exeName) );
+      currentImpl.setCabalExecutableName( exePath );
+      // Just in case FileUtil.makeExecutableName changes the extension.
+      txtExecutablePath.setText( exePath.toOSString() );
+      validate();
+      updateFields();
+    }
+  }
+
+  private void validate() {
+    String userIdent = currentImpl.getUserIdentifier();
+    String installVersion = currentImpl.getInstallVersion();
+    String libraryVersion = currentImpl.getLibraryVersion();
+
+    if (   userIdent != null
+        && userIdent.length() > 0
+        && installVersion != null
+        && installVersion.length() > 0
+        && libraryVersion != null
+        && libraryVersion.length() > 0) {
+      updateStatus( new Status( IStatus.OK, HaskellUIPlugin.getPluginId(), "" ) );
+    } else {
+      String msg = null;
+      if (   userIdent == null
+          || userIdent.length() <= 0) {
+        msg = UITexts.cabalImplsDialog_invalidUserIdentifier;
+      } else {
+        msg = UITexts.cabalImplDialog_invalidCabalExecutable;
+      }
+      updateStatus( new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), msg) );
+    }
   }
 }

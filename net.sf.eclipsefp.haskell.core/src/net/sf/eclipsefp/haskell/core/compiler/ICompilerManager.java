@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.compiler;
 
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public interface ICompilerManager {

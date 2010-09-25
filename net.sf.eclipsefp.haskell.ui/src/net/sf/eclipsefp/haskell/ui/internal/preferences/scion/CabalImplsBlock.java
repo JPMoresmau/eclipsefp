@@ -1,13 +1,12 @@
-// Copyright (c) 2004-2005 by Leif Frenzel
-// See http://leiffrenzel.de
+// Copyright (c) 2010, B. Scott Michel
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplsPreferenceManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -46,7 +45,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-/** The Cabal implementations table and associated buttons
+/** The Cabal implementations table and associated buttons, dialogs and UI
+ * niceties.
  *
  * @author B. Scott Michel
  */
@@ -99,10 +99,47 @@ public class CabalImplsBlock implements ISelectionProvider {
     return composite;
   }
 
+  /** Return the cabal implementations as a serialized XML string
+   *
+   */
+  public String getPref() {
+    return CabalImplsPreferenceManager.toXML( impls );
+  }
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  // Internal helper methods
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   private void add(final CabalImplementation impl) {
     impls.add( impl );
     viewer.setInput( impl );
     viewer.refresh();
+  }
+
+  private CabalImplementation find( final String identifier ) {
+    for (CabalImplementation impl : impls ) {
+      if ( impl.getUserIdentifier().equals( identifier )) {
+        return impl;
+      }
+    }
+    return null;
+  }
+
+  public List<CabalImplementation> getImplementations() {
+    return impls;
+  }
+
+  private void update (final String identifier, final CabalImplementation theImpl) {
+    CabalImplementation impl = find (identifier);
+    if (impl != null) {
+      // Update the fields.
+      impl.setUserIdentifier( theImpl.getUserIdentifier() );
+      impl.setCabalExecutableName( theImpl.getCabalExecutableName() );
+      impl.setInstallVersion( theImpl.getInstallVersion() );
+      impl.setLibraryVersion( theImpl.getLibraryVersion() );
+
+      setCheckedCabalImplementation( identifier );
+      viewer.setInput( theImpl );
+      viewer.refresh();
+    }
   }
 
   public void addSelectionChangedListener( final ISelectionChangedListener listener ) {
@@ -133,6 +170,15 @@ public class CabalImplsBlock implements ISelectionProvider {
     }
   }
 
+  private void setCheckedCabalImplementation( final String identifier ) {
+    CabalImplementation impl = find( identifier );
+    if( impl == null ) {
+      setSelection( new StructuredSelection() );
+    } else {
+      setSelection( new StructuredSelection( impl ) );
+    }
+  }
+
   // Helper methods:
   private void createColumns(final Composite composite) {
     TableColumn colName = createColumn( UITexts.cabalImplsBlock_colName, new SelectionAdapter() {
@@ -141,7 +187,7 @@ public class CabalImplsBlock implements ISelectionProvider {
         // sortByName();
       }
     } );
-    TableColumn colInstallVErsion = createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
+    TableColumn colInstallVersion = createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
         // Insert something here.
@@ -153,13 +199,20 @@ public class CabalImplsBlock implements ISelectionProvider {
         // Insert something here.
       }
     } );
+    TableColumn colCabalPath = createColumn (UITexts.cabalImplsBlock_colCabalPath, new SelectionAdapter() {
+      @Override
+      public void widgetSelected ( final SelectionEvent evt ) {
+        // Something clever here.
+      }
+    });
 
     TableColumnLayout tcLayout = new TableColumnLayout();
     composite.setLayout( tcLayout );
 
-    tcLayout.setColumnData( colName, new ColumnWeightData( 50, true ) );
-    tcLayout.setColumnData( colInstallVErsion, new ColumnWeightData( 25, true ) );
-    tcLayout.setColumnData( colLibraryVersion, new ColumnWeightData( 25, true ) );
+    tcLayout.setColumnData( colName, new ColumnWeightData( 25, true ) );
+    tcLayout.setColumnData( colInstallVersion, new ColumnWeightData( 20, true ) );
+    tcLayout.setColumnData( colLibraryVersion, new ColumnWeightData( 20, true ) );
+    tcLayout.setColumnData( colCabalPath, new ColumnWeightData( 35, true ) );
   }
 
   private TableColumn createColumn( final String text,
@@ -183,7 +236,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     btnEdit = SWTUtil.createPushButton( buttonsComp, sEdit );
     btnEdit.addListener( SWT.Selection, new Listener() {
       public void handleEvent( final Event evt ) {
-        // TODO: Edit existing cabal implementation
+        editCabalImplementation();
       }
     } );
 
@@ -255,7 +308,7 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private void autoSelectSingle( final IStructuredSelection prev ) {
-    IStructuredSelection curr = ( IStructuredSelection )getSelection();
+    IStructuredSelection curr = ( IStructuredSelection ) getSelection();
     if( !curr.equals( prev ) || curr.isEmpty() ) {
       if( curr.size() == 0 && impls.size() == 1 ) {
         // pick a default automatically
@@ -268,7 +321,7 @@ public class CabalImplsBlock implements ISelectionProvider {
 
   private void addCabalImplementation() {
     IStructuredSelection prev = ( IStructuredSelection )getSelection();
-    CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), this, null );
+    CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), null );
     dialog.setTitle( UITexts.cabalImplsBlock_dlgAdd );
     if( dialog.open() == Window.OK ) {
       add( dialog.getResult() );
@@ -276,30 +329,52 @@ public class CabalImplsBlock implements ISelectionProvider {
     }
   }
 
+  private void editCabalImplementation() {
+    IStructuredSelection prev = ( IStructuredSelection ) getSelection();
+    assert (prev.size() == 1);
+    CabalImplementation impl = (CabalImplementation) prev.getFirstElement();
+    String implIdent = impl.getUserIdentifier();
+    CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), impl );
+    dialog.setTitle( UITexts.cabalImplsBlock_dlgEdit );
+    if (dialog.open() == Window.OK) {
+      update( implIdent, dialog.getResult() );
+      autoSelectSingle( prev );
+    }
+  }
+
   private void autoDetectCabalImpls() {
     ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
 
-    viewer.remove(impls);
+    viewer.remove( impls );
     viewer.setInput( null );
-    viewer.refresh( true );
-
     impls.clear();
+
     for (File loc : candidateLocs) {
       File[] files = loc.listFiles( new FilenameFilter() {
         public boolean accept( final File dir, final String name ) {
           // Catch anything starting with "cabal", because MacPorts (and others) may install
           // "cabal-1.8.0" as a legitimate cabal executable.
-          return name.startsWith( CabalImplementation.CABAL_EXECUTABLE );
+          return name.startsWith( CabalImplementation.CABAL_BASENAME );
         }
       });
 
       if (files != null && files.length > 0) {
         for (File file : files) {
-          try {
-            impls.add( new CabalImplementation(file.getCanonicalFile()) );
-          } catch (IOException e) {
-            // Really ought not happen...
+          CabalImplementation impl = new CabalImplementation("foo", file);
+
+          int seqno = 1;
+          String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion());
+          if (!isUniqueUserIdentifier( ident )) {
+            String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
+            while (!isUniqueUserIdentifier(uniqIdent)) {
+              seqno++;
+              uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
+            }
+            ident = uniqIdent;
           }
+
+          impl.setUserIdentifier( ident );
+          impls.add( impl );
         }
       }
     }
@@ -307,9 +382,23 @@ public class CabalImplsBlock implements ISelectionProvider {
     if (impls.size() > 0) {
       viewer.add(impls);
       viewer.setInput( impls.toArray() );
+      setSelection(new StructuredSelection( impls.get(0) ));
+    } else {
+      setSelection( new StructuredSelection ( ) );
     }
 
     viewer.refresh(true);
+  }
+
+  private boolean isUniqueUserIdentifier (final String ident) {
+    boolean retval = true;
+    for (CabalImplementation impl : impls) {
+      if (impl.getUserIdentifier().equals(ident)) {
+        retval = false;
+        break;
+      }
+    }
+    return retval;
   }
 
   /** The internal content provider class */
@@ -344,15 +433,20 @@ public class CabalImplsBlock implements ISelectionProvider {
       if ( elem instanceof CabalImplementation ) {
           CabalImplementation impl = ( CabalImplementation ) elem;
           switch( columnIndex ) {
-            case 0:
-              result = impl.getCabalExecutableName();
+            case 0: {
+              result = impl.getUserIdentifier();
               break;
+            }
             case 1:
               result = impl.getInstallVersion();
               break;
             case 2:
               result = impl.getLibraryVersion();
               break;
+            case 3: {
+              result = impl.getCabalExecutableName().toOSString();
+              break;
+            }
           }
       } else {
         result = elem.toString();

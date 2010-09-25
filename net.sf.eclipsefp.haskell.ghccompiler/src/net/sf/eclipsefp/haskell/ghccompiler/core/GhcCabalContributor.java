@@ -6,8 +6,8 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.ICabalContributor;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationType;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
+import net.sf.eclipsefp.haskell.core.compiler.HsImplementationType;
+import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 
 /**
  * <p>Add GHC options to Cabal executable and library sections</p>

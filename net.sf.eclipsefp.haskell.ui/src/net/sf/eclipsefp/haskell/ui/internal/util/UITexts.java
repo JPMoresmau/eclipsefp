@@ -63,6 +63,7 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_colName;
   public static String cabalImplsBlock_colCabalInstallVersion;
   public static String cabalImplsBlock_colCabalLibraryVersion;
+  public static String cabalImplsBlock_colCabalPath;
   public static String cabalImplsBlock_btnAdd;
   public static String cabalImplsBlock_btnEdit;
   public static String cabalImplsBlock_btnRemove;
@@ -71,8 +72,13 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_dlgEdit;
 
   public static String cabalImplsDialog_name;
+  public static String cabalImplsDialog_executablePath;
   public static String cabalImplsDialog_libVersion;
   public static String cabalImplsDialog_installVersion;
+  public static String cabalImplsDialog_btnBrowse;
+  public static String cabalImplsDialog_dlgBrowse;
+  public static String cabalImplsDialog_invalidUserIdentifier;
+  public static String cabalImplDialog_invalidCabalExecutable;
 
   public static String scionServer_preferences_label;
   public static String scionServerBuiltIn_label;

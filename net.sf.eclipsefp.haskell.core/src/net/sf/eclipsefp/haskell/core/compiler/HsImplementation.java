@@ -1,7 +1,7 @@
 // Copyright (c) 2006-2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.core.internal.hsimpl;
+package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.io.File;
 import java.io.IOException;

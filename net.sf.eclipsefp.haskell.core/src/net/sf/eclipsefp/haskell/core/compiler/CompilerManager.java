@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCoreException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.HsImplementationPersister;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.runtime.CoreException;

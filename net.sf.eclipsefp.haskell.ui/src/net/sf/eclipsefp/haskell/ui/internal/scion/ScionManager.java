@@ -21,7 +21,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.internal.hsimpl.IHsImplementation;
+import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -306,12 +306,12 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
       CabalImplementation cabalImpl = new CabalImplementation();
 
       cabalImpl.probeVersion( hsImpl );
-      final String cabalExecutable = cabalImpl.getCabalExecutableName();
+      final String cabalExecutable = cabalImpl.getCabalExecutableName().toOSString();
 
       if (cabalExecutable.length() > 0) {
         commands.add( cabalExecutable );
         cabalImpl.probeVersion( hsImpl );
-        HaskellUIPlugin.log( "cabal executable: ".concat( cabalImpl.getCabalExecutableName() ),
+        HaskellUIPlugin.log( "cabal executable: ".concat( cabalExecutable ),
                              IStatus.INFO );
         HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),
                              IStatus.INFO );
