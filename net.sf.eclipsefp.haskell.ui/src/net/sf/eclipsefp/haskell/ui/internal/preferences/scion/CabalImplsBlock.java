@@ -14,7 +14,9 @@ import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -31,6 +33,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -54,7 +57,11 @@ import org.eclipse.swt.widgets.TableColumn;
  * @author B. Scott Michel
  */
 public class CabalImplsBlock implements ISelectionProvider {
+  private final static String KEY_SORT_COLUMN = ".sortColumn";
+  private final static String KEY_COLUMN_WIDTH = ".columnWidth";
+
   private CheckboxTableViewer viewer;
+  private int sortColumn;
   private Table table;
   private Button btnAdd;
   private Button btnRemove;
@@ -62,9 +69,8 @@ public class CabalImplsBlock implements ISelectionProvider {
   private Button btnAutoDetect;
   private final List<CabalImplementation> impls = new ArrayList<CabalImplementation>();
   private final ListenerList selectionListeners = new ListenerList();
-  private ISelection lastSelection = new StructuredSelection();
 
-  Composite createControl( final Composite parent ) {
+  Composite createControl( final Composite parent, final PreferencePage prefParent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     Font parentFont = parent.getFont();
 
@@ -99,8 +105,10 @@ public class CabalImplsBlock implements ISelectionProvider {
 
     // And set the current default (checked) implementation
     CabalImplementation defImpl = cMgr.getDefaultCabalImplementation();
-    CabalImplementation impl = findImplementation( defImpl.getUserIdentifier() );
-    setCheckedCabalImplementation( impl.getUserIdentifier() );
+    if (defImpl != null) {
+      CabalImplementation impl = findImplementation( defImpl.getUserIdentifier() );
+      setCheckedCabalImplementation( impl );
+    }
 
     Composite buttonsComp = new Composite( composite, SWT.NONE );
 
@@ -116,9 +124,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     return composite;
   }
 
-  /** Put the Cabal implementation preferences into the preference store.
-   *
-   */
+  /** Put the Cabal implementation preferences into the preference store. */
   public boolean updateCabalImplementations(  ) {
     CabalImplementationManager cMgr = CabalImplementationManager.getInstance();
     cMgr.setCabalImplementations( impls );
@@ -130,13 +136,26 @@ public class CabalImplsBlock implements ISelectionProvider {
     return true;
   }
 
+  public boolean validate( final PreferencePage parent ) {
+    if( impls.size() <= 0 ) {
+      parent.setErrorMessage( UITexts.cabalImplsBlock_noCabalInstallations );
+      return false;
+    } else {
+      CabalImplementation install = getCheckedCabalImplementation();
+      if( install == null ) {
+        parent.setErrorMessage( UITexts.cabalImplsBlock_noCabalInstallationSelected );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   // Internal helper methods
   // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   private void add(final CabalImplementation impl) {
     impls.add( impl );
-    viewer.setInput( impl );
-    viewer.refresh();
   }
 
   private void update (final String identifier, final CabalImplementation theImpl) {
@@ -144,9 +163,6 @@ public class CabalImplsBlock implements ISelectionProvider {
     if (impl != null) {
       // Update the fields.
       impl.copy (theImpl);
-      setCheckedCabalImplementation( identifier );
-      viewer.setInput( theImpl );
-      viewer.refresh();
     }
   }
 
@@ -158,33 +174,44 @@ public class CabalImplsBlock implements ISelectionProvider {
     return new StructuredSelection( viewer.getCheckedElements() );
   }
 
+  public CabalImplementation getCheckedCabalImplementation() {
+    CabalImplementation result = null;
+    Object[] objects = viewer.getCheckedElements();
+    if( objects.length > 0 ) {
+      result = ( CabalImplementation ) objects[ 0 ];
+    }
+    return result;
+  }
+
+
   public void removeSelectionChangedListener( final ISelectionChangedListener listener ) {
     selectionListeners.remove( listener );
   }
 
   public void setSelection( final ISelection selection ) {
     if( selection instanceof IStructuredSelection ) {
-      if( !selection.equals( lastSelection ) ) {
-        lastSelection = selection;
-        Object elem = ( ( IStructuredSelection )selection ).getFirstElement();
-        if( elem == null ) {
-          viewer.setCheckedElements( new Object[ 0 ] );
-        } else {
-          viewer.setCheckedElements( new Object[] { elem } );
-          viewer.reveal( elem );
-        }
-        fireSelectionChanged();
+      Object elem = ( ( IStructuredSelection )selection ).getFirstElement();
+      if( elem == null ) {
+        viewer.setCheckedElements( new Object[ 0 ] );
+      } else {
+        viewer.setCheckedElements( new Object[] { elem } );
+        viewer.reveal( elem );
       }
+      fireSelectionChanged();
     }
   }
 
   private void setCheckedCabalImplementation( final String identifier ) {
-    CabalImplementation impl = findImplementation( identifier );
+    setCheckedCabalImplementation( findImplementation( identifier ) );
+  }
+
+  private void setCheckedCabalImplementation( final CabalImplementation impl ) {
     if( impl == null ) {
       setSelection( new StructuredSelection() );
     } else {
       setSelection( new StructuredSelection( impl ) );
     }
+    fireSelectionChanged();
   }
 
   private CabalImplementation findImplementation( final String ident ) {
@@ -203,25 +230,25 @@ public class CabalImplsBlock implements ISelectionProvider {
     TableColumn colName = createColumn( UITexts.cabalImplsBlock_colName, new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent evt ) {
-        // sortByName();
+        sortByUserIdentifier();
       }
     } );
     TableColumn colInstallVersion = createColumn (UITexts.cabalImplsBlock_colCabalInstallVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
-        // Insert something here.
+        sortByInstallVersion();
       }
     } );
     TableColumn colLibraryVersion = createColumn (UITexts.cabalImplsBlock_colCabalLibraryVersion, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
-        // Insert something here.
+        sortByLibraryVersion();
       }
     } );
     TableColumn colCabalPath = createColumn (UITexts.cabalImplsBlock_colCabalPath, new SelectionAdapter() {
       @Override
       public void widgetSelected ( final SelectionEvent evt ) {
-        // Something clever here.
+        sortByExecutablePath();
       }
     });
 
@@ -279,8 +306,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     viewer = new CheckboxTableViewer( table );
     viewer.setLabelProvider( new CabalImplsLP() );
     viewer.setContentProvider( new CabalImplsCP( impls ) );
-    // by default, sort by name
-    // sortByName();
+    sortByUserIdentifier();
 
     viewer.addSelectionChangedListener( new ISelectionChangedListener() {
       public void selectionChanged( final SelectionChangedEvent evt ) {
@@ -290,12 +316,12 @@ public class CabalImplsBlock implements ISelectionProvider {
 
     viewer.addCheckStateListener( new ICheckStateListener() {
       public void checkStateChanged( final CheckStateChangedEvent event ) {
-        if( event.getChecked() ) {
-          CabalImplementation element = ( CabalImplementation ) event.getElement();
-          setCheckedCabalImplementation( element.getUserIdentifier() );
-        } else {
-          setCheckedCabalImplementation( null );
+
+        CabalImplementation element = ( CabalImplementation ) event.getElement();
+        if (!event.getChecked()) {
+          element = null;
         }
+        setCheckedCabalImplementation( element );
       }
     } );
 
@@ -341,7 +367,12 @@ public class CabalImplsBlock implements ISelectionProvider {
     CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), null );
     dialog.setTitle( UITexts.cabalImplsBlock_dlgAdd );
     if( dialog.open() == Window.OK ) {
-      add( dialog.getResult() );
+      CabalImplementation impl = dialog.getResult();
+      if (validateImpl(impl)) {
+        add( impl );
+        viewer.setInput( impl );
+        viewer.refresh();
+      }
       autoSelectSingle( prev );
     }
   }
@@ -355,7 +386,13 @@ public class CabalImplsBlock implements ISelectionProvider {
       CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), impl );
       dialog.setTitle( UITexts.cabalImplsBlock_dlgEdit );
       if (dialog.open() == Window.OK) {
-        update( implIdent, dialog.getResult() );
+        CabalImplementation updatedImpl = dialog.getResult();
+        if (validateImpl( updatedImpl )) {
+          update( implIdent, updatedImpl );
+          setCheckedCabalImplementation( updatedImpl.getUserIdentifier() );
+          viewer.setInput( impl );
+        }
+        viewer.refresh();
         autoSelectSingle( prev );
       }
     }
@@ -363,6 +400,7 @@ public class CabalImplsBlock implements ISelectionProvider {
 
   private void removeSelectedCabalImplementations() {
     IStructuredSelection ssel = ( IStructuredSelection ) viewer.getSelection();
+    IStructuredSelection prev = ( IStructuredSelection ) getSelection();
     CabalImplementation[] insts = new CabalImplementation[ ssel.size() ];
     Iterator iter = ssel.iterator();
     int i = 0;
@@ -371,15 +409,14 @@ public class CabalImplsBlock implements ISelectionProvider {
       i++;
     }
     removeCabalImplementations( insts );
+    viewer.refresh();
+    autoSelectSingle( prev );
   }
 
   private void removeCabalImplementations( final CabalImplementation[] insts) {
-    IStructuredSelection prev = ( IStructuredSelection )getSelection();
     for( int i = 0; i < insts.length; i++ ) {
       impls.remove( insts[ i ] );
     }
-    viewer.refresh();
-    autoSelectSingle( prev );
   }
 
   private void autoDetectCabalImpls() {
@@ -434,6 +471,10 @@ public class CabalImplsBlock implements ISelectionProvider {
     viewer.refresh(true);
   }
 
+  private boolean validateImpl( final CabalImplementation impl ) {
+    return (impl != null) && isUniqueUserIdentifier(impl.getUserIdentifier());
+  }
+
   private boolean isUniqueUserIdentifier (final String ident) {
     boolean retval = true;
     for (CabalImplementation impl : impls) {
@@ -443,6 +484,79 @@ public class CabalImplsBlock implements ISelectionProvider {
       }
     }
     return retval;
+  }
+
+  private void sortByUserIdentifier() {
+    viewer.setComparator( new Compare_UserIdentifier() );
+    sortColumn = 1;
+  }
+
+  private void sortByExecutablePath() {
+    viewer.setComparator( new Compare_ExecutablePath() );
+    sortColumn = 4;
+  }
+
+  private void sortByInstallVersion() {
+    viewer.setComparator( new Compare_InstallVersion() );
+    sortColumn = 2;
+  }
+
+  private void sortByLibraryVersion() {
+    viewer.setComparator( new Compare_LibraryVersion() );
+    sortColumn = 3;
+  }
+
+  public void saveColumnSettings( final IDialogSettings settings, final String qualifier ) {
+    int columnCount = table.getColumnCount();
+    for( int i = 0; i < columnCount; i++ ) {
+      int width = table.getColumn( i ).getWidth();
+      settings.put( qualifier + KEY_COLUMN_WIDTH + i, width );
+    }
+    settings.put( qualifier + KEY_SORT_COLUMN, sortColumn );
+  }
+
+  public void restoreColumnSettings( final IDialogSettings settings, final String qualifier ) {
+    viewer.getTable().layout( true );
+    restoreColumnWidths( settings, qualifier );
+    try {
+      sortColumn = settings.getInt( qualifier + KEY_SORT_COLUMN );
+    } catch( final NumberFormatException numfex ) {
+      sortColumn = 1;
+    }
+    switch( sortColumn ) {
+      case 1:
+        sortByUserIdentifier();
+        break;
+      case 2:
+        sortByInstallVersion();
+        break;
+      case 3:
+        sortByLibraryVersion();
+        break;
+      case 4:
+        sortByExecutablePath();
+        break;
+    }
+  }
+
+  private void restoreColumnWidths( final IDialogSettings settings, final String qualifier ) {
+    int columnCount = table.getColumnCount();
+    for( int i = 0; i < columnCount; i++ ) {
+      int width = -1;
+
+      try {
+        width = settings.getInt( qualifier + KEY_COLUMN_WIDTH + i );
+      } catch( final NumberFormatException numfex ) {
+        // ignored
+      }
+
+      if( width > 0 ) {
+        // Only override column widths if the preference exists, otherwise,
+        // we go with the column weights previously configured in the table's
+        // layout.
+        table.getColumn( i ).setWidth( width );
+      }
+    }
   }
 
   /** The internal content provider class */
@@ -498,6 +612,84 @@ public class CabalImplsBlock implements ISelectionProvider {
 
       return result;
     }
+  }
 
+  /** Internal viewer comparator class: sort by user identifier */
+  private final class Compare_UserIdentifier extends ViewerComparator {
+    @Override
+    public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
+      int result = super.compare( viewer, e1, e2 );
+      if(    ( e1 instanceof CabalImplementation )
+          && ( e2 instanceof CabalImplementation ) ) {
+        CabalImplementation left = ( CabalImplementation ) e1;
+        CabalImplementation right = ( CabalImplementation )e2;
+        result = left.getUserIdentifier().compareToIgnoreCase( right.getUserIdentifier() );
+      }
+      return result;
+    }
+
+    @Override
+    public boolean isSorterProperty( final Object element, final String property ) {
+      return true;
+    }
+  }
+
+  public class Compare_ExecutablePath extends ViewerComparator {
+    @Override
+    public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
+      int result = super.compare( viewer, e1, e2 );
+      if(    ( e1 instanceof CabalImplementation )
+          && ( e2 instanceof CabalImplementation ) ) {
+        CabalImplementation left = ( CabalImplementation ) e1;
+        CabalImplementation right = ( CabalImplementation )e2;
+        String pathLeft = left.getCabalExecutableName().toOSString();
+        String pathRight = right.getCabalExecutableName().toOSString();
+        result = pathLeft.compareToIgnoreCase( pathRight );
+      }
+      return result;
+    }
+
+    @Override
+    public boolean isSorterProperty( final Object element, final String property ) {
+      return true;
+    }
+  }
+
+  public class Compare_InstallVersion extends ViewerComparator {
+    @Override
+    public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
+      int result = super.compare( viewer, e1, e2 );
+      if(    ( e1 instanceof CabalImplementation )
+          && ( e2 instanceof CabalImplementation ) ) {
+        CabalImplementation left = ( CabalImplementation ) e1;
+        CabalImplementation right = ( CabalImplementation )e2;
+        result = left.getInstallVersion().compareToIgnoreCase( right.getInstallVersion() );
+      }
+      return result;
+    }
+
+    @Override
+    public boolean isSorterProperty( final Object element, final String property ) {
+      return true;
+    }
+  }
+
+  public class Compare_LibraryVersion extends ViewerComparator {
+    @Override
+    public int compare( final Viewer viewer, final Object e1, final Object e2 ) {
+      int result = super.compare( viewer, e1, e2 );
+      if(    ( e1 instanceof CabalImplementation )
+          && ( e2 instanceof CabalImplementation ) ) {
+        CabalImplementation left = ( CabalImplementation ) e1;
+        CabalImplementation right = ( CabalImplementation )e2;
+        result = left.getLibraryVersion().compareToIgnoreCase( right.getLibraryVersion() );
+      }
+      return result;
+    }
+
+    @Override
+    public boolean isSorterProperty( final Object element, final String property ) {
+      return true;
+    }
   }
 }

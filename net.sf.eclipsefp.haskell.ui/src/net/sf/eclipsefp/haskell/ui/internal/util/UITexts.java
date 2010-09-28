@@ -70,6 +70,9 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_btnAutoDetect;
   public static String cabalImplsBlock_dlgAdd;
   public static String cabalImplsBlock_dlgEdit;
+  public static String cabalImplsBlock_noCabalInstallationSelected;
+  public static String cabalImplsBlock_noCabalInstallations;
+  public static String cabalImplsBlock_needScionExecutablePath;
 
   public static String cabalImplsDialog_name;
   public static String cabalImplsDialog_executablePath;

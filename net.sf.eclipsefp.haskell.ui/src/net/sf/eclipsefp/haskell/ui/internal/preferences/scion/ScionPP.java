@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -13,6 +14,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -68,13 +71,21 @@ public class ScionPP
 	  SWTUtil.createLineSpacer( prefComp, 1 );
 
     cabalBlock = new CabalImplsBlock();
-    Control control = cabalBlock.createControl( prefComp );
+    Control control = cabalBlock.createControl( prefComp, this );
+    cabalBlock.addSelectionChangedListener( new ISelectionChangedListener() {
+      public void selectionChanged( final SelectionChangedEvent event ) {
+        setValid( isValid() );
+      }
+    } );
 
     GridData gdata = new GridData( SWT.FILL, SWT.TOP, true, true );
     gdata.horizontalSpan = nColumns;
     control.setLayoutData( gdata );
-    // IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
-    // cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
+
+    // Restore dialog settings for the page, if set. Currently, only the Cabal implementations
+    // block actually stores its settings.
+    IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
+    cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
 
     SWTUtil.createMessageLabel (prefComp, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
 
@@ -86,9 +97,8 @@ public class ScionPP
 		serverBuiltInField.fillIntoGrid( prefComp, nColumns );
 		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
-        Boolean b=(Boolean)event.getNewValue();
-        autodetect.setEnabled( !b.booleanValue(), prefComp );
-        serverExecutableField.setEnabled(  !b.booleanValue(), prefComp );
+        updateButtonState();
+        setValid( isValid() );
       }
     });
 
@@ -99,6 +109,11 @@ public class ScionPP
 		serverExecutableField.setPage( this );
 		serverExecutableField.setPreferenceStore( prefStore );
 		serverExecutableField.fillIntoGrid( prefComp, nColumns );
+		serverExecutableField.setPropertyChangeListener( new IPropertyChangeListener() {
+      public void propertyChange( final PropertyChangeEvent event ) {
+        setValid( isValid() );
+      }
+    });
 
 		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
@@ -107,6 +122,8 @@ public class ScionPP
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						doDetectServer();
+						updateButtonState();
+						setValid( isValid() );
 					}
 				},
 				prefComp);
@@ -118,6 +135,10 @@ public class ScionPP
 		serverBuiltInField.load();
     serverExecutableField.load();
 		autodetect.load();
+		updateButtonState();
+
+		// Finally, set the valid flag for this pane
+		setValid(isValid());
 
 		return prefComp;
 	}
@@ -131,6 +152,12 @@ public class ScionPP
 		} else {
 			serverExecutableField.setStringValue(server);
 		}
+	}
+
+	private void updateButtonState() {
+    boolean b = serverBuiltInField.getBooleanValue();
+    autodetect.setEnabled( !b, prefComp );
+    serverExecutableField.setEnabled(  !b, prefComp );
 	}
 
 	/**
@@ -156,19 +183,13 @@ public class ScionPP
   @Override
   public boolean performOk() {
     cabalBlock.updateCabalImplementations( );
-    /*
-    IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
-    String name = ""; //$NON-NLS-1$
-    if( impl != null ) {
-      name = impl.getName();
-    }
-    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
-    */
+    serverBuiltInField.store();
+    serverExecutableField.store();
+    autodetect.store();
 
-/*
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
-    implementationsBlock.saveColumnSettings( settings, DIALOG_SETTINGS_ID );
-*/
+    cabalBlock.saveColumnSettings( settings, PAGE_ID );
+
     return super.performOk();
   }
 
@@ -179,7 +200,23 @@ public class ScionPP
 
   @Override
   public boolean isValid() {
-    return super.isValid();
+    boolean retval = cabalBlock.validate( this );
+    if (retval) {
+      if (!serverBuiltInField.getBooleanValue()) {
+        if (serverExecutableField.getStringValue().length() == 0) {
+          retval = false;
+          setErrorMessage( UITexts.cabalImplsBlock_needScionExecutablePath );
+        }
+      }
+    }
+
+    if (retval) {
+      // Clear the message
+      setMessage( null );
+      setErrorMessage( null );
+    }
+
+    return retval;
   }
 
 	@Override
