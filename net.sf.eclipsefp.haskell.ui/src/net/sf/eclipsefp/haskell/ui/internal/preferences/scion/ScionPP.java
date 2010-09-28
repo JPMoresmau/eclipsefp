@@ -1,15 +1,11 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The Scion preferences page in the Preferences dialog.
@@ -119,6 +114,7 @@ public class ScionPP
 		autodetect.setPreferenceStore( prefStore );
 		autodetect.fillIntoGrid( prefComp, nColumns );
 
+		// Load existing data from the preference store:
 		serverBuiltInField.load();
     serverExecutableField.load();
 		autodetect.load();
@@ -159,9 +155,7 @@ public class ScionPP
 
   @Override
   public boolean performOk() {
-    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
-
-    node.put( ICorePreferenceNames.CABAL_IMPLEMENTATIONS, cabalBlock.getPref() );
+    cabalBlock.updateCabalImplementations( );
     /*
     IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
     String name = ""; //$NON-NLS-1$
@@ -170,12 +164,6 @@ public class ScionPP
     }
     node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
     */
-
-    try {
-      node.flush();
-    } catch( BackingStoreException ex ) {
-      HaskellUIPlugin.log( ex );
-    }
 
 /*
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();

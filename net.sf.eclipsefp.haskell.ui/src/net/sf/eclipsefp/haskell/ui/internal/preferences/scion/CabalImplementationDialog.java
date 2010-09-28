@@ -1,5 +1,4 @@
-// Copyright (c) 2004-2005 by Leif Frenzel
-// See http://leiffrenzel.de
+// Copyright (c) 2010 B. Scott Michel (scooter.phd@gmail.com)
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
@@ -30,9 +29,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-/** <p>TODO</p>
+/** The Add/Edit Cabal implementation dialog box.
  *
- * @author Leif Frenzel
+ * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public class CabalImplementationDialog extends StatusDialog {
   private static final String DIALOG_SETTINGS_ID = CabalImplementationDialog.class.getName();
@@ -217,8 +216,6 @@ public class CabalImplementationDialog extends StatusDialog {
     if ( exeName.length() > 0 ) {
       IPath exePath = FileUtil.makeExecutableName( new Path(exeName) );
       currentImpl.setCabalExecutableName( exePath );
-      // Just in case FileUtil.makeExecutableName changes the extension.
-      txtExecutablePath.setText( exePath.toOSString() );
       validate();
       updateFields();
     }

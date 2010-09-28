@@ -15,8 +15,7 @@ public interface ICorePreferenceNames {
   String SELECTED_HS_IMPLEMENTATION = "SELECTED_HS_IMPLEMENTATION"; //$NON-NLS-1$
 
   // Preference names for the Cabal implementations
-  String CABAL_IMPLEMENTATIONS = "CABAL_IMPLEMENTATIONS"; //$NON-NLS-1$
-  String SELECTED_CABAL_IMPLEMENTATION = "SELECTED_CABAL_IMPLEMENTATION"; //$NON-NLS-1$
+  String CABAL_IMPLEMENTATIONS = "cabalImplementations"; //$NON-NLS-1$
 
   // new Haskell project
   String FOLDERS_SRC = "FOLDERS_SRC"; //$NON-NLS-1$

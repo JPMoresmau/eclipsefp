@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.cabal;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,16 +40,11 @@ public class CabalImplementation {
     resetVersions();
   }
 
-  /** Constructor with a cabal executable path */
-  public CabalImplementation(final String ident, final File cabalExec) {
-    try {
-      fCabalIdentifier = ident;
-      fCabalExecutablePath = new Path(cabalExec.getCanonicalPath());
-      probeVersionInternal(fCabalExecutablePath);
-    } catch (IOException e) {
-      resetVersions();
-      fCabalExecutablePath = null;
-    }
+  /** Constructor with the cabal executable's Path */
+  public CabalImplementation(final String ident, final IPath cabalExecPath) {
+    fCabalIdentifier = ident;
+    fCabalExecutablePath = cabalExecPath;
+    probeVersionInternal(fCabalExecutablePath);
   }
 
   /** Copy constructor
@@ -58,16 +52,7 @@ public class CabalImplementation {
    *  @param src The source CabalImplementation object
    */
   public CabalImplementation (final CabalImplementation src) {
-    if (src != null) {
-      this.fCabalIdentifier = src.fCabalIdentifier;
-      this.fCabalExecutablePath = src.fCabalExecutablePath;
-      this.fCabalInstallVersion = src.fCabalInstallVersion;
-      this.fCabalLibraryVersion = src.fCabalLibraryVersion;
-    } else {
-      fCabalIdentifier = null;
-      fCabalExecutablePath = null;
-      resetVersions();
-    }
+    this.copy(src);
   }
 
   /** Probe the version numbers of the "cabal" executable, in the given
@@ -195,5 +180,19 @@ public class CabalImplementation {
   /** Set the Cabal library version string */
   public void setLibraryVersion(final String libVersion) {
     fCabalLibraryVersion = libVersion;
+  }
+
+  /** Copy method, used by the copy constructor and elsewhere */
+  public void copy( final CabalImplementation theImpl ) {
+    if (theImpl != null) {
+      this.fCabalIdentifier = theImpl.fCabalIdentifier;
+      this.fCabalExecutablePath = theImpl.fCabalExecutablePath;
+      this.fCabalInstallVersion = theImpl.fCabalInstallVersion;
+      this.fCabalLibraryVersion = theImpl.fCabalLibraryVersion;
+    } else {
+      fCabalIdentifier = null;
+      fCabalExecutablePath = null;
+      resetVersions();
+    }
   }
 }

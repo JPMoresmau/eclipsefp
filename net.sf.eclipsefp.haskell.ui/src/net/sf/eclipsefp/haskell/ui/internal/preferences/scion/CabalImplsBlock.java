@@ -3,14 +3,17 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
-import net.sf.eclipsefp.haskell.core.cabal.CabalImplsPreferenceManager;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -85,6 +88,20 @@ public class CabalImplsBlock implements ISelectionProvider {
     createColumns( tableComposite );
     createViewer();
 
+    // Deep copy the implementations, replace them later.
+    CabalImplementationManager cMgr = CabalImplementationManager.getInstance();
+    impls.clear();
+    for (CabalImplementation impl : cMgr.getCabalImplementations()) {
+      impls.add( new CabalImplementation( impl ) );
+    }
+
+    viewer.setInput( impls );
+
+    // And set the current default (checked) implementation
+    CabalImplementation defImpl = cMgr.getDefaultCabalImplementation();
+    CabalImplementation impl = findImplementation( defImpl.getUserIdentifier() );
+    setCheckedCabalImplementation( impl.getUserIdentifier() );
+
     Composite buttonsComp = new Composite( composite, SWT.NONE );
 
     glayout = new GridLayout(1, true);
@@ -99,12 +116,20 @@ public class CabalImplsBlock implements ISelectionProvider {
     return composite;
   }
 
-  /** Return the cabal implementations as a serialized XML string
+  /** Put the Cabal implementation preferences into the preference store.
    *
    */
-  public String getPref() {
-    return CabalImplsPreferenceManager.toXML( impls );
+  public boolean updateCabalImplementations(  ) {
+    CabalImplementationManager cMgr = CabalImplementationManager.getInstance();
+    cMgr.setCabalImplementations( impls );
+    IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+    CabalImplementation impl = (CabalImplementation) sel.getFirstElement();
+    if (impl != null) {
+      cMgr.setDefaultCabalImplementation( impl.getUserIdentifier(), true );
+    }
+    return true;
   }
+
   // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   // Internal helper methods
   // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -114,28 +139,11 @@ public class CabalImplsBlock implements ISelectionProvider {
     viewer.refresh();
   }
 
-  private CabalImplementation find( final String identifier ) {
-    for (CabalImplementation impl : impls ) {
-      if ( impl.getUserIdentifier().equals( identifier )) {
-        return impl;
-      }
-    }
-    return null;
-  }
-
-  public List<CabalImplementation> getImplementations() {
-    return impls;
-  }
-
   private void update (final String identifier, final CabalImplementation theImpl) {
-    CabalImplementation impl = find (identifier);
+    CabalImplementation impl = findImplementation( identifier );
     if (impl != null) {
       // Update the fields.
-      impl.setUserIdentifier( theImpl.getUserIdentifier() );
-      impl.setCabalExecutableName( theImpl.getCabalExecutableName() );
-      impl.setInstallVersion( theImpl.getInstallVersion() );
-      impl.setLibraryVersion( theImpl.getLibraryVersion() );
-
+      impl.copy (theImpl);
       setCheckedCabalImplementation( identifier );
       viewer.setInput( theImpl );
       viewer.refresh();
@@ -171,12 +179,23 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private void setCheckedCabalImplementation( final String identifier ) {
-    CabalImplementation impl = find( identifier );
+    CabalImplementation impl = findImplementation( identifier );
     if( impl == null ) {
       setSelection( new StructuredSelection() );
     } else {
       setSelection( new StructuredSelection( impl ) );
     }
+  }
+
+  private CabalImplementation findImplementation( final String ident ) {
+    CabalImplementation retval = null;
+    for (CabalImplementation impl : impls) {
+      if (impl.getUserIdentifier().equals( ident )) {
+        retval = impl;
+        break;
+      }
+    }
+    return retval;
   }
 
   // Helper methods:
@@ -215,8 +234,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     tcLayout.setColumnData( colCabalPath, new ColumnWeightData( 35, true ) );
   }
 
-  private TableColumn createColumn( final String text,
-      final SelectionListener listener ) {
+  private TableColumn createColumn( final String text, final SelectionListener listener ) {
     TableColumn result = new TableColumn( table, SWT.NONE );
     result.setText( text );
     result.addSelectionListener( listener );
@@ -244,7 +262,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     btnRemove = SWTUtil.createPushButton( buttonsComp, sRemove );
     btnRemove.addListener( SWT.Selection, new Listener() {
       public void handleEvent( final Event evt ) {
-        // TODO: remove selected cabal implementation
+        removeSelectedCabalImplementations();
       }
     } );
 
@@ -273,10 +291,10 @@ public class CabalImplsBlock implements ISelectionProvider {
     viewer.addCheckStateListener( new ICheckStateListener() {
       public void checkStateChanged( final CheckStateChangedEvent event ) {
         if( event.getChecked() ) {
-          CabalImplementation element = ( CabalImplementation )event.getElement();
-          // TODO: setCheckedHsImplementation( element.getName() );
+          CabalImplementation element = ( CabalImplementation ) event.getElement();
+          setCheckedCabalImplementation( element.getUserIdentifier() );
         } else {
-          // TODO: setCheckedHsImplementation( null );
+          setCheckedCabalImplementation( null );
         }
       }
     } );
@@ -284,7 +302,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     viewer.addDoubleClickListener( new IDoubleClickListener() {
       public void doubleClick( final DoubleClickEvent e ) {
         if( !viewer.getSelection().isEmpty() ) {
-          // TODO: editHsImplementation();
+          editCabalImplementation();
         }
       }
     } );
@@ -314,9 +332,8 @@ public class CabalImplsBlock implements ISelectionProvider {
         // pick a default automatically
         setSelection( new StructuredSelection( impls.get( 0 ) ) );
       }
-    } else {
-      fireSelectionChanged();
     }
+    fireSelectionChanged();
   }
 
   private void addCabalImplementation() {
@@ -330,16 +347,39 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private void editCabalImplementation() {
-    IStructuredSelection prev = ( IStructuredSelection ) getSelection();
-    assert (prev.size() == 1);
-    CabalImplementation impl = (CabalImplementation) prev.getFirstElement();
-    String implIdent = impl.getUserIdentifier();
-    CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), impl );
-    dialog.setTitle( UITexts.cabalImplsBlock_dlgEdit );
-    if (dialog.open() == Window.OK) {
-      update( implIdent, dialog.getResult() );
-      autoSelectSingle( prev );
+    IStructuredSelection prev = ( IStructuredSelection )getSelection();
+    int selected = table.getSelectionIndex();
+    if (selected >= 0) {
+      CabalImplementation impl = impls.get(selected);
+      String implIdent = impl.getUserIdentifier();
+      CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), impl );
+      dialog.setTitle( UITexts.cabalImplsBlock_dlgEdit );
+      if (dialog.open() == Window.OK) {
+        update( implIdent, dialog.getResult() );
+        autoSelectSingle( prev );
+      }
     }
+  }
+
+  private void removeSelectedCabalImplementations() {
+    IStructuredSelection ssel = ( IStructuredSelection ) viewer.getSelection();
+    CabalImplementation[] insts = new CabalImplementation[ ssel.size() ];
+    Iterator iter = ssel.iterator();
+    int i = 0;
+    while( iter.hasNext() ) {
+      insts[ i ] = ( CabalImplementation ) iter.next();
+      i++;
+    }
+    removeCabalImplementations( insts );
+  }
+
+  private void removeCabalImplementations( final CabalImplementation[] insts) {
+    IStructuredSelection prev = ( IStructuredSelection )getSelection();
+    for( int i = 0; i < insts.length; i++ ) {
+      impls.remove( insts[ i ] );
+    }
+    viewer.refresh();
+    autoSelectSingle( prev );
   }
 
   private void autoDetectCabalImpls() {
@@ -360,21 +400,25 @@ public class CabalImplsBlock implements ISelectionProvider {
 
       if (files != null && files.length > 0) {
         for (File file : files) {
-          CabalImplementation impl = new CabalImplementation("foo", file);
+          try {
+            CabalImplementation impl = new CabalImplementation("foo", new Path(file.getCanonicalPath()));
 
-          int seqno = 1;
-          String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion());
-          if (!isUniqueUserIdentifier( ident )) {
-            String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
-            while (!isUniqueUserIdentifier(uniqIdent)) {
-              seqno++;
-              uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
+            int seqno = 1;
+            String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion());
+            if (!isUniqueUserIdentifier( ident )) {
+              String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
+              while (!isUniqueUserIdentifier(uniqIdent)) {
+                seqno++;
+                uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
+              }
+              ident = uniqIdent;
             }
-            ident = uniqIdent;
-          }
 
-          impl.setUserIdentifier( ident );
-          impls.add( impl );
+            impl.setUserIdentifier( ident );
+            impls.add( impl );
+          } catch (IOException e) {
+            // Ignore?
+          }
         }
       }
     }
