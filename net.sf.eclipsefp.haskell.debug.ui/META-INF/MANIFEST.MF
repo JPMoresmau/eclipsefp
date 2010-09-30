@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.ui;singleton:=true
-Bundle-Version: 1.112.0
+Bundle-Version: 2.0.0
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.ui.internal.HaskellDebugUI
 Bundle-Vendor: %bundleVendor
 Require-Bundle: net.sf.eclipsefp.haskell.ghccompiler,
