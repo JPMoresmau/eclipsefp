@@ -1,11 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Utility classes
+Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.util
-Bundle-Version: 1.112.0
+Bundle-Version: 2.0.0
 Bundle-Activator: net.sf.eclipsefp.haskell.util.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.sf.eclipsefp.haskell.util;uses:="org.osgi.framework"
+Bundle-Vendor: %bundleVendor
+Bundle-Localization: plugin

@@ -32,7 +32,7 @@ public class ScionPlugin extends AbstractUIPlugin {
 	/** The name of the subdirectory in the state location area where the built-in server lives */
 	public static final String DIST_FOLDER="dist-scion";
 	/** Version of the scion zip file containing the built-in server's source */
-	public static final String SCION_VERSION="0.1.0.4";
+	public static final String SCION_VERSION="0.1.0.5";
 	/** The project -> scion instance map */
 	private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
 	/** The version number of the Scion protocol that we support. */
