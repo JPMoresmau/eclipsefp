@@ -102,6 +102,7 @@ public class ScionBuilder {
     }
 
     commands.add( "install" );
+    commands.add( "-v" );
 
     ProcessBuilder pb = new ProcessBuilder( commands );
     pb.directory( destDir );
