@@ -32,7 +32,7 @@ public class ScionPlugin extends AbstractUIPlugin {
 	/** The name of the subdirectory in the state location area where the built-in server lives */
 	public static final String DIST_FOLDER="dist-scion";
 	/** Version of the scion zip file containing the built-in server's source */
-	public static final String SCION_VERSION="0.1.0.4";
+	public static final String SCION_VERSION="0.1.0.5";
 	/** The project -> scion instance map */
 	private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
 	/** The version number of the Scion protocol that we support. */
@@ -88,11 +88,11 @@ public class ScionPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns whether tracing is enabled for the specified option.
 	 */
-  public static boolean isTracing(String optionId) {
-    String option = getPluginId() + "/" + optionId;
-    String value = Platform.getDebugOption(option);
-    return value != null && value.equalsIgnoreCase("true");
-  }
+	public static boolean isTracing(String optionId) {
+	  String option = getPluginId() + "/" + optionId;
+	  String value = Platform.getDebugOption(option);
+	  return value != null && value.equalsIgnoreCase("true");
+	}
 	
 	public static void logInfo (String message) {
 		log(Status.INFO, message, null);
@@ -118,32 +118,32 @@ public class ScionPlugin extends AbstractUIPlugin {
 		StatusManager.getManager().handle(status);
 	}
 	
-  public Map<IProject, ScionInstance> getScionInstances() {
-    return instances;
-  }
+	public Map<IProject, ScionInstance> getScionInstances() {
+	  return instances;
+	}
   
-  /** Generate the built-in Scion server's build area directory path.
-   * 
-   *  @return An IPath to the build area subdirectory off the workspace's state location.
-   */
-  public static IPath builtinServerDirectoryPath() {
-    return getDefault().getStateLocation().append( "scion-".concat(SCION_VERSION));  //$NON-NLS-1$
-  }
-  /** Open the Scion server's zip archive as an input stream.
-   * 
-   * @return The InputStream.
-   */
-  public static InputStream builinServerArchive() {
-    String zipArchive = "scion-" + SCION_VERSION + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
-    return ScionPlugin.class.getResourceAsStream( zipArchive );
-  }
-  /** Generate the built-in server's executable path, where we'd expect to find it relative to the
-   * build directory. Note that destDir is most likely the same as what {@link #builtinServerDirectoryPath
-   * builtinServerDirectoryPath} generated.
-   * 
-   * @param destDir The destination directory where the built-in scion server is being built. */
-  public static IPath serverExecutablePath(IPath destDir) {
-    IPath exePath = destDir.append( "dist" ).append( "build" ).append( "scion-server" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    return exePath.append( FileUtil.makeExecutableName( "scion-server" ));
-  }
+	/** Generate the built-in Scion server's build area directory path.
+	 * 
+	 *  @return An IPath to the build area subdirectory off the workspace's state location.
+	 */
+	public static IPath builtinServerDirectoryPath() {
+	  return getDefault().getStateLocation().append( "scion-".concat(SCION_VERSION));  //$NON-NLS-1$
+	}
+	/** Open the Scion server's zip archive as an input stream.
+	 * 
+	 * @return The InputStream.
+	 */
+	public static InputStream builinServerArchive() {
+	  String zipArchive = "scion-" + SCION_VERSION + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
+	  return ScionPlugin.class.getResourceAsStream( zipArchive );
+	}
+	/** Generate the built-in server's executable path, where we'd expect to find it relative to the
+	 * build directory. Note that destDir is most likely the same as what {@link #builtinServerDirectoryPath
+	 * builtinServerDirectoryPath} generated.
+	 * 
+	 * @param destDir The destination directory where the built-in scion server is being built. */
+	public static IPath serverExecutablePath(IPath destDir) {
+	  IPath exePath = destDir.append( "dist" ).append( "build" ).append( "scion-server" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	  return exePath.append( FileUtil.makeExecutableName( "scion-server" ));
+	}
 }
