@@ -20,6 +20,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
+/**
+ * This class encapsulates the details of building the internal Scion server, such as
+ * unpacking the internal zip archive to the staging directory and running cabal to
+ * produce the scion-server executable.
+ *
+ * @author B. Scott Michel (scooter.phd@gmail.com)
+ */
 public class ScionBuilder {
   /** Unpack the built-in Scion server's archive to its final destination
    *
@@ -74,8 +81,12 @@ public class ScionBuilder {
     return retval;
   }
 
-  /** Build the built-in Scion server
-   * @param console */
+  /** Build the built-in Scion server using the Cabal.
+   *
+   * @param cabalImpl The Cabal implementation, which specifies the executable to run
+   * @param destDir The destination directory, where the executable is built
+   * @param conout The IOConsole output stream to which the build process' output is sent.
+   */
   public static ScionBuildStatus build( final CabalImplementation cabalImpl, final File destDir, final IOConsoleOutputStream conout ) {
     ArrayList<String> commands = new ArrayList<String>();
     ScionBuildStatus retval = new ScionBuildStatus();
@@ -128,6 +139,9 @@ public class ScionBuilder {
     return retval;
   }
 
+  /** Does the built-in scion-server executable need building? (Note: this really only occurs if the
+   * actual executable is not present in the staging directory.)
+   */
   public static boolean needsBuilding() {
     return !ScionPlugin.serverExecutablePath( ScionPlugin.builtinServerDirectoryPath() ).toFile().exists();
   }

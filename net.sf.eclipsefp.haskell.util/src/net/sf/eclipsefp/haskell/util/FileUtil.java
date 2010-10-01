@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Path;
  * names.
  * 
  * @author Thomas ten Cate (original)
- * @author Scott Michel (scottm@aero.org, modifications)
+ * @author Scott Michel (scooter.phd@gmail.com, modifications)
  */
 public class FileUtil {
   /** Normal Haskell source extension. */

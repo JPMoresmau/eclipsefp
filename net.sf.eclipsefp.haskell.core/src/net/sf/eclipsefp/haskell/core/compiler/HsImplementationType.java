@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.core.compiler;
 /** Known Haskell implementation enumeration.
   *
   * @author Leif Frenzel
-  * @author Scott Michel (scottm@aero.org, modifications)
+  * @author Scott Michel (scooter.phd@gmail.com, modifications)
   */
 public enum HsImplementationType {
   GHC( "ghc", "--numeric-version", "--print-libdir" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
