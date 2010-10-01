@@ -27,7 +27,7 @@ public class ScionPlugin extends AbstractUIPlugin {
 	// no dot so we see it in Eclipse project view
 	public static final String DIST_FOLDER="dist-scion";
 	
-	public static final String SCION_VERSION="0.1.0.4";
+	public static String SCION_VERSION="0.1.0.5";
 	
 	private final Map<IProject, ScionInstance> instances = new HashMap<IProject, ScionInstance>();
 

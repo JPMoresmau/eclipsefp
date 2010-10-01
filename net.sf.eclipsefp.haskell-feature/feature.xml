@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="%bundleName"
-      version="2.0.0"
+      version="2.0.1"
       provider-name="%bundleVendor">
 
    <description>
@@ -89,7 +89,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.1"
          unpack="false"/>
 
    <plugin
@@ -131,7 +131,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.scion.client"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.1"
          unpack="false"/>
 
    <plugin
