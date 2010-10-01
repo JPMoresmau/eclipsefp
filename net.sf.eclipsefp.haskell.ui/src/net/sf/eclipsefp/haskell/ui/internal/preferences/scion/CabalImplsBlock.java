@@ -127,28 +127,43 @@ public class CabalImplsBlock implements ISelectionProvider {
   /** Put the Cabal implementation preferences into the preference store. */
   public boolean updateCabalImplementations(  ) {
     CabalImplementationManager cMgr = CabalImplementationManager.getInstance();
-    cMgr.setCabalImplementations( impls );
-    IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-    CabalImplementation impl = (CabalImplementation) sel.getFirstElement();
+    Object[] selected = viewer.getCheckedElements();
+    CabalImplementation impl = (CabalImplementation) selected[0];
+    String defaultImplIdent = new String();
     if (impl != null) {
-      cMgr.setDefaultCabalImplementation( impl.getUserIdentifier(), true );
+      defaultImplIdent = impl.getUserIdentifier();
     }
+
+    cMgr.setCabalImplementations( impls, defaultImplIdent );
     return true;
   }
 
   public boolean validate( final PreferencePage parent ) {
+    boolean retval = true;
+    String errorMsg = null;
+
     if( impls.size() <= 0 ) {
-      parent.setErrorMessage( UITexts.cabalImplsBlock_noCabalInstallations );
-      return false;
+     errorMsg = UITexts.cabalImplsBlock_noCabalInstallations;
+      retval = !retval;
     } else {
-      CabalImplementation install = getCheckedCabalImplementation();
-      if( install == null ) {
-        parent.setErrorMessage( UITexts.cabalImplsBlock_noCabalInstallationSelected );
-        return false;
+      Object[] checked = viewer.getCheckedElements();
+      if (checked.length > 0) {
+        if (checked.length > 1) {
+          errorMsg = UITexts.cabalImplsBlock_multipleImplsSelected;
+          retval = !retval;
+        }
+      } else {
+        // <= 0...
+        errorMsg = UITexts.cabalImplsBlock_noCabalInstallationSelected;
+        retval = !retval;
       }
     }
 
-    return true;
+    if (!retval) {
+      parent.setErrorMessage( errorMsg );
+    }
+
+    return retval;
   }
 
   // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+

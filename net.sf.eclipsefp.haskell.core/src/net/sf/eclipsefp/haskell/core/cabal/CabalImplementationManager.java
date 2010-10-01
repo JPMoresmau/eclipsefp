@@ -25,9 +25,9 @@ import org.osgi.service.prefs.Preferences;
  */
 public class CabalImplementationManager {
   /** Number of instances serialized in preferences */
-  private static final String NUM_INSTANCES = "numImpls"; //$NON-NLS-1$
+  public static final String NUM_INSTANCES = "numImpls"; //$NON-NLS-1$
   /** The default Cabal implementation's identifier preference */
-  private static final String DEFAULT_CABAL_IMPLEMENTATION = "defaultImpl"; //$NON-NLS-1$
+  public static final String DEFAULT_CABAL_IMPLEMENTATION = "defaultImpl"; //$NON-NLS-1$
   /** Implementation's identifier preference node */
   private static final String ATT_NAME    = "name"; //$NON-NLS-1$
   /** XML attribute within {@link #ELEM_CABAL_IMPL} for the implementation's executable path */
@@ -46,13 +46,12 @@ public class CabalImplementationManager {
     final static CabalImplementationManager theInstance = new CabalImplementationManager();
   }
 
-  /** The default constructor */
+  /** The default constructor, private to ensure that it remains a singleton instance. */
   private CabalImplementationManager() {
     // Load the implementations from the preference store:
-    impls = deserializePrefs();
-
-    String defaultImplIdent = getDefaultImplIdentPref();
-    setDefaultCabalImplementation( defaultImplIdent, false );
+    impls = new ArrayList<CabalImplementation>();
+    defaultImpl = null;
+    deserializePrefs();
   }
 
   /** Get the singleton instance */
@@ -62,22 +61,6 @@ public class CabalImplementationManager {
 
   /** Get the default Cabal implementation */
   public final CabalImplementation getDefaultCabalImplementation() {
-    return defaultImpl;
-  }
-
-  /** Set the default Cabal implementation, keyed by identiier */
-  public final CabalImplementation setDefaultCabalImplementation(final String ident, final boolean syncPref) {
-    defaultImpl = findImplementation( ident );
-    if (syncPref) {
-      IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
-      Preferences node = instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS );
-      try {
-        node.put( DEFAULT_CABAL_IMPLEMENTATION, ident );
-        node.flush();
-      } catch (BackingStoreException ex) {
-        HaskellCorePlugin.log( "Error setting default Cabal implementation preference", ex );
-      }
-    }
     return defaultImpl;
   }
 
@@ -103,12 +86,13 @@ public class CabalImplementationManager {
    *
    * @param impls The newly updated implementations list
    */
-  public void setCabalImplementations( final List<CabalImplementation> impls ) {
+  public void setCabalImplementations( final List<CabalImplementation> impls, final String defaultImplIdent ) {
     this.impls = impls;
-    serializePrefs();
+    this.defaultImpl = findImplementation( defaultImplIdent );
+    serializePrefs( defaultImplIdent );
   }
 
-  public void serializePrefs( ) {
+  public void serializePrefs( final String defaultImplIdent ) {
     IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
 
     try {
@@ -127,6 +111,8 @@ public class CabalImplementationManager {
         serializePrefs( implSeqNode, impl );
         ++seqno;
       }
+
+      node.put( DEFAULT_CABAL_IMPLEMENTATION, defaultImplIdent );
 
       node.flush();
     } catch (BackingStoreException ex) {
@@ -149,14 +135,14 @@ public class CabalImplementationManager {
     node.put( ATT_LIBRARY_VERSION, impl.getLibraryVersion() );
   }
 
-  public List<CabalImplementation> deserializePrefs () {
-    List<CabalImplementation> impls = new ArrayList<CabalImplementation>();
+  public void deserializePrefs () {
     IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
 
     try {
       if (instanceNode.nodeExists( ICorePreferenceNames.CABAL_IMPLEMENTATIONS )) {
-        Preferences node = instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS);
+        Preferences node = instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS );
         int numImpls = node.getInt( NUM_INSTANCES, 0);
+        String defaultImplIdent = node.get( DEFAULT_CABAL_IMPLEMENTATION, new String() );
 
         for (int i = 1; i <= numImpls; ++i) {
           String implSeqString = String.valueOf(i);
@@ -205,29 +191,16 @@ public class CabalImplementationManager {
             }
           }
         }
+
+        defaultImpl = findImplementation( defaultImplIdent );
       }
     } catch (BackingStoreException ex) {
       // nothing.
     }
-
-    return impls;
   }
 
-  /** Get the default implementation's identifier from the preference hierarchy */
-  private String getDefaultImplIdentPref() {
-    String retval = new String();
-    try {
-      IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
-      if( instanceNode.nodeExists( ICorePreferenceNames.CABAL_IMPLEMENTATIONS ) ) {
-        Preferences node = instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS );
-        String ident = node.get( DEFAULT_CABAL_IMPLEMENTATION, null );
-        if( ident != null ) {
-          retval = ident;
-        }
-      }
-    } catch( BackingStoreException ex ) {
-      // Ok, it doesn't appear to exist, so return an empty string
-    }
-    return retval;
+  public Preferences cabalImplementationsPreferenceNode() {
+    IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    return instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS );
   }
 }

@@ -7,6 +7,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.progress.IProgressConstants;
 
 
 /** <p>The perspective for Haskell development.</p>
@@ -75,6 +76,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     bottom.addView( IPageLayout.ID_TASK_LIST );
     bottom.addView( IPageLayout.ID_PROBLEM_VIEW );
     bottom.addView( IConsoleConstants.ID_CONSOLE_VIEW );
+    bottom.addView( IProgressConstants.PROGRESS_VIEW_ID);
   }
 
   private void addNewShortcuts( final IPageLayout layout ) {

@@ -42,8 +42,15 @@ public class ScionPP
 	private ExecutableFileFieldEditor serverExecutableField;
 	private BooleanFieldEditor serverBuiltInField;
 	private ButtonFieldEditor autodetect;
+	private ButtonFieldEditor forceRebuild;
 	private CabalImplsBlock cabalBlock;
-	private Composite prefComp;
+	private Composite parentComposite;
+	private Composite fieldComposite;
+
+	public ScionPP() {
+	  super();
+    setPreferenceStore(HaskellUIPlugin.getDefault().getPreferenceStore());
+	}
 
 	/**
 	 * Creates the field editors. Field editors are abstractions of
@@ -52,33 +59,28 @@ public class ScionPP
 	 * restore itself.
 	 */
 	@Override
-  protected Control createContents( final Composite parent ) {
+  protected Composite createContents( final Composite parentComposite ) {
 	  final int nColumns = 3;
 
-	  initializeDialogUnits( parent );
 	  noDefaultAndApplyButton();
-
 	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    setPreferenceStore(prefStore);
 
-	  prefComp = new Composite(parent, SWT.NONE);
+    this.parentComposite = parentComposite;
+    parentComposite.setLayout( new GridLayout() );
 
-	  GridLayout glayout = new GridLayout(nColumns, false);
-	  glayout.marginHeight = 0;
-	  glayout.marginWidth = 0;
-	  prefComp.setLayout( glayout );
-
-	  SWTUtil.createMessageLabel( prefComp, UITexts.scion_preferences_title, 4, SWT.DEFAULT );
-	  SWTUtil.createLineSpacer( prefComp, 1 );
+	  SWTUtil.createMessageLabel( parentComposite, UITexts.scion_preferences_title, nColumns, SWT.DEFAULT );
+	  SWTUtil.createLineSpacer( parentComposite, 1 );
 
     cabalBlock = new CabalImplsBlock();
-    Control control = cabalBlock.createControl( prefComp, this );
+    Control control = cabalBlock.createControl( parentComposite, this );
     cabalBlock.addSelectionChangedListener( new ISelectionChangedListener() {
       public void selectionChanged( final SelectionChangedEvent event ) {
         setValid( isValid() );
       }
     } );
 
-    GridData gdata = new GridData( SWT.FILL, SWT.TOP, true, true );
+    GridData gdata = new GridData( SWT.FILL, SWT.TOP, true, false );
     gdata.horizontalSpan = nColumns;
     control.setLayoutData( gdata );
 
@@ -87,33 +89,53 @@ public class ScionPP
     IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
 
-    SWTUtil.createMessageLabel (prefComp, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
+    SWTUtil.createMessageLabel (parentComposite, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
+
+    fieldComposite = new Composite(parentComposite, SWT.NONE);
+    fieldComposite.setLayout( new GridLayout( nColumns, false ) );
 
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
 		                                             UITexts.scionServerBuiltIn_label,
-		                                             prefComp );
-		serverBuiltInField.setPage( this );
-		serverBuiltInField.setPreferenceStore( prefStore );
-		serverBuiltInField.fillIntoGrid( prefComp, nColumns );
+		                                             fieldComposite );
 		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
         updateButtonState();
         setValid( isValid() );
       }
-    });
+    } );
+		serverBuiltInField.setPage( this );
+		serverBuiltInField.setPreferenceStore( prefStore );
+		serverBuiltInField.fillIntoGrid( fieldComposite, nColumns );
+		serverBuiltInField.load();
+
+    forceRebuild = new ButtonFieldEditor(
+        UITexts.forceRebuildButton_text,
+        UITexts.forceRebuildButton_label,
+        new SelectionAdapter() {
+          @Override
+          public void widgetSelected(final SelectionEvent e) {
+            //
+          }
+        },
+        fieldComposite);
+    forceRebuild.setPage( this );
+    forceRebuild.setPreferenceStore( prefStore );
+    forceRebuild.fillIntoGrid( fieldComposite, nColumns );
+    forceRebuild.load();
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
-				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, prefComp);
+				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, fieldComposite);
 		serverExecutableField.setEmptyStringAllowed(true);
-		serverExecutableField.setPage( this );
-		serverExecutableField.setPreferenceStore( prefStore );
-		serverExecutableField.fillIntoGrid( prefComp, nColumns );
 		serverExecutableField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
         setValid( isValid() );
       }
     });
+		serverExecutableField.setPage( this );
+		serverExecutableField.setPreferenceStore( prefStore );
+		serverExecutableField.fillIntoGrid( fieldComposite, nColumns );
+		serverExecutableField.load();
 
 		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
@@ -126,21 +148,17 @@ public class ScionPP
 						setValid( isValid() );
 					}
 				},
-				prefComp);
+				fieldComposite);
 		autodetect.setPage( this );
 		autodetect.setPreferenceStore( prefStore );
-		autodetect.fillIntoGrid( prefComp, nColumns );
-
-		// Load existing data from the preference store:
-		serverBuiltInField.load();
-    serverExecutableField.load();
+		autodetect.fillIntoGrid( fieldComposite, nColumns );
 		autodetect.load();
-		updateButtonState();
 
-		// Finally, set the valid flag for this pane
+		// Update the dialog's state and validity:
+		updateButtonState();
 		setValid(isValid());
 
-		return prefComp;
+		return parentComposite;
 	}
 
 	private void doDetectServer() {
@@ -156,8 +174,9 @@ public class ScionPP
 
 	private void updateButtonState() {
     boolean b = serverBuiltInField.getBooleanValue();
-    autodetect.setEnabled( !b, prefComp );
-    serverExecutableField.setEnabled(  !b, prefComp );
+    forceRebuild.setEnabled( b, fieldComposite );
+    autodetect.setEnabled( !b, fieldComposite );
+    serverExecutableField.setEnabled( !b, fieldComposite );
 	}
 
 	/**
@@ -175,14 +194,14 @@ public class ScionPP
 	}
 
 	public static void initializeDefaults(final IPreferenceStore store) {
-	  // scion might be on the path...
-	  //store.setDefault(SCION_SERVER_EXECUTABLE, getServerExecutableName());
+	  // Set reasonable defaults.
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
+	  store.setDefault( SCION_SERVER_EXECUTABLE, new String() );
 	}
 
   @Override
   public boolean performOk() {
-    cabalBlock.updateCabalImplementations( );
+    cabalBlock.updateCabalImplementations();
     serverBuiltInField.store();
     serverExecutableField.store();
     autodetect.store();

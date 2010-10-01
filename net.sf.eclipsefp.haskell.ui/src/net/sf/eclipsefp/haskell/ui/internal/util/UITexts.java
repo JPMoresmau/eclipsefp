@@ -82,14 +82,19 @@ public final class UITexts extends NLS {
   public static String cabalImplsDialog_dlgBrowse;
   public static String cabalImplsDialog_invalidUserIdentifier;
   public static String cabalImplDialog_invalidCabalExecutable;
+  public static String cabalImplsBlock_multipleImplsSelected;
 
   public static String scionServer_preferences_label;
   public static String scionServerBuiltIn_label;
   public static String scionServerExecutable_label;
+
   public static String autodetectButton_label;
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
   public static String autodetectButton_errorMessage;
+
+  public static String forceRebuildButton_label;
+  public static String forceRebuildButton_text;
 
   public static String executableFileFieldEditor_errorDoesNotExist;
   public static String executableFileFieldEditor_errorNotAbsolute;
@@ -97,22 +102,10 @@ public final class UITexts extends NLS {
 
   public static String scionServerStartupError_title;
   public static String scionServerStartupError_message;
-  public static String scionServerUnzipError;
-
-//  public static String scionServerDependenciesError;
-//  public static String scionServerDependenciesFailed;
-//  public static String scionServerDependenciesSucceeded;
 
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
-  public static String scionServerInstallSucceeded;
 
-//  public static String scionServerConfigureError;
-//  public static String scionServerConfigureFailed;
-//  public static String scionServerConfigureSucceeded;
-//  public static String scionServerBuildError;
-//  public static String scionServerBuildFailed;
-//  public static String scionServerBuildSucceeded;
   public static String scionServerBuildJob;
   public static String scionServerChangeJob;
   public static String scionServerExecutableNotPresent;
@@ -284,6 +277,18 @@ public final class UITexts extends NLS {
   public static String log_nodetails;
 
   public static String noproject;
+
+  public static String unpackScionArchive_title;
+  public static String scionBuildJob_title;
+
+  public static String scionArchiveResourceNotFound;
+  public static String scionArchiveFileException;
+  public static String scionArchiveNonspecificFileException;
+  public static String scionServerProgress_title;
+
+  public static String noCabalImplementation_title;
+  public static String noCabalImplementation_message;
+  public static String zerolenCabalExecutable_message;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

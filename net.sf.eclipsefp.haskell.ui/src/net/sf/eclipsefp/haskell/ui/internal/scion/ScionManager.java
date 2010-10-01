@@ -1,19 +1,14 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -36,7 +31,6 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import net.sf.eclipsefp.haskell.util.FileUtil;
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,14 +39,18 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -63,10 +61,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -82,9 +83,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * This works by listening for resource changes.
  */
 public class ScionManager implements IResourceChangeListener,ISchedulingRule {
-
-
-
   private String serverExecutable = null;
 
   /**
@@ -93,8 +91,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   private boolean serverStartupErrorReported = true; // TODO TtC set back to
                                                      // false
 
-  private final Map<IProject, ScionInstance> instances = ScionPlugin
-      .getDefault().getScionInstances();
+  private final Map<IProject, ScionInstance> instances = ScionPlugin.getDefault().getScionInstances();
 
 
   public ScionManager() {
@@ -102,146 +99,46 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   }
 
   public void start() {
-    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault()
-        .getPreferenceStore();
-    boolean useBuiltIn=preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
-    if (useBuiltIn){
-      serverExecutable=buildBuiltIn();
-      if (serverExecutable==null && CompilerManager.getInstance().getCurrentHsImplementation()==null){
-        new InstanceScope().getNode( HaskellCorePlugin.getPluginId() ).addPreferenceChangeListener( new IPreferenceChangeListener() {
-          public void preferenceChange( final PreferenceChangeEvent event ) {
-            String key = event.getKey();
-            if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
-                || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
-              /*Job job=new Job(UITexts.scionServerBuildJob) {
+    IWorkspace workSpace = ResourcesPlugin.getWorkspace();
+    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
 
-                @Override
-                protected IStatus run( final IProgressMonitor monitor ) {
-                  serverExecutable=buildBuiltIn();
-                  serverExecutableChanged();
-                  return Status.OK_STATUS;
-                }
-              };
-              job.setRule( ScionManager.this );
-              job.schedule();*/
-              if (serverExecutable==null){
-                serverExecutable=buildBuiltIn();
-                serverExecutableChanged();
-              }
-            }
-          }
-        });
+    if (useBuiltIn) {
+      if (   CompilerManager.getInstance().getCurrentHsImplementation() == null
+          || CabalImplementationManager.getInstance().getDefaultCabalImplementation() == null) {
+        // Either the default Haskell or Cabal implementations are unset, so wait for the preferences
+        // to change:
+        IEclipsePreferences hsCorePrefs = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+        hsCorePrefs.addPreferenceChangeListener( new PreferenceStoreChangeListener() );
+      } else if ( ScionBuilder.needsBuilding() ) {
+        spawnBuildJob();
       }
     } else {
-      serverExecutable = preferenceStore
-          .getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
+      serverExecutable = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
     }
 
     // creates the unattached instance used for lexing
-    if (serverExecutable!=null) {
-     // HaskellUIPlugin.log( "Launching unattached scion server ".concat(serverExecutable), IStatus.INFO );
+    if (serverExecutable != null) {
       ScionInstance instance = startInstance( null );
       instances.put( null, instance );
     }
 
-    preferenceStore.addPropertyChangeListener( new IPropertyChangeListener() {
-
-      public void propertyChange( final PropertyChangeEvent event ) {
-        IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-        // built in state has change
-        if (event.getProperty().equals( IPreferenceConstants.SCION_SERVER_BUILTIN )){
-          if (event.getNewValue() instanceof Boolean){
-            // true -> build
-            if (((Boolean)event.getNewValue()).booleanValue()){
-              Job job=new Job(UITexts.scionServerBuildJob) {
-
-                @Override
-                protected IStatus run( final IProgressMonitor monitor ) {
-                  serverExecutable=buildBuiltIn();
-                  serverExecutableChanged();
-                  return Status.OK_STATUS;
-                }
-              };
-              job.setRule( ScionManager.this );
-              job.schedule();
-
-            } else {
-              // false:read property
-              serverExecutable =  preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
-              launchChangeJob();
-            }
-          }
-          // if we're not using built in
-        } else if (!preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN )){
-          if( event.getProperty().equals(
-              IPreferenceConstants.SCION_SERVER_EXECUTABLE ) ) {
-            if( event.getNewValue() instanceof String
-                && !( ( String )event.getNewValue() ).equals( serverExecutable ) ) {
-              serverExecutable = ( String )event.getNewValue();
-              launchChangeJob();
-            }
-          }
-        }
-      }
-    } );
+    preferenceStore.addPropertyChangeListener( new ScionServerPropertiesListener() );
 
     try {
-      ResourcesPlugin.getWorkspace().getRoot().accept( new IResourceVisitor() {
-
-        public boolean visit( final IResource resource ) throws CoreException {
-          return updateForResource( resource );
-        }
-      } );
+      workSpace.getRoot().accept( new UpdateResourceVisitor() );
     } catch( CoreException ex ) {
-      HaskellUIPlugin.log(
-          UITexts.scion_delta_error, ex );
+      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
     }
 
-    ResourcesPlugin.getWorkspace().addResourceChangeListener( this,
-        IResourceChangeEvent.POST_CHANGE );
-
-    ResourcesPlugin.getWorkspace().addResourceChangeListener(
-        new FileDeletionListener(), IResourceChangeEvent.PRE_BUILD );
-
-    ResourcesPlugin.getWorkspace().addResourceChangeListener(
-        new IResourceChangeListener() {
-
-          public void resourceChanged( final IResourceChangeEvent event ) {
-            try {
-              event.getDelta().accept( new IResourceDeltaVisitor() {
-
-                public boolean visit( final IResourceDelta delta ) {
-                  if( delta.getKind() == IResourceDelta.CHANGED ) {
-                    if( delta.getResource() instanceof IFile ) {
-                      IFile f = ( IFile )delta.getResource();
-                      IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
-                      if( f.equals( cabalF ) ) {
-                        for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
-                          l.cabalFileChanged( f );
-                        }
-                      }
-                      return false;
-                    }
-                  }
-                  return true;
-
-                }
-              } );
-
-            } catch( CoreException ex ) {
-              HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
-            }
-          }
-        }, IResourceChangeEvent.POST_CHANGE );
-
-
-
-    ResourcesPlugin.getWorkspace().addResourceChangeListener(
-        new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
+    workSpace.addResourceChangeListener( this, IResourceChangeEvent.POST_CHANGE );
+    workSpace.addResourceChangeListener( new FileDeletionListener(), IResourceChangeEvent.PRE_BUILD );
+    workSpace.addResourceChangeListener( new CabalFileResourceChangeListener(), IResourceChangeEvent.POST_CHANGE );
+    workSpace.addResourceChangeListener( new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
   }
 
-  private void launchChangeJob(){
-    if (serverExecutable!=null && serverExecutable.length()>0){
+  private void launchChangeJob() {
+    if (serverExecutable!=null && serverExecutable.length()>0) {
       Job job=new Job(UITexts.scionServerChangeJob){
         @Override
         protected IStatus run( final IProgressMonitor monitor ) {
@@ -254,118 +151,35 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     }
   }
 
-  private String buildBuiltIn() {
-    IPath stateLoc=ScionPlugin.getDefault().getStateLocation();
-    // increment when changed
+  private ScionBuildStatus buildBuiltIn(final IProgressMonitor monitor, final IOConsoleOutputStream conout) {
+    IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
+    File scionBuildDir = scionBuildDirPath.toFile();
+    ScionBuildStatus retval;
 
-    IPath scionDir=stateLoc.append( "scion-"+ScionPlugin.SCION_VERSION);  //$NON-NLS-1$
-    File sd=scionDir.toFile();
-    if (!sd.exists() || sd.list().length==0){
+    monitor.subTask( "Unpacking the Scion server source archive" );
+    retval = ScionBuilder.unpackScionArchive( scionBuildDir );
+    if (retval.isOK()) {
+      // build final exe location
+      IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
+      CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
+      CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
 
-       // extract scion from bundled zip file
-       InputStream is=ScionPlugin.class.getResourceAsStream( "scion-"+ScionPlugin.SCION_VERSION+".zip" ); //$NON-NLS-1$ //$NON-NLS-2$
-       if ( is == null ) {
-         return null;
-       }
+      IPath exePath = ScionPlugin.serverExecutablePath( scionBuildDirPath );
+      File  exeFile = exePath.toFile();
 
-       ZipInputStream zis=new ZipInputStream( is );
-       try {
-         ZipEntry ze=zis.getNextEntry();
-         while(ze!=null){
-           int BUFFER = 2048;
-           if (!ze.isDirectory()){
-             File f=new File(sd,ze.getName());
-             f.getParentFile().mkdirs();
-             FileOutputStream fos = new FileOutputStream(f);
-             BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
-             byte[] data=new byte[BUFFER];
-             int count=0;
-             while ((count = zis.read(data, 0, BUFFER)) != -1) {
-               //System.out.write(x);
-               dest.write(data, 0, count);
-            }
-             dest.close();
-             fos.close();
-           }
-           ze=zis.getNextEntry();
-         }
-         zis.close();
-       } catch (Exception e){
-         HaskellUIPlugin.log(UITexts.scionServerUnzipError,e);
-         // delete so we try to unzip next time
-         FileUtil.deleteRecursively( sd );
-       }
-      }
-    // build final exe location
-    IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
-    IPath exeLocation = scionDir.append( "dist" ).append( "build" ).append( "scion-server" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    exeLocation = exeLocation.append( FileUtil.makeExecutableName( "scion-server" ) );  //$NON-NLS-1$
-
-    if (!exeLocation.toFile().exists() && hsImpl != null){
-      ArrayList<String> commands = new ArrayList<String>();
-      CabalImplementation cabalImpl = new CabalImplementation();
-
-      cabalImpl.probeVersion( hsImpl );
-      final String cabalExecutable = cabalImpl.getCabalExecutableName().toOSString();
-
-      if (cabalExecutable.length() > 0) {
-        commands.add( cabalExecutable );
-        cabalImpl.probeVersion( hsImpl );
-        HaskellUIPlugin.log( "cabal executable: ".concat( cabalExecutable ),
-                             IStatus.INFO );
-        HaskellUIPlugin.log( "cabal-install version ".concat(cabalImpl.getInstallVersion()),
-                             IStatus.INFO );
-        HaskellUIPlugin.log( "Cabal library version ".concat( cabalImpl.getLibraryVersion() ),
-                             IStatus.INFO );
-
-        String cabalLibVer = cabalImpl.getLibraryVersion();
-        if (cabalLibVer.startsWith( "1.8." )) {
-          commands.add("-fcabal_1_8");
-        } else if (cabalLibVer.startsWith( "1.7." )) {
-          commands.add( "-fcabal_1_7" );
+      if( !exeFile.exists() && hsImpl != null && cabalImpl != null) {
+        monitor.subTask( "Cabal building the internal Scion server" );
+        retval = ScionBuilder.build( cabalImpl, scionBuildDir, conout);
+        if (retval.isOK() && exeFile.exists() ) {
+          retval.setExecutable( exePath.toOSString() );
         }
-
-        commands.add("install");
-        commands.add("-v2");
-
-        //"cabal install"
-        // we tried to only configure/build, but only install fetches the dependencies
-        // the trick mentioned http://hackage.haskell.org/trac/hackage/ticket/411 didn't work
-        ProcessBuilder pb=new ProcessBuilder( commands );
-        pb.directory( sd );
-        pb.redirectErrorStream( true );
-        int code=-1;
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        try {
-          Process p=pb.start();
-          InputStream is=p.getInputStream();
-          int r;
-          while ((r=is.read())!=-1){
-            baos.write( r );
-            System.out.write(r);
-          }
-          code=p.waitFor();
-
-          String depsOutput=new String (baos.toByteArray());
-          baos.reset();
-
-          if (code==0){
-            HaskellUIPlugin.log(NLS.bind( UITexts.scionServerInstallSucceeded,PlatformUtil.NL+depsOutput),IStatus.INFO);
-          } else {
-            HaskellUIPlugin.log( NLS.bind( UITexts.scionServerInstallFailed,PlatformUtil.NL+depsOutput),IStatus.ERROR);
-          }
-        } catch (Exception e){
-          HaskellUIPlugin.log(UITexts.scionServerInstallError,e);
+      } else {
+        if (cabalImpl == null ) {
+          retval.buildFailed(UITexts.noCabalImplementation_title, UITexts.noCabalImplementation_message);
         }
       }
     }
-
-    if (exeLocation.toFile().exists()){
-      return exeLocation.toOSString();
-    }
-
-    HaskellUIPlugin.log( NLS.bind(UITexts.scionServerExecutableNotPresent,exeLocation.toOSString()), IStatus.ERROR );
-    return null;
+    return retval;
   }
 
   /**
@@ -391,10 +205,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
                   PackageDescription pd = PackageDescriptionLoader.load( cabalF );
                   ModuleCreationInfo info = new ModuleCreationInfo( f );
                   if (info.getSourceContainer()!=null){
-                    List<PackageDescriptionStanza> lpds = pd
-                        .getStanzasBySourceDir().get(
-                            info.getSourceContainer().getProjectRelativePath()
-                                .toOSString() );
+                    List<PackageDescriptionStanza> lpds = pd.getStanzasBySourceDir().get( info.getSourceContainer().getProjectRelativePath().toOSString() );
                     String qn = info.getQualifiedModuleName();
 
                     IDocumentProvider prov = new TextFileDocumentProvider();
@@ -442,8 +253,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
         } );
 
       } catch( CoreException ex ) {
-        HaskellUIPlugin.log(
-            UITexts.scion_delta_error, ex );
+        HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
       }
     }
   }
@@ -460,6 +270,85 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
         stopInstance( event.getResource() );
       }
 
+    }
+  }
+
+  /** */
+  public class ScionServerPropertiesListener implements IPropertyChangeListener {
+    public void propertyChange( final PropertyChangeEvent event ) {
+      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+      // built in state has changed
+      if (event.getProperty().equals( IPreferenceConstants.SCION_SERVER_BUILTIN )) {
+        if (event.getNewValue() instanceof Boolean) {
+          // true -> build
+          if (((Boolean)event.getNewValue()).booleanValue()) {
+            spawnBuildJob();
+          } else {
+            // false:read property
+            serverExecutable =  preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
+            launchChangeJob();
+          }
+        }
+        // if we're not using built in
+      } else if (!preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN ) ) {
+        if( event.getProperty().equals( IPreferenceConstants.SCION_SERVER_EXECUTABLE ) ) {
+          if(   event.getNewValue() instanceof String
+             && !( ( String )event.getNewValue() ).equals( serverExecutable ) ) {
+            serverExecutable = ( String )event.getNewValue();
+            launchChangeJob();
+          }
+        }
+      }
+    }
+  }
+
+  /** */
+  public class UpdateResourceVisitor implements IResourceVisitor {
+    public boolean visit( final IResource resource ) throws CoreException {
+      return updateForResource( resource );
+    }
+  }
+
+  /** */
+  public class CabalFileResourceChangeListener implements IResourceChangeListener {
+    public void resourceChanged( final IResourceChangeEvent event ) {
+      try {
+        event.getDelta().accept( new IResourceDeltaVisitor() {
+
+          public boolean visit( final IResourceDelta delta ) {
+            if( delta.getKind() == IResourceDelta.CHANGED ) {
+              if( delta.getResource() instanceof IFile ) {
+                IFile f = ( IFile )delta.getResource();
+                IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
+                if( f.equals( cabalF ) ) {
+                  for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
+                    l.cabalFileChanged( f );
+                  }
+                }
+                return false;
+              }
+            }
+            return true;
+
+          }
+        } );
+
+      } catch( CoreException ex ) {
+        HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
+      }
+    }
+  }
+
+  /** */
+  public class PreferenceStoreChangeListener implements IPreferenceChangeListener {
+    public void preferenceChange( final PreferenceChangeEvent event ) {
+      String key = event.getKey();
+      HaskellUIPlugin.log( "Property changed: ".concat(key), IStatus.INFO );
+      if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
+          || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key )
+          || ICorePreferenceNames.CABAL_IMPLEMENTATIONS.equals( key ) ) {
+        spawnBuildJob();
+      }
     }
   }
 
@@ -490,15 +379,12 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   public void resourceChanged( final IResourceChangeEvent event ) {
     try {
       event.getDelta().accept( new IResourceDeltaVisitor() {
-
         public boolean visit( final IResourceDelta delta ) throws CoreException {
-
           return updateForResource( delta.getResource() );
         }
       } );
     } catch( CoreException ex ) {
-      HaskellUIPlugin.log(
-          UITexts.scion_delta_error, ex );
+      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
     }
   }
 
@@ -649,5 +535,73 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   private final String consoleName ( final IProject project ) {
     String projectName = project != null ? project.getName() : UITexts.noproject;
     return NLS.bind( UITexts.scion_console_title, projectName );
+  }
+
+  /** Spawn a built-in server build job */
+  void spawnBuildJob() {
+    IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+    IOConsole console = new IOConsole(UITexts.scionServerBuildJob, null);
+    Job job = new ScionBuildJob(UITexts.scionServerBuildJob, console);
+
+    mgr.addConsoles(new IConsole[] {console});
+    job.setRule( ScionManager.this );
+    job.setPriority( Job.BUILD );
+    job.schedule();
+  }
+
+  /** Specialized Job class that manages building the internal Scion server,
+   * providing some feedback to the user as the build progresses.
+   *
+    * @author B. Scott Michel
+   */
+  public class ScionBuildJob extends Job {
+    ScionBuildStatus status;
+    IOConsole fConsole;
+    IOConsoleOutputStream fConOut;
+
+    public ScionBuildJob(final String jobTitle, final IOConsole console) {
+      super(jobTitle);
+      status = new ScionBuildStatus();
+      fConsole = console;
+      fConOut = console.newOutputStream();
+
+      console.clearConsole();
+
+      // If the build failed, there will be some indication of why it failed in the
+      // ScionBuildStatus object. This is where we get to present that back to the
+      // user:
+      addJobChangeListener( new JobChangeAdapter() {
+        @Override
+        public void done( final IJobChangeEvent event ) {
+          if (!event.getResult().isOK()) {
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openError( Display.getDefault().getActiveShell(),
+                                         status.getTitle(),
+                                         status.getMessage() );
+              }
+            });
+          } else {
+            // Build was successful, so we don't need the console any more.
+            IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+            mgr.removeConsoles( new IConsole[] { fConsole } );
+          }
+          super.done( event );
+        }
+
+      });
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.scionServerProgress_title, IProgressMonitor.UNKNOWN );
+      status = buildBuiltIn(monitor, fConOut);
+      if (status.isOK()) {
+        serverExecutable = status.getExecutable();
+        serverExecutableChanged();
+      }
+      monitor.done();
+      return status.getStatus();
+    }
   }
 }
