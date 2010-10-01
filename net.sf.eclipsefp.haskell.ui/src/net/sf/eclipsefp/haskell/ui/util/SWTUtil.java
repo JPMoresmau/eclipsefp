@@ -64,6 +64,13 @@ public class SWTUtil {
     return button;
   }
 
+  /** Create a message label
+   *
+   * @param parent Parent composite into which this message label is inserted
+   * @param text The text to display in the label
+   * @param hspan The horizontal span, in columns, that this label will span
+   * @param wrapwidth The width hint used for wrapping the text.
+   */
   public static void createMessageLabel( final Composite parent,
                                     final String text,
                                     final int hspan,
@@ -78,6 +85,11 @@ public class SWTUtil {
     label.setLayoutData( gridData );
   }
 
+  /** Create an invisible line spacer
+   *
+   * @param parent The parent Composiste into which this space is inserted
+   * @param lines The number of lines this spacer takes up.
+   */
   public static void createLineSpacer( final Composite parent, final int lines ) {
     Label lbl = new Label( parent, SWT.NONE );
 
