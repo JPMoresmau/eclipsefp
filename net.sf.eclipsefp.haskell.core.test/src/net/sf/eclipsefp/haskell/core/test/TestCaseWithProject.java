@@ -172,7 +172,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     impl.setBinDir(ghc );
    // impl.setLibDir( "D:\\dev\\haskell\\HaskellPlatform\\2010.1.0.0\\lib" );
     impl.setVersion( "Test" );
-    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences node = HaskellCorePlugin.instanceScopedPreferences();
 
     node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, HsImplementationPersister.toXML( Collections.<IHsImplementation>singletonList( impl ) ) );
     node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, impl.getName() );

@@ -146,4 +146,8 @@ public class ScionPlugin extends AbstractUIPlugin {
     IPath exePath = destDir.append( "dist" ).append( "build" ).append( "scion-server" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     return exePath.append( FileUtil.makeExecutableName( "scion-server" ));
   }
+  /** Generate the built-in server's executable path in the default state location's directory. */
+  public static IPath defaultServerExecutablePath() {
+    return serverExecutablePath(builtinServerDirectoryPath());
+  }
 }

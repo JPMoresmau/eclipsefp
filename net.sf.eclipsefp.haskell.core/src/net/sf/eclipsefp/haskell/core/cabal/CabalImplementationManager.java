@@ -13,7 +13,6 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -93,7 +92,7 @@ public class CabalImplementationManager {
   }
 
   public void serializePrefs( final String defaultImplIdent ) {
-    IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences instanceNode = HaskellCorePlugin.instanceScopedPreferences();
 
     try {
       if (instanceNode.nodeExists( ICorePreferenceNames.CABAL_IMPLEMENTATIONS )) {
@@ -113,8 +112,8 @@ public class CabalImplementationManager {
       }
 
       node.put( DEFAULT_CABAL_IMPLEMENTATION, defaultImplIdent );
-
-      node.flush();
+      node.sync();
+      instanceNode.sync();
     } catch (BackingStoreException ex) {
       HaskellCorePlugin.log( ex.toString(), ex );
       try {
@@ -136,7 +135,7 @@ public class CabalImplementationManager {
   }
 
   public void deserializePrefs () {
-    IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences instanceNode = HaskellCorePlugin.instanceScopedPreferences();
 
     try {
       if (instanceNode.nodeExists( ICorePreferenceNames.CABAL_IMPLEMENTATIONS )) {
@@ -200,7 +199,7 @@ public class CabalImplementationManager {
   }
 
   public Preferences cabalImplementationsPreferenceNode() {
-    IEclipsePreferences instanceNode = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences instanceNode = HaskellCorePlugin.instanceScopedPreferences();
     return instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS );
   }
 }

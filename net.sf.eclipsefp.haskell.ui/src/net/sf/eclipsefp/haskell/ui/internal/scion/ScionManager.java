@@ -50,10 +50,8 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -82,7 +80,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  *
  * This works by listening for resource changes.
  */
-public class ScionManager implements IResourceChangeListener,ISchedulingRule {
+public class ScionManager implements IResourceChangeListener, ISchedulingRule {
   private String serverExecutable = null;
 
   /**
@@ -103,15 +101,14 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
 
+    // Sit and listen to the core preference store changes
+    HaskellCorePlugin.instanceScopedPreferences().addPreferenceChangeListener( new CorePreferencesChangeListener() );
+
     if (useBuiltIn) {
-      if (   CompilerManager.getInstance().getCurrentHsImplementation() == null
-          || CabalImplementationManager.getInstance().getDefaultCabalImplementation() == null) {
-        // Either the default Haskell or Cabal implementations are unset, so wait for the preferences
-        // to change:
-        IEclipsePreferences hsCorePrefs = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
-        hsCorePrefs.addPreferenceChangeListener( new PreferenceStoreChangeListener() );
-      } else if ( ScionBuilder.needsBuilding() ) {
-        spawnBuildJob();
+      if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
+          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
+          && !ScionBuilder.needsBuilding() ) {
+        serverExecutable = ScionPlugin.defaultServerExecutablePath().toOSString();
       }
     } else {
       serverExecutable = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
@@ -121,6 +118,8 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     if (serverExecutable != null) {
       ScionInstance instance = startInstance( null );
       instances.put( null, instance );
+    } else {
+      // Need to wait and build...
     }
 
     preferenceStore.addPropertyChangeListener( new ScionServerPropertiesListener() );
@@ -215,15 +214,13 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
 
                       for( PackageDescriptionStanza pds: lpds ) {
                         pds=pd.getSameStanza(pds);
-                        RealValuePosition rvp = pds.removeFromPropertyList(
-                            CabalSyntax.FIELD_EXPOSED_MODULES, qn );
+                        RealValuePosition rvp = pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, qn );
                         if (rvp!=null){
                           rvp.updateDocument( doc );
                           pd=PackageDescriptionLoader.load( doc.get() );
                           pds=pd.getSameStanza(pds);
                         }
-                        rvp = pds.removeFromPropertyList(
-                            CabalSyntax.FIELD_OTHER_MODULES, qn );
+                        rvp = pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, qn );
                         if (rvp!=null){
                           rvp.updateDocument( doc );
                           pd=PackageDescriptionLoader.load( doc.get() );
@@ -340,7 +337,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
   }
 
   /** */
-  public class PreferenceStoreChangeListener implements IPreferenceChangeListener {
+  public class CorePreferencesChangeListener implements IPreferenceChangeListener {
     public void preferenceChange( final PreferenceChangeEvent event ) {
       String key = event.getKey();
       HaskellUIPlugin.log( "Property changed: ".concat(key), IStatus.INFO );
@@ -549,7 +546,7 @@ public class ScionManager implements IResourceChangeListener,ISchedulingRule {
     job.schedule();
   }
 
-  /** Specialized Job class that manages building the internal Scion server,
+  /** Specialized Job class that manages building the built-in Scion server,
    * providing some feedback to the user as the build progresses.
    *
     * @author B. Scott Michel
