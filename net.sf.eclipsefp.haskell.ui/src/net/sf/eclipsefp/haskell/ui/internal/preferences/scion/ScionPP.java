@@ -89,10 +89,10 @@ public class ScionPP
     IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
 
-    SWTUtil.createMessageLabel (parentComposite, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
-
     fieldComposite = new Composite(parentComposite, SWT.NONE);
     fieldComposite.setLayout( new GridLayout( nColumns, false ) );
+
+    SWTUtil.createMessageLabel (fieldComposite, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
 
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
 		                                             UITexts.scionServerBuiltIn_label,
@@ -105,7 +105,7 @@ public class ScionPP
     } );
 		serverBuiltInField.setPage( this );
 		serverBuiltInField.setPreferenceStore( prefStore );
-		serverBuiltInField.fillIntoGrid( fieldComposite, nColumns );
+		// serverBuiltInField.fillIntoGrid( fieldComposite, nColumns );
 		serverBuiltInField.load();
 
     forceRebuild = new ButtonFieldEditor(
@@ -120,7 +120,7 @@ public class ScionPP
         fieldComposite);
     forceRebuild.setPage( this );
     forceRebuild.setPreferenceStore( prefStore );
-    forceRebuild.fillIntoGrid( fieldComposite, nColumns );
+    // forceRebuild.fillIntoGrid( fieldComposite, nColumns );
     forceRebuild.load();
 
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
@@ -134,7 +134,7 @@ public class ScionPP
     });
 		serverExecutableField.setPage( this );
 		serverExecutableField.setPreferenceStore( prefStore );
-		serverExecutableField.fillIntoGrid( fieldComposite, nColumns );
+		// serverExecutableField.fillIntoGrid( fieldComposite, nColumns );
 		serverExecutableField.load();
 
 		autodetect = new ButtonFieldEditor(
@@ -151,7 +151,7 @@ public class ScionPP
 				fieldComposite);
 		autodetect.setPage( this );
 		autodetect.setPreferenceStore( prefStore );
-		autodetect.fillIntoGrid( fieldComposite, nColumns );
+		// autodetect.fillIntoGrid( fieldComposite, nColumns );
 		autodetect.load();
 
 		// Update the dialog's state and validity:

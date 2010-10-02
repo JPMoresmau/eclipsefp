@@ -75,7 +75,7 @@ public class InstalledImplementationsPP extends PreferencePage
 
   @Override
   public boolean performOk() {
-    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences node = HaskellCorePlugin.instanceScopedPreferences();
 
     node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, implementationsBlock.getPref() );
     IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();

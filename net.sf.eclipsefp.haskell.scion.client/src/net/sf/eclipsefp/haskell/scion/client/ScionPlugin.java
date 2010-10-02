@@ -163,4 +163,8 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static IPath defaultServerExecutablePath() {
     return serverExecutablePath(builtinServerDirectoryPath());
   }
+  /** Generate the built-in server's executable path in the default state location's directory. */
+  public static IPath defaultServerExecutablePath() {
+    return serverExecutablePath(builtinServerDirectoryPath());
+  }
 }
