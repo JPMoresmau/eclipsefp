@@ -2,8 +2,8 @@ package net.sf.eclipsefp.haskell.ui.handlers;
 
 import java.io.File;
 import java.net.URI;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstanceFactory;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import org.eclipse.core.commands.AbstractHandler;
@@ -50,7 +50,8 @@ public class OpenDefinitionHandler extends AbstractHandler {
 				  try {
 
   				  Location l=new Location(file.getLocation().toOSString(),haskellEditor.getDocument(), new Region(textSel.getOffset(),0));
-  				  String s=HaskellUIPlugin.getDefault().getScionInstanceManager( file ).thingAtPoint( l );
+  				  ScionInstanceFactory factory = ScionInstanceFactory.getFactory();
+  				  String s = factory.getScionInstance( file ).thingAtPoint( l );
   				  if (s!=null && s.length()>0){
   				    name=s;
   				    int ix=name.indexOf( ' ' );
@@ -80,7 +81,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 				  name=WordFinder.findWord( haskellEditor.getDocument(), textSel.getOffset() );
 				}
 				if (name!=null && name.length()>0){
-  				Location location = HaskellUIPlugin.getDefault().getScionInstanceManager( file ).firstDefinitionLocation(name);
+  				Location location = ScionInstanceFactory.getFactory().getScionInstance( file ).firstDefinitionLocation(name);
   				if (location != null) {
   					try {
   						openInEditor(haskellEditor.getEditorSite().getPage(), location,file.getProject());

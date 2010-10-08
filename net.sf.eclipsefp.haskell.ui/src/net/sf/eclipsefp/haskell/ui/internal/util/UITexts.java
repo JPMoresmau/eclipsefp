@@ -161,7 +161,6 @@ public final class UITexts extends NLS {
   public static String editor_textHover_error;
   public static String editor_actions_source;
 
-  public static String scion_console_title;
   public static String scion_preferences_title;
   public static String scion_delta_error;
 
@@ -275,7 +274,6 @@ public final class UITexts extends NLS {
   public static String explorer_outline_open;
 
   public static String log_nodetails;
-
   public static String noproject;
 
   public static String unpackScionArchive_title;
@@ -289,6 +287,12 @@ public final class UITexts extends NLS {
   public static String noCabalImplementation_title;
   public static String noCabalImplementation_message;
   public static String zerolenCabalExecutable_message;
+
+  public static String prefsPrerequisites_title;
+  public static String prefsPrerequisites_msg;
+  public static String prefsNoDefaultHaskellImpl;
+  public static String prefsNoDefaultCabalImpl;
+  public static String prefsEmptyServerName;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
