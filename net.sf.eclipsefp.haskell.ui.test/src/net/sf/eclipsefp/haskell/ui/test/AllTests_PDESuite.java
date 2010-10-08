@@ -13,7 +13,6 @@ package net.sf.eclipsefp.haskell.ui.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.sf.eclipsefp.haskell.ui.console.ConsoleCompilingReporter_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.Partitioning_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.SyntaxColoring_PDETest;
@@ -29,7 +28,6 @@ public class AllTests_PDESuite {
 		TestSuite suite = new TestSuite(
 				"Test for net.sf.eclipsefp.haskell.ui");
 
-		suite.addTestSuite( ConsoleCompilingReporter_PDETest.class );
 		suite.addTestSuite( HaskellPreferenceProvider_PDETest.class );
     suite.addTestSuite( HaskellPreferenceManager_PDETest.class );
     suite.addTestSuite( HaskellDocumentProvider_PDETest.class );
