@@ -69,7 +69,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     }
   }
 
-  public ScannerManager(final IPreferenceStore prefStore){
+  public ScannerManager(final IPreferenceStore prefStore) {
     this.prefStore=prefStore;
     propertyChangeHandlers = new HashMap<String, PropertyChangeHandler>();
     initializePropertyListener();

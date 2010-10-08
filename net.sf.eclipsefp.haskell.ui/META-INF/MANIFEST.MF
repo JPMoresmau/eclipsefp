@@ -38,7 +38,6 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets
    net.sf.eclipsefp.haskell.debug.ui,
    net.sf.eclipsefp.haskell.debug.core,
    net.sf.eclipsefp.haskell.core.test",
- net.sf.eclipsefp.haskell.ui.console;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.dialog;
   uses:="org.eclipse.jface.wizard,
    org.eclipse.core.runtime,
@@ -55,6 +54,7 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets
  net.sf.eclipsefp.haskell.ui.internal.editors.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.preferences;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.preferences.editor;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.internal.scion,
  net.sf.eclipsefp.haskell.ui.internal.util;uses:="org.eclipse.osgi.util",
  net.sf.eclipsefp.haskell.ui.internal.views.common;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.views.outline.provisionary;x-friends:="net.sf.eclipsefp.haskell.ui.test",
