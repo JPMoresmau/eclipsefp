@@ -163,8 +163,9 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static IPath defaultServerExecutablePath() {
     return serverExecutablePath(builtinServerDirectoryPath());
   }
-  /** Generate the built-in server's executable path in the default state location's directory. */
-  public static IPath defaultServerExecutablePath() {
-    return serverExecutablePath(builtinServerDirectoryPath());
+  
+  /** The default instance factory comes from haskell.ui */
+  public static ScionInstanceFactory getScionInstanceFactory() {
+    return ScionInstanceFactory.getFactory();
   }
 }

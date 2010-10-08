@@ -53,6 +53,8 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -84,8 +86,11 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  *
  * This works by listening for resource changes.
  */
-public class ScionManager implements IResourceChangeListener, ISchedulingRule {
-  private String serverExecutable = null;
+public class ScionManager implements IResourceChangeListener, ISchedulingRule, IScionServerEventListener {
+  /** Alert the user of Scion startup failure only once per session. */
+  private boolean serverStartupErrorReported = true; // TODO TtC set back to false
+  /** Private Scion server instance factory delegate */
+  private final ScionInstanceFactory scionInstanceFactory = ScionInstanceFactory.getFactory();
 
   /** Default constructor.
    *
@@ -104,27 +109,24 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
     IWorkspace workSpace = ResourcesPlugin.getWorkspace();
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
+    String serverExecutable = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE ).trim();
 
-    // Sit and listen to the core preference store changes
-    HaskellCorePlugin.instanceScopedPreferences().addPreferenceChangeListener( new CorePreferencesChangeListener() );
-
-    if (useBuiltIn) {
-      if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
-          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
-          && !ScionBuilder.needsBuilding() ) {
-        serverExecutable = ScionPlugin.defaultServerExecutablePath().toOSString();
+    // Before changing the factory's configuration, add ScionManager as an event listener,
+    // because it's possible that we'll get an event thrown back at us.
+    scionInstanceFactory.addListener( this );
+    if (prerequisitesSatisfied(useBuiltIn, serverExecutable)) {
+      IPath serverExecutablePath = null;
+      if (serverExecutable != null && serverExecutable.length() > 0) {
+        serverExecutablePath = new Path(serverExecutable);
       }
       // Things look good, so set the scion instance factory's configuration
       scionInstanceFactory.setConfiguration(useBuiltIn, serverExecutablePath);
     }
 
-    // creates the unattached instance used for lexing
-    if (serverExecutable != null) {
-      ScionInstance instance = startInstance( null );
-      instances.put( null, instance );
-    } else {
-      // Need to wait and build...
-    }
+    // Listen to the core preference store changes
+    IEclipsePreferences coreInstancePrefs = HaskellCorePlugin.instanceScopedPreferences();
+    coreInstancePrefs.addPreferenceChangeListener( new CorePreferencesChangeListener() );
+    coreInstancePrefs.addNodeChangeListener( new CorePreferencesNodeChangeListener() );
 
     preferenceStore.addPropertyChangeListener( new ScionServerPropertiesListener() );
 
@@ -345,7 +347,8 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
     }
   }
 
-  /** */
+  /** Listen for changes in HaskellCorePlugin's Eclipse preferences. This does not catch changes in hierarchical
+   * preferences, which requires a different strategy. */
   public class CorePreferencesChangeListener implements IPreferenceChangeListener {
     public void preferenceChange( final PreferenceChangeEvent event ) {
       String key = event.getKey();
@@ -478,6 +481,16 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
     job.setRule( this );
     job.setPriority( Job.BUILD );
     job.schedule();
+  }
+
+  /** ISchedulingRule contains() method. */
+  public boolean contains(final ISchedulingRule rule) {
+    return rule == this;
+  }
+
+  /** ISchedulingRule isConflicting() method. */
+  public boolean isConflicting(final ISchedulingRule rule) {
+    return rule == this;
   }
 
   /** Specialized Job class that manages building the built-in Scion server,
