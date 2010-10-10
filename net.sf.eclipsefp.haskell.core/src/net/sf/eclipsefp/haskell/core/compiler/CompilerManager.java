@@ -242,7 +242,7 @@ public class CompilerManager implements ICompilerManager {
   }
 
   private void listenForImplPref() {
-    new InstanceScope().getNode( HaskellCorePlugin.getPluginId() ).addPreferenceChangeListener( new IPreferenceChangeListener() {
+    HaskellCorePlugin.instanceScopedPreferences().addPreferenceChangeListener( new IPreferenceChangeListener() {
       public void preferenceChange( final PreferenceChangeEvent event ) {
         String key = event.getKey();
         if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )

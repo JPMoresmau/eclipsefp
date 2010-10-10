@@ -13,6 +13,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -47,8 +49,7 @@ public class HaskellCorePlugin extends Plugin {
 
 		collectCompilerInfo();
 
-		Platform.getAdapterManager()
-			.registerAdapters(new HaskellPropertyTester(), IResource.class);
+		Platform.getAdapterManager().registerAdapters(new HaskellPropertyTester(), IResource.class);
 	}
 
 	/**
@@ -148,5 +149,10 @@ public class HaskellCorePlugin extends Plugin {
 	public IConfigurationElement[] getExtensions(final String key) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		return registry.getConfigurationElementsFor(getPluginId(), key);
+	}
+
+	/** Get an instance-scoped preference store for the plug-in */
+	public static final IEclipsePreferences instanceScopedPreferences() {
+	  return new InstanceScope().getNode( getPluginId() );
 	}
 }
