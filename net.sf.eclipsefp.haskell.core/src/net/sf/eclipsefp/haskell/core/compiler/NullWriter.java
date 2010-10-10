@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.util;
+package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.io.Writer;
 

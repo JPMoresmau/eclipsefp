@@ -1,16 +1,11 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-/** State container that keeps track of the built-in Scion server's build status
-  *
-  * @author B. Scott Michel (scooter.phd@gmail.com)
-  */
 public class ScionBuildStatus {
   private IStatus status;
-  private IPath executableName;
+  private String executableName;
   private String title;
   private String message;
 
@@ -24,7 +19,7 @@ public class ScionBuildStatus {
     this.message = message;
   }
 
-  public final void setExecutable(final IPath executable) {
+  public final void setExecutable(final String executable) {
     executableName = executable;
   }
 
@@ -32,7 +27,7 @@ public class ScionBuildStatus {
     return status;
   }
 
-  public final IPath getExecutable() {
+  public final String getExecutable() {
     return executableName;
   }
 

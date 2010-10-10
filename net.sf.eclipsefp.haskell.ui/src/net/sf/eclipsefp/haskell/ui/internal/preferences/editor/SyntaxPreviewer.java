@@ -5,9 +5,6 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.IScionServerEventListener;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEvent;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEventType;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellConfiguration;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider;
@@ -34,10 +31,10 @@ import org.eclipse.swt.widgets.Display;
   *
   * @author Leif Frenzel
   */
-public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames, IScionServerEventListener {
+public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
 
   private IPreferenceStore store;
-  private HaskellConfiguration config;
+  private final HaskellConfiguration config;
   private IPropertyChangeListener propertyChangeListener;
   private Color bgColor;
 
@@ -163,17 +160,5 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
 
   private IDocumentPartitioner getPartitioner() {
     return HaskellDocumentProvider.createDocumentPartitioner();
-  }
-
-  /** Listen for changes to the scion-server, update config as needed */
-  public void processScionServerEvent( final ScionServerEvent ev ) {
-    ScionServerEventType evType = ev.getEventType();
-
-    if (evType == ScionServerEventType.EXECUTABLE_CHANGED || evType == ScionServerEventType.VALID_RUNNING) {
-      config = new HaskellConfiguration( null );
-      config.setPreferenceStore( store );
-      configure(config);
-      refresh();
-    }
   }
 }

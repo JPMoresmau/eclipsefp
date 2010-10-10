@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.IScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
@@ -27,7 +27,7 @@ import org.json.JSONArray;
  */
 public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPreferenceNames {
   private final ScannerManager man;
-  private final IScionInstance instance;
+  private final ScionInstance instance;
   private final IFile file;
 
   private IDocument doc;
@@ -45,7 +45,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   private final Map<String,IToken> tokenByTypes=new HashMap<String,IToken>();
 
-  public ScionTokenScanner(final ScannerManager man,final IScionInstance instance,final IFile file){
+  public ScionTokenScanner(final ScannerManager man,final ScionInstance instance,final IFile file){
     this.man=man;
     this.instance=instance;
     this.file=file;
