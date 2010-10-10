@@ -3,8 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import net.sf.eclipsefp.haskell.scion.client.IScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstanceFactory;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
@@ -43,7 +42,8 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  *
  * @author Leif Frenzel
  */
-public class HaskellConfiguration extends SourceViewerConfiguration implements IEditorPreferenceNames {
+public class HaskellConfiguration extends SourceViewerConfiguration implements
+		IEditorPreferenceNames {
 
 	public static class ContentAssistantFactory implements IContentAssistantFactory {
 
@@ -56,20 +56,8 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements I
 	final HaskellEditor editor;
 	private final IContentAssistantFactory fFactory;
 
-	/** Preference store singleton container */
-	private static class PrefStoreSingletonContainer {
-	  private static IPreferenceStore thePrefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-
-	  /** Override the default preference store */
-	  static void setPreferenceStore(final IPreferenceStore prefStore) {
-	    thePrefStore = prefStore;
-	  }
-	}
-
-	/** ScannerManager singleton container*/
-	private static class ScannerManagerSingletonContainer {
-	  private static ScannerManager theScannerManager = new ScannerManager( PrefStoreSingletonContainer.thePrefStore );
-	}
+	private IPreferenceStore prefStore;
+	private ScannerManager scannerManager;
 
 	public HaskellConfiguration( final HaskellEditor editor ) {
     this( editor, new ContentAssistantFactory() );
@@ -84,7 +72,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements I
 
 
   public void setPreferenceStore( final IPreferenceStore prefStore ) {
-    PrefStoreSingletonContainer.setPreferenceStore( prefStore );
+    this.prefStore = prefStore;
   }
 
 	// interface methods of SourceViewerConfiguration
@@ -137,20 +125,26 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements I
 		return result;
 	}
 
-	public ScannerManager getScannerManager() {
-	  return ScannerManagerSingletonContainer.theScannerManager;
-	  // return ScannerManager.getInstance();
+	public ScannerManager getScannerManager(){
+	    if (prefStore!=null){
+	        if (scannerManager==null){
+	          scannerManager = new ScannerManager( prefStore );
+	        }
+	        return scannerManager;
+	    }
+	    return ScannerManager.getInstance();
 	}
 
 	/** the presentation reconciler is responsible for syntax coloring. */
 	@Override
-  public IPresentationReconciler getPresentationReconciler(final ISourceViewer sv) {
+  public IPresentationReconciler getPresentationReconciler(
+			final ISourceViewer sv) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		// for every content type we need a damager and a repairer:
 //		ScannerManager man = getScannerManager();
     //ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
-		IScionInstance instance=null;
+		ScionInstance instance=null;
 		if (editor!=null){
 		  /*instance=editor.getInstance();
 		  if (instance==null) {
@@ -161,9 +155,10 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements I
 		    }
 		  }*/
 		  // use global instance, that's fine for lexing
-		  instance = ScionInstanceFactory.getSharedScionInstance();
-		  // Should never be null because we could just get a NullScionInstance.
-		  assert(instance == null);
+		  instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
+		  if (instance==null){
+        return reconciler;
+      }
 		} // else no editor: we're in preview null instance is fine
 
 
@@ -266,7 +261,10 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements I
 	// ////////////////
 
 	private IPreferenceStore getPreferenceStore() {
-	  return PrefStoreSingletonContainer.thePrefStore;
+	  if (prefStore!=null){
+	    return prefStore;
+	  }
+		return HaskellUIPlugin.getDefault().getPreferenceStore();
 	}
 
 	private boolean isSpacesForTabs() {

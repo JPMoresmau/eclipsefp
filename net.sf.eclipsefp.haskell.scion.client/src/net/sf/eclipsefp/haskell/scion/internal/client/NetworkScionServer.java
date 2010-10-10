@@ -8,24 +8,29 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
+import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerConnectException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Representation of the Scion server on the Java side.
@@ -35,6 +40,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class NetworkScionServer extends AbstractScionServer {
 	/** Number of times to try to connect or relaunch an operation on timeout */
 	private static final int MAX_RETRIES = 5;
+	/** Socket read timeout from socket, in milliseconds. 10 minutes should leave plenty of time */
+	private static final int SOCKET_TIMEOUT = 10 * 60 * 1000;
 	/** Accept thread initial timeout, 1/2 second in milliseconds */
 	private static final int ACCEPT_INITIAL_TMO = 1000 / 2;
 	
@@ -45,9 +52,12 @@ public class NetworkScionServer extends AbstractScionServer {
 	private BufferedReader socketReader;
 	private BufferedWriter socketWriter;
 	
+	// keep last port used by any server
+	private static AtomicInteger lastPort = new AtomicInteger(4004); 
+
 	private Thread serverOutputThread;
 	
-	public NetworkScionServer(IPath serverExecutable,Writer serverOutput,File directory) {
+	public NetworkScionServer(String serverExecutable,Writer serverOutput,File directory) {
 		super(serverExecutable,serverOutput,directory);
 	}
 	
@@ -111,8 +121,9 @@ public class NetworkScionServer extends AbstractScionServer {
   		  acceptJob.start();
     		
 	   	  // Construct the command line
+    	  String executable = serverExecutable;
     	  List<String> command = new LinkedList<String>();
-    	  command.add(serverExecutable.toOSString());
+    	  command.add(executable);
     	  command.add("-c");
     	  command.add("-p");
     	  command.add(String.valueOf(bindSock.getLocalPort()));

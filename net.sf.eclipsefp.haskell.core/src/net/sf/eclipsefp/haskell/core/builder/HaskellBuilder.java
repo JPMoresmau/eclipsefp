@@ -4,9 +4,7 @@ package net.sf.eclipsefp.haskell.core.builder;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import net.sf.eclipsefp.haskell.scion.client.IScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstanceFactory;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -112,8 +110,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       mon.subTask( CoreTexts.haskellBuilder_compiling );
       SubProgressMonitor subMon = new SubProgressMonitor( mon, 85 );
       getProject().accept( new BuildVisitor( subMon ) );*/
-      ScionInstanceFactory factory = ScionPlugin.getScionInstanceFactory();
-      IScionInstance si = factory.getScionInstance( getProject() );
+      ScionInstance si=ScionPlugin.getDefault().getScionInstances().get( getProject() );
       if (si==null ){
         new Exception("ScionInstance==null").printStackTrace(); //$NON-NLS-1$
         return;

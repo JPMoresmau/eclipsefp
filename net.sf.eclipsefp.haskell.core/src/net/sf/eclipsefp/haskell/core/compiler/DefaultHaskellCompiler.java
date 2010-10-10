@@ -13,7 +13,6 @@
 package net.sf.eclipsefp.haskell.core.compiler;
 
 import java.io.Writer;
-import net.sf.eclipsefp.haskell.util.NullWriter;
 import org.eclipse.core.resources.IFile;
 
 /**

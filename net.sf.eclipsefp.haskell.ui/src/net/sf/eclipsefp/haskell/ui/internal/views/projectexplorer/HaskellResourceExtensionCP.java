@@ -9,9 +9,8 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.IScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstanceFactory;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
@@ -22,9 +21,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -57,8 +56,8 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // if we have a Haskell source file, we show the same content as outline
         // underneath
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
-          ScionInstanceFactory factory = ScionInstanceFactory.getFactory();
-          final IScionInstance si = factory.getScionInstance( f );
+          final ScionInstance si = HaskellUIPlugin.getDefault()
+              .getScionInstanceManager( f );
           // sync access
           if (si!=null){
           //  synchronized( si ) {

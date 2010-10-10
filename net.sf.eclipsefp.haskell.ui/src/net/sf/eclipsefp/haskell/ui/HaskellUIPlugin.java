@@ -14,11 +14,13 @@ package net.sf.eclipsefp.haskell.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -149,6 +151,10 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 
   public ScionManager getScionManager() {
     return fScionManager;
+  }
+
+  public ScionInstance getScionInstanceManager( final IResource resource ) {
+    return fScionManager.getScionInstance( resource );
   }
 
   // helping methods

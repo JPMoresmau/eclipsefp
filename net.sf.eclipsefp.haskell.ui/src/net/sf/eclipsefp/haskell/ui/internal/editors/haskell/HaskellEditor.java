@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.IScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstanceFactory;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -84,7 +83,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private MarkOccurrenceComputer markOccurrencesComputer;
-  private IScionInstance instance = null;
+  private ScionInstance instance=null;
   private HaskellFoldingStructureProvider foldingStructureProvider;
 
   private List<OutlineDef> outline;
@@ -322,7 +321,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // Reload the file on the Scion server side
     IFile file = findFile();
     if( file != null ) {
-      IScionInstance instance = ScionInstanceFactory.getFactory().getScionInstance(file);
+      ScionInstance instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
 
       // since we call synchronize
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
@@ -351,12 +350,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // unload the previous file from Scion
     IFile file = findFile();
     if (file != null && ResourceUtil.isInHaskellProject( file )){
-      ScionInstanceFactory.getFactory().getScionInstance( file ).unloadFile(file);
+      HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(file);
     }
-    instance = null;
+    instance=null;
     super.doSetInput( input );
 
-    IScionInstance instance = getInstance();
+    ScionInstance instance=getInstance();
 
     if (instance!=null) {
         file = findFile();
@@ -373,13 +372,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   /**
    * get the scion instance, creating it if needed
    */
-  public IScionInstance getInstance() {
-    if (instance == null){
+  public ScionInstance getInstance(){
+    if (instance==null){
       IFile file = findFile();
       // load the new file into Scion
       if (file != null && ResourceUtil.isInHaskellProject( file )) {
         //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
-        instance = ScionInstanceFactory.getFactory().getScionInstance(file);
+        instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
       }
     }
     return instance;
@@ -461,7 +460,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         }
       } );
 
-      IScionInstance instance=getInstance();
+      ScionInstance instance=getInstance();
       if( instance!=null && instance.isLoaded( findFile() )) {
         instance.outline(findFile(),new OutlineHandler() {
 

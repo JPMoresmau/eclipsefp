@@ -3,8 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
-import net.sf.eclipsefp.haskell.scion.client.IScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstanceFactory;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +25,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
                                                    IReconcilingStrategyExtension {
 
   private final HaskellEditor editor;
-  private IScionInstance instance=null;
+  private ScionInstance instance=null;
   private IFile file=null;
 //  private final HaskellFoldingStructureProvider foldingStructureProvider;
 
@@ -40,7 +40,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
       IFileEditorInput fei = ( IFileEditorInput )input;
       this.file = fei.getFile();
       if( file != null && file.exists() ) {
-        instance = ScionInstanceFactory.getFactory().getScionInstance( file );
+        instance=HaskellUIPlugin.getDefault().getScionInstanceManager( file );
       }
     }
     /*foldingStructureProvider = new HaskellFoldingStructureProvider( editor );*/
