@@ -36,10 +36,8 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
- * <p>
  * The source viewer configuration provides strategies for functionality of the
  * Haskell editor.
- * </p>
  *
  * @author Leif Frenzel
  */
@@ -47,11 +45,9 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		IEditorPreferenceNames {
 
 	public static class ContentAssistantFactory implements IContentAssistantFactory {
-
 		public ContentAssistant createAssistant() {
 			return new ContentAssistant();
 		}
-
 	}
 
 	final HaskellEditor editor;
@@ -64,9 +60,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
     this( editor, new ContentAssistantFactory() );
   }
 
-  public HaskellConfiguration(
-      final HaskellEditor editor,
-      final IContentAssistantFactory factory ) {
+  public HaskellConfiguration( final HaskellEditor editor, final IContentAssistantFactory factory ) {
     this.editor = editor;
     fFactory = factory;
   }
@@ -80,8 +74,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	// ///////////////////////////////////////////////
 
   @Override
-  public ITextHover getTextHover( final ISourceViewer sourceViewer,
-                                  final String contentType ) {
+  public ITextHover getTextHover( final ISourceViewer sourceViewer, final String contentType ) {
     ITextHover result = null;
     if( IDocument.DEFAULT_CONTENT_TYPE.equals( contentType ) ) {
       result = new HaskellTextHover( editor, sourceViewer );
@@ -114,8 +107,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
   public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
 
 		ContentAssistant result = fFactory.createAssistant();
-		result.setContentAssistProcessor(new HaskellCAProcessor(),
-				IDocument.DEFAULT_CONTENT_TYPE);
+		result.setContentAssistProcessor(new HaskellCAProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		result.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 
 		// TODO get from pref / update on pref change
@@ -126,7 +118,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return result;
 	}
 
-	public ScannerManager getScannerManager(){
+	public ScannerManager getScannerManager() {
 	    if (prefStore!=null){
 	        if (scannerManager==null){
 	          scannerManager = new ScannerManager( prefStore );
@@ -138,28 +130,17 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 
 	/** the presentation reconciler is responsible for syntax coloring. */
 	@Override
-  public IPresentationReconciler getPresentationReconciler(
-			final ISourceViewer sv) {
+  public IPresentationReconciler getPresentationReconciler(final ISourceViewer sv) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		// for every content type we need a damager and a repairer:
 //		ScannerManager man = getScannerManager();
     //ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
 		ScionInstance instance=null;
-		if (editor!=null){
-		  /*instance=editor.getInstance();
-		  if (instance==null) {
-		    instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
-		    // no instance, no parsing
-		    if (instance==null){
-		      return reconciler;
-		    }
-		  }*/
-		  // use global instance, that's fine for lexing
+		if (editor != null){
+		  // Get the shared scion-server instance for lexing.
 		  instance = ScionPlugin.getSharedScionInstance();
-		  if (instance==null){
-        return reconciler;
-      }
+		  assert(instance == null);
 		} // else no editor: we're in preview null instance is fine
 
 

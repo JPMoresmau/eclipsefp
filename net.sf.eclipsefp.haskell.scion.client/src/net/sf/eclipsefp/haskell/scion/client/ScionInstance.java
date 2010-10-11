@@ -15,7 +15,6 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.client.StdStreamScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbitraryCommand;
@@ -53,6 +52,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -68,732 +68,741 @@ import org.json.JSONObject;
 /**
  * Manages a single instance of the Scion server.
  * 
- * Objects from this class keep track of the state of the Scion server, so that the server
- * can be put into the same state after a restart (either of the server, or of the entire
- * workbench). 
+ * Objects from this class keep track of the state of the Scion server, so that
+ * the server can be put into the same state after a restart (either of the
+ * server, or of the entire workbench).
  * 
  * @author Thomas ten Cate
+ * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public class ScionInstance implements IScionCommandRunner {
-	
-	private String serverExecutable;
-	
-	private IScionServer server;
-	
-	private IProject project;
-	
-	private IFile loadedFile = null;
-	
-	private Writer serverOutput;
-	
-	private JSONObject cabalDescription;
-	private Map<String,CabalPackage[]> packagesByDB;
-	private List<Component> components=new LinkedList<Component>();
-	private CabalComponentResolver resolver;
-	private Component lastLoadedComponent;
-	private List<String> exposedModulesCache=null;
-	
-	private Map<IFile,LoadInfo> loadInfos=new HashMap<IFile, LoadInfo>();
-	
-	public ScionInstance(String serverExecutable,IProject project,Writer serverOutput,CabalComponentResolver resolver) {
-		this.serverExecutable = serverExecutable;
-		this.project=project;
-		this.serverOutput=serverOutput;
-		this.resolver=resolver;
-	}
+  /** The scion-server with whom this object communicates */
+  private IScionServer                server;
+  /** The project with which the scion-server is associated */
+  private IProject                    project;
+  private IFile                       loadedFile;
 
-	public String getServerExecutable() {
-		return serverExecutable;
-	}
-	
-	public IProject getProject() {
-		return project;
-	}
-	
-	public void setServerExecutable(final String serverExecutable) throws ScionServerStartupException {
-		if (!this.serverExecutable.equals(serverExecutable)) {
-			restart(true,new Runnable() {
-				
-				public void run() {
-					ScionInstance.this.serverExecutable = serverExecutable;
-				}
-			});
+  private JSONObject                  cabalDescription;
+  private Map<String, CabalPackage[]> packagesByDB;
+  private List<Component>             components;
+  private CabalComponentResolver      resolver;
+  private Component                   lastLoadedComponent;
+  private List<String>                exposedModulesCache;
 
-		}
-	}
-	
-	public void start() throws ScionServerStartupException {
-		if (server == null) {
-			
-			File directory=getProject()!=null?
-				new File(getProject().getLocation().toOSString())
-				:null;
-			server = new StdStreamScionServer(serverExecutable, serverOutput, directory);
-				//new NetworkScionServer(serverExecutable,serverOutput,directory);
-			server.startServer();
-			checkProtocol();
-			if (Trace.isTracing()) {
-				setDeafening();
-			}
-			//openCabal();
-			buildProject(false,true);
-			// done in buildProject
-			//restoreState();
-		}
-	}
-	
-	private boolean checkCabalFile(){
-		if (getProject()==null){
-			return false;
-		}
-		IFile cabalFile=getCabalFile(getProject());
-		boolean exists=cabalFile.exists();
-	    if( !exists) {
-	    	String msg=UITexts.bind(UITexts.cabalFileMissing, cabalFile.getLocation().toString());
-	    	ScionPlugin.logError(msg, null);
-	    	if (!getProject().getWorkspace().isTreeLocked()){
-		        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
-		        try {
-		        	IMarker marker = getProject().createMarker( id );
-		        	marker.setAttribute( IMarker.MESSAGE, msg);
-		        	marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_WARNING );
-		        } catch (CoreException ce){
-		        	ScionPlugin.logError(msg, ce);
-		        }
-	    	} 
-	    }
-	    return exists;
+  private Map<IFile, LoadInfo>        loadInfos;
+  
+  /** The listener list for objects interested in server status events */
+  private static final ListenerList   listeners = new ListenerList();
 
-	}
-	
-	/*public void configureCabal(IJobChangeListener listener) {
-		if (checkCabalFile()){
-			ConfigureCabalProjectCommand command=new ConfigureCabalProjectCommand(this,Job.BUILD,getProject());
-			if (listener!=null){
-				command.addJobChangeListener(listener);
-			}
-			command.runAsync();
-		}
-	}
+  /** The constructor
+   * 
+   * @param server The scion-server instance to whom commands are sent
+   * @param project The associated {@link IProject IProject}
+   * @param resolver The Cabal component resolver
+   */
+  public ScionInstance(IScionServer server, IProject project, CabalComponentResolver resolver) {
+    this.server = server;
+    this.project = project;
+    this.resolver = resolver;
+    
+    this.loadedFile = null;
+    this.components = new LinkedList<Component>();
+    this.exposedModulesCache = null;
+    this.loadInfos = new HashMap<IFile, LoadInfo>();
+  }
 
-	public void openCabal() {
-		if (checkCabalFile()){
-			OpenCabalProjectCommand command = new OpenCabalProjectCommand(this,Job.BUILD,getProject());
-			command.addJobChangeListener(new JobChangeAdapter() {
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						configureCabal(null);
-					}
-				}
-			});
-			command.runAsync();
-		}
-		
-	}*/
-	
-	public void buildProject(final boolean output,final boolean forceRecomp){
-		//configureCabal(new JobChangeAdapter(){
-		//	@Override
-		//	public void done(IJobChangeEvent event) {
-		//		if (event.getResult().isOK()) {
-		this.cabalDescription=null;
-		if (checkCabalFile()){
-			final ListCabalComponentsCommand command=new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, getCabalFile(getProject()).getLocation().toOSString());
-			/*command.addJobChangeListener(new JobChangeAdapter() {
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						for (Component c:command.getComponents()){
-							LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output);
-							loadCommand.addJobChangeListener(new CompilationResultHandler(getProject()));
-							loadCommand.runSync();
-						}
-					}
-				}
-			});*/
-			command.getSuccessors().add(new ArbitraryCommand(ScionInstance.this, Job.BUILD){
-				@Override
-				public IStatus run(IProgressMonitor monitor) {
-					components=command.getComponents();
-					// if lastLoadedComponent is still present, load it last
-					if (lastLoadedComponent!=null){
-						List<Component> l=new ArrayList<Component>(components.size());
-						Component toLoadLast=null;
-						synchronized (components) {
-							for (Component c:components){
-								if (c.toString().equals(lastLoadedComponent.toString())){
-									toLoadLast=c;
-								} else {
-									l.add(c);
-								}
-							}
-						}
-						if (toLoadLast!=null){
-							l.add(toLoadLast);
-						}
-						components=l;
-					}
-					List<Component> cs=null;
-					synchronized (components) {
-						cs=new ArrayList<Component>(components);
-					}
-					deleteProblems(getProject());
-					CompilationResultHandler crh=new CompilationResultHandler(getProject());
-					
-					for (Component c:cs){
-						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output,forceRecomp);
-						//loadCommand.addJobChangeListener();
-						loadCommand.run(monitor);
-						crh.process(loadCommand);
-						lastLoadedComponent=c;
-					}
-					
-					ParseCabalCommand pcc=new ParseCabalCommand(ScionInstance.this,getCabalFile(getProject()).getLocation().toOSString());
-					pcc.run(monitor);
-					ScionInstance.this.cabalDescription=pcc.getDescription();
-					
-					CabalDependenciesCommand cdc=new CabalDependenciesCommand(ScionInstance.this,getCabalFile(getProject()).getLocation().toOSString());
-					cdc.run(monitor);
-					ScionInstance.this.packagesByDB=cdc.getPackagesByDB();
-					
-					restoreState(monitor);
-					
-					return Status.OK_STATUS;
-				}
-			});
-			//if (output){
-				command.runAsync();
-			//} else {
-			//	command.runSync();
-			//}
-		} 
-		//		}
-		//	}
-		//});
-	}
-	
-	
+  /** Get the project associated with this instance */
+  public final IProject getProject() {
+    return project;
+  }
+  
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  // Listener management
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  
+  /** Add a scion-server event change listener */
+  public static void addListener(IScionServerEventListener listener) {
+    listeners.add(listener);
+  }
+  
+  /** Remove a scion-server event change listener */
+  public static void removeListener(IScionServerEventListener listener) {
+    listeners.remove(listener);
+  }
+  
+  /** Notify listeners that a scion-server event occurred.
+   * 
+   * @param evType The type of event that just happened.
+   */
+  private void notifyListeners(ScionServerEventType evType) {
+    ScionServerEvent ev = new ScionServerEvent(server, evType);
+    for (Object listener : listeners.getListeners()) {
+      IScionServerEventListener evListener = (IScionServerEventListener) listener;
+      evListener.processScionServerEvent(ev);
+    }
+  }
 
-	public void stop() {
-		stop(true,null);
-	}
-	
-	private void stop(boolean cleanly,final Runnable after){
-		cabalDescription=null;
-		synchronized (components) {
-			components.clear();
-		}
-		
-		packagesByDB=null;
-		lastLoadedComponent=null;
-		exposedModulesCache=null;
-		if (server != null) {
-			if (cleanly){
-				ScionCommand cmd=new QuitCommand(this);
-				cmd.addJobChangeListener(new JobChangeAdapter(){
-					@Override
-					public void done(IJobChangeEvent event) {
-						// server may not be running...
-						if (server != null) {
-						  server.stopServer();
-						  server = null;
-						}
-						if (after!=null){
-							after.run();
-						}
-					}
-				});
-				cmd.runAsync();
-			} else {
-				// server may not be running...
-				if (server != null) {
-				  server.stopServer();
-				  server = null;
-				}
-				if (after!=null){
-					after.run();
-				}
-			}
-		} else if (after!=null) {
-			after.run();
-		}
-	}
-	
-	public void restart(boolean cleanly,final Runnable inBetween){
-		stop(cleanly,new Runnable(){
-			public void run() {
-				if (inBetween!=null){
-					inBetween.run();
-				}
-				try {
-					start();
-				} catch (Throwable t){
-					ScionPlugin.logError(UITexts.scionServerCouldNotStart_message, t);
-				}
-			}
-		});
-	}
-	
-	public boolean isStopped(){
-		return server==null;
-	}
-	
-	////////////////////////////////
-	// IScionCommandRunner methods
-	
-	public void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
-		if (server == null) {
-			throw new ScionCommandException(command, UITexts.scionServerNotRunning_message);
-		}
-		try {
-			server.runCommandSync(command,monitor);
-		} catch (final ScionServerException ex) {
-			// fatal server error: restart
-			restart(false,new Runnable(){
-				public void run() {
-					ScionPlugin.logWarning(NLS.bind(UITexts.scionServerRestarted_message,getProjectName()), ex);
-				}
-			});
-			throw ex;
-		}
-	}
-	
-	public String getProjectName(){
-		if (getProject()!=null){
-			return getProject().getName();
-		}
-		return UITexts.noproject;
-	}
-	
-	public boolean contains(ISchedulingRule rule) {
-		return rule == this || (getProject()!=null &&  rule == getProject()) || (getProject()!=null && (getProject().contains(rule)));
-	}
+  /** Update the scion-server executable. This method is invoked in response to
+   * a preference change in the UI to signal that the underlying scion-server
+   * has changed.
+   * 
+   * @param server The scion-server executable that this instance should use.
+   * @throws ScionServerStartupException if the server could not be started.
+   */
+  public void setServerExecutable(final IScionServer server) throws ScionServerStartupException {
+    if (!this.server.equals(server)) {
+      restart(true, new Runnable() {
+        public void run() {
+          ScionInstance.this.server = server;
+        }
+      });
 
-	public boolean isConflicting(ISchedulingRule rule) {
-		return rule == this;
-	}
-	
-	//////////////////////
-	// Internal commands
-	
-	private void checkProtocol() {
-		
-		ConnectionInfoCommand command = new ConnectionInfoCommand(this);
-		command.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (event.getResult().isOK()) {
-					ConnectionInfoCommand command = (ConnectionInfoCommand)event.getJob();
-					if (command.getVersion() != ScionPlugin.PROTOCOL_VERSION) {
-						ScionPlugin.logWarning(NLS.bind(UITexts.scionVersionMismatch_warning, Integer.toString(command.getVersion()), Integer.toString(ScionPlugin.PROTOCOL_VERSION)), null);
-					}
-				}
-			}
-		});
-		command.runAsync();
-	}
-	
-	private void restoreState(IProgressMonitor monitor) {
-		if (loadedFile!=null){
-			//loadFile(loadedFile,false);
-			final LoadInfo li=getLoadInfo(loadedFile);
-			if (li.lastCommand!=null){
-				li.lastCommand.cancel();
-				li.lastCommand=null;
-			}
+      notifyListeners(ScionServerEventType.EXECUTABLE_CHANGED);
+    }
+  }
 
-			/*Runnable run=new Runnable(){
-				public void run() {
-					BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
-					li.lastCommand=cmd;
-					cmd.addJobChangeListener(l2);
-					ScionInstance.this.run(cmd,after,sync);
-				};
-			};*/
-			BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, loadedFile);
-			cmd.addAfter(new Runnable(){
-				public void run() {
-					li.lastCommand=null;
-				}
-			});
-			li.lastCommand=cmd;
-			cmd.run(monitor);
-		}
-	}
-	
-	//////////////////////
-	// External commands
+  public void start() throws ScionServerStartupException {
+    server.startServer();
+    server.checkProtocol(this);
+    
+    if (Trace.isTracing()) {
+      setDeafening();
+    }
+    // openCabal();
+    buildProject(false, true);
+    // done in buildProject
+    // restoreState();
+  }
 
-	/*public void backgroundTypecheckFile(IFile file) {
-		BackgroundTypecheckFileCommand command = new BackgroundTypecheckFileCommand(this, file);
-		command.runAsync();
-	}*/
+  private boolean checkCabalFile() {
+    if (getProject() == null) {
+      return false;
+    }
+    IFile cabalFile = getCabalFile(getProject());
+    boolean exists = cabalFile.exists();
+    if (!exists) {
+      String msg = UITexts.bind(UITexts.cabalFileMissing, cabalFile.getLocation().toString());
+      ScionPlugin.logError(msg, null);
+      if (!getProject().getWorkspace().isTreeLocked()) {
+        String id = ScionPlugin.ID_PROJECT_PROBLEM_MARKER;
+        try {
+          IMarker marker = getProject().createMarker(id);
+          marker.setAttribute(IMarker.MESSAGE, msg);
+          marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+        } catch (CoreException ce) {
+          ScionPlugin.logError(msg, ce);
+        }
+      }
+    }
+    return exists;
 
-	/*public void backgroundTypecheckArbitrary(final IFile file,IDocument doc) {
-		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc);
-		cmd.addJobChangeListener(new JobChangeAdapter(){
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (!event.getResult().isOK()){
-					ScionInstance.this.reloadFile(file, null);
-				}
-			}
-		});
-		cmd.runAsync();
-	}*/
-	
-	public void loadFile(IFile fileName,boolean sync) {
-		//loadedFiles.add(fileName);
-		reloadFile(fileName,(ScionCommand)null,sync);
-	}
-	
-	public IFile getLoadedFile() {
-		return loadedFile;
-	}
-	
-	public boolean isLoaded(IFile f) {
-		return f.equals(loadedFile);
-	}
-	
-	public void setLoadedFile(IFile loadedFile) {
-		this.loadedFile = loadedFile;
-	}
-	
-	public void deleteProblems(IResource r){
-		if (!r.getWorkspace().isTreeLocked() && r.exists() && r.getProject().isOpen()){
-			try {
-				if (r instanceof IFile){
-					r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
-				} 
-				r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
-			} catch( CoreException ex ) {
-				ScionPlugin.logError(UITexts.error_deleteMarkers, ex);
-				ex.printStackTrace();
-			}
-		}
-	}
-	
-	private void runWithComponent(final IFile file,final ScionCommand after,final boolean sync){
-		ScionCommand cmd=new ArbitraryCommand(this, Job.BUILD){
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				Set<String> componentNames=resolver.getComponents(file);
-				if (lastLoadedComponent==null || !componentNames.contains(lastLoadedComponent.toString())){
-					Component toLoad=null;
-					
-					if (!componentNames.isEmpty()){
-						synchronized (components) {
-							for (final Component compo:components){
-								if (componentNames.contains(compo.toString())){
-									toLoad=compo;
-									break;
-				
-								}
-							}
-						}
-					}
-					final LoadInfo li=getLoadInfo(file);
-					// we have no component: we create a file one
-					if (toLoad==null){
-						
-						toLoad=new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
-						if (!li.useFileComponent){
-							li.useFileComponent=true;
-							ScionPlugin.logWarning(UITexts.bind(UITexts.warning_file_component,file.getProjectRelativePath()), null);
-						}
-					} else {
-						li.useFileComponent=false;
-					}
-					if (toLoad!=null){
-						final Component compo=toLoad;
-						LoadCommand loadCommand = new LoadCommand(ScionInstance.this,compo,false,false);
-						if (after!=null){
-							loadCommand.getSuccessors().add(after);
-						}
-						addAfter(new Runnable(){
-							public void run() {
-								lastLoadedComponent=compo;
-							}
-						});
+  }
 
-						this.getSuccessors().add(loadCommand);
-					}
-				} 
-				if (after!=null){
-					this.getSuccessors().add(after);
-				}
-				return runSuccessors(monitor);
-			}
-		};
-		run(cmd, null, sync);
-		
-	}
-	
-	public void reloadFile(final IFile file,final Runnable after,final boolean sync) {
-		final LoadInfo li=getLoadInfo(file);
-		if (li.lastCommand!=null){
-			li.lastCommand.cancel();
-			li.lastCommand=null;
-		}
+  /*
+   * public void configureCabal(IJobChangeListener listener) { if
+   * (checkCabalFile()){ ConfigureCabalProjectCommand command=new
+   * ConfigureCabalProjectCommand(this,Job.BUILD,getProject()); if
+   * (listener!=null){ command.addJobChangeListener(listener); }
+   * command.runAsync(); } }
+   * 
+   * public void openCabal() { if (checkCabalFile()){ OpenCabalProjectCommand
+   * command = new OpenCabalProjectCommand(this,Job.BUILD,getProject());
+   * command.addJobChangeListener(new JobChangeAdapter() {
+   * 
+   * @Override public void done(IJobChangeEvent event) { if
+   * (event.getResult().isOK()) { configureCabal(null); } } });
+   * command.runAsync(); }
+   * 
+   * }
+   */
 
-		BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
-		li.lastCommand=cmd;
-		cmd.addAfter(new Runnable(){
-			public void run() {
-				li.lastCommand=null;
-				if (after!=null){
-					after.run();
-				}
-			}
-		});
-				
+  /** Build the Haskell project.
+   * 
+   */
+  public void buildProject(final boolean output, final boolean forceRecomp) {
+    // configureCabal(new JobChangeAdapter(){
+    // @Override
+    // public void done(IJobChangeEvent event) {
+    // if (event.getResult().isOK()) {
+    this.cabalDescription = null;
+    if (checkCabalFile()) {
+      final ListCabalComponentsCommand command = new ListCabalComponentsCommand(ScionInstance.this, Job.BUILD, getCabalFile(
+          getProject()).getLocation().toOSString());
+      /*
+       * command.addJobChangeListener(new JobChangeAdapter() {
+       * 
+       * @Override public void done(IJobChangeEvent event) { if
+       * (event.getResult().isOK()) { for (Component c:command.getComponents()){
+       * LoadCommand loadCommand = new LoadCommand(ScionInstance.this,c,output);
+       * loadCommand.addJobChangeListener(new
+       * CompilationResultHandler(getProject())); loadCommand.runSync(); } } }
+       * });
+       */
+      command.getSuccessors().add(new ArbitraryCommand(ScionInstance.this, Job.BUILD) {
+        @Override
+        public IStatus run(IProgressMonitor monitor) {
+          components = command.getComponents();
+          // if lastLoadedComponent is still present, load it last
+          if (lastLoadedComponent != null) {
+            List<Component> l = new ArrayList<Component>(components.size());
+            Component toLoadLast = null;
+            synchronized (components) {
+              for (Component c : components) {
+                if (c.toString().equals(lastLoadedComponent.toString())) {
+                  toLoadLast = c;
+                } else {
+                  l.add(c);
+                }
+              }
+            }
+            if (toLoadLast != null) {
+              l.add(toLoadLast);
+            }
+            components = l;
+          }
+          List<Component> cs = null;
+          synchronized (components) {
+            cs = new ArrayList<Component>(components);
+          }
+          deleteProblems(getProject());
+          CompilationResultHandler crh = new CompilationResultHandler(getProject());
 
-		runWithComponent(file,cmd,sync);
-	}
-	
-	public void reloadFile(final IFile file,final ScionCommand after,final boolean sync) {
-		final LoadInfo li=getLoadInfo(file);
-		if (li.lastCommand!=null){
-			li.lastCommand.cancel();
-			li.lastCommand=null;
-		}
+          for (Component c : cs) {
+            LoadCommand loadCommand = new LoadCommand(ScionInstance.this, c, output, forceRecomp);
+            // loadCommand.addJobChangeListener();
+            loadCommand.run(monitor);
+            crh.process(loadCommand);
+            lastLoadedComponent = c;
+          }
 
-		/*Runnable run=new Runnable(){
-			public void run() {
-				BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
-				li.lastCommand=cmd;
-				cmd.addJobChangeListener(l2);
-				ScionInstance.this.run(cmd,after,sync);
-			};
-		};*/
-		BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
-		cmd.addAfter(new Runnable(){
-			public void run() {
-				li.lastCommand=null;
-			}
-		});
-		li.lastCommand=cmd;
-		if (after!=null){
-			cmd.getSuccessors().add(after);
-		}
-		runWithComponent(file,cmd,sync);
-	}
-	
-	public void reloadFile(final IFile file,final IDocument doc,final Runnable after,final boolean sync) {
-		// done on return
-		//deleteProblems(file);
-		//LoadCommand loadCommand = new LoadCommand(this, new Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
-		//final IJobChangeListener l=new CompilationResultHandler(getProject(),doc);
-		final LoadInfo li=getLoadInfo(file);
-		if (li.lastCommand!=null){
-			li.lastCommand.cancel();
-			li.lastCommand=null;
-		}
-		
-		
-		BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file,doc){
-			@Override
-			protected boolean onError(JSONException ex, String name, String message) {
-				li.lastCommand=null;
-				if (message!=null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)){
-					deleteProblems(file);
-					if (!li.interactiveCheckDisabled){
-						ScionPlugin.logWarning(UITexts.bind(UITexts.warning_typecheck_arbitrary_failed,file.getProjectRelativePath(),message), null);
-						li.interactiveCheckDisabled=true;
-					} 
-					//removeJobChangeListener(l);
-					//removeJobChangeListener(l2);
-					//ScionInstance.this.reloadFile(file, after,sync);
-					
-					return true;
-				} 
-				li.interactiveCheckDisabled=false;
-				return super.onError(ex, name, message);
-				
-			}
-		};
-		li.lastCommand=cmd;
-		//cmd.addJobChangeListener(l);
-		cmd.addAfter(new Runnable(){
-			public void run() {
-				li.lastCommand=null;
-				if (after!=null){
-					after.run();
-				}
-				
-			}
-		});
-		run(cmd,null,sync);
-		//loadCommand.getSuccessors().add(typecheckCommand);
-		//loadCommand.runAsync();
-		//typecheckCommand.runAsyncAfter(loadCommand);
-	}
-	
-	private void run(ScionCommand cmd,final Runnable after,boolean sync){
-		if (after!=null){
-			cmd.addAfter(after);
-		}
-		if (sync){
-			cmd.runSync();
-		} else {
-			cmd.runAsync();
-		}
-	}
-	
-	public void unloadFile(IFile fileName) {
-		if (fileName.equals(loadedFile)){
-			loadedFile=null;
-		}
-	}
-	
-	public String thingAtPoint(Location location) {
+          ParseCabalCommand pcc = new ParseCabalCommand(ScionInstance.this, getCabalFile(getProject()).getLocation().toOSString());
+          pcc.run(monitor);
+          ScionInstance.this.cabalDescription = pcc.getDescription();
 
-		ThingAtPointCommand command = new ThingAtPointCommand(
-				ScionInstance.this, location);
-		command.runSync();
-		if (command.getResult().isOK()) {
-			return command.getThing();
-		} else {
-			return null;
-		}
+          CabalDependenciesCommand cdc = new CabalDependenciesCommand(ScionInstance.this, getCabalFile(getProject()).getLocation()
+              .toOSString());
+          cdc.run(monitor);
+          ScionInstance.this.packagesByDB = cdc.getPackagesByDB();
 
-	}
-		
-	public void outline(final IFile file,final OutlineHandler handler,final boolean sync){
-		final OutlineCommand cmd=new OutlineCommand(file,ScionInstance.this);
-		if (handler!=null){
-			cmd.addAfter(new Runnable(){
-				public void run() {
-					handler.outlineResult(cmd.getOutlineDefs());
-				}
-			});
-		}
-		
-		withLoadedFile(file,cmd,sync);
-	}
+          restoreState(monitor);
 
-	public void withLoadedFile(final IFile file,ScionCommand cmd,final boolean sync){
-		if (isLoaded(file)){
-			run(cmd,null,sync);
-		} else {
-			reloadFile(file, cmd,sync);
-		}
-	}
-	
-	public Location firstDefinitionLocation(String name) {
-		NameDefinitionsCommand command = new NameDefinitionsCommand(this, name);
-		command.runSync();
-		if (command.getResult().isOK() && command.isFound()) {
-			return command.getFirstLocation();
-		} else {
-			return null;
-		}
-	}
-	
-	public static IFile getCabalFile(final IProject p) {
-	    String ext = FileUtil.EXTENSION_CABAL;
-	    IPath path = new Path( p.getName() ).addFileExtension( ext );
-	    return p.getFile( path );
-	}
+          return Status.OK_STATUS;
+        }
+      });
+      // if (output){
+      command.runAsync();
+      // } else {
+      // command.runSync();
+      // }
+    }
+    // }
+    // }
+    // });
+  }
 
-	public JSONObject getCabalDescription() {
-		return cabalDescription;
-	}
-	
-	public Map<String, CabalPackage[]> getPackagesByDB() {
-		return packagesByDB;
-	}
-	
-	public List<Component> getComponents() {
-		return components;
-	}
-	
-	public void definedNames(final NameHandler handler){
-		
-		if (handler!=null){
-			final DefinedNamesCommand command=new DefinedNamesCommand(this);
-			command.addJobChangeListener(new JobChangeAdapter(){
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						handler.nameResult(command.getNames());
-					}
-				}
-			});
-			command.runSync();
-		}
-		
+  public void stop() {
+    stop(true, null);
+  }
 
-	}
-	
-	public void listExposedModules(final NameHandler handler){
-		if (handler!=null){
-			if (exposedModulesCache!=null){
-				handler.nameResult(exposedModulesCache);
-				return;
-			}
-			final ListExposedModulesCommand command=new ListExposedModulesCommand(this);
-		
-			command.addJobChangeListener(new JobChangeAdapter(){
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						exposedModulesCache=Collections.unmodifiableList(command.getNames());
-						handler.nameResult(exposedModulesCache);
-					}
-				}
-			});
-		
-			command.runSync();
-		}
+  private void stop(boolean cleanly, final Runnable after) {
+    cabalDescription = null;
+    synchronized (components) {
+      components.clear();
+    }
 
-	}
-	
-	public void moduleGraph(final NameHandler handler){
-		if (handler!=null){
-			
-			final ModuleGraphCommand command=new ModuleGraphCommand(this);
-		
-			command.addJobChangeListener(new JobChangeAdapter(){
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						handler.nameResult(command.getNames());
-					}
-				}
-			});
-			command.runSync();
-		}
-		
+    packagesByDB = null;
+    lastLoadedComponent = null;
+    exposedModulesCache = null;
+    if (server != null) {
+      if (cleanly) {
+        ScionCommand cmd = new QuitCommand(this);
+        cmd.addJobChangeListener(new JobChangeAdapter() {
+          @Override
+          public void done(IJobChangeEvent event) {
+            // server may not be running...
+            if (server != null) {
+              server.stopServer();
+              server = null;
+            }
+            if (after != null) {
+              after.run();
+            }
+          }
+        });
+        cmd.runAsync();
+      } else {
+        // server may not be running...
+        if (server != null) {
+          server.stopServer();
+          server = null;
+        }
+        if (after != null) {
+          after.run();
+        }
+      }
+    } else if (after != null) {
+      after.run();
+    }
+  }
 
-	}
-	
-	public synchronized List<TokenDef> tokenTypes(final IFile file,final String contents){
-		TokenTypesCommand command=new TokenTypesCommand(ScionInstance.this,  file, contents,FileUtil.hasLiterateExtension(file));
-		command.run(new NullProgressMonitor());
-		return command.getTokens();
-	}
-	
-	public synchronized void setDeafening () {
-		SetVerbosityCommand command = new SetVerbosityCommand(ScionInstance.this, 3);
-		command.run(new NullProgressMonitor());
-	}
-	
-	private synchronized LoadInfo getLoadInfo(IFile file){
-		LoadInfo li=loadInfos.get(file);
-		if (li==null){
-			li=new LoadInfo();
-			loadInfos.put(file,li);
-		}
-		return li;
-	}
-	
-	private class LoadInfo {
-		private boolean interactiveCheckDisabled=false;
-		private boolean useFileComponent=false;
-		private ScionCommand lastCommand;
-		
-	}
+  /** Restart the scion-server
+   * 
+   * @param cleanly Shut down the scion-server cleanly, if true. 
+   * @param inBetween Runnable action to execute between shutdown and startup.
+   */
+  private void restart(boolean cleanly, final Runnable inBetween) {
+    stop(cleanly, new Runnable() {
+      public void run() {
+        if (inBetween != null) {
+          inBetween.run();
+        }
+        try {
+          start();
+        } catch (Throwable t) {
+          ScionPlugin.logError(UITexts.scionServerCouldNotStart_message, t);
+        }
+      }
+    });
+  }
+
+  public boolean isStopped() {
+    return server == null;
+  }
+
+  // //////////////////////////////
+  // IScionCommandRunner methods
+
+  public void runCommandSync(ScionCommand command, IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
+    if (server == null) {
+      throw new ScionCommandException(command, UITexts.scionServerNotRunning_message);
+    }
+    try {
+      server.runCommandSync(command, monitor);
+    } catch (final ScionServerException ex) {
+      // fatal server error: restart
+      restart(false, new Runnable() {
+        public void run() {
+          ScionPlugin.logWarning(NLS.bind(UITexts.scionServerRestarted_message, getProjectName()), ex);
+        }
+      });
+      throw ex;
+    }
+  }
+
+  public String getProjectName() {
+    if (getProject() != null) {
+      return getProject().getName();
+    }
+    return UITexts.noproject;
+  }
+
+  public boolean contains(ISchedulingRule rule) {
+    return rule == this || (getProject() != null && rule == getProject())
+        || (getProject() != null && (getProject().contains(rule)));
+  }
+
+  public boolean isConflicting(ISchedulingRule rule) {
+    return rule == this;
+  }
+
+  // ////////////////////
+  // Internal commands
+
+  private void restoreState(IProgressMonitor monitor) {
+    if (loadedFile != null) {
+      // loadFile(loadedFile,false);
+      final LoadInfo li = getLoadInfo(loadedFile);
+      if (li.lastCommand != null) {
+        li.lastCommand.cancel();
+        li.lastCommand = null;
+      }
+
+      /*
+       * Runnable run=new Runnable(){ public void run() {
+       * BackgroundTypecheckFileCommand cmd = new
+       * BackgroundTypecheckFileCommand(ScionInstance.this, file);
+       * li.lastCommand=cmd; cmd.addJobChangeListener(l2);
+       * ScionInstance.this.run(cmd,after,sync); }; };
+       */
+      BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, loadedFile);
+      cmd.addAfter(new Runnable() {
+        public void run() {
+          li.lastCommand = null;
+        }
+      });
+      li.lastCommand = cmd;
+      cmd.run(monitor);
+    }
+  }
+
+  // ////////////////////
+  // External commands
+
+  /*
+   * public void backgroundTypecheckFile(IFile file) {
+   * BackgroundTypecheckFileCommand command = new
+   * BackgroundTypecheckFileCommand(this, file); command.runAsync(); }
+   */
+
+  /*
+   * public void backgroundTypecheckArbitrary(final IFile file,IDocument doc) {
+   * BackgroundTypecheckArbitraryCommand cmd = new
+   * BackgroundTypecheckArbitraryCommand(this, file,doc);
+   * cmd.addJobChangeListener(new JobChangeAdapter(){
+   * 
+   * @Override public void done(IJobChangeEvent event) { if
+   * (!event.getResult().isOK()){ ScionInstance.this.reloadFile(file, null); } }
+   * }); cmd.runAsync(); }
+   */
+
+  public void loadFile(IFile fileName, boolean sync) {
+    // loadedFiles.add(fileName);
+    reloadFile(fileName, (ScionCommand) null, sync);
+  }
+
+  public IFile getLoadedFile() {
+    return loadedFile;
+  }
+
+  public boolean isLoaded(IFile f) {
+    return f.equals(loadedFile);
+  }
+
+  public void setLoadedFile(IFile loadedFile) {
+    this.loadedFile = loadedFile;
+  }
+
+  public void deleteProblems(IResource r) {
+    if (!r.getWorkspace().isTreeLocked() && r.exists() && r.getProject().isOpen()) {
+      try {
+        if (r instanceof IFile) {
+          r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+        }
+        r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+      } catch (CoreException ex) {
+        ScionPlugin.logError(UITexts.error_deleteMarkers, ex);
+        ex.printStackTrace();
+      }
+    }
+  }
+
+  private void runWithComponent(final IFile file, final ScionCommand after, final boolean sync) {
+    ScionCommand cmd = new ArbitraryCommand(this, Job.BUILD) {
+      @Override
+      public IStatus run(IProgressMonitor monitor) {
+        Set<String> componentNames = resolver.getComponents(file);
+        if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
+          Component toLoad = null;
+
+          if (!componentNames.isEmpty()) {
+            synchronized (components) {
+              for (final Component compo : components) {
+                if (componentNames.contains(compo.toString())) {
+                  toLoad = compo;
+                  break;
+
+                }
+              }
+            }
+          }
+          final LoadInfo li = getLoadInfo(file);
+          // we have no component: we create a file one
+          if (toLoad == null) {
+
+            toLoad = new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
+            if (!li.useFileComponent) {
+              li.useFileComponent = true;
+              ScionPlugin.logWarning(UITexts.bind(UITexts.warning_file_component, file.getProjectRelativePath()), null);
+            }
+          } else {
+            li.useFileComponent = false;
+          }
+          if (toLoad != null) {
+            final Component compo = toLoad;
+            LoadCommand loadCommand = new LoadCommand(ScionInstance.this, compo, false, false);
+            if (after != null) {
+              loadCommand.getSuccessors().add(after);
+            }
+            addAfter(new Runnable() {
+              public void run() {
+                lastLoadedComponent = compo;
+              }
+            });
+
+            this.getSuccessors().add(loadCommand);
+          }
+        }
+        if (after != null) {
+          this.getSuccessors().add(after);
+        }
+        return runSuccessors(monitor);
+      }
+    };
+    run(cmd, null, sync);
+
+  }
+
+  public void reloadFile(final IFile file, final Runnable after, final boolean sync) {
+    final LoadInfo li = getLoadInfo(file);
+    if (li.lastCommand != null) {
+      li.lastCommand.cancel();
+      li.lastCommand = null;
+    }
+
+    BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
+    li.lastCommand = cmd;
+    cmd.addAfter(new Runnable() {
+      public void run() {
+        li.lastCommand = null;
+        if (after != null) {
+          after.run();
+        }
+      }
+    });
+
+    runWithComponent(file, cmd, sync);
+  }
+
+  public void reloadFile(final IFile file, final ScionCommand after, final boolean sync) {
+    final LoadInfo li = getLoadInfo(file);
+    if (li.lastCommand != null) {
+      li.lastCommand.cancel();
+      li.lastCommand = null;
+    }
+
+    /*
+     * Runnable run=new Runnable(){ public void run() {
+     * BackgroundTypecheckFileCommand cmd = new
+     * BackgroundTypecheckFileCommand(ScionInstance.this, file);
+     * li.lastCommand=cmd; cmd.addJobChangeListener(l2);
+     * ScionInstance.this.run(cmd,after,sync); }; };
+     */
+    BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
+    cmd.addAfter(new Runnable() {
+      public void run() {
+        li.lastCommand = null;
+      }
+    });
+    li.lastCommand = cmd;
+    if (after != null) {
+      cmd.getSuccessors().add(after);
+    }
+    runWithComponent(file, cmd, sync);
+  }
+
+  public void reloadFile(final IFile file, final IDocument doc, final Runnable after, final boolean sync) {
+    // done on return
+    // deleteProblems(file);
+    // LoadCommand loadCommand = new LoadCommand(this, new
+    // Component(ComponentType.FILE,file.getLocation().toOSString(),getCabalFile(getProject()).getLocation().toOSString()),false);
+    // final IJobChangeListener l=new
+    // CompilationResultHandler(getProject(),doc);
+    final LoadInfo li = getLoadInfo(file);
+    if (li.lastCommand != null) {
+      li.lastCommand.cancel();
+      li.lastCommand = null;
+    }
+
+    BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
+      @Override
+      protected boolean onError(JSONException ex, String name, String message) {
+        li.lastCommand = null;
+        if (message != null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)) {
+          deleteProblems(file);
+          if (!li.interactiveCheckDisabled) {
+            ScionPlugin.logWarning(
+                UITexts.bind(UITexts.warning_typecheck_arbitrary_failed, file.getProjectRelativePath(), message), null);
+            li.interactiveCheckDisabled = true;
+          }
+          // removeJobChangeListener(l);
+          // removeJobChangeListener(l2);
+          // ScionInstance.this.reloadFile(file, after,sync);
+
+          return true;
+        }
+        li.interactiveCheckDisabled = false;
+        return super.onError(ex, name, message);
+
+      }
+    };
+    li.lastCommand = cmd;
+    // cmd.addJobChangeListener(l);
+    cmd.addAfter(new Runnable() {
+      public void run() {
+        li.lastCommand = null;
+        if (after != null) {
+          after.run();
+        }
+
+      }
+    });
+    run(cmd, null, sync);
+    // loadCommand.getSuccessors().add(typecheckCommand);
+    // loadCommand.runAsync();
+    // typecheckCommand.runAsyncAfter(loadCommand);
+  }
+
+  private void run(ScionCommand cmd, final Runnable after, boolean sync) {
+    if (after != null) {
+      cmd.addAfter(after);
+    }
+    if (sync) {
+      cmd.runSync();
+    } else {
+      cmd.runAsync();
+    }
+  }
+
+  public void unloadFile(IFile fileName) {
+    if (fileName.equals(loadedFile)) {
+      loadedFile = null;
+    }
+  }
+
+  public String thingAtPoint(Location location) {
+
+    ThingAtPointCommand command = new ThingAtPointCommand(ScionInstance.this, location);
+    command.runSync();
+    if (command.getResult().isOK()) {
+      return command.getThing();
+    } else {
+      return null;
+    }
+
+  }
+
+  public void outline(final IFile file, final OutlineHandler handler, final boolean sync) {
+    final OutlineCommand cmd = new OutlineCommand(file, ScionInstance.this);
+    if (handler != null) {
+      cmd.addAfter(new Runnable() {
+        public void run() {
+          handler.outlineResult(cmd.getOutlineDefs());
+        }
+      });
+    }
+
+    withLoadedFile(file, cmd, sync);
+  }
+
+  public void withLoadedFile(final IFile file, ScionCommand cmd, final boolean sync) {
+    if (isLoaded(file)) {
+      run(cmd, null, sync);
+    } else {
+      reloadFile(file, cmd, sync);
+    }
+  }
+
+  public Location firstDefinitionLocation(String name) {
+    NameDefinitionsCommand command = new NameDefinitionsCommand(this, name);
+    command.runSync();
+    if (command.getResult().isOK() && command.isFound()) {
+      return command.getFirstLocation();
+    } else {
+      return null;
+    }
+  }
+
+  public static IFile getCabalFile(final IProject p) {
+    String ext = FileUtil.EXTENSION_CABAL;
+    IPath path = new Path(p.getName()).addFileExtension(ext);
+    return p.getFile(path);
+  }
+
+  public JSONObject getCabalDescription() {
+    return cabalDescription;
+  }
+
+  public Map<String, CabalPackage[]> getPackagesByDB() {
+    return packagesByDB;
+  }
+
+  public List<Component> getComponents() {
+    return components;
+  }
+
+  public void definedNames(final NameHandler handler) {
+
+    if (handler != null) {
+      final DefinedNamesCommand command = new DefinedNamesCommand(this);
+      command.addJobChangeListener(new JobChangeAdapter() {
+        @Override
+        public void done(IJobChangeEvent event) {
+          if (event.getResult().isOK()) {
+            handler.nameResult(command.getNames());
+          }
+        }
+      });
+      command.runSync();
+    }
+
+  }
+
+  public void listExposedModules(final NameHandler handler) {
+    if (handler != null) {
+      if (exposedModulesCache != null) {
+        handler.nameResult(exposedModulesCache);
+        return;
+      }
+      final ListExposedModulesCommand command = new ListExposedModulesCommand(this);
+
+      command.addJobChangeListener(new JobChangeAdapter() {
+        @Override
+        public void done(IJobChangeEvent event) {
+          if (event.getResult().isOK()) {
+            exposedModulesCache = Collections.unmodifiableList(command.getNames());
+            handler.nameResult(exposedModulesCache);
+          }
+        }
+      });
+
+      command.runSync();
+    }
+
+  }
+
+  public void moduleGraph(final NameHandler handler) {
+    if (handler != null) {
+
+      final ModuleGraphCommand command = new ModuleGraphCommand(this);
+
+      command.addJobChangeListener(new JobChangeAdapter() {
+        @Override
+        public void done(IJobChangeEvent event) {
+          if (event.getResult().isOK()) {
+            handler.nameResult(command.getNames());
+          }
+        }
+      });
+      command.runSync();
+    }
+
+  }
+
+  public synchronized List<TokenDef> tokenTypes(final IFile file, final String contents) {
+    TokenTypesCommand command = new TokenTypesCommand(ScionInstance.this, file, contents, FileUtil.hasLiterateExtension(file));
+    command.run(new NullProgressMonitor());
+    return command.getTokens();
+  }
+
+  public synchronized void setDeafening() {
+    SetVerbosityCommand command = new SetVerbosityCommand(ScionInstance.this, 3);
+    command.run(new NullProgressMonitor());
+  }
+
+  private synchronized LoadInfo getLoadInfo(IFile file) {
+    LoadInfo li = loadInfos.get(file);
+    if (li == null) {
+      li = new LoadInfo();
+      loadInfos.put(file, li);
+    }
+    return li;
+  }
+
+  private class LoadInfo {
+    private boolean      interactiveCheckDisabled = false;
+    private boolean      useFileComponent         = false;
+    private ScionCommand lastCommand;
+
+  }
 
 }
