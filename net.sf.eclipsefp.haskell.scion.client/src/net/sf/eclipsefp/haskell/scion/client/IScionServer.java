@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -28,7 +28,7 @@ public interface IScionServer {
 	/**
 	 * run the command synchronously
 	 * @param command the command
-	 * @param monitor the monitor to manage cancelation, etc.
+	 * @param monitor the monitor to manage cancellation, etc.
 	 * @throws ScionServerException
 	 * @throws ScionCommandException
 	 */

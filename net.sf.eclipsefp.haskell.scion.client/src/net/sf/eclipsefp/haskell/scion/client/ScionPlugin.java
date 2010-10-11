@@ -52,7 +52,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static final int                    PROTOCOL_VERSION          = 1;
   /** The plugin's resource bundle. */
   private ResourceBundle                     resourceBundle;
-
+  
   /**
    * The default constructor.
    * 

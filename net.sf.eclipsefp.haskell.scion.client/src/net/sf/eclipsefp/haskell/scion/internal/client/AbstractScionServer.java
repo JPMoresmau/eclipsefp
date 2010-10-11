@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 
 import org.eclipse.swt.SWT;

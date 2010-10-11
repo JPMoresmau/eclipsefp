@@ -15,7 +15,6 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.client.StdStreamScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbitraryCommand;
