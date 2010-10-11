@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.Iterator;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -79,7 +80,7 @@ class HaskellTextHover extends DefaultTextHover {
         HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );
         return null;
       }
-      ScionInstance scionInstance = HaskellUIPlugin.getDefault().getScionInstanceManager( file );
+      ScionInstance scionInstance = ScionPlugin.getScionInstance(  file );
       if (scionInstance != null) {
         String thing = scionInstance.thingAtPoint(location);
         return thing; // might be null

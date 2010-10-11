@@ -9,7 +9,7 @@ import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
@@ -49,7 +49,7 @@ public class GHCSystemLibrary implements ITreeElement {
       }
 
     }*/
-    ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( project );
+    ScionInstance si=ScionPlugin.getScionInstance( project );
     if (si!=null && si.getPackagesByDB()!=null){
       for (String db:si.getPackagesByDB().keySet()){
         result.add( new GHCPackageConf( this, new Path(db), si.getPackagesByDB().get( db ) ) );

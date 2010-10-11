@@ -108,7 +108,7 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
       if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
           && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
           && !ScionBuilder.needsBuilding() ) {
-        serverExecutable = ScionPlugin.defaultServerExecutablePath().toOSString();
+        serverExecutable = ScionPlugin.builtinServerExecutablePath().toOSString();
       }
     } else {
       serverExecutable = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
@@ -231,7 +231,7 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
                       prov.disconnect( cabalF );
                     }
                   }
-                  ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( f );
+                  ScionInstance si = ScionPlugin.getScionInstance( f );
                   if (si!=null){
                     si.buildProject( false , true);
                   }
@@ -356,17 +356,6 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
       stopInstance( instances.get( project ) );
     }
     instances.clear();
-  }
-
-  /**
-   * Returns the instance manager for the given resource. The resource must be
-   * part of a currently opened project.
-   */
-  public ScionInstance getScionInstance( final IResource resource ) {
-    if (resource!=null){
-      return instances.get( resource.getProject() );
-    }
-    return instances.get(null);
   }
 
   /**

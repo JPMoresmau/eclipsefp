@@ -22,7 +22,7 @@ import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 /** <p>convenience super class for test cases that need a Haskell project
@@ -121,7 +120,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
       }
       waitForScion(f);
      // waitForAutoBuild();
-      HaskellUIPlugin.getDefault().getScionInstanceManager( f ).loadFile( f ,true);
+      ScionPlugin.getScionInstance( f ).loadFile( f ,true);
       waitForScion(f);
       checkProblems();
 
@@ -136,7 +135,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
 
   public static void waitForScion(final IResource r) throws CoreException {
     IJobManager jobMan = Job.getJobManager();
-    Object family=HaskellUIPlugin.getDefault().getScionInstanceManager( r );
+    Object family=ScionPlugin.getScionInstance( r );
     if (family!=null){
       boolean retry = true;
       while( retry ) {
@@ -205,7 +204,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   protected void tearDown() throws Exception {
     try {
       waitForScion(project);
-      ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager( project );
+      ScionInstance si=ScionPlugin.getScionInstance( project );
       project.close( new NullProgressMonitor() );
       waitForScion(project);
       synchronized(this){

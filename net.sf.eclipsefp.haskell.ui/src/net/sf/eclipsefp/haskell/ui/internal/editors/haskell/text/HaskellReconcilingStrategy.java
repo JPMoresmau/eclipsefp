@@ -4,7 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,7 +40,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
       IFileEditorInput fei = ( IFileEditorInput )input;
       this.file = fei.getFile();
       if( file != null && file.exists() ) {
-        instance=HaskellUIPlugin.getDefault().getScionInstanceManager( file );
+        instance=ScionPlugin.getScionInstance( file );
       }
     }
     /*foldingStructureProvider = new HaskellFoldingStructureProvider( editor );*/

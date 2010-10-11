@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -321,7 +322,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // Reload the file on the Scion server side
     IFile file = findFile();
     if( file != null ) {
-      ScionInstance instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
+      ScionInstance instance=ScionPlugin.getScionInstance( file );
 
       // since we call synchronize
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
@@ -350,7 +351,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // unload the previous file from Scion
     IFile file = findFile();
     if (file != null && ResourceUtil.isInHaskellProject( file )){
-      HaskellUIPlugin.getDefault().getScionInstanceManager(file).unloadFile(file);
+      ScionPlugin.getScionInstance( file ).unloadFile(file);
     }
     instance=null;
     super.doSetInput( input );
@@ -378,7 +379,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       // load the new file into Scion
       if (file != null && ResourceUtil.isInHaskellProject( file )) {
         //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
-        instance=HaskellUIPlugin.getDefault().getScionInstanceManager(file);
+        instance=ScionPlugin.getScionInstance( file );
       }
     }
     return instance;

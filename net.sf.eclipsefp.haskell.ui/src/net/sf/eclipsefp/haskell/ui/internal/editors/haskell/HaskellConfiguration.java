@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
@@ -155,7 +156,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		    }
 		  }*/
 		  // use global instance, that's fine for lexing
-		  instance=HaskellUIPlugin.getDefault().getScionManager().getScionInstance( null );
+		  instance = ScionPlugin.getSharedScionInstance();
 		  if (instance==null){
         return reconciler;
       }
