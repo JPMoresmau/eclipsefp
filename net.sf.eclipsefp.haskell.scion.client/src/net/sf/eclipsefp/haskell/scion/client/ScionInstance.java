@@ -357,22 +357,7 @@ public class ScionInstance implements IScionCommandRunner {
   // Internal commands
 
   private void checkProtocol() {
-
-    ConnectionInfoCommand command = new ConnectionInfoCommand(this);
-    command.addJobChangeListener(new JobChangeAdapter() {
-      @Override
-      public void done(IJobChangeEvent event) {
-        if (event.getResult().isOK()) {
-          ConnectionInfoCommand command = (ConnectionInfoCommand) event.getJob();
-          if (command.getVersion() != ScionPlugin.PROTOCOL_VERSION) {
-            ScionPlugin.logWarning(
-                NLS.bind(UITexts.scionVersionMismatch_warning, Integer.toString(command.getVersion()),
-                    Integer.toString(ScionPlugin.PROTOCOL_VERSION)), null);
-          }
-        }
-      }
-    });
-    command.runAsync();
+    server.checkProtocol(this);
   }
 
   private void restoreState(IProgressMonitor monitor) {

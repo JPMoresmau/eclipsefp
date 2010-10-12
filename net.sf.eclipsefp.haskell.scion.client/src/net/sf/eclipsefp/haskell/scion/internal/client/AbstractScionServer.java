@@ -7,9 +7,15 @@ import java.io.Writer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.client.IScionServer;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
+import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -65,6 +71,27 @@ public abstract class AbstractScionServer implements IScionServer {
     return nextSequenceNumber.getAndIncrement();
   }
 
+  /**
+   * Check the server's protocol version.
+   */
+  public void checkProtocol(IScionCommandRunner cmdRunner) {
+    ConnectionInfoCommand command = new ConnectionInfoCommand(cmdRunner);
+    command.addJobChangeListener(new JobChangeAdapter() {
+      @Override
+      public void done(IJobChangeEvent event) {
+        if (event.getResult().isOK()) {
+          ConnectionInfoCommand command = (ConnectionInfoCommand) event.getJob();
+          if (command.getVersion() != ScionPlugin.PROTOCOL_VERSION) {
+            ScionPlugin.logWarning(
+                NLS.bind(UITexts.scionVersionMismatch_warning, Integer.toString(command.getVersion()),
+                    Integer.toString(ScionPlugin.PROTOCOL_VERSION)), null);
+          }
+        }
+      }
+    });
+    command.runAsync();
+  }
+  
   /**
    * Reads a line from the server's stdout (or stderr), blocking until a line is
    * available. The returned line does not contain the newline character(s) at

@@ -33,4 +33,8 @@ public class NullScionServer implements IScionServer {
   public void runCommandSync(ScionCommand command, IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
     // Does absolutely nothing.
   }
+
+  public void checkProtocol(IScionCommandRunner cmdRunner) {
+    // Does nothing.
+  }
 }
