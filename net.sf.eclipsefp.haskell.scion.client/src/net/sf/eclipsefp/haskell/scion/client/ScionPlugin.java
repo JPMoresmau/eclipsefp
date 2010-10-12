@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -11,6 +12,7 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.NullWriter;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -18,7 +20,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
@@ -41,6 +42,8 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static final String                 DIST_FOLDER               = "dist-scion";
   /** Version of the scion zip file containing the built-in server's source */
   public static final String                 SCION_VERSION             = "0.1.0.5";
+  /** The scion server factory */
+  private IScionServerFactory                serverFactory;
   /** The project -> scion instance map */
   private final Map<IProject, ScionInstance> instances;
   /** The shared instance, primarily used for lexing
@@ -52,7 +55,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static final int                    PROTOCOL_VERSION          = 1;
   /** The plugin's resource bundle. */
   private ResourceBundle                     resourceBundle;
-  
+
   /**
    * The default constructor.
    * 
@@ -61,8 +64,11 @@ public class ScionPlugin extends AbstractUIPlugin {
    */
   public ScionPlugin() {
     instance = this;
+    
+    // Set reasonable defaults that can be updated later:
+    serverFactory = NullScionServerFactory.getDefault();
     instances = new HashMap<IProject, ScionInstance>();
-    sharedScionInstance = null;
+    sharedScionInstance = new ScionInstance(serverFactory.createScionServer(null, null), null, new NullWriter(), null);
   }
 
   @Override
@@ -161,7 +167,6 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static ScionInstance getScionInstance( final IProject project ) {
     return getDefault().instances.get(project);
   }
-  
   /** Get the shared {@link ScionInstance ScionInstance} in a static context.
    * 
    * @return The shared {@link ScionInstance ScionInstance} instance.
@@ -174,6 +179,28 @@ public class ScionPlugin extends AbstractUIPlugin {
     return instances;
   }
 
+  /**
+   * Use the null scion server factory.
+   */
+  public synchronized static void useNullScionServerFactory() {
+    getDefault().serverFactory = NullScionServerFactory.getDefault();
+  }
+  
+  /** Use the built-in scion server factory */
+  public synchronized static void useBuiltInServerFactory() {
+    getDefault().serverFactory = BuiltInServerFactory.getDefault();
+  }
+  
+  /** Use the user-defined scion server factory */
+  public synchronized static void useUserScionServerFactory(final IPath userExecutable) {
+    getDefault().serverFactory = new UserScionServerFactory(userExecutable);
+  }
+  
+  /** Get a new IScionServer from the factory */
+  public synchronized static IScionServer createScionServer(IProject project, Writer outStream) {
+    return getDefault().serverFactory.createScionServer(project, outStream);
+  }
+  
   /**
    * Generate the built-in Scion server's build area directory path.
    * 

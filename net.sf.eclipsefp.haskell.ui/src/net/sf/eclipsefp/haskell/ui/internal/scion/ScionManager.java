@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.File;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
@@ -436,9 +438,10 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
     }
 
     HaskellConsole c = new HaskellConsole( null, consoleName(project) );
-    ScionInstance instance = new ScionInstance( serverExecutable, project, c
-        .createOutputWriter() ,new CabalComponentResolver() {
-
+    Writer outStream = c.createOutputWriter();
+    IScionServer server = ScionPlugin.createScionServer( project, outStream );
+    ScionInstance instance = new ScionInstance( server, project, outStream,
+        new CabalComponentResolver() {
           public Set<String> getComponents( final IFile file ) {
             Set<PackageDescriptionStanza> pds= ResourceUtil.getApplicableStanzas( new IFile[]{file} );
             Set<String> ret=new HashSet<String>(pds.size());
