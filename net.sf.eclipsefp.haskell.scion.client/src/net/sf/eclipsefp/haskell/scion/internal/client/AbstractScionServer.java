@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -23,7 +24,7 @@ public abstract class AbstractScionServer implements IScionServer {
 		CLASS_PREFIX = "[ScionServer]",
 		SERVER_STDOUT_PREFIX = "[scion-server]";
 
-	protected String serverExecutable;
+	protected IPath serverExecutable;
 	protected Writer serverOutput;
 	
 	protected File directory;
@@ -33,7 +34,7 @@ public abstract class AbstractScionServer implements IScionServer {
 
 	private AtomicInteger nextSequenceNumber = new AtomicInteger(1);
 	
-	public AbstractScionServer(String serverExecutable,Writer serverOutput,File directory) {
+	public AbstractScionServer(IPath serverExecutable, Writer serverOutput, File directory) {
 		this.serverExecutable = serverExecutable;
 		this.serverOutput=serverOutput;
 		this.directory=directory;

@@ -19,6 +19,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -26,13 +27,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author JP Moresmau
  *
  */
-public class StdStreamScionServer extends AbstractScionServer{
+public class StdStreamScionServer extends AbstractScionServer {
 	private static final String PREFIX="scion:";
 	private BufferedWriter serverStdInWriter;
 	
-		
-	public StdStreamScionServer(String serverExecutable,Writer serverOutput,File directory) {
-		super(serverExecutable,serverOutput,directory);
+	public StdStreamScionServer(IPath serverExecutable,Writer serverOutput,File directory) {
+		super(serverExecutable, serverOutput, directory);
 	}
 	
 	public void runCommandSync(ScionCommand command, IProgressMonitor monitor)
@@ -53,10 +53,8 @@ public class StdStreamScionServer extends AbstractScionServer{
 	}
 
 	public void startServer() throws ScionServerStartupException {
-		String executable = serverExecutable;
 		List<String> command = new LinkedList<String>();
-		command.add(executable);
-		//command.add("--autoport");
+		command.add(serverExecutable.toOSString());
 		command.add("-i ");
 		
 		// Launch the process

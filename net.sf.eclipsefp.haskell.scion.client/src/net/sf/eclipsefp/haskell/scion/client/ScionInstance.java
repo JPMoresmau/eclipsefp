@@ -74,13 +74,12 @@ import org.json.JSONObject;
  * @author Thomas ten Cate
  */
 public class ScionInstance implements IScionCommandRunner {
+  /** The scion-server with whom this object communicates */
   private IScionServer                server;
-
+  /** The project with which the scion-server is associated */
   private IProject                    project;
 
   private IFile                       loadedFile          = null;
-
-  private Writer                      serverOutput;
 
   private JSONObject                  cabalDescription;
   private Map<String, CabalPackage[]> packagesByDB;
@@ -91,14 +90,19 @@ public class ScionInstance implements IScionCommandRunner {
 
   private Map<IFile, LoadInfo>        loadInfos           = new HashMap<IFile, LoadInfo>();
 
-  public ScionInstance(IScionServer server, IProject project, Writer serverOutput, CabalComponentResolver resolver) {
+  /** The constructor
+   * 
+   * @param server The scion-server instance to whom commands are sent
+   * @param project The associated {@link IProject IProject}
+   * @param resolver The Cabal component resolver
+   */
+  public ScionInstance(IScionServer server, IProject project, CabalComponentResolver resolver) {
     this.server = server;
     this.project = project;
-    this.serverOutput = serverOutput;
     this.resolver = resolver;
   }
 
-  public IProject getProject() {
+  public final IProject getProject() {
     return project;
   }
 

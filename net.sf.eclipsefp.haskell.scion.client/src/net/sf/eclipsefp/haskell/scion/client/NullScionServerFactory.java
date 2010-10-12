@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.scion.client;
 import java.io.Writer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import net.sf.eclipsefp.haskell.scion.internal.client.NullScionServer;
 
@@ -33,5 +35,9 @@ public class NullScionServerFactory implements IScionServerFactory {
    * to the {@link NullScionServer NullScionServer}'s singleton. */
   public IScionServer createScionServer(final IProject project, final Writer outStream) {
     return NullScionServer.getDefault();
+  }
+
+  public IPath getServerExecutable() {
+    return new Path("/nullServer");
   }
 }

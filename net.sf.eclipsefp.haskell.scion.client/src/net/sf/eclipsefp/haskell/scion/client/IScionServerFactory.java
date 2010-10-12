@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 import java.io.Writer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 
 /** Scion executable factory interface.
@@ -18,4 +19,6 @@ public interface IScionServerFactory {
    * @param outStream TODO
    */
   public IScionServer createScionServer(final IProject project, final Writer outStream);
+  /** Get the server executable IPath */
+  public IPath getServerExecutable();
 }
