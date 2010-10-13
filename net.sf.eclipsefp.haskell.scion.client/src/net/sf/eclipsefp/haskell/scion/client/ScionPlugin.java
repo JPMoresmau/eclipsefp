@@ -304,24 +304,33 @@ public class ScionPlugin extends AbstractUIPlugin {
       startupEx = ex;
       yelp = true;
     }
-    // Update the instances with the new scion servers
-    for (Map.Entry<IProject, InstanceState> pair : instances.entrySet()) {
-      IProject project = pair.getKey();
-      InstanceState instState = pair.getValue();
-      Writer outStream = instState.getOutStream();
-      
-      try {
-        instState.getInstance().setServerExecutable(serverFactory.createScionServer(project, outStream));
-      } catch (ScionServerStartupException ex) {
-        if (!yelp && startupEx == null) {
-          yelp = true;
-          startupEx = ex;
+    
+    if (!yelp) {
+      // Update the instances with the new scion servers
+      for (Map.Entry<IProject, InstanceState> pair : instances.entrySet()) {
+        IProject project = pair.getKey();
+        InstanceState instState = pair.getValue();
+        Writer outStream = instState.getOutStream();
+        
+        try {
+          instState.getInstance().setServerExecutable(serverFactory.createScionServer(project, outStream));
+        } catch (ScionServerStartupException ex) {
+          if (!yelp && startupEx == null) {
+            yelp = true;
+            startupEx = ex;
+          }
         }
       }
     }
     
     // Encountered a startup error, only yelp at the user once.
     if (yelp) {
+      try {
+        // Revert back to the NullScionServerFactory
+        changeServerFactory(NullScionServerFactory.getDefault());
+      } catch (ScionServerStartupException ex) {
+        // Ignore it, since it cannot happen. Completeness.
+      }
       // only do this once
       String errMsg = new String();
       

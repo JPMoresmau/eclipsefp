@@ -11,9 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.IScionServerEventListener;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionServerEvent;
+import net.sf.eclipsefp.haskell.scion.client.ScionServerEventType;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -49,6 +52,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -68,7 +72,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  *
  * @author Leif Frenzel
  */
-public class HaskellEditor extends TextEditor implements IEditorPreferenceNames {
+public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, IScionServerEventListener {
 
 
   /**
@@ -79,7 +83,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   public static final String ID = HaskellEditor.class.getName();
 
   /** The key binding context active while the Haskell editor is active */
-  private static final String CONTEXT_ID = "net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context";  //$NON-NLS-1$
+  private static final String CONTEXT_ID = HaskellEditor.class.getCanonicalName().concat( "context" );  //$NON-NLS-1$
 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
@@ -115,16 +119,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   @Override
   protected void initializeEditor() {
     super.initializeEditor();
+    ScionInstance.addListener( this );
     setSourceViewerConfiguration( new HaskellConfiguration( this ) );
     setEditorContextMenuId( "#HaskellEditorContext" );  //$NON-NLS-1$
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
     foldingStructureProvider=new HaskellFoldingStructureProvider( this );
-
-
   }
-
 
   public HaskellFoldingStructureProvider getFoldingStructureProvider() {
     return foldingStructureProvider;
@@ -290,6 +292,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if( outlinePage != null ) {
       outlinePage.setInput( null );
     }
+    ScionInstance.removeListener( this );
     super.dispose();
   }
 
@@ -374,12 +377,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
    * get the scion instance, creating it if needed
    */
   public ScionInstance getInstance(){
-    if (instance==null){
+    if (instance == null) {
       IFile file = findFile();
       // load the new file into Scion
       if (file != null && ResourceUtil.isInHaskellProject( file )) {
-        //HaskellUIPlugin.getDefault().getScionInstanceManager(file).loadFile(file);
-        instance=ScionPlugin.getScionInstance( file );
+        instance = ScionPlugin.getScionInstance( file );
       }
     }
     return instance;
@@ -529,5 +531,27 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       }
     }
     return false;
+  }
+
+  // Interface methods for IScionServerEventListener
+
+  /** Process a scion-server status change event */
+  public void processScionServerEvent( final ScionServerEvent ev ) {
+    if (ev.getEventType() == ScionServerEventType.EXECUTABLE_CHANGED) {
+      // The executable changed...
+      final Display display = HaskellUIPlugin.getStandardDisplay();
+      display.asyncExec( new Runnable() {
+        public void run() {
+          // Invalidate the text presentation to update syntax highlighting
+          ISourceViewer sv = getSourceViewer();
+          if (sv != null) {
+            sv.invalidateTextPresentation();
+          }
+          // Then synchronize everything else...
+          synchronize();
+          outlinePage.update();
+        }
+      } );
+    }
   }
 }

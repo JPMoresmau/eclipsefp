@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -72,23 +73,26 @@ import org.json.JSONObject;
  * server, or of the entire workbench).
  * 
  * @author Thomas ten Cate
+ * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public class ScionInstance implements IScionCommandRunner {
   /** The scion-server with whom this object communicates */
   private IScionServer                server;
   /** The project with which the scion-server is associated */
   private IProject                    project;
-
-  private IFile                       loadedFile          = null;
+  private IFile                       loadedFile;
 
   private JSONObject                  cabalDescription;
   private Map<String, CabalPackage[]> packagesByDB;
-  private List<Component>             components          = new LinkedList<Component>();
+  private List<Component>             components;
   private CabalComponentResolver      resolver;
   private Component                   lastLoadedComponent;
-  private List<String>                exposedModulesCache = null;
+  private List<String>                exposedModulesCache;
 
-  private Map<IFile, LoadInfo>        loadInfos           = new HashMap<IFile, LoadInfo>();
+  private Map<IFile, LoadInfo>        loadInfos;
+  
+  /** The listener list for objects interested in server status events */
+  private static final ListenerList   listeners = new ListenerList();
 
   /** The constructor
    * 
@@ -100,27 +104,67 @@ public class ScionInstance implements IScionCommandRunner {
     this.server = server;
     this.project = project;
     this.resolver = resolver;
+    
+    this.loadedFile = null;
+    this.components = new LinkedList<Component>();
+    this.exposedModulesCache = null;
+    this.loadInfos = new HashMap<IFile, LoadInfo>();
   }
 
+  /** Get the project associated with this instance */
   public final IProject getProject() {
     return project;
   }
+  
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  // Listener management
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  
+  /** Add a scion-server event change listener */
+  public static void addListener(IScionServerEventListener listener) {
+    listeners.add(listener);
+  }
+  
+  /** Remove a scion-server event change listener */
+  public static void removeListener(IScionServerEventListener listener) {
+    listeners.remove(listener);
+  }
+  
+  /** Notify listeners that a scion-server event occurred.
+   * 
+   * @param evType The type of event that just happened.
+   */
+  private void notifyListeners(ScionServerEventType evType) {
+    ScionServerEvent ev = new ScionServerEvent(server, evType);
+    for (Object listener : listeners.getListeners()) {
+      IScionServerEventListener evListener = (IScionServerEventListener) listener;
+      evListener.processScionServerEvent(ev);
+    }
+  }
 
+  /** Update the scion-server executable. This method is invoked in response to
+   * a preference change in the UI to signal that the underlying scion-server
+   * has changed.
+   * 
+   * @param server The scion-server executable that this instance should use.
+   * @throws ScionServerStartupException if the server could not be started.
+   */
   public void setServerExecutable(final IScionServer server) throws ScionServerStartupException {
     if (!this.server.equals(server)) {
       restart(true, new Runnable() {
-
         public void run() {
           ScionInstance.this.server = server;
         }
       });
 
+      notifyListeners(ScionServerEventType.EXECUTABLE_CHANGED);
     }
   }
 
   public void start() throws ScionServerStartupException {
     server.startServer();
-    checkProtocol();
+    server.checkProtocol(this);
+    
     if (Trace.isTracing()) {
       setDeafening();
     }
@@ -172,6 +216,9 @@ public class ScionInstance implements IScionCommandRunner {
    * }
    */
 
+  /** Build the Haskell project.
+   * 
+   */
   public void buildProject(final boolean output, final boolean forceRecomp) {
     // configureCabal(new JobChangeAdapter(){
     // @Override
@@ -298,7 +345,12 @@ public class ScionInstance implements IScionCommandRunner {
     }
   }
 
-  public void restart(boolean cleanly, final Runnable inBetween) {
+  /** Restart the scion-server
+   * 
+   * @param cleanly Shut down the scion-server cleanly, if true. 
+   * @param inBetween Runnable action to execute between shutdown and startup.
+   */
+  private void restart(boolean cleanly, final Runnable inBetween) {
     stop(cleanly, new Runnable() {
       public void run() {
         if (inBetween != null) {
@@ -355,10 +407,6 @@ public class ScionInstance implements IScionCommandRunner {
 
   // ////////////////////
   // Internal commands
-
-  private void checkProtocol() {
-    server.checkProtocol(this);
-  }
 
   private void restoreState(IProgressMonitor monitor) {
     if (loadedFile != null) {
