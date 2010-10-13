@@ -22,21 +22,44 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * some helper code to implement a IScionServer
+ * 
  * @author JP Moresmau
- *
+ * 
  */
 public abstract class AbstractScionServer implements IScionServer {
-	protected static final String
-		CLASS_PREFIX = "[ScionServer]",
-		SERVER_STDOUT_PREFIX = "[scion-server]";
+  protected static final String CLASS_PREFIX         = "[ScionServer]";
+  protected static final String SERVER_STDOUT_PREFIX = "[scion-server]";
+  /**
+   * Path to the server executable that is started and with whom EclipseFP
+   * communicates
+   */
+  protected IPath               serverExecutable;
+  /** Server logging output stream, generally tends to be a Eclipse console */
+  protected Writer              serverOutput;
+  /** Working directory where the server operates, can be null if no project. */
+  protected File                directory;
+  /** The scion-server process */
+  protected Process             process;
+  /** Server's standard output */
+  protected BufferedReader      serverStdOutReader;
+  /** Request identifier */
+  private AtomicInteger         nextSequenceNumber = new AtomicInteger(1);
 
-	protected IPath serverExecutable;
-	protected Writer serverOutput;
-	
-	protected File directory;
-	
-	protected Process process;
-	protected BufferedReader serverStdOutReader;
+  /**
+   * The constructor
+   * 
+   * @param serverExecutable
+   *          The scion-server executable
+   * @param serverOutput
+   *          The scion-server's logging stream
+   * @param directory
+   *          The scion-server's working directory
+   */
+  public AbstractScionServer(IPath serverExecutable, Writer serverOutput, File directory) {
+    this.serverExecutable = serverExecutable;
+    this.serverOutput = serverOutput;
+    this.directory = directory;
+  }
 
   /**
    * Get the next request identifier

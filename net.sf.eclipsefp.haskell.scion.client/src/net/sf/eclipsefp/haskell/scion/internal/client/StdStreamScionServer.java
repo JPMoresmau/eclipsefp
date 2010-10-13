@@ -23,9 +23,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Implementation of IScion server using standard in/out to communicate with Scion
+ * Implementation of {@link AbstractScionServer AbstractScionServer} using standard in/out to communicate with Scion
  * @author JP Moresmau
- *
  */
 public class StdStreamScionServer extends AbstractScionServer {
 	private static final String PREFIX="scion:";
@@ -111,7 +110,6 @@ public class StdStreamScionServer extends AbstractScionServer {
 		}
 		
 		Trace.trace(CLASS_PREFIX, "Server stopped");
-
 	}
 
 }
