@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.internal.servers;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,7 +46,7 @@ public class NetworkScionServer extends AbstractScionServer {
 	private BufferedWriter socketWriter;
 
 	private Thread serverOutputThread;
-	
+
 	public NetworkScionServer(IPath serverExecutable,Writer serverOutput,File directory) {
 		super(serverExecutable, serverOutput, directory);
 	}
@@ -299,8 +299,6 @@ public class NetworkScionServer extends AbstractScionServer {
 	 * @throws ScionCommandException if something went wrong parsing or processing the command 
 	 */
 	public void runCommandSync(ScionCommand command,IProgressMonitor monitor) throws ScionServerException, ScionCommandException {
-		// set only once
-		command.setSequenceNumber(makeSequenceNumber());
 		runCommandSync(command, monitor,0);
 	}
 	

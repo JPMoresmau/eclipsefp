@@ -5,8 +5,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
 
 /**
  * interface for communication with scion
@@ -39,4 +39,7 @@ public interface IScionServer {
 	 * Check server's protocol version, log a message if it's not a match.
 	 */
 	void checkProtocol(IScionCommandRunner cmdRunner);
+
+  /** Return the next request sequence number */
+  public int nextSequenceNumber();
 }

@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
 import net.sf.eclipsefp.haskell.scion.types.Location;
@@ -24,8 +24,8 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	
 	protected boolean canceled=false;
 	
-	public BackgroundTypecheckFileCommand(ScionInstance runner, IFile file) {
-		super(runner, Job.BUILD);
+	public BackgroundTypecheckFileCommand(ScionInstance runner, IScionServer server, IFile file) {
+		super(runner, server, Job.BUILD);
 		this.file = file;
 		this.instance=runner;
 	}

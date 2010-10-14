@@ -498,7 +498,7 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
                                          status.getTitle(),
                                          status.getMessage() );
               }
-            });
+            } );
           } else {
             // Build was successful, so we don't need the console any more.
             IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();

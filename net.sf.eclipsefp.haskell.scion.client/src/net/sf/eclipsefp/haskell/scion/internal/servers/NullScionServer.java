@@ -1,4 +1,6 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.internal.servers;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -9,7 +11,9 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 
 public class NullScionServer implements IScionServer {
-  
+  /** Request identifier */
+  private final AtomicInteger              nextSequenceNumber = new AtomicInteger(1);
+
   private final static class SingletonContainer {
     private static final NullScionServer theInstance = new NullScionServer();
   }
@@ -36,5 +40,9 @@ public class NullScionServer implements IScionServer {
 
   public void checkProtocol(IScionCommandRunner cmdRunner) {
     // Does nothing.
+  }
+
+  public int nextSequenceNumber() {
+    return nextSequenceNumber.getAndIncrement();
   }
 }

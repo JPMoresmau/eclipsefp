@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -17,9 +17,9 @@ public class BackgroundTypecheckArbitraryCommand extends
 		BackgroundTypecheckFileCommand {
 	private IDocument doc;
 	
-	public BackgroundTypecheckArbitraryCommand(ScionInstance runner,
-			IFile file,IDocument doc) {
-		super(runner, file);
+	public BackgroundTypecheckArbitraryCommand(ScionInstance runner, IScionServer server, IFile file,
+	    IDocument doc) {
+		super(runner, server, file);
 		this.doc=doc;
 	}
 

@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -21,8 +22,8 @@ public class CabalDependenciesCommand extends ScionCommand {
 	private String fileName;
 	private Map<String,CabalPackage[]> packagesByDB=new HashMap<String,CabalPackage[]>();
 	
-	public CabalDependenciesCommand(IScionCommandRunner runner, String fileName) {
-		super(runner, Job.BUILD);
+	public CabalDependenciesCommand(IScionCommandRunner runner, IScionServer server, String fileName) {
+		super(runner, server, Job.BUILD);
 		this.fileName=fileName;
 	}
 	

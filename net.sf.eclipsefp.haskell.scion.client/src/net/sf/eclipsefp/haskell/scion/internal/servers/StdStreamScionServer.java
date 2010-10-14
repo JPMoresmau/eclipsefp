@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.internal.servers;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -36,7 +36,6 @@ public class StdStreamScionServer extends AbstractScionServer {
 	
 	public void runCommandSync(ScionCommand command, IProgressMonitor monitor)
 			throws ScionServerException, ScionCommandException {
-		command.setSequenceNumber(makeSequenceNumber());
 		try {
 			command.sendCommand(serverStdInWriter,monitor);
 			String line=readLineFromServer();
@@ -111,5 +110,4 @@ public class StdStreamScionServer extends AbstractScionServer {
 		
 		Trace.trace(CLASS_PREFIX, "Server stopped");
 	}
-
 }

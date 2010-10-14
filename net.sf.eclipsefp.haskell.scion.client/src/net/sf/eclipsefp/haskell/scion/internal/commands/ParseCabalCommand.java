@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
@@ -15,8 +16,8 @@ public class ParseCabalCommand extends ScionCommand {
 	private String fileName;
 	private JSONObject description;
 	
-	public ParseCabalCommand(IScionCommandRunner runner, String fileName) {
-		super(runner, Job.BUILD);
+	public ParseCabalCommand(IScionCommandRunner runner, IScionServer server, String fileName) {
+		super(runner, server, Job.BUILD);
 		this.fileName=fileName;
 	}
 	

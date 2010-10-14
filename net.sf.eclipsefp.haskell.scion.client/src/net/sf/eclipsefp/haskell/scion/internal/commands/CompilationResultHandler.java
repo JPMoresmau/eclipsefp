@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import java.util.HashSet;
 import java.util.Set;

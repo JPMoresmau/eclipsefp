@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.internal.servers;
 
 public class ScionParseException extends RuntimeException {
 

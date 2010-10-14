@@ -1,7 +1,8 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
+import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.Component;
@@ -26,8 +27,9 @@ public class LoadCommand extends ScionCommand implements ICompilerResult{
 	private boolean output;
 	private boolean forceRecomp;
 	
-	public LoadCommand(IScionCommandRunner runner, Component c,boolean output,boolean forceRecomp) {
-		super(runner, Job.BUILD);
+	public LoadCommand(IScionCommandRunner runner, IScionServer server, Component c, boolean output, 
+	    boolean forceRecomp) {
+		super(runner, server, Job.BUILD);
 		this.comp=c;
 		this.output=output;
 		this.forceRecomp=forceRecomp;

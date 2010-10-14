@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.scion.internal.client;
+package net.sf.eclipsefp.haskell.scion.internal.servers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +43,7 @@ public abstract class AbstractScionServer implements IScionServer {
   /** Server's standard output */
   protected BufferedReader      serverStdOutReader;
   /** Request identifier */
-  private AtomicInteger         nextSequenceNumber = new AtomicInteger(1);
+  private final AtomicInteger              nextSequenceNumber = new AtomicInteger(1);
 
   /**
    * The constructor
@@ -62,20 +62,10 @@ public abstract class AbstractScionServer implements IScionServer {
   }
 
   /**
-   * Get the next request identifier
-   * 
-   * @return The next atomic request number from {@link nextSequenceNumber
-   *         nextSequenceNumber}
-   */
-  protected int makeSequenceNumber() {
-    return nextSequenceNumber.getAndIncrement();
-  }
-
-  /**
    * Check the server's protocol version.
    */
   public void checkProtocol(IScionCommandRunner cmdRunner) {
-    ConnectionInfoCommand command = new ConnectionInfoCommand(cmdRunner);
+    ConnectionInfoCommand command = new ConnectionInfoCommand(cmdRunner, this);
     command.addJobChangeListener(new JobChangeAdapter() {
       @Override
       public void done(IJobChangeEvent event) {
@@ -156,5 +146,11 @@ public abstract class AbstractScionServer implements IScionServer {
       }
     }
     return line;
+  }
+
+  // ISequenceNumberGenerator methods:
+  
+  public int nextSequenceNumber() {
+    return nextSequenceNumber.getAndIncrement();
   }
 }
