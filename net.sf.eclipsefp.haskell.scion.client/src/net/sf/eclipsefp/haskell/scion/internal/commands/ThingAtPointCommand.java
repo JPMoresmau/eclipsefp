@@ -1,10 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.client.IScionServer;
-import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,8 +17,8 @@ public class ThingAtPointCommand extends ScionCommand {
 	
 	private String thing; // the response
 	
-	public ThingAtPointCommand(IScionCommandRunner runner, IScionServer server, Location location) {
-		super(runner, server, Job.INTERACTIVE);
+	public ThingAtPointCommand(Location location) {
+		super();
 		this.location = location;
 	}
 	

@@ -3,18 +3,14 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.client.IScionServer;
-import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
-
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 public class DefinedNamesCommand extends ScionCommand {
 	private List<String> names=new ArrayList<String>();
 	
-	public DefinedNamesCommand(IScionCommandRunner runner, IScionServer server) {
-		super(runner, server, Job.INTERACTIVE);
+	public DefinedNamesCommand() {
+		super();
 	}
 
 	@Override

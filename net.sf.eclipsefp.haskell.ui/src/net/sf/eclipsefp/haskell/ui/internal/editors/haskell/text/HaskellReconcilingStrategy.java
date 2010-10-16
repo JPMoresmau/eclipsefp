@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
+import net.sf.eclipsefp.haskell.scion.client.ICommandContinuation;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -89,13 +90,11 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   private void reconcile() {
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
     if (editor.isDirty() && instance!=null) {
-      instance.reloadFile( file, editor.getDocument() ,new Runnable() {
-
-        public void run() {
+      instance.reloadFile( file, editor.getDocument(), new ICommandContinuation() {
+        public void commandContinuation() {
           editor.synchronize();
-
         }
-      },false);
+      }, false);
     }
   }
 }

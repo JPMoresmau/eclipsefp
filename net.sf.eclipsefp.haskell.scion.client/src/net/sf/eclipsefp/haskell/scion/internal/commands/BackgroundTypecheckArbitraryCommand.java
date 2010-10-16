@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 
 import org.eclipse.core.resources.IFile;
@@ -13,13 +12,11 @@ import org.json.JSONObject;
  * @author JP Moresmau
  *
  */
-public class BackgroundTypecheckArbitraryCommand extends
-		BackgroundTypecheckFileCommand {
+public class BackgroundTypecheckArbitraryCommand extends BackgroundTypecheckFileCommand {
 	private IDocument doc;
 	
-	public BackgroundTypecheckArbitraryCommand(ScionInstance runner, IScionServer server, IFile file,
-	    IDocument doc) {
-		super(runner, server, file);
+	public BackgroundTypecheckArbitraryCommand(ScionInstance instance, IFile file, IDocument doc) {
+		super(instance, file);
 		this.doc=doc;
 	}
 

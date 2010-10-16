@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.exceptions;
 
-import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -38,7 +38,7 @@ public class ScionServerException extends ScionException {
 			if (sb.length() > 0) {
 				sb.append("\n");
 			}
-			sb.append(NLS.bind(UITexts.scionServerLastWords_message, lastWords));
+			sb.append(NLS.bind(ScionText.scionServerLastWords_message, lastWords));
 		}
 		return sb.toString();
 	}

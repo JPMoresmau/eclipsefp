@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.ICommandContinuation;
 import net.sf.eclipsefp.haskell.scion.client.IScionServerEventListener;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -76,14 +77,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
 
   /**
-   * <p>
    * the id under which the Haskell editor is declared.
-   * </p>
    */
   public static final String ID = HaskellEditor.class.getName();
 
   /** The key binding context active while the Haskell editor is active */
-  private static final String CONTEXT_ID = HaskellEditor.class.getCanonicalName().concat( "context" );  //$NON-NLS-1$
+  private static final String CONTEXT_ID = HaskellEditor.class.getSimpleName() + "Context";  //$NON-NLS-1$
 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
@@ -112,7 +111,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return getSourceViewer() == null ? null : getSourceViewer().getDocument();
   }
 
-
   // interface methods of TextEditor
   // ////////////////////////////////
 
@@ -121,7 +119,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     super.initializeEditor();
     ScionInstance.addListener( this );
     setSourceViewerConfiguration( new HaskellConfiguration( this ) );
-    setEditorContextMenuId( "#HaskellEditorContext" );  //$NON-NLS-1$
+    setEditorContextMenuId( "#" + CONTEXT_ID );  //$NON-NLS-1$
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
@@ -203,9 +201,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
              }
            }
          }
-
        }
-
       }
     });
   }
@@ -256,8 +252,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
 
   private void activateContext() {
-    IContextService contextService = ( IContextService )getSite().getService(
-        IContextService.class );
+    IContextService contextService = ( IContextService )getSite().getService( IContextService.class );
     contextService.activateContext( CONTEXT_ID );
   }
 
@@ -330,12 +325,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       // since we call synchronize
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
       if (instance!=null){
-        instance.reloadFile(file,new Runnable() {
-
-          public void run() {
+        instance.reloadFile(file, new ICommandContinuation() {
+          public void commandContinuation() {
             synchronize();
           }
-        },false);
+        }, false);
       }
     }
   }
@@ -363,13 +357,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     if (instance!=null) {
         file = findFile();
-        instance.reloadFile( file,new Runnable() {
-
-          public void run() {
+        instance.reloadFile( file,new ICommandContinuation() {
+          public void commandContinuation() {
            synchronize();
-
           }
-        },false);
+        }, false);
     }
   }
 

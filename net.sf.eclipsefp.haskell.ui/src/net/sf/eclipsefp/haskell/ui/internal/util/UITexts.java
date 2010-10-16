@@ -275,8 +275,8 @@ public final class UITexts extends NLS {
   public static String explorer_outline_open;
 
   public static String log_nodetails;
-
   public static String noproject;
+  public static String sharedScionInstance_console;
 
   public static String unpackScionArchive_title;
   public static String scionBuildJob_title;

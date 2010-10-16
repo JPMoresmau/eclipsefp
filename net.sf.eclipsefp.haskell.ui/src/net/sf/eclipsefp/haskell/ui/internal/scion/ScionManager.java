@@ -93,6 +93,10 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
     // Sit and listen to the core preference store changes
     HaskellCorePlugin.instanceScopedPreferences().addPreferenceChangeListener( new CorePreferencesChangeListener() );
 
+    // Set up the output logging console for the shared ScionInstance:
+    HaskellConsole c = new HaskellConsole( null, UITexts.sharedScionInstance_console );
+    ScionPlugin.setSharedInstanceWriter( c.createOutputWriter() );
+
     try {
       if (useBuiltIn) {
         if (   CompilerManager.getInstance().getCurrentHsImplementation() != null

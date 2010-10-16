@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
 import net.sf.eclipsefp.haskell.scion.types.Note;
@@ -51,7 +51,7 @@ public class CompilationResultHandler extends JobChangeAdapter {
 						try {
 							n.applyAsMarker(res,max);
 						}	catch( CoreException ex ) {
-							ScionPlugin.logError(UITexts.error_applyMarkers, ex);
+							ScionPlugin.logError(ScionText.error_applyMarkers, ex);
 							ex.printStackTrace();
 						}
 					}
@@ -67,7 +67,7 @@ public class CompilationResultHandler extends JobChangeAdapter {
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
 			} catch (CoreException ce){
-				ScionPlugin.logError(UITexts.error_refreshLocal, ce);
+				ScionPlugin.logError(ScionText.error_refreshLocal, ce);
 				ce.printStackTrace();
 			}
 		}

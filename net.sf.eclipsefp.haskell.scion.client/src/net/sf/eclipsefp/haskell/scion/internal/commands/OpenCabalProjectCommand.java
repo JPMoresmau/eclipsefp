@@ -1,17 +1,17 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.client.IScionServer;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.internal.servers.IScionCommandRunner;
 
 import org.eclipse.core.resources.IProject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class OpenCabalProjectCommand extends ScionCommand {
+	private final IProject project;
 	
-	public OpenCabalProjectCommand(IScionCommandRunner runner, IScionServer server, int priority) {
-		super(runner, server, priority);
+	public OpenCabalProjectCommand(IProject project) {
+		super();
+		this.project = project;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class OpenCabalProjectCommand extends ScionCommand {
 	}
 	
 	public IProject getProject() {
-		return getRunner().getProject();
+		return project;
 	}
 
 	@Override

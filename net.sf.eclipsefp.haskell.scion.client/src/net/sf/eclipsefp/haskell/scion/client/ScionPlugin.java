@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.internal.servers.GenericScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NetworkScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.StdStreamScionServer;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -50,7 +52,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   /** Version of the scion zip file containing the built-in server's source */
   public static final String                 SCION_VERSION             = "0.1.0.5";
   /** The scion server factory */
-  private IScionServerFactory                serverFactory;
+  private GenericScionServerFactory                serverFactory;
   /** The project -> scion instance map */
   private final Map<IProject, InstanceState> instances;
   /** The shared instance, primarily used for lexing
@@ -104,7 +106,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     instances = new HashMap<IProject, InstanceState>();
     
     Writer outStream = new NullWriter();
-    IScionServer server = serverFactory.createScionServer(null, outStream);
+    GenericScionServer server = serverFactory.createScionServer(null, outStream);
     ScionInstance scionInstance = new ScionInstance(server, null, null);
     sharedScionInstance = new InstanceState(scionInstance, outStream);
   }
@@ -216,9 +218,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static ScionInstance getSharedScionInstance() {
     return getDefault().sharedScionInstance.getInstance();
   }
-  /**
-   * Use the null scion server factory.
-   */
+  /** Use the null scion server factory. */
   public synchronized static void useNullScionServerFactory() throws ScionServerStartupException {
     getDefault().changeServerFactory(getNullServerFactory());
   }
@@ -290,22 +290,28 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
     return false;
   }
-  /** Does a scion
 
+  /** Set the output stream writer for the shared ScionInstance */
+  public synchronized static void setSharedInstanceWriter(final Writer outStream) {
+    ScionPlugin plugin = getDefault();
+    
+    plugin.sharedScionInstance.instance.setOutputStream(outStream);
+    plugin.sharedScionInstance.outStream = outStream;
+  }
   /** Create a new ScionInstance, using a scion-server instance from the current factory */
   private synchronized ScionInstance newScionInstance(IProject project, Writer outStream, CabalComponentResolver resolver) {
     ScionInstance scionInstance = new ScionInstance(createScionServer(project, outStream), project, resolver); 
     instances.put(project, new InstanceState(scionInstance, outStream));
     return scionInstance;
   }
-  /** Create a new IScionServer from the factory, optionally registering the server in the
+  /** Create a new GenericScionServer from the factory, optionally registering the server in the
    * instances map.
    */
-  public synchronized IScionServer createScionServer(IProject project, Writer outStream) {
+  public synchronized GenericScionServer createScionServer(IProject project, Writer outStream) {
     return serverFactory.createScionServer(project, outStream);
   }
   /** Change the instances' concept of the current executable */
-  private void changeServerFactory(IScionServerFactory factory) throws ScionServerStartupException {
+  private void changeServerFactory(GenericScionServerFactory factory) throws ScionServerStartupException {
     boolean yelp = false;
     ScionServerStartupException startupEx = null;
     
@@ -409,17 +415,17 @@ public class ScionPlugin extends AbstractUIPlugin {
    * 
    * @author B. Scott Michel (scooter.phd@gmail.com)
    */
-  public interface IScionServerFactory {
+  public interface GenericScionServerFactory {
     /** Create a new ScionExectable 
      * @param project The associated project, which identifies the working directory for the server
      * @param outStream TODO
      */
-    public IScionServer createScionServer(final IProject project, final Writer outStream);
+    public GenericScionServer createScionServer(final IProject project, final Writer outStream);
     /** Get the server executable IPath */
     public IPath getServerExecutable();
   }
   
-  public class NullScionServerFactory implements IScionServerFactory {
+  public class NullScionServerFactory implements GenericScionServerFactory {
     
     /** Default constructor. This is hidden so preserve singleton semantics. */
     private NullScionServerFactory() {
@@ -428,7 +434,7 @@ public class ScionPlugin extends AbstractUIPlugin {
 
     /** Create a new NullScionServer. In reality, this just returns another reference
      * to the {@link NullScionServer NullScionServer}'s singleton. */
-    public IScionServer createScionServer(final IProject project, final Writer outStream) {
+    public GenericScionServer createScionServer(final IProject project, final Writer outStream) {
       return NullScionServer.getDefault();
     }
 
@@ -437,14 +443,14 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
   }
   
-  public class BuiltInStdStreamServerFactory implements IScionServerFactory {
+  public class BuiltInStdStreamServerFactory implements GenericScionServerFactory {
     /** Default constructor. */
     public BuiltInStdStreamServerFactory() {
       // NOP
     }
 
     /** Generate a new BuiltInServer instance */
-    public IScionServer createScionServer(IProject project, Writer outStream) {
+    public GenericScionServer createScionServer(IProject project, Writer outStream) {
       File directory = (project !=null) ? new File(project.getLocation().toOSString()) : null;
       return new StdStreamScionServer(ScionPlugin.builtinServerExecutablePath(), outStream, directory);
     }
@@ -454,14 +460,14 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
   }
 
-  public class BuiltInNetworkServerFactory implements IScionServerFactory {
+  public class BuiltInNetworkServerFactory implements GenericScionServerFactory {
     /** Default constructor. */
     public BuiltInNetworkServerFactory() {
       // NOP
     }
 
     /** Generate a new BuiltInServer instance */
-    public IScionServer createScionServer(IProject project, Writer outStream) {
+    public GenericScionServer createScionServer(IProject project, Writer outStream) {
       File directory = (project !=null) ? new File(project.getLocation().toOSString()) : null;
       return new NetworkScionServer(ScionPlugin.builtinServerExecutablePath(), outStream, directory);
     }
@@ -471,7 +477,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
   }
 
-  public class NetworkStreamScionServerFactory implements IScionServerFactory {
+  public class NetworkStreamScionServerFactory implements GenericScionServerFactory {
     /** The current path to the user's scion-server executable */
     private IPath userExecutable;
     
@@ -479,7 +485,7 @@ public class ScionPlugin extends AbstractUIPlugin {
       this.userExecutable = userExecutable;
     }
     
-    public IScionServer createScionServer(IProject project, Writer outStream) {
+    public GenericScionServer createScionServer(IProject project, Writer outStream) {
       File directory = (project !=null) ? new File(project.getLocation().toOSString()) : null;
       return new NetworkScionServer(userExecutable, outStream, directory);
     }
@@ -489,7 +495,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
   }
   
-  public class StdStreamScionServerFactory implements IScionServerFactory {
+  public class StdStreamScionServerFactory implements GenericScionServerFactory {
     /** The path to the user's executable */
     private IPath userExecutablePath;
     
@@ -502,7 +508,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
     
     /** Create a new user-specified scion server */
-    public IScionServer createScionServer(final IProject project, final Writer outStream) {
+    public GenericScionServer createScionServer(final IProject project, final Writer outStream) {
       File directory = (project !=null) ? new File(project.getLocation().toOSString()) : null;
       return new StdStreamScionServer(userExecutablePath, outStream, directory); 
     }
