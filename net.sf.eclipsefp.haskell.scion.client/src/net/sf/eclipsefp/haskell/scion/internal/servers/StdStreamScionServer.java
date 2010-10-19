@@ -105,9 +105,10 @@ public class StdStreamScionServer extends ScionServer {
       final String fromServer = projectName + "/" + FROM_SERVER_PREFIX;
       while (!terminateFlag && serverOutStream != null) {
         JSONObject response;
+        String responseString = new String();
         // long t0=System.currentTimeMillis();
         try {
-          String responseString = serverOutStream.readLine();
+          responseString = serverOutStream.readLine();
           if (responseString != null) {
             if (responseString.startsWith(PREFIX)) {
               response = new JSONObject(new JSONTokener(responseString.substring(PREFIX.length())));
@@ -130,6 +131,7 @@ public class StdStreamScionServer extends ScionServer {
         } catch (JSONException ex) {
           try {
             serverOutput.write(ScionText.scionJSONParseException_message + PlatformUtil.NL);
+            serverOutput.write(responseString + PlatformUtil.NL);
             ex.printStackTrace(new PrintWriter(serverOutput));
             serverOutput.flush();
 
