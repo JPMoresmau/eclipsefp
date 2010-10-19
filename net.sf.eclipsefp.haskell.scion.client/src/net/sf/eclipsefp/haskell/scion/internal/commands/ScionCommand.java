@@ -103,7 +103,7 @@ public abstract class ScionCommand {
     isSync = true;
   }
   
-  /** Run successor commands queued in the {@link successors} list. */
+  /** Run successor commands queued in the {@link #successors} list. */
   public boolean runSuccessors(ScionServer server) {
     boolean retval = true;
     for (ScionCommand sc : successors) {
