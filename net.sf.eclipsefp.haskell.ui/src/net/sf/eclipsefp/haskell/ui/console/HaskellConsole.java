@@ -3,7 +3,8 @@ package net.sf.eclipsefp.haskell.ui.console;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -28,9 +29,11 @@ public class HaskellConsole {
 
   public Writer createOutputWriter() {
     final IOConsoleOutputStream outputStream = fConsole.newOutputStream();
-    HaskellUIPlugin.getStandardDisplay().syncExec( new Runnable() {
+    final Display stdDisplay = HaskellUIPlugin.getStandardDisplay();
+    stdDisplay.syncExec( new Runnable() {
       public void run() {
-        outputStream.setColor(new Color(HaskellUIPlugin.getStandardDisplay(), 0, 0, 255));
+        // JP likes blue for the console's text color.
+        outputStream.setColor(stdDisplay.getSystemColor( SWT.COLOR_BLUE ));
       }
     });
     Writer outputWriter = new OutputStreamWriter(outputStream);

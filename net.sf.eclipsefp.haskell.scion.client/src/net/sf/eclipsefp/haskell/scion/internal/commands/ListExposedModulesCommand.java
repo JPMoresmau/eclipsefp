@@ -1,7 +1,5 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-
 /**
  * 
  * @author JP Moresmau
@@ -9,8 +7,8 @@ import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
  */
 public class ListExposedModulesCommand extends DefinedNamesCommand {
 
-	public ListExposedModulesCommand(IScionCommandRunner runner){
-		super(runner);
+	public ListExposedModulesCommand(){
+		super();
 	}
 	
 	@Override

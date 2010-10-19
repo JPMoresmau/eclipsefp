@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.NameHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.util.FileUtil;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -85,8 +85,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
     if( file != null
         && FileUtil.hasHaskellExtension( file )
         && ResourceUtil.isInHaskellProject( file ) ) {
-      final HaskellUIPlugin plugin = HaskellUIPlugin.getDefault();
-      final ScionInstance si = plugin.getScionInstanceManager( file );
+      final ScionInstance si = ScionPlugin.getScionInstance( file );
       // sync access
       if( si != null ) {
         si.definedNames( new NameHandler() {
@@ -105,8 +104,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
     if( file != null
         && FileUtil.hasHaskellExtension( file )
         && ResourceUtil.isInHaskellProject( file ) ) {
-      final HaskellUIPlugin plugin = HaskellUIPlugin.getDefault();
-      final ScionInstance si = plugin.getScionInstanceManager( file );
+      final ScionInstance si = ScionPlugin.getScionInstance( file );
       // sync access
       if( si != null ) {
         si.moduleGraph( new NameHandler() {

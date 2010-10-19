@@ -1,405 +1,224 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.exceptions.ScionCommandException;
-import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerException;
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
-import net.sf.eclipsefp.haskell.scion.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.scion.client.ICommandContinuation;
+import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
- * A command that can be sent to the Scion server.
- * After being run, it can be queried for the response.
+ * A command that can be sent to the Scion server. After being run, it can be
+ * queried for the response.
  * 
  * @author Thomas ten Cate
  */
-public abstract class ScionCommand extends Job {
-	
-	private static final String TO_SERVER_PREFIX = "[scion-server] <<", FROM_SERVER_PREFIX = "[scion-server] >>";
+public abstract class ScionCommand {
+  /** Request sequence number, set externally by an AbstractServer object. */
+  private int                              sequence;
+  /** Commands to be executed after this command */
+  private final List<ScionCommand>         successors;
+  /** Methods to be run after the command has finished executing. */
+  private final List<ICommandContinuation> continuations;
+  /**
+   * Used only for error reporting during response processing.
+   */
+  private JSONObject                       response;
+  /** Command status: WAITING or DONE. */
+  int                                      status;
+  /**
+   * Synchronous (true) vs. asynchronous (false) completion.
+   */
+  boolean                                  isSync;
+  /** WAITING state: command is waiting for a response. */
+  static final int                         WAITING = 0;
+  /** DONE state: command's response has been received */
+  static final int                         DONE    = 1;
+  /** ERROR state: An error was encountered in processRequest(). */
+  static final int                         ERROR   = 2;
 
-	private int sequenceNumber = 0;
-	
-	private List<ScionCommand> successors=new LinkedList<ScionCommand>();
-	
-	/**
-	 * The Scion instance used to run this command.
-	 * This also serves as the command's scheduling rule
-	 * (preventing multiple commands being run simultaneously).
-	 * It also serves as the representative of the command's family.
-	 */
-	private IScionCommandRunner runner;
-	
-	/**
-	 * Used only for error reporting during response processing.
-	 */
-	private JSONObject response;
+  /**
+   * Constructs a new scion-server command.
+   */
+  public ScionCommand() {
+    status = WAITING;
+    isSync = false;
+    successors = new LinkedList<ScionCommand>();
+    continuations = new LinkedList<ICommandContinuation>();
+  }
+  
+  /** Set the continuation that needs to be run when the job's status changes */
+  public void addContinuation( final ICommandContinuation continuation ) {
+    continuations.add(continuation);
+  }
+  
+  /** Set the sequence number of this command */
+  public void setSequenceNumber( int sequenceNumber ) {
+    this.sequence = sequenceNumber;
+  }
+  
+  /** Set the response JSON object */
+  public void setResponse( JSONObject response ) {
+    this.response = response;
+  }
+  
+  /** Set the command's status to DONE */
+  public void setCommandDone() {
+    setCommandStatus(DONE);
+  }
+  
+  /** Set the command's status to ERROR */
+  public void setCommandError() {
+    setCommandStatus(ERROR);
+  }
+  
+  /** Internal method to set the command's status and signal waiting objects that the
+   * status has changed.
+   */
+  private void setCommandStatus(final int newStatus) {
+    status = newStatus;
+    if (isSync) {
+      synchronized (this) {
+        notifyAll();
+      }
+    }
+  }
+  
+  /** Predicate to test if command is still waiting for a response. */
+  public boolean isWaiting() {
+    return (status == WAITING);
+  }
+  
+  /** Predicate to test if the command is in the DONE state. */
+  public boolean isDone() {
+    return (status == DONE);
+  }
 
-	/**
-	 * Constructs a new command.
-	 * 
-	 * @param runner the command manager that is to be used when running the command
-	 * @param priority the job priority; one of INTERACTIVE, SHORT, LONG, BUILD, or DECORATE
-	 */
-	public ScionCommand(IScionCommandRunner runner, int priority) {
-		super("Scion command");
-		// can't call getMethod when calling superclass constructor
-		// (even this hack is slightly evil, calling subclass methods)
-		setName("Scion command '" + getMethod() + "'" + (runner.getProject()!=null?", project "+runner.getProject().getName():""));
-		setPriority(priority);
-		setRule(runner);
-		this.runner = runner;
-		
-	}
-	
-	public IScionCommandRunner getRunner() {
-		return runner;
-	}
-	
-	/**
-	 * Schedules this command to be run, and blocks until it is completed.
-	 * 
-	 * @return the command's completion status
-	 */
-	public IStatus runSync() {
-		schedule();
-		while (getState() != NONE) { // alternatives: WAITING, RUNNING or SLEEPING
-			
-			try {
-				join();
-			} catch (InterruptedException e) {
-				// re-check state
-			}
-			Thread.yield();
-		}
-		return getResult();
-	}
-	
-	/**
-	 * Schedules this command to be run at some point in the future.
-	 */
-	public void runAsync() {
-		schedule();
-	}
-	
-	/**
-	 * Schedules this command to be run at some time after the given command completes.
-	 * Completion can mean either success, failure or cancellation.
-	 * 
-	 * If the given command is not scheduled (which probably indicates that it's done already)
-	 * then the current command is scheduled immediately.
-	 * 
-	 * @param command the command to wait for
-	 */
-	public void runAsyncAfter(ScionCommand command) {
-		if (command.getState() == Job.NONE) {
-			runAsync();
-		} else {
-			command.addJobChangeListener(new JobChangeAdapter() {
-				public void done(IJobChangeEvent event) {
-					runAsync();
-				}
-			});
-		}
-	}
-	
-	////////////////////////////////
-	// methods overridden from Job
-	
-	/**
-	 * Runs the command, blocking until completion or error.
-	 * 
-	 * This should not be called; use {@link #runSync()} or {@link #runAsync()}.
-	 */
-	@Override
-	public IStatus run(IProgressMonitor monitor) {
-		if (monitor.isCanceled()) {
-			return Status.CANCEL_STATUS;
-		}
-		// Jobs that finish asynchronously must specify the execution thread by calling setThread,
-		// and must indicate when they are finished by calling the method done.
-		try {
-			runner.runCommandSync(this,monitor);
-		} catch (Throwable ex) {
-			Trace.trace("Exception when running command", ex);
-			IStatus status = new Status(IStatus.ERROR, ScionPlugin.getPluginId(), IStatus.ERROR, ex.getMessage(), ex);
-			ScionPlugin.logStatus(status);
-			// we do not want to return the error status, since that will pop up an error dialog
-		}
-		if(monitor.isCanceled()){
-			return Status.CANCEL_STATUS;
-		}
-		return runSuccessors( monitor);
-	}
-	
-	private List<Runnable> afters=new LinkedList<Runnable>();
-	public void addAfter(final Runnable r){
-		afters.add(r);
-		addJobChangeListener(new JobChangeAdapter(){
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (event.getResult().isOK()) {
-					r.run();
-				}
-			}
-		});
-	}
-	
-	public IStatus runSuccessors(IProgressMonitor monitor){
-		
-		for (ScionCommand sc:getSuccessors()){
-			IStatus st=sc.run(monitor);
+  /** Set synchronous command flag */
+  public void setIsSync() {
+    isSync = true;
+  }
+  
+  /** Run successor commands queued in the {@link successors} list. */
+  public boolean runSuccessors(ScionServer server) {
+    boolean retval = true;
+    for (ScionCommand sc : successors) {
+      if (isSync) {
+        retval &= server.sendCommandSync(sc);
+      } else {
+        server.sendCommand(sc);
+      }
+    }
+    
+    return retval;
+  }
 
-			if (!st.equals(Status.OK_STATUS)){
-				return st;
-			}
-			for (final Runnable r:sc.afters){
-				addAfter(r);
-			}
-		}
-		return Status.OK_STATUS;
-	}
-	
-	
-	
-	@Override
-	public boolean belongsTo(Object family) {
-		return family == runner;
-	}
-	
-	//////////////////////////
-	// sending and receiving
-	
-	/**
-	 * Sends the command over the wire to the given output writer.
-	 * 
-	 * @throws ScionServerException if something happened to the connection
-	 */
-	public void sendCommand(Writer out,IProgressMonitor monitor) throws ScionServerException {
-		if(monitor.isCanceled()){
-			return;
-		}
-		String jsonString = toJSONString();
-		
-		Trace.trace(TO_SERVER_PREFIX, "%s", jsonString);
+  public boolean onError(JSONException ex, String name, String message) {
+    return false;
+  }
 
-		try {
-			out.write(jsonString);
-			out.write("\n");
-			out.flush();
-		} catch (IOException ex) {
-			throw new ScionServerException(UITexts.scionServerConnectionError_message, ex);
-		}
-	}
-	
-	/**
-	 * Waits for the command response over the wire from the given input reader.
-	 * 
-	 * @throws ScionServerException if the response could not be read from the server
-	 * @throws ScionCommandException if something went wrong when processing
-	 */
-	public void receiveResponse(final Reader reader,IProgressMonitor monitor) throws ScionCommandException, ScionServerException {
-		if(monitor.isCanceled()){
-			return;
-		}
-		
-		JSONObject response;
-		//long t0=System.currentTimeMillis();
-		try {
-			response = new JSONObject(new JSONTokener(reader));
-		} catch (JSONException ex) {
-			// we throw a server exception, because there's no telling what state the
-			// server is in after we've received a malformed response (or end-of-stream!)
-			throw new ScionServerException(UITexts.scionJSONParseException_message, ex);
-		}
-		//long t1=System.currentTimeMillis();
-		//System.err.println("receive+parse:"+(t1-t0));
-		Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
-		if (!processResponse(response)){
-			receiveResponse(reader,monitor);
-		}
-	}
+  // /////////////
+  // JSON stuff
 
-	///////////////
-	// JSON stuff
-	
-	public void setSequenceNumber(int sequenceNumber) {
-		this.sequenceNumber = sequenceNumber;
-	}
-	
-	/**
-	 * Serializes the command to its JSON equivalent, ready to be sent to the server.
-	 * 
-	 * @return a valid JSON string
-	 */
-	public String toJSONString() {
-		return toJSON().toString();
-	}
-	
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		try {
-			json.put("method", getMethod());
-			json.put("params", getParams());
-			json.put("id", sequenceNumber);
-		} catch (JSONException e) {
-			// should not happen
-		}
-		return json;
-	}
-	
-	/**
-	 * Returns a human-readable representation of this command.
-	 * 
-	 * Currently returns a pretty-printed version of the JSON serialization.
-	 */
-	public String toString() {
-		return prettyPrint(toJSON());
-	}
-	
-	/**
-	 * Returns the name of the "method" to be called on the server side, e.g. "connection-info".
-	 */
-	protected abstract String getMethod();
-	
-	/**
-	 * Creates the params JSON object to be sent along with the command.
-	 * The default implementation returns an empty map; most subclasses will want to override this.
-	 * Must not return null.
-	 */
-	protected JSONObject getParams() throws JSONException {
-		return new JSONObject();
-	}
-	
-	/**
-	 * Parses the given response string and stores the command result in this object.
-	 * 
-	 * @throws ScionCommandException if something went wrong
-	 */
-	public boolean processResponse(JSONObject response) throws ScionCommandException {
-		this.response = response;
-		try {
-			checkResponseVersion(response);
-			if (checkResponseId(response)){
-				processResponseResult(response);
-				return true;
-			} else {
-				return false;
-			}
-		} finally {
-			this.response = null;
-		}
-	}
+  /**
+   * Serializes the command to its JSON equivalent, ready to be sent to the
+   * server.
+   * 
+   * @return a valid JSON string
+   */
+  public String toJSONString() {
+    return toJSON().toString();
+  }
 
-	private void processResponseResult(JSONObject response) throws ScionCommandException {
-		try {
-			Object result = response.get("result");
-			try {
-				doProcessResult(result);
-			} catch (JSONException ex) {
-				throw new ScionCommandException(this, UITexts.commandProcessingFailed_message, ex);
-			} catch (ClassCastException cce){
-				throw new ScionCommandException(this, NLS.bind(UITexts.commandUnexpectedResult_message, result));
-			}
-		} catch (JSONException ex) {
-			try {
-				JSONObject error = response.getJSONObject("error");
-				String name = error.getString("name");
-				String message = error.getString("message");
-				if (!onError(ex,name,message)){
-					throw new ScionCommandException(this, NLS.bind(UITexts.commandError_message, name, message), ex);
-				}
-			} catch (JSONException ex2) {
-				throw new ScionCommandException(this, UITexts.commandErrorMissing_message, ex2);
-			}
-		}
+  public JSONObject toJSON() {
+    JSONObject json = new JSONObject();
+    try {
+      json.put("method", getMethod());
+      json.put("params", getParams());
+      json.put("id", sequence);
+    } catch (JSONException e) {
+      // should not happen
+    }
+    return json;
+  }
 
-	}
+  /**
+   * Returns a human-readable representation of this command.
+   * 
+   * Currently returns a pretty-printed version of the JSON serialization.
+   */
+  public String toString() {
+    return prettyPrint(toJSON());
+  }
 
-	protected boolean onError(JSONException ex,String name,String message) {
-		return false;
-	}
-	
-	private boolean checkResponseId(JSONObject response) {
-		try {
-			int id = response.getInt("id");
-			if (id != sequenceNumber) {
-				ScionPlugin.logWarning(this, NLS.bind(UITexts.commandIdMismatch_warning, Integer.toString(id), Integer.toString(sequenceNumber)), null);
-			}
-			// last call was cancelled?
-			if (id==sequenceNumber-1){
-				return false;
-			}
-			
-		} catch (JSONException ex) {
-			ScionPlugin.logWarning(this, UITexts.errorReadingId_warning, ex);
-		}
-		return true;
-	}
+  /**
+   * Returns the name of the "method" to be called on the server side, e.g.
+   * "connection-info".
+   */
+  protected abstract String getMethod();
 
-	private void checkResponseVersion(JSONObject response) {
-		try {
-			String version = response.getString("version");
-			String expectedVersion = "0.1";
-			if (!version.equals(expectedVersion)) {
-				ScionPlugin.logWarning(this, NLS.bind(UITexts.commandVersionMismatch_warning, version, expectedVersion), null);
-			}
-		} catch (JSONException ex) {
-			ScionPlugin.logWarning(this, UITexts.errorReadingVersion_warning, ex);
-		}
-	}
-	
-	protected abstract void doProcessResult(Object result) throws JSONException;
-	
-	/**
-	 * Returns information about this command for use in error messages.
-	 * Guaranteed never to throw exceptions, so safe for use in exception handling.
-	 * 
-	 * @return information about this command; never <code>null</code>
-	 */
-	public String getErrorInfo() {
-		String info = null;
-		try {
-			info = NLS.bind(UITexts.scionFailedCommand_message, toString());
-			if (this.response != null) {
-				info += "\n" + NLS.bind(UITexts.scionFailedResponse_message, prettyPrint(response));
-			}
-		} catch (Throwable ex) {
-			// ignore
-		}
-		if (info == null) {
-			return "";
-		}
-		return info;
-	}
-	
-	protected static String prettyPrint(JSONObject json) {
-		try {
-			return json.toString(2);
-		} catch (JSONException e) {
-			// strangely, the not pretty-printed version does not throw at all
-			return json.toString();
-		}
-	}
-	
-	public List<ScionCommand> getSuccessors() {
-		return successors;
-	}
-	
+  /**
+   * Creates the params JSON object to be sent along with the command. The
+   * default implementation returns an empty map; most subclasses will want to
+   * override this.
+   * 
+   *  @return a non-null JSONObject().
+   */
+  protected JSONObject getParams() throws JSONException {
+    return new JSONObject();
+  }
+
+  public final void processResult(Object result) throws JSONException {
+    doProcessResult(result);
+    for (ICommandContinuation continuation : continuations) {
+      continuation.commandContinuation();
+    }
+  }
+  
+  protected void doProcessResult(Object result) throws JSONException {
+    // Base class does nothing.
+  }
+
+  /**
+   * Returns information about this command for use in error messages.
+   * Guaranteed never to throw exceptions, so safe for use in exception
+   * handling.
+   * 
+   * @return information about this command; never <code>null</code>
+   */
+  public String getErrorInfo() {
+    String info = new String();
+    try {
+      info = NLS.bind(ScionText.scionFailedCommand_message, toString());
+      if (this.response != null) {
+        info += "\n" + NLS.bind(ScionText.scionFailedResponse_message, prettyPrint(response));
+      }
+    } catch (Throwable ex) {
+      info = new String();
+    }
+    return info;
+  }
+
+  /** Pretty print a JSON object */
+  protected static String prettyPrint(JSONObject json) {
+    try {
+      return json.toString(2);
+    } catch (JSONException e) {
+      // strangely, the not pretty-printed version does not throw at all
+      return json.toString();
+    }
+  }
+
+  /** Add a successor to this command that is executed once this command completes
+   * successfully.
+   * 
+   * @param successor The successor command.
+   */
+  public void addSuccessor(ScionCommand successor) {
+    successors.add(successor);
+  }
 }

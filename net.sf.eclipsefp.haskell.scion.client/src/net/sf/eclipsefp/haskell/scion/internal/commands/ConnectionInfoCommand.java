@@ -1,8 +1,5 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,8 +8,8 @@ public class ConnectionInfoCommand extends ScionCommand {
 	private int pid;
 	private int version;
 
-	public ConnectionInfoCommand(IScionCommandRunner runner) {
-		super(runner, Job.SHORT);
+	public ConnectionInfoCommand() {
+		super();
 	}
 
 	@Override

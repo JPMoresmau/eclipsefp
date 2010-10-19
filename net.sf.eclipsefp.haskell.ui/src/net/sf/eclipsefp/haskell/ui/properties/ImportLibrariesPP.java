@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -56,7 +57,7 @@ public class ImportLibrariesPP extends PropertyPage
     container.setLayout( layout );
 
 
-    ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager(  ( IProject )getElement() );
+    ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
     List<CabalPackage> list=new ArrayList<CabalPackage>();
     if (si!=null && si.getPackagesByDB()!=null){
 
@@ -104,7 +105,7 @@ public class ImportLibrariesPP extends PropertyPage
 //    list.save();
 
 
-    ScionInstance si=HaskellUIPlugin.getDefault().getScionInstanceManager(  ( IProject )getElement() );
+    ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
     if (si!=null && si.getPackagesByDB()!=null){
       try {
         IFile f=ScionInstance.getCabalFile(  ( IProject )getElement() );

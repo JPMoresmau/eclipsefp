@@ -3,13 +3,11 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,8 +23,8 @@ public class TokenTypesCommand extends ScionCommand {
 	private List<TokenDef> tokens;
 	private boolean literate;
 	
-	public TokenTypesCommand(IScionCommandRunner runner,IFile file, String contents,boolean literate) {
-		super(runner, Job.INTERACTIVE);
+	public TokenTypesCommand(IFile file, String contents, boolean literate) {
+		super();
 		this.file=file;
 		this.contents=contents;
 		this.literate=literate;

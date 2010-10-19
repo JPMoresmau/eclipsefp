@@ -1,8 +1,5 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
-
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,8 +7,8 @@ public class SetVerbosityCommand extends ScionCommand {
 
 	private int verbosity;
 	
-	public SetVerbosityCommand(IScionCommandRunner runner, int verbosity) {
-		super(runner, Job.SHORT);
+	public SetVerbosityCommand(int verbosity) {
+		super();
 		this.verbosity = verbosity;
 	}
 	

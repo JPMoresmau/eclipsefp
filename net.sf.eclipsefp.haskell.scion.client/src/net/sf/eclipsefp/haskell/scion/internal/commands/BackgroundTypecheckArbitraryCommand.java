@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -13,19 +12,12 @@ import org.json.JSONObject;
  * @author JP Moresmau
  *
  */
-public class BackgroundTypecheckArbitraryCommand extends
-		BackgroundTypecheckFileCommand {
+public class BackgroundTypecheckArbitraryCommand extends BackgroundTypecheckFileCommand {
 	private IDocument doc;
 	
-	public BackgroundTypecheckArbitraryCommand(ScionInstance runner,
-			IFile file,IDocument doc) {
-		super(runner, file);
+	public BackgroundTypecheckArbitraryCommand(ScionInstance instance, IFile file, IDocument doc) {
+		super(instance, file);
 		this.doc=doc;
-	}
-
-	@Override
-	protected String getMethod() {
-		return "background-typecheck-arbitrary";
 	}
 
 	@Override

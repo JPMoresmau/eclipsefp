@@ -3,11 +3,9 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -20,8 +18,8 @@ public class OutlineCommand extends ScionCommand {
 	private List<OutlineDef> outlineDefs=new ArrayList<OutlineDef>();
 	private IFile file;
 	
-	public OutlineCommand(IFile file,IScionCommandRunner runner) {
-		super(runner, Job.INTERACTIVE);
+	public OutlineCommand(IFile file) {
+		super();
 		this.file=file;
 	}
 

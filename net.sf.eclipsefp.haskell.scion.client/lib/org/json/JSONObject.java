@@ -515,8 +515,7 @@ public class JSONObject {
     public Object get(String key) throws JSONException {
         Object o = opt(key);
         if (o == null) {
-            throw new JSONException("JSONObject[" + quote(key) +
-                    "] not found.");
+            throw new JSONException("JSONObject[" + quote(key) + "] not found.");
         }
         return o;
     }

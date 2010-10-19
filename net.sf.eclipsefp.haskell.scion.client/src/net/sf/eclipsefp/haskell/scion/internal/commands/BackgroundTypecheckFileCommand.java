@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.internal.client.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
 import net.sf.eclipsefp.haskell.scion.types.Location;
@@ -10,7 +9,6 @@ import net.sf.eclipsefp.haskell.scion.types.Note.Kind;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,17 +23,11 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	protected boolean canceled=false;
 	
 	public BackgroundTypecheckFileCommand(ScionInstance runner, IFile file) {
-		super(runner, Job.BUILD);
+		super();
 		this.file = file;
 		this.instance=runner;
 	}
 
-	@Override
-	protected void canceling() {
-		canceled=true;
-		super.canceling();
-	}
-	
 	@Override
 	protected String getMethod() {
 		return "background-typecheck-file";
@@ -80,7 +72,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 	}
 	
 	@Override
-	protected boolean onError(JSONException ex, String name, String message) {
+	public boolean onError(JSONException ex, String name, String message) {
 		if (canceled){
 			return true;
 		}

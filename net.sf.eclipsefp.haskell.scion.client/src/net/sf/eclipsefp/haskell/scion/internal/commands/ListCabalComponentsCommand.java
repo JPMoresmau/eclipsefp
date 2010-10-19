@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 
 import org.json.JSONArray;
@@ -14,8 +13,8 @@ public class ListCabalComponentsCommand extends ScionCommand {
 	private String fileName;
 	private List<Component> components=new LinkedList<Component>();
 	
-	public ListCabalComponentsCommand(IScionCommandRunner runner, int priority,String fileName) {
-		super(runner, priority);
+	public ListCabalComponentsCommand(String fileName) {
+		super();
 		this.fileName=fileName;
 	}
 

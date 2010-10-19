@@ -3,10 +3,8 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.scion.internal.client.IScionCommandRunner;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +20,8 @@ public class NameDefinitionsCommand extends ScionCommand {
 	
 	private List<Location> locations;
 
-	public NameDefinitionsCommand(IScionCommandRunner runner, String name) {
-		super(runner, Job.INTERACTIVE);
+	public NameDefinitionsCommand(String name) {
+		super();
 		this.name = name;
 	}
 	
