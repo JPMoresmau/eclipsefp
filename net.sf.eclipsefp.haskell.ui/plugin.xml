@@ -272,7 +272,7 @@
       <context
             name="%haskellEditorContext_name"
             description="%haskellEditorContext_desc"
-            id="net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
             parentId="org.eclipse.ui.contexts.window"/>
    </extension>
    <extension
