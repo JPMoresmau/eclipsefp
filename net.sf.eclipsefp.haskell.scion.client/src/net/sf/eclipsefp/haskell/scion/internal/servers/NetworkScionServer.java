@@ -6,6 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+<<<<<<< HEAD
+=======
+import java.io.PrintWriter;
+>>>>>>> 6df034b69955bae2cafbb287d1016ad796a2584b
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ServerSocket;
@@ -22,27 +26,33 @@ import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.runtime.IPath;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * Representation of the Scion server on the Java side.
  * 
  * @author Thomas ten Cate
  */
-public class NetworkScionServer extends GenericScionServer {
+public class NetworkScionServer extends ScionServer {
   /** Number of times to try to connect or relaunch an operation on timeout */
   private static final int           MAX_RETRIES        = 5;
   /** Accept thread initial timeout, 1/2 second in milliseconds */
   private static final int           ACCEPT_INITIAL_TMO = 1000 / 2;
-
-  private static final AtomicInteger threadNb           = new AtomicInteger(1);
+  /** */
   private static final AtomicInteger acceptNb           = new AtomicInteger(1);
-
+  /** The socket to the scion-server */
   private Socket                     socket;
-
+  /** I/O reader thread for process' stdout/stderr logging */
   private Thread                     serverOutputThread;
+  /** The process' stdout reader stream */
+  private BufferedReader             serverStdout;
+  /** The input receiver Job */
+  private InputReceiver              inputReceiver;
 
-  public NetworkScionServer(IPath serverExecutable, Writer serverOutput, File directory) {
-    super(serverExecutable, serverOutput, directory);
+  public NetworkScionServer(String projectName, IPath serverExecutable, Writer serverOutput, File directory) {
+    super(projectName, serverExecutable, serverOutput, directory);
   }
 
   /**
@@ -51,10 +61,11 @@ public class NetworkScionServer extends GenericScionServer {
   @Override
   protected synchronized void doStartServer(String projectName) throws ScionServerStartupException {
     startServerProcess();
-    serverOutputThread = new Thread(CLASS_PREFIX + (threadNb.getAndIncrement())) {
+    serverStdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    serverOutputThread = new Thread(getClass().getSimpleName() + "/" + projectName) {
       public void run() {
         while (serverOutStream != null) {
-          slurpServerOutput();
+          logServerStdout();
           try {
             Thread.sleep(100);
           } catch (InterruptedException ie) {
@@ -182,42 +193,9 @@ public class NetworkScionServer extends GenericScionServer {
     }
   }
 
-  /**
-   * Reads from the server's stdout until EOF is reached. Useful to collect
-   * information after the server process has unexpectedly died.
-   * 
-   * Handles all exceptions internally.
-   * 
-   * @return all data readily available on the server's stdout. Returns
-   *         <code>null</code> if there is no stdout to read from.
-   */
-  private String lastWords() {
-    // Collect a post-mortem by reading all that's left in the server's output
-    // stream
-    if (serverOutStream == null)
-      return null;
-    StringBuffer lastWords = new StringBuffer();
-    try {
-      while (serverHasOutput()) {
-        char[] buf = new char[1024];
-        int nread = serverOutStream.read(buf);
-        
-        if (nread > 0) {
-          String line = new String(buf, 0, nread);
-          if (lastWords.length() > 0) {
-            lastWords.append(PlatformUtil.NL);
-          }
-          lastWords.append(line);
-        }
-      }
-    } catch (IOException ex) {
-      // ignore
-    }
-    return lastWords.toString().trim();
-  }
-
-  // //////////////////////////////
-  // Server stdout communication
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  // Server stdout/stderr communication
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
 
   /**
    * Reads from the server's stdout (and stderr) and sends its output to the
@@ -226,20 +204,24 @@ public class NetworkScionServer extends GenericScionServer {
    * 
    * Errors while reading are silently ignored.
    */
-  private void slurpServerOutput() {
+  private void logServerStdout() {
+    int nread;
     try {
-      while (serverHasOutput()) {
+      while (serverStdout != null && serverStdout.ready()) {
         char[] buf = new char[1024];
-        serverOutStream.read(buf);
+        nread = serverStdout.read(buf);
+        if (nread > 0) {
+          serverOutput.write(buf, 0, nread);
+        }
       }
     } catch (IOException ex) {
       // too bad, ignore
     }
   }
 
-  private boolean serverHasOutput() throws IOException {
-    return (serverOutStream != null && serverOutStream.ready());
-  }
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  // Internal classes
+  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
 
   private class AcceptThread extends Thread {
     private NetworkScionServer instance;
@@ -272,6 +254,57 @@ public class NetworkScionServer extends GenericScionServer {
 
     public void setTerminate() {
       terminateFlag = true;
+    }
+  }
+
+  /** The input receiver thread.
+   *
+   * This thread reads the scion-server's standard input and error, looking for input lines that start with
+   * {@link StdStreamScionServer#PREFIX}. Matching lines are sent to {@link ScionServer#processResponse(JSONObject)}.
+   *  All input is echoed to the {@link ScionServer#serverOutput} output stream.
+   */
+  public class InputReceiver extends Thread {
+    private boolean terminateFlag;
+    
+    public InputReceiver(String name) {
+      super(name);
+      terminateFlag = false;
+    }
+    
+    public void setTerminate() {
+      terminateFlag = true;
+    }
+
+    @Override
+    public void run() {
+      while (!terminateFlag && serverOutStream != null) {
+        JSONObject response;
+        // long t0=System.currentTimeMillis();
+        try {
+          response = new JSONObject(new JSONTokener(serverOutStream));
+
+          Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
+          serverOutput.write(FROM_SERVER_PREFIX.concat(response.toString()).concat(PlatformUtil.NL));
+          serverOutput.flush();
+          
+          processResponse(response);
+        } catch (JSONException ex) {
+          try {
+            serverOutput.write(ScionText.scionJSONParseException_message + PlatformUtil.NL);
+            ex.printStackTrace(new PrintWriter(serverOutput));
+            serverOutput.flush();
+
+            stopServer();
+          } catch (IOException ex2) {
+            stopServer();
+          }
+        } catch (IOException ex) {
+          // Must have caught EOF, shut down server
+          stopServer();
+        }
+        // long t1=System.currentTimeMillis();
+        // System.err.println("receive+parse:"+(t1-t0));
+      }
     }
   }
 }

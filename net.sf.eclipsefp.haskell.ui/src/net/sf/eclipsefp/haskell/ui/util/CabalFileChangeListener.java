@@ -31,7 +31,7 @@ public interface CabalFileChangeListener {
       } );
 
     } catch( CoreException ex ) {
-      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
+      HaskellUIPlugin.log( ScionText.scion_delta_error, ex );
     }
   }*/
 

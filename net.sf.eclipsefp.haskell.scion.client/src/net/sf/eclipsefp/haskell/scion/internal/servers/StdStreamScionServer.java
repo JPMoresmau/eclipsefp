@@ -6,30 +6,36 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
- * Implementation of {@link GenericScionServer GenericScionServer} using
- * standard in/out to communicate with Scion
+ * Implementation of {@link ScionServer} using standard in/out to communicate with Scion
  * 
  * @author JP Moresmau
  */
-public class StdStreamScionServer extends GenericScionServer {
-  private StdErrorReader stdErrorLogger;
+public class StdStreamScionServer extends ScionServer {
+  /** The input receiver Job */
+  private InputReceiver         inputReceiver;
+  /** scion-server response prefix */
+  private static final String PREFIX = "scion:";
 
-  public StdStreamScionServer(IPath serverExecutable, Writer serverOutput, File directory) {
-    super(serverExecutable, serverOutput, directory);
+  public StdStreamScionServer(String projectName, IPath serverExecutable, Writer serverOutput, File directory) {
+    super(projectName, serverExecutable, serverOutput, directory);
   }
 
   protected synchronized void doStartServer(String projectName) throws ScionServerStartupException {
@@ -42,34 +48,21 @@ public class StdStreamScionServer extends GenericScionServer {
     if (directory != null && directory.exists()) {
       builder.directory(directory);
     }
-    builder.redirectErrorStream(false);
+    builder.redirectErrorStream(true);
     try {
       process = builder.start();
     } catch (Throwable ex) {
       throw new ScionServerStartupException(ScionText.scionServerCouldNotStart_message, ex);
     }
-
-    // Start up the standard error reader, stall until the first character is read
-    // (we know that the server is active at that point)
-    stdErrorLogger = new StdErrorReader(projectName);
-    stdErrorLogger.setDaemon(true);
-    stdErrorLogger.start();
-    
-    synchronized (stdErrorLogger) {
-      while (stdErrorLogger.isWaiting()) {
-        try {
-          stdErrorLogger.wait();
-        } catch (InterruptedException ex) {
-          // Keep going
-        }
-      }
-    }
-
     // Connect to the process's stdout to capture messages
     // Assume that status messages and such will be UTF8 only
     try {
       serverOutStream = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF8"));
       serverInStream = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF8"));
+
+      String receiverName = getClass().getSimpleName() + "/" + projectName;
+      inputReceiver = new InputReceiver(receiverName);
+      inputReceiver.start();
     } catch (UnsupportedEncodingException ex) {
       // make compiler happy, because UTF8 is always supported
     }
@@ -77,120 +70,81 @@ public class StdStreamScionServer extends GenericScionServer {
   
   @Override
   public void doStopServer() {
-    if (stdErrorLogger != null) {
-      synchronized (stdErrorLogger) {
-        stdErrorLogger.setTerminate();
-        stdErrorLogger.interrupt();
-        try {
-          stdErrorLogger.join();
-        } catch (InterruptedException e) {
-          // Don't care.
-        }
-        
-        stdErrorLogger = null;
+    if (inputReceiver != null) {
+      // Stop the input receiver.
+      try {
+        inputReceiver.setTerminate();
+        inputReceiver.interrupt();
+        inputReceiver.join();
+      } catch (InterruptedException e) {
+        // Nothing to do.
       }
     }
   }
-  
-  class StdErrorReader extends Thread {
-    /** The reader's current state of wellbeing. */
-    private int liveness;
-    /** Termination flag */
-    private boolean terminate = false;
-    /** The reader is waiting for the first character */
-    final static int WAITING = 0;
-    /** It's alive! It's ALIVE */
-    final static int ALIVE = 1;
-    final static int ERROR = 2;
+
+  /** The input receiver thread.
+   *
+   * This thread reads the scion-server's standard input and error, looking for input lines that start with
+   * {@link StdStreamScionServer#PREFIX}. Matching lines are sent to {@link ScionServer#processResponse(JSONObject)}.
+   *  All input is echoed to the {@link ScionServer#serverOutput} output stream.
+   */
+  public class InputReceiver extends Thread {
+    private boolean terminateFlag;
     
-    public StdErrorReader(String threadName) {
-      super("StdErrorReader [" + threadName + "]");
-      liveness = WAITING;
-    }
-    
-    public boolean isWaiting() {
-      return (liveness == WAITING);
+    public InputReceiver(String name) {
+      super(name);
+      terminateFlag = false;
     }
     
     public void setTerminate() {
-      terminate = true;
+      terminateFlag = true;
     }
-    
+
     @Override
     public void run() {
-      BufferedReader errStream = new BufferedReader( new InputStreamReader(process.getErrorStream()));
-      int nread;
+      final String fromServer = projectName + "/" + FROM_SERVER_PREFIX;
+      while (!terminateFlag && serverOutStream != null) {
+        JSONObject response;
+        // long t0=System.currentTimeMillis();
+        try {
+          String responseString = serverOutStream.readLine();
+          if (responseString != null) {
+            if (responseString.startsWith(PREFIX)) {
+              response = new JSONObject(new JSONTokener(responseString.substring(PREFIX.length())));
 
-      do {
-        try {
-          nread = errStream.read();
-        } catch (IOException ex) {
-          nread = -1;
-          try {
-            errStream.close();
-          } catch (IOException ex2) {
-            // Ignore it, can't do anything about it.
-          }
-          errStream = null;
-          break;
-        }
-      } while (nread <= 0);
-      
-      if (nread > 0) {
-        // Up and active!
-        synchronized (StdErrorReader.this) {
-          liveness = ALIVE;
-          StdErrorReader.this.notifyAll();
-        }
-        
-        try {
-          synchronized (serverOutput) {
-            serverOutput.write(nread);
-          }
-          
-          while (!terminate && errStream != null) {
-            try {
-              if (errStream.ready()) {
-                String line = errStream.readLine();
-                if (line != null) {
-                  synchronized (serverOutput) {
-                    serverOutput.write(line + PlatformUtil.NL);
-                    serverOutput.flush();
-                  }
-                } else {
-                  // Looks like we hit EOF...
-                  errStream.close();
-                  errStream = null;
-                }
-              }
-            } catch (IOException ex) {
-              try {
-                errStream.close();
-              } catch (IOException ex2) {
-                // Not much we can do about this at this point.
-              }
-              errStream = null;
+              Trace.trace(fromServer, "%s", response.toString());
+              serverOutput.write(FROM_SERVER_PREFIX.concat(response.toString()).concat(PlatformUtil.NL));
+              serverOutput.flush();
+              
+              processResponse(response);
+            } else {
+              serverOutput.write(responseString + PlatformUtil.NL);
+              serverOutput.flush();
             }
+          } else {
+            serverOutput.write(ScionText.scionServerGotEOF_message + PlatformUtil.NL);
+            serverOutput.flush();
+            Trace.trace(fromServer, ScionText.scionServerGotEOF_message);
+            stopServer();
           }
-        } catch (IOException e) {
+        } catch (JSONException ex) {
           try {
-            errStream.close();
-          } catch (IOException e2) {
-            liveness = ERROR;
+            serverOutput.write(ScionText.scionJSONParseException_message + PlatformUtil.NL);
+            ex.printStackTrace(new PrintWriter(serverOutput));
+            serverOutput.flush();
+
+            ScionPlugin.logError(ScionText.scionJSONParseException_message, ex);
+            
+            stopServer();
+          } catch (IOException ex2) {
+            ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex2);
+            stopServer();
           }
+        } catch (IOException ex) {
+          ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex);
         }
-      } else {
-        // Didn't get past the first character...
-        try {
-          errStream.close();
-        } catch (IOException e) {
-          // Ignore.
-        }
-        synchronized (StdErrorReader.this) {
-          liveness = ERROR;
-          errStream = null;
-          StdErrorReader.this.notifyAll();
-        }
+        // long t1=System.currentTimeMillis();
+        // System.err.println("receive+parse:"+(t1-t0));
       }
     }
   }

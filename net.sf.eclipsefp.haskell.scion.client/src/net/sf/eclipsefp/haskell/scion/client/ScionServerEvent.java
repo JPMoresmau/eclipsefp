@@ -2,7 +2,7 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import java.util.EventObject;
 
-import net.sf.eclipsefp.haskell.scion.internal.servers.GenericScionServer;
+import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 
 public class ScionServerEvent extends EventObject {
   /** Required serial version UID. */
@@ -15,7 +15,7 @@ public class ScionServerEvent extends EventObject {
    * @param source The scion-server that caused this event
    * @param evType The event type of the status change
    */
-  public ScionServerEvent(GenericScionServer source, ScionServerEventType evType) {
+  public ScionServerEvent(ScionServer source, ScionServerEventType evType) {
     super(source);
     this.evType = evType;
   }

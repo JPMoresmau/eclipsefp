@@ -61,21 +61,21 @@ public class OptimizationTab extends GhcCompilerTab  {
 
   /*  private Group createGeneralGroup( final Composite composite ) {
     Group result = new Group( composite, SWT.SHADOW_ETCHED_IN );
-    result.setText( UITexts.optimizationTab_general );
+    result.setText( ScionText.optimizationTab_general );
     result.setLayout( new GridLayout( 1, false ) );
     return result;
   }
 
  private Group createIndividualGroup( final Composite composite ) {
     Group result = new Group( composite, SWT.SHADOW_ETCHED_IN );
-    result.setText( UITexts.optimizationTab_individual );
+    result.setText( ScionText.optimizationTab_individual );
     result.setLayout( new GridLayout( 1, false ) );
     return result;
   }
 
   private void createIndividualContents( final Group grpIndividual ) {
     Label label = new Label( grpIndividual, SWT.WRAP );
-    label.setText( UITexts.optimizationTab_individualInfo );
+    label.setText( ScionText.optimizationTab_individualInfo );
 
     createBooleanField( grpIndividual, OPT_EXCESS_PRECISION );
     createBooleanField( grpIndividual, OPT_IGNORE_ASSERTS );

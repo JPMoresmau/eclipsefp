@@ -42,7 +42,7 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
 
     createExtraOptionsField( composite );
 
-    /*String text = UITexts.ghciTab_options;
+    /*String text = ScionText.ghciTab_options;
     BooleanDialogField fdGHCOptions = new BooleanDialogField( composite, text );
     fdGHCOptions.addDialogFieldListener( new IDialogFieldListener() {
       public void infoChanged( final Object newInfo ) {
@@ -52,7 +52,7 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
     } );
     fdGHCOptions.setInfo( getFromStore( GHCI_USES_GHC_OPTIONS ) );
 
-    String txt2 = UITexts.ghciTab_srcFolders;
+    String txt2 = ScionText.ghciTab_srcFolders;
     BooleanDialogField fdSrcFolders = new BooleanDialogField( composite, txt2 );
     fdSrcFolders.addDialogFieldListener( new IDialogFieldListener() {
       public void infoChanged( final Object newInfo ) {
@@ -63,7 +63,7 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
     fdSrcFolders.setInfo( getFromStore( GHCI_SOURCE_FOLDERS ) );
 
     Label lblNote = new Label( composite, SWT.WRAP );
-    lblNote.setText( UITexts.ghciTab_note );
+    lblNote.setText( ScionText.ghciTab_note );
     */
     return composite;
   }
