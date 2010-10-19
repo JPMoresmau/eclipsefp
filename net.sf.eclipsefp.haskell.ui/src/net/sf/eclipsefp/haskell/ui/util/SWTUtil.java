@@ -79,7 +79,8 @@ public class SWTUtil {
     label.setFont( parent.getFont() );
     label.setText( text );
 
-    GridData gridData = new GridData( SWT.LEFT, SWT.TOP, false, false );
+    GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING );
+      //new GridData( SWT.LEFT, SWT.TOP, false, false );
     gridData.horizontalSpan = hspan;
     gridData.widthHint = wrapwidth;
     label.setLayoutData( gridData );
