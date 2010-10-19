@@ -44,22 +44,22 @@ public class GhcPreferencePage extends PreferencePage
     /*TabFolder folder = new TabFolder( parent, SWT.NONE );
 
     Tab generalTab = new GeneralTab( overlayStore );
-    String sGeneral = UITexts.ghcPreferencePage_general;
+    String sGeneral = ScionText.ghcPreferencePage_general;
     createTab( folder, sGeneral, generalTab.createControl( folder ) );
 
     Tab languageTab = new LanguageTab( overlayStore );
     Control languageControl = languageTab.createControl( folder );
-    String sLang = UITexts.ghcPreferencePage_language;
+    String sLang = ScionText.ghcPreferencePage_language;
     createTab( folder, sLang, languageControl );
 
     Tab optimizationTab = new OptimizationTab( overlayStore );
     Control optimizationControl = optimizationTab.createControl( folder );
-    String sOpt = UITexts.ghcPreferencePage_optimization;
+    String sOpt = ScionText.ghcPreferencePage_optimization;
     createTab( folder, sOpt, optimizationControl );
 
     Tab moreOptimizationTab = new MoreOptimizationTab( overlayStore );
     Control moreOptControl = moreOptimizationTab.createControl( folder );
-    String sMoreOpt = UITexts.ghcPreferencePage_moreOptimization;
+    String sMoreOpt = ScionText.ghcPreferencePage_moreOptimization;
     createTab( folder, sMoreOpt, moreOptControl );
 
     Dialog.applyDialogFont( folder );

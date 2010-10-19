@@ -357,9 +357,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     if (instance!=null) {
         file = findFile();
-        instance.reloadFile( file,new ICommandContinuation() {
+        instance.reloadFile( file, new ICommandContinuation() {
           public void commandContinuation() {
-           synchronize();
+           HaskellEditor.this.synchronize();
           }
         }, false);
     }

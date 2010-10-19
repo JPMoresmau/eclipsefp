@@ -21,11 +21,6 @@ public class BackgroundTypecheckArbitraryCommand extends BackgroundTypecheckFile
 	}
 
 	@Override
-	protected String getMethod() {
-		return "background-typecheck-arbitrary";
-	}
-
-	@Override
 	protected JSONObject getParams() throws JSONException {
 		JSONObject params = super.getParams();
 		params.put("contents", doc.get());
