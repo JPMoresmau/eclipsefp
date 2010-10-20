@@ -82,7 +82,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public static final String ID = HaskellEditor.class.getName();
 
   /** The key binding context active while the Haskell editor is active */
-  private static final String CONTEXT_ID = HaskellEditor.class.getSimpleName() + "Context";  //$NON-NLS-1$
+  private static final String CONTEXT_ID = HaskellEditor.class.getName() + ".context";  //$NON-NLS-1$
+  private static final String SIMPLE_CONTEXT_ID = HaskellEditor.class.getSimpleName() + "Context";
 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
@@ -119,7 +120,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     super.initializeEditor();
     ScionInstance.addListener( this );
     setSourceViewerConfiguration( new HaskellConfiguration( this ) );
-    setEditorContextMenuId( "#" + CONTEXT_ID );  //$NON-NLS-1$
+    setEditorContextMenuId( "#" + SIMPLE_CONTEXT_ID );  //$NON-NLS-1$
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
