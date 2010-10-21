@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTException;
@@ -45,10 +46,13 @@ public abstract class ScionServer {
    */
   protected IPath                            serverExecutable;
   /**
-   * Project name, used to disambiguate server from each other in the tracing
-   * output.
+   * The project with which this server is associated.
    */
-  protected final String                     projectName;
+  protected final IProject                   project;
+  /**
+   * The server's name, used for logging
+   */
+  protected final String                     serverName;
   /** Server logging output stream, generally tends to be a Eclipse console */
   protected Writer                           serverOutput;
   /** Working directory where the server operates, can be null if no project. */
@@ -68,7 +72,7 @@ public abstract class ScionServer {
   /**
    * The constructor
    * 
-   * @param projectName
+   * @param project
    *          TODO
    * @param serverExecutable
    *          The scion-server executable
@@ -77,8 +81,9 @@ public abstract class ScionServer {
    * @param directory
    *          The scion-server's working directory
    */
-  public ScionServer(String projectName, IPath serverExecutable, Writer serverOutput, File directory) {
-    this.projectName = projectName;
+  public ScionServer(IProject project, IPath serverExecutable, Writer serverOutput, File directory) {
+    this.project = project;
+    this.serverName = getClass().getSimpleName() + "/" + (project != null ? project.getName() : ScionText.noproject);
     this.serverExecutable = serverExecutable;
     this.serverOutput = serverOutput;
     this.directory = directory;
@@ -97,7 +102,8 @@ public abstract class ScionServer {
    *          TODO
    */
   protected ScionServer() {
-    this.projectName = ScionText.noproject;
+    this.project = null;
+    this.serverName = ScionText.noproject;
     this.serverExecutable = null;
     this.serverOutput = null;
     this.directory = null;
@@ -124,18 +130,19 @@ public abstract class ScionServer {
    *       server launch.
    */
   public final void startServer() throws ScionServerStartupException {
+    final String projectName = (project != null ? project.getName() : ScionText.noproject);
     Trace.trace(CLASS_PREFIX, "Starting server " + getClass().getSimpleName() + ":" + projectName);
-    doStartServer(projectName);
+    doStartServer(project);
     Trace.trace(CLASS_PREFIX, "Server started for " + getClass().getSimpleName() + ":" + projectName);
   }
 
   /**
    * Subclass' hook for starting up their respective server processes.
    * 
-   * @param projectName
+   * @param project
    *          The project name
    */
-  protected void doStartServer(String projectName) throws ScionServerStartupException {
+  protected void doStartServer(IProject project) throws ScionServerStartupException {
     // Does nothing...
     serverOutStream = null;
     serverInStream = null;
@@ -173,6 +180,8 @@ public abstract class ScionServer {
         process.destroy();
         process = null;
       }
+      
+      commandQueue.clear();
     } catch (Throwable ex) {
       // ignore
     }
@@ -215,8 +224,7 @@ public abstract class ScionServer {
           stopServer();
         }
       } finally {
-        final String toServer = projectName + "/" + TO_SERVER_PREFIX;
-        Trace.trace(toServer, "%s", jsonString);
+        Trace.trace( serverName, TO_SERVER_PREFIX.concat(jsonString) );
         if (Trace.isTracing()) {
           try {
             serverOutput.write(TO_SERVER_PREFIX + jsonString + PlatformUtil.NL);

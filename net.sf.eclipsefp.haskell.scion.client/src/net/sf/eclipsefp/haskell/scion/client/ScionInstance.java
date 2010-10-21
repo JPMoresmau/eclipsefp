@@ -76,7 +76,7 @@ public class ScionInstance {
   private Map<IFile, LoadInfo>        loadInfos;
 
   /** The listener list for objects interested in server status events */
-  private final ListenerList          listeners = new ListenerList();
+  private final ListenerList          listeners;
 
   /**
    * The constructor
@@ -97,6 +97,7 @@ public class ScionInstance {
     this.components = new LinkedList<Component>();
     this.exposedModulesCache = null;
     this.loadInfos = new HashMap<IFile, LoadInfo>();
+    this.listeners = new ListenerList();
   }
 
   /** Get the project associated with this instance */
@@ -124,7 +125,7 @@ public class ScionInstance {
    * @param evType
    *          The type of event that just happened.
    */
-  private void notifyListeners(ScionServerEventType evType) {
+  public void notifyListeners(ScionServerEventType evType) {
     ScionServerEvent ev = new ScionServerEvent(this, server, evType);
     Object[] theListeners = listeners.getListeners();
     for (int i = 0; i < theListeners.length; ++i) {

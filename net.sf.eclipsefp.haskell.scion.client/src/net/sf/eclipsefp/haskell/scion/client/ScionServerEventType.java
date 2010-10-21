@@ -9,7 +9,14 @@ package net.sf.eclipsefp.haskell.scion.client;
  * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public enum ScionServerEventType {
-  /** The executable changed, usually due to a property change in the EclipseFP preferences pane or as the result of
-   * the built-in server compilation process. */
-  EXECUTABLE_CHANGED
+  /**
+   * The executable changed, usually due to a property change in the EclipseFP
+   * preferences pane or as the result of the built-in server compilation
+   * process.
+   */
+  EXECUTABLE_CHANGED,
+  /**
+   * The underlying scion-server process just terminated abnormally.
+   */
+  ABNORMAL_TERMINATION
 }

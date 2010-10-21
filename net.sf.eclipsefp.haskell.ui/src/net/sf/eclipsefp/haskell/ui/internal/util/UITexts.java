@@ -109,6 +109,8 @@ public final class UITexts extends NLS {
   public static String scionServerBuildJob;
   public static String scionServerChangeJob;
   public static String scionServerExecutableNotPresent;
+  public static String scionServerAbnormalTermination_title;
+  public static String scionServerAbnormalTermination_message;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;

@@ -20,8 +20,11 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
+import net.sf.eclipsefp.haskell.scion.client.IScionServerEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.client.ScionServerEvent;
+import net.sf.eclipsefp.haskell.scion.client.ScionServerEventType;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
@@ -47,7 +50,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -80,7 +82,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  *
  * This works by listening for resource changes.
  */
-public class ScionManager implements IResourceChangeListener, ISchedulingRule {
+public class ScionManager implements IResourceChangeListener, IScionServerEventListener {
   public ScionManager() {
     // the work is done in the start() method
   }
@@ -393,6 +395,7 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
           } );
       try {
         instance.start();
+        instance.addListener( this );
       } catch( ScionServerStartupException ex ) {
         reportServerStartupError( ex );
       }
@@ -441,14 +444,6 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
     } );
   }
 
-  public boolean contains(final ISchedulingRule rule) {
-    return rule == this;
-  }
-
-  public boolean isConflicting(final ISchedulingRule rule) {
-    return rule == this;
-  }
-
   /** Create a console name string using the project name, if available.
    * @param project The project
    * @return A console name
@@ -466,7 +461,6 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
 
     mgr.addConsoles(new IConsole[] {console});
     mgr.showConsoleView( console );
-    job.setRule( ScionManager.this );
     job.setPriority( Job.BUILD );
     job.schedule();
   }
@@ -528,6 +522,26 @@ public class ScionManager implements IResourceChangeListener, ISchedulingRule {
       }
       monitor.done();
       return status.getStatus();
+    }
+  }
+
+  public void processScionServerEvent( final ScionServerEvent ev ) {
+    if ( ev.getEventType() == ScionServerEventType.ABNORMAL_TERMINATION ) {
+      // Ask the user if they'd like the server to be restarted.
+      final Display display = Display.getDefault();
+      display.syncExec( new Runnable() {
+        public void run() {
+          if ( MessageDialog.openQuestion( display.getActiveShell(), UITexts.scionServerAbnormalTermination_title,
+                                           UITexts.scionServerAbnormalTermination_message ) ) {
+            ScionInstance instance = (ScionInstance) ev.getSource();
+            try {
+              instance.start();
+            } catch( ScionServerStartupException ex ) {
+              reportServerStartupError( ex );
+            }
+          }
+        }
+      } );
     }
   }
 }

@@ -453,8 +453,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     /** Generate a new BuiltInServer instance */
     public ScionServer createScionServer(IProject project, Writer outStream) {
       File directory = (project != null) ? new File(project.getLocation().toOSString()) : null;
-      String projectName = (project != null) ? project.getName() : ScionText.noproject;
-      return new StdStreamScionServer(projectName, ScionPlugin.builtinServerExecutablePath(), outStream, directory);
+      return new StdStreamScionServer(project, ScionPlugin.builtinServerExecutablePath(), outStream, directory);
     }
 
     public IPath getServerExecutable() {
@@ -471,8 +470,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     /** Generate a new BuiltInServer instance */
     public ScionServer createScionServer(IProject project, Writer outStream) {
       File directory = (project !=null) ? new File(project.getLocation().toOSString()) : null;
-      String projectName = (project != null) ? project.getName() : ScionText.noproject;
-      return new NetworkScionServer(projectName, ScionPlugin.builtinServerExecutablePath(), outStream, directory);
+      return new NetworkScionServer(project, ScionPlugin.builtinServerExecutablePath(), outStream, directory);
     }
 
     public IPath getServerExecutable() {
@@ -490,8 +488,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     
     public ScionServer createScionServer(IProject project, Writer outStream) {
       File directory = (project !=null) ? new File(project.getLocation().toOSString()) : null;
-      String projectName = (project != null) ? project.getName() : ScionText.noproject;
-      return new NetworkScionServer(projectName, userExecutable, outStream, directory);
+      return new NetworkScionServer(project, userExecutable, outStream, directory);
     }
 
     public IPath getServerExecutable() {

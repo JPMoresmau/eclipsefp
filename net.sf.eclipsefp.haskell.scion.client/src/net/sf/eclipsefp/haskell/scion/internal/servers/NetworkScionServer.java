@@ -22,6 +22,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,19 +49,19 @@ public class NetworkScionServer extends ScionServer {
   /** The input receiver Job */
   private InputReceiver              inputReceiver;
 
-  public NetworkScionServer(String projectName, IPath serverExecutable, Writer serverOutput, File directory) {
-    super(projectName, serverExecutable, serverOutput, directory);
+  public NetworkScionServer(IProject project, IPath serverExecutable, Writer serverOutput, File directory) {
+    super(project, serverExecutable, serverOutput, directory);
   }
 
   /**
    * Starts the Scion server.
    */
   @Override
-  protected synchronized void doStartServer(String projectName) throws ScionServerStartupException {
+  protected synchronized void doStartServer(IProject project) throws ScionServerStartupException {
     startServerProcess();
     
     serverStdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    serverOutputThread = new Thread(getClass().getSimpleName() + "/" + projectName) {
+    serverOutputThread = new Thread(getClass().getSimpleName() + "/" + project) {
       public void run() {
         while (serverStdout != null) {
           logServerStdout();
@@ -69,7 +70,7 @@ public class NetworkScionServer extends ScionServer {
     };
     
     serverOutputThread.start();
-    inputReceiver = new InputReceiver(projectName);
+    inputReceiver = new InputReceiver(serverName);
     inputReceiver.start();
   }
 
