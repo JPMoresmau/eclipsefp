@@ -75,7 +75,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.2"
          unpack="false"/>
 
    <plugin
@@ -89,7 +89,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.0.1"
+         version="2.0.2"
          unpack="false"/>
 
    <plugin
@@ -110,14 +110,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.2"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.2"
          unpack="false"/>
 
    <plugin
@@ -138,14 +138,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.compat"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.2"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.util"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="2.0.2"
          unpack="false"/>
 
 </feature>

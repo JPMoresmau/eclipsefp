@@ -19,6 +19,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.SWTException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -143,7 +144,14 @@ public class StdStreamScionServer extends ScionServer {
             stopServer();
           }
         } catch (IOException ex) {
-          ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex);
+        	if (!terminateFlag){
+        		ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex);
+        	}
+        } catch (SWTException se) {
+          // probably device has been disposed
+        	if (!terminateFlag){
+        		ScionPlugin.logError(ScionText.scionServerNotRunning_message, se);
+        	}
         }
         // long t1=System.currentTimeMillis();
         // System.err.println("receive+parse:"+(t1-t0));

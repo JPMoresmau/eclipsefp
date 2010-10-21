@@ -40,11 +40,15 @@ public class ScionPP
   public static final String PAGE_ID = ScionPP.class.getName();
 
 	private ExecutableFileFieldEditor serverExecutableField;
+	private Composite serverExecutableFieldC;
 	private BooleanFieldEditor serverBuiltInField;
+	private Composite serverBuiltInFieldC;
 	private ButtonFieldEditor autodetect;
+	private Composite autodetectC;
 	private ButtonFieldEditor forceRebuild;
+	private Composite forceRebuildC;
+
 	private CabalImplsBlock cabalBlock;
-	private Composite parentComposite;
 	private Composite fieldComposite;
 
 	public ScionPP() {
@@ -65,9 +69,7 @@ public class ScionPP
 	  noDefaultAndApplyButton();
 	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     setPreferenceStore(prefStore);
-
-    this.parentComposite = parentComposite;
-    parentComposite.setLayout( new GridLayout() );
+    parentComposite.setLayout( new GridLayout(nColumns,false) );
 
 	  SWTUtil.createMessageLabel( parentComposite, UITexts.scion_preferences_title, nColumns, SWT.DEFAULT );
 	  SWTUtil.createLineSpacer( parentComposite, 1 );
@@ -80,7 +82,7 @@ public class ScionPP
       }
     } );
 
-    GridData gdata = new GridData( SWT.FILL, SWT.TOP, true, false );
+    GridData gdata = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
     gdata.horizontalSpan = nColumns;
     control.setLayoutData( gdata );
 
@@ -90,13 +92,17 @@ public class ScionPP
     cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
 
     fieldComposite = new Composite(parentComposite, SWT.NONE);
-    fieldComposite.setLayout( new GridLayout( nColumns, false ) );
+    fieldComposite.setLayout( new GridLayout( 2, false ) );
+    GridData gridData = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+    gridData.horizontalSpan = nColumns;
+    fieldComposite.setLayoutData( gridData );
 
-    SWTUtil.createMessageLabel (fieldComposite, UITexts.scionServer_preferences_label, nColumns, SWT.DEFAULT);
+    SWTUtil.createMessageLabel (fieldComposite, UITexts.scionServer_preferences_label, 2, SWT.DEFAULT);
 
+    serverBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
 		                                             UITexts.scionServerBuiltIn_label,
-		                                             fieldComposite );
+		                                             serverBuiltInFieldC);
 		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
         updateButtonState();
@@ -105,9 +111,10 @@ public class ScionPP
     } );
 		serverBuiltInField.setPage( this );
 		serverBuiltInField.setPreferenceStore( prefStore );
-		// serverBuiltInField.fillIntoGrid( fieldComposite, nColumns );
+		//serverBuiltInField.fillIntoGrid( fieldComposite, 2);
 		serverBuiltInField.load();
 
+		forceRebuildC=new Composite(fieldComposite,SWT.NONE);
     forceRebuild = new ButtonFieldEditor(
         UITexts.forceRebuildButton_text,
         UITexts.forceRebuildButton_label,
@@ -116,16 +123,20 @@ public class ScionPP
           public void widgetSelected(final SelectionEvent e) {
             //
           }
-        },
-        fieldComposite);
+        },forceRebuildC
+        );
     forceRebuild.setPage( this );
     forceRebuild.setPreferenceStore( prefStore );
-    // forceRebuild.fillIntoGrid( fieldComposite, nColumns );
+    //forceRebuild.fillIntoGrid( fieldComposite,2 );
     forceRebuild.load();
 
+    serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
+    GridData gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    serverExecutableFieldC.setLayoutData( gd);
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
-				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, fieldComposite);
+				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, serverExecutableFieldC );
 		serverExecutableField.setEmptyStringAllowed(true);
 		serverExecutableField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
@@ -134,9 +145,10 @@ public class ScionPP
     });
 		serverExecutableField.setPage( this );
 		serverExecutableField.setPreferenceStore( prefStore );
-		// serverExecutableField.fillIntoGrid( fieldComposite, nColumns );
+		//serverExecutableField.fillIntoGrid( fieldComposite, 3 );
 		serverExecutableField.load();
 
+		autodetectC=new Composite(fieldComposite,SWT.NONE);
 		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
 				UITexts.autodetectButton_text,
@@ -147,11 +159,11 @@ public class ScionPP
 						updateButtonState();
 						setValid( isValid() );
 					}
-				},
-				fieldComposite);
+				},autodetectC
+				 );
 		autodetect.setPage( this );
 		autodetect.setPreferenceStore( prefStore );
-		// autodetect.fillIntoGrid( fieldComposite, nColumns );
+		//autodetect.fillIntoGrid( fieldComposite, 4 );
 		autodetect.load();
 
 		// Update the dialog's state and validity:
@@ -174,9 +186,9 @@ public class ScionPP
 
 	private void updateButtonState() {
     boolean b = serverBuiltInField.getBooleanValue();
-    forceRebuild.setEnabled( b, fieldComposite );
-    autodetect.setEnabled( !b, fieldComposite );
-    serverExecutableField.setEnabled( !b, fieldComposite );
+    forceRebuild.setEnabled( b, forceRebuildC );
+    autodetect.setEnabled( !b, autodetectC );
+    serverExecutableField.setEnabled( !b, serverExecutableFieldC );
 	}
 
 	/**

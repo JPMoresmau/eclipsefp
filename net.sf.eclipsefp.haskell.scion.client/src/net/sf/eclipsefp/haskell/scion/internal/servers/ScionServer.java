@@ -20,6 +20,7 @@ import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWTException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -153,6 +154,10 @@ public abstract class ScionServer {
     Trace.trace(CLASS_PREFIX, "Stopping server");
 
     try {
+       // Let the subclass do its thing. BEFORE we close the streams, to give
+       // the sub class a chance to close its own things properly
+       doStopServer();
+        
       if (serverOutStream != null) {
         serverOutStream.close();
         serverOutStream = null;
@@ -161,9 +166,8 @@ public abstract class ScionServer {
         serverInStream.close();
         serverInStream = null;
       }
+      
 
-      // Let the subclass do its thing.
-      doStopServer();
       // Then kill off the server process.
       if (process != null) {
         process.destroy();
@@ -218,7 +222,9 @@ public abstract class ScionServer {
             serverOutput.write(TO_SERVER_PREFIX + jsonString + PlatformUtil.NL);
             serverOutput.flush();
           } catch (IOException ex) {
-            // Ignore this (something creative here?)
+            // Ignore this (something creative here?) 
+          } catch (SWTException se){
+        	  // device is disposed when shutting down, we hope
           }
         }
       }
