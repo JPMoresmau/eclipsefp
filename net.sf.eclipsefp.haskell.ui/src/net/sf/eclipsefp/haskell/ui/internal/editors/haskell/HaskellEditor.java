@@ -53,7 +53,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -88,11 +87,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private MarkOccurrenceComputer markOccurrencesComputer;
-  private ScionInstance instance=null;
   private HaskellFoldingStructureProvider foldingStructureProvider;
 
   private List<OutlineDef> outline;
   private Map<String,List<OutlineDef>> defByName;
+  /** The scion-server supporting this editor.
+  *
+  * @note This variable isn't actually used to communicate with the scion-server. It's sole
+  * purpose is change detection, since the editor can be reused between different projects. */
+ private ScionInstance instance=null;
 
 //  public void reveal( final IHaskellLanguageElement element ) {
 //    Assert.isNotNull( element );
@@ -118,7 +121,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   @Override
   protected void initializeEditor() {
     super.initializeEditor();
-    ScionInstance.addListener( this );
     setSourceViewerConfiguration( new HaskellConfiguration( this ) );
     setEditorContextMenuId( "#" + SIMPLE_CONTEXT_ID );  //$NON-NLS-1$
     // we configure the preferences ourselves
@@ -288,7 +290,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if( outlinePage != null ) {
       outlinePage.setInput( null );
     }
-    ScionInstance.removeListener( this );
+    if (instance != null) {
+      instance.removeListener( this );
+    }
     super.dispose();
   }
 
@@ -339,7 +343,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     IFile result = null;
     IEditorInput input = getEditorInput();
     if( input instanceof IFileEditorInput ) {
-      result = ( ( IFileEditorInput )input ).getFile();
+      result = ( ( IFileEditorInput ) input ).getFile();
     }
     return result;
   }
@@ -348,19 +352,26 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public void doSetInput( final IEditorInput input ) throws CoreException {
     // unload the previous file from Scion
     IFile file = findFile();
-    if (file != null && ResourceUtil.isInHaskellProject( file )){
-      ScionPlugin.getScionInstance( file ).unloadFile(file);
+    ScionInstance theInstance;
+    if ( file != null && ResourceUtil.isInHaskellProject( file ) ) {
+      theInstance = ScionPlugin.getScionInstance( file );
+      theInstance.unloadFile(file);
     }
-    instance=null;
+
+    // Disassociate the editor from the ScionInstance
+    if (instance != null) {
+      instance.removeListener( this );
+      instance = null;
+    }
+
     super.doSetInput( input );
 
-    ScionInstance instance=getInstance();
-
-    if (instance!=null) {
+    theInstance = getInstance();
+    if (theInstance != null) {
         file = findFile();
-        instance.reloadFile( file, new ICommandContinuation() {
+        theInstance.reloadFile( file, new ICommandContinuation() {
           public void commandContinuation() {
-           HaskellEditor.this.synchronize();
+            HaskellEditor.this.synchronize();
           }
         }, false);
     }
@@ -375,6 +386,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       // load the new file into Scion
       if (file != null && ResourceUtil.isInHaskellProject( file )) {
         instance = ScionPlugin.getScionInstance( file );
+        instance.addListener( this );
       }
     }
     return instance;
@@ -531,20 +543,17 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   /** Process a scion-server status change event */
   public void processScionServerEvent( final ScionServerEvent ev ) {
     if (ev.getEventType() == ScionServerEventType.EXECUTABLE_CHANGED) {
-      // The executable changed...
-      final Display display = HaskellUIPlugin.getStandardDisplay();
-      display.asyncExec( new Runnable() {
-        public void run() {
-          // Invalidate the text presentation to update syntax highlighting
-          ISourceViewer sv = getSourceViewer();
-          if (sv != null) {
-            sv.invalidateTextPresentation();
+      // Synchronize the editor with scion-server...
+      ScionInstance theInstance = getInstance();
+      IFile file = findFile();
+
+      if ( theInstance != null && file != null && ResourceUtil.isInHaskellProject( file ) ) {
+        theInstance.reloadFile( file, new ICommandContinuation() {
+          public void commandContinuation() {
+            HaskellEditor.this.synchronize();
           }
-          // Then synchronize everything else...
-          synchronize();
-          outlinePage.update();
-        }
-      } );
+        }, false);
+      }
     }
   }
 }

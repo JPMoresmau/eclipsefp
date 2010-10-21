@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -62,7 +61,7 @@ import org.json.JSONObject;
  */
 public class ScionInstance {
   /** The scion-server with whom this object communicates */
-  private ScionServer          server;
+  private ScionServer                 server;
   /** The project with which the scion-server is associated */
   private IProject                    project;
   private IFile                       loadedFile;
@@ -75,21 +74,25 @@ public class ScionInstance {
   private List<String>                exposedModulesCache;
 
   private Map<IFile, LoadInfo>        loadInfos;
-  
-  /** The listener list for objects interested in server status events */
-  private static final ListenerList   listeners = new ListenerList();
 
-  /** The constructor
+  /** The listener list for objects interested in server status events */
+  private final ListenerList          listeners = new ListenerList();
+
+  /**
+   * The constructor
    * 
-   * @param server The scion-server instance to whom commands are sent
-   * @param project The associated {@link IProject IProject}
-   * @param resolver The Cabal component resolver
+   * @param server
+   *          The scion-server instance to whom commands are sent
+   * @param project
+   *          The associated {@link IProject IProject}
+   * @param resolver
+   *          The Cabal component resolver
    */
   public ScionInstance(ScionServer server, IProject project, CabalComponentResolver resolver) {
     this.server = server;
     this.project = project;
     this.resolver = resolver;
-    
+
     this.loadedFile = null;
     this.components = new LinkedList<Component>();
     this.exposedModulesCache = null;
@@ -100,39 +103,44 @@ public class ScionInstance {
   public final IProject getProject() {
     return project;
   }
-  
-  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+
+  // -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   // Listener management
-  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  
+  // -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+
   /** Add a scion-server event change listener */
-  public static void addListener(IScionServerEventListener listener) {
+  public void addListener(IScionServerEventListener listener) {
     listeners.add(listener);
   }
-  
+
   /** Remove a scion-server event change listener */
-  public static void removeListener(IScionServerEventListener listener) {
+  public void removeListener(IScionServerEventListener listener) {
     listeners.remove(listener);
   }
-  
-  /** Notify listeners that a scion-server event occurred.
+
+  /**
+   * Notify listeners that a scion-server event occurred.
    * 
-   * @param evType The type of event that just happened.
+   * @param evType
+   *          The type of event that just happened.
    */
   private void notifyListeners(ScionServerEventType evType) {
-    ScionServerEvent ev = new ScionServerEvent(server, evType);
-    for (Object listener : listeners.getListeners()) {
-      IScionServerEventListener evListener = (IScionServerEventListener) listener;
-      evListener.processScionServerEvent(ev);
+    ScionServerEvent ev = new ScionServerEvent(this, server, evType);
+    Object[] theListeners = listeners.getListeners();
+    for (int i = 0; i < theListeners.length; ++i) {
+      ((IScionServerEventListener) theListeners[i]).processScionServerEvent(ev);
     }
   }
 
-  /** Update the scion-server executable. This method is invoked in response to
-   * a preference change in the UI to signal that the underlying scion-server
-   * has changed.
+  /**
+   * Update the scion-server executable. This method is invoked in response to a
+   * preference change in the UI to signal that the underlying scion-server has
+   * changed.
    * 
-   * @param server The scion-server executable that this instance should use.
-   * @throws ScionServerStartupException if the server could not be started.
+   * @param server
+   *          The scion-server executable that this instance should use.
+   * @throws ScionServerStartupException
+   *           if the server could not be started.
    */
   public void setServerExecutable(final ScionServer newServer) throws ScionServerStartupException {
     if (!server.equals(newServer)) {
@@ -147,11 +155,12 @@ public class ScionInstance {
   public void setOutputStream(final Writer outStream) {
     server.setOutputStream(outStream);
   }
+
   /** Start the instance's underlying server */
   public void start() throws ScionServerStartupException {
     server.startServer();
     server.checkProtocol();
-    
+
     if (Trace.isTracing()) {
       setDeafening();
     }
@@ -185,7 +194,8 @@ public class ScionInstance {
 
   }
 
-  /** Build the Haskell project.
+  /**
+   * Build the Haskell project.
    * 
    */
   public void buildProject(final boolean output, final boolean forceRecomp) {
@@ -209,7 +219,7 @@ public class ScionInstance {
             }
           }
         }
-        
+
         if (toLoadLast != null) {
           l.add(toLoadLast);
         }
@@ -254,7 +264,7 @@ public class ScionInstance {
     packagesByDB = null;
     lastLoadedComponent = null;
     exposedModulesCache = null;
-    
+
     if (server != null) {
       if (cleanly) {
         ScionCommand cmd = new QuitCommand();
@@ -333,9 +343,9 @@ public class ScionInstance {
           }
         }
       }
-      
+
       final LoadInfo li = getLoadInfo(file);
-      
+
       // we have no component: we create a file one
       if (toLoad == null) {
         toLoad = new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
@@ -346,27 +356,27 @@ public class ScionInstance {
       } else {
         li.useFileComponent = false;
       }
-      
+
       if (toLoad != null) {
         final Component compo = toLoad;
         LoadCommand loadCommand = new LoadCommand(getProject(), compo, false, false);
         if (nextCommand != null) {
           loadCommand.addSuccessor(nextCommand);
         }
-        
+
         loadCommand.addContinuation(new ICommandContinuation() {
           public void commandContinuation() {
             lastLoadedComponent = compo;
           }
-        } );
-        
+        });
+
         cmdToRun = loadCommand;
       }
     } else {
-      assert(nextCommand != null);
+      assert (nextCommand != null);
       cmdToRun = nextCommand;
     }
-    
+
     if (cmdToRun != null) {
       doCommand(cmdToRun, sync);
     }
@@ -376,7 +386,7 @@ public class ScionInstance {
     // Not used, currently: final LoadInfo li = getLoadInfo(file);
 
     BackgroundTypecheckFileCommand cmd = new BackgroundTypecheckFileCommand(ScionInstance.this, file);
-    
+
     if (continuation != null) {
       cmd.addContinuation(continuation);
     }
@@ -401,12 +411,11 @@ public class ScionInstance {
 
     BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
       @Override
-      public boolean onError(JSONException ex, String name, String message) {
+      public boolean onError(String name, String message) {
         if (message != null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)) {
           deleteProblems(file);
           if (!li.interactiveCheckDisabled) {
-            final String errMsg = ScionText.bind(ScionText.warning_typecheck_arbitrary_failed,
-                file.getProjectRelativePath(),
+            final String errMsg = ScionText.bind(ScionText.warning_typecheck_arbitrary_failed, file.getProjectRelativePath(),
                 message);
             ScionPlugin.logWarning(errMsg, null);
             li.interactiveCheckDisabled = true;
@@ -414,16 +423,16 @@ public class ScionInstance {
 
           return true;
         }
-        
+
         li.interactiveCheckDisabled = false;
-        return super.onError(ex, name, message);
+        return super.onError(name, message);
       }
     };
-    
+
     if (continuation != null) {
       cmd.addContinuation(continuation);
     }
-    
+
     doCommand(cmd, sync);
   }
 
@@ -452,12 +461,12 @@ public class ScionInstance {
 
   public void outline(final IFile file, final OutlineHandler handler, final boolean sync) {
     final OutlineCommand cmd = new OutlineCommand(file);
-    
+
     cmd.addContinuation(new ICommandContinuation() {
       public void commandContinuation() {
         handler.outlineResult(cmd.getOutlineDefs());
       }
-    } );
+    });
 
     withLoadedFile(file, cmd, sync);
   }
@@ -550,8 +559,8 @@ public class ScionInstance {
   }
 
   private class LoadInfo {
-    private boolean      interactiveCheckDisabled = false;
-    private boolean      useFileComponent         = false;
+    private boolean interactiveCheckDisabled = false;
+    private boolean useFileComponent         = false;
     // Not used, currently: private ScionCommand lastCommand;
   }
 

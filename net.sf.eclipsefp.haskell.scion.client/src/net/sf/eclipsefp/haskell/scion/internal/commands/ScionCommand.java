@@ -50,34 +50,35 @@ public abstract class ScionCommand {
     successors = new LinkedList<ScionCommand>();
     continuations = new LinkedList<ICommandContinuation>();
   }
-  
+
   /** Set the continuation that needs to be run when the job's status changes */
-  public void addContinuation( final ICommandContinuation continuation ) {
+  public void addContinuation(final ICommandContinuation continuation) {
     continuations.add(continuation);
   }
-  
+
   /** Set the sequence number of this command */
-  public void setSequenceNumber( int sequenceNumber ) {
+  public void setSequenceNumber(int sequenceNumber) {
     this.sequence = sequenceNumber;
   }
-  
+
   /** Set the response JSON object */
-  public void setResponse( JSONObject response ) {
+  public void setResponse(JSONObject response) {
     this.response = response;
   }
-  
+
   /** Set the command's status to DONE */
   public void setCommandDone() {
     setCommandStatus(DONE);
   }
-  
+
   /** Set the command's status to ERROR */
   public void setCommandError() {
     setCommandStatus(ERROR);
   }
-  
-  /** Internal method to set the command's status and signal waiting objects that the
-   * status has changed.
+
+  /**
+   * Internal method to set the command's status and signal waiting objects that
+   * the status has changed.
    */
   private void setCommandStatus(final int newStatus) {
     status = newStatus;
@@ -87,12 +88,12 @@ public abstract class ScionCommand {
       }
     }
   }
-  
+
   /** Predicate to test if command is still waiting for a response. */
   public boolean isWaiting() {
     return (status == WAITING);
   }
-  
+
   /** Predicate to test if the command is in the DONE state. */
   public boolean isDone() {
     return (status == DONE);
@@ -102,22 +103,29 @@ public abstract class ScionCommand {
   public void setIsSync() {
     isSync = true;
   }
-  
-  /** Run successor commands queued in the {@link #successors} list. */
+
+  /**
+   * Run successor commands queued in the {@link #successors} list.
+   * 
+   * @return True if this command is synchronously sent and all of the
+   *         successors also succeed. For asynchronous commands, always returns
+   *         true.
+   */
   public boolean runSuccessors(ScionServer server) {
     boolean retval = true;
-    for (ScionCommand sc : successors) {
-      if (isSync) {
+    if (isSync) {
+      for (ScionCommand sc : successors) {
         retval &= server.sendCommandSync(sc);
-      } else {
-        server.sendCommand(sc);
       }
+    } else {
+      for (ScionCommand sc : successors)
+        server.sendCommand(sc);
     }
-    
+
     return retval;
   }
 
-  public boolean onError(JSONException ex, String name, String message) {
+  public boolean onError(String name, String message) {
     return false;
   }
 
@@ -166,7 +174,7 @@ public abstract class ScionCommand {
    * default implementation returns an empty map; most subclasses will want to
    * override this.
    * 
-   *  @return a non-null JSONObject().
+   * @return a non-null JSONObject().
    */
   protected JSONObject getParams() throws JSONException {
     return new JSONObject();
@@ -178,7 +186,7 @@ public abstract class ScionCommand {
       continuation.commandContinuation();
     }
   }
-  
+
   protected void doProcessResult(Object result) throws JSONException {
     // Base class does nothing.
   }
@@ -213,10 +221,12 @@ public abstract class ScionCommand {
     }
   }
 
-  /** Add a successor to this command that is executed once this command completes
-   * successfully.
+  /**
+   * Add a successor to this command that is executed once this command
+   * completes successfully.
    * 
-   * @param successor The successor command.
+   * @param successor
+   *          The successor command.
    */
   public void addSuccessor(ScionCommand successor) {
     successors.add(successor);

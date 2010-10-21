@@ -63,7 +63,7 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
   }
 
   @Override
-  public boolean onError(JSONException ex, String name, String message) {
+  public boolean onError(String name, String message) {
     try {
       IMarker marker = project.createMarker(IMarker.PROBLEM);
       marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);

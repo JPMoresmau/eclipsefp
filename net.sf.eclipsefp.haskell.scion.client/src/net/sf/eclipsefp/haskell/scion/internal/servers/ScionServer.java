@@ -30,42 +30,45 @@ import org.json.JSONObject;
  * 
  */
 public abstract class ScionServer {
-  protected static final String CLASS_PREFIX         = "[ScionServer]";
-  protected static final String SERVER_STDOUT_PREFIX = "[scion-server]";
+  protected static final String              CLASS_PREFIX         = "[ScionServer]";
+  protected static final String              SERVER_STDOUT_PREFIX = "[scion-server]";
   /** Message prefix for commands send to the server */
-  protected static final String      TO_SERVER_PREFIX   = "[scion-server] << ";
+  protected static final String              TO_SERVER_PREFIX     = "[scion-server] << ";
   /** Message prefix for responses received from the server */
-  protected static final String      FROM_SERVER_PREFIX = "[scion-server] >> ";
+  protected static final String              FROM_SERVER_PREFIX   = "[scion-server] >> ";
   /** The Scion protocol version number */
-  private static final String      PROTOCOL_VERSION = "0.1";
+  private static final String                PROTOCOL_VERSION     = "0.1";
   /**
    * Path to the server executable that is started and with whom EclipseFP
    * communicates
    */
-  protected IPath               serverExecutable;
+  protected IPath                            serverExecutable;
   /**
-   * Project name, used to disambiguate server from each other in the tracing output.
+   * Project name, used to disambiguate server from each other in the tracing
+   * output.
    */
-  protected final String        projectName;
+  protected final String                     projectName;
   /** Server logging output stream, generally tends to be a Eclipse console */
-  protected Writer              serverOutput;
+  protected Writer                           serverOutput;
   /** Working directory where the server operates, can be null if no project. */
-  protected File                directory;
+  protected File                             directory;
   /** The scion-server process */
-  protected Process             process;
+  protected Process                          process;
   /** scion-server's output stream, read by EclipseFP */
-  protected BufferedReader      serverOutStream;
+  protected BufferedReader                   serverOutStream;
   /** scion-server's input stream, written to by EclipseFP */
-  protected BufferedWriter      serverInStream;
+  protected BufferedWriter                   serverInStream;
   /** Request identifier */
-  private final AtomicInteger   nextSequenceNumber;
-  
+  private final AtomicInteger                nextSequenceNumber;
+
   /** Command queue, to deal with both synchronous and asynchronous commands */
   protected final Map<Integer, ScionCommand> commandQueue;
 
   /**
    * The constructor
-   * @param projectName TODO
+   * 
+   * @param projectName
+   *          TODO
    * @param serverExecutable
    *          The scion-server executable
    * @param serverOutput
@@ -78,65 +81,73 @@ public abstract class ScionServer {
     this.serverExecutable = serverExecutable;
     this.serverOutput = serverOutput;
     this.directory = directory;
-    
+
     this.process = null;
     this.serverOutStream = null;
     this.serverInStream = null;
     this.nextSequenceNumber = new AtomicInteger(1);
-    this.commandQueue =  new HashMap<Integer, ScionCommand>();
+    this.commandQueue = new HashMap<Integer, ScionCommand>();
   }
-  
-  /** The default constructor. This is only used by NullScionServer 
-   * @param projectName TODO*/
+
+  /**
+   * The default constructor. This is only used by NullScionServer
+   * 
+   * @param projectName
+   *          TODO
+   */
   protected ScionServer() {
     this.projectName = ScionText.noproject;
     this.serverExecutable = null;
     this.serverOutput = null;
     this.directory = null;
-    
+
     this.process = null;
     this.serverOutStream = null;
     this.serverInStream = null;
     this.nextSequenceNumber = new AtomicInteger(1);
-    this.commandQueue =  new HashMap<Integer, ScionCommand>();
+    this.commandQueue = new HashMap<Integer, ScionCommand>();
   }
- 
+
   /** Redirect the logging stream */
   public void setOutputStream(final Writer outStream) {
     serverOutput = outStream;
   }
-  
+
   /**
    * Start the server process.
    * 
-   * @note This method should not be overridden by subclasses. Subclasses should override
-   * {@link doStartServer doStartServer} instead. This is a protocol design method, where
-   * {@link ScionServer ScionServer} implements code that must be executed
-   * before or after the subclass' server launch.
+   * @note This method should not be overridden by subclasses. Subclasses should
+   *       override {@link doStartServer doStartServer} instead. This is a
+   *       protocol design method, where {@link ScionServer ScionServer}
+   *       implements code that must be executed before or after the subclass'
+   *       server launch.
    */
   public final void startServer() throws ScionServerStartupException {
     Trace.trace(CLASS_PREFIX, "Starting server " + getClass().getSimpleName() + ":" + projectName);
     doStartServer(projectName);
     Trace.trace(CLASS_PREFIX, "Server started for " + getClass().getSimpleName() + ":" + projectName);
- }
+  }
 
-  /** Subclass' hook for starting up their respective server processes.
+  /**
+   * Subclass' hook for starting up their respective server processes.
    * 
-   * @param projectName The project name
+   * @param projectName
+   *          The project name
    */
   protected void doStartServer(String projectName) throws ScionServerStartupException {
     // Does nothing...
     serverOutStream = null;
     serverInStream = null;
   }
-  
+
   /**
    * Stop the server process.
    * 
-   * @note This method should not be overridden by subclasses. Subclasses should override
-   * {@link doStopServer doStopServer} instead. This is a protocol design method, where
-   * {@link ScionServer ScionServer} implements code that must be executed
-   * before or after the subclass' server launch.
+   * @note This method should not be overridden by subclasses. Subclasses should
+   *       override {@link doStopServer doStopServer} instead. This is a
+   *       protocol design method, where {@link ScionServer ScionServer}
+   *       implements code that must be executed before or after the subclass'
+   *       server launch.
    */
   public final void stopServer() {
     Trace.trace(CLASS_PREFIX, "Stopping server");
@@ -150,7 +161,7 @@ public abstract class ScionServer {
         serverInStream.close();
         serverInStream = null;
       }
-      
+
       // Let the subclass do its thing.
       doStopServer();
       // Then kill off the server process.
@@ -164,27 +175,28 @@ public abstract class ScionServer {
 
     Trace.trace(CLASS_PREFIX, "Server stopped");
   }
-  
+
   /**
    * Subclass' hook for stopping their respective server processes.
    */
   protected void doStopServer() {
     // Base class does nothing.
   }
-  
+
   /**
-   * Send a command to the server, but do not wait for a response (asynchronous version).
+   * Send a command to the server, but do not wait for a response (asynchronous
+   * version).
    */
   public void sendCommand(ScionCommand command) {
     if (serverInStream != null) {
       // Keep track of this request in the command queue
       int seqNo = nextSequenceNumber.getAndIncrement();
       command.setSequenceNumber(seqNo);
-      
-      synchronized ( commandQueue ) {
+
+      synchronized (commandQueue) {
         commandQueue.put(new Integer(seqNo), command);
       }
-      
+
       String jsonString = command.toJSONString();
 
       try {
@@ -206,24 +218,24 @@ public abstract class ScionServer {
             serverOutput.write(TO_SERVER_PREFIX + jsonString + PlatformUtil.NL);
             serverOutput.flush();
           } catch (IOException ex) {
-            // Ignore this (something creative here?) 
+            // Ignore this (something creative here?)
           }
         }
       }
     }
   }
-  
-  /** 
+
+  /**
    * Send a command, wait for its response.
    * 
    * @return true if the command completed successfully, otherwise false.
    */
   public final boolean sendCommandSync(ScionCommand command) {
     boolean retval = false;
-    
+
     if (serverInStream != null) {
       command.setIsSync();
-      
+
       synchronized (command) {
         sendCommand(command);
         while (command.isWaiting()) {
@@ -238,7 +250,7 @@ public abstract class ScionServer {
     }
     return retval;
   }
-  
+
   /**
    * Check the server's protocol version. This just generates a warning if the
    * version numbers do not match.
@@ -246,112 +258,108 @@ public abstract class ScionServer {
   public void checkProtocol() {
     sendCommand(new ConnectionInfoCommand());
   }
-  
+
   /**
    * Parses the given response string and stores the command result in this
    * object.
    */
   public boolean processResponse(JSONObject response) {
     boolean retval = false;
-    
-    if (checkResponseVersion(response)) {
-      int id = 0;
-      ScionCommand command = null;
-      
-      try {
-        id = response.getInt("id");
-        
-        synchronized (commandQueue) {
-          Integer key = new Integer(id);
-          command = commandQueue.remove(key);
-        }
-        
-        Object result = response.get("result");
+    int id = response.optInt("id", -1);
+    ScionCommand command = null;
+
+    // Ensure command is always dequeued
+    synchronized (commandQueue) {
+      Integer key = new Integer(id);
+      command = commandQueue.remove(key);
+    }
+
+    if (!checkResponseVersion(response)) {
+      return retval;
+    } else if (id <= 0) {
+      // Command identifiers are always greater than 0.
+      logMessage(ScionText.errorReadingId_warning, null);
+      return retval;
+    } else if (command == null) {
+      // Should have found the command in the queue...
+      logMessage(NLS.bind(ScionText.commandIdMismatch_warning, id), null);
+      return retval;
+    } else {
+      Object result = response.opt("result");
+      if (result != null) {
         try {
           command.setResponse(response);
           command.processResult(result);
           command.setCommandDone();
           command.runSuccessors(ScionServer.this);
+
           retval = true;
-        } catch (JSONException ex) {
+        } catch (JSONException jsonex) {
+          command.setCommandError();
+          logMessage(ScionText.commandProcessingFailed_message, jsonex);
+        } finally {
+          command.setResponse(response);
+        }
+      } else {
+        JSONObject error = response.optJSONObject("error");
+        if (error != null) {
           try {
-            JSONObject error = response.getJSONObject("error");
             String name = error.getString("name");
             String message = error.getString("message");
-            if (!command.onError(ex, name, message)) {
+            if (!command.onError(name, message)) {
               command.setCommandError();
-              try {
-                final String errMsg = NLS.bind(ScionText.commandError_message, name, message);
-                
-                serverOutput.write(errMsg + PlatformUtil.NL);
-                ex.printStackTrace(new PrintWriter(serverOutput));
-                serverOutput.flush();
-                
-                ScionPlugin.logError(errMsg, ex);
-              } catch (IOException e) {
-                // Not much to be done if serverOutput throws an exception
-              }
+              logMessage(NLS.bind(ScionText.commandError_message, name, message), null);
             }
           } catch (JSONException ex2) {
             command.setCommandError();
-            try {
-              serverOutput.write(ScionText.commandErrorMissing_message + PlatformUtil.NL);
-              ex2.printStackTrace(new PrintWriter(serverOutput));
-              serverOutput.flush();
-            } catch (IOException ex3) {
-              // Not much to be done if serverOutput throws an exception
-            }
+            logMessage(ScionText.commandProcessingFailed_message, ex2);
           }
-
-          try {
-            serverOutput.write(ScionText.commandProcessingFailed_message + PlatformUtil.NL);
-            ex.printStackTrace(new PrintWriter(serverOutput));
-            serverOutput.flush();
-          } catch (IOException e) {
-            // Not much to be done if serverOutput throws an exception
-          }
-        } catch (ClassCastException cce) {
+        } else {
           command.setCommandError();
-          try {
-            final String errMsg = NLS.bind(ScionText.commandUnexpectedResult_message, result);
-            serverOutput.write(errMsg.concat(PlatformUtil.NL));
-            cce.printStackTrace(new PrintWriter(serverOutput));
-            serverOutput.flush();
-            
-            ScionPlugin.logError(errMsg, cce);
-          } catch (IOException e) {
-            // Not much to be done if serverOutput throws an exception
-          }
-        } finally {
-          command.setResponse(null);
-        }
-      } catch (JSONException ex) {
-        command.setCommandError();
-        try {
-          serverOutput.write(ScionText.errorReadingId_warning + PlatformUtil.NL);
-          ex.printStackTrace(new PrintWriter(serverOutput));
-          serverOutput.flush();
-        } catch (IOException ex2) {
-          // Nothing we can really do about this.
+          logMessage(NLS.bind(ScionText.commandErrorMissing_message, result), null);
         }
       }
     }
-    
+
     return retval;
   }
 
+  /**
+   * Log a message to both the scion-server's output stream and the Eclipse log
+   * file.
+   * 
+   * @param message
+   *          The error message to log
+   * @param exc
+   *          The exception associated with the message, may be null.
+   */
+  private void logMessage(final String message, final Throwable exc) {
+    try {
+      serverOutput.write(message + PlatformUtil.NL);
+      serverOutput.flush();
+    } catch (IOException ioex) {
+      // Not much we can do.
+    }
+
+    ScionPlugin.logError(message, exc);
+  }
+
+  /**
+   * Check the response from scion-server, ensure that the version number
+   * matches. Otherwise, yell at the user.
+   */
   private boolean checkResponseVersion(JSONObject response) {
     boolean retval = true;
-    try {
-      String version = response.getString("version");
-      if (!version.equals(PROTOCOL_VERSION)) {
-        ScionPlugin.logWarning(NLS.bind(ScionText.commandVersionMismatch_warning, version, PROTOCOL_VERSION), null);
-        retval = false;
-      }
-    } catch (JSONException ex) {
-      ScionPlugin.logWarning(ScionText.errorReadingVersion_warning, ex);
+    String version = response.optString("version");
+
+    if (version == null) {
+      logMessage(ScionText.errorReadingVersion_warning, null);
+      retval = false;
+    } else if (!version.equals(PROTOCOL_VERSION)) {
+      ScionPlugin.logWarning(NLS.bind(ScionText.commandVersionMismatch_warning, version, PROTOCOL_VERSION), null);
+      retval = false;
     }
-    
+
     return retval;
   }
 }

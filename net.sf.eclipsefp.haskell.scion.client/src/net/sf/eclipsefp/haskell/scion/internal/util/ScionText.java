@@ -25,7 +25,8 @@ public class ScionText extends NLS {
   public static String        scionVersionMismatch_warning;
 
   public static String        cabalFileMissing;
-  
+
+  public static String        commandIdMismatch_warning;
   public static String        commandError_message;
   public static String        commandErrorMissing_message;
   public static String        commandProcessingFailed_message;
