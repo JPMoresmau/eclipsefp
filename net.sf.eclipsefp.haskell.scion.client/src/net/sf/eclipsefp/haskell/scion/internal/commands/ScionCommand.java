@@ -104,6 +104,11 @@ public abstract class ScionCommand {
     isSync = true;
   }
 
+  /** Predicate to test if the command has been launch synchronously.  */
+  public boolean isSync() {
+	return isSync;
+  }
+  
   /**
    * Run successor commands queued in the {@link #successors} list.
    * 

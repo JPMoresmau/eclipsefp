@@ -261,6 +261,10 @@ public abstract class ScionServer {
         }
       }
       retval = command.isDone();
+      if (retval){
+    	  // we are in the calling thread, this is safe
+    	  command.runSuccessors(ScionServer.this);
+      }
     }
     return retval;
   }
@@ -305,8 +309,10 @@ public abstract class ScionServer {
           command.setResponse(response);
           command.processResult(result);
           command.setCommandDone();
-          command.runSuccessors(ScionServer.this);
-
+          // we're not in the calling thread!!
+          if (!command.isSync()){
+        	  command.runSuccessors(ScionServer.this);
+          }
           retval = true;
         } catch (JSONException jsonex) {
           command.setCommandError();
