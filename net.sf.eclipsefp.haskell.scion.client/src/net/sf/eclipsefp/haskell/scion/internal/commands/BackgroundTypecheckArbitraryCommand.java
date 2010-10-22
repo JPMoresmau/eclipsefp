@@ -31,5 +31,10 @@ public class BackgroundTypecheckArbitraryCommand extends BackgroundTypecheckFile
 	protected void doProcessCompilationResult(){
 		new CompilationResultHandler(file.getProject(),doc,file.getLocation()).process(this);
 	}
+	
+  @Override
+  protected String getMethod() {
+    return "background-typecheck-arbitrary";
+  }
 
 }
