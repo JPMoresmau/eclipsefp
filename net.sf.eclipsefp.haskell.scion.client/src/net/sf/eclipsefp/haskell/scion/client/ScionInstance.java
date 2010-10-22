@@ -203,51 +203,63 @@ public class ScionInstance {
     if (checkCabalFile()) {
       final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
       final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
+      command.addContinuation(new ICommandContinuation() {
+		
+		public void commandContinuation() {
+			Runnable r=new Runnable(){
+				public void run() {
+					 components = command.getComponents();
+				      // if lastLoadedComponent is still present, load it last
+				      if (lastLoadedComponent != null) {
+				        List<Component> l = new ArrayList<Component>(components.size());
+				        Component toLoadLast = null;
+				        synchronized (components) {
+				          for (Component c : components) {
+				            if (c.toString().equals(lastLoadedComponent.toString())) {
+				              toLoadLast = c;
+				            } else {
+				              l.add(c);
+				            }
+				          }
+				        }
 
+				        if (toLoadLast != null) {
+				          l.add(toLoadLast);
+				        }
+				        components = l;
+				      }
+				      List<Component> cs = null;
+				      synchronized (components) {
+				        cs = new ArrayList<Component>(components);
+				      }
+				      deleteProblems(getProject());
+				      CompilationResultHandler crh = new CompilationResultHandler(getProject());
+
+				      for (Component c : cs) {
+				        LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
+				        server.sendCommandSync(loadCommand);
+				        crh.process(loadCommand);
+				        lastLoadedComponent = c;
+				      }
+
+				      ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+				      server.sendCommandSync(pcc);
+				      cabalDescription = pcc.getDescription();
+
+				      CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+				      server.sendCommandSync(cdc);
+				      packagesByDB = cdc.getPackagesByDB();
+
+				      restoreState();
+				}
+			};
+			
+			new Thread(r).start();
+			
+		}
+      });
       server.sendCommand(command);
-      components = command.getComponents();
-      // if lastLoadedComponent is still present, load it last
-      if (lastLoadedComponent != null) {
-        List<Component> l = new ArrayList<Component>(components.size());
-        Component toLoadLast = null;
-        synchronized (components) {
-          for (Component c : components) {
-            if (c.toString().equals(lastLoadedComponent.toString())) {
-              toLoadLast = c;
-            } else {
-              l.add(c);
-            }
-          }
-        }
-
-        if (toLoadLast != null) {
-          l.add(toLoadLast);
-        }
-        components = l;
-      }
-      List<Component> cs = null;
-      synchronized (components) {
-        cs = new ArrayList<Component>(components);
-      }
-      deleteProblems(getProject());
-      CompilationResultHandler crh = new CompilationResultHandler(getProject());
-
-      for (Component c : cs) {
-        LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
-        server.sendCommandSync(loadCommand);
-        crh.process(loadCommand);
-        lastLoadedComponent = c;
-      }
-
-      ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
-      server.sendCommandSync(pcc);
-      cabalDescription = pcc.getDescription();
-
-      CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
-      server.sendCommandSync(cdc);
-      packagesByDB = cdc.getPackagesByDB();
-
-      restoreState();
+    
     }
   }
 
