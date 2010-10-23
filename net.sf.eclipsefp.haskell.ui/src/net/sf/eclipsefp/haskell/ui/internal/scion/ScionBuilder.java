@@ -122,11 +122,17 @@ public class ScionBuilder {
     try {
       Process p = pb.start();
       InputStream is = p.getInputStream();
-      int r;
-      while( ( r = is.read() ) != -1 ) {
-        conout.write( r );
-        // System.out.write( r );
-      }
+      int nread;
+      byte[] buf = new byte[1024];
+
+      do {
+        nread = is.read(buf);
+        if (nread > 0) {
+          conout. write(buf, 0, nread);
+          conout.flush();
+        }
+      } while (nread >= 0);
+
       code = p.waitFor();
 
       if( code != 0 ) {

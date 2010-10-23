@@ -18,8 +18,8 @@ public class ConnectionInfoCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object obj) throws JSONException {
-		JSONObject result = (JSONObject)obj;
+	protected void doProcessResult() throws JSONException {
+		JSONObject result = (JSONObject) response;
 		pid = result.getInt("pid");
 		version = result.getInt("version");
 	}

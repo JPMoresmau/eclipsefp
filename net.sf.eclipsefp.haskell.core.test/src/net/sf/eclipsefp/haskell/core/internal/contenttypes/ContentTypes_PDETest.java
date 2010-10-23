@@ -14,12 +14,18 @@ import org.eclipse.core.runtime.content.IContentDescription;
   * @author Leif Frenzel
   */
 public class ContentTypes_PDETest extends TestCaseWithProject {
+  final static String hsID = "net.sf.eclipsefp.haskell.contenttypes.haskell";
+  final static String lhsID = "net.sf.eclipsefp.haskell.contenttypes.literateHaskell";
 
   public void testNonHsContentType() throws CoreException {
     IFile file = project.getFile( "a.c" );
     try {
       file.create( new ByteArrayInputStream( new byte[ 0 ] ), true, null );
-      assertNull( file.getContentDescription() );
+      IContentDescription fdescrip = file.getContentDescription();
+      if (fdescrip != null && fdescrip.equals(hsID)) {
+        // Houston, we have a problem...
+        fail("Content type should not be ".concat( hsID ));
+      }
     } finally {
       file.delete( true, null );
     }
@@ -29,7 +35,6 @@ public class ContentTypes_PDETest extends TestCaseWithProject {
     IFile file = project.getFile( "a.hs" );
     try {
       file.create( new ByteArrayInputStream( new byte[ 0 ] ), true, null );
-      String hsID = "net.sf.eclipsefp.haskell.contenttypes.haskell";
       assertEquals( hsID, file.getContentDescription().getContentType().getId() );
     } finally {
       file.delete( true, null );
@@ -41,9 +46,8 @@ public class ContentTypes_PDETest extends TestCaseWithProject {
     try {
       String content = "A\n> module A where \nBlabla";
       file.create( new ByteArrayInputStream( content.getBytes() ), true, null );
-      String hsID = "net.sf.eclipsefp.haskell.contenttypes.literateHaskell";
       IContentDescription cd = file.getContentDescription();
-      assertEquals( hsID, cd.getContentType().getId() );
+      assertEquals( lhsID, cd.getContentType().getId() );
       assertEquals( LiterateContentDescriber.BIRD,
                     cd.getProperty( LiterateContentDescriber.STYLE ) );
     } finally {
@@ -56,9 +60,8 @@ public class ContentTypes_PDETest extends TestCaseWithProject {
     try {
       String content = "A\n\\begin{code}module A where\\end{code}\nBlabla";
       file.create( new ByteArrayInputStream( content.getBytes() ), true, null );
-      String hsID = "net.sf.eclipsefp.haskell.contenttypes.literateHaskell";
       IContentDescription cd = file.getContentDescription();
-      assertEquals( hsID, cd.getContentType().getId() );
+      assertEquals( lhsID, cd.getContentType().getId() );
       assertEquals( LiterateContentDescriber.LATEX,
                     cd.getProperty( LiterateContentDescriber.STYLE ) );
     } finally {

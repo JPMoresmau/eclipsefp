@@ -13,12 +13,10 @@ import org.eclipse.core.resources.IFile;
   * @author JP Moresmau
  */
 public class ProjectReloader implements CabalFileChangeListener{
-
-
   public void cabalFileChanged( final IFile cabalF ) {
-    ScionInstance si = ScionPlugin.getScionInstance( cabalF );
-    if (si!=null){
-      si.buildProject( false,true );
+    final ScionInstance si = ScionPlugin.getScionInstance( cabalF );
+    if (si != null) {
+      si.buildProject( false, true );
     }
   }
 }

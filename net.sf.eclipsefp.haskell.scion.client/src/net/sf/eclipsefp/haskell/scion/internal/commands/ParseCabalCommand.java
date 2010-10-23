@@ -25,8 +25,8 @@ public class ParseCabalCommand extends ScionCommand {
 	}
 	
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
-		description=(JSONObject)result; 
+	protected void doProcessResult() throws JSONException {
+		description=(JSONObject) response; 
 	}
 	
 	public JSONObject getDescription() {

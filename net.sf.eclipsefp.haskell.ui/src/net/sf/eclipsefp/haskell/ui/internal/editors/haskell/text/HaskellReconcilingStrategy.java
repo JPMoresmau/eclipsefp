@@ -3,12 +3,14 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
-import net.sf.eclipsefp.haskell.scion.client.ICommandContinuation;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -26,7 +28,6 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
                                                    IReconcilingStrategyExtension {
 
   private final HaskellEditor editor;
-  private ScionInstance instance=null;
   private IFile file=null;
 //  private final HaskellFoldingStructureProvider foldingStructureProvider;
 
@@ -40,9 +41,6 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     if( input != null && input instanceof IFileEditorInput ) {
       IFileEditorInput fei = ( IFileEditorInput )input;
       this.file = fei.getFile();
-      if( file != null && file.exists() ) {
-        instance=ScionPlugin.getScionInstance( file );
-      }
     }
     /*foldingStructureProvider = new HaskellFoldingStructureProvider( editor );*/
   }
@@ -89,12 +87,20 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
 
   private void reconcile() {
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
-    if (editor.isDirty() && instance!=null) {
-      instance.reloadFile( file, editor.getDocument(), new ICommandContinuation() {
-        public void commandContinuation() {
-          editor.synchronize();
-        }
-      }, false);
+    if (editor.isDirty()) {
+      final ScionInstance scionInstance = ScionPlugin.getScionInstance( file.getProject() );
+      if (scionInstance != null) {
+        Job syncJob = new Job("HaskellReconcilingStrategy/reconcile") {
+          @Override
+          protected IStatus run( final IProgressMonitor monitor ) {
+            scionInstance.reloadFile( file, editor.getDocument());
+            editor.synchronize();
+            return Status.OK_STATUS;
+          }
+        };
+
+        syncJob.schedule();
+      }
     }
   }
 }

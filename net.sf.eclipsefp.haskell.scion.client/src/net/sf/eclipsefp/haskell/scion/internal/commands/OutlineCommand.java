@@ -24,8 +24,8 @@ public class OutlineCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
-		JSONArray arr = (JSONArray)result;
+	protected void doProcessResult() throws JSONException {
+		JSONArray arr = (JSONArray) response;
 		for (int a=0;a<arr.length();a++){
 			outlineDefs.add(new OutlineDef(file,arr.getJSONObject(a)));
 		}

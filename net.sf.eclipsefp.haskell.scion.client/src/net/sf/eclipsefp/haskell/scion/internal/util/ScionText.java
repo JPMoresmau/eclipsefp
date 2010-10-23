@@ -42,6 +42,9 @@ public class ScionText extends NLS {
   public static String        warning_typecheck_arbitrary_failed;
   public static String        warning_file_component;
 
+  public static String        buildProjectJob_name;
+  public static String        buildProjectJob_task1;
+  
   public static String        noproject;
 
   private static final String BUNDLE_NAME = ScionText.class.getPackage().getName() + ".sciontext"; //$NON-NLS-1$

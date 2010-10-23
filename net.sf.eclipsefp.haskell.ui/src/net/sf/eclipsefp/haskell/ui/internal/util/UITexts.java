@@ -287,6 +287,10 @@ public final class UITexts extends NLS {
   public static String scionArchiveFileException;
   public static String scionArchiveNonspecificFileException;
   public static String scionServerProgress_title;
+  public static String scionServerProgress_subtask1;
+  public static String scionServerProgress_subtask2;
+  public static String scionServerProgress_completed_title;
+  public static String scionServerProgress_completed_message;
 
   public static String noCabalImplementation_title;
   public static String noCabalImplementation_message;

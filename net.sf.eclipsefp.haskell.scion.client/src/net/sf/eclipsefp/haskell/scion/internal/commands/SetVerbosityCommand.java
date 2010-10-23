@@ -25,7 +25,7 @@ public class SetVerbosityCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
+	protected void doProcessResult() throws JSONException {
 		// nothing interesting to do
 	}
 

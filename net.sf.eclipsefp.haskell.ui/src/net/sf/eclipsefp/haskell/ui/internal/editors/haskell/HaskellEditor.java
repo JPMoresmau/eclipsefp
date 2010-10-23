@@ -11,13 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.ICommandContinuation;
-import net.sf.eclipsefp.haskell.scion.client.IScionServerEventListener;
+import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
+import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
+import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEvent;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEventType;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -72,9 +71,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  *
  * @author Leif Frenzel
  */
-public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, IScionServerEventListener {
-
-
+public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, IScionEventListener {
   /**
    * the id under which the Haskell editor is declared.
    */
@@ -330,11 +327,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       // since we call synchronize
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
       if (instance!=null){
-        instance.reloadFile(file, new ICommandContinuation() {
-          public void commandContinuation() {
-            synchronize();
-          }
-        }, false);
+        instance.reloadFile(file);
+        synchronize();
       }
     }
   }
@@ -368,12 +362,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     theInstance = getInstance();
     if (theInstance != null) {
-        file = findFile();
-        theInstance.reloadFile( file, new ICommandContinuation() {
-          public void commandContinuation() {
-            HaskellEditor.this.synchronize();
-          }
-        }, false);
+        theInstance.reloadFile( findFile() );
+        synchronize();
     }
   }
 
@@ -450,7 +440,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
      */
   }
 
-  public void synchronize(){
+  public void synchronize() {
     IDocument document=getDocument();
 
     foldingStructureProvider.setDocument( document );
@@ -468,18 +458,18 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         }
       } );
 
-      ScionInstance instance=getInstance();
+      ScionInstance instance = getInstance();
       if( instance!=null && instance.isLoaded( findFile() )) {
-        instance.outline(findFile(),new OutlineHandler() {
+        instance.outline(findFile(), new OutlineHandler() {
 
           public void outlineResult( final List<OutlineDef> outlineDefs ) {
-            outline=outlineDefs;
+            outline = outlineDefs;
             if(getOutlinePage()!=null){
               getOutlinePage().setInput( outlineDefs );
             }
            foldingStructureProvider.updateFoldingRegions(outlineDefs);
           }
-        },false);
+        });
       } else {
         List<OutlineDef> outlineDefs=Collections.emptyList();
         if(getOutlinePage()!=null){
@@ -538,21 +528,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return false;
   }
 
-  // Interface methods for IScionServerEventListener
+  // Interface methods for IScionEventListener
 
   /** Process a scion-server status change event */
-  public void processScionServerEvent( final ScionServerEvent ev ) {
-    if (ev.getEventType() == ScionServerEventType.EXECUTABLE_CHANGED) {
+  public void processScionServerEvent( final ScionEvent ev ) {
+    ScionEventType evType = ev.getEventType();
+    if (evType == ScionEventType.EXECUTABLE_CHANGED
+        || evType == ScionEventType.BUILD_PROJECT_COMPLETED) {
       // Synchronize the editor with scion-server...
-      ScionInstance theInstance = getInstance();
-      IFile file = findFile();
+      final ScionInstance theInstance = getInstance();
+      final IFile file = findFile();
 
       if ( theInstance != null && file != null && ResourceUtil.isInHaskellProject( file ) ) {
-        theInstance.reloadFile( file, new ICommandContinuation() {
-          public void commandContinuation() {
-            HaskellEditor.this.synchronize();
-          }
-        }, false);
+        theInstance.reloadFile( file);
+        synchronize();
       }
     }
   }

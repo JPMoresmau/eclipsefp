@@ -78,7 +78,6 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
         incrementalBuild( delta, mon );
       }
     }
-
   }
 
 
@@ -111,11 +110,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       SubProgressMonitor subMon = new SubProgressMonitor( mon, 85 );
       getProject().accept( new BuildVisitor( subMon ) );*/
       ScionInstance si = ScionPlugin.getScionInstance( getProject() );
-      if (si==null ){
-        new Exception("ScionInstance==null").printStackTrace(); //$NON-NLS-1$
+      if (si == null ){
+        new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
         return;
       }
-      si.buildProject(true,false);
+      si.buildProject(true, false);
     } finally {
       mon.done();
     }

@@ -38,13 +38,13 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
   }
 
   @Override
-  protected void doProcessResult(Object json) throws JSONException {
+  protected void doProcessResult() throws JSONException {
     instance.deleteProblems(file);
-    if (json instanceof JSONArray) {
-      JSONArray result = (JSONArray) json;
+    if (response instanceof JSONArray) {
+      JSONArray result = (JSONArray) response;
       compilationResult = new CompilationResult(result.getJSONObject(1));
-    } else if (json instanceof JSONObject) {
-      JSONObject o = (JSONObject) json;
+    } else if (response instanceof JSONObject) {
+      JSONObject o = (JSONObject) response;
       JSONObject cr = o.optJSONObject("Right");
       if (cr != null) {
         instance.setLoadedFile(file);

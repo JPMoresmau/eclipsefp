@@ -14,7 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEventType;
+import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
@@ -95,7 +95,7 @@ public class StdStreamScionServer extends ScionServer {
   private void signalAbnormalTermination() {
     ScionInstance scionInstance = ScionPlugin.getScionInstance(project);
     assert (scionInstance != null);
-    scionInstance.notifyListeners(ScionServerEventType.ABNORMAL_TERMINATION);
+    scionInstance.notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
   }
 
   /**
@@ -140,11 +140,13 @@ public class StdStreamScionServer extends ScionServer {
               serverOutput.flush();
             }
           } else {
-            serverOutput.write(ScionText.scionServerGotEOF_message + PlatformUtil.NL);
-            serverOutput.flush();
-            Trace.trace(serverName, ScionText.scionServerGotEOF_message);
-            stopServer();
-            signalAbnormalTermination();
+            if (!terminateFlag) {
+              serverOutput.write(ScionText.scionServerGotEOF_message + PlatformUtil.NL);
+              serverOutput.flush();
+              Trace.trace(serverName, ScionText.scionServerGotEOF_message);
+              stopServer();
+              signalAbnormalTermination();
+            }
           }
         } catch (JSONException ex) {
           try {

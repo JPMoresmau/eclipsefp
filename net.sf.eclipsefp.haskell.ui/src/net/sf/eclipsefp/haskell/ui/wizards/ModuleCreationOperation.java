@@ -56,8 +56,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
   // interface methods of IRunnableWithProgress
   /////////////////////////////////////////////
 
-  public void run( final IProgressMonitor monitor )
-                                              throws InvocationTargetException {
+  public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
     Assert.isNotNull( info );
     try {
       boolean onlyAdd=false;
@@ -130,6 +129,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       } finally {
         prov.disconnect( f );
       }
+
       ScionPlugin.getScionInstance( generatedFile ).buildProject( false , false);
 
     } catch( CoreException ex ) {

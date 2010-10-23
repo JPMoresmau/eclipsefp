@@ -15,7 +15,7 @@ public class OpenCabalProjectCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
+	protected void doProcessResult() throws JSONException {
 		// NOOP
 	}
 

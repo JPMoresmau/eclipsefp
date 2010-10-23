@@ -32,9 +32,9 @@ public class CabalDependenciesCommand extends ScionCommand {
 	}
 	
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
+	protected void doProcessResult() throws JSONException {
 		packagesByDB.clear();
-		JSONArray arr=(JSONArray)result;
+		JSONArray arr=(JSONArray) response;
 		for (int a=0;a<arr.length();a++){
 			JSONObject arr2=arr.getJSONObject(a);
 			Iterator<String> it=arr2.keys();

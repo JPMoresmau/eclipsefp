@@ -1,9 +1,5 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import net.sf.eclipsefp.haskell.scion.client.ICommandContinuation;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 
@@ -20,20 +16,12 @@ import org.json.JSONObject;
 public abstract class ScionCommand {
   /** Request sequence number, set externally by an AbstractServer object. */
   private int                              sequence;
-  /** Commands to be executed after this command */
-  private final List<ScionCommand>         successors;
-  /** Methods to be run after the command has finished executing. */
-  private final List<ICommandContinuation> continuations;
   /**
-   * Used only for error reporting during response processing.
+   * The general JSON response from the server, may be a {@link JSONArray} or {@link JSONObject}.
    */
-  private JSONObject                       response;
+  protected Object                         response;
   /** Command status: WAITING or DONE. */
   int                                      status;
-  /**
-   * Synchronous (true) vs. asynchronous (false) completion.
-   */
-  boolean                                  isSync;
   /** WAITING state: command is waiting for a response. */
   static final int                         WAITING = 0;
   /** DONE state: command's response has been received */
@@ -46,14 +34,7 @@ public abstract class ScionCommand {
    */
   public ScionCommand() {
     status = WAITING;
-    isSync = false;
-    successors = new LinkedList<ScionCommand>();
-    continuations = new LinkedList<ICommandContinuation>();
-  }
-
-  /** Set the continuation that needs to be run when the job's status changes */
-  public void addContinuation(final ICommandContinuation continuation) {
-    continuations.add(continuation);
+    response = null;
   }
 
   /** Set the sequence number of this command */
@@ -61,9 +42,18 @@ public abstract class ScionCommand {
     this.sequence = sequenceNumber;
   }
 
-  /** Set the response JSON object */
-  public void setResponse(JSONObject response) {
-    this.response = response;
+  /** Set the response JSON object
+   * 
+   * @param result The JSON result object from scion-server
+   * @param server The server, in case we need to process an asynchronous command's successors
+   * @throws JSONException
+   */
+  public void setResponse(Object result, ScionServer server) throws JSONException {
+    response = result;
+    // Someone else is waiting for the response and will call processResult().
+    synchronized (this) {
+      notifyAll();
+    }
   }
 
   /** Set the command's status to DONE */
@@ -82,11 +72,6 @@ public abstract class ScionCommand {
    */
   private void setCommandStatus(final int newStatus) {
     status = newStatus;
-    if (isSync) {
-      synchronized (this) {
-        notifyAll();
-      }
-    }
   }
 
   /** Predicate to test if command is still waiting for a response. */
@@ -99,35 +84,9 @@ public abstract class ScionCommand {
     return (status == DONE);
   }
 
-  /** Set synchronous command flag */
-  public void setIsSync() {
-    isSync = true;
-  }
-
-  /** Predicate to test if the command has been launch synchronously.  */
-  public boolean isSync() {
-	return isSync;
-  }
-  
-  /**
-   * Run successor commands queued in the {@link #successors} list.
-   * 
-   * @return True if this command is synchronously sent and all of the
-   *         successors also succeed. For asynchronous commands, always returns
-   *         true.
-   */
-  public boolean runSuccessors(ScionServer server) {
-    boolean retval = true;
-    if (isSync) {
-      for (ScionCommand sc : successors) {
-        retval &= server.sendCommandSync(sc);
-      }
-    } else {
-      for (ScionCommand sc : successors)
-        server.sendCommand(sc);
-    }
-
-    return retval;
+  /** Predicate to test if the command has received a response */
+  public boolean hasResponse() {
+    return (response != null);
   }
 
   public boolean onError(String name, String message) {
@@ -185,14 +144,12 @@ public abstract class ScionCommand {
     return new JSONObject();
   }
 
-  public final void processResult(Object result) throws JSONException {
-    doProcessResult(result);
-    for (ICommandContinuation continuation : continuations) {
-      continuation.commandContinuation();
-    }
+  public final void processResult() throws JSONException {
+    assert (response != null);
+    doProcessResult();
   }
 
-  protected void doProcessResult(Object result) throws JSONException {
+  protected void doProcessResult() throws JSONException {
     // Base class does nothing.
   }
 
@@ -208,7 +165,7 @@ public abstract class ScionCommand {
     try {
       info = NLS.bind(ScionText.scionFailedCommand_message, toString());
       if (this.response != null) {
-        info += "\n" + NLS.bind(ScionText.scionFailedResponse_message, prettyPrint(response));
+        info += "\n" + NLS.bind(ScionText.scionFailedResponse_message, prettyPrint((JSONObject) response));
       }
     } catch (Throwable ex) {
       info = new String();
@@ -224,16 +181,5 @@ public abstract class ScionCommand {
       // strangely, the not pretty-printed version does not throw at all
       return json.toString();
     }
-  }
-
-  /**
-   * Add a successor to this command that is executed once this command
-   * completes successfully.
-   * 
-   * @param successor
-   *          The successor command.
-   */
-  public void addSuccessor(ScionCommand successor) {
-    successors.add(successor);
   }
 }

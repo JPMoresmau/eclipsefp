@@ -20,11 +20,11 @@ import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
-import net.sf.eclipsefp.haskell.scion.client.IScionServerEventListener;
+import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
+import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
+import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEvent;
-import net.sf.eclipsefp.haskell.scion.client.ScionServerEventType;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
@@ -82,7 +82,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  *
  * This works by listening for resource changes.
  */
-public class ScionManager implements IResourceChangeListener, IScionServerEventListener {
+public class ScionManager implements IResourceChangeListener, IScionEventListener {
   public ScionManager() {
     // the work is done in the start() method
   }
@@ -137,7 +137,7 @@ public class ScionManager implements IResourceChangeListener, IScionServerEventL
     File scionBuildDir = scionBuildDirPath.toFile();
     ScionBuildStatus retval;
 
-    monitor.subTask( "Unpacking the Scion server source archive" );
+    monitor.subTask( UITexts.scionServerProgress_subtask1 );
     retval = ScionBuilder.unpackScionArchive( scionBuildDir );
     if (retval.isOK()) {
       // build final exe location
@@ -149,7 +149,7 @@ public class ScionManager implements IResourceChangeListener, IScionServerEventL
       File  exeFile = exePath.toFile();
 
       if( !exeFile.exists() && hsImpl != null && cabalImpl != null) {
-        monitor.subTask( "Cabal building the internal Scion server" );
+        monitor.subTask( UITexts.scionServerProgress_subtask2 );
         retval = ScionBuilder.build( cabalImpl, scionBuildDir, conout);
         if (retval.isOK() && exeFile.exists() ) {
           retval.setExecutable( exePath.toOSString() );
@@ -213,8 +213,8 @@ public class ScionManager implements IResourceChangeListener, IScionServerEventL
                       prov.disconnect( cabalF );
                     }
                   }
-                  ScionInstance si = ScionPlugin.getScionInstance( f );
-                  if (si!=null){
+                  final ScionInstance si = ScionPlugin.getScionInstance( f );
+                  if (si != null){
                     si.buildProject( false , true);
                   }
                   return false;
@@ -498,7 +498,15 @@ public class ScionManager implements IResourceChangeListener, IScionServerEventL
               }
             } );
           } else {
-            // Build was successful, so we don't need the console any more.
+            // Yippee! The server built successfully: Tell user and delete the console.
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openInformation( Display.getDefault().getActiveShell(),
+                                               UITexts.scionServerProgress_completed_title,
+                                               UITexts.scionServerProgress_completed_message );
+              }
+            } );
+
             IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
             mgr.removeConsoles( new IConsole[] { fConsole } );
           }
@@ -525,8 +533,8 @@ public class ScionManager implements IResourceChangeListener, IScionServerEventL
     }
   }
 
-  public void processScionServerEvent( final ScionServerEvent ev ) {
-    if ( ev.getEventType() == ScionServerEventType.ABNORMAL_TERMINATION ) {
+  public void processScionServerEvent( final ScionEvent ev ) {
+    if ( ev.getEventType() == ScionEventType.ABNORMAL_TERMINATION ) {
       // Ask the user if they'd like the server to be restarted.
       final Display display = Display.getDefault();
       display.syncExec( new Runnable() {

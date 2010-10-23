@@ -49,9 +49,8 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
   }
 
   @Override
-  protected void doProcessResult(Object result) throws JSONException {
-    compilationResult = new CompilationResult((JSONObject) result);
-
+  protected void doProcessResult() throws JSONException {
+    compilationResult = new CompilationResult((JSONObject) response);
   }
 
   public CompilationResult getCompilationResult() {

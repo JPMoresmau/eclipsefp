@@ -294,7 +294,7 @@
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
-              contextId="net.sf.eclipsefp.haskell.ui.internal.editor.haskell.HaskellEditor.context"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
               sequence="F3"/>
          <!-- other keys -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"

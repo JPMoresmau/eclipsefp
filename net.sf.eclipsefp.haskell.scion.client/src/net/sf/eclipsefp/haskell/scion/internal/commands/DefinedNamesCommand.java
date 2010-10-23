@@ -19,8 +19,8 @@ public class DefinedNamesCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
-		JSONArray arr = (JSONArray)result;
+	protected void doProcessResult() throws JSONException {
+		JSONArray arr = (JSONArray) response;
 		for (int a=0;a<arr.length();a++){
 			names.add(arr.getString(a));
 		}

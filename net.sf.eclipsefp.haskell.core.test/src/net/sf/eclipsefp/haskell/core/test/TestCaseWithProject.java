@@ -157,7 +157,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   protected void setUp() throws Exception {
     super.setUp();
 
-    String ghc=System.getProperty( "GHC_TEST" );
+    String ghc = System.getProperty( "GHC_TEST" );
     if (ghc==null){
       fail( "no GHC_TEST system property found (must point to GHC bin folder)" );
     }

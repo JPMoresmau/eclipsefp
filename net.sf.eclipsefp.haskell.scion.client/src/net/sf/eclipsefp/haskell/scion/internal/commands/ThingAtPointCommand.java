@@ -41,13 +41,13 @@ public class ThingAtPointCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object json) throws JSONException {
-		if (json instanceof String) {
-			thing=(String)json;
-		} else if (json.equals(JSONObject.NULL)) {
+	protected void doProcessResult() throws JSONException {
+		if (response instanceof String) {
+			thing=(String) response;
+		} else if (response.equals(JSONObject.NULL)) {
 		  thing = null;
 		} else {
-			JSONObject result = (JSONObject)json;
+			JSONObject result = (JSONObject) response;
 			if (result.has("Just")) {
 				thing = result.getString("Just");
 			} else {

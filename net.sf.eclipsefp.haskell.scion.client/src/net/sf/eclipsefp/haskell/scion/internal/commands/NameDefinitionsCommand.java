@@ -38,8 +38,8 @@ public class NameDefinitionsCommand extends ScionCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object json) throws JSONException {
-		JSONArray result = (JSONArray)json;
+	protected void doProcessResult() throws JSONException {
+		JSONArray result = (JSONArray) response;
 		locations = new ArrayList<Location>(result.length());
 		for (int i = 0; i < result.length(); ++i) {
 			JSONObject obj=result.getJSONObject(i);

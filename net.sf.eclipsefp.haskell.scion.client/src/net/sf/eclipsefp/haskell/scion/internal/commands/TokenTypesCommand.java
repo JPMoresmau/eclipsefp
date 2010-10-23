@@ -40,9 +40,9 @@ public class TokenTypesCommand extends ScionCommand {
 
 	
 	@Override
-	protected void doProcessResult(Object json) throws JSONException {
-		if (json instanceof JSONObject){
-			JSONObject o=(JSONObject)json;
+	protected void doProcessResult() throws JSONException {
+		if (response instanceof JSONObject){
+			JSONObject o=(JSONObject) response;
 			JSONArray result=o.optJSONArray("Right");
 			if (result!=null){
 				tokens=new ArrayList<TokenDef>(result.length());

@@ -17,7 +17,11 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -105,8 +109,8 @@ public class ImportLibrariesPP extends PropertyPage
 //    list.save();
 
 
-    ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
-    if (si!=null && si.getPackagesByDB()!=null){
+    final ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
+    if (si!=null && si.getPackagesByDB()!=null) {
       try {
         IFile f=ScionInstance.getCabalFile(  ( IProject )getElement() );
         IDocumentProvider prov=new TextFileDocumentProvider();
@@ -143,9 +147,21 @@ public class ImportLibrariesPP extends PropertyPage
             }
           }
         }
-        prov.saveDocument( new NullProgressMonitor(), f, doc, true );
-        si.buildProject( false, true );
 
+        prov.saveDocument( new NullProgressMonitor(), f, doc, true );
+
+        // Perform the ScionInstance.buildProject() in a Job to maintain UI responsiveness.
+        Job buildJob = new Job("Import libraries preference change") {
+          @Override
+          protected IStatus run( final IProgressMonitor monitor ) {
+            monitor.beginTask( getName(), IProgressMonitor.UNKNOWN );
+            si.buildProject( false, true );
+            monitor.done();
+            return Status.OK_STATUS;
+          }
+        };
+
+        buildJob.schedule();
       } catch (CoreException ce){
         HaskellUIPlugin.log( ce );
 

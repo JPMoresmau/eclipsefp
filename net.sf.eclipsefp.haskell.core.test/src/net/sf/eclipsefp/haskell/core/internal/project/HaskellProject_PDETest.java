@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -46,7 +47,8 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
 //    assertEquals( project.getFolder( FileUtil.DEFAULT_FOLDER_SRC ), hp.getSourceFolder() );
 
     assertTrue( ResourceUtil.isSourceFolder( project.getFolder( FileUtil.DEFAULT_FOLDER_SRC ) ) );
-    assertTrue( ResourceUtil.isSourceFolder( project.getFolder( "test" ) ) );
+    IFolder testFolder = project.getFolder( "test" );
+    assertTrue( ResourceUtil.isSourceFolder( testFolder ) );
     assertFalse( ResourceUtil.isSourceFolder( project.getFolder( "crs" ) ) );
   }
 

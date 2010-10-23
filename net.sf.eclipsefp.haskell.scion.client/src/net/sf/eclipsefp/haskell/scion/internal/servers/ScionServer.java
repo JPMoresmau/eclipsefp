@@ -204,17 +204,35 @@ public abstract class ScionServer {
     if (serverInStream != null) {
       // Keep track of this request in the command queue
       int seqNo = nextSequenceNumber.getAndIncrement();
-      command.setSequenceNumber(seqNo);
+      String jsonString = command.toJSONString();
 
       synchronized (commandQueue) {
+        command.setSequenceNumber(seqNo);
         commandQueue.put(new Integer(seqNo), command);
       }
-
-      String jsonString = command.toJSONString();
 
       try {
         serverInStream.write(command.toJSONString() + PlatformUtil.NL);
         serverInStream.flush();
+        // Wait for receiver to get the response
+        synchronized (command) {
+          while (!command.hasResponse()) {
+            try {
+              command.wait();
+            } catch (InterruptedException ex) {
+              // We'll spin until the request is processed...
+            }
+          }
+        }
+        
+        // Process the response
+        try {
+          command.processResult();
+          command.setCommandDone();
+        } catch (JSONException jsonEx) {
+          command.setCommandError();
+          logMessage(ScionText.commandProcessingFailed_message, jsonEx);
+        }
       } catch (IOException ex) {
         try {
           serverOutput.write(getClass().getSimpleName() + ".sendCommand encountered an exception:" + PlatformUtil.NL);
@@ -237,36 +255,6 @@ public abstract class ScionServer {
         }
       }
     }
-  }
-
-  /**
-   * Send a command, wait for its response.
-   * 
-   * @return true if the command completed successfully, otherwise false.
-   */
-  public final boolean sendCommandSync(ScionCommand command) {
-    boolean retval = false;
-
-    if (serverInStream != null) {
-      command.setIsSync();
-
-      synchronized (command) {
-        sendCommand(command);
-        while (command.isWaiting()) {
-          try {
-            command.wait();
-          } catch (InterruptedException ex) {
-            // We'll spin until the request is processed...
-          }
-        }
-      }
-      retval = command.isDone();
-      if (retval){
-    	  // we are in the calling thread, this is safe
-    	  command.runSuccessors(ScionServer.this);
-      }
-    }
-    return retval;
   }
 
   /**
@@ -306,19 +294,10 @@ public abstract class ScionServer {
       Object result = response.opt("result");
       if (result != null) {
         try {
-          command.setResponse(response);
-          command.processResult(result);
-          command.setCommandDone();
-          // we're not in the calling thread!!
-          if (!command.isSync()){
-        	  command.runSuccessors(ScionServer.this);
-          }
-          retval = true;
+          command.setResponse(result, this);
         } catch (JSONException jsonex) {
           command.setCommandError();
           logMessage(ScionText.commandProcessingFailed_message, jsonex);
-        } finally {
-          command.setResponse(response);
         }
       } else {
         JSONObject error = response.optJSONObject("error");

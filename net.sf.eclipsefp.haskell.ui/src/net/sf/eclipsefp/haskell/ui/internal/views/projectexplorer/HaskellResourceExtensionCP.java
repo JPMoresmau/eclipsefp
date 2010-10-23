@@ -75,7 +75,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
                     si.notifyAll();
                   }
                 }
-              } ,true);
+              });
 //              try {
 //             // TODO make this a preference
 //                si.wait( 10000 ); // 10 seconds max

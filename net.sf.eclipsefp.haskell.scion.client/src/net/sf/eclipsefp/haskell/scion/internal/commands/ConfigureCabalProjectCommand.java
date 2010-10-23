@@ -13,7 +13,7 @@ public class ConfigureCabalProjectCommand extends OpenCabalProjectCommand {
 	}
 
 	@Override
-	protected void doProcessResult(Object result) throws JSONException {
+	protected void doProcessResult() throws JSONException {
 		try {
 			IResource res=getProject().findMember(ScionPlugin.DIST_FOLDER);
 			if (res!=null){
