@@ -44,9 +44,7 @@ public class ThingAtPointCommand extends ScionCommand {
 	protected void doProcessResult() throws JSONException {
 		if (response instanceof String) {
 			thing=(String) response;
-		} else if (response.equals(JSONObject.NULL)) {
-		  thing = null;
-		} else {
+		} else if (!JSONObject.NULL.equals(json)){
 			JSONObject result = (JSONObject) response;
 			if (result.has("Just")) {
 				thing = result.getString("Just");
