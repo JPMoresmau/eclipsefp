@@ -306,9 +306,9 @@ public abstract class ScionServer {
             String name = error.getString("name");
             String message = error.getString("message");
             if (!command.onError(name, message)) {
-              command.setCommandError();
               logMessage(NLS.bind(ScionText.commandError_message, name, message), null);
             }
+            command.setCommandError();
           } catch (JSONException ex2) {
             command.setCommandError();
             logMessage(ScionText.commandProcessingFailed_message, ex2);

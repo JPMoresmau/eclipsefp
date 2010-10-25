@@ -47,6 +47,8 @@ public class ScionText extends NLS {
   
   public static String        noproject;
 
+  public static String		  build_job_name;
+  
   private static final String BUNDLE_NAME = ScionText.class.getPackage().getName() + ".sciontext"; //$NON-NLS-1$
 
   static {

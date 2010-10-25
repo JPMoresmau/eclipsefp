@@ -28,8 +28,8 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
-import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
+import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
 import org.json.JSONObject;
 
 /**
@@ -249,56 +250,65 @@ public class ScionInstance {
     if (checkCabalFile()) {
       final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
       final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
-      
-      server.sendCommand(command);
-      components = command.getComponents();
-      // if lastLoadedComponent is still present, load it last
-      if (lastLoadedComponent != null) {
-        List<Component> l = new ArrayList<Component>(components.size());
-        Component toLoadLast = null;
-        synchronized (components) {
-          for (Component c : components) {
-            if (c.toString().equals(lastLoadedComponent.toString())) {
-              toLoadLast = c;
-            } else {
-              l.add(c);
+      command.addContinuation(new ICommandContinuation() {
+        public void commandContinuation() {
+          Job projectJob = new Job(NLS.bind(ScionText.build_job_name, getProject().getName())) {
+            @Override
+            protected IStatus run(final IProgressMonitor monitor) {
+
+              components = command.getComponents();
+              // if lastLoadedComponent is still present, load it last
+              if (lastLoadedComponent != null) {
+                List<Component> l = new ArrayList<Component>(components.size());
+                Component toLoadLast = null;
+                synchronized (components) {
+                  for (Component c : components) {
+                    if (c.toString().equals(lastLoadedComponent.toString())) {
+                      toLoadLast = c;
+                    } else {
+                      l.add(c);
+                    }
+                  }
+                }
+
+                if (toLoadLast != null) {
+                  l.add(toLoadLast);
+                }
+                components = l;
+              }
+              List<Component> cs = null;
+              synchronized (components) {
+                cs = new ArrayList<Component>(components);
+              }
+              deleteProblems(getProject());
+              CompilationResultHandler crh = new CompilationResultHandler(getProject());
+
+              for (Component c : cs) {
+                LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
+                server.sendCommandSync(loadCommand);
+                crh.process(loadCommand);
+                lastLoadedComponent = c;
+              }
+
+              ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+              server.sendCommandSync(pcc);
+              cabalDescription = pcc.getDescription();
+
+              CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+              server.sendCommandSync(cdc);
+              packagesByDB = cdc.getPackagesByDB();
+
+              restoreState();
+
+              return Status.OK_STATUS;
             }
-          }
+          };
+
+          projectJob.schedule();
+
         }
-
-        if (toLoadLast != null) {
-          l.add(toLoadLast);
-        }
-        components = l;
-      }
-      List<Component> cs = null;
-      synchronized (components) {
-        cs = new ArrayList<Component>(components);
-      }
-
-      deleteProblems(getProject());
-      CompilationResultHandler crh = new CompilationResultHandler(getProject());
-
-      for (Component c : cs) {
-        LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
-        
-        server.sendCommand(loadCommand);
-        crh.process(loadCommand);
-        lastLoadedComponent = c;
-      }
-
-      ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
-
-      server.sendCommand(pcc);
-      cabalDescription = pcc.getDescription();
-
-      CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
-
-      server.sendCommand(cdc);
-      packagesByDB = cdc.getPackagesByDB();
-     
-      restoreState();
-      notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED);
+      });
+      server.sendCommand(command);
     }
   }
 
