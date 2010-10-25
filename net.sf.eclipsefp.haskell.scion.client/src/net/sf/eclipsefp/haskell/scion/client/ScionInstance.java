@@ -28,8 +28,8 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
-import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
+import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
@@ -43,10 +43,15 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
 import org.json.JSONObject;
 
 /**
@@ -206,8 +211,11 @@ public class ScionInstance {
       command.addContinuation(new ICommandContinuation() {
 		
 		public void commandContinuation() {
-			Runnable r=new Runnable(){
-				public void run() {
+			
+			Job projectJob = new Job(NLS.bind(ScionText.build_job_name, getProject().getName())) {
+                  @Override
+                  protected IStatus run( final IProgressMonitor monitor ) {
+                    
 					 components = command.getComponents();
 				      // if lastLoadedComponent is still present, load it last
 				      if (lastLoadedComponent != null) {
@@ -251,10 +259,12 @@ public class ScionInstance {
 				      packagesByDB = cdc.getPackagesByDB();
 
 				      restoreState();
-				}
-			};
-			
-			new Thread(r).start();
+				
+				      return Status.OK_STATUS;
+	            }
+	          };
+	
+	      projectJob.schedule();
 			
 		}
       });
