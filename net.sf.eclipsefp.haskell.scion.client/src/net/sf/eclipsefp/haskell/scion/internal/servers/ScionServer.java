@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
-import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
@@ -22,7 +21,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTException;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -39,7 +37,7 @@ public abstract class ScionServer {
   /** Message prefix for responses received from the server */
   protected static final String              FROM_SERVER_PREFIX   = "[scion-server] >> ";
   /** The Scion protocol version number */
-  private static final String                PROTOCOL_VERSION     = "0.1";
+  public static final String                 PROTOCOL_VERSION     = "0.1";
   /**
    * Path to the server executable that is started and with whom EclipseFP
    * communicates
@@ -197,72 +195,91 @@ public abstract class ScionServer {
   }
 
   /**
-   * Send a command to the server, but do not wait for a response (asynchronous
-   * version).
+   * Send a command to the server, wait for a response and process the result. This
+   * is the synchronous command interface.
    */
-  public void sendCommand(ScionCommand command) {
-    if (serverInStream != null) {
-      // Keep track of this request in the command queue
-      int seqNo = nextSequenceNumber.getAndIncrement();
-      String jsonString = command.toJSONString();
-
-      synchronized (commandQueue) {
-        command.setSequenceNumber(seqNo);
-        commandQueue.put(new Integer(seqNo), command);
-      }
-
-      try {
-        serverInStream.write(command.toJSONString() + PlatformUtil.NL);
-        serverInStream.flush();
-        // Wait for receiver to get the response
-        synchronized (command) {
-          while (!command.hasResponse()) {
-            try {
-              command.wait();
-            } catch (InterruptedException ex) {
-              // We'll spin until the request is processed...
-            }
-          }
-        }
-        
-        // Process the response
-        try {
-          command.processResult();
-          command.setCommandDone();
-        } catch (JSONException jsonEx) {
-          command.setCommandError();
-          logMessage(ScionText.commandProcessingFailed_message, jsonEx);
-        }
-      } catch (IOException ex) {
-        try {
-          serverOutput.write(getClass().getSimpleName() + ".sendCommand encountered an exception:" + PlatformUtil.NL);
-          ex.printStackTrace(new PrintWriter(serverOutput));
-          serverOutput.flush();
-        } catch (IOException e) {
-          stopServer();
-        }
-      } finally {
-        Trace.trace( serverName, TO_SERVER_PREFIX.concat(jsonString) );
-        if (Trace.isTracing()) {
-          try {
-            serverOutput.write(TO_SERVER_PREFIX + jsonString + PlatformUtil.NL);
-            serverOutput.flush();
-          } catch (IOException ex) {
-            // Ignore this (something creative here?) 
-          } catch (SWTException se){
-        	  // device is disposed when shutting down, we hope
-          }
-        }
-      }
+  public boolean sendCommand(ScionCommand command) {
+    boolean retval = false;
+    
+    if (serverInStream == null) {
+      return retval;
     }
+
+    if ( internalSendCommand(command) ) {
+      // Wait for receiver to get the response or transition out of its WAITING status (usually the ERROR state)
+      synchronized (command) {
+        while ( command.isWaiting() && !command.hasResponse() ) {
+          try {
+            command.wait();
+          } catch (InterruptedException ex) {
+            // We'll spin until the request is processed...
+          }
+        }
+      }
+
+      // If an error occurred, such as a JSON exception, don't process the result.
+      if ( !command.isError() )
+        retval = command.processResult(this);
+    }
+    
+    return retval;
   }
 
   /**
-   * Check the server's protocol version. This just generates a warning if the
-   * version numbers do not match.
+   * Queue command, send it to the server. This is the asynchronous interface.
    */
-  public void checkProtocol() {
-    sendCommand(new ConnectionInfoCommand());
+  public boolean queueCommand(ScionCommand command) {
+    assert (!command.hasContinuations());
+    command.asyncResponseProcessor(this, serverName);
+    return internalSendCommand(command);
+  }
+
+  /**
+   * The internal method that puts a command on the commandQueue and sends the JSON-ified command string
+   * to scion-server. This is the common code for sendCommand() and queueCommand().
+   * 
+   * @param command
+   * @return
+   */
+  private boolean internalSendCommand(ScionCommand command) { 
+    boolean retval = false;
+    // Keep track of this request in the command queue
+    int seqNo = nextSequenceNumber.getAndIncrement();
+
+    synchronized (commandQueue) {
+      command.setSequenceNumber(seqNo);
+      commandQueue.put(new Integer(seqNo), command);
+    }
+
+    try {
+      serverInStream.write(command.toJSONString() + PlatformUtil.NL);
+      serverInStream.flush();
+      retval = true;
+    } catch (IOException ex) {
+      try {
+        serverOutput.write(getClass().getSimpleName() + ".sendCommand encountered an exception:" + PlatformUtil.NL);
+        ex.printStackTrace(new PrintWriter(serverOutput));
+        serverOutput.flush();
+      } catch (IOException e) {
+        stopServer();
+      }
+    } finally {
+      String jsonString = command.toJSONString();
+
+      Trace.trace(serverName, TO_SERVER_PREFIX.concat(jsonString));
+      if (Trace.isTracing()) {
+        try {
+          serverOutput.write(TO_SERVER_PREFIX + jsonString + PlatformUtil.NL);
+          serverOutput.flush();
+        } catch (IOException ex) {
+          // Ignore this (something creative here?)
+        } catch (SWTException se) {
+          // device is disposed when shutting down, we hope
+        }
+      }
+    }
+    
+    return retval;
   }
 
   /**
@@ -270,57 +287,28 @@ public abstract class ScionServer {
    * object.
    */
   public boolean processResponse(JSONObject response) {
-    boolean retval = false;
     int id = response.optInt("id", -1);
     ScionCommand command = null;
 
+    if (id <= 0) {
+      // Command identifiers are always greater than 0.
+      logMessage(ScionText.errorReadingId_warning, null);
+      return false;
+    }
+    
     // Ensure command is always dequeued
     synchronized (commandQueue) {
       Integer key = new Integer(id);
       command = commandQueue.remove(key);
     }
-
-    if (!checkResponseVersion(response)) {
-      return retval;
-    } else if (id <= 0) {
-      // Command identifiers are always greater than 0.
-      logMessage(ScionText.errorReadingId_warning, null);
-      return retval;
-    } else if (command == null) {
+    
+    if (command == null) {
       // Should have found the command in the queue...
       logMessage(NLS.bind(ScionText.commandIdMismatch_warning, id), null);
-      return retval;
-    } else {
-      Object result = response.opt("result");
-      if (result != null) {
-        try {
-          command.setResponse(result, this);
-        } catch (JSONException jsonex) {
-          command.setCommandError();
-          logMessage(ScionText.commandProcessingFailed_message, jsonex);
-        }
-      } else {
-        JSONObject error = response.optJSONObject("error");
-        if (error != null) {
-          try {
-            String name = error.getString("name");
-            String message = error.getString("message");
-            if (!command.onError(name, message)) {
-              logMessage(NLS.bind(ScionText.commandError_message, name, message), null);
-            }
-            command.setCommandError();
-          } catch (JSONException ex2) {
-            command.setCommandError();
-            logMessage(ScionText.commandProcessingFailed_message, ex2);
-          }
-        } else {
-          command.setCommandError();
-          logMessage(NLS.bind(ScionText.commandErrorMissing_message, result), null);
-        }
-      }
+      return false;
     }
-
-    return retval;
+    
+    return command.setResponse(response, this);
   }
 
   /**
@@ -332,7 +320,7 @@ public abstract class ScionServer {
    * @param exc
    *          The exception associated with the message, may be null.
    */
-  private void logMessage(final String message, final Throwable exc) {
+  public void logMessage(final String message, final Throwable exc) {
     try {
       serverOutput.write(message + PlatformUtil.NL);
       serverOutput.flush();
@@ -341,24 +329,5 @@ public abstract class ScionServer {
     }
 
     ScionPlugin.logError(message, exc);
-  }
-
-  /**
-   * Check the response from scion-server, ensure that the version number
-   * matches. Otherwise, yell at the user.
-   */
-  private boolean checkResponseVersion(JSONObject response) {
-    boolean retval = true;
-    String version = response.optString("version");
-
-    if (version == null) {
-      logMessage(ScionText.errorReadingVersion_warning, null);
-      retval = false;
-    } else if (!version.equals(PROTOCOL_VERSION)) {
-      ScionPlugin.logWarning(NLS.bind(ScionText.commandVersionMismatch_warning, version, PROTOCOL_VERSION), null);
-      retval = false;
-    }
-
-    return retval;
   }
 }

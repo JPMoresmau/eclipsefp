@@ -8,7 +8,7 @@ public class ScionEvent extends EventObject {
   /** Required serial version UID. */
   private static final long serialVersionUID = 1032029311500515018L;
   /** The event type enumeration */
-  ScionEventType      evType;
+  ScionEventType            evType;
   /** The scion-server associated with the event source's {@link ScionInstance}. */
   ScionServer               server;
 
@@ -18,7 +18,7 @@ public class ScionEvent extends EventObject {
    * @param source
    *          The {@link ScionInstance} that caused this event
    * @param server
-   *          The {@link ScionServer} associated with the ScionInstance. 
+   *          The {@link ScionServer} associated with the ScionInstance.
    * @param evType
    *          The event type of the status change
    */

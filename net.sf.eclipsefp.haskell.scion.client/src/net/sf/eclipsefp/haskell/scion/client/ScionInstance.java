@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbit
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CompilationResultHandler;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListExposedModulesCommand;
@@ -133,7 +134,16 @@ public class ScionInstance {
    *          The type of event that just happened.
    */
   public void notifyListeners(ScionEventType evType) {
-    ScionEvent ev = new ScionEvent(this, server, evType);
+    notifyListeners(new ScionEvent(this, server, evType));
+  }
+
+  /**
+   * Notify listeners that a scion-server event occurred.
+   * 
+   * @param ev
+   *          The event that just happened.
+   */
+  public void notifyListeners(ScionEvent ev) {
     Object[] theListeners = listeners.getListeners();
     for (int i = 0; i < theListeners.length; ++i) {
       ((IScionEventListener) theListeners[i]).processScionServerEvent(ev);
@@ -171,7 +181,7 @@ public class ScionInstance {
     internalReset();
     
     server.startServer();
-    server.checkProtocol();
+    checkProtocol();
 
     if (Trace.isTracing()) {
       setDeafening();
@@ -179,18 +189,7 @@ public class ScionInstance {
     
     // The initial buildProject() can take a while: encapsulate in a Job for better UI responsiveness.
     // buildProject() will notify listeners when it completes.
-    Job buildJob = new Job(ScionText.buildProjectJob_name) {
-      @Override
-      protected IStatus run( IProgressMonitor monitor ) {
-        monitor.beginTask( ScionText.buildProjectJob_task1, IProgressMonitor.UNKNOWN );
-        buildProject( false, true );
-        monitor.done();
-        return Status.OK_STATUS;
-      }
-    };
-    
-    buildJob.setPriority(Job.BUILD);
-    buildJob.schedule();
+    buildProject( false, true );
   }
 
   public void stop() {
@@ -216,7 +215,44 @@ public class ScionInstance {
   public boolean isStopped() {
     return server == null;
   }
+  
+  /**
+   * Check the server's protocol version. This just generates a warning if the
+   * version numbers do not match.
+   */
+  public void checkProtocol() {
+    final ConnectionInfoCommand ciCmd = new ConnectionInfoCommand();
+    
+    ciCmd.addContinuation(new Job("Checking protocol version") {
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        String version = ciCmd.getVersion();
+        boolean generateEvent = false;
 
+        if (version == null) {
+          ScionPlugin.logWarning(ScionText.errorReadingVersion_warning, null);
+          generateEvent = true;
+        } else if (!version.equals(ScionServer.PROTOCOL_VERSION)) {
+          ScionPlugin.logWarning(NLS.bind(ScionText.commandVersionMismatch_warning, version, ScionServer.PROTOCOL_VERSION), null);
+          generateEvent = true;
+        }
+        
+        if (generateEvent) {
+          notifyListeners(new VersionMismatchEvent(ScionInstance.this, server, version));
+        }
+        
+        return Status.OK_STATUS;
+      }
+    } );
+    
+    server.queueCommand(ciCmd);
+  }
+
+  /**
+   * Predicate to ensure that the cabal file exists.
+   * 
+   * @return true if the cabal file exists.
+   */
   private boolean checkCabalFile() {
     if (getProject() == null) {
       return false;
@@ -237,78 +273,77 @@ public class ScionInstance {
         }
       }
     }
+    
     return exists;
-
   }
 
   /**
    * Build the Haskell project.
    * 
+   * @param output
+   *          Echo output from the build
+   * @param forceRecomp
+   *          Force recompilation if true
    */
   public void buildProject(final boolean output, final boolean forceRecomp) {
     cabalDescription = null;
     if (checkCabalFile()) {
       final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
       final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
-      command.addContinuation(new ICommandContinuation() {
-        public void commandContinuation() {
-          Job projectJob = new Job(NLS.bind(ScionText.build_job_name, getProject().getName())) {
-            @Override
-            protected IStatus run(final IProgressMonitor monitor) {
-
-              components = command.getComponents();
-              // if lastLoadedComponent is still present, load it last
-              if (lastLoadedComponent != null) {
-                List<Component> l = new ArrayList<Component>(components.size());
-                Component toLoadLast = null;
-                synchronized (components) {
-                  for (Component c : components) {
-                    if (c.toString().equals(lastLoadedComponent.toString())) {
-                      toLoadLast = c;
-                    } else {
-                      l.add(c);
-                    }
-                  }
+      
+      command.addContinuation(new Job(NLS.bind(ScionText.build_job_name, getProject().getName())) {
+        @Override
+        protected IStatus run(final IProgressMonitor monitor) {
+          components = command.getComponents();
+          // if lastLoadedComponent is still present, load it last
+          if (lastLoadedComponent != null) {
+            List<Component> l = new ArrayList<Component>(components.size());
+            Component toLoadLast = null;
+            synchronized (components) {
+              for (Component c : components) {
+                if (c.toString().equals(lastLoadedComponent.toString())) {
+                  toLoadLast = c;
+                } else {
+                  l.add(c);
                 }
-
-                if (toLoadLast != null) {
-                  l.add(toLoadLast);
-                }
-                components = l;
               }
-              List<Component> cs = null;
-              synchronized (components) {
-                cs = new ArrayList<Component>(components);
-              }
-              deleteProblems(getProject());
-              CompilationResultHandler crh = new CompilationResultHandler(getProject());
-
-              for (Component c : cs) {
-                LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
-                server.sendCommandSync(loadCommand);
-                crh.process(loadCommand);
-                lastLoadedComponent = c;
-              }
-
-              ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
-              server.sendCommandSync(pcc);
-              cabalDescription = pcc.getDescription();
-
-              CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
-              server.sendCommandSync(cdc);
-              packagesByDB = cdc.getPackagesByDB();
-
-              restoreState();
-
-              return Status.OK_STATUS;
             }
-          };
 
-          projectJob.schedule();
+            if (toLoadLast != null) {
+              l.add(toLoadLast);
+            }
+            components = l;
+          }
+          List<Component> cs = null;
+          synchronized (components) {
+            cs = new ArrayList<Component>(components);
+          }
+          deleteProblems(getProject());
+          CompilationResultHandler crh = new CompilationResultHandler(getProject());
 
+          for (Component c : cs) {
+            LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
+            server.sendCommand(loadCommand);
+            crh.process(loadCommand);
+            lastLoadedComponent = c;
+          }
+
+          ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+          server.sendCommand(pcc);
+          cabalDescription = pcc.getDescription();
+
+          CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+          server.sendCommand(cdc);
+          packagesByDB = cdc.getPackagesByDB();
+
+          restoreState();
+          notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED);
+          
+          return Status.OK_STATUS;
         }
-      });
-      server.sendCommand(command);
+      } );
+      
+      server.queueCommand(command);
     }
   }
 
@@ -403,7 +438,6 @@ public class ScionInstance {
         
         server.sendCommand(loadCommand);
         lastLoadedComponent = compo;
-        
       }
     }
 
@@ -446,16 +480,8 @@ public class ScionInstance {
         return super.onError(name, message);
       }
     };
-
-    Job bgTypeCheck = new Job("Haskell background type checking for reloaded file") {
-      @Override
-      protected IStatus run(IProgressMonitor monitor) {
-        server.sendCommand(cmd);
-        return Status.OK_STATUS;
-      }
-    };
     
-    bgTypeCheck.schedule();
+    server.sendCommand(cmd);
   }
 
   public void unloadFile(IFile fileName) {
@@ -477,7 +503,7 @@ public class ScionInstance {
     handler.outlineResult(cmd.getOutlineDefs());
   }
 
-  public void withLoadedFile(final IFile file, ScionCommand cmd) {
+  private void withLoadedFile(final IFile file, ScionCommand cmd) {
     if (isLoaded(file)) {
       server.sendCommand(cmd);
     } else {
@@ -521,6 +547,7 @@ public class ScionInstance {
         handler.nameResult(exposedModulesCache);
         return;
       }
+      
       final ListExposedModulesCommand command = new ListExposedModulesCommand();
 
       server.sendCommand(command);
