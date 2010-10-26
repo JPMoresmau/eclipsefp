@@ -216,7 +216,7 @@ public class NetworkScionServer extends ScionServer {
       try {
           nread = serverStdout.read(buf);
           if (nread > 0) {
-            serverOutput.write(buf, 0, nread);
+            outputWriter.addMessage(buf, 0, nread);
           }
       } catch (IOException ex) {
         // assume the stream is closed.
