@@ -52,7 +52,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -83,8 +86,11 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * This works by listening for resource changes.
  */
 public class ScionManager implements IResourceChangeListener, IScionEventListener {
+  private ScionBuildJob           internalBuilder;
+
   public ScionManager() {
-    // the work is done in the start() method
+    // The interesting stuff is done in the start() method
+    internalBuilder = null;
   }
 
   public void start() {
@@ -93,7 +99,10 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
 
     // Sit and listen to the core preference store changes
-    HaskellCorePlugin.instanceScopedPreferences().addPreferenceChangeListener( new CorePreferencesChangeListener() );
+    IEclipsePreferences instanceScope = HaskellCorePlugin.instanceScopedPreferences();
+
+    instanceScope.addPreferenceChangeListener( new CorePreferencesChangeListener() );
+    instanceScope.addNodeChangeListener( new CoreNodeChangeListener() );
 
     // Set up the output logging console for the shared ScionInstance:
     HaskellConsole c = new HaskellConsole( null, UITexts.sharedScionInstance_console );
@@ -132,6 +141,20 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     workSpace.addResourceChangeListener( new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
   }
 
+  /**
+   * Preference page callback to determine if a ScionBuildJob needs to be
+   * spawned
+   *
+   * @note You'd think we could detect this when properties get rewritten,
+   * but not for hierarchical properties, for all of their virtues.
+   */
+  /**
+   * Build the built-in scion-server: unpack the internal scion-x.y.z.a.zip archive into the destination
+   * folder, then kick of a "cabal install" compilation.
+   *
+   * @param monitor The progress monitor
+   * @param conout The console output stream
+   */
   private ScionBuildStatus buildBuiltIn(final IProgressMonitor monitor, final IOConsoleOutputStream conout) {
     IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
     File scionBuildDir = scionBuildDirPath.toFile();
@@ -164,9 +187,10 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   }
 
   /**
-   * <p>detects when a file is deleted and updates the Cabal file accordingly (remove the module). If it is the cabal file, stop scion</p>
-    *
-    * @author JP Moresmau
+   * Detects when a file is deleted and updates the Cabal file accordingly (remove the module).
+   * If the removed file is the cabal file, stop the underlying scion-server.
+   *
+   * @author JP Moresmau
    */
   private class FileDeletionListener implements IResourceChangeListener {
 
@@ -320,17 +344,39 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     }
   }
 
-  /** */
+  /** Preference change listener when EclipseFP core preferences change */
   public class CorePreferencesChangeListener implements IPreferenceChangeListener {
     public void preferenceChange( final PreferenceChangeEvent event ) {
       String key = event.getKey();
-      HaskellUIPlugin.log( "Property changed: ".concat(key), IStatus.INFO );
       if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
-          || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key )
-          || ICorePreferenceNames.CABAL_IMPLEMENTATIONS.equals( key ) ) {
-        spawnBuildJob();
+          || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
+        // Potential to do something here... we don't spawn the built-in server here
+        // because it's only built in response to the Cabal implementations.
+      } else {
+        HaskellUIPlugin.log("Core preference changed: ".concat( key ), null);
       }
     }
+  }
+
+  public class CoreNodeChangeListener implements INodeChangeListener {
+    public void added( final NodeChangeEvent event ) {
+      final String childName = event.getChild().name();
+
+      if (   ICorePreferenceNames.CABAL_IMPLEMENTATIONS.equals( childName ) ) {
+          if (   CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
+              && ScionBuilder.needsBuilding() ) {
+            // The cabal implementations changed, the default cabal implementation seems legitimate
+            spawnBuildJob();
+          }
+      } else {
+        HaskellUIPlugin.log("Preference node added: ".concat( event.getChild().name() ), null);
+      }
+    }
+
+    public void removed( final NodeChangeEvent event ) {
+      HaskellUIPlugin.log("Preference node removed: ".concat( event.getChild().name() ), null);
+    }
+
   }
 
   public void stop() {
@@ -455,14 +501,16 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
   /** Spawn a built-in server build job */
   void spawnBuildJob() {
-    IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-    IOConsole console = new IOConsole(UITexts.scionServerBuildJob, null);
-    Job job = new ScionBuildJob(UITexts.scionServerBuildJob, console);
+    if (internalBuilder == null) {
+      IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+      IOConsole console = new IOConsole(UITexts.scionServerBuildJob, null);
+      internalBuilder = new ScionBuildJob(UITexts.scionServerBuildJob, console);
 
-    mgr.addConsoles(new IConsole[] {console});
-    mgr.showConsoleView( console );
-    job.setPriority( Job.BUILD );
-    job.schedule();
+      mgr.addConsoles(new IConsole[] {console});
+      mgr.showConsoleView( console );
+      internalBuilder.setPriority( Job.BUILD );
+      internalBuilder.schedule();
+    }
   }
 
   /** Specialized Job class that manages building the built-in Scion server,
@@ -509,6 +557,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
             IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
             mgr.removeConsoles( new IConsole[] { fConsole } );
+            ScionManager.this.internalBuilder = null;
           }
           super.done( event );
         }
