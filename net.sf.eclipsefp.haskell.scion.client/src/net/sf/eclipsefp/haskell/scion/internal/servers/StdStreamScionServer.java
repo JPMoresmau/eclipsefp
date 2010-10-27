@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.LinkedList;
@@ -16,9 +15,8 @@ import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
-import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -113,6 +111,7 @@ public class StdStreamScionServer extends ScionServer {
       while (!terminateFlag && serverOutStream != null) {
         JSONObject response;
         String responseString = new String();
+
         // long t0=System.currentTimeMillis();
         try {
           responseString = serverOutStream.readLine();
@@ -120,26 +119,37 @@ public class StdStreamScionServer extends ScionServer {
             if (responseString.startsWith(PREFIX)) {
               response = new JSONObject(new JSONTokener(responseString.substring(PREFIX.length())));
 
-              Trace.trace(serverName, FROM_SERVER_PREFIX.concat(response.toString()));
-              serverOutput.write(FROM_SERVER_PREFIX.concat(response.toString()).concat(PlatformUtil.NL));
-              serverOutput.flush();
+	      String logmsg = FROM_SERVER_PREFIX+response.toString();
+	      outputWriter.addMessage(logmsg);
+              Trace.trace(serverName, logmsg);
+
+              /* serverOutput.write(FROM_SERVER_PREFIX.concat(response.toString()).concat(PlatformUtil.NL));
+              serverOutput.flush(); */
 
               processResponse(response);
             } else {
-              serverOutput.write(responseString + PlatformUtil.NL);
-              serverOutput.flush();
+	      outputWriter.addMessage(responseString);
+
+              /* serverOutput.write(responseString + PlatformUtil.NL);
+              serverOutput.flush(); */
             }
           } else {
             if (!terminateFlag) {
-              serverOutput.write(ScionText.scionServerGotEOF_message + PlatformUtil.NL);
-              serverOutput.flush();
+              /* serverOutput.write(ScionText.scionServerGotEOF_message + PlatformUtil.NL);
+              serverOutput.flush(); */
+
+	      outputWriter.addMessage(ScionText.scionServerGotEOF_message);
               Trace.trace(serverName, ScionText.scionServerGotEOF_message);
               stopServer();
               signalAbnormalTermination();
             }
           }
         } catch (JSONException ex) {
-          try {
+	  outputWriter.addMessage(ScionText.scionJSONParseException_message);
+	  outputWriter.addMessage(responseString);
+	  outputWriter.addMessage(ex);
+
+          /* try {
             serverOutput.write(ScionText.scionJSONParseException_message + PlatformUtil.NL);
             serverOutput.write(responseString + PlatformUtil.NL);
             ex.printStackTrace(new PrintWriter(serverOutput));
@@ -149,7 +159,7 @@ public class StdStreamScionServer extends ScionServer {
             signalAbnormalTermination();
           } catch (IOException ex2) {
             // If we can't write to serverOutput...
-          }
+          } */
         } catch (IOException ex) {
           if (!terminateFlag) {
             ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex);

@@ -5,8 +5,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,6 +70,9 @@ public abstract class ScionServer {
   /** Request identifier */
   private final AtomicInteger                nextSequenceNumber;
 
+  /** logs output **/
+  protected OutputWriter                     outputWriter;
+  
   /** Command queue, to deal with both synchronous and asynchronous commands */
   protected final Map<Integer, ScionCommand> commandQueue;
   /** Command queue monitor, track potential stalls */
@@ -136,12 +141,17 @@ public abstract class ScionServer {
    *       server launch.
    */
   public final void startServer() throws ScionServerStartupException {
-    final String projectName = (project != null ? project.getName() : ScionText.noproject);
-    Trace.trace(CLASS_PREFIX, "Starting server " + getClass().getSimpleName() + ":" + projectName);
-    doStartServer(project);
+    Trace.trace(CLASS_PREFIX, "Starting server " + serverName);
+
     cqMonitor = new CommandQueueMonitor();
     cqMonitor.start();
-    Trace.trace(CLASS_PREFIX, "Server started for " + getClass().getSimpleName() + ":" + projectName);
+
+    outputWriter = new OutputWriter(serverName + "Writer");
+    outputWriter.start();
+
+    doStartServer(project);
+
+    Trace.trace(CLASS_PREFIX, "Server started for " + serverName);
   }
 
   /**
@@ -173,6 +183,9 @@ public abstract class ScionServer {
        // the sub class a chance to close its own things properly
        doStopServer();
         
+	  outputWriter.setTerminate();
+	  outputWriter.interrupt(); 
+       
       if (serverOutStream != null) {
         serverOutStream.close();
         serverOutStream = null;
@@ -278,26 +291,32 @@ public abstract class ScionServer {
       serverInStream.flush();
       retval = true;
     } catch (IOException ex) {
-      try {
+      outputWriter.addMessage(getClass().getSimpleName() + ".sendCommand encountered an exception:");
+      outputWriter.addMessage(ex);
+
+      /* try {
         serverOutput.write(getClass().getSimpleName() + ".sendCommand encountered an exception:" + PlatformUtil.NL);
         ex.printStackTrace(new PrintWriter(serverOutput));
         serverOutput.flush();
       } catch (IOException e) {
         stopServer();
-      }
+      } */
     } finally {
       String jsonString = command.toJSONString();
+      final String toServer = serverName + TO_SERVER_PREFIX;
 
-      Trace.trace(serverName, TO_SERVER_PREFIX.concat(jsonString));
       if (Trace.isTracing()) {
-        try {
+	Trace.trace(toServer, "%s", jsonString);
+	outputWriter.addMessage(TO_SERVER_PREFIX + jsonString);
+
+        /* try {
           serverOutput.write(TO_SERVER_PREFIX + jsonString + PlatformUtil.NL);
           serverOutput.flush();
         } catch (IOException ex) {
           // Ignore this (something creative here?)
         } catch (SWTException se) {
           // device is disposed when shutting down, we hope
-        }
+        } */
       }
     }
     
@@ -343,13 +362,14 @@ public abstract class ScionServer {
    *          The exception associated with the message, may be null.
    */
   public void logMessage(final String message, final Throwable exc) {
-    try {
+    /* try {
       serverOutput.write(message + PlatformUtil.NL);
       serverOutput.flush();
     } catch (IOException ioex) {
       // Not much we can do.
-    }
+    } */
 
+    outputWriter.addMessage(message);
     ScionPlugin.logError(message, exc);
   }
 
@@ -405,6 +425,88 @@ public abstract class ScionServer {
           }
         } catch (InterruptedException irq) {
           // Ignore it.
+        }
+      }
+    }
+  }
+  
+  /**
+   * A separate thread to write the communication with the server see
+   * https://bugs.eclipse.org/bugs/show_bug.cgi?id=259107
+   */
+  public class OutputWriter extends Thread {
+    /** the message list **/
+    private final LinkedList<String> messages   = new LinkedList<String>();
+    /** should we stop? **/
+    private boolean                  terminateFlag;
+    /** marker from things coming from the server */
+    private final String             fromServer = serverName + "/" + FROM_SERVER_PREFIX;
+
+    public OutputWriter(String name) {
+      super(name);
+    }
+
+    public void setTerminate() {
+      terminateFlag = true;
+    }
+
+    public void addMessage(String msg) {
+      synchronized (messages) {
+        messages.add(msg);
+        messages.notify();
+      }
+    }
+
+    public void addMessage(char[] buf, int start, int length) {
+      synchronized (messages) {
+        messages.add(new String(buf, start, length));
+        messages.notify();
+      }
+    }
+
+    public void addMessage(Exception e) {
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      pw.flush();
+      synchronized (messages) {
+        messages.add(sw.toString());
+        messages.notify();
+      }
+    }
+
+    @Override
+    public void run() {
+      while (!terminateFlag && serverOutput != null) {
+        String m = null;
+        synchronized (messages) {
+          try {
+            while (messages.isEmpty()) {
+              messages.wait();
+            }
+
+          } catch (InterruptedException ignore) {
+            // noop
+          }
+          if (!messages.isEmpty()) {
+            m = messages.removeFirst();
+          }
+        }
+        if (m != null) {
+          Trace.trace(fromServer, m);
+          try {
+            serverOutput.write(m + PlatformUtil.NL);
+            serverOutput.flush();
+          } catch (IOException ex) {
+            if (!terminateFlag) {
+              ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex);
+            }
+          } catch (SWTException se) {
+            // probably device has been disposed
+            if (!terminateFlag) {
+              ScionPlugin.logError(ScionText.scionServerNotRunning_message, se);
+            }
+          }
         }
       }
     }
