@@ -236,7 +236,7 @@ public abstract class ScionCommand {
    * Returns the name of the "method" to be called on the server side, e.g.
    * "connection-info".
    */
-  protected abstract String getMethod();
+  public abstract String getMethod();
 
   /**
    * Creates the params JSON object to be sent along with the command. The

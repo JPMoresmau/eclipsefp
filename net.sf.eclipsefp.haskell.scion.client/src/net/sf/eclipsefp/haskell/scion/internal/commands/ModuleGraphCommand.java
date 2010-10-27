@@ -6,7 +6,7 @@ public class ModuleGraphCommand extends DefinedNamesCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "module-graph";
 	}
 }

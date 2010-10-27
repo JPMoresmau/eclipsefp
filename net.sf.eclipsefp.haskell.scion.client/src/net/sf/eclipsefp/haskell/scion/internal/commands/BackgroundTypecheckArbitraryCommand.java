@@ -33,7 +33,7 @@ public class BackgroundTypecheckArbitraryCommand extends BackgroundTypecheckFile
 	}
 	
   @Override
-  protected String getMethod() {
+  public String getMethod() {
     return "background-typecheck-arbitrary";
   }
 

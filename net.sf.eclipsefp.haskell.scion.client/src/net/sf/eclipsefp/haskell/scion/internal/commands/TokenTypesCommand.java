@@ -62,7 +62,7 @@ public class TokenTypesCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "token-types";
 	}
 

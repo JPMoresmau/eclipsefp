@@ -317,16 +317,16 @@ public class ScionInstance {
             cs = new ArrayList<Component>(components);
           }
           deleteProblems(getProject());
-          CompilationResultHandler crh = new CompilationResultHandler(getProject());
+          final CompilationResultHandler crh = new CompilationResultHandler(getProject());
 
           for (Component c : cs) {
-            LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
+            final LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
             server.sendCommand(loadCommand);
             crh.process(loadCommand);
             lastLoadedComponent = c;
           }
 
-          /* ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+          ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
           server.sendCommand(pcc);
           cabalDescription = pcc.getDescription();
 
@@ -335,35 +335,11 @@ public class ScionInstance {
           packagesByDB = cdc.getPackagesByDB();
 
           restoreState();
-          notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED); */
-          
-          return Status.OK_STATUS;
-        }
-      } );
-      
-      final ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
-      pcc.addContinuation(new Job(jobNamePrefix + " Cabal parser") {
-        @Override
-        protected IStatus run(final IProgressMonitor monitor) {
-          cabalDescription = pcc.getDescription();
-          return Status.OK_STATUS;
-        }
-      } );
-
-      final CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
-      cdc.addContinuation(new Job(jobNamePrefix + " Cabal parser") {
-        @Override
-        protected IStatus run(final IProgressMonitor monitor) {
-          packagesByDB = cdc.getPackagesByDB();
-          restoreState();
           notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED);
-
           return Status.OK_STATUS;
         }
       } );
-      
-      command.addSuccessor(pcc);
-      command.addSuccessor(cdc);
+
       server.queueCommand(command);
     }
   }
@@ -389,7 +365,7 @@ public class ScionInstance {
     if (loadedFile != null) {
       // Not used, currently: final LoadInfo li = getLoadInfo(loadedFile);
       // maybe not the proper loaded component	
-      reloadFile(loadedFile, (ScionCommand)null, false);
+      reloadFile(loadedFile, (ScionCommand)null);
     }
   }
 

@@ -26,7 +26,7 @@ public class NameDefinitionsCommand extends ScionCommand {
 	}
 	
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "name-definitions";
 	}
 

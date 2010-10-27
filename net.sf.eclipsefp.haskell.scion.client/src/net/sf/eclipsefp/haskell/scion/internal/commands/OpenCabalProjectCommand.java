@@ -20,7 +20,7 @@ public class OpenCabalProjectCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "open-cabal-project";
 	}
 	

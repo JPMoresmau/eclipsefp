@@ -56,7 +56,7 @@ public class CabalDependenciesCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "cabal-dependencies";
 	}
 

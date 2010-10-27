@@ -33,7 +33,7 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
   }
 
   @Override
-  protected String getMethod() {
+  public String getMethod() {
     return "load";
   }
 

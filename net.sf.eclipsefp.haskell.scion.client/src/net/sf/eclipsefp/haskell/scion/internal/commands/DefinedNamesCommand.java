@@ -14,7 +14,7 @@ public class DefinedNamesCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "defined-names";
 	}
 

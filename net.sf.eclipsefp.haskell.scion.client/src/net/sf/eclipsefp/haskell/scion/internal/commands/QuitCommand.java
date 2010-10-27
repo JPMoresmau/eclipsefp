@@ -7,7 +7,7 @@ public class QuitCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "quit";
 	}
 

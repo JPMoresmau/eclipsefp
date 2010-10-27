@@ -10,6 +10,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
@@ -142,7 +144,7 @@ public abstract class ScionServer {
    *       server launch.
    */
   public final void startServer() throws ScionServerStartupException {
-    Trace.trace(CLASS_PREFIX, "Starting server " + serverName);
+    Trace.trace(serverName, "Starting server.");
 
     cqMonitor = new CommandQueueMonitor(serverName + "-CommandQueueMonitor");
     cqMonitor.start();
@@ -152,7 +154,7 @@ public abstract class ScionServer {
 
     doStartServer(project);
 
-    Trace.trace(CLASS_PREFIX, "Server started for " + serverName);
+    Trace.trace(serverName, "Server started.");
   }
 
   /**
@@ -179,7 +181,7 @@ public abstract class ScionServer {
    *       server launch.
    */
   public final void stopServer(boolean cleanly) {
-    Trace.trace(CLASS_PREFIX, "Stopping server");
+    Trace.trace(serverName, "Stopping server");
 
     try {
       // Clear out any pending commands
@@ -225,7 +227,7 @@ public abstract class ScionServer {
       // ignore
     }
 
-    Trace.trace(CLASS_PREFIX, "Server stopped");
+    Trace.trace(serverName, "Server stopped");
   }
 
   /**
@@ -410,7 +412,19 @@ public abstract class ScionServer {
             // Maybe we're stalled?
             ++stallCount;
             if (stallCount > MAXSTALLS) {
-              ScionPlugin.logInfo(String.format("Possibly stalled queue [%s], depth = %d", serverName, lastDepth ) );
+              StringBuffer diagMsg = new StringBuffer();
+              
+              diagMsg.append("Possibly stalled queue [").append(serverName).append("], depth = ");
+              diagMsg.append(lastDepth).append(PlatformUtil.NL);
+              diagMsg.append("Waiting commands:").append(PlatformUtil.NL);
+              
+              Set<Entry<Integer, ScionCommand>> commands = commandQueue.entrySet();
+              for (Entry<Integer, ScionCommand> cmd : commands) {
+                diagMsg.append("  [").append(cmd.getKey()).append("] ");
+                diagMsg.append(cmd.getValue().getMethod()).append(PlatformUtil.NL);
+              }
+              
+              ScionPlugin.logInfo(diagMsg.toString());
             }
           }
         } catch (InterruptedException irq) {

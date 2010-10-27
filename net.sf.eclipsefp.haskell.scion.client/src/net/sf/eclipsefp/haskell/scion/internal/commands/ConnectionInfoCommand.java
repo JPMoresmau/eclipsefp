@@ -13,7 +13,7 @@ public class ConnectionInfoCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "connection-info";
 	}
 

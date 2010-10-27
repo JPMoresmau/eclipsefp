@@ -26,7 +26,7 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
   }
 
   @Override
-  protected String getMethod() {
+  public String getMethod() {
     return "background-typecheck-file";
   }
 

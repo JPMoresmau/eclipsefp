@@ -27,7 +27,7 @@ public class ThingAtPointCommand extends ScionCommand {
 	}
 
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "thing-at-point";
 	}
 

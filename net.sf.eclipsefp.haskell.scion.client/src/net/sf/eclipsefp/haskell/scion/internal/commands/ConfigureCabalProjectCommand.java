@@ -28,7 +28,7 @@ public class ConfigureCabalProjectCommand extends OpenCabalProjectCommand {
 	}
 	
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "configure-cabal-project";
 	}
 	

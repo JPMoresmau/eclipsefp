@@ -13,7 +13,7 @@ public class SetVerbosityCommand extends ScionCommand {
 	}
 	
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "set-verbosity";
 	}
 	

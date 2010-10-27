@@ -32,7 +32,7 @@ public class OutlineCommand extends ScionCommand {
 	}
 	
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "outline";
 	}
 

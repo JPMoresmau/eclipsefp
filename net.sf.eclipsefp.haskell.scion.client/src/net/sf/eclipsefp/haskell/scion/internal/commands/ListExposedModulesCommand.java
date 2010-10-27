@@ -12,7 +12,7 @@ public class ListExposedModulesCommand extends DefinedNamesCommand {
 	}
 	
 	@Override
-	protected String getMethod() {
+  public String getMethod() {
 		return "list-exposed-modules";
 	}
 
