@@ -17,7 +17,6 @@ import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NetworkScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.StdStreamScionServer;
-import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.NullWriter;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -254,7 +253,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     for( IProject project: thePlugin.instances.keySet() ) {
       InstanceState instanceState = thePlugin.instances.get( project );
       ScionInstance scionInstance = instanceState.getInstance();
-      scionInstance.stop();
+      scionInstance.stop(true);
     }
     thePlugin.instances.clear();
   }
@@ -285,7 +284,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     InstanceState instState = getDefault().instances.remove(project);
     if (instState != null) {
       ScionInstance scionInstance = instState.getInstance();
-      scionInstance.stop();
+      scionInstance.stop(true);
       return true;
     }
     return false;
@@ -298,6 +297,7 @@ public class ScionPlugin extends AbstractUIPlugin {
     plugin.sharedScionInstance.instance.setOutputStream(outStream);
     plugin.sharedScionInstance.outStream = outStream;
   }
+  
   /** Create a new ScionInstance, using a scion-server instance from the current factory */
   private synchronized ScionInstance newScionInstance(IProject project, Writer outStream, CabalComponentResolver resolver) {
     ScionInstance scionInstance = new ScionInstance(createScionServer(project, outStream), project, resolver); 

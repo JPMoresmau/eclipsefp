@@ -217,7 +217,7 @@ public class NetworkScionServer extends ScionServer {
       try {
           nread = serverStdout.read(buf);
           if (nread > 0) {
-            serverOutput.write(buf, 0, nread);
+            outputWriter.addMessage(buf, 0, nread);
           }
       } catch (IOException ex) {
         // assume the stream is closed.
@@ -307,13 +307,13 @@ public class NetworkScionServer extends ScionServer {
             ex.printStackTrace(new PrintWriter(serverOutput));
             serverOutput.flush();
 
-            stopServer();
+            signalAbnormalTermination();
           } catch (IOException ex2) {
-            stopServer();
+            signalAbnormalTermination();
           }
         } catch (IOException ex) {
           // Must have caught EOF, shut down server
-          stopServer();
+          signalAbnormalTermination();
         }
         // long t1=System.currentTimeMillis();
         // System.err.println("receive+parse:"+(t1-t0));

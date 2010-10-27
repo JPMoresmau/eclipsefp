@@ -20,11 +20,9 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsComma
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListExposedModulesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ModuleGraphCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.NOPContinuation;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.QuitCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
@@ -69,8 +67,11 @@ import org.json.JSONObject;
 public class ScionInstance {
   /** The scion-server with whom this object communicates */
   private ScionServer                 server;
+  /** Server running flag */
+  private boolean                     serverRunning;
   /** The project with which the scion-server is associated */
   private IProject                    project;
+  /** The currently loaded file */
   private IFile                       loadedFile;
 
   private JSONObject                  cabalDescription;
@@ -97,6 +98,7 @@ public class ScionInstance {
    */
   public ScionInstance(ScionServer server, IProject project, CabalComponentResolver resolver) {
     this.server = server;
+    this.serverRunning = false;
     this.project = project;
     this.resolver = resolver;
     
@@ -182,6 +184,7 @@ public class ScionInstance {
     internalReset();
     
     server.startServer();
+    serverRunning = true;
     checkProtocol();
 
     if (Trace.isTracing()) {
@@ -191,33 +194,27 @@ public class ScionInstance {
     buildProject( false, true );
   }
 
-  public void stop() {
-    stop(true);
-  }
-
-  private void stop(boolean cleanly) {
+  /**
+   * Stop the scion-server associated with this instance.
+   * 
+   * @param cleanly Flag passed on to the scion-server, determines if a quit command is sent.
+   */
+  public void stop(boolean cleanly) {
     internalReset();
-    
-    if (server != null) {
-      if (cleanly) {
-        ScionCommand cmd = new QuitCommand();
-        server.sendCommand(cmd);
-      }
-      // server may not be running...
-      if (server != null) {
-        server.stopServer();
-        server = null;
-      }
-    }
-  }
-
-  public boolean isStopped() {
-    return server == null;
+    assert(server != null);
+    server.stopServer(cleanly);
+    serverRunning = false;
   }
   
+  /** Is the server still running? */
+  public boolean isStopped() {
+    return !serverRunning;
+  }
+
   /**
-   * Check the server's protocol version. This just generates a warning if the
-   * version numbers do not match.
+   * Check the server's protocol version. This logs a warning if the
+   * version numbers do not match; a {@link VersionMismatchEvent} event
+   * is fired off to server event listeners.
    */
   public void checkProtocol() {
     final ConnectionInfoCommand ciCmd = new ConnectionInfoCommand();
@@ -290,8 +287,9 @@ public class ScionInstance {
     if (checkCabalFile()) {
       final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
       final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
+      final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
       
-      command.addContinuation(new Job(NLS.bind(ScionText.build_job_name, getProject().getName())) {
+      command.addContinuation(new Job(jobNamePrefix) {
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
           components = command.getComponents();
@@ -328,7 +326,7 @@ public class ScionInstance {
             lastLoadedComponent = c;
           }
 
-          ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+          /* ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
           server.sendCommand(pcc);
           cabalDescription = pcc.getDescription();
 
@@ -337,12 +335,35 @@ public class ScionInstance {
           packagesByDB = cdc.getPackagesByDB();
 
           restoreState();
-          notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED);
+          notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED); */
           
           return Status.OK_STATUS;
         }
       } );
       
+      final ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+      pcc.addContinuation(new Job(jobNamePrefix + " Cabal parser") {
+        @Override
+        protected IStatus run(final IProgressMonitor monitor) {
+          cabalDescription = pcc.getDescription();
+          return Status.OK_STATUS;
+        }
+      } );
+
+      final CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+      cdc.addContinuation(new Job(jobNamePrefix + " Cabal parser") {
+        @Override
+        protected IStatus run(final IProgressMonitor monitor) {
+          packagesByDB = cdc.getPackagesByDB();
+          restoreState();
+          notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED);
+
+          return Status.OK_STATUS;
+        }
+      } );
+      
+      command.addSuccessor(pcc);
+      command.addSuccessor(cdc);
       server.queueCommand(command);
     }
   }

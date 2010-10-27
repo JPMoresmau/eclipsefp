@@ -8,7 +8,6 @@ import java.util.ListIterator;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 
-import org.eclipse.core.internal.jobs.JobChangeEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -107,12 +106,13 @@ public abstract class ScionCommand {
           try {
             String name = error.getString("name");
             String message = error.getString("message");
+            
             if (!onError(name, message)) {
               server.logMessage(NLS.bind(ScionText.commandError_message, name, message), null);
-              setCommandError();
-            } else {
-              setCommandDone();
             }
+            
+            // Prevent processReulst() from running, since response will be null.
+            setCommandError();
           } catch (JSONException ex2) {
             setCommandError();
             server.logMessage(ScionText.commandProcessingFailed_message, ex2);
@@ -156,6 +156,7 @@ public abstract class ScionCommand {
 
   /** Set the command's status to ERROR */
   public void setCommandError() {
+    response = null;
     status = ERROR;
   }
 
