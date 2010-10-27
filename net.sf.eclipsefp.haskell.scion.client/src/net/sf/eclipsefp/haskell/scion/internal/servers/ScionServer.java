@@ -182,6 +182,9 @@ public abstract class ScionServer {
     Trace.trace(CLASS_PREFIX, "Stopping server");
 
     try {
+      // Clear out any pending commands
+      commandQueue.clear();
+      
       if (cleanly) {
         // Send the quit command, but don't bother waiting for the result to arrive. If we do wait for the
         // result, we could potentially wait forever.
@@ -218,8 +221,6 @@ public abstract class ScionServer {
         cqMonitor.join();
         cqMonitor = null;
       }
-
-      commandQueue.clear();
     } catch (Throwable ex) {
       // ignore
     }
