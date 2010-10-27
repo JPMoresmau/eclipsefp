@@ -20,6 +20,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsComma
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListExposedModulesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ModuleGraphCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.NOPContinuation;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
@@ -187,8 +188,6 @@ public class ScionInstance {
       setDeafening();
     }
     
-    // The initial buildProject() can take a while: encapsulate in a Job for better UI responsiveness.
-    // buildProject() will notify listeners when it completes.
     buildProject( false, true );
   }
 
@@ -226,14 +225,15 @@ public class ScionInstance {
     ciCmd.addContinuation(new Job("Checking protocol version") {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
-        String version = ciCmd.getVersion();
+        int version = ciCmd.getVersion();
         boolean generateEvent = false;
 
-        if (version == null) {
+        /* if (version == null) {
           ScionPlugin.logWarning(ScionText.errorReadingVersion_warning, null);
           generateEvent = true;
-        } else if (!version.equals(ScionServer.PROTOCOL_VERSION)) {
-          ScionPlugin.logWarning(NLS.bind(ScionText.commandVersionMismatch_warning, version, ScionServer.PROTOCOL_VERSION), null);
+        } else */ if (version != ScionServer.WIRE_PROTOCOL_VERSION) {
+          final String errMsg = NLS.bind(ScionText.commandVersionMismatch_warning, version, ScionServer.WIRE_PROTOCOL_VERSION);
+          ScionPlugin.logWarning(errMsg, null);
           generateEvent = true;
         }
         
@@ -366,7 +366,7 @@ public class ScionInstance {
   
   private void restoreState() {
     if (loadedFile != null) {
-      server.sendCommand(new BackgroundTypecheckFileCommand(ScionInstance.this, loadedFile));
+      server.sendCommand(new BackgroundTypecheckFileCommand(this, loadedFile));
     }
   }
 

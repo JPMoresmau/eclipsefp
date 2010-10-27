@@ -6,7 +6,7 @@ import org.json.JSONObject;
 public class ConnectionInfoCommand extends ScionCommand {
 	
 	private int pid;
-	private String version;
+	private int version;
 
 	public ConnectionInfoCommand() {
 		super();
@@ -21,14 +21,14 @@ public class ConnectionInfoCommand extends ScionCommand {
 	protected void doProcessResult() throws JSONException {
 		JSONObject result = (JSONObject) response;
 		pid = result.getInt("pid");
-		version = result.getString("version");
+		version = result.getInt("version");
 	}
 	
 	public int getPid() {
 		return pid;
 	}
 	
-	public String getVersion() {
+	public int getVersion() {
 		return version;
 	}
 

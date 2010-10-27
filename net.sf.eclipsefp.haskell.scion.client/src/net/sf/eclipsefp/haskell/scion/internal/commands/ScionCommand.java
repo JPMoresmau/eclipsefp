@@ -3,14 +3,18 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 
+import org.eclipse.core.internal.jobs.JobChangeEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -244,7 +248,15 @@ public abstract class ScionCommand {
     return new JSONObject();
   }
 
-  public final boolean processResult(ScionServer server) {
+  /**
+   * Process the received JSON result.
+   * 
+   * @param server The scion-server with whom the successor commands will communicate.
+   * 
+   * @return true if the result was processed successfully, all of the continuations have run and the
+   * successors have been processed.
+   */
+  public final boolean processResult(final ScionServer server) {
     boolean retval = false;
     
     assert (response != null);
@@ -254,11 +266,29 @@ public abstract class ScionCommand {
       setCommandDone();
       response = null;
       
-      for (Job continuation : continuations) {
-        continuation.schedule();
+      if (continuations.size() > 0) {
+        ListIterator<Job> contIter = continuations.listIterator();
+        while ( contIter.hasNext() ) {
+          Job continuation = contIter.next();
+          
+          if ( !contIter.hasNext() ) {
+            // Ensure that the last continuation runs the successors
+            continuation.addJobChangeListener(new JobChangeAdapter() {
+              @Override
+              public void done(IJobChangeEvent ev) {
+                if (ev.getResult().isOK()) {
+                  ScionCommand.this.runSuccessors(server);
+                }
+              }
+            } );
+          }
+          
+          continuation.schedule();
+        }
+      } else {
+        runSuccessors(server);
       }
       
-      runSuccessors(server);
       retval = true;
     } catch (JSONException jsonEx) {
       setCommandError();
@@ -287,9 +317,12 @@ public abstract class ScionCommand {
     Iterator<ScionCommand> succIter = successors.iterator();
     while (retval && succIter.hasNext()) {
       ScionCommand sc = succIter.next();
-      
-      assert (sc.hasContinuations());
-      retval &= server.queueCommand(sc);
+
+      if ( sc.hasContinuations() ) {
+        retval &= server.queueCommand(sc);
+      } else {
+        server.sendCommand(sc);
+      }
     }
     
     return retval;

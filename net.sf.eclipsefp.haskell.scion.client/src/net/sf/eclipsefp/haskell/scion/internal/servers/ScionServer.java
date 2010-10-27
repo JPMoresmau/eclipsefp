@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
@@ -38,6 +40,8 @@ public abstract class ScionServer {
   protected static final String              FROM_SERVER_PREFIX   = "[scion-server] >> ";
   /** The Scion protocol version number */
   public static final String                 PROTOCOL_VERSION     = "0.1";
+  /** The Scion "wire protocol" version number reported by the connection-info command */
+  public static final int                    WIRE_PROTOCOL_VERSION = 1;
   /**
    * Path to the server executable that is started and with whom EclipseFP
    * communicates
@@ -66,6 +70,8 @@ public abstract class ScionServer {
 
   /** Command queue, to deal with both synchronous and asynchronous commands */
   protected final Map<Integer, ScionCommand> commandQueue;
+  /** Command queue monitor, track potential stalls */
+  protected CommandQueueMonitor              cqMonitor;
 
   /**
    * The constructor
@@ -91,6 +97,7 @@ public abstract class ScionServer {
     this.serverInStream = null;
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
+    this.cqMonitor = null;
   }
 
   /**
@@ -111,6 +118,7 @@ public abstract class ScionServer {
     this.serverInStream = null;
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
+    this.cqMonitor = null;
   }
 
   /** Redirect the logging stream */
@@ -131,6 +139,8 @@ public abstract class ScionServer {
     final String projectName = (project != null ? project.getName() : ScionText.noproject);
     Trace.trace(CLASS_PREFIX, "Starting server " + getClass().getSimpleName() + ":" + projectName);
     doStartServer(project);
+    cqMonitor = new CommandQueueMonitor();
+    cqMonitor.start();
     Trace.trace(CLASS_PREFIX, "Server started for " + getClass().getSimpleName() + ":" + projectName);
   }
 
@@ -177,6 +187,14 @@ public abstract class ScionServer {
       if (process != null) {
         process.destroy();
         process = null;
+      }
+      
+      // And the command queue monitor
+      if ( cqMonitor != null ) {
+        cqMonitor.setTerminate();
+        cqMonitor.interrupt();
+        cqMonitor.join();
+        cqMonitor = null;
       }
       
       commandQueue.clear();
@@ -229,9 +247,13 @@ public abstract class ScionServer {
    * Queue command, send it to the server. This is the asynchronous interface.
    */
   public boolean queueCommand(ScionCommand command) {
-    assert (!command.hasContinuations());
-    command.asyncResponseProcessor(this, serverName);
-    return internalSendCommand(command);
+    if (serverInStream != null) {
+      assert (!command.hasContinuations());
+      command.asyncResponseProcessor(this, serverName);
+      return internalSendCommand(command);
+    }
+    
+    return true;
   }
 
   /**
@@ -329,5 +351,62 @@ public abstract class ScionServer {
     }
 
     ScionPlugin.logError(message, exc);
+  }
+
+  /**
+   * Notify the {@link ScionInstance}'s listeners that an abnormal termination
+   * just happened
+   */
+  protected void signalAbnormalTermination() {
+    ScionInstance scionInstance = ScionPlugin.getScionInstance(project);
+    assert (scionInstance != null);
+    if (scionInstance != null) {
+      scionInstance.stop();
+      scionInstance.notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
+    }
+  }
+  
+  /**
+   * Command queue monitor: Report when we think we have a stalled queue.
+   */
+  public class CommandQueueMonitor extends Thread {
+    private final static int TMO = (175 * 1000) / 100; // 1.75 * 1000
+    private final static int MAXSTALLS = 5;
+    private boolean terminateFlag;
+    private int lastDepth;
+    private int stallCount;
+    
+    public CommandQueueMonitor() {
+      super();
+      terminateFlag = false;
+      lastDepth = -1;
+      stallCount = 0;
+    }
+    
+    public void setTerminate() {
+      terminateFlag = true;
+    }
+    
+    public void run() {
+      while ( !terminateFlag ) {
+        try {
+          Thread.sleep(TMO);
+          
+          int depth = commandQueue.size();
+          if (depth != lastDepth) {
+            lastDepth = depth;
+            stallCount = 0;
+          } else if (lastDepth > 0) {
+            // Maybe we're stalled?
+            ++stallCount;
+            if (stallCount > MAXSTALLS) {
+              ScionPlugin.logInfo(String.format("Possibly stalled queue [%s], depth = %d", serverName, lastDepth ) );
+            }
+          }
+        } catch (InterruptedException irq) {
+          // Ignore it.
+        }
+      }
+    }
   }
 }

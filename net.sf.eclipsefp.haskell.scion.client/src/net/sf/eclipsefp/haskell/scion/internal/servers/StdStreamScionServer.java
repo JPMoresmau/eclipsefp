@@ -89,16 +89,6 @@ public class StdStreamScionServer extends ScionServer {
   }
 
   /**
-   * Notify the {@link ScionInstance}'s listeners that an abnormal termination
-   * just happened
-   */
-  private void signalAbnormalTermination() {
-    ScionInstance scionInstance = ScionPlugin.getScionInstance(project);
-    assert (scionInstance != null);
-    scionInstance.notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
-  }
-
-  /**
    * The input receiver thread.
    * 
    * This thread reads the scion-server's standard input and error, looking for
@@ -156,7 +146,6 @@ public class StdStreamScionServer extends ScionServer {
             serverOutput.flush();
 
             ScionPlugin.logError(ScionText.scionJSONParseException_message, ex);
-            stopServer();
             signalAbnormalTermination();
           } catch (IOException ex2) {
             // If we can't write to serverOutput...
