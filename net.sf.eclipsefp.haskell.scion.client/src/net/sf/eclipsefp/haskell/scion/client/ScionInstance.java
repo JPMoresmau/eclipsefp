@@ -387,7 +387,9 @@ public class ScionInstance {
   
   private void restoreState() {
     if (loadedFile != null) {
-      server.sendCommand(new BackgroundTypecheckFileCommand(this, loadedFile));
+      // Not used, currently: final LoadInfo li = getLoadInfo(loadedFile);
+      // maybe not the proper loaded component	
+      reloadFile(loadedFile, (ScionCommand)null, false);
     }
   }
 
