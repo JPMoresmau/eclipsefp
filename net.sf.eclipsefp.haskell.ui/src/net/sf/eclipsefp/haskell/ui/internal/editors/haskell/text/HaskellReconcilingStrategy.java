@@ -8,9 +8,6 @@ import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -89,17 +86,9 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
     if (editor.isDirty()) {
       final ScionInstance scionInstance = ScionPlugin.getScionInstance( file.getProject() );
-      if (scionInstance != null) {
-        Job syncJob = new Job("HaskellReconcilingStrategy/reconcile") {
-          @Override
-          protected IStatus run( final IProgressMonitor monitor ) {
-            scionInstance.reloadFile( file, editor.getDocument());
-            editor.synchronize();
-            return Status.OK_STATUS;
-          }
-        };
-
-        syncJob.schedule();
+      if ( scionInstance != null ) {
+        scionInstance.reloadFile( file, editor.getDocument() );
+        editor.synchronize();
       }
     }
   }
