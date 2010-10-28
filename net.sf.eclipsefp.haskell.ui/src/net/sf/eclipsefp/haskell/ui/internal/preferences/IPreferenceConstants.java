@@ -20,6 +20,7 @@ public interface IPreferenceConstants {
   String CLEAR_BUILD_CONSOLE    = "CLEAR_BUILD_CONSOLE";  //$NON-NLS-1$
 
   // Scion
+  String SCION_SERVER_FLAVOR  = "scionServerFlavor"; //$NON-NLS-1$
   String SCION_SERVER_BUILTIN = "SCION_SERVER_BUILTIN" ; //$NON-NLS-1$
   String SCION_SERVER_EXECUTABLE = "SCION_SERVER_EXECUTABLE";  //$NON-NLS-1$
 

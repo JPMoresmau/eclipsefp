@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.ServerSocket;
@@ -20,7 +19,6 @@ import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -43,7 +41,7 @@ public class NetworkScionServer extends ScionServer {
   /** The socket to the scion-server */
   private Socket                     socket;
   /** I/O reader thread for process' stdout/stderr logging */
-  private Thread                     serverOutputThread;
+  private OutputReader               serverOutputThread;
   /** The process' stdout reader stream */
   private BufferedReader             serverStdout;
   /** The input receiver Job */
@@ -61,14 +59,7 @@ public class NetworkScionServer extends ScionServer {
     startServerProcess();
     
     serverStdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    serverOutputThread = new Thread(getClass().getSimpleName() + "/" + project) {
-      public void run() {
-        while (serverStdout != null) {
-          logServerStdout();
-        }
-      }
-    };
-    
+    serverOutputThread = new OutputReader();
     serverOutputThread.start();
     inputReceiver = new InputReceiver(serverName);
     inputReceiver.start();
@@ -144,7 +135,7 @@ public class NetworkScionServer extends ScionServer {
 
       if (retries >= MAX_RETRIES || socket == null) {
         ScionPlugin.logInfo("== Accept thread did not receive connection, terminating.");
-        acceptJob.setTerminate();
+        acceptJob.setTerminateFlag();
         try {
           acceptJob.join();
           ScionPlugin.logInfo("== Accept thread terminated.");
@@ -173,6 +164,11 @@ public class NetworkScionServer extends ScionServer {
    * this method in any state.
    */
   private void stopServerProcess() {
+    // Tell the threads that we're terminating: inputReceiver is especially sensitive to this, since
+    // the socket close will cause a JSONException:
+    inputReceiver.setTerminateFlag();
+    serverOutputThread.setTerminateFlag();
+
     if (socket != null) {
       try {
         socket.close();
@@ -182,52 +178,20 @@ public class NetworkScionServer extends ScionServer {
       }
     }
     
-    // Cleanup after the threads.
     try {
-      serverOutputThread.interrupt();
-      serverOutputThread.join();
-    } catch (InterruptedException ex) {
-      // Don't care.
-    }
-    
-    try {
-      inputReceiver.setTerminate();
       inputReceiver.interrupt();
       inputReceiver.join();
     } catch (InterruptedException ex) {
       // Don't care.
     }
-  }
-
-  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  // Server stdout/stderr communication
-  //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-
-  /**
-   * Reads from the server's stdout (and stderr) and sends its output to the
-   * tracer (if tracing). If there is no output ready to be read, this returns
-   * immediately.
-   * 
-   * Errors while reading are silently ignored.
-   */
-  private void logServerStdout() {
-    int nread;
-    while (serverStdout != null) {
-      char[] buf = new char[1024];
+    
+    // Cleanup after the threads.
+    if (serverOutputThread != null) {
       try {
-          nread = serverStdout.read(buf);
-          if (nread > 0) {
-            outputWriter.addMessage(buf, 0, nread);
-          }
-      } catch (IOException ex) {
-        // assume the stream is closed.
-        try {
-          serverStdout.close();
-        } catch (IOException e) {
-          // Don't care.
-        } finally {
-          serverStdout = null;
-        }
+        serverOutputThread.interrupt();
+        serverOutputThread.join();
+      } catch (InterruptedException ex) {
+        // Don't care.
       }
     }
   }
@@ -265,7 +229,7 @@ public class NetworkScionServer extends ScionServer {
       }
     }
 
-    public void setTerminate() {
+    public synchronized void setTerminateFlag() {
       terminateFlag = true;
     }
   }
@@ -284,39 +248,82 @@ public class NetworkScionServer extends ScionServer {
       terminateFlag = false;
     }
     
-    public void setTerminate() {
+    public synchronized void setTerminateFlag() {
       terminateFlag = true;
     }
 
     @Override
     public void run() {
-      while (!terminateFlag && serverOutStream != null) {
-        JSONObject response;
+      while (!terminateFlag) {
+        JSONObject response = null;
         // long t0=System.currentTimeMillis();
         try {
           response = new JSONObject(new JSONTokener(serverOutStream));
 
-          Trace.trace(FROM_SERVER_PREFIX, "%s", response.toString());
-          serverOutput.write(FROM_SERVER_PREFIX.concat(response.toString()).concat(PlatformUtil.NL));
-          serverOutput.flush();
+          String logmsg = FROM_SERVER_PREFIX + response.toString();
+          outputWriter.addMessage(logmsg);
+          Trace.trace(serverName, logmsg);
           
           processResponse(response);
         } catch (JSONException ex) {
-          try {
-            serverOutput.write(ScionText.scionJSONParseException_message + PlatformUtil.NL);
-            ex.printStackTrace(new PrintWriter(serverOutput));
-            serverOutput.flush();
-
-            signalAbnormalTermination();
-          } catch (IOException ex2) {
-            signalAbnormalTermination();
+          Throwable cause = ex.getCause();
+          
+          if (cause instanceof SocketException) {
+            // Socket shut down -- basically an EOF from the server
+            if (!terminateFlag) {
+              outputWriter.addMessage(ScionText.scionServerGotEOF_message);
+              Trace.trace(serverName, ScionText.scionServerGotEOF_message);
+              signalAbnormalTermination();
+            }
+          } else {
+            if (!terminateFlag) {
+              outputWriter.addMessage(ScionText.scionJSONParseException_message);
+              if (response != null) {
+                outputWriter.addMessage(response.toString());
+              } else {
+                outputWriter.addMessage("No response received.");
+              }
+              outputWriter.addMessage(ex);
+            }
           }
-        } catch (IOException ex) {
-          // Must have caught EOF, shut down server
-          signalAbnormalTermination();
+        } finally {
+          response = null;
         }
         // long t1=System.currentTimeMillis();
         // System.err.println("receive+parse:"+(t1-t0));
+      }
+    }
+  }
+  
+  public class OutputReader extends Thread {
+    boolean terminateFlag;
+    
+    public OutputReader() {
+      super();
+      terminateFlag = false;
+      setName(serverName + "-OutputReader");
+    }
+    
+    public synchronized void setTerminateFlag() {
+      terminateFlag = true;
+    }
+    
+    public void run() {
+      while (!terminateFlag) {
+        try {
+          String line = serverStdout.readLine();
+          if (line != null) {
+            outputWriter.addMessage(line);
+          }
+        } catch (IOException ex) {
+          // assume the stream is closed, but attempt to close it anyway for good measure.
+          try {
+            serverStdout.close();
+            terminateFlag = true;
+          } catch (IOException e) {
+            // Don't care.
+          }
+        }
       }
     }
   }

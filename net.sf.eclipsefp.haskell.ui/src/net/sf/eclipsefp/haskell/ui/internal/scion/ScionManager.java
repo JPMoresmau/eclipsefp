@@ -84,6 +84,12 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * This works by listening for resource changes.
  */
 public class ScionManager implements IResourceChangeListener, IScionEventListener {
+  /** Preference value for using the standard stream-based connection to the scion-server */
+  public final static String STDSTREAM_SCION_FLAVOR = "stdstream";
+  /** Preference value for using the network-based connection to the scion-server */
+  public final static String NETWORK_SCION_FLAVOR = "network";
+
+  /** The Job that builds the built-in scion-server, when required. */
   private ScionBuildJob           internalBuilder;
 
   public ScionManager() {
@@ -95,6 +101,12 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     IWorkspace workSpace = ResourcesPlugin.getWorkspace();
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
+    String serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
+
+    // If the server flavor isn't set, default to standard stream.
+    if (serverFlavor.length() == 0) {
+      serverFlavor = STDSTREAM_SCION_FLAVOR;
+    }
 
     // Sit and listen to the core preference store changes
     IEclipsePreferences instanceScope = HaskellCorePlugin.instanceScopedPreferences();
@@ -110,15 +122,22 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
             && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
             if ( !ScionBuilder.needsBuilding() ) {
-              // FIXME: Uses stdstream now, could use network pipe, depending on preferences?
-              ScionPlugin.useBuiltInStdStreamServerFactory();
+              if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
+                ScionPlugin.useBuiltInStdStreamServerFactory();
+              } else {
+                ScionPlugin.useBuiltInNetworkServerFactory();
+              }
             } else {
               spawnBuildJob();
             }
         }
       } else {
         String serverExecutable = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
-        ScionPlugin.useStdStreamScionServerFactory( new Path( serverExecutable ) );
+        if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
+          ScionPlugin.useStdStreamScionServerFactory( new Path( serverExecutable ) );
+        } else {
+          ScionPlugin.useNetworkStreamScionServerFactory( new Path( serverExecutable ) );
+        }
       }
     } catch (ScionServerStartupException ex) {
       reportServerStartupError( ex );
@@ -145,17 +164,40 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
    * @note You'd think we could detect this when properties get rewritten,
    * but not for hierarchical properties, for all of their virtues.
    */
-  public void doBuiltInBuild() {
+  public void doBuiltInBuild(final boolean forceRebuild) {
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
 
     if (   useBuiltIn
         && CompilerManager.getInstance().getCurrentHsImplementation() != null
-        && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
-        && ScionBuilder.needsBuilding() ) {
-      spawnBuildJob();
+        && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null ) {
+      if (forceRebuild) {
+        final Display display = HaskellUIPlugin.getStandardDisplay();
+        display.asyncExec( new Runnable() {
+          public void run() {
+            Shell parent = display.getActiveShell();
+            if ( MessageDialog.openConfirm( parent, UITexts.scionRebuild_title, UITexts.scionRebuild_message ) ) {
+              ScionPlugin.shutdownAllInstances();
+
+              IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
+              File scionBuildDir = scionBuildDirPath.toFile();
+
+              FileUtil.deleteRecursively( scionBuildDir );
+              if ( !scionBuildDir.exists() ) {
+                spawnBuildJob();
+              } else {
+                MessageDialog.openError( parent, UITexts.scionRebuild_DirectoryExists_title,
+                                         UITexts.scionRebuild_DirectoryExists_message );
+              }
+            }
+          }
+        } );
+      } else if ( ScionBuilder.needsBuilding() ) {
+        spawnBuildJob();
+      }
     }
   }
+
   /**
    * Build the built-in scion-server: unpack the internal scion-x.y.z.a.zip archive into the destination
    * folder, then kick of a "cabal install" compilation.
@@ -297,7 +339,18 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             } else {
               // false: read user-specified server executable property
               String serverExecutable =  preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
-              ScionPlugin.useStdStreamScionServerFactory( new Path(serverExecutable) );
+              IPath serverExecutablePath = new Path(serverExecutable);
+              String serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
+
+              if (serverFlavor.length() == 0) {
+                serverFlavor = STDSTREAM_SCION_FLAVOR;
+              }
+
+              if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
+                ScionPlugin.useStdStreamScionServerFactory( serverExecutablePath );
+              } else {
+                ScionPlugin.useNetworkStreamScionServerFactory( serverExecutablePath );
+              }
             }
           }
           // if we're not using built in
@@ -487,7 +540,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   }
 
   /** Spawn a built-in server build job */
-  void spawnBuildJob() {
+  synchronized void spawnBuildJob() {
     if (internalBuilder == null) {
       IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
       IOConsole console = new IOConsole(UITexts.scionServerBuildJob, null);
@@ -548,7 +601,6 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
           }
           super.done( event );
         }
-
       });
     }
 
@@ -557,8 +609,19 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       monitor.beginTask( UITexts.scionServerProgress_title, IProgressMonitor.UNKNOWN );
       status = buildBuiltIn(monitor, fConOut);
       if (status.isOK()) {
+        IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+        String serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
+
+        if (serverFlavor.length() == 0) {
+          serverFlavor = STDSTREAM_SCION_FLAVOR;
+        }
+
         try {
-          ScionPlugin.useBuiltInStdStreamServerFactory();
+          if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
+            ScionPlugin.useBuiltInStdStreamServerFactory();
+          } else {
+            ScionPlugin.useBuiltInNetworkServerFactory();
+          }
         } catch (ScionServerStartupException ex) {
           // Should never happen, but who knows...
           reportServerStartupError( ex );

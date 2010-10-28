@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 import java.io.File;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -11,6 +12,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -47,13 +49,17 @@ public class ScionPP
 	private Composite autodetectC;
 	private ButtonFieldEditor forceRebuild;
 	private Composite forceRebuildC;
+	private RadioGroupFieldEditor serverFlavorField;
+	private Composite serverFlavorFieldC;
 
 	private CabalImplsBlock cabalBlock;
 	private Composite fieldComposite;
+	private boolean rebuildBuiltin;
 
 	public ScionPP() {
 	  super();
     setPreferenceStore(HaskellUIPlugin.getDefault().getPreferenceStore());
+    rebuildBuiltin = false;
 	}
 
 	/**
@@ -66,6 +72,10 @@ public class ScionPP
   protected Composite createContents( final Composite parentComposite ) {
 	  final int nColumns = 3;
 
+	  // Member variable initialization:
+	  rebuildBuiltin = false;
+
+	  // Create the page:
 	  noDefaultAndApplyButton();
 	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     setPreferenceStore(prefStore);
@@ -100,6 +110,8 @@ public class ScionPP
     SWTUtil.createMessageLabel (fieldComposite, UITexts.scionServer_preferences_label, 2, SWT.DEFAULT);
 
     serverBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
+    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
+    serverBuiltInFieldC.setLayoutData( gdata );
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
 		                                             UITexts.scionServerBuiltIn_label,
 		                                             serverBuiltInFieldC);
@@ -111,29 +123,30 @@ public class ScionPP
     } );
 		serverBuiltInField.setPage( this );
 		serverBuiltInField.setPreferenceStore( prefStore );
-		//serverBuiltInField.fillIntoGrid( fieldComposite, 2);
 		serverBuiltInField.load();
 
 		forceRebuildC=new Composite(fieldComposite,SWT.NONE);
+    gdata = new GridData( SWT.RIGHT, SWT.CENTER, true, false );
+    forceRebuildC.setLayoutData( gdata );
     forceRebuild = new ButtonFieldEditor(
         UITexts.forceRebuildButton_text,
         UITexts.forceRebuildButton_label,
         new SelectionAdapter() {
           @Override
           public void widgetSelected(final SelectionEvent e) {
-            //
+            rebuildBuiltin = true;
           }
-        },forceRebuildC
-        );
+        },
+        forceRebuildC );
     forceRebuild.setPage( this );
     forceRebuild.setPreferenceStore( prefStore );
     //forceRebuild.fillIntoGrid( fieldComposite,2 );
     forceRebuild.load();
 
     serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
-    GridData gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd.horizontalSpan=2;
-    serverExecutableFieldC.setLayoutData( gd);
+    serverExecutableFieldC.setLayoutData( gd );
 		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
 				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
 				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, serverExecutableFieldC );
@@ -145,10 +158,12 @@ public class ScionPP
     });
 		serverExecutableField.setPage( this );
 		serverExecutableField.setPreferenceStore( prefStore );
-		//serverExecutableField.fillIntoGrid( fieldComposite, 3 );
 		serverExecutableField.load();
 
 		autodetectC=new Composite(fieldComposite,SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    autodetectC.setLayoutData( gd );
 		autodetect = new ButtonFieldEditor(
 				String.format(UITexts.autodetectButton_label, getServerExecutableName()),
 				UITexts.autodetectButton_text,
@@ -159,12 +174,26 @@ public class ScionPP
 						updateButtonState();
 						setValid( isValid() );
 					}
-				},autodetectC
-				 );
+				},
+				autodetectC );
 		autodetect.setPage( this );
 		autodetect.setPreferenceStore( prefStore );
-		//autodetect.fillIntoGrid( fieldComposite, 4 );
 		autodetect.load();
+
+		serverFlavorFieldC = new Composite(fieldComposite, SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    serverFlavorFieldC.setLayoutData( gd);
+		serverFlavorField = new RadioGroupFieldEditor( IPreferenceConstants.SCION_SERVER_FLAVOR,
+		    UITexts.scionServerFlavor_title, 1,
+		    new String[][] {
+		      { UITexts.scionServerFlavor_stdstream_label, ScionManager.STDSTREAM_SCION_FLAVOR },
+		      { UITexts.scionServerFlavor_network_label, ScionManager.NETWORK_SCION_FLAVOR }
+		    },
+		    serverFlavorFieldC, true );
+		serverFlavorField.setPage(this);
+		serverFlavorField.setPreferenceStore( prefStore );
+		serverFlavorField.load();
 
 		// Update the dialog's state and validity:
 		updateButtonState();
@@ -217,13 +246,14 @@ public class ScionPP
     serverBuiltInField.store();
     serverExecutableField.store();
     autodetect.store();
+    serverFlavorField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
 
     // Yuck. You'd think there'd be a way to do this via listening for preference
     // changes, but nooooooh.
-    HaskellUIPlugin.getDefault().getScionManager().doBuiltInBuild();
+    HaskellUIPlugin.getDefault().getScionManager().doBuiltInBuild(rebuildBuiltin);
 
     return super.performOk();
   }

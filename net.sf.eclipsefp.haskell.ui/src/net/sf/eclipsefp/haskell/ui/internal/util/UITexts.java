@@ -103,14 +103,22 @@ public final class UITexts extends NLS {
   public static String scionServerStartupError_title;
   public static String scionServerStartupError_message;
 
-  public static String scionServerInstallError;
-  public static String scionServerInstallFailed;
-
   public static String scionServerBuildJob;
   public static String scionServerChangeJob;
   public static String scionServerExecutableNotPresent;
   public static String scionServerAbnormalTermination_title;
   public static String scionServerAbnormalTermination_message;
+  public static String scionRebuild_title;
+  public static String scionRebuild_message;
+  public static String scionRebuild_DirectoryExists_title;
+  public static String scionRebuild_DirectoryExists_message;
+
+  public static String scionServerFlavor_title;
+  public static String scionServerFlavor_stdstream_label;
+  public static String scionServerFlavor_network_label;
+
+  public static String scionServerInstallError;
+  public static String scionServerInstallFailed;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;

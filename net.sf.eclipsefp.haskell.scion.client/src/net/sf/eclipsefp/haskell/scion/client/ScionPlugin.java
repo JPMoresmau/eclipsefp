@@ -23,6 +23,7 @@ import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -248,14 +249,24 @@ public class ScionPlugin extends AbstractUIPlugin {
   }
   /** Stop all scion-servers and reset the internal project -> scion instance associations */
   public static void stopAllInstances() {
+    shutdownAllInstances();
+    getDefault().instances.clear();
+  }
+  /** Shutdown all instances' servers */
+  public static void shutdownAllInstances() {
     ScionPlugin thePlugin = getDefault();
-    
+
     for( IProject project: thePlugin.instances.keySet() ) {
       InstanceState instanceState = thePlugin.instances.get( project );
       ScionInstance scionInstance = instanceState.getInstance();
+      Assert.isNotNull( scionInstance );
       scionInstance.stop(true);
     }
-    thePlugin.instances.clear();
+    
+    // And remember to terminate the shared scion instance too!
+    ScionInstance sharedInstance = thePlugin.sharedScionInstance.getInstance();
+    Assert.isNotNull(sharedInstance);
+    sharedInstance.stop(true);
   }
   /** Create a new {@link ScionInstance ScionInstance}, using a scion-server instance from the current factory */
   public synchronized static ScionInstance createScionInstance(IProject project, Writer outStream, CabalComponentResolver resolver) {
