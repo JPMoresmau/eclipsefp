@@ -225,6 +225,9 @@ public abstract class ScionServer {
       }
     } catch (Throwable ex) {
       // ignore
+    } finally {
+      // Ensure the command queue is really drained
+      commandQueue.clear();
     }
 
     Trace.trace(serverName, "Server stopped");
