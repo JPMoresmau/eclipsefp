@@ -53,9 +53,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -102,7 +100,6 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     IEclipsePreferences instanceScope = HaskellCorePlugin.instanceScopedPreferences();
 
     instanceScope.addPreferenceChangeListener( new CorePreferencesChangeListener() );
-    instanceScope.addNodeChangeListener( new CoreNodeChangeListener() );
 
     // Set up the output logging console for the shared ScionInstance:
     HaskellConsole c = new HaskellConsole( null, UITexts.sharedScionInstance_console );
@@ -148,6 +145,17 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
    * @note You'd think we could detect this when properties get rewritten,
    * but not for hierarchical properties, for all of their virtues.
    */
+  public void doBuiltInBuild() {
+    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    boolean useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
+
+    if (   useBuiltIn
+        && CompilerManager.getInstance().getCurrentHsImplementation() != null
+        && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
+        && ScionBuilder.needsBuilding() ) {
+      spawnBuildJob();
+    }
+  }
   /**
    * Build the built-in scion-server: unpack the internal scion-x.y.z.a.zip archive into the destination
    * folder, then kick of a "cabal install" compilation.
@@ -356,27 +364,6 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         HaskellUIPlugin.log("Core preference changed: ".concat( key ), null);
       }
     }
-  }
-
-  public class CoreNodeChangeListener implements INodeChangeListener {
-    public void added( final NodeChangeEvent event ) {
-      final String childName = event.getChild().name();
-
-      if (   ICorePreferenceNames.CABAL_IMPLEMENTATIONS.equals( childName ) ) {
-          if (   CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
-              && ScionBuilder.needsBuilding() ) {
-            // The cabal implementations changed, the default cabal implementation seems legitimate
-            spawnBuildJob();
-          }
-      } else {
-        HaskellUIPlugin.log("Preference node added: ".concat( event.getChild().name() ), null);
-      }
-    }
-
-    public void removed( final NodeChangeEvent event ) {
-      HaskellUIPlugin.log("Preference node removed: ".concat( event.getChild().name() ), null);
-    }
-
   }
 
   public void stop() {

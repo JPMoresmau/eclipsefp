@@ -221,6 +221,10 @@ public class ScionPP
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
 
+    // Yuck. You'd think there'd be a way to do this via listening for preference
+    // changes, but nooooooh.
+    HaskellUIPlugin.getDefault().getScionManager().doBuiltInBuild();
+
     return super.performOk();
   }
 
