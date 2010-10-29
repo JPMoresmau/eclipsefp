@@ -25,6 +25,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTException;
@@ -40,9 +41,9 @@ public abstract class ScionServer {
   protected static final String              CLASS_PREFIX         = "[ScionServer]";
   protected static final String              SERVER_STDOUT_PREFIX = "[scion-server]";
   /** Message prefix for commands send to the server */
-  protected static final String              TO_SERVER_PREFIX     = "[scion-server] << ";
+  protected static final String              TO_SERVER_PREFIX     = "<< ";
   /** Message prefix for responses received from the server */
-  protected static final String              FROM_SERVER_PREFIX   = "[scion-server] >> ";
+  protected static final String              FROM_SERVER_PREFIX   = ">> ";
   /** The Scion protocol version number */
   public static final String                 PROTOCOL_VERSION     = "0.1";
   /** The Scion "wire protocol" version number reported by the connection-info command */
@@ -105,6 +106,7 @@ public abstract class ScionServer {
     this.serverInStream = null;
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
+    this.outputWriter = null;
     this.cqMonitor = null;
   }
 
@@ -116,7 +118,7 @@ public abstract class ScionServer {
    */
   protected ScionServer() {
     this.project = null;
-    this.serverName = ScionText.noproject;
+    this.serverName = this.getClass().getSimpleName() + "/" + ScionText.noproject;
     this.serverExecutable = null;
     this.serverOutput = null;
     this.directory = null;
@@ -126,6 +128,7 @@ public abstract class ScionServer {
     this.serverInStream = null;
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
+    this.outputWriter = null;
     this.cqMonitor = null;
   }
 
@@ -197,14 +200,18 @@ public abstract class ScionServer {
       // the sub class a chance to close its own things properly
       doStopServer();
 
-      outputWriter.setTerminate();
-      outputWriter.interrupt();
-      outputWriter.join();
+      if (outputWriter != null) {
+        outputWriter.setTerminate();
+        outputWriter.interrupt();
+        outputWriter.join();
+        outputWriter = null;
+      }
 
       if (serverOutStream != null) {
         serverOutStream.close();
         serverOutStream = null;
       }
+      
       if (serverInStream != null) {
         serverInStream.close();
         serverInStream = null;
@@ -309,13 +316,7 @@ public abstract class ScionServer {
       outputWriter.addMessage(getClass().getSimpleName() + ".sendCommand encountered an exception:");
       outputWriter.addMessage(ex);
     } finally {
-      String jsonString = command.toJSONString();
-      final String toServer = serverName + TO_SERVER_PREFIX;
-
-      if (Trace.isTracing()) {
-	Trace.trace(toServer, "%s", jsonString);
-	outputWriter.addMessage(TO_SERVER_PREFIX + jsonString);
-      }
+      outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
     }
     
     return retval;
@@ -369,13 +370,14 @@ public abstract class ScionServer {
    * just happened
    */
   protected void signalAbnormalTermination() {
-    ScionInstance scionInstance = ScionPlugin.getScionInstance(project);
-    assert (scionInstance != null);
-    if (scionInstance != null) {
+    if (project != null) {
+      ScionInstance scionInstance = ScionPlugin.getScionInstance(project);
+      Assert.isNotNull(scionInstance);
       scionInstance.stop(false);
       scionInstance.notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
     } else {
-      // We're the shared instance.
+      // The shared scion-server instance just abnormally terminated.
+      ScionPlugin.getSharedScionInstance().notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
     }
   }
   
@@ -446,8 +448,6 @@ public abstract class ScionServer {
     private final LinkedList<String> messages   = new LinkedList<String>();
     /** should we stop? **/
     private boolean                  terminateFlag;
-    /** marker from things coming from the server */
-    private final String             fromServer = serverName + "/" + FROM_SERVER_PREFIX;
 
     public OutputWriter(String name) {
       super(name);
@@ -500,7 +500,7 @@ public abstract class ScionServer {
           }
         }
         if (m != null) {
-          Trace.trace(fromServer, m);
+          Trace.trace(serverName, m);
           try {
             serverOutput.write(m + PlatformUtil.NL);
             serverOutput.flush();

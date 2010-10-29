@@ -4,6 +4,12 @@ import java.util.EventObject;
 
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 
+/**
+ * Scion server event object. Carries information about scion-server events, such as
+ * server executable changes, abnormal termination, protocol version mismatches, etc.
+ * 
+ * @author B. Scott Michel (scooter.phd@gmail.com)
+ */
 public class ScionEvent extends EventObject {
   /** Required serial version UID. */
   private static final long serialVersionUID = 1032029311500515018L;

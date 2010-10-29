@@ -117,6 +117,12 @@ public final class UITexts extends NLS {
   public static String scionServerFlavor_stdstream_label;
   public static String scionServerFlavor_network_label;
 
+  public static String scionVersionMismatch_title;
+  public static String scionVersionMismatch_message;
+
+  public static String scionServerDoesntExist_title;
+  public static String scionServerDoesntExist_message;
+
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
 
@@ -203,7 +209,6 @@ public final class UITexts extends NLS {
   public static String resolve_addpragma;
   public static String resolve_import_remove;
   public static String resolve_import_replace;
-
 
   public static String preferences_project_title;
   public static String preferences_project_description;

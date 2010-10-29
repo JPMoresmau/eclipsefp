@@ -119,7 +119,6 @@ public class StdStreamScionServer extends ScionServer {
 
 	      String logmsg = FROM_SERVER_PREFIX+response.toString();
 	      outputWriter.addMessage(logmsg);
-              Trace.trace(serverName, logmsg);
 
               processResponse(response);
             } else {

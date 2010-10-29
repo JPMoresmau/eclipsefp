@@ -402,6 +402,16 @@ public class ScionInstance {
     }
   }
 
+  /**
+   * Ensure that the file's Cabal component is loaded in scion-server, setting
+   * the correct context for subsequent commands.
+   * 
+   * @param file
+   *          The file whose component is required.
+   * @param nextCommand
+   *          An optional command to send to the scion-server after the
+   *          component is loaded.
+   */
   private void runWithComponent(final IFile file, final ScionCommand nextCommand) {
     Set<String> componentNames = resolver.getComponents(file);
     if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
@@ -432,11 +442,8 @@ public class ScionInstance {
       }
 
       if (toLoad != null) {
-        final Component compo = toLoad;
-        LoadCommand loadCommand = new LoadCommand(getProject(), compo, false, false);
-        
-        server.sendCommand(loadCommand);
-        lastLoadedComponent = compo;
+        server.sendCommand(new LoadCommand(getProject(), toLoad, false, false));
+        lastLoadedComponent = toLoad;
       }
     }
 
@@ -444,6 +451,13 @@ public class ScionInstance {
       server.sendCommand(nextCommand);
   }
 
+  /**
+   * Reload a file into the scion-server, setting the proper context for
+   * subsequent commands.
+   * 
+   * @param file
+   *          The file to be loaded.
+   */
   public void reloadFile(final IFile file) {
     // Not used, currently: final LoadInfo li = getLoadInfo(file);
     runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
@@ -481,6 +495,7 @@ public class ScionInstance {
     };
     
     server.sendCommand(cmd);
+    // runWithComponent(file, cmd); ??
   }
 
   public void unloadFile(IFile fileName) {

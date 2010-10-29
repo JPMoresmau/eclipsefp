@@ -14,7 +14,6 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
-import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.Location;
@@ -322,7 +321,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // Reload the file on the Scion server side
     IFile file = findFile();
     if( file != null ) {
-      ScionInstance instance=ScionPlugin.getScionInstance( file );
+      ScionInstance instance = ScionPlugin.getScionInstance( file );
 
       // since we call synchronize
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
@@ -333,6 +332,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     }
   }
 
+  /**
+   * Get the editor's current input file.
+   *
+   * @return An IFile object if the editor's input is a file, otherwise null.
+   */
   public IFile findFile() {
     IFile result = null;
     IEditorInput input = getEditorInput();
@@ -368,7 +372,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   }
 
   /**
-   * get the scion instance, creating it if needed
+   * Get the scion instance, creating it if needed
    */
   public ScionInstance getInstance(){
     if (instance == null) {
@@ -379,6 +383,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         instance.addListener( this );
       }
     }
+
     return instance;
   }
 
@@ -459,12 +464,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       } );
 
       ScionInstance instance = getInstance();
-      if( instance!=null && instance.isLoaded( findFile() )) {
-        instance.outline(findFile(), new OutlineHandler() {
+      final IFile currentFile = findFile();
 
+      if( instance!=null && instance.isLoaded( currentFile )) {
+        instance.outline(currentFile, new OutlineHandler() {
           public void outlineResult( final List<OutlineDef> outlineDefs ) {
             outline = outlineDefs;
-            if(getOutlinePage()!=null){
+            if(getOutlinePage() != null){
               getOutlinePage().setInput( outlineDefs );
             }
            foldingStructureProvider.updateFoldingRegions(outlineDefs);
@@ -472,7 +478,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         });
       } else {
         List<OutlineDef> outlineDefs=Collections.emptyList();
-        if(getOutlinePage()!=null){
+        if(getOutlinePage() != null){
           getOutlinePage().setInput( outlineDefs );
         }
         foldingStructureProvider.updateFoldingRegions(outlineDefs);
@@ -532,17 +538,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   /** Process a scion-server status change event */
   public void processScionServerEvent( final ScionEvent ev ) {
-    ScionEventType evType = ev.getEventType();
-    if (evType == ScionEventType.EXECUTABLE_CHANGED
-        || evType == ScionEventType.BUILD_PROJECT_COMPLETED) {
-      // Synchronize the editor with scion-server...
-      final ScionInstance theInstance = getInstance();
-      final IFile file = findFile();
+    switch (ev.getEventType()) {
+      case EXECUTABLE_CHANGED:
+      case BUILD_PROJECT_COMPLETED:
+        final ScionInstance theInstance = getInstance();
+        final IFile file = findFile();
 
-      if ( theInstance != null && file != null && ResourceUtil.isInHaskellProject( file ) ) {
-        theInstance.reloadFile( file);
-        synchronize();
-      }
+        if ( theInstance != null && file != null && ResourceUtil.isInHaskellProject( file ) ) {
+          theInstance.reloadFile( file);
+          synchronize();
+        }
+        break;
+
+      default:
+        break;
     }
   }
 }

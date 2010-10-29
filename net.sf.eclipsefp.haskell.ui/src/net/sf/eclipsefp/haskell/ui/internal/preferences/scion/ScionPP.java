@@ -253,7 +253,7 @@ public class ScionPP
 
     // Yuck. You'd think there'd be a way to do this via listening for preference
     // changes, but nooooooh.
-    HaskellUIPlugin.getDefault().getScionManager().doBuiltInBuild(rebuildBuiltin);
+    HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin);
 
     return super.performOk();
   }
