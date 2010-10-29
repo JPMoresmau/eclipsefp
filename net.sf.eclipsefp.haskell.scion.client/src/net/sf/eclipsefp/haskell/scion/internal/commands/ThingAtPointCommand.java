@@ -17,10 +17,17 @@ public class ThingAtPointCommand extends ScionCommand {
 	
 	private String thing; // the response
 	
-	public ThingAtPointCommand(Location location) {
+	private boolean qualify;
+	private boolean typed;
+	
+	public ThingAtPointCommand(Location location,boolean qualify,boolean typed) {
 		super();
 		this.location = location;
+		this.qualify=qualify;
+		this.typed=typed;
 	}
+	
+	
 	
 	public String getThing() {
 		return thing;
@@ -37,6 +44,8 @@ public class ThingAtPointCommand extends ScionCommand {
 		params.put("file", location.getFileName());
 		params.put("line", location.getStartLine() );
 		params.put("column", location.getStartColumn());
+		params.put("qualify",qualify);
+		params.put("typed",typed);
 		return params;
 	}
 
@@ -55,6 +64,30 @@ public class ThingAtPointCommand extends ScionCommand {
 		if ("no info".equalsIgnoreCase(thing)) {
 			thing = null; // ... yeah
 		}
+	}
+
+
+
+	public boolean isQualify() {
+		return qualify;
+	}
+
+
+
+	public void setQualify(boolean qualify) {
+		this.qualify = qualify;
+	}
+
+
+
+	public boolean isTyped() {
+		return typed;
+	}
+
+
+
+	public void setTyped(boolean typed) {
+		this.typed = typed;
 	}
 
 }

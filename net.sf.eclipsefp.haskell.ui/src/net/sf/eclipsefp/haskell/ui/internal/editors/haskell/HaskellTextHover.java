@@ -82,7 +82,7 @@ class HaskellTextHover extends DefaultTextHover {
       }
       ScionInstance scionInstance = ScionPlugin.getScionInstance(  file );
       if (scionInstance != null) {
-        String thing = scionInstance.thingAtPoint(location);
+        String thing = scionInstance.thingAtPoint(location,false,true);
         return thing; // might be null
       }
     }

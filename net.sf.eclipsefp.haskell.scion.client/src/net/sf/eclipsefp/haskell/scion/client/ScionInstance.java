@@ -489,10 +489,20 @@ public class ScionInstance {
     }
   }
 
-  public String thingAtPoint(Location location) {
-    ThingAtPointCommand command = new ThingAtPointCommand(location);
-    server.sendCommand(command);
-    return command.getThing();
+  public String thingAtPoint(Location location,boolean qualify,boolean typed) {
+	 // the scion command will only work fine if we have the proper file loaded
+	IFile f=location.getIFile(getProject());
+	if (f!=null){
+		ThingAtPointCommand command = new ThingAtPointCommand(location,qualify,typed);
+	    
+		if (f.equals(loadedFile)){
+			server.sendCommand(command);
+			return command.getThing();
+		} else {
+			reloadFile(f,command);
+		}
+	}
+	return null;
   }
 
   public void outline(final IFile file, final OutlineHandler handler) {
