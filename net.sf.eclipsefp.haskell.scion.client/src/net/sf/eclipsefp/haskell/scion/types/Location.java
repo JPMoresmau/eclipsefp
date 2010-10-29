@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.types;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -128,4 +129,13 @@ public class Location {
 		return String.format("%d:%d-%d:%d", startLine, startColumn, endLine, endColumn);
 	}
 	
+	
+	public IFile getIFile(IProject p){
+		String pl=p.getLocation().toOSString();
+		String loc=getFileName();
+		if (loc!=null && loc.startsWith(pl)){
+			return (IFile)p.getFile(loc.substring(pl.length()));
+		}
+		return null;
+	}
 }
