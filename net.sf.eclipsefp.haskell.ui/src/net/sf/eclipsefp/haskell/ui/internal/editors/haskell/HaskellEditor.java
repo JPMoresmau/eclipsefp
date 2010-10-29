@@ -29,6 +29,8 @@ import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -56,6 +58,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -325,9 +328,17 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
       // since we call synchronize
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
-      if (instance!=null){
+      if (instance != null) {
+        // Make sure scion-server has the right component and context loaded
         instance.reloadFile(file);
-        synchronize();
+        // Synchronize the outline and other important stuff.
+        new UIJob("Editor resynchronization") {
+          @Override
+          public IStatus runInUIThread( final IProgressMonitor monitor ) {
+            synchronize();
+            return Status.OK_STATUS;
+          }
+        }.schedule();
       }
     }
   }
@@ -546,7 +557,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
         if ( theInstance != null && file != null && ResourceUtil.isInHaskellProject( file ) ) {
           theInstance.reloadFile( file);
-          synchronize();
+          // Make sure that this happens in the UI thread.
+          new UIJob("Editor synchronize") {
+            @Override
+            public IStatus runInUIThread( final IProgressMonitor monitor ) {
+              synchronize();
+              return Status.OK_STATUS;
+            }
+          }.schedule();
         }
         break;
 

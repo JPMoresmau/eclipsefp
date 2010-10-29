@@ -8,6 +8,8 @@ import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -15,6 +17,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.progress.UIJob;
 
 /** <p> helper class that defines the model reconciling for the Haskell
   * editor.</p>
@@ -87,8 +90,16 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
     if (editor.isDirty()) {
       final ScionInstance scionInstance = ScionPlugin.getScionInstance( file.getProject() );
       if ( scionInstance != null ) {
+        // Ensure that the correct component is loaded in scion-server
         scionInstance.reloadFile( file, editor.getDocument() );
-        editor.synchronize();
+        // Background resynchronize the editor
+        new UIJob("Reconcile/editor resynchronization") {
+          @Override
+          public IStatus runInUIThread( final IProgressMonitor monitor ) {
+            editor.synchronize();
+            return Status.OK_STATUS;
+          }
+        }.schedule();
       }
     }
   }

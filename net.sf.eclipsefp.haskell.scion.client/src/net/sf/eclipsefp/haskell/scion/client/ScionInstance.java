@@ -48,9 +48,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONObject;
 
@@ -146,10 +148,15 @@ public class ScionInstance {
    * @param ev
    *          The event that just happened.
    */
-  public void notifyListeners(ScionEvent ev) {
+  public void notifyListeners(final ScionEvent ev) {
     Object[] theListeners = listeners.getListeners();
     for (int i = 0; i < theListeners.length; ++i) {
-      ((IScionEventListener) theListeners[i]).processScionServerEvent(ev);
+      final IScionEventListener receiver = (IScionEventListener) theListeners[i];
+      SafeRunner.run(new SafeRunnable("Scion-server event listener") { //$NON-NLS-1$
+        public void run() {
+          receiver.processScionServerEvent(ev);
+        }
+      } );
     }
   }
 
