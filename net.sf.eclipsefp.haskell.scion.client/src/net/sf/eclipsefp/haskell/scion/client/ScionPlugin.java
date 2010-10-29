@@ -49,7 +49,7 @@ public class ScionPlugin extends AbstractUIPlugin {
    */
   public static final String                 DIST_FOLDER               = "dist-scion";
   /** Version of the scion zip file containing the built-in server's source */
-  public static final String                 SCION_VERSION             = "0.1.0.5";
+  public static final String                 SCION_VERSION             = "0.1.0.6";
   /** The scion server factory */
   private ScionServerFactory                 serverFactory;
   /** The project -> scion instance map */

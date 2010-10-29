@@ -50,17 +50,17 @@ public class OpenDefinitionHandler extends AbstractHandler {
 				  try {
 
   				  Location l=new Location(file.getLocation().toOSString(),haskellEditor.getDocument(), new Region(textSel.getOffset(),0));
-  				  String s=ScionPlugin.getScionInstance(  file ).thingAtPoint( l );
+  				  String s=ScionPlugin.getScionInstance(  file ).thingAtPoint( l ,true,false);
   				  if (s!=null && s.length()>0){
   				    name=s;
-  				    int ix=name.indexOf( ' ' );
+  				    /*int ix=name.indexOf( ' ' );
   				    if (ix>-1){
   				      name=name.substring( 0,ix );
   				    }
   				    ix=name.lastIndexOf( '.' );
               if (ix>-1){
                 name=name.substring( ix+1 );
-              }
+              }*/
   				  }
 
 				  } catch(BadLocationException ble){

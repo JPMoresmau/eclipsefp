@@ -489,11 +489,11 @@ public class ScionInstance {
     }
   }
 
-  public String thingAtPoint(Location location) {
+  public String thingAtPoint(Location location,boolean qualify,boolean typed) {
 	 // the scion command will only work fine if we have the proper file loaded
 	IFile f=location.getIFile(getProject());
 	if (f!=null){
-		ThingAtPointCommand command = new ThingAtPointCommand(location);
+		ThingAtPointCommand command = new ThingAtPointCommand(location,qualify,typed);
 	    
 		if (f.equals(loadedFile)){
 			server.sendCommand(command);
