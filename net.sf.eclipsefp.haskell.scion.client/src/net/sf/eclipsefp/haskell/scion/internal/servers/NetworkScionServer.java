@@ -262,7 +262,6 @@ public class NetworkScionServer extends ScionServer {
 
           String logmsg = FROM_SERVER_PREFIX + response.toString();
           outputWriter.addMessage(logmsg);
-          Trace.trace(serverName, logmsg);
           
           processResponse(response);
         } catch (JSONException ex) {
