@@ -4,10 +4,20 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
@@ -18,6 +28,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWTException;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
 /**
@@ -32,7 +43,7 @@ public class ScionBuilder {
    *
    * @param The final destination directory.
    * */
-  public static ScionBuildStatus unpackScionArchive(final File destdir) {
+  public ScionBuildStatus unpackScionArchive(final File destdir) {
     ScionBuildStatus retval = new ScionBuildStatus();
     if( !destdir.exists() || destdir.list().length == 0 ) {
       // extract scion from bundled zip file
@@ -87,7 +98,7 @@ public class ScionBuilder {
    * @param destDir The destination directory, where the executable is built
    * @param conout The IOConsole output stream to which the build process' output is sent.
    */
-  public static ScionBuildStatus build( final CabalImplementation cabalImpl, final File destDir, final IOConsoleOutputStream conout ) {
+  public ScionBuildStatus build( final CabalImplementation cabalImpl, final File destDir, final IOConsoleOutputStream conout ) {
     ArrayList<String> commands = new ArrayList<String>();
     ScionBuildStatus retval = new ScionBuildStatus();
 
@@ -118,26 +129,29 @@ public class ScionBuilder {
     ProcessBuilder pb = new ProcessBuilder( commands );
     pb.directory( destDir );
     pb.redirectErrorStream( true );
-    int code = -1;
+
+    String jobPrefix = getClass().getSimpleName();
+
     try {
       Process p = pb.start();
-      InputStream is = p.getInputStream();
-      int nread;
-      byte[] buf = new byte[1024];
+      BufferedReader is = new BufferedReader( new InputStreamReader( p.getInputStream(), "UTF8" ) );
+      OutputWriter pbWriter = new OutputWriter( jobPrefix + "-OutputWriter", conout );
+      InputReceiver  pbReader = new InputReceiver( jobPrefix + "-InputReader", is, pbWriter);
 
-      do {
-        nread = is.read(buf);
-        if (nread > 0) {
-          conout. write(buf, 0, nread);
-          conout.flush();
-        }
-      } while (nread >= 0);
+      pbReader.start();
+      pbWriter.start();
 
-      code = p.waitFor();
-
+      int code = p.waitFor();
       if( code != 0 ) {
         retval.buildFailed( UITexts.scionBuildJob_title, UITexts.scionServerInstallFailed );
       }
+
+      pbWriter.setTerminate();
+      pbWriter.interrupt();
+      pbWriter.join();
+      pbReader.setTerminate();
+      pbReader.interrupt();
+      pbReader.join();
     } catch( Exception e ) {
       retval.buildFailed( UITexts.scionBuildJob_title, UITexts.scionServerInstallError.concat( PlatformUtil.NL + e.toString() ) );
     }
@@ -150,5 +164,133 @@ public class ScionBuilder {
    */
   public static boolean needsBuilding() {
     return !ScionPlugin.serverExecutablePath( ScionPlugin.builtinServerDirectoryPath() ).toFile().exists();
+  }
+
+  /**
+   * A separate thread to write the communication with the server see
+   * https://bugs.eclipse.org/bugs/show_bug.cgi?id=259107
+   */
+  public class OutputWriter extends Thread {
+    /** the message list **/
+    private final LinkedList<String> messages;
+    /** should we stop? **/
+    private boolean                  terminateFlag;
+    /** The output stream we'll write to. */
+    private BufferedWriter           outStream;
+
+    public OutputWriter(final String name, final OutputStream outStream) {
+      super(name);
+      messages = new LinkedList<String>();
+      terminateFlag = false;
+      this.outStream = null;
+      try {
+        this.outStream = new BufferedWriter( new OutputStreamWriter(outStream, "UTF8") );
+      } catch (UnsupportedEncodingException exc) {
+        // Keep Java happy
+      }
+    }
+
+    public void setTerminate() {
+      terminateFlag = true;
+    }
+
+    public void addMessage(final String msg) {
+      synchronized (messages) {
+        messages.add(msg + PlatformUtil.NL);
+        messages.notify();
+      }
+    }
+
+    public void addMessage(final char[] buf, final int start, final int length) {
+      synchronized (messages) {
+        messages.add(new String(buf, start, length));
+        messages.notify();
+      }
+    }
+
+    public void addMessage(final Exception e) {
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      pw.flush();
+      synchronized (messages) {
+        messages.add(sw.toString());
+        messages.notify();
+      }
+    }
+
+    @Override
+    public void run() {
+      while (!terminateFlag && outStream != null) {
+        String m = null;
+        synchronized (messages) {
+          try {
+            while (messages.isEmpty()) {
+              messages.wait();
+            }
+
+          } catch (InterruptedException ignore) {
+            // noop
+          }
+          if (!messages.isEmpty()) {
+            m = messages.removeFirst();
+          }
+        }
+        if (m != null) {
+          try {
+            outStream.write(m);
+            outStream.flush();
+          } catch (IOException ex) {
+            // Nothing to do.
+          } catch (SWTException se) {
+            // probably device has been disposed
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * The input receiver thread.
+   */
+  public class InputReceiver extends Thread {
+
+    private boolean terminateFlag;
+    private BufferedReader inStream;
+    private final OutputWriter outWriter;
+
+    public InputReceiver( final String name, final BufferedReader stream,
+        final OutputWriter outWriter ) {
+      super( name );
+      terminateFlag = false;
+      this.inStream = stream;
+      this.outWriter = outWriter;
+    }
+
+    public void setTerminate() {
+      terminateFlag = true;
+    }
+
+    @Override
+    public void run() {
+      while( !terminateFlag && inStream != null ) {
+        char[] buf = new char[1024];
+        try {
+          int nread = inStream.read( buf );
+          if( nread > 0 ) {
+            outWriter.addMessage( buf, 0, nread );
+          } else if (nread < 0) {
+            terminateFlag = true;
+          }
+        } catch( IOException ex ) {
+          try {
+            inStream.close();
+          } catch( IOException ex1 ) {
+            // Make Java happy.
+          }
+          inStream = null;
+        }
+      }
+    }
   }
 }

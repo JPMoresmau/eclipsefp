@@ -188,32 +188,35 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     //
     if ( useBuiltIn
         && CompilerManager.getInstance().getCurrentHsImplementation() != null
-        && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null
-        && forceRebuild ) {
-      final Display display = HaskellUIPlugin.getStandardDisplay();
-      display.asyncExec( new Runnable() {
-        public void run() {
-          Shell parent = display.getActiveShell();
-          if ( MessageDialog.openConfirm( parent, UITexts.scionRebuild_title, UITexts.scionRebuild_message ) ) {
-            // Shut down all existing servers, use the null server factory in case things go awry.
-            ScionPlugin.shutdownAllInstances();
-            try {
-              ScionPlugin.useNullScionServerFactory();
-            } catch (ScionServerStartupException exc) {
-              // Never thrown by null server factory, but hey, we have to catch it anyway to make Java happy.
-            }
+        && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
+      if ( forceRebuild ) {
+        final Display display = HaskellUIPlugin.getStandardDisplay();
+        display.asyncExec( new Runnable() {
+          public void run() {
+            Shell parent = display.getActiveShell();
+            if ( MessageDialog.openConfirm( parent, UITexts.scionRebuild_title, UITexts.scionRebuild_message ) ) {
+              // Shut down all existing servers, use the null server factory in case things go awry.
+              ScionPlugin.shutdownAllInstances();
+              try {
+                ScionPlugin.useNullScionServerFactory();
+              } catch (ScionServerStartupException exc) {
+                // Never thrown by null server factory, but hey, we have to catch it anyway to make Java happy.
+              }
 
-            IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
-            File scionBuildDir = scionBuildDirPath.toFile();
+              IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
+              File scionBuildDir = scionBuildDirPath.toFile();
 
-            FileUtil.deleteRecursively( scionBuildDir );
-            if ( scionBuildDir.exists() ) {
-              MessageDialog.openError( parent, UITexts.scionRebuild_DirectoryExists_title,
-                                       UITexts.scionRebuild_DirectoryExists_message );
+              FileUtil.deleteRecursively( scionBuildDir );
+              if ( scionBuildDir.exists() ) {
+                MessageDialog.openError( parent, UITexts.scionRebuild_DirectoryExists_title,
+                                         UITexts.scionRebuild_DirectoryExists_message );
+              } else {
+                serverFactorySetup();
+              }
             }
           }
-        }
-      } );
+        } );
+      }
     }
 
     // Everything else is handled by serverFactorySetup...
@@ -266,6 +269,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       reportServerStartupError( ex );
     }
   }
+
   /**
    * Build the built-in scion-server: unpack the internal scion-x.y.z.a.zip archive into the destination
    * folder, then kick of a "cabal install" compilation.
@@ -276,10 +280,11 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   private ScionBuildStatus buildBuiltIn(final IProgressMonitor monitor, final IOConsoleOutputStream conout) {
     IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
     File scionBuildDir = scionBuildDirPath.toFile();
+    ScionBuilder builder = new ScionBuilder();
     ScionBuildStatus retval;
 
     monitor.subTask( UITexts.scionServerProgress_subtask1 );
-    retval = ScionBuilder.unpackScionArchive( scionBuildDir );
+    retval = builder.unpackScionArchive( scionBuildDir );
     if (retval.isOK()) {
       // build final exe location
       IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
@@ -291,7 +296,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
       if( !exeFile.exists() && hsImpl != null && cabalImpl != null) {
         monitor.subTask( UITexts.scionServerProgress_subtask2 );
-        retval = ScionBuilder.build( cabalImpl, scionBuildDir, conout);
+        retval = builder.build( cabalImpl, scionBuildDir, conout);
         if (retval.isOK() && exeFile.exists() ) {
           retval.setExecutable( exePath.toOSString() );
         }
