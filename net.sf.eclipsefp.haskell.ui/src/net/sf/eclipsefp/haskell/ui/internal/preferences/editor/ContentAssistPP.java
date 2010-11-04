@@ -1,10 +1,9 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -18,35 +17,39 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.IWorkbench;
 
-/** <p>Tab for the content assist preference settings.</p>
+/**
+ * <p>Unused for now but translated in case we need it</p>
   *
-  * @author Leif Frenzel
+  * @author JP Moresmau
   * @deprecated
-  */
-class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
-
+ */
+public class ContentAssistPP extends AbstractEditorPP {
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( UITexts.preferences_editor_contentass_background,
-                        CA_PROPOSALS_BACKGROUND ),
-    new ColorListEntry( UITexts.preferences_editor_contentass_foreground,
-                        CA_PROPOSALS_FOREGROUND ) };
+      new ColorListEntry( UITexts.preferences_editor_contentass_background,
+                          CA_PROPOSALS_BACKGROUND ),
+      new ColorListEntry( UITexts.preferences_editor_contentass_foreground,
+                          CA_PROPOSALS_FOREGROUND ) };
 
-  private List colorList;
-  private ColorSelector colorSelector;
-  private Control txtAutoActDelay;
-  private Control txtActTriggers;
-
-  ContentAssistTab( final IPreferenceStore store ) {
-    super( store );
-  }
-
-
-  // interface methods of Tab
-  ///////////////////////////
+    private List colorList;
+    private ColorSelector colorSelector;
+    private Control txtAutoActDelay;
+    private Control txtActTriggers;
 
   @Override
-  public Control createControl( final Composite parent ) {
+  protected void addPreferences( final OverlayPreferenceStore store ) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void init( final IWorkbench workbench ) {
+    super.init( workbench );
+  }
+
+  @Override
+  protected Control createContents( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
     layout.numColumns = 2;
@@ -57,7 +60,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     Composite editorComposite = createEditorComposite( composite );
     createColorList( composite, editorComposite );
     Composite stylesComposite = createStylesComposite( editorComposite );
-    createLabel( stylesComposite, UITexts.preferences_editor_color );
+    tab.createLabel( stylesComposite, UITexts.preferences_editor_color );
     createColorSelector( stylesComposite );
     initialize();
     return composite;
@@ -143,7 +146,7 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
     createBooleanField( parent, aoText, CA_ORDER_PROPOSALS );
     String aaText = UITexts.preferences_editor_contentass_autoactivation;
     String aaKey = CA_AUTOACTIVATION;
-    Button autoActButton = addBooleanField( parent, aaText, aaKey, 0 );
+    Button autoActButton = tab.addBooleanField( parent, aaText, aaKey, 0 );
     autoActButton.addSelectionListener( new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
@@ -153,11 +156,11 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
 
     String adText = UITexts.preferences_editor_contentass_autoactivation_delay;
     String adKey = CA_AUTOACTIVATION_DELAY;
-    txtAutoActDelay = addTextField( parent, adText, adKey, 4, 0 );
+    txtAutoActDelay = tab.addTextField( parent, adText, adKey, 4, 0 );
 
     String atText = UITexts.preferences_editor_contentass_autoactivation_triggers;
     String atKey = CA_AUTOACTIVATION_TRIGGERS;
-    txtActTriggers = addTextField( parent, atText, atKey, 4, 0 );
+    txtActTriggers = tab.addTextField( parent, atText, atKey, 4, 0 );
   }
 
   public void propertyChange( final PropertyChangeEvent event ) {
@@ -193,15 +196,16 @@ class ContentAssistTab extends EditorTab implements IEditorPreferenceNames {
         }
       }
     } );
-    initializeFields();
+    tab.initializeFields();
   }
 
   private void updateAutoactivationControls() {
     boolean enabled = getPreferenceStore().getBoolean(
         IEditorPreferenceNames.CA_AUTOACTIVATION );
     txtAutoActDelay.setEnabled( enabled );
-    getLabel( txtAutoActDelay ).setEnabled( enabled );
+    tab.getLabel( txtAutoActDelay ).setEnabled( enabled );
     txtActTriggers.setEnabled( enabled );
-    getLabel( txtActTriggers ).setEnabled( enabled );
+    tab.getLabel( txtActTriggers ).setEnabled( enabled );
   }
+
 }

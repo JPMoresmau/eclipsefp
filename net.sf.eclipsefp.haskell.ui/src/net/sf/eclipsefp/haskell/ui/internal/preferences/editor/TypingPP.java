@@ -1,35 +1,39 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import net.sf.eclipsefp.common.ui.dialog.DialogField;
+import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
 
 
-/** <p>Tab for the preference setting related to typing.</p>
-  *
-  * @author Leif Frenzel
-  * @deprecated
-  */
-class TypingTab extends EditorTab implements IEditorPreferenceNames {
+public class TypingPP extends AbstractEditorPP {
   private DialogField spaceForTabs;
 
-  TypingTab( final IPreferenceStore store ) {
-    super( store );
+  @Override
+  protected void addPreferences( final OverlayPreferenceStore store ) {
+    store.addBooleanKey( EDITOR_SPACES_FOR_TABS );
+    store.addBooleanKey( EDITOR_CLOSE_STRINGS );
+    store.addBooleanKey( EDITOR_CLOSE_BRACKETS_AND_PARENS );
+    store.addBooleanKey( EDITOR_CLOSE_BRACES );
+    store.addIntKey( EDITOR_TAB_WIDTH );
+    store.addIntKey( EDITOR_CABAL_TAB_WIDTH );
+
   }
 
-
-  // interface methods of Tab
-  ///////////////////////////
+  @Override
+  public void init( final IWorkbench workbench ) {
+    setDescription(  UITexts.preferences_editor_typing_title );
+    super.init( workbench );
+  }
 
   @Override
-  public Control createControl( final Composite parent ) {
+  protected Control createContents( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
 
     GridLayout layout = new GridLayout();
@@ -40,10 +44,10 @@ class TypingTab extends EditorTab implements IEditorPreferenceNames {
     spaceForTabs=createBooleanField( composite, UITexts.preferences_editor_typing_spaces_tabs, prefName );
     new Label(composite,SWT.NONE);
 
-    addIntegerField( composite, UITexts.preferences_editor_typing_tab_width, IEditorPreferenceNames.EDITOR_TAB_WIDTH, 3, 0 );
-    addIntegerField( composite, UITexts.preferences_editor_typing_cabal_tab_width, IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH, 3, 0 );
+    tab.addIntegerField( composite, UITexts.preferences_editor_typing_tab_width, IEditorPreferenceNames.EDITOR_TAB_WIDTH, 3, 0 );
+    tab.addIntegerField( composite, UITexts.preferences_editor_typing_cabal_tab_width, IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH, 3, 0 );
 
-    initializeFields();
+    tab.initializeFields();
 
     return composite;
   }
@@ -54,4 +58,5 @@ class TypingTab extends EditorTab implements IEditorPreferenceNames {
     }
 
   }
+
 }

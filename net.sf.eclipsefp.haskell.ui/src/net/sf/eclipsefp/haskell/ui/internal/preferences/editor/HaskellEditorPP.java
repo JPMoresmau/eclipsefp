@@ -27,6 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /** <p>the preference page for the Haskell editor.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class HaskellEditorPP extends PreferencePage
                              implements IWorkbenchPreferencePage,

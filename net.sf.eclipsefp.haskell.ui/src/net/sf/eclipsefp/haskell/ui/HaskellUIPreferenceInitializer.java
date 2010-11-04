@@ -14,7 +14,7 @@ package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AbstractEditorPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -25,7 +25,8 @@ public class HaskellUIPreferenceInitializer extends
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = HaskellUIPlugin.getDefault().getPreferenceStore();
-		HaskellEditorPP.initializeDefaultValues(prefs);
+		//HaskellEditorPP.initializeDefaultValues(prefs);
+		AbstractEditorPP.initializeDefaultValues( prefs );
 		NewHaskellProjectPP.initializeDefaults(prefs);
 		//BuildConsolePP.initializeDefaults(prefs);
 		ScionPP.initializeDefaults(prefs);

@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Composite;
   * Encapsulates some common functionality.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 abstract class EditorTab extends Tab {
 

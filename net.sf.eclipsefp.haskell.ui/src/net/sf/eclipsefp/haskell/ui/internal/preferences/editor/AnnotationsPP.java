@@ -1,14 +1,11 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import net.sf.eclipsefp.common.ui.preferences.Tab;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -20,58 +17,33 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
-
-/** <p>Tab for the annotation color preference settings.</p>
+/**
+ * <p>Annotation preferences page</p>
   *
-  * @author Leif Frenzel
-  * @deprecated
-  */
-class AnnotationsTab extends Tab {
-
+  * @author JP Moresmau
+ */
+public class AnnotationsPP extends AbstractEditorPP {
   private List colorList;
 
-  private final String[][] colorListModel;
+  private String[][] colorListModel;
   private ColorSelector colorSelector;
   private Button cbShowInText;
   private Button cbShowInOverviewRuler;
 
-
-  AnnotationsTab( final IPreferenceStore store ) {
-    super( store );
+  @Override
+  public void init( final IWorkbench workbench ) {
+    super.init( workbench );
+    setDescription( UITexts.preferences_editor_annotations_presentation);
     colorListModel = createAnnotationTypeListModel();
   }
 
-
-  // interface methods of Tab
-  ///////////////////////////
-
   @Override
-  public Control createControl( final Composite parent ) {
-    Composite composite = new Composite( parent, SWT.NONE );
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 2;
-    composite.setLayout( layout );
-
-    initializeAnnPresLabel( composite );
-    Composite editorComposite = initializeEditorComposite( composite );
-    initializeColorList( composite, editorComposite );
-    Composite optionsComposite = initializeOptionsComposite( editorComposite );
-    initializeShowInTextCB( optionsComposite );
-    initializeShowInOverviewRulerCB( optionsComposite );
-    createLabel( optionsComposite, UITexts.preferences_editor_color );
-    initializeColorSelector( optionsComposite );
-
-    initialize();
-
-    return composite;
-  }
-
-  void addPreferences( final OverlayPreferenceStore store ) {
+  protected void addPreferences( final OverlayPreferenceStore store ) {
     MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
     Iterator iter = preferences.getAnnotationPreferences().iterator();
     while( iter.hasNext() ) {
@@ -80,8 +52,28 @@ class AnnotationsTab extends Tab {
       store.addBooleanKey( info.getTextPreferenceKey() );
       store.addBooleanKey( info.getOverviewRulerPreferenceKey() );
     }
+
   }
 
+  @Override
+  protected Control createContents( final Composite parent ) {
+    Composite composite = new Composite( parent, SWT.NONE );
+    GridLayout layout = new GridLayout();
+    layout.numColumns = 2;
+    composite.setLayout( layout );
+
+    Composite editorComposite = initializeEditorComposite( composite );
+    initializeColorList( composite, editorComposite );
+    Composite optionsComposite = initializeOptionsComposite( editorComposite );
+    initializeShowInTextCB( optionsComposite );
+    initializeShowInOverviewRulerCB( optionsComposite );
+    tab.createLabel( optionsComposite, UITexts.preferences_editor_color );
+    initializeColorSelector( optionsComposite );
+
+    initialize();
+
+    return composite;
+  }
 
   // UI initialization methods
   ////////////////////////////
@@ -130,13 +122,6 @@ class AnnotationsTab extends Tab {
     } );
   }
 
-  private void initializeAnnPresLabel( final Composite parent ) {
-    Label label = new Label( parent, SWT.LEFT );
-    label.setText( UITexts.preferences_editor_annotations_presentation );
-    GridData gridData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-    gridData.horizontalSpan = 2;
-    label.setLayoutData( gridData );
-  }
 
   private Composite initializeEditorComposite( final Composite parent ) {
     Composite editorComposite = new Composite( parent, SWT.NONE );
@@ -250,6 +235,6 @@ class AnnotationsTab extends Tab {
         }
       }
     } );
-    initializeFields();
+    tab.initializeFields();
   }
 }
