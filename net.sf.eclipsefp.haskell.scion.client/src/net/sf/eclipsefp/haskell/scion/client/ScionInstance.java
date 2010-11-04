@@ -517,7 +517,7 @@ public class ScionInstance {
 	if (file!=null){
 		ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
 		withLoadedFile(file, cmd);
-		cmd.getThing();
+		return cmd.getThing();
 	}
 	return null;
   }
