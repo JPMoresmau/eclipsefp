@@ -42,7 +42,7 @@ public class HaskellUIImages implements IImageNames {
   private final static String ACTION = "clcl16/";  // basic colors - size 16x16 //$NON-NLS-1$
   private final static String WIZARD = "wizban/";  // wizard banners //$NON-NLS-1$
   private final static String ACTION_E = "elcl16/"; //$NON-NLS-1$
-
+  private final static String TOOLS = "etool16/"; //$NON-NLS-1$
 
   private static void declareImages() {
     // objects
@@ -107,6 +107,7 @@ public class HaskellUIImages implements IImageNames {
 
     declare(ACTION_SORT,ACTION_E+"alphab_sort_co.png"); //$NON-NLS-1$
     declare(IMPORT_REMOVE,OBJECT+"correction_delete_import.gif"); //$NON-NLS-1$
+    declare(HASKELL_MISC,TOOLS+"haskell_misc.gif"); //$NON-NLS-1$
   }
 
   private final static void declare( final String key,
