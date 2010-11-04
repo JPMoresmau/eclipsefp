@@ -1,10 +1,9 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -18,35 +17,52 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.IWorkbench;
 
-/** <p>the tab for appearance preference settings.</p>
+/**
+ * <p>Default Editor page: appearance</p>
   *
-  * @author Leif Frenzel
-  */
-class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
-
+  * @author JP Moresmau
+ */
+public class AppearancePP extends AbstractEditorPP {
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-    new ColorListEntry( UITexts.preferences_editor_appearance_line_number_color,
-                        EDITOR_LINE_NUMBER_RULER_COLOR ),
-    new ColorListEntry( UITexts.preferences_editor_appearance_matching_brackets_color,
-                        EDITOR_MATCHING_BRACKETS_COLOR ),
-    new ColorListEntry( UITexts.preferences_editor_appearance_current_line_color, EDITOR_CURRENT_LINE_COLOR ),
-    new ColorListEntry( UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN_COLOR ) };
+      new ColorListEntry( UITexts.preferences_editor_appearance_line_number_color,
+                          EDITOR_LINE_NUMBER_RULER_COLOR ),
+      new ColorListEntry( UITexts.preferences_editor_appearance_matching_brackets_color,
+                          EDITOR_MATCHING_BRACKETS_COLOR ),
+      new ColorListEntry( UITexts.preferences_editor_appearance_current_line_color, EDITOR_CURRENT_LINE_COLOR ),
+      new ColorListEntry( UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN_COLOR ) };
 
-  private List colorList;
-  private ColorSelector colorSelector;
+    private List colorList;
+    private ColorSelector colorSelector;
 
+  @Override
+  public void init( final IWorkbench workbench ) {
+    setDescription( UITexts.preferences_editor_description );
+    super.init( workbench );
+  }
 
-  AppearanceTab( final IPreferenceStore store ) {
-    super( store );
+  @Override
+  protected void addPreferences( final OverlayPreferenceStore store ) {
+    store.addBooleanKey( EDITOR_CURRENT_LINE );
+    store.addStringKey( EDITOR_CURRENT_LINE_COLOR );
+    store.addBooleanKey( EDITOR_MATCHING_BRACKETS );
+    store.addStringKey( EDITOR_MATCHING_BRACKETS_COLOR );
+    store.addBooleanKey( EDITOR_PRINT_MARGIN );
+    store.addStringKey( EDITOR_PRINT_MARGIN_COLOR );
+    store.addIntKey( EDITOR_PRINT_MARGIN_COLUMN );
+    store.addBooleanKey( EDITOR_OVERVIEW_RULER );
+    store.addStringKey( EDITOR_LINE_NUMBER_RULER_COLOR );
+    store.addBooleanKey( EDITOR_LINE_NUMBER_RULER );
+
   }
 
 
   // interface methods of Tab
   ///////////////////////////
-
   @Override
-  public Control createControl( final Composite parent ) {
+  protected Control createContents( final Composite parent ) {
+
     Composite control = new Composite( parent, SWT.NONE );
     GridLayout layout = new GridLayout();
     layout.numColumns = 2;
@@ -58,7 +74,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
     Composite editorComposite = createEditorComposite( control );
     createColorList( control, editorComposite );
     Composite stylesComposite = createStylesComposite( editorComposite );
-    createLabel( stylesComposite, UITexts.preferences_editor_color);
+    tab.createLabel( stylesComposite, UITexts.preferences_editor_color);
     createColorSelector( stylesComposite );
 
     initialize();
@@ -147,7 +163,7 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
 
   private void addFields( final Composite parent ) {
     String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
-    addIntegerField( parent, UITexts.preferences_editor_appearance_print_margin_column, pmKey, 3, 0 );
+    tab.addIntegerField( parent, UITexts.preferences_editor_appearance_print_margin_column, pmKey, 3, 0 );
     String orKey = EDITOR_OVERVIEW_RULER;
     createBooleanField( parent, UITexts.preferences_editor_appearance_overview_ruler, orKey );
     String lnrKey = EDITOR_LINE_NUMBER_RULER;
@@ -193,6 +209,6 @@ class AppearanceTab extends EditorTab implements IEditorPreferenceNames {
         }
       }
     } );
-    initializeFields();
+    tab.initializeFields();
   }
 }

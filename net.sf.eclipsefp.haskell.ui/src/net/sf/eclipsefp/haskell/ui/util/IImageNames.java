@@ -80,4 +80,6 @@ public interface IImageNames {
   String ACTION_SORT          = ID + ".ACTION_SORT"; //$NON-NLS-1$
 
   String IMPORT_REMOVE        = ID+".IMPORT_REMOVE"; //$NON-NLS-1$
+
+  String HASKELL_MISC         = ID+".HASKELL_MISC"; //$NON-NLS-1$
 }

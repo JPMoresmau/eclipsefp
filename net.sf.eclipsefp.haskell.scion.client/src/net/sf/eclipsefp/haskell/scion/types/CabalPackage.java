@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.scion.types;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +17,7 @@ public class CabalPackage {
 	private String version;
 	private boolean exposed;
 	private Component[] components;
+	private Set<String> modules;
 	
 	public CabalPackage(){
 		
@@ -28,7 +32,13 @@ public class CabalPackage {
 		for (int a=0;a<arr.length();a++){
 			components[a]=new Component(arr.getJSONObject(a));
 		}
+		arr=obj.getJSONArray("modules");
+		modules=new HashSet<String>(arr.length());
+		for (int a=0;a<arr.length();a++){
+			modules.add(arr.getString(a));
+		}
 	}
+	
 	
 	public String getName() {
 		return name;
@@ -60,5 +70,7 @@ public class CabalPackage {
 		return name+((version!=null && version.length()>0)?"-"+version:"");
 	}
 	
-	
+	public Set<String> getModules() {
+		return modules;
+	}
 }

@@ -1,8 +1,7 @@
-// Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
 import java.util.Arrays;
-import net.sf.eclipsefp.common.ui.preferences.Tab;
+import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
@@ -23,13 +22,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.IWorkbench;
 
-/** <p>tab for syntax coloring preference settings.</p>
-  *
-  * @author Leif Frenzel
-  */
-class SyntaxTab extends Tab implements IEditorPreferenceNames {
 
+public class SyntaxPP extends AbstractEditorPP {
   private Button rbBackgroundDefault;
   private Button rbBackgroundCustom;
   private ColorSelector backgroundColorSelector;
@@ -62,16 +58,44 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     Arrays.sort( colorListModel );
   }
 
-  SyntaxTab( final IPreferenceStore store ) {
-    super( store );
-  }
-
-
-  // interface methods of Tab
-  ///////////////////////////
 
   @Override
-  public Control createControl( final Composite parent ) {
+  protected void addPreferences( final OverlayPreferenceStore store ) {
+    store.addStringKey( EDITOR_FOREGROUND_COLOR );
+    store.addBooleanKey( EDITOR_FOREGROUND_DEFAULT_COLOR );
+    store.addStringKey( EDITOR_BACKGROUND_COLOR );
+    store.addBooleanKey( EDITOR_BACKGROUND_DEFAULT_COLOR );
+    store.addStringKey( EDITOR_COMMENT_COLOR );
+    store.addBooleanKey( EDITOR_COMMENT_BOLD );
+    store.addStringKey( EDITOR_LITERATE_COMMENT_COLOR );
+    store.addBooleanKey( EDITOR_LITERATE_COMMENT_BOLD );
+    store.addStringKey( EDITOR_STRING_COLOR );
+    store.addBooleanKey( EDITOR_STRING_BOLD );
+    store.addStringKey( EDITOR_CHAR_COLOR );
+    store.addBooleanKey( EDITOR_CHAR_BOLD );
+    store.addStringKey( EDITOR_FUNCTION_COLOR );
+    store.addBooleanKey( EDITOR_FUNCTION_BOLD );
+    store.addStringKey( EDITOR_NUMBER_COLOR );
+    store.addBooleanKey( EDITOR_NUMBER_BOLD );
+    store.addStringKey( EDITOR_VAR_COLOR );
+    store.addBooleanKey( EDITOR_VAR_BOLD );
+    store.addStringKey( EDITOR_CON_COLOR );
+    store.addBooleanKey( EDITOR_CON_BOLD );
+    store.addStringKey( EDITOR_KEYWORD_COLOR );
+    store.addBooleanKey( EDITOR_KEYWORD_BOLD );
+    store.addStringKey( EDITOR_SYMBOL_COLOR );
+    store.addBooleanKey( EDITOR_SYMBOL_BOLD );
+    store.addStringKey( EDITOR_CPP_COLOR );
+    store.addBooleanKey( EDITOR_CPP_BOLD );
+    store.addStringKey( EDITOR_TH_COLOR );
+    store.addBooleanKey( EDITOR_TH_BOLD );
+    store.addStringKey( EDITOR_DEFAULT_COLOR );
+    store.addBooleanKey( EDITOR_DEFAULT_BOLD );
+
+  }
+
+  @Override
+  protected Control createContents( final Composite parent ) {
     Composite composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new GridLayout() );
 
@@ -81,7 +105,7 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
     Composite editorComposite = initializeEditorComposite( composite );
     initializeColorList( composite, editorComposite );
     Composite stylesComposite = initializeStylesComposite( editorComposite );
-    createLabel( stylesComposite, UITexts.preferences_editor_color );
+    tab.createLabel( stylesComposite, UITexts.preferences_editor_color );
     initializeColorSelector( stylesComposite );
     initializeBoldCheckBox( stylesComposite );
 
@@ -92,8 +116,13 @@ class SyntaxTab extends Tab implements IEditorPreferenceNames {
   }
 
   @Override
+  public void init( final IWorkbench workbench ) {
+    setDescription( UITexts.preferences_editor_syntax_title);
+    super.init( workbench );
+  }
+
   public void initializeFields() {
-    super.initializeFields();
+    tab.initializeFields();
     IPreferenceStore ps = getPreferenceStore();
     RGB rgb = PreferenceConverter.getColor( ps, EDITOR_BACKGROUND_COLOR );
     backgroundColorSelector.setColorValue( rgb );

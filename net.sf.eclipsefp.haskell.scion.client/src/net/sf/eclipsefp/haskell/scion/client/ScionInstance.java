@@ -513,16 +513,11 @@ public class ScionInstance {
 
   public String thingAtPoint(Location location,boolean qualify,boolean typed) {
 	 // the scion command will only work fine if we have the proper file loaded
-	IFile f=location.getIFile(getProject());
-	if (f!=null){
-		ThingAtPointCommand command = new ThingAtPointCommand(location,qualify,typed);
-	    
-		if (f.equals(loadedFile)){
-			server.sendCommand(command);
-			return command.getThing();
-		} else {
-			reloadFile(f,command);
-		}
+	IFile file=location.getIFile(getProject());
+	if (file!=null){
+		ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
+		withLoadedFile(file, cmd);
+		return cmd.getThing();
 	}
 	return null;
   }
@@ -602,7 +597,7 @@ public class ScionInstance {
     return command.getTokens();
   }
 
-  public synchronized void setDeafening() {
+  public void setDeafening() {
     server.sendCommand(new SetVerbosityCommand(3));
   }
 

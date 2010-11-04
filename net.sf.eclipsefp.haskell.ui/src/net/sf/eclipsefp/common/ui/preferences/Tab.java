@@ -88,7 +88,7 @@ public abstract class Tab implements IPropertyChangeListener{
     initializeTexts();
   }
 
-  protected Control getLabel( final Control field ) {
+  public Control getLabel( final Control field ) {
     return labels.get( field );
   }
 
@@ -100,7 +100,7 @@ public abstract class Tab implements IPropertyChangeListener{
   // UI creation helping methods for subclasses
   /////////////////////////////////////////////
 
-  protected void createLabel( final Composite parent, final String text ) {
+  public void createLabel( final Composite parent, final String text ) {
     Label label = new Label( parent, SWT.LEFT );
     label.setText( text );
     GridData gridData = new GridData();
@@ -108,7 +108,7 @@ public abstract class Tab implements IPropertyChangeListener{
     label.setLayoutData( gridData );
   }
 
-  protected final Button addBooleanField( final Composite parent,
+  public final Button addBooleanField( final Composite parent,
                                           final String label,
                                           final String key,
                                           final int indentation ) {
@@ -126,7 +126,7 @@ public abstract class Tab implements IPropertyChangeListener{
     return checkBox;
   }
 
-  protected Control addIntegerField( final Composite composite,
+  public Control addIntegerField( final Composite composite,
                                      final String label,
                                      final String key,
                                      final int textLimit,
@@ -138,7 +138,7 @@ public abstract class Tab implements IPropertyChangeListener{
     return result;
   }
 
-  protected Control addTextField( final Composite composite,
+  public Control addTextField( final Composite composite,
                                   final String label,
                                   final String key,
                                   final int textLimit,
