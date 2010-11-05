@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.ui.console;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -23,7 +25,7 @@ public class HaskellConsole {
 
   private void createIOConsole(final String name) {
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-    fConsole = new IOConsole(name, null);
+    fConsole = new IOConsole(name, HaskellConsole.class.getName(),HaskellUIImages.getImageDescriptor( IImageNames.HASKELL_MISC ));
     mgr.addConsoles(new IConsole[] {fConsole});
   }
 

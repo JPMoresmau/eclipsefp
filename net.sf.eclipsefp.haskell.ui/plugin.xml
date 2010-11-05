@@ -155,9 +155,28 @@
       <page
             name="%editorPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
-            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP"
-            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.HaskellEditorPP">
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP">
       </page>
+       <page
+            name="%editorPP_syntax_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP">
+      </page>  
+       <page
+            name="%editorPP_typing_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TypingPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TypingPP">
+      </page> 
+      <page
+            name="%editorPP_annotation_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP">
+      </page>      
+      
       <page
             name="%projectWizardPP"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"
@@ -176,10 +195,16 @@
             name="%scionPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
-            <page
+      <page
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             name="%debugPP_name"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
+      </page>
+      <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP"
+            name="%searchPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
    </extension>

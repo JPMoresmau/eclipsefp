@@ -498,9 +498,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if (defByName==null){
       buildDefByName();
     }
-    List<OutlineDef> l=defByName.get( name);
-    if (l!=null && l.size()>0){
-      return l.iterator().next().getLocation();
+    if (defByName!=null){
+      List<OutlineDef> l=defByName.get( name);
+      if (l!=null && l.size()>0){
+        return l.iterator().next().getLocation();
+      }
     }
     return null;
   }
