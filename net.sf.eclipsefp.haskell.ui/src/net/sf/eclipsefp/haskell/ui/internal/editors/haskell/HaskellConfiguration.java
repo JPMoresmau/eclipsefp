@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScann
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
@@ -140,7 +141,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		if (editor != null){
 		  // Get the shared scion-server instance for lexing.
 		  instance = ScionPlugin.getSharedScionInstance();
-		  assert(instance == null);
+		  Assert.isNotNull( instance );
 		} // else no editor: we're in preview null instance is fine
 
 

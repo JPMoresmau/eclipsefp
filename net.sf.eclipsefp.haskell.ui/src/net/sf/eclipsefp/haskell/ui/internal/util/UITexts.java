@@ -285,6 +285,11 @@ public final class UITexts extends NLS {
   public static String preferences_debug_break_on_exception;
   public static String preferences_debug_print_with_show;
 
+  public static String preferences_search_haddock_description;
+  public static String preferences_search_haddock_help;
+  public static String preferences_search_haddock_new;
+  public static String preferences_search_haddock_new_empty;
+
   public static String explorer_libraries;
   public static String explorer_libraries_noimpl;
   public static String explorer_outline_open;

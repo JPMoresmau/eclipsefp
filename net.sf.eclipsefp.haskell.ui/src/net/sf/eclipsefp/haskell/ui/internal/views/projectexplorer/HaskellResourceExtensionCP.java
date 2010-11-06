@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
@@ -57,32 +56,17 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // if we have a Haskell source file, we show the same content as outline
         // underneath
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
-          final ScionInstance si = ScionPlugin.getScionInstance( f );
-          // sync access
-          if (si!=null){
-          //  synchronized( si ) {
-              si.outline( f, new OutlineHandler() {
+          ScionInstance si = ScionPlugin.getScionInstance( f );
+          if (si != null){
+            List<OutlineDef> outlineDefs = si.outline( f );
+            OutlineCP cp = new OutlineCP();
 
-                public void outlineResult( final List<OutlineDef> outlineDefs ) {
-                  OutlineCP cp = new OutlineCP();
-                  cp.inputChanged( null, null, outlineDefs );
-                  for( OutlineDef def: outlineDefs ) {
-                    if( def.getParentID() == null ) {
-                      result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
-                    }
-                  }
-                  synchronized( si ) {
-                    si.notifyAll();
-                  }
-                }
-              });
-//              try {
-//             // TODO make this a preference
-//                si.wait( 10000 ); // 10 seconds max
-//              } catch( InterruptedException ie ) {
-//                // noop
-//              }
-//            }
+            cp.inputChanged( null, null, outlineDefs );
+            for( OutlineDef def : outlineDefs ) {
+              if( def.getParentID() == null ) {
+                result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
+              }
+            }
           }
         }
       } else if( parentElement instanceof ITreeElement ) {

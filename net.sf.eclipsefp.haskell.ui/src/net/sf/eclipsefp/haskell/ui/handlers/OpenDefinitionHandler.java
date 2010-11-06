@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.handlers;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
@@ -14,10 +15,13 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.internal.variables.ValueVariable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,6 +30,9 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.IValueVariable;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
@@ -123,7 +130,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
   				        for (CabalPackage cp:pkgs){
   				          if (cp.getModules()!=null && cp.getModules().contains(module)){
   				            String pkg=cp.toString();
-  				            openHaddock(haskellEditor.getEditorSite().getPage(),instance.getProject(),pkg,module,shortName,haddockType);
+  				            openExternalDefinition(haskellEditor.getEditorSite().getPage(),instance.getProject(),pkg,module,shortName,haddockType);
   				            break outer;
 
   				          }
@@ -140,7 +147,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 		return null;
 	}
 
-	protected static boolean openHaddock(final IWorkbenchPage page, final IProject project,final String pkg, final String module, final String shortName, final char type){
+	protected static boolean openExternalDefinition(final IWorkbenchPage page, final IProject project,final String pkg, final String module, final String shortName, final char type){
 	  int ix=pkg.indexOf( '-' );
     String packageName=pkg;
     String packageVersion="";
@@ -196,8 +203,47 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
 
 	  String moduleHTMLFile=module.replace( '.', '-' )+".html";
-	  String relFile=pkg+"/"+moduleHTMLFile;
-	  String anchor="#"+type+":"+shortName;
+	  //String relFile=pkg+"/"+moduleHTMLFile;
+	  String anchor=type+":"+shortName;
+
+	  IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
+
+	  IStringVariableManager mgr=VariablesPlugin.getDefault().getStringVariableManager();
+	  IValueVariable[] vars=new IValueVariable[]{
+	      new ValueVariable( "IMPL_BIN", "", true, hsImpl!=null?hsImpl.getBinDir():"" ),
+	      new ValueVariable( "PACKAGE_NAME", "", true, packageName ),
+	      new ValueVariable( "PACKAGE_VERSION", "", true, packageVersion ),
+	      new ValueVariable( "MODULE", "", true, module ),
+	      new ValueVariable( "MODULE_HTML", "", true, moduleHTMLFile ),
+	      new ValueVariable( "ANCHOR", "", true, anchor ),
+	  };
+	  try {
+  	  mgr.addVariables( vars );
+  	  try {
+  	    String s=HaskellUIPlugin.getDefault().getPreferenceStore().getString( IPreferenceConstants.HADDOCK_SEARCH_PATHS );
+  	    if (s!=null && s.length()>0){
+  	      String[] paths=SearchPathsPP.parseString( s );
+  	      for (String p:paths){
+  	        try {
+  	          String fullPath=mgr.performStringSubstitution( p );
+  	          URL url=new URL(fullPath);
+  	          if (exists(url)){
+  	            PlatformUI.getWorkbench().getBrowserSupport().createBrowser(pkg+" "+module ).openURL( url );
+  	            return true;
+  	          }
+  	        } catch (Exception ce){
+  	          HaskellUIPlugin.log( ce );
+  	        }
+  	      }
+  	    }
+
+  	  }finally {
+  	    mgr.removeVariables( vars );
+  	  }
+	  } catch (CoreException ce){
+	    HaskellUIPlugin.log( ce );
+	  }
+	  /*
 	  IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
 	  if (hsImpl!=null){
 	    File bin=new File(hsImpl.getBinDir());
@@ -224,12 +270,39 @@ public class OpenDefinitionHandler extends AbstractHandler {
     } catch (Exception e){
       HaskellUIPlugin.log( e );
     }
-
+  */
 
 	  return false;
 	}
 
-	protected static void openInEditor(final IWorkbenchPage page, final Location location,final IProject p) throws PartInitException {
+	private static boolean exists( final URL url ) {
+	  try {
+      if (url!=null){
+        if (url.getProtocol().equalsIgnoreCase( "file" )){
+          URI uri=url.toURI();
+          if (uri.getFragment()!=null){
+            String s=uri.toString();
+            uri=new URI(s.substring( 0,s.length()-(uri.getFragment().length()+1) ));
+          }
+          return new File(uri).exists();
+        } else if (url.getProtocol().equalsIgnoreCase( "http" )){
+          HttpURLConnection conn=(HttpURLConnection)url.openConnection();
+          conn.setRequestMethod( "HEAD" );
+          conn.connect();
+          try {
+            return (HttpURLConnection.HTTP_OK==conn.getResponseCode());
+          } finally {
+            conn.disconnect();
+          }
+        }
+      }
+	  } catch (Exception e){
+	    HaskellUIPlugin.log( e );
+	  }
+    return false;
+  }
+
+  protected static void openInEditor(final IWorkbenchPage page, final Location location,final IProject p) throws PartInitException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		URI uri = new File(location.getFileName()).toURI(); //new URI("file", "", location.getFileName(), null, null);

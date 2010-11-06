@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
-import net.sf.eclipsefp.haskell.scion.client.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
@@ -27,10 +27,15 @@ import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -53,12 +58,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -125,7 +128,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
     initMarkOccurrences();
-    foldingStructureProvider=new HaskellFoldingStructureProvider( this );
+    foldingStructureProvider = new HaskellFoldingStructureProvider( this );
   }
 
   public HaskellFoldingStructureProvider getFoldingStructureProvider() {
@@ -265,9 +268,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if( IContentOutlinePage.class.equals( required ) ) {
       if( outlinePage == null ) {
         outlinePage = new HaskellOutlinePage( this );
-      }
-      if( outline != null ) {
-        outlinePage.setInput( outline );
+        if( outline != null ) {
+          outlinePage.setInput( outline );
+        }
       }
       result = outlinePage;
     } else if( projectionSupport != null ) {
@@ -331,14 +334,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       if (instance != null) {
         // Make sure scion-server has the right component and context loaded
         instance.reloadFile(file);
-        // Synchronize the outline and other important stuff.
-        new UIJob("Editor resynchronization") {
-          @Override
-          public IStatus runInUIThread( final IProgressMonitor monitor ) {
-            synchronize();
-            return Status.OK_STATUS;
-          }
-        }.schedule();
+        synchronize();
       }
     }
   }
@@ -375,22 +371,31 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     super.doSetInput( input );
 
-    theInstance = getInstance();
-    if (theInstance != null) {
-        theInstance.reloadFile( findFile() );
-        synchronize();
+    // Ensure we synchronize to the correct file, which ought to have been set by the call to super.
+    // It doesn't hurt to be cautious here.
+    if ( input instanceof IFileEditorInput ) {
+      file = ((IFileEditorInput) input).getFile();
+      theInstance = getInstance(file);
+      if (theInstance != null) {
+          theInstance.reloadFile( file );
+          synchronize();
+      }
     }
   }
 
   /**
    * Get the scion instance, creating it if needed
+   *
+   * @param theFile
+   *          The file that identifies the project that identifies the
+   *          ScionInstance we're interested in using.
    */
-  public ScionInstance getInstance(){
+  private ScionInstance getInstance(final IFile theFile){
     if (instance == null) {
-      IFile file = findFile();
       // load the new file into Scion
-      if (file != null && ResourceUtil.isInHaskellProject( file )) {
-        instance = ScionPlugin.getScionInstance( file );
+      if (theFile != null && ResourceUtil.isInHaskellProject( theFile )) {
+        instance = ScionPlugin.getScionInstance( theFile );
+        Assert.isNotNull( instance );
         instance.addListener( this );
       }
     }
@@ -460,41 +465,35 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     IDocument document=getDocument();
 
     foldingStructureProvider.setDocument( document );
+
     if( markOccurrencesComputer != null ) {
+      WorkspaceJob occurances = new WorkspaceJob("Haskell occurance marker") {
+        @Override
+        public IStatus runInWorkspace( final IProgressMonitor monitor ) {
+          markOccurrencesComputer.compute();
+          return Status.OK_STATUS;
+        }
+      };
+
       markOccurrencesComputer.setDocument( document );
+      occurances.schedule();
     }
 
-    Shell shell = getSite().getShell();
-    if( shell != null && !shell.isDisposed() ) {
-      shell.getDisplay().asyncExec( new Runnable() {
-        public void run() {
-          if( markOccurrencesComputer != null ) {
-            markOccurrencesComputer.compute();
-          }
-        }
-      } );
+    final IFile currentFile = findFile();
+    ScionInstance instance = getInstance( currentFile );
 
-      ScionInstance instance = getInstance();
-      final IFile currentFile = findFile();
-
-      if( instance!=null && instance.isLoaded( currentFile )) {
-        instance.outline(currentFile, new OutlineHandler() {
-          public void outlineResult( final List<OutlineDef> outlineDefs ) {
-            outline = outlineDefs;
-            if(getOutlinePage() != null){
-              getOutlinePage().setInput( outlineDefs );
-            }
-           foldingStructureProvider.updateFoldingRegions(outlineDefs);
-          }
-        });
-      } else {
-        List<OutlineDef> outlineDefs=Collections.emptyList();
-        if(getOutlinePage() != null){
-          getOutlinePage().setInput( outlineDefs );
-        }
-        foldingStructureProvider.updateFoldingRegions(outlineDefs);
-      }
+    if( instance != null && instance.isLoaded( currentFile ) ) {
+      outline = instance.outline( currentFile );
+    } else {
+      outline = Collections.emptyList();
     }
+
+    // Note: there's a good possibility that outlinePage is null until it is created by getAdapter()
+    if ( outlinePage != null ) {
+      outlinePage.setInput( outline );
+    }
+
+    foldingStructureProvider.updateFoldingRegions( outline );
   }
 
   public HaskellOutlinePage getOutlinePage() {
@@ -505,9 +504,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if (defByName==null){
       buildDefByName();
     }
-    List<OutlineDef> l=defByName.get( name);
-    if (l!=null && l.size()>0){
-      return l.iterator().next().getLocation();
+    if (defByName!=null){
+      List<OutlineDef> l=defByName.get( name);
+      if (l!=null && l.size()>0){
+        return l.iterator().next().getLocation();
+      }
     }
     return null;
   }
@@ -531,7 +532,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    * useful to find if a selection for a breakpoint is in real code
    */
   public boolean isInOutline(final ISelection sel){
-    if (outline!=null && sel instanceof ITextSelection){
+    if (outline != null && sel instanceof ITextSelection){
       ITextSelection tsel=(ITextSelection)sel;
       int line=tsel.getStartLine()+1;
       for (OutlineDef od:outline){
@@ -547,26 +548,52 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   // Interface methods for IScionEventListener
 
-  /** Process a scion-server status change event */
+  /**
+   * Process a scion-server status change event
+   *
+   * @param ev
+   *          The {@link ScionEvent} indicating the type of server event that
+   *          happened.
+   */
   public void processScionServerEvent( final ScionEvent ev ) {
     switch (ev.getEventType()) {
-      case EXECUTABLE_CHANGED:
-      case BUILD_PROJECT_COMPLETED:
-        final ScionInstance theInstance = getInstance();
-        final IFile file = findFile();
+      case SERVER_STARTED: {
+        final ScionInstance theInstance = (ScionInstance) ev.getSource();
+        Job buildJob = theInstance.buildProject(false, true);
 
-        if ( theInstance != null && file != null && ResourceUtil.isInHaskellProject( file ) ) {
-          theInstance.reloadFile( file);
-          // Make sure that this happens in the UI thread.
-          new UIJob("Editor synchronize") {
-            @Override
-            public IStatus runInUIThread( final IProgressMonitor monitor ) {
-              synchronize();
-              return Status.OK_STATUS;
-            }
-          }.schedule();
+        buildJob.addJobChangeListener( new JobChangeAdapter() {
+          @Override
+          public void done(final IJobChangeEvent ev) {
+            final IFile file = findFile();
+
+            new FileCommandGroup("Editor sync after project build.", file) {
+              @Override
+              protected IStatus run( final IProgressMonitor monitor ) {
+                theInstance.reloadFile( file );
+                synchronize();
+
+                return Status.OK_STATUS;
+              }
+            }.schedule();
+          }
+        } );
+
+        buildJob.schedule();
+        break;
+      }
+
+      case EXECUTABLE_CHANGED: {
+        final IFile file = findFile();
+        if (file != null) {
+          final ScionInstance theInstance = getInstance( file );
+
+          if ( theInstance != null && ResourceUtil.isInHaskellProject( file ) ) {
+            theInstance.reloadFile( file );
+            synchronize();
+          }
         }
         break;
+      }
 
       default:
         break;

@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -33,7 +32,7 @@ public abstract class ScionCommand {
    * readable. */
   private String                           serverName;
   /** Commands to be executed after this command */
-  private final List<ScionCommand>         successors;
+  /* Deprecate and delete private final List<ScionCommand>         successors; */
   /** Jobs to be run after the command has finished executing. */
   private final List<Job>                  continuations;
   /**
@@ -55,7 +54,7 @@ public abstract class ScionCommand {
   public ScionCommand() {
     processResultJob = null;
     serverName = "[No server]";
-    successors = new ArrayList<ScionCommand>();
+    /* Deprecate and delete: successors = new ArrayList<ScionCommand>(); */
     continuations = new ArrayList<Job>();
     status = WAITING;
     response = null;
@@ -309,11 +308,12 @@ public abstract class ScionCommand {
    * @param successor The successor command.
    */
   public void addSuccessor(ScionCommand successor) {
-    successors.add(successor);
+    /* Deprecate and delete: successors.add(successor); */
   }
   
   /** Run successor commands queued in the {@link #successors} list. */
   public boolean runSuccessors(ScionServer server) {
+    /* Deprecate and delete: 
     boolean retval = true;
     Iterator<ScionCommand> succIter = successors.iterator();
     while (retval && succIter.hasNext()) {
@@ -326,7 +326,9 @@ public abstract class ScionCommand {
       }
     }
     
-    return retval;
+    return retval; */
+    
+    return true;
   }
   /**
    * Returns information about this command for use in error messages.

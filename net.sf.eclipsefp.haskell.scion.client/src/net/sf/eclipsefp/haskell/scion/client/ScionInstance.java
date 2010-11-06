@@ -27,6 +27,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
+import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
@@ -34,6 +35,7 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -42,6 +44,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -163,7 +166,10 @@ public class ScionInstance {
   /**
    * Update the scion-server executable. This method is invoked in response to a
    * preference change in the UI to signal that the underlying scion-server has
-   * changed.
+   * changed. Alternatively, this method gets triggered during the UI's startup
+   * when EclipseFP changes from the {@link NullScionServer} default server to
+   * a real server after preferences, etc., are read or when the built-in server's
+   * recompile finishes successfully.
    * 
    * @param server
    *          The scion-server executable that this instance should use.
@@ -198,7 +204,7 @@ public class ScionInstance {
       setDeafening();
     }
     
-    buildProject( false, true );
+    notifyListeners(ScionEventType.SERVER_STARTED);
   }
 
   /**
@@ -230,18 +236,10 @@ public class ScionInstance {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
         int version = ciCmd.getVersion();
-        boolean generateEvent = false;
 
-        /* if (version == null) {
-          ScionPlugin.logWarning(ScionText.errorReadingVersion_warning, null);
-          generateEvent = true;
-        } else */ if (version != ScionServer.WIRE_PROTOCOL_VERSION) {
+        if (version != ScionServer.WIRE_PROTOCOL_VERSION) {
           final String errMsg = NLS.bind(ScionText.commandVersionMismatch_warning, version, ScionServer.WIRE_PROTOCOL_VERSION);
           ScionPlugin.logWarning(errMsg, null);
-          generateEvent = true;
-        }
-        
-        if (generateEvent) {
           notifyListeners(new VersionMismatchEvent(ScionInstance.this, server, version));
         }
         
@@ -253,7 +251,7 @@ public class ScionInstance {
   }
 
   /**
-   * Predicate to ensure that the cabal file exists.
+   * Predicate that ensures that the cabal file exists.
    * 
    * @return true if the cabal file exists.
    */
@@ -288,17 +286,22 @@ public class ScionInstance {
    *          Echo output from the build
    * @param forceRecomp
    *          Force recompilation if true
+   * @return TODO
    */
-  public void buildProject(final boolean output, final boolean forceRecomp) {
-    cabalDescription = null;
+  public Job buildProject(final boolean output, final boolean forceRecomp) {
+    ProjectCommandGroup retval = null;
+    
     if (checkCabalFile()) {
-      final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
-      final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
       final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
-      
-      command.addContinuation(new Job(jobNamePrefix) {
+
+      retval = new ProjectCommandGroup(jobNamePrefix, getProject()) {
         @Override
-        protected IStatus run(final IProgressMonitor monitor) {
+        protected IStatus run(IProgressMonitor monitor) {
+          cabalDescription = null;
+          final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
+          final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
+          
+          server.sendCommand(command);
           components = command.getComponents();
           // if lastLoadedComponent is still present, load it last
           if (lastLoadedComponent != null) {
@@ -342,13 +345,12 @@ public class ScionInstance {
           packagesByDB = cdc.getPackagesByDB();
 
           restoreState();
-          notifyListeners(ScionEventType.BUILD_PROJECT_COMPLETED);
           return Status.OK_STATUS;
         }
-      } );
-
-      server.queueCommand(command);
+      };
     }
+    
+    return retval;
   }
 
   // ////////////////////
@@ -370,17 +372,16 @@ public class ScionInstance {
   
   private void restoreState() {
     if (loadedFile != null) {
-      // Not used, currently: final LoadInfo li = getLoadInfo(loadedFile);
-      // maybe not the proper loaded component	
-      reloadFile(loadedFile, (ScionCommand)null);
+      // Ensure that loadedFile is really the loaded file.	
+      reloadFile( loadedFile );
     }
   }
 
   // ////////////////////
   // External commands
 
-  public void loadFile(IFile fileName, boolean sync) {
-    reloadFile(fileName, (ScionCommand) null);
+  public void loadFile(IFile fileName) {
+    reloadFile( fileName );
   }
 
   public IFile getLoadedFile() {
@@ -421,12 +422,13 @@ public class ScionInstance {
    */
   private void runWithComponent(final IFile file, final ScionCommand nextCommand) {
     Set<String> componentNames = resolver.getComponents(file);
+    
     if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
       Component toLoad = null;
 
       if (!componentNames.isEmpty()) {
         synchronized (components) {
-          for (final Component compo : components) {
+          for (Component compo : components) {
             if (componentNames.contains(compo.toString())) {
               toLoad = compo;
               break;
@@ -435,7 +437,7 @@ public class ScionInstance {
         }
       }
 
-      final LoadInfo li = getLoadInfo(file);
+      LoadInfo li = getLoadInfo(file);
 
       // we have no component: we create a file one
       if (toLoad == null) {
@@ -449,7 +451,10 @@ public class ScionInstance {
       }
 
       if (toLoad != null) {
-        server.sendCommand(new LoadCommand(getProject(), toLoad, false, false));
+        IProject fProject = file.getProject();
+        // Project for this instance should be the same as the file's
+        Assert.isTrue( getProject() == fProject );
+        server.sendCommand(new LoadCommand(fProject, toLoad, false, false));
         lastLoadedComponent = toLoad;
       }
     }
@@ -466,12 +471,19 @@ public class ScionInstance {
    *          The file to be loaded.
    */
   public void reloadFile(final IFile file) {
-    // Not used, currently: final LoadInfo li = getLoadInfo(file);
     runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
   }
 
+  /**
+   * Reload a file into the scion-server, setting the context for the next
+   * command. The next command is then sent to the scion-server for execution.
+   * 
+   * @param file
+   *          The file to be loaded
+   * @param nextCommand
+   *          The following command to be executed
+   */
   public void reloadFile(final IFile file, final ScionCommand nextCommand) {
-    // Not used, currently: final LoadInfo li = getLoadInfo(file);
     runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
     if (nextCommand != null) {
       server.sendCommand(nextCommand);
@@ -501,18 +513,17 @@ public class ScionInstance {
       }
     };
     
-    server.sendCommand(cmd);
-    // runWithComponent(file, cmd); ??
+    // server.sendCommand(cmd);
+    runWithComponent(file, cmd);
   }
 
   public void unloadFile(IFile fileName) {
-    if (fileName.equals(loadedFile)) {
-      loadedFile = null;
-    }
+    Assert.isTrue( loadedFile.equals(fileName) );
+    loadedFile = null;
   }
 
   public String thingAtPoint(Location location,boolean qualify,boolean typed) {
-	 // the scion command will only work fine if we have the proper file loaded
+	// the scion command will only work fine if we have the proper file loaded
 	IFile file=location.getIFile(getProject());
 	if (file!=null){
 		ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
@@ -522,11 +533,11 @@ public class ScionInstance {
 	return null;
   }
 
-  public void outline(final IFile file, final OutlineHandler handler) {
+  public List<OutlineDef> outline( final IFile file ) {
     final OutlineCommand cmd = new OutlineCommand(file);
 
     withLoadedFile(file, cmd);
-    handler.outlineResult(cmd.getOutlineDefs());
+    return cmd.getOutlineDefs();
   }
 
   private void withLoadedFile(final IFile file, ScionCommand cmd) {
@@ -548,6 +559,7 @@ public class ScionInstance {
   }
 
   public JSONObject getCabalDescription() {
+    // Never called... :-)
     return cabalDescription;
   }
 
@@ -613,6 +625,5 @@ public class ScionInstance {
   private class LoadInfo {
     private boolean interactiveCheckDisabled = false;
     private boolean useFileComponent         = false;
-    // Not used, currently: private ScionCommand lastCommand;
   }
 }
