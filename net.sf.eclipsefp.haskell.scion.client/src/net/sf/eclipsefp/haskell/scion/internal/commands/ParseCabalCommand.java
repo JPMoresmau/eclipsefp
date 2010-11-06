@@ -34,7 +34,8 @@ public class ParseCabalCommand extends ScionCommand {
 	}
 
 	@Override
-        public String getMethod() {
+  public String getMethod() {
 		return "parse-cabal";
 	}
+
 }
