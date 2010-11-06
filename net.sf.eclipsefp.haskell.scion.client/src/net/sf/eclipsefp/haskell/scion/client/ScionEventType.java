@@ -11,6 +11,10 @@ package net.sf.eclipsefp.haskell.scion.client;
  */
 public enum ScionEventType {
   /**
+   * Server started successfully
+   */
+  SERVER_STARTED,
+  /**
    * The executable changed, usually due to a property change in the EclipseFP
    * preferences pane or as the result of the built-in server compilation
    * process.
