@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -27,10 +28,14 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -390,6 +395,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       // load the new file into Scion
       if (theFile != null && ResourceUtil.isInHaskellProject( theFile )) {
         instance = ScionPlugin.getScionInstance( theFile );
+        Assert.isNotNull( instance );
         instance.addListener( this );
       }
     }
@@ -542,11 +548,41 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   // Interface methods for IScionEventListener
 
-  /** Process a scion-server status change event */
+  /**
+   * Process a scion-server status change event
+   *
+   * @param ev
+   *          The {@link ScionEvent} indicating the type of server event that
+   *          happened.
+   */
   public void processScionServerEvent( final ScionEvent ev ) {
     switch (ev.getEventType()) {
-      case EXECUTABLE_CHANGED:
-      case BUILD_PROJECT_COMPLETED:
+      case SERVER_STARTED: {
+        final ScionInstance theInstance = (ScionInstance) ev.getSource();
+        Job buildJob = theInstance.buildProject(false, true);
+
+        buildJob.addJobChangeListener( new JobChangeAdapter() {
+          @Override
+          public void done(final IJobChangeEvent ev) {
+            final IFile file = findFile();
+
+            new FileCommandGroup("Editor sync after project build.", file) {
+              @Override
+              protected IStatus run( final IProgressMonitor monitor ) {
+                theInstance.reloadFile( file );
+                synchronize();
+
+                return Status.OK_STATUS;
+              }
+            }.schedule();
+          }
+        } );
+
+        buildJob.schedule();
+        break;
+      }
+
+      case EXECUTABLE_CHANGED: {
         final IFile file = findFile();
         if (file != null) {
           final ScionInstance theInstance = getInstance( file );
@@ -557,6 +593,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
           }
         }
         break;
+      }
 
       default:
         break;
