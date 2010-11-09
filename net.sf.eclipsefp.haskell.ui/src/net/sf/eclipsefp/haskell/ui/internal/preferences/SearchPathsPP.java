@@ -21,7 +21,7 @@ public class SearchPathsPP extends FieldEditorPreferencePage implements IWorkben
   public static final String SEP="|";
 
   private static final String[] defaults=new String[]{
-    "file:/${IMPL_BIN}/../doc/html/libraries/${PACKAGE_NAME}-${PACKAGE_VERSION}/${MODULE_HTML}#${ANCHOR}",
+    "file://${IMPL_BIN}/../doc/html/libraries/${PACKAGE_NAME}-${PACKAGE_VERSION}/${MODULE_HTML}#${ANCHOR}",
     "http://hackage.haskell.org/packages/archive/${PACKAGE_NAME}/${PACKAGE_VERSION}/doc/html/${MODULE_HTML}#${ANCHOR}"
 } ;
 

@@ -20,6 +20,7 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.internal.variables.ValueVariable;
@@ -31,8 +32,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -238,8 +241,18 @@ public class OpenDefinitionHandler extends AbstractHandler {
 	  IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
 
 	  IStringVariableManager mgr=VariablesPlugin.getDefault().getStringVariableManager();
+    String hsImplBinDir = hsImpl != null ? hsImpl.getBinDir() : "";
+
+    if (hsImplBinDir.length() > 0) {
+      IPath hsIBDPath = new Path (hsImplBinDir);
+      // Need the extra "/" to make it a proper file URL: file:///C:/...
+      if ( PlatformUtil.runningOnWindows() && hsIBDPath.isAbsolute() ) {
+        hsImplBinDir = "/".concat( hsIBDPath.toPortableString() );
+      }
+    }
+
 	  IValueVariable[] vars=new IValueVariable[]{
-	      new ValueVariable( "IMPL_BIN", "", true, hsImpl!=null?hsImpl.getBinDir():"" ),
+	      new ValueVariable( "IMPL_BIN", "", true, hsImplBinDir ),
 	      new ValueVariable( "PACKAGE_NAME", "", true, packageName ),
 	      new ValueVariable( "PACKAGE_VERSION", "", true, packageVersion ),
 	      new ValueVariable( "MODULE", "", true, module ),
@@ -253,10 +266,11 @@ public class OpenDefinitionHandler extends AbstractHandler {
   	    if (s!=null && s.length()>0){
   	      String[] paths=SearchPathsPP.parseString( s );
   	      for (String p:paths){
-  	        try {
-  	          String fullPath=mgr.performStringSubstitution( p );
-  	          URL url=new URL(fullPath);
-  	          if (exists(url)){
+	          String fullPath=mgr.performStringSubstitution( p );
+	          try {
+  	          URL url = new URL( fullPath );
+  	          // Ensure that spaces are properly escaped inside the path portion of the URL
+  	          if (exists(url)) {
   	            PlatformUI.getWorkbench().getBrowserSupport().createBrowser(pkg+" "+module ).openURL( url );
   	            return true;
   	          }
@@ -307,13 +321,8 @@ public class OpenDefinitionHandler extends AbstractHandler {
 	private static boolean exists( final URL url ) {
 	  try {
       if (url!=null){
-        if (url.getProtocol().equalsIgnoreCase( "file" )){
-          URI uri=url.toURI();
-          if (uri.getFragment()!=null){
-            String s=uri.toString();
-            uri=new URI(s.substring( 0,s.length()-(uri.getFragment().length()+1) ));
-          }
-          return new File(uri).exists();
+        if (url.getProtocol().equalsIgnoreCase( "file" )) {
+          return new File(url.getFile()).exists();
         } else if (url.getProtocol().equalsIgnoreCase( "http" )){
           HttpURLConnection conn=(HttpURLConnection)url.openConnection();
           conn.setRequestMethod( "HEAD" );
