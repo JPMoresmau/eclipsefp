@@ -34,6 +34,7 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -42,6 +43,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -230,18 +232,10 @@ public class ScionInstance {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
         int version = ciCmd.getVersion();
-        boolean generateEvent = false;
 
-        /* if (version == null) {
-          ScionPlugin.logWarning(ScionText.errorReadingVersion_warning, null);
-          generateEvent = true;
-        } else */ if (version != ScionServer.WIRE_PROTOCOL_VERSION) {
+        if (version != ScionServer.WIRE_PROTOCOL_VERSION) {
           final String errMsg = NLS.bind(ScionText.commandVersionMismatch_warning, version, ScionServer.WIRE_PROTOCOL_VERSION);
           ScionPlugin.logWarning(errMsg, null);
-          generateEvent = true;
-        }
-        
-        if (generateEvent) {
           notifyListeners(new VersionMismatchEvent(ScionInstance.this, server, version));
         }
         
@@ -253,7 +247,7 @@ public class ScionInstance {
   }
 
   /**
-   * Predicate to ensure that the cabal file exists.
+   * Predicate that ensures that the cabal file exists.
    * 
    * @return true if the cabal file exists.
    */
@@ -421,12 +415,13 @@ public class ScionInstance {
    */
   private void runWithComponent(final IFile file, final ScionCommand nextCommand) {
     Set<String> componentNames = resolver.getComponents(file);
+    
     if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
       Component toLoad = null;
 
       if (!componentNames.isEmpty()) {
         synchronized (components) {
-          for (final Component compo : components) {
+          for (Component compo : components) {
             if (componentNames.contains(compo.toString())) {
               toLoad = compo;
               break;
@@ -435,7 +430,7 @@ public class ScionInstance {
         }
       }
 
-      final LoadInfo li = getLoadInfo(file);
+      LoadInfo li = getLoadInfo(file);
 
       // we have no component: we create a file one
       if (toLoad == null) {
@@ -449,7 +444,10 @@ public class ScionInstance {
       }
 
       if (toLoad != null) {
-        server.sendCommand(new LoadCommand(getProject(), toLoad, false, false));
+        IProject fProject = file.getProject();
+        // Project for this instance should be the same as the file's
+        Assert.isTrue( getProject() == fProject );
+        server.sendCommand(new LoadCommand(fProject, toLoad, false, false));
         lastLoadedComponent = toLoad;
       }
     }
@@ -470,6 +468,15 @@ public class ScionInstance {
     runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
   }
 
+  /**
+   * Reload a file into the scion-server, setting the context for the next
+   * command. The next command is then sent to the scion-server for execution.
+   * 
+   * @param file
+   *          The file to be loaded
+   * @param nextCommand
+   *          The following command to be executed
+   */
   public void reloadFile(final IFile file, final ScionCommand nextCommand) {
     // Not used, currently: final LoadInfo li = getLoadInfo(file);
     runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
@@ -501,12 +508,12 @@ public class ScionInstance {
       }
     };
     
-    server.sendCommand(cmd);
-    // runWithComponent(file, cmd); ??
+    // server.sendCommand(cmd);
+    runWithComponent(file, cmd);
   }
 
   public void unloadFile(IFile fileName) {
-    if (fileName.equals(loadedFile)) {
+    if (loadedFile.equals(fileName)) {
       loadedFile = null;
     }
   }
@@ -522,11 +529,11 @@ public class ScionInstance {
 	return null;
   }
 
-  public void outline(final IFile file, final OutlineHandler handler) {
+  public List<OutlineDef> outline( final IFile file ) {
     final OutlineCommand cmd = new OutlineCommand(file);
 
     withLoadedFile(file, cmd);
-    handler.outlineResult(cmd.getOutlineDefs());
+    return cmd.getOutlineDefs();
   }
 
   private void withLoadedFile(final IFile file, ScionCommand cmd) {
