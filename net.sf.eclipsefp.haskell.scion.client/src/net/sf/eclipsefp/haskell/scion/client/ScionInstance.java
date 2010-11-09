@@ -204,7 +204,11 @@ public class ScionInstance {
       setDeafening();
     }
     
-    notifyListeners(ScionEventType.SERVER_STARTED);
+    // And finally set up the initial project build...
+    Job projectJob = buildProject(false, true);
+    
+    if (projectJob != null)
+      projectJob.schedule();
   }
 
   /**
@@ -348,6 +352,8 @@ public class ScionInstance {
           return Status.OK_STATUS;
         }
       };
+      
+      retval.setPriority(Job.BUILD);
     }
     
     return retval;
@@ -524,8 +530,8 @@ public class ScionInstance {
 
   public String thingAtPoint(Location location,boolean qualify,boolean typed) {
 	// the scion command will only work fine if we have the proper file loaded
-	IFile file=location.getIFile(getProject());
-	if (file!=null){
+	IFile file = location.getIFile(getProject());
+	if (file != null){
 		ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
 		withLoadedFile(file, cmd);
 		return cmd.getThing();
@@ -571,36 +577,28 @@ public class ScionInstance {
     return components;
   }
 
-  public void definedNames(final NameHandler handler) {
-    if (handler != null) {
-      final DefinedNamesCommand command = new DefinedNamesCommand();
-      server.sendCommand(command);
-      handler.nameResult(command.getNames());
-    }
+  public List<String> definedNames() {
+    final DefinedNamesCommand command = new DefinedNamesCommand();
+    server.sendCommand(command);
+    return command.getNames();
   }
 
-  public void listExposedModules(final NameHandler handler) {
-    if (handler != null) {
-      if (exposedModulesCache != null) {
-        handler.nameResult(exposedModulesCache);
-        return;
-      }
-      
+  public List<String> listExposedModules() {
+    if (exposedModulesCache == null) {
       final ListExposedModulesCommand command = new ListExposedModulesCommand();
 
       server.sendCommand(command);
       exposedModulesCache = Collections.unmodifiableList(command.getNames());
-      handler.nameResult(exposedModulesCache);
     }
+    
+    return exposedModulesCache;
   }
 
-  public void moduleGraph(final NameHandler handler) {
-    if (handler != null) {
-      final ModuleGraphCommand command = new ModuleGraphCommand();
+  public List<String> moduleGraph() {
+    final ModuleGraphCommand command = new ModuleGraphCommand();
 
-      server.sendCommand(command);
-      handler.nameResult(command.getNames());
-    }
+    server.sendCommand(command);
+    return command.getNames();
   }
 
   public synchronized List<TokenDef> tokenTypes(final IFile file, final String contents) {

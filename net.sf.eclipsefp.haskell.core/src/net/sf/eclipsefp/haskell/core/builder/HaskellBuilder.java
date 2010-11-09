@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 
 /** <p>The incremental builder for Haskell projects.</p>
   *
@@ -111,7 +112,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       getProject().accept( new BuildVisitor( subMon ) );*/
       ScionInstance si = ScionPlugin.getScionInstance( getProject() );
       if (si != null ) {
-        si.buildProject(true, false);
+        Job projectJob = si.buildProject(true, false);
+
+        if (projectJob != null) {
+          projectJob.schedule();
+        }
       } else {
         new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
       }

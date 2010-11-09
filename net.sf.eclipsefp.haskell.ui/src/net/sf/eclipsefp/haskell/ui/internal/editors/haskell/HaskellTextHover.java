@@ -4,12 +4,17 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.Iterator;
+import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IDocument;
@@ -72,19 +77,9 @@ class HaskellTextHover extends DefaultTextHover {
   private String computeThingAtPoint( final ITextViewer textViewer, final IRegion hoverRegion  ) {
     IFile file = editor.findFile();
     if (file != null) {
-      IDocument document = textViewer.getDocument();
-      Location location;
-      try {
-        location = new Location(file.getLocation().toOSString(), document, hoverRegion);
-      } catch (BadLocationException ex) {
-        HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );
-        return null;
-      }
-      ScionInstance scionInstance = ScionPlugin.getScionInstance(  file );
-      if (scionInstance != null) {
-        String thing = scionInstance.thingAtPoint(location,false,true);
-        return thing; // might be null
-      }
+      ComputeThingAtPoint tap = new ComputeThingAtPoint( "Thing-at-point", file, textViewer, hoverRegion );
+      tap.runGroupSynchronously();
+      return tap.getThing();
     }
     return null;
   }
@@ -94,11 +89,39 @@ class HaskellTextHover extends DefaultTextHover {
     return false;
   }
 
-  /*
-  private IFile getCabalFile( final IProject project ) {
-    String ext = ResourceUtil.EXTENSION_CABAL;
-    IPath path = new Path( project.getName() ).addFileExtension( ext );
-    return project.getFile( path );
+  private class ComputeThingAtPoint extends FileCommandGroup {
+    private String thing;
+    private final ITextViewer textViewer;
+    private final IFile theFile;
+    private final IRegion hoverRegion;
+
+    public ComputeThingAtPoint( final String jobName, final IFile theFile, final ITextViewer textviewer, final IRegion hoverRegion ) {
+      super( jobName, theFile, Job.SHORT );
+      this.thing = null;
+      this.textViewer = textviewer;
+      this.theFile = theFile;
+      this.hoverRegion = hoverRegion;
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      IDocument document = textViewer.getDocument();
+      Location location;
+      try {
+        location = new Location(theFile.getLocation().toOSString(), document, hoverRegion);
+        ScionInstance scionInstance = ScionPlugin.getScionInstance( theFile );
+        if (scionInstance != null) {
+          thing = scionInstance.thingAtPoint(location, false, true);
+        }
+      } catch (BadLocationException ex) {
+        HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );
+      }
+
+      return Status.OK_STATUS;
+    }
+
+    public String getThing() {
+      return thing;
+    }
   }
-  */
 }

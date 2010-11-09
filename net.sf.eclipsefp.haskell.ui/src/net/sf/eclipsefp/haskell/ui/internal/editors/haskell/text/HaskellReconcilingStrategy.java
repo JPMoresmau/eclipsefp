@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
+import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -10,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -17,7 +19,6 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.progress.UIJob;
 
 /** <p> helper class that defines the model reconciling for the Haskell
   * editor.</p>
@@ -88,18 +89,19 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   private void reconcile() {
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
     if (editor.isDirty()) {
-      final ScionInstance scionInstance = ScionPlugin.getScionInstance( file.getProject() );
-      if ( scionInstance != null ) {
-        // Ensure that the correct component is loaded in scion-server
-        scionInstance.reloadFile( file, editor.getDocument() );
-        // Background resynchronize the editor
-        new UIJob("Reconcile/editor resynchronization") {
+      final ScionInstance theInstance = ScionPlugin.getScionInstance( file.getProject() );
+      if ( theInstance != null ) {
+        FileCommandGroup cgroup = new FileCommandGroup("Reconciler", file, Job.SHORT) {
           @Override
-          public IStatus runInUIThread( final IProgressMonitor monitor ) {
+          protected IStatus run( final IProgressMonitor monitor ) {
+            theInstance.reloadFile( file );
             editor.synchronize();
             return Status.OK_STATUS;
           }
-        }.schedule();
+        };
+
+        // No need to run this synchronously
+        cgroup.schedule();
       }
     }
   }

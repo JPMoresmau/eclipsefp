@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
@@ -30,6 +31,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -44,6 +49,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -57,95 +63,118 @@ public class OpenDefinitionHandler extends AbstractHandler {
 		// explicit default constructor
 	}
 
-	public Object execute(final ExecutionEvent event) {
-		IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		if (editor instanceof HaskellEditor) {
-			HaskellEditor haskellEditor = (HaskellEditor)editor;
-			IFile file = haskellEditor.findFile();
-			ISelection selection = haskellEditor.getSelectionProvider().getSelection();
-			if (selection instanceof TextSelection) {
-				TextSelection textSel = (TextSelection)selection;
-				String name = textSel.getText().trim();
-				ScionInstance instance=ScionPlugin.getScionInstance(  file );
-				char haddockType=' ';
-				//if (name.length()==0){
-				  try {
+  public Object execute( final ExecutionEvent event ) {
+    IEditorPart editor = HandlerUtil.getActiveEditor( event );
+    if( !( editor instanceof HaskellEditor ) ) {
+      return null;
+    }
 
-  				  Location l=new Location(file.getLocation().toOSString(),haskellEditor.getDocument(), new Region(textSel.getOffset(),0));
-  				  String s=instance.thingAtPoint( l ,true,false);
-  				  if (s!=null && s.length()>0){
-  				    name=s;
-  				    if (name.length()>2 && name.charAt( name.length()-2 )==' '){
-  				      haddockType=name.charAt( name.length()-1 );
-  				      name=name.substring( 0,name.length()-2 );
-  				    }
-  				    /*int ix=name.indexOf( ' ' );
-  				    if (ix>-1){
-  				      name=name.substring( 0,ix );
-  				    }
-  				    ix=name.lastIndexOf( '.' );
-              if (ix>-1){
-                name=name.substring( ix+1 );
-              }*/
-  				  }
+    final HaskellEditor haskellEditor = ( HaskellEditor )editor;
+    final IFile file = haskellEditor.findFile();
+    final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
-				  } catch(BadLocationException ble){
-				    ble.printStackTrace();
-				  }
+    if( selection instanceof TextSelection ) {
+      final TextSelection textSel = ( TextSelection )selection;
 
-				//}
-				if (name.length()==0){
-          /*try {
-            IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( textSel.getOffset() );
-            String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
-            int off=textSel.getOffset()-r.getOffset();
-            name=ParserUtils.getHaskellWord(line,off);
-          } catch(BadLocationException ble){
+      FileCommandGroup cg = new FileCommandGroup("First definition location", file, Job.SHORT) {
+        @Override
+        protected IStatus run( final IProgressMonitor monitor ) {
+          String name = textSel.getText().trim();
+          final ScionInstance instance = ScionPlugin.getScionInstance( file );
+          char haddockType = ' ';
+
+          try {
+            Location l = new Location( file.getLocation().toOSString(),
+                haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
+            String s = instance.thingAtPoint( l, true, false );
+            if( s != null && s.length() > 0 ) {
+              name = s;
+              if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
+                haddockType = name.charAt( name.length() - 1 );
+                name = name.substring( 0, name.length() - 2 );
+              }
+            }
+
+          } catch( BadLocationException ble ) {
             ble.printStackTrace();
-          }*/
-				  name=WordFinder.findWord( haskellEditor.getDocument(), textSel.getOffset() );
-				}
-				if (name!=null && name.length()>0){
-  				Location location = instance.firstDefinitionLocation(name);
-  				if (location != null) {
-  					try {
-  						openInEditor(haskellEditor.getEditorSite().getPage(), location,file.getProject());
-  					} catch (PartInitException ex) {
-  					  ex.printStackTrace();
-  						// too bad
-  					}
-  				} else {
-  				  // we try to find an id for an object not exported, that scion doesn't know
-  				  // but that we have in the outline
-				    location=haskellEditor.getOutlineLocation( name );
-				    if (location!=null){
-				      selectAndReveal( haskellEditor, haskellEditor.getDocument(), location );
-				    } else {
-				      int ix=name.lastIndexOf( '.' );
-				      if (ix>0 && ix<name.length()-1){
-				        String module=name.substring( 0,ix );
-				        String shortName=name.substring( ix+1 );
-  				      // find in outside location...
-  				      outer:for (CabalPackage[] pkgs:instance.getPackagesByDB().values()){
-  				        for (CabalPackage cp:pkgs){
-  				          if (cp.getModules()!=null && cp.getModules().contains(module)){
-  				            String pkg=cp.toString();
-  				            openExternalDefinition(haskellEditor.getEditorSite().getPage(),instance.getProject(),pkg,module,shortName,haddockType);
-  				            break outer;
+          }
 
-  				          }
-  				        }
-  				      }
-				      }
+          if( name.length() == 0 ) {
+            name = WordFinder.findWord( haskellEditor.getDocument(),
+                textSel.getOffset() );
+          }
 
-				    }
+          if( name != null && name.length() > 0 ) {
+            Location location = instance.firstDefinitionLocation( name );
 
-  				}
-				}
-			}
-		}
-		return null;
-	}
+            if( location != null ) {
+              final Location theLocation = location;
+              new UIJob("Opening definition in editor") {
+                @Override
+                public IStatus runInUIThread( final IProgressMonitor monitor ) {
+                  try {
+                    openInEditor( haskellEditor.getEditorSite().getPage(), theLocation, file.getProject() );
+                  } catch( PartInitException ex ) {
+                    ex.printStackTrace();
+                    // too bad
+                  }
+
+                  return Status.OK_STATUS;
+                }
+              }.schedule();
+            } else {
+              // we try to find an id for an object not exported, that scion doesn't
+              // know
+              // but that we have in the outline
+              location = haskellEditor.getOutlineLocation( name );
+              if( location != null ) {
+                final Location theLocation = location;
+                // Ensure that this happens in the UI thread
+                new UIJob("Select and reveal") {
+                  @Override
+                  public IStatus runInUIThread( final IProgressMonitor monitor ) {
+                    selectAndReveal( haskellEditor, haskellEditor.getDocument(), theLocation );
+                    return Status.OK_STATUS;
+                  }
+                }.schedule();
+              } else {
+                int ix = name.lastIndexOf( '.' );
+                if( ix > 0 && ix < name.length() - 1 ) {
+                  final String module = name.substring( 0, ix );
+                  final String shortName = name.substring( ix + 1 );
+                  // find in outside location...
+                  outer: for( CabalPackage[] pkgs: instance.getPackagesByDB().values() ) {
+                    for( CabalPackage cp: pkgs ) {
+                      if( cp.getModules() != null
+                          && cp.getModules().contains( module ) ) {
+                        final String pkg = cp.toString();
+                        final char haddockInd = haddockType;
+                        new UIJob("Open external definition") {
+                          @Override
+                          public IStatus runInUIThread( final IProgressMonitor monitor ) {
+                            openExternalDefinition( haskellEditor.getEditorSite().getPage(), instance.getProject(), pkg, module,
+                                shortName, haddockInd );
+                            return Status.OK_STATUS;
+                          }
+                        }.schedule();
+                        break outer;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          return Status.OK_STATUS;
+        }
+      };
+
+      cg.runGroupSynchronously();
+    }
+
+    return null;
+  }
 
 	protected static boolean openExternalDefinition(final IWorkbenchPage page, final IProject project,final String pkg, final String module, final String shortName, final char type){
 	  int ix=pkg.indexOf( '-' );
@@ -312,16 +341,17 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
 		  if (!file.getProject().equals( p ) && files.length>1){
 		    for (IFile f:files){
-		      if (f.getProject().equals( p )){
-		        file=f;
+		      if (f.getProject().equals( p )) {
+		        file = f;
 		        break;
 		      }
 		    }
 		  }
-			IEditorPart editor = IDE.openEditor(page, file, true);
-			ITextEditor textEditor = (ITextEditor)editor;
-			IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
-			selectAndReveal(textEditor,document,location);
+
+		  IEditorPart editor = IDE.openEditor(page, file, true);
+      ITextEditor textEditor = (ITextEditor)editor;
+      IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
+      selectAndReveal(textEditor,document,location);
 		}
 	}
 

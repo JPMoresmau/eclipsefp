@@ -33,9 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -99,6 +97,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   * purpose is change detection, since the editor can be reused between different projects. */
  private ScionInstance instance=null;
 
+ /** Default constructor */
+ public HaskellEditor() {
+   super();
+ }
+
 //  public void reveal( final IHaskellLanguageElement element ) {
 //    Assert.isNotNull( element );
 //    IDocument doc = getSourceViewer().getDocument();
@@ -142,8 +145,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   }
 
   @Override
-  protected void configureSourceViewerDecorationSupport(
-      final SourceViewerDecorationSupport support ) {
+  protected void configureSourceViewerDecorationSupport( final SourceViewerDecorationSupport support ) {
     super.configureSourceViewerDecorationSupport( support );
     support.setCharacterPairMatcher( new HaskellCharacterPairMatcher() );
     String bracketsKey = EDITOR_MATCHING_BRACKETS;
@@ -172,8 +174,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
-    createTextOpAction( "ContentAssistProposal", //$NON-NLS-1$
-        ISourceViewer.CONTENTASSIST_PROPOSALS, defId );
+    createTextOpAction( "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId ); //$NON-NLS-1$
 
     // comment/uncomment
     createTextOpAction( "Comment", ITextOperationTarget.PREFIX, //$NON-NLS-1$
@@ -250,9 +251,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       };
       projectionViewer.addPostSelectionChangedListener( listener );
     }
+
     activateContext();
-
-
   }
 
 
@@ -333,8 +333,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
       if (instance != null) {
         // Make sure scion-server has the right component and context loaded
-        instance.reloadFile(file);
-        synchronize();
+        reloadAndSync( instance, file );
       }
     }
   }
@@ -375,16 +374,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // It doesn't hurt to be cautious here.
     if ( input instanceof IFileEditorInput ) {
       file = ((IFileEditorInput) input).getFile();
-      theInstance = getInstance(file);
-      if (theInstance != null) {
-          theInstance.reloadFile( file );
-          synchronize();
-      }
+      reloadAndSync(getInstance(file), file);
     }
   }
 
   /**
-   * Get the scion instance, creating it if needed
+   * Get the scion-server instance object.
    *
    * @param theFile
    *          The file that identifies the project that identifies the
@@ -546,6 +541,31 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return false;
   }
 
+  /**
+   * Reload the requested file and synchronize the editor's elements (outline,
+   * folding structure)
+   *
+   * @param theInstance
+   *          The ScionInstance used to communicate with the scion-server
+   * @param theFile
+   *          The file to reload
+   */
+  private void reloadAndSync( final ScionInstance theInstance, final IFile theFile) {
+    if ( theInstance != null ) {
+      String jobName = "Editor file reload/synchronize [" + theFile.getName() + "]";
+      FileCommandGroup cgroup = new FileCommandGroup(jobName, theFile, Job.SHORT) {
+        @Override
+        protected IStatus run( final IProgressMonitor monitor ) {
+          theInstance.reloadFile( theFile );
+          synchronize();
+          return Status.OK_STATUS;
+        }
+      };
+
+      cgroup.schedule();
+    }
+  }
+
   // Interface methods for IScionEventListener
 
   /**
@@ -557,39 +577,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    */
   public void processScionServerEvent( final ScionEvent ev ) {
     switch (ev.getEventType()) {
-      case SERVER_STARTED: {
-        final ScionInstance theInstance = (ScionInstance) ev.getSource();
-        Job buildJob = theInstance.buildProject(false, true);
-
-        buildJob.addJobChangeListener( new JobChangeAdapter() {
-          @Override
-          public void done(final IJobChangeEvent ev) {
-            final IFile file = findFile();
-
-            new FileCommandGroup("Editor sync after project build.", file) {
-              @Override
-              protected IStatus run( final IProgressMonitor monitor ) {
-                theInstance.reloadFile( file );
-                synchronize();
-
-                return Status.OK_STATUS;
-              }
-            }.schedule();
-          }
-        } );
-
-        buildJob.schedule();
-        break;
-      }
-
       case EXECUTABLE_CHANGED: {
         final IFile file = findFile();
         if (file != null) {
           final ScionInstance theInstance = getInstance( file );
-
           if ( theInstance != null && ResourceUtil.isInHaskellProject( file ) ) {
-            theInstance.reloadFile( file );
-            synchronize();
+            reloadAndSync( theInstance, file );
           }
         }
         break;

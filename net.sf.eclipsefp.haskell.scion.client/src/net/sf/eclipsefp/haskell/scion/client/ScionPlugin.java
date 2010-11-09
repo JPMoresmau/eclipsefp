@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -55,6 +56,11 @@ public class ScionPlugin extends AbstractUIPlugin {
   private ScionServerFactory                 serverFactory;
   /** The project -> scion instance map */
   private final Map<IProject, InstanceState> instances;
+  /** The project -> scion-server event listener map. This map is used to fire events that are project-specific (vs.
+   * scion-server-specific) to interested listeners. This is the only way to signal that a server and its respective
+   * instance has started, for example. */
+  private static final Map<IProject, ListenerList>  projectEventListeners = new HashMap<IProject, ListenerList>();
+  
   /** The shared instance, primarily used for lexical analysis
    * 
    * @note This is a separate object to prevent looking for the null project in the {@link #instances} map.
@@ -417,6 +423,28 @@ public class ScionPlugin extends AbstractUIPlugin {
    */
   public static IPath builtinServerExecutablePath() {
     return serverExecutablePath(builtinServerDirectoryPath());
+  }
+  
+  /**
+   * Add a listener to the project event listeners 
+   */
+  public static void addProjectEventListener(IProject project, IScionEventListener listener) {
+    ListenerList listeners;
+    
+    if (!projectEventListeners.containsKey(project)) {
+      listeners = projectEventListeners.put(project, new ListenerList());
+    } else {
+      listeners = projectEventListeners.get(project);
+    }
+    
+    listeners.add(listener);
+  }
+  
+  /**
+   * Remove a project event listener
+   */
+  public static void removeProjectEventListener(IProject project, IScionEventListener listener) {
+    projectEventListeners.remove(listener);
   }
   
   //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~

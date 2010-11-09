@@ -390,12 +390,14 @@ public abstract class ScionServer {
     private boolean terminateFlag;
     private int lastDepth;
     private int stallCount;
+    private Set<Entry<Integer, ScionCommand>> lastQueue;
     
     public CommandQueueMonitor(final String threadName) {
       super();
       terminateFlag = false;
       lastDepth = -1;
       stallCount = 0;
+      lastQueue = null;
       
       setName(threadName);
     }
@@ -413,23 +415,35 @@ public abstract class ScionServer {
           if (depth != lastDepth) {
             lastDepth = depth;
             stallCount = 0;
+            lastQueue = null;
           } else if (lastDepth > 0) {
             // Maybe we're stalled?
+            Set<Entry<Integer, ScionCommand>> commands = null;
+            
+            synchronized (commandQueue) {
+              commands = commandQueue.entrySet();
+            }
+            
             ++stallCount;
-            if (stallCount > MAXSTALLS) {
-              StringBuffer diagMsg = new StringBuffer();
+
+            if ( lastQueue != null && commands.equals(lastQueue) ) {
+              if (stallCount > MAXSTALLS) {
+                StringBuffer diagMsg = new StringBuffer();
               
-              diagMsg.append("Possibly stalled queue [").append(serverName).append("], depth = ");
-              diagMsg.append(lastDepth).append(PlatformUtil.NL);
-              diagMsg.append("Waiting commands:").append(PlatformUtil.NL);
+                diagMsg.append("Possibly stalled queue [").append(serverName).append("], depth = ");
+                diagMsg.append(lastDepth).append(PlatformUtil.NL);
+                diagMsg.append("Waiting commands:").append(PlatformUtil.NL);
               
-              Set<Entry<Integer, ScionCommand>> commands = commandQueue.entrySet();
-              for (Entry<Integer, ScionCommand> cmd : commands) {
-                diagMsg.append("  [").append(cmd.getKey()).append("] ");
-                diagMsg.append(cmd.getValue().getMethod()).append(PlatformUtil.NL);
+                for (Entry<Integer, ScionCommand> cmd : commands) {
+                  diagMsg.append("  [").append(cmd.getKey()).append("] ");
+                  diagMsg.append(cmd.getValue().getMethod()).append(PlatformUtil.NL);
+                }
+              
+                ScionPlugin.logInfo(diagMsg.toString());
               }
-              
-              ScionPlugin.logInfo(diagMsg.toString());
+            } else {
+              // Only re-assign as needed
+              lastQueue = commands;
             }
           }
         } catch (InterruptedException irq) {
