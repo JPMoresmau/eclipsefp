@@ -257,6 +257,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 	      mgr.newValueVariable( "MODULE", "", true, module ),
 	      mgr.newValueVariable( "MODULE_HTML", "", true, moduleHTMLFile ),
 	      mgr.newValueVariable( "ANCHOR", "", true, anchor ),
+	      mgr.newValueVariable( "NAME", "", true, shortName ),
 	  };
 	  try {
   	  mgr.addVariables( vars );
