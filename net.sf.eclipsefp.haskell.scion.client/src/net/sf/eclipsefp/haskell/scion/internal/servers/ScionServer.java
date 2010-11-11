@@ -530,12 +530,12 @@ public abstract class ScionServer {
             serverOutput.flush();
           } catch (IOException ex) {
             if (!terminateFlag) {
-              ScionPlugin.logError(ScionText.scionServerNotRunning_message, ex);
+              ScionPlugin.logError(ScionText.scionServerOutputError_message, ex);
             }
           } catch (SWTException se) {
             // probably device has been disposed
             if (!terminateFlag) {
-              ScionPlugin.logError(ScionText.scionServerNotRunning_message, se);
+              ScionPlugin.logError(ScionText.scionServerOutputError_message, se);
             }
           }
         }

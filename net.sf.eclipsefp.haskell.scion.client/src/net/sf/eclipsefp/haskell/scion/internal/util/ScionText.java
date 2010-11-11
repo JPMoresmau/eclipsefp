@@ -21,7 +21,8 @@ public class ScionText extends NLS {
   public static String        scionFailedResponse_message;
   public static String        scionServerGotEOF_message;
   public static String        scionServerInvalidResponsePrefix_message;
-
+  public static String 		  scionServerOutputError_message;
+  
   public static String        scionVersionMismatch_warning;
 
   public static String        cabalFileMissing;
