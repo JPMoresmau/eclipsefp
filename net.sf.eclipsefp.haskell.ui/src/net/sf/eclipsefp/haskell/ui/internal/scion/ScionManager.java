@@ -710,14 +710,16 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
   public void processScionServerEvent( final ScionEvent ev ) {
     ScionEventType evType = ev.getEventType();
+    final ScionInstance instance = (ScionInstance) ev.getSource();
     final Display display = Display.getDefault();
 
     if ( evType == ScionEventType.ABNORMAL_TERMINATION ) {
       // Ask the user if they'd like the server to be restarted.
       display.asyncExec( new Runnable() {
         public void run() {
-          if ( MessageDialog.openQuestion( display.getActiveShell(), UITexts.scionServerAbnormalTermination_title,
-                                           UITexts.scionServerAbnormalTermination_message ) ) {
+          final String projectName = instance.getProject().getName();
+          final String msg = NLS.bind( UITexts.scionServerAbnormalTermination_message, projectName );
+          if ( MessageDialog.openQuestion( display.getActiveShell(), UITexts.scionServerAbnormalTermination_title, msg ) ) {
             ScionInstance instance = (ScionInstance) ev.getSource();
             try {
               instance.start();

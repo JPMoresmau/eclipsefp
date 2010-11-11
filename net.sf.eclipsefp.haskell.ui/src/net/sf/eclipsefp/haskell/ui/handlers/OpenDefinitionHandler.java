@@ -23,7 +23,6 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.internal.variables.ValueVariable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -252,12 +251,12 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
 	  IValueVariable[] vars=new IValueVariable[]{
-	      new ValueVariable( "IMPL_BIN", "", true, hsImplBinDir ),
-	      new ValueVariable( "PACKAGE_NAME", "", true, packageName ),
-	      new ValueVariable( "PACKAGE_VERSION", "", true, packageVersion ),
-	      new ValueVariable( "MODULE", "", true, module ),
-	      new ValueVariable( "MODULE_HTML", "", true, moduleHTMLFile ),
-	      new ValueVariable( "ANCHOR", "", true, anchor ),
+	      mgr.newValueVariable( "IMPL_BIN", "", true, hsImplBinDir ),
+	      mgr.newValueVariable( "PACKAGE_NAME", "", true, packageName ),
+	      mgr.newValueVariable( "PACKAGE_VERSION", "", true, packageVersion ),
+	      mgr.newValueVariable( "MODULE", "", true, module ),
+	      mgr.newValueVariable( "MODULE_HTML", "", true, moduleHTMLFile ),
+	      mgr.newValueVariable( "ANCHOR", "", true, anchor ),
 	  };
 	  try {
   	  mgr.addVariables( vars );

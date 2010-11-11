@@ -19,10 +19,10 @@ public class BackgroundTypecheckFileCommand extends ScionCommand implements ICom
 
   protected ScionInstance   instance;
 
-  public BackgroundTypecheckFileCommand(ScionInstance runner, IFile file) {
+  public BackgroundTypecheckFileCommand(ScionInstance instance, IFile file) {
     super();
     this.file = file;
-    this.instance = runner;
+    this.instance = instance;
   }
 
   @Override

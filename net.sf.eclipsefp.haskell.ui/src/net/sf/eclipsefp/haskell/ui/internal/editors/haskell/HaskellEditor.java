@@ -27,7 +27,6 @@ import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,6 +59,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -117,7 +117,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 //  }
 
   public IDocument getDocument() {
-    return getSourceViewer() == null ? null : getSourceViewer().getDocument();
+    IDocumentProvider docProvider = getDocumentProvider();
+    return docProvider.getDocument( getEditorInput() );
   }
 
   // interface methods of TextEditor
@@ -191,7 +192,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
          int line=service.getLineOfLastMouseButtonActivity();
 
          for (Iterator<?> it=getSourceViewer().getAnnotationModel().getAnnotationIterator();it.hasNext();){
-           Annotation ann=(Annotation)it.next();
+           Annotation ann = (Annotation) it.next();
            if (ann instanceof MarkerAnnotation){
              Position p=getSourceViewer().getAnnotationModel().getPosition( ann );
              try {
@@ -214,26 +215,25 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
 
   @Override
-  protected ISourceViewer createSourceViewer( final Composite parent,
-      final IVerticalRuler ruler, final int styles ) {
+  protected ISourceViewer createSourceViewer( final Composite parent, final IVerticalRuler ruler, final int styles ) {
     // copied this from the super class, replaced source viewer with
     // projection viewer
     fAnnotationAccess = createAnnotationAccess();
     fOverviewRuler = createOverviewRuler( getSharedColors() );
-    ProjectionViewer viewer = new ProjectionViewer( parent, ruler,
-        getOverviewRuler(), isOverviewRulerVisible(), styles );
+    ProjectionViewer viewer = new ProjectionViewer( parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles );
 
     // ensure decoration support has been created and configured.
     getSourceViewerDecorationSupport( viewer );
+
     return viewer;
   }
 
   @Override
   public void createPartControl( final Composite parent ) {
     super.createPartControl( parent );
+
     ProjectionViewer projectionViewer = ( ProjectionViewer )getSourceViewer();
-    projectionSupport = new ProjectionSupport( projectionViewer,
-        getAnnotationAccess(), getSharedColors() );
+    projectionSupport = new ProjectionSupport( projectionViewer, getAnnotationAccess(), getSharedColors() );
     projectionSupport.install();
     projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
     projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
@@ -268,10 +268,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if( IContentOutlinePage.class.equals( required ) ) {
       if( outlinePage == null ) {
         outlinePage = new HaskellOutlinePage( this );
-        if( outline != null ) {
-          outlinePage.setInput( outline );
-        }
+        updateOutline();
       }
+
       result = outlinePage;
     } else if( projectionSupport != null ) {
       result = projectionSupport.getAdapter( getSourceViewer(), required );
@@ -326,15 +325,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   protected void editorSaved() {
     // Reload the file on the Scion server side
     IFile file = findFile();
-    if( file != null ) {
-      ScionInstance instance = ScionPlugin.getScionInstance( file );
-
-      // since we call synchronize
-      // && !ResourcesPlugin.getWorkspace().isAutoBuilding()
-      if (instance != null) {
-        // Make sure scion-server has the right component and context loaded
-        reloadAndSync( instance, file );
-      }
+    if( file != null && ScionPlugin.getScionInstance( file ) != null) {
+      updateOutline( file );
     }
   }
 
@@ -344,22 +336,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    * @return An IFile object if the editor's input is a file, otherwise null.
    */
   public IFile findFile() {
-    IFile result = null;
     IEditorInput input = getEditorInput();
     if( input instanceof IFileEditorInput ) {
-      result = ( ( IFileEditorInput ) input ).getFile();
+      return ( ( IFileEditorInput ) input ).getFile();
     }
-    return result;
+
+    return null;
   }
 
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
     // unload the previous file from Scion
     IFile file = findFile();
-    ScionInstance theInstance;
     if ( file != null && ResourceUtil.isInHaskellProject( file ) ) {
-      theInstance = ScionPlugin.getScionInstance( file );
-      theInstance.unloadFile(file);
+      ScionPlugin.getScionInstance( file ).unloadFile(file);
     }
 
     // Disassociate the editor from the ScionInstance
@@ -374,7 +364,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // It doesn't hurt to be cautious here.
     if ( input instanceof IFileEditorInput ) {
       file = ((IFileEditorInput) input).getFile();
-      reloadAndSync(getInstance(file), file);
+      updateOutline( file );
     }
   }
 
@@ -456,10 +446,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
      */
   }
 
+  /*
   public void synchronize() {
-    IDocument document=getDocument();
-
-    foldingStructureProvider.setDocument( document );
+    IDocument document = getDocument();
 
     if( markOccurrencesComputer != null ) {
       WorkspaceJob occurances = new WorkspaceJob("Haskell occurance marker") {
@@ -473,34 +462,51 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       markOccurrencesComputer.setDocument( document );
       occurances.schedule();
     }
+  } */
 
-    final IFile currentFile = findFile();
-    ScionInstance instance = getInstance( currentFile );
-
-    if( instance != null && instance.isLoaded( currentFile ) ) {
-      outline = instance.outline( currentFile );
-    } else {
-      outline = Collections.emptyList();
-    }
-
-    // Note: there's a good possibility that outlinePage is null until it is created by getAdapter()
-    if ( outlinePage != null ) {
-      outlinePage.setInput( outline );
-    }
-
-    foldingStructureProvider.updateFoldingRegions( outline );
+  /**
+   * Update the outline page using the current editor file.
+   */
+  public void updateOutline() {
+    updateOutline(findFile());
   }
 
-  public HaskellOutlinePage getOutlinePage() {
-    return outlinePage;
+  /**
+   * Update the outline page, using a specific file (notably when the editor's
+   * input is changed.
+   *
+   * @param currentFile
+   *          The current file from which the outline is generated.
+   */
+  private void updateOutline(final IFile currentFile) {
+    if ( currentFile != null && outlinePage != null ) {
+      final String jobName = "Updating outline for ".concat(currentFile.getName());
+      new FileCommandGroup(jobName, currentFile, Job.SHORT) {
+        @Override
+        protected IStatus run( final IProgressMonitor monitor ) {
+          ScionInstance instance = getInstance( currentFile );
+
+          if ( instance != null ) {
+            outline = instance.outline( currentFile );
+          } else {
+            outline = Collections.emptyList();
+          }
+
+          outlinePage.setInput( outline );
+          foldingStructureProvider.updateFoldingRegions( outline );
+
+          return Status.OK_STATUS;
+        }
+      }.schedule();
+    }
   }
 
-  public synchronized Location getOutlineLocation(final String name){
-    if (defByName==null){
+  public synchronized Location getOutlineLocation(final String name) {
+    if ( defByName==null ){
       buildDefByName();
     }
     if (defByName!=null){
-      List<OutlineDef> l=defByName.get( name);
+      List<OutlineDef> l = defByName.get( name );
       if (l!=null && l.size()>0){
         return l.iterator().next().getLocation();
       }
@@ -550,13 +556,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    * @param theFile
    *          The file to reload
    */
+  /*
   private void reloadAndSync( final ScionInstance theInstance, final IFile theFile) {
     if ( theInstance != null ) {
       String jobName = "Editor file reload/synchronize [" + theFile.getName() + "]";
       FileCommandGroup cgroup = new FileCommandGroup(jobName, theFile, Job.SHORT) {
         @Override
         protected IStatus run( final IProgressMonitor monitor ) {
-          theInstance.reloadFile( theFile );
           synchronize();
           return Status.OK_STATUS;
         }
@@ -565,6 +571,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       cgroup.schedule();
     }
   }
+  */
 
   // Interface methods for IScionEventListener
 
@@ -579,11 +586,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     switch (ev.getEventType()) {
       case EXECUTABLE_CHANGED: {
         final IFile file = findFile();
-        if (file != null) {
-          final ScionInstance theInstance = getInstance( file );
-          if ( theInstance != null && ResourceUtil.isInHaskellProject( file ) ) {
-            reloadAndSync( theInstance, file );
-          }
+        if (file != null && ResourceUtil.isInHaskellProject( file ) ) {
+            updateOutline( file );
         }
         break;
       }

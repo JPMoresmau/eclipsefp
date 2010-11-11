@@ -187,7 +187,16 @@ public abstract class ScionServer {
     Trace.trace(serverName, "Stopping server");
 
     try {
-      // Clear out any pending commands
+      // If there are pending commands for which sendCommand() is waiting, 
+      // make sure that they get awakened:
+      for (ScionCommand cmd : commandQueue.values() ) {
+        synchronized (cmd) {
+          cmd.setCommandError();
+          cmd.notifyAll(); 
+        }
+      }
+      
+      // Clear out the queue.
       commandQueue.clear();
       
       if (cleanly) {
@@ -254,7 +263,7 @@ public abstract class ScionServer {
   public boolean sendCommand(ScionCommand command) {
     boolean retval = false;
     
-    if (serverInStream == null) {
+    if (serverInStream == null ) {
       return retval;
     }
 
@@ -300,6 +309,7 @@ public abstract class ScionServer {
    */
   private boolean internalSendCommand(ScionCommand command) { 
     boolean retval = false;
+    
     // Keep track of this request in the command queue
     int seqNo = nextSequenceNumber.getAndIncrement();
 
