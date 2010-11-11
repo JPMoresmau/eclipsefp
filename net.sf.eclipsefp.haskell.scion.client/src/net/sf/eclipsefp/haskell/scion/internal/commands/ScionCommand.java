@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,8 +32,6 @@ public abstract class ScionCommand {
   /** The server name associated with processResultJob (used solely for setting the Job's name to something
    * readable. */
   private String                           serverName;
-  /** Commands to be executed after this command */
-  /* Deprecate and delete private final List<ScionCommand>         successors; */
   /** Jobs to be run after the command has finished executing. */
   private final List<Job>                  continuations;
   /**
@@ -54,7 +53,6 @@ public abstract class ScionCommand {
   public ScionCommand() {
     processResultJob = null;
     serverName = "[No server]";
-    /* Deprecate and delete: successors = new ArrayList<ScionCommand>(); */
     continuations = new ArrayList<Job>();
     status = WAITING;
     response = null;
@@ -259,7 +257,7 @@ public abstract class ScionCommand {
   public final boolean processResult(final ScionServer server) {
     boolean retval = false;
     
-    assert (response != null);
+    Assert.isNotNull(response);
     // Process the response
     try {
       doProcessResult();
@@ -267,26 +265,9 @@ public abstract class ScionCommand {
       response = null;
       
       if (continuations.size() > 0) {
-        ListIterator<Job> contIter = continuations.listIterator();
-        while ( contIter.hasNext() ) {
-          Job continuation = contIter.next();
-          
-          if ( !contIter.hasNext() ) {
-            // Ensure that the last continuation runs the successors
-            continuation.addJobChangeListener(new JobChangeAdapter() {
-              @Override
-              public void done(IJobChangeEvent ev) {
-                if (ev.getResult().isOK()) {
-                  ScionCommand.this.runSuccessors(server);
-                }
-              }
-            } );
-          }
-          
+        for (Job continuation : continuations) {
           continuation.schedule();
         }
-      } else {
-        runSuccessors(server);
       }
       
       retval = true;
@@ -301,35 +282,7 @@ public abstract class ScionCommand {
   protected void doProcessResult() throws JSONException {
     // Base class does nothing.
   }
-  
-  /** Add a successor to this command that is executed once this command completes
-   * successfully.
-   *
-   * @param successor The successor command.
-   */
-  public void addSuccessor(ScionCommand successor) {
-    /* Deprecate and delete: successors.add(successor); */
-  }
-  
-  /** Run successor commands queued in the {@link #successors} list. */
-  public boolean runSuccessors(ScionServer server) {
-    /* Deprecate and delete: 
-    boolean retval = true;
-    Iterator<ScionCommand> succIter = successors.iterator();
-    while (retval && succIter.hasNext()) {
-      ScionCommand sc = succIter.next();
 
-      if ( sc.hasContinuations() ) {
-        retval &= server.queueCommand(sc);
-      } else {
-        server.sendCommand(sc);
-      }
-    }
-    
-    return retval; */
-    
-    return true;
-  }
   /**
    * Returns information about this command for use in error messages.
    * Guaranteed never to throw exceptions, so safe for use in exception

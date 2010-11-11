@@ -13,13 +13,13 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /** <p>provides folding regions for documents in the Haskell editor.</p>
   *
@@ -28,26 +28,22 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 public class HaskellFoldingStructureProvider {
 
   private final HaskellEditor editor;
-  private IDocument document;
-  private IProgressMonitor progressMonitor;
 
   public HaskellFoldingStructureProvider( final HaskellEditor editor ) {
     this.editor = editor;
   }
 
-  void setProgressMonitor( final IProgressMonitor progressMonitor ) {
-    this.progressMonitor = progressMonitor;
-  }
-
-  public void setDocument( final IDocument document ) {
-    this.document = document;
-  }
-
   public void updateFoldingRegions(final List<OutlineDef> outlineDefs) {
     ProjectionAnnotationModel model = getAnnModel();
+
+    // And this is how we really get the editor's document without waiting for the
+    // source viewer.
+    IDocumentProvider docProvider = editor.getDocumentProvider();
+    IDocument document = docProvider.getDocument( editor.getEditorInput() );
+
     if (model!=null){
       Set<Location> blocks=new HashSet<Location>();
-      for (OutlineDef def:outlineDefs){
+      for (OutlineDef def : outlineDefs){
         // only blocks that are more than one line long can be folded
         if (def.getBlock()!=null && def.getBlock().getEndLine()>def.getBlock().getStartLine()){
           blocks.add( def.getBlock() );
@@ -55,7 +51,7 @@ public class HaskellFoldingStructureProvider {
       }
       Set<Position> regions=new HashSet<Position>();
       for (Location l:blocks){
-        Position p=createPosition( l.getStartLine(), l.getEndLine() );
+        Position p=createPosition( document, l.getStartLine(), l.getEndLine() );
         if (p!=null){
           regions.add( p );
         }
@@ -65,7 +61,7 @@ public class HaskellFoldingStructureProvider {
 
   }
 
-  private Position createPosition( final int startLine, final int endLine ) {
+  private Position createPosition( final IDocument document, final int startLine, final int endLine ) {
     Position result = null;
     try {
       int start = document.getLineOffset( startLine -1 );
@@ -97,14 +93,9 @@ public class HaskellFoldingStructureProvider {
       additionsMap.put( new ProjectionAnnotation(), it.next() );
     }
 
-    if(    ( deletions.length != 0 || additionsMap.size() != 0 )
-        && !isCancelled() ) {
+    if( deletions.length != 0 || additionsMap.size() != 0 ) {
       model.modifyAnnotations( deletions, additionsMap, new Annotation[] {} );
     }
-  }
-
-  private boolean isCancelled() {
-    return progressMonitor != null && ( progressMonitor.isCanceled() );
   }
 
   private Annotation[] computeDifferences( final ProjectionAnnotationModel mdl,

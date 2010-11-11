@@ -6,6 +6,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
+/**
+ * The base class for project and file command groups. It implements the primitive
+ * scheduling rule, provides facilities for partial ordering of command groups when
+ * neccessary.
+ * 
+ * @author B. Scott Michel (scooter.phd@gmail.com)
+ */
 public abstract class CommandGroup extends Job implements ISchedulingRule {
   /** Sequence number generator */
   private static AtomicInteger nextCmdSeq = new AtomicInteger();

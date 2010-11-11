@@ -305,7 +305,9 @@ public class ScionInstance {
           final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
           final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
           
-          server.sendCommand(command);
+          if (!server.sendCommand(command))
+            return Status.CANCEL_STATUS;
+          
           components = command.getComponents();
           // if lastLoadedComponent is still present, load it last
           if (lastLoadedComponent != null) {
@@ -326,26 +328,32 @@ public class ScionInstance {
             }
             components = l;
           }
+          
           List<Component> cs = null;
           synchronized (components) {
             cs = new ArrayList<Component>(components);
           }
+          
           deleteProblems(getProject());
           final CompilationResultHandler crh = new CompilationResultHandler(getProject());
 
           for (Component c : cs) {
             final LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
-            server.sendCommand(loadCommand);
+            if (!server.sendCommand(loadCommand))
+              return Status.CANCEL_STATUS;
+            
             crh.process(loadCommand);
             lastLoadedComponent = c;
           }
 
           ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
-          server.sendCommand(pcc);
+          if (!server.sendCommand(pcc))
+            return Status.CANCEL_STATUS;
           cabalDescription = pcc.getDescription();
 
           CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
-          server.sendCommand(cdc);
+          if (!server.sendCommand(cdc))
+            return Status.CANCEL_STATUS;
           packagesByDB = cdc.getPackagesByDB();
 
           restoreState();
@@ -379,7 +387,7 @@ public class ScionInstance {
   private void restoreState() {
     if (loadedFile != null) {
       // Ensure that loadedFile is really the loaded file.	
-      reloadFile( loadedFile );
+      loadFile( loadedFile );
     }
   }
 
@@ -426,8 +434,9 @@ public class ScionInstance {
    *          An optional command to send to the scion-server after the
    *          component is loaded.
    */
-  private void runWithComponent(final IFile file, final ScionCommand nextCommand) {
-    Set<String> componentNames = resolver.getComponents(file);
+  private boolean runWithComponent( final IFile file ) {
+    Set<String> componentNames = resolver.getComponents( file );
+    boolean loadOK = true;
     
     if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
       Component toLoad = null;
@@ -460,13 +469,15 @@ public class ScionInstance {
         IProject fProject = file.getProject();
         // Project for this instance should be the same as the file's
         Assert.isTrue( getProject() == fProject );
-        server.sendCommand(new LoadCommand(fProject, toLoad, false, false));
-        lastLoadedComponent = toLoad;
+        if ( server.sendCommand(new LoadCommand(fProject, toLoad, false, false)) ) {
+          lastLoadedComponent = toLoad;
+        } else {
+          loadOK = false;
+        }
       }
     }
 
-    if (nextCommand != null)
-      server.sendCommand(nextCommand);
+    return loadOK;
   }
 
   /**
@@ -476,27 +487,15 @@ public class ScionInstance {
    * @param file
    *          The file to be loaded.
    */
-  public void reloadFile(final IFile file) {
-    runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
+  public boolean reloadFile(final IFile file) {
+    boolean retval = runWithComponent(file); 
+    if ( retval )
+      retval = server.sendCommand(new BackgroundTypecheckFileCommand( this, file ) );
+    
+    return retval;
   }
 
-  /**
-   * Reload a file into the scion-server, setting the context for the next
-   * command. The next command is then sent to the scion-server for execution.
-   * 
-   * @param file
-   *          The file to be loaded
-   * @param nextCommand
-   *          The following command to be executed
-   */
-  public void reloadFile(final IFile file, final ScionCommand nextCommand) {
-    runWithComponent(file, new BackgroundTypecheckFileCommand(this, file));
-    if (nextCommand != null) {
-      server.sendCommand(nextCommand);
-    }
-  }
-
-  public void reloadFile(final IFile file, final IDocument doc) {
+  public boolean reloadFile(final IFile file, final IDocument doc) {
     final LoadInfo li = getLoadInfo(file);
 
     final BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
@@ -519,8 +518,11 @@ public class ScionInstance {
       }
     };
     
-    // server.sendCommand(cmd);
-    runWithComponent(file, cmd);
+    boolean retval = runWithComponent( file );
+    if (retval)
+      retval = server.sendCommand( cmd );
+    
+    return retval;
   }
 
   public void unloadFile(IFile fileName) {
@@ -542,15 +544,13 @@ public class ScionInstance {
   public List<OutlineDef> outline( final IFile file ) {
     final OutlineCommand cmd = new OutlineCommand(file);
 
-    withLoadedFile(file, cmd);
+    withLoadedFile( file, cmd );
     return cmd.getOutlineDefs();
   }
 
-  private void withLoadedFile(final IFile file, ScionCommand cmd) {
-    if (isLoaded(file)) {
+  private void withLoadedFile(final IFile file, final ScionCommand cmd) {
+    if ( isLoaded(file) || reloadFile( file ) ) {
       server.sendCommand(cmd);
-    } else {
-      reloadFile(file, cmd);
     }
   }
 

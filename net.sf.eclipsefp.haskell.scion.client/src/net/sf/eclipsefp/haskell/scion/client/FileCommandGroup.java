@@ -6,7 +6,6 @@ package net.sf.eclipsefp.haskell.scion.client;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
@@ -33,6 +32,13 @@ public abstract class FileCommandGroup extends ProjectCommandGroup {
     this.theFile = theFile;
     setRule(this);
     setPriority(priority);
+  }
+  
+  /**
+   * Get the command's file
+   */
+  public IFile getFile() {
+    return theFile;
   }
   
   /**
