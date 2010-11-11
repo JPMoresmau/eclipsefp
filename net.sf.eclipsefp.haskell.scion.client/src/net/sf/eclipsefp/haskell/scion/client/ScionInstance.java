@@ -520,9 +520,10 @@ public class ScionInstance {
     };
     
     boolean retval = runWithComponent( file );
-    if (retval)
-      retval = server.sendCommand( cmd );
-    
+    if (retval){
+    	// load the saved file first
+      retval = withLoadedFile(file, cmd );
+    }
     return retval;
   }
 
@@ -581,10 +582,11 @@ public class ScionInstance {
 	  }
   }
 
-  private void withLoadedFile(final IFile file, final ScionCommand cmd) {
+  private boolean withLoadedFile(final IFile file, final ScionCommand cmd) {
     if ( isLoaded(file) || reloadFile( file ) ) {
-      server.sendCommand(cmd);
+      return server.sendCommand(cmd);
     }
+    return false;
   }
 
   public Location firstDefinitionLocation(String name) {
