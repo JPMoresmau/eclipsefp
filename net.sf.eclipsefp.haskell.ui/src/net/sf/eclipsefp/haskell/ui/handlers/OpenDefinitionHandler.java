@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
@@ -18,6 +17,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -78,9 +77,6 @@ public class OpenDefinitionHandler extends AbstractHandler {
     if( selection instanceof TextSelection ) {
       final TextSelection textSel = ( TextSelection )selection;
 
-      FileCommandGroup cg = new FileCommandGroup("First definition location", file, Job.SHORT) {
-        @Override
-        protected IStatus run( final IProgressMonitor monitor ) {
           String name = textSel.getText().trim();
           final ScionInstance instance = ScionPlugin.getScionInstance( file );
           char haddockType = ' ';
@@ -88,7 +84,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
           try {
             Location l = new Location( file.getLocation().toOSString(),
                 haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-            String s = instance.thingAtPoint( l, true, false );
+            String s = instance.thingAtPoint(haskellEditor.getDocument(), l, true, false );
             if( s != null && s.length() > 0 ) {
               name = s;
               if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
@@ -111,7 +107,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
             if( location != null ) {
               final Location theLocation = location;
-              new UIJob("Opening definition in editor") {
+              new UIJob(UITexts.openDefinition_open_job) {
                 @Override
                 public IStatus runInUIThread( final IProgressMonitor monitor ) {
                   try {
@@ -132,7 +128,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
               if( location != null ) {
                 final Location theLocation = location;
                 // Ensure that this happens in the UI thread
-                new UIJob("Select and reveal") {
+                new UIJob(UITexts.openDefinition_select_job) {
                   @Override
                   public IStatus runInUIThread( final IProgressMonitor monitor ) {
                     selectAndReveal( haskellEditor, haskellEditor.getDocument(), theLocation );
@@ -151,7 +147,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
                           && cp.getModules().contains( module ) ) {
                         final String pkg = cp.toString();
                         final char haddockInd = haddockType;
-                        new UIJob("Open external definition") {
+                        new UIJob(UITexts.openDefinition_select_job) {
                           @Override
                           public IStatus runInUIThread( final IProgressMonitor monitor ) {
                             openExternalDefinition( haskellEditor.getEditorSite().getPage(), instance.getProject(), pkg, module,
@@ -168,11 +164,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
             }
           }
 
-          return Status.OK_STATUS;
-        }
-      };
 
-      cg.runGroupSynchronously();
     }
 
     return null;

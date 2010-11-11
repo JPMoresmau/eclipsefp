@@ -34,6 +34,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
+import net.sf.eclipsefp.haskell.scion.types.IOutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
@@ -530,22 +531,54 @@ public class ScionInstance {
     loadedFile = null;
   }
 
-  public String thingAtPoint(Location location,boolean qualify,boolean typed) {
+  public String thingAtPoint(final IDocument doc,Location location,boolean qualify,boolean typed) {
 	// the scion command will only work fine if we have the proper file loaded
-	IFile file = location.getIFile(getProject());
+	final IFile file = location.getIFile(getProject());
 	if (file != null){
-		ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
-		withLoadedFile(file, cmd);
-		return cmd.getThing();
+		final String jobName = NLS.bind(ScionText.thingatpoint_job_name,file.getName());
+		final ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
+		new FileCommandGroup(jobName, file, Job.SHORT) {
+	        @Override
+	        protected IStatus run( final IProgressMonitor monitor ) {
+	        	reloadFile(file, doc);
+	        	server.sendCommand(cmd);
+	        	return Status.OK_STATUS;
+	        }
+		}.runGroupSynchronously();
+	    return cmd.getThing();
 	}
 	return null;
   }
 
   public List<OutlineDef> outline( final IFile file ) {
-    final OutlineCommand cmd = new OutlineCommand(file);
-
-    withLoadedFile( file, cmd );
-    return cmd.getOutlineDefs();
+	  final String jobName = NLS.bind(ScionText.outline_job_name,file.getName());
+	  final OutlineCommand cmd = new OutlineCommand(file);
+      new FileCommandGroup(jobName, file, Job.SHORT) {
+        @Override
+        protected IStatus run( final IProgressMonitor monitor ) {
+        	withLoadedFile( file, cmd );
+        	return Status.OK_STATUS;
+        }
+      }.runGroupSynchronously();
+      return cmd.getOutlineDefs();
+  }
+  
+  public void outline(final IFile file , final IDocument doc,final IOutlineHandler handler){
+	  if (file!=null && handler!=null){
+		  final String jobName = NLS.bind(ScionText.outline_job_name,file.getName());
+	      new FileCommandGroup(jobName, file, Job.SHORT) {
+	        @Override
+	        protected IStatus run( final IProgressMonitor monitor ) {
+	        	final OutlineCommand cmd = new OutlineCommand(file);
+	
+	        	reloadFile(file, doc);
+	        	server.sendCommand(cmd);
+	        	handler.handleOutline(cmd.getOutlineDefs());
+	          
+	        	return Status.OK_STATUS;
+	        }
+	      }.schedule();
+	  }
   }
 
   private void withLoadedFile(final IFile file, final ScionCommand cmd) {

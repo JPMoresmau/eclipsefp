@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.types.IOutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -30,9 +30,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -96,6 +93,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   * @note This variable isn't actually used to communicate with the scion-server. It's sole
   * purpose is change detection, since the editor can be reused between different projects. */
  private ScionInstance instance=null;
+
+ private final IOutlineHandler outlineHandler=new IOutlineHandler() {
+   public void handleOutline( final List<OutlineDef> defs ) {
+   outlinePage.setInput( defs );
+   foldingStructureProvider.updateFoldingRegions( defs );
+ }
+};
 
  /** Default constructor */
  public HaskellEditor() {
@@ -471,6 +475,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     updateOutline(findFile());
   }
 
+
+
   /**
    * Update the outline page, using a specific file (notably when the editor's
    * input is changed.
@@ -480,24 +486,31 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    */
   private void updateOutline(final IFile currentFile) {
     if ( currentFile != null && outlinePage != null ) {
-      final String jobName = "Updating outline for ".concat(currentFile.getName());
-      new FileCommandGroup(jobName, currentFile, Job.SHORT) {
-        @Override
-        protected IStatus run( final IProgressMonitor monitor ) {
-          ScionInstance instance = getInstance( currentFile );
+//      final String jobName = "Updating outline for ".concat(currentFile.getName());
+//      new FileCommandGroup(jobName, currentFile, Job.SHORT) {
+//        @Override
+//        protected IStatus run( final IProgressMonitor monitor ) {
+//          ScionInstance instance = getInstance( currentFile );
+//
+//          if ( instance != null ) {
+//            outline = instance.outline( currentFile );
+//          } else {
+//            outline = Collections.emptyList();
+//          }
+//
+//          outlinePage.setInput( outline );
+//          foldingStructureProvider.updateFoldingRegions( outline );
+//
+//          return Status.OK_STATUS;
+//        }
+//      }.schedule();
+      ScionInstance instance = getInstance( currentFile );
 
-          if ( instance != null ) {
-            outline = instance.outline( currentFile );
-          } else {
-            outline = Collections.emptyList();
-          }
-
-          outlinePage.setInput( outline );
-          foldingStructureProvider.updateFoldingRegions( outline );
-
-          return Status.OK_STATUS;
-        }
-      }.schedule();
+      if (instance!=null){
+        instance.outline( currentFile, getDocument(), outlineHandler);
+      } else {
+        outlineHandler.handleOutline( Collections.<OutlineDef>emptyList() );
+      }
     }
   }
 

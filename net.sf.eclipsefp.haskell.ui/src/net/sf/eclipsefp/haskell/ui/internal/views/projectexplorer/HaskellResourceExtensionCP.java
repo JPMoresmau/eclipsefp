@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
@@ -21,14 +20,10 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -61,27 +56,38 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // if we have a Haskell source file, we show the same content as outline
         // underneath
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
-          FileCommandGroup cg = new FileCommandGroup("Generating outline", f, Job.SHORT) {
-            @Override
-            protected IStatus run( final IProgressMonitor monitor ) {
-              ScionInstance si = ScionPlugin.getScionInstance( f );
-              if (si != null){
-                List<OutlineDef> outlineDefs = si.outline( f );
-                OutlineCP cp = new OutlineCP();
-
-                cp.inputChanged( null, null, outlineDefs );
-                for( OutlineDef def : outlineDefs ) {
-                  if( def.getParentID() == null ) {
-                    result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
-                  }
-                }
+//          FileCommandGroup cg = new FileCommandGroup("Generating outline", f, Job.SHORT) {
+//            @Override
+//            protected IStatus run( final IProgressMonitor monitor ) {
+//              ScionInstance si = ScionPlugin.getScionInstance( f );
+//              if (si != null){
+//                List<OutlineDef> outlineDefs = si.outline( f );
+//                OutlineCP cp = new OutlineCP();
+//
+//                cp.inputChanged( null, null, outlineDefs );
+//                for( OutlineDef def : outlineDefs ) {
+//                  if( def.getParentID() == null ) {
+//                    result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
+//                  }
+//                }
+//              }
+//              return Status.OK_STATUS;
+//            }
+//          };
+//
+//          // Collect results, synchronously:
+//          cg.runGroupSynchronously();
+          ScionInstance si = ScionPlugin.getScionInstance( f );
+          if (si != null){
+            List<OutlineDef> outlineDefs = si.outline( f );
+            OutlineCP cp = new OutlineCP();
+            cp.inputChanged( null, null, outlineDefs );
+            for( OutlineDef def : outlineDefs ) {
+              if( def.getParentID() == null ) {
+                result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
               }
-              return Status.OK_STATUS;
             }
-          };
-
-          // Collect results, synchronously:
-          cg.runGroupSynchronously();
+          }
         }
       } else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
