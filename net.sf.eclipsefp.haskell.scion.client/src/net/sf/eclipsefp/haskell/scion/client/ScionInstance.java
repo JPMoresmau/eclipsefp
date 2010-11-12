@@ -54,6 +54,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.SafeRunnable;
@@ -302,62 +304,12 @@ public class ScionInstance {
       retval = new ProjectCommandGroup(jobNamePrefix, getProject()) {
         @Override
         protected IStatus run(IProgressMonitor monitor) {
-          cabalDescription = null;
-          final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
-          final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
-          
-          if (!server.sendCommand(command))
-            return Status.CANCEL_STATUS;
-          
-          components = command.getComponents();
-          // if lastLoadedComponent is still present, load it last
-          if (lastLoadedComponent != null) {
-            List<Component> l = new ArrayList<Component>(components.size());
-            Component toLoadLast = null;
-            synchronized (components) {
-              for (Component c : components) {
-                if (c.toString().equals(lastLoadedComponent.toString())) {
-                  toLoadLast = c;
-                } else {
-                  l.add(c);
-                }
-              }
-            }
-
-            if (toLoadLast != null) {
-              l.add(toLoadLast);
-            }
-            components = l;
+          try {
+            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
+            buildProjectInternal(monitor, output, forceRecomp);
+          } finally {
+            monitor.done();
           }
-          
-          List<Component> cs = null;
-          synchronized (components) {
-            cs = new ArrayList<Component>(components);
-          }
-          
-          deleteProblems(getProject());
-          final CompilationResultHandler crh = new CompilationResultHandler(getProject());
-
-          for (Component c : cs) {
-            final LoadCommand loadCommand = new LoadCommand(getProject(), c, output, forceRecomp);
-            if (!server.sendCommand(loadCommand))
-              return Status.CANCEL_STATUS;
-            
-            crh.process(loadCommand);
-            lastLoadedComponent = c;
-          }
-
-          ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
-          if (!server.sendCommand(pcc))
-            return Status.CANCEL_STATUS;
-          cabalDescription = pcc.getDescription();
-
-          CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
-          if (!server.sendCommand(cdc))
-            return Status.CANCEL_STATUS;
-          packagesByDB = cdc.getPackagesByDB();
-
-          restoreState();
           return Status.OK_STATUS;
         }
       };
@@ -367,7 +319,116 @@ public class ScionInstance {
     
     return retval;
   }
+  
+  public boolean buildProjectWithinJob(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+    boolean retval = false;
+    IJobManager mgr = Job.getJobManager();
+    
+    try {
+      mgr.beginRule(project, monitor);
+      if ( checkCabalFile() ) {
+        retval = buildProjectInternal(monitor, output, forceRecomp);
+      }
+    } finally {
+      mgr.endRule(project);
+    }
+    
+    return retval;
+  }
+  
+  private boolean buildProjectInternal(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+    boolean retval = false;
+    final String projectName = project.getName();
+    
+    if ( listComponents(monitor) && loadComponents(monitor, output, forceRecomp) ) {
+      monitor.subTask( NLS.bind( ScionText.buildProject_parseCabalDescription, projectName ) );
+      ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+      if (server.sendCommand(pcc)) {
+        cabalDescription = pcc.getDescription();
 
+        monitor.subTask( NLS.bind( ScionText.buildProject_cabalDependencies, projectName ) );
+        CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+        if (server.sendCommand(cdc)) {
+          packagesByDB = cdc.getPackagesByDB();
+          retval = true;
+          restoreState();
+        }
+      }
+    }
+    
+    return retval;
+  }
+
+  private boolean listComponents(IProgressMonitor monitor) {
+    monitor.subTask( NLS.bind( ScionText.buildProject_listComponents, project.getName() ) );
+
+    cabalDescription = null;
+
+    final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
+    final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
+    
+    if (server.sendCommand(command)) {
+      components = command.getComponents();
+
+      // if lastLoadedComponent is still present, load it last
+      if (lastLoadedComponent != null) {
+        List<Component> l = new ArrayList<Component>(components.size());
+        Component toLoadLast = null;
+        synchronized (components) {
+          for (Component c : components) {
+            if (c.toString().equals(lastLoadedComponent.toString())) {
+              toLoadLast = c;
+            } else {
+              l.add(c);
+            }
+          }
+        }
+  
+        if (toLoadLast != null) {
+          l.add(toLoadLast);
+        }
+        
+        components = l;
+      }
+      
+      return true;
+    }
+    
+    return false;
+  }
+  
+  private boolean loadComponents(IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+    List<Component> cs = null;
+    IProject theProject = getProject();
+    boolean failed = false;
+    
+    synchronized (components) {
+      cs = new ArrayList<Component>(components);
+    }
+    
+    deleteProblems(theProject);
+    final CompilationResultHandler crh = new CompilationResultHandler(theProject);
+
+    for (Component c : cs) {
+      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, c.toString() ) );
+
+      final LoadCommand loadCommand = new LoadCommand(theProject, c, output, forceRecomp);
+      if (server.sendCommand(loadCommand)) {
+        crh.process(loadCommand);
+        lastLoadedComponent = c;
+      } else {
+        failed = true;
+        break;
+      }
+    }
+      
+    if (failed) {
+      // Clear out state
+      internalReset();
+    }
+    
+    return !failed;
+  }
   // ////////////////////
   // Internal commands
 
@@ -489,11 +550,7 @@ public class ScionInstance {
    *          The file to be loaded.
    */
   public boolean reloadFile(final IFile file) {
-    boolean retval = runWithComponent(file); 
-    if ( retval )
-      retval = server.sendCommand(new BackgroundTypecheckFileCommand( this, file ) );
-    
-    return retval;
+    return ( runWithComponent(file) && server.sendCommand(new BackgroundTypecheckFileCommand( this, file ) ) );
   }
 
   public boolean reloadFile(final IFile file, final IDocument doc) {
@@ -519,11 +576,7 @@ public class ScionInstance {
       }
     };
     
-    boolean retval = runWithComponent( file );
-    if (retval)
-      retval = server.sendCommand( cmd );
-    
-    return retval;
+    return runWithComponent( file ) && server.sendCommand( cmd );
   }
 
   public void unloadFile(IFile fileName) {
@@ -531,54 +584,56 @@ public class ScionInstance {
     loadedFile = null;
   }
 
-  public String thingAtPoint(final IDocument doc,Location location,boolean qualify,boolean typed) {
-	// the scion command will only work fine if we have the proper file loaded
-	final IFile file = location.getIFile(getProject());
-	if (file != null){
-		final String jobName = NLS.bind(ScionText.thingatpoint_job_name,file.getName());
-		final ThingAtPointCommand cmd = new ThingAtPointCommand(location,qualify,typed);
-		new FileCommandGroup(jobName, file, Job.SHORT) {
-	        @Override
-	        protected IStatus run( final IProgressMonitor monitor ) {
-	        	reloadFile(file, doc);
-	        	server.sendCommand(cmd);
-	        	return Status.OK_STATUS;
-	        }
-		}.runGroupSynchronously();
-	    return cmd.getThing();
-	}
-	return null;
-  }
-
-  public List<OutlineDef> outline( final IFile file ) {
-	  final String jobName = NLS.bind(ScionText.outline_job_name,file.getName());
-	  final OutlineCommand cmd = new OutlineCommand(file);
+  public String thingAtPoint(final IDocument doc, Location location, boolean qualify, boolean typed) {
+    // the scion command will only work fine if we have the proper file loaded
+    final IFile file = location.getIFile(getProject());
+    if (file != null) {
+      final String jobName = NLS.bind(ScionText.thingatpoint_job_name, file.getName());
+      final ThingAtPointCommand cmd = new ThingAtPointCommand(location, qualify, typed);
       new FileCommandGroup(jobName, file, Job.SHORT) {
         @Override
-        protected IStatus run( final IProgressMonitor monitor ) {
-        	withLoadedFile( file, cmd );
-        	return Status.OK_STATUS;
+        protected IStatus run(final IProgressMonitor monitor) {
+          reloadFile(file, doc);
+          server.sendCommand(cmd);
+          return Status.OK_STATUS;
         }
       }.runGroupSynchronously();
-      return cmd.getOutlineDefs();
+      return cmd.getThing();
+    }
+    return null;
+  }
+
+  public List<OutlineDef> outline(final IFile file) {
+    final String jobName = NLS.bind(ScionText.outline_job_name, file.getName());
+    final OutlineCommand cmd = new OutlineCommand(file);
+
+    new FileCommandGroup(jobName, file, Job.SHORT) {
+      @Override
+      protected IStatus run(final IProgressMonitor monitor) {
+        withLoadedFile(file, cmd);
+        return Status.OK_STATUS;
+      }
+    }.runGroupSynchronously();
+    
+    return cmd.getOutlineDefs();
   }
   
-  public void outline(final IFile file , final IDocument doc,final IOutlineHandler handler){
-	  if (file!=null && handler!=null){
-		  final String jobName = NLS.bind(ScionText.outline_job_name,file.getName());
-	      new FileCommandGroup(jobName, file, Job.SHORT) {
-	        @Override
-	        protected IStatus run( final IProgressMonitor monitor ) {
-	        	final OutlineCommand cmd = new OutlineCommand(file);
-	
-	        	reloadFile(file, doc);
-	        	server.sendCommand(cmd);
-	        	handler.handleOutline(cmd.getOutlineDefs());
-	          
-	        	return Status.OK_STATUS;
-	        }
-	      }.schedule();
-	  }
+  public void outline(final IFile file, final IDocument doc, final IOutlineHandler handler) {
+    if (file != null && handler != null) {
+      final String jobName = NLS.bind(ScionText.outline_job_name, file.getName());
+      new FileCommandGroup(jobName, file, Job.SHORT) {
+        @Override
+        protected IStatus run(final IProgressMonitor monitor) {
+          final OutlineCommand cmd = new OutlineCommand(file);
+
+          reloadFile(file, doc);
+          server.sendCommand(cmd);
+          handler.handleOutline(cmd.getOutlineDefs());
+
+          return Status.OK_STATUS;
+        }
+      }.schedule();
+    }
   }
 
   private void withLoadedFile(final IFile file, final ScionCommand cmd) {

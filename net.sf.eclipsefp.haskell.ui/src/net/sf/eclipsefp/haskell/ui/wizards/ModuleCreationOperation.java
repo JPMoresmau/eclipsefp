@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
@@ -131,11 +130,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
         prov.disconnect( f );
       }
 
-      Job projectJob = ScionPlugin.getScionInstance( generatedFile ).buildProject( false , false);
-      if (projectJob != null) {
-        projectJob.schedule();
-      }
-
+      ScionPlugin.getScionInstance( generatedFile ).buildProjectWithinJob( monitor, false , false);
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );
     }

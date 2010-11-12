@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -13,14 +14,14 @@ import org.eclipse.core.runtime.jobs.Job;
   *
   * @author JP Moresmau
  */
-public class ProjectReloader implements CabalFileChangeListener{
+public class ProjectReloader implements CabalFileChangeListener {
   public void cabalFileChanged( final IFile cabalF ) {
     final ScionInstance si = ScionPlugin.getScionInstance( cabalF );
-    if (si != null) {
-      Job projectJob = si.buildProject( false, true );
-      if (projectJob != null) {
-        projectJob.schedule();
-      }
-    }
+
+    Assert.isNotNull( si );
+
+    Job projectJob = si.buildProject( false, true );
+    Assert.isNotNull( projectJob );
+    projectJob.schedule();
   }
 }
