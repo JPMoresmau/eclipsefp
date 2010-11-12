@@ -108,7 +108,7 @@ public abstract class ScionCommand {
               server.logMessage(NLS.bind(ScionText.commandError_message, name, message), null);
             }
             
-            // Prevent processReulst() from running, since response will be null.
+            // Prevent processResult() from running, since response will be null.
             setCommandError();
           } catch (JSONException ex2) {
             setCommandError();

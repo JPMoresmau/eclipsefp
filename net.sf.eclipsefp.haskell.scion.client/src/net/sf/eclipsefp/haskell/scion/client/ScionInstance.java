@@ -576,7 +576,7 @@ public class ScionInstance {
       }
     };
     
-    return runWithComponent( file ) && server.sendCommand( cmd );
+    return runWithComponent( file ) && withLoadedFile( file, cmd );
   }
 
   public void unloadFile(IFile fileName) {
@@ -636,10 +636,11 @@ public class ScionInstance {
     }
   }
 
-  private void withLoadedFile(final IFile file, final ScionCommand cmd) {
+  private boolean withLoadedFile(final IFile file, final ScionCommand cmd) {
     if ( isLoaded(file) || reloadFile( file ) ) {
-      server.sendCommand(cmd);
+      return server.sendCommand(cmd);
     }
+    return false;
   }
 
   public Location firstDefinitionLocation(String name) {
