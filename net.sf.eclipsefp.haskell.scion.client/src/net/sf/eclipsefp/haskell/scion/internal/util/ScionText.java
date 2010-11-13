@@ -50,8 +50,13 @@ public class ScionText extends NLS {
   public static String        process_result_job_arg;
   public static String        background_typecheck_job;
   
-  public static String 		  outline_job_name;
-  public static String		  thingatpoint_job_name;
+  public static String        outline_job_name;
+  public static String	      thingatpoint_job_name;
+  
+  public static String        buildProject_listComponents;
+  public static String        buildProject_loadComponents;
+  public static String        buildProject_parseCabalDescription;
+  public static String        buildProject_cabalDependencies;
   
   private static final String BUNDLE_NAME = ScionText.class.getPackage().getName() + ".sciontext"; //$NON-NLS-1$
 
