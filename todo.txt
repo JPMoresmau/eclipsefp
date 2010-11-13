@@ -1,0 +1,55 @@
+why clicking on run arrow asks me between ghci and hugs? can't reproduce
+
+- several background-typecheck-arbitrary queued when we're building: only keep the last one for each file
+
+- clean up preferences
+	- no option for GHC/GHCi: we need to know what options to ignore for GHCi, since these options are going to appear in the Cabal file
+	- GHC options on each project as well
+
+- GHC 6.12 -dynamic option (http://mostlycode.wordpress.com/2010/01/26/ghc-6-12-1-dynamic-executables-fun/)
+
+- code manipulation: should be pluggable into scion without recompiling???
+	- broken refactorings (point free, etc...)
+	- add type signature  done as quick fix on warning
+
+- files not haskell in source folders could go into data-files automatically
+
+- project actions
+	- clean
+	- sdist (in progress)
+ -> via scion or via cabal impl directly
+
+
+- occurences + search for Haskell objects in project/workspace
+
+
+- run Ghci with proper flags done partially
+	- ask which cabal component to take
+	- what about conditional in cabal (like scion: if ghc impl...)
+	- remove inproper options
+	- ignore .ghci file option? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html -ignore-dot-ghci)
+
+.ghci file parsing/editor?? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
+
+- integrate HUnit/Quickcheck?
+- integrate analysis tools like SourceGraph, hlint, hpc, HaskaBelle
+- integrate doc tools hoogle,haddock
+- integrate runtime tools like criterion
+- integrate HaRe for refactoring?
+
+- cabal install interface (list modules, show new version of installed modules, choose which modules to install/update, etc...)
+
+- debugging 
+	- column on breakpoint??
+	- try to use :hist to display full stack (can we intercept write to add :trace in front?)
+	- better system to force evaluation? Done with custom value setter calling :force what about calling seq ... ()?
+	- reloading modules when stopped seems to cause breakpoints to disappear in GHCi, to check
+
+- add Haskell nature + related file to existing project
+
+- import management (order import, only import what's needed, add proper import for function?)
+
+- project rename
+
+- CAPRI http://www.haskell.org/haskellwiki/Capri to install scion
+	- built-in -> install global/local/project
