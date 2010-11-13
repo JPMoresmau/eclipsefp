@@ -647,6 +647,9 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
       console.clearConsole();
 
+      // This is a user visible task, so set the annoy bit:
+      setUser(true);
+
       // If the build failed, there will be some indication of why it failed in the
       // ScionBuildStatus object. This is where we get to present that back to the
       // user:
@@ -662,15 +665,16 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
               }
             } );
           } else {
-            // Yippee! The server built successfully: Tell user and delete the console.
+            /*  Yippee! The server built successfully: Tell user and delete the console.
             Display.getDefault().syncExec( new Runnable() {
               public void run() {
                 MessageDialog.openInformation( Display.getDefault().getActiveShell(),
                                                UITexts.scionServerProgress_completed_title,
                                                UITexts.scionServerProgress_completed_message );
               }
-            } );
+            } ); */
 
+            // Dispose of the console on a successful build
             IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
             mgr.removeConsoles( new IConsole[] { fConsole } );
             ScionManager.this.internalBuilder = null;
