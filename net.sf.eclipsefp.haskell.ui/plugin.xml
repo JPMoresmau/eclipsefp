@@ -574,4 +574,15 @@
            id="net.sf.eclipsefp.haskell.ui.listener1">
      </listener>
   </extension>
+     <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            icon="icons/eview16/cabal.gif"
+            class="net.sf.eclipsefp.haskell.ui.wizards.CabalSDistWizard"
+            name="%cabalSDistWizard.name"
+            category="net.sf.eclipsefp.haskell.ui.exportWizardCategory"
+            id="net.sf.eclipsefp.haskell.ui.wizards.CabalSDistWizard">
+         <description>%cabalSDistWizard.description</description>
+      </wizard>
+   </extension>
 </plugin>

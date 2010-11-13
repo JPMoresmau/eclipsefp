@@ -318,6 +318,13 @@ public final class UITexts extends NLS {
   public static String openDefinition_select_job;
   public static String openDefinition_external_job;
 
+  public static String exportSource_job;
+  public static String exportSource_error;
+  public static String exportSource_options;
+  public static String exportSource_options_folder;
+  public static String exportSource_options_snapshot;
+  public static String exportSource_options_folder_choose;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

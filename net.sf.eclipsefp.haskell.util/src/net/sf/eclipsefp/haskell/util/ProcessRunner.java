@@ -18,21 +18,27 @@ public class ProcessRunner implements IProcessRunner {
     fProcessFactory = factory;
   }
 
-  public void executeBlocking( final File workingDir, final Writer out,
+  public int executeBlocking( final File workingDir, final Writer out,
       final Writer err, final String ... args ) throws IOException {
 
     Process proc = doExecute( workingDir, args );
 
     Thread outRedirect = redirect( new InputStreamReader( proc.getInputStream() ), out );
-    Thread errRedirect = redirect( new InputStreamReader( proc.getErrorStream() ), err );
-
+    Thread errRedirect = null;
+    if (err!=null){
+    	errRedirect = redirect( new InputStreamReader( proc.getErrorStream() ), err );
+    }
+    int code=-1;
     try {
-      proc.waitFor(); // wait for process to finish
+      code=proc.waitFor(); // wait for process to finish
       outRedirect.join(); // wait until out stream content is redirected
-      errRedirect.join(); // wait until err stream content is redirected
+      if (errRedirect!=null){
+    	  errRedirect.join(); // wait until err stream content is redirected
+      }
     } catch (InterruptedException ex) {
       // ignore
     }
+    return code;
   }
 
   public Process executeNonblocking( final File workingDir, final Writer out,

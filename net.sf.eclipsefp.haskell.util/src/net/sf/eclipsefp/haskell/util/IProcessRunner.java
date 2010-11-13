@@ -27,7 +27,7 @@ public interface IProcessRunner {
    *
    * @see {@link NullWriter}
    */
-  void executeBlocking(File workingDir, Writer out, Writer err, String... args) throws IOException;
+  int executeBlocking(File workingDir, Writer out, Writer err, String... args) throws IOException;
 
   /**
    * Runs the program and returns immediately.

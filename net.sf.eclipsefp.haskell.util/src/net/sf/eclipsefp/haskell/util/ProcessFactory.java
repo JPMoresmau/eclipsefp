@@ -9,7 +9,7 @@ public class ProcessFactory implements IProcessFactory {
 	  ProcessBuilder builder = new ProcessBuilder(commandLine);
 	  builder.directory( workingDir );
 	  builder.redirectErrorStream( true );
-		return builder.start();
+	  return builder.start();
 	}
 
 }
