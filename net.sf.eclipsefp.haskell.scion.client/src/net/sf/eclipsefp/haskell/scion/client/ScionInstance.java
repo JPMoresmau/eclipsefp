@@ -34,7 +34,8 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
-import net.sf.eclipsefp.haskell.scion.types.IOutlineHandler;
+import net.sf.eclipsefp.haskell.scion.types.IAsyncScionCommandAction;
+import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
@@ -55,7 +56,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.SafeRunnable;
@@ -379,7 +379,7 @@ public class ScionInstance {
         if (server.sendCommand(cdc)) {
           packagesByDB = cdc.getPackagesByDB();
           retval = true;
-          restoreState();
+          restoreState( monitor );
         }
       }
     }
@@ -488,10 +488,19 @@ public class ScionInstance {
     packagesByDB = null;
   }
   
-  private void restoreState() {
+  /**
+   * Externally visible verison of reloadFile(); this is only used by PDE tests.
+   * 
+   * @param file The file to load
+   * @return true if the scion-server commands succeeded.
+   */
+  public boolean loadFile ( IFile file ) {
+    return reloadFile(new NullProgressMonitor(), file );
+  }
+  private void restoreState( IProgressMonitor monitor ) {
     if (loadedFile != null) {
       // Ensure that loadedFile is really the loaded file.	
-      reloadFile( loadedFile );
+      reloadFile( monitor, loadedFile );
     }
   }
 
@@ -508,7 +517,8 @@ public class ScionInstance {
   }
 
   /**
-   * Predicate for whether the given file is the loaded file.
+   * Execute the command iff its file is currently loaded. This is synchronized to optimize
+   * singleton commands operating on the same file.
    * 
    * @param f The file to test.
    * @return True if the file is the loaded file.
@@ -551,11 +561,10 @@ public class ScionInstance {
    * 
    * @param file
    *          The file whose component is required.
-   * @param nextCommand
-   *          An optional command to send to the scion-server after the
-   *          component is loaded.
+   * @return true if the component was loaded successfully or no component load was neeeded, otherwise
+   * false indicated a scion-server interaction error.
    */
-  private boolean runWithComponent( final IFile file ) {
+  private boolean runWithComponent( final IProgressMonitor monitor, final IFile file ) {
     Set<String> componentNames = resolver.getComponents( file );
     boolean loadOK = true;
     
@@ -590,6 +599,8 @@ public class ScionInstance {
         IProject fProject = file.getProject();
         // Project for this instance should be the same as the file's
         Assert.isTrue( getProject() == fProject );
+        
+        monitor.subTask(NLS.bind(ScionText.loadingComponent_task_name, toLoad.toString() ) );
         if ( server.sendCommand(new LoadCommand(fProject, toLoad, false, false)) ) {
           lastLoadedComponent = toLoad;
         } else {
@@ -608,24 +619,48 @@ public class ScionInstance {
    * @param file
    *          The file to be loaded.
    */
+  /*
   public boolean reloadFile(final IFile file) {
     return ( runWithComponent(file) && server.sendCommand(new BackgroundTypecheckFileCommand( this, file ) ) );
+  }
+  */
+  
+  /**
+   * reloadFile() with user feedback within a Job.
+   * 
+   * @param monitor User feedback device
+   * @param file The file to be loaded
+   */
+  private boolean reloadFile( final IProgressMonitor monitor, final IFile file ) {
+    if (runWithComponent(monitor, file)) {
+      monitor.subTask( NLS.bind(ScionText.reloadFile_task_name, file.getName()));
+      return server.sendCommand(new BackgroundTypecheckFileCommand( this, file ) );
+    } else
+      return false;
   }
 
   /**
    * Update (reload) the file with its current document contents, primarily used
    * to perform background type checking on the document while it's being
    * edited.
+   * <p>
+   * <b> THIS METHOD DOES NOT CHECK PREREQUISITES; DO NOT CALL THIS METHOD
+   * DIRECTLY. USE
+   * {@link #withLoadedDocument(IFile, IDocument, ScionCommand, String)} or
+   * {@link #withLoadedDocumentAsync(IFile, IDocument, ScionCommand, String, IAsyncScionCommandAction)}
+   * INSTEAD.</b>
    * 
    * @param file
    *          The file associated with the document
    * @param doc
-   *          The document to be typechecked
+   *          The document to be type-checked
    * @return true if all commands sent to the scion-server succeeded.
    */
-  public boolean reloadFile(final IFile file, final IDocument doc) {
-    final LoadInfo li = getLoadInfo(file);
+  private boolean reloadFile(final IProgressMonitor monitor, final IFile file, final IDocument doc) {
+    String jobName = NLS.bind(ScionText.reloadCurrentDocument_job_name, file.getName());
+    monitor.subTask(jobName);
 
+    final LoadInfo li = getLoadInfo(file);
     final BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
       @Override
       public boolean onError(String name, String message) {
@@ -646,7 +681,8 @@ public class ScionInstance {
       }
     };
     
-    return runWithComponent( file ) && withLoadedFile( file, cmd );
+    
+    return server.sendCommand(cmd);
   }
 
   /**
@@ -680,85 +716,153 @@ public class ScionInstance {
     if (file != null) {
       final String jobName = NLS.bind(ScionText.thingatpoint_job_name, file.getName());
       final ThingAtPointCommand cmd = new ThingAtPointCommand(location, qualify, typed);
-      new FileCommandGroup(jobName, file, Job.SHORT) {
-        @Override
-        protected IStatus run(final IProgressMonitor monitor) {
-          reloadFile(file, doc);
-          server.sendCommand(cmd);
-          return Status.OK_STATUS;
-        }
-      }.runGroupSynchronously();
       
-      return cmd.getThing();
+      if (withLoadedDocument( file, doc, cmd, jobName ))
+        return cmd.getThing();
     }
+    
     return null;
   }
 
   /**
    * Get the outline for the file.
    * 
-   * This method does not get the outline for the current document. Use {@link #outline(IFile, IDocument, IOutlineHandler)}
+   * This method does not get the outline for the current document. Use {@link #outline(IFile, IDocument, OutlineHandler)}
    * instead.
    * 
    * @param file The file whose outline is generated
    * @return A list of outline definitions
    */
   public List<OutlineDef> outline(final IFile file) {
-    final String jobName = NLS.bind(ScionText.outline_job_name, file.getName());
     final OutlineCommand cmd = new OutlineCommand(file);
-
-    new FileCommandGroup(jobName, file, Job.SHORT) {
-      @Override
-      protected IStatus run(final IProgressMonitor monitor) {
-        withLoadedFile(file, cmd);
-        return Status.OK_STATUS;
-      }
-    }.runGroupSynchronously();
     
+    withLoadedFile(file, cmd, NLS.bind(ScionText.outline_job_name, file.getName()));
     return cmd.getOutlineDefs();
   }
   
   /**
    * Get the outline for the file's current document. This method operates asynchronously,
-   * calling a handler's {@link IOutlineHandler#handleOutline(List) handleOutline} method
+   * calling a handler's {@link OutlineHandler#handleOutline(List) handleOutline} method
    * when the generated outline becomes available. 
    * 
    * @param file The file, used to ensure that scion-server is operating on the correct file
    * @param doc The document, i.e., the file's current editor contents.
-   * @param handler The IOutlineHandler object who's handleOutline() method is invoked.
+   * @param handler The OutlineHandler object who's handleOutline() method is invoked.
    */
-  public void outline(final IFile file, final IDocument doc, final IOutlineHandler handler) {
+  public void outline(final IFile file, final IDocument doc, final OutlineHandler handler) {
     if (file != null && handler != null) {
-      final String jobName = NLS.bind(ScionText.outline_job_name, file.getName());
-      new FileCommandGroup(jobName, file, Job.SHORT) {
-        @Override
-        protected IStatus run(final IProgressMonitor monitor) {
-          final OutlineCommand cmd = new OutlineCommand(file);
-
-          reloadFile(file, doc);
-          server.sendCommand(cmd);
-          handler.handleOutline(cmd.getOutlineDefs());
-
-          return Status.OK_STATUS;
-        }
-      }.schedule();
+      withLoadedDocumentAsync(file, doc, new OutlineCommand(file), NLS.bind(ScionText.outline_job_name, file.getName()),
+                              handler);
     }
   }
 
   /**
    * Ensure that the given file is the current file before executing a command.
+   * If a multi-command sequence must be executed, the command sequence is
+   * executed synchronously.
+   * 
+   * @param file
+   *          The file
+   * @param cmd
+   *          The command
+   * @return True if all commands, including the requested command, are executed
+   *         successfully.
+   */
+  private boolean withLoadedFile(final IFile file, final ScionCommand cmd, final String jobName) {
+    FileCommandGroup fileGroup = new FileCommandGroup(jobName, file, Job.SHORT) {
+      @Override
+      protected IStatus run(final IProgressMonitor monitor) {
+        IStatus retval = Status.CANCEL_STATUS;
+        
+        try {
+          monitor.beginTask(jobName, IProgressMonitor.UNKNOWN);
+          if (   ( isLoaded( file) || reloadFile ( monitor, file) )
+              && server.sendCommand( cmd ) )
+            retval = Status.OK_STATUS;
+        } finally {
+          monitor.done();
+        }
+        
+        return retval;
+      }
+    };
+    
+    fileGroup.runGroupSynchronously();
+    return (fileGroup.getResult().equals( Status.OK_STATUS ));
+  }
+  
+  /**
+   * Perform a command on the currently loaded document's contents (vs. the currently loaded file's contents)
+   * asynchronously, invoking a handler when the scion command returns a result. This method will ensure that
+   * the file becomes the currently loaded file, if it isn't already.
+   * 
+   * @param file The currently loaded file.
+   * @param doc The file's current document contents
+   * @param cmd The scion-server command to be executed
+   * @param jobName The name to associate with the generated file command group
+   * @param handler The handler object who's {@link IAsyncScionCommandAction#handle(ScionCommand) handle} method
+   * is invoked if the command is processed successfully.
+   */
+  private void withLoadedDocumentAsync( final IFile file, final IDocument doc, final ScionCommand cmd,
+                                                     final String jobName, final IAsyncScionCommandAction handler ) {
+    new FileCommandGroup( jobName, file, Job.SHORT ) {
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        IStatus retval = Status.CANCEL_STATUS;
+        
+        try {
+          monitor.beginTask(jobName, IProgressMonitor.UNKNOWN);
+          
+          if (   ( isLoaded(file) || reloadFile (monitor, file) )
+              && reloadFile( monitor, file, doc )
+              && server.sendCommand(cmd) ) {
+            handler.handle(cmd);
+            retval = Status.OK_STATUS;
+          }
+        } finally {
+          monitor.done();
+        }
+        
+        return retval;
+      }
+    }.schedule();
+  }
+  
+  /**
+   * Perform a command on the currently loaded document's contents (vs. the currently loaded file's contents).
+   * This method will ensure that the file becomes the currently loaded file, if it isn't already.
    * 
    * @param file The file
-   * @param cmd The command
-   * @return True if all commands, including the requested command, are executed successfully.
+   * @param doc The file's current document contents
+   * @param cmd The scion-command to execute
+   * @param jobName The name associated with the file command group job
+   * @return true if all scion-server command executed successfully.
    */
-  private boolean withLoadedFile(final IFile file, final ScionCommand cmd) {
-    if ( isLoaded(file) || reloadFile( file ) ) {
-      return server.sendCommand(cmd);
-    }
-    return false;
+  private boolean withLoadedDocument( final IFile file, final IDocument doc, final ScionCommand cmd, final String jobName ) {
+    FileCommandGroup cmdGroup = new FileCommandGroup( jobName, file, Job.SHORT ) {
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        IStatus retval = Status.CANCEL_STATUS;
+        
+        try {
+          monitor.beginTask(jobName, IProgressMonitor.UNKNOWN);
+          if (   ( isLoaded(file) || reloadFile (monitor, file) )
+              && reloadFile( monitor, file, doc )
+              && server.sendCommand(cmd) ) {
+            retval = Status.OK_STATUS;
+          }
+        } finally {
+          monitor.done();
+        }
+        
+        return retval;
+      }
+    };
+    
+    cmdGroup.runGroupSynchronously();
+    return (cmdGroup.getResult().equals(Status.OK_STATUS));
   }
-
+  
   /**
    * Located the first definition of a name.
    * 
@@ -809,28 +913,29 @@ public class ScionInstance {
    * 
    * @return A list of defined names.
    */
-  public List<String> definedNames() {
-    final DefinedNamesCommand command = new DefinedNamesCommand();
-    server.sendCommand(command);
-    return command.getNames();
+  public List<String> definedNames( final IFile file ) {
+    final DefinedNamesCommand cmd = new DefinedNamesCommand();
+    
+    withLoadedFile(file, cmd, NLS.bind(ScionText.definedNames_task_name, file.getName()));
+    return cmd.getNames();
   }
 
-  public List<String> listExposedModules() {
+  public List<String> listExposedModules( final IFile file ) {
     if (exposedModulesCache == null) {
-      final ListExposedModulesCommand command = new ListExposedModulesCommand();
+      final ListExposedModulesCommand cmd = new ListExposedModulesCommand();
 
-      server.sendCommand(command);
-      exposedModulesCache = Collections.unmodifiableList(command.getNames());
+      withLoadedFile( file, cmd, NLS.bind(ScionText.listExposedModules_task_name, file.getName()) );
+      exposedModulesCache = Collections.unmodifiableList(cmd.getNames());
     }
     
     return exposedModulesCache;
   }
 
-  public List<String> moduleGraph() {
-    final ModuleGraphCommand command = new ModuleGraphCommand();
+  public List<String> moduleGraph( final IFile file ) {
+    final ModuleGraphCommand cmd = new ModuleGraphCommand();
 
-    server.sendCommand(command);
-    return command.getNames();
+    withLoadedFile( file, cmd, NLS.bind(ScionText.moduleGraph_task_name, file.getName()) );
+    return cmd.getNames();
   }
 
   public synchronized List<TokenDef> tokenTypes(final IFile file, final String contents) {

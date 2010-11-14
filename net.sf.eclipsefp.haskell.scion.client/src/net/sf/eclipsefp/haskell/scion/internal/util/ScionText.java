@@ -52,6 +52,12 @@ public class ScionText extends NLS {
   
   public static String        outline_job_name;
   public static String	      thingatpoint_job_name;
+  public static String        reloadCurrentDocument_job_name;
+  public static String        reloadFile_task_name;
+  public static String        loadingComponent_task_name;
+  public static String        definedNames_task_name;
+  public static String        moduleGraph_task_name;
+  public static String        listExposedModules_task_name;
   
   public static String        buildProject_listComponents;
   public static String        buildProject_loadComponents;

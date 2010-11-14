@@ -120,7 +120,7 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
       }
       waitForScion(f);
      // waitForAutoBuild();
-      ScionPlugin.getScionInstance( f ).reloadFile( f);
+      ScionPlugin.getScionInstance( f ).loadFile( f );
       waitForScion(f);
       checkProblems();
 

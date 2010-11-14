@@ -5,15 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.FileCommandGroup;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
@@ -27,8 +22,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		//placeholder constructor
 	}
 
-  public HaskellCompletionContext( final IFile file, final String source,
-      final int offset ) {
+  public HaskellCompletionContext( final IFile file, final String source, final int offset ) {
     this.file = file;
     this.source = source;
     setOffset( offset );
@@ -92,16 +86,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
       final ScionInstance si = ScionPlugin.getScionInstance( file );
       // sync access
       if( si != null ) {
-        FileCommandGroup commandGroup = new FileCommandGroup("Searching defined names", file, Job.SHORT) {
-          @Override
-          protected IStatus run( final IProgressMonitor monitor ) {
-            List<String> names = si.definedNames();
-            searchStringList( prefix, names, result );
-            return Status.OK_STATUS;
-          }
-        };
-
-        commandGroup.runGroupSynchronously();
+        List<String> names = si.definedNames( file );
+        searchStringList( prefix, names, result );
       }
     }
   }
@@ -113,16 +99,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
       final ScionInstance si = ScionPlugin.getScionInstance( file );
       // sync access
       if( si != null ) {
-        FileCommandGroup commandGroup = new FileCommandGroup("Search module names", file, Job.SHORT) {
-          @Override
-          protected IStatus run( final IProgressMonitor monitor ) {
-            searchStringList( prefix, si.moduleGraph(), result );
-            searchStringList( prefix, si.listExposedModules(), result);
-            return Status.OK_STATUS;
-          }
-        };
-
-        commandGroup.runGroupSynchronously();
+        searchStringList( prefix, si.moduleGraph( file ), result );
+        searchStringList( prefix, si.listExposedModules( file ), result);
       }
     }
   }

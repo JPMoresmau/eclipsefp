@@ -15,7 +15,7 @@ import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.IOutlineHandler;
+import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -97,7 +97,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    */
   private ScionInstance instance = null;
 
-  private final IOutlineHandler outlineHandler = new IOutlineHandler() {
+  private final OutlineHandler outlineHandler = new OutlineHandler() {
 
     public void handleOutline( final List<OutlineDef> defs ) {
       outlinePage.setInput( defs );
