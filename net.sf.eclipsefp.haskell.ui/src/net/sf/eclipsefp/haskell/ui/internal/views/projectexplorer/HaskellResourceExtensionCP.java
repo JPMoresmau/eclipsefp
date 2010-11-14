@@ -21,9 +21,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -38,8 +38,6 @@ import org.eclipse.ui.navigator.ICommonContentProvider;
  * @author Leif Frenzel
  */
 public class HaskellResourceExtensionCP implements ICommonContentProvider {
-
-
   // interface methods of ITreeContentProvider
   // //////////////////////////////////////////
 
@@ -56,27 +54,6 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // if we have a Haskell source file, we show the same content as outline
         // underneath
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
-//          FileCommandGroup cg = new FileCommandGroup("Generating outline", f, Job.SHORT) {
-//            @Override
-//            protected IStatus run( final IProgressMonitor monitor ) {
-//              ScionInstance si = ScionPlugin.getScionInstance( f );
-//              if (si != null){
-//                List<OutlineDef> outlineDefs = si.outline( f );
-//                OutlineCP cp = new OutlineCP();
-//
-//                cp.inputChanged( null, null, outlineDefs );
-//                for( OutlineDef def : outlineDefs ) {
-//                  if( def.getParentID() == null ) {
-//                    result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
-//                  }
-//                }
-//              }
-//              return Status.OK_STATUS;
-//            }
-//          };
-//
-//          // Collect results, synchronously:
-//          cg.runGroupSynchronously();
           ScionInstance si = ScionPlugin.getScionInstance( f );
           if (si != null){
             List<OutlineDef> outlineDefs = si.outline( f );

@@ -88,23 +88,27 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   private List<OutlineDef> outline;
   private Map<String,List<OutlineDef>> defByName;
-  /** The scion-server supporting this editor.
-  *
-  * @note This variable isn't actually used to communicate with the scion-server. It's sole
-  * purpose is change detection, since the editor can be reused between different projects. */
- private ScionInstance instance=null;
+  /**
+   * The scion-server supporting this editor.
+   *
+   * @note This variable isn't actually used to communicate with the
+   *       scion-server. It's sole purpose is change detection, since the editor
+   *       can be reused between different projects.
+   */
+  private ScionInstance instance = null;
 
- private final IOutlineHandler outlineHandler=new IOutlineHandler() {
-   public void handleOutline( final List<OutlineDef> defs ) {
-   outlinePage.setInput( defs );
-   foldingStructureProvider.updateFoldingRegions( defs );
- }
-};
+  private final IOutlineHandler outlineHandler = new IOutlineHandler() {
 
- /** Default constructor */
- public HaskellEditor() {
-   super();
- }
+    public void handleOutline( final List<OutlineDef> defs ) {
+      outlinePage.setInput( defs );
+      foldingStructureProvider.updateFoldingRegions( defs );
+    }
+  };
+
+  /** Default constructor */
+  public HaskellEditor() {
+    super();
+  }
 
 //  public void reveal( final IHaskellLanguageElement element ) {
 //    Assert.isNotNull( element );
