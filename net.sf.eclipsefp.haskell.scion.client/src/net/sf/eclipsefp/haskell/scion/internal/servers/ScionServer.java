@@ -395,8 +395,8 @@ public abstract class ScionServer {
    * Command queue monitor: Report when we think we have a stalled queue.
    */
   public class CommandQueueMonitor extends Thread {
-    private final static int TMO = (175 * 1000) / 100; // 1.75 * 1000 milliseconds
-    private final static int MAXSTALLS = 10;           // 17.5 seconds after initial stall
+    private final static int TMO = (350 * 1000) / 100; // 3.50 * 1000 milliseconds
+    private final static int MAXSTALLS = 10;           // 35 seconds after initial stall
     private boolean terminateFlag;
     private int lastDepth;
     private int stallCount;

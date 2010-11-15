@@ -111,7 +111,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       getProject().accept( new BuildVisitor( subMon ) );*/
       ScionInstance si = ScionPlugin.getScionInstance( getProject() );
       if (si != null ) {
-        si.buildProjectWithinJob(mon, true, false);
+        si.buildProjectForWorkspace(mon, true, false);
       } else {
         new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
       }

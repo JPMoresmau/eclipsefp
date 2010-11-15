@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -148,11 +147,7 @@ public class ImportLibrariesPP extends PropertyPage
         prov.saveDocument( new NullProgressMonitor(), f, doc, true );
 
         // Perform the ScionInstance.buildProject() in a Job to maintain UI responsiveness.
-        Job buildJob = si.buildProject( false, true );
-
-        if (buildJob != null) {
-          buildJob.schedule();
-        }
+        si.buildProject( false, true );
       } catch (CoreException ce){
         HaskellUIPlugin.log( ce );
 

@@ -361,11 +361,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                     }
                   }
                   final ScionInstance si = ScionPlugin.getScionInstance( f );
-                  if (si != null){
-                    Job projectJob = si.buildProject( false , true);
-                    if (projectJob != null) {
-                      projectJob.schedule();
-                    }
+                  if (si != null) {
+                    si.buildProject( false , true);
                   }
                   return false;
                 } else if (f.equals( cabalF )){

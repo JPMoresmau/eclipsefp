@@ -206,12 +206,6 @@ public class ScionInstance {
     if (Trace.isTracing()) {
       setDeafening();
     }
-    
-    // And finally set up the initial project build...
-    Job projectJob = buildProject(false, true);
-    
-    if (projectJob != null)
-      projectJob.schedule();
   }
 
   /**
@@ -299,18 +293,17 @@ public class ScionInstance {
    *          Force recompilation if true
    * @return A Job that can be scheduled to build the project
    */
-  public Job buildProject(final boolean output, final boolean forceRecomp) {
-    ProjectCommandGroup retval = null;
-    
+  public void buildProject(final boolean output, final boolean forceRecomp) {
     if (checkCabalFile()) {
       final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
 
-      retval = new ProjectCommandGroup(jobNamePrefix, getProject()) {
+      Job buildJob = new Job (jobNamePrefix) {
         @Override
         protected IStatus run(IProgressMonitor monitor) {
           try {
             monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
             buildProjectInternal(monitor, output, forceRecomp);
+            restoreState(monitor);
           } finally {
             monitor.done();
           }
@@ -318,10 +311,10 @@ public class ScionInstance {
         }
       };
       
-      retval.setPriority(Job.BUILD);
+      buildJob.setRule( project );
+      buildJob.setPriority(Job.BUILD);
+      buildJob.schedule();
     }
-    
-    return retval;
   }
   
   /**
@@ -333,14 +326,14 @@ public class ScionInstance {
    * @param forceRecomp If true, force recompilation
    * @return True if all commands sent to scion-server succeeded, indicating that the build completed.
    */
-  public boolean buildProjectWithinJob(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+  public boolean buildProjectForWorkspace(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
     boolean retval = false;
     IJobManager mgr = Job.getJobManager();
     
     try {
       mgr.beginRule(project, monitor);
       if ( checkCabalFile() ) {
-        retval = buildProjectInternal(monitor, output, forceRecomp);
+        retval = buildProjectInternal(monitor, output, forceRecomp) && restoreState(monitor);
       }
     } finally {
       mgr.endRule(project);
@@ -351,7 +344,7 @@ public class ScionInstance {
   
   /**
    * The internal method called by {@link #buildProject(boolean, boolean) buildProject} and 
-   * {@link #buildProjectWithinJob(IProgressMonitor, boolean, boolean) buildProjectWithinJob} to
+   * {@link #buildProjectForWorkspace(IProgressMonitor, boolean, boolean) buildProjectForWorkspace} to
    * <ul>
    * <li> List the components (executables, libraries) in the Cabal project file.</li>
    * <li> Load the components into the underlying interpreter</li>
@@ -379,7 +372,6 @@ public class ScionInstance {
         if (server.sendCommand(cdc)) {
           packagesByDB = cdc.getPackagesByDB();
           retval = true;
-          restoreState( monitor );
         }
       }
     }
@@ -452,7 +444,7 @@ public class ScionInstance {
     final CompilationResultHandler crh = new CompilationResultHandler(theProject);
 
     for (Component c : cs) {
-      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, c.toString() ) );
+      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, theProject.getName(), c.toString() ) );
 
       final LoadCommand loadCommand = new LoadCommand(theProject, c, output, forceRecomp);
       if (server.sendCommand(loadCommand)) {
@@ -497,25 +489,19 @@ public class ScionInstance {
   public boolean loadFile ( IFile file ) {
     return reloadFile(new NullProgressMonitor(), file );
   }
-  private void restoreState( IProgressMonitor monitor ) {
-    if (loadedFile != null) {
-      // Ensure that loadedFile is really the loaded file.	
-      reloadFile( monitor, loadedFile );
-    }
+  
+  /**
+   * Restore state after a project build. This is mainly for the convenience of workspace builds,
+   * where the current file should be reloaded in scion-server.
+   * 
+   * @param monitor User feedback device passed to reloadFile().
+   */
+  private boolean restoreState( IProgressMonitor monitor ) {
+    return (loadedFile == null || reloadFile( monitor, loadedFile ) );
   }
 
   // ////////////////////
   // External commands
-
-  /** 
-   * Accessor for the currently loaded file.
-   * 
-   * @return The currently loaded file.
-   */
-  public IFile getLoadedFile() {
-    return loadedFile;
-  }
-
   /**
    * Execute the command iff its file is currently loaded. This is synchronized to optimize
    * singleton commands operating on the same file.
@@ -561,52 +547,59 @@ public class ScionInstance {
    * 
    * @param file
    *          The file whose component is required.
-   * @return true if the component was loaded successfully or no component load was neeeded, otherwise
+   * @return true if the component was loaded successfully or no component load was needed, otherwise
    * false indicated a scion-server interaction error.
    */
   private boolean runWithComponent( final IProgressMonitor monitor, final IFile file ) {
-    Set<String> componentNames = resolver.getComponents( file );
     boolean loadOK = true;
-    
-    if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
-      Component toLoad = null;
+    boolean projectBuilt = ( components.size() > 0 && packagesByDB != null );
 
-      if (!componentNames.isEmpty()) {
-        synchronized (components) {
-          for (Component compo : components) {
-            if (componentNames.contains(compo.toString())) {
-              toLoad = compo;
-              break;
+    if ( projectBuilt || buildProjectInternal(monitor, false, true) ) {
+      Set<String> componentNames = resolver.getComponents( file );
+      
+      if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
+        Component toLoad = null;
+  
+        if (!componentNames.isEmpty()) {
+          synchronized (components) {
+            for (Component compo : components) {
+              if (componentNames.contains(compo.toString())) {
+                toLoad = compo;
+                break;
+              }
             }
           }
         }
-      }
-
-      LoadInfo li = getLoadInfo(file);
-
-      // we have no component: we create a file one
-      if (toLoad == null) {
-        toLoad = new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
-        if (!li.useFileComponent) {
-          li.useFileComponent = true;
-          ScionPlugin.logWarning(ScionText.bind(ScionText.warning_file_component, file.getProjectRelativePath()), null);
-        }
-      } else {
-        li.useFileComponent = false;
-      }
-
-      if (toLoad != null) {
-        IProject fProject = file.getProject();
-        // Project for this instance should be the same as the file's
-        Assert.isTrue( getProject() == fProject );
-        
-        monitor.subTask(NLS.bind(ScionText.loadingComponent_task_name, toLoad.toString() ) );
-        if ( server.sendCommand(new LoadCommand(fProject, toLoad, false, false)) ) {
-          lastLoadedComponent = toLoad;
+  
+        LoadInfo li = getLoadInfo(file);
+  
+        // we have no component: we create a file one
+        if (toLoad == null) {
+          toLoad = new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
+          if (!li.useFileComponent) {
+            li.useFileComponent = true;
+            ScionPlugin.logWarning(ScionText.bind(ScionText.warning_file_component, file.getProjectRelativePath()), null);
+          }
         } else {
-          loadOK = false;
+          li.useFileComponent = false;
+        }
+  
+        if (toLoad != null) {
+          IProject fProject = file.getProject();
+          // Project for this instance should be the same as the file's
+          Assert.isTrue( getProject() == fProject );
+          
+          monitor.subTask(NLS.bind(ScionText.loadingComponent_task_name, fProject.getName(), toLoad.toString() ) );
+          if ( server.sendCommand(new LoadCommand(fProject, toLoad, false, false)) ) {
+            lastLoadedComponent = toLoad;
+          } else {
+            loadOK = false;
+          }
         }
       }
+    } else {
+      // Build failed.
+      loadOK = false;
     }
 
     return loadOK;
@@ -615,18 +608,6 @@ public class ScionInstance {
   /**
    * Load a file into the scion-server, setting the proper context for
    * subsequent commands.
-   * 
-   * @param file
-   *          The file to be loaded.
-   */
-  /*
-  public boolean reloadFile(final IFile file) {
-    return ( runWithComponent(file) && server.sendCommand(new BackgroundTypecheckFileCommand( this, file ) ) );
-  }
-  */
-  
-  /**
-   * reloadFile() with user feedback within a Job.
    * 
    * @param monitor User feedback device
    * @param file The file to be loaded
@@ -769,7 +750,7 @@ public class ScionInstance {
    *         successfully.
    */
   private boolean withLoadedFile(final IFile file, final ScionCommand cmd, final String jobName) {
-    FileCommandGroup fileGroup = new FileCommandGroup(jobName, file, Job.SHORT) {
+    CommandGroup fileGroup = new CommandGroup(jobName, file, needsProjectRule(file)) {
       @Override
       protected IStatus run(final IProgressMonitor monitor) {
         IStatus retval = Status.CANCEL_STATUS;
@@ -787,8 +768,7 @@ public class ScionInstance {
       }
     };
     
-    fileGroup.runGroupSynchronously();
-    return (fileGroup.getResult().equals( Status.OK_STATUS ));
+    return (fileGroup.runGroupSynchronously().equals( Status.OK_STATUS ));
   }
   
   /**
@@ -805,7 +785,7 @@ public class ScionInstance {
    */
   private void withLoadedDocumentAsync( final IFile file, final IDocument doc, final ScionCommand cmd,
                                                      final String jobName, final IAsyncScionCommandAction handler ) {
-    new FileCommandGroup( jobName, file, Job.SHORT ) {
+    new CommandGroup( jobName, file, needsProjectRule(file) ) {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
         IStatus retval = Status.CANCEL_STATUS;
@@ -813,11 +793,13 @@ public class ScionInstance {
         try {
           monitor.beginTask(jobName, IProgressMonitor.UNKNOWN);
           
-          if (   ( isLoaded(file) || reloadFile (monitor, file) )
-              && reloadFile( monitor, file, doc )
-              && server.sendCommand(cmd) ) {
-            handler.handle(cmd);
-            retval = Status.OK_STATUS;
+          if ( isLoaded(file) || reloadFile (monitor, file) ) {
+            // reloadFile for a document can fail, but this is OK.
+            reloadFile( monitor, file, doc );
+            if ( server.sendCommand(cmd) ) {
+              handler.handle(cmd);
+              retval = Status.OK_STATUS;
+            }
           }
         } finally {
           monitor.done();
@@ -839,17 +821,19 @@ public class ScionInstance {
    * @return true if all scion-server command executed successfully.
    */
   private boolean withLoadedDocument( final IFile file, final IDocument doc, final ScionCommand cmd, final String jobName ) {
-    FileCommandGroup cmdGroup = new FileCommandGroup( jobName, file, Job.SHORT ) {
+    CommandGroup cmdGroup = new CommandGroup( jobName, file, needsProjectRule(file) ) {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
         IStatus retval = Status.CANCEL_STATUS;
         
         try {
           monitor.beginTask(jobName, IProgressMonitor.UNKNOWN);
-          if (   ( isLoaded(file) || reloadFile (monitor, file) )
-              && reloadFile( monitor, file, doc )
-              && server.sendCommand(cmd) ) {
-            retval = Status.OK_STATUS;
+          if ( isLoaded(file) || reloadFile (monitor, file) ) {
+            // Reload the document in scion-server, but we really don't care if it fails.
+            reloadFile( monitor, file, doc );
+            if ( server.sendCommand(cmd) ) {
+              retval = Status.OK_STATUS;
+            }
           }
         } finally {
           monitor.done();
@@ -859,8 +843,7 @@ public class ScionInstance {
       }
     };
     
-    cmdGroup.runGroupSynchronously();
-    return (cmdGroup.getResult().equals(Status.OK_STATUS));
+    return (cmdGroup.runGroupSynchronously().equals(Status.OK_STATUS));
   }
   
   /**
@@ -949,6 +932,14 @@ public class ScionInstance {
    */
   public void setDeafening() {
     server.sendCommand(new SetVerbosityCommand(3));
+  }
+  
+  private boolean needsProjectRule( final IFile file ) {
+    boolean needsBuild = ( components.size() == 0 || packagesByDB == null );
+    Set<String> componentNames = resolver.getComponents( file );
+    boolean needsComponent = (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString()) );
+
+    return needsBuild || needsComponent;
   }
 
   private synchronized LoadInfo getLoadInfo(IFile file) {

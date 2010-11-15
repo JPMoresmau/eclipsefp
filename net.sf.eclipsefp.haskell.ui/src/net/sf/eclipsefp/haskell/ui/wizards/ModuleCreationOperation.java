@@ -130,7 +130,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
         prov.disconnect( f );
       }
 
-      ScionPlugin.getScionInstance( generatedFile ).buildProjectWithinJob( monitor, false , false);
+      ScionPlugin.getScionInstance( generatedFile ).buildProjectForWorkspace( monitor, false , false);
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );
     }
