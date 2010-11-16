@@ -366,7 +366,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                   }
                   return false;
                 } else if (f.equals( cabalF )){
-                    stopInstance( f);
+                    stopInstance( f );
                     return false;
 
                 }

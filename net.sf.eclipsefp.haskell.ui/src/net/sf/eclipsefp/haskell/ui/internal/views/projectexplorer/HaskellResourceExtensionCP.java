@@ -55,7 +55,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // underneath
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
           ScionInstance si = ScionPlugin.getScionInstance( f );
-          if (si != null){
+          if (si != null) {
             List<OutlineDef> outlineDefs = si.outline( f );
             OutlineCP cp = new OutlineCP();
             cp.inputChanged( null, null, outlineDefs );

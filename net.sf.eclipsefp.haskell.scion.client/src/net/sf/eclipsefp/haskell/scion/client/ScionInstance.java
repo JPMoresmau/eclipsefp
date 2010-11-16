@@ -82,6 +82,9 @@ public class ScionInstance {
   /** The currently loaded file */
   private IFile                       loadedFile;
 
+  /** Flag that indicates that the project has been built successfully */
+  private boolean                     projectIsBuilt;
+  /** The Cabal project description */
   private JSONObject                  cabalDescription;
   private Map<String, CabalPackage[]> packagesByDB;
   private List<Component>             components;
@@ -110,6 +113,7 @@ public class ScionInstance {
     this.project = project;
     this.resolver = resolver;
     
+    this.projectIsBuilt = false;
     this.lastLoadedComponent = null;
     this.loadedFile = null;
     this.components = new LinkedList<Component>();
@@ -376,6 +380,7 @@ public class ScionInstance {
       }
     }
     
+    projectIsBuilt = retval;
     return retval;
   }
 
@@ -468,6 +473,7 @@ public class ScionInstance {
 
   /** Reset initial state. */
   private void internalReset() {
+    projectIsBuilt = false;
     cabalDescription = null;
     synchronized (components) {
       components.clear();
@@ -552,9 +558,8 @@ public class ScionInstance {
    */
   private boolean runWithComponent( final IProgressMonitor monitor, final IFile file ) {
     boolean loadOK = true;
-    boolean projectBuilt = ( components.size() > 0 && packagesByDB != null );
 
-    if ( projectBuilt || buildProjectInternal(monitor, false, true) ) {
+    if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
       Set<String> componentNames = resolver.getComponents( file );
       
       if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
@@ -736,7 +741,143 @@ public class ScionInstance {
                               handler);
     }
   }
+  
+  /**
+   * Located the first definition of a name.
+   * 
+   * @param name The name to located.
+   * @return The editor location where the name can be found.
+   */
+  public Location firstDefinitionLocation(String name) {
+    NameDefinitionsCommand command = new NameDefinitionsCommand(name);
+    server.sendCommand(command);
+    return command.getFirstLocation();
+  }
 
+  /**
+   * Generate the Cabal project file's name from the Eclipse project's name.
+   * 
+   * @param project The Eclipse project
+   * @return The "&lt;project&gt;.cabal" string.
+   */
+  public static IFile getCabalFile(final IProject project) {
+    return project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
+  }
+
+  public JSONObject getCabalDescription() {
+    // Never called... :-)
+    return cabalDescription;
+  }
+
+  /**
+   * Accessor for the Cabal dependencies map.
+   * 
+   * @return The cabal dependencies map.
+   */
+  public Map<String, CabalPackage[]> getPackagesByDB() {
+    return packagesByDB;
+  }
+
+  /**
+   * Accessor for the Cabal project file's components.
+   * 
+   * @return A list of the cabal project's components.
+   */
+  public List<Component> getComponents() {
+    return components;
+  }
+
+  /**
+   * Get the currently visible (defined) names, used for generating completions.
+   * 
+   * @return A list of defined names.
+   */
+  public List<String> definedNames( ) {
+    final DefinedNamesCommand cmd = new DefinedNamesCommand();
+    
+    withProject( cmd, NLS.bind(ScionText.definedNames_task_name, project.getName()));
+    return cmd.getNames();
+  }
+
+  public List<String> listExposedModules( ) {
+    if (exposedModulesCache == null) {
+      final ListExposedModulesCommand cmd = new ListExposedModulesCommand();
+
+      withProject( cmd, NLS.bind(ScionText.listExposedModules_task_name, project.getName()) );
+      exposedModulesCache = Collections.unmodifiableList(cmd.getNames());
+    }
+    
+    return exposedModulesCache;
+  }
+
+  public List<String> moduleGraph( ) {
+    final ModuleGraphCommand cmd = new ModuleGraphCommand();
+
+    withProject( cmd, NLS.bind(ScionText.moduleGraph_task_name, project.getName()) );
+    return cmd.getNames();
+  }
+
+  public synchronized List<TokenDef> tokenTypes(final IFile file, final String contents) {
+    TokenTypesCommand command = new TokenTypesCommand(file, contents, FileUtil.hasLiterateExtension(file));
+    server.sendCommand(command);
+    return command.getTokens();
+  }
+
+  /**
+   * Set the scion-server's debug level to deafening (lots of output!)
+   */
+  public void setDeafening() {
+    server.sendCommand(new SetVerbosityCommand(3));
+  }
+  
+  /**
+   * Predicate test for whether command groups need a project rule in addition to the file rule.
+   * 
+   * @param file The file, used to query component names.
+   * @return true if a project rule is needed.
+   */
+  private boolean needsProjectRule( final IFile file ) {
+    Set<String> componentNames = resolver.getComponents( file );
+    boolean needsComponent = (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString()) );
+
+    return !projectIsBuilt || needsComponent;
+  }
+
+  /**
+   * Ensure that the command sequence is executed using a project scheduling rule. The resulting Job
+   * is executed synchronously.
+   */
+  private boolean withProject( final ScionCommand command, final String jobName ) {
+    Job projJob = new Job ( jobName ) {
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        IStatus retval = Status.CANCEL_STATUS;
+        if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
+          retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
+        }
+        
+        return retval;
+      }
+    };
+    
+    // Note: All of this code could go into a separate class, but this is only used
+    // once, so really no point.
+    projJob.setPriority( Job.INTERACTIVE );
+    projJob.setRule( project );
+    projJob.schedule();
+    
+    while (projJob.getResult() == null) {
+      try {
+        projJob.join();
+      } catch (InterruptedException irq) {
+        // Return something reasonable.
+        return false;
+      }
+    }
+    
+    return (projJob.getResult().equals(Status.OK_STATUS));
+  }
+  
   /**
    * Ensure that the given file is the current file before executing a command.
    * If a multi-command sequence must be executed, the command sequence is
@@ -844,102 +985,6 @@ public class ScionInstance {
     };
     
     return (cmdGroup.runGroupSynchronously().equals(Status.OK_STATUS));
-  }
-  
-  /**
-   * Located the first definition of a name.
-   * 
-   * @param name The name to located.
-   * @return The editor location where the name can be found.
-   */
-  public Location firstDefinitionLocation(String name) {
-    NameDefinitionsCommand command = new NameDefinitionsCommand(name);
-    server.sendCommand(command);
-    return command.getFirstLocation();
-  }
-
-  /**
-   * Generate the Cabal project file's name from the Eclipse project's name.
-   * 
-   * @param project The Eclipse project
-   * @return The "&lt;project&gt;.cabal" string.
-   */
-  public static IFile getCabalFile(final IProject project) {
-    return project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
-  }
-
-  public JSONObject getCabalDescription() {
-    // Never called... :-)
-    return cabalDescription;
-  }
-
-  /**
-   * Accessor for the Cabal dependencies map.
-   * 
-   * @return The cabal dependencies map.
-   */
-  public Map<String, CabalPackage[]> getPackagesByDB() {
-    return packagesByDB;
-  }
-
-  /**
-   * Accessor for the Cabal project file's components.
-   * 
-   * @return A list of the cabal project's components.
-   */
-  public List<Component> getComponents() {
-    return components;
-  }
-
-  /**
-   * Get the currently visible (defined) names, used for generating completions.
-   * 
-   * @return A list of defined names.
-   */
-  public List<String> definedNames( final IFile file ) {
-    final DefinedNamesCommand cmd = new DefinedNamesCommand();
-    
-    withLoadedFile(file, cmd, NLS.bind(ScionText.definedNames_task_name, file.getName()));
-    return cmd.getNames();
-  }
-
-  public List<String> listExposedModules( final IFile file ) {
-    if (exposedModulesCache == null) {
-      final ListExposedModulesCommand cmd = new ListExposedModulesCommand();
-
-      withLoadedFile( file, cmd, NLS.bind(ScionText.listExposedModules_task_name, file.getName()) );
-      exposedModulesCache = Collections.unmodifiableList(cmd.getNames());
-    }
-    
-    return exposedModulesCache;
-  }
-
-  public List<String> moduleGraph( final IFile file ) {
-    final ModuleGraphCommand cmd = new ModuleGraphCommand();
-
-    withLoadedFile( file, cmd, NLS.bind(ScionText.moduleGraph_task_name, file.getName()) );
-    return cmd.getNames();
-  }
-
-  public synchronized List<TokenDef> tokenTypes(final IFile file, final String contents) {
-    TokenTypesCommand command = new TokenTypesCommand(file, contents, FileUtil.hasLiterateExtension(file));
-    server.sendCommand(command);
-    return command.getTokens();
-  }
-
-  /**
-   * Set the scion-server's debug level to deafening (lots of output!)
-   */
-  public void setDeafening() {
-    server.sendCommand(new SetVerbosityCommand(3));
-  }
-  
-  private boolean needsProjectRule( final IFile file ) {
-    boolean needsBuild = ( components.size() == 0 || packagesByDB == null );
-    Set<String> componentNames = resolver.getComponents( file );
-    boolean needsComponent = (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString()) );
-
-    return needsBuild || needsComponent;
   }
 
   private synchronized LoadInfo getLoadInfo(IFile file) {

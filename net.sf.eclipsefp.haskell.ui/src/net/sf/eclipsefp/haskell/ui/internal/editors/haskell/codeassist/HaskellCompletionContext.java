@@ -86,7 +86,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
       final ScionInstance si = ScionPlugin.getScionInstance( file );
       // sync access
       if( si != null ) {
-        List<String> names = si.definedNames( file );
+        List<String> names = si.definedNames( );
         searchStringList( prefix, names, result );
       }
     }
@@ -99,8 +99,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
       final ScionInstance si = ScionPlugin.getScionInstance( file );
       // sync access
       if( si != null ) {
-        searchStringList( prefix, si.moduleGraph( file ), result );
-        searchStringList( prefix, si.listExposedModules( file ), result);
+        searchStringList( prefix, si.moduleGraph( ), result );
+        searchStringList( prefix, si.listExposedModules( ), result);
       }
     }
   }

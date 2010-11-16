@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.wizards;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
@@ -50,8 +51,9 @@ public class CabalSDistOptionsPage extends WizardPage {
     gd=new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
     tFolder.setLayoutData( gd );
 
-    //if (projects.size()>0){
-      final IProject uniqueP=projects.iterator().next();
+    Iterator<IProject> projIter = projects.iterator();
+    if (projIter.hasNext()) {
+      final IProject uniqueP=projIter.next();
       final String projectLocation=uniqueP.getLocation().toOSString();
       fullPath=uniqueP.getLocation().append( "dist" ).toOSString();
       Button bFolder=new Button(composite,SWT.PUSH);
@@ -72,7 +74,7 @@ public class CabalSDistOptionsPage extends WizardPage {
           tFolder.setText( toDisplay );
         }
       });
-    //}
+    }
 
     bSnapshot=new Button(composite,SWT.CHECK);
     bSnapshot.setText( UITexts.exportSource_options_snapshot );
