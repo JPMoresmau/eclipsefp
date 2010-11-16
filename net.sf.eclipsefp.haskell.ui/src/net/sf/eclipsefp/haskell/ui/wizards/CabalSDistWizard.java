@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -18,12 +19,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * <p>Calls Cabal sdist</p>
@@ -65,17 +68,34 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
       }
 
       for (final IProject p:projects){
-        new UIJob(NLS.bind( UITexts.exportSource_job, p.getName() )) {
+        new Job(NLS.bind( UITexts.exportSource_job, p.getName() )) {
 
           @Override
-          public IStatus runInUIThread( final IProgressMonitor arg0 ) {
+          protected IStatus run(final IProgressMonitor arg0) {
             StringWriter out=new StringWriter();
             try {
               int ret=new ProcessRunner().executeBlocking( new File(p.getLocation().toOSString()) , out, null, commands.toArray( new String[commands.size()]));
-              if (ret!=0){
+              String output=out.toString();
+           // let's not rely on Eclipse to show us the status, display it ourselves and return ok
+              if (ret!=0 ){
                 HaskellUIPlugin.log(out.toString() ,IStatus.ERROR );
-                return new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), UITexts.exportSource_error);
+                final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), out.toString());
+                Display.getDefault().asyncExec( new Runnable(){
+                  public void run() {
+                    ErrorDialog.openError( getShell(), UITexts.exportSource_error, UITexts.exportSource_error_text, st );
+                  }
+                } );
+              } else if (hasWarnings( output)){
+                HaskellUIPlugin.log(out.toString() ,IStatus.WARNING );
+                final IStatus st= new Status( IStatus.WARNING, HaskellUIPlugin.getPluginId(), out.toString());
+                Display.getDefault().asyncExec( new Runnable(){
+                  public void run() {
+                    ErrorDialog.openError( getShell(), UITexts.exportSource_warning, UITexts.exportSource_warning_text, st );
+                  }
+                } );
               }
+
+
               return Status.OK_STATUS;
             } catch (IOException ioe){
               HaskellUIPlugin.log(ioe);
@@ -86,6 +106,23 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
           }
         }.schedule();
         return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * see if output contains any of the marker for warnings. Not performance critical
+   */
+  private static boolean hasWarnings(final String output){
+    if (output!=null && output.length()>0){
+      String lc=output.toLowerCase();
+      String markers=UITexts.exportSource_warning_markers;
+      StringTokenizer st=new StringTokenizer( markers, " " );
+      while (st.hasMoreTokens()){
+        if (lc.contains( st.nextToken() )){
+          return true;
+        }
       }
     }
     return false;

@@ -320,10 +320,14 @@ public final class UITexts extends NLS {
 
   public static String exportSource_job;
   public static String exportSource_error;
+  public static String exportSource_warning;
+  public static String exportSource_error_text;
+  public static String exportSource_warning_text;
   public static String exportSource_options;
   public static String exportSource_options_folder;
   public static String exportSource_options_snapshot;
   public static String exportSource_options_folder_choose;
+  public static String exportSource_warning_markers;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
