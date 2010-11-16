@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -55,7 +56,7 @@ public class ModuleInclusionPP extends PropertyPage {
       mco.setGeneratedFile( (IFile)getElement() );
 
       try {
-        mco.run( null );
+        mco.run( new NullProgressMonitor() );
         return true;
       } catch( Exception ex ) {
         HaskellUIPlugin.log( UITexts.module_inclusion_error, ex );
