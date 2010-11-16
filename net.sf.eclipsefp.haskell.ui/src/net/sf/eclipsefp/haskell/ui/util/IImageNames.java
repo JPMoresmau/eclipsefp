@@ -82,4 +82,6 @@ public interface IImageNames {
   String IMPORT_REMOVE        = ID+".IMPORT_REMOVE"; //$NON-NLS-1$
 
   String HASKELL_MISC         = ID+".HASKELL_MISC"; //$NON-NLS-1$
+
+  String EXPORT_SRC           = ID+".EXPORT_SRC"; //$NON-NLS-1$
 }

@@ -107,6 +107,7 @@ public class HaskellUIImages implements IImageNames {
 
     declare(ACTION_SORT,ACTION_E+"alphab_sort_co.png"); //$NON-NLS-1$
     declare(IMPORT_REMOVE,OBJECT+"correction_delete_import.gif"); //$NON-NLS-1$
+    declare(EXPORT_SRC,OBJECT+"export_src.gif"); //$NON-NLS-1$
     declare(HASKELL_MISC,TOOLS+"haskell_misc.gif"); //$NON-NLS-1$
   }
 

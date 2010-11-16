@@ -577,7 +577,7 @@
      <extension
          point="org.eclipse.ui.exportWizards">
       <wizard
-            icon="icons/eview16/cabal.gif"
+            icon="icons/obj16/export_src.gif"
             class="net.sf.eclipsefp.haskell.ui.wizards.CabalSDistWizard"
             name="%cabalSDistWizard.name"
             category="net.sf.eclipsefp.haskell.ui.exportWizardCategory"
