@@ -39,24 +39,27 @@ public class HaskellFoldingStructureProvider {
     // And this is how we really get the editor's document without waiting for the
     // source viewer.
     IDocumentProvider docProvider = editor.getDocumentProvider();
-    IDocument document = docProvider.getDocument( editor.getEditorInput() );
+    // may be null if we're late and editor has closed
+    if (docProvider!=null){
+      IDocument document = docProvider.getDocument( editor.getEditorInput() );
 
-    if (model!=null){
-      Set<Location> blocks=new HashSet<Location>();
-      for (OutlineDef def : outlineDefs){
-        // only blocks that are more than one line long can be folded
-        if (def.getBlock()!=null && def.getBlock().getEndLine()>def.getBlock().getStartLine()){
-          blocks.add( def.getBlock() );
+      if (model!=null){
+        Set<Location> blocks=new HashSet<Location>();
+        for (OutlineDef def : outlineDefs){
+          // only blocks that are more than one line long can be folded
+          if (def.getBlock()!=null && def.getBlock().getEndLine()>def.getBlock().getStartLine()){
+            blocks.add( def.getBlock() );
+          }
         }
-      }
-      Set<Position> regions=new HashSet<Position>();
-      for (Location l:blocks){
-        Position p=createPosition( document, l.getStartLine(), l.getEndLine() );
-        if (p!=null){
-          regions.add( p );
+        Set<Position> regions=new HashSet<Position>();
+        for (Location l:blocks){
+          Position p=createPosition( document, l.getStartLine(), l.getEndLine() );
+          if (p!=null){
+            regions.add( p );
+          }
         }
+        updateFoldingRegions( model, regions );
       }
-      updateFoldingRegions( model, regions );
     }
 
   }
