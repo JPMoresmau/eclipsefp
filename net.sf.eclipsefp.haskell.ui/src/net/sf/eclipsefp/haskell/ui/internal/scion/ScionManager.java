@@ -622,6 +622,11 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       mgr.addConsoles(new IConsole[] {console});
       mgr.showConsoleView( console );
       internalBuilder.setPriority( Job.BUILD );
+      // Important to ensure that we schedule ourselves as a workspace job to prevent
+      // other jobs from running (not that they can, but...)
+      internalBuilder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+      // This is a user visible task, so set the annoy bit:
+      internalBuilder.setUser(true);
       internalBuilder.schedule();
     }
   }
@@ -642,10 +647,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       fConsole = console;
       fConOut = console.newOutputStream();
 
+      console.activate();
       console.clearConsole();
-
-      // This is a user visible task, so set the annoy bit:
-      setUser(true);
 
       // If the build failed, there will be some indication of why it failed in the
       // ScionBuildStatus object. This is where we get to present that back to the
