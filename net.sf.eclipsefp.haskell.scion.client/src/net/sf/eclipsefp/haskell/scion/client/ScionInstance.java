@@ -81,7 +81,9 @@ public class ScionInstance {
   private IProject                    project;
   /** The currently loaded file */
   private IFile                       loadedFile;
-
+  /** The currently loaded file */
+  private String                      loadedDocContents;
+  
   /** Flag that indicates that the project has been built successfully */
   private boolean                     projectIsBuilt;
   /** The Cabal project description */
@@ -525,6 +527,14 @@ public class ScionInstance {
    * @param loadedFile The new loaded file.
    */
   public void setLoadedFile(IFile loadedFile) {
+    if (!loadedFile.equals(this.loadedFile)){
+	    loadedDocContents=null;
+	    try {
+	    	loadedDocContents=FileUtil.getContents(loadedFile);
+	    } catch (Exception e){
+	    	ScionPlugin.logError(ScionText.error_readingFile, e);
+	    }
+    }
     this.loadedFile = loadedFile;
   }
 
@@ -643,32 +653,37 @@ public class ScionInstance {
    * @return true if all commands sent to the scion-server succeeded.
    */
   private boolean reloadFile(final IProgressMonitor monitor, final IFile file, final IDocument doc) {
-    String jobName = NLS.bind(ScionText.reloadCurrentDocument_job_name, file.getName());
-    monitor.subTask(jobName);
-
-    final LoadInfo li = getLoadInfo(file);
-    final BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
-      @Override
-      public boolean onError(String name, String message) {
-        if (message != null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)) {
-          deleteProblems(file);
-          if (!li.interactiveCheckDisabled) {
-            final String errMsg = ScionText.bind(ScionText.warning_typecheck_arbitrary_failed, file.getProjectRelativePath(),
-                message);
-            ScionPlugin.logWarning(errMsg, null);
-            li.interactiveCheckDisabled = true;
-          }
-
-          return true;
-        }
-
-        li.interactiveCheckDisabled = false;
-        return super.onError(name, message);
-      }
-    };
+	String newContents=doc.get();
+	if(loadedDocContents==null || !newContents.equals(loadedDocContents)){
+		loadedDocContents=newContents;
+	    String jobName = NLS.bind(ScionText.reloadCurrentDocument_job_name, file.getName());
+	    monitor.subTask(jobName);
+	    final LoadInfo li = getLoadInfo(file);
+	    final BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
+	      @Override
+	      public boolean onError(String name, String message) {
+	        if (message != null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)) {
+	        	// I'm in two minds here: is it better to see obsolete errors at the wrong place, or to not see any error and have to save to see again the errors?
+	        	//deleteProblems(file);
+	          if (!li.interactiveCheckDisabled) {
+	            final String errMsg = ScionText.bind(ScionText.warning_typecheck_arbitrary_failed, file.getProjectRelativePath(),
+	                message);
+	            ScionPlugin.logWarning(errMsg, null);
+	            li.interactiveCheckDisabled = true;
+	          }
+	
+	          return true;
+	        }
+	
+	        li.interactiveCheckDisabled = false;
+	        return super.onError(name, message);
+	      }
+	    };
+	    return server.sendCommand(cmd);
+	}
+	return true;
     
-    
-    return server.sendCommand(cmd);
+   
   }
 
   /**

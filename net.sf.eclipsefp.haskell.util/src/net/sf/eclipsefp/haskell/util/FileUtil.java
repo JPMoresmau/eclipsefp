@@ -1,10 +1,13 @@
 package net.sf.eclipsefp.haskell.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -229,5 +232,22 @@ public class FileUtil {
    */
   public static final ArrayList<File> getCandidateLocations() {
     return candidateLocations;
+  }
+  
+  public static String getContents(IFile f) throws Exception{
+	  StringBuilder sb=new StringBuilder();
+	  if (f.exists()){
+		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		  InputStream is=f.getContents(true);
+		  byte[] buf=new byte[4096];
+		  int r=is.read(buf);
+		  while (r>-1){
+			  baos.write(buf,0,r);
+			  r=is.read(buf);
+		  }
+		  is.close();
+		  sb.append(new String(baos.toByteArray(),f.getCharset()));
+	  }
+	  return sb.toString();
   }
 }
