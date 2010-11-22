@@ -47,7 +47,7 @@ public class CabalSDistOptionsPage extends WizardPage {
     lFolder.setText( UITexts.exportSource_options_folder );
 
     tFolder=new Text(composite,SWT.BORDER);
-    tFolder.setText( "dist" );
+    tFolder.setText( ".dist-scion" ); // TODO Have this somewhere in common if one day we can change it
     gd=new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
     tFolder.setLayoutData( gd );
 

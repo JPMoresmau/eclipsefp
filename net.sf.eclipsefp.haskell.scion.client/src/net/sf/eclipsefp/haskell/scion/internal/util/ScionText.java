@@ -39,7 +39,8 @@ public class ScionText extends NLS {
   public static String        error_deleteMarkers;
   public static String        error_applyMarkers;
   public static String        error_refreshLocal;
-
+  public static String	      error_readingFile;
+  
   public static String        warning_typecheck_arbitrary_failed;
   public static String        warning_file_component;
   
