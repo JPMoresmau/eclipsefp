@@ -171,7 +171,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
   }
 
 	protected static boolean openExternalDefinition(final IWorkbenchPage page, final IProject project,final String pkg, final String module, final String shortName, final char type){
-	  int ix=pkg.indexOf( '-' );
+	  int ix=pkg.lastIndexOf( '-' );
     String packageName=pkg;
     String packageVersion="";
     if (ix>-1){
