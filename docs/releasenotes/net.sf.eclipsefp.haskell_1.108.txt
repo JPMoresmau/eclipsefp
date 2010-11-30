@@ -1,0 +1,19 @@
+EclipseFP Haskell 1.108
+
+Release Notes
+
+Scion:
+  You need Scion, the Haskell IDE library. See http://code.google.com/p/scion-lib/ for more information.
+  You cannot use the version from Hackage (0.1.0.2) since commands have been added for eclipsefp. You'll need to build Cabal from source 
+  (git clone git://github.com/nominolo/scion.git, runhaskell Setup.hs configure/build/install)
+
+Features:
+- use Scion to build Haskell projects (using Cabal info)
+- use Scion to typecheck Haskell source files
+- use Scion to typecheck unsaved Haskell source file contents (if no preprocessing is required)
+- use Scion to give Haskell source file outline
+- built-in Cabal parser
+- launch GHCi with options from Cabal file (GHC options, etc)
+- automatic GHCi command launch and package reload
+
+JP Moresmau (jp@moresmau.fr)

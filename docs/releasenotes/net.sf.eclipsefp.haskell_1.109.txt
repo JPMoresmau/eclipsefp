@@ -1,0 +1,26 @@
+EclipseFP Haskell 1.109
+
+Release Notes
+
+Scion:
+  You need Scion, the Haskell IDE library. See http://code.google.com/p/scion-lib/ for more information.
+  You cannot use the version from Hackage (0.1.0.2) since commands have been added for eclipsefp. You'll need to build Cabal from source 
+  (git clone git://github.com/jpmoresmau/scion.git, runhaskell Setup.hs configure/build/install)
+
+Fixes:
+- issue with scion directory (error saying that the project is not in a relative directory)
+- various issues with Cabal file handling
+- handle empty source paths
+- some fixes linked to Scion operation ordering, resource tree locks, etc.
+
+Features:
+- quick fixes on a few GHC warnings (add type signature, add some language pragmas, remove unused import). To be extended
+- choose initial components on project creation (executable and/or library)
+- improve go to declaration behaviour (jump even to things that are not exposed)
+- GHC preferences
+	- ui has been reorganized using collapsable composites instead of tabs
+	- preferences are now used to prepopulate ghc-options and extensions fields of the Cabal file of a new project
+	- for GHC>6.8.1, new syntax -XOption is used instead of -fOption
+
+
+JP Moresmau (jp@moresmau.fr)
