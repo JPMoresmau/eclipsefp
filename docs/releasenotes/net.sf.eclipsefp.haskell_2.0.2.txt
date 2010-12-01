@@ -25,7 +25,7 @@ Upgrade notes:
   - When upgrading through the Eclipse mecanism, scion will not be rebuilt when you restart. You need to go to Preferences -> Haskell -> Scion and Cabal and select one Cabal install (using Autodetect usually works fine). Upon clicking OK scion will build.
 
 
-Thanks to Scott Michel for his contributions.
+Thanks to B. Scott Michel for his contributions.
 Thanks to all the people that expressed interest in EclipseFP and want to see it stay alive and improve!
 
 JP Moresmau (jp@moresmau.fr)
