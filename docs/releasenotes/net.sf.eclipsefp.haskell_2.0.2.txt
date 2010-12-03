@@ -1,0 +1,31 @@
+EclipseFP Haskell 2.0.2
+
+Release Notes
+
+
+Scion:
+  You need Scion, the Haskell IDE library. See http://code.google.com/p/scion-lib/ for more information.
+  You cannot use the version from Hackage (0.1.0.2) since commands have been added for eclipsefp. From version 1.111, eclipsefp includes a modified source distribution of scion, that is built and used by eclipsefp if the use built-in server preferences option is checked. Since it is by default, eclipse might be a bit slow to start the first time scion is built. Otherwise, you can build Scion from source (git clone git://github.com/JPMoresmau/scion.git, runhaskell Setup.hs configure/build/install)
+
+Fixes:
+  - Thing at point command correctly sets the proper file context and parses the result correctly
+
+Features:
+  - Specify Cabal implementation to use to build internal Scion
+  - Open Definition has been enhanced:
+	- correctly finds proper definition when several names existed in the project in different modules
+	- opens definition in source files in referenced projects
+	- opens external source or haddock documentation (driven by preferences, by default, searches in the local Haskell implementation and on Hackage)
+  - Interface to cabal sdist via Project -> Export -> Haskell -> Cabal Source export
+
+Internal:
+  - Refactor of scion client plugin for better stability, better performance and cleaner code
+
+Upgrade notes:
+  - When upgrading through the Eclipse mecanism, scion will not be rebuilt when you restart. You need to go to Preferences -> Haskell -> Scion and Cabal and select one Cabal install (using Autodetect usually works fine). Upon clicking OK scion will build.
+
+
+Thanks to B. Scott Michel for his contributions.
+Thanks to all the people that expressed interest in EclipseFP and want to see it stay alive and improve!
+
+JP Moresmau (jp@moresmau.fr)

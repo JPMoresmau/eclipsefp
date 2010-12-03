@@ -1,0 +1,52 @@
+EclipseFP Haskell 2.0.1
+
+Release Notes
+
+We're moving to a 3 integer version identifier, since it's used for Eclipse plugins (see http://wiki.eclipse.org/index.php/Version_Numbering). 2.0.0 is the version following 1.111. 2.0.1 fixes a dependency error on AttoJSON (now builds with version 0.5.8)
+
+Scion:
+  You need Scion, the Haskell IDE library. See http://code.google.com/p/scion-lib/ for more information.
+  You cannot use the version from Hackage (0.1.0.2) since commands have been added for eclipsefp. From version 1.111, eclipsefp includes a modified source distribution of scion, that is built and used by eclipsefp if the use built-in server preferences option is checked. Since it is by default, eclipse might be a bit slow to start the first time scion is built. Otherwise, you can build Scion from source (git clone git://github.com/JPMoresmau/scion.git, runhaskell Setup.hs configure/build/install)
+
+Fixes:
+  - use cabal install to install scion so that dependencies are downloaded
+  - fix in Cabal parsing with multiple if else
+  - icons in outline view for Cabal flags/if/else
+  - do not see build messages multiple times when we have multiple cabal components
+  - marker position when changing a module breaks another one
+  - rebuild everything without output on startup to have full definition db
+  - fixes in Cabal handling when modifying multiple-valued fields
+  - fixes "file not in module graph" when a source file does not belong to the last Cabal component loaded
+  - creates Main.hs for new executable in the proper folder as specified by preferences
+  - when a file is not found in module graph, reset module specific session info to avoid data from the previous file
+  - Quick fix: adding a new pragma or type definition respects literate format
+  - 0pening a file not contained in a Cabal component (Setup.hs say) uses a single file component that parses it without any special flag nor dependencies
+  - Opening Main.hs when the source folder is the project root folder does not fail with File not in Module graph error any more. 
+  - uses GHC lexing for syntax highlighting, which fixes issues with for example character literals, etc.
+  - selecting an instance declaration in outline view selects the full declaration instead of partially selecting the start of it
+  - fixes when adding/removing a module to/from several components	
+  - when arbitrary type check cannot be done, the message only appears on per file per session, and contains the file name
+  - better support of Cabal 1.6
+
+Features:
+  - GHC libraries list in Project Explorer only shows libraries referenced by the project.
+  - Some more quick fixes around pragmas (more messages handled)
+  - unused "import libraries" property page changed to provide front end to build-depends field of Cabal (add/remove libraries dependencies)
+  - compiles under Helios
+  - if no component (library and/or executable) is selected when creating a project, no cabal file is created. Useful to get a project from a source control.
+  - tab with for Haskell and Cabal editor exposed as preferences
+  - More options for syntax highlighting (numbers, etc...)
+  - By default a new module is included in all the components of the project
+  - Outline now works on modules that parse but do not typecheck
+  - Arguments for GHCi launch configurations now split in additional arguments, that you can edit, and other arguments, generated from the cabal info
+
+Internal
+  - removed Antlr parsing and Java based AST representation. Let's just use Scion for all source code parsing.
+  - uses GHC lexing for syntax highlighting. Same thing, let's leverage Scion.
+  - Communications with scion using pipes and not network.
+
+Thanks to Han Joosten for his feedback and his help.
+Thanks to Scott Michel for his contributions.
+Thanks to all the people that expressed interest in EclipseFP and want to see it stay alive and improve!
+
+JP Moresmau (jp@moresmau.fr)

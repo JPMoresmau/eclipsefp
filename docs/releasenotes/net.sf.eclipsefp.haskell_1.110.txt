@@ -1,0 +1,24 @@
+EclipseFP Haskell 1.110
+
+Release Notes
+
+Scion:
+  You need Scion, the Haskell IDE library. See http://code.google.com/p/scion-lib/ for more information.
+  You cannot use the version from Hackage (0.1.0.2) since commands have been added for eclipsefp. You'll need to build Cabal from source 
+  (git clone git://github.com/JPMoresmau/scion.git, runhaskell Setup.hs configure/build/install)
+
+Fixes:
+  - issues when Cabal files didn't end with new line
+  - changes launch command line when cabal file changes
+  - sourceforge 2919994: cannot change color of characters fixed
+
+Features:
+  - launch GHCi sessions in debug mode
+	- toggle line breakpoints in Haskell source
+	- stop automatically at breakpoints, then single step
+	- see variables at stop point and possibility to force their evaluation
+	- GHCi preferences: use Show on print, stop at exception/errors
+	- evaluate arbitrary expressions when stopped
+  - see outline components in project view
+
+JP Moresmau (jp@moresmau.fr)

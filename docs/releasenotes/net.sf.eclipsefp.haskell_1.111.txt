@@ -1,0 +1,28 @@
+EclipseFP Haskell 1.111
+
+Release Notes
+
+Scion:
+  You need Scion, the Haskell IDE library. See http://code.google.com/p/scion-lib/ for more information.
+  You cannot use the version from Hackage (0.1.0.2) since commands have been added for eclipsefp. From version 1.111, eclipsefp includes a modified source distribution of scion, that is built and used by eclipsefp if the use built-in server preferences option is checked. Since it is by default, eclipse might be a bit slow to start the first time scion is built. Otherwise, you can build Scion from source (git clone git://github.com/JPMoresmau/scion.git, runhaskell Setup.hs configure/build/install)
+
+Fixes:
+  - supports IPv6 (Scion defaults to listening to IPv6 if the stack is enabled, see http://hackage.haskell.org/trac/ghc/ticket/2391)
+  - supports GHC 6.12 (new ghc-pkg list format, uses scion code that is GHC 6.12 compliant) 
+  - forces UTF-8 on connection to scion
+  - do not overwrite existing project files (allow projects to be created from source control repositories)
+  - remove deleted files in launch configurations
+  - show error if configure fails
+  - GHC implementations choice UI had several bugs, now fixed
+  - Saving a haskell file that is not in a Haskell project does not cause NullPointerException any more
+	
+Features:
+  - Project name appears in job names (Progress view) to help debugging eclipsefp
+  - Bundles scion source code. It will run cabal configure and cabal build for you (thus downloading dependencies) and use the built scion-server. It will not install scion on your system via cabal install to not mess up your packages. It will not build if you haven't selected any GHC implementation in Preferences, in which case you need to choose an implementation and restart Eclipse.
+  - GHC implementation UI: use default name with version when no name is given and bin folder selected
+
+
+Thanks to David, Chris Daniels and Han Joosten for their feedback and their help.
+
+
+JP Moresmau (jp@moresmau.fr)

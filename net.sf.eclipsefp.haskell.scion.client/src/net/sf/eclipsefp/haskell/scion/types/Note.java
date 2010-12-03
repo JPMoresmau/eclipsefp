@@ -1,9 +1,13 @@
 package net.sf.eclipsefp.haskell.scion.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -97,21 +101,20 @@ public class Note {
 					)
 				return;
 		}
-		
-		
-		IMarker marker = resource.createMarker(IMarker.PROBLEM);
-		marker.setAttribute(IMarker.SEVERITY, severity);
-		marker.setAttribute(IMarker.LINE_NUMBER, line);
-		marker.setAttribute(IMarker.CHAR_START, start);
+
+		Map<Object,Object> attributes=new HashMap<Object,Object>();
+		MarkerUtilities.setLineNumber(attributes, line);
+		MarkerUtilities.setCharStart(attributes, start);
 		// if we have startColumn==endColumn we could take end+1
 		// BUT if end goes over the document size, the marker is not shown on the document
 		// so it's better to just show the line without more info 
 		if (end>start){
 			// exclusive
-			marker.setAttribute(IMarker.CHAR_END, end-1);
+			MarkerUtilities.setCharEnd(attributes, end-1);
 		} 
-		
-		marker.setAttribute(IMarker.MESSAGE,msg);
+		attributes.put(IMarker.SEVERITY, severity);
+		attributes.put(IMarker.MESSAGE,msg);
+		MarkerUtilities.createMarker(resource, attributes, IMarker.PROBLEM);
 	}
 	
 
