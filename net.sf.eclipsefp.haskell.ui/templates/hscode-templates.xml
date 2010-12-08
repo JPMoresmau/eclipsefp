@@ -19,4 +19,23 @@
   autoinsert="false"
 >case ${expression} of
 </template>
+<template
+  name="data"
+  description="Insert a Haskell98 data type"
+  id="net.sf.eclipsefp.haskell.templates.data98"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>data ${expression} = ${constructor}
+</template>
+<template
+  name="data"
+  description="Insert a General Algegraic Data Type"
+  id="net.sf.eclipsefp.haskell.templates.data_gadt"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>data ${typename} where
+  ${constructor} :: ${typename}
+</template>
 </templates>
