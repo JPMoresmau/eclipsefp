@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+<template
+  name="gadt"
+  description="Insert a General Algebraic Data Type"
+  id="net.sf.eclipsefp.haskell.templates.gadt"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>data ${typename} where
+  ${constructor} :: ${typename}
+</template>
+<template
+  name="case"
+  description="Insert a case statement"
+  id="net.sf.eclipsefp.haskell.templates.case"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>case ${expression} of
+</template>
+<template
+  name="data"
+  description="Insert a Haskell98 data type"
+  id="net.sf.eclipsefp.haskell.templates.data98"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>data ${expression} = ${constructor}
+</template>
+<template
+  name="data"
+  description="Insert a General Algegraic Data Type"
+  id="net.sf.eclipsefp.haskell.templates.data_gadt"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>data ${typename} where
+  ${constructor} :: ${typename}
+</template>
+</templates>

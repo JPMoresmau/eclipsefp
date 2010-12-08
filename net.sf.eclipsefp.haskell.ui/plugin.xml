@@ -90,7 +90,7 @@
             class="org.eclipse.jface.text.templates.TemplateContextType"
             name="%templateContext_name"
             id="cabalPackageDescriptionTemplates"/>
-      <include file="templates/templates.xml"/>
+      <include file="templates/cabal-templates.xml"/>
    </extension>
 
    <extension
@@ -206,6 +206,12 @@
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP"
             name="%searchPP_name"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
+      </page>
+      <page
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences"
+            name="Haskell Code Templates">
       </page>
    </extension>
    <extension
@@ -419,6 +425,9 @@
       <initializer
             class="net.sf.eclipsefp.haskell.ui.HaskellUIPreferenceInitializer">
       </initializer>
+      <initializer
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.PreferenceInitializer">
+      </initializer>
    </extension>
 
    <!-- some common categories for eclipsefp subprojects to dock on -->
@@ -585,4 +594,14 @@
          <description>%cabalSDistWizard.description</description>
       </wizard>
    </extension>
+     <extension
+           point="org.eclipse.ui.editors.templates">
+        <contextType
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HSCodeTemplateContextType"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+            name="%hsCodeTemplates.context">
+        </contextType>
+        <include file="templates/hscode-templates.xml">
+        </include>
+     </extension>
 </plugin>
