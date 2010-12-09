@@ -3,18 +3,14 @@ package net.sf.eclipsefp.haskell.haddock.ui.wizard.op;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
-
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.CommandLineUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.haddock.HaddockPlugin;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.IDebugUIConstants;
 
 /** <p>the operation that performs the actual Haddock run.</p>
   *
@@ -22,7 +18,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
   */
 public class GenerateDocs {
 
-  private static final String PROCESS_TYPE_ID = GenerateDocs.class.getName();
+ // private static final String PROCESS_TYPE_ID = GenerateDocs.class.getName();
   private static boolean trace = HaddockPlugin.isTracing();
 
   private final HaddockInfo info;
@@ -36,22 +32,26 @@ public class GenerateDocs {
     createDirs();
     try {
       String[] cmdLine = getCmdLine();
-      Process process = Runtime.getRuntime().exec( cmdLine );
-      if( process != null ) {
+      //Process process = Runtime.getRuntime().exec( cmdLine );
+      //if( process != null ) {
         try {
-          ILaunchConfigurationWorkingCopy wc = createLaunch();
+          /*ILaunchConfigurationWorkingCopy wc = createLaunch();
           wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
+          wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
           ILaunch newLaunch = new Launch( wc, ILaunchManager.RUN_MODE, null );
           String label = "Generating Haddock docs";
           IProcess proc = DebugPlugin.newProcess( newLaunch, process, label );
           proc.setAttribute( IProcess.ATTR_CMDLINE,
                              CommandLineUtil.renderCommandLine( cmdLine) );
           proc.setAttribute( IProcess.ATTR_PROCESS_TYPE, PROCESS_TYPE_ID );
-          getLauchManager().addLaunch( newLaunch );
+          getLauchManager().addLaunch( newLaunch );*/
+          String label = "Generating Haddock docs";
+          HaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label );
+
         } catch( CoreException cex ) {
           HaddockPlugin.log( "Problem during docs generation", cex );
         }
-      }
+     // }
     } catch( IOException ioex ) {
       result = false;
       HaddockPlugin.log( "Problem during docs generation", ioex );

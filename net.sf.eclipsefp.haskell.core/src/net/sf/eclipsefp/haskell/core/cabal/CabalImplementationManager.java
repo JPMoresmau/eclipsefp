@@ -9,6 +9,7 @@ package net.sf.eclipsefp.haskell.core.cabal;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -201,5 +202,19 @@ public class CabalImplementationManager {
   public Preferences cabalImplementationsPreferenceNode() {
     IEclipsePreferences instanceNode = HaskellCorePlugin.instanceScopedPreferences();
     return instanceNode.node( ICorePreferenceNames.CABAL_IMPLEMENTATIONS );
+  }
+
+  public static String getCabalExecutable(){
+    CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
+    CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
+    if (cabalImpl!=null){
+      final String cabalExecutable = cabalImpl.getCabalExecutableName().toOSString();
+      if (cabalExecutable==null || cabalExecutable.length()<1){
+        HaskellCorePlugin.log( CoreTexts.zerolenCabalExecutable_message,IStatus.ERROR);
+        return null;
+      }
+      return cabalExecutable;
+    }
+    return null;
   }
 }

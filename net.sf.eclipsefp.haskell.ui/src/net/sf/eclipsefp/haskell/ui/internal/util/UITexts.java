@@ -329,6 +329,15 @@ public final class UITexts extends NLS {
   public static String exportSource_options_folder_choose;
   public static String exportSource_warning_markers;
 
+  public static String install_job;
+  public static String install_options;
+  public static String install_options_folder;
+  public static String install_options_folder_choose;
+  public static String install_options_user;
+  public static String install_options_global;
+  public static String install_error;
+  public static String install_error_text;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

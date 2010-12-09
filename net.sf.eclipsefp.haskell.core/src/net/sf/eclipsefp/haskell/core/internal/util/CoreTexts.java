@@ -46,6 +46,7 @@ public final class CoreTexts extends NLS {
 
   public static String sourceFileGenerator_creating;
 
+  public static String zerolenCabalExecutable_message;
 
   private static final String BUNDLE_NAME
     = CoreTexts.class.getPackage().getName() + ".coretexts"; //$NON-NLS-1$
