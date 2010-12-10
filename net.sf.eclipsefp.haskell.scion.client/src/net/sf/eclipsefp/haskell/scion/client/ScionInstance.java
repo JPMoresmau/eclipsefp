@@ -287,11 +287,9 @@ public class ScionInstance {
   }
 
   /**
-   * Build the Haskell project. This method returns a Job, which should be scheduled, i.e.,
-   * <pre>
-   *   Job buildJob = buildProject(true, false);
-   *   buildJob.schedule();
-   * </pre>
+   * Build the Haskell project. This method creates a Job that adds a project resource scheduling
+   * rule to prevent other project-referenced jobs from running, and schedules the resulting Job
+   * to run.
    * 
    * @param output
    *          Echo output from the build
@@ -299,7 +297,7 @@ public class ScionInstance {
    *          Force recompilation if true
    * @return A Job that can be scheduled to build the project
    */
-  public void buildProject(final boolean output, final boolean forceRecomp) {
+  public Job buildProject(final boolean output, final boolean forceRecomp) {
     if (checkCabalFile()) {
       final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
 
@@ -320,7 +318,11 @@ public class ScionInstance {
       buildJob.setRule( project );
       buildJob.setPriority(Job.BUILD);
       buildJob.schedule();
+      
+      return buildJob;
     }
+    
+    return null;
   }
   
   /**
@@ -361,20 +363,21 @@ public class ScionInstance {
    * @param monitor Progress feedback to the user
    * @param output If true, output from the build will appear in the project's console
    * @param forceRecomp If true, force recompilation
-   * @return True if all commands sent to scion-server succeeded, indicating that the build completed.
+   * @return true if all commands sent to scion-server succeeded, indicating that the build completed.
    */
   private boolean buildProjectInternal(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
     boolean retval = false;
     final String projectName = project.getName();
+    final String cabalFile = getCabalFile(getProject()).getLocation().toOSString();
     
     if ( listComponents(monitor) && loadComponents(monitor, output, forceRecomp) ) {
       monitor.subTask( NLS.bind( ScionText.buildProject_parseCabalDescription, projectName ) );
-      ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+      ParseCabalCommand pcc = new ParseCabalCommand(cabalFile);
       if (server.sendCommand(pcc)) {
         cabalDescription = pcc.getDescription();
 
         monitor.subTask( NLS.bind( ScionText.buildProject_cabalDependencies, projectName ) );
-        CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+        CabalDependenciesCommand cdc = new CabalDependenciesCommand(cabalFile);
         if (server.sendCommand(cdc)) {
           packagesByDB = cdc.getPackagesByDB();
           retval = true;
@@ -790,6 +793,19 @@ public class ScionInstance {
    * @return The cabal dependencies map.
    */
   public Map<String, CabalPackage[]> getPackagesByDB() {
+    if (packagesByDB == null) {
+      // Attempt to build the project, since this is an indicator that the build needs to be done.
+      Job buildJob = buildProject(false, true);
+      
+      while (buildJob.getResult() == null) {
+        try {
+          buildJob.join();
+        } catch (InterruptedException irq) {
+          break;
+        }
+      }
+    }
+    
     return packagesByDB;
   }
 
@@ -799,6 +815,19 @@ public class ScionInstance {
    * @return A list of the cabal project's components.
    */
   public List<Component> getComponents() {
+    if (components == null) {
+      // Attempt to build the project, since this is an indicator that the build needs to be done.
+      Job buildJob = buildProject(false, true);
+      
+      while (buildJob.getResult() == null) {
+        try {
+          buildJob.join();
+        } catch (InterruptedException irq) {
+          break;
+        }
+      }
+    }
+
     return components;
   }
 
