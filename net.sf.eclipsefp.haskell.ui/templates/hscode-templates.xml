@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
+
+<!-- General Abstract Data Types -->
 <template
   name="gadt"
   description="Insert a General Algebraic Data Type"
@@ -10,24 +12,7 @@
 >data ${typename} where
   ${constructor} :: ${typename}
 </template>
-<template
-  name="case"
-  description="Insert a case statement"
-  id="net.sf.eclipsefp.haskell.templates.case"
-  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
-  enabled="true"
-  autoinsert="false"
->case ${expression} of
-</template>
-<template
-  name="data"
-  description="Insert a Haskell98 data type"
-  id="net.sf.eclipsefp.haskell.templates.data98"
-  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
-  enabled="true"
-  autoinsert="false"
->data ${expression} = ${constructor}
-</template>
+
 <template
   name="data"
   description="Insert a General Algegraic Data Type"
@@ -38,4 +23,53 @@
 >data ${typename} where
   ${constructor} :: ${typename}
 </template>
+
+<!-- 'case' expression -->
+<template
+  name="case"
+  description="Insert a case expression"
+  id="net.sf.eclipsefp.haskell.templates.case"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>case ${expression} of
+</template>
+
+<!-- Haskell 98 data type/constructor -->
+<template
+  name="data"
+  description="Insert a Haskell98 data type"
+  id="net.sf.eclipsefp.haskell.templates.data98"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>data ${expression} = ${constructor}${cursor}
+</template>
+
+<!-- 'do' block -->
+<template
+  name="do"
+  description="Insert a Monad 'do' block"
+  id="net.sf.eclipsefp.haskell.templates.monad.do"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>do
+  -- TODO: Add Monad code
+  ${cursor}return undefined
+</template>
+
+<!-- 'let' expression -->
+<template
+  name="let"
+  description="Insert a 'let' expression"
+  id="net.sf.eclipsefp.haskell.templates.let"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>let
+    ${var} = ${value}
+  in ${expression}
+</template>
+
 </templates>

@@ -13,7 +13,6 @@ import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class HaskellCompletionContext implements IHaskellCompletionContext {
-
   private IFile file;
   private String source;
   private int fOffset;
@@ -78,8 +77,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
 	}
 
-  private void searchDefinedNames( final String prefix,
-      final List<ICompletionProposal> result ) {
+  private void searchDefinedNames( final String prefix, final List<ICompletionProposal> result ) {
     if( file != null
         && FileUtil.hasHaskellExtension( file )
         && ResourceUtil.isInHaskellProject( file ) ) {
@@ -105,33 +103,26 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
     }
   }
 
-	private void searchStringList(final String prefix, final String[] names,
-		final List<ICompletionProposal> result)
+	private void searchStringList(final String prefix, final String[] names, final List<ICompletionProposal> result)
 	{
 		final int offset = getOffset();
 		final int plength = prefix.length();
 
 		for(String name : names) {
 			if (name.startsWith(prefix)) {
-				result.add(new CompletionProposal(name, offset - plength,
-				                                  plength,
-				                                  name.length()));
-
+				result.add(new CompletionProposal(name, offset - plength, plength, name.length()));
 			}
 		}
 	}
 
-	 private void searchStringList(final String prefix, final Iterable<String> names,
-	     final List<ICompletionProposal> result)
+	 private void searchStringList(final String prefix, final Iterable<String> names, final List<ICompletionProposal> result)
 	   {
 	     final int offset = getOffset();
 	     final int plength = prefix.length();
 
 	     for(String name : names) {
 	       if (name.startsWith(prefix)) {
-	         result.add(new CompletionProposal(name, offset - plength,
-	                                           plength,
-	                                           name.length()));
+	         result.add(new CompletionProposal(name, offset - plength, plength, name.length()));
 	       }
 	     }
 	   }
@@ -190,8 +181,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 //		}
 //	}
 
-	private String getQualifier( final String source,
-			                     final int offset )
+	private String getQualifier( final String source, final int offset )
 	{
 		StringBuffer contents = readSourceTillOffset(source, offset);
 

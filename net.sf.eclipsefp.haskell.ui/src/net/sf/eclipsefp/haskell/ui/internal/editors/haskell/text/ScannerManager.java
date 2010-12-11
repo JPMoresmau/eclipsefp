@@ -210,8 +210,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private Token createTokenInternal( final String colorKey,
                                      final String boldKey ) {
-    TextAttribute textAtt = createTextAttribute( colorKey,
-                                                               boldKey );
+    TextAttribute textAtt = createTextAttribute( colorKey, boldKey );
     final Token result = new Token( textAtt );
     PropertyChangeHandler colorHandler = new PropertyChangeHandler() {
       @Override

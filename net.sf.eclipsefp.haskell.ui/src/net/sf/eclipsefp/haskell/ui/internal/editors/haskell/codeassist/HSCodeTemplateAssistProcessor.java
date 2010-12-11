@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -25,28 +26,50 @@ import org.eclipse.swt.graphics.Image;
 public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
   @Override
   protected String extractPrefix( final ITextViewer viewer, final int offset ) {
-    int i = offset;
     IDocument document = viewer.getDocument();
-    if( i > document.getLength() ) {
-      return "";
+
+    // If we're beyond the document limit (how?), so return an empty string
+    if( offset > document.getLength() ) {
+      return new String();
     }
+
     try {
-      while( i > 0 ) {
-        char ch = document.getChar( i - 1 );
-        if( !Character.isJavaIdentifierPart( ch ) ) {
-          break;
-        }
-        i--;
+      IRegion lineAt = document.getLineInformationOfOffset( offset );
+      boolean stopScan = false;
+      int i = lineAt.getOffset();
+      char ch = document.getChar( i );
+
+      // Is this a comment block -> possible Haddock template completion context
+      while (   Character.isSpaceChar( ch )
+             && i <= offset ) {
+        ch = document.getChar( ++i );
       }
-      if( i > 0 ) {
-        int j = i;
-        if( document.getChar( j - 1 ) == '<' ) {
+
+      if (   (ch == '{' || ch == '-' )
+          && document.getChar(i + 1) == '-' ) {
+        if (i + 1 == offset) {
+          // Smells like a comment and a Haddock template completion
+          return document.get(i, i + 1);
+        }
+
+        // We're somewhere in the middle of a comment, which means there are no
+        // possible template completions.
+        return null;
+      }
+
+      // Otherwise, collect an identifier but don't go past the beginning of the current line:
+      while( i > lineAt.getOffset() && !stopScan) {
+        ch = document.getChar( i - 1 );
+        if( !HaskellText.isHaskellIdentifierPart(ch) ) {
+          stopScan = true;
+        } else {
           i--;
         }
       }
+
       return document.get( i, offset - i );
     } catch( BadLocationException e ) {
-      return "";
+      return new String();
     }
   }
 

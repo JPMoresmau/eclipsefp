@@ -21,7 +21,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.json.JSONArray;
 
 /**
- * <p>Uses Scion tokenTypesArbitrary function to get tokens for a haskell source</p>
+ * Uses Scion tokenTypesArbitrary function to get tokens for a haskell source
   *
   * @author JP Moresmau
  */
@@ -43,47 +43,40 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private int offset;
   private int length;
 
-  private final Map<String,IToken> tokenByTypes=new HashMap<String,IToken>();
+  private final Map<String,IToken> tokenByTypes;
 
   public ScionTokenScanner(final ScannerManager man,final ScionInstance instance,final IFile file){
     this.man=man;
     this.instance=instance;
     this.file=file;
-    buildTokensByType();
-  }
 
-  private void buildTokensByType(){
-    tokenByTypes.put( "LS", man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
-    tokenByTypes.put( "LC", man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
-    tokenByTypes.put( "D", man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
-    tokenByTypes.put( "DL", man.createToken( EDITOR_LITERATE_COMMENT_COLOR,
-        EDITOR_LITERATE_COMMENT_BOLD  ) );
-    tokenByTypes.put( "K", man.createToken( EDITOR_KEYWORD_COLOR,
-        EDITOR_KEYWORD_BOLD   ) );
-    tokenByTypes.put( "EK", man.createToken( EDITOR_KEYWORD_COLOR,
-        EDITOR_KEYWORD_BOLD   ) );
-    tokenByTypes.put( "LI", man.createToken( EDITOR_NUMBER_COLOR,
-        EDITOR_NUMBER_BOLD   ) );
-    tokenByTypes.put( "LR", man.createToken( EDITOR_NUMBER_COLOR,
-        EDITOR_NUMBER_BOLD   ) );
-    tokenByTypes.put( "LW", man.createToken( EDITOR_NUMBER_COLOR,
-        EDITOR_NUMBER_BOLD   ) );
-    tokenByTypes.put( "LF", man.createToken( EDITOR_NUMBER_COLOR,
-        EDITOR_NUMBER_BOLD   ) );
-    tokenByTypes.put( "LW", man.createToken( EDITOR_NUMBER_COLOR,
-        EDITOR_NUMBER_BOLD   ) );
-    tokenByTypes.put( "IC", man.createToken( EDITOR_CON_COLOR,
-        EDITOR_CON_BOLD  ) );
-    tokenByTypes.put( "IV", man.createToken( EDITOR_VAR_COLOR,
-        EDITOR_VAR_BOLD   ) );
-    tokenByTypes.put( "S", man.createToken( EDITOR_SYMBOL_COLOR,
-        EDITOR_SYMBOL_BOLD   ) );
-    tokenByTypes.put( "SS", man.createToken( EDITOR_SYMBOL_COLOR,
-        EDITOR_SYMBOL_BOLD   ) );
-    tokenByTypes.put( "PP", man.createToken( EDITOR_CPP_COLOR,
-        EDITOR_CPP_BOLD   ) );
-    tokenByTypes.put( "TH", man.createToken( EDITOR_TH_COLOR,
-        EDITOR_TH_BOLD   ) );
+    this.tokenByTypes = new HashMap<String, IToken>() {
+      // Eclipse insists on a serial version identifier, not that this hash map will ever
+      // get serialized...
+      private static final long serialVersionUID = 3579246300065591883L;
+      {
+        // Literal string
+        put( "LS", man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
+        // Literal character
+        put( "LC", man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
+        put( "D", man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
+        put( "DL", man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
+        // Keyword
+        put( "K", man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
+        put( "EK", man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
+        put( "LI", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( "LR", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( "LW", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( "LF", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( "LW", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( "IC", man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) );
+        put( "IV", man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) );
+        put( "S", man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
+        put( "SS", man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
+        put( "PP", man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) );
+        put( "TH", man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
+      }
+    };
   }
 
   public int getTokenLength() {
