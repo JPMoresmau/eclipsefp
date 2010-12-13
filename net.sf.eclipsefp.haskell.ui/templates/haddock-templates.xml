@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Haddock documentation completions -->
+<templates>
+
+<!-- Document following -->
+<template
+  name="--| "
+  description="Document following declaration"
+  id="net.sf.eclipsefp.haskell.templates.haddock_follow"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.haddocktemplates"
+  enabled="true"
+  autoinsert="false"
+>--| </template>
+
+<!-- Document previous -->
+<template
+  name="--^ "
+  description="Document previous declaration/item"
+  id="net.sf.eclipsefp.haskell.templates.haddock_prev"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.haddocktemplates"
+  enabled="true"
+  autoinsert="false"
+>--^ </template>
+
+</templates>

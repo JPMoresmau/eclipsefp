@@ -4,7 +4,7 @@
 <!-- General Abstract Data Types -->
 <template
   name="gadt"
-  description="Insert a General Algebraic Data Type"
+  description="%CodeTemplates.gadt.description"
   id="net.sf.eclipsefp.haskell.templates.gadt"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
@@ -15,7 +15,7 @@
 
 <template
   name="data"
-  description="Insert a General Algegraic Data Type"
+  description="%CodeTemplates.gadt.description"
   id="net.sf.eclipsefp.haskell.templates.data_gadt"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
@@ -27,7 +27,7 @@
 <!-- 'case' expression -->
 <template
   name="case"
-  description="Insert a case expression"
+  description="%CodeTemplates.case.description"
   id="net.sf.eclipsefp.haskell.templates.case"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
@@ -38,7 +38,7 @@
 <!-- Haskell 98 data type/constructor -->
 <template
   name="data"
-  description="Insert a Haskell98 data type"
+  description="%CodeTemplates.h98datactor.description"
   id="net.sf.eclipsefp.haskell.templates.data98"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
@@ -49,20 +49,20 @@
 <!-- 'do' block -->
 <template
   name="do"
-  description="Insert a Monad 'do' block"
+  description="%CodeTemplates.do.description"
   id="net.sf.eclipsefp.haskell.templates.monad.do"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
   autoinsert="false"
 >do
-  -- TODO: Add Monad code
+  -- ${todo}: Add Monad code
   ${cursor}return undefined
 </template>
 
 <!-- 'let' expression -->
 <template
   name="let"
-  description="Insert a 'let' expression"
+  description="%CodeTemplates.let.description"
   id="net.sf.eclipsefp.haskell.templates.let"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
@@ -72,4 +72,27 @@
   in ${expression}
 </template>
 
+<!-- 'newtype' expression -->
+<template
+  name="newtype"
+  description="%CodeTemplates.newtype.description"
+  id="net.sf.eclipsefp.haskell.templates.newtype"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>newtype ${newtype} = ${existingType}
+</template>
+
+<!-- 'class' expression -->
+<template
+  name="class"
+  description="%CodeTemplates.class.description"
+  id="net.sf.eclipsefp.haskell.templates.class"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>class ${name} where
+  -- ${todo} Add class function signatures
+  ${function} :: ${signature}
+</template>
 </templates>

@@ -28,14 +28,13 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
   protected String extractPrefix( final ITextViewer viewer, final int offset ) {
     IDocument document = viewer.getDocument();
 
-    // If we're beyond the document limit (how?), so return an empty string
+    // If we're beyond the document limit (how?), return an empty string
     if( offset > document.getLength() ) {
       return new String();
     }
 
     try {
       IRegion lineAt = document.getLineInformationOfOffset( offset );
-      boolean stopScan = false;
       int i = lineAt.getOffset();
       char ch = document.getChar( i );
 
@@ -58,17 +57,21 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
       }
 
       // Otherwise, collect an identifier but don't go past the beginning of the current line:
-      while( i > lineAt.getOffset() && !stopScan) {
-        ch = document.getChar( i - 1 );
-        if( !HaskellText.isHaskellIdentifierPart(ch) ) {
-          stopScan = true;
+      i = offset - 1;
+
+      boolean stopscan = false;
+      while (i > lineAt.getOffset() && !stopscan) {
+        ch = document.getChar( i );
+        if (HaskellText.isHaskellIdentifierPart(document.getChar( i ))) {
+          --i;
         } else {
-          i--;
+          stopscan = true;
         }
       }
 
       return document.get( i, offset - i );
     } catch( BadLocationException e ) {
+      // Dunno how we'd generate this exception, but handle it anyway.
       return new String();
     }
   }
@@ -98,11 +101,17 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
   public ICompletionProposal[] computeCompletionProposals( final ITextViewer viewer, final int offset ) {
     ITextSelection selection = ( ITextSelection )viewer.getSelectionProvider().getSelection();
     int theOffset = offset;
+
     // adjust offset to end of normalized selection
-    if( selection.getOffset() == theOffset ) {
+    if ( selection.getOffset() == theOffset ) {
       theOffset = selection.getOffset() + selection.getLength();
     }
+
     String prefix = extractPrefix( viewer, theOffset );
+    if (prefix == null) {
+      return new ICompletionProposal[ 0 ];
+    }
+
     Region region = new Region( theOffset - prefix.length(), prefix.length() );
     TemplateContext context = createContext( viewer, region );
     if( context == null ) {
