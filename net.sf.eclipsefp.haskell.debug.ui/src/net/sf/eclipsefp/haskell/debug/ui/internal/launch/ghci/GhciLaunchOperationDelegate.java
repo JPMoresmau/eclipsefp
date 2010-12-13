@@ -38,7 +38,6 @@ public class GhciLaunchOperationDelegate
     List<String> cmdLine = new ArrayList<String>();
 
     cmdLine.add( "--interactive" ); //$NON-NLS-1$
-
     String libPath = Util.constructLibPath( selectedFiles );
     if( !"".equals( libPath ) ) { //$NON-NLS-1$
       cmdLine.add(libPath);
