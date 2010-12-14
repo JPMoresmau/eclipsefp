@@ -25,7 +25,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.Launch;
@@ -291,11 +290,11 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
   public static void runInConsole(final List<String> commands,final File directory,final String title) throws CoreException,IOException{
     ProcessBuilder pb=new ProcessBuilder( commands );
     pb.directory( directory );
-    pb.redirectErrorStream( true );
-    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+    //pb.redirectErrorStream( true );
+    final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     String configTypeId = HaskellLaunchDelegate.class.getName();
     ILaunchConfigurationType configType  = launchManager.getLaunchConfigurationType( configTypeId );
-    final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, launchManager.generateUniqueLaunchConfigurationNameFrom( title));
+    final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, launchManager.generateUniqueLaunchConfigurationNameFrom( title + System.currentTimeMillis()));
 
     wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
     wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
@@ -310,27 +309,36 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
     launch.addProcess(ep);
 
     launchManager.addLaunch(launch);
-    launchManager.addLaunchListener( new ILaunchListener() {
-
-      public void launchRemoved( final ILaunch arg0 ) {
-        if (arg0==launch){
-          try {
-            wc.delete();
-          } catch (CoreException ce){
-            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
-          }
-        }
-
-      }
-
-      public void launchChanged( final ILaunch arg0 ) {
-        // NOOP
-      }
-
-      public void launchAdded( final ILaunch arg0 ) {
-        // NOOP
-      }
-    });
+//    launchManager.addLaunchListener( new ILaunchListener() {
+//
+//      public void launchRemoved( final ILaunch arg0 ) {
+//        if (arg0==launch && arg0.isTerminated()){
+//          launchManager.removeLaunchListener( this );
+//          try {
+//            wc.delete();
+//          } catch (CoreException ce){
+//            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
+//          }
+//        }
+//
+//      }
+//
+//      public void launchChanged( final ILaunch arg0 ) {
+//        // NOOP
+//        if (arg0==launch && arg0.isTerminated()){
+//          launchManager.removeLaunchListener( this );
+//          try {
+//            wc.delete();
+//          } catch (CoreException ce){
+//            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
+//          }
+//        }
+//      }
+//
+//      public void launchAdded( final ILaunch arg0 ) {
+//        // NOOP
+//      }
+//    });
 
   }
 }
