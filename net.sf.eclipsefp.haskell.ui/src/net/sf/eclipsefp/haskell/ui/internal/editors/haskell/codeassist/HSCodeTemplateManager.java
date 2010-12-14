@@ -60,7 +60,6 @@ public class HSCodeTemplateManager {
   /** Get the template context registry, initializing the registry container if necessary */
   public ContextTypeRegistry getContextTypeRegistry() {
     fRegistry.addContextType( HSCodeTemplateContextType.CONTEXT_TYPE );
-    fRegistry.addContextType( HaddockTemplateContextType.CONTEXT_TYPE );
     return fRegistry;
   }
 

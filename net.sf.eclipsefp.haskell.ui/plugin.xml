@@ -624,14 +624,4 @@
                translations="$nl$/templates/hscode-templates.properties">
       </include>
    </extension>
-   <extension
-         point="org.eclipse.ui.editors.templates">
-      <contextType
-          class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaddockTemplateContextType"
-          id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.haddocktemplates"
-          name="%haddockTemplates.context">
-      </contextType>
-      <include file="templates/haddock-templates.xml">
-      </include>
-   </extension>
 </plugin>

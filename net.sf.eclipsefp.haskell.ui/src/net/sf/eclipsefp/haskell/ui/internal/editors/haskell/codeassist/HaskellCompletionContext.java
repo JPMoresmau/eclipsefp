@@ -61,7 +61,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			//searchImportableModules(completedToken, result);
 
 			searchDefinedNames(completedToken, result);
-			searchModulesNames(completedToken, result);
+			// FIXME: Delete after next release: This is now part of the modules template variable.
+			// searchModulesNames(completedToken, result);
 			searchPreludeAndKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
@@ -90,6 +91,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
     }
   }
 
+  /* DELETE ME AFTER NEXT RELEASE!
   private void searchModulesNames( final String prefix, final List<ICompletionProposal> result ) {
     if( file != null
         && FileUtil.hasHaskellExtension( file )
@@ -102,6 +104,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
       }
     }
   }
+  */
 
 	private void searchStringList(final String prefix, final String[] names, final List<ICompletionProposal> result)
 	{

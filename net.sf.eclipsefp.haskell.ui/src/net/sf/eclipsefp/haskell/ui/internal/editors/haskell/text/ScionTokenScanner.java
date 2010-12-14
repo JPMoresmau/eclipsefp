@@ -173,13 +173,11 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     if (tok!=null){
       return tok;
     }
-    return man.createToken( EDITOR_DEFAULT_COLOR,
-        EDITOR_DEFAULT_BOLD );
+    return man.createToken( EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD );
   }
 
   public void setPartialRange( final IDocument document, final int offset, final int length,
       final String contentType, final int partitionOffset ) {
     setRange( document, offset, length );
-
   }
 }

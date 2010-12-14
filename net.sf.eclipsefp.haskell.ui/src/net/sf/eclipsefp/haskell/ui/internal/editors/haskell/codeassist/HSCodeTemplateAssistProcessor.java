@@ -16,6 +16,7 @@ import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -35,41 +36,28 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
 
     try {
       IRegion lineAt = document.getLineInformationOfOffset( offset );
-      int i = lineAt.getOffset();
+      int i = offset - 1;
       char ch = document.getChar( i );
 
-      // Is this a comment block -> possible Haddock template completion context
-      while (   Character.isSpaceChar( ch )
-             && i <= offset ) {
-        ch = document.getChar( ++i );
-      }
-
-      if (   (ch == '{' || ch == '-' )
-          && document.getChar(i + 1) == '-' ) {
-        if (i + 1 == offset) {
-          // Smells like a comment and a Haddock template completion
-          return document.get(i, i + 1);
+      if (HaskellText.isHaskellIdentifierPart( ch )) {
+        // Scan backward until non-identifier character
+        for (--i; i >= lineAt.getOffset() && HaskellText.isHaskellIdentifierPart( document.getChar( i ) ); --i) {
+          // NOP
         }
 
-        // We're somewhere in the middle of a comment, which means there are no
-        // possible template completions.
-        return null;
-      }
-
-      // Otherwise, collect an identifier but don't go past the beginning of the current line:
-      i = offset - 1;
-
-      boolean stopscan = false;
-      while (i > lineAt.getOffset() && !stopscan) {
-        ch = document.getChar( i );
-        if (HaskellText.isHaskellIdentifierPart(document.getChar( i ))) {
-          --i;
-        } else {
-          stopscan = true;
+        ++i;
+        return document.get( i, offset - i );
+      } else if ( HaskellText.isCommentPart( ch ) ) {
+        // Scan backward until a non-comment character:
+        for (--i; i >= lineAt.getOffset() && HaskellText.isCommentPart( document.getChar( i ) ); --i) {
+          // NOP
         }
-      }
 
-      return document.get( i, offset - i );
+        ++i;
+        return document.get( i, offset - i );
+      } else {
+        return new String();
+      }
     } catch( BadLocationException e ) {
       // Dunno how we'd generate this exception, but handle it anyway.
       return new String();
@@ -79,7 +67,8 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
   @Override
   protected Template[] getTemplates( final String contextTypeId ) {
     HSCodeTemplateManager manager = HSCodeTemplateManager.getInstance();
-    return manager.getTemplateStore().getTemplates();
+    TemplateStore tStore = manager.getTemplateStore();
+    return tStore.getTemplates();
   }
 
   @Override
@@ -117,24 +106,26 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
     if( context == null ) {
       return new ICompletionProposal[ 0 ];
     }
+
     context.setVariable( "selection", selection.getText() ); // name of the selection variables {line, word_selection //$NON-NLS-1$
+
     Template[] templates = getTemplates( context.getContextType().getId() );
+    String contextId = context.getContextType().getId();
     List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
+
     for( int i = 0; i < templates.length; i++ ) {
-      Template template = templates[ i ];
       try {
+        Template template = templates[ i ];
         context.getContextType().validate( template.getPattern() );
+
+        if (prefix.length() > 0 ) {
+          String templateName = template.getName();
+          if ( templateName.startsWith( prefix ) && template.matches( prefix, contextId ) ) {
+            matches.add( createProposal( template, context, ( IRegion )region, getRelevance( template, prefix ) ) );
+          }
+        }
       } catch( TemplateException e ) {
         continue;
-      }
-      if( !prefix.equals( "" ) && prefix.charAt( 0 ) == '<' ) {
-        prefix = prefix.substring( 1 );
-      }
-      if( !prefix.equals( "" )
-          && ( template.getName().startsWith( prefix ) && template.matches(
-              prefix, context.getContextType().getId() ) ) ) {
-        matches.add( createProposal( template, context, ( IRegion )region,
-            getRelevance( template, prefix ) ) );
       }
     }
     return matches.toArray( new ICompletionProposal[ matches.size() ] );

@@ -21,5 +21,6 @@ public class HSCodeTemplateContextType extends TemplateContextType {
     addResolver( new GlobalTemplateVariables.Cursor() );
     addResolver( new GlobalTemplateVariables.WordSelection() );
     addResolver( new GlobalTemplateVariables.LineSelection() );
+    addResolver( new HaskellTemplateVariables.Module() );
   }
 }

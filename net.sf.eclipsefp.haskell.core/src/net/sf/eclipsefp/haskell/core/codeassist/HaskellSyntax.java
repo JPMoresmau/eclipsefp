@@ -19,7 +19,7 @@ public final class HaskellSyntax {
   private static final String[] KEYWORDS = new String[] {
     "as",       //$NON-NLS-1$
     /* Template proposal: "case",     //$NON-NLS-1$ */
-    "class",    //$NON-NLS-1$
+    /* Template proposal: "class",    //$NON-NLS-1$ */
     /* Template proposal: "data",     //$NON-NLS-1$ */
     "default",  //$NON-NLS-1$
     "deriving", //$NON-NLS-1$
@@ -32,16 +32,16 @@ public final class HaskellSyntax {
     "infixl",   //$NON-NLS-1$
     "infixr",   //$NON-NLS-1$
     "instance", //$NON-NLS-1$
-    "let",      //$NON-NLS-1$
+    /* Template proposal: "let",      //$NON-NLS-1$ */
     "module",   //$NON-NLS-1$
-    "of",       //$NON-NLS-1$
+    /* Embedded in template proposals: "of",       //$NON-NLS-1$ */
     "primitive",//$NON-NLS-1$
     "qualified",//$NON-NLS-1$
     "then",     //$NON-NLS-1$
     "type",     //$NON-NLS-1$
-    "where",    //$NON-NLS-1$
+    "where"     //$NON-NLS-1$
     /* Template proposal: "do",       //$NON-NLS-1$ */
-    "newtype"   //$NON-NLS-1$
+    /* Template proposal "newtype"   //$NON-NLS-1$ */
   };
 
 

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
 
+<!-- 'import' statement -->
+<template
+  name="import"
+  description="%CodeTemplates.import.description"
+  id="net.sf.eclipsefp.haskell.templates.import"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>import ${module}
+</template>
 <!-- General Abstract Data Types -->
 <template
   name="gadt"
@@ -55,7 +65,7 @@
   enabled="true"
   autoinsert="false"
 >do
-  -- ${todo}: Add Monad code
+  -- %CodeTemplates.do.text
   ${cursor}return undefined
 </template>
 
@@ -83,7 +93,7 @@
 >newtype ${newtype} = ${existingType}
 </template>
 
-<!-- 'class' expression -->
+<!-- 'class' declaration -->
 <template
   name="class"
   description="%CodeTemplates.class.description"
@@ -92,7 +102,74 @@
   enabled="true"
   autoinsert="false"
 >class ${name} where
-  -- ${todo} Add class function signatures
+  -- %CodeTemplates.class.text
   ${function} :: ${signature}
+</template>
+
+<!--
+ Haddock documentation templates
+-->
+<template
+  name="--"
+  description="%CodeTemplates.double_dash.description"
+  id="net.sf.eclipsefp.haskell.templates.double_dash"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>-- ${cursor}
+</template>
+
+<template
+  name="{-"
+  description="%CodeTemplates.multiline.description"
+  id="net.sf.eclipsefp.haskell.templates.multiline"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>{-
+${cursor}
+-}
+</template>
+
+<template
+  name="-- |"
+  description="%CodeTemplates.double_dash_haddock_next.description"
+  id="net.sf.eclipsefp.haskell.templates.double_dash_haddock_next"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>-- | ${cursor}
+</template>
+
+<template
+  name="-- ^"
+  description="%CodeTemplates.double_dash_haddock_prev.description"
+  id="net.sf.eclipsefp.haskell.templates.double_dash_haddock_prev"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>-- ^ ${cursor}
+</template>
+
+<template
+  name="{- |"
+  description="%CodeTemplates.multiline_haddock_next.description"
+  id="net.sf.eclipsefp.haskell.templates.multiline_haddock_next"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>{- | ${cursor}
+-}
+</template>
+
+<template
+  name="-- ^"
+  description="%CodeTemplates.multiline_haddock_prev.description"
+  id="net.sf.eclipsefp.haskell.templates.multiline_haddock_prev"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>{- ^ ${cursor}
+-}
 </template>
 </templates>

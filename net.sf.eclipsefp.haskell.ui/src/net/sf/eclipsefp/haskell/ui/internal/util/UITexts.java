@@ -339,6 +339,7 @@ public final class UITexts extends NLS {
   public static String install_error_text;
 
   public static String template_prefSave_backingStore_exception;
+  public static String HaskellTemplateVariables_module_description;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
