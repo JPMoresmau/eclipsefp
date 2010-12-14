@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellDebugTarget;
@@ -22,10 +23,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 
 
@@ -280,5 +285,60 @@ public class HaskellLaunchDelegate implements ILaunchConfigurationDelegate {
       Status status = new Status(IStatus.ERROR, HaskellDebugCore.getPluginId(),CoreTexts.console_command_failed, ioe);
       throw new CoreException(status);
     }
+  }
+
+  public static void runInConsole(final List<String> commands,final File directory,final String title) throws CoreException,IOException{
+    ProcessBuilder pb=new ProcessBuilder( commands );
+    pb.directory( directory );
+    //pb.redirectErrorStream( true );
+    final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+    String configTypeId = HaskellLaunchDelegate.class.getName();
+    ILaunchConfigurationType configType  = launchManager.getLaunchConfigurationType( configTypeId );
+    final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, launchManager.generateUniqueLaunchConfigurationNameFrom( title + System.currentTimeMillis()));
+
+    wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
+    wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
+
+    final ILaunch launch = new Launch(wc,ILaunchManager.RUN_MODE,null);
+
+    Process jp=pb.start();
+    IProcess ep = DebugPlugin.newProcess(launch, jp,title);
+    ep.setAttribute( IProcess.ATTR_CMDLINE,
+        CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
+    ep.setAttribute( IProcess.ATTR_PROCESS_TYPE, HaskellLaunchDelegate.class.getName() );
+    launch.addProcess(ep);
+
+    launchManager.addLaunch(launch);
+//    launchManager.addLaunchListener( new ILaunchListener() {
+//
+//      public void launchRemoved( final ILaunch arg0 ) {
+//        if (arg0==launch && arg0.isTerminated()){
+//          launchManager.removeLaunchListener( this );
+//          try {
+//            wc.delete();
+//          } catch (CoreException ce){
+//            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
+//          }
+//        }
+//
+//      }
+//
+//      public void launchChanged( final ILaunch arg0 ) {
+//        // NOOP
+//        if (arg0==launch && arg0.isTerminated()){
+//          launchManager.removeLaunchListener( this );
+//          try {
+//            wc.delete();
+//          } catch (CoreException ce){
+//            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
+//          }
+//        }
+//      }
+//
+//      public void launchAdded( final ILaunch arg0 ) {
+//        // NOOP
+//      }
+//    });
+
   }
 }

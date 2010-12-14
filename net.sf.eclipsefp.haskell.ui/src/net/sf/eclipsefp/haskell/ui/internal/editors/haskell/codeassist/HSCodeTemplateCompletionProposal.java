@@ -6,7 +6,6 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.swt.graphics.Image;
 
-
 public class HSCodeTemplateCompletionProposal extends TemplateProposal {
   private final Template fTemplate;
   private final TemplateContext fContext;

@@ -5,7 +5,6 @@ package net.sf.eclipsefp.haskell.ui.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellConfiguration_Test;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher_Test;
 import net.sf.eclipsefp.haskell.ui.internal.util.FileUtilTest;
 
@@ -18,7 +17,6 @@ public class AllTests_Suite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite( HaskellCharacterPairMatcher_Test.class );
-		suite.addTestSuite( HaskellConfiguration_Test.class );
 		suite.addTestSuite( FileUtilTest.class );
 		return suite;
 	}

@@ -18,7 +18,6 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvi
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.Partitioning_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.SyntaxColoring_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.CompletionContext_PDETest;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellContentAssistProcessor_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.WorkbenchHaskellCompletionContext_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceProvider_PDETest;
@@ -39,7 +38,6 @@ public class AllTests_PDESuite {
     suite.addTestSuite( SyntaxColoring_PDETest.class );
 
     // code assist
-    suite.addTestSuite( HaskellContentAssistProcessor_PDETest.class );
     suite.addTestSuite( WorkbenchHaskellCompletionContext_PDETest.class );
     suite.addTestSuite( CompletionContext_PDETest.class );
 

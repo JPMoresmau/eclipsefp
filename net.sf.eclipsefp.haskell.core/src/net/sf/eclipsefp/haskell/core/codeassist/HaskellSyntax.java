@@ -7,12 +7,41 @@ package net.sf.eclipsefp.haskell.core.codeassist;
   * @author Leif Frenzel
   */
 public final class HaskellSyntax {
-
+  /**
+   * Haskell's keywords.
+   *
+   * <p>Note: These used to be useful for syntax highlighting and content assist proposals.
+   * Syntax highlighting is now handled differently via the scion-server, so these keywords are now used
+   * solely for content assist proposals. At some point, these may go away because EclipseFP
+   * has template content proposals.
+   *
+   */
   private static final String[] KEYWORDS = new String[] {
-    "as", "case", "class", "data", "default", "deriving", "else", "hiding", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    "if", "import", "in", "infix", "infixl", "infixr", "instance", "let", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    "module", "of", "primitive", "qualified", "then", "type", "where", "do", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    "newtype" //$NON-NLS-1$
+    "as",       //$NON-NLS-1$
+    /* Template proposal: "case",     //$NON-NLS-1$ */
+    /* Template proposal: "class",    //$NON-NLS-1$ */
+    /* Template proposal: "data",     //$NON-NLS-1$ */
+    "default",  //$NON-NLS-1$
+    "deriving", //$NON-NLS-1$
+    "else",     //$NON-NLS-1$
+    "hiding",   //$NON-NLS-1$
+    "if",       //$NON-NLS-1$
+    "import",   //$NON-NLS-1$
+    "in",       //$NON-NLS-1$
+    "infix",    //$NON-NLS-1$
+    "infixl",   //$NON-NLS-1$
+    "infixr",   //$NON-NLS-1$
+    "instance", //$NON-NLS-1$
+    /* Template proposal: "let",      //$NON-NLS-1$ */
+    "module",   //$NON-NLS-1$
+    /* Embedded in template proposals: "of",       //$NON-NLS-1$ */
+    "primitive",//$NON-NLS-1$
+    "qualified",//$NON-NLS-1$
+    "then",     //$NON-NLS-1$
+    "type",     //$NON-NLS-1$
+    "where"     //$NON-NLS-1$
+    /* Template proposal: "do",       //$NON-NLS-1$ */
+    /* Template proposal "newtype"   //$NON-NLS-1$ */
   };
 
 

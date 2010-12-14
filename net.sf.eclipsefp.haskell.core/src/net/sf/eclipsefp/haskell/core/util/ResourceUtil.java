@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +25,8 @@ import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -33,6 +37,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * <p>
@@ -283,6 +289,24 @@ public class ResourceUtil {
     return ret;
   }
 
+  public static Collection<String> getHiddenImportPackages(final IFile[] files){
+    Collection<String> ips=getImportPackages(files);
+    Collection<String> hidden=new HashSet<String>();
+    if (ips.size()>0){
+      Map<String,CabalPackage[]> pkgs=ScionPlugin.getScionInstance( files[0] ).getPackagesByDB();
+      for (CabalPackage[] cps:pkgs.values()){
+        for (CabalPackage cp:cps){
+          if (cp.getComponents().length>0 && ips.contains(cp.getName()) && !cp.isExposed()){
+            hidden.add(cp.getName());
+          }
+        }
+      }
+    }
+    return hidden;
+
+  }
+
+
   public static Collection<String> getSourceFolders(final IFile[] files){
     if (files==null || files.length==0){
       return Collections.emptySet();
@@ -450,5 +474,22 @@ public class ResourceUtil {
     IPath path=file.getProjectRelativePath().removeFirstSegments( source.getProjectRelativePath().segmentCount() );
     String s=path.toString();
     return getModuleName(s).replace( '/', '.' );
+  }
+
+  public static Collection<IProject> getProjects(final ISelection arg1 ){
+    Set<IProject> projects=new LinkedHashSet<IProject>();
+    if (arg1 instanceof IStructuredSelection){
+      for (Iterator<?> it=((IStructuredSelection)arg1).iterator();it.hasNext();){
+        IResource res = ResourceUtil.findResource( it.next() );
+        try {
+          if( res != null && res.getProject()!=null  && res.getProject().hasNature(HaskellNature.NATURE_ID)) {
+            projects.add( res.getProject() );
+          }
+        } catch (CoreException cex) {
+          // ignore, we must assume this is not a Haskell project
+        }
+      }
+    }
+    return projects;
   }
 }

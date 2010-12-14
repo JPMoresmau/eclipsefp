@@ -58,19 +58,18 @@ public class ImportLibrariesPP extends PropertyPage
 
 
     ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
-    List<CabalPackage> list=new ArrayList<CabalPackage>();
-    if (si!=null && si.getPackagesByDB()!=null){
 
-      tablePart.setMinimumSize( 150, 200 );
-      tablePart.createControl( container, SWT.BORDER, 2 );
+    tablePart.setMinimumSize( 150, 200 );
+    tablePart.createControl( container, SWT.BORDER, 2 );
 
 //      list = new ImportLibrariesList( ( IProject )getElement() );
 
-      tablePart.getTableViewer().setContentProvider( new ArrayContentProvider() );
-      ImportLibrariesLabelProvider lp = new ImportLibrariesLabelProvider();
-      tablePart.getTableViewer().setLabelProvider( lp );
+    tablePart.getTableViewer().setContentProvider( new ArrayContentProvider() );
+    ImportLibrariesLabelProvider lp = new ImportLibrariesLabelProvider();
+    tablePart.getTableViewer().setLabelProvider( lp );
 
-
+    if (si!=null && si.getPackagesByDB()!=null){
+      List<CabalPackage> list=new ArrayList<CabalPackage>();
       for (CabalPackage[] cps:si.getPackagesByDB().values()){
         for (CabalPackage cp:cps){
           if (cp.getComponents().length>0){
@@ -80,10 +79,9 @@ public class ImportLibrariesPP extends PropertyPage
       }
       tablePart.setAllPackages( si.getPackagesByDB().values() );
       tablePart.setComponents( si.getComponents() );
+      tablePart.getTableViewer().setInput( list );
     }
 
-
-    tablePart.getTableViewer().setInput( list );
 //    initializeStates();
 
     tablePart.setButtonEnabled( 1, false );

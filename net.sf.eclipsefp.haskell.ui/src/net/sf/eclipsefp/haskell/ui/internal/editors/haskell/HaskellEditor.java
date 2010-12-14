@@ -135,7 +135,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   @Override
   protected void initializeEditor() {
     super.initializeEditor();
-    setSourceViewerConfiguration( new HaskellConfiguration( this ) );
+    setSourceViewerConfiguration( new HaskellSourceViewerConfiguration( this ) );
     setEditorContextMenuId( "#" + SIMPLE_CONTEXT_ID );  //$NON-NLS-1$
     // we configure the preferences ourselves
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );

@@ -376,12 +376,13 @@ public class ScionInstance {
       if (server.sendCommand(pcc)) {
         cabalDescription = pcc.getDescription();
 
-        monitor.subTask( NLS.bind( ScionText.buildProject_cabalDependencies, projectName ) );
-        CabalDependenciesCommand cdc = new CabalDependenciesCommand(cabalFile);
+       /* monitor.subTask( NLS.bind( ScionText.buildProject_cabalDependencies, projectName ) );
+        CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
         if (server.sendCommand(cdc)) {
           packagesByDB = cdc.getPackagesByDB();
           retval = true;
-        }
+        }*/
+        retval = true;
       }
     }
     
@@ -793,19 +794,12 @@ public class ScionInstance {
    * @return The cabal dependencies map.
    */
   public Map<String, CabalPackage[]> getPackagesByDB() {
-    if (packagesByDB == null) {
-      // Attempt to build the project, since this is an indicator that the build needs to be done.
-      Job buildJob = buildProject(false, true);
-      
-      while (buildJob.getResult() == null) {
-        try {
-          buildJob.join();
-        } catch (InterruptedException irq) {
-          break;
-        }
-      }
-    }
-    
+	  if (packagesByDB==null){
+		  CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
+	      if (withProject(cdc,  NLS.bind( ScionText.buildProject_cabalDependencies, getProject().getName() ))){
+		      packagesByDB = cdc.getPackagesByDB();
+	      }
+	  }
     return packagesByDB;
   }
 

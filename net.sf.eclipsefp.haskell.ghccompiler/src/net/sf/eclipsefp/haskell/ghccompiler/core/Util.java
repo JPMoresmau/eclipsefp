@@ -45,7 +45,8 @@ public class Util {
       IPath path = libs[ i ].getPath();
       sbResult.append( path.toOSString() );
     }*/
-    for (String s:ResourceUtil.getImportPackages( files )){
+    // we only need hidden packages
+    for (String s:ResourceUtil.getHiddenImportPackages( files )){
       sbResult.append(" -package "); //$NON-NLS-1$
       sbResult.append(s);
     }

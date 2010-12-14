@@ -472,6 +472,25 @@
               menubarPath="source/organize"
               id="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports"/>
     </viewerContribution>
+    <objectContribution
+          id="net.sf.eclipsefp.haskell.ui.contribution1"
+          objectClass="org.eclipse.core.resources.IProject">
+       <action
+             class="net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction"
+             enablesFor="1"
+             id="net.sf.eclipsefp.haskell.ui.newAction"
+             label="%cabalInstallWizard.name"
+             >
+        <description>%cabalInstallWizard.description</description>
+       </action>
+        <enablement>
+	      <adapt type="org.eclipse.core.resources.IProject">
+	        <test property="org.eclipse.core.resources.projectNature" 
+	              value="net.sf.eclipsefp.haskell.core.project.HaskellNature"/>
+	      </adapt>
+	
+      </enablement>
+    </objectContribution>
   </extension>
   
   <!-- [Views] Project Explorer -->
@@ -587,21 +606,22 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             icon="icons/obj16/export_src.gif"
-            class="net.sf.eclipsefp.haskell.ui.wizards.CabalSDistWizard"
+            class="net.sf.eclipsefp.haskell.ui.wizards.cabal.CabalSDistWizard"
             name="%cabalSDistWizard.name"
             category="net.sf.eclipsefp.haskell.ui.exportWizardCategory"
             id="net.sf.eclipsefp.haskell.ui.wizards.CabalSDistWizard">
          <description>%cabalSDistWizard.description</description>
       </wizard>
    </extension>
-     <extension
-           point="org.eclipse.ui.editors.templates">
-        <contextType
-            class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HSCodeTemplateContextType"
-            id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
-            name="%hsCodeTemplates.context">
-        </contextType>
-        <include file="templates/hscode-templates.xml">
-        </include>
-     </extension>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+          class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HSCodeTemplateContextType"
+          id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+          name="%hsCodeTemplates.context">
+      </contextType>
+      <include file="templates/hscode-templates.xml"
+               translations="$nl$/templates/hscode-templates.properties">
+      </include>
+   </extension>
 </plugin>

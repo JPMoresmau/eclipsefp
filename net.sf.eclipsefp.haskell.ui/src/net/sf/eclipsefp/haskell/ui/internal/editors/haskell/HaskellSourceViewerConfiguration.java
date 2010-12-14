@@ -6,13 +6,14 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellCAProcessor;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellContentAssistProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcilingStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
@@ -37,36 +38,33 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
- * The source viewer configuration provides strategies for functionality of the
- * Haskell editor.
+ * The source viewer configuration implements functionality for the Haskell editor.
  *
  * @author Leif Frenzel
+ * @author B. Scott Michel (scooter.phd@gmail.com)
  */
-public class HaskellConfiguration extends SourceViewerConfiguration implements
-		IEditorPreferenceNames {
-
-	public static class ContentAssistantFactory implements IContentAssistantFactory {
-		public ContentAssistant createAssistant() {
-			return new ContentAssistant();
-		}
-	}
-
+public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration implements IEditorPreferenceNames {
+  /** The associated Haskell editor */
 	final HaskellEditor editor;
-	private final IContentAssistantFactory fFactory;
-
+	/** The plugin's preference store, needed to create a new ScannerManager */
 	private IPreferenceStore prefStore;
+	/** The syntax highlighting and other content management container */
 	private ScannerManager scannerManager;
 
-	public HaskellConfiguration( final HaskellEditor editor ) {
-    this( editor, new ContentAssistantFactory() );
-  }
-
-  public HaskellConfiguration( final HaskellEditor editor, final IContentAssistantFactory factory ) {
+	/** The constructor
+	 *
+	 * @param editor The associated Haskell editor
+	 */
+	public HaskellSourceViewerConfiguration( final HaskellEditor editor ) {
     this.editor = editor;
-    fFactory = factory;
   }
 
-
+	/** Set the source viewer's preference store.
+   *
+   * <p>Note: Currently only referenced by {@link SyntaxPreviewer}</p>
+	 *
+	 * @param prefStore The preference store
+	 */
   public void setPreferenceStore( final IPreferenceStore prefStore ) {
     this.prefStore = prefStore;
   }
@@ -84,8 +82,7 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
   }
 
 	@Override
-  public IAutoEditStrategy[] getAutoEditStrategies(
-      final ISourceViewer sv, final String contentType ) {
+  public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sv, final String contentType ) {
     return new IAutoEditStrategy[] { new HaskellAutoIndentStrategy() };
   }
 
@@ -107,8 +104,8 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 	@Override
   public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
 
-		ContentAssistant result = fFactory.createAssistant();
-		result.setContentAssistProcessor(new HaskellCAProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+		ContentAssistant result = new ContentAssistant();
+		result.setContentAssistProcessor(new HaskellContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		result.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 
 		// TODO get from pref / update on pref change
@@ -119,9 +116,13 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		return result;
 	}
 
+	/**
+	 * Get the scanner manager. If the preference store (prefStore) is set, then return a new {@link ScannerManager}
+	 * that uses the preference store; otherwise, return the ScannerManager singleton instance.
+	 * */
 	public ScannerManager getScannerManager() {
-	    if (prefStore!=null){
-	        if (scannerManager==null){
+	    if ( prefStore != null ) {
+	        if ( scannerManager == null ){
 	          scannerManager = new ScannerManager( prefStore );
 	        }
 	        return scannerManager;
@@ -135,10 +136,10 @@ public class HaskellConfiguration extends SourceViewerConfiguration implements
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		// for every content type we need a damager and a repairer:
-//		ScannerManager man = getScannerManager();
-    //ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
+    //		ScannerManager man = getScannerManager();
+    // ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
 		ScionInstance instance=null;
-		if (editor != null){
+		if ( editor != null ){
 		  // Get the shared scion-server instance for lexing.
 		  instance = ScionPlugin.getSharedScionInstance();
 		  Assert.isNotNull( instance );

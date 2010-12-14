@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellConfiguration;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellSourceViewerConfiguration;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Display;
 public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
 
   private IPreferenceStore store;
-  private final HaskellConfiguration config;
+  private final HaskellSourceViewerConfiguration config;
   private IPropertyChangeListener propertyChangeListener;
   private Color bgColor;
 
@@ -42,7 +42,7 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
     super( parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     this.store = store;
 
-    config=new HaskellConfiguration( null );
+    config=new HaskellSourceViewerConfiguration( null );
     config.setPreferenceStore( store );
     configure( config );
     //done after configure so that the text invalidation is done after the scanner manager being notified

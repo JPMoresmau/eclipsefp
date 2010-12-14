@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -15,6 +16,7 @@ import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -25,35 +27,48 @@ import org.eclipse.swt.graphics.Image;
 public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
   @Override
   protected String extractPrefix( final ITextViewer viewer, final int offset ) {
-    int i = offset;
     IDocument document = viewer.getDocument();
-    if( i > document.getLength() ) {
-      return "";
+
+    // If we're beyond the document limit (how?), return an empty string
+    if( offset > document.getLength() ) {
+      return new String();
     }
+
     try {
-      while( i > 0 ) {
-        char ch = document.getChar( i - 1 );
-        if( !Character.isJavaIdentifierPart( ch ) ) {
-          break;
+      IRegion lineAt = document.getLineInformationOfOffset( offset );
+      int i = offset - 1;
+      char ch = document.getChar( i );
+
+      if (HaskellText.isHaskellIdentifierPart( ch )) {
+        // Scan backward until non-identifier character
+        for (--i; i >= lineAt.getOffset() && HaskellText.isHaskellIdentifierPart( document.getChar( i ) ); --i) {
+          // NOP
         }
-        i--;
-      }
-      if( i > 0 ) {
-        int j = i;
-        if( document.getChar( j - 1 ) == '<' ) {
-          i--;
+
+        ++i;
+        return document.get( i, offset - i );
+      } else if ( HaskellText.isCommentPart( ch ) ) {
+        // Scan backward until a non-comment character:
+        for (--i; i >= lineAt.getOffset() && HaskellText.isCommentPart( document.getChar( i ) ); --i) {
+          // NOP
         }
+
+        ++i;
+        return document.get( i, offset - i );
+      } else {
+        return new String();
       }
-      return document.get( i, offset - i );
     } catch( BadLocationException e ) {
-      return "";
+      // Dunno how we'd generate this exception, but handle it anyway.
+      return new String();
     }
   }
 
   @Override
   protected Template[] getTemplates( final String contextTypeId ) {
     HSCodeTemplateManager manager = HSCodeTemplateManager.getInstance();
-    return manager.getTemplateStore().getTemplates();
+    TemplateStore tStore = manager.getTemplateStore();
+    return tStore.getTemplates();
   }
 
   @Override
@@ -75,34 +90,42 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
   public ICompletionProposal[] computeCompletionProposals( final ITextViewer viewer, final int offset ) {
     ITextSelection selection = ( ITextSelection )viewer.getSelectionProvider().getSelection();
     int theOffset = offset;
+
     // adjust offset to end of normalized selection
-    if( selection.getOffset() == theOffset ) {
+    if ( selection.getOffset() == theOffset ) {
       theOffset = selection.getOffset() + selection.getLength();
     }
+
     String prefix = extractPrefix( viewer, theOffset );
+    if (prefix == null) {
+      return new ICompletionProposal[ 0 ];
+    }
+
     Region region = new Region( theOffset - prefix.length(), prefix.length() );
     TemplateContext context = createContext( viewer, region );
     if( context == null ) {
       return new ICompletionProposal[ 0 ];
     }
+
     context.setVariable( "selection", selection.getText() ); // name of the selection variables {line, word_selection //$NON-NLS-1$
+
     Template[] templates = getTemplates( context.getContextType().getId() );
+    String contextId = context.getContextType().getId();
     List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
+
     for( int i = 0; i < templates.length; i++ ) {
-      Template template = templates[ i ];
       try {
+        Template template = templates[ i ];
         context.getContextType().validate( template.getPattern() );
+
+        if (prefix.length() > 0 ) {
+          String templateName = template.getName();
+          if ( templateName.startsWith( prefix ) && template.matches( prefix, contextId ) ) {
+            matches.add( createProposal( template, context, ( IRegion )region, getRelevance( template, prefix ) ) );
+          }
+        }
       } catch( TemplateException e ) {
         continue;
-      }
-      if( !prefix.equals( "" ) && prefix.charAt( 0 ) == '<' ) {
-        prefix = prefix.substring( 1 );
-      }
-      if( !prefix.equals( "" )
-          && ( template.getName().startsWith( prefix ) && template.matches(
-              prefix, context.getContextType().getId() ) ) ) {
-        matches.add( createProposal( template, context, ( IRegion )region,
-            getRelevance( template, prefix ) ) );
       }
     }
     return matches.toArray( new ICompletionProposal[ matches.size() ] );

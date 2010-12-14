@@ -12,11 +12,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class WorkbenchHaskellCompletionContext extends HaskellCompletionContext {
-
-
-
-  public WorkbenchHaskellCompletionContext( final ITextViewer viewer,
-      final int offset ) {
+  public WorkbenchHaskellCompletionContext( final ITextViewer viewer, final int offset ) {
     super( getFile( viewer ), viewer.getDocument().get(), offset );
   }
 

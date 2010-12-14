@@ -21,6 +21,8 @@ public final class CoreTexts extends NLS {
   public static String breakpoint_message;
   public static String thread_default_name;
 
+  public static String launchconfiguration_delete_failed;
+
   private static final String BUNDLE_NAME
     = CoreTexts.class.getPackage().getName() + ".coretexts"; //$NON-NLS-1$
 
