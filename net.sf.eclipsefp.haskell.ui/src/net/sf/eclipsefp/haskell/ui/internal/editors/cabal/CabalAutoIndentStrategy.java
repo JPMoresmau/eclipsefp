@@ -2,50 +2,49 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import java.util.Arrays;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.TextUtilities;
 
 /**
- * <p>Indent strategy: indent after section name</p>
+ * Indent strategy: indent after section name
   *
   * @author JP Moresmau
  */
-public class CabalAutoIndentStrategy extends HaskellAutoIndentStrategy {
+public class CabalAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
   @Override
-  public void customizeDocumentCommand( final IDocument document,
-                                        final DocumentCommand command ) {
-
-    if (command.text.endsWith( "\n" )){ //$NON-NLS-1$
+  public void customizeDocumentCommand( final IDocument d, final DocumentCommand c ) {
+    if (TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1){
+      // Start autoindentation after a cabal section (e.g., global, executable, library)
       try {
-        IRegion r=document.getLineInformation( document.getLineOfOffset( command.offset ));
-        String s=document.get( r.getOffset(), r.getLength() ).toLowerCase();
+        IRegion r = d.getLineInformation( d.getLineOfOffset( c.offset ));
+        String s = d.get( r.getOffset(), r.getLength() ).toLowerCase();
+
         for (String section:CabalSyntax.sections.keySet()){
-          if (s.equals( section ) || s.startsWith( section+" " )){ //$NON-NLS-1$
-            char[] ch=new char[getTabWidth()];
+          if (s.equals( section ) || s.startsWith( section + " " )){ //$NON-NLS-1$
+            char[] ch = new char[getTabWidth()];
             Arrays.fill( ch, ' ' );
-            command.text=command.text+new String(ch);
+            c.text = c.text + new String(ch);
           }
         }
-      } catch (BadLocationException ble){
+      } catch (BadLocationException ble) {
         // ignore
       }
+    } else {
+      // Superclass takes care of autoindentation
+      super.customizeDocumentCommand( d, c );
     }
-    super.customizeDocumentCommand( document, command );
   }
 
-  @Override
-  protected int getTabWidth() {
-    String key = IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH;
-    return getPreferenceStore().getInt( key );
-  }
-
-  @Override
-  protected boolean isSpacesForTabs() {
-    return true;
+  private int getTabWidth() {
+    IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    return prefStore.getInt( IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH );
   }
 }

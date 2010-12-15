@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
@@ -55,26 +56,22 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       // get serialized...
       private static final long serialVersionUID = 3579246300065591883L;
       {
-        // Literal string
-        put( "LS", man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
-        // Literal character
-        put( "LC", man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
-        put( "D", man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
-        put( "DL", man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
-        // Keyword
-        put( "K", man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
-        put( "EK", man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
-        put( "LI", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( "LR", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( "LW", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( "LF", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( "LW", man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( "IC", man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) );
-        put( "IV", man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) );
-        put( "S", man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
-        put( "SS", man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
-        put( "PP", man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) );
-        put( "TH", man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
+        put( IScionTokens.LITERAL_STRING, man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
+        put( IScionTokens.LITERAL_CHAR, man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
+        put( IScionTokens.DOCUMENTATION_ANNOTATION, man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
+        put( IScionTokens.LITERATE_COMMENT, man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
+        put( IScionTokens.KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
+        put( IScionTokens.GHC_EXTENSION_KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
+        put( IScionTokens.LITERAL_INTEGER, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( IScionTokens.LITERAL_RATIONAL, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( IScionTokens.LITERAL_WORD, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( IScionTokens.LITERAL_FLOAT, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( IScionTokens.IDENTIFIER_CONSTRUCTOR, man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) );
+        put( IScionTokens.IDENTIFIER_VARIABLE, man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) );
+        put( IScionTokens.SYMBOL_RESERVED, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
+        put( IScionTokens.SYMBOL_SPECIAL, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
+        put( IScionTokens.PREPROCESSOR_TEXT, man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) );
+        put( IScionTokens.TEMPLATE_HASKELL, man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
       }
     };
   }
@@ -132,40 +129,38 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   }
 
   public void setRange( final IDocument document, final int offset, final int length ) {
-    currentTokenDef=null;
- //   currentToken=null;
-    tokenDefs=null;
+    currentTokenDef = null;
+    // currentToken=null;
+    tokenDefs = null;
 
-
-      if (instance!=null){
-
-        String newContents=document.get();
-        if (!document.equals( doc ) || !newContents.equals( contents ) || lTokenDefs==null){
-          doc=document;
-          contents=newContents;
-          lTokenDefs=instance.tokenTypes(file, contents );
-        }
-      } else {
-        try {
-          InputStream stream = SyntaxPreviewer.class.getResourceAsStream( "preview.json" );
-          // preview file
-          JSONArray result=new JSONArray( ResourceUtil.readStream( stream ) );
-          lTokenDefs=new ArrayList<TokenDef>(result.length());
-          for (int i = 0; i < result.length(); ++i) {
-            JSONArray arr=result.getJSONArray(i);
-            lTokenDefs.add(new TokenDef(arr));
-          }
-        } catch( Exception ex ) {
-          HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
-        }
+    if( instance != null ) {
+      String newContents = document.get();
+      if( !document.equals( doc ) || !newContents.equals( contents ) || lTokenDefs == null ) {
+        doc = document;
+        contents = newContents;
+        lTokenDefs = instance.tokenTypes( file, contents );
       }
-      this.doc=document;
-    if (lTokenDefs!=null && lTokenDefs.size()>0){
-      tokenDefs=lTokenDefs.listIterator();
+    } else {
+      try {
+        InputStream stream = SyntaxPreviewer.class.getResourceAsStream( "preview.json" );
+        // preview file
+        JSONArray result = new JSONArray( ResourceUtil.readStream( stream ) );
+        lTokenDefs = new ArrayList<TokenDef>( result.length() );
+        for( int i = 0; i < result.length(); ++i ) {
+          JSONArray arr = result.getJSONArray( i );
+          lTokenDefs.add( new TokenDef( arr ) );
+        }
+      } catch( Exception ex ) {
+        HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
+      }
+    }
+    this.doc = document;
+    if( lTokenDefs != null && lTokenDefs.size() > 0 ) {
+      tokenDefs = lTokenDefs.listIterator();
     }
 
-    this.offset=offset;
-    this.length=length;
+    this.offset = offset;
+    this.length = length;
   }
 
   private IToken getTokenFromTokenDef(final TokenDef td){

@@ -12,7 +12,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 /**
  * Computes the content assist completion proposals and context information.
  *
- * @author Leif Frenzel
+ * @author Leif Frenzel (original author)
  * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public class HaskellContentAssistProcessor implements IContentAssistProcessor {

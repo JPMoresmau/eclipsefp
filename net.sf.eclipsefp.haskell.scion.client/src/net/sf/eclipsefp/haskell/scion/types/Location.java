@@ -17,10 +17,8 @@ import org.json.JSONObject;
  * @author Thomas ten Cate
  */
 public class Location {
-
 	private String fileName;
 	private String otherName;
-
 
 	private int startLine, startColumn, endLine, endColumn;
 	
@@ -28,13 +26,18 @@ public class Location {
 		this(null,json);
 	}
 
-	public Location(IFile f,JSONObject json) throws JSONException {
-		this.fileName = json.optString("file");
-		this.otherName=json.optString("other");
-		if ((this.fileName==null || this.fileName=="")&& (this.otherName==null || this.otherName=="")&& f!=null){
-			this.fileName=f.getLocation().toOSString();
+	public Location(IFile f, JSONObject json) throws JSONException {
+		this.fileName  = json.optString("file");
+		this.otherName = json.optString("other");
+		
+		if (   f != null
+		    && (this.fileName == null || this.fileName.length() == 0)
+		    && (this.otherName == null || this.otherName.length() == 0) ) {
+		  // Default the file name to the Java file resource
+		  this.fileName = f.getLocation().toOSString();
 		} 
-		if (json.optString("no-location").length()==0){
+		
+		if (json.optString("no-location").length() == 0) {
 			JSONArray region = json.getJSONArray("region");
 			startLine = region.getInt(0);
 			startColumn = region.getInt(1);

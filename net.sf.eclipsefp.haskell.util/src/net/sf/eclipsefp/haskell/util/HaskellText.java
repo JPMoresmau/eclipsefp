@@ -20,6 +20,7 @@ public final class HaskellText {
             || (ch == '_')
             || (ch == '\'') ); 
   }
+  
   /**
    * Predicate for comment characters
    */

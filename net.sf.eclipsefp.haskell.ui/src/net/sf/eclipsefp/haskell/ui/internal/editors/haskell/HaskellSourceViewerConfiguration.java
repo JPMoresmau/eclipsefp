@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -83,7 +84,14 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 
 	@Override
   public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sv, final String contentType ) {
-    return new IAutoEditStrategy[] { new HaskellAutoIndentStrategy() };
+    TabsToSpacesConverter tabConverter = new TabsToSpacesConverter();
+
+    tabConverter.setNumberOfSpacesPerTab( getTabWidth( sv ) );
+
+    return new IAutoEditStrategy[] {
+        new HaskellAutoIndentStrategy(),
+        tabConverter
+    };
   }
 
 	@Override
@@ -146,7 +154,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 		} // else no editor: we're in preview null instance is fine
 
 
-		IFile file=editor!=null?editor.findFile():null;
+		IFile file = (editor != null ? editor.findFile() : null);
 		ITokenScanner codeScanner=new ScionTokenScanner(getScannerManager(),instance, file);
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
@@ -219,8 +227,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	}
 
 	@Override
-	public IQuickAssistAssistant getQuickAssistAssistant(
-	    final ISourceViewer sourceViewer ) {
+	public IQuickAssistAssistant getQuickAssistAssistant(final ISourceViewer sourceViewer ) {
     QuickAssistAssistant qaa=new QuickAssistAssistant();
     qaa.setQuickAssistProcessor( new QuickAssistProcessor() );
     return qaa;
