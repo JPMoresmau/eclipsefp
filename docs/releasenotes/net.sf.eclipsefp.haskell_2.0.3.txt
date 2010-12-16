@@ -9,11 +9,13 @@ Scion:
 
 Fixes:
   - Scion dependency on AttoJSON fixed to require 0.5.8
+  - Where dependent packages are shown (project explorer, project properties) the project is correctly loaded if need be
+  - when launching GHCi, only hidden packages are added via -package
 
 Features:
   - Interface to cabal install via contextual action on project
   - Cabal sdist now writes its output to a console
-  - Code templates
+  - Code templates (import, gadt, data, case, do, let, newtype, class, single and multi line comments and haddock instructions
 
 Internal:
 
