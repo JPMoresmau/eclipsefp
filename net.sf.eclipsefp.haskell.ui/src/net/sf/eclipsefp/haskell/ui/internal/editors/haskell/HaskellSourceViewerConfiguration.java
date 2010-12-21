@@ -196,12 +196,11 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	}
 
 	@Override
-  public String[] getIndentPrefixes(final ISourceViewer sourceViewer,
-			final String contentType) {
-
+  public String[] getIndentPrefixes(final ISourceViewer sourceViewer, final String contentType) {
 		int tabWidth = getTabWidth(sourceViewer);
 		StringBuilder prefix = new StringBuilder();
 		String[] ret=new String[tabWidth+2];
+
 		for (int i = 0; i <= tabWidth; i++) {
 
 			if (isSpacesForTabs()) {
