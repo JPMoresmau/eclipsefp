@@ -15,9 +15,9 @@ import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
+import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
@@ -65,9 +65,7 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
- * <p>
  * The main editor class for the Haskell editor.
- * </p>
  *
  * @author Leif Frenzel
  */
@@ -479,8 +477,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     updateOutline(findFile());
   }
 
-
-
   /**
    * Update the outline page, using a specific file (notably when the editor's
    * input is changed.
@@ -490,24 +486,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    */
   private void updateOutline(final IFile currentFile) {
     if ( currentFile != null && outlinePage != null ) {
-//      final String jobName = "Updating outline for ".concat(currentFile.getName());
-//      new FileCommandGroup(jobName, currentFile, Job.SHORT) {
-//        @Override
-//        protected IStatus run( final IProgressMonitor monitor ) {
-//          ScionInstance instance = getInstance( currentFile );
-//
-//          if ( instance != null ) {
-//            outline = instance.outline( currentFile );
-//          } else {
-//            outline = Collections.emptyList();
-//          }
-//
-//          outlinePage.setInput( outline );
-//          foldingStructureProvider.updateFoldingRegions( outline );
-//
-//          return Status.OK_STATUS;
-//        }
-//      }.schedule();
       ScionInstance instance = getInstance( currentFile );
 
       if (instance!=null){
@@ -563,32 +541,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     }
     return false;
   }
-
-  /**
-   * Reload the requested file and synchronize the editor's elements (outline,
-   * folding structure)
-   *
-   * @param theInstance
-   *          The ScionInstance used to communicate with the scion-server
-   * @param theFile
-   *          The file to reload
-   */
-  /*
-  private void reloadAndSync( final ScionInstance theInstance, final IFile theFile) {
-    if ( theInstance != null ) {
-      String jobName = "Editor file reload/synchronize [" + theFile.getName() + "]";
-      FileCommandGroup cgroup = new FileCommandGroup(jobName, theFile, Job.SHORT) {
-        @Override
-        protected IStatus run( final IProgressMonitor monitor ) {
-          synchronize();
-          return Status.OK_STATUS;
-        }
-      };
-
-      cgroup.schedule();
-    }
-  }
-  */
 
   // Interface methods for IScionEventListener
 

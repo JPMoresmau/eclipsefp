@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -56,9 +55,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		try {
 			completedToken = getQualifier(source,getOffset());
 
-			List<ICompletionProposal> result = Collections.synchronizedList( new ArrayList<ICompletionProposal>());
-			//searchScope(completedToken, result);
-			//searchImportableModules(completedToken, result);
+			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 
 			searchDefinedNames(completedToken, result);
 			// FIXME: Delete after next release: This is now part of the modules template variable.
