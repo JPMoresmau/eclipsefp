@@ -12,8 +12,8 @@ public final class HaskellSyntax {
    *
    * <p>Note: These used to be useful for syntax highlighting and content assist proposals.
    * Syntax highlighting is now handled differently via the scion-server, so these keywords are now used
-   * solely for content assist proposals. At some point, these may go away because EclipseFP
-   * has template content proposals.
+   * solely for content assist proposals. At some point, these may go away as EclipseFP
+   * template content proposals become more robust.
    *
    */
   private static final String[] KEYWORDS = new String[] {
@@ -26,7 +26,7 @@ public final class HaskellSyntax {
     "else",     //$NON-NLS-1$
     "hiding",   //$NON-NLS-1$
     "if",       //$NON-NLS-1$
-    "import",   //$NON-NLS-1$
+    /* Template proposal: "import",   //$NON-NLS-1$ */
     "in",       //$NON-NLS-1$
     "infix",    //$NON-NLS-1$
     "infixl",   //$NON-NLS-1$

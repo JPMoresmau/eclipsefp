@@ -11,6 +11,7 @@
   autoinsert="false"
 >import ${module}
 </template>
+
 <!-- General Abstract Data Types -->
 <template
   name="gadt"
@@ -77,9 +78,8 @@
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
   autoinsert="false"
->let
-    ${var} = ${value}
-  in ${expression}
+>let ${var} = ${value}
+in  ${expression}
 </template>
 
 <!-- 'newtype' expression -->
@@ -106,9 +106,21 @@
   ${function} :: ${signature}
 </template>
 
+<!-- context expression -->
+<template
+  name="=>"
+  description="%CodeTemplates.context.description"
+  id="net.sf.eclipsefp.haskell.templates.context"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>${existingType} =>
+</template>
+
 <!--
  Haddock documentation templates
 -->
+
 <template
   name="--"
   description="%CodeTemplates.double_dash.description"
@@ -163,7 +175,7 @@ ${cursor}
 </template>
 
 <template
-  name="-- ^"
+  name="{- ^"
   description="%CodeTemplates.multiline_haddock_prev.description"
   id="net.sf.eclipsefp.haskell.templates.multiline_haddock_prev"
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"

@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -71,10 +72,8 @@ class CabalConfiguration extends SourceViewerConfiguration {
   public IContentAssistant getContentAssistant( final ISourceViewer sv ) {
     ContentAssistant result = new ContentAssistant();
     IContentAssistProcessor processor = new CabalCompletionProcessor();
-    result.setContentAssistProcessor( processor,
-                                      IDocument.DEFAULT_CONTENT_TYPE );
-    result.setContextInformationPopupOrientation(
-                                         IContentAssistant.CONTEXT_INFO_ABOVE );
+    result.setContentAssistProcessor( processor, IDocument.DEFAULT_CONTENT_TYPE );
+    result.setContextInformationPopupOrientation( IContentAssistant.CONTEXT_INFO_ABOVE );
     result.setInformationControlCreator( getInformationControlCreator( sv ) );
     result.enableAutoInsert( true );
     return result;
@@ -92,8 +91,7 @@ class CabalConfiguration extends SourceViewerConfiguration {
 
 
   @Override
-  public String[] getIndentPrefixes( final ISourceViewer sourceViewer,
-      final String contentType ) {
+  public String[] getIndentPrefixes( final ISourceViewer sourceViewer, final String contentType ) {
     int tabWidth = getTabWidth(sourceViewer);
     StringBuilder prefix = new StringBuilder();
     String[] ret=new String[tabWidth+2];
@@ -137,9 +135,14 @@ class CabalConfiguration extends SourceViewerConfiguration {
   }
 
   @Override
-  public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sourceViewer,
-      final String contentType ) {
-    return new IAutoEditStrategy[] { new CabalAutoIndentStrategy()};
+  public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sourceViewer, final String contentType ) {
+    TabsToSpacesConverter tabConverter = new TabsToSpacesConverter();
+
+    tabConverter.setNumberOfSpacesPerTab( getTabWidth( sourceViewer ) );
+    return new IAutoEditStrategy[] {
+        new CabalAutoIndentStrategy(),
+        tabConverter
+    };
   }
 
   // helping methods
@@ -162,5 +165,4 @@ class CabalConfiguration extends SourceViewerConfiguration {
   private IPreferenceStore getPreferenceStore() {
     return HaskellUIPlugin.getDefault().getPreferenceStore();
   }
-
 }

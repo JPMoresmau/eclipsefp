@@ -15,11 +15,12 @@ public final class HaskellText {
    * @return true if the character is part of a Haskell identifier
    */
   public static boolean isHaskellIdentifierPart( char ch ) {
-    return (   (ch >= 'A' && ch <= 'Z')
-            || (ch >= 'a' && ch <= 'z')
+    return (   Character.getType(ch) == Character.UPPERCASE_LETTER
+            || Character.getType(ch) == Character.LOWERCASE_LETTER
             || (ch == '_')
             || (ch == '\'') ); 
   }
+  
   /**
    * Predicate for comment characters
    */

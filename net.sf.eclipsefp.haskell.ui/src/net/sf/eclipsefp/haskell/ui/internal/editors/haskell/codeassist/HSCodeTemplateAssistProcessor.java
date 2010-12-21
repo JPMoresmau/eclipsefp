@@ -25,6 +25,19 @@ import org.eclipse.swt.graphics.Image;
  * @author B. Scott Michel
  */
 public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
+  /**
+   * Reverse lex the document to extract the prefix for the completion. For example, if the current character at the offset
+   * is part of an identifier, work backward until a non-identifier lex token is reached.
+   *
+   * <p>Things this function lexes:
+   * <ul>
+   * <li>Identifiers that don't start with underscore</li>
+   * <li>Starts of comments, "{-" and "--"</li>
+   * <li>Groups of Unicode symbol characters, to catch tokens like "=>"</li>
+   * </ul>
+   *
+   * @return The collected prefix string or the empty string if nothing was collected.
+   */
   @Override
   protected String extractPrefix( final ITextViewer viewer, final int offset ) {
     IDocument document = viewer.getDocument();
@@ -46,7 +59,11 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
         }
 
         ++i;
-        return document.get( i, offset - i );
+        String retval = document.get( i, offset - i );
+
+        if ( !retval.startsWith( "_" ) ) {
+          return retval;
+        }
       } else if ( HaskellText.isCommentPart( ch ) ) {
         // Scan backward until a non-comment character:
         for (--i; i >= lineAt.getOffset() && HaskellText.isCommentPart( document.getChar( i ) ); --i) {
@@ -54,14 +71,26 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
         }
 
         ++i;
+        String retval = document.get( i, offset - i );
+
+        // Ensure that the prefix is really the start of a comment.
+        if (retval.startsWith( "{-" ) || retval.startsWith( "--" ) ) {
+          return retval;
+        }
+      } else if ( isSymbol( ch ) ) {
+        // Scan backward until a non-comment character:
+        for (--i; i >= lineAt.getOffset() && isSymbol( document.getChar( i ) ); --i) {
+          // NOP
+        }
+
+        ++i;
         return document.get( i, offset - i );
-      } else {
-        return new String();
       }
     } catch( BadLocationException e ) {
-      // Dunno how we'd generate this exception, but handle it anyway.
-      return new String();
+      // Dunno how we'd generate this exception, but catch it anyway and fall through
     }
+
+    return new String();
   }
 
   @Override
@@ -131,5 +160,10 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
     return matches.toArray( new ICompletionProposal[ matches.size() ] );
   }
 
-
+  private boolean isSymbol( final char ch ) {
+    return (   Character.getType( ch ) == Character.MATH_SYMBOL
+            || Character.getType( ch ) == Character.CURRENCY_SYMBOL
+            || Character.getType( ch ) == Character.MODIFIER_SYMBOL
+            || Character.getType( ch ) == Character.OTHER_SYMBOL);
+  }
 }
