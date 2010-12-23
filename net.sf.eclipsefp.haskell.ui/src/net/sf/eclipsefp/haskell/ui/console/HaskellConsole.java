@@ -13,24 +13,31 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
+/**
+ * Haskell-specific IOConsole class.
+ */
+public class HaskellConsole extends IOConsole {
+  /** Preference value for Haskell console high water mark */
+  public final static int HASKELL_CONSOLE_HIGH_WATER_MARK = 32 * 1024; // 32K
+  /** Preference value for Haskell console low water mark */
+  public final static int HASKELL_CONSOLE_LOW_WATER_MARK = HASKELL_CONSOLE_HIGH_WATER_MARK / 4;
 
-public class HaskellConsole {
-  private IOConsole fConsole;
-  private final IConsoleCleaner fCleaner;
+  /**
+   * Construct and register the console with the console manager.
+   */
+  public HaskellConsole(final String name) {
+    super(name, HaskellConsole.class.getName(),HaskellUIImages.getImageDescriptor( IImageNames.HASKELL_MISC ));
 
-  public HaskellConsole(final IConsoleCleaner cleaner,final String name) {
-    fCleaner = cleaner;
-    createIOConsole(name);
-  }
-
-  private void createIOConsole(final String name) {
+    // Register console with the console manager.
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-    fConsole = new IOConsole(name, HaskellConsole.class.getName(),HaskellUIImages.getImageDescriptor( IImageNames.HASKELL_MISC ));
-    mgr.addConsoles(new IConsole[] {fConsole});
+    mgr.addConsoles(new IConsole[] { this });
   }
 
+  /**
+   * Create an output stream writer, ensuring that the console's output is blue.
+   */
   public Writer createOutputWriter() {
-    final IOConsoleOutputStream outputStream = fConsole.newOutputStream();
+    final IOConsoleOutputStream outputStream = newOutputStream();
     final Display stdDisplay = HaskellUIPlugin.getStandardDisplay();
     stdDisplay.syncExec( new Runnable() {
       public void run() {
@@ -38,19 +45,7 @@ public class HaskellConsole {
         outputStream.setColor(stdDisplay.getSystemColor( SWT.COLOR_BLUE ));
       }
     });
-    Writer outputWriter = new OutputStreamWriter(outputStream);
-    return outputWriter;
+
+    return new OutputStreamWriter(outputStream);
   }
-
-
-  public IConsoleCleaner getCleaner() {
-    return fCleaner;
-  }
-
-
-  public IOConsole getConsole() {
-    return fConsole;
-  }
-
-
 }

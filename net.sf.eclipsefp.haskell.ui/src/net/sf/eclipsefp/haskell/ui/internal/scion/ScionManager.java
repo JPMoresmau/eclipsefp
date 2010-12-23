@@ -88,18 +88,16 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   public final static String STDSTREAM_SCION_FLAVOR = "stdstream";
   /** Preference value for using the network-based connection to the scion-server */
   public final static String NETWORK_SCION_FLAVOR = "network";
-
-  // Current state/preference tracking variables.
-  // Note: Listening to preference changes is not sufficient because there are several different
-  // choices that can cause restarting scion-server instances. We'd like to just restart the
-  // instances once in response to preference changes make via the ScionPP preference page.
-
   /** Current "use builtin" state */
   private boolean useBuiltIn;
   /** Current server flavor */
   private String serverFlavor;
   /** Current executable path string */
   private IPath serverExecutablePath;
+  /** Haskell console low water mark */
+  private int hConLowWater;
+  /** Haskell console high water mark */
+  private int hConHighWater;
 
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
    * being fired off.
@@ -112,6 +110,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     serverFlavor = STDSTREAM_SCION_FLAVOR;
     serverExecutablePath = null;
     internalBuilder = null;
+    hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
+    hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
   }
 
   public void start() {
@@ -119,6 +119,15 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
 
     // Capture preferences as currently stored:
+
+    hConLowWater = preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_LOW_WATER_MARK );
+    if (hConLowWater == 0) {
+      hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
+    }
+    hConHighWater = preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK );
+    if (hConHighWater == 0) {
+      hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
+    }
 
     useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
     serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
@@ -133,8 +142,9 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     }
 
     // Set up the output logging console for the shared ScionInstance:
-    HaskellConsole c = new HaskellConsole( null, UITexts.sharedScionInstance_console );
+    HaskellConsole c = new HaskellConsole( UITexts.sharedScionInstance_console );
     ScionPlugin.setSharedInstanceWriter( c.createOutputWriter() );
+    c.setWaterMarks( hConLowWater, hConHighWater );
 
     serverFactorySetup();
 
@@ -539,8 +549,9 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     ScionInstance instance = ScionPlugin.getScionInstance( project );
 
     if ( instance == null ) {
-      HaskellConsole c = new HaskellConsole( null, consoleName(project) );
+      HaskellConsole c = getHaskellConsole( project );
       Writer outStream = c.createOutputWriter();
+
       instance = ScionPlugin.createScionInstance( project, outStream,
           new CabalComponentResolver() {
             public Set<String> getComponents( final IFile file ) {
@@ -629,6 +640,27 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       internalBuilder.setUser(true);
       internalBuilder.schedule();
     }
+  }
+
+  /**
+   * Get the Haskell console for a project, creating one if necessary.
+   *
+   * @param consoleName The console's name
+   */
+  private HaskellConsole getHaskellConsole(final IProject project) {
+    final String consoleName = consoleName(project);
+    final IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+
+    for( IConsole c: mgr.getConsoles() ) {
+      if( c.getName().equals( consoleName ) ) {
+        return (HaskellConsole) c;
+      }
+    }
+
+    HaskellConsole hCon = new HaskellConsole( consoleName );
+
+    hCon.setWaterMarks( hConLowWater, hConHighWater );
+    return hCon;
   }
 
   /** Specialized Job class that manages building the built-in Scion server,
