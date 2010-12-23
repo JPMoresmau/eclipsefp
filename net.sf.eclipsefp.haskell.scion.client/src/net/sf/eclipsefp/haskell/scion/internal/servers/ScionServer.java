@@ -526,7 +526,18 @@ public abstract class ScionServer {
         if (m != null) {
           Trace.trace(serverName, m);
           try {
-            serverOutput.write(m + PlatformUtil.NL);
+            final int mLen = m.length();
+            int i = 0;
+
+            // Break the message up into 1K chunks for better UI responsiveness, since this all is going to
+            // an IOConsole.
+            while ( mLen - i > 1024 ) {
+              serverOutput.write(m, i, 1024);
+              serverOutput.flush();
+              i += 1024;
+            }
+            serverOutput.write(m, i, mLen - i);
+            serverOutput.write(PlatformUtil.NL);
             serverOutput.flush();
           } catch (IOException ex) {
             if (!terminateFlag) {
