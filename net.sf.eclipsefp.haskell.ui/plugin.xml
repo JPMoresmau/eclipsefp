@@ -50,7 +50,7 @@
             extensions="hs,lhs"
             icon="icons/obj16/hsfile_obj.gif"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.actions.HaskellEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.haskell" />
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.literateHaskell" />
@@ -320,7 +320,7 @@
               sequence="Ctrl+Shift+/"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+ß"
+              sequence="Ctrl+Shift+7"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -354,30 +354,6 @@
             <equals value="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
          </with>
       </definition>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="net.sf.eclipsefp.haskell.ui.actionSets.open"
-            label="%openActionSet_label"
-            description="%openActionSet_description"
-            visible="false">
-         <action
-            id="net.sf.eclipsefp.haskell.ui.actions.openDefinition"
-            definitionId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
-            label="%openDefinitionAction_label"
-            tooltip="%openDefinitionAction_tooltip"
-            retarget="true"
-            allowLabelUpdate="true"/>
-       <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
-      </actionSet>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSetPartAssociations">
-      <actionSetPartAssociation
-            targetID="net.sf.eclipsefp.haskell.ui.actionSets.open">
-         <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
-      </actionSetPartAssociation>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -623,5 +599,71 @@
       <include file="templates/hscode-templates.xml"
                translations="$nl$/templates/hscode-templates.properties">
       </include>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="%CodingActionSet.description"
+            id="net.sf.eclipsefp.haskell.ui.CodingActionSet"
+            label="%CodingActionSet.label"
+            visible="false">
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.openDefinition"
+            definitionId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
+            label="%openDefinitionAction_label"
+            tooltip="%openDefinitionAction_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"/>
+       <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
+ <!-- Source menu -->         
+         <menu
+               id="net.sf.eclipsefp.haskell.ui.sourceMenu"
+               path="edit"
+               label="%SourceMenu.label">
+            <separator
+                  name="commentGroup">
+            </separator>
+            <separator
+                  name="editGroup">
+            </separator>
+         </menu>
+<!-- Source menu: commentGroup -->
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"
+               label="%UncommentAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Uncomment">
+         </action>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.comment"
+               label="%CommentAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Comment">
+         </action>
+<!-- Source menu: editGroup -->         
+         <action
+               definitionId="org.eclipse.ui.edit.text.shiftLeft"
+               label="%ShiftLeftAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/editGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.ShiftLeft">
+         </action>
+         <action
+               definitionId="org.eclipse.ui.edit.text.shiftRight"
+               label="%ShiftRightAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/editGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.ShiftRight">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="net.sf.eclipsefp.haskell.ui.CodingActionSet">
+         <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
+      </actionSetPartAssociation>
    </extension>
 </plugin>
