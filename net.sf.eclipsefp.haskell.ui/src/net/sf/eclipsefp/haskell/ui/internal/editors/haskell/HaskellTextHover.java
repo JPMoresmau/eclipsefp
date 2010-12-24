@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
@@ -71,14 +72,14 @@ class HaskellTextHover extends DefaultTextHover {
   private String computeThingAtPoint( final ITextViewer textViewer, final IRegion hoverRegion  ) {
     IFile file = editor.findFile();
     if (file != null) {
-      //ComputeThingAtPoint tap = new ComputeThingAtPoint( "Thing-at-point", file, textViewer, hoverRegion );
-      //tap.runGroupSynchronously();
-      //return tap.getThing();
       try {
         Location location = new Location(file.getLocation().toOSString(), textViewer.getDocument(), hoverRegion);
+        IDocument theDocument = textViewer.getDocument();
         ScionInstance scionInstance = ScionPlugin.getScionInstance( file );
+
         if (scionInstance != null) {
-          return scionInstance.thingAtPoint(textViewer.getDocument(),location, false, true);
+          // TODO: Would be nice to also grab the Haddock documentation for the "thing" at point too.
+          return scionInstance.thingAtPoint( theDocument, location, false, true);
         }
       } catch (BadLocationException ex) {
         HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );

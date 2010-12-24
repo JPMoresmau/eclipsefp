@@ -375,7 +375,7 @@ public class ScionInstance {
       ParseCabalCommand pcc = new ParseCabalCommand(cabalFile);
       if (server.sendCommand(pcc)) {
         cabalDescription = pcc.getDescription();
-
+        packagesByDB=null;
        /* monitor.subTask( NLS.bind( ScionText.buildProject_cabalDependencies, projectName ) );
         CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
         if (server.sendCommand(cdc)) {

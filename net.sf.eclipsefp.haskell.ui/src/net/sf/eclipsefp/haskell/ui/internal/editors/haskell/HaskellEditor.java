@@ -189,7 +189,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX, //$NON-NLS-1$
         IActionDefinitionIds.UNCOMMENT );
 
-
     addRulerContextMenuListener( new IMenuListener() {
 
       public void menuAboutToShow( final IMenuManager manager ) {
@@ -426,8 +425,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         || property.equals( EDITOR_TH_BOLD );
   }
 
-  private void createTextOpAction( final String name, final int targetId,
-      final String actionDefinitionId ) {
+  private void createTextOpAction( final String name, final int targetId, final String actionDefinitionId ) {
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
     Action action = new TextOperationAction( bundle, name + ".", this, targetId );  //$NON-NLS-1$
     action.setActionDefinitionId( actionDefinitionId );

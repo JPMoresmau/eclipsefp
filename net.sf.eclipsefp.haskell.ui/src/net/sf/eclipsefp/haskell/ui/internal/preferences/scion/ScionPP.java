@@ -75,6 +75,9 @@ public class ScionPP
 	  // Member variable initialization:
 	  rebuildBuiltin = false;
 
+	  // FIXME: Need to add fields for server verbosity (do we really want to watch server interaction messages?)
+	  // FIXME: Need to add fields for console high and low water marks, hook preference changes to ScionManager
+
 	  // Create the page:
 	  noDefaultAndApplyButton();
 	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
@@ -251,11 +254,14 @@ public class ScionPP
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
 
-    // Yuck. You'd think there'd be a way to do this via listening for preference
-    // changes, but nooooooh.
-    HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin);
-
-    return super.performOk();
+    if (super.performOk()) {
+      // Yuck. You'd think there'd be a way to do this via listening for preference
+      // changes, but nooooooh.
+      HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
