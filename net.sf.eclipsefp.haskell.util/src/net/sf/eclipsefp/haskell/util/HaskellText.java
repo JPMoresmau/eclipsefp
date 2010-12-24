@@ -29,4 +29,15 @@ public final class HaskellText {
            || ch == '-'
            || ch == '}');
  }
+ 
+ /**
+  * Predicate for symbol characters
+  */
+
+ public static boolean isSymbol( final char ch ) {
+   return (   Character.getType( ch ) == Character.MATH_SYMBOL
+           || Character.getType( ch ) == Character.CURRENCY_SYMBOL
+           || Character.getType( ch ) == Character.MODIFIER_SYMBOL
+           || Character.getType( ch ) == Character.OTHER_SYMBOL);
+ }
 }

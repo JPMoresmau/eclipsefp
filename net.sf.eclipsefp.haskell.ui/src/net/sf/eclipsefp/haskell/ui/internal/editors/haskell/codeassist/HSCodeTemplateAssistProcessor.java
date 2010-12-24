@@ -77,9 +77,9 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
         if (retval.startsWith( "{-" ) || retval.startsWith( "--" ) ) {
           return retval;
         }
-      } else if ( isSymbol( ch ) ) {
+      } else if ( HaskellText.isSymbol( ch ) ) {
         // Scan backward until a non-comment character:
-        for (--i; i >= lineAt.getOffset() && isSymbol( document.getChar( i ) ); --i) {
+        for (--i; i >= lineAt.getOffset() && HaskellText.isSymbol( document.getChar( i ) ); --i) {
           // NOP
         }
 
@@ -158,12 +158,5 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
       }
     }
     return matches.toArray( new ICompletionProposal[ matches.size() ] );
-  }
-
-  private boolean isSymbol( final char ch ) {
-    return (   Character.getType( ch ) == Character.MATH_SYMBOL
-            || Character.getType( ch ) == Character.CURRENCY_SYMBOL
-            || Character.getType( ch ) == Character.MODIFIER_SYMBOL
-            || Character.getType( ch ) == Character.OTHER_SYMBOL);
   }
 }
