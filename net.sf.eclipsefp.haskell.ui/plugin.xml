@@ -281,15 +281,15 @@
             name="%openDefinitionCommand_name"
             id="net.sf.eclipsefp.ui.commands.navigate.openDefinition"/>
       <command
-            description="%HaddockDocumentationAction.description"
+            description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%HaddockDocumentationAction.name"
-            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_documentation"/>
-      <command
-            description="%HaddockDocumentFollowingAction.description"
-            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%HaddockDocumentFollowingAction.name"
+            name="%HaddockDocumentFollowing.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following"/>
+      <command
+            description="%HaddockDocumentPrevious.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddockDocumentPrevious.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"/>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -338,6 +338,9 @@
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D F"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following" />
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+D P"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous" />
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
@@ -634,12 +637,8 @@
                id="net.sf.eclipsefp.haskell.ui.sourceMenu"
                path="edit"
                label="%SourceMenu.label">
-            <separator
-                  name="commentGroup">
-            </separator>
-            <separator
-                  name="editGroup">
-            </separator>
+            <separator name="commentGroup"/>
+            <separator name="editGroup"/>
          </menu>
 <!-- Source menu: commentGroup -->
          <action
@@ -656,13 +655,25 @@
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
                id="net.sf.eclipsefp.haskell.ui.actions.Comment">
          </action>
+         <menu
+               path="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="HaddockDocumentation"
+               label="%HaddockDocumentation.label">
+            <separator name="haddockDoc"/>
+         </menu>
          <action
-               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_documentation"
-               label="%HaddockDocumentationAction.label"
-               style="pulldown"
-               class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentation"
-               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
-               id="net.sf.eclipsefp.haskell.ui.editor.actions.HaddockDocumentation">
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following"
+               label="%HaddockDocumentPrevious.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Previous">
+         </action>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"
+               label="%HaddockDocumentFollowing.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Following">
          </action>
 <!-- Source menu: editGroup -->         
          <action

@@ -28,7 +28,4 @@ public class HaskellActionConstants {
   /** Source -> Haddock submenu: name of the "document following" action */
   public static final String HADDOCK_FOLLOWING = ActionPrefix.concat( "Haddock.Following" );
 
-  /** Source -> Haddock submenu: name of the "document following" action definition ID*/
-  public static final String HADDOCK_FOLLOWING_DEF_ID = ActionPrefix.concat( "haddock_following" );
-
 }

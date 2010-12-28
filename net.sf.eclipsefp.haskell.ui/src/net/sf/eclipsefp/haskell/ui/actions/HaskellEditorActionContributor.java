@@ -35,5 +35,6 @@ public class HaskellEditorActionContributor extends BasicTextEditorActionContrib
     actionBars.setGlobalActionHandler(HaskellActionConstants.UNCOMMENT, getAction(textEditor, "Uncomment")); //$NON-NLS-1$
     actionBars.setGlobalActionHandler(HaskellActionConstants.SHIFT_RIGHT, getAction(textEditor, "ShiftRight")); //$NON-NLS-1$
     actionBars.setGlobalActionHandler(HaskellActionConstants.SHIFT_LEFT, getAction(textEditor, "ShiftLeft")); //$NON-NLS-1$
+    actionBars.setGlobalActionHandler(HaskellActionConstants.HADDOCK_FOLLOWING, getAction(textEditor, "Haddock.Following"));
   }
 }
