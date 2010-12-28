@@ -3,6 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -27,7 +29,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset)
 	{
-		IHaskellCompletionContext context = new WorkbenchHaskellCompletionContext( viewer, offset );
+	  IFile theFile = HaskellUIPlugin.getFile( viewer );
+	  String docContents = viewer.getDocument().get();
+
+		IHaskellCompletionContext context = new HaskellCompletionContext( theFile, docContents, offset );
 		HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
 		ICompletionProposal[] contextProposals = context.computeProposals();
 		ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );

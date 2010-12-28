@@ -14,19 +14,32 @@ package net.sf.eclipsefp.haskell.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -83,6 +96,11 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
    */
   public static HaskellUIPlugin getDefault() {
     return plugin;
+  }
+
+  /** Get the current active workbench page (kiped from the Java UI plugin) */
+  public static IWorkbenchPage getActivePage() {
+    return getDefault().internalGetActivePage();
   }
 
   /**
@@ -144,11 +162,66 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     logg( message, IStatus.ERROR, thr );
   }
 
+  /** Get the active workbench page (kiped from Java UI plugin) */
+  private IWorkbenchPage internalGetActivePage() {
+    IWorkbenchWindow window= getWorkbench().getActiveWorkbenchWindow();
+    if (window == null) {
+      return null;
+    }
+    return window.getActivePage();
+  }
+
   // Scion manager
   // //////////////
 
   public ScionManager getScionManager() {
     return fScionManager;
+  }
+  /**
+   * Get the {@link ScionInstance} associated with a viewer's underlying editor
+   * @param viewer The ITextViewer
+   * @return The associated {@link ScionInstance} or null, if no association exists.
+   */
+  public static ScionInstance getScionInstance( final ITextViewer viewer ) {
+    IFile viewerFile = getFile( viewer );
+
+    if ( viewerFile != null ) {
+      return ScionPlugin.getScionInstance( viewerFile );
+    }
+
+    return null;
+  }
+
+  /**
+   * Utility function to get the IFile associated with a given text viewer
+   *
+   * @param viewer The text viewer
+   * @return The associated IFile object or null, if none found.
+   */
+  public static IFile getFile( final ITextViewer viewer ) {
+    ITextEditor textEditor = getTextEditor( viewer );
+
+    if( textEditor != null ) {
+      return getFile (textEditor);
+    }
+
+    return null;
+  }
+
+  /**
+   * Utility function to get the IFile associated with a given text editor
+   *
+   * @param editor The text editor
+   * @return The associated IFile or null, if the text editor's input is not an instance of IFileEditorInput
+   */
+  public static IFile getFile( final ITextEditor editor ) {
+    IEditorInput input = editor.getEditorInput();
+    if( input instanceof IFileEditorInput ) {
+      IFileEditorInput fileInput = ( IFileEditorInput )input;
+      return fileInput.getFile();
+    }
+
+    return null;
   }
 
   // helping methods
@@ -164,5 +237,30 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   public IConfigurationElement[] getExtensions(final String key) {
     IExtensionRegistry registry = Platform.getExtensionRegistry();
     return registry.getConfigurationElementsFor(getPluginId(), key);
+  }
+
+  /** Get the editor associated with a text viewer.
+   *
+   * @param viewer The text viewer
+   * @return The text editor or null, if none found.
+   */
+  public static ITextEditor getTextEditor(final ITextViewer viewer) {
+    IDocument currentDocument = viewer.getDocument();
+
+    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+
+    for (int i = 0; i < editorReferences.length; i++) {
+      IEditorPart editor = editorReferences[i].getEditor(false);
+      if (editor instanceof ITextEditor) {
+        ITextEditor textEditor = (ITextEditor) editor;
+        IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+        if (currentDocument.equals(doc)) {
+          return textEditor;
+        }
+      }
+    }
+
+    return null;
   }
 }

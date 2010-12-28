@@ -211,7 +211,7 @@
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences"
-            name="Haskell Code Templates">
+            name="%HaskellSourceTmplatesPP.name">
       </page>
    </extension>
    <extension
@@ -266,20 +266,30 @@
             name="%firstCharCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"/>
       <command
-            description="%commentCommand_desc"
+            description="%CommentAction.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%commentCommand_name"
+            name="%CommentAction.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.comment"/>
       <command
-            description="%uncommentCommand_desc"
+            description="%UncommentAction.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%uncommentCommand_name"
+            name="%UncommentAction.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"/>
       <command
             description="%openDefinitionCommand_desc"
             categoryId="org.eclipse.ui.category.navigate"
             name="%openDefinitionCommand_name"
             id="net.sf.eclipsefp.ui.commands.navigate.openDefinition"/>
+      <command
+            description="%HaddockDocumentationAction.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddockDocumentationAction.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_documentation"/>
+      <command
+            description="%HaddockDocumentFollowingAction.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddockDocumentFollowingAction.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following"/>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -308,20 +318,26 @@
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
-         <!-- keys for Comment -->
+         <!-- keys for Line Comment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+/"
+              sequence="M1+7"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+7"
+              platform="carbon"
+              sequence="M1+/"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
-         <!-- keys for Uncomment -->
+         <!-- keys for Line Uncomment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+Shift+/"
+              sequence="M1+M2+7"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+Shift+7"
+              platform="carbon"
+              sequence="M1+M2+/"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+         <!-- keys for Haddock documentation -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+D F"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following" />
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
@@ -455,9 +471,7 @@
              class="net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction"
              enablesFor="1"
              id="net.sf.eclipsefp.haskell.ui.newAction"
-             label="%cabalInstallWizard.name"
-             >
-        <description>%cabalInstallWizard.description</description>
+             label="%cabalInstallWizard.name">
        </action>
         <enablement>
 	      <adapt type="org.eclipse.core.resources.IProject">
@@ -641,6 +655,14 @@
                retarget="true"
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
                id="net.sf.eclipsefp.haskell.ui.actions.Comment">
+         </action>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_documentation"
+               label="%HaddockDocumentationAction.label"
+               style="pulldown"
+               class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentation"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.editor.actions.HaddockDocumentation">
          </action>
 <!-- Source menu: editGroup -->         
          <action
