@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions;
 
 import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.text.BadLocationException;
@@ -15,15 +16,17 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 /** Implements Haddock -> Document Following item/element */
-final class HaddockDocumentFollowingAction extends TextEditorAction {
+public final class HaddockDocumentFollowingAction extends TextEditorAction {
   /** The Haddock following item documentation marker */
   private static final String FOLLOWDOC_MARKER = " -- | ";
   /** The documentation for the user to replace */
   static final String USER_REPLACES = UITexts.HaddockDocumentation_user_replaces;
 
   /** Default constructor */
-  HaddockDocumentFollowingAction(final ResourceBundle bundle, final String prefix, final ITextEditor editor) {
+  public HaddockDocumentFollowingAction(final ResourceBundle bundle, final String prefix, final ITextEditor editor) {
     super(bundle, prefix, editor);
+    setId( HaskellEditor.HADDOCK_DOCUMENT_FOLLOWING_ACTION );
+    setActionDefinitionId( IEditorActionDefinitionIds.HADDOCK_FOLLOWING );
   }
 
   @Override

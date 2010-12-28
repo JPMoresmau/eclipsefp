@@ -59,17 +59,12 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   private static HaskellUIPlugin plugin = null;
   // Resource bundle.
   private ResourceBundle resourceBundle = null;
-
+  // The scion-server manager object
   private ScionManager fScionManager = null;
 
   public HaskellUIPlugin() {
     plugin = this;
-    try {
-      String name = HaskellUIPlugin.class.getName();
-      resourceBundle = ResourceBundle.getBundle( name );
-    } catch( MissingResourceException x ) {
-      resourceBundle = null;
-    }
+    resourceBundle = null;
   }
 
   @Override
@@ -144,6 +139,14 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
    * </p>
    */
   public ResourceBundle getResourceBundle() {
+    if (resourceBundle == null) {
+      try {
+        resourceBundle = Platform.getResourceBundle( getBundle() );
+      } catch( MissingResourceException x ) {
+        resourceBundle = null;
+      }
+    }
+
     return resourceBundle;
   }
 

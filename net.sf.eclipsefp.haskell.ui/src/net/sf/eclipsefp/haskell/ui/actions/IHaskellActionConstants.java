@@ -5,10 +5,10 @@ package net.sf.eclipsefp.haskell.ui.actions;
   *
   * @author B. Scott Michel (scooter.phd@gmail.com
  */
-public class HaskellActionConstants {
+public interface IHaskellActionConstants {
   /** The action prefix: This is the package name and needs to match the action identifiers in the Haskell UI's
    * plugin.xml. */
-  private static final String ActionPrefix = HaskellActionConstants.class.getPackage().getName() + ".";
+  static final String ActionPrefix = IHaskellActionConstants.class.getPackage().getName() + ".";
 
   /** Comment menu: name of Comment action */
   public static final String COMMENT = ActionPrefix.concat( "Comment" );
@@ -27,5 +27,4 @@ public class HaskellActionConstants {
 
   /** Source -> Haddock submenu: name of the "document following" action */
   public static final String HADDOCK_FOLLOWING = ActionPrefix.concat( "Haddock.Following" );
-
 }

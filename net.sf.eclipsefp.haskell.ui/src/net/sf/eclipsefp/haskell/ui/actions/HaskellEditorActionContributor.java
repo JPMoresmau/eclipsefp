@@ -2,6 +2,7 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.actions;
 
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -15,11 +16,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public class HaskellEditorActionContributor extends BasicTextEditorActionContributor {
-
+  /** The constructor */
   public HaskellEditorActionContributor() {
     super();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void setActiveEditor(final IEditorPart editorPart) {
     ITextEditor textEditor = null;
@@ -31,10 +35,19 @@ public class HaskellEditorActionContributor extends BasicTextEditorActionContrib
     Assert.isNotNull( textEditor );
 
     IActionBars actionBars= getActionBars();
-    actionBars.setGlobalActionHandler(HaskellActionConstants.COMMENT, getAction(textEditor, "Comment")); //$NON-NLS-1$
-    actionBars.setGlobalActionHandler(HaskellActionConstants.UNCOMMENT, getAction(textEditor, "Uncomment")); //$NON-NLS-1$
-    actionBars.setGlobalActionHandler(HaskellActionConstants.SHIFT_RIGHT, getAction(textEditor, "ShiftRight")); //$NON-NLS-1$
-    actionBars.setGlobalActionHandler(HaskellActionConstants.SHIFT_LEFT, getAction(textEditor, "ShiftLeft")); //$NON-NLS-1$
-    actionBars.setGlobalActionHandler(HaskellActionConstants.HADDOCK_FOLLOWING, getAction(textEditor, "Haddock.Following"));
+
+    // Activate command -> action mappings
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.COMMENT,
+                                      getAction(textEditor, HaskellEditor.LINE_COMMENT_ACTION));
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.UNCOMMENT,
+                                      getAction(textEditor, HaskellEditor.LINE_UNCOMMENT_ACTION));
+
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.SHIFT_RIGHT, getAction(textEditor, "ShiftRight")); //$NON-NLS-1$
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.SHIFT_LEFT, getAction(textEditor, "ShiftLeft")); //$NON-NLS-1$
+
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.HADDOCK_FOLLOWING,
+                                      getAction(textEditor, HaskellEditor.HADDOCK_DOCUMENT_FOLLOWING_ACTION));
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.HADDOCK_PREVIOUS,
+                                      getAction(textEditor, HaskellEditor.HADDOCK_DOCUMENT_PREVIOUS_ACTION));
   }
 }

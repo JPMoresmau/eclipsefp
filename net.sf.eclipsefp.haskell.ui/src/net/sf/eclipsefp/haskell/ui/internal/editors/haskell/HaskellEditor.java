@@ -19,6 +19,9 @@ import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentFollowingAction;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentPreviousAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
@@ -30,7 +33,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -70,10 +72,20 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * @author Leif Frenzel
  */
 public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, IScionEventListener {
-  /**
-   * the id under which the Haskell editor is declared.
-   */
+  /** The Haskell editor's identifier. */
   public static final String ID = HaskellEditor.class.getName();
+  /** Action string associated with a following Haddock documentation comment */
+  public static final String HADDOCK_DOCUMENT_FOLLOWING_ACTION = "Haddock.Follow"; //$NON-NLS-1$
+  /** Action string associated with a previous Haddock documentation comment */
+  public static final String HADDOCK_DOCUMENT_PREVIOUS_ACTION = "Haddock.Previous"; //$NON-NLS-1$
+  /** Action string associated with line comment insertion */
+  public static final String LINE_COMMENT_ACTION = "Comment"; //$NON-NLS-1$
+  /** Action string associated with line uncommenting */
+  public static final String LINE_UNCOMMENT_ACTION = "Uncomment"; //$NON-NLS-1$
+  /** Resource prefix used to query properties for line comments (see plugin.properties) */
+  private static final String commentResourcePrefix = "CommentAction"; //$NON-NLS-1$
+  /** Resource prefix used to query properties for line commenting */
+  private static final String uncommentResourcePrefix = "UncommentAction";
 
   /** The key binding context active while the Haskell editor is active */
   private static final String CONTEXT_ID = HaskellEditor.class.getName() + ".context";  //$NON-NLS-1$
@@ -167,11 +179,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if( isEditable() ) {
       IMenuManager mmSource = new MenuManager( UITexts.editor_actions_source, "source" ); //$NON-NLS-1$
       menu.prependToGroup( ITextEditorActionConstants.GROUP_EDIT, mmSource );
+
       mmSource.add( new Separator( "comments" ) ); //$NON-NLS-1$
       mmSource.add( new Separator( "formatting" ) ); //$NON-NLS-1$
       mmSource.add( new Separator( "organize" ) ); //$NON-NLS-1$
-      addAction( mmSource, "comments", "Comment" ); //$NON-NLS-1$ //$NON-NLS-2$
-      addAction( mmSource, "comments", "Uncomment" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+      addAction( mmSource, "comments", LINE_COMMENT_ACTION ); //$NON-NLS-1$
+      addAction( mmSource, "comments", LINE_UNCOMMENT_ACTION ); //$NON-NLS-1$
+      addAction( mmSource, "comments", HADDOCK_DOCUMENT_FOLLOWING_ACTION);
+      addAction( mmSource, "comments", HADDOCK_DOCUMENT_PREVIOUS_ACTION);
     }
   }
 
@@ -181,13 +197,23 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
-    createTextOpAction( "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId ); //$NON-NLS-1$
+    setAction("ContentAssistProposal",
+              createTextOpAction( "ContentAssistProposal", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId )); //$NON-NLS-1$
 
     // comment/uncomment
-    createTextOpAction( "Comment", ITextOperationTarget.PREFIX, //$NON-NLS-1$
-        IActionDefinitionIds.COMMENT );
-    createTextOpAction( "Uncomment", ITextOperationTarget.STRIP_PREFIX, //$NON-NLS-1$
-        IActionDefinitionIds.UNCOMMENT );
+    createTextOpAction( LINE_COMMENT_ACTION, commentResourcePrefix, ITextOperationTarget.PREFIX,
+                        IEditorActionDefinitionIds.COMMENT );
+
+
+    createTextOpAction( LINE_UNCOMMENT_ACTION, uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
+                        IEditorActionDefinitionIds.UNCOMMENT );
+
+
+    // New actions that we contribute:
+    ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
+
+    setAction( HADDOCK_DOCUMENT_FOLLOWING_ACTION, new HaddockDocumentFollowingAction( bundle, "HaddockDocumentFollowing.", this ));
+    setAction( HADDOCK_DOCUMENT_PREVIOUS_ACTION,  new HaddockDocumentPreviousAction( bundle, "HaddockDocumentPrevious.", this ));
 
     addRulerContextMenuListener( new IMenuListener() {
 
@@ -425,12 +451,18 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         || property.equals( EDITOR_TH_BOLD );
   }
 
-  private void createTextOpAction( final String name, final int targetId, final String actionDefinitionId ) {
+  /**
+   * Create a standard text operation action
+   */
+  private TextOperationAction createTextOpAction( final String actionIdName, final String resourcePrefix, final int targetId,
+                                                  final String actionDefinitionId ) {
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
-    Action action = new TextOperationAction( bundle, name + ".", this, targetId );  //$NON-NLS-1$
+    TextOperationAction action = new TextOperationAction( bundle, resourcePrefix + ".", this, targetId );  //$NON-NLS-1$
     action.setActionDefinitionId( actionDefinitionId );
-    setAction( name, action );
-    markAsStateDependentAction( name, true );
+    setAction( actionIdName, action );
+    markAsStateDependentAction( actionIdName, true );
+
+    return action;
   }
 
   @Override

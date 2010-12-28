@@ -1,9 +1,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions;
 
-import net.sf.eclipsefp.haskell.ui.actions.HaskellActionConstants;
+import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -11,46 +11,50 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.TextEditorAction;
 
 /** Implements Haddock -> Document Previous item/element */
-final class HaddockDocumentPreviousAction extends Action {
+public final class HaddockDocumentPreviousAction extends TextEditorAction {
   /** The Haddock previous item documentation marker */
   private static final String PREVDOC_MARKER = " -- ^ ";
   /** The documentation for the user to replace */
   static final String USER_REPLACES = UITexts.HaddockDocumentation_user_replaces;
 
-  /** The associated editor */
-  private final HaskellEditor editor;
-
   /** Default constructor */
-  HaddockDocumentPreviousAction(final HaskellEditor editor) {
-    super(UITexts.HaddockDocumentation_previous_item);
-    this.editor = editor;
-    setId( HaskellActionConstants.HADDOCK_PREVIOUS );
+  public HaddockDocumentPreviousAction(final ResourceBundle bundle, final String prefix, final ITextEditor editor) {
+    super(bundle, prefix, editor);
+    setId( HaskellEditor.HADDOCK_DOCUMENT_PREVIOUS_ACTION );
+    setActionDefinitionId( IEditorActionDefinitionIds.HADDOCK_PREVIOUS );
   }
 
   @Override
   public void run() {
     // Go to the end of the line in the editor's document, add the "-- ^ " code:
-    IDocument doc = editor.getDocument();
+    ITextEditor editor = getTextEditor();
 
-    ISelectionProvider selectionProvider = editor.getSelectionProvider();
-    ISelection selection = selectionProvider.getSelection();
-    if (selection instanceof ITextSelection) {
-      ITextSelection textSelection = ( ITextSelection )selection;
-      int offset = textSelection.getOffset();
+    if (editor instanceof HaskellEditor) {
+      HaskellEditor hEditor = ( HaskellEditor ) editor;
+      IDocument doc = hEditor.getDocument();
 
-      if (offset > -1) {
-        try {
-          IRegion currentLine = doc.getLineInformationOfOffset( offset );
-          int endOfLineOffset = currentLine.getOffset() + currentLine.getLength();
+      ISelectionProvider selectionProvider = hEditor.getSelectionProvider();
+      ISelection selection = selectionProvider.getSelection();
+      if (selection instanceof ITextSelection) {
+        ITextSelection textSelection = ( ITextSelection )selection;
+        int offset = textSelection.getOffset();
 
-          doc.replace(endOfLineOffset, 0, PREVDOC_MARKER.concat(USER_REPLACES));
+        if (offset > -1) {
+          try {
+            IRegion currentLine = doc.getLineInformationOfOffset( offset );
+            int endOfLineOffset = currentLine.getOffset() + currentLine.getLength();
 
-          ITextSelection newCursor = new TextSelection( doc, endOfLineOffset + PREVDOC_MARKER.length(), USER_REPLACES.length() );
-          selectionProvider.setSelection( newCursor );
-        } catch( BadLocationException ex ) {
-          // Ignore and continue...
+            doc.replace(endOfLineOffset, 0, PREVDOC_MARKER.concat(USER_REPLACES));
+
+            ITextSelection newCursor = new TextSelection( doc, endOfLineOffset + PREVDOC_MARKER.length(), USER_REPLACES.length() );
+            selectionProvider.setSelection( newCursor );
+          } catch( BadLocationException ex ) {
+            // Ignore and continue...
+          }
         }
       }
     }

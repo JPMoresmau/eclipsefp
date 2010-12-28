@@ -663,17 +663,17 @@
          </menu>
          <action
                definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following"
-               label="%HaddockDocumentPrevious.label"
-               retarget="true"
-               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
-               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Previous">
-         </action>
-         <action
-               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"
                label="%HaddockDocumentFollowing.label"
                retarget="true"
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
                id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Following">
+         </action>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"
+               label="%HaddockDocumentPrevious.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Previous">
          </action>
 <!-- Source menu: editGroup -->         
          <action
