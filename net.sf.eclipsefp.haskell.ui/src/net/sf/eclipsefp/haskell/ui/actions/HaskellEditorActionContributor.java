@@ -41,6 +41,8 @@ public class HaskellEditorActionContributor extends BasicTextEditorActionContrib
                                       getAction(textEditor, HaskellEditor.LINE_COMMENT_ACTION));
     actionBars.setGlobalActionHandler(IHaskellActionConstants.UNCOMMENT,
                                       getAction(textEditor, HaskellEditor.LINE_UNCOMMENT_ACTION));
+    actionBars.setGlobalActionHandler( IHaskellActionConstants.COMMENT_PRAGMA,
+                                      getAction(textEditor, HaskellEditor.COMMENT_PRAGMA_ACTION));
 
     actionBars.setGlobalActionHandler(IHaskellActionConstants.SHIFT_RIGHT, getAction(textEditor, "ShiftRight")); //$NON-NLS-1$
     actionBars.setGlobalActionHandler(IHaskellActionConstants.SHIFT_LEFT, getAction(textEditor, "ShiftLeft")); //$NON-NLS-1$
@@ -49,5 +51,7 @@ public class HaskellEditorActionContributor extends BasicTextEditorActionContrib
                                       getAction(textEditor, HaskellEditor.HADDOCK_DOCUMENT_FOLLOWING_ACTION));
     actionBars.setGlobalActionHandler(IHaskellActionConstants.HADDOCK_PREVIOUS,
                                       getAction(textEditor, HaskellEditor.HADDOCK_DOCUMENT_PREVIOUS_ACTION));
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.HADDOCK_BLOCK_FOLLOWING,
+                                      getAction(textEditor, HaskellEditor.HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION));
   }
 }

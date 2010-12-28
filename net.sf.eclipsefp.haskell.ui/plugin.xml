@@ -276,6 +276,11 @@
             name="%UncommentAction.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"/>
       <command
+            description="%CommentPragmaAction.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%CommentPragmaAction.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma"/>
+      <command
             description="%openDefinitionCommand_desc"
             categoryId="org.eclipse.ui.category.navigate"
             name="%openDefinitionCommand_name"
@@ -290,6 +295,11 @@
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%HaddockDocumentPrevious.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"/>
+      <command
+            description="%HaddockDocumentBlockFollow.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddocDocumentBlockFollow.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following"/>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -334,6 +344,10 @@
               platform="carbon"
               sequence="M1+M2+/"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+         <!-- keys for Comment Pragma -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+C P"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma" />
          <!-- keys for Haddock documentation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D F"
@@ -341,6 +355,9 @@
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D P"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous" />
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+D B"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following" />
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
@@ -666,15 +683,25 @@
                label="%HaddockDocumentFollowing.label"
                retarget="true"
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
-               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Following">
-         </action>
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Following"/>
          <action
                definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"
                label="%HaddockDocumentPrevious.label"
                retarget="true"
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
-               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Previous">
-         </action>
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Previous"/>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following"
+               label="%HaddockDocumentBlockFollow.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Block.Following"/>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma"
+               label="%CommentPragmaAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Comment.Pragma"/>
 <!-- Source menu: editGroup -->         
          <action
                definitionId="org.eclipse.ui.edit.text.shiftLeft"

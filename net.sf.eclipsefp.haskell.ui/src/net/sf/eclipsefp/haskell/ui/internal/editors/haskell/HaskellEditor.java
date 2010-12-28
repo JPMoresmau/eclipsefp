@@ -20,8 +20,10 @@ import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockBlockDocumentFollowingAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentFollowingAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentPreviousAction;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.PragmaCommentAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
@@ -78,14 +80,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public static final String HADDOCK_DOCUMENT_FOLLOWING_ACTION = "Haddock.Follow"; //$NON-NLS-1$
   /** Action string associated with a previous Haddock documentation comment */
   public static final String HADDOCK_DOCUMENT_PREVIOUS_ACTION = "Haddock.Previous"; //$NON-NLS-1$
+  /** Action string associated with a following Haddock documentation comment */
+  public static final String HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION = "Haddock.Block.Follow"; //$NON-NLS-1$
   /** Action string associated with line comment insertion */
   public static final String LINE_COMMENT_ACTION = "Comment"; //$NON-NLS-1$
   /** Action string associated with line uncommenting */
   public static final String LINE_UNCOMMENT_ACTION = "Uncomment"; //$NON-NLS-1$
+  /** Action string associated with pragma comments insertion */
+  public static final String COMMENT_PRAGMA_ACTION = "Comment.Pragma"; //$NON-NLS-1$
   /** Resource prefix used to query properties for line comments (see plugin.properties) */
   private static final String commentResourcePrefix = "CommentAction"; //$NON-NLS-1$
   /** Resource prefix used to query properties for line commenting */
   private static final String uncommentResourcePrefix = "UncommentAction";
+  /** Resource prefix used to query properties for pragma comments */
+  private static final String commentPragmaResourcePrefix = "CommentPragmaAction"; //$NON-NLS-1$
 
   /** The key binding context active while the Haskell editor is active */
   private static final String CONTEXT_ID = HaskellEditor.class.getName() + ".context";  //$NON-NLS-1$
@@ -186,8 +194,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
       addAction( mmSource, "comments", LINE_COMMENT_ACTION ); //$NON-NLS-1$
       addAction( mmSource, "comments", LINE_UNCOMMENT_ACTION ); //$NON-NLS-1$
-      addAction( mmSource, "comments", HADDOCK_DOCUMENT_FOLLOWING_ACTION);
-      addAction( mmSource, "comments", HADDOCK_DOCUMENT_PREVIOUS_ACTION);
+      addAction( mmSource, "comments", COMMENT_PRAGMA_ACTION); //$NON-NLS-1$
+      addAction( mmSource, "comments", HADDOCK_DOCUMENT_FOLLOWING_ACTION); //$NON-NLS-1$
+      addAction( mmSource, "comments", HADDOCK_DOCUMENT_PREVIOUS_ACTION); //$NON-NLS-1$
+      addAction( mmSource, "comments", HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION); //$NON-NLS-1$
     }
   }
 
@@ -203,17 +213,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // comment/uncomment
     createTextOpAction( LINE_COMMENT_ACTION, commentResourcePrefix, ITextOperationTarget.PREFIX,
                         IEditorActionDefinitionIds.COMMENT );
-
-
     createTextOpAction( LINE_UNCOMMENT_ACTION, uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
                         IEditorActionDefinitionIds.UNCOMMENT );
-
 
     // New actions that we contribute:
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
 
-    setAction( HADDOCK_DOCUMENT_FOLLOWING_ACTION, new HaddockDocumentFollowingAction( bundle, "HaddockDocumentFollowing.", this ));
-    setAction( HADDOCK_DOCUMENT_PREVIOUS_ACTION,  new HaddockDocumentPreviousAction( bundle, "HaddockDocumentPrevious.", this ));
+    setAction(COMMENT_PRAGMA_ACTION,
+              new PragmaCommentAction( bundle, commentPragmaResourcePrefix + ".", this ));
+    setAction( HADDOCK_DOCUMENT_FOLLOWING_ACTION,
+               new HaddockDocumentFollowingAction( bundle, "HaddockDocumentFollowing.", this ));
+    setAction( HADDOCK_DOCUMENT_PREVIOUS_ACTION,
+               new HaddockDocumentPreviousAction( bundle, "HaddockDocumentPrevious.", this ));
+    setAction( HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION,
+               new HaddockBlockDocumentFollowingAction( bundle, "HaddockDocumentBlockFollow.", this ));
 
     addRulerContextMenuListener( new IMenuListener() {
 
