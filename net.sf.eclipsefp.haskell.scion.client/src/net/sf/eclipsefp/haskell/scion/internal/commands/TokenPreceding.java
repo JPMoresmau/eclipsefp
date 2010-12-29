@@ -1,12 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
-import java.util.ArrayList;
-
 import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.Note;
-import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 
-import org.eclipse.core.runtime.CoreException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

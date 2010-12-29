@@ -17,21 +17,59 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ContentAssistEvent;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.ICompletionListener;
+import org.eclipse.jface.text.contentassist.ICompletionListenerExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
- * Computes the content assist completion proposals and context information.
+ * Computes the content assist completion proposals and context information. This class is fairly stateful, since
+ * what are presented as completion proposals depends on where the editor's point is located and the preceding token's
+ * lexical type.
  *
  * @author Leif Frenzel (original author)
  * @author B. Scott Michel (scooter.phd@gmail.com)
  */
 public class HaskellContentAssistProcessor implements IContentAssistProcessor {
-  /** Default constructor */
-	public HaskellContentAssistProcessor() {
+  /** The associated content assistant, used to add/remove listeners */
+  private final ContentAssistant assistant;
+  /** Current completion prefix */
+  private String prefix;
+
+  /** The different context states that the completion processor needs to track */
+  enum CompletionContext {
+      NO_CONTEXT
+    , DEFAULT_CONTEXT
+    , IMPORT_STMT
+  }
+
+  /** The current completion context state */
+  private CompletionContext context;
+  /** The original prefix offset */
+  private int prefixOffsetAnchor;
+
+  // Module context variables:
+  /** Module names in the modules graph */
+  private ArrayList<String> moduleGraphNames;
+  /** Module names exposed by the cabal project file */
+  private ArrayList<String> exposedModules;
+
+  /**
+   * The constructor.
+   *
+   * @param assistant The associated content assistant
+   */
+	public HaskellContentAssistProcessor(final ContentAssistant assistant) {
 	  super();
+	  this.assistant = assistant;
+	  internalReset();
+
+	  // Add the listener, who modulates the completion context
+	  this.assistant.addCompletionListener( new CAListener() );
 	}
 
 	// =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
@@ -45,44 +83,42 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	{
 	  IFile theFile = HaskellUIPlugin.getFile( viewer );
 	  IDocument doc = viewer.getDocument();
-	  String prefix = getCompletionPrefix( doc, offset );
-	  ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
-	  if ( scion != null ) {
-	    int offsetPrefix = offset - prefix.length();
+    prefix = getCompletionPrefix( doc, offset );
+    switch (context) {
+      case NO_CONTEXT: {
+        // Figure out what we're doing...
+        ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
+        if ( scion != null ) {
+          int offsetPrefix = offset - prefix.length();
 
-	    if (offsetPrefix < 0) {
-        offsetPrefix = 0;
+          if (offsetPrefix < 0) {
+            offsetPrefix = 0;
+          }
+
+          Region point = new Region( offsetPrefix, 0 );
+          String token = scion.tokenPreceding( theFile, doc, point );
+
+          if (HaskellLexerTokens.isImportToken( token )) {
+            return moduleNamesContext(scion, offset);
+          } else {
+            return defaultCompletionContext(viewer, theFile, doc, offset);
+          }
+        }
+
+        break;
       }
 
-	    Region point = new Region( offsetPrefix, 0 );
-	    String token = scion.tokenPreceding( theFile, doc, point );
+      case DEFAULT_CONTEXT: {
+        return defaultCompletionContext( viewer, theFile, doc, offset );
+      }
 
-	    if (HaskellLexerTokens.isImportToken( token )) {
-	      return getModuleNames(scion, prefix, offset);
-	    }
-	  }
+      case IMPORT_STMT: {
+        return filterModuleNames( offset );
+      }
+    }
 
-		IHaskellCompletionContext context = new HaskellCompletionContext( theFile, doc.get(), offset );
-		HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
-		ICompletionProposal[] contextProposals = context.computeProposals();
-		ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );
-
-		// Merge the results together (templates precede generated proposals):
-		int totalSize = contextProposals.length + templateProposals.length;
-    int endIndex = 0;
-		ICompletionProposal[] result = new ICompletionProposal[ totalSize ];
-
-		if ( templateProposals.length > 0 ) {
-		  System.arraycopy( templateProposals, 0, result, endIndex, templateProposals.length );
-		  endIndex += templateProposals.length;
-		}
-
-		if ( contextProposals.length > 0 ) {
-		  System.arraycopy( contextProposals, 0, result, endIndex, contextProposals.length );
-		}
-
-		return (totalSize > 0 ? result : null);
+    return null;
 	}
 
 	public IContextInformation[] computeContextInformation(final ITextViewer viewer, final int documentOffset) {
@@ -110,20 +146,100 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 		return null;
 	}
 
-	/**
-	 * Generate all of the visible module names matching a prefix.
-	 */
-	private ICompletionProposal[] getModuleNames(final ScionInstance scion, final String prefix, final int offset) {
-    List<String> modules = new ArrayList<String>();
+	/** Hard reset internal state */
+	private void internalReset() {
+	  context = CompletionContext.NO_CONTEXT;
+    prefixOffsetAnchor = -1;
+	  prefix = new String();
+	  moduleGraphNames = null;
+	  exposedModules = null;
+	}
 
-    for (String m : scion.moduleGraph() ) {
-      if (prefix.length() == 0 || m.startsWith( prefix )) {
+	/** Get the completion prefix from the prefix offset, if non-zero, or reverse lex */
+	private String getCompletionPrefix( final IDocument doc, final int offset ) {
+	  if (prefixOffsetAnchor > 0) {
+	    try {
+        return doc.get( prefixOffsetAnchor, offset - prefixOffsetAnchor );
+      } catch( BadLocationException ex ) {
+        // Should not happen, but fall through to lexCompletionPrefix() call
+      }
+	  }
+
+	  // Prefix offset anchor isn't set, or fell through as the result of the exception
+	  prefixOffsetAnchor = offset;
+	  return lexCompletionPrefix( doc, offset );
+	}
+
+	/**
+	 * Default completion context, if no other context can be determined.
+	 */
+	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
+	                                                        final int offset ) {
+	  context = CompletionContext.DEFAULT_CONTEXT;
+
+    IHaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset );
+    HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
+    ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
+    ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );
+
+    // Merge the results together (templates precede generated proposals):
+    int totalSize = haskellProposals.length + templateProposals.length;
+    int endIndex = 0;
+    ICompletionProposal[] result = new ICompletionProposal[ totalSize ];
+
+    if ( templateProposals.length > 0 ) {
+      System.arraycopy( templateProposals, 0, result, endIndex, templateProposals.length );
+      endIndex += templateProposals.length;
+    }
+
+    if ( haskellProposals.length > 0 ) {
+      System.arraycopy( haskellProposals, 0, result, endIndex, haskellProposals.length );
+    }
+
+    return (totalSize > 0 ? result : null);
+	}
+
+	/**
+	 * Initialize the state necessary for the 'import' statement's context.
+	 *
+	 * @param scion The scion-server instance for the document's file/project
+	 * @param prefix The prefix used to filter matching module names
+	 * @param offset Offset into the document where proposals could be inserted
+	 *
+	 * @return A ICompletionProposal array of matching module names, or null, if none.
+	 */
+	private ICompletionProposal[] moduleNamesContext(final ScionInstance scion, final int offset) {
+	  // Grab all of the module names, keep them cached for the duration of the completion session
+
+	  moduleGraphNames = new ArrayList<String>();
+	  moduleGraphNames.addAll( scion.moduleGraph() );
+
+	  exposedModules = new ArrayList<String>();
+	  exposedModules.addAll( scion.listExposedModules() );
+	  context = CompletionContext.IMPORT_STMT;
+
+	  return filterModuleNames( offset);
+	}
+
+	/**
+	 * Filter module names given a matching prefix.
+	 *
+	 * @param prefix The module name prefix
+	 * @param offset The offset into the document where the completions will be inserted.
+	 * @return An ICompletionProposal array of matching completions, or null if none.
+	 */
+	private ICompletionProposal[] filterModuleNames( final int offset ) {
+    List<String> modules = new ArrayList<String>();
+    final String normalizedPrefix = prefix.toLowerCase();
+
+    for (String m : moduleGraphNames ) {
+      if (prefix.length() == 0 || m.toLowerCase().startsWith( normalizedPrefix )) {
         modules.add(m);
       }
     }
 
-    for (String m : scion.listExposedModules( ) ) {
-      if (prefix.length() == 0 || m.startsWith( prefix )) {
+    for (String m : exposedModules ) {
+      if (prefix.length() == 0 || m.toLowerCase().startsWith( normalizedPrefix )) {
         modules.add(m);
       }
     }
@@ -145,15 +261,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
     return null;
 	}
+
 	/**
 	 * Get the completion prefix by reverse lexing from the offset. The reverse lexing process stops at the beginning of the
-	 * line on which the editor point (offset) is located.
+	 * line on which the editor point (offset) is located, unless a token has been otherwise collected.
 	 *
 	 * @param document The document from which to extract the completion prefix
 	 * @param offset The current editor point in the document.
 	 * @return The completion prefix string or an empty string if reverse lexing did not find anything useful.
 	 */
-	public static final String getCompletionPrefix( final IDocument document, final int offset ) {
+	public static final String lexCompletionPrefix( final IDocument document, final int offset ) {
     // If we're beyond the document limit (how?), return an empty string
     if( offset > document.getLength() ) {
       return new String();
@@ -163,7 +280,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       IRegion lineAt = document.getLineInformationOfOffset( offset );
       final int lineBegin = lineAt.getOffset();
       int i = offset - 1;
-      char ch = document.getChar( i );
+      final char ch = document.getChar( i );
 
       if (HaskellText.isHaskellIdentifierPart( ch )) {
         // Scan backward until non-identifier character
@@ -213,5 +330,36 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     return new String();
+	}
+
+	/** Content assistant listener: This initializes and manages the transitions between completion context states. */
+	private class CAListener implements ICompletionListener, ICompletionListenerExtension {
+	  public CAListener() {
+	    // NOP
+	  }
+
+	  public void assistSessionStarted( final ContentAssistEvent event ) {
+	    // HaskellUIPlugin.log( "CA session starts, prefix = '" + (prefix != null ? prefix : "<null") + "', context = " + context, null );
+
+	    // Reset the context to force computeCompletionProposals to figure out what the context,
+	    // clean out existing state:
+	    HaskellContentAssistProcessor.this.internalReset();
+    }
+
+    public void assistSessionEnded( final ContentAssistEvent event ) {
+      // HaskellUIPlugin.log( "CA session ends.", null);
+
+      // Reset internal state for completeness
+      HaskellContentAssistProcessor.this.internalReset();
+    }
+
+    public void assistSessionRestarted( final ContentAssistEvent event ) {
+      // HaskellUIPlugin.log( "CA session restarts, prefix = '" + (prefix != null ? prefix : "<null") + "', context = " + context, null );
+    }
+
+    public void selectionChanged( final ICompletionProposal proposal, final boolean smartToggle ) {
+      // NOP
+    }
+
 	}
 }

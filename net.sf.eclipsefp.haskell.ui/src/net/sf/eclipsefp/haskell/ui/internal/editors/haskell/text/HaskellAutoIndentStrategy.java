@@ -14,7 +14,6 @@ import org.eclipse.jface.text.IDocument;
   * @author Leif Frenzel
   */
 public class HaskellAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
-
   // Override methods DefaultIndentLineAutoEditStrategy
   ///////////////////////////////////////////
 
@@ -24,10 +23,4 @@ public class HaskellAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
     // FIXME: Help with layout mode here:
     super.customizeDocumentCommand( document, command );
   }
-
-  /* DELETE ME: This is no longer needed
-  private int getTabWidth() {
-    IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-    return prefStore.getInt( IEditorPreferenceNames.EDITOR_TAB_WIDTH );
-  } */
 }

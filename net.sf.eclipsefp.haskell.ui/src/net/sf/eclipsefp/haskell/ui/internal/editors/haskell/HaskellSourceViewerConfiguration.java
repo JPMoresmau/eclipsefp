@@ -112,16 +112,17 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	@Override
   public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
 
-		ContentAssistant result = new ContentAssistant();
-		result.setContentAssistProcessor(new HaskellContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
-		result.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		ContentAssistant ca = new ContentAssistant();
+		ca.setContentAssistProcessor(new HaskellContentAssistProcessor(ca), IDocument.DEFAULT_CONTENT_TYPE);
+		ca.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 
-		// TODO get from pref / update on pref change
-		result.enableAutoActivation(true);
-		result.enableAutoInsert(true);
-		result.setAutoActivationDelay(500);
+		ca.enablePrefixCompletion( true );
+		ca.setRepeatedInvocationMode( true );
+		ca.enableAutoActivation(true);
+		ca.enableAutoInsert(true);
+		ca.setAutoActivationDelay(500);
 
-		return result;
+		return ca;
 	}
 
 	/**

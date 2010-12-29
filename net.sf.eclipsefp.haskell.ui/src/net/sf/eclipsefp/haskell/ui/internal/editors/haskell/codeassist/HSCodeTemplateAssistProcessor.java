@@ -37,7 +37,7 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
    */
   @Override
   protected String extractPrefix( final ITextViewer viewer, final int offset ) {
-    return HaskellContentAssistProcessor.getCompletionPrefix( viewer.getDocument(), offset );
+    return HaskellContentAssistProcessor.lexCompletionPrefix( viewer.getDocument(), offset );
   }
 
   @Override
