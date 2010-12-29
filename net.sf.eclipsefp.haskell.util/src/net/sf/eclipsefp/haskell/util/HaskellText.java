@@ -24,20 +24,19 @@ public final class HaskellText {
   /**
    * Predicate for comment characters
    */
- public static boolean isCommentPart( char ch ) {
-   return (   ch == '{'
-           || ch == '-'
-           || ch == '}');
- }
+  public static boolean isCommentPart( char ch ) {
+    return (   ch == '{'
+            || ch == '-'
+            || ch == '}');
+  }
  
- /**
-  * Predicate for symbol characters
-  */
-
- public static boolean isSymbol( final char ch ) {
-   return (   Character.getType( ch ) == Character.MATH_SYMBOL
-           || Character.getType( ch ) == Character.CURRENCY_SYMBOL
-           || Character.getType( ch ) == Character.MODIFIER_SYMBOL
-           || Character.getType( ch ) == Character.OTHER_SYMBOL);
- }
+  /**
+   * Predicate for symbol characters
+   */
+  public static boolean isSymbol( final char ch ) {
+    return (   Character.getType( ch ) == Character.MATH_SYMBOL
+            || Character.getType( ch ) == Character.CURRENCY_SYMBOL
+            || Character.getType( ch ) == Character.MODIFIER_SYMBOL
+            || Character.getType( ch ) == Character.OTHER_SYMBOL);
+  }
 }

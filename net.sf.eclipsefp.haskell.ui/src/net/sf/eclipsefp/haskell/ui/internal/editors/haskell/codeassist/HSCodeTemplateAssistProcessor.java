@@ -2,9 +2,6 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.haskell.util.HaskellText;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
@@ -40,57 +37,7 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
    */
   @Override
   protected String extractPrefix( final ITextViewer viewer, final int offset ) {
-    IDocument document = viewer.getDocument();
-
-    // If we're beyond the document limit (how?), return an empty string
-    if( offset > document.getLength() ) {
-      return new String();
-    }
-
-    try {
-      IRegion lineAt = document.getLineInformationOfOffset( offset );
-      int i = offset - 1;
-      char ch = document.getChar( i );
-
-      if (HaskellText.isHaskellIdentifierPart( ch )) {
-        // Scan backward until non-identifier character
-        for (--i; i >= lineAt.getOffset() && HaskellText.isHaskellIdentifierPart( document.getChar( i ) ); --i) {
-          // NOP
-        }
-
-        ++i;
-        String retval = document.get( i, offset - i );
-
-        if ( !retval.startsWith( "_" ) ) {
-          return retval;
-        }
-      } else if ( HaskellText.isCommentPart( ch ) ) {
-        // Scan backward until a non-comment character:
-        for (--i; i >= lineAt.getOffset() && HaskellText.isCommentPart( document.getChar( i ) ); --i) {
-          // NOP
-        }
-
-        ++i;
-        String retval = document.get( i, offset - i );
-
-        // Ensure that the prefix is really the start of a comment.
-        if (retval.startsWith( "{-" ) || retval.startsWith( "--" ) ) {
-          return retval;
-        }
-      } else if ( HaskellText.isSymbol( ch ) ) {
-        // Scan backward until a non-comment character:
-        for (--i; i >= lineAt.getOffset() && HaskellText.isSymbol( document.getChar( i ) ); --i) {
-          // NOP
-        }
-
-        ++i;
-        return document.get( i, offset - i );
-      }
-    } catch( BadLocationException e ) {
-      // Dunno how we'd generate this exception, but catch it anyway and fall through
-    }
-
-    return new String();
+    return HaskellContentAssistProcessor.getCompletionPrefix( viewer.getDocument(), offset );
   }
 
   @Override

@@ -7,7 +7,7 @@ package net.sf.eclipsefp.haskell.core.codeassist;
  *
  * @author B. Scott Michel
  */
-public interface IHaskellTokens {
+public class HaskellLexerTokens {
   // Keywords
   public final static String ITas = "ITas"; //$NON-NLS-1$
   public final static String ITcase = "ITcase"; //$NON-NLS-1$
@@ -167,4 +167,12 @@ public interface IHaskellTokens {
   public final static String ITdocOptionsOld = "ITdocOptionsOld"; //$NON-NLS-1$
   public final static String ITlineComment = "ITlineComment"; //$NON-NLS-1$
   public final static String ITblockComment = "ITblockComment"; //$NON-NLS-1$
+
+  //=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~
+  // Predicates
+  //=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~
+
+  public final static boolean isImportToken(final String token) {
+    return ITimport.equals(token);
+  }
 }

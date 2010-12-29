@@ -57,7 +57,10 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 
   // The shared instance.
   private static HaskellUIPlugin plugin = null;
-  // Resource bundle.
+  /** The plugin's resource bundle ("plugin.properties"). Note that this variable is lazily assigned,
+   * and only serves the cache the result when the {@link HaskellUIPlugin#getResourceBundle() getResourceBundle()}
+   * method is initially called.
+   */
   private ResourceBundle resourceBundle = null;
   // The scion-server manager object
   private ScionManager fScionManager = null;
@@ -134,9 +137,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   // ///////////////////////////
 
   /**
-   * <p>
-   * returns the plugin's resource bundle.
-   * </p>
+   * Get the plugin's resource bundle (aka "plugin.properties").
    */
   public ResourceBundle getResourceBundle() {
     if (resourceBundle == null) {
@@ -264,6 +265,35 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
       }
     }
 
+    return null;
+  }
+
+  /**
+   * Get the file object corresponding to the a document.
+   *
+   * @param currentDocument The document whose file we want.
+   */
+  public static IFile getFile(final IDocument currentDocument) {
+    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+    IEditorInput input = null;
+
+    for (int i = 0; i < editorReferences.length; i++) {
+      IEditorPart editor = editorReferences[i].getEditor(false);
+      if (editor instanceof ITextEditor) {
+        ITextEditor textEditor = (ITextEditor) editor;
+        IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+        if (currentDocument.equals(doc)) {
+          input = textEditor.getEditorInput();
+          if (input instanceof IFileEditorInput) {
+            IFileEditorInput fileInput = (IFileEditorInput) input;
+            return fileInput.getFile();
+          }
+        }
+      }
+    }
+
+    // Return a null IFile, which is handled in HaskellCompletionContext.
     return null;
   }
 }

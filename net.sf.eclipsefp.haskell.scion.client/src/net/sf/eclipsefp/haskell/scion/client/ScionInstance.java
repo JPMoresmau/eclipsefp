@@ -26,6 +26,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokenPreceding;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
@@ -57,7 +58,9 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONObject;
@@ -762,7 +765,29 @@ public class ScionInstance {
   }
   
   /**
-   * Located the first definition of a name.
+   * Get the Haskell lexer token preceding the editor's point
+   * 
+   * @param file The file being operated on
+   * @param doc The current document
+   * @param point The editor's point
+   */
+  public String tokenPreceding(final IFile file, final IDocument doc, final IRegion point) {
+    try {
+      Location location = new Location(file.toString(), doc, point);
+      final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
+      final TokenPreceding cmd = new TokenPreceding(doc.get(), location, false);
+        
+      if (withLoadedDocument( file, doc, cmd, jobName ))
+        return cmd.getTokenString();
+    } catch (BadLocationException e) {
+      // Fall through
+    }
+    
+    return new String();
+  }
+  
+  /**
+   * Locate the first definition of a name.
    * 
    * @param name The name to located.
    * @return The editor location where the name can be found.
