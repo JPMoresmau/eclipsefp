@@ -172,7 +172,19 @@ public class HaskellLexerTokens {
   // Predicates
   //=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~
 
+  /** 'import' token predicate
+   *
+   * @param token The lexer token to compare
+   */
   public final static boolean isImportToken(final String token) {
     return ITimport.equals(token);
+  }
+
+  /** '::' (dcolon) token predicate
+   *
+   * @param token The lexer token to compare
+   */
+  public final static boolean isDoubleColon(final String token) {
+    return ITdcolon.equals(token);
   }
 }

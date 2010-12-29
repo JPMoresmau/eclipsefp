@@ -18,7 +18,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 /** Implements Haddock -> Document Following item/element */
 public final class HaddockDocumentFollowingAction extends TextEditorAction {
   /** The Haddock following item documentation marker */
-  private static final String FOLLOWDOC_MARKER = " -- | ";
+  private static final String FOLLOWDOC_MARKER = "-- | ";
   /** The documentation for the user to replace */
   static final String USER_REPLACES = UITexts.HaddockDocumentation_user_replaces;
 
