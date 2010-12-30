@@ -117,7 +117,7 @@ public class StdStreamScionServer extends ScionServer {
             if (responseString.startsWith(PREFIX)) {
               response = new JSONObject(new JSONTokener(responseString.substring(PREFIX.length())));
 
-              if (verboseInteraction) {
+              if (getVerboseInteraction()) {
                 String logmsg = FROM_SERVER_PREFIX+response.toString();
                 outputWriter.addMessage(logmsg);
               }

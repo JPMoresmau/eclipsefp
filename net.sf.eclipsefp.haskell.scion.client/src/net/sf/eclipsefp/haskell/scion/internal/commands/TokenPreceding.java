@@ -23,6 +23,8 @@ public class TokenPreceding extends ScionCommand {
   boolean literate;
   /** The lexer token returned by scion-server, see {@link IHaskellTokens} */
   String token;
+  /** The lexer token's location in the source, as reported by the scion-server */
+  Location tokenLocation;
   
   /** The usual constructor
    * 
@@ -36,6 +38,9 @@ public class TokenPreceding extends ScionCommand {
     this.theDocument = contents;
     this.editPoint = editPoint;
     this.literate = literate;
+    
+    this.token = null;
+    this.tokenLocation = null;
   }
 
   /**
@@ -61,6 +66,13 @@ public class TokenPreceding extends ScionCommand {
       JSONArray result = o.optJSONArray("Right");
       if (result != null) {
         token = (String) result.get(0);
+        
+        int startLine = result.getInt(1);
+        int startColumn = result.getInt(2);
+        int endLine = result.getInt(3);
+        int endColumn = result.getInt(4);
+        
+        tokenLocation = new Location(new String(), startLine, startColumn, endLine, endColumn);
       }
     }
   }
@@ -70,6 +82,13 @@ public class TokenPreceding extends ScionCommand {
    */
   public String getTokenString() {
     return token;
+  }
+  
+  /**
+   * Get the token's Location
+   */
+  public Location getTokenLocation() {
+    return tokenLocation;
   }
 
   /**

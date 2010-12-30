@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
@@ -446,7 +448,12 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static void removeProjectEventListener(IProject project, IScionEventListener listener) {
     projectEventListeners.remove(listener);
   }
-  
+
+  /** Get an instance-scoped preference store for the plug-in */
+  public static final IEclipsePreferences instanceScopedPreferences() {
+    return new InstanceScope().getNode( getPluginId() );
+  }
+
   //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
   // Internal factory classes:
   //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
