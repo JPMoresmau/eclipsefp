@@ -76,6 +76,8 @@ public abstract class ScionServer {
 
   /** logs output **/
   protected OutputWriter                     outputWriter;
+  /** Server interaction verbosity */
+  protected boolean                          verboseInteraction;
   
   /** Command queue, to deal with both synchronous and asynchronous commands */
   protected final Map<Integer, ScionCommand> commandQueue;
@@ -107,6 +109,7 @@ public abstract class ScionServer {
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
     this.outputWriter = null;
+    this.verboseInteraction = false;
     this.cqMonitor = null;
   }
 
@@ -129,6 +132,7 @@ public abstract class ScionServer {
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
     this.outputWriter = null;
+    this.verboseInteraction = false;
     this.cqMonitor = null;
   }
 
@@ -326,7 +330,9 @@ public abstract class ScionServer {
       outputWriter.addMessage(getClass().getSimpleName() + ".sendCommand encountered an exception:");
       outputWriter.addMessage(ex);
     } finally {
-      outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
+      if (verboseInteraction) {
+        outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
+      }
     }
     
     return retval;
@@ -389,6 +395,20 @@ public abstract class ScionServer {
       // The shared scion-server instance just abnormally terminated.
       ScionPlugin.getSharedScionInstance().notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
     }
+  }
+  
+  /**
+   * Set verbose interaction flag
+   */
+  public void setVerboseInteraction(final boolean flag) {
+    verboseInteraction = flag;
+  }
+  
+  /**
+   * Get the verbose interaction flag
+   */
+  public boolean getVerboseInteraction() {
+    return verboseInteraction;
   }
   
   /**
