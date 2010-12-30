@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Path;
  * running Cabal. For example, ScionManager needs to know the current version
  * of the installed cabal in order to set installer flags.
  *
- * @author Scott Michel (scooter.phd@gmail.com)
+ * @author Scott Michel (bscottm@ieee.org)
  */
 public class CabalImplementation {
   /** Base cabal executable name */

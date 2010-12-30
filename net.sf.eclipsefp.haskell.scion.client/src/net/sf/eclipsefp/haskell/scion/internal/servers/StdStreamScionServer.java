@@ -28,7 +28,7 @@ import org.json.JSONTokener;
  * with Scion
  * 
  * @author JP Moresmau
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class StdStreamScionServer extends ScionServer {
   /** The input receiver Job */

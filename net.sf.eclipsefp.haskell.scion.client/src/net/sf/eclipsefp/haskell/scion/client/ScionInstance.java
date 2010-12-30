@@ -74,7 +74,7 @@ import org.json.JSONObject;
  * server, or of the entire workbench).
  * 
  * @author Thomas ten Cate
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class ScionInstance {
   /** The scion-server with whom this object communicates */

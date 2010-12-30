@@ -5,7 +5,7 @@ import net.sf.eclipsefp.haskell.scion.types.Location;
 /**
  * The "token-at-point" scion command
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class TokenAtPoint extends TokenRelativeToPoint {
   /** The usual constructor

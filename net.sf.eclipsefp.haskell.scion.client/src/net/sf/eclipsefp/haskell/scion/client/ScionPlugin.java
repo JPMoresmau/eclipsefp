@@ -459,7 +459,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
   /** Scion executable factory interface.
    * 
-   * @author B. Scott Michel (scooter.phd@gmail.com)
+   * @author B. Scott Michel (bscottm@ieee.org)
    */
   public interface ScionServerFactory {
     /** Create a new ScionExectable 

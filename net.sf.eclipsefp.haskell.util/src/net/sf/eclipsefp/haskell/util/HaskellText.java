@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.util;
 /**
  * Haskell text utilities: identifier identification, etc.
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 
 public final class HaskellText {

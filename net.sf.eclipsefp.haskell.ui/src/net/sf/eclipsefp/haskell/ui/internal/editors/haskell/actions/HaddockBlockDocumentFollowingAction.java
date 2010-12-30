@@ -18,7 +18,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 /**
  * Block documentation comment text editor action, which inserts "{- | ... -}" into the document.
   *
-  * @author B. Scott Michel (scooter.phd@gmail.com)
+  * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class HaddockBlockDocumentFollowingAction extends TextEditorAction {
   /** The Haddock following item block documentation marker */

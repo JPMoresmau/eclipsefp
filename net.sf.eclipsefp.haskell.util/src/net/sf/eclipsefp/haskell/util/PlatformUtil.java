@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Operating system-specific platform utilities.
- * @author Scott Michel (scooter.phd@gmail.com)
+ * @author Scott Michel (bscottm@ieee.org)
  */
 public class PlatformUtil {
 	/**

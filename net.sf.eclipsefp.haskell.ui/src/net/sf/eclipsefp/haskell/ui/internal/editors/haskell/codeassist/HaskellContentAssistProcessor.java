@@ -32,7 +32,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  * lexical type.
  *
  * @author Leif Frenzel (original author)
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   /** The associated content assistant, used to add/remove listeners */
@@ -45,6 +45,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       NO_CONTEXT
     , DEFAULT_CONTEXT
     , IMPORT_STMT
+    , CONID_CONTEXT
   }
 
   /** The current completion context state */
@@ -97,10 +98,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           }
 
           Region point = new Region( offsetPrefix, 0 );
-          String token = scion.tokenPreceding( theFile, doc, point );
+          String token = scion.tokenPrecedingPoint( theFile, doc, point );
 
           if (HaskellLexerTokens.isImportToken( token )) {
             return moduleNamesContext(scion, offset);
+          } else if (isConstructorContext(token)) {
+            return typeConstructorContext(scion, offset);
           } else {
             return defaultCompletionContext(viewer, theFile, doc, offset);
           }
@@ -121,7 +124,15 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     return null;
 	}
 
-	public IContextInformation[] computeContextInformation(final ITextViewer viewer, final int documentOffset) {
+	/**
+	 * Does this token expect a type constructor to follow it?
+	 */
+	private boolean isConstructorContext( final String token ) {
+	  return (   HaskellLexerTokens.isDoubleColon( token )
+	          || HaskellLexerTokens.isRightArrow( token ) );
+  }
+
+  public IContextInformation[] computeContextInformation(final ITextViewer viewer, final int documentOffset) {
 		// unused
 		return null;
 	}
@@ -260,6 +271,18 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     return null;
+	}
+
+	/**
+	 * Initialize the type constructor context: this will only present type constructors as completions.
+	 *
+	 * @param scion The scion-server instance that generates the completions
+	 * @param offset The current editor point
+	 *
+	 * @return A ICompletionProposal list or null, if no completions exist
+	 */
+	private ICompletionProposal[] typeConstructorContext(final ScionInstance scion, final int offset) {
+	  return null;
 	}
 
 	/**

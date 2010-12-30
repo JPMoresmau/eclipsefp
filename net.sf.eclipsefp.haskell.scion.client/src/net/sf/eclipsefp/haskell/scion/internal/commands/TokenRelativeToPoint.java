@@ -10,7 +10,7 @@ import org.json.JSONObject;
  * Superclass for TokenPrecedingPoint and TokenAtPoint, since they share the same
  * parameters. Only the command name differs.
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public abstract class TokenRelativeToPoint extends ScionCommand {
   /** The current document's contents */

@@ -5,7 +5,7 @@ import net.sf.eclipsefp.haskell.scion.types.Location;
 /**
  * Get the token preceding the editor's point
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  *
  */
 public class TokenPrecedingPoint extends TokenRelativeToPoint {

@@ -15,7 +15,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 /**
  * A text editor action that inserts a pragma comment ("{-#  #-}")
   *
-  * @author B. Scott Michel (scooter.phd@gmail.com)
+  * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class PragmaCommentAction extends TextEditorAction {
   /** Pragma comment begin */

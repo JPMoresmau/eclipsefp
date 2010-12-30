@@ -187,4 +187,13 @@ public class HaskellLexerTokens {
   public final static boolean isDoubleColon(final String token) {
     return ITdcolon.equals(token);
   }
+
+  /**
+   * '->' (rarrow) token predicate
+   *
+   * @param token The lexer token to compate
+   */
+  public final static boolean isRightArrow(final String token) {
+    return ITrarrow.equals( token );
+  }
 }

@@ -10,7 +10,7 @@ import org.eclipse.debug.core.ILaunchManager;
  * ILaunchManager handles the differences between the Galileo and Helios version of the Eclipse API. Eventually, this class
  * goes away when Helios and later Eclipse distributions are the norm.
  *
- * @author B. Scott Michel <scooter.phd@gmail.com>
+ * @author B. Scott Michel <bscottm@ieee.org>
  */
 public class ILaunchManagerCompat {
 	static Method generateLaunchConfigurationNameM = null;

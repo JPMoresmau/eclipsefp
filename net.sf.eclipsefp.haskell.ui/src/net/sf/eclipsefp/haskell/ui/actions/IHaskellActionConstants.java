@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.actions;
 /**
  * Action constants related to Haskell editor-specific actions.
   *
-  * @author B. Scott Michel (scooter.phd@gmail.com
+  * @author B. Scott Michel (bscottm@ieee.org
  */
 public interface IHaskellActionConstants {
   /** The action prefix: This is the package name and needs to match the action identifiers in the Haskell UI's

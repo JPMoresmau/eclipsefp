@@ -13,7 +13,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /** Haskell editor global action contributor: this installs things like the "Source" menu and associated
  * global actions.
  *
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class HaskellEditorActionContributor extends BasicTextEditorActionContributor {
   /** The constructor */

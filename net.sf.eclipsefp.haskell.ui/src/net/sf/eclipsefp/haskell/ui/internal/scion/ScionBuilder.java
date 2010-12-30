@@ -1,4 +1,4 @@
-// (c) 2010, B. Scott Michel (scooter.phd@gmail.com)
+// (c) 2010, B. Scott Michel (bscottm@ieee.org)
 // Licensed under the EPL
 
 package net.sf.eclipsefp.haskell.ui.internal.scion;
@@ -36,7 +36,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  * unpacking the internal zip archive to the staging directory and running cabal to
  * produce the scion-server executable.
  *
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class ScionBuilder {
   /** Unpack the built-in Scion server's archive to its final destination
