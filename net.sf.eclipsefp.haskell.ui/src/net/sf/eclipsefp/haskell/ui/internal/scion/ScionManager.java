@@ -177,42 +177,39 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     final String newServerExecutable = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
     IPath newServerExecutablePath = new Path(newServerExecutable);
 
-    // Did any of the major properties change?
-    if (newUseBuiltIn != useBuiltIn
-        || !newServerFlavor.equals( serverFlavor )
-        || !newServerExecutablePath.equals( serverExecutablePath )) {
-      // Yup.
-      ScionPlugin.shutdownAllInstances();
-      try {
-        ScionPlugin.useNullScionServerFactory();
-      } catch (ScionServerStartupException ex) {
-        // Should never get generated, but make Java happy.
-      }
-
-      // And update...
-      useBuiltIn = newUseBuiltIn;
-      serverFlavor = newServerFlavor;
-      serverExecutablePath = newServerExecutablePath;
+    // Did any of the major properties change, and we're not forcing a rebuild?
+    if (   !forceRebuild
+        && newUseBuiltIn == useBuiltIn
+        && newServerFlavor.equals( serverFlavor )
+        && (useBuiltIn || newServerExecutablePath.equals( serverExecutablePath ))) {
+      return;
     }
 
-    //
-    if ( useBuiltIn
-        && CompilerManager.getInstance().getCurrentHsImplementation() != null
-        && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
-      if ( forceRebuild ) {
+    // Yup, something changed, so shut down the instances...
+    ScionPlugin.shutdownAllInstances();
+
+    // Switch over to the null instance factory
+    try {
+      ScionPlugin.useNullScionServerFactory();
+    } catch (ScionServerStartupException ex) {
+      // Should never get generated, but make Java happy.
+    }
+
+    // And update...
+    useBuiltIn = newUseBuiltIn;
+    serverFlavor = newServerFlavor;
+    serverExecutablePath = newServerExecutablePath;
+
+    // Can we forcibly rebuild (must use builtin, have Haskell and Cabal implementations
+    if ( forceRebuild ) {
+      if ( useBuiltIn
+          && CompilerManager.getInstance().getCurrentHsImplementation() != null
+          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
         final Display display = HaskellUIPlugin.getStandardDisplay();
         display.asyncExec( new Runnable() {
           public void run() {
             Shell parent = display.getActiveShell();
             if ( MessageDialog.openConfirm( parent, UITexts.scionRebuild_title, UITexts.scionRebuild_message ) ) {
-              // Shut down all existing servers, use the null server factory in case things go awry.
-              ScionPlugin.shutdownAllInstances();
-              try {
-                ScionPlugin.useNullScionServerFactory();
-              } catch (ScionServerStartupException exc) {
-                // Never thrown by null server factory, but hey, we have to catch it anyway to make Java happy.
-              }
-
               IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
               File scionBuildDir = scionBuildDirPath.toFile();
 
@@ -227,10 +224,10 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
           }
         } );
       }
+    } else {
+      // Everything else is handled by serverFactorySetup...
+      serverFactorySetup();
     }
-
-    // Everything else is handled by serverFactorySetup...
-    serverFactorySetup();
   }
 
   /**
