@@ -26,7 +26,8 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.TokenPreceding;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokenAtPoint;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokenPrecedingPoint;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
@@ -771,11 +772,11 @@ public class ScionInstance {
    * @param doc The current document
    * @param point The editor's point
    */
-  public String tokenPreceding(final IFile file, final IDocument doc, final IRegion point) {
+  public String tokenPrecedingPoint(final IFile file, final IDocument doc, final IRegion point) {
     try {
       Location location = new Location(file.toString(), doc, point);
       final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
-      final TokenPreceding cmd = new TokenPreceding(doc.get(), location, false);
+      final TokenPrecedingPoint cmd = new TokenPrecedingPoint(doc.get(), location, false);
         
       if (withLoadedDocument( file, doc, cmd, jobName ))
         return cmd.getTokenString();
@@ -785,7 +786,30 @@ public class ScionInstance {
     
     return new String();
   }
+
   
+  /**
+   * Get the Haskell lexer token preceding the editor's point
+   * 
+   * @param file The file being operated on
+   * @param doc The current document
+   * @param point The editor's point
+   */
+  public String tokenAtPoint(final IFile file, final IDocument doc, final IRegion point) {
+    try {
+      Location location = new Location(file.toString(), doc, point);
+      final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
+      final TokenAtPoint cmd = new TokenAtPoint(doc.get(), location, false);
+        
+      if (withLoadedDocument( file, doc, cmd, jobName ))
+        return cmd.getTokenString();
+    } catch (BadLocationException e) {
+      // Fall through
+    }
+    
+    return new String();
+  }
+
   /**
    * Locate the first definition of a name.
    * 

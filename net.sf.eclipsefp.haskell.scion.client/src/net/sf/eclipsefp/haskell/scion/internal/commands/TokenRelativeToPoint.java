@@ -7,12 +7,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Get the token preceding the editor's point
+ * Superclass for TokenPrecedingPoint and TokenAtPoint, since they share the same
+ * parameters. Only the command name differs.
  * 
  * @author B. Scott Michel (scooter.phd@gmail.com)
- *
  */
-public class TokenPreceding extends ScionCommand {
+public abstract class TokenRelativeToPoint extends ScionCommand {
   /** The current document's contents */
   String theDocument;
   /** The location of the editor's point */
@@ -33,7 +33,7 @@ public class TokenPreceding extends ScionCommand {
    * @param column The current column of the editor's point
    * @param literate Literate Haskell source flag
    */
-  public TokenPreceding(String contents, Location editPoint, boolean literate) {
+  public TokenRelativeToPoint(String contents, Location editPoint, boolean literate) {
     super();
     this.theDocument = contents;
     this.editPoint = editPoint;
@@ -89,13 +89,5 @@ public class TokenPreceding extends ScionCommand {
    */
   public Location getTokenLocation() {
     return tokenLocation;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public String getMethod() {
-    return "token-preceding";
   }
 }
