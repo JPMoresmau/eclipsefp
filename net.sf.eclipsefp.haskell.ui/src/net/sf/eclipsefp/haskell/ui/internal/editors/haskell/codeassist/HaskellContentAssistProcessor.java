@@ -119,6 +119,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       case IMPORT_STMT: {
         return filterModuleNames( offset );
       }
+
+      case CONID_CONTEXT: {
+        return null;
+      }
     }
 
     return null;
