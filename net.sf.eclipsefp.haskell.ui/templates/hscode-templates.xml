@@ -9,8 +9,7 @@
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
   autoinsert="false"
->import ${module}
-</template>
+>import ${module}</template>
 
 <!-- General Abstract Data Types -->
 <template
@@ -114,8 +113,7 @@ in  ${expression}
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
   autoinsert="false"
->${existingType} =>
-</template>
+>${existingType} => </template>
 
 <!--
  Haddock documentation templates

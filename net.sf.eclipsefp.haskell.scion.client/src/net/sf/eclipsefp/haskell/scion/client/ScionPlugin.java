@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
@@ -51,7 +53,7 @@ public class ScionPlugin extends AbstractUIPlugin {
    */
   public static final String                 DIST_FOLDER               = ".dist-scion";
   /** Version of the scion zip file containing the built-in server's source */
-  public static final String                 SCION_VERSION             = "0.1.0.7";
+  public static final String                 SCION_VERSION             = "0.1.0.8";
   /** The scion server factory */
   private ScionServerFactory                 serverFactory;
   /** The project -> scion instance map */
@@ -446,13 +448,18 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static void removeProjectEventListener(IProject project, IScionEventListener listener) {
     projectEventListeners.remove(listener);
   }
-  
+
+  /** Get an instance-scoped preference store for the plug-in */
+  public static final IEclipsePreferences instanceScopedPreferences() {
+    return new InstanceScope().getNode( getPluginId() );
+  }
+
   //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
   // Internal factory classes:
   //-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
   /** Scion executable factory interface.
    * 
-   * @author B. Scott Michel (scooter.phd@gmail.com)
+   * @author B. Scott Michel (bscottm@ieee.org)
    */
   public interface ScionServerFactory {
     /** Create a new ScionExectable 

@@ -50,7 +50,7 @@
             extensions="hs,lhs"
             icon="icons/obj16/hsfile_obj.gif"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.actions.HaskellEditorActionContributor"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.haskell" />
         <contentTypeBinding contentTypeId="net.sf.eclipsefp.haskell.contenttypes.literateHaskell" />
@@ -211,7 +211,7 @@
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences"
-            name="Haskell Code Templates">
+            name="%HaskellSourceTmplatesPP.name">
       </page>
    </extension>
    <extension
@@ -266,20 +266,40 @@
             name="%firstCharCommand_name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"/>
       <command
-            description="%commentCommand_desc"
+            description="%CommentAction.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%commentCommand_name"
+            name="%CommentAction.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.comment"/>
       <command
-            description="%uncommentCommand_desc"
+            description="%UncommentAction.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%uncommentCommand_name"
+            name="%UncommentAction.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"/>
+      <command
+            description="%CommentPragmaAction.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%CommentPragmaAction.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma"/>
       <command
             description="%openDefinitionCommand_desc"
             categoryId="org.eclipse.ui.category.navigate"
             name="%openDefinitionCommand_name"
             id="net.sf.eclipsefp.ui.commands.navigate.openDefinition"/>
+      <command
+            description="%HaddockDocumentFollowing.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddockDocumentFollowing.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following"/>
+      <command
+            description="%HaddockDocumentPrevious.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddockDocumentPrevious.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"/>
+      <command
+            description="%HaddockDocumentBlockFollow.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%HaddocDocumentBlockFollow.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following"/>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -308,20 +328,36 @@
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
-         <!-- keys for Comment -->
+         <!-- keys for Line Comment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+/"
+              sequence="M1+7"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+7"
+              platform="carbon"
+              sequence="M1+/"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
-         <!-- keys for Uncomment -->
+         <!-- keys for Line Uncomment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+Shift+/"
+              sequence="M1+M2+7"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-              sequence="Ctrl+ß"
+              platform="carbon"
+              sequence="M1+M2+/"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+         <!-- keys for Comment Pragma -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+C P"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma" />
+         <!-- keys for Haddock documentation -->
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+D F"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following" />
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+D P"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous" />
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+D B"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following" />
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
@@ -354,30 +390,6 @@
             <equals value="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
          </with>
       </definition>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="net.sf.eclipsefp.haskell.ui.actionSets.open"
-            label="%openActionSet_label"
-            description="%openActionSet_description"
-            visible="false">
-         <action
-            id="net.sf.eclipsefp.haskell.ui.actions.openDefinition"
-            definitionId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
-            label="%openDefinitionAction_label"
-            tooltip="%openDefinitionAction_tooltip"
-            retarget="true"
-            allowLabelUpdate="true"/>
-       <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
-      </actionSet>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSetPartAssociations">
-      <actionSetPartAssociation
-            targetID="net.sf.eclipsefp.haskell.ui.actionSets.open">
-         <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
-      </actionSetPartAssociation>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -479,9 +491,7 @@
              class="net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction"
              enablesFor="1"
              id="net.sf.eclipsefp.haskell.ui.newAction"
-             label="%cabalInstallWizard.name"
-             >
-        <description>%cabalInstallWizard.description</description>
+             label="%cabalInstallWizard.name">
        </action>
         <enablement>
 	      <adapt type="org.eclipse.core.resources.IProject">
@@ -623,5 +633,97 @@
       <include file="templates/hscode-templates.xml"
                translations="$nl$/templates/hscode-templates.properties">
       </include>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="%CodingActionSet.description"
+            id="net.sf.eclipsefp.haskell.ui.CodingActionSet"
+            label="%CodingActionSet.label"
+            visible="false">
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.openDefinition"
+            definitionId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
+            label="%openDefinitionAction_label"
+            tooltip="%openDefinitionAction_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"/>
+       <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
+ <!-- Source menu -->         
+         <menu
+               id="net.sf.eclipsefp.haskell.ui.sourceMenu"
+               path="edit"
+               label="%SourceMenu.label">
+            <separator name="commentGroup"/>
+            <separator name="editGroup"/>
+         </menu>
+<!-- Source menu: commentGroup -->
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment"
+               label="%UncommentAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Uncomment">
+         </action>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.comment"
+               label="%CommentAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Comment">
+         </action>
+         <menu
+               path="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="HaddockDocumentation"
+               label="%HaddockDocumentation.label">
+            <separator name="haddockDoc"/>
+         </menu>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following"
+               label="%HaddockDocumentFollowing.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Following"/>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous"
+               label="%HaddockDocumentPrevious.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Previous"/>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following"
+               label="%HaddockDocumentBlockFollow.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/HaddockDocumentation/haddockDoc"
+               id="net.sf.eclipsefp.haskell.ui.actions.Haddock.Block.Following"/>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma"
+               label="%CommentPragmaAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Comment.Pragma"/>
+<!-- Source menu: editGroup -->         
+         <action
+               definitionId="org.eclipse.ui.edit.text.shiftLeft"
+               label="%ShiftLeftAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/editGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.ShiftLeft">
+         </action>
+         <action
+               definitionId="org.eclipse.ui.edit.text.shiftRight"
+               label="%ShiftRightAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/editGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.ShiftRight">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="net.sf.eclipsefp.haskell.ui.CodingActionSet">
+         <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
+      </actionSetPartAssociation>
    </extension>
 </plugin>

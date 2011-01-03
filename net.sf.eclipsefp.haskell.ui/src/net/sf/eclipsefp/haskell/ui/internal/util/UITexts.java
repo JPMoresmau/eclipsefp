@@ -117,6 +117,8 @@ public final class UITexts extends NLS {
   public static String scionServerFlavor_stdstream_label;
   public static String scionServerFlavor_network_label;
 
+  public static String scionVerboseInteraction_title;
+
   public static String scionVersionMismatch_title;
   public static String scionVersionMismatch_message;
 
@@ -341,8 +343,12 @@ public final class UITexts extends NLS {
   public static String template_prefSave_backingStore_exception;
   public static String HaskellTemplateVariables_module_description;
 
-  private static final String BUNDLE_NAME
-    = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
+  public static String HaddockDocumentation_not_applicable;
+  public static String HaddockDocumentation_previous_item;
+  public static String HaddockDocumentation_following_item;
+  public static String HaddockDocumentation_user_replaces;
+
+  private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
     NLS.initializeMessages( BUNDLE_NAME, UITexts.class );

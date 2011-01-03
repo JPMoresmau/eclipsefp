@@ -32,23 +32,6 @@ public abstract class AbstractAction implements IEditorActionDelegate {
     ex.printStackTrace();
   }
 
-  /**
-   * This method returns the delimiter for the document
-   *
-   * @param doc
-   * @param startLineIndex
-   * @return delimiter for the document (\n|\r\|r\n)
-   */
-  public static String getDelimiter( final IDocument doc,
-                                     final int startLineIndex )
-                                                   throws BadLocationException {
-    String endLineDelim = doc.getLineDelimiter( startLineIndex );
-    if( endLineDelim == null ) {
-      endLineDelim = doc.getLegalLineDelimiters()[ 0 ];
-    }
-    return endLineDelim;
-  }
-
   public void selectionChanged( final IAction action,
                                 final ISelection selection ) {
     // unused

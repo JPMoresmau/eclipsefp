@@ -26,6 +26,8 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokenAtPoint;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokenPrecedingPoint;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
@@ -57,7 +59,9 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONObject;
@@ -70,7 +74,7 @@ import org.json.JSONObject;
  * server, or of the entire workbench).
  * 
  * @author Thomas ten Cate
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class ScionInstance {
   /** The scion-server with whom this object communicates */
@@ -287,11 +291,9 @@ public class ScionInstance {
   }
 
   /**
-   * Build the Haskell project. This method returns a Job, which should be scheduled, i.e.,
-   * <pre>
-   *   Job buildJob = buildProject(true, false);
-   *   buildJob.schedule();
-   * </pre>
+   * Build the Haskell project. This method creates a Job that adds a project resource scheduling
+   * rule to prevent other project-referenced jobs from running, and schedules the resulting Job
+   * to run.
    * 
    * @param output
    *          Echo output from the build
@@ -299,7 +301,7 @@ public class ScionInstance {
    *          Force recompilation if true
    * @return A Job that can be scheduled to build the project
    */
-  public void buildProject(final boolean output, final boolean forceRecomp) {
+  public Job buildProject(final boolean output, final boolean forceRecomp) {
     if (checkCabalFile()) {
       final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
 
@@ -320,7 +322,11 @@ public class ScionInstance {
       buildJob.setRule( project );
       buildJob.setPriority(Job.BUILD);
       buildJob.schedule();
+      
+      return buildJob;
     }
+    
+    return null;
   }
   
   /**
@@ -361,15 +367,16 @@ public class ScionInstance {
    * @param monitor Progress feedback to the user
    * @param output If true, output from the build will appear in the project's console
    * @param forceRecomp If true, force recompilation
-   * @return True if all commands sent to scion-server succeeded, indicating that the build completed.
+   * @return true if all commands sent to scion-server succeeded, indicating that the build completed.
    */
   private boolean buildProjectInternal(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
     boolean retval = false;
     final String projectName = project.getName();
+    final String cabalFile = getCabalFile(getProject()).getLocation().toOSString();
     
     if ( listComponents(monitor) && loadComponents(monitor, output, forceRecomp) ) {
       monitor.subTask( NLS.bind( ScionText.buildProject_parseCabalDescription, projectName ) );
-      ParseCabalCommand pcc = new ParseCabalCommand(getCabalFile(getProject()).getLocation().toOSString());
+      ParseCabalCommand pcc = new ParseCabalCommand(cabalFile);
       if (server.sendCommand(pcc)) {
         cabalDescription = pcc.getDescription();
         packagesByDB=null;
@@ -759,7 +766,52 @@ public class ScionInstance {
   }
   
   /**
-   * Located the first definition of a name.
+   * Get the Haskell lexer token preceding the editor's point
+   * 
+   * @param file The file being operated on
+   * @param doc The current document
+   * @param point The editor's point
+   */
+  public String tokenPrecedingPoint(final IFile file, final IDocument doc, final IRegion point) {
+    try {
+      Location location = new Location(file.toString(), doc, point);
+      final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
+      final TokenPrecedingPoint cmd = new TokenPrecedingPoint(doc.get(), location, false);
+        
+      if (withLoadedDocument( file, doc, cmd, jobName ))
+        return cmd.getTokenString();
+    } catch (BadLocationException e) {
+      // Fall through
+    }
+    
+    return new String();
+  }
+
+  
+  /**
+   * Get the Haskell lexer token preceding the editor's point
+   * 
+   * @param file The file being operated on
+   * @param doc The current document
+   * @param point The editor's point
+   */
+  public String tokenAtPoint(final IFile file, final IDocument doc, final IRegion point) {
+    try {
+      Location location = new Location(file.toString(), doc, point);
+      final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
+      final TokenAtPoint cmd = new TokenAtPoint(doc.get(), location, false);
+        
+      if (withLoadedDocument( file, doc, cmd, jobName ))
+        return cmd.getTokenString();
+    } catch (BadLocationException e) {
+      // Fall through
+    }
+    
+    return new String();
+  }
+
+  /**
+   * Locate the first definition of a name.
    * 
    * @param name The name to located.
    * @return The editor location where the name can be found.
@@ -806,6 +858,19 @@ public class ScionInstance {
    * @return A list of the cabal project's components.
    */
   public List<Component> getComponents() {
+    if (components == null) {
+      // Attempt to build the project, since this is an indicator that the build needs to be done.
+      Job buildJob = buildProject(false, true);
+      
+      while (buildJob.getResult() == null) {
+        try {
+          buildJob.join();
+        } catch (InterruptedException irq) {
+          break;
+        }
+      }
+    }
+
     return components;
   }
 

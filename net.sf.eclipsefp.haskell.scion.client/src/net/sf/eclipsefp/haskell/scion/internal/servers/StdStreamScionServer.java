@@ -28,7 +28,7 @@ import org.json.JSONTokener;
  * with Scion
  * 
  * @author JP Moresmau
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class StdStreamScionServer extends ScionServer {
   /** The input receiver Job */
@@ -117,12 +117,14 @@ public class StdStreamScionServer extends ScionServer {
             if (responseString.startsWith(PREFIX)) {
               response = new JSONObject(new JSONTokener(responseString.substring(PREFIX.length())));
 
-	      String logmsg = FROM_SERVER_PREFIX+response.toString();
-	      outputWriter.addMessage(logmsg);
+              if (getVerboseInteraction()) {
+                String logmsg = FROM_SERVER_PREFIX+response.toString();
+                outputWriter.addMessage(logmsg);
+              }
 
               processResponse(response);
             } else {
-	      outputWriter.addMessage(responseString);
+              outputWriter.addMessage(responseString);
             }
           } else {
             if (!terminateFlag) {

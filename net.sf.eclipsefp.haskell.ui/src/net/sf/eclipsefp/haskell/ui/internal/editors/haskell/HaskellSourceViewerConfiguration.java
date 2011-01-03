@@ -42,7 +42,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  * The source viewer configuration implements functionality for the Haskell editor.
  *
  * @author Leif Frenzel
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration implements IEditorPreferenceNames {
   /** The associated Haskell editor */
@@ -112,16 +112,17 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	@Override
   public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
 
-		ContentAssistant result = new ContentAssistant();
-		result.setContentAssistProcessor(new HaskellContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
-		result.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		ContentAssistant ca = new ContentAssistant();
+		ca.setContentAssistProcessor(new HaskellContentAssistProcessor(ca), IDocument.DEFAULT_CONTENT_TYPE);
+		ca.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 
-		// TODO get from pref / update on pref change
-		result.enableAutoActivation(true);
-		result.enableAutoInsert(true);
-		result.setAutoActivationDelay(500);
+		ca.enablePrefixCompletion( true );
+		ca.setRepeatedInvocationMode( true );
+		ca.enableAutoActivation(true);
+		ca.enableAutoInsert(true);
+		ca.setAutoActivationDelay(500);
 
-		return result;
+		return ca;
 	}
 
 	/**
@@ -196,12 +197,11 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	}
 
 	@Override
-  public String[] getIndentPrefixes(final ISourceViewer sourceViewer,
-			final String contentType) {
-
+  public String[] getIndentPrefixes(final ISourceViewer sourceViewer, final String contentType) {
 		int tabWidth = getTabWidth(sourceViewer);
 		StringBuilder prefix = new StringBuilder();
 		String[] ret=new String[tabWidth+2];
+
 		for (int i = 0; i <= tabWidth; i++) {
 
 			if (isSpacesForTabs()) {

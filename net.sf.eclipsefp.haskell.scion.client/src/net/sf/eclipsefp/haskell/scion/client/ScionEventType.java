@@ -7,7 +7,7 @@ package net.sf.eclipsefp.haskell.scion.client;
  * Scion event types. These events communicate various Scion client interactions
  * and execution environment changes to interested listeners.
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public enum ScionEventType {
   /**

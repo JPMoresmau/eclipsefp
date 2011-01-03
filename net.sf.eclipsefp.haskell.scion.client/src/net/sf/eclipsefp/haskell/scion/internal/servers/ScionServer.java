@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sf.eclipsefp.haskell.scion.client.IScionPreferenceNames;
 import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
@@ -27,6 +28,13 @@ import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTException;
 import org.json.JSONObject;
@@ -76,11 +84,16 @@ public abstract class ScionServer {
 
   /** logs output **/
   protected OutputWriter                     outputWriter;
+  /** Server interaction verbosity */
+  protected boolean                          verboseInteraction;
   
   /** Command queue, to deal with both synchronous and asynchronous commands */
   protected final Map<Integer, ScionCommand> commandQueue;
   /** Command queue monitor, track potential stalls */
   protected CommandQueueMonitor              cqMonitor;
+  
+  /** Property change listener */
+  protected IPropertyChangeListener          propListener;
 
   /**
    * The constructor
@@ -107,7 +120,9 @@ public abstract class ScionServer {
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
     this.outputWriter = null;
+    this.verboseInteraction = false;
     this.cqMonitor = null;
+    this.propListener = null;
   }
 
   /**
@@ -129,7 +144,9 @@ public abstract class ScionServer {
     this.nextSequenceNumber = new AtomicInteger(1);
     this.commandQueue = new HashMap<Integer, ScionCommand>();
     this.outputWriter = null;
+    this.verboseInteraction = false;
     this.cqMonitor = null;
+    this.propListener = null;
   }
 
   /** Redirect the logging stream */
@@ -156,6 +173,8 @@ public abstract class ScionServer {
     outputWriter.start();
 
     doStartServer(project);
+    
+    listenForPreferenceEvents();
 
     Trace.trace(serverName, "Server started.");
   }
@@ -239,6 +258,8 @@ public abstract class ScionServer {
         cqMonitor.join();
         cqMonitor = null;
       }
+      
+      unlistenForPreferenceEvents();
     } catch (Throwable ex) {
       // ignore
     } finally {
@@ -254,6 +275,46 @@ public abstract class ScionServer {
    */
   protected void doStopServer() {
     // Base class does nothing.
+  }
+  
+  /**
+   * Listen for InstanceScope preference events, such as when the verbose interaction
+   * preference changes. This method also gets the current preference values and updates
+   * the ScionServer object.
+   */
+  
+  protected void listenForPreferenceEvents() {
+    IPreferenceStore prefs = ScionPlugin.getDefault().getPreferenceStore();
+    
+    // Set initial value from preference store.
+    setVerboseInteraction( prefs.getBoolean(IScionPreferenceNames.VERBOSE_INTERACTION) );
+    
+    // Handle property changes:
+    propListener = new IPropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent event) {
+        if (IScionPreferenceNames.VERBOSE_INTERACTION.equals(event.getProperty())
+            && !event.getOldValue().equals(event.getNewValue())) {
+          try {
+            Boolean newVerboseInteraction = (Boolean) event.getNewValue();
+            setVerboseInteraction(newVerboseInteraction.booleanValue());
+          } catch (ClassCastException exc) {
+            // Ignore
+          }
+        }
+      }
+    };
+
+    prefs.addPropertyChangeListener(propListener);
+  }
+  
+  /**
+   * Stop listening for InstanceScope preference events.
+   */
+  protected void unlistenForPreferenceEvents() {
+    IPreferenceStore prefs = ScionPlugin.getDefault().getPreferenceStore();
+    
+    prefs.removePropertyChangeListener(propListener);
+    propListener = null;
   }
 
   /**
@@ -326,7 +387,9 @@ public abstract class ScionServer {
       outputWriter.addMessage(getClass().getSimpleName() + ".sendCommand encountered an exception:");
       outputWriter.addMessage(ex);
     } finally {
-      outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
+      if (getVerboseInteraction()) {
+        outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
+      }
     }
     
     return retval;
@@ -389,6 +452,20 @@ public abstract class ScionServer {
       // The shared scion-server instance just abnormally terminated.
       ScionPlugin.getSharedScionInstance().notifyListeners(ScionEventType.ABNORMAL_TERMINATION);
     }
+  }
+  
+  /**
+   * Set verbose interaction flag
+   */
+  public void setVerboseInteraction(final boolean flag) {
+    verboseInteraction = flag;
+  }
+  
+  /**
+   * Get the verbose interaction flag
+   */
+  public boolean getVerboseInteraction() {
+    return verboseInteraction;
   }
   
   /**

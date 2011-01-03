@@ -260,8 +260,10 @@ public class NetworkScionServer extends ScionServer {
         try {
           response = new JSONObject(new JSONTokener(serverOutStream));
 
-          String logmsg = FROM_SERVER_PREFIX + response.toString();
-          outputWriter.addMessage(logmsg);
+          if (getVerboseInteraction()) {
+            String logmsg = FROM_SERVER_PREFIX + response.toString();
+            outputWriter.addMessage(logmsg);
+          }
           
           processResponse(response);
         } catch (JSONException ex) {

@@ -25,8 +25,4 @@ public interface ICorePreferenceNames {
   String DEBUG_BREAK_ON_ERROR="DEBUG_BREAK_ON_ERROR"; //$NON-NLS-1$
   String DEBUG_BREAK_ON_EXCEPTION="DEBUG_BREAK_ON_EXCEPTION"; //$NON-NLS-1$
   String DEBUG_PRINT_WITH_SHOW="DEBUG_PRINT_EVAL_WITH_SHOW"; //$NON-NLS-1$
-
-  // These preference names are no longer used:
-  //String TARGET_BINARY = "TARGET_BINARY"; //$NON-NLS-1$
-  //String FOLDERS_OUT = "FOLDERS_OUT"; //$NON-NLS-1$
 }

@@ -4,7 +4,7 @@ package net.sf.eclipsefp.haskell.core.codeassist;
  * Scion tokens: These are the token strings returned by scion to annotate various parts of the
  * input source, i.e., identify keywords, etc.
  *
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public interface IScionTokens {
   // !!These strings need to be synchronized with changes to the scion source!! (See lib/Scion/Inspect.hs)

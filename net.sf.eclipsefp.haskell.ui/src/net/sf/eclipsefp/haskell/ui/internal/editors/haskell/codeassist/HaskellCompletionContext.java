@@ -58,8 +58,6 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 
 			searchDefinedNames(completedToken, result);
-			// FIXME: Delete after next release: This is now part of the modules template variable.
-			// searchModulesNames(completedToken, result);
 			searchPreludeAndKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
@@ -215,10 +213,8 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1; //$NON-NLS-1$
 	}
 
-	private StringBuffer readSourceTillOffset(final String source,
-		final int offset)
+	private StringBuffer readSourceTillOffset(final String source, final int offset)
 	{
-		//final String source = unit.getOriginalSourceCode();
 		return new StringBuffer(source.substring(0, offset));
 	}
 

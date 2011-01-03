@@ -8,7 +8,7 @@ import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
  * Scion server event object. Carries information about scion-server events, such as
  * server executable changes, abnormal termination, protocol version mismatches, etc.
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class ScionEvent extends EventObject {
   /** Required serial version UID. */

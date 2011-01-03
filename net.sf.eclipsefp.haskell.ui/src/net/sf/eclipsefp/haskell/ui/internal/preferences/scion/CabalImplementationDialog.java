@@ -1,4 +1,4 @@
-// Copyright (c) 2010 B. Scott Michel (scooter.phd@gmail.com)
+// Copyright (c) 2010 B. Scott Michel (bscottm@ieee.org)
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
 
 /** The Add/Edit Cabal implementation dialog box.
  *
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public class CabalImplementationDialog extends StatusDialog {
   private static final String DIALOG_SETTINGS_ID = CabalImplementationDialog.class.getName();

@@ -53,6 +53,8 @@ public class ScionText extends NLS {
   
   public static String        outline_job_name;
   public static String	      thingatpoint_job_name;
+  public static String        tokenpreceding_job_name;
+  public static String        tokenatpoint_job_name;
   public static String        reloadCurrentDocument_job_name;
   public static String        reloadFile_task_name;
   public static String        loadingComponent_task_name;

@@ -1,6 +1,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
+import net.sf.eclipsefp.haskell.scion.client.IScionPreferenceNames;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
@@ -51,6 +53,8 @@ public class ScionPP
 	private Composite forceRebuildC;
 	private RadioGroupFieldEditor serverFlavorField;
 	private Composite serverFlavorFieldC;
+	private BooleanFieldEditor verboseInteractionField;
+	private Composite verboseInteractionFieldC;
 
 	private CabalImplsBlock cabalBlock;
 	private Composite fieldComposite;
@@ -75,9 +79,13 @@ public class ScionPP
 	  // Member variable initialization:
 	  rebuildBuiltin = false;
 
+	  // FIXME: Need to add fields for server verbosity (do we really want to watch server interaction messages?)
+	  // FIXME: Need to add fields for console high and low water marks, hook preference changes to ScionManager
+
 	  // Create the page:
 	  noDefaultAndApplyButton();
 	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+	  IPreferenceStore scionPrefStore = ScionPlugin.getDefault().getPreferenceStore();
     setPreferenceStore(prefStore);
     parentComposite.setLayout( new GridLayout(nColumns,false) );
 
@@ -140,7 +148,6 @@ public class ScionPP
         forceRebuildC );
     forceRebuild.setPage( this );
     forceRebuild.setPreferenceStore( prefStore );
-    //forceRebuild.fillIntoGrid( fieldComposite,2 );
     forceRebuild.load();
 
     serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
@@ -195,6 +202,17 @@ public class ScionPP
 		serverFlavorField.setPreferenceStore( prefStore );
 		serverFlavorField.load();
 
+    verboseInteractionFieldC = new Composite(fieldComposite, SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    verboseInteractionFieldC.setLayoutData( gd);
+    verboseInteractionField = new BooleanFieldEditor( IScionPreferenceNames.VERBOSE_INTERACTION,
+        UITexts.scionVerboseInteraction_title,
+        verboseInteractionFieldC );
+    verboseInteractionField.setPage(this);
+    verboseInteractionField.setPreferenceStore( scionPrefStore );
+    verboseInteractionField.load();
+
 		// Update the dialog's state and validity:
 		updateButtonState();
 		setValid(isValid());
@@ -238,6 +256,7 @@ public class ScionPP
 	  // Set reasonable defaults.
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
 	  store.setDefault( SCION_SERVER_EXECUTABLE, new String() );
+	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
 
   @Override
@@ -247,15 +266,19 @@ public class ScionPP
     serverExecutableField.store();
     autodetect.store();
     serverFlavorField.store();
+    verboseInteractionField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
 
-    // Yuck. You'd think there'd be a way to do this via listening for preference
-    // changes, but nooooooh.
-    HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin);
-
-    return super.performOk();
+    if (super.performOk()) {
+      // Yuck. You'd think there'd be a way to do this via listening for preference
+      // changes, but nooooooh.
+      HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override

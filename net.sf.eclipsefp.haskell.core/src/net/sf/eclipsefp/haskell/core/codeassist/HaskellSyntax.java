@@ -13,7 +13,7 @@ public final class HaskellSyntax {
    * <p>Note: These used to be useful for syntax highlighting and content assist proposals.
    * Syntax highlighting is now handled differently via the scion-server, so these keywords are now used
    * solely for content assist proposals. At some point, these may go away as EclipseFP
-   * template content proposals become more robust.
+   * template content proposals become more robust.</p>
    *
    */
   private static final String[] KEYWORDS = new String[] {

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * A command group is a logical grouping of commands that excludes other commands from running
  * that operate on the same project or that project's resources.
  * 
- * @author B. Scott Michel (scooter.phd@gmail.com)
+ * @author B. Scott Michel (bscottm@ieee.org)
  */
 public abstract class CommandGroup extends Job {
   /**
