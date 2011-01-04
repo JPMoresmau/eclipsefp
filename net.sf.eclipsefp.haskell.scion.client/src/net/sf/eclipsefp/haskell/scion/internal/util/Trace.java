@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.internal.util;
 
+import java.util.IllegalFormatException;
+
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
 public class Trace {
@@ -9,8 +11,19 @@ public class Trace {
 	public synchronized static void trace(String prefix, String message, Object... args) {
 		if (ScionPlugin.isTracing(optionId)) {
 			printPrefix(prefix);
-			System.out.println(String.format(message, args));
-			System.out.flush();
+			try {
+				// if we have no arguments, we could have passed an arbitrary string, that contains % characters that cause issues
+				// a real life example was %title% in a yesod quasiquoted file
+				if (args.length>0){
+					System.out.println(String.format(message, args));
+				} else {
+					System.out.println(message);
+				}
+				System.out.flush();
+			} catch (IllegalFormatException ife){
+				System.err.println(message);
+				ife.printStackTrace();
+			}
 		}
 	}
 	
