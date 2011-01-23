@@ -3,6 +3,9 @@ package net.sf.eclipsefp.haskell.scion.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -67,8 +70,15 @@ public class Note {
 	
 	public void applyAsMarker(IResource resource,int maxLines) throws CoreException {
 		if (resource != null && resource.isAccessible()) {
+			/**
+			 * this causes scheduling rule issues sometimes
+			 */
 			if (!resource.getWorkspace().isTreeLocked()){
-				resource.refreshLocal(0, new NullProgressMonitor());
+				try {
+					resource.refreshLocal(0, new NullProgressMonitor());
+				} catch (CoreException ce){
+					// ignore
+				}
 			}
 			
 	        int severity;
@@ -90,7 +100,7 @@ public class Note {
 		}
 	}
 
-	private void addMarker(IResource resource, int severity, int line,
+	private void addMarker(final IResource resource, int severity, int line,
 			int start, int end, String msg) throws CoreException {
 		// duplicate
 		for (IMarker m:resource.findMarkers(IMarker.PROBLEM, false, 0)){
@@ -102,19 +112,34 @@ public class Note {
 				return;
 		}
 
-		Map<Object,Object> attributes=new HashMap<Object,Object>();
+		final Map<Object,Object> attributes=new HashMap<Object,Object>();
 		MarkerUtilities.setLineNumber(attributes, line);
-		MarkerUtilities.setCharStart(attributes, start);
+		
 		// if we have startColumn==endColumn we could take end+1
-		// BUT if end goes over the document size, the marker is not shown on the document
+		// BUT if end goes over the document size, or start is zero, or if Eclipse feels like it, the marker is not shown on the document
 		// so it's better to just show the line without more info 
 		if (end>start){
+			MarkerUtilities.setCharStart(attributes, start);
 			// exclusive
 			MarkerUtilities.setCharEnd(attributes, end-1);
-		} 
+		}
 		attributes.put(IMarker.SEVERITY, severity);
 		attributes.put(IMarker.MESSAGE,msg);
-		MarkerUtilities.createMarker(resource, attributes, IMarker.PROBLEM);
+		
+		/**
+		 * this locks the workspace, so fire a new thread
+		 */
+		new Thread(new Runnable(){
+			public void run() {
+				try {
+					MarkerUtilities.createMarker(resource, attributes, IMarker.PROBLEM);
+				} catch (CoreException ex){
+					ScionPlugin.logError(ScionText.error_applyMarkers, ex);
+					ex.printStackTrace();
+				}
+			};
+		}).start();
+		
 	}
 	
 
