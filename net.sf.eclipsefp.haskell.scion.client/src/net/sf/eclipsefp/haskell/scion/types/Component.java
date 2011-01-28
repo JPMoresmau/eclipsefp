@@ -13,12 +13,14 @@ public class Component {
 	private ComponentType type;
 	private String name;
 	private String cabalFileName;
+	private boolean buildable=true;
 	
-	public Component(ComponentType type, String name,String cabalFileName) {
+	public Component(ComponentType type, String name,String cabalFileName,boolean buildable) {
 		super();
 		this.type = type;
 		this.name = name;
 		this.cabalFileName=cabalFileName;
+		this.buildable=buildable;
 	}
 	
 	public Component(JSONObject obj) throws JSONException{
@@ -39,6 +41,9 @@ public class Component {
 			}*/
 		}
 		cabalFileName=obj.getString("cabal-file");
+		if (obj.has("buildable")){
+			buildable=obj.getBoolean("buildable");
+		}
 	}
 
 	public ComponentType getType() {
@@ -57,6 +62,11 @@ public class Component {
 		this.name = name;
 	}
 	
+	public boolean isBuildable() {
+		//return buildable;
+		return true;
+	}
+	
 	public JSONObject toJSON() throws JSONException {
 		JSONObject component = new JSONObject();
 		// non cabal based
@@ -66,6 +76,7 @@ public class Component {
 			// cabal based
 			component.put(getType().toString().toLowerCase(), getName()!=null?getName():JSONObject.NULL);
 			component.put("cabal-file", cabalFileName);
+			component.put("buildable", buildable);
 		}
 		return component;
 	}

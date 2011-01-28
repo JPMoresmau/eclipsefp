@@ -35,7 +35,7 @@ public class CompilationResultHandler extends JobChangeAdapter {
 		this.documentPath=documentPath;
 	}
 	
-	public void process(ICompilerResult r){
+	public void process(final ICompilerResult r){
 		CompilationResult cr=r.getCompilationResult();
 		if (cr!=null){
 			String root=project.getLocation().toOSString();

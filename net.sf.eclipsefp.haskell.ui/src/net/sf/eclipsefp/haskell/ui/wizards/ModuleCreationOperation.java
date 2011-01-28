@@ -14,7 +14,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
@@ -129,8 +128,8 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       } finally {
         prov.disconnect( f );
       }
-
-      ScionPlugin.getScionInstance( generatedFile ).buildProjectForWorkspace( monitor, false , false);
+      // let the listener do its work
+     // ScionPlugin.getScionInstance( generatedFile ).buildProjectForWorkspace( monitor, false , false);
     } catch( CoreException ex ) {
       throw new InvocationTargetException( ex );
     }

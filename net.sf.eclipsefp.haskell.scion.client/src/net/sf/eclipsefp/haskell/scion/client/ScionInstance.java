@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.scion.client;
 
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,9 +38,9 @@ import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.IAsyncScionCommandAction;
-import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
+import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -57,13 +58,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.json.JSONObject;
 
 /**
@@ -339,9 +341,38 @@ public class ScionInstance {
    * @return True if all commands sent to scion-server succeeded, indicating that the build completed.
    */
   public boolean buildProjectForWorkspace(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
-    boolean retval = false;
-    IJobManager mgr = Job.getJobManager();
-    
+    //boolean retval = false;
+	final List<Boolean> retList=new LinkedList<Boolean>();
+	/**
+	 * there are issues between jobs and workspace operations
+	 * I have seen deadlocks where a workspace operation was trying to start a job with a scheduling rule
+	 * and another job with a conflicting scheduling rule was trying to start a workspace operation
+	 * for example, creating/deleting modules rapidly while project is being built
+	 * So here instead of using a job we use a workspace modify operation
+	 */
+    WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(project){
+    	@Override
+    	protected void execute(IProgressMonitor arg0) throws CoreException,
+    			InvocationTargetException, InterruptedException {
+    		 if ( checkCabalFile() ) {
+    			 boolean retval = buildProjectInternal(monitor, output, forceRecomp) && restoreState(monitor);
+    			 retList.add(retval);
+    		 } else {
+    			 retList.add(false);
+    		 }
+    		
+    	}
+    };
+	try {
+		wmo.run(monitor);
+	} catch (InterruptedException ie){
+		// noop
+	}catch (InvocationTargetException ie){
+		ScionPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+	}
+	return retList.isEmpty()?false:retList.iterator().next();
+    /*IJobManager mgr = Job.getJobManager();
+   
     try {
       mgr.beginRule(project, monitor);
       if ( checkCabalFile() ) {
@@ -351,7 +382,8 @@ public class ScionInstance {
       mgr.endRule(project);
     }
     
-    return retval;
+    return retval;*/
+    
   }
   
   /**
@@ -417,7 +449,7 @@ public class ScionInstance {
         Component toLoadLast = null;
         synchronized (components) {
           for (Component c : components) {
-            if (c.toString().equals(lastLoadedComponent.toString())) {
+            if (c.isBuildable() && c.toString().equals(lastLoadedComponent.toString())) {
               toLoadLast = c;
             } else {
               l.add(c);
@@ -459,16 +491,18 @@ public class ScionInstance {
     final CompilationResultHandler crh = new CompilationResultHandler(theProject);
 
     for (Component c : cs) {
-      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, theProject.getName(), c.toString() ) );
-
-      final LoadCommand loadCommand = new LoadCommand(theProject, c, output, forceRecomp);
-      if (server.sendCommand(loadCommand)) {
-        crh.process(loadCommand);
-        lastLoadedComponent = c;
-      } else {
-        failed = true;
-        break;
-      }
+    	if (c.isBuildable()){
+	      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, theProject.getName(), c.toString() ) );
+	
+	      final LoadCommand loadCommand = new LoadCommand(theProject, c, output, forceRecomp);
+	      if (server.sendCommand(loadCommand)) {
+	        crh.process(loadCommand);
+	        lastLoadedComponent = c;
+	      } else {
+	        failed = true;
+	        break;
+	      }
+    	}
     }
       
     if (failed) {
@@ -586,7 +620,7 @@ public class ScionInstance {
         if (!componentNames.isEmpty()) {
           synchronized (components) {
             for (Component compo : components) {
-              if (componentNames.contains(compo.toString())) {
+              if (compo.isBuildable() && componentNames.contains(compo.toString())) {
                 toLoad = compo;
                 break;
               }
@@ -598,7 +632,7 @@ public class ScionInstance {
   
         // we have no component: we create a file one
         if (toLoad == null) {
-          toLoad = new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString());
+          toLoad = new Component(ComponentType.FILE, file.getName(), file.getLocation().toOSString(),true);
           if (!li.useFileComponent) {
             li.useFileComponent = true;
             ScionPlugin.logWarning(ScionText.bind(ScionText.warning_file_component, file.getProjectRelativePath()), null);
@@ -935,34 +969,79 @@ public class ScionInstance {
    * is executed synchronously.
    */
   private boolean withProject( final ScionCommand command, final String jobName ) {
-    Job projJob = new Job ( jobName ) {
-      @Override
-      protected IStatus run(IProgressMonitor monitor) {
+	// we want to run synchronously, and we're in the ui thread: let's not use a job!
+	if (Display.getCurrent()!=null){
+		
         IStatus retval = Status.CANCEL_STATUS;
-        if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
+        if ( projectIsBuilt || buildProjectInternal(new NullProgressMonitor(), false, true) ) {
           retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
         }
         
-        return retval;
-      }
-    };
-    
-    // Note: All of this code could go into a separate class, but this is only used
-    // once, so really no point.
-    projJob.setPriority( Job.INTERACTIVE );
-    projJob.setRule( project );
-    projJob.schedule();
-    
-    while (projJob.getResult() == null) {
-      try {
-        projJob.join();
-      } catch (InterruptedException irq) {
-        // Return something reasonable.
-        return false;
-      }
-    }
-    
-    return (projJob.getResult().equals(Status.OK_STATUS));
+        return retval.equals(Status.OK_STATUS);
+		      
+		    
+	} else {
+		/**
+		 * there are issues between jobs and workspace operations
+		 * I have seen deadlocks where a workspace operation was trying to start a job with a scheduling rule
+		 * and another job with a conflicting scheduling rule was trying to start a workspace operation
+		 * for example, creating/deleting modules rapidly while project is being built
+		 * So here instead of using a job we use a workspace modify operation
+		 */
+		final List<Boolean> retList=new LinkedList<Boolean>();
+	    WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(project){
+	    	@Override
+	    	protected void execute(IProgressMonitor monitor) throws CoreException,
+	    			InvocationTargetException, InterruptedException {
+	    		if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
+	    			boolean retval = server.sendCommand(command) ;
+	    			retList.add(retval);
+	  	        } 
+	    		
+	    	}
+	    };
+		try {
+			wmo.run(new NullProgressMonitor());
+		} catch (InterruptedException ie){
+			// noop
+		}catch (InvocationTargetException ie){
+			ScionPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+		}
+		return retList.isEmpty()?false:retList.iterator().next();
+		
+	    /*Job projJob = new Job ( jobName ) {
+	      @Override
+	      protected IStatus run(IProgressMonitor monitor) {
+	        IStatus retval = Status.CANCEL_STATUS;
+	        if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
+	          retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
+	        }
+	        
+	        return retval;
+	      }
+	    };
+	    // Note: All of this code could go into a separate class, but this is only used
+	    // once, so really no point.
+	    projJob.setPriority( Job.INTERACTIVE );
+	    projJob.setRule( project );
+	    projJob.schedule();
+	    
+	    while (projJob.getResult() == null) {
+	     try {
+	        projJob.join();
+	      } catch (InterruptedException irq) {
+	        // Return something reasonable.
+	        return false;
+	      }
+	      //Thread.yield();
+	    }
+	    */
+		
+		
+		
+	    //return (projJob.getResult().equals(Status.OK_STATUS));
+	}
+
   }
   
   /**
