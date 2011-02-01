@@ -2,9 +2,8 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -12,7 +11,6 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 
 /** <p>Operation for cleaning output and binary folders of a Haskell
@@ -31,9 +29,9 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
   }
 
   public void run( final IProgressMonitor mon ) throws CoreException {
-    mon.beginTask( CoreTexts.cleanOutFoldersOperation_cleaning, 15 );
+    mon.beginTask( CoreTexts.cleanOutFoldersOperation_cleaning, 12 );
     try {
-      deleteExe( mon );      //  (3)
+      //deleteExe( mon );      //  (3)
       shrubOutFolder( mon ); // (12)
     } finally {
       mon.done();
@@ -47,22 +45,23 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
   private void shrubOutFolder( final IProgressMonitor mon )
                                                           throws CoreException {
     mon.subTask( CoreTexts.cleanOutFoldersOperation_shrubbingOut );
-    IContainer outFolder = ResourceUtil.getOutFolder( project );
+    IContainer outFolder = project.getFolder( ScionPlugin.DIST_FOLDER );
+      //ResourceUtil.getOutFolder( project );
     if( outFolder != null && !outFolder.equals( project ) ) {
       outFolder.accept( folderCleaner, IContainer.INCLUDE_PHANTOMS );
     }
     mon.worked( 12 );
   }
 
-  private void deleteExe( final IProgressMonitor mon ) throws CoreException {
-    mon.subTask( CoreTexts.cleanOutFoldersOperation_removingExes );
-    IFile[] files = ResourceUtil.getProjectExecutables( project );
-    for( IFile file: files ) {
-      if( file != null && file.isAccessible() ) {
-        file.delete( true, new SubProgressMonitor( mon, 3 ) );
-      }
-    }
-  }
+//  private void deleteExe( final IProgressMonitor mon ) throws CoreException {
+//    mon.subTask( CoreTexts.cleanOutFoldersOperation_removingExes );
+//    IFile[] files = ResourceUtil.getProjectExecutables( project );
+//    for( IFile file: files ) {
+//      if( file != null && file.isAccessible() ) {
+//        file.delete( true, new SubProgressMonitor( mon, 3 ) );
+//      }
+//    }
+//  }
 
 
   // inner classes

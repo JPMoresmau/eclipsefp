@@ -69,7 +69,7 @@ public abstract class LaunchOperation {
     return configuration.getAttribute( att, ILaunchAttributes.EMPTY );
   }
 
-  String getExePath( final ILaunchConfiguration config ) throws CoreException {
+  static String getExePath( final ILaunchConfiguration config ) throws CoreException {
     String att = ILaunchAttributes.EXECUTABLE;
     return config.getAttribute( att, ILaunchAttributes.EMPTY );
   }

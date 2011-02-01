@@ -70,7 +70,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
   private ILaunchConfiguration getConfiguration( final IResource[] resources,
                                                  final IFile[] files )
                                                           throws CoreException {
-    List<ILaunchConfiguration> configurations = findConfig( resources );
+    List<ILaunchConfiguration> configurations = findConfig(delegate, resources );
     ILaunchConfiguration result = null;
     int count = configurations.size();
     if( count < 1 ) {
@@ -124,7 +124,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     return wc.doSave();
   }
 
-  private List<ILaunchConfiguration> findConfig( final IResource[] resources )
+  public static List<ILaunchConfiguration> findConfig( final IInteractiveLaunchOperationDelegate delegate, final IResource[] resources )
                                                           throws CoreException {
     List<ILaunchConfiguration> result = Collections.emptyList();
     ILaunchConfiguration[] configurations = getConfigurations();
@@ -143,7 +143,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     return result;
   }
 
-  private String getFirstResName( final ILaunchConfiguration config )
+  private static String getFirstResName( final ILaunchConfiguration config )
                                                           throws CoreException {
     String att = FIRST_SELECTED_RESOURCE;
     return config.getAttribute( att, ILaunchAttributes.EMPTY );

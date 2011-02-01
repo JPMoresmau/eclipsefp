@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.core.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,13 +21,12 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.core.internal.util.Assert;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
+import net.sf.eclipsefp.haskell.scion.types.Component;
+import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -54,13 +54,27 @@ public class ResourceUtil {
 	 * project has the Haskell nature.
 	 */
 
-	public static ArrayList<IFile> getProjectExecutablesArray( final IProject project)
+	public static List<IFile> getProjectExecutables( final IProject project)
 	  throws CoreException
 	{
-    Assert.isTrue( project.hasNature( HaskellNature.NATURE_ID ) );
+	  ArrayList<IFile> result = new ArrayList<IFile>();
+    if (project.hasNature( HaskellNature.NATURE_ID ) ){
 
-    ArrayList<IFile> result = new ArrayList<IFile>();
-    IHaskellProject hsProject = HaskellProjectManager.get( project );
+
+      ScionInstance instance=ScionPlugin.getScionInstance( project );
+      if (instance!=null){
+        for (Component c:instance.getComponents()){
+          if (c.isBuildable() &&  c.getType().equals( ComponentType.EXECUTABLE )){
+            String name=FileUtil.makeExecutableName( c.getName() );
+            IFile f=project.getFile( ScionPlugin.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
+            if (f.exists()){
+              result.add( f );
+            }
+          }
+        }
+      }
+    }
+    /*IHaskellProject hsProject = HaskellProjectManager.get( project );
     Set<IPath> targetNames = hsProject.getTargetNames();
     for( IPath path: targetNames ) {
       if (!path.isEmpty()){
@@ -69,29 +83,29 @@ public class ResourceUtil {
           result.add( file );
         }
       }
-    }
+    }*/
 
     return result;
 	}
 
-	public static boolean isProjectExecutable(final IProject project, final String exeName)
-	{
-	  boolean retval = false;
-	  String theExeName = FileUtil.makeExecutableName(exeName);
-
-	  try {
-	    ArrayList<IFile> executables = getProjectExecutablesArray(project);
-	    for (IFile iter: executables) {
-	      if (iter.getName().equals( theExeName )) {
-	        retval = true;
-	      }
-	    }
-	  } catch (CoreException e) {
-	    retval = false;
-	  }
-
-	  return retval;
-	}
+//	public static boolean isProjectExecutable(final IProject project, final String exeName)
+//	{
+//	  boolean retval = false;
+//	  String theExeName = FileUtil.makeExecutableName(exeName);
+//
+//	  try {
+//	    ArrayList<IFile> executables = getProjectExecutablesArray(project);
+//	    for (IFile iter: executables) {
+//	      if (iter.getName().equals( theExeName )) {
+//	        retval = true;
+//	      }
+//	    }
+//	  } catch (CoreException e) {
+//	    retval = false;
+//	  }
+//
+//	  return retval;
+//	}
 
 	/**
 	 * <p>
@@ -99,9 +113,9 @@ public class ResourceUtil {
 	 * project must have the Haskell nature.
 	 * </p>
 	 */
-	public static IFile[] getProjectExecutables( final IProject project )
+	public static IFile[] getProjectExecutablesArray( final IProject project )
       throws CoreException {
-	  ArrayList<IFile> executables = getProjectExecutablesArray(project);
+	  List<IFile> executables = getProjectExecutables(project);
     return executables.toArray( new IFile[ executables.size() ] );
   }
 
@@ -112,22 +126,22 @@ public class ResourceUtil {
 	 * @return The IContainer object corresponding to the project's output
 	 * folder.
 	 */
-	public static IContainer getOutFolder(final IProject project)
-			throws CoreException
-	{
-	  Assert.isNotNull( project );
-		Assert.isTrue(project.hasNature(HaskellNature.NATURE_ID));
-
-		IHaskellProject hsProject = getHsProject(project);
-		IPath outputPath = hsProject.getOutputPath();
-		IContainer result;
-		if (outputPath.equals(project.getProjectRelativePath())) {
-			result = project;
-		} else {
-			result = project.getFolder(outputPath);
-		}
-		return result;
-	}
+//	public static IContainer getOutFolder(final IProject project)
+//			throws CoreException
+//	{
+//	  Assert.isNotNull( project );
+//		Assert.isTrue(project.hasNature(HaskellNature.NATURE_ID));
+//
+//		IHaskellProject hsProject = getHsProject(project);
+//		IPath outputPath = hsProject.getOutputPath();
+//		IContainer result;
+//		if (outputPath.equals(project.getProjectRelativePath())) {
+//			result = project;
+//		} else {
+//			result = project.getFolder(outputPath);
+//		}
+//		return result;
+//	}
 
 	/**
 	 * <p>
@@ -201,6 +215,29 @@ public class ResourceUtil {
 		}
 		return result;
 	}
+
+  public static IResource[] getResourcesFromSelection(final ISelection selection){
+    if( selection != null && selection instanceof IStructuredSelection ) {
+      List<IResource> list = new ArrayList<IResource>();
+      IStructuredSelection ssel = ( IStructuredSelection )selection;
+      for( Object element: ssel.toList() ) {
+        IResource res = ResourceUtil.findResource( element );
+        if( res != null ) {
+         list.add( res );
+        }
+      }
+      IResource[] ress = toResourceArray( list );
+      return ress;
+    }
+    return new IResource[0];
+  }
+
+
+  public static IResource[] toResourceArray( final List<IResource> list ) {
+    IResource[] result = new IResource[ list.size() ];
+    list.toArray( result );
+    return result;
+  }
 
 	private static IContainer getContainer(final IProject p,final String src){
 	  return src.equals( "." )?p:p.getFolder( src ); //$NON-NLS-1$
@@ -462,9 +499,9 @@ public class ResourceUtil {
 	// helping methods
 	// ////////////////
 
-	private static IHaskellProject getHsProject( final IProject project ) {
-    return HaskellProjectManager.get( project );
-  }
+//	private static IHaskellProject getHsProject( final IProject project ) {
+//    return HaskellProjectManager.get( project );
+//  }
 
   public static String getModuleName( final String fileName ) {
     return fileName.substring( 0, fileName.lastIndexOf( '.' ) );
