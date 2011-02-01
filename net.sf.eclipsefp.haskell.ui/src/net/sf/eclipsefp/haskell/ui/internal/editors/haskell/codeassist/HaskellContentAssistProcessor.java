@@ -100,9 +100,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           Region point = new Region( offsetPrefix, 0 );
           String token = scion.tokenPrecedingPoint( theFile, doc, point );
 
-          if (HaskellLexerTokens.isImportToken( token )) {
+          if (HaskellLexerTokens.isImportContext( token )) {
             return moduleNamesContext(scion, offset);
-          } else if (isConstructorContext(token)) {
+          } else if (HaskellLexerTokens.isTyConContext( token )) {
             return typeConstructorContext(scion, offset);
           } else {
             return defaultCompletionContext(viewer, theFile, doc, offset);
@@ -127,14 +127,6 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
     return null;
 	}
-
-	/**
-	 * Does this token expect a type constructor to follow it?
-	 */
-	private boolean isConstructorContext( final String token ) {
-	  return (   HaskellLexerTokens.isDoubleColon( token )
-	          || HaskellLexerTokens.isRightArrow( token ) );
-  }
 
   public IContextInformation[] computeContextInformation(final ITextViewer viewer, final int documentOffset) {
 		// unused

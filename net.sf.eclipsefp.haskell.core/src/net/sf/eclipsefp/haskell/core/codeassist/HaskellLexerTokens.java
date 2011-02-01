@@ -172,28 +172,19 @@ public class HaskellLexerTokens {
   // Predicates
   //=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~
 
-  /** 'import' token predicate
+  /** Import statement context ('import' or 'qualified')
    *
    * @param token The lexer token to compare
    */
-  public final static boolean isImportToken(final String token) {
-    return ITimport.equals(token);
+  public final static boolean isImportContext(final String token) {
+    return ITimport.equals(token) || ITqualified.equals(token);
   }
 
-  /** '::' (dcolon) token predicate
+  /** '::' (dcolon) or '->' (right arrow) type constructor context
    *
    * @param token The lexer token to compare
    */
-  public final static boolean isDoubleColon(final String token) {
-    return ITdcolon.equals(token);
-  }
-
-  /**
-   * '->' (rarrow) token predicate
-   *
-   * @param token The lexer token to compate
-   */
-  public final static boolean isRightArrow(final String token) {
-    return ITrarrow.equals( token );
+  public final static boolean isTyConContext(final String token) {
+    return ITdcolon.equals(token) || ITdcolon.equals(token);
   }
 }
