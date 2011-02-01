@@ -69,7 +69,6 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 	private void searchPreludeAndKeywords(final String prefix,
 		final List<ICompletionProposal> result)
 	{
-		searchStringList(prefix, HaskellSyntax.getClasses(), result);
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
 	}
 
