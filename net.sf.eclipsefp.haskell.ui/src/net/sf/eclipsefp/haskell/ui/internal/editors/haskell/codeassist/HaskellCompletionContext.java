@@ -58,7 +58,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 
 			searchDefinedNames(completedToken, result);
-			searchPreludeAndKeywords(completedToken, result);
+			searchKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
 			// ignore the error and just return an empty result
@@ -66,7 +66,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return new ICompletionProposal[0];
 	}
 
-	private void searchPreludeAndKeywords(final String prefix,
+	private void searchKeywords(final String prefix,
 		final List<ICompletionProposal> result)
 	{
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);

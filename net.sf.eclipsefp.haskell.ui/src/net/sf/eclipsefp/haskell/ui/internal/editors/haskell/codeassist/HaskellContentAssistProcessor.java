@@ -103,7 +103,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           if (HaskellLexerTokens.isImportContext( token )) {
             return moduleNamesContext(scion, offset);
           } else if (HaskellLexerTokens.isTyConContext( token )) {
-            return typeConstructorContext(scion, offset);
+            return typeConstructorContext(scion, theFile, doc, offset);
           } else {
             return defaultCompletionContext(viewer, theFile, doc, offset);
           }
@@ -277,7 +277,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 *
 	 * @return A ICompletionProposal list or null, if no completions exist
 	 */
-	private ICompletionProposal[] typeConstructorContext(final ScionInstance scion, final int offset) {
+	private ICompletionProposal[] typeConstructorContext(final ScionInstance scion, final IFile file, final IDocument doc,
+	                                                     final int offset) {
+	  scion.completionsForTypeConstructors( file, doc );
 	  return null;
 	}
 
