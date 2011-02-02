@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbit
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CompilationResultHandler;
+import net.sf.eclipsefp.haskell.scion.internal.commands.CompletionTyCons;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
@@ -920,6 +921,12 @@ public class ScionInstance {
     return cmd.getNames();
   }
 
+  /**
+   * Ask the scion-server for the current project component's exposed modules. This is used
+   * by the 'import' completion processing as well as the module template variable processor.
+   * 
+   * @return The list of Haskell modules visible to the current Haskell source file.
+   */
   public List<String> listExposedModules( ) {
     if (exposedModulesCache == null) {
       final ListExposedModulesCommand cmd = new ListExposedModulesCommand();
@@ -931,6 +938,12 @@ public class ScionInstance {
     return exposedModulesCache;
   }
 
+  /**
+   * Ask the scion-server for the current project component's module graph. This is used by
+   * the 'import' completion processing as well as the module template variable processor.
+   * 
+   * @return The list of Haskell modules visible in the module graph
+   */
   public List<String> moduleGraph( ) {
     final ModuleGraphCommand cmd = new ModuleGraphCommand();
 
@@ -938,10 +951,26 @@ public class ScionInstance {
     return cmd.getNames();
   }
 
+  /**
+   * Fetches the syntax highlighting token type list for the current editor's Haskell source,
+   * sending the file's contents.
+   * 
+   * @param file The current Haskell source file
+   * @param contents The source file's current contents
+   * @return A list of {@link TokenDef TokenDef} tokens used for syntax highlighting.
+   */
   public synchronized List<TokenDef> tokenTypes(final IFile file, final String contents) {
     TokenTypesCommand command = new TokenTypesCommand(file, contents, FileUtil.hasLiterateExtension(file));
     server.sendCommand(command);
     return command.getTokens();
+  }
+  
+  public void completionsForTypeConstructors(final IFile file, final IDocument doc) {
+    final CompletionTyCons tycons = new CompletionTyCons();
+    
+    if (withLoadedDocument(file, doc, tycons, "TyCon completions")) {
+      // Do something clever
+    }
   }
 
   /**

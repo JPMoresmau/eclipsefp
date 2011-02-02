@@ -118,11 +118,6 @@ public final class HaskellSyntax {
     "Left", "Right", "LT", "EQ", "GT" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
   };
 
-  private static final String[] CLASSES = new String[] {
-    "Eq", "Show", "Read", "Ord", "Num", "Bounded", "Enum", "Real", "Fractional", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-    "Integral", "RealFrac", "Floating", "RealFloat", "Monad", "Functor" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-  };
-
   private HaskellSyntax() {
     // prevent instantiation
   }
@@ -133,10 +128,6 @@ public final class HaskellSyntax {
 
   public static String[] getLibs() {
     return VAL;
-  }
-
-  public static String[] getClasses() {
-    return CLASSES;
   }
 
   public static String[] getKeywords() {
