@@ -9,6 +9,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -31,6 +32,7 @@ import org.eclipse.debug.core.ILaunchManager;
  * @author Leif Frenzel
  */
 class ExecutableLaunchOperation extends LaunchOperation {
+  public static final String EXECUTABLE_CONFIG_TYPE = ExecutableHaskellLaunchDelegate.class.getName();
 
   void launch( final IResource resource, final IProgressMonitor monitor )
       throws CoreException {
@@ -100,6 +102,11 @@ class ExecutableLaunchOperation extends LaunchOperation {
     return result;
   }
 
+  @Override
+  protected String getConfigTypeName() {
+    return EXECUTABLE_CONFIG_TYPE;
+  }
+
   private ILaunchConfiguration createConfiguration( final IFile executable )
       throws CoreException {
     ILaunchConfigurationType configType = getConfigType();
@@ -107,10 +114,14 @@ class ExecutableLaunchOperation extends LaunchOperation {
     ILaunchConfigurationWorkingCopy wc = configType.newInstance( null, id );
     String exePath = getExePath( executable );
     wc.setAttribute( ILaunchAttributes.EXECUTABLE, exePath );
+    wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, executable.getProject().getLocation().toOSString() );
     String projectName = ILaunchAttributes.PROJECT_NAME;
     wc.setAttribute( projectName, executable.getProject().getName() );
+    wc.setAttribute(ILaunchAttributes.SYNC_STREAMS,true);
     return wc.doSave();
   }
+
+
 
   private String getExePath( final IFile executable ) {
     String result = executable.getLocation().toOSString();
@@ -125,7 +136,7 @@ class ExecutableLaunchOperation extends LaunchOperation {
   public static List<ILaunchConfiguration> findConfiguration( final IProject project )
       throws CoreException {
     List<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
-    ILaunchConfiguration[] configurations = getConfigurations();
+    ILaunchConfiguration[] configurations =  LaunchOperation.getConfigurations(LaunchOperation.getConfigType( EXECUTABLE_CONFIG_TYPE ));
     result = new ArrayList<ILaunchConfiguration>( configurations.length );
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];

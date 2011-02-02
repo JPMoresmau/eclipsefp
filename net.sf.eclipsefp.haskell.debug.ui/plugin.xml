@@ -4,9 +4,14 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/etool16/hsicon16.gif"
+            icon="icons/etool16/ghci16.gif"
             configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/etool16/hsexe16.gif"
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchExecutableIcon">
       </launchConfigurationTypeImage>
    </extension>
    <extension
@@ -15,6 +20,11 @@
             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HaskellLaunchTabGroup"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HaskellLaunchTabGroup">
+      </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+            type="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup">
       </launchConfigurationTabGroup>
    </extension>
    <extension

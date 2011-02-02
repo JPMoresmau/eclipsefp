@@ -15,8 +15,8 @@ import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOpera
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -94,9 +94,12 @@ public class GhciLaunchOperationDelegate
       final Set<IProject> visited,final IFile[] selectedFiles ) throws CoreException {
     /*Set<IPath> sourcePaths = hsProject.getSourcePaths();*/
     for( String sourcePath: ResourceUtil.getSourceFolders( selectedFiles ) ) {
-      IFolder folder = hsProject.getFolder( sourcePath );
+      IResource r=hsProject;
+      if (!sourcePath.equals( "." )){ //$NON-NLS-1$
+        r=hsProject.getFolder( sourcePath );
+      }
       // getRawLocation gives us the real FS path even if the resource is linked
-      IPath loc = new Path( folder.getLocationURI().getPath() );
+      IPath loc = new Path( r.getLocationURI().getPath() );
       cmdLine.add( "-i\"" + loc.toOSString() + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
     IProject[] refs = hsProject.getReferencedProjects();

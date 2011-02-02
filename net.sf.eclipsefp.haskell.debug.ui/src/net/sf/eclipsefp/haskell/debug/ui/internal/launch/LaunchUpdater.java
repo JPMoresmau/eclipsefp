@@ -21,8 +21,8 @@ public class LaunchUpdater implements CabalFileChangeListener {
     try {
       final ClassLoader cl=getClass().getClassLoader();
      String projectName=cabalF.getProject().getName();
-     for(ILaunchConfiguration c:LaunchOperation.getConfigurationsForProject( projectName )){
-       String delegateClass=c.getAttribute( ILaunchAttributes.DELEGATE, (String)null );
+     for(ILaunchConfiguration c:LaunchOperation.getConfigurationsForProject(LaunchOperation.getConfigType( InteractiveLaunchOperation.INTERACTIVE_CONFIG_TYPE ), projectName )){
+       String delegateClass=InteractiveLaunchOperation.getDelegate( c );
        if (delegateClass!=null){
          try {
 

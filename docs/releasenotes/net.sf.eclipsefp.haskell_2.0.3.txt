@@ -22,6 +22,7 @@ Fixes:
     the project is correctly loaded if need be
   - When launching GHCi, only hidden packages are added via -package
   - When running a haskell file with the "launch the selected ressource or active editor", if an existing launch configuration exists, it it reused.
+  - When an existing launch configuration is found for a ressource, update executable to be the current executable for the delegate
 
 Features:
   - Interface to cabal install via contextual action on project
@@ -55,7 +56,7 @@ Features:
       - Block following ("{- | ... -}") via Ctrl+Shift+D B
       - Pragma comment ("{-#  #-}") via Ctrl-Shift-C P
 
-  - Run as haskell application: for projects with executable components, launch the built exe file
+  - Run as haskell application: for projects with executable components, launch the built exe file.
 
 Internal:
 
