@@ -5,6 +5,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 
 /** <p>runs initialization code for default preference settings for the
@@ -78,13 +79,21 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
   }
 
   private static void initAppearance( final IPreferenceStore store ) {
-    store.setDefault( EDITOR_PRINT_MARGIN_COLUMN, 80 );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN );
+//    store.setDefault( EDITOR_PRINT_MARGIN_COLUMN, 80 );
 
-    store.setDefault( EDITOR_OVERVIEW_RULER, true );
-    store.setDefault( EDITOR_LINE_NUMBER_RULER , false );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER);
+//    store.setDefault( EDITOR_OVERVIEW_RULER, true );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR );
+//    store.setDefault( EDITOR_LINE_NUMBER_RULER , false );
     store.setDefault( EDITOR_MATCHING_BRACKETS, true );
-    store.setDefault( EDITOR_CURRENT_LINE, true );
-    store.setDefault( EDITOR_PRINT_MARGIN, true );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE );
+    store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN );
+//    store.setDefault( EDITOR_CURRENT_LINE, true );
+//    store.setDefault( EDITOR_PRINT_MARGIN, true );
 
     conv( store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB( 192, 192, 192 ) );
   }

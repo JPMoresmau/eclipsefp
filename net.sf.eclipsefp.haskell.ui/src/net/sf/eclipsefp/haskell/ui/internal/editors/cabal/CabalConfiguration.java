@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text.CabalScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text.CommentScanner;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TabsToSpacesConverter;
@@ -137,7 +138,7 @@ class CabalConfiguration extends SourceViewerConfiguration {
   @Override
   public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sourceViewer, final String contentType ) {
     TabsToSpacesConverter tabConverter = new TabsToSpacesConverter();
-
+    tabConverter.setLineTracker( new DefaultLineTracker() );
     tabConverter.setNumberOfSpacesPerTab( getTabWidth( sourceViewer ) );
     return new IAutoEditStrategy[] {
         new CabalAutoIndentStrategy(),

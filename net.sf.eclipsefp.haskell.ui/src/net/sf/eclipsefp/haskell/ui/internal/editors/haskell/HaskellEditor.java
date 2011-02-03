@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -59,7 +61,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -156,10 +160,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     setSourceViewerConfiguration( new HaskellSourceViewerConfiguration( this ) );
     setEditorContextMenuId( "#" + SIMPLE_CONTEXT_ID );  //$NON-NLS-1$
     // we configure the preferences ourselves
-    setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
+    IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
+    IPreferenceStore combinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] {generalTextStore, HaskellUIPlugin.getDefault().getPreferenceStore() });
+    setPreferenceStore( combinedPreferenceStore);
     initMarkOccurrences();
     foldingStructureProvider = new HaskellFoldingStructureProvider( this );
   }
+
 
   public HaskellFoldingStructureProvider getFoldingStructureProvider() {
     return foldingStructureProvider;
@@ -179,6 +186,25 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     String colorKey = EDITOR_MATCHING_BRACKETS_COLOR;
     support.setMatchingCharacterPainterPreferenceKeys( bracketsKey, colorKey );
     support.setSymbolicFontName( getFontPropertyPreferenceKey() );
+  }
+
+  @Override
+  protected String[] collectContextMenuPreferencePages() {
+    List<String> ls=new ArrayList<String>(Arrays.asList( super.collectContextMenuPreferencePages()));
+    ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP" );
+    ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
+    ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP");
+    ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences");
+    return ls.toArray( new String[ls.size()] );
+  }
+
+
+  @Override
+  protected String[] collectOverviewRulerMenuPreferencePages() {
+    List<String> ls=new ArrayList<String>(Arrays.asList( super.collectOverviewRulerMenuPreferencePages()));
+    ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP" );
+    ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
+    return ls.toArray( new String[ls.size()] );
   }
 
   @Override
