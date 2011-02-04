@@ -4,24 +4,24 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.osgi.service.prefs.BackingStoreException;
 
 
 /** <p>the preference page for installed Haskell implementations. A Haskell
@@ -72,23 +72,30 @@ public class InstalledImplementationsPP extends PreferencePage
     return parent;
   }
 
+@Override
+public Point computeSize() {
+  // TODO Auto-generated method stub
+  return super.computeSize();
+}
+
   @Override
   public boolean performOk() {
-    IEclipsePreferences node = HaskellCorePlugin.instanceScopedPreferences();
-
-    node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, implementationsBlock.getPref() );
-    IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
-    String name = ""; //$NON-NLS-1$
-    if( impl != null ) {
-      name = impl.getName();
-    }
-    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
-
-    try {
-      node.flush();
-    } catch( BackingStoreException ex ) {
-      HaskellUIPlugin.log( ex );
-    }
+    CompilerManager.setHsImplementations( implementationsBlock.getInstallations(), implementationsBlock.getCheckedHsImplementation() );
+//    IEclipsePreferences node = HaskellCorePlugin.instanceScopedPreferences();
+//
+//    node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, implementationsBlock.getPref() );
+//    IHsImplementation impl = implementationsBlock.getCheckedHsImplementation();
+//    String name = ""; //$NON-NLS-1$
+//    if( impl != null ) {
+//      name = impl.getName();
+//    }
+//    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, name );
+//
+//    try {
+//      node.flush();
+//    } catch( BackingStoreException ex ) {
+//      HaskellUIPlugin.log( ex );
+//    }
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     implementationsBlock.saveColumnSettings( settings, DIALOG_SETTINGS_ID );

@@ -31,10 +31,13 @@ public final class CoreTexts extends NLS {
 
   public static String haskellProjectManager_jobName;
 
+  public static String hsImplementation_none;
   public static String hsImplementation_invalidLocation;
   public static String hsImplementation_invalidName;
   public static String hsImplementation_noLocation;
   public static String hsImplementation_noName;
+  public static String hsImplementation_name_default;
+  public static String hsImplementation_name_index;
 
   public static String invalidCabalFileException_noDetail;
 
