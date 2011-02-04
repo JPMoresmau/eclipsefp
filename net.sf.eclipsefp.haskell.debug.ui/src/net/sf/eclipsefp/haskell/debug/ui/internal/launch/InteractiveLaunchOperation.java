@@ -128,6 +128,8 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     wc.setAttribute( projectName, project.getName() );
     wc.setAttribute( FIRST_SELECTED_RESOURCE, resources[ 0 ].getName() );
     wc.setAttribute( ILaunchAttributes.RELOAD_COMMAND, delegate.getReloadCommand() );
+    // by default, reload when saving, that's why interactive sessions are good
+    wc.setAttribute( ILaunchAttributes.RELOAD,true);
     return wc.doSave();
   }
 
