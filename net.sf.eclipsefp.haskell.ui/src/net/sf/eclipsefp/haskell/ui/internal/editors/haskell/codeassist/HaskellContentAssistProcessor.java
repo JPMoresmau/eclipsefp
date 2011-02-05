@@ -184,10 +184,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       }
 	  }
 
-	  // Prefix offset anchor isn't set, or fell through as the result of the exception
-	  prefixOffsetAnchor = offset;
-	  return lexCompletionPrefix( doc, offset );
-	}
+    // Prefix offset anchor isn't set, or fell through as the result of the exception
+	  String retval = lexCompletionPrefix( doc, offset );
+    prefixOffsetAnchor = offset - retval.length();
+
+    return retval;
+}
 
 	/**
 	 * Default completion context, if no other context can be determined.
@@ -271,7 +273,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       final int prefixLength = prefix.length();
 
       for (String m : modules) {
-        result[i] = new CompletionProposal( m, offset, prefixLength, m.length() );
+        result[i] = new CompletionProposal( m, prefixOffsetAnchor, prefixLength, m.length() );
         ++i;
       }
 
@@ -318,14 +320,19 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	    }
 
 	    if (prefix.length() == 0 || name.toLowerCase().startsWith( normalizedPrefix )) {
-	      String fullProposal = name + " -- " + k + " (" + completionPairs.get( k ) + ")";
-	      CompletionProposal proposal = new CompletionProposal(k, offset, k.length(), k.length(), null, fullProposal, tyConContext, null );
+	      String fullProposal = name + " -- " + completionPairs.get( k );
+
+	      if (!name.equals( k )) {
+	        fullProposal =  fullProposal + " as " + k;
+	      }
+
+	      CompletionProposal proposal = new CompletionProposal(k, prefixOffsetAnchor, prefixLength, k.length(), null,
+	                                                           fullProposal, tyConContext, null );
 	      proposals.add( proposal );
 	    }
 	  }
 
-	  ICompletionProposal[] retval = new ICompletionProposal[proposals.size()];
-	  return proposals.toArray( retval );
+	  return proposals.toArray( new ICompletionProposal[proposals.size()] );
 	}
 
 	/**
@@ -405,7 +412,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  }
 
 	  public void assistSessionStarted( final ContentAssistEvent event ) {
-	    HaskellUIPlugin.log( "CA session starts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
+	    // HaskellUIPlugin.log( "CA session starts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
 
 	    // Reset the context to force computeCompletionProposals to figure out what the context,
 	    // clean out existing state:
@@ -413,18 +420,18 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     public void assistSessionEnded( final ContentAssistEvent event ) {
-      HaskellUIPlugin.log( "CA session ends.", null);
+      // HaskellUIPlugin.log( "CA session ends.", null);
 
       // Reset internal state for completeness
       HaskellContentAssistProcessor.this.internalReset();
     }
 
     public void assistSessionRestarted( final ContentAssistEvent event ) {
-      HaskellUIPlugin.log( "CA session restarts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
+      // HaskellUIPlugin.log( "CA session restarts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
     }
 
     public void selectionChanged( final ICompletionProposal proposal, final boolean smartToggle ) {
-      HaskellUIPlugin.log( "CA session selection changed, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
+      // HaskellUIPlugin.log( "CA session selection changed, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
       // NOP
     }
 
