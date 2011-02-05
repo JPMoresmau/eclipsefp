@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextHover;
@@ -84,10 +85,9 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 
 	@Override
   public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sv, final String contentType ) {
-    TabsToSpacesConverter tabConverter = new TabsToSpacesConverter();
-
+    final TabsToSpacesConverter tabConverter = new TabsToSpacesConverter();
+    tabConverter.setLineTracker( new DefaultLineTracker() );
     tabConverter.setNumberOfSpacesPerTab( getTabWidth( sv ) );
-
     return new IAutoEditStrategy[] {
         new HaskellAutoIndentStrategy(),
         tabConverter

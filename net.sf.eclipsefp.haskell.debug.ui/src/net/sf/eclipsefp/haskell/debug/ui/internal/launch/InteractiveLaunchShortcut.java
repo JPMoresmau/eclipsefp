@@ -11,7 +11,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -25,7 +26,7 @@ import org.eclipse.ui.IEditorPart;
   *
   * @author Leif Frenzel
   */
-public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
+public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
 
   // methods to be implemented by subclasses
   //////////////////////////////////////////
@@ -50,10 +51,12 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
          list.add( res );
         }
       }
-      IResource[] ress = toArray( list );
+      IResource[] ress = ResourceUtil.toResourceArray( list );
       launch( ress,mode );
     }
   }
+
+
 
   public void launch( final IEditorPart editor, final String mode ) {
     // launched from editor part
@@ -79,9 +82,37 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
     }
   }
 
-  private IResource[] toArray( final List<IResource> list ) {
-    IResource[] result = new IResource[ list.size() ];
-    list.toArray( result );
-    return result;
+
+  public IResource getLaunchableResource( final IEditorPart paramIEditorPart ) {
+    return null;
   }
+  public IResource getLaunchableResource( final ISelection paramISelection ) {
+    return null;
+  }
+  public ILaunchConfiguration[] getLaunchConfigurations(
+      final IEditorPart paramIEditorPart ) {
+    IResource resource = ResourceUtil.findResource( paramIEditorPart.getEditorInput() );
+    try {
+      List<ILaunchConfiguration> cs=InteractiveLaunchOperation.findConfig( getDelegate(),new IResource[]{ resource });
+      return cs.toArray( new ILaunchConfiguration[cs.size()] );
+  } catch (CoreException cex){
+    HaskellUIPlugin.log( cex );
+  }
+  return null;
+  }
+
+  /**
+   * this allows launching a new configuration
+   */
+  public ILaunchConfiguration[] getLaunchConfigurations(
+      final ISelection paramISelection ) {
+    try {
+        List<ILaunchConfiguration> cs=InteractiveLaunchOperation.findConfig( getDelegate(), ResourceUtil.getResourcesFromSelection( paramISelection ) );
+        return cs.toArray( new ILaunchConfiguration[cs.size()] );
+    } catch (CoreException cex){
+      HaskellUIPlugin.log( cex );
+    }
+    return null;
+  }
+
 }

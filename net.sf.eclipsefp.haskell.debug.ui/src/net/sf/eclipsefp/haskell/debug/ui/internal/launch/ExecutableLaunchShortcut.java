@@ -3,11 +3,13 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -16,7 +18,7 @@ import org.eclipse.ui.IEditorPart;
   *
   * @author Leif Frenzel
   */
-public class ExecutableLaunchShortcut implements ILaunchShortcut {
+public class ExecutableLaunchShortcut implements ILaunchShortcut2 {
 
   // interface methods of ILaunchShortcut
   ///////////////////////////////////////
@@ -47,5 +49,40 @@ public class ExecutableLaunchShortcut implements ILaunchShortcut {
       String msg = "Could not launch Haskell application."; //$NON-NLS-1$
       HaskellUIPlugin.log( msg, cex );
     }
+  }
+
+  public IResource getLaunchableResource( final IEditorPart paramIEditorPart ) {
+    return null;
+  }
+  public IResource getLaunchableResource( final ISelection paramISelection ) {
+    return null;
+  }
+  public ILaunchConfiguration[] getLaunchConfigurations(
+      final IEditorPart paramIEditorPart ) {
+    IResource resource = ResourceUtil.findResource( paramIEditorPart.getEditorInput() );
+    try {
+      List<ILaunchConfiguration> cs=ExecutableLaunchOperation.findConfiguration(resource.getProject());
+      return cs.toArray( new ILaunchConfiguration[cs.size()] );
+  } catch (CoreException cex){
+    HaskellUIPlugin.log( cex );
+  }
+  return null;
+  }
+
+  /**
+   * this allows launching a new configuration
+   */
+  public ILaunchConfiguration[] getLaunchConfigurations(
+      final ISelection paramISelection ) {
+    try {
+        IResource[] res=ResourceUtil.getResourcesFromSelection( paramISelection ) ;
+        if (res.length>0){
+          List<ILaunchConfiguration> cs=ExecutableLaunchOperation.findConfiguration(res[0].getProject());
+          return cs.toArray( new ILaunchConfiguration[cs.size()] );
+        }
+    } catch (CoreException cex){
+      HaskellUIPlugin.log( cex );
+    }
+    return null;
   }
 }

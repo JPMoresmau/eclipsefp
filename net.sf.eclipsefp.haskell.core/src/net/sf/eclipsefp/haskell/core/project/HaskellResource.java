@@ -1,10 +1,13 @@
 package net.sf.eclipsefp.haskell.core.project;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 public class HaskellResource {
 
@@ -28,4 +31,16 @@ public class HaskellResource {
            && ResourceUtil.isSourceFolder( folder );
   }
 
+  public boolean isProjectExecutable(){
+    if (fResource instanceof IProject){
+      IProject project=(IProject)fResource;
+      try {
+        return !ResourceUtil.getProjectExecutables( project ).isEmpty();
+      } catch (CoreException ce){
+        HaskellCorePlugin.log( ce );
+      }
+
+    }
+    return false;
+  }
 }

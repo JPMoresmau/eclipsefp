@@ -1,7 +1,6 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /** <p>contains the preference names for the Haskell editor.</p>
@@ -11,23 +10,23 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 public interface IEditorPreferenceNames {
 
   // Inherited constants
-  String EDITOR_CURRENT_LINE
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
-  String EDITOR_CURRENT_LINE_COLOR
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
-  String EDITOR_LINE_NUMBER_RULER
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
-  String EDITOR_LINE_NUMBER_RULER_COLOR
-    = AbstractDecoratedTextEditorPreferenceConstants
-        .EDITOR_LINE_NUMBER_RULER_COLOR;
-  String EDITOR_PRINT_MARGIN
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
-  String EDITOR_PRINT_MARGIN_COLOR
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
-  String EDITOR_PRINT_MARGIN_COLUMN
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
-  String EDITOR_OVERVIEW_RULER
-    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
+//  String EDITOR_CURRENT_LINE
+//   = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+//  String EDITOR_CURRENT_LINE_COLOR
+//    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+//  String EDITOR_LINE_NUMBER_RULER
+//    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
+//  String EDITOR_LINE_NUMBER_RULER_COLOR
+//    = AbstractDecoratedTextEditorPreferenceConstants
+//        .EDITOR_LINE_NUMBER_RULER_COLOR;
+//  String EDITOR_PRINT_MARGIN
+//    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
+//  String EDITOR_PRINT_MARGIN_COLOR
+//    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
+//  String EDITOR_PRINT_MARGIN_COLUMN
+//    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+//  String EDITOR_OVERVIEW_RULER
+//    = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
   String EDITOR_BACKGROUND_DEFAULT_COLOR
     = AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT;
   String EDITOR_BACKGROUND_COLOR

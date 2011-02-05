@@ -6,7 +6,6 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -29,15 +28,22 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
   */
 public abstract class LaunchOperation {
 
-  static final String CONFIG_TYPE = HaskellLaunchDelegate.class.getName();
 
-  public static ILaunchConfiguration[] getConfigurations() throws CoreException {
-    ILaunchConfigurationType configType = getConfigType();
+
+  public ILaunchConfiguration[] getConfigurations() throws CoreException {
+    return getConfigurations( getConfigType() );
+  }
+
+  public static ILaunchConfiguration[] getConfigurations(final ILaunchConfigurationType configType) throws CoreException {
     return getLaunchManager().getLaunchConfigurations( configType );
   }
 
-  public static List<ILaunchConfiguration> getConfigurationsForProject(final String projectName) throws CoreException {
-    ILaunchConfigurationType configType = getConfigType();
+  public List<ILaunchConfiguration> getConfigurationsForProject(final String projectName) throws CoreException {
+   return getConfigurationsForProject(getConfigType(), projectName );
+  }
+
+  public static List<ILaunchConfiguration> getConfigurationsForProject(final ILaunchConfigurationType type,final String projectName) throws CoreException {
+    ILaunchConfigurationType configType = type;
     ILaunchConfiguration[] configs=getLaunchManager().getLaunchConfigurations( configType );
     List<ILaunchConfiguration> ret=new ArrayList<ILaunchConfiguration>();
     for (ILaunchConfiguration config:configs){
@@ -59,9 +65,15 @@ public abstract class LaunchOperation {
     return ILaunchManagerCompat.generateLaunchConfigurationName( mgr, name.replace( '/', '.' ) );
   }
 
-  public static ILaunchConfigurationType getConfigType() {
-    return getLaunchManager().getLaunchConfigurationType( CONFIG_TYPE );
+  public final ILaunchConfigurationType getConfigType() {
+    return getConfigType( getConfigTypeName() );
   }
+
+  public static final ILaunchConfigurationType getConfigType(final String configTypeName) {
+    return getLaunchManager().getLaunchConfigurationType(configTypeName );
+  }
+
+  protected abstract String getConfigTypeName();
 
   public static String getProjectName( final ILaunchConfiguration configuration )
                                                           throws CoreException {
@@ -69,7 +81,7 @@ public abstract class LaunchOperation {
     return configuration.getAttribute( att, ILaunchAttributes.EMPTY );
   }
 
-  String getExePath( final ILaunchConfiguration config ) throws CoreException {
+  static String getExePath( final ILaunchConfiguration config ) throws CoreException {
     String att = ILaunchAttributes.EXECUTABLE;
     return config.getAttribute( att, ILaunchAttributes.EMPTY );
   }

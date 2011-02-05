@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IContainer;
@@ -29,6 +30,8 @@ import org.eclipse.osgi.util.NLS;
   * @author Leif Frenzel
   */
 public class InteractiveLaunchOperation extends LaunchOperation {
+  static final String INTERACTIVE_CONFIG_TYPE = HaskellLaunchDelegate.class.getName();
+
 
   private static final String FIRST_SELECTED_RESOURCE
     = "FIRST_SELECTED_RESOURCE"; //$NON-NLS-1$
@@ -44,6 +47,10 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     this.delegate = del;
   }
 
+  @Override
+  protected String getConfigTypeName() {
+    return INTERACTIVE_CONFIG_TYPE;
+  }
 
   // methods called from outside
   //////////////////////////////
@@ -70,7 +77,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
   private ILaunchConfiguration getConfiguration( final IResource[] resources,
                                                  final IFile[] files )
                                                           throws CoreException {
-    List<ILaunchConfiguration> configurations = findConfig( resources );
+    List<ILaunchConfiguration> configurations = findConfig(delegate, resources );
     ILaunchConfiguration result = null;
     int count = configurations.size();
     if( count < 1 ) {
@@ -121,32 +128,49 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     wc.setAttribute( projectName, project.getName() );
     wc.setAttribute( FIRST_SELECTED_RESOURCE, resources[ 0 ].getName() );
     wc.setAttribute( ILaunchAttributes.RELOAD_COMMAND, delegate.getReloadCommand() );
+    // by default, reload when saving, that's why interactive sessions are good
+    wc.setAttribute( ILaunchAttributes.RELOAD,true);
     return wc.doSave();
   }
 
-  private List<ILaunchConfiguration> findConfig( final IResource[] resources )
+  public static List<ILaunchConfiguration> findConfig( final IInteractiveLaunchOperationDelegate delegate, final IResource[] resources )
                                                           throws CoreException {
     List<ILaunchConfiguration> result = Collections.emptyList();
-    ILaunchConfiguration[] configurations = getConfigurations();
+    ILaunchConfiguration[] configurations = LaunchOperation.getConfigurations(LaunchOperation.getConfigType( INTERACTIVE_CONFIG_TYPE ));
     result = new ArrayList<ILaunchConfiguration>( configurations.length );
+    String cls=delegate.getClass().getName();
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
+
       String exePath = delegate.getExecutable();
       String projectName = resources[ 0 ].getProject().getName();
       String firstResName = resources[ 0 ].getName();
-      if(    getExePath( configuration ).equals( exePath )
+      if( (getDelegate( configuration )==null || getDelegate( configuration ).equals( cls ))
           && getProjectName( configuration ).equals( projectName )
           && getFirstResName( configuration ).equals( firstResName ) ) {
+        String cExePath=getExePath( configuration );
+       // ensure exe path is current
+        if (cExePath==null || !cExePath.equals( exePath )){
+          ILaunchConfigurationWorkingCopy wc=configuration.getWorkingCopy();
+          wc.setAttribute( ILaunchAttributes.EXECUTABLE, exePath);
+          configuration=wc.doSave();
+        }
+
         result.add( configuration );
       }
+
     }
     return result;
   }
 
-  private String getFirstResName( final ILaunchConfiguration config )
+  private static String getFirstResName( final ILaunchConfiguration config )
                                                           throws CoreException {
     String att = FIRST_SELECTED_RESOURCE;
     return config.getAttribute( att, ILaunchAttributes.EMPTY );
+  }
+
+  public static String getDelegate(final ILaunchConfiguration config) throws CoreException{
+    return config.getAttribute( ILaunchAttributes.DELEGATE, (String)null );
   }
 
   public static String getArguments(final IInteractiveLaunchOperationDelegate delegate,final IProject project, final IFile[] files ) {

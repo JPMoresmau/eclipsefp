@@ -164,12 +164,12 @@
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP">
       </page>  
-       <page
+       <!--page
             name="%editorPP_typing_name"
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TypingPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TypingPP">
-      </page> 
+      </page--> 
       <page
             name="%editorPP_annotation_name"
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"

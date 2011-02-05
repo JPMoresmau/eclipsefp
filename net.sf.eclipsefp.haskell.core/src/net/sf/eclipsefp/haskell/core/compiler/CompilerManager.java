@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.compiler;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -10,13 +12,18 @@ import net.sf.eclipsefp.haskell.core.HaskellCoreException;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.osgi.util.NLS;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * <p>
@@ -78,8 +85,7 @@ public class CompilerManager implements ICompilerManager {
 		initDefaultCompiler();
 		initHsImplementation();
     if( currentHsImplementation == null ) {
-      String msg =   "No valid Haskell implementation found. Possibly none " //$NON-NLS-1$
-                   + "was configured in the Haskell preferences."; //$NON-NLS-1$
+      String msg =   CoreTexts.hsImplementation_none;
       HaskellCorePlugin.log( msg, IStatus.WARNING );
     }
 		listenForImplPref();
@@ -226,6 +232,23 @@ public class CompilerManager implements ICompilerManager {
     if( currentImplName != null ) {
       Map<String, IHsImplementation> impls = loadImpls();
       this.currentHsImplementation = impls.get( currentImplName );
+    } else {
+      List<IHsImplementation> impls=autodetectGHCImpls();
+      if (impls.size()>0){
+        setHsImplementations(impls,impls.get( 0 ));
+        initHsImplementation() ;
+      }
+    }
+  }
+
+  public static void setHsImplementations(final List<IHsImplementation> impls,final IHsImplementation def){
+    IEclipsePreferences node = HaskellCorePlugin.instanceScopedPreferences();
+    node.put( ICorePreferenceNames.HS_IMPLEMENTATIONS, HsImplementationPersister.toXML( impls ) );
+    node.put( ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, def!=null?def.getName() :""); //$NON-NLS-1$
+    try {
+      node.flush();
+    } catch( BackingStoreException ex ) {
+      HaskellCorePlugin.log( ex );
     }
   }
 
@@ -250,5 +273,57 @@ public class CompilerManager implements ICompilerManager {
         }
       }
     });
+  }
+
+  public static List<IHsImplementation> autodetectGHCImpls(){
+    ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
+    List<IHsImplementation> impls=new ArrayList<IHsImplementation>();
+    for (File loc : candidateLocs) {
+      File[] files = loc.listFiles( new FilenameFilter() {
+        public boolean accept( final File dir, final String name ) {
+          return name.equals( GHCSyntax.GHC );
+        }
+      });
+      if (files != null && files.length > 0) {
+        for (File file : files) {
+          HsImplementation impl=new HsImplementation();
+          impl.setType( HsImplementationType.GHC );
+          impl.setBinDir( file.getParent() );
+          impl.validate();
+          String vs=impl.getVersion();
+          String nameStub=NLS.bind( CoreTexts.hsImplementation_name_default,impl.getType().toString(),vs);
+          int index=1;
+          String nameFull=nameStub;
+          while( isDuplicateName(impls,nameFull,impl ) ) {
+            nameFull=NLS.bind(CoreTexts.hsImplementation_name_index,nameStub,String.valueOf(index));
+            index++;
+          }
+          impl.setName( nameFull );
+          IStatus[] statuss=impl.validate();
+          boolean err=false;
+          for( int i = 0; i < statuss.length; i++ ) {
+            IStatus curr = statuss[ i ];
+            if( curr.matches( IStatus.ERROR ) ) {
+              err=true;
+            }
+          }
+          if (!err){
+            impls.add( impl );
+          }
+        }
+      }
+
+    }
+    return impls;
+  }
+
+  public static boolean isDuplicateName(final List<IHsImplementation> impls, final String name, final HsImplementation impl ) {
+    boolean result = false;
+    if( name != null && name.trim().length() > 0 ) {
+      for( IHsImplementation inst: impls ) {
+        result |= inst!=impl && name.equals( inst.getName() );
+      }
+    }
+    return result;
   }
 }

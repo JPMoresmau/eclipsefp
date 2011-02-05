@@ -489,10 +489,12 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   public class CorePreferencesChangeListener implements IPreferenceChangeListener {
     public void preferenceChange( final PreferenceChangeEvent event ) {
       String key = event.getKey();
-      if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
-          || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
-        // Potential to do something here... we don't spawn the built-in server here
-        // because it's only built in response to the Cabal implementations.
+      //if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
+      //    || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
+      if (CabalImplementationManager.DEFAULT_CABAL_IMPLEMENTATION.equals( key ) ||  ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key )){
+        if (useBuiltIn){
+          handlePreferenceChanges(true);
+        }
       } else {
         HaskellUIPlugin.log("Core preference changed: ".concat( key ), null);
       }

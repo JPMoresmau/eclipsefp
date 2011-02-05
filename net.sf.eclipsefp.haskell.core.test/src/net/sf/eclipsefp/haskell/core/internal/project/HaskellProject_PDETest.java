@@ -1,17 +1,11 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.internal.project;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.test.TestCaseWithProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 
 public class HaskellProject_PDETest extends TestCaseWithProject {
@@ -52,48 +46,48 @@ public class HaskellProject_PDETest extends TestCaseWithProject {
     assertFalse( ResourceUtil.isSourceFolder( project.getFolder( "crs" ) ) );
   }
 
-  public void testTargetExecutable_single() throws CoreException {
-    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
-    // atm one target exe is added automatically during project creation
-    assertEquals( 1, hp.getTargetNames().size() );
-
-    IPath path = new Path( "bla.exe" );
-    InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
-    IFile f=project.getFile( path );
-    f.create( is, true, null );
-    try {
-      hp.addTargetName( path );
-      assertEquals( 2, hp.getTargetNames().size() );
-
-      assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ));
-      assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
-    } finally {
-      f.delete( true, null );
-    }
-  }
-
-  public void testTargetExecutable_multiple() throws CoreException {
-    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
-    // atm one target exe is added automatically during project creation
-    assertEquals( 1, hp.getTargetNames().size() );
-
-    IPath path = new Path( "bin/bli.exe" );
-    IPath path2 = new Path( "bla.exe" );
-    InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
-    project.getFolder( "bin" ).create( true, true, null );
-    project.getFile( path ).create( is, true, null );
-    IFile f=project.getFile( path2 );
-    f.create( is, true, null );
-    try {
-      hp.addTargetName( path );
-      hp.addTargetName( path2 );
-      assertEquals( 3, hp.getTargetNames().size() );
-
-      assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ) );
-      assertTrue( ResourceUtil.isProjectExecutable( project, "bin/bli" ) );
-      assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
-    } finally {
-      f.delete( true, null );
-    }
-  }
+//  public void testTargetExecutable_single() throws CoreException {
+//    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
+//    // atm one target exe is added automatically during project creation
+//    assertEquals( 1, hp.getTargetNames().size() );
+//
+//    IPath path = new Path( "bla.exe" );
+//    InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
+//    IFile f=project.getFile( path );
+//    f.create( is, true, null );
+//    try {
+//      hp.addTargetName( path );
+//      assertEquals( 2, hp.getTargetNames().size() );
+//
+//      assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ));
+//      assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
+//    } finally {
+//      f.delete( true, null );
+//    }
+//  }
+//
+//  public void testTargetExecutable_multiple() throws CoreException {
+//    HaskellProject hp = ( HaskellProject )HaskellProjectManager.get( project );
+//    // atm one target exe is added automatically during project creation
+//    assertEquals( 1, hp.getTargetNames().size() );
+//
+//    IPath path = new Path( "bin/bli.exe" );
+//    IPath path2 = new Path( "bla.exe" );
+//    InputStream is = new ByteArrayInputStream( new byte[ 0 ] );
+//    project.getFolder( "bin" ).create( true, true, null );
+//    project.getFile( path ).create( is, true, null );
+//    IFile f=project.getFile( path2 );
+//    f.create( is, true, null );
+//    try {
+//      hp.addTargetName( path );
+//      hp.addTargetName( path2 );
+//      assertEquals( 3, hp.getTargetNames().size() );
+//
+//      assertTrue( ResourceUtil.isProjectExecutable( project, "bla" ) );
+//      assertTrue( ResourceUtil.isProjectExecutable( project, "bin/bli" ) );
+//      assertFalse( ResourceUtil.isProjectExecutable( project, "blubb" ) );
+//    } finally {
+//      f.delete( true, null );
+//    }
+//  }
 }

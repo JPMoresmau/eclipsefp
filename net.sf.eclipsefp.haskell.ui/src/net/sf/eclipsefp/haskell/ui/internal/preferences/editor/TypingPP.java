@@ -11,7 +11,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 
-
+/**
+ *
+ * @deprecated
+ * @author JP Moresmau
+ */
 public class TypingPP extends AbstractEditorPP {
   private DialogField spaceForTabs;
 

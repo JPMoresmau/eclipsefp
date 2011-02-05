@@ -6,11 +6,15 @@
  */
 package net.sf.eclipsefp.haskell.core.cabal;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -193,10 +197,66 @@ public class CabalImplementationManager {
         }
 
         defaultImpl = findImplementation( defaultImplIdent );
+      } else {
+        List<CabalImplementation> detectedImpls=autoDetectCabalImpls();
+        if (detectedImpls.size()>0){
+          setCabalImplementations( detectedImpls, detectedImpls.get(0).getUserIdentifier() );
+        }
       }
     } catch (BackingStoreException ex) {
       // nothing.
     }
+  }
+
+  public static List<CabalImplementation> autoDetectCabalImpls() {
+    ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
+    List<CabalImplementation> impls=new ArrayList<CabalImplementation>();
+    for (File loc : candidateLocs) {
+      File[] files = loc.listFiles( new FilenameFilter() {
+        public boolean accept( final File dir, final String name ) {
+          // Catch anything starting with "cabal", because MacPorts (and others) may install
+          // "cabal-1.8.0" as a legitimate cabal executable.
+          return name.startsWith( CabalImplementation.CABAL_BASENAME );
+        }
+      });
+
+      if (files != null && files.length > 0) {
+        for (File file : files) {
+          try {
+            CabalImplementation impl = new CabalImplementation("foo", new Path(file.getCanonicalPath())); //$NON-NLS-1$
+
+            int seqno = 1;
+            String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion()); //$NON-NLS-1$
+            if (!isUniqueUserIdentifier( ident, impls )) {
+              String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+              while (!isUniqueUserIdentifier(uniqIdent, impls)) {
+                seqno++;
+                uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+              }
+              ident = uniqIdent;
+            }
+
+            impl.setUserIdentifier( ident );
+            impls.add( impl );
+          } catch (IOException e) {
+            // Ignore?
+          }
+        }
+      }
+    }
+    return impls;
+
+  }
+
+  public static boolean isUniqueUserIdentifier (final String ident,final List<CabalImplementation> impls) {
+    boolean retval = true;
+    for (CabalImplementation impl : impls) {
+      if (impl.getUserIdentifier().equals(ident)) {
+        retval = false;
+        break;
+      }
+    }
+    return retval;
   }
 
   public Preferences cabalImplementationsPreferenceNode() {

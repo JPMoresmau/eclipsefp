@@ -227,6 +227,7 @@ public final class UITexts extends NLS {
   public static String preferences_project_output_note;
 
   public static String preferences_editor_description;
+  public static String preferences_editor_description_hover;
   public static String preferences_editor_color;
 
   public static String preferences_editor_annotations_title;

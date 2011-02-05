@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.haddock.HaddockPlugin;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
 
 /** <p>the operation that performs the actual Haddock run.</p>
   *
@@ -46,7 +46,7 @@ public class GenerateDocs {
           proc.setAttribute( IProcess.ATTR_PROCESS_TYPE, PROCESS_TYPE_ID );
           getLauchManager().addLaunch( newLaunch );*/
           String label = "Generating Haddock docs";
-          HaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label );
+          AbstractHaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label );
 
         } catch( CoreException cex ) {
           HaddockPlugin.log( "Problem during docs generation", cex );
@@ -68,16 +68,16 @@ public class GenerateDocs {
     outputDir.mkdirs();
   }
 
-  private ILaunchManager getLauchManager() {
-    return DebugPlugin.getDefault().getLaunchManager();
-  }
+//  private ILaunchManager getLauchManager() {
+//    return DebugPlugin.getDefault().getLaunchManager();
+//  }
 
-  private ILaunchConfigurationWorkingCopy createLaunch() throws CoreException {
+//  private ILaunchConfigurationWorkingCopy createLaunch() throws CoreException {
     String configTypeId = HaskellLaunchDelegate.class.getName();
-    ILaunchConfigurationType configType
-      = getLauchManager().getLaunchConfigurationType( configTypeId );
-    return configType.newInstance( null, "Haddock" );
-  }
+//    ILaunchConfigurationType configType
+//      = getLauchManager().getLaunchConfigurationType( configTypeId );
+//    return configType.newInstance( null, "Haddock" );
+//  }
 
   private String[] getCmdLine() {
     List<String> args = info.createCommand();

@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.HsImplementation;
 import net.sf.eclipsefp.haskell.core.compiler.HsImplementationPersister;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
@@ -66,6 +67,7 @@ class ImplementationsBlock implements ISelectionProvider {
   private Button btnAdd;
   private Button btnRemove;
   private Button btnEdit;
+  private Button btnAutoDetect;
 
   // index of column used for sorting
   private int sortColumn = 0;
@@ -127,6 +129,11 @@ class ImplementationsBlock implements ISelectionProvider {
     return HsImplementationPersister.toXML( installations );
   }
 
+
+  public List<IHsImplementation> getInstallations() {
+    return installations;
+  }
+
   void add( final HsImplementation impl ) {
     installations.add( impl );
     viewer.setInput( installations );
@@ -134,13 +141,14 @@ class ImplementationsBlock implements ISelectionProvider {
   }
 
   boolean isDuplicateName( final String name, final HsImplementation impl ) {
-    boolean result = false;
-    if( name != null && name.trim().length() > 0 ) {
-      for( IHsImplementation inst: installations ) {
-        result |= inst!=impl && name.equals( inst.getName() );
-      }
-    }
-    return result;
+    return CompilerManager.isDuplicateName( installations, name, impl );
+//    boolean result = false;
+//    if( name != null && name.trim().length() > 0 ) {
+//      for( IHsImplementation inst: installations ) {
+//        result |= inst!=impl && name.equals( inst.getName() );
+//      }
+//    }
+//    return result;
   }
 
   void setCheckedHsImplementation( final String name ) {
@@ -332,7 +340,18 @@ class ImplementationsBlock implements ISelectionProvider {
         removeSelectedInstallations();
       }
     } );
+
+    String sDetect = UITexts.cabalImplsBlock_btnAutoDetect;
+    btnAutoDetect = SWTUtil.createPushButton( buttonsComp, sDetect );
+    btnAutoDetect.addListener( SWT.Selection, new Listener() {
+      public void handleEvent (final Event ev) {
+        autoDetectGHCImpls();
+      }
+
+
+    });
   }
+
 
   private void createViewer() {
     viewer = new CheckboxTableViewer( table );
@@ -455,6 +474,14 @@ class ImplementationsBlock implements ISelectionProvider {
     } else {
       fireSelectionChanged();
     }
+  }
+
+  private void autoDetectGHCImpls() {
+    List<IHsImplementation> detect=CompilerManager.autodetectGHCImpls();
+    installations.clear();
+    installations.addAll( detect);
+    viewer.refresh();
+
   }
 
   private final class Comparator_Version extends ViewerComparator {

@@ -1,9 +1,6 @@
 // Copyright (c) 2010, B. Scott Michel
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,9 +8,7 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
-import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
@@ -435,45 +430,11 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private void autoDetectCabalImpls() {
-    ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
-
     viewer.remove( impls );
     viewer.setInput( null );
+    List<CabalImplementation> detected=CabalImplementationManager.autoDetectCabalImpls();
     impls.clear();
-
-    for (File loc : candidateLocs) {
-      File[] files = loc.listFiles( new FilenameFilter() {
-        public boolean accept( final File dir, final String name ) {
-          // Catch anything starting with "cabal", because MacPorts (and others) may install
-          // "cabal-1.8.0" as a legitimate cabal executable.
-          return name.startsWith( CabalImplementation.CABAL_BASENAME );
-        }
-      });
-
-      if (files != null && files.length > 0) {
-        for (File file : files) {
-          try {
-            CabalImplementation impl = new CabalImplementation("foo", new Path(file.getCanonicalPath()));
-
-            int seqno = 1;
-            String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion());
-            if (!isUniqueUserIdentifier( ident )) {
-              String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
-              while (!isUniqueUserIdentifier(uniqIdent)) {
-                seqno++;
-                uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) );
-              }
-              ident = uniqIdent;
-            }
-
-            impl.setUserIdentifier( ident );
-            impls.add( impl );
-          } catch (IOException e) {
-            // Ignore?
-          }
-        }
-      }
-    }
+    impls.addAll( detected );
 
     if (impls.size() > 0) {
       viewer.add(impls);
@@ -487,19 +448,9 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private boolean validateImpl( final CabalImplementation impl ) {
-    return (impl != null) && isUniqueUserIdentifier(impl.getUserIdentifier());
+    return (impl != null) && CabalImplementationManager.isUniqueUserIdentifier(impl.getUserIdentifier(),impls);
   }
 
-  private boolean isUniqueUserIdentifier (final String ident) {
-    boolean retval = true;
-    for (CabalImplementation impl : impls) {
-      if (impl.getUserIdentifier().equals(ident)) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
-  }
 
   private void sortByUserIdentifier() {
     viewer.setComparator( new Compare_UserIdentifier() );
