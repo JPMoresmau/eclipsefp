@@ -6,6 +6,8 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellLexerTokens;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -19,6 +21,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionListenerExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -45,6 +48,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       NO_CONTEXT
     , DEFAULT_CONTEXT
     , IMPORT_STMT
+    , TYCON_CONTEXT
     , CONID_CONTEXT
   }
 
@@ -58,6 +62,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   private ArrayList<String> moduleGraphNames;
   /** Module names exposed by the cabal project file */
   private ArrayList<String> exposedModules;
+
+  // Type constructor context variables:
+  private Map<String, String> completionPairs;
+  private final ContextInformation tyConContext = new ContextInformation("Type Constructor", "Type Constructor");
 
   /**
    * The constructor.
@@ -120,6 +128,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
         return filterModuleNames( offset );
       }
 
+      case TYCON_CONTEXT: {
+        return filterCompletionPairs( offset );
+      }
       case CONID_CONTEXT: {
         return null;
       }
@@ -160,6 +171,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  prefix = new String();
 	  moduleGraphNames = null;
 	  exposedModules = null;
+	  completionPairs = null;
 	}
 
 	/** Get the completion prefix from the prefix offset, if non-zero, or reverse lex */
@@ -225,7 +237,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  exposedModules.addAll( scion.listExposedModules() );
 	  context = CompletionContext.IMPORT_STMT;
 
-	  return filterModuleNames( offset);
+	  return filterModuleNames( offset );
 	}
 
 	/**
@@ -259,7 +271,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       final int prefixLength = prefix.length();
 
       for (String m : modules) {
-        result[i] = new CompletionProposal( m, offset - prefixLength, prefixLength, m.length() );
+        result[i] = new CompletionProposal( m, offset, prefixLength, m.length() );
         ++i;
       }
 
@@ -273,14 +285,47 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 * Initialize the type constructor context: this will only present type constructors as completions.
 	 *
 	 * @param scion The scion-server instance that generates the completions
+	 * @param file The file in the editor
+	 * @param doc the editor's document
 	 * @param offset The current editor point
 	 *
 	 * @return A ICompletionProposal list or null, if no completions exist
 	 */
 	private ICompletionProposal[] typeConstructorContext(final ScionInstance scion, final IFile file, final IDocument doc,
 	                                                     final int offset) {
-	  scion.completionsForTypeConstructors( file, doc );
-	  return null;
+	  completionPairs = scion.completionsForTypeConstructors( file, doc );
+	  context = CompletionContext.TYCON_CONTEXT;
+	  return filterCompletionPairs( offset );
+	}
+
+	/**
+	 * Filter completion pairs
+	 */
+	private ICompletionProposal[] filterCompletionPairs( final int offset ) {
+	  ArrayList<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
+    final String normalizedPrefix = prefix.toLowerCase();
+	  TreeSet<String> sortedKeys = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+	  final int prefixLength = prefix.length();
+
+	  sortedKeys.addAll(completionPairs.keySet());
+	  for ( String k : sortedKeys ) {
+	    // Key may be a qualified name
+	    String name = k;
+	    int qualifier = k.lastIndexOf( "." );
+
+	    if (qualifier > 0) {
+	      name = k.substring( qualifier + 1 );
+	    }
+
+	    if (prefix.length() == 0 || name.toLowerCase().startsWith( normalizedPrefix )) {
+	      String fullProposal = name + " -- " + k + " (" + completionPairs.get( k ) + ")";
+	      CompletionProposal proposal = new CompletionProposal(k, offset, k.length(), k.length(), null, fullProposal, tyConContext, null );
+	      proposals.add( proposal );
+	    }
+	  }
+
+	  ICompletionProposal[] retval = new ICompletionProposal[proposals.size()];
+	  return proposals.toArray( retval );
 	}
 
 	/**
@@ -360,7 +405,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  }
 
 	  public void assistSessionStarted( final ContentAssistEvent event ) {
-	    // HaskellUIPlugin.log( "CA session starts, prefix = '" + (prefix != null ? prefix : "<null") + "', context = " + context, null );
+	    HaskellUIPlugin.log( "CA session starts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
 
 	    // Reset the context to force computeCompletionProposals to figure out what the context,
 	    // clean out existing state:
@@ -368,17 +413,18 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     public void assistSessionEnded( final ContentAssistEvent event ) {
-      // HaskellUIPlugin.log( "CA session ends.", null);
+      HaskellUIPlugin.log( "CA session ends.", null);
 
       // Reset internal state for completeness
       HaskellContentAssistProcessor.this.internalReset();
     }
 
     public void assistSessionRestarted( final ContentAssistEvent event ) {
-      // HaskellUIPlugin.log( "CA session restarts, prefix = '" + (prefix != null ? prefix : "<null") + "', context = " + context, null );
+      HaskellUIPlugin.log( "CA session restarts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
     }
 
     public void selectionChanged( final ICompletionProposal proposal, final boolean smartToggle ) {
+      HaskellUIPlugin.log( "CA session selection changed, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
       // NOP
     }
 

@@ -965,12 +965,14 @@ public class ScionInstance {
     return command.getTokens();
   }
   
-  public void completionsForTypeConstructors(final IFile file, final IDocument doc) {
-    final CompletionTyCons tycons = new CompletionTyCons();
+  public Map<String, String> completionsForTypeConstructors(final IFile file, final IDocument doc) {
+    final CompletionTyCons tycons = new CompletionTyCons(file);
     
     if (withLoadedDocument(file, doc, tycons, "TyCon completions")) {
-      // Do something clever
+      return tycons.getCompletions();
     }
+    
+    return null;
   }
 
   /**

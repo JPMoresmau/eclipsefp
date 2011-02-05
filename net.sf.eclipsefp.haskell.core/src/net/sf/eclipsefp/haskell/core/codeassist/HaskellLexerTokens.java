@@ -185,6 +185,6 @@ public class HaskellLexerTokens {
    * @param token The lexer token to compare
    */
   public final static boolean isTyConContext(final String token) {
-    return ITdcolon.equals(token) || ITdcolon.equals(token);
+    return ITdcolon.equals(token) || ITrarrow.equals(token);
   }
 }
