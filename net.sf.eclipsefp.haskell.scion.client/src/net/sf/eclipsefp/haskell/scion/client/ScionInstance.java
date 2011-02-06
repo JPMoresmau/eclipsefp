@@ -15,7 +15,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbit
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CompilationResultHandler;
-import net.sf.eclipsefp.haskell.scion.internal.commands.CompletionTyCons;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TypeCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
@@ -31,6 +31,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenAtPoint;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenPrecedingPoint;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.VarIdCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
@@ -965,11 +966,21 @@ public class ScionInstance {
     return command.getTokens();
   }
   
-  public Map<String, String> completionsForTypeConstructors(final IFile file, final IDocument doc) {
-    final CompletionTyCons tycons = new CompletionTyCons(file);
+  public Map<String, String> completionsForTypes(final IFile file, final IDocument doc) {
+    final TypeCompletions types = new TypeCompletions(file);
     
-    if (withLoadedDocument(file, doc, tycons, "TyCon completions")) {
-      return tycons.getCompletions();
+    if (withLoadedDocument(file, doc, types, "TyCon completions")) {
+      return types.getCompletions();
+    }
+    
+    return null;
+  }
+  
+  public Map<String, String> completionsForVarIds(final IFile file, final IDocument doc) {
+    final VarIdCompletions varIds = new VarIdCompletions(file);
+    
+    if (withLoadedDocument(file, doc, varIds, "VarId completions")) {
+      return varIds.getCompletions();
     }
     
     return null;

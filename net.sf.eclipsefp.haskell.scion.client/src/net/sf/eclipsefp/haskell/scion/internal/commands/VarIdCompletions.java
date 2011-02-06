@@ -8,11 +8,11 @@ import org.eclipse.core.resources.IFile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CompletionTyCons extends ScionCommand {
+public class VarIdCompletions extends ScionCommand {
   IFile theFile;
   Map<String, String> completions;
   
-  public CompletionTyCons(final IFile theFile) {
+  public VarIdCompletions(final IFile theFile) {
     this.theFile = theFile;
     this.completions = null;
   }
@@ -40,7 +40,7 @@ public class CompletionTyCons extends ScionCommand {
   
   @Override
   public String getMethod() {
-    return "completion-tycons";
+    return "completion-types";
   }
   
   public final Map<String, String> getCompletions() {

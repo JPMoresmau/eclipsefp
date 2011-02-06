@@ -295,7 +295,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	private ICompletionProposal[] typeConstructorContext(final ScionInstance scion, final IFile file, final IDocument doc,
 	                                                     final int offset) {
-	  completionPairs = scion.completionsForTypeConstructors( file, doc );
+	  completionPairs = scion.completionsForTypes( file, doc );
 	  context = CompletionContext.TYCON_CONTEXT;
 	  return filterCompletionPairs( offset );
 	}
