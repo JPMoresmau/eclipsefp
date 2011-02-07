@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.core.codeassist;
 
+import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
+
 /**
  * Haskell lexer tokens, returned by the scion-server's "tokens" and token-related commands. Note that this source
  * comes straight from the GHC Lexer.hs source, which is current as of GHC 7.0. There may be tokens that are no
@@ -176,15 +178,27 @@ public class HaskellLexerTokens {
    *
    * @param token The lexer token to compare
    */
-  public final static boolean isImportContext(final String token) {
-    return ITimport.equals(token) || ITqualified.equals(token);
+  public final static boolean hasImportContext(final HaskellLexerToken[] tokens) {
+    boolean retval = false;
+    for (int i = tokens.length - 1; !retval && i >= 0; --i) {
+      final String theTok = tokens[i].getToken();
+      retval |= (ITimport.equals(theTok) || ITqualified.equals(theTok));
+    }
+
+    return retval;
   }
 
   /** '::' (dcolon) or '->' (right arrow) type constructor context
    *
    * @param token The lexer token to compare
    */
-  public final static boolean isTyConContext(final String token) {
-    return ITdcolon.equals(token) || ITrarrow.equals(token);
+  public final static boolean hasTyConContext(final HaskellLexerToken[] tokens) {
+    boolean retval = false;
+    for (int i = tokens.length - 1; !retval && i >= 0; --i) {
+      final String theTok = tokens[i].getToken();
+      retval |= (ITdcolon.equals(theTok) || ITrarrow.equals(theTok));
+    }
+
+    return retval;
   }
 }

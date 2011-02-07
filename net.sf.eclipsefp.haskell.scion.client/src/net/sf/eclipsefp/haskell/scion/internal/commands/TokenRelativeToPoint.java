@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.scion.internal.commands;
 
+import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 
 import org.json.JSONArray;
@@ -7,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Superclass for TokenPrecedingPoint and TokenAtPoint, since they share the same
+ * Superclass for TokensPrecedingPoint and TokenAtPoint, since they share the same
  * parameters. Only the command name differs.
  * 
  * @author B. Scott Michel (bscottm@ieee.org)
@@ -21,10 +22,8 @@ public abstract class TokenRelativeToPoint extends ScionCommand {
   int column;
   /** Literate Haskell flag */
   boolean literate;
-  /** The lexer token returned by scion-server, see {@link IHaskellTokens} */
-  String token;
-  /** The lexer token's location in the source, as reported by the scion-server */
-  Location tokenLocation;
+  /** The resulting Haskell lexer token */
+  HaskellLexerToken[] lexTokens;
   
   /** The usual constructor
    * 
@@ -39,8 +38,7 @@ public abstract class TokenRelativeToPoint extends ScionCommand {
     this.editPoint = editPoint;
     this.literate = literate;
     
-    this.token = null;
-    this.tokenLocation = null;
+    this.lexTokens = null;
   }
 
   /**
@@ -65,29 +63,22 @@ public abstract class TokenRelativeToPoint extends ScionCommand {
       JSONObject o = (JSONObject) response;
       JSONArray result = o.optJSONArray("Right");
       if (result != null) {
-        token = (String) result.get(0);
-        
+        String token = (String) result.get(0);
         int startLine = result.getInt(1);
         int startColumn = result.getInt(2);
         int endLine = result.getInt(3);
         int endColumn = result.getInt(4);
         
-        tokenLocation = new Location(new String(), startLine, startColumn, endLine, endColumn);
+        lexTokens = new HaskellLexerToken[1];
+        lexTokens[0] = new HaskellLexerToken(token, startLine, startColumn, endLine, endColumn);
       }
     }
   }
   
   /**
-   * Get the Haskel lexer token string.
+   * Get the Haskell lexer tokens array.
    */
-  public String getTokenString() {
-    return token;
-  }
-  
-  /**
-   * Get the token's Location
-   */
-  public Location getTokenLocation() {
-    return tokenLocation;
+  public HaskellLexerToken[] getLexTokens() {
+    return lexTokens;
   }
 }

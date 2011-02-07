@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellLexerTokens;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
@@ -51,6 +52,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     , TYCON_CONTEXT
     , CONID_CONTEXT
   }
+
+  /** Default number of tokens to grab before point when determining completion context */
+  private final static int NUM_PRECEDING_TOKENS = 8;
 
   /** The current completion context state */
   private CompletionContext context;
@@ -106,15 +110,17 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           }
 
           Region point = new Region( offsetPrefix, 0 );
-          String token = scion.tokenPrecedingPoint( theFile, doc, point );
+          HaskellLexerToken[] tokens = scion.tokensPrecedingPoint( NUM_PRECEDING_TOKENS, theFile, doc, point );
 
-          if (HaskellLexerTokens.isImportContext( token )) {
-            return moduleNamesContext(scion, offset);
-          } else if (HaskellLexerTokens.isTyConContext( token )) {
-            return typeConstructorContext(scion, theFile, doc, offset);
-          } else {
-            return defaultCompletionContext(viewer, theFile, doc, offset);
+          if (tokens != null) {
+            if (HaskellLexerTokens.hasImportContext( tokens )) {
+              return moduleNamesContext(scion, offset);
+            } else if (HaskellLexerTokens.hasTyConContext( tokens )) {
+              return typeConstructorContext(scion, theFile, doc, offset);
+            }
           }
+
+          return defaultCompletionContext(viewer, theFile, doc, offset);
         }
 
         break;
@@ -388,7 +394,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
         ++i;
         return document.get( i, offset - i );
-      } else if (!Character.isWhitespace( ch )){
+      } else if (ch == '(' || ch == ')') {
+        // Don't include parentheses in a prefix, e.g., ":: (<point>".
+        return new String();
+      } else if (!Character.isWhitespace( ch )) {
         // Punt! Grab what we can until we hit whitespace
         for (--i; i >= lineBegin && !Character.isWhitespace( document.getChar(i) ); --i) {
           // NOP

@@ -29,7 +29,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenAtPoint;
-import net.sf.eclipsefp.haskell.scion.internal.commands.TokenPrecedingPoint;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokensPrecedingPoint;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.VarIdCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
@@ -39,6 +39,7 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
+import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.IAsyncScionCommandAction;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
@@ -808,19 +809,19 @@ public class ScionInstance {
    * @param doc The current document
    * @param point The editor's point
    */
-  public String tokenPrecedingPoint(final IFile file, final IDocument doc, final IRegion point) {
+  public HaskellLexerToken[] tokensPrecedingPoint(final int numTokens, final IFile file, final IDocument doc, final IRegion point) {
     try {
       Location location = new Location(file.toString(), doc, point);
       final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
-      final TokenPrecedingPoint cmd = new TokenPrecedingPoint(doc.get(), location, false);
+      final TokensPrecedingPoint cmd = new TokensPrecedingPoint(numTokens, doc.get(), location, false);
         
       if (withLoadedDocument( file, doc, cmd, jobName ))
-        return cmd.getTokenString();
+        return cmd.getLexTokens();
     } catch (BadLocationException e) {
       // Fall through
     }
     
-    return new String();
+    return null;
   }
 
   
@@ -831,19 +832,22 @@ public class ScionInstance {
    * @param doc The current document
    * @param point The editor's point
    */
-  public String tokenAtPoint(final IFile file, final IDocument doc, final IRegion point) {
+  public HaskellLexerToken tokenAtPoint(final IFile file, final IDocument doc, final IRegion point) {
     try {
       Location location = new Location(file.toString(), doc, point);
       final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
       final TokenAtPoint cmd = new TokenAtPoint(doc.get(), location, false);
         
-      if (withLoadedDocument( file, doc, cmd, jobName ))
-        return cmd.getTokenString();
+      if (withLoadedDocument( file, doc, cmd, jobName )) {
+        HaskellLexerToken[] toks = cmd.getLexTokens();
+        if (toks != null)
+          return toks[0];
+      }
     } catch (BadLocationException e) {
       // Fall through
     }
     
-    return new String();
+    return null;
   }
 
   /**
@@ -966,6 +970,13 @@ public class ScionInstance {
     return command.getTokens();
   }
   
+  /**
+   * Get the list of type names for the current document, to be used with Eclipse's completion/code assistance.
+   * 
+   * @param file The file being edited by the Haskell editor
+   * @param doc The current editor contents
+   * @return A Map of string pairs: (type name, Haskell module)
+   */
   public Map<String, String> completionsForTypes(final IFile file, final IDocument doc) {
     final TypeCompletions types = new TypeCompletions(file);
     
@@ -976,6 +987,13 @@ public class ScionInstance {
     return null;
   }
   
+  /**
+   * Get the list of variable identifiers (var Ids) for the current document, to be used with Eclipse's completion/code assistance.
+   * 
+   * @param file The Haskell editor's current file
+   * @param doc The Haskell editor's current document
+   * @return A Map of string pairs (varId, module)
+   */
   public Map<String, String> completionsForVarIds(final IFile file, final IDocument doc) {
     final VarIdCompletions varIds = new VarIdCompletions(file);
     
