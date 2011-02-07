@@ -1,11 +1,14 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -15,15 +18,17 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
   private IFile file;
   private String source;
   private int fOffset;
+  private HaskellEditor editor;
 
 	protected HaskellCompletionContext() {
 		//placeholder constructor
 	}
 
-  public HaskellCompletionContext( final IFile file, final String source, final int offset ) {
+  public HaskellCompletionContext( final IFile file, final String source, final int offset , final HaskellEditor editor) {
     this.file = file;
     this.source = source;
     setOffset( offset );
+    this.editor=editor;
   }
 
 //	public IHaskellModel getLanguageModel() {
@@ -80,7 +85,13 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
       // sync access
       if( si != null ) {
         List<String> names = si.definedNames( );
+        if (editor!=null){
+          Set<String> uNames=new HashSet<String>(names);
+          uNames.addAll(editor.getLocalNames());
+          names=new ArrayList<String>(uNames);
+         }
         searchStringList( prefix, names, result );
+
       }
     }
   }

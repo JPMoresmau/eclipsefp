@@ -197,8 +197,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
 	                                                        final int offset ) {
 	  context = CompletionContext.DEFAULT_CONTEXT;
-
-    IHaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset );
+    IHaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset ,HaskellUIPlugin.getHaskellEditor( viewer ) );
     HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
     ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
     ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );

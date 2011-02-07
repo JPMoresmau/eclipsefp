@@ -16,6 +16,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
@@ -265,6 +266,14 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
       }
     }
 
+    return null;
+  }
+
+  public static HaskellEditor getHaskellEditor(final ITextViewer viewer) {
+    ITextEditor ed=getTextEditor( viewer );
+    if (ed instanceof HaskellEditor){
+      return (HaskellEditor)ed;
+    }
     return null;
   }
 
