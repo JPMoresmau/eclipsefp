@@ -203,8 +203,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
 	                                                        final int offset ) {
 	  context = CompletionContext.DEFAULT_CONTEXT;
-
-    IHaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset );
+    IHaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset ,HaskellUIPlugin.getHaskellEditor( viewer ) );
     HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
     ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
     ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );
@@ -309,37 +308,42 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Filter completion pairs
 	 */
-	private ICompletionProposal[] filterCompletionPairs( final int offset ) {
-	  ArrayList<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
-    final String normalizedPrefix = prefix.toLowerCase();
-	  TreeSet<String> sortedKeys = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-	  final int prefixLength = prefix.length();
+  private ICompletionProposal[] filterCompletionPairs( final int offset ) {
+    ArrayList<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
 
-	  sortedKeys.addAll(completionPairs.keySet());
-	  for ( String k : sortedKeys ) {
-	    // Key may be a qualified name
-	    String name = k;
-	    int qualifier = k.lastIndexOf( "." );
+    if( completionPairs != null ) {
+      final String normalizedPrefix = prefix.toLowerCase();
+      TreeSet<String> sortedKeys = new TreeSet<String>(
+          String.CASE_INSENSITIVE_ORDER );
+      final int prefixLength = prefix.length();
 
-	    if (qualifier > 0) {
-	      name = k.substring( qualifier + 1 );
-	    }
+      sortedKeys.addAll( completionPairs.keySet() );
+      for( String k: sortedKeys ) {
+        // Key may be a qualified name
+        String name = k;
+        int qualifier = k.lastIndexOf( "." );
 
-	    if (prefix.length() == 0 || name.toLowerCase().startsWith( normalizedPrefix )) {
-	      String fullProposal = name + " -- " + completionPairs.get( k );
+        if( qualifier > 0 ) {
+          name = k.substring( qualifier + 1 );
+        }
 
-	      if (!name.equals( k )) {
-	        fullProposal =  fullProposal + " as " + k;
-	      }
+        if( prefix.length() == 0
+            || name.toLowerCase().startsWith( normalizedPrefix ) ) {
+          String fullProposal = name + " -- " + completionPairs.get( k );
 
-	      CompletionProposal proposal = new CompletionProposal(k, prefixOffsetAnchor, prefixLength, k.length(), null,
-	                                                           fullProposal, tyConContext, null );
-	      proposals.add( proposal );
-	    }
-	  }
+          if( !name.equals( k ) ) {
+            fullProposal = fullProposal + " as " + k;
+          }
 
-	  return proposals.toArray( new ICompletionProposal[proposals.size()] );
-	}
+          CompletionProposal proposal = new CompletionProposal( k,
+              prefixOffsetAnchor, prefixLength, k.length(), null, fullProposal,
+              tyConContext, null );
+          proposals.add( proposal );
+        }
+      }
+    }
+    return proposals.toArray( new ICompletionProposal[ proposals.size() ] );
+  }
 
 	/**
 	 * Get the completion prefix by reverse lexing from the offset. The reverse lexing process stops at the beginning of the

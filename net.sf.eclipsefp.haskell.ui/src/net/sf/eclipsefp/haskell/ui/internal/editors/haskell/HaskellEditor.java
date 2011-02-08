@@ -108,7 +108,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private MarkOccurrenceComputer markOccurrencesComputer;
   private HaskellFoldingStructureProvider foldingStructureProvider;
 
-  private List<OutlineDef> outline;
+  //private List<OutlineDef> outline;
   private Map<String,List<OutlineDef>> defByName;
   /**
    * The scion-server supporting this editor.
@@ -578,10 +578,21 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return null;
   }
 
+  public List<String> getLocalNames(){
+    List<String> ls=new ArrayList<String>();
+    if (outlinePage!=null && outlinePage.getInput()!=null){
+      for (OutlineDef od:outlinePage.getInput()){
+        ls.add(od.getName());
+      }
+    }
+    return ls;
+  }
+
   private void buildDefByName(){
-    if (outline!=null){
+    if (outlinePage!=null && outlinePage.getInput()!=null){
+
       defByName=new HashMap<String, List<OutlineDef>>();
-      for (OutlineDef od:outline){
+      for (OutlineDef od:outlinePage.getInput()){
         List<OutlineDef> l=defByName.get( od.getName());
         if(l==null){
           l=new ArrayList<OutlineDef>();
@@ -597,10 +608,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    * useful to find if a selection for a breakpoint is in real code
    */
   public boolean isInOutline(final ISelection sel){
-    if (outline != null && sel instanceof ITextSelection){
+    if (outlinePage!=null && outlinePage.getInput()!=null && sel instanceof ITextSelection){
       ITextSelection tsel=(ITextSelection)sel;
       int line=tsel.getStartLine()+1;
-      for (OutlineDef od:outline){
+      for (OutlineDef od:outlinePage.getInput()){
         // here we could filter out if inside some type of outlinedef we do not want breakpoints
 
         if (od.getBlock().getStartLine()<=line && od.getBlock().getEndLine()>=line){

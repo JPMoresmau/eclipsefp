@@ -116,6 +116,10 @@ public class HaskellOutlinePage extends ContentOutlinePage {
   }
 
 
+  public List<OutlineDef> getInput() {
+    return input;
+  }
+
   /** <p>updates the outline page.</p> */
   public void update() {
     if (getControl()!=null && !getControl().isDisposed()){
