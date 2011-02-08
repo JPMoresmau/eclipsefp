@@ -205,7 +205,7 @@ public class CompletionContext_PDETest extends TestCaseWithProject{
 
 	  try {
 	    IFile f=addFile( module, source );
-	    return new HaskellCompletionContext(f,source, offset);
+	    return new HaskellCompletionContext(f, source, offset, null);
 	  } catch (Exception ce){
 	    ce.printStackTrace();
 	    fail( ce.getLocalizedMessage() );
