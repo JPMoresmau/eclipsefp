@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.codeassist;
 
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 
 /**
  * Haskell lexer tokens, returned by the scion-server's "tokens" and token-related commands. Note that this source
@@ -9,7 +10,7 @@ import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
  *
  * @author B. Scott Michel
  */
-public class HaskellLexerTokens {
+public class LexerTokenCategories {
   // Keywords
   public final static String ITas = "ITas"; //$NON-NLS-1$
   public final static String ITcase = "ITcase"; //$NON-NLS-1$
@@ -178,14 +179,14 @@ public class HaskellLexerTokens {
    *
    * @param token The lexer token to compare
    */
-  public final static boolean hasImportContext(final HaskellLexerToken[] tokens) {
-    boolean retval = false;
-    for (int i = tokens.length - 1; !retval && i >= 0; --i) {
-      final String theTok = tokens[i].getToken();
-      retval |= (ITimport.equals(theTok) || ITqualified.equals(theTok));
+  public final static boolean hasImportContext(final HaskellLexerToken[] tokens, final Location currentLine) {
+    // Work backward, keep on the same line:
+    int i = tokens.length - 1;
+    while (tokens[i].getTokenLoc().getStartLine() == currentLine.getStartLine()) {
+      --i;
     }
-
-    return retval;
+    // Should be at the start of the line, do we see 'import'?
+    return (tokens[++i].getToken().equals( ITimport ));
   }
 
   /** '::' (dcolon) or '->' (right arrow) type constructor context
@@ -193,12 +194,14 @@ public class HaskellLexerTokens {
    * @param token The lexer token to compare
    */
   public final static boolean hasTyConContext(final HaskellLexerToken[] tokens) {
-    boolean retval = false;
-    for (int i = tokens.length - 1; !retval && i >= 0; --i) {
-      final String theTok = tokens[i].getToken();
-      retval |= (ITdcolon.equals(theTok) || ITrarrow.equals(theTok));
+    int i = tokens.length - 1;
+
+    // Skip backward over parens and then test if the token is '::' or '->'
+    while (IToparen.equals( tokens[i].getToken() )) {
+      --i;
     }
 
-    return retval;
+    final String theTok = tokens[i].getToken();
+    return (ITdcolon.equals(theTok) || ITrarrow.equals(theTok));
   }
 }

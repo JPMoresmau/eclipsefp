@@ -8,9 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import net.sf.eclipsefp.haskell.core.codeassist.HaskellLexerTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.LexerTokenCategories;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
@@ -105,19 +106,25 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
         if ( scion != null ) {
           int offsetPrefix = offset - prefix.length();
 
-          if (offsetPrefix < 0) {
-            offsetPrefix = 0;
-          }
+          try {
+            Location lineBegin = new Location(theFile.toString(), doc, doc.getLineInformationOfOffset( offset ));
 
-          Region point = new Region( offsetPrefix, 0 );
-          HaskellLexerToken[] tokens = scion.tokensPrecedingPoint( NUM_PRECEDING_TOKENS, theFile, doc, point );
-
-          if (tokens != null) {
-            if (HaskellLexerTokens.hasImportContext( tokens )) {
-              return moduleNamesContext(scion, offset);
-            } else if (HaskellLexerTokens.hasTyConContext( tokens )) {
-              return typeConstructorContext(scion, theFile, doc, offset);
+            if (offsetPrefix < 0) {
+              offsetPrefix = 0;
             }
+
+            Region point = new Region( offsetPrefix, 0 );
+            HaskellLexerToken[] tokens = scion.tokensPrecedingPoint( NUM_PRECEDING_TOKENS, theFile, doc, point );
+
+            if (tokens != null) {
+              if (LexerTokenCategories.hasImportContext( tokens, lineBegin )) {
+                return moduleNamesContext(scion, offset);
+              } else if (LexerTokenCategories.hasTyConContext( tokens )) {
+                return typeConstructorContext(scion, theFile, doc, offset);
+              }
+            }
+          } catch (BadLocationException ble) {
+            // Ignore, pass through to default completion context.
           }
 
           return defaultCompletionContext(viewer, theFile, doc, offset);
