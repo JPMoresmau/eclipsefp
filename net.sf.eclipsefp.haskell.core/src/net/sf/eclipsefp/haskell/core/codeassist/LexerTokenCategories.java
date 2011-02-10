@@ -182,11 +182,15 @@ public class LexerTokenCategories {
   public final static boolean hasImportContext(final HaskellLexerToken[] tokens, final Location currentLine) {
     // Work backward, keep on the same line:
     int i = tokens.length - 1;
-    while (tokens[i].getTokenLoc().getStartLine() == currentLine.getStartLine()) {
+    while (i>=0 && tokens[i].getTokenLoc().getStartLine() == currentLine.getStartLine()) {
       --i;
     }
+    i++;
+    if (i>=tokens.length){
+      return false;
+    }
     // Should be at the start of the line, do we see 'import'?
-    return (tokens[++i].getToken().equals( ITimport ));
+    return (tokens[i].getToken().equals( ITimport ));
   }
 
   /** '::' (dcolon) or '->' (right arrow) type constructor context
@@ -197,10 +201,12 @@ public class LexerTokenCategories {
     int i = tokens.length - 1;
 
     // Skip backward over parens and then test if the token is '::' or '->'
-    while (IToparen.equals( tokens[i].getToken() )) {
+    while (i>=0 && IToparen.equals( tokens[i].getToken() )) {
       --i;
     }
-
+    if (i<0){
+      return false;
+    }
     final String theTok = tokens[i].getToken();
     return (ITdcolon.equals(theTok) || ITrarrow.equals(theTok));
   }
