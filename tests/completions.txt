@@ -1,0 +1,106 @@
+1. import
+	import <ctrl-space>                                  -> list of modules
+
+	import qualified <ctrl-space>                        -> list of modules
+
+	import <Module> as <ctrl-space>                      -> nothing
+
+	import qualified <Module> as <ctrl-space>            -> nothing
+
+2. type definitions
+	<function> :: <ctrl-space>                           -> list of types
+
+	<function> :: <Type> -> <ctrl-space>                 -> list of types
+
+	<function> :: (<TypeClass> a) => <ctrl-space>        -> list of types (+ a would be heaven (-:)
+
+	<function> :: <Type1> -> <Type2>( <ctrl-space>       -> list of types
+
+3. functions
+	<function> a = <ctrl-space>                          -> list of variables
+	
+	<function> <ctrl-space>                              -> list of constructors            
+	
+	<function> :: <Type1> -> <Type2>
+	<function> a = <ctrl-space>                          -> list of variables
+	
+	<function> :: (<TypeClass> a) => <Type1> -> a
+	<function> a = <ctrl-space>                          -> list of variables
+	
+	<function> a = case a of
+		<ctrl-space>                                 -> list of constructors
+
+	<function> a = case a of
+		Nothing -> <ctrl-space>                      -> list of variables
+
+	<function> a = let <ctrl-space>                      -> nothing
+
+	<function> a = do <ctrl-space>                       -> list of variables
+
+	<function> a = go a
+		where go <ctrl-space>  			     -> list of constructors
+
+	<function> a = go a
+		where go b =<ctrl-space>  		     -> list of variables 
+
+	<function> a b | <ctrl-space>                        -> list of variables 
+
+4. Type annotations inside code
+	<function> a = do
+		b<-(read a):: <ctrl-space>                   -> list of types
+
+5. parenthesis
+	<function> a = do
+		b<-((read a)::String)++<ctrl-space>  	     -> list of variables
+
+6. module
+	module 	<ctrl-space> 				     -> nothing
+
+7. data declarations
+	data <ctrl-space>                                    -> nothing
+		
+	data <Type> = <ctrl-space> 			     -> nothing
+
+	data <Type>= <Constructor> <ctrl-space>		     -> list of types
+
+	data <Type>= <Constructor> <Type1> <Type2>
+		deriving <ctrl-space>			     -> list of types
+
+	data <Type>= <Constructor> {<ctrl-space>	     -> nothing
+
+	data <Type>= <Constructor> {a::<ctrl-space>	     -> list of types
+
+	type <Type>= <ctrl-space>			     -> list of types	
+
+	newtype <Type>= <ctrl-space>			     -> list of types	
+
+8. litterals
+	function fun1 a=let 
+		b="<ctrl-space>				     -> nothing ??? probably difficult to know if we're inside or outside the string litteral, etc... minor
+
+
+
+rules
+	-read tokens backwards from position
+	-encounter ) increase parenthesis count
+	-encouter ( decrease parenthesis count if >0, otherwise ignore
+	-encounter } increase curlycount
+	-encounter { decrease curly count if >0, otherwise nothing
+	-encounter = keep flag "equal"
+	-encounter <- : variables
+	-encounter as nothing
+	-encounter { nothing
+	-encounter import, qualified modules
+	-encounter deriving types
+	-encounter ::, => type
+	-encounter | variables
+	-encounter -> keep flag ("right arrow")
+		- encounter :: type
+		- encounter case variables
+	-encounter of constructor
+	-encounter let nothing unless flag "equal": types
+	-encounter module nothing
+	-encounter = then data,type,newtype -> list of types
+	-reach column 0 constructors unless flag "equal": types
+	-encounter where constructors unless flag "equal": types
+	-variables
