@@ -121,10 +121,18 @@ public class OpenDefinitionHandler extends AbstractHandler {
                 }
               }.schedule();
             } else {
+              String module=null;
+              String shortName=name;
+              int ix = name.lastIndexOf( '.' );
+              if( ix > 0 && ix < name.length() - 1 ) {
+                module = name.substring( 0, ix );
+                shortName = name.substring( ix + 1 );
+              }
               // we try to find an id for an object not exported, that scion doesn't
               // know
               // but that we have in the outline
-              location = haskellEditor.getOutlineLocation( name );
+              // short name of course in the outline
+              location = haskellEditor.getOutlineLocation( shortName );
               if( location != null ) {
                 final Location theLocation = location;
                 // Ensure that this happens in the UI thread
@@ -136,10 +144,9 @@ public class OpenDefinitionHandler extends AbstractHandler {
                   }
                 }.schedule();
               } else {
-                int ix = name.lastIndexOf( '.' );
-                if( ix > 0 && ix < name.length() - 1 ) {
-                  final String module = name.substring( 0, ix );
-                  final String shortName = name.substring( ix + 1 );
+                if( module!=null ) {
+                  final String moduleF=module;
+                  final String shortNameF=shortName;
                   // find in outside location...
                   outer: for( CabalPackage[] pkgs: instance.getPackagesByDB().values() ) {
                     for( CabalPackage cp: pkgs ) {
@@ -150,8 +157,8 @@ public class OpenDefinitionHandler extends AbstractHandler {
                         new UIJob(UITexts.openDefinition_select_job) {
                           @Override
                           public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                            openExternalDefinition( haskellEditor.getEditorSite().getPage(), instance.getProject(), pkg, module,
-                                shortName, haddockInd );
+                            openExternalDefinition( haskellEditor.getEditorSite().getPage(), instance.getProject(), pkg, moduleF,
+                                shortNameF, haddockInd );
                             return Status.OK_STATUS;
                           }
                         }.schedule();
