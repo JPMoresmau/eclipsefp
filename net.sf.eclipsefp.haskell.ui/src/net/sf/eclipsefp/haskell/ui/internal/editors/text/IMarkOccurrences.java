@@ -3,6 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.text;
 
+import net.sf.eclipsefp.haskell.scion.types.Occurrence;
+
 
 /** <p>implementors know how to compute occurrences of the identifier (if any)
   * at a cursor position in a Haskell source text.</p>

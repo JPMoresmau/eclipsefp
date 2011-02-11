@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbit
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CompilationResultHandler;
+import net.sf.eclipsefp.haskell.scion.internal.commands.OccurrencesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TypeCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
@@ -42,6 +43,7 @@ import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.IAsyncScionCommandAction;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.Occurrence;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
@@ -813,7 +815,7 @@ public class ScionInstance {
     try {
       Location location = new Location(file.toString(), doc, point);
       final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
-      final TokensPrecedingPoint cmd = new TokensPrecedingPoint(numTokens, doc.get(), location, false);
+      final TokensPrecedingPoint cmd = new TokensPrecedingPoint(numTokens, doc.get(), location, FileUtil.hasLiterateExtension(file));
         
       if (withLoadedDocument( file, doc, cmd, jobName ))
         return cmd.getLexTokens();
@@ -822,6 +824,17 @@ public class ScionInstance {
     }
     
     return null;
+  }
+  
+  public Occurrence[] getOccurrences(final IFile file, final IDocument doc,final String query){
+	      final String jobName = NLS.bind(ScionText.occurrences_job_name, file.getName());
+	      final OccurrencesCommand cmd = new OccurrencesCommand(doc.get(), query, FileUtil.hasLiterateExtension(file));
+	      
+	      if (withLoadedDocument( file, doc, cmd, jobName )){
+	        return cmd.getOccurrences();
+	      }
+	    
+	    return null;
   }
 
   
@@ -836,7 +849,7 @@ public class ScionInstance {
     try {
       Location location = new Location(file.toString(), doc, point);
       final String jobName = NLS.bind(ScionText.tokenpreceding_job_name, file.getName());
-      final TokenAtPoint cmd = new TokenAtPoint(doc.get(), location, false);
+      final TokenAtPoint cmd = new TokenAtPoint(doc.get(), location, FileUtil.hasLiterateExtension(file));
         
       if (withLoadedDocument( file, doc, cmd, jobName )) {
         HaskellLexerToken[] toks = cmd.getLexTokens();

@@ -21,11 +21,11 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   /** The associated Haskell editor */
   private final HaskellEditor editor;
   /** The document */
-  private IDocument document;
+ // private IDocument document;
 
   public HaskellReconcilingStrategy( final HaskellEditor editor ) {
     this.editor = editor;
-    this.document = null;
+  //  this.document = null;
   }
 
 
@@ -42,7 +42,7 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
 
 
   public void setDocument( final IDocument document ) {
-    this.document = document;
+//    this.document = document;
   }
 
   // interface methods of IReconcilingStrategyExtension

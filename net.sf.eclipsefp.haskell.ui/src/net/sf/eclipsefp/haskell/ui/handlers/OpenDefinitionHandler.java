@@ -10,7 +10,6 @@ import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -41,9 +40,6 @@ import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -71,37 +67,12 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
     final HaskellEditor haskellEditor = ( HaskellEditor )editor;
-    final IFile file = haskellEditor.findFile();
-    final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
-
-    if( selection instanceof TextSelection ) {
-      final TextSelection textSel = ( TextSelection )selection;
-
-          String name = textSel.getText().trim();
-          final ScionInstance instance = ScionPlugin.getScionInstance( file );
-          char haddockType = ' ';
-
-          try {
-            Location l = new Location( file.getLocation().toOSString(),
-                haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-            String s = instance.thingAtPoint(haskellEditor.getDocument(), l, true, false );
-            if( s != null && s.length() > 0 ) {
-              name = s;
-              if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
-                haddockType = name.charAt( name.length() - 1 );
-                name = name.substring( 0, name.length() - 2 );
-              }
-            }
-
-          } catch( BadLocationException ble ) {
-            ble.printStackTrace();
-          }
-
-          if( name.length() == 0 ) {
-            name = WordFinder.findWord( haskellEditor.getDocument(),
-                textSel.getOffset() );
-          }
-
+    WordFinder.EditorThing eThing=WordFinder.getEditorThing( haskellEditor, true, false );
+    if (eThing!=null){
+          String name = eThing.getName();
+          char haddockType = eThing.getHaddockType();
+          final ScionInstance instance=eThing.getInstance();
+          final IFile file=eThing.getFile();
           if( name != null && name.length() > 0 ) {
             Location location = instance.firstDefinitionLocation( name );
 

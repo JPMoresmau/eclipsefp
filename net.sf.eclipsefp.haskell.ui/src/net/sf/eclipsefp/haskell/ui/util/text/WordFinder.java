@@ -3,9 +3,17 @@
 package net.sf.eclipsefp.haskell.ui.util.text;
 
 import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ISelection;
 
 
 /** <p>A helping class for detecting words in documents.</p>
@@ -60,5 +68,84 @@ public class WordFinder {
     }
     return null;
     //return result;
+  }
+
+  public static EditorThing getEditorThing(final HaskellEditor haskellEditor,final boolean qualify, final boolean typed){
+    final IFile file = haskellEditor.findFile();
+    final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
+
+    if( selection instanceof TextSelection ) {
+      final TextSelection textSel = ( TextSelection )selection;
+
+          String name = textSel.getText().trim();
+          final ScionInstance instance = ScionPlugin.getScionInstance( file );
+          char haddockType = ' ';
+
+          try {
+            Location l = new Location( file.getLocation().toOSString(),
+                haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
+            String s = instance.thingAtPoint(haskellEditor.getDocument(), l, qualify, typed );
+            if( s != null && s.length() > 0 ) {
+              name = s;
+              if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
+                name="";
+              }
+              if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
+                haddockType = name.charAt( name.length() - 1 );
+                name = name.substring( 0, name.length() - 2 );
+              }
+            }
+
+          } catch( BadLocationException ble ) {
+            ble.printStackTrace();
+          }
+
+          if( name.length() == 0 ) {
+            name = WordFinder.findWord( haskellEditor.getDocument(),
+                textSel.getOffset() );
+          }
+          return new EditorThing(instance, file, name, haddockType );
+    }
+    return null;
+  }
+
+  /**
+   * Simple structure wrapping a word in the editor with some useful pointers
+    *
+    * @author JP Moresmau
+   */
+  public static class EditorThing {
+    private final String name;
+    private final char haddockType;
+    private final ScionInstance instance;
+    private final IFile file;
+
+    public EditorThing(final ScionInstance instance,final IFile file, final String name, final char haddockType ) {
+      super();
+      this.instance=instance;
+      this.file=file;
+      this.name = name;
+      this.haddockType = haddockType;
+    }
+
+
+    public ScionInstance getInstance() {
+      return instance;
+    }
+
+
+    public IFile getFile() {
+      return file;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+
+    public char getHaddockType() {
+      return haddockType;
+    }
+
   }
 }

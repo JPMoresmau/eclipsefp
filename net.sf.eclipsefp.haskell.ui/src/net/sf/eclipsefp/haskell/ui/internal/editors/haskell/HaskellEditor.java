@@ -36,6 +36,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -63,6 +65,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -316,7 +319,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         public void selectionChanged( final SelectionChangedEvent event ) {
           IDocument doc = getSourceViewer().getDocument();
           markOccurrencesComputer.setDocument( doc );
-          markOccurrencesComputer.compute();
+          new UIJob(UITexts.editor_occurrences_job) {
+            @Override
+            public IStatus runInUIThread(final IProgressMonitor monitor) {
+              markOccurrencesComputer.compute();
+              return Status.OK_STATUS;
+           }
+          }.schedule();
         }
       };
       projectionViewer.addPostSelectionChangedListener( listener );
@@ -519,25 +528,26 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
      * server.createFunction( IMarkOccurrences.class ); if( mo != null ) {
      * markOccurrencesComputer = new MarkOccurrenceComputer( this, mo ); }
      */
+    markOccurrencesComputer = new MarkOccurrenceComputer( this);
   }
 
-  /*
-  public void synchronize() {
-    IDocument document = getDocument();
 
-    if( markOccurrencesComputer != null ) {
-      WorkspaceJob occurances = new WorkspaceJob("Haskell occurance marker") {
-        @Override
-        public IStatus runInWorkspace( final IProgressMonitor monitor ) {
-          markOccurrencesComputer.compute();
-          return Status.OK_STATUS;
-        }
-      };
-
-      markOccurrencesComputer.setDocument( document );
-      occurances.schedule();
-    }
-  } */
+//  public void synchronize() {
+//    IDocument document = getDocument();
+//
+//    if( markOccurrencesComputer != null ) {
+//      WorkspaceJob occurances = new WorkspaceJob("Haskell occurance marker") {
+//        @Override
+//        public IStatus runInWorkspace( final IProgressMonitor monitor ) {
+//          markOccurrencesComputer.compute();
+//          return Status.OK_STATUS;
+//        }
+//      };
+//
+//      markOccurrencesComputer.setDocument( document );
+//      occurances.schedule();
+//    }
+//  }
 
   /**
    * Update the outline page using the current editor file.
@@ -645,4 +655,5 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         break;
     }
   }
+
 }

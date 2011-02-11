@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.scion.types.Occurrence;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -30,15 +30,12 @@ public class MarkOccurrenceComputer {
 
   private final HaskellEditor editor;
   private IDocument document;
-  private final IMarkOccurrences markOccurrences;
 
-  public MarkOccurrenceComputer( final HaskellEditor editor,
-                                 final IMarkOccurrences markOccurrences ) {
-    if( editor == null || markOccurrences == null ) {
+  public MarkOccurrenceComputer( final HaskellEditor editor ) {
+    if( editor == null ) {
       throw new IllegalArgumentException();
     }
     this.editor = editor;
-    this.markOccurrences = markOccurrences;
   }
 
   public void setDocument( final IDocument document ) {
@@ -46,26 +43,36 @@ public class MarkOccurrenceComputer {
   }
 
   public void compute() {
-    String content = document.get();
-    ISelection selection = editor.getSelectionProvider().getSelection();
-    if( selection instanceof ITextSelection ) {
-      ITextSelection textSelection = ( ITextSelection )selection;
-      try {
-        IAnnotationModel model = getAnnotationModel( editor );
-        if( model instanceof IAnnotationModelExtension ) {
-          int offset = textSelection.getOffset();
-          int line = document.getLineOfOffset( offset ); // zero-based
-          int col = computeColumn( document, offset, line );
-          Occurrence[] occs = markOccurrences.mark( content, line + 1, col );
-          Map<Annotation, Position> map = computeAnnotations( occs );
-          IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
-          amx.replaceAnnotations( collectToRemove( model ), map );
-        }
-      } catch( final BadLocationException badlox ) {
-        // this means we could not properly get information from the
-        // editor document; no point in continuing
+    WordFinder.EditorThing eThing=WordFinder.getEditorThing( editor, false, false );
+    if (eThing!=null && eThing.getName()!=null && eThing.getName().length()>0){
+      IAnnotationModel model = getAnnotationModel( editor );
+      if( model instanceof IAnnotationModelExtension ) {
+        Occurrence[] occs =eThing.getInstance().getOccurrences( eThing.getFile(), document, eThing.getName() );
+        Map<Annotation, Position> map = computeAnnotations( occs );
+        IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+        amx.replaceAnnotations( collectToRemove( model ), map );
       }
     }
+//    String content = document.get();
+//    ISelection selection = editor.getSelectionProvider().getSelection();
+//    if( selection instanceof ITextSelection ) {
+//      ITextSelection textSelection = ( ITextSelection )selection;
+//      try {
+//        IAnnotationModel model = getAnnotationModel( editor );
+//        if( model instanceof IAnnotationModelExtension ) {
+//          int offset = textSelection.getOffset();
+//          int line = document.getLineOfOffset( offset ); // zero-based
+//          int col = computeColumn( document, offset, line );
+//          Occurrence[] occs = markOccurrences.mark( content, line + 1, col );
+//          Map<Annotation, Position> map = computeAnnotations( occs );
+//          IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+//          amx.replaceAnnotations( collectToRemove( model ), map );
+//        }
+//      } catch( final BadLocationException badlox ) {
+//        // this means we could not properly get information from the
+//        // editor document; no point in continuing
+//      }
+//    }
   }
 
 
@@ -97,11 +104,11 @@ public class MarkOccurrenceComputer {
     return result;
   }
 
-  private int computeColumn( final IDocument document,
-                             final int offset,
-                             final int line ) throws BadLocationException {
-    return ( offset - document.getLineOffset( line ) + 1 );
-  }
+//  private int computeColumn( final IDocument document,
+//                             final int offset,
+//                             final int line ) throws BadLocationException {
+//    return ( offset - document.getLineOffset( line ) + 1 );
+//  }
 
   private List<Position> computePositions( final Occurrence[] occurrences ) {
     List<Position> result = new ArrayList<Position>();

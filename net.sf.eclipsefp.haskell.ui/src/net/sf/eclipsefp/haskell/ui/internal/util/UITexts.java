@@ -178,6 +178,7 @@ public final class UITexts extends NLS {
 
   public static String editor_textHover_error;
   public static String editor_actions_source;
+  public static String editor_occurrences_job;
 
   public static String scion_console_title;
   public static String scion_preferences_title;
