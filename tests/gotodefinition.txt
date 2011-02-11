@@ -1,0 +1,14 @@
+Cases which should always work on functions
+
+1. function defined in same module, exported
+
+2. function defined in same module, not exported
+
+3. function defined and exported in another module in same project
+
+4. function defined and exported in reference project
+
+5. function defined and exported in locally installed (through Haskell Platform) package
+
+6. function defined and exported in locally installed (from Hackage) package
+

@@ -58,6 +58,8 @@ Features:
 
   - Run as haskell application: for projects with executable components, launch the built exe file.
 
+  - Occurrences shown in current files (based on lexer, so internal functions with the same name will be highlighted too)
+
 Internal:
 
 Upgrade notes:
