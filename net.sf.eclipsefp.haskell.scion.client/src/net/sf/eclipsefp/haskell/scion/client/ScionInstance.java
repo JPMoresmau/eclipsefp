@@ -250,7 +250,7 @@ public class ScionInstance {
   public void checkProtocol() {
     final ConnectionInfoCommand ciCmd = new ConnectionInfoCommand();
     
-    ciCmd.addContinuation(new Job("Checking protocol version") {
+    ciCmd.addContinuation(new Job(ScionText.protocol_job_name) {
       @Override
       protected IStatus run(IProgressMonitor monitor) {
         int version = ciCmd.getVersion();
@@ -993,7 +993,7 @@ public class ScionInstance {
   public Map<String, String> completionsForTypes(final IFile file, final IDocument doc) {
     final TypeCompletions types = new TypeCompletions(file);
     
-    if (withLoadedDocument(file, doc, types, "TyCon completions")) {
+    if (withLoadedDocument(file, doc, types, ScionText.completions_tycon)) {
       return types.getCompletions();
     }
     
@@ -1010,7 +1010,7 @@ public class ScionInstance {
   public Map<String, String> completionsForVarIds(final IFile file, final IDocument doc) {
     final VarIdCompletions varIds = new VarIdCompletions(file);
     
-    if (withLoadedDocument(file, doc, varIds, "VarId completions")) {
+    if (withLoadedDocument(file, doc, varIds, ScionText.completions_varid)) {
       return varIds.getCompletions();
     }
     

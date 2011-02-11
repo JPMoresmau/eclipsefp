@@ -68,6 +68,10 @@ public class ScionText extends NLS {
   public static String        buildProject_parseCabalDescription;
   public static String        buildProject_cabalDependencies;
   
+  public static String		  protocol_job_name;
+  public static String		  completions_tycon;
+  public static String		  completions_varid;
+  
   private static final String BUNDLE_NAME = ScionText.class.getPackage().getName() + ".sciontext"; //$NON-NLS-1$
 
   static {
