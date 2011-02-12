@@ -47,10 +47,13 @@ public class MarkOccurrenceComputer {
     if (eThing!=null && eThing.getName()!=null && eThing.getName().length()>0){
       IAnnotationModel model = getAnnotationModel( editor );
       if( model instanceof IAnnotationModelExtension ) {
-        Occurrence[] occs =eThing.getInstance().getOccurrences( eThing.getFile(), document, eThing.getName() );
-        Map<Annotation, Position> map = computeAnnotations( occs );
-        IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
-        amx.replaceAnnotations( collectToRemove( model ), map );
+        Occurrence[] occs = eThing.getInstance().getOccurrences( eThing.getFile(), document, eThing.getName() );
+
+        if (occs != null) {
+          Map<Annotation, Position> map = computeAnnotations( occs );
+          IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+          amx.replaceAnnotations( collectToRemove( model ), map );
+        }
       }
     }
 //    String content = document.get();

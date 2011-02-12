@@ -344,6 +344,8 @@ public final class UITexts extends NLS {
 
   public static String template_prefSave_backingStore_exception;
   public static String HaskellTemplateVariables_module_description;
+  public static String HaskellTemplateVariables_classTypeName_description;
+  public static String HaskellTemplateVariables_typeName_description;
 
   public static String HaddockDocumentation_not_applicable;
   public static String HaddockDocumentation_previous_item;

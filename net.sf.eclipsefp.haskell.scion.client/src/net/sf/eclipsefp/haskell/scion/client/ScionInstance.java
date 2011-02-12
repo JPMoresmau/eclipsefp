@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckArbitraryCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.ClassTypeNameCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CompilationResultHandler;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OccurrencesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TypeCompletions;
@@ -1016,6 +1017,23 @@ public class ScionInstance {
     
     return null;
   }
+  
+  /**
+   * Get the list of class type names for the current document, to be used with Eclipse's completion/code assistance.
+   * 
+   * @param file The Haskell editor's current file
+   * @param doc The Haskell editor's current document
+   * @return A Map of string pairs (varId, module)
+   */
+  public Map<String, String> completionsForClassTypeNames(final IFile file, final IDocument doc) {
+    final ClassTypeNameCompletions classNames = new ClassTypeNameCompletions(file);
+    
+    if (withLoadedDocument(file, doc, classNames, ScionText.completions_varid)) {
+      return classNames.getCompletions();
+    }
+    
+    return null;
+  }
 
   /**
    * Set the scion-server's debug level to deafening (lots of output!)
@@ -1041,80 +1059,45 @@ public class ScionInstance {
    * Ensure that the command sequence is executed using a project scheduling rule. The resulting Job
    * is executed synchronously.
    */
-  private boolean withProject( final ScionCommand command, final String jobName ) {
-	// we want to run synchronously, and we're in the ui thread: let's not use a job!
-	if (Display.getCurrent()!=null){
-		
-        IStatus retval = Status.CANCEL_STATUS;
-        if ( projectIsBuilt || buildProjectInternal(new NullProgressMonitor(), false, true) ) {
-          retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
-        }
-        
-        return retval.equals(Status.OK_STATUS);
-		      
-		    
-	} else {
-		/**
-		 * there are issues between jobs and workspace operations
-		 * I have seen deadlocks where a workspace operation was trying to start a job with a scheduling rule
-		 * and another job with a conflicting scheduling rule was trying to start a workspace operation
-		 * for example, creating/deleting modules rapidly while project is being built
-		 * So here instead of using a job we use a workspace modify operation
-		 */
-		final List<Boolean> retList=new LinkedList<Boolean>();
-	    WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(project){
-	    	@Override
-	    	protected void execute(IProgressMonitor monitor) throws CoreException,
-	    			InvocationTargetException, InterruptedException {
-	    		if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
-	    			boolean retval = server.sendCommand(command) ;
-	    			retList.add(retval);
-	  	        } 
-	    		
-	    	}
-	    };
-		try {
-			wmo.run(new NullProgressMonitor());
-		} catch (InterruptedException ie){
-			// noop
-		}catch (InvocationTargetException ie){
-			ScionPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
-		}
-		return retList.isEmpty()?false:retList.iterator().next();
-		
-	    /*Job projJob = new Job ( jobName ) {
-	      @Override
-	      protected IStatus run(IProgressMonitor monitor) {
-	        IStatus retval = Status.CANCEL_STATUS;
-	        if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
-	          retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
-	        }
-	        
-	        return retval;
-	      }
-	    };
-	    // Note: All of this code could go into a separate class, but this is only used
-	    // once, so really no point.
-	    projJob.setPriority( Job.INTERACTIVE );
-	    projJob.setRule( project );
-	    projJob.schedule();
-	    
-	    while (projJob.getResult() == null) {
-	     try {
-	        projJob.join();
-	      } catch (InterruptedException irq) {
-	        // Return something reasonable.
-	        return false;
-	      }
-	      //Thread.yield();
-	    }
-	    */
-		
-		
-		
-	    //return (projJob.getResult().equals(Status.OK_STATUS));
-	}
+  private boolean withProject(final ScionCommand command, final String jobName) {
+    // we want to run synchronously, and we're in the ui thread: let's not use a
+    // job!
+    if (Display.getCurrent() != null) {
+      IStatus retval = Status.CANCEL_STATUS;
+      if (projectIsBuilt || buildProjectInternal(new NullProgressMonitor(), false, true)) {
+        retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
+      }
 
+      return retval.equals(Status.OK_STATUS);
+    } else {
+      /**
+       * there are issues between jobs and workspace operations I have seen
+       * deadlocks where a workspace operation was trying to start a job with a
+       * scheduling rule and another job with a conflicting scheduling rule was
+       * trying to start a workspace operation for example, creating/deleting
+       * modules rapidly while project is being built So here instead of using a
+       * job we use a workspace modify operation
+       */
+      final List<Boolean> retList = new LinkedList<Boolean>();
+      WorkspaceModifyOperation wmo = new WorkspaceModifyOperation(project) {
+        @Override
+        protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+          if (projectIsBuilt || buildProjectInternal(monitor, false, true)) {
+            boolean retval = server.sendCommand(command);
+            retList.add(retval);
+          }
+
+        }
+      };
+      try {
+        wmo.run(new NullProgressMonitor());
+      } catch (InterruptedException ie) {
+        // noop
+      } catch (InvocationTargetException ie) {
+        ScionPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+      }
+      return retList.isEmpty() ? false : retList.iterator().next();
+    }
   }
   
   /**

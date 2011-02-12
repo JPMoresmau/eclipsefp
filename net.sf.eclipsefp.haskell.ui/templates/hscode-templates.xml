@@ -105,7 +105,7 @@ in  ${expression}
   ${function} :: ${signature}
 </template>
 
-<!-- context expression -->
+<!-- Type context expression -->
 <template
   name="=>"
   description="%CodeTemplates.context.description"
@@ -113,7 +113,7 @@ in  ${expression}
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
   autoinsert="false"
->${existingType} => </template>
+>(${classTypeName}) => ${typeName}</template>
 
 <!--
  Haddock documentation templates
