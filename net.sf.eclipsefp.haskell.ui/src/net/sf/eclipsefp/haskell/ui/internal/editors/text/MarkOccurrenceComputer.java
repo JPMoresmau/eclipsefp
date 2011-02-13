@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.scion.types.OccurencesHandler;
 import net.sf.eclipsefp.haskell.scion.types.Occurrence;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
+import net.sf.eclipsefp.haskell.ui.util.text.WordFinder.EditorThing;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -43,18 +45,26 @@ public class MarkOccurrenceComputer {
   }
 
   public void compute() {
-    WordFinder.EditorThing eThing=WordFinder.getEditorThing( editor, false, false );
-    if (eThing!=null && eThing.getName()!=null && eThing.getName().length()>0){
-      IAnnotationModel model = getAnnotationModel( editor );
-      if( model instanceof IAnnotationModelExtension ) {
-        Occurrence[] occs = eThing.getInstance().getOccurrences( eThing.getFile(), document, eThing.getName() );
+    final IAnnotationModel model = getAnnotationModel( editor );
+    if( model instanceof IAnnotationModelExtension ) {
+      WordFinder.getEditorThing( editor, false, false , new WordFinder.EditorThingHandler() {
 
-        if (occs != null) {
-          Map<Annotation, Position> map = computeAnnotations( occs );
-          IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
-          amx.replaceAnnotations( collectToRemove( model ), map );
+        public void handle( final EditorThing thing ) {
+          thing.getInstance().getOccurrences( thing.getFile(), document, thing.getName(), new OccurencesHandler() {
+
+            @Override
+            public void handle( final Occurrence[] occurrences ) {
+              if (occurrences != null) {
+                Map<Annotation, Position> map = computeAnnotations( occurrences );
+                IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+                amx.replaceAnnotations( collectToRemove( model ), map );
+              }
+
+            }
+          });
         }
-      }
+      });
+
     }
 //    String content = document.get();
 //    ISelection selection = editor.getSelectionProvider().getSelection();

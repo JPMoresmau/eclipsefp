@@ -16,8 +16,6 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.BackgroundTypecheckFileC
 import net.sf.eclipsefp.haskell.scion.internal.commands.CabalDependenciesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ClassTypeNameCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.commands.CompilationResultHandler;
-import net.sf.eclipsefp.haskell.scion.internal.commands.OccurrencesCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.TypeCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ConnectionInfoCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.DefinedNamesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ListCabalComponentsCommand;
@@ -25,14 +23,16 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ListExposedModulesComman
 import net.sf.eclipsefp.haskell.scion.internal.commands.LoadCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ModuleGraphCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.OccurrencesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenAtPoint;
-import net.sf.eclipsefp.haskell.scion.internal.commands.TokensPrecedingPoint;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenTypesCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TokensPrecedingPoint;
+import net.sf.eclipsefp.haskell.scion.internal.commands.TypeCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.commands.VarIdCompletions;
 import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
@@ -44,9 +44,10 @@ import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.IAsyncScionCommandAction;
 import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.Occurrence;
+import net.sf.eclipsefp.haskell.scion.types.OccurencesHandler;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
+import net.sf.eclipsefp.haskell.scion.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -766,12 +767,28 @@ public class ScionInstance {
       final String jobName = NLS.bind(ScionText.thingatpoint_job_name, file.getName());
       final ThingAtPointCommand cmd = new ThingAtPointCommand(location, qualify, typed);
       
-      if (withLoadedDocument( file, doc, cmd, jobName ))
+      if (withLoadedDocument( file, doc, cmd, jobName )){
         return cmd.getThing();
+      }
     }
     
     return null;
   }
+  
+	public void thingAtPoint(final IDocument doc, Location location,
+			boolean qualify, boolean typed, ThingAtPointHandler handler) {
+		// the scion command will only work fine if we have the proper file
+		// loaded
+		final IFile file = location.getIFile(getProject());
+		if (file != null) {
+			final String jobName = NLS.bind(ScionText.thingatpoint_job_name,
+					file.getName());
+			final ThingAtPointCommand cmd = new ThingAtPointCommand(location,
+					qualify, typed);
+
+			withLoadedDocumentAsync(file, doc, cmd, jobName, handler);
+		}
+	}
 
   /**
    * Get the outline for the file.
@@ -827,15 +844,12 @@ public class ScionInstance {
     return null;
   }
   
-  public Occurrence[] getOccurrences(final IFile file, final IDocument doc,final String query){
-	      final String jobName = NLS.bind(ScionText.occurrences_job_name, file.getName());
-	      final OccurrencesCommand cmd = new OccurrencesCommand(doc.get(), query, FileUtil.hasLiterateExtension(file));
-	      
-	      if (withLoadedDocument( file, doc, cmd, jobName )){
-	        return cmd.getOccurrences();
-	      }
-	    
-	    return null;
+  public void getOccurrences(final IFile file, final IDocument doc,final String query,final OccurencesHandler handler){
+      final String jobName = NLS.bind(ScionText.occurrences_job_name, file.getName());
+      final OccurrencesCommand cmd = new OccurrencesCommand(doc.get(), query, FileUtil.hasLiterateExtension(file));
+      
+      withLoadedDocumentAsync( file, doc, cmd, jobName,handler );
+
   }
 
   

@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
@@ -70,41 +71,51 @@ public class WordFinder {
     //return result;
   }
 
-  public static EditorThing getEditorThing(final HaskellEditor haskellEditor,final boolean qualify, final boolean typed){
+  public static EditorThing getEditorThing(final HaskellEditor haskellEditor,final boolean qualify, final boolean typed,final EditorThingHandler handler){
     final IFile file = haskellEditor.findFile();
     final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
     if( selection instanceof TextSelection ) {
       final TextSelection textSel = ( TextSelection )selection;
 
-          String name = textSel.getText().trim();
+          final String fName = textSel.getText().trim();
           final ScionInstance instance = ScionPlugin.getScionInstance( file );
-          char haddockType = ' ';
+
 
           try {
             Location l = new Location( file.getLocation().toOSString(),
                 haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-            String s = instance.thingAtPoint(haskellEditor.getDocument(), l, qualify, typed );
-            if( s != null && s.length() > 0 ) {
-              name = s;
-              if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
-                name="";
+            instance.thingAtPoint(haskellEditor.getDocument(), l, qualify, typed,new ThingAtPointHandler() {
+
+              @Override
+              public void handleThing( final String thing ) {
+                char haddockType = ' ';
+                String name=fName;
+                if( thing != null && thing.length() > 0 ) {
+                  name = thing;
+                  if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
+                    name="";
+                  }
+                  if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
+                    haddockType = name.charAt( name.length() - 1 );
+                    name = name.substring( 0, name.length() - 2 );
+                  }
+                }
+
+
+                if( name.length() == 0 ) {
+                  name = WordFinder.findWord( haskellEditor.getDocument(),
+                      textSel.getOffset() );
+                }
+                if (name!=null && name.length()>0){
+                  handler.handle( new EditorThing(instance, file, name, haddockType ));
+                }
               }
-              if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
-                haddockType = name.charAt( name.length() - 1 );
-                name = name.substring( 0, name.length() - 2 );
-              }
-            }
+            });
 
           } catch( BadLocationException ble ) {
             ble.printStackTrace();
           }
-
-          if( name.length() == 0 ) {
-            name = WordFinder.findWord( haskellEditor.getDocument(),
-                textSel.getOffset() );
-          }
-          return new EditorThing(instance, file, name, haddockType );
     }
     return null;
   }
@@ -147,5 +158,14 @@ public class WordFinder {
       return haddockType;
     }
 
+  }
+
+  /**
+   * <p>Callback interface</p>
+    *
+    * @author JP Moresmau
+   */
+  public static interface EditorThingHandler{
+    void handle(EditorThing thing);
   }
 }

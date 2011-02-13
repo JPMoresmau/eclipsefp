@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
+import net.sf.eclipsefp.haskell.ui.util.text.WordFinder.EditorThing;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.commands.AbstractHandler;
@@ -67,83 +68,89 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
     final HaskellEditor haskellEditor = ( HaskellEditor )editor;
-    WordFinder.EditorThing eThing=WordFinder.getEditorThing( haskellEditor, true, false );
-    if (eThing!=null){
-          String name = eThing.getName();
-          char haddockType = eThing.getHaddockType();
-          final ScionInstance instance=eThing.getInstance();
-          final IFile file=eThing.getFile();
-          if( name != null && name.length() > 0 ) {
-            Location location = instance.firstDefinitionLocation( name );
+    WordFinder.getEditorThing( haskellEditor, true, false,new WordFinder.EditorThingHandler() {
 
+      public void handle( final EditorThing thing ) {
+        String name = thing.getName();
+        char haddockType = thing.getHaddockType();
+        final ScionInstance instance=thing.getInstance();
+        final IFile file=thing.getFile();
+        if( name != null && name.length() > 0 ) {
+          Location location = instance.firstDefinitionLocation( name );
+
+          if( location != null ) {
+            final Location theLocation = location;
+            new UIJob(UITexts.openDefinition_open_job) {
+              @Override
+              public IStatus runInUIThread( final IProgressMonitor monitor ) {
+                try {
+                  openInEditor( haskellEditor.getEditorSite().getPage(), theLocation, file.getProject() );
+                } catch( PartInitException ex ) {
+                  ex.printStackTrace();
+                  // too bad
+                }
+
+                return Status.OK_STATUS;
+              }
+            }.schedule();
+          } else {
+            String module=null;
+            String shortName=name;
+            int ix = name.lastIndexOf( '.' );
+            if( ix > 0 && ix < name.length() - 1 ) {
+              module = name.substring( 0, ix );
+              shortName = name.substring( ix + 1 );
+            }
+            // we try to find an id for an object not exported, that scion doesn't
+            // know
+            // but that we have in the outline
+            // short name of course in the outline
+            location = haskellEditor.getOutlineLocation( shortName );
             if( location != null ) {
               final Location theLocation = location;
-              new UIJob(UITexts.openDefinition_open_job) {
+              // Ensure that this happens in the UI thread
+              new UIJob(UITexts.openDefinition_select_job) {
                 @Override
                 public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                  try {
-                    openInEditor( haskellEditor.getEditorSite().getPage(), theLocation, file.getProject() );
-                  } catch( PartInitException ex ) {
-                    ex.printStackTrace();
-                    // too bad
-                  }
-
+                  selectAndReveal( haskellEditor, haskellEditor.getDocument(), theLocation );
                   return Status.OK_STATUS;
                 }
               }.schedule();
             } else {
-              String module=null;
-              String shortName=name;
-              int ix = name.lastIndexOf( '.' );
-              if( ix > 0 && ix < name.length() - 1 ) {
-                module = name.substring( 0, ix );
-                shortName = name.substring( ix + 1 );
-              }
-              // we try to find an id for an object not exported, that scion doesn't
-              // know
-              // but that we have in the outline
-              // short name of course in the outline
-              location = haskellEditor.getOutlineLocation( shortName );
-              if( location != null ) {
-                final Location theLocation = location;
-                // Ensure that this happens in the UI thread
-                new UIJob(UITexts.openDefinition_select_job) {
-                  @Override
-                  public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                    selectAndReveal( haskellEditor, haskellEditor.getDocument(), theLocation );
-                    return Status.OK_STATUS;
-                  }
-                }.schedule();
-              } else {
-                if( module!=null ) {
-                  final String moduleF=module;
-                  final String shortNameF=shortName;
-                  // find in outside location...
-                  outer: for( CabalPackage[] pkgs: instance.getPackagesByDB().values() ) {
-                    for( CabalPackage cp: pkgs ) {
-                      if( cp.getModules() != null
-                          && cp.getModules().contains( module ) ) {
-                        final String pkg = cp.toString();
-                        final char haddockInd = haddockType;
-                        new UIJob(UITexts.openDefinition_select_job) {
-                          @Override
-                          public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                            openExternalDefinition( haskellEditor.getEditorSite().getPage(), instance.getProject(), pkg, moduleF,
-                                shortNameF, haddockInd );
-                            return Status.OK_STATUS;
-                          }
-                        }.schedule();
-                        break outer;
+              if( module!=null ) {
+                final String moduleF=module;
+                final String shortNameF=shortName;
+                final char haddockTypeF=haddockType;
+                new Thread(new Runnable(){
+                  public void run() {
+                    // find in outside location...
+                    outer: for( CabalPackage[] pkgs: instance.getPackagesByDB().values() ) {
+                      for( CabalPackage cp: pkgs ) {
+                        if( cp.getModules() != null
+                            && cp.getModules().contains( moduleF ) ) {
+                          final String pkg = cp.toString();
+                           new UIJob(UITexts.openDefinition_select_job) {
+                            @Override
+                            public IStatus runInUIThread( final IProgressMonitor monitor ) {
+                              openExternalDefinition( haskellEditor.getEditorSite().getPage(), instance.getProject(), pkg, moduleF,
+                                  shortNameF, haddockTypeF );
+                              return Status.OK_STATUS;
+                            }
+                          }.schedule();
+                          break outer;
+                        }
                       }
                     }
                   }
-                }
+                }).start();
+
               }
             }
           }
+        }
 
-
-    }
+      }
+    });
 
     return null;
   }
