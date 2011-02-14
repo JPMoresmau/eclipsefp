@@ -472,7 +472,6 @@ public class ScionPlugin extends AbstractUIPlugin {
   }
   
   public class NullScionServerFactory implements ScionServerFactory {
-    
     /** Default constructor. This is hidden so preserve singleton semantics. */
     private NullScionServerFactory() {
       // NOP
@@ -481,7 +480,8 @@ public class ScionPlugin extends AbstractUIPlugin {
     /** Create a new NullScionServer. In reality, this just returns another reference
      * to the {@link NullScionServer NullScionServer}'s singleton. */
     public ScionServer createScionServer(final IProject project, final Writer outStream) {
-      return NullScionServer.getDefault();
+      File directory = (project != null) ? new File(project.getLocation().toOSString()) : null;
+      return new NullScionServer(project, getServerExecutable(), outStream, directory);
     }
 
     public IPath getServerExecutable() {

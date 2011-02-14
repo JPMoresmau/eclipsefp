@@ -1,18 +1,16 @@
 package net.sf.eclipsefp.haskell.scion.internal.servers;
 
+import java.io.File;
+import java.io.Writer;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 
 public class NullScionServer extends ScionServer {
-  private final static class SingletonContainer {
-    private static final NullScionServer theInstance = new NullScionServer();
-  }
-
-  private NullScionServer() {
-    super();
-  }
-  
-  public static ScionServer getDefault() {
-    return SingletonContainer.theInstance;
+  public NullScionServer(IProject project, IPath serverExecutable, Writer serverOutput, File directory) {
+    super(project, serverExecutable, serverOutput, directory);
   }
   
   @Override

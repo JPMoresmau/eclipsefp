@@ -234,7 +234,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
    * Server factory setup. This is common code used by both start() and handlePreferenceChanges() for setting
    * and starting scion server factories.
    */
-  private void serverFactorySetup()
+  private synchronized void serverFactorySetup()
   {
     try {
       if (useBuiltIn) {
@@ -719,26 +719,14 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     protected IStatus run( final IProgressMonitor monitor ) {
       monitor.beginTask( UITexts.scionServerProgress_title, IProgressMonitor.UNKNOWN );
       status = buildBuiltIn(monitor, fConOut);
+      monitor.done();
+
       if (status.isOK()) {
-        IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-        String serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
-
-        if (serverFlavor.length() == 0) {
-          serverFlavor = STDSTREAM_SCION_FLAVOR;
-        }
-
-        try {
-          if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
-            ScionPlugin.useBuiltInStdStreamServerFactory();
-          } else {
-            ScionPlugin.useBuiltInNetworkServerFactory();
-          }
-        } catch (ScionServerStartupException ex) {
-          // Should never happen, but who knows...
-          reportServerStartupError( ex );
+        synchronized (ScionManager.this) {
+          ScionPlugin.shutdownAllInstances();
+          ScionManager.this.serverFactorySetup();
         }
       }
-      monitor.done();
       return status.getStatus();
     }
   }
