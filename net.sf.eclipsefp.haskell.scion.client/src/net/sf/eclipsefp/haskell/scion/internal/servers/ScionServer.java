@@ -379,17 +379,25 @@ public abstract class ScionServer {
       commandQueue.put(new Integer(seqNo), command);
     }
 
-    try {
-      serverInStream.write(command.toJSONString() + PlatformUtil.NL);
-      serverInStream.flush();
-      retval = true;
-    } catch (IOException ex) {
-      outputWriter.addMessage(getClass().getSimpleName() + ".sendCommand encountered an exception:");
-      outputWriter.addMessage(ex);
-    } finally {
-      if (getVerboseInteraction()) {
-        outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
+    if (serverInStream != null) {
+      try {
+        serverInStream.write(command.toJSONString() + PlatformUtil.NL);
+        serverInStream.flush();
+        retval = true;
+      } catch (IOException ex) {
+        if (outputWriter != null) {
+          outputWriter.addMessage(getClass().getSimpleName() + ".sendCommand encountered an exception:");
+          outputWriter.addMessage(ex);
+        }
+      } finally {
+        if (getVerboseInteraction() && outputWriter != null) {
+          outputWriter.addMessage(TO_SERVER_PREFIX + command.toJSONString());
+        }
       }
+    } else {
+      // Can't fail if we can't send the command, so assume that it succeeded (NullScionServer, in
+      // particular, has a null serverInStream).
+      retval = true;
     }
     
     return retval;
