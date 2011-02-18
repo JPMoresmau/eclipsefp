@@ -1,0 +1,32 @@
+<h2>Installation steps</h2>
+<p>If you see this, you have successfully installed the eclipseFP plugins. 
+However there may still be some configuration steps to be done before you can use the plugins fully.</p>
+
+<h3>GHC configuration</h3>
+<p>
+EclipseFP requires GHC to compile Haskell source files. 
+We recommend installing the <a href="http://hackage.haskell.org/platform/">Haskell Platform</a> that comes with all required libraries bundled in a installer for your platform.
+You can configure GHC by opening the Eclipse Preferences and going to <b>Haskell &gt; Haskell implementations</b>. If a GHC is in your PATH you should see it in the list. Otherwise you can manually add a GHC installation.
+</p>
+
+<h3>Cabal configuration</h3>
+<p>
+EclipseFP also requires a working Cabal. <a href="http://www.haskell.org/haskellwiki/Cabal">Cabal</a> is a build management tool for Haskell. Similarly, the Haskell Platform contains a version of Cabal compatible with the GHC it ships with.
+You can configure Cabal in the Eclipse Preferences under <b>Haskell &gt; Scion and Cabal</b>. By default EclipseFP will have looked in your PATH and use any Cabal installation it can find there.
+</p>
+
+<h3>Scion configuration</h3>
+<p>
+Scion is a Haskell program that uses GHC and Cabal to give a consistent API to manage and build Haskell projects. EclipseFP uses Scion for a lot of operations. 
+It comes with a version of Scion in source form, that should get built automatically once GHC and Cabal have been set up.
+The Eclipse Preferences page under <b>Haskell &gt; Scion and Cabal</b> allows you to change settings if required. 
+We recommend to stick to default setting (built-in server through Standard Stream/Pipe) unless you feel adventurous! 
+</p>
+
+<h3>Problems building Scion</h3>
+<p>
+It may happen that Scion does not build successfully when you start EclipseFP. 
+The build process dumps its outputs and errors into a Console in the Console View of Eclipse. Please check this file for errors.
+Often, the build fails due to some libraries conflict. Please run <b>cabal update</b> before restarting EclipseFP. 
+This will ensure your Cabal knows about the latest versions of libraries available on Hackage.
+</p>
