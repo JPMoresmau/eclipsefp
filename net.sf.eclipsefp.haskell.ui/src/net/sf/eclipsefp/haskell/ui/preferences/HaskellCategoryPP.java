@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.preferences;
 
 import net.sf.eclipsefp.common.ui.preferences.RootPreferencePage;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 
 
 /** <p>the root preference page for the Haskell tools.</p>
@@ -12,7 +13,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 public class HaskellCategoryPP extends RootPreferencePage {
 
   public HaskellCategoryPP() {
-    super( "Preferences for Haskell.\nPlease select from the tree." );
+    super( UITexts.preferences_title );
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
   }
 }

@@ -213,6 +213,8 @@ public final class UITexts extends NLS {
   public static String resolve_import_remove;
   public static String resolve_import_replace;
 
+  public static String preferences_title;
+
   public static String preferences_project_title;
   public static String preferences_project_description;
   public static String preferences_project_folders;
