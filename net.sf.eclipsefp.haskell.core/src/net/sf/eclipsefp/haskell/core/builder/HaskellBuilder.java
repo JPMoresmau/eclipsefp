@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -111,7 +112,8 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       getProject().accept( new BuildVisitor( subMon ) );*/
       ScionInstance si = ScionPlugin.getScionInstance( getProject() );
       if (si != null ) {
-        si.buildProjectForWorkspace(mon, true, false);
+        BuildOptions buildOptions=new BuildOptions().setOutput(true).setRecompile(false);
+        si.buildProjectForWorkspace(mon, buildOptions);
       } else {
         new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
       }

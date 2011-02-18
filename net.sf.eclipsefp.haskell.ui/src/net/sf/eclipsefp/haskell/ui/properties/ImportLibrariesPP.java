@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -43,6 +44,7 @@ public class ImportLibrariesPP extends PropertyPage
   public ImportLibrariesPP() {
     tablePart = new ImportLibrariesViewerPart();
     setDescription(UITexts.libraries_description);
+    noDefaultAndApplyButton();
   }
 
 
@@ -102,7 +104,6 @@ public class ImportLibrariesPP extends PropertyPage
   public boolean performOk() {
 //    list.save();
 
-
     final ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
     if (si!=null && si.getPackagesByDB()!=null) {
       try {
@@ -145,7 +146,8 @@ public class ImportLibrariesPP extends PropertyPage
         prov.saveDocument( new NullProgressMonitor(), f, doc, true );
 
         // Perform the ScionInstance.buildProject() in a Job to maintain UI responsiveness.
-        si.buildProject( false, true );
+        BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+        si.buildProject( buildOptions );
       } catch (CoreException ce){
         HaskellUIPlugin.log( ce );
 

@@ -354,6 +354,9 @@ public final class UITexts extends NLS {
   public static String HaddockDocumentation_following_item;
   public static String HaddockDocumentation_user_replaces;
 
+  public static String properties_userflags_description;
+  public static String properties_userflags_none;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
