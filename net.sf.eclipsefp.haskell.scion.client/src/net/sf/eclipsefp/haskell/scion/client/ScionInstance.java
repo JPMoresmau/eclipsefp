@@ -27,6 +27,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.OccurrencesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
+import net.sf.eclipsefp.haskell.scion.internal.commands.SetUserFlagsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ThingAtPointCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.TokenAtPoint;
@@ -38,6 +39,7 @@ import net.sf.eclipsefp.haskell.scion.internal.servers.NullScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.servers.ScionServer;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
+import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
@@ -310,16 +312,26 @@ public class ScionInstance {
    *          Force recompilation if true
    * @return A Job that can be scheduled to build the project
    */
-  public Job buildProject(final boolean output, final boolean forceRecomp) {
+  public Job buildProject(final BuildOptions buildOptions) {
     if (checkCabalFile()) {
-      final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
+      Job buildJob=getBuildJob(buildOptions);
+      buildJob.schedule();
+      
+      return buildJob;
+    }
+    
+    return null;
+  }
+  
+  private Job getBuildJob(final BuildOptions buildOptions){
+	  final String jobNamePrefix = NLS.bind(ScionText.build_job_name, getProject().getName());
 
       Job buildJob = new Job (jobNamePrefix) {
         @Override
         protected IStatus run(IProgressMonitor monitor) {
           try {
             monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-            buildProjectInternal(monitor, output, forceRecomp);
+            buildProjectInternal(monitor, buildOptions);
             restoreState(monitor);
           } finally {
             monitor.done();
@@ -327,15 +339,9 @@ public class ScionInstance {
           return Status.OK_STATUS;
         }
       };
-      
       buildJob.setRule( project );
       buildJob.setPriority(Job.BUILD);
-      buildJob.schedule();
-      
       return buildJob;
-    }
-    
-    return null;
   }
   
   /**
@@ -347,7 +353,7 @@ public class ScionInstance {
    * @param forceRecomp If true, force recompilation
    * @return True if all commands sent to scion-server succeeded, indicating that the build completed.
    */
-  public boolean buildProjectForWorkspace(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+  public boolean buildProjectForWorkspace(final IProgressMonitor monitor, final BuildOptions buildOptions) {
     //boolean retval = false;
 	final List<Boolean> retList=new LinkedList<Boolean>();
 	/**
@@ -362,7 +368,7 @@ public class ScionInstance {
     	protected void execute(IProgressMonitor arg0) throws CoreException,
     			InvocationTargetException, InterruptedException {
     		 if ( checkCabalFile() ) {
-    			 boolean retval = buildProjectInternal(monitor, output, forceRecomp) && restoreState(monitor);
+    			 boolean retval = buildProjectInternal(monitor, buildOptions) && restoreState(monitor);
     			 retList.add(retval);
     		 } else {
     			 retList.add(false);
@@ -408,12 +414,18 @@ public class ScionInstance {
    * @param forceRecomp If true, force recompilation
    * @return true if all commands sent to scion-server succeeded, indicating that the build completed.
    */
-  private boolean buildProjectInternal(final IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+  private boolean buildProjectInternal(final IProgressMonitor monitor, final BuildOptions buildOptions) {
     boolean retval = false;
     final String projectName = project.getName();
     final String cabalFile = getCabalFile(getProject()).getLocation().toOSString();
     
-    if ( listComponents(monitor) && loadComponents(monitor, output, forceRecomp) ) {
+    // configure requested
+    // this assumes the user set flags haven't changed without scion noticing
+    if (buildOptions.isConfigure()){
+    	server.sendCommand(new SetUserFlagsCommand(getProject(),cabalFile));
+    }
+    
+    if ( listComponents(monitor) && loadComponents(monitor, buildOptions) ) {
       monitor.subTask( NLS.bind( ScionText.buildProject_parseCabalDescription, projectName ) );
       ParseCabalCommand pcc = new ParseCabalCommand(cabalFile);
       if (server.sendCommand(pcc)) {
@@ -485,7 +497,7 @@ public class ScionInstance {
    * @param forceRecomp If true, force recompilation and reloading.
    * @return
    */
-  private boolean loadComponents(IProgressMonitor monitor, final boolean output, final boolean forceRecomp) {
+  private boolean loadComponents(IProgressMonitor monitor, final BuildOptions buildOptions) {
     List<Component> cs = null;
     IProject theProject = getProject();
     boolean failed = false;
@@ -501,7 +513,7 @@ public class ScionInstance {
     	if (c.isBuildable()){
 	      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, theProject.getName(), c.toString() ) );
 	
-	      final LoadCommand loadCommand = new LoadCommand(theProject, c, output, forceRecomp);
+	      final LoadCommand loadCommand = new LoadCommand(theProject, c, buildOptions);
 	      if (server.sendCommand(loadCommand)) {
 	        crh.process(loadCommand);
 	        lastLoadedComponent = c;
@@ -617,8 +629,8 @@ public class ScionInstance {
    */
   private boolean runWithComponent( final IProgressMonitor monitor, final IFile file ) {
     boolean loadOK = true;
-
-    if ( projectIsBuilt || buildProjectInternal(monitor, false, true) ) {
+    BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+    if ( projectIsBuilt || buildProjectInternal(monitor, buildOptions) ) {
       Set<String> componentNames = resolver.getComponents( file );
       
       if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
@@ -654,7 +666,8 @@ public class ScionInstance {
           Assert.isTrue( getProject() == fProject );
           
           monitor.subTask(NLS.bind(ScionText.loadingComponent_task_name, fProject.getName(), toLoad.toString() ) );
-          if ( server.sendCommand(new LoadCommand(fProject, toLoad, false, false)) ) {
+          BuildOptions buildOptions2=new BuildOptions().setOutput(false).setRecompile(false);
+          if ( server.sendCommand(new LoadCommand(fProject, toLoad, buildOptions2)) ) {
             lastLoadedComponent = toLoad;
           } else {
             loadOK = false;
@@ -928,7 +941,8 @@ public class ScionInstance {
   public List<Component> getComponents() {
     if (components == null) {
       // Attempt to build the project, since this is an indicator that the build needs to be done.
-      Job buildJob = buildProject(false, true);
+      BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+      Job buildJob = buildProject(buildOptions);
       
       while (buildJob.getResult() == null) {
         try {
@@ -1056,6 +1070,12 @@ public class ScionInstance {
     server.sendCommand(new SetVerbosityCommand(3));
   }
   
+//  public void setUserFlags(Map<String,Boolean> flags){
+//	  SetUserFlagsCommand cmd=new SetUserFlagsCommand(flags);
+//	  cmd.addContinuation(getBuildJob(true, true));
+//	  server.queueCommand(cmd);
+//  }
+//  
   /**
    * Predicate test for whether command groups need a project rule in addition to the file rule.
    * 
@@ -1078,7 +1098,8 @@ public class ScionInstance {
     // job!
     if (Display.getCurrent() != null) {
       IStatus retval = Status.CANCEL_STATUS;
-      if (projectIsBuilt || buildProjectInternal(new NullProgressMonitor(), false, true)) {
+      BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+      if (projectIsBuilt || buildProjectInternal(new NullProgressMonitor(), buildOptions)) {
         retval = (server.sendCommand(command) ? Status.OK_STATUS : Status.CANCEL_STATUS);
       }
 
@@ -1096,7 +1117,8 @@ public class ScionInstance {
       WorkspaceModifyOperation wmo = new WorkspaceModifyOperation(project) {
         @Override
         protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-          if (projectIsBuilt || buildProjectInternal(monitor, false, true)) {
+        	BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+        	if (projectIsBuilt || buildProjectInternal(monitor, buildOptions)) {
             boolean retval = server.sendCommand(command);
             retList.add(retval);
           }

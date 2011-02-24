@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.scion.internal.commands;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
+import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.scion.types.CompilationResult;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.ICompilerResult;
@@ -20,15 +21,16 @@ import org.json.JSONObject;
 public class LoadCommand extends ScionCommand implements ICompilerResult {
   private Component         comp;
   private CompilationResult compilationResult;
-  private boolean           output;
-  private boolean           forceRecomp;
+  private BuildOptions		buildOptions;
   private IProject          project;
 
-  public LoadCommand(IProject project, Component c, boolean output, boolean forceRecomp) {
+  public LoadCommand(IProject project, Component c, BuildOptions options) {
     super();
+    if (options==null){
+    	throw new IllegalArgumentException("buildoptions == null");
+    }
     this.comp = c;
-    this.output = output;
-    this.forceRecomp = forceRecomp;
+    this.buildOptions=options;
     this.project = project;
   }
 
@@ -42,8 +44,8 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
     JSONObject params = new JSONObject();
     params.put("component", comp.toJSON());
     JSONObject options = new JSONObject();
-    options.put("output", output);
-    options.put("forcerecomp", forceRecomp);
+    options.put("output", buildOptions.isOutput());
+    options.put("forcerecomp", buildOptions.isRecompile());
     params.put("options", options);
     return params;
   }
@@ -58,7 +60,7 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
   }
 
   public boolean hasOutput() {
-    return output;
+    return buildOptions.isOutput();
   }
 
   @Override

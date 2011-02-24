@@ -21,11 +21,19 @@ public class ListCabalComponentsCommand extends ScionCommand {
 	@Override
 	protected void doProcessResult() throws JSONException {
 		components.clear();
-		if (response instanceof JSONArray){
-			JSONArray arr=(JSONArray) response;
-			for (int a=0;a<arr.length();a++){
-				components.add(new Component(arr.getJSONObject(a)));
-			}
+		if (response instanceof JSONObject){
+			JSONObject o = (JSONObject) response;
+		      JSONArray arr = o.optJSONArray("Right");
+		      if (arr!=null){
+			
+				for (int a=0;a<arr.length();a++){
+					components.add(new Component(arr.getJSONObject(a)));
+				}
+		      } else {
+		    	  String msg=o.optString("Left");
+		    	  throw new JSONException(msg);
+		      }
+		
 		}
 
 	}

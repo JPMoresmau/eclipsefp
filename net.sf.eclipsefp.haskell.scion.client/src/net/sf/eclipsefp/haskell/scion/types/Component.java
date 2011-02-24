@@ -63,8 +63,7 @@ public class Component {
 	}
 	
 	public boolean isBuildable() {
-		//return buildable;
-		return true;
+		return buildable;
 	}
 	
 	public JSONObject toJSON() throws JSONException {

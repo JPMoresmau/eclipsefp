@@ -34,20 +34,28 @@ public class CabalDependenciesCommand extends ScionCommand {
 	@Override
 	protected void doProcessResult() throws JSONException {
 		packagesByDB.clear();
-		JSONArray arr=(JSONArray) response;
-		for (int a=0;a<arr.length();a++){
-			JSONObject arr2=arr.getJSONObject(a);
-			Iterator<String> it=arr2.keys();
-			while (it.hasNext()){
-				String dbName=it.next();
-				//String dbName=arr2.getString(0);
-				JSONArray arr3=arr2.getJSONArray(dbName);
-				CabalPackage[] pkgs=new CabalPackage[arr3.length()];
-				for (int b=0;b<arr3.length();b++){
-					pkgs[b]=new CabalPackage(arr3.getJSONObject(b));
-				}
-				packagesByDB.put(dbName, pkgs);
-			}
+		if (response instanceof JSONObject) {
+		      JSONObject o = (JSONObject) response;
+		      JSONArray arr = o.optJSONArray("Right");
+		      if (arr!=null){
+		    	  for (int a=0;a<arr.length();a++){
+					JSONObject arr2=arr.getJSONObject(a);
+					Iterator<String> it=arr2.keys();
+					while (it.hasNext()){
+						String dbName=it.next();
+						//String dbName=arr2.getString(0);
+						JSONArray arr3=arr2.getJSONArray(dbName);
+						CabalPackage[] pkgs=new CabalPackage[arr3.length()];
+						for (int b=0;b<arr3.length();b++){
+							pkgs[b]=new CabalPackage(arr3.getJSONObject(b));
+						}
+						packagesByDB.put(dbName, pkgs);
+					}
+		    	  }
+		      } else {
+		    	  String msg=o.optString("Left");
+		    	  throw new JSONException(msg);
+		      }
 		}
 	}
 	

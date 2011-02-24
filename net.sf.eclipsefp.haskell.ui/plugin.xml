@@ -232,7 +232,23 @@
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
       </page>
-
+	 <page
+            name="%projectFlagsPP_name"
+            class="net.sf.eclipsefp.haskell.ui.properties.UserFlagsPP"
+            id="net.sf.eclipsefp.haskell.ui.properties.UserFlagsPP">
+         <filter
+               name="nature"
+               value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+         </filter>
+         <filter
+               name="open"
+               value="true">
+         </filter>
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject" />
+         </enabledWhen>
+      </page>
+      
       <page
             name="%fileExposeModulesPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
