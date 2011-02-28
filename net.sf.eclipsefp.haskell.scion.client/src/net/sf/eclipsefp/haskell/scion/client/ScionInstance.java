@@ -25,7 +25,6 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.ModuleGraphCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.NameDefinitionsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OccurrencesCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.OutlineCommand;
-import net.sf.eclipsefp.haskell.scion.internal.commands.ParseCabalCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetUserFlagsCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.SetVerbosityCommand;
@@ -75,7 +74,6 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.json.JSONObject;
 
 /**
  * Manages a single instance of the Scion server.
@@ -102,7 +100,7 @@ public class ScionInstance {
   /** Flag that indicates that the project has been built successfully */
   private boolean                     projectIsBuilt;
   /** The Cabal project description */
-  private JSONObject                  cabalDescription;
+//  private JSONObject                  cabalDescription;
   private Map<String, CabalPackage[]> packagesByDB;
   private List<Component>             components;
   private CabalComponentResolver      resolver;
@@ -427,9 +425,9 @@ public class ScionInstance {
     
     if ( listComponents(monitor) && loadComponents(monitor, buildOptions) ) {
       monitor.subTask( NLS.bind( ScionText.buildProject_parseCabalDescription, projectName ) );
-      ParseCabalCommand pcc = new ParseCabalCommand(cabalFile);
-      if (server.sendCommand(pcc)) {
-        cabalDescription = pcc.getDescription();
+//      ParseCabalCommand pcc = new ParseCabalCommand(cabalFile);
+//      if (server.sendCommand(pcc)) {
+//        cabalDescription = pcc.getDescription();
         packagesByDB=null;
        /* monitor.subTask( NLS.bind( ScionText.buildProject_cabalDependencies, projectName ) );
         CabalDependenciesCommand cdc = new CabalDependenciesCommand(getCabalFile(getProject()).getLocation().toOSString());
@@ -438,7 +436,7 @@ public class ScionInstance {
           retval = true;
         }*/
         retval = true;
-      }
+ //     }
     }
     
     projectIsBuilt = retval;
@@ -454,7 +452,7 @@ public class ScionInstance {
   private boolean listComponents(IProgressMonitor monitor) {
     monitor.subTask( NLS.bind( ScionText.buildProject_listComponents, project.getName() ) );
 
-    cabalDescription = null;
+//    cabalDescription = null;
 
     final String cabalProjectFile = getCabalFile(getProject()).getLocation().toOSString();
     final ListCabalComponentsCommand command = new ListCabalComponentsCommand(cabalProjectFile);
@@ -537,7 +535,7 @@ public class ScionInstance {
   /** Reset initial state. */
   private void internalReset() {
     projectIsBuilt = false;
-    cabalDescription = null;
+//    cabalDescription = null;
     synchronized (components) {
       components.clear();
     }
@@ -913,10 +911,10 @@ public class ScionInstance {
     return project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
   }
 
-  public JSONObject getCabalDescription() {
-    // Never called... :-)
-    return cabalDescription;
-  }
+//  public JSONObject getCabalDescription() {
+//    // Never called... :-)
+//    return cabalDescription;
+//  }
 
   /**
    * Accessor for the Cabal dependencies map.

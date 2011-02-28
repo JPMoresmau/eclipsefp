@@ -6,7 +6,7 @@ import org.json.JSONObject;
 /**
  * 
  * @author JP Moresmau
- *
+ * @deprecated
  */
 public class ParseCabalCommand extends ScionCommand {
 	private String fileName;
