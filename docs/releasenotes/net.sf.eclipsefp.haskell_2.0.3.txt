@@ -28,7 +28,7 @@ Fixes:
 Features:
   - Interface to cabal install via contextual action on project
 
-  - Cabal sdist now writes its output to a console
+  - Cabal sdist now writes its output to a console, and warns the user if the resulting file already exists
 
   - Code completion
 
