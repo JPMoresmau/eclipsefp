@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -19,7 +20,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -203,9 +203,9 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
     }
   }
 
-  public static void runInConsole(final List<String> commands,final File directory,final String title) throws CoreException,IOException{
-    ProcessBuilder pb=new ProcessBuilder( commands );
-    pb.directory( directory );
+  public static void runInConsole(final List<String> commands,final File directory,final String title) throws CoreException{
+    //ProcessBuilder pb=new ProcessBuilder( commands );
+    //pb.directory( directory );
     //pb.redirectErrorStream( true );
     final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     String configTypeId = ExecutableHaskellLaunchDelegate.class.getName();
@@ -214,18 +214,30 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
 
     wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
     wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
+    //wc.setAttribute(IProcess.ATTR_CMDLINE,
+    //        CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
+    //wc.setAttribute( IProcess.ATTR_PROCESS_TYPE, HaskellLaunchDelegate.class.getName() );
+    wc.setAttribute(ILaunchAttributes.EXECUTABLE,commands.get( 0 ));
+    if (directory!=null){
+      wc.setAttribute(ILaunchAttributes.WORKING_DIRECTORY,directory.getAbsolutePath());
+    }
+    if (commands.size()>1){
+      wc.setAttribute(ILaunchAttributes.EXTRA_ARGUMENTS,CommandLineUtil.renderCommandLine( commands.subList( 1, commands.size() ) ));
+    }
+    //final ILaunch launch = new Launch(wc,,null);
+    wc.launch( ILaunchManager.RUN_MODE , new NullProgressMonitor() );
 
-    final ILaunch launch = new Launch(wc,ILaunchManager.RUN_MODE,null);
+    //Process jp=pb.start();
+    //IProcess ep = DebugPlugin.newProcess(launch, jp,title);
+    //ep.setAttribute( IProcess.ATTR_CMDLINE,
+    //    CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
+    //ep.setAttribute( IProcess.ATTR_PROCESS_TYPE, HaskellLaunchDelegate.class.getName() );
+    //launch.addProcess(ep);
 
-    Process jp=pb.start();
-    IProcess ep = DebugPlugin.newProcess(launch, jp,title);
-    ep.setAttribute( IProcess.ATTR_CMDLINE,
-        CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
-    ep.setAttribute( IProcess.ATTR_PROCESS_TYPE, HaskellLaunchDelegate.class.getName() );
-    launch.addProcess(ep);
+    //launchManager.addLaunch(launch);
 
-    launchManager.addLaunch(launch);
-//    launchManager.addLaunchListener( new ILaunchListener() {
+
+    //    launchManager.addLaunchListener( new ILaunchListener() {
 //
 //      public void launchRemoved( final ILaunch arg0 ) {
 //        if (arg0==launch && arg0.isTerminated()){
