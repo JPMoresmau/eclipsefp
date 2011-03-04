@@ -25,6 +25,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.NetworkUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
@@ -129,7 +130,7 @@ public class ScionBuilder {
     ProcessBuilder pb = new ProcessBuilder( commands );
     pb.directory( destDir );
     pb.redirectErrorStream( true );
-
+    NetworkUtil.addHTTP_PROXY_env( pb, "http://hackage.haskell.org" );
     String jobPrefix = getClass().getSimpleName();
 
     try {

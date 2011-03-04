@@ -2,10 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.util
-Bundle-Version: 2.0.2
+Bundle-Version: 2.0.3
 Bundle-Activator: net.sf.eclipsefp.haskell.util.Activator
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.eclipse.core.net
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.sf.eclipsefp.haskell.util;uses:="org.osgi.framework"

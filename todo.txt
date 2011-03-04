@@ -50,6 +50,7 @@ why clicking on run arrow asks me between ghci and hugs? can't reproduce
 - import management (order import, only import what's needed, add proper import for function?)
 
 - project rename
+- module rename (rename file + module name + imports + in cabal)
 
 - CAPRI http://www.haskell.org/haskellwiki/Capri to install scion
 	- built-in -> install global/local/project
