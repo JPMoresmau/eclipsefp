@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
@@ -40,7 +40,9 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
   public void addPages() {
     optionsPage=new CabalSDistOptionsPage(projects) ;
     addPage(optionsPage );
+
   }
+
 
   @Override
   public boolean performFinish() {
@@ -59,7 +61,7 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
       for (final IProject p:projects){
 
         try {
-          HaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.exportSource_job, p.getName() ) );
+          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.exportSource_job, p.getName() ),false );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);

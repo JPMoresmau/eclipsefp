@@ -2,6 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="Haskell" topic="html/overview.html">
+  <topic label="Installation steps" href="html/installation.html"/>
   <topic label="Getting Started" href="html/gettingStarted.html"/>
   <topic label="User Guide" href="html/userGuide/userGuide.html">
     <topic label="Haskell Editor" 

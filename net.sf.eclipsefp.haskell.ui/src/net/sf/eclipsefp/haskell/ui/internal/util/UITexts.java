@@ -213,6 +213,8 @@ public final class UITexts extends NLS {
   public static String resolve_import_remove;
   public static String resolve_import_replace;
 
+  public static String preferences_title;
+
   public static String preferences_project_title;
   public static String preferences_project_description;
   public static String preferences_project_folders;
@@ -332,6 +334,7 @@ public final class UITexts extends NLS {
   public static String exportSource_options_snapshot;
   public static String exportSource_options_folder_choose;
   public static String exportSource_warning_markers;
+  public static String exportSource_overwrite_warning;
 
   public static String install_job;
   public static String install_options;
@@ -351,6 +354,9 @@ public final class UITexts extends NLS {
   public static String HaddockDocumentation_previous_item;
   public static String HaddockDocumentation_following_item;
   public static String HaddockDocumentation_user_replaces;
+
+  public static String properties_userflags_description;
+  public static String properties_userflags_none;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

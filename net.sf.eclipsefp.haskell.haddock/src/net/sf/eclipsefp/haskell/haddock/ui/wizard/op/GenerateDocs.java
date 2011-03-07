@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.haddock.ui.wizard.op;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
@@ -30,7 +29,7 @@ public class GenerateDocs {
   public boolean run() {
     boolean result = true;
     createDirs();
-    try {
+ //   try {
       String[] cmdLine = getCmdLine();
       //Process process = Runtime.getRuntime().exec( cmdLine );
       //if( process != null ) {
@@ -46,16 +45,16 @@ public class GenerateDocs {
           proc.setAttribute( IProcess.ATTR_PROCESS_TYPE, PROCESS_TYPE_ID );
           getLauchManager().addLaunch( newLaunch );*/
           String label = "Generating Haddock docs";
-          AbstractHaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label );
+          AbstractHaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label,false );
 
         } catch( CoreException cex ) {
           HaddockPlugin.log( "Problem during docs generation", cex );
         }
      // }
-    } catch( IOException ioex ) {
-      result = false;
-      HaddockPlugin.log( "Problem during docs generation", ioex );
-    }
+//    } catch( IOException ioex ) {
+//      result = false;
+//      HaddockPlugin.log( "Problem during docs generation", ioex );
+//    }
     return result;
   }
 

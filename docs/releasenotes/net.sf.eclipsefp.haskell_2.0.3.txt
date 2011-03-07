@@ -23,11 +23,12 @@ Fixes:
   - When launching GHCi, only hidden packages are added via -package
   - When running a haskell file with the "launch the selected ressource or active editor", if an existing launch configuration exists, it it reused.
   - When an existing launch configuration is found for a ressource, update executable to be the current executable for the delegate
+  - Documentation has been updated to not say things that are now totally wrong :-)
 
 Features:
   - Interface to cabal install via contextual action on project
 
-  - Cabal sdist now writes its output to a console
+  - Cabal sdist now writes its output to a console, and warns the user if the resulting file already exists
 
   - Code completion
 
@@ -77,6 +78,10 @@ Features:
 
     - Inserting type variables after a type name is also another feature that
       will appear in a forthcoming release.
+
+  - Set Cabal flags values in Project preferences.
+
+  - Set HTTP_PROXY for Cabal operations to use the proxy defined in Eclipse
 
 Internal:
 

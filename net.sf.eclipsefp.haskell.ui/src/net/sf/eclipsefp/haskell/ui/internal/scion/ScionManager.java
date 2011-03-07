@@ -26,6 +26,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
+import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
@@ -369,7 +370,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                   }
                   final ScionInstance si = ScionPlugin.getScionInstance( f );
                   if (si != null) {
-                    si.buildProject( false , true);
+                    BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+                    si.buildProject( buildOptions);
                   }
                   return false;
                 } else if (f.equals( cabalF )){

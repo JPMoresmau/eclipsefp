@@ -24,6 +24,8 @@ public class FileUtil {
   public static final String   EXTENSION_HS       = "hs";                   //$NON-NLS-1$
   /** Literate Haskell (embedded TeX) source extension. */
   public static final String   EXTENSION_LHS      = "lhs";                  //$NON-NLS-1$
+  /**  Haskell for C bindings source extension. */
+  public static final String   EXTENSION_HSC      = "hsc";                  //$NON-NLS-1$
   /**
    * "Common Architecture for Building Applications and Libraries" (cabal)
    * project file source extension.
@@ -217,7 +219,7 @@ public class FileUtil {
    * </p>
    */
   public static boolean hasHaskellExtension(final IResource resource) {
-    return has(resource, EXTENSION_HS) || has(resource, EXTENSION_LHS);
+    return has(resource, EXTENSION_HS) || has(resource, EXTENSION_LHS) || has(resource, EXTENSION_HSC);
   }
 
   private static boolean has(final IResource resource, final String extension) {

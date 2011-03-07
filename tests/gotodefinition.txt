@@ -12,3 +12,10 @@ Cases which should always work on functions
 
 6. function defined and exported in locally installed (from Hackage) package
 
+
+Constructors: same than functions
+
+Types/Classes in type definition
+
+Class 
+Class methods

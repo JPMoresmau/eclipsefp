@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.wizards.cabal;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,13 +18,19 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * <p>Common UI class for cabal operations: set the dist folder (use scion folder by default</p>
+ * <p>Common UI class for cabal operations: set the dist folder (use scion folder by default)</p>
   *
   * @author JP Moresmau
  */
 public class DistFolder {
+  /**
+   * simple property for a listener to listen to
+   */
+  public static final String PROP_PATH="PATH";
   private final Text tFolder;
   private String fullPath;
+
+  private final PropertyChangeSupport pcs=new PropertyChangeSupport( this );
 
   public DistFolder(final Collection<IProject> projects,final Composite composite,final String label,final String dialogTitle,final String dialogMessage){
     Label lFolder=new Label(composite,SWT.NONE);
@@ -43,6 +51,10 @@ public class DistFolder {
       bFolder.addSelectionListener( new SelectionAdapter() {
         @Override
         public void widgetSelected( final SelectionEvent e ) {
+          String oldDisplay=null;
+          if (fullPath!=null && fullPath.startsWith( projectLocation )){
+            oldDisplay=fullPath.substring( projectLocation.length()+File.separator.length() );
+          }
           DirectoryDialog dd=new DirectoryDialog( composite.getShell() );
           dd.setText( dialogTitle );
           dd.setMessage( dialogMessage );
@@ -54,10 +66,18 @@ public class DistFolder {
             toDisplay=fullPath.substring( projectLocation.length()+File.separator.length() );
           }
           tFolder.setText( toDisplay );
+          pcs.firePropertyChange( PROP_PATH, oldDisplay, toDisplay );
         }
       });
+
+
     }
 
+  }
+
+  public void addPropertyListener(final PropertyChangeListener pcl){
+    pcs.addPropertyChangeListener( PROP_PATH,pcl );
+    pcs.firePropertyChange( PROP_PATH, null, ScionPlugin.DIST_FOLDER );
   }
 
   public String getFolder(){

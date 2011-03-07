@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -72,6 +73,8 @@ public class ScionPlugin extends AbstractUIPlugin {
   public static final int                    PROTOCOL_VERSION          = 1;
   /** The plugin's resource bundle. */
   private ResourceBundle                     resourceBundle;
+  
+  public static QualifiedName 				 USERFLAGS_PROPERTY=new QualifiedName("EclipseFP", "UserFlags");
   
   /** Instance state associated with each project */
   private class InstanceState {

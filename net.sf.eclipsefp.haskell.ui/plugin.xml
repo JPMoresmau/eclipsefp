@@ -47,7 +47,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%haskellEditor_name"
-            extensions="hs,lhs"
+            extensions="hs,lhs,hsc"
             icon="icons/obj16/hsfile_obj.gif"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
             contributorClass="net.sf.eclipsefp.haskell.ui.actions.HaskellEditorActionContributor"
@@ -59,7 +59,7 @@
    <extension
          point="org.eclipse.ui.editors.documentProviders">
       <provider
-            extensions="hs,lhs"
+            extensions="hs,lhs,hsc"
             class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider">
       </provider>
@@ -232,7 +232,23 @@
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
       </page>
-
+	 <page
+            name="%projectFlagsPP_name"
+            class="net.sf.eclipsefp.haskell.ui.properties.UserFlagsPP"
+            id="net.sf.eclipsefp.haskell.ui.properties.UserFlagsPP">
+         <filter
+               name="nature"
+               value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+         </filter>
+         <filter
+               name="open"
+               value="true">
+         </filter>
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject" />
+         </enabledWhen>
+      </page>
+      
       <page
             name="%fileExposeModulesPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
@@ -247,6 +263,15 @@
             class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
             id="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP_litt"
             nameFilter="*.lhs">
+          <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IFile" />
+         </enabledWhen>
+      </page>
+      <page
+            name="%fileExposeModulesPP_name"
+            class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"
+            id="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP_hsc"
+            nameFilter="*.hsc">
           <enabledWhen>
             <adapt type="org.eclipse.core.resources.IFile" />
          </enabledWhen>
