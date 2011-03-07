@@ -63,6 +63,8 @@ Features:
 
   - Set Cabal flags values in Project preferences.
 
+  - Set HTTP_PROXY for Cabal operations to use the proxy defined in Eclipse
+
 Internal:
 
 Upgrade notes:
