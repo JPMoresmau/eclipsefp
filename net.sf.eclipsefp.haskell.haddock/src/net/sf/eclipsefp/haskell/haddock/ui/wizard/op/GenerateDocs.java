@@ -45,7 +45,7 @@ public class GenerateDocs {
           proc.setAttribute( IProcess.ATTR_PROCESS_TYPE, PROCESS_TYPE_ID );
           getLauchManager().addLaunch( newLaunch );*/
           String label = "Generating Haddock docs";
-          AbstractHaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label );
+          AbstractHaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label,false );
 
         } catch( CoreException cex ) {
           HaddockPlugin.log( "Problem during docs generation", cex );

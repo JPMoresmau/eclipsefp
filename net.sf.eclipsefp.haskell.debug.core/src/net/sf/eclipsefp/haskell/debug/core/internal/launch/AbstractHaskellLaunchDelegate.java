@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.util.NetworkUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -94,6 +95,9 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
     pb.directory( workingDir );
     if( configuration.getAttribute( ILaunchAttributes.SYNC_STREAMS, true ) ) {
       pb.redirectErrorStream( true );
+    }
+    if (configuration.getAttribute( ILaunchAttributes.NEEDS_HTTP_PROXY, false ) ) {
+      NetworkUtil.addHTTP_PROXY_env( pb,NetworkUtil.HACKAGE_URL  );
     }
     try {
       Process proc = pb.start();
@@ -203,7 +207,7 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
     }
   }
 
-  public static void runInConsole(final List<String> commands,final File directory,final String title) throws CoreException{
+  public static void runInConsole(final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY) throws CoreException{
     //ProcessBuilder pb=new ProcessBuilder( commands );
     //pb.directory( directory );
     //pb.redirectErrorStream( true );
@@ -224,6 +228,7 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
     if (commands.size()>1){
       wc.setAttribute(ILaunchAttributes.EXTRA_ARGUMENTS,CommandLineUtil.renderCommandLine( commands.subList( 1, commands.size() ) ));
     }
+    wc.setAttribute( ILaunchAttributes.NEEDS_HTTP_PROXY, needsHTTP_PROXY );
     //final ILaunch launch = new Launch(wc,,null);
     wc.launch( ILaunchManager.RUN_MODE , new NullProgressMonitor() );
 

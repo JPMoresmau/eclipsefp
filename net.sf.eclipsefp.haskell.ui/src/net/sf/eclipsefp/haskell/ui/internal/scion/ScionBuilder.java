@@ -130,7 +130,7 @@ public class ScionBuilder {
     ProcessBuilder pb = new ProcessBuilder( commands );
     pb.directory( destDir );
     pb.redirectErrorStream( true );
-    NetworkUtil.addHTTP_PROXY_env( pb, "http://hackage.haskell.org" );
+    NetworkUtil.addHTTP_PROXY_env( pb, NetworkUtil.HACKAGE_URL );
     String jobPrefix = getClass().getSimpleName();
 
     try {
