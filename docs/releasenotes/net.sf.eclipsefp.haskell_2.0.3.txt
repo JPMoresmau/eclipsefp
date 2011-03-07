@@ -56,9 +56,27 @@ Features:
       - Block following ("{- | ... -}") via Ctrl+Shift+D B
       - Pragma comment ("{-#  #-}") via Ctrl-Shift-C P
 
-  - Run as haskell application: for projects with executable components, launch the built exe file.
+  - Run as haskell application: for projects with executable components, launch
+    the built exe file.
 
-  - Occurrences shown in current files (based on lexer, so internal functions with the same name will be highlighted too)
+  - Occurrences shown in current files (based on lexer, so internal functions
+    with the same name will be highlighted too)
+
+  - Type name completion after "->" (right arrow)
+
+    - EclipseFP currently assumes that "->" occurs in a type signature, e.g.,
+      "foo :: Bool -> String -> ..." Note that this is the common case when
+      this completion is requested.
+
+    - There are a lot of other contexts in which "->" can occur, such as witin
+      alternatives of a 'case' expression and lambda expressions. Performing the
+      incremental or reverse parse is a challenging problem; this is the subject
+      of current hacking toward a general solution.
+
+    - Please bear with the developers as this feature evolves.
+
+    - Inserting type variables after a type name is also another feature that
+      will appear in a forthcoming release.
 
 Internal:
 
@@ -66,10 +84,11 @@ Upgrade notes:
   
 Known issues:
   - Scion compiles with GHC 6.12, but does not currently compile with GHC 6.10
-    due to API changes (pm_parsed_source).
+    due to API changes (pm_parsed_source) and package dependencies that currently
+    assume 6.12, notably Control.Applicative.
 
 
-Thanks to B. Scott Michel (scooter.phd@gmail.com) for his contributions.
+Thanks to B. Scott Michel (bscottm@ieee.org) for his contributions.
 Thanks to all bug reporters and users for their feedback.
 Thanks to all the people that expressed interest in EclipseFP and want to see it stay alive and improve!
 
