@@ -61,6 +61,7 @@ public interface IImageNames {
 
   // Cabal elements
   String EXECUTABLE_STANZA = ID + ".EXECUTABLE_STANZA"; //$NON-NLS-1$
+  String TESTSUITE_STANZA  = ID + ".TESTSUITE_STANZA"; //$NON-NLS-1$
   String LIBRARY_STANZA    = ID + ".LIBRARY_STANZA"; //$NON-NLS-1$
   String GENERAL_STANZA    = ID + ".GENERAL_STANZA"; //$NON-NLS-1$
   String IF_STANZA         = ID + ".IF_STANZA"; //$NON-NLS-1$

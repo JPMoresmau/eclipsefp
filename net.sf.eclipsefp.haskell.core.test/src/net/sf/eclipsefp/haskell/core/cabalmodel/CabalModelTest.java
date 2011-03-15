@@ -681,4 +681,13 @@ public class CabalModelTest extends TestCase {
     assertEquals(ModuleInclusionType.MAIN,exe.getModuleInclusionType( "T1" ));
     assertEquals(ModuleInclusionType.MISSING,exe.getModuleInclusionType( "Testing.Test2" ));
   }
+
+  public void testTestSuite(){
+    String content3=getContent( "TestSuite.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    PackageDescriptionStanza ts=pdss.get( 2 );
+    assertEquals(CabalSyntax.SECTION_TESTSUITE,ts.getType());
+    assertEquals("exitcode-stdio-1.0",ts.getProperties().get( CabalSyntax.FIELD_TYPE ));
+  }
 }

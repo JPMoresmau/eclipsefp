@@ -112,7 +112,7 @@ public class ModuleInclusionComposite extends Composite {
 
           ModuleInclusionType mit=pd.getModuleInclusionType( module );
 
-          if (CabalSyntax.SECTION_EXECUTABLE.equals( pd.getType() ) && ModuleInclusionType.MAIN.equals( mit )){
+          if ((CabalSyntax.SECTION_EXECUTABLE.equals( pd.getType()) || CabalSyntax.SECTION_TESTSUITE.equals( pd.getType())) && ModuleInclusionType.MAIN.equals( mit )){
              bInclude.setEnabled( false );
           }
 

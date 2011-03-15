@@ -7,7 +7,8 @@ public class Component {
 	public enum ComponentType {
 		FILE,
 		LIBRARY,
-		EXECUTABLE 
+		EXECUTABLE ,
+		TESTSUITE
 	}
 
 	private ComponentType type;
@@ -83,7 +84,11 @@ public class Component {
 	@Override
 	public String toString() {
 		// this is equivalent to PackageDescriptionStanza getTypeName()
-		return getType().toString().toLowerCase() +(getName()!=null?" "+getName():"");
+		if (ComponentType.TESTSUITE.equals(getType())){
+			return "test-suite" +(getName()!=null?" "+getName():"");
+		} else {
+			return getType().toString().toLowerCase() +(getName()!=null?" "+getName():"");
+		}
 	}
 	
 }
