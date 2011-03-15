@@ -131,7 +131,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.scion.client"
          download-size="0"
          install-size="0"
-         version="2.0.3"
+         version="2.0.4"
          unpack="false"/>
 
    <plugin
