@@ -20,7 +20,7 @@ Fixes:
   - do not auto detected files starting with cabal that do not report a version number
 
 Features:
- 
+  - Cabal test-suite syntax supported in syntax editor: http://www.haskell.org/cabal/release/cabal-1.10.1.0/doc/users-guide/#test-suites
 
 Internal:
 

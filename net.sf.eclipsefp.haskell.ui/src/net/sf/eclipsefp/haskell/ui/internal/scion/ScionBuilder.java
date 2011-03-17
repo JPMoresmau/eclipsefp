@@ -120,8 +120,8 @@ public class ScionBuilder {
     String cabalLibVer = cabalImpl.getLibraryVersion();
     if( cabalLibVer.startsWith( "1.8." ) ) {
       commands.add( "-fcabal_1_8" );
-    } else if( cabalLibVer.startsWith( "1.7." ) ) {
-      commands.add( "-fcabal_1_7" );
+    } else if( cabalLibVer.startsWith( "1.10." ) ) {
+      commands.add( "-fcabal_1_10" );
     }
 
     commands.add( "install" );

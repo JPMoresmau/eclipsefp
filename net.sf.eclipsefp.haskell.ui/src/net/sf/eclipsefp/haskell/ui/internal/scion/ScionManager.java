@@ -497,9 +497,9 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         if (useBuiltIn){
           handlePreferenceChanges(true);
         }
-      } else {
-        HaskellUIPlugin.log("Core preference changed: ".concat( key ), null);
-      }
+      } /*else {
+        HaskellUIPlugin.log("Core preference changed: ".concat( key ), IStatus.INFO);
+      }*/
     }
   }
 
@@ -710,8 +710,9 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             // Dispose of the console on a successful build
             IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
             mgr.removeConsoles( new IConsole[] { fConsole } );
-            ScionManager.this.internalBuilder = null;
           }
+          // reset builder even on failure otherwise it never launches again
+          ScionManager.this.internalBuilder = null;
           super.done( event );
         }
       });
