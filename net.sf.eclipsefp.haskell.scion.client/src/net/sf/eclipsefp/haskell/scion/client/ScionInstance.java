@@ -1054,7 +1054,7 @@ public class ScionInstance {
   public Map<String, String> completionsForClassTypeNames(final IFile file, final IDocument doc) {
     final ClassTypeNameCompletions classNames = new ClassTypeNameCompletions(file);
     
-    if (withLoadedDocument(file, doc, classNames, ScionText.completions_varid)) {
+    if (withLoadedDocument(file, doc, classNames, ScionText.completions_classes)) {
       return classNames.getCompletions();
     }
     
