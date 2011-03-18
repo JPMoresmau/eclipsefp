@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -23,6 +22,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 
@@ -106,8 +106,8 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
       processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
       IProcess process = null;
       if( proc != null ) {
-        String loc = location.toOSString();
-        process = DebugPlugin.newProcess( launch, proc, loc, processAttrs );
+        //String loc = location.toOSString();
+        process = DebugPlugin.newProcess( launch, proc, configuration.getName(), processAttrs );
         process.setAttribute( IProcess.ATTR_CMDLINE, CommandLineUtil
             .renderCommandLine( cmdLine ) );
       }
@@ -208,19 +208,16 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
   }
 
   public static void runInConsole(final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY) throws CoreException{
-    //ProcessBuilder pb=new ProcessBuilder( commands );
-    //pb.directory( directory );
-    //pb.redirectErrorStream( true );
+
     final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     String configTypeId = ExecutableHaskellLaunchDelegate.class.getName();
     ILaunchConfigurationType configType  = launchManager.getLaunchConfigurationType( configTypeId );
-    final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, launchManager.generateUniqueLaunchConfigurationNameFrom( title + System.currentTimeMillis()));
+    final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, title );//launchManager.generateUniqueLaunchConfigurationNameFrom( title));
 
     wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
+    wc.setAttribute( IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false );
     wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
-    //wc.setAttribute(IProcess.ATTR_CMDLINE,
-    //        CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
-    //wc.setAttribute( IProcess.ATTR_PROCESS_TYPE, HaskellLaunchDelegate.class.getName() );
+
     wc.setAttribute(ILaunchAttributes.EXECUTABLE,commands.get( 0 ));
     if (directory!=null){
       wc.setAttribute(ILaunchAttributes.WORKING_DIRECTORY,directory.getAbsolutePath());
@@ -229,50 +226,8 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
       wc.setAttribute(ILaunchAttributes.EXTRA_ARGUMENTS,CommandLineUtil.renderCommandLine( commands.subList( 1, commands.size() ) ));
     }
     wc.setAttribute( ILaunchAttributes.NEEDS_HTTP_PROXY, needsHTTP_PROXY );
-    //final ILaunch launch = new Launch(wc,,null);
-    wc.launch( ILaunchManager.RUN_MODE , new NullProgressMonitor() );
-
-    //Process jp=pb.start();
-    //IProcess ep = DebugPlugin.newProcess(launch, jp,title);
-    //ep.setAttribute( IProcess.ATTR_CMDLINE,
-    //    CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
-    //ep.setAttribute( IProcess.ATTR_PROCESS_TYPE, HaskellLaunchDelegate.class.getName() );
-    //launch.addProcess(ep);
-
-    //launchManager.addLaunch(launch);
-
-
-    //    launchManager.addLaunchListener( new ILaunchListener() {
-//
-//      public void launchRemoved( final ILaunch arg0 ) {
-//        if (arg0==launch && arg0.isTerminated()){
-//          launchManager.removeLaunchListener( this );
-//          try {
-//            wc.delete();
-//          } catch (CoreException ce){
-//            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
-//          }
-//        }
-//
-//      }
-//
-//      public void launchChanged( final ILaunch arg0 ) {
-//        // NOOP
-//        if (arg0==launch && arg0.isTerminated()){
-//          launchManager.removeLaunchListener( this );
-//          try {
-//            wc.delete();
-//          } catch (CoreException ce){
-//            HaskellDebugCore.log( CoreTexts.launchconfiguration_delete_failed, ce );
-//          }
-//        }
-//      }
-//
-//      public void launchAdded( final ILaunch arg0 ) {
-//        // NOOP
-//      }
-//    });
+    // makes the console opens consistently
+    DebugUITools.launch( wc, ILaunchManager.RUN_MODE );
 
   }
-
 }
