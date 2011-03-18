@@ -72,6 +72,7 @@ public class ScionText extends NLS {
   public static String		  protocol_job_name;
   public static String		  completions_tycon;
   public static String		  completions_varid;
+  public static String		  completions_classes;
   
   private static final String BUNDLE_NAME = ScionText.class.getPackage().getName() + ".sciontext"; //$NON-NLS-1$
 

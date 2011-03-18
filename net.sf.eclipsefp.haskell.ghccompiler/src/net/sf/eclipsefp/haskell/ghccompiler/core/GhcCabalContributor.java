@@ -42,7 +42,7 @@ public class GhcCabalContributor implements ICabalContributor {
       String valOptions=sbOptions.toString();
       String valExtensions=sbExtensions.toString();
       for (PackageDescriptionStanza pds:pd.getStanzas()){
-        if(CabalSyntax.SECTION_EXECUTABLE.equals( pds.getType() ) || CabalSyntax.SECTION_LIBRARY.equals( pds.getType() )){
+        if(CabalSyntax.SECTION_EXECUTABLE.equals( pds.getType() ) || CabalSyntax.SECTION_LIBRARY.equals( pds.getType() ) || CabalSyntax.SECTION_TESTSUITE.equals( pds.getType() )){
           if (valOptions.length()>0){
             pds.update( CabalSyntax.FIELD_GHC_OPTIONS, valOptions );
           }

@@ -55,6 +55,7 @@ public class HaskellUIImages implements IImageNames {
     declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" ); //$NON-NLS-1$
     declare( HASKELL_PROJECT,      OBJECT + "hsproject.gif" ); //$NON-NLS-1$
     declare( EXECUTABLE_STANZA,    OBJECT + "executablestanza.gif" ); //$NON-NLS-1$
+    declare( TESTSUITE_STANZA,     OBJECT + "testsuitestanza.gif" ); //$NON-NLS-1$
     declare( LIBRARY_STANZA,       OBJECT + "librarystanza.gif" ); //$NON-NLS-1$
     declare( GENERAL_STANZA,       OBJECT + "generalstanza.gif" ); //$NON-NLS-1$
     declare( IF_STANZA,            OBJECT + "if.gif" ); //$NON-NLS-1$

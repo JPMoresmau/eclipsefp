@@ -16,6 +16,7 @@ public enum CabalSyntax {
   SECTION_FLAG("flag",true), //$NON-NLS-1$
   SECTION_IF("if",true), //$NON-NLS-1$
   SECTION_ELSE("else",true), //$NON-NLS-1$
+  SECTION_TESTSUITE("test-suite",true), //$NON-NLS-1$
 
   FIELD_CATEGORY("category"), //$NON-NLS-1$
   FIELD_EXPOSED_MODULES("exposed-modules"), //$NON-NLS-1$
@@ -66,28 +67,44 @@ public enum CabalSyntax {
   FIELD_NHC98_OPTIONS("nhc98-options"),//$NON-NLS-1$
   FIELD_INSTALL_INCLUDES("install-includes"),//$NON-NLS-1$
   FIELD_PKGCONFIG_DEPENDS("pkgconfig-depends"),//$NON-NLS-1$
-  FIELD_CPP_OPTIONS("cpp-options")//$NON-NLS-1$
+  FIELD_CPP_OPTIONS("cpp-options"),//$NON-NLS-1$
+  FIELD_TEST_MODULE("test-module"),//$NON-NLS-1$
 
+  VALUE_EXITCODE_STDIO_1_0("exitcode-stdio-1.0",CabalSyntaxType.VALUE),//$NON-NLS-1$
+  VALUE_DETAILED_1_0("detailed-1.0",CabalSyntaxType.VALUE),//$NON-NLS-1$
 
   ;
 
+  public enum CabalSyntaxType {
+    FIELD,
+    VALUE,
+    SECTION
+  }
 
   private final String cabalName;
-  private final boolean sectionHeader;
+  private final CabalSyntaxType type;
 
   private CabalSyntax(final String cabalName){
     this.cabalName=cabalName;
-    this.sectionHeader=false;
+    type=CabalSyntaxType.FIELD;
   }
 
   private CabalSyntax(final String cabalName,final boolean sectionHeader){
     this.cabalName=cabalName;
-    this.sectionHeader=sectionHeader;
+    this.type=sectionHeader?CabalSyntaxType.SECTION:CabalSyntaxType.FIELD;
   }
 
+  private CabalSyntax(final String cabalName,final CabalSyntaxType type){
+    this.cabalName=cabalName;
+    this.type=type;
+  }
+
+  public CabalSyntaxType getType() {
+    return type;
+  }
 
   public boolean isSectionHeader() {
-    return sectionHeader;
+    return CabalSyntaxType.SECTION.equals(type);
   }
 
   @Override

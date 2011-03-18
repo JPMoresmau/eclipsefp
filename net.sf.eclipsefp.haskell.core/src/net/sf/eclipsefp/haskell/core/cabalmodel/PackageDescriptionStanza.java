@@ -386,7 +386,8 @@ public class PackageDescriptionStanza {
       ret.addAll(st.getSourceDirs());
     }
     if (ret.isEmpty() && (getType()!=null && (getType().equals( CabalSyntax.SECTION_EXECUTABLE)
-        || getType().equals( CabalSyntax.SECTION_LIBRARY)))){
+        || getType().equals( CabalSyntax.SECTION_LIBRARY)
+        || getType().equals( CabalSyntax.SECTION_TESTSUITE)))){
       ret.add("."); //$NON-NLS-1$
     }
     return ret;

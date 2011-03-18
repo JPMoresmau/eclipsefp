@@ -39,6 +39,8 @@ class CabalOutlineLP extends LabelProvider {
         result = HaskellUIImages.getImage( IImageNames.ELSE_STANZA );
       } else if (CabalSyntax.SECTION_FLAG.equals( pds.getType() )){
         result = HaskellUIImages.getImage( IImageNames.FLAG_STANZA );
+      } else if (CabalSyntax.SECTION_TESTSUITE.equals( pds.getType() )){
+        result = HaskellUIImages.getImage( IImageNames.TESTSUITE_STANZA );
       } else if (pds.getType()==null){
         result = HaskellUIImages.getImage( IImageNames.GENERAL_STANZA );
       }

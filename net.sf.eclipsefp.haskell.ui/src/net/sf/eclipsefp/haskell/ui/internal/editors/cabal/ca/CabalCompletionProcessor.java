@@ -70,7 +70,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
             } else {
               sb.append(" "); //$NON-NLS-1$
             }
-          } else {
+          } else if (CabalSyntax.CabalSyntaxType.FIELD.equals( cs.getType() )){
             sb.append(":"); //$NON-NLS-1$
           }
           String rep=sb.toString();
@@ -185,7 +185,8 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
       try {
         while( index > 0 ) {
           char ch = document.getChar( index - 1 );
-          if (! Character.isLetterOrDigit(ch)) {
+          // - is valid in cabal field names
+          if (! Character.isLetterOrDigit(ch) && ch!='-') {
             break;
           }
           index--;

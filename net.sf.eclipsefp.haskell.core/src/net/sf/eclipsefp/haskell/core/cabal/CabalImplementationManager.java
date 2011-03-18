@@ -224,20 +224,22 @@ public class CabalImplementationManager {
         for (File file : files) {
           try {
             CabalImplementation impl = new CabalImplementation("foo", new Path(file.getCanonicalPath())); //$NON-NLS-1$
-
-            int seqno = 1;
-            String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion()); //$NON-NLS-1$
-            if (!isUniqueUserIdentifier( ident, impls )) {
-              String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
-              while (!isUniqueUserIdentifier(uniqIdent, impls)) {
-                seqno++;
-                uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+            // if we can't get a version, it's not a valid Cabal install
+            if (impl.getInstallVersion()!=null && impl.getInstallVersion().length()>0){
+              int seqno = 1;
+              String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion()); //$NON-NLS-1$
+              if (!isUniqueUserIdentifier( ident, impls )) {
+                String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+                while (!isUniqueUserIdentifier(uniqIdent, impls)) {
+                  seqno++;
+                  uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+                }
+                ident = uniqIdent;
               }
-              ident = uniqIdent;
-            }
 
-            impl.setUserIdentifier( ident );
-            impls.add( impl );
+              impl.setUserIdentifier( ident );
+              impls.add( impl );
+            }
           } catch (IOException e) {
             // Ignore?
           }

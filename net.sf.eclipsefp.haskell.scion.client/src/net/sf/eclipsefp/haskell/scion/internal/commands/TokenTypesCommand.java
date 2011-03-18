@@ -46,9 +46,32 @@ public class TokenTypesCommand extends ScionCommand {
 			JSONArray result=o.optJSONArray("Right");
 			if (result!=null){
 				tokens=new ArrayList<TokenDef>(result.length());
+//				TokenDef previous=null;
 				for (int i = 0; i < result.length(); ++i) {
 					JSONArray arr=result.getJSONArray(i);
-					tokens.add(new TokenDef(arr));
+					TokenDef td=new TokenDef(arr);
+					// checks
+//					if (td.getLocation().getStartLine()>td.getLocation().getEndLine()){
+//						System.err.println(td.getLocation().toString());
+//					}
+//					if (td.getLocation().getStartLine()==td.getLocation().getEndLine() && td.getLocation().getStartColumn()>=td.getLocation().getEndColumn()){
+//						System.err.println(td.getLocation().toString());
+//					}
+//					if (previous!=null){
+//						if (td.getLocation().getStartLine()<previous.getLocation().getStartLine()){
+//							System.err.println(td.getLocation().toString());
+//						}
+//						if (td.getLocation().getStartLine()<previous.getLocation().getEndLine()){
+//							System.err.println(td.getLocation().toString());
+//						}
+//						if (td.getLocation().getStartLine()==previous.getLocation().getEndLine()){
+//							if (td.getLocation().getStartColumn()<previous.getLocation().getEndColumn()){
+//								System.err.println(td.getLocation().toString());
+//							}
+//						}
+//					}
+					tokens.add(td);
+//					previous=td;
 				}
 			} else {
 				JSONObject err=o.optJSONObject("Left");
