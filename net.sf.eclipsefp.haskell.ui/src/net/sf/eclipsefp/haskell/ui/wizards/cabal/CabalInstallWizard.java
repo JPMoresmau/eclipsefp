@@ -63,60 +63,6 @@ public class CabalInstallWizard extends Wizard {
           ErrorDialog.openError( getShell(), UITexts.install_error, UITexts.install_error_text, st);
         }
 
-//        new Job(NLS.bind( UITexts.install_job, p.getName() )) {
-//
-//          @Override
-//          protected IStatus run(final IProgressMonitor arg0) {
-//            ProcessBuilder pb=new ProcessBuilder( commands );
-//            pb.directory( new File(p.getLocation().toOSString()) );
-//            pb.redirectErrorStream( true );
-            /*IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-            IOConsole console = new IOConsole(NLS.bind( UITexts.install_job,p.getName()), null);
-
-            mgr.addConsoles(new org.eclipse.ui.console.IConsole[] {console});
-            mgr.showConsoleView( console );
-
-            try {
-              int ret=new ProcessRunner().executeBlocking( new File(p.getLocation().toOSString()) ,new OutputStreamWriter( console.newOutputStream()), null, commands.toArray( new String[commands.size()]));
-              if (ret!=0){
-                final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), "");
-                Display.getDefault().asyncExec( new Runnable(){
-                  public void run() {
-                    ErrorDialog.openError( getShell(), UITexts.install_error, UITexts.install_error_text, st );
-                  }
-                } );
-              }
-              return Status.OK_STATUS;
-            } catch (IOException ioe){
-              HaskellUIPlugin.log(ioe);
-             return  new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), UITexts.install_error,ioe );
-            }finally {
-              arg0.done();
-            }
-            */
-//            try {
-//              ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-//              String configTypeId = HaskellLaunchDelegate.class.getName();
-//              ILaunchConfigurationType configType  = launchManager.getLaunchConfigurationType( configTypeId );
-//              ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, UITexts.install_job );
-//              wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
-//              wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
-//              ILaunch launch = new Launch(wc,ILaunchManager.RUN_MODE,null);
-//
-//              Process jp=pb.start();
-//              IProcess ep = DebugPlugin.newProcess(launch, jp,UITexts.install_job);
-//              ep.setAttribute( IProcess.ATTR_CMDLINE,
-//                  CommandLineUtil.renderCommandLine( commands.toArray( new String[commands.size()] )) );
-//              ep.setAttribute( IProcess.ATTR_PROCESS_TYPE, getClass().getName() );
-//              launch.addProcess(ep);
-//              launchManager.addLaunch(launch);
-//
-//            } catch (Exception ioe){
-//              HaskellUIPlugin.log(ioe);
-//            //  return  new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), UITexts.install_error,ioe );
-//            }
-//          }
-//        }.schedule();
 
       }
     }
