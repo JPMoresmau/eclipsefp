@@ -25,7 +25,10 @@ public class BuildMarkerResolutionGenerator implements
         String msgL=msg.toLowerCase();
         int ix=-1;
         if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
-          res.add(new MissingTypeWarningResolution());
+          res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_INFERREDTYPE_START));
+        } else if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS )>-1){
+          // type is given on next line
+          res.add(new MissingTypeWarningResolution("\n"));
         } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
           res.add(new RemoveImportResolution());
           int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START );
