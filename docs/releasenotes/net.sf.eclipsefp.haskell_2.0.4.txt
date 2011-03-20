@@ -22,10 +22,12 @@ Fixes:
 Features:
   - Support GHC 7.0
   - Cabal test-suite syntax supported in syntax editor: http://www.haskell.org/cabal/release/cabal-1.10.1.0/doc/users-guide/#test-suites
+     - Cabal test option on contextual project menu. This is only a short term solution, expect a new version of EclipseFP with full launch configuration support for cabal test.
 
 Internal:
 
 Upgrade notes:
+  - If you had EclipseFP configured with a previous version of GHC and Cabal, run autodetect again in the Haskell Implementations and Scion and Cabal preference pages.
   
 Known issues:
 
