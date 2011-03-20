@@ -70,12 +70,16 @@ public class ButtonFieldEditor extends FieldEditor {
     // ( ( GridData )getLabelControl().getLayoutData() ).horizontalSpan = numColumns - 1;
   }
 
+  protected int getButtonStyle(){
+    return SWT.PUSH;
+  }
+
   /**
    * Get the button control. Create it in parent if required.
    */
   protected Button getButtonControl( final Composite parent ) {
     if( button == null ) {
-      button = new Button( parent, SWT.PUSH );
+      button = new Button( parent, getButtonStyle() );
       if( buttonText == null ) {
         buttonText = JFaceResources.getString( "openChange" ); //$NON-NLS-1$
       }

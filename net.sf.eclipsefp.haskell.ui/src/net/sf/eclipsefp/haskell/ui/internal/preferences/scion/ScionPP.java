@@ -26,8 +26,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -49,8 +51,8 @@ public class ScionPP
 	private Composite serverBuiltInFieldC;
 	private ButtonFieldEditor autodetect;
 	private Composite autodetectC;
-	private ButtonFieldEditor forceRebuild;
-	private Composite forceRebuildC;
+	private Button forceRebuild;
+	//private Composite forceRebuildC;
 	private RadioGroupFieldEditor serverFlavorField;
 	private Composite serverFlavorFieldC;
 	private BooleanFieldEditor verboseInteractionField;
@@ -133,22 +135,37 @@ public class ScionPP
 		serverBuiltInField.setPreferenceStore( prefStore );
 		serverBuiltInField.load();
 
-		forceRebuildC=new Composite(fieldComposite,SWT.NONE);
+		//forceRebuildC=new Composite(fieldComposite,SWT.NONE);
     gdata = new GridData( SWT.RIGHT, SWT.CENTER, true, false );
-    forceRebuildC.setLayoutData( gdata );
-    forceRebuild = new ButtonFieldEditor(
+    //forceRebuildC.setLayoutData( gdata );
+    forceRebuild=new Button(fieldComposite,SWT.CHECK);
+    forceRebuild.setText( UITexts.forceRebuildButton_text );
+    forceRebuild.setLayoutData( gdata );
+    forceRebuild.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected( final SelectionEvent e ) {
+        rebuildBuiltin=forceRebuild.getSelection();
+      }
+    });
+    /*forceRebuild = new ButtonFieldEditor(
         UITexts.forceRebuildButton_text,
         UITexts.forceRebuildButton_label,
         new SelectionAdapter() {
           @Override
           public void widgetSelected(final SelectionEvent e) {
-            rebuildBuiltin = true;
+            rebuildBuiltin = !rebuildBuiltin;
           }
         },
-        forceRebuildC );
+        forceRebuildC ){
+      @Override
+      protected int getButtonStyle() {
+       return SWT.CHECK;
+      }
+    };
     forceRebuild.setPage( this );
     forceRebuild.setPreferenceStore( prefStore );
-    forceRebuild.load();
+    forceRebuild.load();*/
+
 
     serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
     GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
@@ -233,7 +250,12 @@ public class ScionPP
 
 	private void updateButtonState() {
     boolean b = serverBuiltInField.getBooleanValue();
-    forceRebuild.setEnabled( b, forceRebuildC );
+    //forceRebuild.setEnabled( b, forceRebuildC );
+    forceRebuild.setEnabled( b);
+    if (!b){
+      forceRebuild.setSelection( false );
+      forceRebuild.notifyListeners( SWT.Selection, new Event() );
+    }
     autodetect.setEnabled( !b, autodetectC );
     serverExecutableField.setEnabled( !b, serverExecutableFieldC );
 	}
