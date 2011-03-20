@@ -345,6 +345,17 @@ public final class UITexts extends NLS {
   public static String install_error;
   public static String install_error_text;
 
+  public static String test_job;
+  public static String test_options;
+  public static String test_options_folder;
+  public static String test_options_folder_choose;
+  public static String test_options_testsuites;
+  public static String test_options_testsuites_all;
+  public static String test_options_testsuites_none;
+  public static String test_error;
+  public static String test_error_text;
+  public static String test_version_fail;
+
   public static String template_prefSave_backingStore_exception;
   public static String HaskellTemplateVariables_module_description;
   public static String HaskellTemplateVariables_classTypeName_description;

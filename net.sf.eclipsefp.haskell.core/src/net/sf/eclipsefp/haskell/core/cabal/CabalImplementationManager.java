@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.framework.Version;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -276,6 +277,18 @@ public class CabalImplementationManager {
         return null;
       }
       return cabalExecutable;
+    }
+    return null;
+  }
+
+  public static Version getCabalLibraryVersion(){
+    CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
+    CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
+    if (cabalImpl!=null){
+      final String cabalVersion=cabalImpl.getLibraryVersion();
+      if (cabalVersion!=null && cabalVersion.length()>0){
+        return new Version(cabalVersion);
+      }
     }
     return null;
   }
