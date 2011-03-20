@@ -30,7 +30,7 @@ public class WordFinder {
 
   public static String findWord( final IDocument document, final int position ) {
     //IRegion result = null;
-    if( position >= 0 ) {
+    if(document!=null && position >= 0 ) {
       try {
         IRegion r=document.getLineInformationOfOffset( position );
         String line=document.get( r.getOffset(), r.getLength() );

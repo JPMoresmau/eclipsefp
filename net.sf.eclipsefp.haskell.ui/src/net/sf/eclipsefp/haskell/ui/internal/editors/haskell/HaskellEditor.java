@@ -151,7 +151,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   public IDocument getDocument() {
     IDocumentProvider docProvider = getDocumentProvider();
-    return docProvider.getDocument( getEditorInput() );
+    if (docProvider!=null){
+      return docProvider.getDocument( getEditorInput() );
+    }
+    return null;
   }
 
   // interface methods of TextEditor
