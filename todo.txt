@@ -1,6 +1,3 @@
-disallow new projects with spaces in names
-
-run cabal update before new scion install (when unzipping) but not on forcibly rebuilding
 
 why clicking on run arrow asks me between ghci and hugs? can't reproduce
 
@@ -20,7 +17,6 @@ why clicking on run arrow asks me between ghci and hugs? can't reproduce
 
 - project actions
 	- clean
-	- sdist (in progress)
  -> via scion or via cabal impl directly
 
 

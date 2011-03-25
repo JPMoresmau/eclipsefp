@@ -95,6 +95,8 @@ public final class UITexts extends NLS {
 
   public static String forceRebuildButton_label;
   public static String forceRebuildButton_text;
+  public static String cabalUpdateButton_label;
+  public static String cabalUpdateButton_text;
 
   public static String executableFileFieldEditor_errorDoesNotExist;
   public static String executableFileFieldEditor_errorNotAbsolute;
@@ -127,6 +129,8 @@ public final class UITexts extends NLS {
 
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
+  public static String cabalUpdateError;
+  public static String cabalUpdateFailed;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;
@@ -307,6 +311,7 @@ public final class UITexts extends NLS {
 
   public static String unpackScionArchive_title;
   public static String scionBuildJob_title;
+  public static String cabalUpdateJob_title;
 
   public static String scionArchiveResourceNotFound;
   public static String scionArchiveFileException;
@@ -314,6 +319,7 @@ public final class UITexts extends NLS {
   public static String scionServerProgress_title;
   public static String scionServerProgress_subtask1;
   public static String scionServerProgress_subtask2;
+  public static String cabalUpdateProgress;
   // public static String scionServerProgress_completed_title;
   // public static String scionServerProgress_completed_message;
 

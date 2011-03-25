@@ -294,10 +294,22 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     monitor.subTask( UITexts.scionServerProgress_subtask1 );
     retval = builder.unpackScionArchive( scionBuildDir );
     if (retval.isOK()) {
+
+
+
       // build final exe location
       IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
       CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
       CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
+
+      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+      boolean updateCabal = preferenceStore.getBoolean( IPreferenceConstants.RUN_CABAL_UPDATE );
+      if (updateCabal){
+        preferenceStore.setValue( IPreferenceConstants.RUN_CABAL_UPDATE, false );
+        monitor.subTask( UITexts.cabalUpdateProgress );
+        builder.update( cabalImpl, conout );
+        // we ignore the return so that failing update does not stop the compilation
+      }
 
       IPath exePath = ScionPlugin.serverExecutablePath( scionBuildDirPath );
       File  exeFile = exePath.toFile();
