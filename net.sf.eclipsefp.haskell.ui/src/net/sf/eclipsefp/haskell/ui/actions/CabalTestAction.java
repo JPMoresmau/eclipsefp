@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.actions;
 
+import java.util.Collection;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -34,18 +35,23 @@ public class CabalTestAction implements IObjectActionDelegate {
 
 
   public void run( final IAction arg0 ) {
-    Version v=CabalImplementationManager.getCabalLibraryVersion();
-    if (v!=null && new VersionRange(new Version(1,10,0),true,null,true).isIncluded( v )){
-      WizardDialog wd=new WizardDialog( currentShell, new CabalTestWizard( project ) );
-      wd.open();
-    } else {
-      final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),UITexts.test_version_fail);
-      ErrorDialog.openError( currentShell, UITexts.test_error, UITexts.test_version_fail, st);
+    if (project!=null){
+      Version v=CabalImplementationManager.getCabalLibraryVersion();
+      if (v!=null && new VersionRange(new Version(1,10,0),true,null,true).isIncluded( v )){
+        WizardDialog wd=new WizardDialog( currentShell, new CabalTestWizard( project ) );
+        wd.open();
+      } else {
+        final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),UITexts.test_version_fail);
+        ErrorDialog.openError( currentShell, UITexts.test_error, UITexts.test_version_fail, st);
+      }
     }
   }
 
   public void selectionChanged( final IAction arg0, final ISelection arg1 ) {
-    project=ResourceUtil.getProjects( arg1 ).iterator().next();
+    Collection<IProject> prjs=ResourceUtil.getProjects( arg1 );
+    if (prjs.size()>0){
+      project=prjs.iterator().next();
+    }
   }
 
 }
