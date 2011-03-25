@@ -1,3 +1,7 @@
+disallow new projects with spaces in names
+
+run cabal update before new scion install (when unzipping) but not on forcibly rebuilding
+
 why clicking on run arrow asks me between ghci and hugs? can't reproduce
 
 - several background-typecheck-arbitrary queued when we're building: only keep the last one for each file
@@ -32,7 +36,7 @@ why clicking on run arrow asks me between ghci and hugs? can't reproduce
 .ghci file parsing/editor?? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
 
 - integrate HUnit/Quickcheck?
-- integrate analysis tools like SourceGraph, hlint, hpc, HaskaBelle
+- integrate analysis tools like SourceGraph, HLINT, hpc, HaskaBelle
 - integrate doc tools hoogle,haddock
 - integrate runtime tools like criterion
 - integrate HaRe for refactoring?
