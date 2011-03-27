@@ -260,10 +260,11 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
           }
         } else {
           final Display display = Display.getDefault();
-          final Shell parentShell = display.getActiveShell();
 
           display.asyncExec( new Runnable() {
             public void run() {
+              // needs ui thread
+              Shell parentShell = display.getActiveShell();
               String errMsg = NLS.bind( UITexts.scionServerDoesntExist_message, serverExecutablePath.toOSString() );
               MessageDialog.openError( parentShell, UITexts.scionServerDoesntExist_title, errMsg );
             }
