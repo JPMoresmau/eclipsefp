@@ -75,7 +75,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="2.0.4"
+         version="2.0.5"
          unpack="false"/>
 
    <plugin
