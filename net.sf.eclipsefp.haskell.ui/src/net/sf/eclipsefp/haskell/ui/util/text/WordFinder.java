@@ -75,7 +75,7 @@ public class WordFinder {
     final IFile file = haskellEditor.findFile();
     final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
-    if( selection instanceof TextSelection ) {
+    if( selection instanceof TextSelection && file!=null) {
       final TextSelection textSel = ( TextSelection )selection;
 
           final String fName = textSel.getText().trim();

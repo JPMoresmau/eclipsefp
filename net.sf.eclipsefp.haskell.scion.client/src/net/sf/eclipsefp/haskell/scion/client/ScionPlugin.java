@@ -206,10 +206,12 @@ public class ScionPlugin extends AbstractUIPlugin {
    * @return The associated {@link ScionInstance ScionInstance} or null, if no association exists.
    */
   public static ScionInstance getScionInstance( final IResource resource ) {
-    IProject project = resource.getProject();
-    if (project != null) {
-      return getScionInstance(project);
-    }
+	  if (resource!=null){
+	    IProject project = resource.getProject();
+	    if (project != null) {
+	      return getScionInstance(project);
+	    }
+	  }
     return null;
   }
   /** Get the {@link ScionInstance ScionInstance} associated with a project from a static
