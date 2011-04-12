@@ -334,6 +334,7 @@ public final class UITexts extends NLS {
   public static String exportSource_options_snapshot;
   public static String exportSource_options_folder_choose;
   public static String exportSource_warning_markers;
+  public static String exportSource_overwrite_warning;
 
   public static String install_job;
   public static String install_options;

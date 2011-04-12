@@ -41,6 +41,9 @@ public class Location {
 			JSONArray region = json.getJSONArray("region");
 			startLine = region.getInt(0);
 			startColumn = region.getInt(1);
+			if (startColumn<0){
+				startColumn=0;
+			}
 			endLine = region.getInt(2);
 			endColumn = region.getInt(3);
 		}
@@ -50,8 +53,13 @@ public class Location {
 		this.fileName = fileName;
 		this.startLine = startLine;
 		this.startColumn = startColumn;
+		int mv=0;
+		if (startColumn<0){
+			mv=0-startColumn;
+			this.startColumn=0;
+		}
 		this.endLine = endLine;
-		this.endColumn = endColumn;
+		this.endColumn = endColumn+mv;
 	}
 	
 	public Location(String fileName, IDocument document, IRegion region) throws BadLocationException {

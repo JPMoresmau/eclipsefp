@@ -14,13 +14,6 @@ with it as an IDE that supports Haskell development.</p>
   </li><li>
   For more information about Haskell go to <a href="http://haskell.org">
   http://haskell.org</a>.
-  </li><li>
-  Note that you need an installation of the Glasgow Haskell Compiler (GHC)
-  on your system. (See 
-  <a href="http://haskell.org/ghc">http://haskell.org/ghc</a>.) If you don't,
-  you can still work with Haskell sources (and run them in HUGS), but you
-  won't see any syntax errors etc., and there will be no executable 
-  automatically built from the sources.
   </li></ul>
 </p>
 
@@ -69,25 +62,13 @@ described here may not yet be in place.</p>
   
     <ul><li><p>
       Create a new project by selecting <b>File &gt; New &gt; Project</b> from 
-      the menu, expanding the <b>Functional programming</b> icon, then choosing 
+      the menu, expanding the <b>Haskell</b> icon, then choosing 
       <b>Haskell Project</b>. Specify a project name and hit <b>OK</b>.
-    </p></li></ul>
-  
-    <p>
-      A Haskell project has some properties:
-      <ul>
-	    <li><b>source folder</b> (where the compiler expects the sources)</li>
-		<li><b>output folder</b> (used by the compiler for object files)</li>
-		<li><b>binaries folder</b> (where the target executable is put)</li>
-		<li><b>target binary name</b> (the name of the executable produced 
-		by the compiler and linker).</li>
-      </ul>
-    </p>
-    <p>
-      When the project has been created, you will see the respective folders, 
-      which are created by the <b>New Project</b> wizard. You can configure 
-      these settings on the <b>Preference Page</b> for that wizard.
-    </p>
+    </p></li>
+ 	<li><p>Specify a project name</p></li>
+ 	<li><p>Specify where you want the project to reside (default is inside your workspace</p></li>
+ 	<li><p>Specify some initial components to be created for you. The New Project wizard will auto generate a cabal file that will contain a reference to each component you select. You can choose to create an executable, a library, or both.</p></li>
+   	</ul>
   </li>
 </ul>
 
@@ -97,16 +78,11 @@ described here may not yet be in place.</p>
     Add source files to the project source folder.
   </p>
 
-  <ul><li><p>
-    Files can be created either from the menu (<b>File &gt; New</b>), or from 
-    the context menu you get when you right-click the project in the 
-    <i>Project Explorer</i> View).
-  </p></li>
-
-  <li><p>
-    For the 'Hello world' program, create a new file named 
-    <code>Main.hs</code>.
-  </p></li></ul>
+	<p>If you have selected "executable" in the new project wizard page, a 
+    <code>Main.hs</code> file should have been created for you. 
+    Otherwise you can create a new Haskell module from the menu (<b>File &gt; New &gt; Haskell &gt; Haskell Module</b>).
+    The second page of the wizard lets you choose in which component the module will be present. You can have a project with several components, and not all modules are present in all components.
+  </p>
 
   <p>
     If you give the files a Haskell-specific extension (like <code>.hs</code>
@@ -122,7 +98,7 @@ described here may not yet be in place.</p>
 
   <p>You can configure the editor in the main <i><b>Preferences Dialog</b></i>:
   Select <b>Window &gt; Preferences</b> from the menu and choose the 
-  <b>Functional Programming</b> section.</p>
+  <b>General &gt; Editors &gt; Text Editors</b> section.</p>
 
 <ul>  
   <li><p>
@@ -137,7 +113,7 @@ described here may not yet be in place.</p>
   <li><p>
     <b>Save</b>. This will trigger the auto building, and you will see compiler 
     errors (if there were errors in the build) in the <b><i>Problems 
-    View</i></b>. If no errors have occured, the compiled object files and 
+    View</i></b>. If no errors have occurred, the compiled object files and 
     the linked executable should be in their respective folders. Auto building
     works incrementally, that is, only changed resources are built when you 
     save again.
@@ -152,10 +128,8 @@ described here may not yet be in place.</p>
   </p>
 
   <ul><li>
-    Select <b>Run As &gt; Haskell Application</b> from the menu <b>Run</b> (or
-    from the lauching icon that looks like a white triangle in a green circle).
-    You can also right-click the executable in the Project Explorer view
-    and choose <b>Run &gt; Haskell Application</b> from the popup menu.
+    Select <b>Run As &gt; Haskell Application</b> from the contexual <b>Run</b> menu on the project. 
+    This is only available if your project contains executable modules and if it has been built by Scion.
   </li></ul>
   
   <p>
@@ -176,3 +150,13 @@ described here may not yet be in place.</p>
     appear there, and if your program takes console input, the Console View 
     is where you can type in while developing.
   </p>
+
+ <h3><a name="run">Run a module in the interpreter</a></h3>
+ 
+ <p>You can right click on any Haskell module and choose <b>Run GHCi session</b>. This will open GHCi, the GHC interpreter, in a Eclipse console, and load all the required modules.</p>
+ 
+ <p>You can type in that console and have a full interactive session, modifying your modules in the Eclipse editors and running code in the console</p>
+ 
+ <p>The launch configuration options for interpreter sessions let you configure some automation features, like automatically reloading modules that you've saved in the editor.</p>
+ 
+  

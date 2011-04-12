@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
@@ -56,7 +56,7 @@ public class CabalInstallWizard extends Wizard {
       commands.add( "--reinstall" );
       for (final IProject p:projects){
         try {
-          HaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ) );
+          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ),true );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);

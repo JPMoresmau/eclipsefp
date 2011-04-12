@@ -1,0 +1,26 @@
+Name:   TestSuite
+Version:  1.1.1
+Cabal-Version:  >= 1.2
+License:  BSD3
+License-File: LICENSE
+Author:   Author
+Category: Testing
+Synopsis: A well tested product
+
+executable testsuite
+  main-is: test.hs
+  Build-Depends:  multiset     >= 0.1 && < 0.3,
+    base
+  other-modules:
+    Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,
+    Test.HUnit.Text, Test.HUnit
+
+
+test-suite testsuite-suite
+  type:    exitcode-stdio-1.0
+  main-is: test.hs
+  Build-Depends:  multiset     >= 0.1 && < 0.3,
+    base
+  other-modules:
+    Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,
+    Test.HUnit.Text, Test.HUnit

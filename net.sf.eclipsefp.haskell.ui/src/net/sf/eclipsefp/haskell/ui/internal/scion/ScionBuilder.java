@@ -25,6 +25,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.NetworkUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
@@ -119,8 +120,8 @@ public class ScionBuilder {
     String cabalLibVer = cabalImpl.getLibraryVersion();
     if( cabalLibVer.startsWith( "1.8." ) ) {
       commands.add( "-fcabal_1_8" );
-    } else if( cabalLibVer.startsWith( "1.7." ) ) {
-      commands.add( "-fcabal_1_7" );
+    } else if( cabalLibVer.startsWith( "1.10." ) ) {
+      commands.add( "-fcabal_1_10" );
     }
 
     commands.add( "install" );
@@ -129,7 +130,7 @@ public class ScionBuilder {
     ProcessBuilder pb = new ProcessBuilder( commands );
     pb.directory( destDir );
     pb.redirectErrorStream( true );
-
+    NetworkUtil.addHTTP_PROXY_env( pb, NetworkUtil.HACKAGE_URL );
     String jobPrefix = getClass().getSimpleName();
 
     try {

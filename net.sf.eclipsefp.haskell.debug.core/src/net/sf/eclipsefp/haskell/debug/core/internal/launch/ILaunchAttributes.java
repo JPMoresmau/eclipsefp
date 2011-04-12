@@ -26,4 +26,6 @@ public interface ILaunchAttributes {
   String RELOAD            = "RELOAD";//$NON-NLS-1$
   String COMMAND           = "COMMAND";//$NON-NLS-1$
   String COMMAND_ON_RELOAD = "COMMAND_ON_RELOAD";//$NON-NLS-1$
+
+  String NEEDS_HTTP_PROXY  = "NEEDS_HTTP_PROXY";//$NON-NLS-1$
 }

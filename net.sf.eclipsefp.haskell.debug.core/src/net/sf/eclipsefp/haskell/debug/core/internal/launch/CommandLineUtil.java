@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -20,7 +21,7 @@ public class CommandLineUtil {
   /** <p>renders the passed array into one command line string.</p> */
   public static String renderCommandLine( final String[] commandLine ) {
     StringBuffer buf = new StringBuffer();
-    if( commandLine.length > 0 ) {
+    if(commandLine!=null && commandLine.length > 0 ) {
       buf.append( commandLine[ 0 ] );
       for( int i = 1; i < commandLine.length; i++ ) {
         buf.append( ' ' );
@@ -29,6 +30,21 @@ public class CommandLineUtil {
     }
     return buf.toString();
   }
+
+  /** <p>renders the passed list into one command line string.</p> */
+  public static String renderCommandLine( final List<String> commandLine ) {
+    StringBuffer buf = new StringBuffer();
+    if(commandLine!=null &&  commandLine.size() > 0 ) {
+      Iterator<String> it=commandLine.iterator();
+      buf.append( it.next());
+      while (it.hasNext()){
+        buf.append( ' ' );
+        buf.append( it.next() );
+      }
+    }
+    return buf.toString();
+  }
+
 
 
   /** <p>parses the argument text into an array of individual arguments using

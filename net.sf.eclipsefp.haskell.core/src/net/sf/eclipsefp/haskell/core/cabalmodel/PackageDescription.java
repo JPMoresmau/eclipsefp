@@ -93,6 +93,9 @@ public class PackageDescription {
       if (CabalSyntax.SECTION_EXECUTABLE.equals(pds.getType()) && c.getType().equals( ComponentType.EXECUTABLE ) && pds.getName().equals(c.getName())){
         return pds;
       }
+      if (CabalSyntax.SECTION_TESTSUITE.equals(pds.getType()) && c.getType().equals( ComponentType.TESTSUITE ) && pds.getName().equals(c.getName())){
+        return pds;
+      }
     }
     return null;
   }
@@ -106,6 +109,9 @@ public class PackageDescription {
         return pds;
       }
       if (CabalSyntax.SECTION_EXECUTABLE.equals(pds.getType()) && CabalSyntax.SECTION_EXECUTABLE.equals(p.getType() ) && pds.getName().equals(p.getName())){
+        return pds;
+      }
+      if (CabalSyntax.SECTION_TESTSUITE.equals(pds.getType()) && CabalSyntax.SECTION_TESTSUITE.equals(p.getType() ) && pds.getName().equals(p.getName())){
         return pds;
       }
     }
