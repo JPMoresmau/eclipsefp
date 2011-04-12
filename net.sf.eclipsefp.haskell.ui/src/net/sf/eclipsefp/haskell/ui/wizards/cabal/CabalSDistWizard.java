@@ -32,7 +32,6 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
 
   public CabalSDistWizard() {
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
-    //setWindowTitle( HaskellUIPlugin.getDefault().getDescriptor().getResourceBundle().getString( "cabalSDistWizard.name" ));
     setWindowTitle( Platform.getResourceBundle( Platform.getBundle( HaskellUIPlugin.getPluginId() )).getString( "cabalSDistWizard.name" ));
   }
 

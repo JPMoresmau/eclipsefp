@@ -61,7 +61,7 @@ public enum CabalSyntax {
   FIELD_TYPE("type"),//$NON-NLS-1$
   FIELD_LOCATION("location"),//$NON-NLS-1$
   FIELD_TAG("tag"),//$NON-NLS-1$
-  FIELD_BUG_REPORTS("bug_reports"),//$NON-NLS-1$
+  FIELD_BUG_REPORTS("bug-reports"),//$NON-NLS-1$
   FIELD_DATA_DIR("data-dir"),//$NON-NLS-1$
   FIELD_BUILD_TOOLS("build-tools"),//$NON-NLS-1$
   FIELD_NHC98_OPTIONS("nhc98-options"),//$NON-NLS-1$

@@ -93,6 +93,49 @@ public class ScionBuilder {
     return retval;
   }
 
+  public ScionBuildStatus update( final CabalImplementation cabalImpl, final IOConsoleOutputStream conout ) {
+    final String cabalExecutable = cabalImpl.getCabalExecutableName().toOSString();
+    ScionBuildStatus retval = new ScionBuildStatus();
+    if( cabalExecutable.length() <= 0 ) {
+      retval.buildFailed( UITexts.cabalUpdateJob_title, UITexts.zerolenCabalExecutable_message );
+      return retval;
+    }
+    ArrayList<String> commands = new ArrayList<String>();
+    commands.add( cabalExecutable );
+    commands.add( "update" );
+    commands.add( "-v" );
+    ProcessBuilder pb = new ProcessBuilder( commands );
+    pb.redirectErrorStream( true );
+    NetworkUtil.addHTTP_PROXY_env( pb, NetworkUtil.HACKAGE_URL );
+    String jobPrefix = getClass().getSimpleName();
+
+    try {
+      Process p = pb.start();
+      BufferedReader is = new BufferedReader( new InputStreamReader( p.getInputStream(), "UTF8" ) );
+      OutputWriter pbWriter = new OutputWriter( jobPrefix + "-OutputWriter", conout );
+      InputReceiver  pbReader = new InputReceiver( jobPrefix + "-InputReader", is, pbWriter);
+
+      pbReader.start();
+      pbWriter.start();
+
+      int code = p.waitFor();
+      if( code != 0 ) {
+        retval.buildFailed( UITexts.cabalUpdateJob_title, UITexts.cabalUpdateFailed );
+      }
+
+      pbWriter.setTerminate();
+      pbWriter.interrupt();
+      pbWriter.join();
+      pbReader.setTerminate();
+      pbReader.interrupt();
+      pbReader.join();
+    } catch( Exception e ) {
+      retval.buildFailed( UITexts.cabalUpdateJob_title, UITexts.cabalUpdateError.concat( PlatformUtil.NL + e.toString() ) );
+    }
+
+    return retval;
+  }
+
   /** Build the built-in Scion server using the Cabal.
    *
    * @param cabalImpl The Cabal implementation, which specifies the executable to run
@@ -126,7 +169,6 @@ public class ScionBuilder {
 
     commands.add( "install" );
     commands.add( "-v" );
-
     ProcessBuilder pb = new ProcessBuilder( commands );
     pb.directory( destDir );
     pb.redirectErrorStream( true );

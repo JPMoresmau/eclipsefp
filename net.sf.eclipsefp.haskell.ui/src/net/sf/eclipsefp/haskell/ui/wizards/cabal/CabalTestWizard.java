@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.ui.wizards.cabal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -16,25 +15,21 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
 
-/**
- * <p>Wizard to run cabal install on a project</p>
-  *
-  * @author JP Moresmau
- */
-public class CabalInstallWizard extends Wizard {
-  private final Set<IProject> projects;
-  private CabalInstallOptionsPage optionsPage;
 
-  public CabalInstallWizard(final Set<IProject> projects) {
+public class CabalTestWizard extends Wizard {
+  private final IProject project;
+  private CabalTestOptionsPage optionsPage;
+
+  public CabalTestWizard(final IProject project) {
     super();
-    this.projects=projects;
-    setWindowTitle( Platform.getResourceBundle( Platform.getBundle( HaskellUIPlugin.getPluginId() )).getString( "cabalInstallWizard.name" ));
+    this.project=project;
+    setWindowTitle( Platform.getResourceBundle( Platform.getBundle( HaskellUIPlugin.getPluginId() )).getString( "cabalTestWizard.name" ));
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
   }
 
   @Override
   public void addPages() {
-    optionsPage=new CabalInstallOptionsPage(projects) ;
+    optionsPage=new CabalTestOptionsPage(project) ;
     addPage(optionsPage );
   }
 
@@ -44,29 +39,24 @@ public class CabalInstallWizard extends Wizard {
     if (cabalExecutable!=null){
       final List<String> commands = new ArrayList<String>();
       commands.add( cabalExecutable );
-      commands.add("install");
+      commands.add("test");
    // options
       commands.add("--builddir="+optionsPage.getFolder());
-      if (optionsPage.isGlobal()){
-        commands.add( "--global" );
-      } else {
-        commands.add( "--user" );
-      }
-      // force reinstall since we're probably reinstalling our development version
-      commands.add( "--reinstall" );
-      for (final IProject p:projects){
+
+      // test suites as extra arguments
+
         try {
-          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ),true );
+          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(project.getLocation().toOSString()), NLS.bind( UITexts.test_job, project.getName() ),true );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
-          ErrorDialog.openError( getShell(), UITexts.install_error, UITexts.install_error_text, st);
+          ErrorDialog.openError( getShell(), UITexts.test_error, UITexts.test_error_text, st);
         }
 
 
-      }
+
     }
      return true;
-
   }
+
 }

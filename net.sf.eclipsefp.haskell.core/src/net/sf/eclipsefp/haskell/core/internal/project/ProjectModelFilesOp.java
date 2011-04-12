@@ -96,12 +96,14 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     if (isLibrary()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
       pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
+      pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base" ); //$NON-NLS-1$
     }
 
     if (isExecutable()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_EXECUTABLE, name );
       pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
       pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" ); //$NON-NLS-1$
+      pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base" ); //$NON-NLS-1$
     }
 
     for (ICabalContributor c:CabalContributorManager.getContributors()){

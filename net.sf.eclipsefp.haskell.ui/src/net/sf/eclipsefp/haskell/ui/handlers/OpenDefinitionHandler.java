@@ -342,6 +342,9 @@ public class OpenDefinitionHandler extends AbstractHandler {
 	}
 
 	protected static void selectAndReveal(final ITextEditor textEditor,final IDocument document,final Location location){
+	  if (document==null){
+	    return;
+	  }
 	  try {
       int startOffset = location.getStartOffset(document);
       int length = location.getLength(document);

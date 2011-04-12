@@ -26,8 +26,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -49,8 +51,9 @@ public class ScionPP
 	private Composite serverBuiltInFieldC;
 	private ButtonFieldEditor autodetect;
 	private Composite autodetectC;
-	private ButtonFieldEditor forceRebuild;
-	private Composite forceRebuildC;
+	private Button forceRebuild;
+	private BooleanFieldEditor cabalUpdateField;
+	//private Composite forceRebuildC;
 	private RadioGroupFieldEditor serverFlavorField;
 	private Composite serverFlavorFieldC;
 	private BooleanFieldEditor verboseInteractionField;
@@ -119,6 +122,7 @@ public class ScionPP
 
     serverBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
     gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
+    gdata.horizontalSpan=2;
     serverBuiltInFieldC.setLayoutData( gdata );
 		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
 		                                             UITexts.scionServerBuiltIn_label,
@@ -133,22 +137,51 @@ public class ScionPP
 		serverBuiltInField.setPreferenceStore( prefStore );
 		serverBuiltInField.load();
 
-		forceRebuildC=new Composite(fieldComposite,SWT.NONE);
-    gdata = new GridData( SWT.RIGHT, SWT.CENTER, true, false );
-    forceRebuildC.setLayoutData( gdata );
-    forceRebuild = new ButtonFieldEditor(
+		//forceRebuildC=new Composite(fieldComposite,SWT.NONE);
+    gdata = new GridData( SWT.LEFT, SWT.CENTER, true, false );
+    gdata.horizontalIndent=30;
+    gdata.horizontalSpan=1;
+    //forceRebuildC.setLayoutData( gdata );
+    forceRebuild=new Button(fieldComposite,SWT.CHECK);
+    forceRebuild.setText( UITexts.forceRebuildButton_text );
+    forceRebuild.setLayoutData( gdata );
+
+
+    /*forceRebuild = new ButtonFieldEditor(
         UITexts.forceRebuildButton_text,
         UITexts.forceRebuildButton_label,
         new SelectionAdapter() {
           @Override
           public void widgetSelected(final SelectionEvent e) {
-            rebuildBuiltin = true;
+            rebuildBuiltin = !rebuildBuiltin;
           }
         },
-        forceRebuildC );
+        forceRebuildC ){
+      @Override
+      protected int getButtonStyle() {
+       return SWT.CHECK;
+      }
+    };
     forceRebuild.setPage( this );
     forceRebuild.setPreferenceStore( prefStore );
-    forceRebuild.load();
+    forceRebuild.load();*/
+
+    final Composite cabalUpdateFieldC=new Composite(fieldComposite,SWT.NONE);
+    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
+    cabalUpdateFieldC.setLayoutData( gdata );
+    cabalUpdateField=new BooleanFieldEditor( IPreferenceConstants.RUN_CABAL_UPDATE, UITexts.cabalUpdateButton_text, cabalUpdateFieldC );
+    cabalUpdateField.setPage( this );
+    cabalUpdateField.setPreferenceStore( getPreferenceStore() );
+    cabalUpdateField.load();
+    cabalUpdateField.setEnabled( false, cabalUpdateFieldC );
+
+    forceRebuild.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected( final SelectionEvent e ) {
+        rebuildBuiltin=forceRebuild.getSelection();
+        cabalUpdateField.setEnabled( rebuildBuiltin, cabalUpdateFieldC );
+      }
+    });
 
     serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
     GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
@@ -233,7 +266,12 @@ public class ScionPP
 
 	private void updateButtonState() {
     boolean b = serverBuiltInField.getBooleanValue();
-    forceRebuild.setEnabled( b, forceRebuildC );
+    //forceRebuild.setEnabled( b, forceRebuildC );
+    forceRebuild.setEnabled( b);
+    if (!b){
+      forceRebuild.setSelection( false );
+      forceRebuild.notifyListeners( SWT.Selection, new Event() );
+    }
     autodetect.setEnabled( !b, autodetectC );
     serverExecutableField.setEnabled( !b, serverExecutableFieldC );
 	}
@@ -255,6 +293,7 @@ public class ScionPP
 	public static void initializeDefaults(final IPreferenceStore store) {
 	  // Set reasonable defaults.
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
+    store.setDefault( RUN_CABAL_UPDATE, true );
 	  store.setDefault( SCION_SERVER_EXECUTABLE, new String() );
 	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
@@ -267,6 +306,7 @@ public class ScionPP
     autodetect.store();
     serverFlavorField.store();
     verboseInteractionField.store();
+    cabalUpdateField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
