@@ -76,45 +76,44 @@ public class WordFinder {
     final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
     if( selection instanceof TextSelection && file!=null) {
-      final TextSelection textSel = ( TextSelection )selection;
-
-          final String fName = textSel.getText().trim();
           final ScionInstance instance = ScionPlugin.getScionInstance( file );
+          if (instance!=null){
+            final TextSelection textSel = ( TextSelection )selection;
+            final String fName = textSel.getText().trim();
+            try {
+              Location l = new Location( file.getLocation().toOSString(),
+                  haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
+              instance.thingAtPoint(haskellEditor.getDocument(), l, qualify, typed,new ThingAtPointHandler() {
 
-
-          try {
-            Location l = new Location( file.getLocation().toOSString(),
-                haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-            instance.thingAtPoint(haskellEditor.getDocument(), l, qualify, typed,new ThingAtPointHandler() {
-
-              @Override
-              public void handleThing( final String thing ) {
-                char haddockType = ' ';
-                String name=fName;
-                if( thing != null && thing.length() > 0 ) {
-                  name = thing;
-                  if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
-                    name="";
+                @Override
+                public void handleThing( final String thing ) {
+                  char haddockType = ' ';
+                  String name=fName;
+                  if( thing != null && thing.length() > 0 ) {
+                    name = thing;
+                    if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
+                      name="";
+                    }
+                    if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
+                      haddockType = name.charAt( name.length() - 1 );
+                      name = name.substring( 0, name.length() - 2 );
+                    }
                   }
-                  if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
-                    haddockType = name.charAt( name.length() - 1 );
-                    name = name.substring( 0, name.length() - 2 );
+
+
+                  if( name.length() == 0 ) {
+                    name = WordFinder.findWord( haskellEditor.getDocument(),
+                        textSel.getOffset() );
+                  }
+                  if (name!=null && name.length()>0){
+                    handler.handle( new EditorThing(instance, file, name, haddockType ));
                   }
                 }
+              });
 
-
-                if( name.length() == 0 ) {
-                  name = WordFinder.findWord( haskellEditor.getDocument(),
-                      textSel.getOffset() );
-                }
-                if (name!=null && name.length()>0){
-                  handler.handle( new EditorThing(instance, file, name, haddockType ));
-                }
-              }
-            });
-
-          } catch( BadLocationException ble ) {
-            ble.printStackTrace();
+            } catch( BadLocationException ble ) {
+              ble.printStackTrace();
+            }
           }
     }
     return null;
