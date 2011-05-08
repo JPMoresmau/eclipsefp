@@ -10,7 +10,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -146,8 +145,9 @@ public class ImportLibrariesPP extends PropertyPage
         prov.saveDocument( new NullProgressMonitor(), f, doc, true );
 
         // Perform the ScionInstance.buildProject() in a Job to maintain UI responsiveness.
-        BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
-        si.buildProject( buildOptions );
+        // let the listener do its work
+        //BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
+        //si.buildProject( buildOptions );
       } catch (CoreException ce){
         HaskellUIPlugin.log( ce );
 
