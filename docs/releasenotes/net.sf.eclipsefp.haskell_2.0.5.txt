@@ -17,12 +17,14 @@ Scion from source (git clone git://github.com/JPMoresmau/scion.git, runhaskell
 Setup.hs configure/build/install)
 
 Fixes:
-  - do not auto detect files starting with cabal that do not report a version number
+- Cabal preferences mismatch error is now a warning, and preferences synchronize automatically with current versions
+- bug-reports cabal field now properly highlighted
+- only accept valid project names in project creation wizard
+- clean cabal automatically when GHC complains of a missing -package-id
 
 Features:
-  - GHC 7.0 support: scion now builds with GHC 7
-  - Cabal test-suite syntax supported in syntax editor: http://www.haskell.org/cabal/release/cabal-1.10.1.0/doc/users-guide/#test-suites
-     - Cabal test option on contextual project menu. This is only a short term solution, expect a new version of EclipseFP with full launch configuration support for cabal test.
+- Quick Fix: add missing dependency on hidden package
+- run cabal update before building scion
 
 Internal:
 
