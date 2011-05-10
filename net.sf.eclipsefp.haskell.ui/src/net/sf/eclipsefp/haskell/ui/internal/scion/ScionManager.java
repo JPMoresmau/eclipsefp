@@ -162,6 +162,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
     workSpace.addResourceChangeListener( this, IResourceChangeEvent.POST_CHANGE );
     workSpace.addResourceChangeListener( new FileDeletionListener(), IResourceChangeEvent.PRE_BUILD );
+    // POST_BUILD is similar to POST_CHANGE but the workspace tree is not locked, which is useful for some listeners
     workSpace.addResourceChangeListener( new CabalFileResourceChangeListener(), IResourceChangeEvent.POST_BUILD );
     workSpace.addResourceChangeListener( new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
   }
