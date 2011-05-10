@@ -1,4 +1,4 @@
-EclipseFP Haskell 2.0.4
+EclipseFP Haskell 2.0.5
 
 Release Notes
 
@@ -21,6 +21,10 @@ Fixes:
 - bug-reports cabal field now properly highlighted
 - only accept valid project names in project creation wizard
 - clean cabal automatically when GHC complains of a missing -package-id
+- Latex literate style supported by syntax highlighter
+- {-# #-} pragmas now marked properly as comments in syntax highlighter
+- files containing tabs instead of space: a warning is raised when opening to give the option of converting tabs to space, 
+  since in most cases with GHC7 the editor will crash on opening. Option to disable "spaces for tabs" in preferences removed. You can't have tabs, full stop.
 
 Features:
 - Quick Fix: add missing dependency on hidden package
