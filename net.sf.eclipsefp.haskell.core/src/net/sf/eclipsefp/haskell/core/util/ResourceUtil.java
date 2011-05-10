@@ -331,10 +331,12 @@ public class ResourceUtil {
     Collection<String> hidden=new HashSet<String>();
     if (ips.size()>0){
       Map<String,CabalPackage[]> pkgs=ScionPlugin.getScionInstance( files[0] ).getPackagesByDB();
-      for (CabalPackage[] cps:pkgs.values()){
-        for (CabalPackage cp:cps){
-          if (cp.getComponents().length>0 && ips.contains(cp.getName()) && !cp.isExposed()){
-            hidden.add(cp.getName());
+      if (pkgs!=null){
+        for (CabalPackage[] cps:pkgs.values()){
+          for (CabalPackage cp:cps){
+            if (cp.getComponents().length>0 && ips.contains(cp.getName()) && !cp.isExposed()){
+              hidden.add(cp.getName());
+            }
           }
         }
       }
