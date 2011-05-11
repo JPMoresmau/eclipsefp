@@ -1,4 +1,4 @@
-EclipseFP Haskell 2.0.4
+EclipseFP Haskell 2.0.5
 
 Release Notes
 
@@ -17,12 +17,20 @@ Scion from source (git clone git://github.com/JPMoresmau/scion.git, runhaskell
 Setup.hs configure/build/install)
 
 Fixes:
-  - do not auto detect files starting with cabal that do not report a version number
+- Cabal preferences mismatch error is now a warning, and preferences synchronize automatically with current versions
+- bug-reports cabal field now properly highlighted
+- only accept valid project names in project creation wizard
+- clean cabal automatically when GHC complains of a missing -package-id
+- Latex literate style supported by syntax highlighter
+- {-# #-} pragmas now marked properly as comments in syntax highlighter
+- files containing tabs instead of space: a warning is raised when opening to give the option of converting tabs to space, 
+  since in most cases with GHC7 the editor will crash on opening. Option to disable "spaces for tabs" in preferences removed. You can't have tabs, full stop.
+- on unix, an error "getFileStatus: does not exist" could happen
 
 Features:
-  - GHC 7.0 support: scion now builds with GHC 7
-  - Cabal test-suite syntax supported in syntax editor: http://www.haskell.org/cabal/release/cabal-1.10.1.0/doc/users-guide/#test-suites
-     - Cabal test option on contextual project menu. This is only a short term solution, expect a new version of EclipseFP with full launch configuration support for cabal test.
+- Quick Fix: add missing dependency on hidden package
+- run cabal update before building scion
+- Wizard on projects (cabal source export, install, test, haddock export) will ask the user to save files if there are unsaved files in the project
 
 Internal:
 

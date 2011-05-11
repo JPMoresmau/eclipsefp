@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
-import net.sf.eclipsefp.common.ui.dialog.DialogField;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -38,7 +37,7 @@ public class AppearancePP extends AbstractEditorPP {
 
     private List colorList;
     private ColorSelector colorSelector;
-    private DialogField spaceForTabs;
+ //   private DialogField spaceForTabs;
 
   @Override
   public void init( final IWorkbench workbench ) {
@@ -59,7 +58,7 @@ public class AppearancePP extends AbstractEditorPP {
 //    store.addBooleanKey( EDITOR_OVERVIEW_RULER );
 //    store.addStringKey( EDITOR_LINE_NUMBER_RULER_COLOR );
 //    store.addBooleanKey( EDITOR_LINE_NUMBER_RULER );
-    store.addBooleanKey( EDITOR_SPACES_FOR_TABS );
+//    store.addBooleanKey( EDITOR_SPACES_FOR_TABS );
     store.addIntKey( EDITOR_TAB_WIDTH );
     store.addIntKey( EDITOR_CABAL_TAB_WIDTH );
   }
@@ -89,9 +88,9 @@ public class AppearancePP extends AbstractEditorPP {
     gd.horizontalSpan=2;
     link.setLayoutData( gd );
 
-    String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-    spaceForTabs=createBooleanField( control, UITexts.preferences_editor_typing_spaces_tabs, prefName );
-    new Label(control,SWT.NONE);
+//    String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
+//    spaceForTabs=createBooleanField( control, UITexts.preferences_editor_typing_spaces_tabs, prefName );
+ //   new Label(control,SWT.NONE);
 
     tab.addIntegerField( control, UITexts.preferences_editor_typing_tab_width, IEditorPreferenceNames.EDITOR_TAB_WIDTH, 3, 0 );
     tab.addIntegerField( control, UITexts.preferences_editor_typing_cabal_tab_width, IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH, 3, 0 );
@@ -214,9 +213,9 @@ public class AppearancePP extends AbstractEditorPP {
         }
       }
     } );
-    if (spaceForTabs!=null){
+    /*if (spaceForTabs!=null){
       spaceForTabs.setInfo( getFromStore( IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS ) );
-    }
+    }*/
   }
 
   // helping methods

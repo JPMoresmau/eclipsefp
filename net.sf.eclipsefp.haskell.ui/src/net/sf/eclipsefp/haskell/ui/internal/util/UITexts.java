@@ -217,6 +217,7 @@ public final class UITexts extends NLS {
   public static String resolve_addpragma;
   public static String resolve_import_remove;
   public static String resolve_import_replace;
+  public static String resolve_addpackage;
 
   public static String preferences_title;
 
@@ -375,6 +376,9 @@ public final class UITexts extends NLS {
 
   public static String properties_userflags_description;
   public static String properties_userflags_none;
+
+  public static String error_tabs;
+  public static String error_tabs_message;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

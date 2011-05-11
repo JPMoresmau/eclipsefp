@@ -60,7 +60,7 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
       for (final IProject p:projects){
 
         try {
-          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.exportSource_job, p.getName() ),false );
+          AbstractHaskellLaunchDelegate.runInConsole(p, commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.exportSource_job, p.getName() ),false );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);

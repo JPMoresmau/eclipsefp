@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunch
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.haddock.HaddockPlugin;
 import net.sf.eclipsefp.haskell.haddock.core.HaddockInfo;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /** <p>the operation that performs the actual Haddock run.</p>
@@ -45,7 +46,11 @@ public class GenerateDocs {
           proc.setAttribute( IProcess.ATTR_PROCESS_TYPE, PROCESS_TYPE_ID );
           getLauchManager().addLaunch( newLaunch );*/
           String label = "Generating Haddock docs";
-          AbstractHaskellLaunchDelegate.runInConsole( Arrays.asList(cmdLine), null, label,false );
+          IProject prj=null;
+          if (info.getProjects().length==1){
+            prj=info.getProjects()[0];
+          }
+          AbstractHaskellLaunchDelegate.runInConsole(prj, Arrays.asList(cmdLine), null, label,false );
 
         } catch( CoreException cex ) {
           HaddockPlugin.log( "Problem during docs generation", cex );

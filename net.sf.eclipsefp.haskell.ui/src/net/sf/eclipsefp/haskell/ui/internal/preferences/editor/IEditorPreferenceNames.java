@@ -68,7 +68,7 @@ public interface IEditorPreferenceNames {
 
   String EDITOR_DEFAULT_COLOR              = "defaultColor";  //$NON-NLS-1$
   String EDITOR_DEFAULT_BOLD               = "defaultBold";  //$NON-NLS-1$
-  String EDITOR_SPACES_FOR_TABS            = "spacesForTabs";  //$NON-NLS-1$
+//  String EDITOR_SPACES_FOR_TABS            = "spacesForTabs";  //$NON-NLS-1$
   String EDITOR_CLOSE_STRINGS              = "closeStrings";  //$NON-NLS-1$
   String EDITOR_CLOSE_BRACKETS_AND_PARENS  = "closeBracketsAndParens";  //$NON-NLS-1$
   String EDITOR_CLOSE_BRACES               = "closeBraces";  //$NON-NLS-1$

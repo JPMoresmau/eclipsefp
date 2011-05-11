@@ -519,7 +519,7 @@ public abstract class ScionServer {
 
             if ( lastQueue != null && commands.equals(lastQueue) ) {
               if (stallCount > MAXSTALLS) {
-                StringBuffer diagMsg = new StringBuffer();
+                StringBuilder diagMsg = new StringBuilder();
               
                 diagMsg.append("Possibly stalled queue [").append(serverName).append("], depth = ");
                 diagMsg.append(lastDepth).append(PlatformUtil.NL);
@@ -531,6 +531,7 @@ public abstract class ScionServer {
                 }
               
                 ScionPlugin.logInfo(diagMsg.toString());
+                stallCount=0;
               }
             } else {
               // Only re-assign as needed
