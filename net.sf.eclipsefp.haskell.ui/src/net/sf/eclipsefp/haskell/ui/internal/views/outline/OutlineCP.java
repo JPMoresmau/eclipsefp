@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
+import net.sf.eclipsefp.haskell.scion.types.OutlineDef.OutlineDefType;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -17,8 +18,35 @@ import org.eclipse.jface.viewers.Viewer;
 public class OutlineCP implements ITreeContentProvider{
   private Map<String,List<OutlineDef>> input;
 
+  /**
+   * For elements that expand into an identically-named single element with an obvious
+   * type, we could just expand directly into that child element's children.
+   */
+  public boolean hasSingularChild( final Object o ){
+    if( ((OutlineDef)o).getType() != OutlineDefType.DATA ) {
+      return false;
+    }
+
+    Object[] children = getRawChildren( o );
+
+    if( children.length != 1 ) {
+      return false;
+    }
+
+    return ((OutlineDef)children[0]).getType() == OutlineDefType.CONSTRUCTOR &&
+           ((OutlineDef)children[0]).getName().equals( ((OutlineDef)o).getName() );
+    }
+
   public Object[] getChildren( final Object parentElement ) {
-    //return input.toArray();
+    Object[] result = getRawChildren( parentElement );
+    if( hasSingularChild( parentElement ) ) {
+      return getChildren( result[0] );
+    } else {
+      return result;
+    }
+  }
+
+  public Object[] getRawChildren( final Object parentElement ) {
     List<OutlineDef> l=input.get(((OutlineDef )parentElement).getID());
     if (l!=null){
       return l.toArray();
