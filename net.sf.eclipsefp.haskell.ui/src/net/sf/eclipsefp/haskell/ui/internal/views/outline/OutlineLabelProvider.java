@@ -25,7 +25,7 @@ public class OutlineLabelProvider extends LabelProvider {
     imageKeysByType.put(OutlineDef.OutlineDefType.SYN,IImageNames.TYPE_DECL);
     imageKeysByType.put(OutlineDef.OutlineDefType.INSTANCE,IImageNames.INSTANCE_DECL);
     imageKeysByType.put(OutlineDef.OutlineDefType.FIELD,IImageNames.FIELD_DECL);
-    imageKeysByType.put(OutlineDef.OutlineDefType.CONSTRUCTOR,IImageNames.DATA_DECL);
+    imageKeysByType.put(OutlineDef.OutlineDefType.CONSTRUCTOR,IImageNames.CONSTRUCTOR_DECL);
   }
 
 
