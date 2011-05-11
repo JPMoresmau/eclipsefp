@@ -56,7 +56,7 @@ public class CabalInstallWizard extends Wizard {
       commands.add( "--reinstall" );
       for (final IProject p:projects){
         try {
-          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ),true );
+          AbstractHaskellLaunchDelegate.runInConsole(p, commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ),true );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);

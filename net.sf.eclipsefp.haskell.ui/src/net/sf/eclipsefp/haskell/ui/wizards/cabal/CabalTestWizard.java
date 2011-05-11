@@ -46,7 +46,7 @@ public class CabalTestWizard extends Wizard {
       // test suites as extra arguments
 
         try {
-          AbstractHaskellLaunchDelegate.runInConsole( commands, new File(project.getLocation().toOSString()), NLS.bind( UITexts.test_job, project.getName() ),true );
+          AbstractHaskellLaunchDelegate.runInConsole(project, commands, new File(project.getLocation().toOSString()), NLS.bind( UITexts.test_job, project.getName() ),true );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
