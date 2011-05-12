@@ -8,6 +8,7 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.util.NetworkUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,13 +21,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 
-public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurationDelegate{
+public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationDelegate{
 
   public void launch( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProgressMonitor monitor )
@@ -207,16 +208,21 @@ public abstract class AbstractHaskellLaunchDelegate implements ILaunchConfigurat
     }
   }
 
-  public static void runInConsole(final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY) throws CoreException{
+  public static void runInConsole(final IProject prj,final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY) throws CoreException{
 
     final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     String configTypeId = ExecutableHaskellLaunchDelegate.class.getName();
     ILaunchConfigurationType configType  = launchManager.getLaunchConfigurationType( configTypeId );
     final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null, title );//launchManager.generateUniqueLaunchConfigurationNameFrom( title));
 
-    wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, true );
+    // if private, we don't get the save dialog for unsave files in project
+    wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, prj==null );
     wc.setAttribute( IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false );
     wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
+
+    if (prj!=null){
+      wc.setAttribute(ILaunchAttributes.PROJECT_NAME,prj.getName());
+    }
 
     wc.setAttribute(ILaunchAttributes.EXECUTABLE,commands.get( 0 ));
     if (directory!=null){

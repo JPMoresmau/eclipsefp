@@ -11,6 +11,8 @@ public interface GhcMessages {
 
   public static String WARNING_NOTYPE_CONTAINS="definition but no type signature"; //$NON-NLS-1$
 
+  public static String WARNING_NOTYPE_TOPLEVEL_CONTAINS="top-level binding with no type signature"; //$NON-NLS-1$
+	
   public static String WARNING_USEFLAG_CONTAINS="you intended to use"; //$NON-NLS-1$
   public static String WARNING_USEFLAG_CONTAINS2="perhaps you intended"; //$NON-NLS-1$
   public static String WARNING_USEFLAG_CONTAINS3="use -x"; //$NON-NLS-1$
@@ -24,5 +26,9 @@ public interface GhcMessages {
   
   public static String ERROR_INTERACTIVE_DISABLED="interactive check disabled"; //$NON-NLS-1$
 
+  public static String MISSING_MODULE="could not find module";//$NON-NLS-1$
+  public static String MISSING_MODULE_ADD_START="perhaps you need to add `";//$NON-NLS-1$	  
+  public static String MISSING_MODULE_ADD_END="' to the build-depends"; //$NON-NLS-1$	
+  
 
 }

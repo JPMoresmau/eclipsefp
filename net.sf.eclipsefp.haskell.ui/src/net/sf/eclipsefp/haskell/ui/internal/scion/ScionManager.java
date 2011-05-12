@@ -162,7 +162,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
     workSpace.addResourceChangeListener( this, IResourceChangeEvent.POST_CHANGE );
     workSpace.addResourceChangeListener( new FileDeletionListener(), IResourceChangeEvent.PRE_BUILD );
-    workSpace.addResourceChangeListener( new CabalFileResourceChangeListener(), IResourceChangeEvent.POST_CHANGE );
+    // POST_BUILD is similar to POST_CHANGE but the workspace tree is not locked, which is useful for some listeners
+    workSpace.addResourceChangeListener( new CabalFileResourceChangeListener(), IResourceChangeEvent.POST_BUILD );
     workSpace.addResourceChangeListener( new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
   }
 
@@ -260,10 +261,11 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
           }
         } else {
           final Display display = Display.getDefault();
-          final Shell parentShell = display.getActiveShell();
 
           display.asyncExec( new Runnable() {
             public void run() {
+              // needs ui thread
+              Shell parentShell = display.getActiveShell();
               String errMsg = NLS.bind( UITexts.scionServerDoesntExist_message, serverExecutablePath.toOSString() );
               MessageDialog.openError( parentShell, UITexts.scionServerDoesntExist_title, errMsg );
             }
@@ -294,10 +296,22 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     monitor.subTask( UITexts.scionServerProgress_subtask1 );
     retval = builder.unpackScionArchive( scionBuildDir );
     if (retval.isOK()) {
+
+
+
       // build final exe location
       IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
       CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
       CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
+
+      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+      boolean updateCabal = preferenceStore.getBoolean( IPreferenceConstants.RUN_CABAL_UPDATE );
+      if (updateCabal){
+        preferenceStore.setValue( IPreferenceConstants.RUN_CABAL_UPDATE, false );
+        monitor.subTask( UITexts.cabalUpdateProgress );
+        builder.update( cabalImpl, conout );
+        // we ignore the return so that failing update does not stop the compilation
+      }
 
       IPath exePath = ScionPlugin.serverExecutablePath( scionBuildDirPath );
       File  exeFile = exePath.toFile();

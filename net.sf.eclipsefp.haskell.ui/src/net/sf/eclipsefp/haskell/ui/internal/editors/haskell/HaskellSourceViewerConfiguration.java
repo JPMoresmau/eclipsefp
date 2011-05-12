@@ -259,8 +259,9 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	}
 
 	private boolean isSpacesForTabs() {
-    String key = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-    return getPreferenceStore().getBoolean( key );
+    //String key = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
+    //return getPreferenceStore().getBoolean( key );
+	  return true; // too problematic otherwise
   }
 
 //  private boolean isLatexLiterate() {

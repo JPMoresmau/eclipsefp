@@ -95,6 +95,8 @@ public final class UITexts extends NLS {
 
   public static String forceRebuildButton_label;
   public static String forceRebuildButton_text;
+  public static String cabalUpdateButton_label;
+  public static String cabalUpdateButton_text;
 
   public static String executableFileFieldEditor_errorDoesNotExist;
   public static String executableFileFieldEditor_errorNotAbsolute;
@@ -127,6 +129,8 @@ public final class UITexts extends NLS {
 
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
+  public static String cabalUpdateError;
+  public static String cabalUpdateFailed;
 
   public static String legalSection_entryCopyright;
   public static String legalSection_entryLicense;
@@ -148,6 +152,7 @@ public final class UITexts extends NLS {
   public static String newProjectWizardPage_NameGroup_label_text;
   public static String newProjectWizardPage_Message_enterProjectName;
   public static String newProjectWizardPage_Message_projectAlreadyExists;
+  public static String newProjectWizardPage_Message_projectInvalidName;
   public static String newProjectWizardPageMessage_invalidProjectNameForWorkspaceRoot;
   public static String newProjectWizardPage_LocationGroup_title;
   public static String newProjectWizardPage_LocationGroup_workspace_desc;
@@ -158,7 +163,7 @@ public final class UITexts extends NLS {
   public static String newProjectWizardPage_Message_enterLocation;
   public static String newProjectWizardPage_Message_invalidDirectory;
   public static String newProjectWizardPage_Message_notOnWorkspaceRoot;
-  public static String newProjectWizardPage_Message_notExisingProjectOnWorkspaceRoot;
+  public static String newProjectWizardPage_Message_notExistingProjectOnWorkspaceRoot;
   public static String newProjectWizardPage_Message_cannotCreateAtExternalLocation;
 
   public static String newProjectWizardPage_ComponentGroup_title;
@@ -212,6 +217,7 @@ public final class UITexts extends NLS {
   public static String resolve_addpragma;
   public static String resolve_import_remove;
   public static String resolve_import_replace;
+  public static String resolve_addpackage;
 
   public static String preferences_title;
 
@@ -306,6 +312,7 @@ public final class UITexts extends NLS {
 
   public static String unpackScionArchive_title;
   public static String scionBuildJob_title;
+  public static String cabalUpdateJob_title;
 
   public static String scionArchiveResourceNotFound;
   public static String scionArchiveFileException;
@@ -313,6 +320,7 @@ public final class UITexts extends NLS {
   public static String scionServerProgress_title;
   public static String scionServerProgress_subtask1;
   public static String scionServerProgress_subtask2;
+  public static String cabalUpdateProgress;
   // public static String scionServerProgress_completed_title;
   // public static String scionServerProgress_completed_message;
 
@@ -345,6 +353,17 @@ public final class UITexts extends NLS {
   public static String install_error;
   public static String install_error_text;
 
+  public static String test_job;
+  public static String test_options;
+  public static String test_options_folder;
+  public static String test_options_folder_choose;
+  public static String test_options_testsuites;
+  public static String test_options_testsuites_all;
+  public static String test_options_testsuites_none;
+  public static String test_error;
+  public static String test_error_text;
+  public static String test_version_fail;
+
   public static String template_prefSave_backingStore_exception;
   public static String HaskellTemplateVariables_module_description;
   public static String HaskellTemplateVariables_classTypeName_description;
@@ -357,6 +376,9 @@ public final class UITexts extends NLS {
 
   public static String properties_userflags_description;
   public static String properties_userflags_none;
+
+  public static String error_tabs;
+  public static String error_tabs_message;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

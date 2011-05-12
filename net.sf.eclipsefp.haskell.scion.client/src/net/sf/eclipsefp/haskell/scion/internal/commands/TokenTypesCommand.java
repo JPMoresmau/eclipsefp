@@ -70,8 +70,8 @@ public class TokenTypesCommand extends ScionCommand {
 //							}
 //						}
 //					}
-					tokens.add(td);
 //					previous=td;
+					tokens.add(td);
 				}
 			} else {
 				JSONObject err=o.optJSONObject("Left");

@@ -72,7 +72,7 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     store.setDefault( EDITOR_TAB_WIDTH, 8 );
     store.setDefault( EDITOR_CABAL_TAB_WIDTH, 2 );
     // good practice, no?
-    store.setDefault( EDITOR_SPACES_FOR_TABS, true );
+    //store.setDefault( EDITOR_SPACES_FOR_TABS, true );
     store.setDefault( EDITOR_CLOSE_STRINGS, true );
     store.setDefault( EDITOR_CLOSE_BRACKETS_AND_PARENS, true );
     store.setDefault( EDITOR_CLOSE_BRACES, true );

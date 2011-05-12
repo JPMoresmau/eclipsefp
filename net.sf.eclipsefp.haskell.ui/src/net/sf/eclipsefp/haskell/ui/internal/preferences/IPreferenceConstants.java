@@ -27,6 +27,7 @@ public interface IPreferenceConstants {
   public final static String SCION_SERVER_FLAVOR  = "scionServerFlavor"; //$NON-NLS-1$
   public final static String SCION_SERVER_BUILTIN = "SCION_SERVER_BUILTIN" ; //$NON-NLS-1$
   public final static String SCION_SERVER_EXECUTABLE = "SCION_SERVER_EXECUTABLE";  //$NON-NLS-1$
+  public final static String RUN_CABAL_UPDATE = "RUN_CABAL_UPDATE" ; //$NON-NLS-1$
 
   // search paths
   public final static String HADDOCK_SEARCH_PATHS = "HADDOCK_SEARCH_PATHS";  //$NON-NLS-1$

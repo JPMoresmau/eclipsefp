@@ -342,6 +342,15 @@ public class NewProjectWizardPage extends WizardPage {
         return;
       }
 
+      for (int a=0;a<name.length();a++){
+        char c=name.charAt( a );
+        if (!(Character.isDigit( c ) || Character.isLetter( c ) || c=='-')){
+          setErrorMessage(UITexts.newProjectWizardPage_Message_projectInvalidName);
+          setPageComplete(false);
+          return;
+        }
+      }
+
       // check whether project already exists
       final IProject handle= workspace.getRoot().getProject(name);
       if (handle.exists()) {
@@ -401,7 +410,7 @@ public class NewProjectWizardPage extends WizardPage {
           }
 
           if (!projectPath.toFile().exists()) {
-            setErrorMessage(UITexts.newProjectWizardPage_Message_notExisingProjectOnWorkspaceRoot);
+            setErrorMessage(UITexts.newProjectWizardPage_Message_notExistingProjectOnWorkspaceRoot);
             setPageComplete(false);
             return;
           }
