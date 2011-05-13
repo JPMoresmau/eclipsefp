@@ -91,6 +91,7 @@ public class HaskellUIImages implements IImageNames {
     declare( FUNCTION_BINDING,      OBJECT + "functionbinding.gif" ); //$NON-NLS-1$
     declare( PATTERN_BINDING,       OBJECT + "patternbinding.gif" ); //$NON-NLS-1$
     declare( DATA_DECL,             OBJECT + "datadecl.gif" ); //$NON-NLS-1$
+    declare( CONSTRUCTOR_DECL,      OBJECT + "constructordecl.gif" ); //$NON-NLS-1$
     declare( TYPE_DECL,             OBJECT + "typedecl.gif" ); //$NON-NLS-1$
     declare( NEWTYPE_DECL,          OBJECT + "typedecl.gif" ); //$NON-NLS-1$
     declare( TYPE_SIGNATURE,        OBJECT + "typesig.gif" ); //$NON-NLS-1$
