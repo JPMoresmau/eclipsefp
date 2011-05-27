@@ -93,6 +93,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     PackageDescription pd=new PackageDescription( name );
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_VERSION, "0.1" ); //$NON-NLS-1$
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_CABAL_VERSION, ">= 1.2" ); //$NON-NLS-1$
+    pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_BUILD_TYPE, "Simple" ); //$NON-NLS-1$
     if (isLibrary()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
       pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
