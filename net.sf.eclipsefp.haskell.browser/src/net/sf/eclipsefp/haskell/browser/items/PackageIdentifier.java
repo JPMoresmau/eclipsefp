@@ -30,4 +30,11 @@ public class PackageIdentifier {
 	public String getVersion() {
 		return this.version;
 	}
+	
+	public JSONObject toJSON() throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("name", this.name);
+		o.put("version", this.version);
+		return o;
+	}
 }

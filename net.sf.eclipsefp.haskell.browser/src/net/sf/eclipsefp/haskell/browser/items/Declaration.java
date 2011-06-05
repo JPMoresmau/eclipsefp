@@ -28,7 +28,7 @@ public abstract class Declaration extends Documented {
 		this.name = name;
 	}
 
-	public Declaration fromJSON(JSONObject o) throws Exception {
+	public static Declaration fromJSON(JSONObject o) throws Exception {
 		String type = o.getString("type");
 
 		if (type.equals("data"))

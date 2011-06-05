@@ -9,15 +9,15 @@ import org.json.JSONObject;
  * @author serras
  */
 
-public class Package extends Documented {
+public class HaskellPackage extends Documented {
 	PackageIdentifier id;
 
-	public Package(String doc, PackageIdentifier id) {
+	public HaskellPackage(String doc, PackageIdentifier id) {
 		this.setDoc(doc);
 		this.id = id;
 	}
 	
-	public Package(JSONObject o) throws JSONException {
+	public HaskellPackage(JSONObject o) throws JSONException {
 		this.setDoc(o);
 		this.id = new PackageIdentifier(o.getJSONObject("id"));
 	}
