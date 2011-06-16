@@ -47,6 +47,8 @@ public class ScionPP
 
 	private ExecutableFileFieldEditor serverExecutableField;
 	private Composite serverExecutableFieldC;
+	private ExecutableFileFieldEditor browserExecutableField;
+  private Composite browserExecutableFieldC;
 	private BooleanFieldEditor serverBuiltInField;
 	private Composite serverBuiltInFieldC;
 	private ButtonFieldEditor autodetect;
@@ -246,6 +248,23 @@ public class ScionPP
     verboseInteractionField.setPreferenceStore( scionPrefStore );
     verboseInteractionField.load();
 
+    browserExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
+    GridData bgd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    bgd.horizontalSpan=2;
+    browserExecutableFieldC.setLayoutData( gd );
+    browserExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,
+        NLS.bind(UITexts.scionBrowserExecutable_label, getBrowserExecutableName()),
+        false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, browserExecutableFieldC );
+    browserExecutableField.setEmptyStringAllowed(true);
+    browserExecutableField.setPropertyChangeListener( new IPropertyChangeListener() {
+      public void propertyChange( final PropertyChangeEvent event ) {
+        setValid( isValid() );
+      }
+    });
+    browserExecutableField.setPage( this );
+    browserExecutableField.setPreferenceStore( prefStore );
+    browserExecutableField.load();
+
 		// Update the dialog's state and validity:
 		updateButtonState();
 		setValid(isValid());
@@ -290,11 +309,16 @@ public class ScionPP
 		return FileUtil.makeExecutableName("scion-server"); //$NON-NLS-1$
 	}
 
+	public static String getBrowserExecutableName() {
+    return FileUtil.makeExecutableName("scion-browser"); //$NON-NLS-1$
+  }
+
 	public static void initializeDefaults(final IPreferenceStore store) {
 	  // Set reasonable defaults.
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
     store.setDefault( RUN_CABAL_UPDATE, true );
 	  store.setDefault( SCION_SERVER_EXECUTABLE, new String() );
+	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
 	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
 
@@ -303,6 +327,7 @@ public class ScionPP
     cabalBlock.updateCabalImplementations();
     serverBuiltInField.store();
     serverExecutableField.store();
+    browserExecutableField.store();
     autodetect.store();
     serverFlavorField.store();
     verboseInteractionField.store();

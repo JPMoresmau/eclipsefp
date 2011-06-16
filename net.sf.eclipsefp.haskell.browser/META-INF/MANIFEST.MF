@@ -7,9 +7,8 @@ Bundle-Activator: net.sf.eclipsefp.haskell.browser.BrowserPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.sf.eclipsefp.haskell.core;bundle-version="2.0.5",
- net.sf.eclipsefp.haskell.scion.client;bundle-version="2.0.5",
- net.sf.eclipsefp.haskell.ui;bundle-version="2.0.5",
  net.sf.eclipsefp.haskell.util;bundle-version="2.0.3"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %bundleVendor
+Export-Package: net.sf.eclipsefp.haskell.browser

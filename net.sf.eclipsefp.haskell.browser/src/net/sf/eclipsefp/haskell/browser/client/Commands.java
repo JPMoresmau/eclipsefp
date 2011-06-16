@@ -111,6 +111,7 @@ public class Commands {
 			}
 		}
 
-		return (Packaged<Declaration>[])aDecls.toArray();
+		Packaged<Declaration>[] elts = (Packaged<Declaration>[]) new Packaged[aDecls.size()];
+		return aDecls.toArray(elts);
 	}
 }

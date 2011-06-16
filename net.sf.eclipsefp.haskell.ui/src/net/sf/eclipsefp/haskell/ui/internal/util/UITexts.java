@@ -88,6 +88,9 @@ public final class UITexts extends NLS {
   public static String scionServerBuiltIn_label;
   public static String scionServerExecutable_label;
 
+  public static String scionBrowser_preferences_label;
+  public static String scionBrowserExecutable_label;
+
   public static String autodetectButton_label;
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
@@ -126,6 +129,15 @@ public final class UITexts extends NLS {
 
   public static String scionServerDoesntExist_title;
   public static String scionServerDoesntExist_message;
+
+  public static String scionBrowserDoesntExist_title;
+  public static String scionBrowserDoesntExist_message;
+
+  public static String scionBrowserNotConfigured_title;
+  public static String scionBrowserNotConfigured_message;
+
+  public static String scionBrowserRebuildDatabase_title;
+  public static String scionBrowserRebuildDatabase_message;
 
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
@@ -309,6 +321,7 @@ public final class UITexts extends NLS {
   public static String log_nodetails;
   public static String noproject;
   public static String sharedScionInstance_console;
+  public static String sharedBrowserInstance_console;
 
   public static String unpackScionArchive_title;
   public static String scionBuildJob_title;

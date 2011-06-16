@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -95,6 +96,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   private String serverFlavor;
   /** Current executable path string */
   private IPath serverExecutablePath;
+  /** Current browser executable path string */
+  private IPath browserExecutablePath;
   /** Haskell console low water mark */
   private int hConLowWater;
   /** Haskell console high water mark */
@@ -110,6 +113,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     useBuiltIn = true;
     serverFlavor = STDSTREAM_SCION_FLAVOR;
     serverExecutablePath = null;
+    browserExecutablePath = null;
     internalBuilder = null;
     hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
     hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
@@ -142,12 +146,24 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       serverExecutablePath = new Path(serverExecutable);
     }
 
+    final String browserExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
+    if (browserExecutable.length() > 0) {
+      browserExecutablePath = new Path(browserExecutable);
+    }
+
     // Set up the output logging console for the shared ScionInstance:
     HaskellConsole c = new HaskellConsole( UITexts.sharedScionInstance_console );
     ScionPlugin.setSharedInstanceWriter( c.createOutputWriter() );
     c.setWaterMarks( hConLowWater, hConHighWater );
 
     serverFactorySetup();
+
+    // Set up the output logging console for the shared Browser
+    HaskellConsole cBrowser = new HaskellConsole(  UITexts.sharedBrowserInstance_console );
+    BrowserPlugin.setSharedLogStream( cBrowser.createOutputWriter() );
+    cBrowser.setWaterMarks( hConLowWater, hConHighWater );
+
+    browserSetup();
 
     // Sit and listen to the core preference store changes
     IEclipsePreferences instanceScope = HaskellCorePlugin.instanceScopedPreferences();
@@ -331,6 +347,38 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     return retval;
   }
 
+  private synchronized void browserSetup() {
+    final Display display = Display.getDefault();
+
+    if (browserExecutablePath == null) {
+      display.asyncExec( new Runnable() {
+        public void run() {
+          // needs ui thread
+          Shell parentShell = display.getActiveShell();
+          MessageDialog.openError( parentShell, UITexts.scionBrowserNotConfigured_title, UITexts.scionBrowserNotConfigured_message );
+        }
+      } );
+      BrowserPlugin.useNullSharedInstance();
+      return;
+    }
+
+    if (browserExecutablePath.toFile().exists()) {
+      BrowserPlugin.changeSharedInstance( browserExecutablePath );
+    } else {
+      display.asyncExec( new Runnable() {
+        public void run() {
+          // needs ui thread
+          Shell parentShell = display.getActiveShell();
+          String errMsg = NLS.bind( UITexts.scionBrowserDoesntExist_message, browserExecutablePath.toOSString() );
+          MessageDialog.openError( parentShell, UITexts.scionBrowserDoesntExist_title, errMsg );
+        }
+      } );
+
+      browserExecutablePath = null;
+      BrowserPlugin.useNullSharedInstance();
+    }
+  }
+
   /**
    * Detects when a file is deleted and updates the Cabal file accordingly (remove the module).
    * If the removed file is the cabal file, stop the underlying scion-server.
@@ -460,6 +508,21 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         }
       }  catch (ScionServerStartupException ex) {
         reportServerStartupError( ex );
+      }
+    }
+  }
+
+  public class ScionBrowserServerPropertiesListener implements IPropertyChangeListener {
+    public void propertyChange( final PropertyChangeEvent event ) {
+      try {
+        if (event.getProperty().equals( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE)) {
+          if (event.getNewValue() instanceof String) {
+            browserExecutablePath = new Path((String)event.getNewValue());
+            browserSetup();
+          }
+        }
+      } catch (Throwable ex) {
+        // Do nothing
       }
     }
   }
