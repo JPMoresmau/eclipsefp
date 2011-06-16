@@ -364,6 +364,22 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
 
     if (browserExecutablePath.toFile().exists()) {
       BrowserPlugin.changeSharedInstance( browserExecutablePath );
+
+      display.asyncExec( new Runnable() {
+        public void run() {
+          // needs ui thread
+          Shell parentShell = display.getActiveShell();
+          boolean rebuild = MessageDialog.openQuestion( parentShell, UITexts.scionBrowserRebuildDatabase_title,
+             UITexts.scionBrowserRebuildDatabase_message );
+          Job builder = rebuild ? new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase)
+                                : new BrowserDatabaseLoadJob(UITexts.scionBrowserLoadingDatabases);
+          builder.setPriority( Job.BUILD );
+          builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+          builder.setUser(true);
+          builder.schedule();
+        }
+      } );
+
     } else {
       display.asyncExec( new Runnable() {
         public void run() {
@@ -839,6 +855,68 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                                      UITexts.scionVersionMismatch_message );
         }
       } );
+    }
+  }
+
+  /** Specialized Job class that manages loading the Browser databases.
+   *  Based in the work of B. Scott Michel.
+   *
+    * @author B. Alejandro Serrano
+   */
+  public class BrowserDatabaseLoadJob extends Job {
+    IStatus status;
+
+    public BrowserDatabaseLoadJob(final String jobTitle) {
+      super(jobTitle);
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.scionBrowserLoadingDatabases, IProgressMonitor.UNKNOWN );
+      status = BrowserPlugin.loadLocalDatabase( false );
+      monitor.done();
+
+      return status;
+    }
+  }
+
+  /** Specialized Job class that manages rebuilding the Browser database.
+   *  Based in the work of B. Scott Michel.
+   *
+    * @author B. Alejandro Serrano
+   */
+  public class BrowserDatabaseRebuildJob extends Job {
+    IStatus status;
+
+    public BrowserDatabaseRebuildJob(final String jobTitle) {
+      super(jobTitle);
+
+      // If the build failed, there will be some indication of why it failed.
+      addJobChangeListener( new JobChangeAdapter() {
+        @Override
+        public void done( final IJobChangeEvent event ) {
+          if (!event.getResult().isOK()) {
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openError( Display.getDefault().getActiveShell(),
+                                         UITexts.scionBrowserRebuildingDatabaseError_title,
+                                         UITexts.scionBrowserRebuildingDatabaseError_message );
+              }
+            } );
+          }
+
+          super.done( event );
+        }
+      });
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.scionBrowserRebuildingDatabase, IProgressMonitor.UNKNOWN );
+      status = BrowserPlugin.loadLocalDatabase( true );
+      monitor.done();
+
+      return status;
     }
   }
 }

@@ -15,16 +15,18 @@ public abstract class BrowserServer {
 
 	protected Writer logStream = null;
 
-	public void setLogStream(final Writer logStream) {
+	public void setLogStream(Writer logStream) {
 		this.logStream = logStream;
 	}
 
 	protected void log(String msg) {
 		try {
-			if (logStream != null)
-				logStream.write(msg);
+			if (logStream != null) {
+				logStream.write(msg + "\n");
+				logStream.flush();
+			}
 		} catch (Throwable ex) {
-
+			
 		}
 	}
 

@@ -49,22 +49,36 @@ public class StreamBrowserServer extends BrowserServer {
 
 	public String sendAndReceive(JSONObject input) throws IOException {
 		String jsonInput = input.toString();
-		log(">> " + jsonInput + "\n");
+		log(">> " + jsonInput);
 		in.write(jsonInput + "\n");
+		in.flush();
 		String response = out.readLine();
 		log(response);
 		return response;
 	}
 
+	public void sendAndReceiveOk(JSONObject input) throws IOException {
+		String jsonInput = input.toString();
+		log(">> " + jsonInput);
+		in.write(jsonInput + "\n");
+		in.flush();
+
+		String response = null;
+		do {
+			response = out.readLine();
+			log(response);
+		} while (!response.equals("\"ok\""));
+	}
+
 	@Override
 	public void loadLocalDatabase(String path, boolean rebuild) throws IOException, JSONException {
-		sendAndReceive(Commands.createLoadLocalDatabase(path, rebuild));
+		sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild));
 	}
 
 	@Override
 	public void setCurrentDatabase(CurrentDatabase current, PackageIdentifier id)
 			throws IOException, JSONException {
-		sendAndReceive(Commands.createSetCurrentDatabase(current, id));
+		sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
 	}
 
 	@Override
