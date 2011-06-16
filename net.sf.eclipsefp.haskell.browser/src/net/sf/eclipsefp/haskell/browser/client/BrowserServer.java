@@ -46,4 +46,6 @@ public abstract class BrowserServer {
 
 	public abstract Packaged<Declaration>[] getDeclarations(String module)
 			throws Exception;
+	
+	public abstract void stop();
 }

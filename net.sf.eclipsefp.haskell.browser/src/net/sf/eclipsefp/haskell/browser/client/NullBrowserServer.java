@@ -11,8 +11,8 @@ import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import org.json.JSONException;
 
 /**
- * A virtual connection to a server which gives no responses.
- * Used at initialization time and when there is no scion-browser installed.
+ * A virtual connection to a server which gives no responses. Used at
+ * initialization time and when there is no scion-browser installed.
  * 
  * @author serras
  */
@@ -55,7 +55,11 @@ public class NullBrowserServer extends BrowserServer {
 	@Override
 	public Packaged<Declaration>[] getDeclarations(String module) throws Exception {
 		// Return nothing
-		return (Packaged<Declaration>[])new Packaged[0];
+		return (Packaged<Declaration>[]) new Packaged[0];
 	}
 
+	@Override
+	public void stop() {
+		// Do nothing
+	}
 }

@@ -57,6 +57,8 @@ public class BrowserPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		if (server != null)
+			server.stop();
 		super.stop(context);
 	}
 
@@ -99,6 +101,10 @@ public class BrowserPlugin extends AbstractUIPlugin {
 	}
 
 	public void changeInstance(IPath path) {
+		// Destroy previous scion-browser
+		if (this.server != null)
+			this.server.stop();
+		
 		if (path.toFile().exists()) {
 			try {
 				this.server = new StreamBrowserServer(path);
@@ -116,6 +122,10 @@ public class BrowserPlugin extends AbstractUIPlugin {
 	}
 
 	public void useNullInstance() {
+		// Destroy previous scion-browser
+		if (this.server != null)
+			this.server.stop();
+		
 		this.server = new NullBrowserServer();
 	}
 

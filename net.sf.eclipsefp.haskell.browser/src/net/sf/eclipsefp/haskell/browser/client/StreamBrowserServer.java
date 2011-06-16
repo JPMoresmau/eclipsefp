@@ -104,4 +104,10 @@ public class StreamBrowserServer extends BrowserServer {
 		String response = sendAndReceive(Commands.createGetDeclarations(module));
 		return Commands.responseGetDeclarations(response);
 	}
+	
+	@Override
+	public void stop() {
+		if (process != null)
+			process.destroy();
+	}
 }
