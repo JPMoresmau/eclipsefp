@@ -11,14 +11,29 @@ import net.sf.eclipsefp.haskell.browser.items.Packaged;
 
 import org.json.JSONException;
 
+/**
+ * Abstract class for communicating with a scion-browser instance.
+ * 
+ * @author serras
+ */
 public abstract class BrowserServer {
 
 	protected Writer logStream = null;
 
+	/**
+	 * Sets the stream where log messages will be sent
+	 * 
+	 * @param logStream the new log stream
+	 */
 	public void setLogStream(Writer logStream) {
 		this.logStream = logStream;
 	}
 
+	/**
+	 * Logs a message, usually into an Eclipse console
+	 * 
+	 * @param msg string to be shown
+	 */
 	protected void log(String msg) {
 		try {
 			if (logStream != null) {
