@@ -45,7 +45,6 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
 				
 				cache = new ArrayList<Packaged<Declaration>>();
 				for (Packaged<Declaration> decl : BrowserPlugin.getSharedInstance().getDeclarations(mitem.getModule().getName())) {
-					System.out.println(decl.getElement().getName());
 					if (decl.getElement().getType() == DeclarationType.FUNCTION && !isTypes)
 						cache.add(decl);
 					else if (decl.getElement().getType() != DeclarationType.FUNCTION && isTypes)
@@ -63,9 +62,10 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof Gadt) {
-			Gadt item = (Gadt) parentElement;
-			return item.getConstructors();
+		if (parentElement instanceof Packaged<?>) {
+			Declaration item = ((Packaged<Declaration>)parentElement).getElement();
+			if (item instanceof Gadt)
+				return ((Gadt)item).getConstructors();
 		}
 		return new Object[0];
 	}
@@ -76,9 +76,10 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
 
 	public boolean hasChildren(Object element) {
 		// Only datatypes and newtypes may have children
-		if (element instanceof Gadt) {
-			Gadt item = (Gadt) element;
-			return item.getConstructors().length > 0;
+		if (element instanceof Packaged<?>) {
+			Declaration item = ((Packaged<Declaration>)element).getElement();
+			if (item instanceof Gadt)
+				return ((Gadt)item).getConstructors().length > 0;
 		}
 
 		return false;

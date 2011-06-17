@@ -109,7 +109,6 @@ public class Commands {
 			for (int j = 0; j < declsInPkg.length(); j++) {
 				JSONObject o = declsInPkg.getJSONObject(j);
 				Declaration decl = Declaration.fromJSON(o);
-				System.out.println(decl.getName() + " AAA");
 				aDecls.add(new Packaged<Declaration>(id, decl));
 			}
 		}

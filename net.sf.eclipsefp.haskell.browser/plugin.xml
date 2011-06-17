@@ -71,5 +71,14 @@
          </menu>
       </viewContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
+            icon="icons/etool16/haskell_misc.gif"
+            id="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
+            name="Haskell Browser">
+      </perspective>
+   </extension>
 
 </plugin>

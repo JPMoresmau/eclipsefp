@@ -68,7 +68,9 @@ public abstract class DeclarationsView extends ViewPart implements ISelectionLis
 		Object o = sel.getFirstElement();
 		if (o == null)
 			return;
-		if (o instanceof ModulesItem)
+		if (o instanceof ModulesItem) {
 			viewer.setInput(o);
+			viewer.refresh();
+		}
 	}
 }

@@ -10,15 +10,14 @@ import org.json.JSONObject;
  */
 
 public class TypeSynonym extends Declaration {
-	String[] context;
 	String[] vars;
 	String equals;
 
-	public TypeSynonym(String doc, String[] context, String name,
+	public TypeSynonym(String doc, String name,
 			String[] vars, String equals) {
 		this.setDoc(doc);
 		this.setType(DeclarationType.TYPE_SYNONYM);
-		this.setInfo(context, name, vars, equals);
+		this.setInfo(name, vars, equals);
 	}
 
 	public TypeSynonym(JSONObject o) throws JSONException {
@@ -27,9 +26,8 @@ public class TypeSynonym extends Declaration {
 		this.setInfo(o);
 	}
 
-	protected void setInfo(String[] context, String name, String[] vars,
+	protected void setInfo(String name, String[] vars,
 			String equals) {
-		this.context = context;
 		this.setName(name);
 		this.vars = vars;
 		this.equals = equals;
@@ -39,14 +37,9 @@ public class TypeSynonym extends Declaration {
 		this.setDoc(o);
 
 		JSONObject head = o.getJSONObject("head");
-		this.setInfo(Util.getStringArray(o.getJSONArray("context")),
-				head.getString("name"),
+		this.setInfo(head.getString("name"),
 				Util.getStringArray(head.getJSONArray("vars")),
 				o.getString("equals"));
-	}
-
-	public String[] getContext() {
-		return this.context;
 	}
 
 	public String[] getTypeVariables() {
