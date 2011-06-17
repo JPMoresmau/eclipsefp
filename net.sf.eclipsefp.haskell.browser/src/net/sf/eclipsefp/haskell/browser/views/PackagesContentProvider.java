@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
+import java.util.ArrayList;
+
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
@@ -8,8 +10,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class PackagesContentProvider implements ITreeContentProvider {
-
-	HaskellPackage[] localCache = null;
+	
+	PackagesItem[] localCache = null;
 
 	public Object[] getElements(Object inputElement) {
 		return new Object[] { DatabaseType.LOCAL };
@@ -17,7 +19,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
 		if (localCache == null)
-			cacheElements();
+			cache();
 
 		switch ((DatabaseType) parentElement) {
 		case LOCAL:
@@ -28,10 +30,12 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-		if (element instanceof DatabaseType)
-			return new PackagesRoot();
-		else
-			return DatabaseType.LOCAL;
+		if (element instanceof DatabaseType) {
+			return PackagesRoot.ROOT;
+		} else {
+			PackagesItem pkg = (PackagesItem)element;
+			return pkg.getDatabase();
+		}
 	}
 
 	public boolean hasChildren(Object element) {
@@ -42,12 +46,15 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		this.localCache = null;
 	}
 
-	private void cacheElements() {
+	private void cache() {
 		try {
 			BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.LOCAL, null);
-			this.localCache = BrowserPlugin.getSharedInstance().getPackages();
+			ArrayList<PackagesItem> cache = new ArrayList<PackagesItem>();
+			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages())
+				cache.add(new PackagesItem(DatabaseType.LOCAL, pkg));
+			this.localCache = cache.toArray(new PackagesItem[cache.size()]);
 		} catch (Throwable ex) {
-			this.localCache = new HaskellPackage[0];
+			this.localCache = new PackagesItem[0];
 		}
 	}
 

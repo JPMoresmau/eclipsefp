@@ -56,7 +56,7 @@ public class StreamBrowserServer extends BrowserServer {
 		in.write(jsonInput + "\n");
 		in.flush();
 		String response = out.readLine();
-		log(response);
+		// log(response);
 		return response;
 	}
 

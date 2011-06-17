@@ -37,9 +37,12 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener {
 		// Set initial content provider
 		provider = new PackagesContentProvider();
 		viewer.setContentProvider(provider);
-		viewer.setInput(new PackagesRoot());
+		viewer.setInput(PackagesRoot.ROOT);
 		// Hook for listeners
 		BrowserPlugin.getDefault().addDatabaseLoadedListener(this);
+		
+		// Register as selection provider
+		getSite().setSelectionProvider(viewer);
 	}
 
 	@Override
