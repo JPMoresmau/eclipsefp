@@ -1,10 +1,5 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -17,8 +12,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.part.ViewPart;
 
 public class ModulesView extends ViewPart implements ISelectionListener {
@@ -27,9 +20,6 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "net.sf.eclipsefp.haskell.browser.views.ModulesView";
-
-	static final String FLAT_MENU_ID = "net.sf.eclipsefp.haskell.browser.views.modulesViewFlat";
-	static final String HIERARCHICAL_MENU_ID = "net.sf.eclipsefp.haskell.browser.views.modulesViewHierarchical";
 
 	TreeViewer viewer;
 	TextViewer doc;
