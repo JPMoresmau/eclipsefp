@@ -1,5 +1,10 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -7,19 +12,42 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.part.ViewPart;
 
 public class ModulesView extends ViewPart implements ISelectionListener {
-	
+
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "net.sf.eclipsefp.haskell.browser.views.ModulesView";
-	
+
+	static final String FLAT_MENU_ID = "net.sf.eclipsefp.haskell.browser.views.modulesViewFlat";
+	static final String HIERARCHICAL_MENU_ID = "net.sf.eclipsefp.haskell.browser.views.modulesViewHierarchical";
+
 	TreeViewer viewer;
 	TextViewer doc;
+	ModulesContentProvider provider;
+
+	private IMemento memento;
+
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		this.memento = memento;
+	}
+
+	@Override
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		provider.saveState(memento);
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -27,26 +55,26 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 		viewer = new TreeViewer(form);
 		doc = new TextViewer(form, SWT.NONE);
 		form.setWeights(new int[] { 80, 20 });
-		
+
 		// Set label provider and sorter
 		viewer.setLabelProvider(new ModulesLabelProvider());
 		viewer.setSorter(new ModulesSorter());
 		// Set content provider
-		viewer.setContentProvider(new ModulesContentProvider());
+		provider = new ModulesContentProvider(this.memento);
+		viewer.setContentProvider(provider);
 		viewer.setInput(null);
-		
+
 		// Register as selection provider
 		getSite().setSelectionProvider(viewer);
 		// Hook onto selection changes
 		getSite().getPage().addPostSelectionListener(this);
-
 	}
 
 	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-	
+
 	@Override
 	public void dispose() {
 		getSite().getPage().removePostSelectionListener(this);
@@ -59,11 +87,21 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 			return;
 		if (!(selection instanceof IStructuredSelection))
 			return;
-		IStructuredSelection sel = (IStructuredSelection)selection;
+		IStructuredSelection sel = (IStructuredSelection) selection;
 		Object o = sel.getFirstElement();
 		if (o == null)
 			return;
 		viewer.setInput(o);
 	}
 
+	public void setHierarchical(boolean isH) {
+		if (provider.getHierarchical() != isH) {
+			provider.setHierarchical(isH);
+			viewer.refresh();
+		}
+	}
+
+	public boolean getHierarchical() {
+		return provider.getHierarchical();
+	}
 }

@@ -14,7 +14,7 @@ public class ModulesLabelProvider implements ILabelProvider {
 
 	public String getText(Object element) {
 		ModulesItem item = (ModulesItem)element;
-		return item.getModule().getName();
+		return item.getShownName();
 	}
 
 	// Listeners: not used

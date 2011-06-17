@@ -8,13 +8,32 @@ import net.sf.eclipsefp.haskell.browser.items.Module;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IMemento;
 
 public class ModulesContentProvider implements ITreeContentProvider {
 
-	boolean isHierarchical = false;
+	boolean isHierarchical;
+	static final String MEMENTO_KEY = "isHierarchical";
 
 	ArrayList<ModulesItem> linearCache = null;
 	ArrayList<ModulesItem> hierarchicalCache = null;
+	
+	public ModulesContentProvider(IMemento memento) {
+		super();
+		if (memento == null)
+			isHierarchical = false;
+		else {
+			Boolean value = memento.getBoolean(MEMENTO_KEY);
+			if (value == null)
+				isHierarchical = false;
+			else
+				isHierarchical = (boolean)value;
+		}
+	}
+	
+	public void saveState(IMemento memento) {
+		memento.putBoolean(MEMENTO_KEY, isHierarchical);
+	}
 
 	public Object[] getElements(Object inputElement) {
 		return isHierarchical ? hierarchicalCache.toArray() : linearCache.toArray();
@@ -80,14 +99,14 @@ public class ModulesContentProvider implements ITreeContentProvider {
 	}
 	
 	public void addModuleToHierarchy(Object dbInfo, Module m) {
-		String[] names = m.getName().split(".");
+		String[] names = m.getName().split("\\.");
 		
 		ArrayList<ModulesItem> currentList = hierarchicalCache;
 		ModulesItem currentParent = null;
 		for (int i = 0; i < names.length; i++) {
 			ModulesItem currentItem = null;
 			for (ModulesItem item : currentList) {
-				if (item.getShownName() == names[i]) {
+				if (item.getShownName().equals(names[i])) {
 					currentItem = item;
 					break;
 				}
@@ -102,5 +121,13 @@ public class ModulesContentProvider implements ITreeContentProvider {
 			currentList = currentItem.getModulesArrayList();
 			currentParent = currentItem;
 		}
+	}
+	
+	public boolean getHierarchical() {
+		return this.isHierarchical;
+	}
+	
+	public void setHierarchical(boolean isH) {
+		this.isHierarchical = isH;
 	}
 }
