@@ -104,10 +104,12 @@ public class Commands {
 
 		for (int i = 0; i < jDecls.length(); i++) {
 			JSONArray pair = jDecls.getJSONArray(i);
-			PackageIdentifier id = new PackageIdentifier(pair.getJSONObject(1));
-			JSONArray declsInPkg = pair.getJSONArray(2);
+			PackageIdentifier id = new PackageIdentifier(pair.getJSONObject(0));
+			JSONArray declsInPkg = pair.getJSONArray(1);
 			for (int j = 0; j < declsInPkg.length(); j++) {
-				Declaration decl = Declaration.fromJSON(declsInPkg.getJSONObject(i));
+				JSONObject o = declsInPkg.getJSONObject(j);
+				Declaration decl = Declaration.fromJSON(o);
+				System.out.println(decl.getName() + " AAA");
 				aDecls.add(new Packaged<Declaration>(id, decl));
 			}
 		}

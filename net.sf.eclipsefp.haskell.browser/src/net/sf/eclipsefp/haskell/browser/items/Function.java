@@ -12,8 +12,9 @@ import org.json.JSONObject;
 public class Function extends Declaration {
 	String signature;
 
-	public Function(String doc, String signature) {
+	public Function(String doc, String name, String signature) {
 		this.setDoc(doc);
+		this.setName(name);
 		this.setType(DeclarationType.FUNCTION);
 		this.signature = signature;
 	}
@@ -21,6 +22,7 @@ public class Function extends Declaration {
 	public Function(JSONObject o) throws JSONException {
 		this.setDoc(o);
 		this.setType(DeclarationType.FUNCTION);
+		this.setName(o.getString("name"));
 		this.signature = o.getString("signature");
 	}
 

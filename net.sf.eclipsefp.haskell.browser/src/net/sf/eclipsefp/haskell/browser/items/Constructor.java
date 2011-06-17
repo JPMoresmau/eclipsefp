@@ -5,25 +5,25 @@ import org.json.JSONObject;
 
 public class Constructor extends Documented {
 	String name;
-	String type;
+	String signature;
 	
-	public Constructor(String doc, String name, String type) {
+	public Constructor(String doc, String name, String signature) {
 		this.setDoc(doc);
 		this.name = name;
-		this.type = type;
+		this.signature = signature;
 	}
 	
 	public Constructor(JSONObject o) throws JSONException {
 		this.setDoc(o);
 		this.name = o.getString("name");
-		this.type = o.getString("type");
+		this.signature = o.getString("type");
 	}
 	
 	public String getName() {
 		return this.name;
 	}
 	
-	public String getType() {
-		return this.type;
+	public String getSignature() {
+		return this.signature;
 	}
 }
