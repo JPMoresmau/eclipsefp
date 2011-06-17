@@ -10,7 +10,7 @@
       </category>
       <view
             name="Packages"
-            icon="icons/sample.gif"
+            icon="icons/obj16/package.gif"
             category="net.sf.eclipsefp.haskell.browser"
             class="net.sf.eclipsefp.haskell.browser.views.PackagesView"
             id="net.sf.eclipsefp.haskell.browser.views.PackagesView">

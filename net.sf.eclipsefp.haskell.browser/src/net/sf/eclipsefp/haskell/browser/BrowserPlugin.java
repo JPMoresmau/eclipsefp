@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.browser;
 
 import java.io.Writer;
+import java.util.ArrayList;
 
-import net.sf.eclipsefp.haskell.browser.client.BrowserServer;
 import net.sf.eclipsefp.haskell.browser.client.NullBrowserServer;
 import net.sf.eclipsefp.haskell.browser.client.StreamBrowserServer;
 
@@ -16,7 +16,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class BrowserPlugin extends AbstractUIPlugin {
+public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedListener {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.browser"; //$NON-NLS-1$
 	public static final String BROWSER_VERSION = "0.1";
@@ -27,6 +27,9 @@ public class BrowserPlugin extends AbstractUIPlugin {
 	private BrowserServer server;
 	// The console log output
 	private Writer logStream;
+	
+	// Listeners for loading new databases
+	private ArrayList<IDatabaseLoadedListener> dbLoadedListeners;
 
 	/**
 	 * The constructor
@@ -34,6 +37,7 @@ public class BrowserPlugin extends AbstractUIPlugin {
 	public BrowserPlugin() {
 		this.server = new NullBrowserServer();
 		this.logStream = null;
+		this.dbLoadedListeners = new ArrayList<IDatabaseLoadedListener>();
 	}
 
 	/*
@@ -130,6 +134,7 @@ public class BrowserPlugin extends AbstractUIPlugin {
 		if (path.toFile().exists()) {
 			try {
 				this.server = new StreamBrowserServer(path);
+				this.server.addDatabaseLoadedListener(this);
 				this.server.setLogStream(this.logStream);
 			} catch (Throwable ex) {
 				this.server = new NullBrowserServer();
@@ -212,5 +217,28 @@ public class BrowserPlugin extends AbstractUIPlugin {
 	 */
 	public static IPath getHackageDatabasePath() {
 		return builtinBrowserDirectoryPath().append("hackage.db");
+	}
+	
+	/**
+	 * Adds a new listener for database changes
+	 * 
+	 * @param listener
+	 */
+	public void addDatabaseLoadedListener(IDatabaseLoadedListener listener) {
+		dbLoadedListeners.add(listener);
+	}
+	
+	/**
+	 * Raises an event for all listeners currently registered
+	 * 
+	 * @param e
+	 */
+	protected void notifyDatabaseLoaded(DatabaseLoadedEvent e) {
+		for (IDatabaseLoadedListener listener : dbLoadedListeners)
+			listener.databaseLoaded(e);
+	}
+
+	public void databaseLoaded(DatabaseLoadedEvent e) {
+		notifyDatabaseLoaded(e);
 	}
 }

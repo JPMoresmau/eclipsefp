@@ -16,12 +16,12 @@ public class HaskellPackage extends Documented {
 		this.setDoc(doc);
 		this.id = id;
 	}
-	
+
 	public HaskellPackage(JSONObject o) throws JSONException {
 		this.setDoc(o);
 		this.id = new PackageIdentifier(o.getJSONObject("id"));
 	}
-	
+
 	public PackageIdentifier getIdentifier() {
 		return this.id;
 	}

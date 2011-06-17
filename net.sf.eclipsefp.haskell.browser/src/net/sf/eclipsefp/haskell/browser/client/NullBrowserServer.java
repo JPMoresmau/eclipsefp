@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.browser.client;
 
 import java.io.IOException;
 
+import net.sf.eclipsefp.haskell.browser.BrowserServer;
+import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -29,7 +31,7 @@ public class NullBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public void setCurrentDatabase(CurrentDatabase current, PackageIdentifier id)
+	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
 			throws IOException, JSONException {
 		// Do nothing
 	}

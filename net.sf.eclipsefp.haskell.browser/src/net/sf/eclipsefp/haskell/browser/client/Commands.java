@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.browser.client;
 
 import java.util.ArrayList;
 
+import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -29,7 +30,7 @@ public class Commands {
 		return o;
 	}
 
-	public static JSONObject createSetCurrentDatabase(CurrentDatabase current,
+	public static JSONObject createSetCurrentDatabase(DatabaseType current,
 			PackageIdentifier id) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "set-current-db");

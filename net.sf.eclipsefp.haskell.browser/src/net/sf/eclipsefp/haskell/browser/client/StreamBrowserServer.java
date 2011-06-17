@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import net.sf.eclipsefp.haskell.browser.BrowserServer;
+import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
+import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -73,10 +76,13 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void loadLocalDatabase(String path, boolean rebuild) throws IOException, JSONException {
 		sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild));
+		// Notify listeners
+		DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path, DatabaseType.LOCAL);
+		notifyDatabaseLoaded(e);
 	}
 
 	@Override
-	public void setCurrentDatabase(CurrentDatabase current, PackageIdentifier id)
+	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
 			throws IOException, JSONException {
 		sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
 	}

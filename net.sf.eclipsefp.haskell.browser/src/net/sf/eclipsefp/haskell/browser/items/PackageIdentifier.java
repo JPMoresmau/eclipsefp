@@ -37,4 +37,8 @@ public class PackageIdentifier {
 		o.put("version", this.version);
 		return o;
 	}
+	
+	public String toString() {
+		return this.name + "-" + this.version;
+	}
 }
