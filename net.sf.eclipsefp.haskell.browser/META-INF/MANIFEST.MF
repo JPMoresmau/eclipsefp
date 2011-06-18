@@ -13,4 +13,5 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %bundleVendor
 Export-Package: net.sf.eclipsefp.haskell.browser,
- net.sf.eclipsefp.haskell.browser.items
+ net.sf.eclipsefp.haskell.browser.items,
+ net.sf.eclipsefp.haskell.browser.views
