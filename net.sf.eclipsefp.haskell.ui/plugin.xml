@@ -138,6 +138,12 @@
             class="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
       </perspective>
+      <perspective
+            class="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
+            icon="icons/etool16/haskell_misc.gif"
+            id="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
+            name="Haskell Browser">
+      </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -767,5 +773,74 @@
             targetID="net.sf.eclipsefp.haskell.ui.CodingActionSet">
          <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
       </actionSetPartAssociation>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="net.sf.eclipsefp.haskell.browser"
+            name="Haskell Browser">
+      </category>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.PackagesView"
+            icon="icons/obj16/package.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.PackagesView"
+            name="Packages">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.ModulesView"
+            icon="icons/obj16/module.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.ModulesView"
+            name="Modules">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.TypesView"
+            icon="icons/obj16/datadecl.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.TypesView"
+            name="Types"
+            restorable="true">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.FunctionsView"
+            icon="icons/obj16/functionbinding.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.FunctionsView"
+            name="Functions"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="net.sf.eclipsefp.haskell.browser.views.modulesViewContribution"
+            targetID="net.sf.eclipsefp.haskell.browser.views.ModulesView">
+         <action
+               class="net.sf.eclipsefp.haskell.browser.views.ModulesViewHierarchicalDelegate"
+               id="net.sf.eclipsefp.haskell.browser.views.modulesViewHierarchical"
+               label="Hierarchical"
+               menubarPath="net.sf.eclipsefp.haskell.browser.views.modulesViewPulldown/content"
+               style="radio">
+         </action>
+         <action
+               class="net.sf.eclipsefp.haskell.browser.views.ModulesViewFlatDelegate"
+               id="net.sf.eclipsefp.haskell.browser.views.modulesViewFlat"
+               label="Flat"
+               menubarPath="net.sf.eclipsefp.haskell.browser.views.modulesViewPulldown/content"
+               style="radio">
+         </action>
+         <menu
+               id="net.sf.eclipsefp.haskell.browser.views.modulesViewPulldown"
+               label="Style"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+      </viewContribution>
    </extension>
 </plugin>
