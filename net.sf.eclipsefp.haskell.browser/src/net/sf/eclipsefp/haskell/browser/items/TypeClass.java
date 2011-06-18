@@ -56,4 +56,31 @@ public class TypeClass extends Declaration {
 	public String[] getFunctionalDependencies() {
 		return this.fundeps;
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		StringBuilder builder = new StringBuilder("class");
+		builder.append(' ');
+		for (String ctx : this.getContext()) {
+			builder.append(ctx);
+			builder.append(' ');
+		}
+		if (this.getContext().length > 0)
+			builder.append("=> ");
+		builder.append(this.getName());
+		for (String tvar : this.getTypeVariables()) {
+			builder.append(' ');
+			builder.append(tvar);
+		}
+		String[] fdeps = this.getFunctionalDependencies();
+		if (fdeps.length > 0) {
+			builder.append(" | ");
+			for (int i = 0; i < fdeps.length; i++) {
+				if (i != 0)
+					builder.append(", ");
+				builder.append(fdeps[i]);
+			}
+		}
+		return builder.toString();
+	}
 }

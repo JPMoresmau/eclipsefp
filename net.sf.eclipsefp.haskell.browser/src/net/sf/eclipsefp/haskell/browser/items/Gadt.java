@@ -37,10 +37,13 @@ public abstract class Gadt extends Declaration {
 		}
 
 		JSONObject head = o.getJSONObject("head");
+		String oKind = o.optString("kind", "");
+		if (oKind.equals("null"))
+			oKind = "";
 		this.setInfo(Util.getStringArray(o.getJSONArray("context")),
 				head.getString("name"),
 				Util.getStringArray(head.getJSONArray("vars")),
-				o.optString("kind", ""),
+				oKind,
 				aCons.toArray(new Constructor[jCons.length()]));
 	}
 
@@ -58,5 +61,26 @@ public abstract class Gadt extends Declaration {
 
 	public Constructor[] getConstructors() {
 		return this.cons;
+	}
+	
+	public String getCompleteDefinition(String keyword) {
+		StringBuilder builder = new StringBuilder(keyword);
+		builder.append(' ');
+		for (String ctx : this.getContext()) {
+			builder.append(ctx);
+			builder.append(' ');
+		}
+		if (this.getContext().length > 0)
+			builder.append("=> ");
+		builder.append(this.getName());
+		for (String tvar : this.getTypeVariables()) {
+			builder.append(' ');
+			builder.append(tvar);
+		}
+		if (!this.getKind().isEmpty()) {
+			builder.append(" :: ");
+			builder.append(this.getKind());
+		}
+		return builder.toString();
 	}
 }

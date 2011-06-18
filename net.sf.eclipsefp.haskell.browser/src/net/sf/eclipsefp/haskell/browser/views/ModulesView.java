@@ -2,11 +2,14 @@ package net.sf.eclipsefp.haskell.browser.views;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
@@ -16,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
-public class ModulesView extends ViewPart implements ISelectionListener {
+public class ModulesView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -24,7 +27,7 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 	public static final String ID = "net.sf.eclipsefp.haskell.browser.views.ModulesView";
 
 	TreeViewer viewer;
-	TextViewer doc;
+	Browser doc;
 	ModulesContentProvider provider;
 
 	private IMemento memento;
@@ -45,8 +48,8 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 	public void createPartControl(Composite parent) {
 		SashForm form = new SashForm(parent, SWT.VERTICAL);
 		viewer = new TreeViewer(form);
-		doc = new TextViewer(form, SWT.NONE);
-		form.setWeights(new int[] { 80, 20 });
+		doc = new Browser(form, SWT.NONE);
+		form.setWeights(new int[] { 75, 25 });
 
 		// Set label provider and sorter
 		viewer.setLabelProvider(new ModulesLabelProvider());
@@ -55,7 +58,8 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 		provider = new ModulesContentProvider(this.memento);
 		viewer.setContentProvider(provider);
 		viewer.setInput(null);
-
+		// Hook for changes in selection
+		viewer.addPostSelectionChangedListener(this);
 		// Register as selection provider
 		getSite().setSelectionProvider(viewer);
 		// Hook onto selection changes
@@ -96,5 +100,32 @@ public class ModulesView extends ViewPart implements ISelectionListener {
 
 	public boolean getHierarchical() {
 		return provider.getHierarchical();
+	}
+	
+	public void selectionChanged(SelectionChangedEvent event) {
+		TreeSelection selection = (TreeSelection) event.getSelection();
+		ModulesItem item = (ModulesItem)selection.getFirstElement();
+		if (item == null || item.getModule() == null) {
+			doc.setText("");
+		} else {
+			doc.setText(generateHtml(item.getModule().getDoc()));
+		}
+	}
+	
+	public String generateHtml(String packageDocs) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("<html>");
+		builder.append("<body>");
+		builder.append("<div style=\"font-size: small\">");
+		String[] paragraphs = packageDocs.split("\n\n");
+		for (String paragraph : paragraphs) {
+			builder.append("<p>");
+			builder.append(paragraph);
+			builder.append("</p>");
+		}
+		builder.append("</div>");
+		builder.append("</body>");
+		builder.append("</html>");
+		return builder.toString();
 	}
 }

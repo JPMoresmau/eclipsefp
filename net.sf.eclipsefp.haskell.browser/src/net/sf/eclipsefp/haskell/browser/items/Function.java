@@ -29,4 +29,12 @@ public class Function extends Declaration {
 	public String getSignature() {
 		return this.signature;
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		StringBuilder builder = new StringBuilder(this.getName());
+		builder.append(" :: ");
+		builder.append(this.getSignature());
+		return builder.toString();
+	}
 }

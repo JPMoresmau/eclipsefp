@@ -49,4 +49,18 @@ public class TypeSynonym extends Declaration {
 	public String getEquivalence() {
 		return this.equals;
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		StringBuilder builder = new StringBuilder("type");
+		builder.append(' ');
+		builder.append(this.getName());
+		for (String tvar : this.getTypeVariables()) {
+			builder.append(' ');
+			builder.append(tvar);
+		}
+		builder.append(" = ");
+		builder.append(this.getEquivalence());
+		return builder.toString();
+	}
 }

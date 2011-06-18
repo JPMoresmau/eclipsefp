@@ -47,4 +47,22 @@ public class Instance extends Declaration {
 	public String[] getTypeVariables() {
 		return this.vars;
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		StringBuilder builder = new StringBuilder("instance");
+		builder.append(' ');
+		for (String ctx : this.getContext()) {
+			builder.append(ctx);
+			builder.append(' ');
+		}
+		if (this.getContext().length > 0)
+			builder.append("=> ");
+		builder.append(this.getName());
+		for (String tvar : this.getTypeVariables()) {
+			builder.append(' ');
+			builder.append(tvar);
+		}
+		return builder.toString();
+	}
 }

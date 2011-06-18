@@ -35,6 +35,10 @@ public class ModulesItem {
 		return this.mod;
 	}
 	
+	void setModule(Module mod) {
+		this.mod = mod;
+	}
+	
 	public ModulesItem getParent() {
 		return this.parent;
 	}

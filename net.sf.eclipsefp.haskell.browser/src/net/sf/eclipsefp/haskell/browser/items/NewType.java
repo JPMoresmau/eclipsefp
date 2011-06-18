@@ -23,4 +23,9 @@ public class NewType extends Gadt {
 		this.setType(DeclarationType.NEW_TYPE);
 		this.setInfo(o);
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		return getCompleteDefinition("newtype");
+	}	
 }

@@ -23,4 +23,9 @@ public class DataType extends Gadt {
 		this.setType(DeclarationType.DATA_TYPE);
 		this.setInfo(o);
 	}
+
+	@Override
+	public String getCompleteDefinition() {
+		return getCompleteDefinition("data");
+	}	
 }

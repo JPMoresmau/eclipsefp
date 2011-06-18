@@ -21,5 +21,7 @@ public abstract class Documented {
 	
 	protected void setDoc(JSONObject o) {
 		this.doc = o.optString("doc", "");
+		if (this.doc.equals("null"))
+			this.doc = "";
 	}
 }

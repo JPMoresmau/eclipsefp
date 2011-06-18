@@ -46,4 +46,6 @@ public abstract class Declaration extends Documented {
 		else
 			throw new Exception("Declaration of unknown type");
 	}
+	
+	public abstract String getCompleteDefinition();
 }

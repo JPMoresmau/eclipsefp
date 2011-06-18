@@ -117,6 +117,11 @@ public class ModulesContentProvider implements ITreeContentProvider {
 				else
 					currentItem = new ModulesItem(dbInfo, names[i], null, currentParent);
 				currentList.add(currentItem);
+			} else {
+				if (i == names.length - 1) { // Maybe we have newer information
+					if (currentItem.getModule() == null)
+						currentItem.setModule(m);
+				}
 			}
 			currentList = currentItem.getModulesArrayList();
 			currentParent = currentItem;

@@ -26,4 +26,11 @@ public class Constructor extends Documented {
 	public String getSignature() {
 		return this.signature;
 	}
+	
+	public String getCompleteDefinition() {
+		StringBuilder builder = new StringBuilder(this.getName());
+		builder.append(" :: ");
+		builder.append(this.getSignature());
+		return builder.toString();
+	}
 }
