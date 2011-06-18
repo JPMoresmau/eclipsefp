@@ -1,91 +1,98 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
 import java.util.ArrayList;
-
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
-
+import net.sf.eclipsefp.haskell.browser.items.QueryItem;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class DeclarationsContentProvider implements ITreeContentProvider {
 
-	boolean isTypes;
-	ArrayList<Packaged<Declaration>> cache = null;
+  boolean isTypes;
+  ArrayList<QueryItem> cache = null;
 
-	public DeclarationsContentProvider(boolean isTypes) {
-		this.isTypes = isTypes;
-	}
+  public DeclarationsContentProvider( final boolean isTypes ) {
+    this.isTypes = isTypes;
+  }
 
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null || !(newInput instanceof ModulesItem)) {
-			cache = new ArrayList<Packaged<Declaration>>();
-		} else {
-			try {
-				ModulesItem mitem = (ModulesItem)newInput;
-				
-				// The module is a fake module from hierarchical view
-				if (mitem.getModule() == null) {
-					cache = new ArrayList<Packaged<Declaration>>();
-					return;
-				}
+  public void inputChanged( final Viewer viewer, final Object oldInput,
+      final Object newInput ) {
+    if( newInput == null || !( newInput instanceof ModulesItem ) ) {
+      cache = new ArrayList<QueryItem>();
+    } else {
+      try {
+        ModulesItem mitem = ( ModulesItem )newInput;
 
-				Object o = mitem.getDatabaseInfo();
-				if (o instanceof DatabaseType) {
-					BrowserPlugin.getSharedInstance().setCurrentDatabase((DatabaseType) o, null);
-				} else {
-					PackagesItem item = (PackagesItem) o;
-					BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.PACKAGE,
-							item.getPackage().getIdentifier());
-				}
-				
-				cache = new ArrayList<Packaged<Declaration>>();
-				for (Packaged<Declaration> decl : BrowserPlugin.getSharedInstance().getDeclarations(mitem.getModule().getName())) {
-					if (decl.getElement().getType() == DeclarationType.FUNCTION && !isTypes)
-						cache.add(decl);
-					else if (decl.getElement().getType() != DeclarationType.FUNCTION && isTypes)
-						cache.add(decl);
-				}
+        // The module is a fake module from hierarchical view
+        if( mitem.getModule() == null ) {
+          cache = new ArrayList<QueryItem>();
+          return;
+        }
 
-			} catch (Throwable ex) {
-				cache = new ArrayList<Packaged<Declaration>>();
-			}
-		}
-	}
+        Object o = mitem.getDatabaseInfo();
+        if( o instanceof DatabaseType ) {
+          BrowserPlugin.getSharedInstance().setCurrentDatabase(
+              ( DatabaseType )o, null );
+        } else {
+          PackagesItem item = ( PackagesItem )o;
+          BrowserPlugin.getSharedInstance().setCurrentDatabase(
+              DatabaseType.PACKAGE, item.getPackage().getIdentifier() );
+        }
 
-	public Object[] getElements(Object inputElement) {
-		return cache.toArray();
-	}
+        cache = new ArrayList<QueryItem>();
+        Packaged<Declaration>[] decls = BrowserPlugin.getSharedInstance()
+            .getDeclarations( mitem.getModule().getName() );
+        for( QueryItem decl: QueryItem.convertToQueryItem( decls ) ) {
+          if( decl.getType() == DeclarationType.FUNCTION && !isTypes ) {
+            cache.add( decl );
+          } else if( decl.getType() != DeclarationType.FUNCTION && isTypes ) {
+            cache.add( decl );
+          }
+        }
 
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof Packaged<?>) {
-			Declaration item = ((Packaged<Declaration>)parentElement).getElement();
-			if (item instanceof Gadt)
-				return ((Gadt)item).getConstructors();
-		}
-		return new Object[0];
-	}
+      } catch( Throwable ex ) {
+        cache = new ArrayList<QueryItem>();
+      }
+    }
+  }
 
-	public Object getParent(Object element) {
-		return null;
-	}
+  public Object[] getElements( final Object inputElement ) {
+    return cache.toArray();
+  }
 
-	public boolean hasChildren(Object element) {
-		// Only datatypes and newtypes may have children
-		if (element instanceof Packaged<?>) {
-			Declaration item = ((Packaged<Declaration>)element).getElement();
-			if (item instanceof Gadt)
-				return ((Gadt)item).getConstructors().length > 0;
-		}
+  public Object[] getChildren( final Object parentElement ) {
+    if( parentElement instanceof QueryItem ) {
+      QueryItem item = ( QueryItem )parentElement;
+      ArrayList<Object> elements = new ArrayList<Object>();
+      // If a GADT, add constructors
+      if( item.getDeclaration() instanceof Gadt ) {
+        for( Constructor c: ( ( Gadt )item.getDeclaration() ).getConstructors() ) {
+          elements.add( c );
+        }
+      }
+      // Add other inner items
+      elements.addAll( item.getInnerItems() );
+      return elements.toArray();
+    } else {
+      return new Object[ 0 ];
+    }
+  }
 
-		return false;
-	}
+  public Object getParent( final Object element ) {
+    return null;
+  }
 
-	public void dispose() {
-		// Do nothing
-	}
+  public boolean hasChildren( final Object element ) {
+    return this.getChildren( element ).length > 0;
+  }
+
+  public void dispose() {
+    // Do nothing
+  }
 }

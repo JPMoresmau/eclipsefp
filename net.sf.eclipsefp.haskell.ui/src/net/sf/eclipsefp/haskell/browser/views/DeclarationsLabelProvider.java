@@ -5,22 +5,20 @@ import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.Function;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.Instance;
-import net.sf.eclipsefp.haskell.browser.items.Packaged;
+import net.sf.eclipsefp.haskell.browser.items.QueryItem;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 public class DeclarationsLabelProvider implements ILabelProvider {
 
-	public Image getImage(Object element) {
-		if (element instanceof Packaged<?>) {
-			Packaged<Declaration> pDecl = (Packaged<Declaration>) element;
-			Declaration decl = pDecl.getElement();
-			switch (decl.getType()) {
+	public Image getImage(final Object element) {
+		if (element instanceof QueryItem) {
+			QueryItem item = (QueryItem) element;
+			switch (item.getType()) {
 			case DATA_TYPE:
 			case NEW_TYPE:
 				return ImageCache.DATATYPE;
@@ -40,9 +38,9 @@ public class DeclarationsLabelProvider implements ILabelProvider {
 		return null;
 	}
 
-	public String getText(Object element) {
-		if (element instanceof Packaged<?>) {
-			Declaration elt = ((Packaged<Declaration>) element).getElement();
+	public String getText(final Object element) {
+		if (element instanceof QueryItem) {
+			Declaration elt = ((QueryItem) element).getDeclaration();
 			if (elt instanceof Gadt) {
 				Gadt item = (Gadt) elt;
 				StringBuilder name = new StringBuilder(item.getName());
@@ -62,12 +60,22 @@ public class DeclarationsLabelProvider implements ILabelProvider {
 			} else if (elt instanceof Instance) {
 				Instance item = (Instance) elt;
 				StringBuilder name = new StringBuilder();
-				for (String ctx : item.getContext()) {
-					name.append(ctx);
-					name.append(' ');
-				}
-				if (item.getContext().length > 0)
-					name.append("=> ");
+
+				if (item.getContext().length > 1) {
+				  name.append('(');
+				  name.append(item.getContext()[0]);
+		      for (int i = 1; i < item.getContext().length; i++) {
+		        name.append(", ");
+		        name.append(item.getContext()[i]);
+		      }
+		      name.append(") ");
+		    } else if (item.getContext().length == 1) {
+		      name.append(item.getContext()[0]);
+		      name.append(' ');
+		    }
+		    if (item.getContext().length > 0) {
+          name.append("=> ");
+        }
 				name.append(item.getName());
 				for (String var : item.getTypeVariables()) {
 					name.append(' ');
@@ -97,7 +105,7 @@ public class DeclarationsLabelProvider implements ILabelProvider {
 	}
 
 	// Listeners: not used
-	public void addListener(ILabelProviderListener listener) {
+	public void addListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 
@@ -105,12 +113,12 @@ public class DeclarationsLabelProvider implements ILabelProvider {
 		// Do nothing
 	}
 
-	public boolean isLabelProperty(Object element, String property) {
+	public boolean isLabelProperty(final Object element, final String property) {
 		// Do nothing
 		return false;
 	}
 
-	public void removeListener(ILabelProviderListener listener) {
+	public void removeListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 

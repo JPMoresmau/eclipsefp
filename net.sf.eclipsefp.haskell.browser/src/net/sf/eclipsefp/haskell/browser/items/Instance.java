@@ -52,8 +52,16 @@ public class Instance extends Declaration {
 	public String getCompleteDefinition() {
 		StringBuilder builder = new StringBuilder("instance");
 		builder.append(' ');
-		for (String ctx : this.getContext()) {
-			builder.append(ctx);
+		if (this.getContext().length > 1) {
+			builder.append('(');
+			builder.append(this.getContext()[0]);
+			for (int i = 1; i < this.getContext().length; i++) {
+				builder.append(", ");
+				builder.append(this.getContext()[i]);
+			}
+			builder.append(") ");
+		} else if (this.getContext().length == 1) {
+			builder.append(this.getContext()[0]);
 			builder.append(' ');
 		}
 		if (this.getContext().length > 0)
