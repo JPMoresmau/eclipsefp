@@ -1,29 +1,39 @@
 package net.sf.eclipsefp.haskell.browser.items;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class HoogleResultDeclaration extends HoogleResult {
-	PackageIdentifier pkg;
+	ArrayList<PackageIdentifier> pkg;
 	String mod;
 	Declaration decl;
 
 	public HoogleResultDeclaration(PackageIdentifier pkg, String mod, Declaration decl) {
 		setType(HoogleResultType.DECLARATION);
-		this.pkg = pkg;
+		this.pkg = new ArrayList<PackageIdentifier>();
+		this.pkg.add(pkg);
 		this.mod = mod;
 		this.decl = decl;
 	}
 
 	public HoogleResultDeclaration(JSONObject o) throws Exception {
 		setType(HoogleResultType.DECLARATION);
-		JSONArray result = o.getJSONArray("result");
-		this.pkg = new PackageIdentifier(result.getJSONObject(0));
-		this.mod = result.getString(1);
-		this.decl = Declaration.fromJSON(result.getJSONObject(2));
+		JSONArray results = o.getJSONArray("results");
+		// Get info from first result
+		JSONArray first_result = results.getJSONArray(0);
+		this.mod = first_result.getString(1);
+		this.decl = Declaration.fromJSON(first_result.getJSONObject(2));
+		// Add packages
+		this.pkg = new ArrayList<PackageIdentifier>();
+		for (int i = 0; i < results.length(); i++) {
+			JSONArray result = results.getJSONArray(i);
+			this.pkg.add(new PackageIdentifier(result.getJSONObject(0)));;
+		}
 	}
 
-	public PackageIdentifier getPackageIdentifier() {
+	public ArrayList<PackageIdentifier> getPackageIdentifiers() {
 		return this.pkg;
 	}
 	

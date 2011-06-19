@@ -120,6 +120,7 @@ public class Commands {
 	
 	public static JSONObject createHoogleQuery(String query) throws JSONException {
 		JSONObject o = new JSONObject();
+		o.put("command", "hoogle-query");
 		o.put("query", query);
 		return o;
 	}

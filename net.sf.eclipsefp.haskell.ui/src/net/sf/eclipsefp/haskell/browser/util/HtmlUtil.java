@@ -34,15 +34,18 @@ public class HtmlUtil {
   private static void addPackageModule(
       final ArrayList<PackageIdentifier> pkgs, final String module,
       final StringBuilder builder ) {
+
+    builder.append( "<p>" );
     if( module != null ) {
-      builder.append( "<p>" );
       builder.append( "<b>Defined in: </b>" );
       builder.append( module );
-      builder.append( "</p>" );
     }
 
     if( pkgs != null ) {
-      builder.append( "<p>" );
+      if (module != null) {
+        builder.append( "<br />" );
+      }
+
       builder.append( "<b>Packaged in: </b>" );
       boolean first = true;
       for( PackageIdentifier pkg: pkgs ) {
@@ -52,8 +55,8 @@ public class HtmlUtil {
         builder.append( pkg.toString() );
         first = false;
       }
-      builder.append( "</p>" );
     }
+    builder.append( "</p>" );
   }
 
   /**

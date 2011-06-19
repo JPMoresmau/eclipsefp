@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.browser.items;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +14,9 @@ public class HoogleResultPackage extends HoogleResult {
 	
 	public HoogleResultPackage(JSONObject o) throws JSONException {
 		setType(HoogleResultType.PACKAGE);
-		this.pkg = new HaskellPackage(o.getJSONObject("result"));
+		JSONArray results = o.getJSONArray("results");
+		// Get info from first result
+		this.pkg = new HaskellPackage(results.getJSONObject(0));
 	}
 	
 	public HaskellPackage getPackage() {

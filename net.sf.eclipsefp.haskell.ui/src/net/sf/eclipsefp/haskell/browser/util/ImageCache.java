@@ -1,29 +1,21 @@
 package net.sf.eclipsefp.haskell.browser.util;
 
-import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.swt.graphics.Image;
 
 public class ImageCache {
 
-  public static Image MODULE = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/module.gif" ).createImage();
-  public static Image PACKAGE = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/package.gif" ).createImage();
-  public static Image DATABASE = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/packagefolder.gif" ).createImage();
-  public static Image DATATYPE = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/datadecl.gif" ).createImage();
-  public static Image CONSTRUCTOR = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/constructordecl.gif" ).createImage();
-  public static Image CLASS = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/classdecl.gif" ).createImage();
-  public static Image INSTANCE = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/instancedecl.gif" ).createImage();
-  public static Image FUNCTION = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/functionbinding.gif" ).createImage();
-  public static Image TYPE = BrowserPlugin.getImageDescriptor(
-      "icons/obj16/typedecl.gif" ).createImage();
+  public static Image MODULE = HaskellUIImages.getImage( IImageNames.MODULE );
+  public static Image PACKAGE = HaskellUIImages.getImage( IImageNames.PACKAGE );
+  public static Image DATABASE = HaskellUIImages.getImage( IImageNames.PACKAGE_FOLDER );
+  public static Image DATATYPE = HaskellUIImages.getImage( IImageNames.DATA_DECL );
+  public static Image CONSTRUCTOR = HaskellUIImages.getImage( IImageNames.CONSTRUCTOR_DECL );
+  public static Image CLASS = HaskellUIImages.getImage( IImageNames.CLASS_DECL );
+  public static Image INSTANCE = HaskellUIImages.getImage( IImageNames.INSTANCE_DECL );
+  public static Image FUNCTION = HaskellUIImages.getImage( IImageNames.FUNCTION_BINDING );
+  public static Image TYPE = HaskellUIImages.getImage( IImageNames.TYPE_DECL );
 
   public static Image getImageForDeclaration( final DeclarationType type ) {
     switch( type ) {

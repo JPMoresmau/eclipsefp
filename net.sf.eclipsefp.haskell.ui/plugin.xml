@@ -810,6 +810,14 @@
             name="Functions"
             restorable="true">
       </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
+            icon="icons/obj16/lambda.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
+            name="Hoogle"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
