@@ -142,7 +142,7 @@
             class="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
             icon="icons/etool16/haskell_misc.gif"
             id="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
-            name="Haskell Browser">
+            name="%haskellBrowserPerspective_name">
       </perspective>
    </extension>
    <extension
@@ -778,28 +778,28 @@
          point="org.eclipse.ui.views">
       <category
             id="net.sf.eclipsefp.haskell.browser"
-            name="Haskell Browser">
+            name="%haskellBrowserPerspective_category">
       </category>
       <view
             category="net.sf.eclipsefp.haskell.browser"
             class="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
             icon="icons/obj16/package.gif"
             id="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
-            name="Packages">
+            name="%haskellBrowser_packagesView">
       </view>
       <view
             category="net.sf.eclipsefp.haskell.browser"
             class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"
             icon="icons/obj16/module.gif"
             id="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"
-            name="Modules">
+            name="%haskellBrowser_modulesView">
       </view>
       <view
             category="net.sf.eclipsefp.haskell.browser"
             class="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"
             icon="icons/obj16/datadecl.gif"
             id="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"
-            name="Types"
+            name="%haskellBrowser_typesView"
             restorable="true">
       </view>
       <view
@@ -807,7 +807,7 @@
             class="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"
             icon="icons/obj16/functionbinding.gif"
             id="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"
-            name="Functions"
+            name="%haskellBrowser_functionsView"
             restorable="true">
       </view>
       <view
@@ -815,7 +815,7 @@
             class="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
             icon="icons/obj16/lambda.gif"
             id="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
-            name="Hoogle"
+            name="%haskellBrowser_hoogleView"
             restorable="true">
       </view>
    </extension>
@@ -827,20 +827,20 @@
          <action
                class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesViewHierarchicalDelegate"
                id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewHierarchical"
-               label="Hierarchical"
+               label="%haskellBrowser_hierarchical"
                menubarPath="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown/content"
                style="radio">
          </action>
          <action
                class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesViewFlatDelegate"
                id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewFlat"
-               label="Flat"
+               label="%haskellBrowser_flat"
                menubarPath="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown/content"
                style="radio">
          </action>
          <menu
                id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown"
-               label="Style"
+               label="%haskellBrowser_viewStyle"
                path="additions">
             <groupMarker
                   name="content">

@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.browser.util;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 
 /**
  * Generates Html for showing documentation in several places.
@@ -37,16 +38,20 @@ public class HtmlUtil {
 
     builder.append( "<p>" );
     if( module != null ) {
-      builder.append( "<b>Defined in: </b>" );
+      builder.append( "<b>" );
+      builder.append( UITexts.browser_definedInModules );
+      builder.append( "</b>" );
       builder.append( module );
     }
 
     if( pkgs != null ) {
-      if (module != null) {
+      if( module != null ) {
         builder.append( "<br />" );
       }
 
-      builder.append( "<b>Packaged in: </b>" );
+      builder.append( "<b>" );
+      builder.append( UITexts.browser_packagedInPackages );
+      builder.append( "</b>" );
       boolean first = true;
       for( PackageIdentifier pkg: pkgs ) {
         if( !first ) {
@@ -62,12 +67,17 @@ public class HtmlUtil {
   /**
    * Complete way to generate documentation.
    *
-   * @param definition complete definition of the item to show
-   * @param pkgs list of packages where it is defined, or null to not show it
-   * @param module module where it is defined, or null to not show it
-   * @param inAtStart if true, the information about the item package+module
-   *                  will be shown before the docs, if false, it will be after
-   * @param docs documentation for the item
+   * @param definition
+   *          complete definition of the item to show
+   * @param pkgs
+   *          list of packages where it is defined, or null to not show it
+   * @param module
+   *          module where it is defined, or null to not show it
+   * @param inAtStart
+   *          if true, the information about the item package+module will be
+   *          shown before the docs, if false, it will be after
+   * @param docs
+   *          documentation for the item
    */
   public static String generateDocument( final String definition,
       final ArrayList<PackageIdentifier> pkgs, final String module,
@@ -100,7 +110,8 @@ public class HtmlUtil {
    * {@link HtmlUtil#generateDocument(String, ArrayList, String, boolean, String)}
    * but without package and module info.
    */
-  public static String generateDocument (final String definition, final String docs) {
-    return generateDocument(definition, null, null, true, docs);
+  public static String generateDocument( final String definition,
+      final String docs ) {
+    return generateDocument( definition, null, null, true, docs );
   }
 }

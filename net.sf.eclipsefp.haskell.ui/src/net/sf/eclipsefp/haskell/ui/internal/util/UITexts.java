@@ -399,6 +399,9 @@ public final class UITexts extends NLS {
   public static String error_tabs;
   public static String error_tabs_message;
 
+  public static String browser_definedInModules;
+  public static String browser_packagedInPackages;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
