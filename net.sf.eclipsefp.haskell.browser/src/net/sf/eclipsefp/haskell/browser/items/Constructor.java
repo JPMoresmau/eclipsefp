@@ -33,4 +33,8 @@ public class Constructor extends Documented {
 		builder.append(this.getSignature());
 		return builder.toString();
 	}
+	
+	public String getShownName() {
+		return this.name + " :: " + this.signature;
+	}
 }

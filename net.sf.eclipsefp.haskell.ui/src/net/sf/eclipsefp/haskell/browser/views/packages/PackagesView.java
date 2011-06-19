@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.browser.views;
+package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import java.net.URL;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
+import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -27,7 +28,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
   /**
    * The ID of the view as specified by the extension.
    */
-  public static final String ID = "net.sf.eclipsefp.haskell.browser.views.PackagesView";
+  public static final String ID = "net.sf.eclipsefp.haskell.browser.views.packages.PackagesView";
 
   TreeViewer viewer;
   Browser doc;

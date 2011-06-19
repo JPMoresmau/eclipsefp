@@ -1,9 +1,10 @@
-package net.sf.eclipsefp.haskell.browser.views;
+package net.sf.eclipsefp.haskell.browser.views.modules;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Module;
+import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;

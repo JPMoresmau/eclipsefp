@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.browser.views;
+package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;

@@ -63,4 +63,16 @@ public class TypeSynonym extends Declaration {
 		builder.append(this.getEquivalence());
 		return builder.toString();
 	}
+	
+	@Override
+	public String getShownName() {
+		StringBuilder name = new StringBuilder(this.name);
+		for (String var : this.vars) {
+			name.append(' ');
+			name.append(var);
+		}
+		name.append(" = ");
+		name.append(this.equals);
+		return name.toString();
+	}
 }

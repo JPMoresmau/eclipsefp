@@ -1,6 +1,8 @@
-package net.sf.eclipsefp.haskell.browser.views;
+package net.sf.eclipsefp.haskell.browser.views.modules;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
+import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,7 +26,7 @@ public class ModulesView extends ViewPart implements ISelectionListener,
   /**
    * The ID of the view as specified by the extension.
    */
-  public static final String ID = "net.sf.eclipsefp.haskell.browser.views.ModulesView";
+  public static final String ID = "net.sf.eclipsefp.haskell.browser.views.modules.ModulesView";
 
   TreeViewer viewer;
   Browser doc;

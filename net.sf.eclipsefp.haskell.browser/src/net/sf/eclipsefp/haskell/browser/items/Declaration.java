@@ -48,4 +48,6 @@ public abstract class Declaration extends Documented {
 	}
 	
 	public abstract String getCompleteDefinition();
+	
+	public abstract String getShownName();
 }

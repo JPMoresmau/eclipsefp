@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.browser.views;
+package net.sf.eclipsefp.haskell.browser.views.declarations;
 
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;

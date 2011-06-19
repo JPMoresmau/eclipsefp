@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.browser.views;
+package net.sf.eclipsefp.haskell.browser.util;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;

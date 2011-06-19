@@ -35,8 +35,7 @@ public class Instance extends Declaration {
 		this.setDoc(o);
 
 		JSONObject head = o.getJSONObject("head");
-		this.setInfo(Util.getStringArray(o.getJSONArray("context")),
-				head.getString("name"),
+		this.setInfo(Util.getStringArray(o.getJSONArray("context")), head.getString("name"),
 				Util.getStringArray(head.getJSONArray("vars")));
 	}
 
@@ -47,7 +46,7 @@ public class Instance extends Declaration {
 	public String[] getTypeVariables() {
 		return this.vars;
 	}
-	
+
 	@Override
 	public String getCompleteDefinition() {
 		StringBuilder builder = new StringBuilder("instance");
@@ -72,5 +71,32 @@ public class Instance extends Declaration {
 			builder.append(tvar);
 		}
 		return builder.toString();
+	}
+
+	@Override
+	public String getShownName() {
+		StringBuilder name = new StringBuilder();
+
+		if (this.context.length > 1) {
+			name.append('(');
+			name.append(this.context[0]);
+			for (int i = 1; i < this.context.length; i++) {
+				name.append(", ");
+				name.append(this.context[i]);
+			}
+			name.append(") ");
+		} else if (this.context.length == 1) {
+			name.append(this.context[0]);
+			name.append(' ');
+		}
+		if (this.context.length > 0) {
+			name.append("=> ");
+		}
+		name.append(this.name);
+		for (String var : this.vars) {
+			name.append(' ');
+			name.append(var);
+		}
+		return name.toString();
 	}
 }

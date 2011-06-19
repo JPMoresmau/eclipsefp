@@ -782,31 +782,31 @@
       </category>
       <view
             category="net.sf.eclipsefp.haskell.browser"
-            class="net.sf.eclipsefp.haskell.browser.views.PackagesView"
+            class="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
             icon="icons/obj16/package.gif"
-            id="net.sf.eclipsefp.haskell.browser.views.PackagesView"
+            id="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
             name="Packages">
       </view>
       <view
             category="net.sf.eclipsefp.haskell.browser"
-            class="net.sf.eclipsefp.haskell.browser.views.ModulesView"
+            class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"
             icon="icons/obj16/module.gif"
-            id="net.sf.eclipsefp.haskell.browser.views.ModulesView"
+            id="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"
             name="Modules">
       </view>
       <view
             category="net.sf.eclipsefp.haskell.browser"
-            class="net.sf.eclipsefp.haskell.browser.views.TypesView"
+            class="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"
             icon="icons/obj16/datadecl.gif"
-            id="net.sf.eclipsefp.haskell.browser.views.TypesView"
+            id="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"
             name="Types"
             restorable="true">
       </view>
       <view
             category="net.sf.eclipsefp.haskell.browser"
-            class="net.sf.eclipsefp.haskell.browser.views.FunctionsView"
+            class="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"
             icon="icons/obj16/functionbinding.gif"
-            id="net.sf.eclipsefp.haskell.browser.views.FunctionsView"
+            id="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"
             name="Functions"
             restorable="true">
       </view>
@@ -814,24 +814,24 @@
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
-            id="net.sf.eclipsefp.haskell.browser.views.modulesViewContribution"
-            targetID="net.sf.eclipsefp.haskell.browser.views.ModulesView">
+            id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewContribution"
+            targetID="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView">
          <action
-               class="net.sf.eclipsefp.haskell.browser.views.ModulesViewHierarchicalDelegate"
-               id="net.sf.eclipsefp.haskell.browser.views.modulesViewHierarchical"
+               class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesViewHierarchicalDelegate"
+               id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewHierarchical"
                label="Hierarchical"
-               menubarPath="net.sf.eclipsefp.haskell.browser.views.modulesViewPulldown/content"
+               menubarPath="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown/content"
                style="radio">
          </action>
          <action
-               class="net.sf.eclipsefp.haskell.browser.views.ModulesViewFlatDelegate"
-               id="net.sf.eclipsefp.haskell.browser.views.modulesViewFlat"
+               class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesViewFlatDelegate"
+               id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewFlat"
                label="Flat"
-               menubarPath="net.sf.eclipsefp.haskell.browser.views.modulesViewPulldown/content"
+               menubarPath="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown/content"
                style="radio">
          </action>
          <menu
-               id="net.sf.eclipsefp.haskell.browser.views.modulesViewPulldown"
+               id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown"
                label="Style"
                path="additions">
             <groupMarker

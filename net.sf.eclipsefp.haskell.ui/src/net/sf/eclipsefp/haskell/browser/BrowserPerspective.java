@@ -1,9 +1,9 @@
 package net.sf.eclipsefp.haskell.browser;
 
-import net.sf.eclipsefp.haskell.browser.views.FunctionsView;
-import net.sf.eclipsefp.haskell.browser.views.ModulesView;
-import net.sf.eclipsefp.haskell.browser.views.PackagesView;
-import net.sf.eclipsefp.haskell.browser.views.TypesView;
+import net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView;
+import net.sf.eclipsefp.haskell.browser.views.declarations.TypesView;
+import net.sf.eclipsefp.haskell.browser.views.modules.ModulesView;
+import net.sf.eclipsefp.haskell.browser.views.packages.PackagesView;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 

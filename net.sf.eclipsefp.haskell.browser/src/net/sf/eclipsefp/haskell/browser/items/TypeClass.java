@@ -91,4 +91,14 @@ public class TypeClass extends Declaration {
 		}
 		return builder.toString();
 	}
+	
+	@Override
+	public String getShownName() {
+		StringBuilder name = new StringBuilder(this.name);
+		for (String var : this.vars) {
+			name.append(' ');
+			name.append(var);
+		}
+		return name.toString();
+	}
 }

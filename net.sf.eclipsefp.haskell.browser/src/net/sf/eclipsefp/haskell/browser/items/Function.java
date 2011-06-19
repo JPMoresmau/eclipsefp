@@ -37,4 +37,9 @@ public class Function extends Declaration {
 		builder.append(this.getSignature());
 		return builder.toString();
 	}
+	
+	@Override
+	public String getShownName() {
+		return this.name + " :: " + this.signature;
+	}
 }
