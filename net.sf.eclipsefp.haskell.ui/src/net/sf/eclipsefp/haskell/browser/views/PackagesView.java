@@ -22,97 +22,99 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
-		ISelectionChangedListener, IDoubleClickListener {
+    ISelectionChangedListener, IDoubleClickListener {
 
-	/**
-	 * The ID of the view as specified by the extension.
-	 */
-	public static final String ID = "net.sf.eclipsefp.haskell.browser.views.PackagesView";
+  /**
+   * The ID of the view as specified by the extension.
+   */
+  public static final String ID = "net.sf.eclipsefp.haskell.browser.views.PackagesView";
 
-	TreeViewer viewer;
-	Browser doc;
-	PackagesContentProvider provider;
+  TreeViewer viewer;
+  Browser doc;
+  PackagesContentProvider provider;
 
-	@Override
-	public void createPartControl(final Composite parent) {
-		SashForm form = new SashForm(parent, SWT.VERTICAL);
-		viewer = new TreeViewer(form);
-		doc = new Browser(form, SWT.NONE);
-		doc.setFont(viewer.getControl().getFont());
-		form.setWeights(new int[] { 75, 25 });
+  @Override
+  public void createPartControl( final Composite parent ) {
+    SashForm form = new SashForm( parent, SWT.VERTICAL );
+    viewer = new TreeViewer( form );
+    doc = new Browser( form, SWT.NONE );
+    doc.setFont( viewer.getControl().getFont() );
+    form.setWeights( new int[] { 75, 25 } );
 
-		// Set label provider and sorter
-		viewer.setLabelProvider(new PackagesLabelProvider());
-		viewer.setSorter(new PackagesSorter());
-		// Set initial content provider
-		provider = new PackagesContentProvider();
-		viewer.setContentProvider(provider);
-		viewer.setInput(PackagesRoot.ROOT);
-		// Hook for listeners
-		BrowserPlugin.getDefault().addDatabaseLoadedListener(this);
-		// Hook for changes in selection
-		viewer.addPostSelectionChangedListener(this);
-		// Hook for double clicking
-		viewer.addDoubleClickListener(this);
-		// Register as selection provider
-		getSite().setSelectionProvider(viewer);
-	}
+    // Set label provider and sorter
+    viewer.setLabelProvider( new PackagesLabelProvider() );
+    viewer.setSorter( new PackagesSorter() );
+    // Set initial content provider
+    provider = new PackagesContentProvider();
+    viewer.setContentProvider( provider );
+    viewer.setInput( PackagesRoot.ROOT );
+    // Hook for listeners
+    BrowserPlugin.getDefault().addDatabaseLoadedListener( this );
+    // Hook for changes in selection
+    viewer.addPostSelectionChangedListener( this );
+    // Hook for double clicking
+    viewer.addDoubleClickListener( this );
+    // Register as selection provider
+    getSite().setSelectionProvider( viewer );
+  }
 
-	@Override
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
+  @Override
+  public void setFocus() {
+    viewer.getControl().setFocus();
+  }
 
-	public void databaseLoaded(final DatabaseLoadedEvent e) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				// Use the new provider
-				provider.uncache();
-				viewer.refresh();
-			}
-		});
-	}
+  public void databaseLoaded( final DatabaseLoadedEvent e ) {
+    Display.getDefault().asyncExec( new Runnable() {
 
-	public void selectionChanged(final SelectionChangedEvent event) {
-		TreeSelection selection = (TreeSelection) event.getSelection();
-		Object o = selection.getFirstElement();
-		if (o == null || o instanceof DatabaseType) {
-			doc.setText("");
-		} else {
-			PackagesItem item = (PackagesItem) o;
-			doc.setText(HtmlUtil.generatePackage(null, item.getPackage().getDoc()));
-		}
-	}
+      public void run() {
+        // Use the new provider
+        provider.uncache();
+        viewer.refresh();
+      }
+    } );
+  }
 
-	public void doubleClick(final DoubleClickEvent event) {
-		TreeSelection selection = (TreeSelection) event.getSelection();
-		Object o = selection.getFirstElement();
-		if (o == null || o instanceof DatabaseType) {
+  public void selectionChanged( final SelectionChangedEvent event ) {
+    TreeSelection selection = ( TreeSelection )event.getSelection();
+    Object o = selection.getFirstElement();
+    if( o == null || o instanceof DatabaseType ) {
+      doc.setText( "" );
+    } else {
+      PackagesItem item = ( PackagesItem )o;
+      doc.setText( HtmlUtil.generateDocument( null, item.getPackage().getDoc() ) );
+    }
+  }
+
+  public void doubleClick( final DoubleClickEvent event ) {
+    TreeSelection selection = ( TreeSelection )event.getSelection();
+    Object o = selection.getFirstElement();
+    if( o == null || o instanceof DatabaseType ) {
       return;
     }
 
-		PackagesItem item = (PackagesItem) o;
-		// Open browser
-		try {
-			IWorkbenchBrowserSupport browserSupport = this.getSite().getWorkbenchWindow()
-					.getWorkbench().getBrowserSupport();
-			URL webUrl = new URL(generateUrl(item.getPackage().getIdentifier()));
-			IWebBrowser browser = browserSupport.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR
-					| IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
-					"Haskell Browser");
-			browser.openURL(webUrl);
-		} catch (Throwable ex) {
-		  // Do nothing
-		}
-	}
+    PackagesItem item = ( PackagesItem )o;
+    // Open browser
+    try {
+      IWorkbenchBrowserSupport browserSupport = this.getSite()
+          .getWorkbenchWindow().getWorkbench().getBrowserSupport();
+      URL webUrl = new URL( generateUrl( item.getPackage().getIdentifier() ) );
+      IWebBrowser browser = browserSupport.createBrowser(
+          IWorkbenchBrowserSupport.AS_EDITOR
+              | IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
+          "Haskell Browser" );
+      browser.openURL( webUrl );
+    } catch( Throwable ex ) {
+      // Do nothing
+    }
+  }
 
-	public String generateUrl(final PackageIdentifier item) {
-		if (item.getName().equals("ghc")) {
-			// GHC libraries are a special case
-			return "http://www.haskell.org/ghc/docs/" + item.getVersion() + "/html/libraries/"
-					+ item.toString() + "/";
-		} else {
-			return "http://hackage.haskell.org/package/" + item.toString();
-		}
-	}
+  public String generateUrl( final PackageIdentifier item ) {
+    if( item.getName().equals( "ghc" ) ) {
+      // GHC libraries are a special case
+      return "http://www.haskell.org/ghc/docs/" + item.getVersion()
+          + "/html/libraries/" + item.toString() + "/";
+    } else {
+      return "http://hackage.haskell.org/package/" + item.toString();
+    }
+  }
 }
