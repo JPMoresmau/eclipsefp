@@ -32,7 +32,6 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
       <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
       <import plugin="net.sf.eclipsefp.haskell.scion.client"/>
       <import plugin="org.eclipse.text" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsefp.haskell.util" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="net.sf.eclipsefp.haskell.core"/>
       <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
@@ -49,6 +48,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.apache.ant"/>
       <import plugin="org.eclipse.core.expressions" version="3.4.100" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.util" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filesystem"/>
       <import plugin="net.sf.eclipsefp.haskell.debug.core"/>
       <import plugin="net.sf.eclipsefp.haskell.debug.ui"/>
@@ -61,7 +61,12 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
       <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.variables" version="3.2.200" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.browser" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.net"/>
+      <import plugin="org.eclipse.jface.text" version="3.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -146,6 +151,13 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          download-size="0"
          install-size="0"
          version="2.0.3"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.browser"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
