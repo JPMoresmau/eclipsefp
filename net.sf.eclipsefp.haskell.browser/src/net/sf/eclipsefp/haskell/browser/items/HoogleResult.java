@@ -15,6 +15,8 @@ public abstract class HoogleResult {
 	
 	public abstract String getName();
 	
+	public abstract String getCompleteDefinition();
+	
 	public static HoogleResult fromJSON(JSONObject o) throws Exception {
 		String type = o.getString("type");
 		if (type.equals("package"))

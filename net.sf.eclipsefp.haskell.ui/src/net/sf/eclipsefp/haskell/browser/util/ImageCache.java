@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Image;
 public class ImageCache {
 
   public static Image MODULE = HaskellUIImages.getImage( IImageNames.MODULE );
+  public static Image MODULE_CONTENT = HaskellUIImages.getImage( IImageNames.EXPORT_MODULE_CONTENT );
   public static Image PACKAGE = HaskellUIImages.getImage( IImageNames.PACKAGE );
   public static Image DATABASE = HaskellUIImages.getImage( IImageNames.PACKAGE_FOLDER );
   public static Image DATATYPE = HaskellUIImages.getImage( IImageNames.DATA_DECL );

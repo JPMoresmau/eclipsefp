@@ -27,4 +27,9 @@ public class HoogleResultPackage extends HoogleResult {
 	public String getName() {
 		return this.pkg.getIdentifier().toString();
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		return "package " + this.getName();
+	}
 }

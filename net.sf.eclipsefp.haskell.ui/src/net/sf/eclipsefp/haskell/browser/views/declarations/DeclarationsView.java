@@ -154,27 +154,10 @@ public abstract class DeclarationsView extends ViewPart implements
 
   public String generateUrl( final QueryItem item ) {
     PackageIdentifier pkg = item.getPackages().get( 0 );
-    String url;
-    if( pkg.getName().equals( "ghc" ) ) {
-      // GHC libraries are a special case
-      url = "http://www.haskell.org/ghc/docs/" + pkg.getVersion()
-          + "/html/libraries/" + pkg.toString() + "/";
-    } else {
-      url = "http://hackage.haskell.org/packages/archive/" + pkg.getName()
-          + "/" + pkg.getVersion() + "/doc/html/";
-    }
-    // Add module name
-    url += lastModulesItem.getModule().getName().replace( '.', '-' ) + ".html";
-    // Add declaration name
+    String moduleName = lastModulesItem.getModule().getName();
     String itemName = item.getName();
-    if( itemName.startsWith( "(" ) ) {
-      itemName = itemName.substring( 1, itemName.length() - 1 );
-    }
-    if( item.getType() == DeclarationType.FUNCTION ) {
-      url += "#v:" + itemName;
-    } else {
-      url += "#t:" + itemName;
-    }
-    return url;
+    boolean isFunctionLike = (item.getType() == DeclarationType.FUNCTION);
+
+    return HtmlUtil.generateElementUrl( pkg, moduleName, isFunctionLike, itemName );
   }
 }

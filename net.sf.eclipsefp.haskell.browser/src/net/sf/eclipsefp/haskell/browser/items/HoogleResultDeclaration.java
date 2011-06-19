@@ -49,4 +49,9 @@ public class HoogleResultDeclaration extends HoogleResult {
 	public String getName() {
 		return this.decl.getName();
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		return this.decl.getCompleteDefinition();
+	}
 }

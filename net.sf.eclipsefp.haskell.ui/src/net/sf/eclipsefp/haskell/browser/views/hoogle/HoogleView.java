@@ -1,5 +1,9 @@
 package net.sf.eclipsefp.haskell.browser.views.hoogle;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Map;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultConstructor;
@@ -7,6 +11,9 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResultDeclaration;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultModule;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultPackage;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -21,11 +28,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 
 public class HoogleView extends ViewPart implements SelectionListener,
-    ISelectionChangedListener {
+    ISelectionChangedListener, IDoubleClickListener {
 
   /**
    * The ID of the view as specified by the extension.
@@ -67,7 +76,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
     viewer.setInput( "" );
     doc = new Browser( form, SWT.NONE );
     form.setWeights( new int[] { 70, 30 } );
-
+    // Hook for double clicking
+    viewer.addDoubleClickListener( this );
     // Hook for changes in selection
     viewer.addPostSelectionChangedListener( this );
   }
@@ -91,6 +101,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
       Object first = provider.getFirstElement();
       if( first != null ) {
         viewer.setSelection( new StructuredSelection( first ), true );
+        viewer.getControl().setFocus();
       }
     }
   }
@@ -104,8 +115,18 @@ public class HoogleView extends ViewPart implements SelectionListener,
       return;
     }
 
-    if( o instanceof HoogleResult ) {
-      HoogleResult result = ( HoogleResult )o;
+    // Try to find element to show
+    HoogleResult result = null;
+    if (o instanceof HoogleResult) {
+      result = (HoogleResult)o;
+    } else {
+      Map.Entry<String, Object> entry = (Map.Entry<String, Object>)o;
+      if (entry.getValue() instanceof HoogleResult) {
+        result = (HoogleResult)entry.getValue();
+      }
+    }
+
+    if( result != null ) {
       String text = null;
       switch( result.getType() ) {
         case PACKAGE:
@@ -135,6 +156,69 @@ public class HoogleView extends ViewPart implements SelectionListener,
       }
 
       doc.setText( text );
+    } else {
+      doc.setText( HtmlUtil.generateText( UITexts.browser_definedInSeveralLocations ) );
+    }
+  }
+
+  public void doubleClick( final DoubleClickEvent event ) {
+    TreeSelection selection = ( TreeSelection )event.getSelection();
+    Object o = selection.getFirstElement();
+    if( o == null ) {
+      return;
+    }
+
+    // Try to find element to show
+    HoogleResult result = null;
+    if (o instanceof HoogleResult) {
+      result = (HoogleResult)o;
+    } else {
+      Map.Entry<String, Object> entry = (Map.Entry<String, Object>)o;
+      if (entry.getValue() instanceof HoogleResult) {
+        result = (HoogleResult)entry.getValue();
+      } else {
+        // Show the first one (better than nothing)
+        result = ((ArrayList<HoogleResult>)entry.getValue()).get( 0 );
+      }
+    }
+
+    String url = null;
+    switch (result.getType()) {
+      case PACKAGE:
+        HoogleResultPackage pkg = (HoogleResultPackage)result;
+        url = HtmlUtil.generatePackageUrl( pkg.getPackage().getIdentifier() );
+        break;
+      case MODULE:
+        HoogleResultModule mod = (HoogleResultModule)result;
+        url = HtmlUtil.generateModuleUrl( mod.getPackageIdentifiers().get(0), mod.getName() );
+        break;
+      case CONSTRUCTOR:
+        HoogleResultConstructor con = (HoogleResultConstructor)result;
+        url = HtmlUtil.generateElementUrl( con.getPackageIdentifiers().get( 0 ),
+            con.getModule(), true, con.getName() );
+        break;
+      case DECLARATION:
+        HoogleResultDeclaration decl = (HoogleResultDeclaration)result;
+        url = HtmlUtil.generateElementUrl( decl.getPackageIdentifiers().get( 0 ),
+            decl.getModule(), decl.getDeclaration().getType() == DeclarationType.FUNCTION,
+            decl.getName() );
+        break;
+    }
+
+    // Open browser
+    if (url != null) {
+      try {
+        IWorkbenchBrowserSupport browserSupport = this.getSite()
+            .getWorkbenchWindow().getWorkbench().getBrowserSupport();
+        URL webUrl = new URL( url );
+        IWebBrowser browser = browserSupport.createBrowser(
+            IWorkbenchBrowserSupport.AS_EDITOR
+                | IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
+            "Haskell Browser" );
+        browser.openURL( webUrl );
+      } catch( Throwable ex ) {
+        // Do nothing
+      }
     }
   }
 }

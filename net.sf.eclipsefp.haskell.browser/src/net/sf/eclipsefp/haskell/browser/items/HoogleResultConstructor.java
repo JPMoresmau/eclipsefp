@@ -57,4 +57,8 @@ public class HoogleResultConstructor extends HoogleResult {
 		return this.con.getName();
 	}
 
+	@Override
+	public String getCompleteDefinition() {
+		return this.con.getCompleteDefinition();
+	}
 }

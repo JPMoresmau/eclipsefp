@@ -5,7 +5,6 @@ import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
-import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -98,7 +97,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     try {
       IWorkbenchBrowserSupport browserSupport = this.getSite()
           .getWorkbenchWindow().getWorkbench().getBrowserSupport();
-      URL webUrl = new URL( generateUrl( item.getPackage().getIdentifier() ) );
+      URL webUrl = new URL( HtmlUtil.generatePackageUrl( item.getPackage().getIdentifier() ) );
       IWebBrowser browser = browserSupport.createBrowser(
           IWorkbenchBrowserSupport.AS_EDITOR
               | IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
@@ -106,16 +105,6 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
       browser.openURL( webUrl );
     } catch( Throwable ex ) {
       // Do nothing
-    }
-  }
-
-  public String generateUrl( final PackageIdentifier item ) {
-    if( item.getName().equals( "ghc" ) ) {
-      // GHC libraries are a special case
-      return "http://www.haskell.org/ghc/docs/" + item.getVersion()
-          + "/html/libraries/" + item.toString() + "/";
-    } else {
-      return "http://hackage.haskell.org/package/" + item.toString();
     }
   }
 }

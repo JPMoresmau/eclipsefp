@@ -43,4 +43,9 @@ public class HoogleResultModule extends HoogleResult {
 	public String getName() {
 		return this.mod.getName();
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		return "module " + this.getName();
+	}
 }

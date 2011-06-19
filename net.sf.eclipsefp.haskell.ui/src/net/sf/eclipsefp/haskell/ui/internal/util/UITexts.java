@@ -401,6 +401,7 @@ public final class UITexts extends NLS {
 
   public static String browser_definedInModules;
   public static String browser_packagedInPackages;
+  public static String browser_definedInSeveralLocations;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
