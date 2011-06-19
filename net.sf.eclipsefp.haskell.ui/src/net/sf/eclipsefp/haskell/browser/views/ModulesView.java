@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,19 +32,19 @@ public class ModulesView extends ViewPart implements ISelectionListener, ISelect
 	private IMemento memento;
 
 	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
+	public void init(final IViewSite site, final IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		this.memento = memento;
 	}
 
 	@Override
-	public void saveState(IMemento memento) {
+	public void saveState(final IMemento memento) {
 		super.saveState(memento);
 		provider.saveState(memento);
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		SashForm form = new SashForm(parent, SWT.VERTICAL);
 		viewer = new TreeViewer(form);
 		doc = new Browser(form, SWT.NONE);
@@ -78,20 +77,24 @@ public class ModulesView extends ViewPart implements ISelectionListener, ISelect
 	}
 
 	// This will be called when a new package is selected
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (part == this)
-			return;
-		if (!(selection instanceof IStructuredSelection))
-			return;
+	public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+		if (part == this) {
+      return;
+    }
+		if (!(selection instanceof IStructuredSelection)) {
+      return;
+    }
 		IStructuredSelection sel = (IStructuredSelection) selection;
 		Object o = sel.getFirstElement();
-		if (o == null)
-			return;
-		if (o instanceof DatabaseType || o instanceof PackagesItem)
-			viewer.setInput(o);
+		if (o == null) {
+      return;
+    }
+		if (o instanceof DatabaseType || o instanceof PackagesItem) {
+      viewer.setInput(o);
+    }
 	}
 
-	public void setHierarchical(boolean isH) {
+	public void setHierarchical(final boolean isH) {
 		if (provider.getHierarchical() != isH) {
 			provider.setHierarchical(isH);
 			viewer.refresh();
@@ -101,31 +104,14 @@ public class ModulesView extends ViewPart implements ISelectionListener, ISelect
 	public boolean getHierarchical() {
 		return provider.getHierarchical();
 	}
-	
-	public void selectionChanged(SelectionChangedEvent event) {
+
+	public void selectionChanged(final SelectionChangedEvent event) {
 		TreeSelection selection = (TreeSelection) event.getSelection();
 		ModulesItem item = (ModulesItem)selection.getFirstElement();
 		if (item == null || item.getModule() == null) {
 			doc.setText("");
 		} else {
-			doc.setText(generateHtml(item.getModule().getDoc()));
+			doc.setText(HtmlUtil.generateModule(null, item.getModule().getDoc()));
 		}
-	}
-	
-	public String generateHtml(String packageDocs) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<html>");
-		builder.append("<body>");
-		builder.append("<div style=\"font-size: small\">");
-		String[] paragraphs = packageDocs.split("\n\n");
-		for (String paragraph : paragraphs) {
-			builder.append("<p>");
-			builder.append(paragraph);
-			builder.append("</p>");
-		}
-		builder.append("</div>");
-		builder.append("</body>");
-		builder.append("</html>");
-		return builder.toString();
 	}
 }

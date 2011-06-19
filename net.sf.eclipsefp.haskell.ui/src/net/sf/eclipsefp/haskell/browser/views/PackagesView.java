@@ -1,13 +1,11 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
 import java.net.URL;
-
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
-
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -19,10 +17,8 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.ViewPart;
 
 public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
@@ -38,7 +34,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 	PackagesContentProvider provider;
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		SashForm form = new SashForm(parent, SWT.VERTICAL);
 		viewer = new TreeViewer(form);
 		doc = new Browser(form, SWT.NONE);
@@ -67,7 +63,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 		viewer.getControl().setFocus();
 	}
 
-	public void databaseLoaded(DatabaseLoadedEvent e) {
+	public void databaseLoaded(final DatabaseLoadedEvent e) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				// Use the new provider
@@ -77,39 +73,23 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 		});
 	}
 
-	public void selectionChanged(SelectionChangedEvent event) {
+	public void selectionChanged(final SelectionChangedEvent event) {
 		TreeSelection selection = (TreeSelection) event.getSelection();
 		Object o = selection.getFirstElement();
 		if (o == null || o instanceof DatabaseType) {
 			doc.setText("");
 		} else {
 			PackagesItem item = (PackagesItem) o;
-			doc.setText(generateHtml(item.getPackage().getDoc()));
+			doc.setText(HtmlUtil.generatePackage(null, item.getPackage().getDoc()));
 		}
 	}
 
-	public String generateHtml(String packageDocs) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<html>");
-		builder.append("<body>");
-		builder.append("<div style=\"font-size: small\">");
-		String[] paragraphs = packageDocs.split("\n\n");
-		for (String paragraph : paragraphs) {
-			builder.append("<p>");
-			builder.append(paragraph);
-			builder.append("</p>");
-		}
-		builder.append("</div>");
-		builder.append("</body>");
-		builder.append("</html>");
-		return builder.toString();
-	}
-
-	public void doubleClick(DoubleClickEvent event) {
+	public void doubleClick(final DoubleClickEvent event) {
 		TreeSelection selection = (TreeSelection) event.getSelection();
 		Object o = selection.getFirstElement();
-		if (o == null || o instanceof DatabaseType)
-			return;
+		if (o == null || o instanceof DatabaseType) {
+      return;
+    }
 
 		PackagesItem item = (PackagesItem) o;
 		// Open browser
@@ -122,11 +102,11 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 					"Haskell Browser");
 			browser.openURL(webUrl);
 		} catch (Throwable ex) {
-
+		  // Do nothing
 		}
 	}
 
-	public String generateUrl(PackageIdentifier item) {
+	public String generateUrl(final PackageIdentifier item) {
 		if (item.getName().equals("ghc")) {
 			// GHC libraries are a special case
 			return "http://www.haskell.org/ghc/docs/" + item.getVersion() + "/html/libraries/"

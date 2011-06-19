@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
@@ -71,6 +72,8 @@ public abstract class BrowserServer {
 	public abstract Module[] getModules(String module) throws IOException, JSONException;
 
 	public abstract Packaged<Declaration>[] getDeclarations(String module) throws Exception;
+	
+	public abstract HoogleResult[] queryHoogle(String query) throws Exception;
 
 	public abstract void stop();
 }

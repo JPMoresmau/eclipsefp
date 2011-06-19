@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.browser.BrowserServer;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
@@ -31,8 +32,8 @@ public class NullBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
-			throws IOException, JSONException {
+	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id) throws IOException,
+			JSONException {
 		// Do nothing
 	}
 
@@ -58,6 +59,12 @@ public class NullBrowserServer extends BrowserServer {
 	public Packaged<Declaration>[] getDeclarations(String module) throws Exception {
 		// Return nothing
 		return (Packaged<Declaration>[]) new Packaged[0];
+	}
+
+	@Override
+	public HoogleResult[] queryHoogle(String query) throws Exception {
+		// Return nothing
+		return new HoogleResult[0];
 	}
 
 	@Override

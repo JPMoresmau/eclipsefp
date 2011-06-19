@@ -1,7 +1,6 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
 import java.net.URL;
-import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
@@ -113,49 +112,12 @@ public abstract class DeclarationsView extends ViewPart implements ISelectionLis
 
 		if (o instanceof QueryItem) {
 			QueryItem decl = (QueryItem) o;
-			doc.setText(generateHtml(decl.getDeclaration().getCompleteDefinition(), decl.getPackages(),
+			doc.setText(HtmlUtil.generateDeclaration(decl.getDeclaration().getCompleteDefinition(), decl.getPackages(),
 					decl.getDeclaration().getDoc()));
 		} else if (o instanceof Constructor) {
 			Constructor c = (Constructor) o;
-			doc.setText(generateHtml(c.getCompleteDefinition(), null, c.getDoc()));
+			doc.setText(HtmlUtil.generateDeclaration(c.getCompleteDefinition(), null, c.getDoc()));
 		}
-	}
-
-	public String generateHtml(final String definition, final ArrayList<PackageIdentifier> pkgs, final String docs) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<html>");
-		builder.append("<body>");
-		builder.append("<div style=\"font-size: small\">");
-
-		builder.append("<p style=\"font-family: monospace\">");
-		builder.append(definition);
-		builder.append("</p>");
-
-		String[] paragraphs = docs.split("\n\n");
-		for (String paragraph : paragraphs) {
-			builder.append("<p>");
-			builder.append(paragraph);
-			builder.append("</p>");
-		}
-
-		if (pkgs != null) {
-			builder.append("<p>");
-			builder.append("<b>Defined in: </b>");
-			boolean first = true;
-			for (PackageIdentifier pkg : pkgs) {
-			  if (!first) {
-			    builder.append(", ");
-			  }
-			  builder.append(pkg.toString());
-			  first = false;
-			}
-			builder.append("</p>");
-		}
-
-		builder.append("</div>");
-		builder.append("</body>");
-		builder.append("</html>");
-		return builder.toString();
 	}
 
 	public void doubleClick(final DoubleClickEvent event) {
@@ -198,10 +160,14 @@ public abstract class DeclarationsView extends ViewPart implements ISelectionLis
 		// Add module name
 		url += lastModulesItem.getModule().getName().replace('.', '-') + ".html";
 		// Add declaration name
+		String itemName = item.getName();
+		if (itemName.startsWith( "(" )) {
+      itemName = itemName.substring( 1, itemName.length() - 1 );
+    }
 		if (item.getType() == DeclarationType.FUNCTION) {
-      url += "#v:" + item.getName();
+      url += "#v:" + itemName;
     } else {
-      url += "#t:" + item.getName();
+      url += "#t:" + itemName;
     }
 		return url;
 	}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
@@ -115,5 +116,22 @@ public class Commands {
 
 		Packaged<Declaration>[] elts = (Packaged<Declaration>[]) new Packaged[aDecls.size()];
 		return aDecls.toArray(elts);
+	}
+	
+	public static JSONObject createHoogleQuery(String query) throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("query", query);
+		return o;
+	}
+	
+	public static HoogleResult[] responseHoogleQuery(String response) throws JSONException, Exception {
+		JSONArray jResults = new JSONArray(response);
+		ArrayList<HoogleResult> aResults = new ArrayList<HoogleResult>();
+		
+		for (int i = 0; i < jResults.length(); i++) {
+			aResults.add(HoogleResult.fromJSON(jResults.getJSONObject(i)));
+		}
+		
+		return aResults.toArray(new HoogleResult[jResults.length()]);
 	}
 }

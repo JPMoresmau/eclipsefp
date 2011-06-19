@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
@@ -109,6 +110,12 @@ public class StreamBrowserServer extends BrowserServer {
 	public Packaged<Declaration>[] getDeclarations(String module) throws Exception {
 		String response = sendAndReceive(Commands.createGetDeclarations(module));
 		return Commands.responseGetDeclarations(response);
+	}
+	
+	@Override
+	public HoogleResult[] queryHoogle(String query) throws Exception {
+		String response = sendAndReceive(Commands.createHoogleQuery(query));
+		return Commands.responseHoogleQuery(response);
 	}
 	
 	@Override

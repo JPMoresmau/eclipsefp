@@ -1,11 +1,9 @@
 package net.sf.eclipsefp.haskell.browser.views;
 
 import java.util.ArrayList;
-
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Module;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
@@ -17,29 +15,30 @@ public class ModulesContentProvider implements ITreeContentProvider {
 
 	ArrayList<ModulesItem> linearCache = null;
 	ArrayList<ModulesItem> hierarchicalCache = null;
-	
-	public ModulesContentProvider(IMemento memento) {
+
+	public ModulesContentProvider(final IMemento memento) {
 		super();
-		if (memento == null)
-			isHierarchical = false;
-		else {
+		if (memento == null) {
+      isHierarchical = false;
+    } else {
 			Boolean value = memento.getBoolean(MEMENTO_KEY);
-			if (value == null)
-				isHierarchical = false;
-			else
-				isHierarchical = (boolean)value;
+			if (value == null) {
+        isHierarchical = false;
+      } else {
+        isHierarchical = value;
+      }
 		}
 	}
-	
-	public void saveState(IMemento memento) {
+
+	public void saveState(final IMemento memento) {
 		memento.putBoolean(MEMENTO_KEY, isHierarchical);
 	}
 
-	public Object[] getElements(Object inputElement) {
+	public Object[] getElements(final Object inputElement) {
 		return isHierarchical ? hierarchicalCache.toArray() : linearCache.toArray();
 	}
 
-	public Object[] getChildren(Object parentElement) {
+	public Object[] getChildren(final Object parentElement) {
 		if (!isHierarchical) {
 			return new Object[0];
 		} else {
@@ -48,12 +47,12 @@ public class ModulesContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	public Object getParent(Object element) {
+	public Object getParent(final Object element) {
 		ModulesItem item = (ModulesItem) element;
 		return item.getParent();
 	}
 
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(final Object element) {
 		if (!isHierarchical) {
 			return false;
 		} else {
@@ -66,9 +65,9 @@ public class ModulesContentProvider implements ITreeContentProvider {
 		// Do nothing
 	}
 
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		// Do nothing
-		
+
 		if (newInput == null) {
 			linearCache = new ArrayList<ModulesItem>();
 			hierarchicalCache = new ArrayList<ModulesItem>();
@@ -82,7 +81,7 @@ public class ModulesContentProvider implements ITreeContentProvider {
 					BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.PACKAGE,
 							item.getPackage().getIdentifier());
 				}
-				
+
 				linearCache = new ArrayList<ModulesItem>();
 				hierarchicalCache = new ArrayList<ModulesItem>();
 				Module[] modules = BrowserPlugin.getSharedInstance().getAllModules();
@@ -90,17 +89,17 @@ public class ModulesContentProvider implements ITreeContentProvider {
 					linearCache.add(new ModulesItem(newInput, module.getName(), module));
 					addModuleToHierarchy(newInput, module);
 				}
-				
+
 			} catch (Throwable ex) {
 				linearCache = new ArrayList<ModulesItem>();
 				hierarchicalCache = new ArrayList<ModulesItem>();
 			}
 		}
 	}
-	
-	public void addModuleToHierarchy(Object dbInfo, Module m) {
+
+	public void addModuleToHierarchy(final Object dbInfo, final Module m) {
 		String[] names = m.getName().split("\\.");
-		
+
 		ArrayList<ModulesItem> currentList = hierarchicalCache;
 		ModulesItem currentParent = null;
 		for (int i = 0; i < names.length; i++) {
@@ -112,27 +111,29 @@ public class ModulesContentProvider implements ITreeContentProvider {
 				}
 			}
 			if (currentItem == null) {
-				if (i == names.length - 1) // This is the last one
-					currentItem = new ModulesItem(dbInfo, names[i], m, currentParent);
-				else
-					currentItem = new ModulesItem(dbInfo, names[i], null, currentParent);
+				if (i == names.length - 1) {
+          currentItem = new ModulesItem(dbInfo, names[i], m, currentParent);
+        } else {
+          currentItem = new ModulesItem(dbInfo, names[i], null, currentParent);
+        }
 				currentList.add(currentItem);
 			} else {
 				if (i == names.length - 1) { // Maybe we have newer information
-					if (currentItem.getModule() == null)
-						currentItem.setModule(m);
+					if (currentItem.getModule() == null) {
+            currentItem.setModule(m);
+          }
 				}
 			}
 			currentList = currentItem.getModulesArrayList();
 			currentParent = currentItem;
 		}
 	}
-	
+
 	public boolean getHierarchical() {
 		return this.isHierarchical;
 	}
-	
-	public void setHierarchical(boolean isH) {
+
+	public void setHierarchical(final boolean isH) {
 		this.isHierarchical = isH;
 	}
 }
