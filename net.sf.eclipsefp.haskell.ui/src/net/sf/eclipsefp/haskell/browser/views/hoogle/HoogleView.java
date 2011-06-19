@@ -27,6 +27,11 @@ import org.eclipse.ui.part.ViewPart;
 public class HoogleView extends ViewPart implements SelectionListener,
     ISelectionChangedListener {
 
+  /**
+   * The ID of the view as specified by the extension.
+   */
+  public static final String ID = "net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView";
+
   Text text;
   TreeViewer viewer;
   Browser doc;
@@ -61,7 +66,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     viewer.setLabelProvider( new HoogleLabelProvider() );
     viewer.setInput( "" );
     doc = new Browser( form, SWT.NONE );
-    form.setWeights( new int[] { 60, 40 } );
+    form.setWeights( new int[] { 70, 30 } );
 
     // Hook for changes in selection
     viewer.addPostSelectionChangedListener( this );
@@ -112,20 +117,20 @@ public class HoogleView extends ViewPart implements SelectionListener,
           HoogleResultModule mod = ( HoogleResultModule )result;
           text = HtmlUtil
               .generateDocument( "module " + mod.getName(), mod
-                  .getPackageIdentifiers(), null, true, mod.getModule()
+                  .getPackageIdentifiers(), null, false, mod.getModule()
                   .getDoc() );
           break;
         case DECLARATION:
           HoogleResultDeclaration decl = ( HoogleResultDeclaration )result;
           text = HtmlUtil.generateDocument( decl.getDeclaration()
               .getCompleteDefinition(), decl.getPackageIdentifiers(), decl
-              .getModule(), true, decl.getDeclaration().getDoc() );
+              .getModule(), false, decl.getDeclaration().getDoc() );
           break;
         case CONSTRUCTOR:
           HoogleResultConstructor con = ( HoogleResultConstructor )result;
           text = HtmlUtil.generateDocument( con.getConstructor()
               .getCompleteDefinition(), con.getPackageIdentifiers(), con
-              .getModule(), true, con.getDeclaration().getDoc() );
+              .getModule(), false, con.getDeclaration().getDoc() );
           break;
       }
 

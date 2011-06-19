@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.browser.BrowserPerspective;
+import net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView;
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
@@ -65,9 +66,10 @@ public class HaskellPerspective implements IPerspectiveFactory {
     addBottomViews( bottom );
     IFolderLayout right = layout.createFolder( "right", //$NON-NLS-1$
                                                IPageLayout.RIGHT,
-                                               0.80f,
+                                               0.75f,
                                                editorArea );
     right.addView( IPageLayout.ID_OUTLINE );
+    right.addView( HoogleView.ID );
   }
 
   private void addLeftViews( final IFolderLayout left ) {
