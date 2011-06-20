@@ -37,25 +37,15 @@ class DescriptionSection extends CabalFormSection {
     getSection().setLayoutData( data );
 
     String text = UITexts.descriptionSection_entrySynopsis;
-    txtSynopsis = createFormEntry( toolkit, container, text );
+    txtSynopsis = createFormEntry( CabalSyntax.FIELD_SYNOPSIS, toolkit, container, text );
     String text2 = UITexts.descriptionSection_entryDescription;
-    txtDescription = createMultiLineFormEntry( toolkit, container, text2 );
+    txtDescription = createMultiLineFormEntry( CabalSyntax.FIELD_DESCRIPTION, toolkit, container, text2 );
     String text3 = UITexts.descriptionSection_entryHomepage;
-    txtHomepage = createFormEntry( toolkit, container, text3 );
+    txtHomepage = createFormEntry( CabalSyntax.FIELD_HOMEPAGE, toolkit, container, text3 );
     String text4 = UITexts.descriptionSection_entryCategory;
-    txtCategory = createFormEntry( toolkit, container, text4 );
+    txtCategory = createFormEntry( CabalSyntax.FIELD_CATEGORY, toolkit, container, text4 );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
-  }
-
-  @Override
-  void mapData() {
-    entries2accs.put( txtSynopsis, CabalSyntax.FIELD_SYNOPSIS );
-    entries2accs.put( txtDescription, CabalSyntax.FIELD_DESCRIPTION );
-    entries2accs.put( txtHomepage, CabalSyntax.FIELD_HOMEPAGE );
-    entries2accs.put( txtCategory, CabalSyntax.FIELD_CATEGORY );
-
-
   }
 }

@@ -37,26 +37,16 @@ class GeneralSection extends CabalFormSection {
     getSection().setLayoutData( data );
 
     String text = UITexts.generalSection_entryName;
-    txtName = createFormEntry( toolkit, container, text );
+    txtName = createFormEntry( CabalSyntax.FIELD_NAME, toolkit, container, text );
     String text2 = UITexts.generalSection_entryVersion;
-    txtVersion = createFormEntry( toolkit, container, text2 );
+    txtVersion = createFormEntry( CabalSyntax.FIELD_VERSION, toolkit, container, text2 );
 
     String text3 = UITexts.generalSection_entryAuthor;
-    txtAuthor = createFormEntry( toolkit, container, text3 );
+    txtAuthor = createFormEntry( CabalSyntax.FIELD_AUTHOR, toolkit, container, text3 );
     String text4 = UITexts.generalSection_entryMaintainer;
-    txtMaintainer = createFormEntry( toolkit, container, text4 );
+    txtMaintainer = createFormEntry( CabalSyntax.FIELD_MAINTAINER, toolkit, container, text4 );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
-  }
-
-  @Override
-  void mapData() {
-    entries2accs.put( txtName, CabalSyntax.FIELD_NAME );
-    entries2accs.put( txtVersion, CabalSyntax.FIELD_VERSION);
-    entries2accs.put( txtAuthor, CabalSyntax.FIELD_AUTHOR);
-    entries2accs.put( txtMaintainer, CabalSyntax.FIELD_MAINTAINER );
-
-
   }
 }

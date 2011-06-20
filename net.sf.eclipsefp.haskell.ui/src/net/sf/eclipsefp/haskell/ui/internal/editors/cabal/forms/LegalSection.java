@@ -36,22 +36,13 @@ class LegalSection extends CabalFormSection {
     getSection().setLayoutData( data );
 
     String text = UITexts.legalSection_entryCopyright;
-    txtCopyright = createFormEntry( toolkit, container, text );
+    txtCopyright = createFormEntry( CabalSyntax.FIELD_COPYRIGHT, toolkit, container, text );
     String text2 = UITexts.legalSection_entryLicense;
-    txtLicense = createFormEntry( toolkit, container, text2 );
+    txtLicense = createFormEntry( CabalSyntax.FIELD_LICENSE, toolkit, container, text2 );
     String text3 = UITexts.legalSection_entryLicenseFile;
-    txtLicenseFile = createFormEntry( toolkit, container, text3 );
+    txtLicenseFile = createFormEntry( CabalSyntax.FIELD_LICENSE_FILE, toolkit, container, text3 );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
-  }
-
-  @Override
-  void mapData() {
-    entries2accs.put( txtCopyright, CabalSyntax.FIELD_COPYRIGHT );
-    entries2accs.put( txtLicense, CabalSyntax.FIELD_LICENSE );
-    entries2accs.put( txtLicenseFile, CabalSyntax.FIELD_LICENSE_FILE );
-
-
   }
 }
