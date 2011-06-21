@@ -110,6 +110,9 @@ public abstract class CabalFormSection extends SectionPart {
   protected FormEntry createFileFromEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
     FormEntryFile entry = new FormEntryFile();
     entry.init( project, container, toolkit, SWT.NONE );
+    entry.setProperty( property );
+    entry.addFormEntryListener( createFormEntryListener() );
+    entries.add( entry );
     return entry;
   }
 
