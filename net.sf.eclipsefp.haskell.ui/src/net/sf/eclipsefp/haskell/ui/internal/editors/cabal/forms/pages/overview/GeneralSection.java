@@ -7,29 +7,32 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/** <p>form section for general info (name, version, ...).</p>
-  *
-  * @author Leif Frenzel
-  */
+/**
+ * <p>
+ * form section for general info (name, version, ...).
+ * </p>
+ *
+ * @author Leif Frenzel
+ */
 class GeneralSection extends CabalFormSection {
 
-  GeneralSection( final IFormPage page,
-                  final Composite parent,
-                  final CabalFormEditor editor ) {
-    super( page, parent, editor, UITexts.generalSection_title );
+  GeneralSection( final IFormPage page, final Composite parent,
+      final CabalFormEditor editor, final IProject project ) {
+    super( page, parent, editor, UITexts.generalSection_title, project );
   }
 
   @Override
   protected void createClient( final FormToolkit toolkit ) {
     Composite container = toolkit.createComposite( getSection() );
     container.setLayout( new GridLayout( 2, false ) );
-    GridData data = new GridData(GridData.FILL_BOTH);
+    GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
     String text = UITexts.generalSection_entryName;

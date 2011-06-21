@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -10,10 +11,12 @@ public abstract class CabalFormPage extends FormPage {
 
   PackageDescription packageDescription = null;
   boolean isLoaded = false;
+  protected IProject project;
 
   public CabalFormPage( final FormEditor editor, final String id,
-      final String title ) {
+      final String title, final IProject project ) {
     super( editor, id, title );
+    this.project = project;
   }
 
   protected boolean isLoaded() {

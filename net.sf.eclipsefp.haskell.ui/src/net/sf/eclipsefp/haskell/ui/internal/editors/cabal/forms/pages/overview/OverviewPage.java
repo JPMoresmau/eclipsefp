@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
@@ -27,8 +28,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class OverviewPage extends CabalFormPage {
 
-  public OverviewPage( final FormEditor editor ) {
-    super( editor, OverviewPage.class.getName(), UITexts.overviewPage_title );
+  public OverviewPage( final FormEditor editor, final IProject project ) {
+    super( editor, OverviewPage.class.getName(), UITexts.overviewPage_title, project );
   }
 
 
@@ -50,11 +51,16 @@ public class OverviewPage extends CabalFormPage {
     Composite bottom = toolkit.createComposite( form.getBody() );
     bottom.setLayout( createGridLayout( 1, 0, 0 ) );
     bottom.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+    Composite extra = toolkit.createComposite( form.getBody() );
+    extra.setLayout( createGridLayout( 2, 0, 0 ) );
+    extra.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
 
     CabalFormEditor formEditor = ( CabalFormEditor )getEditor();
-    managedForm.addPart( new GeneralSection( this, top, formEditor ) );
-    managedForm.addPart( new LegalSection( this, top, formEditor ) );
-    managedForm.addPart( new DescriptionSection( this, bottom, formEditor ) );
+    managedForm.addPart( new GeneralSection( this, top, formEditor, project ) );
+    managedForm.addPart( new LegalSection( this, top, formEditor, project ) );
+    managedForm.addPart( new DescriptionSection( this, bottom, formEditor, project ) );
+    managedForm.addPart (new BuildSection(this, extra, formEditor, project));
+    managedForm.addPart (new DataFilesSection(this, extra, formEditor, project));
 
     this.finishedLoading();
   }

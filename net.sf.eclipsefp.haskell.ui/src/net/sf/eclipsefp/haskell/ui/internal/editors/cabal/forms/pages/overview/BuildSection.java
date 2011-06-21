@@ -1,12 +1,13 @@
 // Copyright (c) 2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.advanced;
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,11 +22,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  *
  * @author Leif Frenzel
  */
-class CabalSection extends CabalFormSection {
+class BuildSection extends CabalFormSection {
 
-  CabalSection( final IFormPage page, final Composite parent,
-      final CabalFormEditor editor ) {
-    super( page, parent, editor, UITexts.advancedPage_cabalSection );
+  BuildSection( final IFormPage page, final Composite parent,
+      final CabalFormEditor editor, final IProject project ) {
+    super( page, parent, editor, UITexts.advancedPage_cabalSection, project );
   }
 
   @Override
@@ -37,10 +38,15 @@ class CabalSection extends CabalFormSection {
 
     MinimalVersionFormEntryCombo<String> combo = new MinimalVersionFormEntryCombo<String>(
         new CabalVersionChoice() );
-    createCustomFormEntry( combo, null, CabalSyntax.FIELD_CABAL_VERSION,
+    createCustomFormEntry( combo, CabalSyntax.FIELD_CABAL_VERSION,
         toolkit, container, UITexts.advancedPage_cabalMinimalVersion, SWT.NONE );
     createComboFormEntry( CabalSyntax.FIELD_BUILD_TYPE, new BuildTypeChoice(),
         toolkit, container, UITexts.advancedPage_cabalBuildType );
+
+    CompilerFormEntry compiler = new CompilerFormEntry();
+    createCustomFormEntry( compiler, CabalSyntax.FIELD_TESTED_WITH,
+        toolkit, container, UITexts.advancedPage_cabalTestedWith, true,
+        SWT.NONE );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );

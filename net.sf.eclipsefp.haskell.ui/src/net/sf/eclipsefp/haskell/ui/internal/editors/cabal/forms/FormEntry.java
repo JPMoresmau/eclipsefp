@@ -2,7 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
-import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -18,7 +18,7 @@ public abstract class FormEntry {
   private CabalSyntax property;
   private final ArrayList<IFormEntryListener> listeners = new ArrayList<IFormEntryListener>();
 
-  public abstract void init( final HaskellProject project,
+  public abstract void init( final IProject project,
       final Composite parent, final FormToolkit toolkit, final int style );
 
   public abstract Control getControl();

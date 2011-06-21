@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
-import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
@@ -33,13 +33,15 @@ public abstract class CabalFormSection extends SectionPart {
   final CabalFormEditor editor;
   private PackageDescriptionStanza stanza = null;
   private final ArrayList<FormEntry> entries;
+  private final IProject project;
 
   protected CabalFormSection( final IFormPage page, final Composite parent,
-      final CabalFormEditor editor, final String text ) {
+      final CabalFormEditor editor, final String text, final IProject project ) {
     super( parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION
         | ExpandableComposite.TITLE_BAR );
     this.editor = editor;
     entries = new ArrayList<FormEntry>();
+    this.project = project;
     initialize( page.getManagedForm() );
     getSection().clientVerticalSpacing = 6;
     getSection().setData( "part", this );
@@ -74,9 +76,9 @@ public abstract class CabalFormSection extends SectionPart {
     return editor.getEditorSite().getActionBars().getStatusLineManager();
   }
 
-  protected FormEntry createCustomFormEntry(final FormEntry customEntry, final HaskellProject project, final CabalSyntax property,
-      final FormToolkit toolkit, final Composite container, final String label, final int style) {
-    FormEntryDecorator decorator = new FormEntryDecorator( label, customEntry );
+  protected FormEntry createCustomFormEntry(final FormEntry customEntry, final CabalSyntax property,
+      final FormToolkit toolkit, final Composite container, final String label, final boolean showLabelAbove, final int style) {
+    FormEntryDecorator decorator = new FormEntryDecorator( label, showLabelAbove, customEntry );
     decorator.init( project, container, toolkit, style );
     decorator.setProperty( property );
     decorator.addFormEntryListener( createFormEntryListener() );
@@ -84,20 +86,31 @@ public abstract class CabalFormSection extends SectionPart {
     return decorator;
   }
 
+  protected FormEntry createCustomFormEntry(final FormEntry customEntry, final CabalSyntax property,
+      final FormToolkit toolkit, final Composite container, final String label, final int style) {
+    return createCustomFormEntry( customEntry, property, toolkit, container, label, false, style );
+  }
+
   protected FormEntry createFormEntry( final CabalSyntax property,
       final FormToolkit toolkit, final Composite container, final String label ) {
-    return createCustomFormEntry( new FormEntryText(), null, property, toolkit, container, label, SWT.NONE );
+    return createCustomFormEntry( new FormEntryText(), property, toolkit, container, label, SWT.NONE );
   }
 
   protected FormEntry createMultiLineFormEntry( final CabalSyntax property,
       final FormToolkit toolkit, final Composite container, final String label ) {
-    return createCustomFormEntry( new FormEntryText(), null, property, toolkit, container, label, SWT.MULTI );
+    return createCustomFormEntry( new FormEntryText(), property, toolkit, container, label, SWT.MULTI );
   }
 
   protected <T> FormEntry createComboFormEntry( final CabalSyntax property,
       final Choice<T> choices, final FormToolkit toolkit,
       final Composite container, final String label ) {
-    return createCustomFormEntry( new FormEntryCombo<T>( choices ), null, property, toolkit, container, label, SWT.NONE );
+    return createCustomFormEntry( new FormEntryCombo<T>( choices ), property, toolkit, container, label, SWT.NONE );
+  }
+
+  protected FormEntry createFileFromEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
+    FormEntryFile entry = new FormEntryFile();
+    entry.init( project, container, toolkit, SWT.NONE );
+    return entry;
   }
 
   // helping functions

@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
@@ -27,7 +27,7 @@ public class FormEntryCombo<T> extends FormEntry {
   }
 
   @Override
-  public void init( final HaskellProject project, final Composite parent,
+  public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
     int finalStyle = style | SWT.FLAT;
     if (!choices.allowOther()) {

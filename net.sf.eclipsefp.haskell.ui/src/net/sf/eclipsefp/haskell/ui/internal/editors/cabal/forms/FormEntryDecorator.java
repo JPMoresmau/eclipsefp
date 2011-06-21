@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
-import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,7 +46,7 @@ public class FormEntryDecorator extends FormEntry {
   }
 
   @Override
-  public void init( final HaskellProject project, final Composite parent,
+  public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
     // Create description label
     label = toolkit.createLabel( parent, labelText );

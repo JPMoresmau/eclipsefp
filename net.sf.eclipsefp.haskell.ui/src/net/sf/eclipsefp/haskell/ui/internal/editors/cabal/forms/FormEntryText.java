@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -32,7 +32,7 @@ public class FormEntryText extends FormEntry {
   private boolean isIgnoreModify = false;
 
   @Override
-  public void init( final HaskellProject project, final Composite parent,
+  public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
     this.textField = toolkit.createText( parent, "", style );
     addListeners();

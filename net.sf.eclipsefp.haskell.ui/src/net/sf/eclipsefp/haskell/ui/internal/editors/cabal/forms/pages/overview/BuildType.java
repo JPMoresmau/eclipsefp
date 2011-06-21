@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.advanced;
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
 
 
 public enum BuildType {

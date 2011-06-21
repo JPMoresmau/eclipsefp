@@ -5,7 +5,6 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.advanced.AdvancedPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview.OverviewPage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +27,7 @@ public class CabalFormEditor extends FormEditor {
   private CabalEditor cabalSourceEditor;
   private PackageDescription packageDescription;
   private OverviewPage overview;
-  private AdvancedPage advanced;
+  private IFileEditorInput fileInput;
 
   public PackageDescription getPackageDescription() {
     return packageDescription;
@@ -39,7 +38,6 @@ public class CabalFormEditor extends FormEditor {
     this.packageDescription = packageDescription;
     cabalSourceEditor.setPackageDescription( packageDescription );
     overview.setPackageDescription( packageDescription );
-    advanced.setPackageDescription( packageDescription );
   }
 
   public IDocument getModel() {
@@ -60,23 +58,17 @@ public class CabalFormEditor extends FormEditor {
     return overview;
   }
 
-  public AdvancedPage getAdvanced() {
-    return advanced;
-  }
-
   // interface methdods of FormEditor
   ///////////////////////////////////
 
   @Override
   protected void addPages() {
     try {
-      overview = new OverviewPage( this );
+      overview = new OverviewPage( this, fileInput.getFile().getProject() );
       addPage(overview);
-      advanced = new AdvancedPage( this );
-      addPage(advanced);
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
-      setPageText( 2, UITexts.cabalFormEditor_tabSource );
+      setPageText( 1, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( "Unable to create form pages.", cex ); //$NON-NLS-1$
     }
@@ -110,8 +102,8 @@ public class CabalFormEditor extends FormEditor {
                     final IEditorInput input ) throws PartInitException {
     super.init( site, input );
     if( input instanceof IFileEditorInput ) {
-      IFileEditorInput fei = ( IFileEditorInput )input;
-      setPartName( fei.getFile().getName() );
+      fileInput = ( IFileEditorInput )input;
+      setPartName( fileInput.getFile().getName() );
     }
   }
 

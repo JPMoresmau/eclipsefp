@@ -412,6 +412,12 @@ public final class UITexts extends NLS {
   public static String advancedPage_dataFiles;
   public static String advancedPage_selectDataFiles;
 
+  public static String compilerChooser_title;
+  public static String compilerChooser_version;
+
+  public static String cabalEditor_add;
+  public static String cabalEditor_remove;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
