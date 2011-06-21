@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import net.sf.eclipsefp.haskell.core.internal.project.HaskellProject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -10,49 +11,59 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/**
- * copied from PDE UI internals and modified
- *
- * The helper class for creating entry fields with label and text. Optionally, a
- * button can be added after the text. The attached listener reacts to all the
- * events. Entring new text makes the entry 'dirty', but only when 'commit' is
- * called is 'valueChanged' method called (and only if 'dirty' flag is set).
- * This allows delayed commit.
- *
- * Based on previous work of Leif Frenzel
- */
-public class FormEntryText extends FormEntry {
 
-  private Text textField;
+public class FormEntryCombo<T> extends FormEntry {
+
+  private CCombo comboField;
+  private final Choice<T> choices;
   private String value = ""; //$NON-NLS-1$
   private boolean dirty;
   private boolean isIgnoreModify = false;
 
+  public FormEntryCombo( final Choice<T> choices ) {
+    this.choices = choices;
+  }
+
   @Override
   public void init( final HaskellProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
-    this.textField = toolkit.createText( parent, "", style );
+    int finalStyle = style | SWT.FLAT;
+    if (!choices.allowOther()) {
+      finalStyle |= SWT.READ_ONLY;
+    }
+    this.comboField = new CCombo( parent, finalStyle );
+    toolkit.adapt( comboField, true, true );
+    comboField.setItems( choices.getAllShownStrings() );
     addListeners();
   }
 
   @Override
   public Control getControl() {
-    return this.textField;
+    return this.comboField;
   }
 
   @Override
   public int heightHint() {
-    // Make more space for multiline editors
-    return ( this.textField.getStyle() & SWT.MULTI ) > 0 ? 60 : 15;
+    return 20;
   }
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
     this.isIgnoreModify = blockNotification;
-    this.textField.setText( value != null ? value : "" ); //$NON-NLS-1$
+    // Find the element to show
+    if (value != null) {
+      T item = choices.fromCabalString( value );
+      if (item != null) {
+        this.comboField.setText( choices.toShownString( item ) );
+      } else {
+        this.comboField.setText( value );
+      }
+    } else {
+      this.comboField.setText( "" );
+    }
+    // Save the real Cabal value
     this.value = ( value != null ) ? value : ""; //$NON-NLS-1$
     this.isIgnoreModify = false;
   }
@@ -64,7 +75,7 @@ public class FormEntryText extends FormEntry {
 
   @Override
   public void setEditable( final boolean editable ) {
-    this.textField.setEditable( editable );
+    this.comboField.setEnabled( editable );
   }
 
   /** Returns true if the text has been modified. */
@@ -78,7 +89,13 @@ public class FormEntryText extends FormEntry {
    */
   public void commit() {
     if( dirty ) {
-      value = textField.getText();
+      String text = comboField.getText();
+      T item = choices.fromShownString( text );
+      if (item != null) {
+        value = choices.toCabalString( item );
+      } else {
+        value = comboField.getText();
+      }
       notifyTextValueChanged();
     }
     dirty = false;
@@ -92,14 +109,26 @@ public class FormEntryText extends FormEntry {
   // //////////////////
 
   private void keyReleaseOccured( final KeyEvent evt ) {
-    if( evt.character == '\r' && ( textField.getStyle() & SWT.MULTI ) == 0 ) {
+    if( evt.character == '\r' && ( comboField.getStyle() & SWT.MULTI ) == 0 ) {
       // commit value
       if( dirty ) {
         commit();
       }
     } else if( evt.character == '\u001b' ) { // Escape character
-      if( !value.equals( textField.getText() ) ) {
-        textField.setText( value != null ? value : "" ); // restore old //$NON-NLS-1$
+      String shown;
+      if (value != null) {
+        T item = choices.fromCabalString( value );
+        if (item != null) {
+          shown = choices.toShownString( item );
+        } else {
+          shown = value;
+        }
+      } else {
+        shown = "";
+      }
+
+      if( !shown.equals( comboField.getText() ) ) {
+        comboField.setText( shown ); // restore old
       }
       dirty = false;
     }
@@ -114,22 +143,22 @@ public class FormEntryText extends FormEntry {
   }
 
   private void addListeners() {
-    textField.addKeyListener( new KeyAdapter() {
+    comboField.addKeyListener( new KeyAdapter() {
 
       @Override
       public void keyReleased( final KeyEvent evt ) {
         keyReleaseOccured( evt );
       }
     } );
-    textField.addModifyListener( new ModifyListener() {
+    comboField.addModifyListener( new ModifyListener() {
 
       public void modifyText( final ModifyEvent evt ) {
-        if( !textField.getText().equals( value ) ) {
+        if( !comboField.getText().equals( value ) ) {
           editOccured( evt );
         }
       }
     } );
-    textField.addFocusListener( new FocusAdapter() {
+    comboField.addFocusListener( new FocusAdapter() {
 
       @Override
       public void focusGained( final FocusEvent evt ) {
@@ -144,4 +173,5 @@ public class FormEntryText extends FormEntry {
       }
     } );
   }
+
 }

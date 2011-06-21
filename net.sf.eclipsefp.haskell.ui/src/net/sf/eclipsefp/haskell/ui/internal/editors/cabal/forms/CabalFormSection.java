@@ -27,13 +27,13 @@ import org.eclipse.ui.forms.widgets.Section;
  *
  * @author Leif Frenzel, serras
  */
-abstract class CabalFormSection extends SectionPart {
+public abstract class CabalFormSection extends SectionPart {
 
   final CabalFormEditor editor;
   private PackageDescriptionStanza stanza = null;
   private final ArrayList<FormEntry> entries;
 
-  CabalFormSection( final IFormPage page, final Composite parent,
+  protected CabalFormSection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final String text ) {
     super( parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION
         | ExpandableComposite.TITLE_BAR );
@@ -58,7 +58,7 @@ abstract class CabalFormSection extends SectionPart {
     } );
   }
 
-  abstract void createClient( FormToolkit toolkit );
+  protected abstract void createClient( FormToolkit toolkit );
 
   public PackageDescriptionStanza getStanza() {
     return stanza;
@@ -74,23 +74,34 @@ abstract class CabalFormSection extends SectionPart {
   }
 
 
-  FormEntry createFormEntry( final CabalSyntax property,
+  protected FormEntry createFormEntry( final CabalSyntax property,
       final FormToolkit toolkit, final Composite container, final String label ) {
     FormEntryText text = new FormEntryText();
     FormEntryDecorator decorator = new FormEntryDecorator( label, text );
-    decorator.init( null, container, toolkit, SWT.NONE);
+    decorator.init( null, container, toolkit, SWT.NONE );
     decorator.setProperty( property );
     decorator.addFormEntryListener( createFormEntryListener() );
     entries.add( decorator );
     return decorator;
   }
 
-  FormEntry createMultiLineFormEntry( final CabalSyntax property,
-      final FormToolkit toolkit,
-      final Composite container, final String label ) {
+  protected FormEntry createMultiLineFormEntry( final CabalSyntax property,
+      final FormToolkit toolkit, final Composite container, final String label ) {
     FormEntryText text = new FormEntryText();
     FormEntryDecorator decorator = new FormEntryDecorator( label, text );
-    decorator.init( null, container, toolkit, SWT.MULTI);
+    decorator.init( null, container, toolkit, SWT.MULTI );
+    decorator.setProperty( property );
+    decorator.addFormEntryListener( createFormEntryListener() );
+    entries.add( decorator );
+    return decorator;
+  }
+
+  protected <T> FormEntry createComboFormEntry( final CabalSyntax property,
+      final Choice<T> choices, final FormToolkit toolkit,
+      final Composite container, final String label ) {
+    FormEntryCombo<T> combo = new FormEntryCombo<T>( choices );
+    FormEntryDecorator decorator = new FormEntryDecorator( label, combo );
+    decorator.init( null, container, toolkit, SWT.NONE );
     decorator.setProperty( property );
     decorator.addFormEntryListener( createFormEntryListener() );
     entries.add( decorator );

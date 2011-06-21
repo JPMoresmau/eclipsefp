@@ -5,7 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.OverviewPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview.OverviewPage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

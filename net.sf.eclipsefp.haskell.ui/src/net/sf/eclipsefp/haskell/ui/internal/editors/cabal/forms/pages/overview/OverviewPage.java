@@ -1,12 +1,13 @@
 // Copyright (c) 2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackagePropertiesStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
