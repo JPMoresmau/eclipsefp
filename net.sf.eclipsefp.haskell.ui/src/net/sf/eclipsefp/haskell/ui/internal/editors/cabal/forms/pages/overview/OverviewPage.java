@@ -3,28 +3,29 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
 
-import net.sf.eclipsefp.haskell.core.cabalmodel.PackagePropertiesStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/** <p>The overview page on the Cabal form editor lets the user enter elements
-  * of the Cabal descriptions in a form-based UI.</p>
-  *
-  * @author Leif Frenzel
-  */
-public class OverviewPage extends FormPage {
+/**
+ * <p>
+ * The overview page on the Cabal form editor lets the user enter elements of
+ * the Cabal descriptions in a form-based UI.
+ * </p>
+ *
+ * @author Leif Frenzel
+ */
+public class OverviewPage extends CabalFormPage {
 
   public OverviewPage( final FormEditor editor ) {
     super( editor, OverviewPage.class.getName(), UITexts.overviewPage_title );
@@ -32,7 +33,7 @@ public class OverviewPage extends FormPage {
 
 
   // interface methods of FormPage
-  ////////////////////////////////
+  // //////////////////////////////
 
   @Override
   protected void createFormContent( final IManagedForm managedForm ) {
@@ -54,43 +55,18 @@ public class OverviewPage extends FormPage {
     managedForm.addPart( new GeneralSection( this, top, formEditor ) );
     managedForm.addPart( new LegalSection( this, top, formEditor ) );
     managedForm.addPart( new DescriptionSection( this, bottom, formEditor ) );
+
+    this.finishedLoading();
   }
 
-
-
-
-  // helping functions
-  ////////////////////
-
-  private GridLayout createGridLayout( final int cols,
-                                       final int sideMargin,
-                                       final int topMargin ) {
-    GridLayout layout = new GridLayout( cols, true );
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-
-    layout.marginTop = topMargin;
-    layout.marginBottom = topMargin;
-    layout.marginLeft = sideMargin;
-    layout.marginRight = sideMargin;
-
-    layout.horizontalSpacing = 20;
-    layout.verticalSpacing = 17;
-    return layout;
-  }
-
-
-  public void setPackageDescription( final PackageDescription packageDescription ) {
-    PackageDescriptionStanza stanza=null;
-    if (packageDescription.getStanzas().size()>0 && packageDescription.getStanzas().get(0) instanceof PackagePropertiesStanza){
-      stanza= packageDescription.getStanzas().get(0);
+  @Override
+  protected void setPackageDescriptionInternal(
+      final PackageDescription packageDescription ) {
+    PackageDescriptionStanza stanza = packageDescription.getPackageStanza();
+    for( IFormPart p: getManagedForm().getParts() ) {
+      if( p instanceof CabalFormSection ) {
+        ( ( CabalFormSection )p ).setStanza( stanza );
+      }
     }
-
-    for (IFormPart p:getManagedForm().getParts()){
-       if (p instanceof CabalFormSection){
-         ((CabalFormSection)p).setStanza( stanza );
-       }
-     }
-
   }
 }

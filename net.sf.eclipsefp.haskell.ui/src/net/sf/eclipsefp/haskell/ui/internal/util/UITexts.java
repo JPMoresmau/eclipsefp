@@ -33,6 +33,7 @@ public final class UITexts extends NLS {
   public static String generalSection_entryMaintainer;
   public static String generalSection_entryName;
   public static String generalSection_entryVersion;
+  public static String generalSection_entryStability;
   public static String generalSection_title;
 
   public static String hsImplementationDialog_binDir;
@@ -402,6 +403,14 @@ public final class UITexts extends NLS {
   public static String browser_definedInModules;
   public static String browser_packagedInPackages;
   public static String browser_definedInSeveralLocations;
+
+  public static String advancedPage_title;
+  public static String advancedPage_cabalSection;
+  public static String advancedPage_cabalMinimalVersion;
+  public static String advancedPage_cabalBuildType;
+  public static String advancedPage_cabalTestedWith;
+  public static String advancedPage_dataFiles;
+  public static String advancedPage_selectDataFiles;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

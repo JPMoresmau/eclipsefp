@@ -1,0 +1,59 @@
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
+
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.FormPage;
+
+
+public abstract class CabalFormPage extends FormPage {
+
+  PackageDescription packageDescription = null;
+  boolean isLoaded = false;
+
+  public CabalFormPage( final FormEditor editor, final String id,
+      final String title ) {
+    super( editor, id, title );
+  }
+
+  protected boolean isLoaded() {
+    return this.isLoaded;
+  }
+
+  protected void finishedLoading() {
+    if (packageDescription != null) {
+      setPackageDescriptionInternal( packageDescription );
+    }
+    this.isLoaded = true;
+  }
+
+  protected abstract void setPackageDescriptionInternal(
+      final PackageDescription packageDescription );
+
+  public void setPackageDescription( final PackageDescription packageDescription ) {
+    this.packageDescription = packageDescription;
+    if( isLoaded() ) {
+      setPackageDescriptionInternal( packageDescription );
+    }
+  }
+
+  protected PackageDescription getPackageDescription() {
+    return this.packageDescription;
+  }
+
+  protected GridLayout createGridLayout( final int cols, final int sideMargin,
+      final int topMargin ) {
+    GridLayout layout = new GridLayout( cols, true );
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
+
+    layout.marginTop = topMargin;
+    layout.marginBottom = topMargin;
+    layout.marginLeft = sideMargin;
+    layout.marginRight = sideMargin;
+
+    layout.horizontalSpacing = 20;
+    layout.verticalSpacing = 17;
+    return layout;
+  }
+}

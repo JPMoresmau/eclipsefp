@@ -36,6 +36,8 @@ class GeneralSection extends CabalFormSection {
     createFormEntry( CabalSyntax.FIELD_NAME, toolkit, container, text );
     String text2 = UITexts.generalSection_entryVersion;
     createFormEntry( CabalSyntax.FIELD_VERSION, toolkit, container, text2 );
+    String text2b = UITexts.generalSection_entryStability;
+    createFormEntry( CabalSyntax.FIELD_STABILITY, toolkit, container, text2b );
 
     String text3 = UITexts.generalSection_entryAuthor;
     createFormEntry( CabalSyntax.FIELD_AUTHOR, toolkit, container, text3 );

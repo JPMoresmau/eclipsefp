@@ -38,6 +38,13 @@ public class PackageDescription {
     return stanzas;
   }
 
+  public PackageDescriptionStanza getPackageStanza() {
+    if (getStanzas().size()>0 && getStanzas().get(0) instanceof PackagePropertiesStanza){
+      return getStanzas().get(0);
+    }
+    return null;
+  }
+
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
     PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );
