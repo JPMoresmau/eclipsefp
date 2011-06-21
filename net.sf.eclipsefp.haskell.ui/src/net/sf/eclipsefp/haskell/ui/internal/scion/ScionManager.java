@@ -368,11 +368,12 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       display.asyncExec( new Runnable() {
         public void run() {
           // needs ui thread
-          Shell parentShell = display.getActiveShell();
+          /*Shell parentShell = display.getActiveShell();
           boolean rebuild = MessageDialog.openQuestion( parentShell, UITexts.scionBrowserRebuildDatabase_title,
              UITexts.scionBrowserRebuildDatabase_message );
           Job builder = rebuild ? new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase)
-                                : new BrowserDatabaseLoadJob(UITexts.scionBrowserLoadingDatabases);
+                                : new BrowserDatabaseLoadJob(UITexts.scionBrowserLoadingDatabases);*/
+          Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
           builder.setPriority( Job.BUILD );
           builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
           builder.setUser(true);
