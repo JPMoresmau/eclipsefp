@@ -28,7 +28,7 @@ public class FormEntryMultiSelect extends FormEntry implements
   @Override
   public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
-    treeField = new CheckboxTreeViewer( parent, SWT.BORDER | SWT.FLAT );
+    treeField = new CheckboxTreeViewer( parent, SWT.NONE );
     toolkit.adapt( treeField.getControl(), true, true );
 
     treeField.setContentProvider( contents );

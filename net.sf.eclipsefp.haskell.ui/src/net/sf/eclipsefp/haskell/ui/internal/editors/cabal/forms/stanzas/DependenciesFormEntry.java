@@ -46,8 +46,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
     items = new Vector<DependencyItem>();
 
-    Table table = toolkit.createTable( composite, SWT.SINGLE | SWT.BORDER
-        | SWT.FLAT );
+    Table table = toolkit.createTable( composite, SWT.SINGLE );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;
     listGD.grabExcessVerticalSpace = true;

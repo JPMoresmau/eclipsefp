@@ -34,7 +34,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
   @Override
   public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
-    treeField = new CheckboxTreeViewer( parent, SWT.BORDER | SWT.FLAT );
+    treeField = new CheckboxTreeViewer( parent, SWT.NULL );
     toolkit.adapt( treeField.getControl(), true, true );
 
     treeField.setLabelProvider( new WorkbenchLabelProvider() );
