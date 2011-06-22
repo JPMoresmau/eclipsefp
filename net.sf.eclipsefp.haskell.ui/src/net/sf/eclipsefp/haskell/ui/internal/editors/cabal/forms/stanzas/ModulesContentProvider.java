@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 import java.util.ArrayList;
 import java.util.Vector;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IProject;
@@ -49,6 +50,7 @@ public class ModulesContentProvider implements ITreeContentProvider {
   public String[] elements;
 
   public ModulesContentProvider( final IProject project,
+      final PackageDescription description,
       final PackageDescriptionStanza stanza ) throws CoreException {
     String sourceDirs = null;
     if (stanza.getProperties().containsKey( CabalSyntax.FIELD_HS_SOURCE_DIRS )) {
@@ -60,6 +62,15 @@ public class ModulesContentProvider implements ITreeContentProvider {
     ArrayList<String> modules = new ArrayList<String>();
     ModulesVisitor visitor = new ModulesVisitor( modules, StringUtils.split( sourceDirs, ',' ) );
     project.accept( visitor );
+
+    PackageDescriptionStanza pkg = description.getPackageStanza();
+    if (pkg != null) {
+      if (pkg.getProperties().containsKey( CabalSyntax.FIELD_DATA_FILES )) {
+        // There are data files, so Paths_package is also provided
+        modules.add( "Paths_" + pkg.getProperties().get( CabalSyntax.FIELD_NAME ) );
+      }
+    }
+
     this.elements = modules.toArray(new String[modules.size()]);
   }
 
