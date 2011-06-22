@@ -5,8 +5,10 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview.OverviewPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview.OverviewPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.LibraryPage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
@@ -27,6 +29,7 @@ public class CabalFormEditor extends FormEditor {
   private CabalEditor cabalSourceEditor;
   private PackageDescription packageDescription;
   private OverviewPage overview;
+  private LibraryPage library;
   private IFileEditorInput fileInput;
 
   public PackageDescription getPackageDescription() {
@@ -38,6 +41,7 @@ public class CabalFormEditor extends FormEditor {
     this.packageDescription = packageDescription;
     cabalSourceEditor.setPackageDescription( packageDescription );
     overview.setPackageDescription( packageDescription );
+    library.setPackageDescription( packageDescription );
   }
 
   public IDocument getModel() {
@@ -58,17 +62,24 @@ public class CabalFormEditor extends FormEditor {
     return overview;
   }
 
+  public LibraryPage getLibrary() {
+    return library;
+  }
+
   // interface methdods of FormEditor
   ///////////////////////////////////
 
   @Override
   protected void addPages() {
     try {
-      overview = new OverviewPage( this, fileInput.getFile().getProject() );
+      IProject project = fileInput.getFile().getProject();
+      overview = new OverviewPage( this, project );
       addPage(overview);
+      library = new LibraryPage( this, project );
+      addPage(library);
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
-      setPageText( 1, UITexts.cabalFormEditor_tabSource );
+      setPageText( 2, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( "Unable to create form pages.", cex ); //$NON-NLS-1$
     }

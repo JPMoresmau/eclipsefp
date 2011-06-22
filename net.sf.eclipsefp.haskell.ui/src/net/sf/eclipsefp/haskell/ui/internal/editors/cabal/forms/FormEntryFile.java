@@ -20,6 +20,16 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
   CheckboxTreeViewer treeField;
   boolean ignoreModify = false;
+  boolean onlyDirs;
+
+  public FormEntryFile() {
+    this(false);
+  }
+
+  public FormEntryFile(final boolean onlyDirs) {
+    super();
+    this.onlyDirs = onlyDirs;
+  }
 
   @Override
   public void init( final IProject project, final Composite parent,
@@ -28,7 +38,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     toolkit.adapt( treeField.getControl(), true, true );
 
     treeField.setLabelProvider( new WorkbenchLabelProvider() );
-    treeField.setContentProvider( new LimitedWorkbenchContentProvider() );
+    treeField.setContentProvider( new LimitedWorkbenchContentProvider( onlyDirs ) );
     treeField.setComparator( new ResourceComparator( ResourceComparator.NAME ) );
     treeField.addCheckStateListener( this );
     treeField.setInput( project );

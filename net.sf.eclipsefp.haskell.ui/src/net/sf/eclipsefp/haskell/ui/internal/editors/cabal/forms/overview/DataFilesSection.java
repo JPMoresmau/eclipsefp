@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
@@ -34,7 +34,7 @@ public class DataFilesSection extends CabalFormSection {
     labelGD.grabExcessHorizontalSpace = true;
     infoLabel.setLayoutData( labelGD );
 
-    FormEntry entry = createFileFromEntry( CabalSyntax.FIELD_DATA_FILES,
+    FormEntry entry = createFileFormEntry( CabalSyntax.FIELD_DATA_FILES,
         toolkit, container );
     entry.getControl().setLayoutData( new GridData( GridData.FILL_BOTH ) );
 

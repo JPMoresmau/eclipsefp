@@ -53,7 +53,10 @@ public class DependenciesDialog extends Dialog implements
     parent.getShell().setText( UITexts.cabalEditor_addDependency );
     // Create the inside
     Composite composite = new Composite( parent, SWT.NONE );
-    composite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+    GridData compositeGD = new GridData( GridData.FILL_BOTH );
+    compositeGD.heightHint = 300;
+    compositeGD.widthHint = 250;
+    composite.setLayoutData( compositeGD );
     // The layout
     GridLayout layout = new GridLayout();
     layout.numColumns = 1;
@@ -72,7 +75,7 @@ public class DependenciesDialog extends Dialog implements
     packageTree.setComparator( new ViewerComparator() );
     packageTree.setContentProvider( new DependenciesDialogContentProvider(
         alreadySelected ) );
-    packageTree.setInput( null );
+    packageTree.setInput( new Object() );
 
     // Hook for changes in selection
     packageTree.addPostSelectionChangedListener( this );

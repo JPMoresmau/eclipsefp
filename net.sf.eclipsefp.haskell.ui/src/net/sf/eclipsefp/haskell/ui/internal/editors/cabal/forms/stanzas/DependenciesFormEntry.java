@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
@@ -45,7 +46,8 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
     items = new Vector<DependencyItem>();
 
-    Table table = toolkit.createTable( composite, SWT.SINGLE );
+    Table table = toolkit.createTable( composite, SWT.SINGLE | SWT.BORDER
+        | SWT.FLAT );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;
     listGD.grabExcessVerticalSpace = true;
@@ -54,7 +56,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     table.setHeaderVisible( true );
     TableColumn column1 = new TableColumn( table, SWT.NULL );
     column1.setText( UITexts.cabalEditor_dependenciesPackage );
-    column1.pack();
+    column1.setWidth( 150 );
     TableColumn column2 = new TableColumn( table, SWT.NULL );
     column2.setText( UITexts.cabalEditor_dependenciesVersion );
     column2.pack();
@@ -143,8 +145,8 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
     Vector<String> elements = StringUtils.split( newValue, ',' );
     items = new Vector<DependencyItem>();
-    for (String element : elements) {
-      items.add(DependencyItem.fromString( element ));
+    for( String element: elements ) {
+      items.add( DependencyItem.fromString( element ) );
     }
     tableField.setInput( items );
 
@@ -193,11 +195,12 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
   public void modify( final Object element, final String property,
       final Object value ) {
-    DependencyItem item = ( DependencyItem )element;
+    DependencyItem item = ( DependencyItem )( ( TableItem )element ).getData();
     if( property.equals( "version" ) ) {
       String newValue = ( String )value;
       if( !item.getVersion().equals( newValue ) ) {
-        item.setPackage( newValue );
+        item.setVersion( newValue );
+        tableField.setInput( items );
         notifyTextValueChanged();
       }
     }

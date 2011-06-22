@@ -63,6 +63,10 @@ public abstract class CabalFormSection extends SectionPart {
 
   protected abstract void createClient( FormToolkit toolkit );
 
+  protected IProject getProject() {
+    return project;
+  }
+
   public PackageDescriptionStanza getStanza() {
     return stanza;
   }
@@ -70,6 +74,7 @@ public abstract class CabalFormSection extends SectionPart {
   public void setStanza( final PackageDescriptionStanza stanza ) {
     this.stanza = stanza;
     fillInValues( false );
+    this.setAllEditable( stanza != null );
   }
 
   IStatusLineManager getStatusLineManager() {
@@ -107,13 +112,23 @@ public abstract class CabalFormSection extends SectionPart {
     return createCustomFormEntry( new FormEntryCombo<T>( choices ), property, toolkit, container, label, SWT.NONE );
   }
 
-  protected FormEntry createFileFromEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
+  protected FormEntry createFileFormEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
     FormEntryFile entry = new FormEntryFile();
+    setCustomFormEntry( entry, property, toolkit, container );
+    return entry;
+  }
+
+  protected FormEntry createDirFormEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
+    FormEntryFile entry = new FormEntryFile(true);
+    setCustomFormEntry( entry, property, toolkit, container );
+    return entry;
+  }
+
+  protected void setCustomFormEntry (final FormEntry entry, final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
     entry.init( project, container, toolkit, SWT.NONE );
     entry.setProperty( property );
     entry.addFormEntryListener( createFormEntryListener() );
     entries.add( entry );
-    return entry;
   }
 
   // helping functions
@@ -150,21 +165,23 @@ public abstract class CabalFormSection extends SectionPart {
   }
 
   private void setNewValue( final FormEntry text, final CabalSyntax mutator ) {
-    // try {
-    String newValue = text.getValue();
-    // IManipulateCabalFile manipulator = getManipulator();
-    // String buffer = editor.getModel().get();
-    // editor.getModel().set( manipulator.set( buffer, mutator, newValue ) );
-    stanza.getProperties().put( mutator.getCabalName(), newValue );
+    if (this.stanza != null) {
+      // try {
+      String newValue = text.getValue();
+      // IManipulateCabalFile manipulator = getManipulator();
+      // String buffer = editor.getModel().get();
+      // editor.getModel().set( manipulator.set( buffer, mutator, newValue ) );
+      stanza.getProperties().put( mutator.getCabalName(), newValue );
 
-    /*
-     * String realValue=stanza.getRealValue( mutator, newValue ); ValuePosition
-     * vp=stanza.getPositions().get( mutator ); if (vp==null){ vp=new
-     * ValuePosition
-     * (stanza.getEndLine(),stanza.getEndLine(),stanza.getIndent()); }
-     */
-    RealValuePosition vp = stanza.update( mutator, newValue );
-    vp.updateDocument( editor.getModel() );
+      /*
+       * String realValue=stanza.getRealValue( mutator, newValue ); ValuePosition
+       * vp=stanza.getPositions().get( mutator ); if (vp==null){ vp=new
+       * ValuePosition
+       * (stanza.getEndLine(),stanza.getEndLine(),stanza.getIndent()); }
+       */
+      RealValuePosition vp = stanza.update( mutator, newValue );
+      vp.updateDocument( editor.getModel() );
+    }
   }
 
   private IFormEntryListener createFormEntryListener() {

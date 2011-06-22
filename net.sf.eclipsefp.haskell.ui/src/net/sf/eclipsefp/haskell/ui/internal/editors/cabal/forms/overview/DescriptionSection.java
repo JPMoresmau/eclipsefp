@@ -1,7 +1,7 @@
 // Copyright (c) 2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
@@ -16,16 +16,16 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * <p>
- * form section for general info (name, version, ...).
+ * form section for description info (synopsis, description ...).
  * </p>
  *
  * @author Leif Frenzel
  */
-class GeneralSection extends CabalFormSection {
+class DescriptionSection extends CabalFormSection {
 
-  GeneralSection( final IFormPage page, final Composite parent,
+  DescriptionSection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
-    super( page, parent, editor, UITexts.generalSection_title, project );
+    super( page, parent, editor, UITexts.descriptionSection_title, project );
   }
 
   @Override
@@ -35,17 +35,15 @@ class GeneralSection extends CabalFormSection {
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    String text = UITexts.generalSection_entryName;
-    createFormEntry( CabalSyntax.FIELD_NAME, toolkit, container, text );
-    String text2 = UITexts.generalSection_entryVersion;
-    createFormEntry( CabalSyntax.FIELD_VERSION, toolkit, container, text2 );
-    String text2b = UITexts.generalSection_entryStability;
-    createFormEntry( CabalSyntax.FIELD_STABILITY, toolkit, container, text2b );
-
-    String text3 = UITexts.generalSection_entryAuthor;
-    createFormEntry( CabalSyntax.FIELD_AUTHOR, toolkit, container, text3 );
-    String text4 = UITexts.generalSection_entryMaintainer;
-    createFormEntry( CabalSyntax.FIELD_MAINTAINER, toolkit, container, text4 );
+    String text = UITexts.descriptionSection_entrySynopsis;
+    createFormEntry( CabalSyntax.FIELD_SYNOPSIS, toolkit, container, text );
+    String text2 = UITexts.descriptionSection_entryDescription;
+    createMultiLineFormEntry( CabalSyntax.FIELD_DESCRIPTION, toolkit,
+        container, text2 );
+    String text3 = UITexts.descriptionSection_entryHomepage;
+    createFormEntry( CabalSyntax.FIELD_HOMEPAGE, toolkit, container, text3 );
+    String text4 = UITexts.descriptionSection_entryCategory;
+    createFormEntry( CabalSyntax.FIELD_CATEGORY, toolkit, container, text4 );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );

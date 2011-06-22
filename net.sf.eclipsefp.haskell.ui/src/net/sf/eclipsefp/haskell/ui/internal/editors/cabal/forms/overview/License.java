@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.pages.overview;
+package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
 
 public enum License {
