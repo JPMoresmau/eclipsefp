@@ -33,6 +33,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
   private Button addButton;
   private Button removeButton;
   private Vector<DependencyItem> items;
+  private boolean isCellEditing = false;
 
   @Override
   public void init( final IProject project, final Composite parent,
@@ -117,6 +118,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
           while( iterator.hasNext() ) {
             items.remove( iterator.next() );
           }
+          tableField.setInput( items );
           DependenciesFormEntry.this.notifyTextValueChanged();
         }
       }
@@ -136,12 +138,17 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
 
-    String newValue = ( value == null ) ? "" : value;
-    String oldValue = this.getValue();
+    if (isCellEditing) {
+      return;
+    }
+
+    String newValue = (( value == null ) ? "" : value).trim();
+    String oldValue = this.getValue().trim();
     if( newValue.equals( oldValue ) ) {
       return;
     }
 
+    isCellEditing = true;
     Vector<String> elements = StringUtils.split( newValue, ',' );
     items = new Vector<DependencyItem>();
     for( String element: elements ) {
@@ -153,7 +160,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     if( !blockNotification ) {
       notifyTextValueChanged();
     }
-
+    isCellEditing = false;
   }
 
   @Override
@@ -164,8 +171,10 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         builder.append( ", " );
       }
       builder.append( item.getPackage() );
-      builder.append( ' ' );
-      builder.append( item.getVersion() );
+      if (!item.getVersion().trim().isEmpty()) {
+        builder.append( ' ' );
+        builder.append( item.getVersion() );
+      }
     }
     return builder.toString();
   }
@@ -194,6 +203,11 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
   public void modify( final Object element, final String property,
       final Object value ) {
+    if (element == null) {
+      return;
+    }
+
+    isCellEditing = true;
     DependencyItem item = ( DependencyItem )( ( TableItem )element ).getData();
     if( property.equals( "version" ) ) {
       String newValue = ( String )value;
@@ -203,6 +217,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         notifyTextValueChanged();
       }
     }
+    isCellEditing = false;
   }
 
 }

@@ -35,7 +35,7 @@ public class CompilerFormEntry extends FormEntry {
     layout.numColumns = 2;
     composite.setLayout( layout );
 
-    compilerList = new List( composite, SWT.SINGLE );
+    compilerList = new List( composite, SWT.SINGLE | SWT.BORDER );
     toolkit.adapt( compilerList, true, true );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;

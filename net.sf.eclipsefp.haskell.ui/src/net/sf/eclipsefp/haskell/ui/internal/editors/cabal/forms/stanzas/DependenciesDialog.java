@@ -5,6 +5,8 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -23,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 
 public class DependenciesDialog extends Dialog implements
-    ISelectionChangedListener {
+    ISelectionChangedListener, IDoubleClickListener {
 
   TreeViewer packageTree;
   Text packageName;
@@ -79,6 +81,8 @@ public class DependenciesDialog extends Dialog implements
 
     // Hook for changes in selection
     packageTree.addPostSelectionChangedListener( this );
+    // Hook for double clicking
+    packageTree.addDoubleClickListener( this );
 
     // Add version text
     packageName = new Text( composite, SWT.SINGLE | SWT.BORDER );
@@ -101,6 +105,16 @@ public class DependenciesDialog extends Dialog implements
       HaskellPackage item = ( HaskellPackage )o;
       packageDocs.setText( HtmlUtil.generateDocument( null, item.getDoc() ) );
       packageName.setText( item.getIdentifier().getName() );
+    }
+  }
+
+  public void doubleClick( final DoubleClickEvent event ) {
+    TreeSelection selection = ( TreeSelection )event.getSelection();
+    Object o = selection.getFirstElement();
+    if( o == null ) {
+      return;
+    } else {
+      okPressed();
     }
   }
 }

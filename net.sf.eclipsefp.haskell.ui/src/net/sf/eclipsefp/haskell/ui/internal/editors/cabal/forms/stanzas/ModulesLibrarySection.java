@@ -1,9 +1,13 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntryMultiSelect;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
@@ -14,13 +18,13 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
-public class SourceDirsSection extends CabalFormSection implements IFormEntryListener {
+public class ModulesLibrarySection extends CabalFormSection implements IFormEntryListener {
 
-  IFormEntryListener listener = null;
+  FormEntryMultiSelect entry;
 
-  SourceDirsSection( final IFormPage page, final Composite parent,
+  ModulesLibrarySection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
-    super( page, parent, editor, UITexts.cabalEditor_sourceDirectories, project );
+    super( page, parent, editor, UITexts.cabalEditor_exposedModules, project );
   }
 
   @Override
@@ -30,7 +34,9 @@ public class SourceDirsSection extends CabalFormSection implements IFormEntryLis
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    FormEntry entry = createDirFormEntry( CabalSyntax.FIELD_HS_SOURCE_DIRS, toolkit, container );
+    entry = new FormEntryMultiSelect( new ModulesContentProvider() );
+    setCustomFormEntry( entry, CabalSyntax.FIELD_EXPOSED_MODULES, toolkit,
+        container );
     GridData entryGD = new GridData( GridData.FILL_BOTH );
     entryGD.heightHint = 120;
     entry.getControl().setLayoutData( entryGD );
@@ -40,13 +46,26 @@ public class SourceDirsSection extends CabalFormSection implements IFormEntryLis
     getSection().setClient( container );
   }
 
-  public void setListener(final IFormEntryListener listener) {
-    this.listener = listener;
+  public void refreshInput( final IProject project,
+      final PackageDescription descr, final PackageDescriptionStanza stanza ) {
+    if( descr == null || stanza == null ) {
+      entry.getTree().setInput( new Object() );
+    } else {
+      String value = stanza.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+      value = (value == null) ? "" : value;
+      entry.getTree().setInput(
+          new ModulesContentProviderRoot( project, descr, stanza ) );
+      entry.setValue( value, false );
+    }
   }
 
   public void textValueChanged( final FormEntry entry ) {
-    if (listener != null) {
-      listener.textValueChanged( entry );
+    if (this.stanza != null) {
+      FormEntryMultiSelect multi = (FormEntryMultiSelect)entry;
+      String newValue = multi.getNonSelectedValue();
+      stanza.getProperties().put( CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
+      RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES, newValue );
+      vp.updateDocument( editor.getModel() );
     }
   }
 
@@ -61,5 +80,4 @@ public class SourceDirsSection extends CabalFormSection implements IFormEntryLis
   public void selectionChanged( final FormEntry entry ) {
     // Do nothing
   }
-
 }

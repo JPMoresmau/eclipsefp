@@ -30,8 +30,8 @@ import org.eclipse.ui.forms.widgets.Section;
  */
 public abstract class CabalFormSection extends SectionPart {
 
-  final CabalFormEditor editor;
-  private PackageDescriptionStanza stanza = null;
+  protected final CabalFormEditor editor;
+  protected PackageDescriptionStanza stanza = null;
   private final ArrayList<FormEntry> entries;
   private final IProject project;
 
@@ -164,7 +164,7 @@ public abstract class CabalFormSection extends SectionPart {
     }
   }
 
-  private void setNewValue( final FormEntry text, final CabalSyntax mutator ) {
+  protected void setNewValue( final FormEntry text, final CabalSyntax mutator ) {
     if (this.stanza != null) {
       // try {
       String newValue = text.getValue();

@@ -45,12 +45,33 @@ public class PackageDescription {
     return null;
   }
 
+  public PackageDescriptionStanza getLibraryStanza() {
+    return getComponentStanza( new Component( ComponentType.LIBRARY, null, null, true ) );
+  }
+
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
     PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );
     pds.setEndLine( startLine+1 );
     stanzas.add( pds );
     return pds;
+  }
+
+  public void removeStanza(final PackageDescriptionStanza stanza) {
+    boolean found = false;
+    int diff = 0;
+
+    for (PackageDescriptionStanza st : getStanzas()) {
+      if (st == stanza) {
+        diff = - (st.getEndLine() - st.getStartLine() + 1);
+        found = true;
+        continue;
+      }
+      if (found) {
+        st.diffLine( diff );
+      }
+    }
+    this.stanzas.remove( stanza );
   }
 
   public Map<String, List<PackageDescriptionStanza>> getStanzasBySourceDir(){

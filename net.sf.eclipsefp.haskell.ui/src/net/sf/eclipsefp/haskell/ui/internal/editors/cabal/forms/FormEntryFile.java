@@ -72,9 +72,9 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     seeChecked(provider, provider.getElements( treeField.getInput() ), elements);
     ignoreModify = false;
 
-    if (!blockNotification) {
+    /* if (!blockNotification) {
       notifyTextValueChanged();
-    }
+    } */
   }
 
   private void seeChecked( final LimitedWorkbenchContentProvider provider,

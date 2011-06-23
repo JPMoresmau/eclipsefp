@@ -69,9 +69,9 @@ public class FormEntryMultiSelect extends FormEntry implements
     for( Object o: contents.getElements( null ) ) {
       String s = ( String )o;
       if( elements.indexOf( s ) == -1 ) {
-        treeField.setChecked( s, true );
-      } else {
         treeField.setChecked( s, false );
+      } else {
+        treeField.setChecked( s, true );
       }
     }
     ignoreModify = false;
