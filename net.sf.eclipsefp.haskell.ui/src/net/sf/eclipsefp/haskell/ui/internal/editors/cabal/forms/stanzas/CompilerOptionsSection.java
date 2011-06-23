@@ -35,7 +35,8 @@ public class CompilerOptionsSection extends CabalFormSection {
         new CompilerExtensionContentProvider() );
     createCustomFormEntry( entry, CabalSyntax.FIELD_EXTENSIONS, toolkit,
         container, UITexts.cabalEditor_compilerExtensions, true, SWT.NONE );
-    GridData entryGD = (GridData)entry.getControl().getLayoutData();
+    GridData entryGD = new GridData( GridData.FILL_BOTH );
+    entryGD.horizontalSpan = 2;
     entryGD.heightHint = 100;
     entry.getControl().setLayoutData( entryGD );
 

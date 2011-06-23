@@ -20,9 +20,15 @@ public class FormEntryMultiSelect extends FormEntry implements
   ITreeContentProvider contents;
   CheckboxTreeViewer treeField;
   boolean ignoreModify = false;
+  boolean onlyOneSelected = false;
 
   public FormEntryMultiSelect( final ITreeContentProvider contents ) {
+    this(contents, false);
+  }
+
+  public FormEntryMultiSelect( final ITreeContentProvider contents, final boolean onlyOneSelected ) {
     this.contents = contents;
+    this.onlyOneSelected = onlyOneSelected;
   }
 
   @Override
@@ -114,6 +120,16 @@ public class FormEntryMultiSelect extends FormEntry implements
   }
 
   public void checkStateChanged( final CheckStateChangedEvent event ) {
+    if (onlyOneSelected) {
+      boolean previousIgnoreModify = ignoreModify;
+      ignoreModify = true;
+      for (Object o : treeField.getCheckedElements()) {
+        if (!event.getElement().equals( o )) {
+          treeField.setChecked( o, false );
+        }
+      }
+      ignoreModify = previousIgnoreModify;
+    }
     if( !ignoreModify ) {
       notifyTextValueChanged();
     }

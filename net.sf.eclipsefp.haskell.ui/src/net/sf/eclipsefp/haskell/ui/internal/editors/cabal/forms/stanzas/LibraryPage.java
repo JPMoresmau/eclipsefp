@@ -47,7 +47,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
     form.getBody().setLayout( createGridLayout( 1, 6, 12 ) );
     Composite top = toolkit.createComposite( form.getBody() );
     top.setLayout( createGridLayout( 2, 0, 0 ) );
-    top.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+    top.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 
     isALibrary = toolkit.createButton( top, UITexts.cabalEditor_isALibrary, SWT.CHECK );
     GridData isLibGD = new GridData();

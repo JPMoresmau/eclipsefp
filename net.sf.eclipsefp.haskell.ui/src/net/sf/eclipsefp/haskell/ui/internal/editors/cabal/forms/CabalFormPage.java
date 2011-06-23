@@ -59,4 +59,20 @@ public abstract class CabalFormPage extends FormPage {
     layout.verticalSpacing = 17;
     return layout;
   }
+
+  protected GridLayout createUnequalGridLayout( final int cols, final int sideMargin,
+      final int topMargin ) {
+    GridLayout layout = new GridLayout( cols, false );
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
+
+    layout.marginTop = topMargin;
+    layout.marginBottom = topMargin;
+    layout.marginLeft = sideMargin;
+    layout.marginRight = sideMargin;
+
+    layout.horizontalSpacing = 20;
+    layout.verticalSpacing = 17;
+    return layout;
+  }
 }
