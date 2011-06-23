@@ -12,11 +12,16 @@ public class MainIsFormEntry extends FormEntryMultiSelect {
 
   @Override
   public String getValue() {
-    return super.getValue().replace( '.', '/' ).concat( ".hs" );
+    String value = super.getValue();
+    return value.isEmpty() ? "" : value.replace( '.', '/' ).concat( ".hs" );
   }
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
+    if (value.trim().equals( getValue().trim() )) {
+      return;
+    }
+
     if (value == null || !value.endsWith( ".hs" )) {
       super.setValue( value, blockNotification );
     } else {

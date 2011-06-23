@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 
@@ -47,6 +48,16 @@ public class PackageDescription {
 
   public PackageDescriptionStanza getLibraryStanza() {
     return getComponentStanza( new Component( ComponentType.LIBRARY, null, null, true ) );
+  }
+
+  public List<PackageDescriptionStanza> getExecutableStanzas() {
+    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    for (PackageDescriptionStanza stanza : getStanzas()) {
+      if (stanza.getType() == CabalSyntax.SECTION_EXECUTABLE) {
+        result.add( stanza );
+      }
+    }
+    return result;
   }
 
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){

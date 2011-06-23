@@ -158,7 +158,7 @@ public abstract class CabalFormSection extends SectionPart {
     }
   }
 
-  private void setAllEditable( final boolean editable ) {
+  public void setAllEditable( final boolean editable ) {
     for( FormEntry entry: entries ) {
       entry.setEditable( editable );
     }
