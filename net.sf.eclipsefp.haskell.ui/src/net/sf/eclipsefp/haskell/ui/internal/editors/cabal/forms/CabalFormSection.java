@@ -1,7 +1,7 @@
 // Copyright (c) 2008 by Leif Frenzel - see http://leiffrenzel.de
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-// Copyright (c) 2011 by Alejandro Serrano (serras)
+// Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import java.util.ArrayList;

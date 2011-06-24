@@ -1,14 +1,17 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 public class PackagesSorter extends ViewerSorter {
 
 	@Override
-	public int compare(Viewer viewer, Object e1, Object e2) {
+	public int compare(final Viewer viewer, final Object e1, final Object e2) {
 		if (e1 instanceof PackagesItem && e2 instanceof PackagesItem) {
 			HaskellPackage p1 = ((PackagesItem)e1).getPackage();
 			HaskellPackage p2 = ((PackagesItem)e2).getPackage();

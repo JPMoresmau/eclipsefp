@@ -1,19 +1,22 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 public class PackagesLabelProvider implements ILabelProvider {
 
-	public Image getImage(Object element) {
+	public Image getImage(final Object element) {
 		return element instanceof DatabaseType ? ImageCache.DATABASE : ImageCache.PACKAGE;
 	}
 
-	public String getText(Object element) {
+	public String getText(final Object element) {
 		if (element instanceof DatabaseType) {
 			switch ((DatabaseType) element) {
 			case ALL:
@@ -33,7 +36,7 @@ public class PackagesLabelProvider implements ILabelProvider {
 	}
 
 	// Listeners: not used
-	public void addListener(ILabelProviderListener listener) {
+	public void addListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 
@@ -41,12 +44,12 @@ public class PackagesLabelProvider implements ILabelProvider {
 		// Do nothing
 	}
 
-	public boolean isLabelProperty(Object element, String property) {
+	public boolean isLabelProperty(final Object element, final String property) {
 		// Do nothing
 		return false;
 	}
 
-	public void removeListener(ILabelProviderListener listener) {
+	public void removeListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 }

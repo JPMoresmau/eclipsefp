@@ -1,4 +1,5 @@
 // Copyright (c) 2003-2007 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.browser.BrowserPerspective;

@@ -1,25 +1,28 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import java.util.ArrayList;
-
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class PackagesContentProvider implements ITreeContentProvider {
-	
+
 	PackagesItem[] localCache = null;
 
-	public Object[] getElements(Object inputElement) {
+	public Object[] getElements(final Object inputElement) {
 		return new Object[] { DatabaseType.LOCAL };
 	}
 
-	public Object[] getChildren(Object parentElement) {
-		if (localCache == null)
-			cache();
+	public Object[] getChildren(final Object parentElement) {
+		if (localCache == null) {
+      cache();
+    }
 
 		switch ((DatabaseType) parentElement) {
 		case LOCAL:
@@ -29,7 +32,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
-	public Object getParent(Object element) {
+	public Object getParent(final Object element) {
 		if (element instanceof DatabaseType) {
 			return PackagesRoot.ROOT;
 		} else {
@@ -38,7 +41,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(final Object element) {
 		return (element instanceof PackagesRoot || element instanceof DatabaseType);
 	}
 
@@ -50,8 +53,9 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		try {
 			BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.LOCAL, null);
 			ArrayList<PackagesItem> cache = new ArrayList<PackagesItem>();
-			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages())
-				cache.add(new PackagesItem(DatabaseType.LOCAL, pkg));
+			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages()) {
+        cache.add(new PackagesItem(DatabaseType.LOCAL, pkg));
+      }
 			this.localCache = cache.toArray(new PackagesItem[cache.size()]);
 		} catch (Throwable ex) {
 			this.localCache = new PackagesItem[0];
@@ -62,7 +66,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		// Do nothing
 	}
 
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		// Do nothing
 	}
 }

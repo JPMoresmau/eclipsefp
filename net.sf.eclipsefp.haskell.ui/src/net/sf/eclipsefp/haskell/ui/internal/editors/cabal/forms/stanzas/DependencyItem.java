@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 

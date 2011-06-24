@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * The Scion preferences page in the Preferences dialog.
  *
  * @author Thomas ten Cate
+ * @author Alejandro Serrano (Browser integration)
  */
 
 public class ScionPP
