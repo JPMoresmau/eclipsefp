@@ -4,11 +4,15 @@
  */
 package net.sf.eclipsefp.haskell.browser;
 
+import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import net.sf.eclipsefp.haskell.browser.client.NullBrowserServer;
 import net.sf.eclipsefp.haskell.browser.client.StreamBrowserServer;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -24,6 +28,11 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.browser"; //$NON-NLS-1$
 	public static final String BROWSER_VERSION = "0.1";
+	public static final String DIST_FOLDER = ".dist-scion-browser";
+	
+	/** The plugin's resource bundle. */
+	private ResourceBundle resourceBundle;
+	
 	// The shared instance
 	private static BrowserPlugin plugin;
 
@@ -54,6 +63,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		resourceBundle = ResourceBundle.getBundle("plugin");
 	}
 
 	/*
@@ -68,6 +78,20 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		if (server != null)
 			server.stop();
 		super.stop(context);
+	}
+	
+	public static String getStringResource(String key) {
+		BrowserPlugin p = getDefault();
+		if (p != null) {
+			try {
+				return p.resourceBundle.getString(key);
+			} catch (MissingResourceException ex) {
+				return key;
+			}
+		} else {
+			// plugin still loading
+			return key;
+		}
 	}
 
 	/**
@@ -175,6 +199,14 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	public static void useNullSharedInstance() {
 		getDefault().useNullInstance();
 	}
+	
+	/**
+	 * Makes the plug-in to use the buil-in browser
+	 */
+	public static void useSharedBuiltinInstance() {
+		IPath path = builtinServerExecutablePath();
+		changeSharedInstance(path);
+	}
 
 	/**
 	 * Loads the local database in the current shared instance
@@ -199,7 +231,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 */
 	public static IPath builtinBrowserDirectoryPath() {
 		IPath path = getDefault().getStateLocation().append(
-				"scion-browser-".concat(BROWSER_VERSION)); //$NON-NLS-1$
+				"scion-browser-".concat(BROWSER_VERSION).concat("-dbs")); //$NON-NLS-1$
 		if (!path.toFile().exists())
 			path.toFile().mkdirs();
 		return path;
@@ -244,5 +276,50 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 
 	public void databaseLoaded(DatabaseLoadedEvent e) {
 		notifyDatabaseLoaded(e);
+	}
+	
+	/**
+	 * Generate the built-in Scion server's build area directory path.
+	 * 
+	 * @return An IPath to the build area subdirectory off the workspace's state
+	 *         location.
+	 */
+	public static IPath builtinServerDirectoryPath() {
+		return getDefault().getStateLocation().append("scion-browser-".concat(BROWSER_VERSION));
+	}
+
+	/**
+	 * Open the Scion server's zip archive as an input stream.
+	 * 
+	 * @return The InputStream.
+	 */
+	public static InputStream builinServerArchive() {
+		String zipArchive = "scion-browser-" + BROWSER_VERSION + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
+		return BrowserPlugin.class.getResourceAsStream(zipArchive);
+	}
+
+	/**
+	 * Generate the built-in server's executable path, where we'd expect to find
+	 * it relative to the build directory. Note that destDir is most likely the
+	 * same as what {@link #builtinServerDirectoryPath
+	 * builtinServerDirectoryPath} generated.
+	 * 
+	 * @param destDir
+	 *            The destination directory where the built-in scion server is
+	 *            being built.
+	 */
+	public static IPath serverExecutablePath(IPath destDir) {
+		IPath exePath = destDir.append("dist").append("build").append("scion-browser"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return exePath.append(FileUtil.makeExecutableName("scion-browser"));
+	}
+
+	/**
+	 * Generate the built-in server's executable path in the default state
+	 * location's directory.
+	 * 
+	 * @return An IPath to the built-in server's executable.
+	 */
+	public static IPath builtinServerExecutablePath() {
+		return serverExecutablePath(builtinServerDirectoryPath());
 	}
 }

@@ -4,40 +4,40 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.InputStream;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 
 /**
- * This class encapsulates the details of building the internal Scion server, such as
+ * This class encapsulates the details of building the internal Browser server, such as
  * unpacking the internal zip archive to the staging directory and running cabal to
- * produce the scion-server executable.
+ * produce the scion-browser executable.
  *
  * @author B. Scott Michel (bscottm@ieee.org)
  */
-public class ScionBuilder extends PackageBuilder {
+public class BrowserBuilder extends PackageBuilder {
 
   @Override
   public InputStream getArchive() {
-    return ScionPlugin.builinServerArchive();
+    return BrowserPlugin.builinServerArchive();
   }
 
   @Override
   public String getMessage(final PackageBuilderMessages message) {
     switch(message) {
       case UNPACK_ARCHIVE_TITLE:
-        return UITexts.unpackScionArchive_title;
+        return UITexts.unpackBrowserArchive_title;
       case ARCHIVE_RESOURCE_NOT_FOUND:
-        return UITexts.scionArchiveResourceNotFound;
+        return UITexts.browserArchiveResourceNotFound;
       case ARCHIVE_FILE_EXCEPTION:
-        return UITexts.scionArchiveFileException;
+        return UITexts.browserArchiveFileException;
       case ARCHIVE_NON_SPECIFIC_EXTENSION:
-        return UITexts.scionArchiveNonspecificFileException;
+        return UITexts.browserArchiveNonspecificFileException;
       case BUILD_JOB_TITLE:
-        return UITexts.scionBuildJob_title;
+        return UITexts.browserBuildJob_title;
       case INSTALL_FAILED:
-        return UITexts.scionServerInstallFailed;
+        return UITexts.browserServerInstallFailed;
       case INSTALL_ERROR:
-        return UITexts.scionServerInstallError;
+        return UITexts.browserServerInstallError;
     }
 
     return null;
@@ -48,11 +48,11 @@ public class ScionBuilder extends PackageBuilder {
    */
   @Override
   public boolean needsBuilding() {
-    return scionNeedsBuilding();
+    return browserNeedsBuilding();
   }
 
-  public static boolean scionNeedsBuilding() {
-    return !ScionPlugin.serverExecutablePath( ScionPlugin.builtinServerDirectoryPath() ).toFile().exists();
+  public static boolean browserNeedsBuilding() {
+    return !BrowserPlugin.serverExecutablePath( BrowserPlugin.builtinServerDirectoryPath() ).toFile().exists();
   }
 
 }

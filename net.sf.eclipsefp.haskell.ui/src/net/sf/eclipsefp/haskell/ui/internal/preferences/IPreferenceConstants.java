@@ -33,5 +33,6 @@ public interface IPreferenceConstants {
   public final static String HADDOCK_SEARCH_PATHS = "HADDOCK_SEARCH_PATHS";  //$NON-NLS-1$
 
   // Browser
+  public final static String SCION_BROWSER_SERVER_BUILTIN = "SCION_BROWSER_SERVER_BUILTIN" ; //$NON-NLS-1$
   public final static String SCION_BROWSER_SERVER_EXECUTABLE = "SCION_BROWSER_SERVER_EXECUTABLE";  //$NON-NLS-1$
 }

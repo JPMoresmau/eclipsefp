@@ -96,6 +96,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   private String serverFlavor;
   /** Current executable path string */
   private IPath serverExecutablePath;
+  /** Current "use builtin" state */
+  private boolean browserUseBuiltIn;
   /** Current browser executable path string */
   private IPath browserExecutablePath;
   /** Haskell console low water mark */
@@ -106,15 +108,18 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
    * being fired off.
    */
-  private ScionBuildJob           internalBuilder;
+  private ScionBuildJob internalBuilder;
+  private BrowserBuildJob internalBrowserBuilder;
 
   public ScionManager() {
     // The interesting stuff is done in the start() method
     useBuiltIn = true;
+    browserUseBuiltIn = true;
     serverFlavor = STDSTREAM_SCION_FLAVOR;
     serverExecutablePath = null;
     browserExecutablePath = null;
     internalBuilder = null;
+    internalBrowserBuilder = null;
     hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
     hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
   }
@@ -146,6 +151,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       serverExecutablePath = new Path(serverExecutable);
     }
 
+    browserUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN );
     final String browserExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
     if (browserExecutable.length() > 0) {
       browserExecutablePath = new Path(browserExecutable);
@@ -186,9 +192,15 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   /**
    * Handle ScionPP preference changes.
    *
-   * @param forceRebuild If using the built-in scion-server, should it be rebuilt?
+   * @param forceRebuildServer If using the built-in scion-server, should it be rebuilt?
+   * @param forceRebuildServer If using the built-in scion-browser, should it be rebuilt?
    */
-  public void handlePreferenceChanges(final boolean forceRebuild) {
+  public void handlePreferenceChanges(final boolean forceRebuildServer, final boolean forceRebuildBrowser) {
+    handlePreferenceChangesServer( forceRebuildServer );
+    handlePreferenceChangesBrowser( forceRebuildBrowser );
+  }
+
+  public void handlePreferenceChangesServer(final boolean forceRebuild) {
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     boolean newUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
     String newServerFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
@@ -248,6 +260,59 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     }
   }
 
+  public void handlePreferenceChangesBrowser(final boolean forceRebuild) {
+    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    boolean newUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN );
+    final String newServerExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
+    IPath newServerExecutablePath = new Path(newServerExecutable);
+
+    // Did any of the major properties change, and we're not forcing a rebuild?
+    if (   !forceRebuild
+        && newUseBuiltIn == browserUseBuiltIn
+        && (browserUseBuiltIn || newServerExecutablePath.equals( browserExecutablePath ))) {
+      return;
+    }
+
+    // Yup, something changed, so shut down the instances...
+    BrowserPlugin.getSharedInstance().stop();
+
+    // Switch over to the null instance factory
+    BrowserPlugin.useNullSharedInstance();
+
+    // And update...
+    browserUseBuiltIn = newUseBuiltIn;
+    browserExecutablePath = newServerExecutablePath;
+
+    // Can we forcibly rebuild (must use builtin, have Haskell and Cabal implementations
+    if ( forceRebuild ) {
+      if ( browserUseBuiltIn
+          && CompilerManager.getInstance().getCurrentHsImplementation() != null
+          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
+        final Display display = HaskellUIPlugin.getStandardDisplay();
+        display.asyncExec( new Runnable() {
+          public void run() {
+            Shell parent = display.getActiveShell();
+            if ( MessageDialog.openConfirm( parent, UITexts.browserRebuild_title, UITexts.browserRebuild_message ) ) {
+              IPath browserBuildDirPath = BrowserPlugin.builtinServerDirectoryPath();
+              File browserBuildDir = browserBuildDirPath.toFile();
+
+              FileUtil.deleteRecursively( browserBuildDir );
+              if ( browserBuildDir.exists() ) {
+                MessageDialog.openError( parent, UITexts.browserRebuild_DirectoryExists_title,
+                                         UITexts.browserRebuild_DirectoryExists_message );
+              } else {
+                browserSetup();
+              }
+            }
+          }
+        } );
+      }
+    } else {
+      // Everything else is handled by browserSetup...
+      browserSetup();
+    }
+  }
+
   /**
    * Server factory setup. This is common code used by both start() and handlePreferenceChanges() for setting
    * and starting scion server factories.
@@ -258,7 +323,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       if (useBuiltIn) {
         if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
             && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
-            if ( !ScionBuilder.needsBuilding() ) {
+            if ( !ScionBuilder.scionNeedsBuilding() ) {
               if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
                 ScionPlugin.useBuiltInStdStreamServerFactory();
               } else {
@@ -313,8 +378,6 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     retval = builder.unpackScionArchive( scionBuildDir );
     if (retval.isOK()) {
 
-
-
       // build final exe location
       IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
       CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
@@ -350,50 +413,99 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   private synchronized void browserSetup() {
     final Display display = Display.getDefault();
 
-    if (browserExecutablePath == null) {
-      display.asyncExec( new Runnable() {
-        public void run() {
-          // needs ui thread
-          Shell parentShell = display.getActiveShell();
-          MessageDialog.openError( parentShell, UITexts.scionBrowserNotConfigured_title, UITexts.scionBrowserNotConfigured_message );
-        }
-      } );
-      BrowserPlugin.useNullSharedInstance();
-      return;
-    }
+    if (browserUseBuiltIn) {
+      if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
+          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
+          if ( !BrowserBuilder.browserNeedsBuilding() ) {
+            BrowserPlugin.useSharedBuiltinInstance();
 
-    if (browserExecutablePath.toFile().exists()) {
-      BrowserPlugin.changeSharedInstance( browserExecutablePath );
-
-      display.asyncExec( new Runnable() {
-        public void run() {
-          // needs ui thread
-          /*Shell parentShell = display.getActiveShell();
-          boolean rebuild = MessageDialog.openQuestion( parentShell, UITexts.scionBrowserRebuildDatabase_title,
-             UITexts.scionBrowserRebuildDatabase_message );
-          Job builder = rebuild ? new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase)
-                                : new BrowserDatabaseLoadJob(UITexts.scionBrowserLoadingDatabases);*/
-          Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-          builder.setPriority( Job.BUILD );
-          builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-          builder.setUser(true);
-          builder.schedule();
-        }
-      } );
-
+            display.asyncExec( new Runnable() {
+              public void run() {
+                Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+                builder.setPriority( Job.BUILD );
+                builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+                builder.setUser(true);
+                builder.schedule();
+              }
+            } );
+          } else {
+            spawnBrowserBuildJob();
+          }
+      }
     } else {
-      display.asyncExec( new Runnable() {
-        public void run() {
-          // needs ui thread
-          Shell parentShell = display.getActiveShell();
-          String errMsg = NLS.bind( UITexts.scionBrowserDoesntExist_message, browserExecutablePath.toOSString() );
-          MessageDialog.openError( parentShell, UITexts.scionBrowserDoesntExist_title, errMsg );
-        }
-      } );
+      if ( browserExecutablePath != null && browserExecutablePath.toFile().exists() ) {
+        BrowserPlugin.changeSharedInstance( browserExecutablePath );
 
-      browserExecutablePath = null;
-      BrowserPlugin.useNullSharedInstance();
+        display.asyncExec( new Runnable() {
+          public void run() {
+            Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+            builder.setPriority( Job.BUILD );
+            builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+            builder.setUser(true);
+            builder.schedule();
+          }
+        } );
+      } else {
+        display.asyncExec( new Runnable() {
+          public void run() {
+            // needs ui thread
+            Shell parentShell = display.getActiveShell();
+            MessageDialog.openError( parentShell, UITexts.scionBrowserNotConfigured_title, UITexts.scionBrowserNotConfigured_message );
+          }
+        } );
+
+        browserExecutablePath = null;
+        BrowserPlugin.useNullSharedInstance();
+      }
     }
+  }
+
+  /**
+   * Build the built-in scion-server: unpack the internal scion-browser-x.y.z.a.zip archive into the destination
+   * folder, then kick of a "cabal install" compilation.
+   *
+   * @param monitor The progress monitor
+   * @param conout The console output stream
+   */
+  private ScionBuildStatus buildBrowserBuiltIn(final IProgressMonitor monitor, final IOConsoleOutputStream conout) {
+    IPath browserBuildDirPath = BrowserPlugin.builtinServerDirectoryPath();
+    File browserBuildDir = browserBuildDirPath.toFile();
+    BrowserBuilder builder = new BrowserBuilder();
+    ScionBuildStatus retval;
+
+    monitor.subTask( UITexts.browserServerProgress_subtask1 );
+    retval = builder.unpackScionArchive( browserBuildDir );
+    if (retval.isOK()) {
+      // build final exe location
+      IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
+      CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
+      CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
+
+      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+      boolean updateCabal = preferenceStore.getBoolean( IPreferenceConstants.RUN_CABAL_UPDATE );
+      if (updateCabal){
+        preferenceStore.setValue( IPreferenceConstants.RUN_CABAL_UPDATE, false );
+        monitor.subTask( UITexts.cabalUpdateProgress );
+        builder.update( cabalImpl, conout );
+        // we ignore the return so that failing update does not stop the compilation
+      }
+
+      IPath exePath = BrowserPlugin.serverExecutablePath( browserBuildDirPath );
+      File  exeFile = exePath.toFile();
+
+      if( !exeFile.exists() && hsImpl != null && cabalImpl != null) {
+        monitor.subTask( UITexts.browserServerProgress_subtask2 );
+        retval = builder.build( cabalImpl, browserBuildDir, conout);
+        if (retval.isOK() && exeFile.exists() ) {
+          retval.setExecutable( exePath.toOSString() );
+        }
+      } else {
+        if (cabalImpl == null ) {
+          retval.buildFailed(UITexts.noCabalImplementation_title, UITexts.noCabalImplementation_message);
+        }
+      }
+    }
+    return retval;
   }
 
   /**
@@ -589,7 +701,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       //    || ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key ) ) {
       if (CabalImplementationManager.DEFAULT_CABAL_IMPLEMENTATION.equals( key ) ||  ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION.equals( key )){
         if (useBuiltIn){
-          handlePreferenceChanges(true);
+          handlePreferenceChanges(true, true);
         }
       } /*else {
         HaskellUIPlugin.log("Core preference changed: ".concat( key ), IStatus.INFO);
@@ -737,6 +849,25 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     }
   }
 
+  /** Spawn a built-in server build job */
+  synchronized void spawnBrowserBuildJob() {
+    if (internalBrowserBuilder == null) {
+      IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+      IOConsole console = new IOConsole(UITexts.browserServerBuildJob, null);
+      internalBrowserBuilder = new BrowserBuildJob(UITexts.browserServerBuildJob, console);
+
+      mgr.addConsoles(new IConsole[] {console});
+      mgr.showConsoleView( console );
+      internalBrowserBuilder.setPriority( Job.BUILD );
+      // Important to ensure that we schedule ourselves as a workspace job to prevent
+      // other jobs from running (not that they can, but...)
+      internalBrowserBuilder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+      // This is a user visible task, so set the annoy bit:
+      internalBrowserBuilder.setUser(true);
+      internalBrowserBuilder.schedule();
+    }
+  }
+
   /**
    * Get the Haskell console for a project, creating one if necessary.
    *
@@ -822,6 +953,76 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         synchronized (ScionManager.this) {
           ScionPlugin.shutdownAllInstances();
           ScionManager.this.serverFactorySetup();
+        }
+      }
+      return status.getStatus();
+    }
+  }
+
+  /** Specialized Job class that manages building the built-in Browser server,
+   * providing some feedback to the user as the build progresses.
+   *
+    * @author B. Scott Michel
+   */
+  public class BrowserBuildJob extends Job {
+    ScionBuildStatus status;
+    IOConsole fConsole;
+    IOConsoleOutputStream fConOut;
+
+    public BrowserBuildJob(final String jobTitle, final IOConsole console) {
+      super(jobTitle);
+      status = new ScionBuildStatus();
+      fConsole = console;
+      fConOut = console.newOutputStream();
+
+      console.activate();
+      console.clearConsole();
+
+      // If the build failed, there will be some indication of why it failed in the
+      // ScionBuildStatus object. This is where we get to present that back to the
+      // user:
+      addJobChangeListener( new JobChangeAdapter() {
+        @Override
+        public void done( final IJobChangeEvent event ) {
+          if (!event.getResult().isOK()) {
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openError( Display.getDefault().getActiveShell(),
+                                         status.getTitle(),
+                                         status.getMessage() );
+              }
+            } );
+          } else {
+            /*  Yippee! The server built successfully: Tell user and delete the console.
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openInformation( Display.getDefault().getActiveShell(),
+                                               UITexts.scionServerProgress_completed_title,
+                                               UITexts.scionServerProgress_completed_message );
+              }
+            } ); */
+
+            // Dispose of the console on a successful build
+            IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+            mgr.removeConsoles( new IConsole[] { fConsole } );
+          }
+          // reset builder even on failure otherwise it never launches again
+          ScionManager.this.internalBrowserBuilder = null;
+          super.done( event );
+        }
+      });
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.scionServerProgress_title, IProgressMonitor.UNKNOWN );
+      status = buildBrowserBuiltIn(monitor, fConOut);
+      monitor.done();
+
+      if (status.isOK()) {
+        synchronized (ScionManager.this) {
+          BrowserPlugin.getSharedInstance().stop();
+          ScionManager.this.browserSetup();
         }
       }
       return status.getStatus();

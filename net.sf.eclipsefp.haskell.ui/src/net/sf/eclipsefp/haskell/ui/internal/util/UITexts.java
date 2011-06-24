@@ -74,6 +74,7 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_noCabalInstallationSelected;
   public static String cabalImplsBlock_noCabalInstallations;
   public static String cabalImplsBlock_needScionExecutablePath;
+  public static String cabalImplsBlock_needBrowserExecutablePath;
 
   public static String cabalImplsDialog_name;
   public static String cabalImplsDialog_executablePath;
@@ -90,6 +91,7 @@ public final class UITexts extends NLS {
   public static String scionServerExecutable_label;
 
   public static String scionBrowser_preferences_label;
+  public static String scionBrowserBuiltIn_label;
   public static String scionBrowserExecutable_label;
 
   public static String autodetectButton_label;
@@ -118,6 +120,16 @@ public final class UITexts extends NLS {
   public static String scionRebuild_message;
   public static String scionRebuild_DirectoryExists_title;
   public static String scionRebuild_DirectoryExists_message;
+
+  public static String browserServerBuildJob;
+  public static String browserServerChangeJob;
+  public static String browserServerExecutableNotPresent;
+  public static String browserServerAbnormalTermination_title;
+  public static String browserServerAbnormalTermination_message;
+  public static String browserRebuild_title;
+  public static String browserRebuild_message;
+  public static String browserRebuild_DirectoryExists_title;
+  public static String browserRebuild_DirectoryExists_message;
 
   public static String scionServerFlavor_title;
   public static String scionServerFlavor_stdstream_label;
@@ -148,6 +160,8 @@ public final class UITexts extends NLS {
 
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
+  public static String browserServerInstallError;
+  public static String browserServerInstallFailed;
   public static String cabalUpdateError;
   public static String cabalUpdateFailed;
 
@@ -332,6 +346,8 @@ public final class UITexts extends NLS {
 
   public static String unpackScionArchive_title;
   public static String scionBuildJob_title;
+  public static String unpackBrowserArchive_title;
+  public static String browserBuildJob_title;
   public static String cabalUpdateJob_title;
 
   public static String scionArchiveResourceNotFound;
@@ -343,6 +359,13 @@ public final class UITexts extends NLS {
   public static String cabalUpdateProgress;
   // public static String scionServerProgress_completed_title;
   // public static String scionServerProgress_completed_message;
+
+  public static String browserArchiveResourceNotFound;
+  public static String browserArchiveFileException;
+  public static String browserArchiveNonspecificFileException;
+  public static String browserServerProgress_title;
+  public static String browserServerProgress_subtask1;
+  public static String browserServerProgress_subtask2;
 
   public static String noCabalImplementation_title;
   public static String noCabalImplementation_message;

@@ -48,13 +48,20 @@ public class ScionPP
 
 	private ExecutableFileFieldEditor serverExecutableField;
 	private Composite serverExecutableFieldC;
-	private ExecutableFileFieldEditor browserExecutableField;
-  private Composite browserExecutableFieldC;
 	private BooleanFieldEditor serverBuiltInField;
 	private Composite serverBuiltInFieldC;
 	private ButtonFieldEditor autodetect;
 	private Composite autodetectC;
 	private Button forceRebuild;
+
+	private ExecutableFileFieldEditor browserExecutableField;
+  private Composite browserExecutableFieldC;
+	private BooleanFieldEditor browserBuiltInField;
+  private Composite browserBuiltInFieldC;
+  private ButtonFieldEditor autodetectBrowser;
+  private Composite autodetectBrowserC;
+  private Button forceRebuildBrowser;
+
 	private BooleanFieldEditor cabalUpdateField;
 	//private Composite forceRebuildC;
 	private RadioGroupFieldEditor serverFlavorField;
@@ -65,11 +72,13 @@ public class ScionPP
 	private CabalImplsBlock cabalBlock;
 	private Composite fieldComposite;
 	private boolean rebuildBuiltin;
+	private boolean rebuildBrowserBuiltin;
 
 	public ScionPP() {
 	  super();
     setPreferenceStore(HaskellUIPlugin.getDefault().getPreferenceStore());
     rebuildBuiltin = false;
+    rebuildBrowserBuiltin = false;
 	}
 
 	/**
@@ -84,6 +93,7 @@ public class ScionPP
 
 	  // Member variable initialization:
 	  rebuildBuiltin = false;
+	  rebuildBrowserBuiltin = false;
 
 	  // FIXME: Need to add fields for server verbosity (do we really want to watch server interaction messages?)
 	  // FIXME: Need to add fields for console high and low water marks, hook preference changes to ScionManager
@@ -249,10 +259,48 @@ public class ScionPP
     verboseInteractionField.setPreferenceStore( scionPrefStore );
     verboseInteractionField.load();
 
+    // scion-browser
+
+    SWTUtil.createMessageLabel (fieldComposite, UITexts.scionBrowser_preferences_label, 2, SWT.DEFAULT);
+
+    browserBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
+    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
+    gdata.horizontalSpan=2;
+    browserBuiltInFieldC.setLayoutData( gdata );
+    browserBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN,
+                                                  UITexts.scionServerBuiltIn_label,
+                                                  browserBuiltInFieldC);
+    browserBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
+      public void propertyChange( final PropertyChangeEvent event ) {
+        updateButtonState();
+        setValid( isValid() );
+      }
+    } );
+    browserBuiltInField.setPage( this );
+    browserBuiltInField.setPreferenceStore( prefStore );
+    browserBuiltInField.load();
+
+    //forceRebuildC=new Composite(fieldComposite,SWT.NONE);
+    gdata = new GridData( SWT.LEFT, SWT.CENTER, true, false );
+    gdata.horizontalIndent=30;
+    gdata.horizontalSpan=1;
+    //forceRebuildC.setLayoutData( gdata );
+    forceRebuildBrowser=new Button(fieldComposite,SWT.CHECK);
+    forceRebuildBrowser.setText( UITexts.forceRebuildButton_text );
+    forceRebuildBrowser.setLayoutData( gdata );
+
+    forceRebuildBrowser.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected( final SelectionEvent e ) {
+        rebuildBrowserBuiltin=forceRebuildBrowser.getSelection();
+        cabalUpdateField.setEnabled( rebuildBrowserBuiltin, cabalUpdateFieldC );
+      }
+    });
+
     browserExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
-    GridData bgd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-    bgd.horizontalSpan=2;
-    browserExecutableFieldC.setLayoutData( gd );
+    GridData gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd2.horizontalSpan=2;
+    browserExecutableFieldC.setLayoutData( gd2 );
     browserExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,
         NLS.bind(UITexts.scionBrowserExecutable_label, getBrowserExecutableName()),
         false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, browserExecutableFieldC );
@@ -265,6 +313,26 @@ public class ScionPP
     browserExecutableField.setPage( this );
     browserExecutableField.setPreferenceStore( prefStore );
     browserExecutableField.load();
+
+    autodetectBrowserC=new Composite(fieldComposite,SWT.NONE);
+    gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd2.horizontalSpan=2;
+    autodetectBrowserC.setLayoutData( gd2 );
+    autodetectBrowser = new ButtonFieldEditor(
+        String.format(UITexts.autodetectButton_label, getBrowserExecutableName()),
+        UITexts.autodetectButton_text,
+        new SelectionAdapter() {
+          @Override
+          public void widgetSelected(final SelectionEvent e) {
+            doDetectBrowser();
+            updateButtonState();
+            setValid( isValid() );
+          }
+        },
+        autodetectBrowserC );
+    autodetectBrowser.setPage( this );
+    autodetectBrowser.setPreferenceStore( prefStore );
+    autodetectBrowser.load();
 
 		// Update the dialog's state and validity:
 		updateButtonState();
@@ -284,6 +352,17 @@ public class ScionPP
 		}
 	}
 
+	private void doDetectBrowser() {
+    String server = detectBrowserServer();
+    if (server == null) {
+      MessageDialog.openError(getShell(),
+          UITexts.autodetectButton_errorTitle,
+          NLS.bind(UITexts.autodetectButton_errorMessage, getBrowserExecutableName()));
+    } else {
+      browserExecutableField.setStringValue(server);
+    }
+  }
+
 	private void updateButtonState() {
     boolean b = serverBuiltInField.getBooleanValue();
     //forceRebuild.setEnabled( b, forceRebuildC );
@@ -294,6 +373,16 @@ public class ScionPP
     }
     autodetect.setEnabled( !b, autodetectC );
     serverExecutableField.setEnabled( !b, serverExecutableFieldC );
+
+    boolean b2 = browserBuiltInField.getBooleanValue();
+    //forceRebuild.setEnabled( b, forceRebuildC );
+    forceRebuildBrowser.setEnabled( b2 );
+    if (!b2){
+      forceRebuildBrowser.setSelection( false );
+      forceRebuildBrowser.notifyListeners( SWT.Selection, new Event() );
+    }
+    autodetectBrowser.setEnabled( !b2, autodetectBrowserC );
+    browserExecutableField.setEnabled( !b2, browserExecutableFieldC );
 	}
 
 	/**
@@ -306,6 +395,11 @@ public class ScionPP
 	  return f!=null?f.getAbsolutePath():null;
 	}
 
+	private String detectBrowserServer() {
+    File f=FileUtil.findExecutableInPath( getBrowserExecutableName() );
+    return f!=null?f.getAbsolutePath():null;
+  }
+
 	public static String getServerExecutableName() {
 		return FileUtil.makeExecutableName("scion-server"); //$NON-NLS-1$
 	}
@@ -317,6 +411,7 @@ public class ScionPP
 	public static void initializeDefaults(final IPreferenceStore store) {
 	  // Set reasonable defaults.
 	  store.setDefault( SCION_SERVER_BUILTIN, true );
+	  store.setDefault( SCION_BROWSER_SERVER_BUILTIN, true );
     store.setDefault( RUN_CABAL_UPDATE, true );
 	  store.setDefault( SCION_SERVER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
@@ -327,9 +422,11 @@ public class ScionPP
   public boolean performOk() {
     cabalBlock.updateCabalImplementations();
     serverBuiltInField.store();
+    browserBuiltInField.store();
     serverExecutableField.store();
     browserExecutableField.store();
     autodetect.store();
+    autodetectBrowser.store();
     serverFlavorField.store();
     verboseInteractionField.store();
     cabalUpdateField.store();
@@ -340,7 +437,7 @@ public class ScionPP
     if (super.performOk()) {
       // Yuck. You'd think there'd be a way to do this via listening for preference
       // changes, but nooooooh.
-      HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin);
+      HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges(rebuildBuiltin, rebuildBrowserBuiltin);
       return true;
     } else {
       return false;
@@ -358,6 +455,15 @@ public class ScionPP
     if (retval) {
       if (!serverBuiltInField.getBooleanValue()) {
         if (serverExecutableField.getStringValue().length() == 0) {
+          retval = false;
+          setErrorMessage( UITexts.cabalImplsBlock_needScionExecutablePath );
+        }
+      }
+    }
+
+    if (retval) {
+      if (!browserBuiltInField.getBooleanValue()) {
+        if (browserExecutableField.getStringValue().length() == 0) {
           retval = false;
           setErrorMessage( UITexts.cabalImplsBlock_needScionExecutablePath );
         }
