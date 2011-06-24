@@ -32,7 +32,7 @@ public abstract class CabalFormSection extends SectionPart {
 
   protected final CabalFormEditor editor;
   protected PackageDescriptionStanza stanza = null;
-  private final ArrayList<FormEntry> entries;
+  protected final ArrayList<FormEntry> entries;
   private final IProject project;
 
   protected CabalFormSection( final IFormPage page, final Composite parent,
@@ -134,7 +134,7 @@ public abstract class CabalFormSection extends SectionPart {
   // helping functions
   // //////////////////
 
-  private void fillInValues( final boolean first ) {
+  protected void fillInValues( final boolean first ) {
     // try {
     setAllEditable( true );
     getStatusLineManager().setErrorMessage( null );
@@ -148,7 +148,7 @@ public abstract class CabalFormSection extends SectionPart {
      */
   }
 
-  private void fillValue( final FormEntry entry, final CabalSyntax acc,
+  protected void fillValue( final FormEntry entry, final CabalSyntax acc,
       final boolean first ) {
     if( stanza != null ) {
       String value = stanza.getProperties().get( acc );

@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntryMultiSe
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -24,7 +25,7 @@ public class ModulesExecutableSection extends CabalFormSection implements IFormE
 
   ModulesExecutableSection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
-    super( page, parent, editor, UITexts.cabalEditor_exposedModules, project );
+    super( page, parent, editor, UITexts.cabalEditor_mainModule, project );
   }
 
   @Override
@@ -35,15 +36,22 @@ public class ModulesExecutableSection extends CabalFormSection implements IFormE
     getSection().setLayoutData( data );
 
     entry = new MainIsFormEntry( new ModulesContentProvider() );
-    setCustomFormEntry( entry, CabalSyntax.FIELD_MAIN_IS, toolkit,
-        container );
+    entry.init( getProject(), container, toolkit, SWT.NONE );
+    entry.setProperty( CabalSyntax.FIELD_MAIN_IS );
+    entry.addFormEntryListener( this );
+    // entries.add( entry );
     GridData entryGD = new GridData( GridData.FILL_BOTH );
     entryGD.heightHint = 120;
     entry.getControl().setLayoutData( entryGD );
-    entry.addFormEntryListener( this );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
+  }
+
+  @Override
+  public void setAllEditable( final boolean editable ) {
+    super.setAllEditable( editable );
+    entry.setEditable( editable );
   }
 
   public void refreshInput( final IProject project,
@@ -51,21 +59,41 @@ public class ModulesExecutableSection extends CabalFormSection implements IFormE
     if( descr == null || stanza == null ) {
       entry.getTree().setInput( new Object() );
     } else {
-      String value = stanza.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+      String value = stanza.getProperties().get( CabalSyntax.FIELD_MAIN_IS );
       value = (value == null) ? "" : value;
+      int prevCount = entry.getTree().getTree().getItemCount();
       entry.getTree().setInput(
           new ModulesContentProviderRoot( project, descr, stanza ) );
-      entry.setValue( value, false );
+      int postCount = entry.getTree().getTree().getItemCount();
+      entry.setValue( value, true );
+      // We have to rewrite the "other-modules" section
+      if (prevCount != postCount) {
+        textValueChanged( entry );
+      }
     }
   }
 
   public void textValueChanged( final FormEntry entry ) {
     if (this.stanza != null) {
       FormEntryMultiSelect multi = (FormEntryMultiSelect)entry;
+
+      String newValueMain = multi.getValue();
+      String oldValueMain = stanza.getProperties().get( CabalSyntax.FIELD_MAIN_IS.getCabalName() );
+      oldValueMain = oldValueMain == null ? "" : oldValueMain;
+      if (!oldValueMain.equals( newValueMain )) {
+        stanza.getProperties().put( CabalSyntax.FIELD_MAIN_IS.getCabalName(), newValueMain );
+        RealValuePosition vp = stanza.update( CabalSyntax.FIELD_MAIN_IS, newValueMain );
+        vp.updateDocument( editor.getModel() );
+      }
+
       String newValue = multi.getNonSelectedValue();
-      stanza.getProperties().put( CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
-      RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES, newValue );
-      vp.updateDocument( editor.getModel() );
+      String oldValue = stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() );
+      oldValue = oldValue == null ? "" : oldValue;
+      if (!oldValue.equals( newValue )) {
+        stanza.getProperties().put( CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
+        RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES, newValue );
+        vp.updateDocument( editor.getModel() );
+      }
     }
   }
 

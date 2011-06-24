@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.Arrays;
 import java.util.Vector;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.scion.types.Component;
@@ -13,6 +14,9 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,12 +39,14 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
   private boolean ignoreModify = false;
   private CabalFormEditor formEditor;
 
+  SourceDirsSection sourceDirsSection;
+  ModulesExecutableSection modulesSection;
+
+  String nextSelected = null;
+
   public ExecutablesPage( final FormEditor editor, final IProject project ) {
     super( editor, ExecutablesPage.class.getName(), UITexts.cabalEditor_executables, project );
   }
-
-  SourceDirsSection sourceDirsSection;
-  ModulesExecutableSection modulesSection;
 
   @Override
   protected void createFormContent( final IManagedForm managedForm ) {
@@ -85,7 +91,35 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
 
       @Override
       public void widgetSelected( final SelectionEvent e ) {
-        // Do nothing
+        InputDialog dialog = new InputDialog( execsList.getShell(),
+            UITexts.cabalEditor_newExecutableString,
+            UITexts.cabalEditor_newExecutableString, "",
+            new IInputValidator() {
+
+              public String isValid( final String newText ) {
+                String value = newText.trim();
+                if (value.isEmpty()) {
+                  return UITexts.cabalEditor_newExecutableBlankError;
+                }
+                for (String s : execsList.getItems()) {
+                  if (s.equals( value )) {
+                    return UITexts.cabalEditor_newExecutableAlreadyExistsError;
+                  }
+                }
+                return null;
+              }
+            } );
+        if (dialog.open() == Window.OK) {
+          PackageDescription lastDescription = formEditor.getPackageDescription();
+          String execName = dialog.getValue().trim();
+          PackageDescriptionStanza execStanza = lastDescription.addStanza(
+              CabalSyntax.SECTION_EXECUTABLE, execName );
+          execStanza.setIndent( 2 );
+          execStanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+          execStanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" );
+          nextSelected = execName;
+          formEditor.getModel().set( lastDescription.dump() );
+        }
       }
     } );
 
@@ -96,7 +130,10 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
 
       @Override
       public void widgetSelected( final SelectionEvent e ) {
-        // Do nothing
+        PackageDescription lastDescription = formEditor.getPackageDescription();
+        PackageDescriptionStanza stanza = sourceDirsSection.getStanza();
+        lastDescription.removeStanza( stanza );
+        formEditor.getModel().set( lastDescription.dump() );
       }
     } );
 
@@ -147,6 +184,7 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
     }
 
     setStanza(stanza);
+    modulesSection.refreshInput( project, this.getPackageDescription(), stanza );
   }
 
   @Override
@@ -169,36 +207,20 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
         execsList.add( pkgElement );
       }
     }
-    ignoreModify = false;
-
-    /*ignoreModify = true;
-    PackageDescriptionStanza libStanza = packageDescription.getLibraryStanza();
-    modulesSection.refreshInput( project, packageDescription, libStanza );
-    if (libStanza == null) {
-      isALibrary.setSelection( false );
-      for( IFormPart p: getManagedForm().getParts() ) {
-        if( p instanceof CabalFormSection ) {
-          ( ( CabalFormSection )p ).setStanza( null );
-        }
-      }
-    } else {
-      isALibrary.setSelection( true );
-      for( IFormPart p: getManagedForm().getParts() ) {
-        if( p instanceof CabalFormSection ) {
-          ( ( CabalFormSection )p ).setStanza( libStanza );
-        }
-      }
+    if (nextSelected != null) {
+      execsList.setSelection( new String[] { nextSelected } );
+      nextSelected = null;
     }
-    ignoreModify = false; */
+    widgetSelected( null );
+    ignoreModify = false;
   }
 
   public void textValueChanged( final FormEntry entry ) {
-    /*if (this.getPackageDescription() != null) {
-      PackageDescriptionStanza libStanza = this.getPackageDescription().addStanza( CabalSyntax.SECTION_LIBRARY, "" );
-      modulesSection.refreshInput( project, this.getPackageDescription(), libStanza );
+    if (this.getPackageDescription() != null) {
+      modulesSection.refreshInput( project, this.getPackageDescription(), sourceDirsSection.getStanza() );
     } else {
       modulesSection.refreshInput( project, this.getPackageDescription(), null );
-    }*/
+    }
   }
 
   public void focusGained( final FormEntry entry ) {

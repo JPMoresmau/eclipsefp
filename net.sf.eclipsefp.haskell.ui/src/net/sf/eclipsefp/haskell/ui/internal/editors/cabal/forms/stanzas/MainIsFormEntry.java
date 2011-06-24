@@ -18,14 +18,16 @@ public class MainIsFormEntry extends FormEntryMultiSelect {
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
-    if (value.trim().equals( getValue().trim() )) {
+    String realValue = (value == null) ? "" : value;
+
+    if (realValue.trim().equals( getValue().trim() )) {
       return;
     }
 
-    if (value == null || !value.endsWith( ".hs" )) {
-      super.setValue( value, blockNotification );
+    if (realValue == null || !realValue.endsWith( ".hs" )) {
+      super.setValue( realValue, blockNotification );
     } else {
-      String newValue = value.substring( 0, value.length() - 3 ).replace( '/', '.' );
+      String newValue = realValue.substring( 0, realValue.length() - 3 ).replace( '/', '.' );
       super.setValue( newValue, blockNotification );
     }
   }

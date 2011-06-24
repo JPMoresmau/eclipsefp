@@ -425,6 +425,7 @@ public final class UITexts extends NLS {
   public static String cabalEditor_sourceDirectories;
   public static String cabalEditor_exposedModules;
   public static String cabalEditor_auxiliaryModules;
+  public static String cabalEditor_mainModule;
   public static String cabalEditor_compilerOptions;
   public static String cabalEditor_compilerFlags;
   public static String cabalEditor_compilerExtensions;
@@ -432,6 +433,9 @@ public final class UITexts extends NLS {
   public static String cabalEditor_library;
   public static String cabalEditor_isALibrary;
   public static String cabalEditor_executables;
+  public static String cabalEditor_newExecutableString;
+  public static String cabalEditor_newExecutableBlankError;
+  public static String cabalEditor_newExecutableAlreadyExistsError;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
