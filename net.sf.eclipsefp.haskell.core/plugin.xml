@@ -78,4 +78,14 @@
       <persistent value="true"/>
       <super type="net.sf.eclipsefp.haskell.core.problem"/>
    </extension>
+   <extension
+         id="hlint.HLintBuilder"
+         name="%hlintBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.hlint.HLintBuilder">
+         </run>
+      </builder>
+   </extension>
 </plugin>
