@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Note {
+	
+	public static final String ID_PROBLEM_MARKER = "net.sf.eclipsefp.haskell.core.problem"; //$NON-NLS-1$
 
 	public enum Kind { ERROR, WARNING, INFO, OTHER };
 	
@@ -132,7 +134,7 @@ public class Note {
 		new Thread(new Runnable(){
 			public void run() {
 				try {
-					MarkerUtilities.createMarker(resource, attributes, IMarker.PROBLEM);
+					MarkerUtilities.createMarker(resource, attributes, ID_PROBLEM_MARKER);
 				} catch (CoreException ex){
 					ScionPlugin.logError(ScionText.error_applyMarkers, ex);
 					ex.printStackTrace();

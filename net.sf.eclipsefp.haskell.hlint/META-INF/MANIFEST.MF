@@ -10,5 +10,4 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %bundleVendor
 Bundle-ClassPath: .
-Export-Package: net.sf.eclipsefp.haskell.hlint,
- net.sf.eclipsefp.haskell.hlint.parser
+Export-Package: net.sf.eclipsefp.haskell.hlint

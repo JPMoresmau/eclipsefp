@@ -88,4 +88,29 @@
          </run>
       </builder>
    </extension>
+   <extension
+         id="hlint"
+         name="%hlintProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="scionProblem"
+         name="%scionProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="net.sf.eclipsefp.haskell.core.problem">
+      </super>
+   </extension>
 </plugin>
