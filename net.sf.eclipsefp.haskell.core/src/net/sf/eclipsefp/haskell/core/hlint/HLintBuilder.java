@@ -13,7 +13,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,16 +33,31 @@ public class HLintBuilder extends IncrementalProjectBuilder {
       final IProgressMonitor monitor ) throws CoreException {
     if( kind == INCREMENTAL_BUILD || kind == AUTO_BUILD ) {
       // Get delta
-      IResourceDelta delta = getDelta( getProject() );
+      final IResourceDelta delta = getDelta( getProject() );
       if( delta == null ) {
         return null;
       }
-      delta.accept( new DeltaVisitor() );
+      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+        @Override
+        public void run( final IProgressMonitor monitor ) throws CoreException {
+          delta.accept( new DeltaVisitor() );
+        }
+      }, monitor );
     } else if( kind == CLEAN_BUILD ) {
-      clean( monitor );
+      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+        @Override
+        public void run( final IProgressMonitor monitor ) throws CoreException {
+          clean( monitor );
+        }
+      }, monitor );
     } else if( kind == FULL_BUILD ) {
-      clean( monitor );
-      getProject().accept( new FullBuildVisitor() );
+      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+        @Override
+        public void run( final IProgressMonitor monitor ) throws CoreException {
+          clean( monitor );
+          getProject().accept( new FullBuildVisitor() );
+        }
+      }, monitor );
     }
     // Complete code here
     return null;
