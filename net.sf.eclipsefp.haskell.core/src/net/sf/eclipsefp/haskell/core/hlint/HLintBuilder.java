@@ -17,6 +17,7 @@ public class HLintBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(final int kind, final Map<String, String> args, final IProgressMonitor monitor)
 			throws CoreException {
+	  // Complete code here
 		return null;
 	}
 

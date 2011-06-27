@@ -4,7 +4,7 @@ public class Suggestion {
 	private SourceLocation location;
 	private Severity severity;
 	private String message;
-	private CodeModification prev;
+	private CodeModification pre;
 	private CodeModification post;
 	
 	public SourceLocation getLocation() {
@@ -19,31 +19,31 @@ public class Suggestion {
 		return message;
 	}
 	
-	public CodeModification getPrev() {
-		return prev;
+	public CodeModification getPre() {
+		return pre;
 	}
 	
 	public CodeModification getPost() {
 		return post;
 	}
 
-	void setLocation(SourceLocation location) {
+	public void setLocation(SourceLocation location) {
 		this.location = location;
 	}
 
-	void setSeverity(Severity severity) {
+	public void setSeverity(Severity severity) {
 		this.severity = severity;
 	}
 
-	void setMessage(String message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
 
-	void setPrev(CodeModification prev) {
-		this.prev = prev;
+	public void setPre(CodeModification pre) {
+		this.pre = pre;
 	}
 
-	void setPost(CodeModification post) {
+	public void setPost(CodeModification post) {
 		this.post = post;
 	}
 }
