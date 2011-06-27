@@ -439,7 +439,8 @@ public class ScionInstance {
  //     }
     }
     
-    projectIsBuilt = retval;
+    // same causes will have same effect, no need trying to rebuild until we change something
+    projectIsBuilt = true;  // retval;
     return retval;
   }
 
