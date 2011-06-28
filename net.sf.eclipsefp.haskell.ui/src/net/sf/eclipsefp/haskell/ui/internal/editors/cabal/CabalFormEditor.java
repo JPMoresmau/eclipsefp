@@ -5,8 +5,11 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.OverviewPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview.OverviewPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.ExecutablesPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.LibraryPage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
@@ -27,6 +30,9 @@ public class CabalFormEditor extends FormEditor {
   private CabalEditor cabalSourceEditor;
   private PackageDescription packageDescription;
   private OverviewPage overview;
+  private LibraryPage library;
+  private ExecutablesPage executables;
+  private IFileEditorInput fileInput;
 
   public PackageDescription getPackageDescription() {
     return packageDescription;
@@ -37,6 +43,8 @@ public class CabalFormEditor extends FormEditor {
     this.packageDescription = packageDescription;
     cabalSourceEditor.setPackageDescription( packageDescription );
     overview.setPackageDescription( packageDescription );
+    library.setPackageDescription( packageDescription );
+    executables.setPackageDescription( packageDescription );
   }
 
   public IDocument getModel() {
@@ -52,9 +60,16 @@ public class CabalFormEditor extends FormEditor {
     return cabalSourceEditor;
   }
 
-
   public OverviewPage getOverview() {
     return overview;
+  }
+
+  public LibraryPage getLibrary() {
+    return library;
+  }
+
+  public ExecutablesPage getExecutables() {
+    return executables;
   }
 
   // interface methdods of FormEditor
@@ -63,11 +78,16 @@ public class CabalFormEditor extends FormEditor {
   @Override
   protected void addPages() {
     try {
-      overview=new OverviewPage( this );
-      addPage( overview);
+      IProject project = fileInput.getFile().getProject();
+      overview = new OverviewPage( this, project );
+      addPage(overview);
+      library = new LibraryPage( this, project );
+      addPage(library);
+      executables = new ExecutablesPage( this, project );
+      addPage(executables);
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
-      setPageText( 1, UITexts.cabalFormEditor_tabSource );
+      setPageText( 3, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( "Unable to create form pages.", cex ); //$NON-NLS-1$
     }
@@ -101,8 +121,8 @@ public class CabalFormEditor extends FormEditor {
                     final IEditorInput input ) throws PartInitException {
     super.init( site, input );
     if( input instanceof IFileEditorInput ) {
-      IFileEditorInput fei = ( IFileEditorInput )input;
-      setPartName( fei.getFile().getName() );
+      fileInput = ( IFileEditorInput )input;
+      setPartName( fileInput.getFile().getName() );
     }
   }
 

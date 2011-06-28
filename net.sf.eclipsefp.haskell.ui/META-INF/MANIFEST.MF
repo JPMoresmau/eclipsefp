@@ -25,7 +25,8 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.core.expressions;bundle-version="3.4.100",
  net.sf.eclipsefp.haskell.util,
  org.eclipse.core.variables;bundle-version="3.2.200",
- net.sf.eclipsefp.haskell.debug.core;bundle-version="2.0.0"
+ net.sf.eclipsefp.haskell.debug.core;bundle-version="2.0.0",
+ net.sf.eclipsefp.haskell.browser;bundle-version="0.0.1"
 Bundle-ManifestVersion: 2
 Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets",
  net.sf.eclipsefp.common.ui.preferences;
@@ -35,6 +36,9 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets
    org.eclipse.swt.widgets",
  net.sf.eclipsefp.common.ui.preferences.overlay;uses:="org.eclipse.jface.preference,org.eclipse.jface.util",
  net.sf.eclipsefp.common.ui.util;uses:="org.eclipse.swt.widgets",
+ net.sf.eclipsefp.haskell.browser.views.declarations,
+ net.sf.eclipsefp.haskell.browser.views.modules,
+ net.sf.eclipsefp.haskell.browser.views.packages,
  net.sf.eclipsefp.haskell.ui;
   x-friends:="net.sf.eclipsefp.haskell.ui.test,
    net.sf.eclipsefp.haskell.debug.ui,

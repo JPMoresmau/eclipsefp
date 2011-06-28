@@ -597,6 +597,8 @@ public class ScionInstance {
     }
     this.loadedFile = loadedFile;
   }
+  
+  final static String PROBLEM_MARKER_ID = "net.sf.eclipsefp.haskell.core.problem";
 
   /**
    * Delete all problem markers for a given file.
@@ -609,7 +611,7 @@ public class ScionInstance {
         if (r instanceof IFile) {
           r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
         }
-        r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+        r.deleteMarkers(PROBLEM_MARKER_ID, true, IResource.DEPTH_INFINITE);
       } catch (CoreException ex) {
         ScionPlugin.logError(ScionText.error_deleteMarkers, ex);
         ex.printStackTrace();

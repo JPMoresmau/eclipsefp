@@ -31,6 +31,8 @@ public class HaskellCorePlugin extends Plugin {
 	public static final String ID_EXT_POINT_CABAL_CONTRIBUTORS = "cabalContributors"; //$NON-NLS-1$
 	public static final String ID_PROBLEM_MARKER = "net.sf.eclipsefp.haskell.core.problem"; //$NON-NLS-1$
 	public static final String ID_PROJECT_PROBLEM_MARKER = "net.sf.eclipsefp.haskell.core.projectProblem"; //$NON-NLS-1$
+	public static final String ID_HLINT_MARKER = "net.sf.eclipsefp.haskell.core.hlint"; //$NON-NLS-1$
+	public static final String ID_SCION_MARKER = "net.sf.eclipsefp.haskell.core.scionProblem"; //$NON-NLS-1$
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$

@@ -1,0 +1,181 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";
+  LOOKAHEAD = 100;
+  FORCE_LA_CHECK = true;  static = false;}PARSER_BEGIN(OutputParser)package net.sf.eclipsefp.haskell.hlint.parser;
+
+import java.util.*;
+import net.sf.eclipsefp.haskell.hlint.*;
+
+public class OutputParser{  }PARSER_END(OutputParser)
+TOKEN :
+{  < SPACE : " " >
+| < EOL : "\n" | "\r" | "\r\n" >
+| < COLON : ":" >
+| < OTHER_CHAR : ~[ "\n", "\r", ":" ] >
+}
+
+List<Suggestion> suggestions() :
+{
+  ArrayList<Suggestion > sugs;
+  Suggestion sug;}
+{  string_until_eol()
+  < EOF >
+  {    return new ArrayList<Suggestion>();
+  }
+| sug = suggestion()
+  {    sugs = new ArrayList<Suggestion>();
+    sugs.add(sug);
+  }
+  (    sug = suggestion()
+    {      sugs.add(sug);
+    }
+  )*
+  string_until_eol()
+  < EOF >
+  {    return sugs;
+  }
+}Suggestion suggestion() :{
+  StringBuilder filename;
+  Integer line;
+  Integer column;
+  Severity sev;
+  StringBuilder message;
+  CodeModification pre;
+  CodeModification post;
+}{  filename = string_until_colon()
+  line = number()
+  column = number()
+  < SPACE >
+  sev = severity()
+  < SPACE >
+  message = string_until_eol()
+  pre = code_mod()
+  post = code_mod()
+  < EOL >  {    Suggestion s = new Suggestion();
+    s.setLocation(new SourceLocation(filename.toString(), line, column));
+    s.setSeverity(sev);
+    s.setMessage(message.toString());
+    s.setPre(pre);
+    s.setPost(post);
+    return s;  }}
+
+StringBuilder string_until_colon() :
+{  Token c;
+  StringBuilder s;
+}
+{
+  c = < OTHER_CHAR >  s = string_until_colon()
+  {    s.insert(0, c.image);
+    return s;
+  }
+| c = < SPACE >
+  s = string_until_colon()
+  {
+    s.insert(0, c.image);
+    return s;
+  }
+| < COLON >
+  {    return new StringBuilder();
+  }
+}
+
+StringBuilder string_until_eol() :
+{
+  Token c;
+  StringBuilder s;
+}
+{
+  c = < OTHER_CHAR >
+  s = string_until_eol()
+  {
+    s.insert(0, c.image);
+    return s;
+  }
+| c = < SPACE >
+  s = string_until_eol()
+  {
+    s.insert(0, c.image);
+    return s;
+  }
+| c = < COLON >
+  s = string_until_eol()
+  {
+    s.insert(0, c.image);
+    return s;
+  }
+| < EOL >
+  {
+    return new StringBuilder();
+  }
+}
+
+Integer number() :
+{
+  StringBuilder sb;
+}
+{
+  sb = string_until_colon()
+  {
+    return Integer.valueOf(sb.toString());
+  }
+}
+
+Severity severity() :
+{
+  StringBuilder sb;
+}{
+  sb = string_until_colon()
+  {
+    String s = sb.toString();    if (s.equals("Ignore"))
+      return Severity.IGNORE;
+    else if (s.equals("Warning"))
+      return Severity.WARNING;
+    else if (s.equals("Error"))
+      return Severity.ERROR;
+    else
+      return null;
+  }
+}
+
+CodeModification code_mod() :
+{
+  StringBuilder s;}
+{
+  string_until_eol() // Get the message
+  {
+    s = null;
+  }
+  (     s = source_code()
+  )?
+  {
+    if (s != null)
+      return new CodeModificationText(s.toString());
+    else
+      return new CodeModificationRemove();
+  }
+}
+
+StringBuilder source_code_line() :
+{
+  StringBuilder line;}
+{  < SPACE >
+  < SPACE >
+  line = string_until_eol()
+  {    return line;
+  }
+}
+
+StringBuilder source_code() :
+{  StringBuilder line;
+  StringBuilder all;
+}
+{  all = source_code_line()
+  (    line = source_code_line()
+    {
+      all.append('\n');      all.append(line.toString());
+    }
+  )*
+  {    return all;
+  } 
+}

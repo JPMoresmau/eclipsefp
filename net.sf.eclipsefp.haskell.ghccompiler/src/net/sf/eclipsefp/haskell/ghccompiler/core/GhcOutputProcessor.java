@@ -2,11 +2,11 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
 import java.io.IOException;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.scion.types.Note;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -34,7 +34,7 @@ public class GhcOutputProcessor implements IGhcOutputProcessor {
   public void compiling( final String fileName, final int number, final int total ) {
     IFile file = findFile(fileName);
     try {
-      file.deleteMarkers( IMarker.PROBLEM, true, IResource.DEPTH_INFINITE );
+      file.deleteMarkers( HaskellCorePlugin.ID_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE );
     } catch( CoreException ex ) {
       GhcCompilerPlugin.log( UITexts.error_deleteMarkers, IStatus.WARNING, ex );
     }

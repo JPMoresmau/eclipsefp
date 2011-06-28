@@ -24,44 +24,39 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
    </license>
 
    <requires>
-      <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
-      <import plugin="net.sf.eclipsefp.haskell.ui" version="2.0.5" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsefp.haskell.haddock" version="2.0.5" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
-      <import plugin="net.sf.eclipsefp.haskell.scion.client" version="2.0.5" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.text" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsefp.haskell.util" version="2.0.3" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.browser" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.compat" version="2.0.2" match="greaterOrEqual"/>
       <import plugin="net.sf.eclipsefp.haskell.core" version="2.0.5" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.debug.core" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.debug.ui" version="2.0.3" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.haddock" version="2.0.5" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.ghccompiler" version="2.0.4" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.scion.client" version="2.0.5" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.ui" version="2.0.5" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.util" version="2.0.3" match="greaterOrEqual"/>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.eclipse.core.net"/>
       <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.variables" version="3.2.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
       <import plugin="org.eclipse.ltk.ui.refactoring"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.text" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.console" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.ui.editors" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.ide" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.ui.views" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.apache.ant"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.filesystem"/>
-      <import plugin="net.sf.eclipsefp.haskell.debug.core" version="2.0.5" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsefp.haskell.debug.ui" version="2.0.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsefp.haskell.ghccompiler" version="2.0.4" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.5.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsefp.haskell.compat" version="2.0.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -146,6 +141,20 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          download-size="0"
          install-size="0"
          version="2.0.3"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.browser"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.hlint"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
          unpack="false"/>
 
 </feature>

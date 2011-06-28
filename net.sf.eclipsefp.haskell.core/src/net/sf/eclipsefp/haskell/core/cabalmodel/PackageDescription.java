@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 
@@ -38,12 +39,50 @@ public class PackageDescription {
     return stanzas;
   }
 
+  public PackageDescriptionStanza getPackageStanza() {
+    if (getStanzas().size()>0 && getStanzas().get(0) instanceof PackagePropertiesStanza){
+      return getStanzas().get(0);
+    }
+    return null;
+  }
+
+  public PackageDescriptionStanza getLibraryStanza() {
+    return getComponentStanza( new Component( ComponentType.LIBRARY, null, null, true ) );
+  }
+
+  public List<PackageDescriptionStanza> getExecutableStanzas() {
+    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    for (PackageDescriptionStanza stanza : getStanzas()) {
+      if (stanza.getType() == CabalSyntax.SECTION_EXECUTABLE) {
+        result.add( stanza );
+      }
+    }
+    return result;
+  }
+
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
     PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );
     pds.setEndLine( startLine+1 );
     stanzas.add( pds );
     return pds;
+  }
+
+  public void removeStanza(final PackageDescriptionStanza stanza) {
+    boolean found = false;
+    int diff = 0;
+
+    for (PackageDescriptionStanza st : getStanzas()) {
+      if (st == stanza) {
+        diff = - (st.getEndLine() - st.getStartLine() + 1);
+        found = true;
+        continue;
+      }
+      if (found) {
+        st.diffLine( diff );
+      }
+    }
+    this.stanzas.remove( stanza );
   }
 
   public Map<String, List<PackageDescriptionStanza>> getStanzasBySourceDir(){

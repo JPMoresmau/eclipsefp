@@ -33,6 +33,7 @@ public final class UITexts extends NLS {
   public static String generalSection_entryMaintainer;
   public static String generalSection_entryName;
   public static String generalSection_entryVersion;
+  public static String generalSection_entryStability;
   public static String generalSection_title;
 
   public static String hsImplementationDialog_binDir;
@@ -73,6 +74,7 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_noCabalInstallationSelected;
   public static String cabalImplsBlock_noCabalInstallations;
   public static String cabalImplsBlock_needScionExecutablePath;
+  public static String cabalImplsBlock_needBrowserExecutablePath;
 
   public static String cabalImplsDialog_name;
   public static String cabalImplsDialog_executablePath;
@@ -87,6 +89,10 @@ public final class UITexts extends NLS {
   public static String scionServer_preferences_label;
   public static String scionServerBuiltIn_label;
   public static String scionServerExecutable_label;
+
+  public static String scionBrowser_preferences_label;
+  public static String scionBrowserBuiltIn_label;
+  public static String scionBrowserExecutable_label;
 
   public static String autodetectButton_label;
   public static String autodetectButton_text;
@@ -115,6 +121,16 @@ public final class UITexts extends NLS {
   public static String scionRebuild_DirectoryExists_title;
   public static String scionRebuild_DirectoryExists_message;
 
+  public static String browserServerBuildJob;
+  public static String browserServerChangeJob;
+  public static String browserServerExecutableNotPresent;
+  public static String browserServerAbnormalTermination_title;
+  public static String browserServerAbnormalTermination_message;
+  public static String browserRebuild_title;
+  public static String browserRebuild_message;
+  public static String browserRebuild_DirectoryExists_title;
+  public static String browserRebuild_DirectoryExists_message;
+
   public static String scionServerFlavor_title;
   public static String scionServerFlavor_stdstream_label;
   public static String scionServerFlavor_network_label;
@@ -127,8 +143,25 @@ public final class UITexts extends NLS {
   public static String scionServerDoesntExist_title;
   public static String scionServerDoesntExist_message;
 
+  public static String scionBrowserDoesntExist_title;
+  public static String scionBrowserDoesntExist_message;
+
+  public static String scionBrowserNotConfigured_title;
+  public static String scionBrowserNotConfigured_message;
+
+  public static String scionBrowserRebuildDatabase_title;
+  public static String scionBrowserRebuildDatabase_message;
+
+  public static String scionBrowserLoadingDatabases;
+
+  public static String scionBrowserRebuildingDatabase;
+  public static String scionBrowserRebuildingDatabaseError_title;
+  public static String scionBrowserRebuildingDatabaseError_message;
+
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
+  public static String browserServerInstallError;
+  public static String browserServerInstallFailed;
   public static String cabalUpdateError;
   public static String cabalUpdateFailed;
 
@@ -309,9 +342,12 @@ public final class UITexts extends NLS {
   public static String log_nodetails;
   public static String noproject;
   public static String sharedScionInstance_console;
+  public static String sharedBrowserInstance_console;
 
   public static String unpackScionArchive_title;
   public static String scionBuildJob_title;
+  public static String unpackBrowserArchive_title;
+  public static String browserBuildJob_title;
   public static String cabalUpdateJob_title;
 
   public static String scionArchiveResourceNotFound;
@@ -323,6 +359,13 @@ public final class UITexts extends NLS {
   public static String cabalUpdateProgress;
   // public static String scionServerProgress_completed_title;
   // public static String scionServerProgress_completed_message;
+
+  public static String browserArchiveResourceNotFound;
+  public static String browserArchiveFileException;
+  public static String browserArchiveNonspecificFileException;
+  public static String browserServerProgress_title;
+  public static String browserServerProgress_subtask1;
+  public static String browserServerProgress_subtask2;
 
   public static String noCabalImplementation_title;
   public static String noCabalImplementation_message;
@@ -379,6 +422,43 @@ public final class UITexts extends NLS {
 
   public static String error_tabs;
   public static String error_tabs_message;
+
+  public static String browser_definedInModules;
+  public static String browser_packagedInPackages;
+  public static String browser_definedInSeveralLocations;
+
+  public static String advancedPage_title;
+  public static String advancedPage_cabalSection;
+  public static String advancedPage_cabalMinimalVersion;
+  public static String advancedPage_cabalBuildType;
+  public static String advancedPage_cabalTestedWith;
+  public static String advancedPage_dataFiles;
+  public static String advancedPage_selectDataFiles;
+
+  public static String compilerChooser_title;
+  public static String compilerChooser_version;
+
+  public static String cabalEditor_add;
+  public static String cabalEditor_remove;
+
+  public static String cabalEditor_addDependency;
+  public static String cabalEditor_dependencies;
+  public static String cabalEditor_dependenciesPackage;
+  public static String cabalEditor_dependenciesVersion;
+  public static String cabalEditor_sourceDirectories;
+  public static String cabalEditor_exposedModules;
+  public static String cabalEditor_auxiliaryModules;
+  public static String cabalEditor_mainModule;
+  public static String cabalEditor_compilerOptions;
+  public static String cabalEditor_compilerFlags;
+  public static String cabalEditor_compilerExtensions;
+
+  public static String cabalEditor_library;
+  public static String cabalEditor_isALibrary;
+  public static String cabalEditor_executables;
+  public static String cabalEditor_newExecutableString;
+  public static String cabalEditor_newExecutableBlankError;
+  public static String cabalEditor_newExecutableAlreadyExistsError;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
