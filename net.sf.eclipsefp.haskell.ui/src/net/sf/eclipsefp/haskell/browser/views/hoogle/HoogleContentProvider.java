@@ -4,7 +4,6 @@
  */
 package net.sf.eclipsefp.haskell.browser.views.hoogle;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
@@ -28,7 +27,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     }
 
     String newQuery = ( ( String )newInput ).trim();
-    if( newQuery.isEmpty() ) {
+    if( newQuery.length()==0 ) {
       results = null;
       shownElements = null;
     } else {
@@ -49,7 +48,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
           // If we didn't find the key, add to list
           if (entryList == null) {
             entryList = new ArrayList<HoogleResult>();
-            results.add( new AbstractMap.SimpleEntry<String, ArrayList<HoogleResult>>(key, entryList) );
+            results.add( new SimpleEntry<String, ArrayList<HoogleResult>>(key, entryList) );
           }
           // Add element
           entryList.add(result);
@@ -61,7 +60,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
             shownElements.add( entry.getValue().get( 0 ) );
           } else {
             // If not, we introduce a (element name, list of elements) item
-            shownElements.add( new AbstractMap.SimpleEntry<String, ArrayList<HoogleResult>>( entry.getKey(), entry.getValue() ) );
+            shownElements.add( new SimpleEntry<String, ArrayList<HoogleResult>>( entry.getKey(), entry.getValue() ) );
           }
         }
       } catch( Throwable ex ) {
@@ -94,7 +93,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
       if (entry.getValue() instanceof ArrayList) {
         ArrayList<Map.Entry<String, HoogleResult>> results = new ArrayList<Map.Entry<String,HoogleResult>>();
         for (HoogleResult result : (ArrayList<HoogleResult>)entry.getValue()) {
-          results.add( new AbstractMap.SimpleEntry( entry.getKey(), result ) );
+          results.add( new SimpleEntry( entry.getKey(), result ) );
         }
         return results.toArray();
       }
@@ -118,5 +117,38 @@ public class HoogleContentProvider implements ITreeContentProvider {
 
   public void dispose() {
     // Do nothing
+  }
+
+  public class SimpleEntry<K, V> implements Map.Entry<K, V>{
+    private K key;
+    private V value;
+    public SimpleEntry( final K key, final V value ) {
+      super();
+      this.key = key;
+      this.value = value;
+    }
+
+    public K getKey() {
+      return key;
+    }
+
+    public V getValue() {
+      return value;
+    }
+
+
+    public void setKey( final K key ) {
+      this.key = key;
+    }
+
+
+    public V setValue( final V value ) {
+      V ret=this.value;
+      this.value = value;
+      return ret;
+    }
+
+
+
   }
 }

@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.CoreException;
 
 public class FullBuildVisitor implements IResourceVisitor {
 
-  @Override
   public boolean visit( final IResource resource ) throws CoreException {
     if( HLintBuilder.mustBeVisited( resource ) ) {
       for( Suggestion s: HLintRunner.runHLintOn( resource.getLocation() ) ) {

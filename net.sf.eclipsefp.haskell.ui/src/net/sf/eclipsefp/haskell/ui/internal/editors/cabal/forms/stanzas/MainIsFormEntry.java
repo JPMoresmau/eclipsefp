@@ -17,7 +17,7 @@ public class MainIsFormEntry extends FormEntryMultiSelect {
   @Override
   public String getValue() {
     String value = super.getValue();
-    return value.isEmpty() ? "" : value.replace( '.', '/' ).concat( ".hs" );
+    return value.length()==0 ? "" : value.replace( '.', '/' ).concat( ".hs" );
   }
 
   @Override

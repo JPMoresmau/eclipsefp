@@ -89,7 +89,7 @@ public abstract class Gadt extends Declaration {
 			builder.append(' ');
 			builder.append(tvar);
 		}
-		if (!this.getKind().isEmpty()) {
+		if (this.getKind().length()>0) {
 			builder.append(" :: ");
 			builder.append(this.getKind());
 		}

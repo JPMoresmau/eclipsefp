@@ -102,7 +102,7 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
 
               public String isValid( final String newText ) {
                 String value = newText.trim();
-                if (value.isEmpty()) {
+                if (value.length()==0) {
                   return UITexts.cabalEditor_newExecutableBlankError;
                 }
                 for (String s : execsList.getItems()) {

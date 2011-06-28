@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 
 public class DeltaVisitor implements IResourceDeltaVisitor {
 
-  @Override
   public boolean visit( final IResourceDelta delta ) throws CoreException {
     IResource resource = delta.getResource();
     if( HLintBuilder.mustBeVisited( resource ) ) {

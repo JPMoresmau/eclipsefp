@@ -175,7 +175,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         builder.append( ", " );
       }
       builder.append( item.getPackage() );
-      if (!item.getVersion().trim().isEmpty()) {
+      if (item.getVersion().trim().length()>0) {
         builder.append( ' ' );
         builder.append( item.getVersion() );
       }

@@ -22,26 +22,22 @@ public class HaskellNature implements IProjectNature {
   // interface methods of IProjectNature
   //////////////////////////////////////
 
-  @Override
   public void configure() throws CoreException {
     addBuilder( HaskellBuilder.BUILDER_ID );
     //addBuilder( CabalBuilder.BUILDER_ID );
     addBuilder( HLintBuilder.BUILDER_ID );
   }
 
-  @Override
   public void deconfigure() throws CoreException {
     removeBuilder( HLintBuilder.BUILDER_ID );
     // removeBuilder( CabalBuilder.BUILDER_ID );
     removeBuilder( HaskellBuilder.BUILDER_ID );
   }
 
-  @Override
   public IProject getProject() {
     return project;
   }
 
-  @Override
   public void setProject( final IProject project ) {
     this.project = project;
   }

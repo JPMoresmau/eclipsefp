@@ -29,7 +29,7 @@ public class HLintBuilder extends IncrementalProjectBuilder {
   }
 
   @Override
-  protected IProject[] build( final int kind, final Map<String, String> args,
+  protected IProject[] build( final int kind, final Map args,
       final IProgressMonitor monitor ) throws CoreException {
     if( kind == INCREMENTAL_BUILD || kind == AUTO_BUILD ) {
       // Get delta
@@ -38,21 +38,18 @@ public class HLintBuilder extends IncrementalProjectBuilder {
         return null;
       }
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        @Override
         public void run( final IProgressMonitor monitor ) throws CoreException {
           delta.accept( new DeltaVisitor() );
         }
       }, monitor );
     } else if( kind == CLEAN_BUILD ) {
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        @Override
         public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
         }
       }, monitor );
     } else if( kind == FULL_BUILD ) {
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        @Override
         public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
           getProject().accept( new FullBuildVisitor() );
