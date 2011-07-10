@@ -13,10 +13,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
   *
   * @author Leif Frenzel
   */
-public class ExecutableLaunchShortcut extends ExecutableTestSuiteLaunchShortcut {
+public class TestSuiteLaunchShortcut extends ExecutableTestSuiteLaunchShortcut {
 
   @Override
   public List<ILaunchConfiguration> findConfiguration( final IProject project ) throws CoreException {
-    return ExecutableLaunchOperation.findConfiguration(project);
+    return TestSuiteLaunchOperation.findConfiguration(project);
   }
 }

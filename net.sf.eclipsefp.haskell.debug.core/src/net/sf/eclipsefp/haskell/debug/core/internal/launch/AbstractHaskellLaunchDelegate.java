@@ -146,7 +146,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return result;
   }
 
-  private String[] determineArguments( final ILaunchConfiguration config )
+  String[] determineArguments( final ILaunchConfiguration config )
       throws CoreException {
     String extra = config.getAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
         ILaunchAttributes.EMPTY );

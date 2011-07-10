@@ -43,4 +43,17 @@ public class HaskellResource {
     }
     return false;
   }
+
+  public boolean isProjectTestSuite(){
+    if (fResource instanceof IProject){
+      IProject project=(IProject)fResource;
+      try {
+        return !ResourceUtil.getProjectTestSuites( project ).isEmpty();
+      } catch (CoreException ce){
+        HaskellCorePlugin.log( ce );
+      }
+
+    }
+    return false;
+  }
 }

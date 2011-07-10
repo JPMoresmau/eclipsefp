@@ -23,7 +23,7 @@
       </launchConfigurationTabGroup>
        <launchConfigurationTabGroup
             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
-            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup">
       </launchConfigurationTabGroup>
    </extension>
@@ -78,6 +78,32 @@
             </contextLabel>
          </contextualLaunch>
       </shortcut>
+      <shortcut
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut"
+            icon="icons/etool16/hsicon16.gif"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut"
+            label="%testSuiteLaunchShortcut_label"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="net.sf.eclipsefp.haskell.core.isProjectTestSuite">
+                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%testSuiteLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
    </extension>
    <extension point="org.eclipse.ui.commands">
       <command
@@ -92,6 +118,12 @@
             categoryId="org.eclipse.debug.ui.category.run"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run">
       </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%runTestSuiteShortcut_desc"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut.run"
+            name="%runTestSuiteShortcut_name">
+      </command>
    </extension>
    <extension point="org.eclipse.ui.bindings">
       <key sequence="M3+M2+X G"
@@ -100,6 +132,11 @@
       <key sequence="M3+M2+X H"
            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+X F">
+      </key>
    </extension>
    <extension
          point="net.sf.eclipsefp.haskell.ui.CabalChangeListener">

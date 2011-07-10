@@ -49,22 +49,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * @author Leif Frenzel
  */
 public class ResourceUtil {
-	/**
-	 * Return the project executable as an ArrayList, assuming that the
-	 * project has the Haskell nature.
-	 */
 
-	public static List<IFile> getProjectExecutables( final IProject project)
-	  throws CoreException
-	{
-	  ArrayList<IFile> result = new ArrayList<IFile>();
+  static List<IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) throws CoreException {
+    ArrayList<IFile> result = new ArrayList<IFile>();
     if (project.hasNature( HaskellNature.NATURE_ID ) ){
-
-
       ScionInstance instance=ScionPlugin.getScionInstance( project );
       if (instance!=null){
         for (Component c:instance.getComponents()){
-          if (c.isBuildable() &&  c.getType().equals( ComponentType.EXECUTABLE )){
+          if (c.isBuildable() &&  c.getType().equals( type )){
             String name=FileUtil.makeExecutableName( c.getName() );
             IFile f=project.getFile( ScionPlugin.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
             if (f.exists()){
@@ -74,19 +66,28 @@ public class ResourceUtil {
         }
       }
     }
-    /*IHaskellProject hsProject = HaskellProjectManager.get( project );
-    Set<IPath> targetNames = hsProject.getTargetNames();
-    for( IPath path: targetNames ) {
-      if (!path.isEmpty()){
-        IFile file = project.getFile( path );
-        if( file.exists() ) {
-          result.add( file );
-        }
-      }
-    }*/
 
     return result;
+  }
+
+  /**
+   * Return the project executable as an ArrayList, assuming that the
+   * project has the Haskell nature.
+   */
+
+	public static List<IFile> getProjectExecutables( final IProject project)
+	  throws CoreException
+	{
+	  return getExecutablesOfComponentType( project, ComponentType.EXECUTABLE );
 	}
+
+	public static List<IFile> getProjectTestSuites( final IProject project)
+	  throws CoreException
+  {
+    return getExecutablesOfComponentType( project, ComponentType.TESTSUITE );
+  }
+
+
 
 //	public static boolean isProjectExecutable(final IProject project, final String exeName)
 //	{
@@ -116,6 +117,12 @@ public class ResourceUtil {
 	public static IFile[] getProjectExecutablesArray( final IProject project )
       throws CoreException {
 	  List<IFile> executables = getProjectExecutables(project);
+    return executables.toArray( new IFile[ executables.size() ] );
+  }
+
+	public static IFile[] getProjectTestSuitesArray( final IProject project )
+      throws CoreException {
+    List<IFile> executables = getProjectTestSuites( project );
     return executables.toArray( new IFile[ executables.size() ] );
   }
 
