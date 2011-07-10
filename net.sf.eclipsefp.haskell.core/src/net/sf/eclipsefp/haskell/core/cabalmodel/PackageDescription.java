@@ -60,6 +60,16 @@ public class PackageDescription {
     return result;
   }
 
+  public List<PackageDescriptionStanza> getTestSuiteStanzas() {
+    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    for (PackageDescriptionStanza stanza : getStanzas()) {
+      if (stanza.getType() == CabalSyntax.SECTION_TESTSUITE) {
+        result.add( stanza );
+      }
+    }
+    return result;
+  }
+
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
     PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );

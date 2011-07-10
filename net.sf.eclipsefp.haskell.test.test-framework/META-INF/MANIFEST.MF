@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EclipseFP for Haskell test-framework
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.test.test-framework;singleton:=true
+Bundle-Version: 0.1
+Bundle-Activator: net.sf.eclipsefp.haskell.test.testFramework.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.junit;bundle-version="[3.2.0,4.0.0)"
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

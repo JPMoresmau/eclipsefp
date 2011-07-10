@@ -10,23 +10,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.forms.editor.FormEditor;
 
 
-public class ExecutablesPage extends ExecutablesTestSuitePage {
+public class TestSuitesPage extends ExecutablesTestSuitePage {
 
-  public ExecutablesPage( final FormEditor editor, final IProject project ) {
-    super( editor, project, UITexts.cabalEditor_executables );
+  public TestSuitesPage( final FormEditor editor, final IProject project ) {
+    super( editor, project, UITexts.cabalEditor_testSuites );
   }
 
   @Override
   public String getMessage( final Messages m ) {
     switch(m) {
       case TITLE:
-        return UITexts.cabalEditor_executables;
+        return UITexts.cabalEditor_testSuites;
       case NEW:
-        return UITexts.cabalEditor_newExecutableString;
+        return UITexts.cabalEditor_newTestSuiteString;
       case BLANK_ERROR:
-        return UITexts.cabalEditor_newExecutableBlankError;
+        return UITexts.cabalEditor_newTestSuiteBlankError;
       case ALREADY_EXISTS_ERROR:
-        return UITexts.cabalEditor_newExecutableAlreadyExistsError;
+        return UITexts.cabalEditor_newTestSuiteAlreadyExistsError;
     }
     return null;
   }
@@ -34,20 +34,21 @@ public class ExecutablesPage extends ExecutablesTestSuitePage {
   @Override
   public PackageDescriptionStanza createNewStanza(final PackageDescription desc, final String name) {
     PackageDescriptionStanza stanza = desc.addStanza(
-        CabalSyntax.SECTION_EXECUTABLE, name );
+        CabalSyntax.SECTION_TESTSUITE, name );
     stanza.setIndent( 2 );
+    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
     return stanza;
   }
 
   @Override
   public List<PackageDescriptionStanza> getStanzas(
       final PackageDescription description ) {
-    return description.getExecutableStanzas();
+    return description.getTestSuiteStanzas();
   }
 
   @Override
   public ComponentType getComponentType() {
-    return ComponentType.EXECUTABLE;
+    return ComponentType.TESTSUITE;
   }
 
 }
