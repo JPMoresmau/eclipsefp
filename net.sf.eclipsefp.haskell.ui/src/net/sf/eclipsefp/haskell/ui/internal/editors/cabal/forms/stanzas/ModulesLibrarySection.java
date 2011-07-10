@@ -7,7 +7,6 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
@@ -64,13 +63,14 @@ public class ModulesLibrarySection extends CabalFormSection implements IFormEntr
   }
 
   public void textValueChanged( final FormEntry entry ) {
-    if (this.stanza != null) {
+    // Previouslu, "other-modules" was also updated
+    /* if (this.stanza != null) {
       FormEntryMultiSelect multi = (FormEntryMultiSelect)entry;
       String newValue = multi.getNonSelectedValue();
       stanza.getProperties().put( CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
       RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES, newValue );
       vp.updateDocument( editor.getModel() );
-    }
+    }*/
   }
 
   public void focusGained( final FormEntry entry ) {

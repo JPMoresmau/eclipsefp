@@ -90,14 +90,15 @@ public class ModulesExecutableSection extends CabalFormSection implements IFormE
         vp.updateDocument( editor.getModel() );
       }
 
-      String newValue = multi.getNonSelectedValue();
+      // Previously, "other-modules" was also updated
+      /*String newValue = multi.getNonSelectedValue();
       String oldValue = stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() );
       oldValue = oldValue == null ? "" : oldValue;
       if (!oldValue.equals( newValue )) {
         stanza.getProperties().put( CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
         RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES, newValue );
         vp.updateDocument( editor.getModel() );
-      }
+      }*/
     }
   }
 
