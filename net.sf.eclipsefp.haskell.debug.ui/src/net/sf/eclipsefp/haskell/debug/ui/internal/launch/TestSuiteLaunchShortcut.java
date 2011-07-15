@@ -19,4 +19,9 @@ public class TestSuiteLaunchShortcut extends ExecutableTestSuiteLaunchShortcut {
   public List<ILaunchConfiguration> findConfiguration( final IProject project ) throws CoreException {
     return TestSuiteLaunchOperation.findConfiguration(project);
   }
+
+  @Override
+  public IExecutableTestSuiteLaunchOperation getLaunchOperation() {
+    return new TestSuiteLaunchOperation();
+  }
 }

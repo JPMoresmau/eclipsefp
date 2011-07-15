@@ -17,6 +17,8 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
 
  public abstract List<ILaunchConfiguration> findConfiguration(IProject project) throws CoreException;
 
+ public abstract IExecutableTestSuiteLaunchOperation getLaunchOperation();
+
  //interface methods of ILaunchShortcut
  ///////////////////////////////////////
 
@@ -40,7 +42,7 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
  private void launch( final IResource resource ) {
    // TODO put this in a Job and use the progress monitor
    try {
-     new ExecutableLaunchOperation().launch( resource, null );
+     getLaunchOperation().launch( resource, null );
    } catch( CoreException cex ) {
      // TODO show msg box
      String msg = "Could not launch Haskell application."; //$NON-NLS-1$

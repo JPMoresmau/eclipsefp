@@ -29,9 +29,9 @@ public class TestSuiteHaskellLaunchDelegate extends
 
   private String getFilename() {
     if (filename == null) {
-      Random r = new Random();
-      Integer n = r.nextInt();
-      HaskellDebugCore.getDefault().getStateLocation().append( n.toString() + ".xml" ); //$NON-NLS-1$
+      Random r = new Random(System.currentTimeMillis());
+      int n = r.nextInt();
+      filename = HaskellDebugCore.getDefault().getStateLocation().append( n + ".xml" ).toOSString(); //$NON-NLS-1$
     }
     return filename;
   }
@@ -43,7 +43,7 @@ public class TestSuiteHaskellLaunchDelegate extends
         ILaunchAttributes.EMPTY );
     String args = config.getAttribute( ILaunchAttributes.ARGUMENTS,
         ILaunchAttributes.EMPTY );
-    String xmlArg = "--jxml='" + getFilename() + "'";  //$NON-NLS-1$ //$NON-NLS-2$
+    String xmlArg = "--jxml=\"" + getFilename() + "\"";  //$NON-NLS-1$ //$NON-NLS-2$
     return CommandLineUtil.parse( extra + " " + args + " " + xmlArg ); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -69,7 +69,8 @@ public class TestSuiteHaskellLaunchDelegate extends
 
         // Get file and parse output
         try {
-          JUnitCore.importTestRunSession( new File( getFilename() ) );
+          String fname = getFilename();
+          JUnitCore.importTestRunSession( new File( fname ) );
         } catch (CoreException e) {
           // Do nothing
         }

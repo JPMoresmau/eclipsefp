@@ -32,10 +32,10 @@ import org.eclipse.debug.core.ILaunchManager;
  *
  * @author Leif Frenzel
  */
-class TestSuiteLaunchOperation extends LaunchOperation {
+class TestSuiteLaunchOperation extends LaunchOperation implements IExecutableTestSuiteLaunchOperation {
   public static final String TEST_SUITE_CONFIG_TYPE = TestSuiteHaskellLaunchDelegate.class.getName();
 
-  void launch( final IResource resource, final IProgressMonitor monitor )
+  public void launch( final IResource resource, final IProgressMonitor monitor )
       throws CoreException {
     if( resource != null ) {
       IProject project = resource.getProject();
