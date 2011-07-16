@@ -17,6 +17,9 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.junit.JUnitCore;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * launch delegate for Haskell executables executables
@@ -76,12 +79,18 @@ public class TestSuiteHaskellLaunchDelegate extends
         monitor.worked( 1 );
 
         // Get file and parse output
-        try {
-          String fname = getFilename();
-          JUnitCore.importTestRunSession( new File( fname ) );
-        } catch (CoreException e) {
-          // Do nothing
-        }
+        final String fname = getFilename();
+        Display.getDefault().syncExec( new Runnable() {
+          public void run() {
+            try {
+              IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+              page.showView( "org.eclipse.jdt.junit.ResultView" ); //$NON-NLS-1$
+              JUnitCore.importTestRunSession( new File( fname ) );
+            } catch (CoreException e) {
+              // Do nothing
+            }
+          }
+        } );
 
         // Always delete the file at the end
         new File(getFilename()).delete();

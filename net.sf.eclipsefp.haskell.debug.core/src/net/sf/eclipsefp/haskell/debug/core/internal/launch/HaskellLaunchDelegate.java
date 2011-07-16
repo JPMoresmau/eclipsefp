@@ -30,14 +30,14 @@ import org.eclipse.debug.core.model.IProcess;
   */
 public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
 
-  static final String DEBUG_PROCESS_TYPE = "net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciProcessType"; //$NON-NLS-1$
+  // static final String DEBUG_PROCESS_TYPE = "net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciProcessType"; //$NON-NLS-1$
 
   @Override
   protected void preProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final Map<String, String> processAttribs ) {
-    if (mode.equals( ILaunchManager.DEBUG_MODE )){
+    /*if (mode.equals( ILaunchManager.DEBUG_MODE )){
       processAttribs.put( IProcess.ATTR_PROCESS_TYPE, DEBUG_PROCESS_TYPE );
-    }
+    }*/
   }
 
   @Override
