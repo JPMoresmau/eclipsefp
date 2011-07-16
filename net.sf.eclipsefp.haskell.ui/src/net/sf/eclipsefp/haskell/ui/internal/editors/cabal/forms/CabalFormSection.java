@@ -167,20 +167,26 @@ public abstract class CabalFormSection extends SectionPart {
   protected void setNewValue( final FormEntry text, final CabalSyntax mutator ) {
     if (this.stanza != null) {
       // try {
-      String newValue = text.getValue();
       // IManipulateCabalFile manipulator = getManipulator();
       // String buffer = editor.getModel().get();
       // editor.getModel().set( manipulator.set( buffer, mutator, newValue ) );
-      stanza.getProperties().put( mutator.getCabalName(), newValue );
 
-      /*
-       * String realValue=stanza.getRealValue( mutator, newValue ); ValuePosition
-       * vp=stanza.getPositions().get( mutator ); if (vp==null){ vp=new
-       * ValuePosition
-       * (stanza.getEndLine(),stanza.getEndLine(),stanza.getIndent()); }
-       */
-      RealValuePosition vp = stanza.update( mutator, newValue );
-      vp.updateDocument( editor.getModel() );
+      String oldValue = stanza.getProperties().get( mutator.getCabalName() );
+      oldValue = oldValue == null ? "" : oldValue;
+
+      String newValue = text.getValue();
+      if (!newValue.equals( oldValue )) {
+        stanza.getProperties().put( mutator.getCabalName(), newValue );
+
+        /*
+         * String realValue=stanza.getRealValue( mutator, newValue ); ValuePosition
+         * vp=stanza.getPositions().get( mutator ); if (vp==null){ vp=new
+         * ValuePosition
+         * (stanza.getEndLine(),stanza.getEndLine(),stanza.getIndent()); }
+         */
+        RealValuePosition vp = stanza.update( mutator, newValue );
+        vp.updateDocument( editor.getModel() );
+      }
     }
   }
 
