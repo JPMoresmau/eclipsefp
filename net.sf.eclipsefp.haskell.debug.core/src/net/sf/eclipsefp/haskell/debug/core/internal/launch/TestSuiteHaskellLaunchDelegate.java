@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Random;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
@@ -45,6 +46,13 @@ public class TestSuiteHaskellLaunchDelegate extends
         ILaunchAttributes.EMPTY );
     String xmlArg = "--jxml=\"" + getFilename() + "\"";  //$NON-NLS-1$ //$NON-NLS-2$
     return CommandLineUtil.parse( extra + " " + args + " " + xmlArg ); //$NON-NLS-1$ //$NON-NLS-2$
+  }
+
+  @Override
+  protected void preProcessCreation( final ILaunchConfiguration configuration,
+      final String mode, final ILaunch launch, final Map<String, String> processAttribs ) {
+    // NOOP
+
   }
 
   @Override

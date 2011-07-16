@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.IOException;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellDebugTarget;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
@@ -29,12 +30,21 @@ import org.eclipse.debug.core.model.IProcess;
   */
 public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
 
+  static final String DEBUG_PROCESS_TYPE = "net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciProcessType"; //$NON-NLS-1$
+
+  @Override
+  protected void preProcessCreation( final ILaunchConfiguration configuration,
+      final String mode, final ILaunch launch, final Map<String, String> processAttribs ) {
+    if (mode.equals( ILaunchManager.DEBUG_MODE )){
+      processAttribs.put( IProcess.ATTR_PROCESS_TYPE, DEBUG_PROCESS_TYPE );
+    }
+  }
+
   @Override
   protected void postProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProcess process ) throws CoreException{
     if (mode.equals( ILaunchManager.DEBUG_MODE )){
       HaskellDebugTarget hdt=new HaskellDebugTarget( launch, process );
-
       launch.addDebugTarget(hdt);
       hdt.start();
     }
@@ -102,6 +112,5 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
       DebugPlugin.getDefault().getLaunchManager().addLaunchListener( ll );
     }
   }
-
 
 }

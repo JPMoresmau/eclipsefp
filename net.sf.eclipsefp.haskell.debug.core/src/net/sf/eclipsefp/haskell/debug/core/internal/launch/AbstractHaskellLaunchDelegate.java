@@ -42,8 +42,8 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         checkCancellation( monitor );
         File workingDir = determineWorkingDir( configuration );
         checkCancellation( monitor );
-        IProcess process = createProcess( configuration, launch, loc, cmdLine,
-            workingDir );
+        IProcess process = createProcess( configuration, mode, launch, loc,
+            cmdLine, workingDir );
         if( process != null ) {
           postProcessCreation( configuration, mode, launch, process );
         }
@@ -87,10 +87,11 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
   }
 
   protected abstract void postProcessCreation(final ILaunchConfiguration configuration,final String mode,final ILaunch launch,IProcess process) throws CoreException;
+  protected abstract void preProcessCreation(final ILaunchConfiguration configuration,final String mode,final ILaunch launch,Map<String, String> processAttribs) throws CoreException;
 
   private IProcess createProcess( final ILaunchConfiguration configuration,
-      final ILaunch launch, final IPath location, final String[] cmdLine,
-      final File workingDir ) throws CoreException {
+      final String mode, final ILaunch launch, final IPath location,
+      final String[] cmdLine, final File workingDir ) throws CoreException {
     // Process proc = DebugPlugin.exec( cmdLine, workingDir );
     ProcessBuilder pb = new ProcessBuilder( cmdLine );
     pb.directory( workingDir );
@@ -105,6 +106,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       Map<String, String> processAttrs = new HashMap<String, String>();
       String programName = determineProgramName( location );
       processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
+      preProcessCreation( configuration, mode, launch, processAttrs );
       IProcess process = null;
       if( proc != null ) {
         //String loc = location.toOSString();

@@ -215,5 +215,13 @@
      		debugModel="net.sf.eclipsefp.haskell.debug"
      		delegateClass="net.sf.eclipsefp.haskell.debug.ui.internal.debug.HaskellWatchExpressionDelegate"/>
   	</extension>
+      <extension
+            point="org.eclipse.debug.ui.consoleLineTrackers">
+         <consoleLineTracker
+               class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLineTracker"
+               id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLineTracker"
+               processType="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciProcessType">
+         </consoleLineTracker>
+      </extension>
       
 </plugin>
