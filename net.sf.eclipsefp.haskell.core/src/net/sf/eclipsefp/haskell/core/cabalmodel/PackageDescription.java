@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,15 @@ public class PackageDescription {
     }
 
     return ret;
+  }
+
+  public Collection<String> getAllSourceDirs() {
+    HashSet<String> result = new HashSet<String>();
+    for (PackageDescriptionStanza pds:stanzas){
+      Collection<String> sds=pds.getSourceDirs();
+      result.addAll( sds );
+    }
+    return result;
   }
 
   public void dump(final Writer w) throws IOException {

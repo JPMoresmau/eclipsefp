@@ -158,11 +158,4 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          version="0.0.1"
          unpack="false"/>
 
-   <plugin
-         id="net.sf.eclipsefp.haskell.refactor"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
 </feature>

@@ -464,6 +464,10 @@ public final class UITexts extends NLS {
   public static String cabalEditor_newTestSuiteBlankError;
   public static String cabalEditor_newTestSuiteAlreadyExistsError;
 
+  public static String renameParticipant_title;
+  public static String moveParticipant_title;
+  public static String copyParticipant_title;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
