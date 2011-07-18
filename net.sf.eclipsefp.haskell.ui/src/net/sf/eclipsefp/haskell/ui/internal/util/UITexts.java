@@ -467,6 +467,8 @@ public final class UITexts extends NLS {
   public static String renameParticipant_title;
   public static String moveParticipant_title;
   public static String copyParticipant_title;
+  public static String updateReferences;
+  public static String updateCabalFile;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

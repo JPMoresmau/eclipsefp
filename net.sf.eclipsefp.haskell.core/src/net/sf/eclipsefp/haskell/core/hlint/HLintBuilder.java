@@ -80,7 +80,8 @@ public class HLintBuilder extends IncrementalProjectBuilder {
 
   static boolean isInSourceFolder( final IFile file ) {
     if( file == null || !file.isAccessible() ) {
-      throw new IllegalArgumentException();
+      // throw new IllegalArgumentException();
+      return false;
     }
     boolean result = false;
     IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
