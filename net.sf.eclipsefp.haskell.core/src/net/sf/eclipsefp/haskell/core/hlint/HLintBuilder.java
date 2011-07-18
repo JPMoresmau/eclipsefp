@@ -38,8 +38,12 @@ public class HLintBuilder extends IncrementalProjectBuilder {
         return null;
       }
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        public void run( final IProgressMonitor monitor ) throws CoreException {
-          delta.accept( new DeltaVisitor() );
+        public void run( final IProgressMonitor monitor ) {
+          try {
+            delta.accept( new DeltaVisitor() );
+          } catch (CoreException e) {
+            // Do nothing
+          }
         }
       }, monitor );
     } else if( kind == CLEAN_BUILD ) {
@@ -52,7 +56,11 @@ public class HLintBuilder extends IncrementalProjectBuilder {
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
         public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
-          getProject().accept( new FullBuildVisitor() );
+          try {
+            getProject().accept( new FullBuildVisitor() );
+          } catch (CoreException e) {
+            // Do nothing
+          }
         }
       }, monitor );
     }
