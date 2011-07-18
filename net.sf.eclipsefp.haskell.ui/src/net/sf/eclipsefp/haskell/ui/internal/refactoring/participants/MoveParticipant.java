@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -11,12 +12,13 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
-public class RenameParticipant extends
-    org.eclipse.ltk.core.refactoring.participants.RenameParticipant {
+
+public class MoveParticipant extends
+    org.eclipse.ltk.core.refactoring.participants.MoveParticipant {
 
   IFile file;
 
-  public RenameParticipant() {
+  public MoveParticipant() {
     // Do nothing
   }
 
@@ -31,7 +33,7 @@ public class RenameParticipant extends
 
   @Override
   public String getName() {
-    return UITexts.renameParticipant_title;
+    return UITexts.moveParticipant_title;
   }
 
   @Override
@@ -43,15 +45,15 @@ public class RenameParticipant extends
   @Override
   public Change createPreChange( final IProgressMonitor pm ) throws OperationCanceledException {
     // Get arguments
-    String newName = getArguments().getNewName();
-    IPath newPath = file.getProjectRelativePath().removeLastSegments( 1 )
-        .append( newName );
+    IFolder folder = (IFolder)getArguments().getDestination();
+    IPath newPath = folder.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
     // Create change
-    return RenameMoveChangeCreator.createChange( file, newPath, getArguments().getUpdateReferences(), UITexts.renameParticipant_title );
+    return RenameMoveChangeCreator.createChange( file, newPath, getArguments().getUpdateReferences(), UITexts.moveParticipant_title );
   }
 
   @Override
   public Change createChange( final IProgressMonitor pm ) throws OperationCanceledException {
     return null;
   }
+
 }

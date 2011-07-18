@@ -880,4 +880,32 @@
          </enablement>
       </renameParticipant>
    </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveParticipant"
+            name="Move Haskell module">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="net.sf.eclipsefp.haskell.contenttypes.haskell">
+                  </test>
+               </adapt>
+            </with></enablement>
+      </moveParticipant>
+   </extension>
 </plugin>
