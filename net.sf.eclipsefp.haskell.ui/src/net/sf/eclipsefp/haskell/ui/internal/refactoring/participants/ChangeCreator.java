@@ -15,9 +15,23 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 
-public class RenameMoveChangeCreator {
+public class ChangeCreator {
 
-  public static Change createChange(final IFile file, final IPath newPath, final boolean updateReferences, final String title) {
+  public static TextFileChange createCopyChange(final IFile oldFile, final IFile newFile) {
+    String oldModule = Util.getModuleName( oldFile );
+    String newModule = Util.getModuleName( newFile );
+
+    // Create changes in module
+    TextFileChange change = new TextFileChange( UITexts.copyParticipant_title, newFile );
+    int moduleNamePos = Util.getModuleNameOffset( newFile );
+    if (moduleNamePos != -1) {
+      change.setEdit( new ReplaceEdit( moduleNamePos, oldModule.length(), newModule ) );
+    }
+
+    return change;
+  }
+
+  public static Change createRenameMoveChange(final IFile file, final IPath newPath, final boolean updateReferences, final String title) {
     String oldModule = Util.getModuleName( file );
     String newModule = Util.getModuleName( file.getProject(), newPath );
 

@@ -879,6 +879,16 @@
             </with>
          </enablement>
       </renameParticipant>
+      <renameParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameFolderParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameFolderParticipant"
+            name="Rename Haskell folder">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </enablement>
+      </renameParticipant>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
@@ -907,5 +917,34 @@
                </adapt>
             </with></enablement>
       </moveParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.copyParticipants">
+      <copyParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.CopyParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.CopyParticipant"
+            name="Copy Haskell module">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="net.sf.eclipsefp.haskell.contenttypes.haskell">
+                  </test>
+               </adapt>
+            </with>
+         </enablement>
+      </copyParticipant>
    </extension>
 </plugin>

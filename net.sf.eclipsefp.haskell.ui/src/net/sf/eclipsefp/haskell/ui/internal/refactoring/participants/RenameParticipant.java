@@ -47,7 +47,7 @@ public class RenameParticipant extends
     IPath newPath = file.getProjectRelativePath().removeLastSegments( 1 )
         .append( newName );
     // Create change
-    return RenameMoveChangeCreator.createChange( file, newPath, getArguments().getUpdateReferences(), UITexts.renameParticipant_title );
+    return ChangeCreator.createRenameMoveChange( file, newPath, getArguments().getUpdateReferences(), UITexts.renameParticipant_title );
   }
 
   @Override

@@ -3,8 +3,6 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
@@ -13,27 +11,27 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 
-public class MoveParticipant extends
-    org.eclipse.ltk.core.refactoring.participants.MoveParticipant {
+public class CopyParticipant extends
+    org.eclipse.ltk.core.refactoring.participants.CopyParticipant {
 
-  IFile file;
+  IFile oldFile;
 
-  public MoveParticipant() {
+  public CopyParticipant() {
     // Do nothing
   }
 
   @Override
   protected boolean initialize( final Object element ) {
     if( element instanceof IFile ) {
-      this.file = ( IFile )element;
-      return FileUtil.hasHaskellExtension( file );
+      this.oldFile = ( IFile )element;
+      return FileUtil.hasHaskellExtension( oldFile );
     }
     return false;
   }
 
   @Override
   public String getName() {
-    return UITexts.moveParticipant_title;
+    return UITexts.copyParticipant_title;
   }
 
   @Override
@@ -43,17 +41,10 @@ public class MoveParticipant extends
   }
 
   @Override
-  public Change createPreChange( final IProgressMonitor pm ) throws OperationCanceledException {
-    // Get arguments
-    IFolder folder = (IFolder)getArguments().getDestination();
-    IPath newPath = folder.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
-    // Create change
-    return ChangeCreator.createRenameMoveChange( file, newPath, getArguments().getUpdateReferences(), UITexts.moveParticipant_title );
-  }
-
-  @Override
   public Change createChange( final IProgressMonitor pm ) throws OperationCanceledException {
-    return null;
+    // Get arguments
+    IFile newFile = (IFile)getArguments().getDestination();
+    return ChangeCreator.createCopyChange( oldFile, newFile );
   }
 
 }
