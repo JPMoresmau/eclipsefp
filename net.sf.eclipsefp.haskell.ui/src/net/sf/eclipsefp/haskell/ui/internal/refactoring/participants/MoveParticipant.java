@@ -4,6 +4,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -45,8 +46,15 @@ public class MoveParticipant extends
   @Override
   public Change createPreChange( final IProgressMonitor pm ) throws OperationCanceledException {
     // Get arguments
-    IFolder folder = (IFolder)getArguments().getDestination();
-    IPath newPath = folder.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
+    IPath newPath;
+    Object destination = getArguments().getDestination();
+    if (destination instanceof IProject) {
+      IProject p = (IProject)destination;
+      newPath = p.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
+    } else {
+      IFolder folder = (IFolder)getArguments().getDestination();
+      newPath = folder.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
+    }
     // Create change
     return ChangeCreator.createRenameMoveChange( file, newPath, getArguments().getUpdateReferences(), UITexts.moveParticipant_title );
   }

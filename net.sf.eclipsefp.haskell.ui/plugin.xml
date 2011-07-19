@@ -917,6 +917,16 @@
                </adapt>
             </with></enablement>
       </moveParticipant>
+      <moveParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveFolderParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveFolderParticipant"
+            name="Move Haskell folder">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </enablement>
+      </moveParticipant>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.copyParticipants">

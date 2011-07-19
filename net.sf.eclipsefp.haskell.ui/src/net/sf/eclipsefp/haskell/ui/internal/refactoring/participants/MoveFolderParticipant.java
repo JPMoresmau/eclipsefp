@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.IPath;
@@ -15,15 +16,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
+import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 
-public class RenameFolderParticipant extends RenameParticipant {
+public class MoveFolderParticipant extends MoveParticipant {
 
   IFolder folder;
   ArrayList<IFile> haskellFiles;
 
-  public RenameFolderParticipant() {
+  public MoveFolderParticipant() {
     // Do nothing
   }
 
@@ -52,7 +53,7 @@ public class RenameFolderParticipant extends RenameParticipant {
 
   @Override
   public String getName() {
-    return UITexts.renameFolderParticipant_title;
+    return UITexts.moveFolderParticipant_title;
   }
 
   @Override
@@ -64,9 +65,16 @@ public class RenameFolderParticipant extends RenameParticipant {
   @Override
   public Change createPreChange( final IProgressMonitor pm ) throws OperationCanceledException {
     // Get arguments
-    String newName = getArguments().getNewName();
     IPath oldPath = folder.getProjectRelativePath();
-    IPath newPath = oldPath.removeLastSegments( 1 ).append( newName );
+    IPath newPath;
+    Object destination = getArguments().getDestination();
+    if (destination instanceof IProject) {
+      IProject p = (IProject)destination;
+      newPath = p.getProjectRelativePath().append( oldPath.lastSegment() );
+    } else {
+      IFolder folder = (IFolder)getArguments().getDestination();
+      newPath = folder.getProjectRelativePath().append( oldPath.lastSegment() );
+    }
 
     // Check if it is one of the source folders
     Set<IPath> sourcePaths = Util.getPaths( folder.getProject() );

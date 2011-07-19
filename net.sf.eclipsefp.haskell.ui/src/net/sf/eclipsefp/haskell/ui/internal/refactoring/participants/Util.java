@@ -328,4 +328,56 @@ public class Util {
 
     return doc.get();
   }
+
+  public static String newSourceFolderCabalFile(final IProject project,
+      final IPath oldPath, final IPath newPath) {
+    TextFileDocumentProvider provider = new TextFileDocumentProvider();
+    IFile cabalF = ScionInstance.getCabalFile( project );
+    PackageDescription pd = null;
+    try {
+      pd = PackageDescriptionLoader.load( cabalF );
+      provider.connect( cabalF );
+    } catch( Exception e ) {
+      return null;
+    }
+
+    IDocument doc = provider.getDocument( cabalF );
+    try {
+      List<PackageDescriptionStanza> lpds = pd.getStanzas();
+      for( PackageDescriptionStanza pds: lpds ) {
+
+        // Should we change this stanza?
+        String srcList = pds.getProperties().get(
+            CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName().toLowerCase() );
+        srcList = srcList == null ? "" : srcList;
+        List<String> srcs = PackageDescriptionLoader.parseList( srcList );
+        for (String src : srcs) {
+          IPath srcPath = Path.fromPortableString( src );
+          if (srcPath.equals( oldPath )) {
+            RealValuePosition rvp = pds.removeFromPropertyList(
+                CabalSyntax.FIELD_HS_SOURCE_DIRS,
+                oldPath.toPortableString() );
+            rvp.updateDocument( doc );
+            pd = PackageDescriptionLoader.load( doc.get() );
+            pds = pd.getSameStanza( pds );
+
+            rvp = pds.addToPropertyList(
+                CabalSyntax.FIELD_HS_SOURCE_DIRS,
+                newPath.toPortableString() );
+            rvp.updateDocument( doc );
+            pd = PackageDescriptionLoader.load( doc.get() );
+            pds = pd.getSameStanza( pds );
+
+            break;
+          }
+        }
+      }
+    } catch( Exception e ) {
+      // Do nothing
+    } finally {
+      provider.disconnect( cabalF );
+    }
+
+    return doc.get();
+  }
 }
