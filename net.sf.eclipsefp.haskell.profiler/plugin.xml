@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            extension="hp"
+            type="text">
+      </fileTypes>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="hp"
+            id="net.sf.eclipsefp.haskell.contenttypes.profiler"
+            name="%contenttype_profiler_name"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="net.sf.eclipsefp.haskell.profiler.internal.editors.ProfilerViewer"
+            contributorClass="net.sf.eclipsefp.haskell.profiler.actions.ProfilerViewerActionContributor"
+            extensions="hp"
+            id="net.sf.eclipsefp.haskell.profiler.internal.editors.ProfilerViewer"
+            name="%profilerViewer_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.profiler">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+
+</plugin>
