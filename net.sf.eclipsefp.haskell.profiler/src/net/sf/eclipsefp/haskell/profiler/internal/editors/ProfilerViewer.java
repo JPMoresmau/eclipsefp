@@ -1,48 +1,45 @@
 package net.sf.eclipsefp.haskell.profiler.internal.editors;
 
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.util.Map;
+
+import net.sf.eclipsefp.haskell.profiler.model.Job;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 public class ProfilerViewer extends EditorPart {
 
+	Job job = null;
+	
 	public ProfilerViewer() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
-
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void doSaveAs() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		// TODO Auto-generated method stub
-
+		try {
+			IFileEditorInput fInput = (IFileEditorInput)input;
+			InputStream contents = fInput.getFile().getContents();
+			job = Job.parse(contents);
+			contents.close();
+			for(Map.Entry<String, BigInteger> entry : job.sortEntriesByTotal()) {
+				System.out.print(entry.getKey());
+				System.out.print(": ");
+				System.out.println(entry.getValue().toString());
+			}
+		} catch (Exception e) {
+			throw new PartInitException(Status.CANCEL_STATUS);
+		}
 	}
-
-	@Override
-	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		// TODO Auto-generated method stub
@@ -51,8 +48,29 @@ public class ProfilerViewer extends EditorPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		// Do nothing
 	}
+
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		// Do nothing: the .hp files cannot be changed
+	}
+
+	@Override
+	public void doSaveAs() {
+		// Do nothing: the .hp files cannot be changed
+	}
+
+	@Override
+	public boolean isDirty() {
+		return false;
+	}
+
+	@Override
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+
+
 
 }

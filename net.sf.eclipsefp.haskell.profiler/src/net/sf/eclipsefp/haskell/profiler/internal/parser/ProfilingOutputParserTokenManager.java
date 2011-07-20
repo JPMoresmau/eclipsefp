@@ -15,8 +15,6 @@ private final int jjStopStringLiteralDfa_0(int pos, long active0)
    switch (pos)
    {
       case 0:
-         if ((active0 & 0x8L) != 0L)
-            return 0;
          if ((active0 & 0x7e0L) != 0L)
          {
             jjmatchedKind = 14;
@@ -129,8 +127,6 @@ private int jjMoveStringLiteralDfa0_0()
 {
    switch(curChar)
    {
-      case 9:
-         return jjStartNfaWithStates_0(0, 3, 0);
       case 66:
          return jjMoveStringLiteralDfa1_0(0x200L);
       case 68:
@@ -445,7 +441,7 @@ private int jjMoveNfa_0(int startState, int curPos)
             switch(jjstateSet[--i])
             {
                case 1:
-                  if ((0xfffffffaffffdbffL & l) != 0L)
+                  if ((0xfffffffaffffd9ffL & l) != 0L)
                   {
                      if (kind > 14)
                         kind = 14;
@@ -461,7 +457,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                   }
                   break;
                case 0:
-                  if ((0xfffffffaffffdbffL & l) == 0L)
+                  if ((0xfffffffaffffd9ffL & l) == 0L)
                      break;
                   if (kind > 14)
                      kind = 14;
@@ -686,7 +682,7 @@ public Token getNextToken()
    }
 
    try { input_stream.backup(0);
-      while (curChar <= 32 && (0x100002400L & (1L << curChar)) != 0L)
+      while (curChar <= 32 && (0x100002600L & (1L << curChar)) != 0L)
          curChar = input_stream.BeginToken();
    }
    catch (java.io.IOException e1) { continue EOFLoop; }

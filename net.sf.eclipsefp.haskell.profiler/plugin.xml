@@ -14,7 +14,7 @@
             base-type="org.eclipse.core.runtime.text"
             file-extensions="hp"
             id="net.sf.eclipsefp.haskell.contenttypes.profiler"
-            name="%contenttype_profiler_name"
+            name="%contenttypeProfilerName"
             priority="normal">
       </content-type>
    </extension>
@@ -25,7 +25,7 @@
             contributorClass="net.sf.eclipsefp.haskell.profiler.actions.ProfilerViewerActionContributor"
             extensions="hp"
             id="net.sf.eclipsefp.haskell.profiler.internal.editors.ProfilerViewer"
-            name="%profilerViewer_name">
+            name="%profilerViewerName">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.profiler">
          </contentTypeBinding>

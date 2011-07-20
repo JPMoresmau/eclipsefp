@@ -20,7 +20,7 @@ TOKEN :
 {
   < #DIGIT : [ "0"-"9" ] >
 | < FLOAT : (< DIGIT >)+ "." (< DIGIT >)+ >
-| < INTEGER : (< DIGIT >)+ >| < IDENTIFIER : (~[" ", "\n", "\r", "\""])+ >
+| < INTEGER : (< DIGIT >)+ >| < IDENTIFIER : (~[" ", "\n", "\r", "\t", "\""])+ >
 | < QUOTEDSTRING : "\"" (~["\"", "\n", "\r"])* "\"" >
 }
 

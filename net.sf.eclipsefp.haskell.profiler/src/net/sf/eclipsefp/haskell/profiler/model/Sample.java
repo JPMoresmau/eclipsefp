@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.profiler.model;
 
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,5 +24,12 @@ public class Sample {
 	
 	public Set<Map.Entry<String, Long>> getEntries() {
 		return entries.entrySet();
+	}
+	
+	public BigInteger getTotal() {
+		BigInteger result = BigInteger.ZERO;
+		for (long v : entries.values())
+			result = result.add(BigInteger.valueOf(v));
+		return result;
 	}
 }
