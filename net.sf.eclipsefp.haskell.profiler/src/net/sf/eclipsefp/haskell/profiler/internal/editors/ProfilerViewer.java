@@ -1,10 +1,14 @@
 package net.sf.eclipsefp.haskell.profiler.internal.editors;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import net.sf.eclipsefp.haskell.profiler.model.Job;
 import net.sf.eclipsefp.haskell.profiler.model.Sample;
@@ -23,25 +27,39 @@ import org.eclipse.birt.chart.model.data.impl.SeriesDefinitionImpl;
 import org.eclipse.birt.chart.model.impl.ChartWithAxesImpl;
 import org.eclipse.birt.chart.model.type.AreaSeries;
 import org.eclipse.birt.chart.model.type.impl.AreaSeriesImpl;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ContainerGenerator;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
 
 public class ProfilerViewer extends EditorPart {
 
+	static int INITIAL_NUMBER_OF_ITEMS = 15;
+
+	String fileContents;
 	Job job = null;
 	double[] samplePoints;
 	List<Map.Entry<String, BigInteger>> entries;
+	Scale slider;
 	ChartCanvas canvas;
 
 	public ProfilerViewer() {
@@ -58,8 +76,9 @@ public class ProfilerViewer extends EditorPart {
 			IFile inputFile = fInput.getFile();
 			setPartName(inputFile.getName());
 			InputStream contents = inputFile.getContents();
-			job = Job.parse(contents);
+			fileContents = new Scanner(contents).useDelimiter("\\Z").next();
 			contents.close();
+			job = Job.parse(new StringReader(fileContents));
 			// Sort entries
 			entries = job.sortEntriesByTotal();
 			// Get sample points
@@ -80,21 +99,48 @@ public class ProfilerViewer extends EditorPart {
 		layout.numColumns = 1;
 		parent.setLayout(layout);
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setText("Placeholder");
-		GridData lGridData = new GridData(GridData.FILL_HORIZONTAL);
-		l.setLayoutData(lGridData);
+		Composite horiz = new Composite(parent, SWT.NONE);
+		GridData hGridData = new GridData(GridData.FILL_HORIZONTAL);
+		horiz.setLayoutData(hGridData);
+		GridLayout hLayout = new GridLayout();
+		hLayout.numColumns = 2;
+		horiz.setLayout(hLayout);
 
-		Chart chart = createChart(15);
+		Label l = new Label(horiz, SWT.NONE);
+		l.setText("Ungroup these elements");
+		slider = new Scale(horiz, SWT.NONE);
+		slider.setMinimum(0);
+		slider.setMaximum(entries.size());
+		slider.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		int n = entries.size() < INITIAL_NUMBER_OF_ITEMS ? entries.size() : INITIAL_NUMBER_OF_ITEMS;
+		slider.setSelection(n);
+		slider.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				Chart chart = createChart(slider.getSelection());
+				canvas.setChart(chart);
+				canvas.redraw();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				Chart chart = createChart(slider.getSelection());
+				canvas.setChart(chart);
+				canvas.redraw();
+			}
+		});
+
+		Chart chart = createChart(n);
 		canvas = new ChartCanvas(parent, SWT.NONE);
-		canvas.setChart(chart);
 		GridData cGridData = new GridData(GridData.FILL_BOTH);
 		canvas.setLayoutData(cGridData);
+		canvas.setChart(chart);
 	}
 
 	private Chart createChart(int numberApart) {
 		int n = entries.size() < numberApart ? entries.size() : numberApart;
-		List<Map.Entry<String, BigInteger>> entriesApart = entries.subList(0, n);
+		List<Map.Entry<String, BigInteger>> entriesApart = new ArrayList<Map.Entry<String, BigInteger>>(
+				entries.subList(0, n));
 
 		Chart chart = ChartWithAxesImpl.create();
 		// Title
@@ -174,7 +220,28 @@ public class ProfilerViewer extends EditorPart {
 
 	@Override
 	public void doSaveAs() {
-		// Do nothing: the .hp files cannot be changed
+		SaveAsDialog dialog = new SaveAsDialog(getSite().getShell());
+		dialog.setOriginalName(getPartName());
+		if (dialog.open() == Window.OK) {
+			try {
+				IPath path = dialog.getResult();
+				IPath folder = path.uptoSegment(path.segmentCount() - 1);
+				ContainerGenerator gen = new ContainerGenerator(folder);
+				IContainer con = gen.generateContainer(null);
+				IFile file = con.getFile(Path.fromPortableString(path.lastSegment()));
+				byte[] bytes = fileContents.getBytes();
+				InputStream source = new ByteArrayInputStream(bytes);
+				if (!file.exists()) {
+					file.create(source, IResource.NONE, null);
+				} else {
+					file.setContents(source, IResource.NONE, null);
+				}
+				source.close();
+				setPartName(path.lastSegment());
+			} catch (Exception e) {
+				// Do nothing
+			}
+		}
 	}
 
 	@Override
@@ -184,7 +251,7 @@ public class ProfilerViewer extends EditorPart {
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		return false;
+		return true;
 	}
 
 }
