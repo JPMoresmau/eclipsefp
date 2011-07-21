@@ -14,6 +14,9 @@ public final class UITexts extends NLS {
 
   // message fields
   public static String graph_restOfTrace;
+  public static String graph_title;
+  public static String graph_options;
+  public static String graph_ungroupElements;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

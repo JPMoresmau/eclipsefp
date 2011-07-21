@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import net.sf.eclipsefp.haskell.profiler.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.profiler.model.Job;
 import net.sf.eclipsefp.haskell.profiler.model.Sample;
 
@@ -41,7 +42,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -49,6 +49,9 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 
 public class ProfilerViewer extends EditorPart {
@@ -59,8 +62,11 @@ public class ProfilerViewer extends EditorPart {
 	Job job = null;
 	double[] samplePoints;
 	List<Map.Entry<String, BigInteger>> entries;
-	Scale slider;
-	ChartCanvas canvas;
+	
+	private FormToolkit toolkit;
+	private ScrolledForm form;
+	private Scale slider;
+	private ChartCanvas canvas;
 
 	public ProfilerViewer() {
 		super();
@@ -95,25 +101,38 @@ public class ProfilerViewer extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		
+		toolkit = new FormToolkit(parent.getDisplay());
+		form = toolkit.createScrolledForm(parent);
+		form.setText(UITexts.bind(UITexts.graph_title, new Object[] { job.getName(), job.getDate() }));
+		
+		int n = entries.size() < INITIAL_NUMBER_OF_ITEMS ? entries.size() : INITIAL_NUMBER_OF_ITEMS;
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		parent.setLayout(layout);
-
-		Composite horiz = new Composite(parent, SWT.NONE);
-		GridData hGridData = new GridData(GridData.FILL_HORIZONTAL);
-		horiz.setLayoutData(hGridData);
+		form.getBody().setLayout(layout);
+		
+		Chart chart = createChart(n);
+		canvas = new ChartCanvas(form.getBody(), SWT.NONE);
+		canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
+		canvas.setChart(chart);
+		
+		Section section = toolkit.createSection(form.getBody(), 
+				  Section.TITLE_BAR | Section.TWISTIE);
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		section.setText(UITexts.graph_options);
+		
+		Composite sectionClient = toolkit.createComposite(section);
 		GridLayout hLayout = new GridLayout();
 		hLayout.numColumns = 2;
-		horiz.setLayout(hLayout);
+		sectionClient.setLayout(hLayout);
+		section.setClient(sectionClient);
 
-		Label l = new Label(horiz, SWT.NONE);
-		l.setText("Ungroup these elements");
-		slider = new Scale(horiz, SWT.NONE);
+		toolkit.createLabel(sectionClient, UITexts.graph_ungroupElements);
+		slider = new Scale(sectionClient, SWT.NONE);
 		slider.setMinimum(0);
 		slider.setMaximum(entries.size());
 		slider.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		int n = entries.size() < INITIAL_NUMBER_OF_ITEMS ? entries.size() : INITIAL_NUMBER_OF_ITEMS;
 		slider.setSelection(n);
 		slider.addSelectionListener(new SelectionListener() {
 
@@ -130,11 +149,7 @@ public class ProfilerViewer extends EditorPart {
 			}
 		});
 
-		Chart chart = createChart(n);
-		canvas = new ChartCanvas(parent, SWT.NONE);
-		GridData cGridData = new GridData(GridData.FILL_BOTH);
-		canvas.setLayoutData(cGridData);
-		canvas.setChart(chart);
+		toolkit.paintBordersFor(parent);
 	}
 
 	private Chart createChart(int numberApart) {
@@ -144,7 +159,8 @@ public class ProfilerViewer extends EditorPart {
 
 		Chart chart = ChartWithAxesImpl.create();
 		// Title
-		chart.getTitle().getLabel().getCaption().setValue(job.getName());
+		// chart.getTitle().getLabel().getCaption().setValue(job.getName());
+		chart.getTitle().setVisible(false);
 		// chart.getTitle().getLabel().getCaption().getFont().setSize(14);
 		// chart.getTitle().getLabel().getCaption().getFont().setName("Arial");
 		// Legend
@@ -185,7 +201,7 @@ public class ProfilerViewer extends EditorPart {
 		// Add (rest) elements
 		NumberDataSet restDataSet = NumberDataSetImpl.create(numbers.getRest());
 		AreaSeries restSeries = (AreaSeries) AreaSeriesImpl.create();
-		restSeries.setSeriesIdentifier("(rest)");
+		restSeries.setSeriesIdentifier(UITexts.graph_restOfTrace);
 		restSeries.setDataSet(restDataSet);
 		restSeries.getLineAttributes().setVisible(false);
 		restSeries.getLabel().setVisible(false);
