@@ -2,10 +2,10 @@ package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Random;
-import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -14,10 +14,10 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * launch delegate for Haskell executables executables
@@ -25,24 +25,12 @@ import org.eclipse.ui.PlatformUI;
  * @author JP Moresmau
  *
  */
-public class TestSuiteHaskellLaunchDelegate extends
+public class ExecutableProfilingHaskellLaunchDelegate extends
     ExecutableOrTestSuiteHaskellLaunchDelegate {
-
-  String filename = null;
-
-  private String getFilename() {
-    if( filename == null ) {
-      Random r = new Random( System.currentTimeMillis() );
-      int n = r.nextInt();
-      filename = HaskellDebugCore.getDefault().getStateLocation()
-          .append( n + ".xml" ).toOSString(); //$NON-NLS-1$
-    }
-    return filename;
-  }
 
   @Override
   protected String getExtraArguments() {
-    return "--jxml=\"" + getFilename() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+    return "+RTS -hT"; //$NON-NLS-1$
   }
 
   @Override
@@ -56,6 +44,7 @@ public class TestSuiteHaskellLaunchDelegate extends
   @Override
   protected void postProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProcess process ) {
+
     Job endJob = new Job( CoreTexts.testSuite_waiting ) {
 
       @Override
@@ -73,24 +62,34 @@ public class TestSuiteHaskellLaunchDelegate extends
         }
         monitor.worked( 1 );
 
-        // Get file and parse output
-        final String fname = getFilename();
-        Display.getDefault().syncExec( new Runnable() {
+        try {
+          IPath exeLocation = getExecutableLocation( configuration );
+          IPath hpLocation = exeLocation.removeFileExtension()
+              .addFileExtension( "hp" ); //$NON-NLS-1$
+          final File fileToOpen = hpLocation.toFile();
 
-          public void run() {
-            try {
-              IWorkbenchPage page = PlatformUI.getWorkbench()
-                  .getActiveWorkbenchWindow().getActivePage();
-              page.showView( "org.eclipse.jdt.junit.ResultView" ); //$NON-NLS-1$
-              JUnitCore.importTestRunSession( new File( fname ) );
-            } catch( CoreException e ) {
-              // Do nothing
+          Display.getDefault().syncExec( new Runnable() {
+
+            public void run() {
+              try {
+                if( fileToOpen.exists() && fileToOpen.isFile() ) {
+                  IFileStore fileStore = EFS.getLocalFileSystem().getStore(
+                      fileToOpen.toURI() );
+                  IWorkbenchPage page = PlatformUI.getWorkbench()
+                      .getActiveWorkbenchWindow().getActivePage();
+                  IDE.openEditorOnFileStore( page, fileStore );
+                } else {
+                  // Do something if the file does not exist
+                }
+              } catch( Exception e ) {
+                // Do nothing
+              }
             }
-          }
-        } );
+          } );
+        } catch( Exception e ) {
+          return Status.CANCEL_STATUS;
+        }
 
-        // Always delete the file at the end
-        new File( getFilename() ).delete();
         return Status.OK_STATUS;
       }
     };

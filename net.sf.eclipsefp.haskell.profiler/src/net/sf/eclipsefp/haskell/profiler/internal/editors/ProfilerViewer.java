@@ -1,9 +1,12 @@
 package net.sf.eclipsefp.haskell.profiler.internal.editors;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +55,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.EditorPart;
 
 public class ProfilerViewer extends EditorPart {
@@ -78,10 +82,18 @@ public class ProfilerViewer extends EditorPart {
 		setInput(input);
 
 		try {
-			IFileEditorInput fInput = (IFileEditorInput) input;
-			IFile inputFile = fInput.getFile();
-			setPartName(inputFile.getName());
-			InputStream contents = inputFile.getContents();
+			InputStream contents;
+			if (input instanceof FileStoreEditorInput) {
+				FileStoreEditorInput fInput = (FileStoreEditorInput) input;
+				URI path = fInput.getURI();
+				contents = new FileInputStream(new File(path));
+				setPartName(fInput.getName());
+			} else {
+				IFileEditorInput fInput = (IFileEditorInput) input;
+				IFile inputFile = fInput.getFile();
+				setPartName(inputFile.getName());
+				contents = inputFile.getContents();
+			}
 			fileContents = new Scanner(contents).useDelimiter("\\Z").next();
 			contents.close();
 			job = Job.parse(new StringReader(fileContents));
