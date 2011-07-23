@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Random;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
@@ -30,6 +34,7 @@ public class ExecutableProfilingHaskellLaunchDelegate extends
   final String RUNTIME_OPTIONS = "+RTS -hT"; //$NON-NLS-1$
   final String DATETIME_FORMAT = "yyMMdd.HHmmss"; //$NON-NLS-1$
 
+  String projectName;
   String previousFilename = null;
   String savedFilename = null;
 
@@ -43,13 +48,16 @@ public class ExecutableProfilingHaskellLaunchDelegate extends
       final String mode, final ILaunch launch,
       final Map<String, String> processAttribs ) {
     // NOOP
-
   }
 
   @Override
   protected void postProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProcess process ) {
-    // NOOP
+    try {
+      projectName = configuration.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );
+    } catch( CoreException e ) {
+      projectName = null;
+    }
   }
 
   @Override
@@ -104,6 +112,14 @@ public class ExecutableProfilingHaskellLaunchDelegate extends
       public void run() {
         try {
           if( fileToOpen.exists() && fileToOpen.isFile() ) {
+            // Refresh workspace
+            if ( projectName != null ) {
+              IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+              if ( p != null ) {
+                p.refreshLocal( IResource.DEPTH_ONE, null );
+              }
+            }
+            // Open editor
             IFileStore fileStore = EFS.getLocalFileSystem().getStore(
                 fileToOpen.toURI() );
             IWorkbenchPage page = PlatformUI.getWorkbench()
