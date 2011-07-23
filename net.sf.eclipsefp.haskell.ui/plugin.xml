@@ -957,4 +957,27 @@
          </enablement>
       </copyParticipant>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.ui.sourcegraph.run"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.ui.sourcegraph.RunActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.ui.sourcegraph.runAction"
+               label="%sourcegraph_run">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+   </extension>
 </plugin>

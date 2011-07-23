@@ -474,6 +474,9 @@ public final class UITexts extends NLS {
   public static String moveFolderParticipant_title;
   public static String copyFolderParticipant_title;
 
+  public static String runSourceGraph_error;
+  public static String runSourceGraph_errorTitle;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
