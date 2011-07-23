@@ -47,16 +47,22 @@ public class MoveParticipant extends
   public Change createPreChange( final IProgressMonitor pm ) throws OperationCanceledException {
     // Get arguments
     IPath newPath;
+    IProject project;
     Object destination = getArguments().getDestination();
     if (destination instanceof IProject) {
-      IProject p = (IProject)destination;
-      newPath = p.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
+      project = (IProject)destination;
+      newPath = project.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
     } else {
       IFolder folder = (IFolder)getArguments().getDestination();
+      project = folder.getProject();
       newPath = folder.getProjectRelativePath().append( file.getProjectRelativePath().lastSegment() );
     }
     // Create change
-    return ChangeCreator.createRenameMoveChange( file, newPath, getArguments().getUpdateReferences(), UITexts.moveParticipant_title );
+    if (project.equals( file.getProject() )) {
+      return ChangeCreator.createRenameMoveChange( file, newPath, getArguments().getUpdateReferences(), UITexts.moveParticipant_title );
+    } else {
+      return ChangeCreator.createRenameMoveInOtherProjectChange( file, newPath, getArguments().getUpdateReferences(), UITexts.moveParticipant_title );
+    }
   }
 
   @Override

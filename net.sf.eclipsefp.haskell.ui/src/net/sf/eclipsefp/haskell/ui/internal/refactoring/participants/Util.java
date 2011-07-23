@@ -328,6 +328,84 @@ public class Util {
 
     return doc.get();
   }
+  
+  public static String newRemoveModuleCabalFile( final IProject project,
+      final IFile oldFile ) {
+    TextFileDocumentProvider provider = new TextFileDocumentProvider();
+    String oldModuleName = getModuleName( oldFile );
+
+    IFile cabalF = ScionInstance.getCabalFile( project );
+    PackageDescription pd = null;
+    try {
+      pd = PackageDescriptionLoader.load( cabalF );
+      provider.connect( cabalF );
+    } catch( Exception e ) {
+      return null;
+    }
+
+    IDocument doc = provider.getDocument( cabalF );
+    try {
+      List<PackageDescriptionStanza> lpds = pd.getStanzas();
+      for( PackageDescriptionStanza pds: lpds ) {
+
+        // Should we change this stanza?
+        String srcList = pds.getProperties().get(
+            CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName().toLowerCase() );
+        srcList = srcList == null ? "" : srcList;
+        List<String> srcs = PackageDescriptionLoader.parseList( srcList );
+        final Set<IPath> allowedPaths = getStanzaPaths( project, oldFile );
+        boolean shouldBeChanged = false;
+        for (String src : srcs) {
+          IPath srcPath = Path.fromPortableString( src );
+          if (allowedPaths.contains( srcPath )) {
+            shouldBeChanged = true;
+            break;
+          }
+        }
+        if (!shouldBeChanged) {
+          continue; // We should not
+        }
+
+        // Modules sections
+        CabalSyntax[] elements = new CabalSyntax[] {
+            CabalSyntax.FIELD_EXPOSED_MODULES, CabalSyntax.FIELD_OTHER_MODULES };
+        for( CabalSyntax element: elements ) {
+          pds = pd.getSameStanza( pds );
+          String propList = pds.getProperties().get(
+              element.getCabalName().toLowerCase() );
+          propList = propList == null ? "" : propList;
+          List<String> props = PackageDescriptionLoader.parseList( propList );
+          if( props.indexOf( oldModuleName ) != -1 ) {
+            RealValuePosition rvp = pds.removeFromPropertyList( element,
+                oldModuleName );
+            rvp.updateDocument( doc );
+            pd = PackageDescriptionLoader.load( doc.get() );
+            pds = pd.getSameStanza( pds );
+          }
+        }
+
+        // Main-is section
+        String oldMainName = oldModuleName.replace( '.', '/' ) + ".hs";
+        pds = pd.getSameStanza( pds );
+        String mainProp = pds.getProperties().get(
+            CabalSyntax.FIELD_MAIN_IS.getCabalName().toLowerCase() );
+        mainProp = mainProp == null ? "" : mainProp;
+        if( oldMainName.equals( mainProp ) ) {
+          RealValuePosition rvp = pds.update( CabalSyntax.FIELD_MAIN_IS, "" );
+          rvp.updateDocument( doc );
+          pd = PackageDescriptionLoader.load( doc.get() );
+          pds = pd.getSameStanza( pds );
+        }
+
+      }
+    } catch( Exception e ) {
+      // Do nothing
+    } finally {
+      provider.disconnect( cabalF );
+    }
+
+    return doc.get();
+  }
 
   public static String newSourceFolderCabalFile(final IProject project,
       final IPath oldPath, final IPath newPath) {

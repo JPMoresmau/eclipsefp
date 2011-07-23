@@ -128,4 +128,49 @@ public class ChangeCreator {
       return change;
     }
   }
+
+  public static Change createRenameMoveInOtherProjectChange(final IFile file, final IPath newPath,
+      final boolean updateReferences, final String title) {
+    String oldModule = Util.getModuleName( file );
+    String newModule = Util.getModuleName( file.getProject(), newPath );
+
+    // Create changes in module
+    TextFileChange change = new TextFileChange( title, file );
+    int moduleNamePos = Util.getModuleNameOffset( file );
+    if (moduleNamePos != -1) {
+      change.setEdit( new ReplaceEdit( moduleNamePos, oldModule.length(), newModule ) );
+    }
+
+    if( updateReferences ) {
+
+      boolean someChange = false;
+
+      // Cabal reference
+      String newCabalFile = Util.newRemoveModuleCabalFile( file.getProject(), file );
+      IFile cabalF = ScionInstance.getCabalFile( file.getProject() );
+      TextFileDocumentProvider provider = new TextFileDocumentProvider();
+      TextFileChange cabalChanges = null;
+      try {
+        provider.connect( cabalF );
+        IDocument doc = provider.getDocument( cabalF );
+        int length = doc.getLength();
+        if (!newCabalFile.equals( doc.get() )) {
+          cabalChanges = new TextFileChange( UITexts.updateCabalFile, cabalF);
+          cabalChanges.setEdit( new ReplaceEdit( 0, length, newCabalFile ) );
+          someChange = true;
+        }
+        provider.disconnect( cabalF );
+      } catch (Exception e) {
+        // Do nothing
+      }
+
+      if (someChange) {
+        return new CompositeChange( title, new Change[] { change, cabalChanges } );
+      } else {
+        return change;
+      }
+    } else {
+      return change;
+    }
+  }
 }
