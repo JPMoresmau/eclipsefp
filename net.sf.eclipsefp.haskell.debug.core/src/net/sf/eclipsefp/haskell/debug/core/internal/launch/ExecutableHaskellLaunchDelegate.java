@@ -28,8 +28,21 @@ public class ExecutableHaskellLaunchDelegate extends
   }
 
   @Override
+  protected void preProcessDefinitionCreation(
+      final ILaunchConfiguration configuration, final String mode, final ILaunch launch ) {
+    // NOOP
+
+  }
+
+  @Override
   protected void postProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProcess process ) {
+    // NOOP
+
+  }
+
+  @Override
+  protected void postProcessFinished() {
     // NOOP
 
   }

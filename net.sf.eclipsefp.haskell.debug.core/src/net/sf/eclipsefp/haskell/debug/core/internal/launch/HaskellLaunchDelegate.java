@@ -53,6 +53,18 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
 
   }
 
+  @Override
+  protected void preProcessDefinitionCreation(
+      final ILaunchConfiguration configuration, final String mode, final ILaunch launch ) {
+    // NOOP
+
+  }
+
+  @Override
+  protected void postProcessFinished() {
+    // NOOP
+  }
+
   public static void commandToProcess(final IProcess p,final String command) throws CoreException{
     try {
       if (command!=null && command.length()>0){

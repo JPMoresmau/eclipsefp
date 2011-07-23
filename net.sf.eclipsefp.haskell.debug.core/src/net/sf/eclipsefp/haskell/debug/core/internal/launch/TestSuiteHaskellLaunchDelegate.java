@@ -4,13 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.Random;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
-import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
@@ -56,45 +50,36 @@ public class TestSuiteHaskellLaunchDelegate extends
   @Override
   protected void postProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProcess process ) {
-    Job endJob = new Job( CoreTexts.testSuite_waiting ) {
+    // NOOP
+  }
 
-      @Override
-      protected IStatus run( final IProgressMonitor monitor ) {
-        monitor.beginTask( CoreTexts.testSuite_waiting, 1 );
-        while( !process.isTerminated() ) {
-          if( monitor.isCanceled() ) {
-            try {
-              process.terminate();
-            } catch( DebugException e ) {
-              // Do nothing
-            }
-            return Status.CANCEL_STATUS;
-          }
+  @Override
+  protected void preProcessDefinitionCreation(
+      final ILaunchConfiguration configuration, final String mode, final ILaunch launch ) {
+    // NOOP
+
+  }
+
+  @Override
+  protected void postProcessFinished() {
+    // Get file and parse output
+    final String fname = getFilename();
+    Display.getDefault().syncExec( new Runnable() {
+
+      public void run() {
+        try {
+          IWorkbenchPage page = PlatformUI.getWorkbench()
+              .getActiveWorkbenchWindow().getActivePage();
+          page.showView( "org.eclipse.jdt.junit.ResultView" ); //$NON-NLS-1$
+          JUnitCore.importTestRunSession( new File( fname ) );
+        } catch( CoreException e ) {
+          // Do nothing
         }
-        monitor.worked( 1 );
-
-        // Get file and parse output
-        final String fname = getFilename();
-        Display.getDefault().syncExec( new Runnable() {
-
-          public void run() {
-            try {
-              IWorkbenchPage page = PlatformUI.getWorkbench()
-                  .getActiveWorkbenchWindow().getActivePage();
-              page.showView( "org.eclipse.jdt.junit.ResultView" ); //$NON-NLS-1$
-              JUnitCore.importTestRunSession( new File( fname ) );
-            } catch( CoreException e ) {
-              // Do nothing
-            }
-          }
-        } );
-
-        // Always delete the file at the end
-        new File( getFilename() ).delete();
-        return Status.OK_STATUS;
       }
-    };
-    endJob.schedule();
+    } );
+
+    // Always delete the file at the end
+    new File( getFilename() ).delete();
   }
 
 }
