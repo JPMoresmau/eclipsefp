@@ -33,7 +33,7 @@ public class TestSuiteBeautifier {
   static final String NAME = "name"; //$NON-NLS-1$
   static final String GROUP_SEPARATOR = "\\."; //$NON-NLS-1$
 
-  public static void beuatify( final File file ) throws IOException, JDOMException {
+  public static void beuatify( final File file ) throws JDOMException {
     try {
       FileInputStream contents = new FileInputStream( file );
       String fileContents = new Scanner( contents ).useDelimiter( "\\Z" ).next(); //$NON-NLS-1$
@@ -65,6 +65,7 @@ public class TestSuiteBeautifier {
     for( Element testcase: testcases ) {
       // Get classname
       String classname = testcase.getAttributeValue( CLASSNAME, "" ); //$NON-NLS-1$
+      testcase.removeAttribute( CLASSNAME );
       // Add to the nested testsuite
       if( classname.length() > 0 ) {
         // Remove from its position
