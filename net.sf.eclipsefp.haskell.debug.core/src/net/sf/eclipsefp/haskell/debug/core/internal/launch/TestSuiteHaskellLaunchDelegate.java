@@ -14,13 +14,15 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * launch delegate for Haskell executables executables
+ * launch delegate for test-framework test suites
  *
- * @author JP Moresmau
+ * @author Alejandro Serrano
  *
  */
 public class TestSuiteHaskellLaunchDelegate extends
     ExecutableOrTestSuiteHaskellLaunchDelegate {
+
+  static final String JUNIT_VIEW = "org.eclipse.jdt.junit.ResultView"; //$NON-NLS-1$
 
   String filename = null;
 
@@ -64,14 +66,21 @@ public class TestSuiteHaskellLaunchDelegate extends
   protected void postProcessFinished() {
     // Get file and parse output
     final String fname = getFilename();
+    final File file = new File( fname );
+    try {
+      TestSuiteBeautifier.beuatify( file );
+    } catch (Exception e) {
+      // Do nothing
+    }
+
     Display.getDefault().syncExec( new Runnable() {
 
       public void run() {
         try {
           IWorkbenchPage page = PlatformUI.getWorkbench()
               .getActiveWorkbenchWindow().getActivePage();
-          page.showView( "org.eclipse.jdt.junit.ResultView" ); //$NON-NLS-1$
-          JUnitCore.importTestRunSession( new File( fname ) );
+          page.showView( JUNIT_VIEW );
+          JUnitCore.importTestRunSession( file );
         } catch( CoreException e ) {
           // Do nothing
         }

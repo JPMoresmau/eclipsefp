@@ -23,3 +23,5 @@ Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.core.internal,
  net.sf.eclipsefp.haskell.debug.core.internal.debug,
  net.sf.eclipsefp.haskell.debug.core.internal.launch;x-friends:="net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.debug.ui"
+Bundle-ClassPath: .,
+ lib/jdom.jar
