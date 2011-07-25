@@ -38,7 +38,7 @@ public class TestSuiteHaskellLaunchDelegate extends
 
   @Override
   protected String getExtraArguments() {
-    return "--jxml=\"" + getFilename() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+    return "--plain --jxml=\"" + getFilename() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   @Override
@@ -67,11 +67,11 @@ public class TestSuiteHaskellLaunchDelegate extends
     // Get file and parse output
     final String fname = getFilename();
     final File file = new File( fname );
-    try {
+    /* try {
       TestSuiteBeautifier.beuatify( file );
     } catch (Exception e) {
       // Do nothing
-    }
+    }*/
 
     Display.getDefault().syncExec( new Runnable() {
 
