@@ -7,11 +7,10 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntryMultiSelect;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.layout.GridData;
@@ -21,9 +20,10 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
-public class ModulesLibrarySection extends CabalFormSection implements IFormEntryListener {
+public class ModulesLibrarySection extends CabalFormSection implements
+    IOtherValueEntryListener {
 
-  FormEntryMultiSelect entry;
+  FormEntryModules entry;
 
   ModulesLibrarySection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
@@ -37,51 +37,46 @@ public class ModulesLibrarySection extends CabalFormSection implements IFormEntr
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    entry = new FormEntryMultiSelect( new ModulesContentProvider() );
+    entry = new FormEntryModules( "Exposed" );
     setCustomFormEntry( entry, CabalSyntax.FIELD_EXPOSED_MODULES, toolkit,
         container );
     GridData entryGD = new GridData( GridData.FILL_BOTH );
     entryGD.heightHint = 120;
     entry.getControl().setLayoutData( entryGD );
-    entry.addFormEntryListener( this );
+    entry.addOtherValueListener( this );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
   }
 
   public void refreshInput( final IProject project,
-      final PackageDescription descr, final PackageDescriptionStanza stanza ) {
+      final PackageDescription descr, final PackageDescriptionStanza stanza,
+      final boolean blockNotification ) {
     if( descr == null || stanza == null ) {
-      entry.getTree().setInput( new Object() );
+      entry.setSourceFolders( null, blockNotification );
     } else {
-      String value = stanza.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-      value = (value == null) ? "" : value;
-      entry.getTree().setInput(
-          new ModulesContentProviderRoot( project, descr, stanza ) );
-      entry.setValue( value, false );
+      entry
+          .setSourceFolders(
+              new FormEntryModulesRoot( project, descr, stanza ),
+              blockNotification );
     }
   }
 
-  public void textValueChanged( final FormEntry entry ) {
-    // Previouslu, "other-modules" was also updated
-    /* if (this.stanza != null) {
-      FormEntryMultiSelect multi = (FormEntryMultiSelect)entry;
-      String newValue = multi.getNonSelectedValue();
-      stanza.getProperties().put( CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
-      RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES, newValue );
+  public void otherTextValueChanged( final FormEntry entry ) {
+    if( this.stanza != null ) {
+      FormEntryModules multi = ( FormEntryModules )entry;
+      String newValue = multi.getOtherModulesValue();
+      stanza.getProperties().put(
+          CabalSyntax.FIELD_OTHER_MODULES.getCabalName(), newValue );
+      RealValuePosition vp = stanza.update( CabalSyntax.FIELD_OTHER_MODULES,
+          newValue );
       vp.updateDocument( editor.getModel() );
-    }*/
+    }
   }
 
-  public void focusGained( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void textDirty( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void selectionChanged( final FormEntry entry ) {
-    // Do nothing
+  @Override
+  public void setStanza( final PackageDescriptionStanza stanza ) {
+    super.setStanza( stanza );
+    entry.setOtherModulesValue( stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() ), true );
   }
 }

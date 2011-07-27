@@ -70,7 +70,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
     managedForm.addPart( modulesSection );
     managedForm.addPart( new CompilerOptionsSection( this, top, formEditor, project ) );
 
-    sourceDirsSection.setListener( this );
+    // sourceDirsSection.setListener( this );
 
     toolkit.paintBordersFor( form );
     this.finishedLoading();
@@ -82,7 +82,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
 
     ignoreModify = true;
     PackageDescriptionStanza libStanza = packageDescription.getLibraryStanza();
-    modulesSection.refreshInput( project, packageDescription, libStanza );
+    modulesSection.refreshInput( project, packageDescription, libStanza, true );
     if (libStanza == null) {
       isALibrary.setSelection( false );
       for( IFormPart p: getManagedForm().getParts() ) {
@@ -108,6 +108,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
         // We need to add a stanza
         PackageDescriptionStanza libStanza = lastDescription.addStanza( CabalSyntax.SECTION_LIBRARY, "" );
         libStanza.setIndent( 2 );
+        libStanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
         libStanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
         libStanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" );
         formEditor.getModel().set( lastDescription.dump() );
@@ -123,9 +124,9 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
   public void textValueChanged( final FormEntry entry ) {
     if (this.getPackageDescription() != null) {
       PackageDescriptionStanza libStanza = this.getPackageDescription().addStanza( CabalSyntax.SECTION_LIBRARY, "" );
-      modulesSection.refreshInput( project, this.getPackageDescription(), libStanza );
+      modulesSection.refreshInput( project, this.getPackageDescription(), libStanza, false );
     } else {
-      modulesSection.refreshInput( project, this.getPackageDescription(), null );
+      modulesSection.refreshInput( project, this.getPackageDescription(), null, false );
     }
   }
 

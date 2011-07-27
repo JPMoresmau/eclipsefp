@@ -60,11 +60,11 @@ public class ModulesContentProvider implements ITreeContentProvider {
 
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
-    if( newInput == null || !( newInput instanceof ModulesContentProviderRoot ) ) {
+    if( newInput == null || !( newInput instanceof FormEntryModulesRoot ) ) {
       this.elements = new String[ 0 ];
     } else {
       try {
-        ModulesContentProviderRoot root = ( ModulesContentProviderRoot )newInput;
+        FormEntryModulesRoot root = ( FormEntryModulesRoot )newInput;
         String sourceDirs = null;
         if( root.getStanza().getProperties()
             .containsKey( CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName() ) ) {

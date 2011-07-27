@@ -9,12 +9,12 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.eclipse.core.resources.IProject;
 
 
-public class ModulesContentProviderRoot {
+public class FormEntryModulesRoot {
   IProject project;
   PackageDescription description;
   PackageDescriptionStanza stanza;
 
-  public ModulesContentProviderRoot( final IProject project,
+  public FormEntryModulesRoot( final IProject project,
       final PackageDescription description, final PackageDescriptionStanza stanza ) {
     super();
     this.project = project;

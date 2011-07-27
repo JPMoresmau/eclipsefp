@@ -67,7 +67,7 @@ public class ModulesExecutableSection extends CabalFormSection implements IFormE
       value = (value == null) ? "" : value;
       int prevCount = entry.getTree().getTree().getItemCount();
       entry.getTree().setInput(
-          new ModulesContentProviderRoot( project, descr, stanza ) );
+          new FormEntryModulesRoot( project, descr, stanza ) );
       int postCount = entry.getTree().getTree().getItemCount();
       entry.setValue( value, true );
       // We have to rewrite the "other-modules" section
