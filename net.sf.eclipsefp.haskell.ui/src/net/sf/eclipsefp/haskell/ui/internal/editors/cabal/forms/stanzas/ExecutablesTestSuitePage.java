@@ -200,8 +200,8 @@ public abstract class ExecutablesTestSuitePage extends CabalFormPage implements 
       stanza = getPackageDescription().getComponentStanza( new Component( getComponentType(), name, "", true ) );
     }
 
+    modulesSection.refreshInput( project, this.getPackageDescription(), stanza, false );
     setStanza(stanza);
-    modulesSection.refreshInput( project, this.getPackageDescription(), stanza );
   }
 
   @Override
@@ -234,9 +234,10 @@ public abstract class ExecutablesTestSuitePage extends CabalFormPage implements 
 
   public void textValueChanged( final FormEntry entry ) {
     if (this.getPackageDescription() != null) {
-      modulesSection.refreshInput( project, this.getPackageDescription(), sourceDirsSection.getStanza() );
+      PackageDescriptionStanza libStanza = this.getPackageDescription().addStanza( CabalSyntax.SECTION_LIBRARY, "" );
+      modulesSection.refreshInput( project, this.getPackageDescription(), libStanza, false );
     } else {
-      modulesSection.refreshInput( project, this.getPackageDescription(), null );
+      modulesSection.refreshInput( project, this.getPackageDescription(), null, false );
     }
   }
 

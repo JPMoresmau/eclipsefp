@@ -8,6 +8,7 @@ import java.util.Vector;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -74,10 +75,10 @@ public class FormEntryModules extends FormEntry {
     exposedCol.setText( exposedString );
     exposedCol.pack();
     TableColumn otherCol = new TableColumn( table, SWT.NULL );
-    otherCol.setText( "Other" );
+    otherCol.setText( UITexts.cabalEditor_other_modules );
     otherCol.pack();
     TableColumn nameCol = new TableColumn( table, SWT.NULL );
-    nameCol.setText( "Module" );
+    nameCol.setText( UITexts.cabalEditor_module );
     nameCol.pack();
   }
 
@@ -173,13 +174,25 @@ public class FormEntryModules extends FormEntry {
           exposedButton.addSelectionListener( new SelectionListener() {
 
             public void widgetSelected( final SelectionEvent e ) {
-              if (!ignoreModify) {
+              if( !ignoreModify ) {
                 String mod = item.getText( NAME_COL );
-                if (exposed.contains( mod )) {
+                if( exposed.contains( mod ) ) {
                   exposed.remove( mod );
                 } else {
-                  exposed.add( mod );
-                  Collections.sort( exposed );
+                  if (onlyOne && exposed.size() > 0) {
+                    // We have to deselect the other one
+                    boolean previousIgnoreModify = ignoreModify;
+                    ignoreModify = true;
+                    for (String it : exposed) {
+                      exposedBoxes.get( it ).setSelection( false );
+                    }
+                    ignoreModify = previousIgnoreModify;
+                    exposed.clear();
+                    exposed.add(mod);
+                  } else {
+                    exposed.add( mod );
+                    Collections.sort( exposed );
+                  }
                 }
                 FormEntryModules.this.notifyTextValueChanged();
               }
@@ -201,9 +214,9 @@ public class FormEntryModules extends FormEntry {
           otherButton.addSelectionListener( new SelectionListener() {
 
             public void widgetSelected( final SelectionEvent e ) {
-              if (!ignoreModify) {
+              if( !ignoreModify ) {
                 String mod = item.getText( NAME_COL );
-                if (other.contains( mod )) {
+                if( other.contains( mod ) ) {
                   other.remove( mod );
                 } else {
                   other.add( mod );
@@ -248,7 +261,8 @@ public class FormEntryModules extends FormEntry {
   }
 
   @Override
-  public synchronized void setValue( final String value, final boolean blockNotification ) {
+  public synchronized void setValue( final String value,
+      final boolean blockNotification ) {
     synchronized( this ) {
       List<String> newValue = getOrderedValue( value );
       if( getValueFrom( newValue ).equals( getValue() ) ) {

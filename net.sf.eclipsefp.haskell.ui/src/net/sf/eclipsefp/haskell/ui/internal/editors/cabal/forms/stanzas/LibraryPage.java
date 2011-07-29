@@ -10,8 +10,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
@@ -27,7 +25,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
-public class LibraryPage extends CabalFormPage implements SelectionListener, IFormEntryListener {
+public class LibraryPage extends CabalFormPage implements SelectionListener {
 
   private Button isALibrary;
   private boolean ignoreModify = false;
@@ -69,8 +67,6 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
     modulesSection = new ModulesLibrarySection( this, top, formEditor, project );
     managedForm.addPart( modulesSection );
     managedForm.addPart( new CompilerOptionsSection( this, top, formEditor, project ) );
-
-    // sourceDirsSection.setListener( this );
 
     toolkit.paintBordersFor( form );
     this.finishedLoading();
@@ -121,28 +117,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
     }
   }
 
-  public void textValueChanged( final FormEntry entry ) {
-    if (this.getPackageDescription() != null) {
-      PackageDescriptionStanza libStanza = this.getPackageDescription().addStanza( CabalSyntax.SECTION_LIBRARY, "" );
-      modulesSection.refreshInput( project, this.getPackageDescription(), libStanza, false );
-    } else {
-      modulesSection.refreshInput( project, this.getPackageDescription(), null, false );
-    }
-  }
-
   public void widgetDefaultSelected( final SelectionEvent e ) {
-    // Do nothing
-  }
-
-  public void focusGained( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void textDirty( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void selectionChanged( final FormEntry entry ) {
     // Do nothing
   }
 }

@@ -27,7 +27,7 @@ public class ModulesLibrarySection extends CabalFormSection implements
 
   ModulesLibrarySection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
-    super( page, parent, editor, UITexts.cabalEditor_exposedModules, project );
+    super( page, parent, editor, UITexts.cabalEditor_modules, project );
   }
 
   @Override
@@ -37,7 +37,7 @@ public class ModulesLibrarySection extends CabalFormSection implements
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    entry = new FormEntryModules( "Exposed" );
+    entry = new FormEntryModules( UITexts.cabalEditor_exposed_modules );
     setCustomFormEntry( entry, CabalSyntax.FIELD_EXPOSED_MODULES, toolkit,
         container );
     GridData entryGD = new GridData( GridData.FILL_BOTH );
@@ -77,6 +77,8 @@ public class ModulesLibrarySection extends CabalFormSection implements
   @Override
   public void setStanza( final PackageDescriptionStanza stanza ) {
     super.setStanza( stanza );
-    entry.setOtherModulesValue( stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() ), true );
+    if (stanza != null) {
+      entry.setOtherModulesValue( stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() ), true );
+    }
   }
 }
