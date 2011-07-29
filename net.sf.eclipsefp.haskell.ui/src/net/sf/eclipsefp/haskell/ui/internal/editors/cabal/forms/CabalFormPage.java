@@ -55,8 +55,8 @@ public abstract class CabalFormPage extends FormPage {
     layout.marginLeft = sideMargin;
     layout.marginRight = sideMargin;
 
-    layout.horizontalSpacing = 20;
-    layout.verticalSpacing = 17;
+    layout.horizontalSpacing = 8; // 15;
+    layout.verticalSpacing = 8; // 12;
     return layout;
   }
 

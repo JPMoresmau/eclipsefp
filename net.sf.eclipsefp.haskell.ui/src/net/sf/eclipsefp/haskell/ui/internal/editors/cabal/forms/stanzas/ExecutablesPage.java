@@ -148,7 +148,7 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
       }
     };
     removeAction.setImageDescriptor( PlatformUI.getWorkbench()
-        .getSharedImages().getImageDescriptor( ISharedImages.IMG_ELCL_REMOVE ) );
+        .getSharedImages().getImageDescriptor( ISharedImages.IMG_TOOL_DELETE ) );
 
     manager.add( addAction );
     manager.add( removeAction );

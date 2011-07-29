@@ -110,7 +110,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
       }
     };
     removeAction.setImageDescriptor( PlatformUI.getWorkbench()
-        .getSharedImages().getImageDescriptor( ISharedImages.IMG_ELCL_REMOVE ) );
+        .getSharedImages().getImageDescriptor( ISharedImages.IMG_TOOL_DELETE ) );
   }
 
   @Override
