@@ -9,86 +9,72 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class CompilerFormEntry extends FormEntry {
 
-  private Composite composite;
   private List compilerList;
-  private Button addButton;
-  private Button removeButton;
+  private Action addAction;
+  private Action removeAction;
 
   @Override
   public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
-    composite = toolkit.createComposite( parent );
-    GridLayout layout = new GridLayout();
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-    layout.numColumns = 2;
-    composite.setLayout( layout );
 
-    compilerList = new List( composite, SWT.SINGLE | SWT.BORDER );
-    toolkit.adapt( compilerList, true, true );
+    compilerList = new List( parent, SWT.SINGLE );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;
     listGD.grabExcessVerticalSpace = true;
     listGD.verticalSpan = 2;
     compilerList.setLayoutData( listGD );
+    toolkit.adapt( compilerList, true, true );
+    compilerList.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 
-    Composite buttonComposite = toolkit.createComposite( composite );
-    GridLayout buttonLayout = new GridLayout();
-    buttonLayout.marginHeight = 0;
-    buttonLayout.marginWidth = 0;
-    buttonLayout.numColumns = 1;
-    buttonLayout.makeColumnsEqualWidth = true;
-    buttonComposite.setLayout( buttonLayout );
-
-    addButton = toolkit.createButton( buttonComposite, UITexts.cabalEditor_add,
-        SWT.NONE );
-    addButton.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    addButton.addSelectionListener( new SelectionAdapter() {
+    addAction = new Action( UITexts.cabalEditor_add, IAction.AS_PUSH_BUTTON ) {
 
       @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        ChooseCompilerDialog dialog = new ChooseCompilerDialog( composite
+      public void run() {
+        ChooseCompilerDialog dialog = new ChooseCompilerDialog( compilerList
             .getShell() );
         if( dialog.open() == Window.OK ) {
           compilerList.add( dialog.getValue() );
           CompilerFormEntry.this.notifyTextValueChanged();
         }
       }
-    } );
+    };
+    addAction.setImageDescriptor( PlatformUI.getWorkbench().getSharedImages()
+        .getImageDescriptor( ISharedImages.IMG_OBJ_ADD ) );
 
-    removeButton = toolkit.createButton( buttonComposite, UITexts.cabalEditor_remove,
-        SWT.NONE );
-    removeButton.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    removeButton.addSelectionListener( new SelectionAdapter() {
+    removeAction = new Action( UITexts.cabalEditor_remove,
+        IAction.AS_PUSH_BUTTON ) {
 
       @Override
-      public void widgetSelected( final SelectionEvent e ) {
+      public void run() {
+        // Remove the selected elements
         if( compilerList.getSelectionIndices().length > 0 ) {
           compilerList.remove( compilerList.getSelectionIndices() );
           CompilerFormEntry.this.notifyTextValueChanged();
         }
       }
-    } );
+    };
+    removeAction.setImageDescriptor( PlatformUI.getWorkbench()
+        .getSharedImages().getImageDescriptor( ISharedImages.IMG_ELCL_REMOVE ) );
   }
 
   @Override
   public Control getControl() {
-    return composite;
+    return compilerList;
   }
 
   @Override
@@ -132,8 +118,14 @@ public class CompilerFormEntry extends FormEntry {
   @Override
   public void setEditable( final boolean editable ) {
     compilerList.setEnabled( editable );
-    addButton.setEnabled( editable );
-    removeButton.setEnabled( editable );
+  }
+
+  public Action getAddAction() {
+    return addAction;
+  }
+
+  public Action getRemoveAction() {
+    return removeAction;
   }
 
 }

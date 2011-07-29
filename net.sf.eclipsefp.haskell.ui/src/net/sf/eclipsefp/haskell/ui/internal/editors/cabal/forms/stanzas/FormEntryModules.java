@@ -89,7 +89,7 @@ public class FormEntryModules extends FormEntry {
 
   @Override
   public int heightHint() {
-    return 200;
+    return 170;
   }
 
   @SuppressWarnings ( "unchecked" )
@@ -99,7 +99,15 @@ public class FormEntryModules extends FormEntry {
       if( root == null ) {
         // If we have no data
         table.clearAll();
-
+        for( Button b: exposedBoxes.values() ) {
+          b.dispose();
+        }
+        exposedBoxes.clear();
+        for( Button b: otherBoxes.values() ) {
+          b.dispose();
+        }
+        otherBoxes.clear();
+        prevElements.clear();
         return;
       }
 
@@ -123,10 +131,10 @@ public class FormEntryModules extends FormEntry {
 
       PackageDescriptionStanza pkg = root.getDescription().getPackageStanza();
       if( pkg != null ) {
-        if( pkg.getProperties().containsKey( CabalSyntax.FIELD_DATA_FILES ) ) {
+        if( pkg.getProperties().containsKey( CabalSyntax.FIELD_DATA_FILES.getCabalName() ) ) {
           // There are data files, so Paths_package is also provided
           modules.add( "Paths_"
-              + pkg.getProperties().get( CabalSyntax.FIELD_NAME ) );
+              + pkg.getProperties().get( CabalSyntax.FIELD_NAME.getCabalName() ) );
         }
       }
 
@@ -274,7 +282,9 @@ public class FormEntryModules extends FormEntry {
       exposed.clear();
       for( TableItem item: table.getItems() ) {
         String mod = item.getText( NAME_COL );
-        exposedBoxes.get( mod ).setSelection( newValue.contains( mod ) );
+        if (exposedBoxes.containsKey( mod )) {
+          exposedBoxes.get( mod ).setSelection( newValue.contains( mod ) );
+        }
         if( newValue.contains( mod ) ) {
           exposed.add( mod );
         }
@@ -300,7 +310,9 @@ public class FormEntryModules extends FormEntry {
       other.clear();
       for( TableItem item: table.getItems() ) {
         String mod = item.getText( NAME_COL );
-        otherBoxes.get( mod ).setSelection( newValue.contains( mod ) );
+        if (otherBoxes.containsKey( mod )) {
+          otherBoxes.get( mod ).setSelection( newValue.contains( mod ) );
+        }
         if( newValue.contains( mod ) ) {
           other.add( mod );
         }
@@ -335,6 +347,9 @@ public class FormEntryModules extends FormEntry {
 
   @Override
   public void setEditable( final boolean editable ) {
+    if (!editable) {
+      setSourceFolders( null, true );
+    }
     table.setEnabled( editable );
   }
 

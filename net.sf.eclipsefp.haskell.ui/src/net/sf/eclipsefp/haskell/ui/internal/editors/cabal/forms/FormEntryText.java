@@ -50,7 +50,7 @@ public class FormEntryText extends FormEntry {
   @Override
   public int heightHint() {
     // Make more space for multiline editors
-    return ( this.textField.getStyle() & SWT.MULTI ) > 0 ? 60 : 15;
+    return ( this.textField.getStyle() & SWT.MULTI ) > 0 ? 45 : 15;
   }
 
   @Override

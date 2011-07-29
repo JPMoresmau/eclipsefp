@@ -35,6 +35,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener {
     super( editor, LibraryPage.class.getName(), UITexts.cabalEditor_library, project );
   }
 
+  DependenciesSection depsSection;
   SourceDirsSection sourceDirsSection;
   ModulesLibrarySection modulesSection;
 
@@ -48,24 +49,33 @@ public class LibraryPage extends CabalFormPage implements SelectionListener {
 
     form.getBody().setLayout( createGridLayout( 1, 6, 12 ) );
     Composite top = toolkit.createComposite( form.getBody() );
-    top.setLayout( createGridLayout( 2, 0, 0 ) );
+    top.setLayout( createGridLayout( 3, 0, 0 ) );
     top.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 
     isALibrary = toolkit.createButton( top, UITexts.cabalEditor_isALibrary, SWT.CHECK );
     GridData isLibGD = new GridData();
-    isLibGD.horizontalSpan = 2;
+    isLibGD.horizontalSpan = 3;
     isLibGD.grabExcessHorizontalSpace = true;
     isLibGD.heightHint = 15;
-    isLibGD.widthHint = 200;
+    // isLibGD.widthHint = 200;
     isALibrary.setLayoutData( isLibGD );
     isALibrary.addSelectionListener( this );
 
     formEditor = ( CabalFormEditor )getEditor();
-    managedForm.addPart( new DependenciesSection( this, top, formEditor, project ) );
-    sourceDirsSection = new SourceDirsSection( this, top, formEditor, project );
-    managedForm.addPart( sourceDirsSection );
+    depsSection = new DependenciesSection( this, top, formEditor, project );
+    managedForm.addPart( depsSection );
+    GridData depsGD = new GridData(GridData.FILL_BOTH);
+    depsGD.verticalSpan = 2;
+    depsGD.grabExcessVerticalSpace = true;
+    depsSection.getSection().setLayoutData( depsGD );
     modulesSection = new ModulesLibrarySection( this, top, formEditor, project );
     managedForm.addPart( modulesSection );
+    GridData modulesGD = new GridData(GridData.FILL_BOTH);
+    modulesGD.verticalSpan = 2;
+    modulesGD.grabExcessVerticalSpace = true;
+    modulesSection.getSection().setLayoutData( modulesGD );
+    sourceDirsSection = new SourceDirsSection( this, top, formEditor, project );
+    managedForm.addPart( sourceDirsSection );
     managedForm.addPart( new CompilerOptionsSection( this, top, formEditor, project ) );
 
     toolkit.paintBordersFor( form );
