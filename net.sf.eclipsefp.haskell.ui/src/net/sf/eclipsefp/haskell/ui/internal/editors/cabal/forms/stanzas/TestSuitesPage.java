@@ -84,7 +84,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         CabalSyntax.SECTION_TESTSUITE, name );
     stanza.setIndent( 2 );
     stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
-    stanza.update( CabalSyntax.FIELD_X_TEST_FRAMEWORK, "true" );
+    stanza.update( CabalSyntax.FIELD_X_USES_TEST_FRAMEWORK, "true" );
     stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4, HUnit >= 1.2 && < 2, QuickCheck >= 2.4, test-framework >= 0.4.1, test-framework-quickcheck2, test-framework-hunit" );
     stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
     stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );

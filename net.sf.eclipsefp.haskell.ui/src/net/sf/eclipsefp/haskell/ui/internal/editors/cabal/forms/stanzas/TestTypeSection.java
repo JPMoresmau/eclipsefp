@@ -29,6 +29,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 class TestTypeSection extends CabalFormSection implements IFormEntryListener {
 
   FormEntryCombo<TestSuiteType> choice;
+  FormEntry checkbox;
 
   TestTypeSection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
@@ -50,7 +51,7 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
 
     choice.addFormEntryListener( this );
 
-    createCheckBoxEntry( CabalSyntax.FIELD_X_TEST_FRAMEWORK,
+    checkbox = createCheckBoxEntry( CabalSyntax.FIELD_X_USES_TEST_FRAMEWORK,
         UITexts.cabalEditor_isTestFrameworkTestSuite, toolkit, container );
 
     toolkit.paintBordersFor( container );
@@ -65,6 +66,7 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
         .equals( CabalSyntax.VALUE_DETAILED_0_9.getCabalName() ) ) {
       deletedElement = CabalSyntax.FIELD_MAIN_IS;
       addedElement = CabalSyntax.FIELD_TEST_MODULE;
+
     } else if( fEntry.getValue().equals(
         CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() ) ) {
       deletedElement = CabalSyntax.FIELD_TEST_MODULE;
