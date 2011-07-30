@@ -70,8 +70,10 @@ public enum CabalSyntax {
   FIELD_CPP_OPTIONS("cpp-options"),//$NON-NLS-1$
   FIELD_TEST_MODULE("test-module"),//$NON-NLS-1$
 
+  FIELD_X_TEST_FRAMEWORK("x-test-framework"),//$NON-NLS-1$
+
   VALUE_EXITCODE_STDIO_1_0("exitcode-stdio-1.0",CabalSyntaxType.VALUE),//$NON-NLS-1$
-  VALUE_DETAILED_1_0("detailed-1.0",CabalSyntaxType.VALUE),//$NON-NLS-1$
+  VALUE_DETAILED_0_9("detailed-0.9",CabalSyntaxType.VALUE),//$NON-NLS-1$
 
   ;
 

@@ -82,6 +82,11 @@ public class FormEntryModules extends FormEntry {
     nameCol.pack();
   }
 
+  public void changeExposedColumnName( final String newName ) {
+    TableColumn exposedCol = table.getColumn( EXPOSED_COL );
+    exposedCol.setText( newName );
+  }
+
   @Override
   public Control getControl() {
     return table;

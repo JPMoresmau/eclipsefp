@@ -44,7 +44,8 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
 
   DependenciesSection depsSection;
   SourceDirsSection sourceDirsSection;
-  ModulesExecutableSection modulesSection;
+  ModulesTestSuiteSection modulesSection;
+  TestTypeSection typeSection;
 
   String nextSelected = null;
 
@@ -164,17 +165,19 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     depsSection = new DependenciesSection( this, right, formEditor, project );
     managedForm.addPart( depsSection );
     GridData depsGD = new GridData(GridData.FILL_BOTH);
-    depsGD.verticalSpan = 2;
+    depsGD.verticalSpan = 3;
     depsGD.grabExcessVerticalSpace = true;
     depsSection.getSection().setLayoutData( depsGD );
 
-    modulesSection = new ModulesExecutableSection( this, right, formEditor, project );
+    modulesSection = new ModulesTestSuiteSection( this, right, formEditor, project );
     managedForm.addPart( modulesSection );
     GridData modulesGD = new GridData(GridData.FILL_BOTH);
-    modulesGD.verticalSpan = 2;
+    modulesGD.verticalSpan = 3;
     modulesGD.grabExcessVerticalSpace = true;
     modulesSection.getSection().setLayoutData( modulesGD );
 
+    typeSection = new TestTypeSection( this, right, formEditor, project );
+    managedForm.addPart( typeSection );
     sourceDirsSection = new SourceDirsSection( this, right, formEditor, project );
     managedForm.addPart( sourceDirsSection );
     managedForm.addPart( new CompilerOptionsSection( this, right, formEditor, project ) );
