@@ -5,11 +5,12 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 
 
 public enum TestSuiteType {
-  Stdio (CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName(), "Executable (exitcode-stdio runner)"),
-  Detailed (CabalSyntax.VALUE_DETAILED_0_9.getCabalName(), "Module (detailed runner)");
+  Stdio (CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName(), UITexts.cabalEditor_stdioTestSuite),
+  Detailed (CabalSyntax.VALUE_DETAILED_0_9.getCabalName(), UITexts.cabalEditor_detailedTestSuite);
 
   String cabalName;
   String shownName;

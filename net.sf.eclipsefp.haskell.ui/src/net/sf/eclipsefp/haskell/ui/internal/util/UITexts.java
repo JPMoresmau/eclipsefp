@@ -475,6 +475,7 @@ public final class UITexts extends NLS {
   public static String cabalEditor_detailedTestSuite;
   public static String cabalEditor_stdioTestSuite;
   public static String cabalEditor_testFrameworkTestSuite;
+  public static String cabalEditor_isTestFrameworkTestSuite;
 
   public static String renameParticipant_title;
   public static String moveParticipant_title;

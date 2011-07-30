@@ -38,8 +38,8 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
   @Override
   protected void createClient( final FormToolkit toolkit ) {
     Composite container = toolkit.createComposite( getSection() );
-    container.setLayout( new GridLayout( 2, false ) );
-    GridData data = new GridData( GridData.FILL_BOTH );
+    container.setLayout( new GridLayout( 1, false ) );
+    GridData data = new GridData( GridData.FILL_HORIZONTAL );
     getSection().setLayoutData( data );
 
     choice = new FormEntryCombo<TestSuiteType>( new TestSuiteTypeChoice() );
@@ -49,6 +49,9 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
     choice.getControl().setLayoutData( entryGD );
 
     choice.addFormEntryListener( this );
+
+    createCheckBoxEntry( CabalSyntax.FIELD_X_TEST_FRAMEWORK,
+        UITexts.cabalEditor_isTestFrameworkTestSuite, toolkit, container );
 
     toolkit.paintBordersFor( container );
     getSection().setClient( container );

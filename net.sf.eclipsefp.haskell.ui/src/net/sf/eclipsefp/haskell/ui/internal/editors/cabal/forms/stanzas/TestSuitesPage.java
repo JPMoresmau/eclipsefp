@@ -14,6 +14,8 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -24,7 +26,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -53,12 +57,35 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     super( editor, TestSuitesPage.class.getName(), UITexts.cabalEditor_testSuites, project );
   }
 
-  public PackageDescriptionStanza createNewStanza(final PackageDescription desc, final String name) {
+  public PackageDescriptionStanza createNewStdioStanza(final PackageDescription desc, final String name) {
     PackageDescriptionStanza stanza = desc.addStanza(
-        CabalSyntax.SECTION_EXECUTABLE, name );
+        CabalSyntax.SECTION_TESTSUITE, name );
     stanza.setIndent( 2 );
     stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
     stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
+    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );
+    return stanza;
+  }
+
+  public PackageDescriptionStanza createNewDetailedStanza(final PackageDescription desc, final String name) {
+    PackageDescriptionStanza stanza = desc.addStanza(
+        CabalSyntax.SECTION_TESTSUITE, name );
+    stanza.setIndent( 2 );
+    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_DETAILED_0_9.getCabalName() );
+    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
+    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" );
+    return stanza;
+  }
+
+  public PackageDescriptionStanza createNewTestFrameworkStanza(final PackageDescription desc, final String name) {
+    PackageDescriptionStanza stanza = desc.addStanza(
+        CabalSyntax.SECTION_TESTSUITE, name );
+    stanza.setIndent( 2 );
+    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
+    stanza.update( CabalSyntax.FIELD_X_TEST_FRAMEWORK, "true" );
+    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4, HUnit >= 1.2 && < 2, QuickCheck >= 2.4, test-framework >= 0.4.1, test-framework-quickcheck2, test-framework-hunit" );
     stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
     stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );
     return stanza;
@@ -104,7 +131,13 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     execsList.setData( FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER );
     toolkit.adapt( execsList, true, true );
 
-    Action addAction = new Action( UITexts.cabalEditor_add, IAction.AS_PUSH_BUTTON ) {
+    Action addAction = new Action( UITexts.cabalEditor_add, IAction.AS_DROP_DOWN_MENU ) {
+      // Nothing here
+    };
+    addAction.setImageDescriptor( PlatformUI.getWorkbench().getSharedImages()
+        .getImageDescriptor( ISharedImages.IMG_OBJ_ADD ) );
+
+    final Action addStdioAction = new Action( UITexts.cabalEditor_stdioTestSuite, IAction.AS_PUSH_BUTTON ) {
 
       @Override
       public void run() {
@@ -129,14 +162,102 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         if (dialog.open() == Window.OK) {
           PackageDescription lastDescription = formEditor.getPackageDescription();
           String execName = dialog.getValue().trim();
-          createNewStanza( lastDescription, execName );
+          createNewStdioStanza( lastDescription, execName );
           nextSelected = execName;
           formEditor.getModel().set( lastDescription.dump() );
         }
       }
     };
-    addAction.setImageDescriptor( PlatformUI.getWorkbench().getSharedImages()
-        .getImageDescriptor( ISharedImages.IMG_OBJ_ADD ) );
+    final Action addDetailedAction = new Action( UITexts.cabalEditor_detailedTestSuite, IAction.AS_PUSH_BUTTON ) {
+
+      @Override
+      public void run() {
+        InputDialog dialog = new InputDialog( execsList.getShell(),
+            UITexts.cabalEditor_newTestSuiteString,
+            UITexts.cabalEditor_newTestSuiteString,
+            "", new IInputValidator() {
+
+              public String isValid( final String newText ) {
+                String value = newText.trim();
+                if (value.length()==0) {
+                  return UITexts.cabalEditor_newTestSuiteBlankError;
+                }
+                for (String s : execsList.getItems()) {
+                  if (s.equals( value )) {
+                    return UITexts.cabalEditor_newTestSuiteAlreadyExistsError;
+                  }
+                }
+                return null;
+              }
+            } );
+        if (dialog.open() == Window.OK) {
+          PackageDescription lastDescription = formEditor.getPackageDescription();
+          String execName = dialog.getValue().trim();
+          createNewDetailedStanza( lastDescription, execName );
+          nextSelected = execName;
+          formEditor.getModel().set( lastDescription.dump() );
+        }
+      }
+    };
+    final Action addTestFrameworkAction = new Action( UITexts.cabalEditor_testFrameworkTestSuite, IAction.AS_PUSH_BUTTON ) {
+
+      @Override
+      public void run() {
+        InputDialog dialog = new InputDialog( execsList.getShell(),
+            UITexts.cabalEditor_newTestSuiteString,
+            UITexts.cabalEditor_newTestSuiteString,
+            "", new IInputValidator() {
+
+              public String isValid( final String newText ) {
+                String value = newText.trim();
+                if (value.length()==0) {
+                  return UITexts.cabalEditor_newTestSuiteBlankError;
+                }
+                for (String s : execsList.getItems()) {
+                  if (s.equals( value )) {
+                    return UITexts.cabalEditor_newTestSuiteAlreadyExistsError;
+                  }
+                }
+                return null;
+              }
+            } );
+        if (dialog.open() == Window.OK) {
+          PackageDescription lastDescription = formEditor.getPackageDescription();
+          String execName = dialog.getValue().trim();
+          createNewTestFrameworkStanza( lastDescription, execName );
+          nextSelected = execName;
+          formEditor.getModel().set( lastDescription.dump() );
+        }
+      }
+    };
+
+    addAction.setMenuCreator( new IMenuCreator() {
+
+      Menu menu;
+      MenuManager menuManager;
+
+      public Menu getMenu( final Menu parent ) {
+        // Not expected
+        return null;
+      }
+
+      public Menu getMenu( final Control parent ) {
+        menuManager = new MenuManager();
+        menu = menuManager.createContextMenu( parent );
+
+        menuManager.add( addTestFrameworkAction );
+        menuManager.add( addStdioAction );
+        menuManager.add( addDetailedAction );
+
+        menuManager.update( true );
+
+        return menu;
+      }
+
+      public void dispose() {
+        menuManager.dispose();
+      }
+    } );
 
     Action removeAction = new Action( UITexts.cabalEditor_remove,
         IAction.AS_PUSH_BUTTON ) {

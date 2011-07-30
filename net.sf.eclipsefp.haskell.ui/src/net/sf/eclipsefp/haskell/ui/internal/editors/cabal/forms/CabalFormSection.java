@@ -124,6 +124,12 @@ public abstract class CabalFormSection extends SectionPart {
     return entry;
   }
 
+  protected FormEntry createCheckBoxEntry (final CabalSyntax property, final String title, final FormToolkit toolkit, final Composite container) {
+    FormEntryCheckBox entry = new FormEntryCheckBox( title );
+    setCustomFormEntry( entry, property, toolkit, container );
+    return entry;
+  }
+
   protected void setCustomFormEntry (final FormEntry entry, final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
     entry.init( project, container, toolkit, SWT.NONE );
     entry.setProperty( property );
