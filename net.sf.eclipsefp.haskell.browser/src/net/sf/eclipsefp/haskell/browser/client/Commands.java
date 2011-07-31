@@ -139,4 +139,10 @@ public class Commands {
 		
 		return aResults.toArray(new HoogleResult[jResults.length()]);
 	}
+	
+	public static JSONObject createDownloadHoogleData() throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "hoogle-data");
+		return o;
+	}
 }

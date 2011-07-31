@@ -110,6 +110,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     }
   }
 
+  @SuppressWarnings ( "unchecked" )
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
 
@@ -121,12 +122,12 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
     // Try to find element to show
     HoogleResult result = null;
-    if (o instanceof HoogleResult) {
-      result = (HoogleResult)o;
+    if( o instanceof HoogleResult ) {
+      result = ( HoogleResult )o;
     } else {
-      Map.Entry<String, Object> entry = (Map.Entry<String, Object>)o;
-      if (entry.getValue() instanceof HoogleResult) {
-        result = (HoogleResult)entry.getValue();
+      Map.Entry<String, Object> entry = ( Map.Entry<String, Object> )o;
+      if( entry.getValue() instanceof HoogleResult ) {
+        result = ( HoogleResult )entry.getValue();
       }
     }
 
@@ -140,10 +141,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
           break;
         case MODULE:
           HoogleResultModule mod = ( HoogleResultModule )result;
-          text = HtmlUtil
-              .generateDocument( "module " + mod.getName(), mod
-                  .getPackageIdentifiers(), null, false, mod.getModule()
-                  .getDoc() );
+          text = HtmlUtil.generateDocument( "module " + mod.getName(), mod
+              .getPackageIdentifiers(), null, false, mod.getModule().getDoc() );
           break;
         case DECLARATION:
           HoogleResultDeclaration decl = ( HoogleResultDeclaration )result;
@@ -161,10 +160,12 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
       doc.setText( text );
     } else {
-      doc.setText( HtmlUtil.generateText( UITexts.browser_definedInSeveralLocations ) );
+      doc.setText( HtmlUtil
+          .generateText( UITexts.browser_definedInSeveralLocations ) );
     }
   }
 
+  @SuppressWarnings ( "unchecked" )
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
@@ -174,51 +175,54 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
     // Try to find element to show
     HoogleResult result = null;
-    if (o instanceof HoogleResult) {
-      result = (HoogleResult)o;
+    if( o instanceof HoogleResult ) {
+      result = ( HoogleResult )o;
     } else {
-      Map.Entry<String, Object> entry = (Map.Entry<String, Object>)o;
-      if (entry.getValue() instanceof HoogleResult) {
-        result = (HoogleResult)entry.getValue();
+      Map.Entry<String, Object> entry = ( Map.Entry<String, Object> )o;
+      if( entry.getValue() instanceof HoogleResult ) {
+        result = ( HoogleResult )entry.getValue();
       } else {
         // Show the first one (better than nothing)
-        result = ((ArrayList<HoogleResult>)entry.getValue()).get( 0 );
+        result = ( ( ArrayList<HoogleResult> )entry.getValue() ).get( 0 );
       }
     }
 
     String url = null;
-    switch (result.getType()) {
+    switch( result.getType() ) {
       case PACKAGE:
-        HoogleResultPackage pkg = (HoogleResultPackage)result;
+        HoogleResultPackage pkg = ( HoogleResultPackage )result;
         url = HtmlUtil.generatePackageUrl( pkg.getPackage().getIdentifier() );
         break;
       case MODULE:
-        HoogleResultModule mod = (HoogleResultModule)result;
-        url = HtmlUtil.generateModuleUrl( mod.getPackageIdentifiers().get(0), mod.getName() );
+        HoogleResultModule mod = ( HoogleResultModule )result;
+        url = HtmlUtil.generateModuleUrl( mod.getPackageIdentifiers().get( 0 ),
+            mod.getName() );
         break;
       case CONSTRUCTOR:
-        HoogleResultConstructor con = (HoogleResultConstructor)result;
-        url = HtmlUtil.generateElementUrl( con.getPackageIdentifiers().get( 0 ),
-            con.getModule(), true, con.getName() );
+        HoogleResultConstructor con = ( HoogleResultConstructor )result;
+        url = HtmlUtil.generateElementUrl(
+            con.getPackageIdentifiers().get( 0 ), con.getModule(), true,
+            con.getName() );
         break;
       case DECLARATION:
-        HoogleResultDeclaration decl = (HoogleResultDeclaration)result;
-        url = HtmlUtil.generateElementUrl( decl.getPackageIdentifiers().get( 0 ),
-            decl.getModule(), decl.getDeclaration().getType() == DeclarationType.FUNCTION,
-            decl.getName() );
+        HoogleResultDeclaration decl = ( HoogleResultDeclaration )result;
+        url = HtmlUtil.generateElementUrl(
+            decl.getPackageIdentifiers().get( 0 ), decl.getModule(), decl
+                .getDeclaration().getType() == DeclarationType.FUNCTION, decl
+                .getName() );
         break;
     }
 
     // Open browser
-    if (url != null) {
+    if( url != null ) {
       try {
         IWorkbenchBrowserSupport browserSupport = this.getSite()
             .getWorkbenchWindow().getWorkbench().getBrowserSupport();
         URL webUrl = new URL( url );
         IWebBrowser browser = browserSupport.createBrowser(
             IWorkbenchBrowserSupport.AS_EDITOR
-                | IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
-            "Haskell Browser" );
+                | IWorkbenchBrowserSupport.LOCATION_BAR, null,
+            "Haskell Browser", "Haskell Browser" );
         browser.openURL( webUrl );
       } catch( Throwable ex ) {
         // Do nothing

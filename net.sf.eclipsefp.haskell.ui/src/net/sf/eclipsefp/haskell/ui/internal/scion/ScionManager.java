@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -457,6 +459,49 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         browserExecutablePath = null;
         BrowserPlugin.useNullSharedInstance();
       }
+    }
+  }
+
+  void checkHoogleDataIsPresent() {
+    boolean rebuild = false;
+    try {
+      BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL,
+          null );
+      // We know that "fmap" is always present
+      HoogleResult[] mapResults = BrowserPlugin.getSharedInstance()
+          .queryHoogle( "fmap" );
+      rebuild = mapResults.length == 0;
+    } catch( Exception e ) {
+      rebuild = true;
+    }
+    if( rebuild ) {
+      // There is no "fmap", we don't have a database
+      final Display display = Display.getDefault();
+
+      display.asyncExec( new Runnable() {
+
+        public void run() {
+          // needs ui thread
+          Shell parentShell = display.getActiveShell();
+          if( MessageDialog
+              .openQuestion(
+                  parentShell,
+                  UITexts.hoogle_dataNotPresent_title,
+                  UITexts.hoogle_dataNotPresent_message ) ) {
+            display.asyncExec( new Runnable() {
+
+              public void run() {
+                Job builder = new HoogleDownloadDataJob(
+                    UITexts.hoogle_downloadingData );
+                builder.setPriority( Job.BUILD );
+                builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+                builder.setUser( true );
+                builder.schedule();
+              }
+            } );
+          }
+        }
+      } );
     }
   }
 
@@ -1097,7 +1142,9 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       addJobChangeListener( new JobChangeAdapter() {
         @Override
         public void done( final IJobChangeEvent event ) {
-          if (!event.getResult().isOK()) {
+          if (event.getResult().isOK()) {
+            checkHoogleDataIsPresent();
+          } else {
             Display.getDefault().syncExec( new Runnable() {
               public void run() {
                 MessageDialog.openError( Display.getDefault().getActiveShell(),
@@ -1119,6 +1166,31 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       monitor.done();
 
       return status;
+    }
+  }
+
+  /** Specialized Job class that manages downloading Hoogle data.
+   *  Based in the work of B. Scott Michel.
+   *
+    * @author B. Alejandro Serrano
+   */
+  public class HoogleDownloadDataJob extends Job {
+
+    public HoogleDownloadDataJob( final String jobTitle ) {
+      super( jobTitle );
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.hoogle_downloadingData, IProgressMonitor.UNKNOWN );
+      try {
+        BrowserPlugin.getSharedInstance().downloadHoogleData();
+      } catch( Exception e ) {
+        // Do nothing if fails
+      }
+      monitor.done();
+
+      return Status.OK_STATUS;
     }
   }
 }

@@ -490,6 +490,10 @@ public final class UITexts extends NLS {
   public static String runSourceGraph_error;
   public static String runSourceGraph_errorTitle;
 
+  public static String hoogle_downloadingData;
+  public static String hoogle_dataNotPresent_title;
+  public static String hoogle_dataNotPresent_message;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {

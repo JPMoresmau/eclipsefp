@@ -70,6 +70,11 @@ public class NullBrowserServer extends BrowserServer {
 		// Return nothing
 		return new HoogleResult[0];
 	}
+	
+	@Override
+	public void downloadHoogleData() {
+		// Do nothing
+	}
 
 	@Override
 	public void stop() {
