@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.junit.JUnitCore;
+import org.eclipse.jdt.internal.junit.model.JUnitModel;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -67,11 +67,7 @@ public class TestSuiteHaskellLaunchDelegate extends
     // Get file and parse output
     final String fname = getFilename();
     final File file = new File( fname );
-    /* try {
-      TestSuiteBeautifier.beuatify( file );
-    } catch (Exception e) {
-      // Do nothing
-    }*/
+    // final TestSuiteAndSession session = TestSuiteAndSession.parseFile( file );
 
     Display.getDefault().syncExec( new Runnable() {
 
@@ -80,7 +76,8 @@ public class TestSuiteHaskellLaunchDelegate extends
           IWorkbenchPage page = PlatformUI.getWorkbench()
               .getActiveWorkbenchWindow().getActivePage();
           page.showView( JUNIT_VIEW );
-          JUnitCore.importTestRunSession( file );
+          // JUnitCorePlugin.getModel().addTestRunSession( session );
+          JUnitModel.importTestRunSession( file );
         } catch( CoreException e ) {
           // Do nothing
         }
