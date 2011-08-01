@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Haskell" topic="html/overview.html">
+<toc label="Haskell Plug-in User Guide" topic="html/overview.html">
   <topic label="Installation steps" href="html/installation.html"/>
   <topic label="Getting Started" href="html/gettingStarted.html"/>
   <topic label="User Guide" href="html/userGuide/userGuide.html">
     <topic label="Haskell Editor" 
            href="html/userGuide/editor.html"/>      
-    <topic label="Cabal Package Description Editor" 
+    <topic label="Cabal Editor" 
            href="html/userGuide/cabaleditor.html"/>      
-    <topic label="Compilers and Interpreters" 
+    
+    <topic href="html/userGuide/runningPrograms.html" label="Running">
+       <topic href="html/userGuide/debugging.html" label="Debugging">
+       </topic>
+       <topic href="html/userGuide/profiling.html" label="Profiling">
+       </topic>
+       <topic href="html/userGuide/testing.html" label="Testing (Test-framework)">
+       </topic>
+       <topic label="Compilers and Interpreters" 
            href="html/userGuide/compilersInterpreters.html"/>
+    </topic>
     <topic label="Generating documentation (Haddock)" 
            href="html/userGuide/haddock.html"/>
+    <topic href="html/userGuide/sourcegraph.html" label="Code analysis (SourceGraph)">
+    </topic>
+    <topic href="html/userGuide/browser.html" label="Haskell Browser">
+    </topic>
   </topic>
   <topic label="Tips and tricks" href="html/tips/tips.html"/>
   <topic label="What's new" href="html/whatsnew/whatsnew.html"/>

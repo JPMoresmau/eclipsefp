@@ -1,12 +1,79 @@
-<h2>Cabal Package Description Editor</h2>
+<html>
+<head>
+<link rel="stylesheet" href="../../../PRODUCT_PLUGIN/book.css" type="text/css"> 
+</head>
+
+<body>
+
+<h1>Cabal Package Description Editor</h1>
 
 <p>Building projects in Eclipse relies on the 
-Haskell <a href="http://haskell.org/cabal">Cabal</a>, and to allow you to easily view and modify your project's cabal file,
-there is an editor that supports Cabal's package description files.</p>
+Haskell <a href="http://haskell.org/cabal">Cabal</a>, and to allow you to easily view and
+modify your project's Cabal file, there is an editor that supports Cabal's package description files.</p>
 
-<p>That editor provides syntax coloring, code folding, a page for the Outline
-View, and makes also some templates available that let you easily create
-a new Cabal package description.</p>
+<p>Note that saving changes to the Cabal file will trigger a rebuild of the project.</p>
+
+<h3>Package</h3>
+
+<p>In the <b>Package</b> you can change the Cabal properties that affect the entire project.
+This includes descriptive properties such as project name, version, author, maintainer, license, 
+description, homepage; and also properties that affect the build, such as minimal Cabal version.</p>
+
+<h4>Data files</h4>
+
+<p>Some packages need to access data files during its execution. The way Cabal has to deal with them
+can be configured in the Cabal editor:
+<ul>
+<li>Choose the files that will be available,</li>
+<li>This will create a new <code>Paths_&lt;package&gt</code> module which tells the paths to
+the files in the installed system,</li>
+<li>Remember to include this module in the <i>Other</i> section for each component that will 
+need access to the data files.</li>
+</ul>
+</p>
+
+<h3>Components</h3>
+
+<p>Cabal deals with three kinds of components, that is, objects created from the source code.
+Those kinds are libraries, executables and test suites, and can be configured thorugh their
+respective tab in the Cabal editor.</p>
+
+<p>In general, there are four configuration sections for each component:
+<ul>
+<li>
+<i>Dependencies</i>: which include information of other packages needed to build the project.<br />
+You can add new dependencies clicking the <b>+</b> button. This will open a new window with
+the list of packages currently installed in your system.<br />
+If you want, you can add a version requirement using the <i>Version</i> column in the table.<br />
+</li>
+<li><i>Modules</i>: which tell the modules to gather to create the component. Each module can be
+in three different states: unselected; with the first column selected, that will expose the module
+(when editing a library) or will use it as entry point (when editing an executable or test suite);
+or with the second column selected, which will say that the module is a companion module.</li>
+<li><i>Source folders</i>: allow you to tell where the project files are located. When creating
+a new project, a <code>src</code> folder will be created, and it's recommended to place your
+files in that folder.</li>
+<li><i>Compiler options</i>: allow you to set flags or enable certain language extensions. Currently,
+this section only applies to GHC.</li>
+</ul>
+</p>
+
+<p>Each project can have at most one library. You can decide whether or not to build one in the
+<i>Library</i> tab.
+</p>
+
+<p>On the other hand, the <i>Executables</i> and <i>Test suites</i> tabs allow to have as many components
+as you want for that type. On the left of the window you will find the list of components that you
+already have in your project. You can add more clicking the <b>+</b> button above the list.</p>
+
+<p>For test suites, you can also select the type of test you are creating. Currently ony executable
+tests that use Test-framework can be run withing EclipseFP.</p>
+
+
+<h3>Source</h3>
+
+<p>The source tab provides and editor with syntax coloring, code folding, and makes also some
+ templates available that let you easily create a new Cabal package description.</p>
 
 <p>The editor is by default registered for the file extension 
 <code>.cabal</code>. To trigger a template, hit <code>Control+SPACE</code>
@@ -15,5 +82,3 @@ at any (non-comment) position in such a file. For some entries (e.g. the
 key and point with the mouse on the value - the entry is then changed into
 a link that takes you directly to the referenced file (if it exists) when
 you click on it.</p>
-
-<p>Note that saving changes to the Cabal file will trigger a rebuild of the project.</p>

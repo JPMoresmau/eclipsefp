@@ -1,0 +1,50 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../PRODUCT_PLUGIN/book.css" type="text/css"> 
+</head>
+
+<body>
+
+<h1>Haskell Browser</h1>
+
+<p>The Haskell Browser provides several ways to inspect the packages available in
+your system and read the documentation for their modules. To start using it, you must
+open the <i>Haskell Browser</i> perspective by either goint to
+<b>Window &gt; Open Perspective &gt; Other...</b> or clicking the <b>+</b> button
+in the upper right corner and selecting <b>Haskell Browser</b> from the list
+that will appear.</p>
+
+<p>You will see four views in the top part of Eclipse, named <i>Packages</i>,
+<i>Modules</i>, <i>Types</i> and <i>Functions</i>. In each of it, clicking an item
+will show its documentation in the bottom part of the corresponding view, and
+double-clicking it will open a window with Hackage documentation in HTML.
+Of course, it will also change the other views (selecting a new package changes the
+list of modules, selecting a new module the list of types and functions).</p>
+
+<p>Here are some tips for working with each view:
+<ul>
+<li>Apart from selecting a specific package, you can click on the <i>Local</i> item
+in the <i>Packages</i> view. This will make the <i>Modules</i> view show the information
+of <b>all</b> the modules available in your system.</li>
+<li>You can show the modules either in a flat style or hierarchicaly. Change between them
+using the <i>Style</i> submenu available in the upper right corner of the <i>Modules</i> view.</li>
+<li>In the <i>Types</i> view, we try to show the instances grouped. That means that if there is
+a instance using a class defined in the same module, the instance will be shown inside that class.
+And also that all the instances defined for a type within a module are shown inside that type.</li>
+</ul>
+</p>
+
+<h3>Hoogle</h3>
+
+<p>In the <i>Haskell</i> perspective, you may notice that a <i>Hoogle</i> view is available.
+This allows you to search your package database using the <a href="http://www.haskell.org/hoogle/">
+Hoogle</a> technology. Just write a query in the search box, and the results will be shown
+under it, along with documentation and information of where (package and module) to find
+the item.</p>
+
+<p><i>Tip</i>: you can search not only by name but also by type. To do that, write your query with
+a double colon in the front. For example, querying <code>:: (a -> b) -> [a] -> [b]</code> will return
+<code>map</code> among the results.</p>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../PRODUCT_PLUGIN/book.css" type="text/css"> 
+</head>
+
+<body>
+
+<h1>Debugging</h1>
+
+<p>This plug-in supports debugging of Haskell modules using GHCi. That means that the features
+in this section are available only if the module is run within a GHCi session. To do this,
+right-click the module, and select <b>Debug As &gt; GHCi session</b>.</p>
+
+<p>You can add breakpoints in your code double-clicking in the left margin of the source code
+editor. A small blue circle will appear in the selected line. You can delete the breakpoint
+double-clicking one of those circles. Note that currently EclipseFP does not allow to set
+breakpoints in particular expressions, only in entire lines.</p>
+
+<p>Once you start running functions in your module, it is recommended to change to the
+<i>Debug</i> perspective by going to the main menu and selecting
+<b>Window &gt; Open Perspective &gt; Debug</b>. This gives you access to the debugging tools.</p>
+
+<p>When a breakpoint is reached, the expression being evaluated is shown with a different
+background in the code editor. You can step or continue using the buttons available in
+the <i>Debug</i> view.</p>
+
+<p>You can also inspect the value of the variables in the <i>Variables</i> view. As withing GHCi,
+variables that aren't yet evaluated are shown as <code>_</code>.</p>
+
+<h3>Debugging an executable</h3>
+
+<p>EclipseFP does not support direct debugging of executables. However, you can simulate it
+following these steps:
+<li>Right-click your main module and select debugging within GHCi,</li>
+<li>If you havne't done it yet, add breakpoints to your code,</li>
+<li>In the GHCi console, write <code>main</code> and press the Enter key. This will
+execute the <code>main</code> function, which is the entry point of your application.</li>
+</p>
+
+</body>
+</html>
