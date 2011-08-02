@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.DebugUITools;
@@ -246,6 +247,10 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
   }
 
   public static void runInConsole(final IProject prj,final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY) throws CoreException{
+    runInConsole( prj, commands, directory, title, needsHTTP_PROXY,null );
+  }
+
+  public static void runInConsole(final IProject prj,final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY,final Runnable after) throws CoreException{
 
     final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     String configTypeId = ExecutableHaskellLaunchDelegate.class.getName();
@@ -269,6 +274,39 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       wc.setAttribute(ILaunchAttributes.EXTRA_ARGUMENTS,CommandLineUtil.renderCommandLine( commands.subList( 1, commands.size() ) ));
     }
     wc.setAttribute( ILaunchAttributes.NEEDS_HTTP_PROXY, needsHTTP_PROXY );
+
+    if (after!=null){
+      ILaunchesListener2 l=new ILaunchesListener2() {
+
+        public void launchesRemoved( final ILaunch[] paramArrayOfILaunch ) {
+          // NOOP
+
+        }
+
+        public void launchesChanged( final ILaunch[] paramArrayOfILaunch ) {
+          // NOOP
+
+        }
+
+        public void launchesAdded( final ILaunch[] paramArrayOfILaunch ) {
+          // NOOP
+
+        }
+
+        public void launchesTerminated( final ILaunch[] paramArrayOfILaunch ) {
+         for (ILaunch la:paramArrayOfILaunch){
+           System.out.println("found launch:"+(la.getLaunchConfiguration()==wc));
+           if (la.getLaunchConfiguration()==wc){
+             after.run();
+             launchManager.removeLaunchListener( this );
+           }
+         }
+
+        }
+      };
+      launchManager.addLaunchListener( l );
+    }
+
     // makes the console opens consistently
     DebugUITools.launch( wc, ILaunchManager.RUN_MODE );
 

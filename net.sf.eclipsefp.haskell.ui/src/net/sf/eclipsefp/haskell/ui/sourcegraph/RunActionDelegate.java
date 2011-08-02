@@ -2,8 +2,11 @@ package net.sf.eclipsefp.haskell.ui.sourcegraph;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -39,36 +42,47 @@ public class RunActionDelegate implements IObjectActionDelegate {
   public void run( final IAction action ) {
     if (project != null) {
       try {
-        IFile cabalFile = ScionInstance.getCabalFile( project );
+        final IFile cabalFile = ScionInstance.getCabalFile( project );
         // Run the command
-        String[] cmdLine = new String[] { SOURCEGRAPH, cabalFile.getRawLocation().toOSString() };
-        Process p = Runtime.getRuntime().exec(cmdLine);
-        p.waitFor();
-        // Get path name
-        final IPath projectPath = cabalFile.getRawLocation().removeLastSegments( 1 );
-        final IPath htmlPath = projectPath.append( SOURCEGRAPH ).append( project.getName() ).addFileExtension( HTML_EXTENSION );
-        final File htmlFile = htmlPath.toFile();
+        //String[] cmdLine = new String[] { SOURCEGRAPH, cabalFile.getRawLocation().toOSString() };
+        //Process p = Runtime.getRuntime().exec(cmdLine);
+        //p.waitFor();
+        final List<String> commands = new ArrayList<String>();
+        commands.add( SOURCEGRAPH );
+        commands.add(cabalFile.getRawLocation().toOSString());
 
-        Display.getDefault().syncExec( new Runnable() {
-
+        AbstractHaskellLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), "SourceGraph", false,new Runnable(){
           public void run() {
-            try {
-              if( htmlFile.exists() && htmlFile.isFile() ) {
-                // Refresh workspace
-                project.refreshLocal( IResource.DEPTH_ONE, null );
-                // Open URL
-                IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
-                URL url = htmlFile.toURI().toURL();
-                IWebBrowser browser = browserSupport.createBrowser( IWorkbenchBrowserSupport.AS_EDITOR, null, SOURCEGRAPH, "" );
-                browser.openURL(url);
-              } else {
-                // Do something if the file does not exist
+         // Get path name
+            final IPath projectPath = cabalFile.getRawLocation().removeLastSegments( 1 );
+            final IPath htmlPath = projectPath.append( SOURCEGRAPH ).append( project.getName() ).addFileExtension( HTML_EXTENSION );
+            final File htmlFile = htmlPath.toFile();
+
+            Display.getDefault().syncExec( new Runnable() {
+
+              public void run() {
+                try {
+                  if( htmlFile.exists() && htmlFile.isFile() ) {
+                    // Refresh workspace
+                    project.refreshLocal( IResource.DEPTH_ONE, null );
+                    // Open URL
+                    IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+                    URL url = htmlFile.toURI().toURL();
+                    IWebBrowser browser = browserSupport.createBrowser( IWorkbenchBrowserSupport.AS_EDITOR, null, SOURCEGRAPH, "" );
+                    browser.openURL(url);
+                  } else {
+                    // Do something if the file does not exist
+                  }
+                } catch( Exception e ) {
+                  // Do nothing
+                }
               }
-            } catch( Exception e ) {
-              // Do nothing
-            }
+            } );
+
           }
         } );
+
+
       } catch (Exception e) {
         final IStatus st = new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), e.toString());
         ErrorDialog.openError( currentShell, UITexts.runSourceGraph_errorTitle, UITexts.runSourceGraph_error, st);
