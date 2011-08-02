@@ -1,0 +1,38 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../PRODUCT_PLUGIN/book.css" type="text/css"> 
+</head>
+
+<body>
+
+<h1>Pofiling</h1>
+
+<p>EclipseFP supports directly the lightier memory profiling scheme that GHC provides.
+This scheme shows the memory used, grouped by variable type, during the time the
+program is executing.</p>
+
+<p>To start an executable with profiling support, right click the project root, go to the
+<b>Run As</b> menu and then select <b>Haskell Application with Profiling</b>. This will open
+a window with the list of executables in your Cabal file. Select the one you want and click <i>Run</i></p>
+
+<p>Once the program finishes, a file will be created in your project root named
+<code>&lt;name of your executable&gt;_&lt;date&gt;_&lt;time&gt;</code>.hp</code>. This is the
+file which contains the trace of memory used by your program. This file is automatically opened
+by the plug-in, showing a graph of your memory.</p>
+
+<p><i>Technical note</i>: when profiling mode is selected for an executable, it is run
+adding the runtime option <code>-hT</code>. You can run the executable with other profile options
+outside of EclipseFP, and then inspect the resulting <code>.hp</code> inside Eclipse.</p>
+
+<h3>The <code>rtsopts</code> problem</h3>
+
+<p>Sometimes when an executable is set for profiling, an error message is shown telling something
+about <code>rtsopts</code>, and an empty trace is generated. This happens because, from GHC 7 on,
+you have to add a special flag to the compiler to generate profiling traces.</p>
+
+<p>To do this, open the Cabal editor and go to the <i>Executables</i> tab. Select the executable
+you want to profile and add <code>-rtsopts</code> to the <i>Compiler flags</i> textbox. Save the Cabal
+file and clean your project.</p>
+
+</body>
+</html>

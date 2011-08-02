@@ -1,7 +1,3 @@
-/**
- * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
- */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.Arrays;
@@ -14,22 +10,24 @@ import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -37,12 +35,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
-public class ExecutablesPage extends CabalFormPage implements IFormEntryListener, SelectionListener {
+public class ExecutablesPage extends CabalFormPage implements SelectionListener {
 
   private List execsList;
+  @SuppressWarnings ( "unused" )
   private boolean ignoreModify = false;
   private CabalFormEditor formEditor;
 
+  DependenciesSection depsSection;
   SourceDirsSection sourceDirsSection;
   ModulesExecutableSection modulesSection;
 
@@ -50,6 +50,25 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
 
   public ExecutablesPage( final FormEditor editor, final IProject project ) {
     super( editor, ExecutablesPage.class.getName(), UITexts.cabalEditor_executables, project );
+  }
+
+  public PackageDescriptionStanza createNewStanza(final PackageDescription desc, final String name) {
+    PackageDescriptionStanza stanza = desc.addStanza(
+        CabalSyntax.SECTION_EXECUTABLE, name );
+    stanza.setIndent( 2 );
+    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
+    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );
+    return stanza;
+  }
+
+  public java.util.List<PackageDescriptionStanza> getStanzas(
+      final PackageDescription description ) {
+    return description.getExecutableStanzas();
+  }
+
+  public ComponentType getComponentType() {
+    return ComponentType.EXECUTABLE;
   }
 
   @Override
@@ -63,42 +82,34 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
     form.getBody().setLayout( createUnequalGridLayout( 2, 6, 12 ) );
 
     Composite left = toolkit.createComposite( form.getBody() );
-    GridLayout leftLayout = new GridLayout();
-    leftLayout.marginHeight = 0;
-    leftLayout.marginWidth = 0;
-    leftLayout.numColumns = 2;
-    left.setLayout( leftLayout );
-    left.setLayoutData( new GridData(GridData.FILL_VERTICAL) );
+    left.setLayout( new GridLayout( 1, true ) );
+    left.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+
+    ToolBar tbar = new ToolBar( left, SWT.NULL );
+    toolkit.adapt( tbar, true, true );
+    GridData tbarGD = new GridData( GridData.FILL_HORIZONTAL );
+    tbarGD.grabExcessHorizontalSpace = true;
+    tbar.setLayoutData( tbarGD );
+    ToolBarManager manager = new ToolBarManager( tbar );
 
     execsList = new List( left, SWT.SINGLE | SWT.BORDER );
-    toolkit.adapt( execsList, true, true );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;
     listGD.grabExcessVerticalSpace = true;
-    listGD.verticalSpan = 2;
-    listGD.widthHint = 200;
+    listGD.widthHint = 150;
     execsList.setLayoutData( listGD );
     execsList.addSelectionListener( this );
+    execsList.setData( FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER );
+    toolkit.adapt( execsList, true, true );
 
-    Composite buttonComposite = toolkit.createComposite( left );
-    GridLayout buttonLayout = new GridLayout();
-    buttonLayout.marginHeight = 0;
-    buttonLayout.marginWidth = 0;
-    buttonLayout.numColumns = 1;
-    buttonLayout.makeColumnsEqualWidth = true;
-    buttonComposite.setLayout( buttonLayout );
-
-    Button addButton = toolkit.createButton( buttonComposite, UITexts.cabalEditor_add,
-        SWT.NONE );
-    addButton.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    addButton.addSelectionListener( new SelectionAdapter() {
+    Action addAction = new Action( UITexts.cabalEditor_add, IAction.AS_PUSH_BUTTON ) {
 
       @Override
-      public void widgetSelected( final SelectionEvent e ) {
+      public void run() {
         InputDialog dialog = new InputDialog( execsList.getShell(),
             UITexts.cabalEditor_newExecutableString,
-            UITexts.cabalEditor_newExecutableString, "",
-            new IInputValidator() {
+            UITexts.cabalEditor_newExecutableString,
+            "", new IInputValidator() {
 
               public String isValid( final String newText ) {
                 String value = newText.trim();
@@ -116,45 +127,56 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
         if (dialog.open() == Window.OK) {
           PackageDescription lastDescription = formEditor.getPackageDescription();
           String execName = dialog.getValue().trim();
-          PackageDescriptionStanza execStanza = lastDescription.addStanza(
-              CabalSyntax.SECTION_EXECUTABLE, execName );
-          execStanza.setIndent( 2 );
-          execStanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
-          execStanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" );
+          createNewStanza( lastDescription, execName );
           nextSelected = execName;
           formEditor.getModel().set( lastDescription.dump() );
         }
       }
-    } );
+    };
+    addAction.setImageDescriptor( PlatformUI.getWorkbench().getSharedImages()
+        .getImageDescriptor( ISharedImages.IMG_OBJ_ADD ) );
 
-    Button removeButton = toolkit.createButton( buttonComposite, UITexts.cabalEditor_remove,
-        SWT.NONE );
-    removeButton.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    removeButton.addSelectionListener( new SelectionAdapter() {
+    Action removeAction = new Action( UITexts.cabalEditor_remove,
+        IAction.AS_PUSH_BUTTON ) {
 
       @Override
-      public void widgetSelected( final SelectionEvent e ) {
+      public void run() {
         PackageDescription lastDescription = formEditor.getPackageDescription();
         PackageDescriptionStanza stanza = sourceDirsSection.getStanza();
         lastDescription.removeStanza( stanza );
         formEditor.getModel().set( lastDescription.dump() );
       }
-    } );
+    };
+    removeAction.setImageDescriptor( PlatformUI.getWorkbench()
+        .getSharedImages().getImageDescriptor( ISharedImages.IMG_TOOL_DELETE ) );
 
+    manager.add( addAction );
+    manager.add( removeAction );
+    manager.update( true );
 
     Composite right = toolkit.createComposite( form.getBody() );
-    right.setLayout( createGridLayout( 2, 0, 0 ) );
+    right.setLayout( createGridLayout( 3, 0, 0 ) );
     right.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 
     formEditor = ( CabalFormEditor )getEditor();
-    managedForm.addPart( new DependenciesSection( this, right, formEditor, project ) );
-    sourceDirsSection = new SourceDirsSection( this, right, formEditor, project );
-    managedForm.addPart( sourceDirsSection );
+
+    depsSection = new DependenciesSection( this, right, formEditor, project );
+    managedForm.addPart( depsSection );
+    GridData depsGD = new GridData(GridData.FILL_BOTH);
+    depsGD.verticalSpan = 2;
+    depsGD.grabExcessVerticalSpace = true;
+    depsSection.getSection().setLayoutData( depsGD );
+
     modulesSection = new ModulesExecutableSection( this, right, formEditor, project );
     managedForm.addPart( modulesSection );
-    managedForm.addPart( new CompilerOptionsSection( this, right, formEditor, project ) );
+    GridData modulesGD = new GridData(GridData.FILL_BOTH);
+    modulesGD.verticalSpan = 2;
+    modulesGD.grabExcessVerticalSpace = true;
+    modulesSection.getSection().setLayoutData( modulesGD );
 
-    sourceDirsSection.setListener( this );
+    sourceDirsSection = new SourceDirsSection( this, right, formEditor, project );
+    managedForm.addPart( sourceDirsSection );
+    managedForm.addPart( new CompilerOptionsSection( this, right, formEditor, project ) );
 
     setAllEditable( false );
 
@@ -184,11 +206,11 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
       stanza = null;
     } else {
       String name = execsList.getSelection()[0];
-      stanza = getPackageDescription().getComponentStanza( new Component( ComponentType.EXECUTABLE, name, "", true ) );
+      stanza = getPackageDescription().getComponentStanza( new Component( getComponentType(), name, "", true ) );
     }
 
+    modulesSection.refreshInput( project, this.getPackageDescription(), stanza, true );
     setStanza(stanza);
-    modulesSection.refreshInput( project, this.getPackageDescription(), stanza );
   }
 
   @Override
@@ -198,7 +220,7 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
     ignoreModify = true;
     java.util.List<String> inList = Arrays.asList( execsList.getItems() );
     Vector<String> inPackage = new Vector<String>();
-    for (PackageDescriptionStanza execStanza : packageDescription.getExecutableStanzas()) {
+    for (PackageDescriptionStanza execStanza : this.getStanzas( packageDescription )) {
       inPackage.add( execStanza.getName() );
     }
     for (String listElement : inList) {
@@ -217,26 +239,6 @@ public class ExecutablesPage extends CabalFormPage implements IFormEntryListener
     }
     widgetSelected( null );
     ignoreModify = false;
-  }
-
-  public void textValueChanged( final FormEntry entry ) {
-    if (this.getPackageDescription() != null) {
-      modulesSection.refreshInput( project, this.getPackageDescription(), sourceDirsSection.getStanza() );
-    } else {
-      modulesSection.refreshInput( project, this.getPackageDescription(), null );
-    }
-  }
-
-  public void focusGained( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void textDirty( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void selectionChanged( final FormEntry entry ) {
-    // Do nothing
   }
 
   public void widgetDefaultSelected( final SelectionEvent e ) {

@@ -15,7 +15,7 @@ public class BuildTypeChoice extends Choice<BuildType> {
 
   @Override
   public boolean allowOther() {
-    return true;
+    return false;
   }
 
   @Override

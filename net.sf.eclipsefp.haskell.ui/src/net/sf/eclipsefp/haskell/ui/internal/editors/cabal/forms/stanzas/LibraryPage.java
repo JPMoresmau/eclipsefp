@@ -10,8 +10,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
-import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
@@ -27,7 +25,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
-public class LibraryPage extends CabalFormPage implements SelectionListener, IFormEntryListener {
+public class LibraryPage extends CabalFormPage implements SelectionListener {
 
   private Button isALibrary;
   private boolean ignoreModify = false;
@@ -37,6 +35,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
     super( editor, LibraryPage.class.getName(), UITexts.cabalEditor_library, project );
   }
 
+  DependenciesSection depsSection;
   SourceDirsSection sourceDirsSection;
   ModulesLibrarySection modulesSection;
 
@@ -50,27 +49,34 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
 
     form.getBody().setLayout( createGridLayout( 1, 6, 12 ) );
     Composite top = toolkit.createComposite( form.getBody() );
-    top.setLayout( createGridLayout( 2, 0, 0 ) );
+    top.setLayout( createGridLayout( 3, 0, 0 ) );
     top.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 
     isALibrary = toolkit.createButton( top, UITexts.cabalEditor_isALibrary, SWT.CHECK );
     GridData isLibGD = new GridData();
-    isLibGD.horizontalSpan = 2;
+    isLibGD.horizontalSpan = 3;
     isLibGD.grabExcessHorizontalSpace = true;
     isLibGD.heightHint = 15;
-    isLibGD.widthHint = 200;
+    // isLibGD.widthHint = 200;
     isALibrary.setLayoutData( isLibGD );
     isALibrary.addSelectionListener( this );
 
     formEditor = ( CabalFormEditor )getEditor();
-    managedForm.addPart( new DependenciesSection( this, top, formEditor, project ) );
-    sourceDirsSection = new SourceDirsSection( this, top, formEditor, project );
-    managedForm.addPart( sourceDirsSection );
+    depsSection = new DependenciesSection( this, top, formEditor, project );
+    managedForm.addPart( depsSection );
+    GridData depsGD = new GridData(GridData.FILL_BOTH);
+    depsGD.verticalSpan = 2;
+    depsGD.grabExcessVerticalSpace = true;
+    depsSection.getSection().setLayoutData( depsGD );
     modulesSection = new ModulesLibrarySection( this, top, formEditor, project );
     managedForm.addPart( modulesSection );
+    GridData modulesGD = new GridData(GridData.FILL_BOTH);
+    modulesGD.verticalSpan = 2;
+    modulesGD.grabExcessVerticalSpace = true;
+    modulesSection.getSection().setLayoutData( modulesGD );
+    sourceDirsSection = new SourceDirsSection( this, top, formEditor, project );
+    managedForm.addPart( sourceDirsSection );
     managedForm.addPart( new CompilerOptionsSection( this, top, formEditor, project ) );
-
-    sourceDirsSection.setListener( this );
 
     toolkit.paintBordersFor( form );
     this.finishedLoading();
@@ -82,7 +88,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
 
     ignoreModify = true;
     PackageDescriptionStanza libStanza = packageDescription.getLibraryStanza();
-    modulesSection.refreshInput( project, packageDescription, libStanza );
+    modulesSection.refreshInput( project, packageDescription, libStanza, true );
     if (libStanza == null) {
       isALibrary.setSelection( false );
       for( IFormPart p: getManagedForm().getParts() ) {
@@ -108,6 +114,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
         // We need to add a stanza
         PackageDescriptionStanza libStanza = lastDescription.addStanza( CabalSyntax.SECTION_LIBRARY, "" );
         libStanza.setIndent( 2 );
+        libStanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
         libStanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
         libStanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" );
         formEditor.getModel().set( lastDescription.dump() );
@@ -120,28 +127,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener, IFo
     }
   }
 
-  public void textValueChanged( final FormEntry entry ) {
-    if (this.getPackageDescription() != null) {
-      PackageDescriptionStanza libStanza = this.getPackageDescription().addStanza( CabalSyntax.SECTION_LIBRARY, "" );
-      modulesSection.refreshInput( project, this.getPackageDescription(), libStanza );
-    } else {
-      modulesSection.refreshInput( project, this.getPackageDescription(), null );
-    }
-  }
-
   public void widgetDefaultSelected( final SelectionEvent e ) {
-    // Do nothing
-  }
-
-  public void focusGained( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void textDirty( final FormEntry entry ) {
-    // Do nothing
-  }
-
-  public void selectionChanged( final FormEntry entry ) {
     // Do nothing
   }
 }

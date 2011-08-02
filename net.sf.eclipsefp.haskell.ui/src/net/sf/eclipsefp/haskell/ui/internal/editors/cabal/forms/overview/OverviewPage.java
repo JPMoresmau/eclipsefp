@@ -50,7 +50,7 @@ public class OverviewPage extends CabalFormPage {
     top.setLayout( createGridLayout( 2, 0, 0 ) );
     top.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     Composite bottom = toolkit.createComposite( form.getBody() );
-    bottom.setLayout( createGridLayout( 1, 0, 0 ) );
+    bottom.setLayout( createGridLayout( 2, 0, 0 ) );
     bottom.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     Composite extra = toolkit.createComposite( form.getBody() );
     extra.setLayout( createGridLayout( 2, 0, 0 ) );
@@ -58,10 +58,15 @@ public class OverviewPage extends CabalFormPage {
 
     CabalFormEditor formEditor = ( CabalFormEditor )getEditor();
     managedForm.addPart( new GeneralSection( this, top, formEditor, project ) );
-    managedForm.addPart( new LegalSection( this, top, formEditor, project ) );
-    managedForm.addPart( new DescriptionSection( this, bottom, formEditor, project ) );
-    managedForm.addPart (new BuildSection(this, extra, formEditor, project));
-    managedForm.addPart (new DataFilesSection(this, extra, formEditor, project));
+    managedForm.addPart( new DescriptionSection( this, top, formEditor, project ) );
+
+    managedForm.addPart (new BuildSection(this, bottom, formEditor, project));
+    managedForm.addPart( new LegalSection( this, bottom, formEditor, project ) );
+
+    managedForm.addPart (new TestedWithSection(this, extra, formEditor, project));
+    CabalFormSection dataFiles = new DataFilesSection(this, extra, formEditor, project);
+    dataFiles.getSection().setDescription( UITexts.advancedPage_selectDataFiles );
+    managedForm.addPart (dataFiles);
 
     this.finishedLoading();
   }

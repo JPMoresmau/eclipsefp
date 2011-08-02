@@ -13,6 +13,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -139,7 +141,7 @@ public class FormEntryCombo<T> extends FormEntry {
     notifySelectionChanged();
   }
 
-  private void editOccured( final ModifyEvent evt ) {
+  private void editOccured( ) {
     if( !isIgnoreModify ) {
       dirty = true;
       notifyTextDirty();
@@ -158,7 +160,7 @@ public class FormEntryCombo<T> extends FormEntry {
 
       public void modifyText( final ModifyEvent evt ) {
         if( !comboField.getText().equals( value ) ) {
-          editOccured( evt );
+          editOccured( );
         }
       }
     } );
@@ -176,6 +178,21 @@ public class FormEntryCombo<T> extends FormEntry {
         }
       }
     } );
+
+    if (!choices.allowOther()) {
+      comboField.addSelectionListener( new SelectionListener() {
+
+        public void widgetSelected( final SelectionEvent e ) {
+          if( !comboField.getText().equals( value ) ) {
+            commit();
+          }
+        }
+
+        public void widgetDefaultSelected( final SelectionEvent e ) {
+          // Do nothing
+        }
+      } );
+    }
   }
 
 }

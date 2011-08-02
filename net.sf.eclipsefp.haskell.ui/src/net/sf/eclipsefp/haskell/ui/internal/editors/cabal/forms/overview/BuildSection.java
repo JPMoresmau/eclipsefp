@@ -44,11 +44,6 @@ class BuildSection extends CabalFormSection {
     createComboFormEntry( CabalSyntax.FIELD_BUILD_TYPE, new BuildTypeChoice(),
         toolkit, container, UITexts.advancedPage_cabalBuildType );
 
-    CompilerFormEntry compiler = new CompilerFormEntry();
-    createCustomFormEntry( compiler, CabalSyntax.FIELD_TESTED_WITH,
-        toolkit, container, UITexts.advancedPage_cabalTestedWith, true,
-        SWT.NONE );
-
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
   }

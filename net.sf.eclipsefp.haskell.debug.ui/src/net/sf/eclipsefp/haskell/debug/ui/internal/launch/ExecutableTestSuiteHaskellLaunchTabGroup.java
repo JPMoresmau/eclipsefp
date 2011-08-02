@@ -6,7 +6,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 
-public class ExecutableHaskellLaunchTabGroup extends
+public class ExecutableTestSuiteHaskellLaunchTabGroup extends
     AbstractLaunchConfigurationTabGroup {
 
   // interface methods of ILaunchConfigurationTabGroup

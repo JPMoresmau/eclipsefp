@@ -13,6 +13,16 @@
             configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.ui.launch.launchExecutableIcon">
       </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate"
+            icon="icons/etool16/hsexe16.gif"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchExecutableProfilingIcon">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate"
+            icon="icons/etool16/hsexe16.gif"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchTestSuiteIcon">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -23,9 +33,19 @@
       </launchConfigurationTabGroup>
        <launchConfigurationTabGroup
             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
-            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup">
       </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
+             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
+             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate">
+       </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
+             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
+             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate">
+       </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
@@ -78,6 +98,58 @@
             </contextLabel>
          </contextualLaunch>
       </shortcut>
+      <shortcut
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut"
+            icon="icons/etool16/hsicon16.gif"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut"
+            label="%testSuiteLaunchShortcut_label"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="net.sf.eclipsefp.haskell.core.isProjectTestSuite">
+                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%testSuiteLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+      <shortcut
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableProfilingLaunchShortcut"
+            icon="icons/etool16/hsicon16.gif"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableProfilingLaunchShortcut"
+            label="%appLaunchProfilingShortcut_label"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
+                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%appLaunchProfilingContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
    </extension>
    <extension point="org.eclipse.ui.commands">
       <command
@@ -92,6 +164,18 @@
             categoryId="org.eclipse.debug.ui.category.run"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run">
       </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%runTestSuiteShortcut_desc"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut.run"
+            name="%runTestSuiteShortcut_name">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%runHaskellProfilingShortcut_desc"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableProfilingLaunchShortcut.run"
+            name="%runHaskellProfilingShortcut_name">
+      </command>
    </extension>
    <extension point="org.eclipse.ui.bindings">
       <key sequence="M3+M2+X G"
@@ -100,6 +184,16 @@
       <key sequence="M3+M2+X H"
            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+X F">
+      </key>
+      <key
+            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableProfilingLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+X R">
+      </key>
    </extension>
    <extension
          point="net.sf.eclipsefp.haskell.ui.CabalChangeListener">

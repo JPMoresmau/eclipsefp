@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview.OverviewPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.ExecutablesPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.LibraryPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.TestSuitesPage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -32,6 +33,7 @@ public class CabalFormEditor extends FormEditor {
   private OverviewPage overview;
   private LibraryPage library;
   private ExecutablesPage executables;
+  private TestSuitesPage testSuites;
   private IFileEditorInput fileInput;
 
   public PackageDescription getPackageDescription() {
@@ -45,6 +47,7 @@ public class CabalFormEditor extends FormEditor {
     overview.setPackageDescription( packageDescription );
     library.setPackageDescription( packageDescription );
     executables.setPackageDescription( packageDescription );
+    testSuites.setPackageDescription( packageDescription );
   }
 
   public IDocument getModel() {
@@ -72,6 +75,10 @@ public class CabalFormEditor extends FormEditor {
     return executables;
   }
 
+  public TestSuitesPage getTestSuites() {
+    return testSuites;
+  }
+
   // interface methdods of FormEditor
   ///////////////////////////////////
 
@@ -85,9 +92,11 @@ public class CabalFormEditor extends FormEditor {
       addPage(library);
       executables = new ExecutablesPage( this, project );
       addPage(executables);
+      testSuites = new TestSuitesPage( this, project );
+      addPage(testSuites);
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
-      setPageText( 3, UITexts.cabalFormEditor_tabSource );
+      setPageText( 4, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( "Unable to create form pages.", cex ); //$NON-NLS-1$
     }

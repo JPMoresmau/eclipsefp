@@ -124,6 +124,12 @@ public abstract class CabalFormSection extends SectionPart {
     return entry;
   }
 
+  protected FormEntry createCheckBoxEntry (final CabalSyntax property, final String title, final FormToolkit toolkit, final Composite container) {
+    FormEntryCheckBox entry = new FormEntryCheckBox( title );
+    setCustomFormEntry( entry, property, toolkit, container );
+    return entry;
+  }
+
   protected void setCustomFormEntry (final FormEntry entry, final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
     entry.init( project, container, toolkit, SWT.NONE );
     entry.setProperty( property );
@@ -165,22 +171,19 @@ public abstract class CabalFormSection extends SectionPart {
   }
 
   protected void setNewValue( final FormEntry text, final CabalSyntax mutator ) {
-    if (this.stanza != null) {
-      // try {
-      String newValue = text.getValue();
-      // IManipulateCabalFile manipulator = getManipulator();
-      // String buffer = editor.getModel().get();
-      // editor.getModel().set( manipulator.set( buffer, mutator, newValue ) );
-      stanza.getProperties().put( mutator.getCabalName(), newValue );
+    setNewValue( text.getValue(), mutator );
+  }
 
-      /*
-       * String realValue=stanza.getRealValue( mutator, newValue ); ValuePosition
-       * vp=stanza.getPositions().get( mutator ); if (vp==null){ vp=new
-       * ValuePosition
-       * (stanza.getEndLine(),stanza.getEndLine(),stanza.getIndent()); }
-       */
-      RealValuePosition vp = stanza.update( mutator, newValue );
-      vp.updateDocument( editor.getModel() );
+  protected void setNewValue( final String newValue, final CabalSyntax mutator ) {
+    if (this.stanza != null) {
+      String oldValue = stanza.getProperties().get( mutator.getCabalName() );
+      oldValue = oldValue == null ? "" : oldValue;
+
+      if (!newValue.equals( oldValue )) {
+        stanza.getProperties().put( mutator.getCabalName(), newValue );
+        RealValuePosition vp = stanza.update( mutator, newValue );
+        vp.updateDocument( editor.getModel() );
+      }
     }
   }
 

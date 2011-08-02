@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,16 @@ public class PackageDescription {
     return result;
   }
 
+  public List<PackageDescriptionStanza> getTestSuiteStanzas() {
+    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    for (PackageDescriptionStanza stanza : getStanzas()) {
+      if (stanza.getType() == CabalSyntax.SECTION_TESTSUITE) {
+        result.add( stanza );
+      }
+    }
+    return result;
+  }
+
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
     PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );
@@ -104,6 +115,15 @@ public class PackageDescription {
     }
 
     return ret;
+  }
+
+  public Collection<String> getAllSourceDirs() {
+    HashSet<String> result = new HashSet<String>();
+    for (PackageDescriptionStanza pds:stanzas){
+      Collection<String> sds=pds.getSourceDirs();
+      result.addAll( sds );
+    }
+    return result;
   }
 
   public void dump(final Writer w) throws IOException {

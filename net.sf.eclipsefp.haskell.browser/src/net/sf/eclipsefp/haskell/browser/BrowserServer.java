@@ -57,7 +57,7 @@ public abstract class BrowserServer {
 	public void addDatabaseLoadedListener(IDatabaseLoadedListener listener) {
 		dbLoadedListeners.add(listener);
 	}
-	
+
 	protected void notifyDatabaseLoaded(DatabaseLoadedEvent e) {
 		for (IDatabaseLoadedListener listener : dbLoadedListeners)
 			listener.databaseLoaded(e);
@@ -76,8 +76,10 @@ public abstract class BrowserServer {
 	public abstract Module[] getModules(String module) throws IOException, JSONException;
 
 	public abstract Packaged<Declaration>[] getDeclarations(String module) throws Exception;
-	
+
 	public abstract HoogleResult[] queryHoogle(String query) throws Exception;
+
+	public abstract void downloadHoogleData() throws IOException, JSONException;
 
 	public abstract void stop();
 }

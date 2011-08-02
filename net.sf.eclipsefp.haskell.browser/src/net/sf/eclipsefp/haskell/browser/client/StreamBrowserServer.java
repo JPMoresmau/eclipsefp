@@ -55,7 +55,7 @@ public class StreamBrowserServer extends BrowserServer {
 		}
 	}
 
-	public String sendAndReceive(JSONObject input) throws IOException {
+	public synchronized String sendAndReceive(JSONObject input) throws IOException {
 		String jsonInput = input.toString();
 		log(">> " + jsonInput);
 		in.write(jsonInput + "\n");
@@ -65,7 +65,7 @@ public class StreamBrowserServer extends BrowserServer {
 		return response;
 	}
 
-	public void sendAndReceiveOk(JSONObject input) throws IOException {
+	public synchronized void sendAndReceiveOk(JSONObject input) throws IOException {
 		String jsonInput = input.toString();
 		log(">> " + jsonInput);
 		in.write(jsonInput + "\n");
@@ -120,6 +120,11 @@ public class StreamBrowserServer extends BrowserServer {
 	public HoogleResult[] queryHoogle(String query) throws Exception {
 		String response = sendAndReceive(Commands.createHoogleQuery(query));
 		return Commands.responseHoogleQuery(response);
+	}
+	
+	@Override
+	public void downloadHoogleData() throws IOException, JSONException {
+		sendAndReceiveOk(Commands.createDownloadHoogleData());
 	}
 	
 	@Override

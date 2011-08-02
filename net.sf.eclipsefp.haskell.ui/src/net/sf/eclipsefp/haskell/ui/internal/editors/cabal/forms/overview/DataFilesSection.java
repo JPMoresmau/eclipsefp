@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -31,12 +30,6 @@ public class DataFilesSection extends CabalFormSection {
     container.setLayout( new GridLayout( 1, false ) );
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
-
-    Label infoLabel = toolkit.createLabel( container,
-        UITexts.advancedPage_selectDataFiles );
-    GridData labelGD = new GridData( GridData.VERTICAL_ALIGN_BEGINNING );
-    labelGD.grabExcessHorizontalSpace = true;
-    infoLabel.setLayoutData( labelGD );
 
     FormEntry entry = createFileFormEntry( CabalSyntax.FIELD_DATA_FILES,
         toolkit, container );

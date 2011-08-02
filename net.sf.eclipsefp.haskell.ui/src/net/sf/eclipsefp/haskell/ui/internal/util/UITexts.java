@@ -459,6 +459,40 @@ public final class UITexts extends NLS {
   public static String cabalEditor_newExecutableString;
   public static String cabalEditor_newExecutableBlankError;
   public static String cabalEditor_newExecutableAlreadyExistsError;
+  public static String cabalEditor_testSuites;
+  public static String cabalEditor_newTestSuiteString;
+  public static String cabalEditor_newTestSuiteBlankError;
+  public static String cabalEditor_newTestSuiteAlreadyExistsError;
+  public static String cabalEditor_testType;
+
+  public static String cabalEditor_modules;
+  public static String cabalEditor_module;
+  public static String cabalEditor_exposed_modules;
+  public static String cabalEditor_other_modules;
+  public static String cabalEditor_main_modules;
+  public static String cabalEditor_test_modules;
+
+  public static String cabalEditor_detailedTestSuite;
+  public static String cabalEditor_stdioTestSuite;
+  public static String cabalEditor_testFrameworkTestSuite;
+  public static String cabalEditor_isTestFrameworkTestSuite;
+
+  public static String renameParticipant_title;
+  public static String moveParticipant_title;
+  public static String copyParticipant_title;
+  public static String updateReferences;
+  public static String updateCabalFile;
+
+  public static String renameFolderParticipant_title;
+  public static String moveFolderParticipant_title;
+  public static String copyFolderParticipant_title;
+
+  public static String runSourceGraph_error;
+  public static String runSourceGraph_errorTitle;
+
+  public static String hoogle_downloadingData;
+  public static String hoogle_dataNotPresent_title;
+  public static String hoogle_dataNotPresent_message;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

@@ -55,7 +55,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
   @Override
   public int heightHint() {
-    return 150;
+    return 100;
   }
 
   @Override

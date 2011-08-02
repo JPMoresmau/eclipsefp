@@ -9,7 +9,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.Choice;
 
 public class CabalVersionChoice extends Choice<String> {
 
-  private static String[] values = new String[] { "1.2", "1.4", "1.6", "1.8", "1.10" };
+  private static String[] values = new String[] { "1.2", "1.4", "1.6", "1.8", "1.10", "1.12" };
 
   @Override
   public String[] getValues() {

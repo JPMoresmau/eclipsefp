@@ -10,6 +10,8 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -17,41 +19,32 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
-  private Composite composite;
   private TableViewer tableField;
-  private Button addButton;
-  private Button removeButton;
+  private Action addAction;
+  private Action removeAction;
   private Vector<DependencyItem> items;
   private boolean isCellEditing = false;
 
   @Override
   public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
-    composite = toolkit.createComposite( parent );
-    GridLayout layout = new GridLayout();
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
-    layout.numColumns = 2;
-    composite.setLayout( layout );
 
     items = new Vector<DependencyItem>();
 
-    Table table = toolkit.createTable( composite, SWT.SINGLE );
+    Table table = toolkit.createTable( parent, SWT.SINGLE );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;
     listGD.grabExcessVerticalSpace = true;
@@ -77,27 +70,16 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     tableField.setContentProvider( new DependenciesTableContentProvider() );
     tableField.setInput( items );
 
-    Composite buttonComposite = toolkit.createComposite( composite );
-    GridLayout buttonLayout = new GridLayout();
-    buttonLayout.marginHeight = 0;
-    buttonLayout.marginWidth = 0;
-    buttonLayout.numColumns = 1;
-    buttonLayout.makeColumnsEqualWidth = true;
-    buttonComposite.setLayout( buttonLayout );
-
-    addButton = toolkit.createButton( buttonComposite, UITexts.cabalEditor_add,
-        SWT.NONE );
-    addButton.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    addButton.addSelectionListener( new SelectionAdapter() {
+    addAction = new Action( UITexts.cabalEditor_add, IAction.AS_PUSH_BUTTON ) {
 
       @Override
-      public void widgetSelected( final SelectionEvent e ) {
+      public void run() {
         Vector<String> alreadySelected = new Vector<String>();
         for( DependencyItem item: items ) {
           alreadySelected.add( item.getPackage() );
         }
-        DependenciesDialog dialog = new DependenciesDialog( composite
-            .getShell(), alreadySelected );
+        DependenciesDialog dialog = new DependenciesDialog( tableField
+            .getTable().getShell(), alreadySelected );
         if( dialog.open() == Window.OK && dialog.getValue() != null ) {
           DependencyItem item = new DependencyItem( dialog.getValue(), "" );
           items.add( item );
@@ -105,15 +87,15 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
           DependenciesFormEntry.this.notifyTextValueChanged();
         }
       }
-    } );
+    };
+    addAction.setImageDescriptor( PlatformUI.getWorkbench().getSharedImages()
+        .getImageDescriptor( ISharedImages.IMG_OBJ_ADD ) );
 
-    removeButton = toolkit.createButton( buttonComposite,
-        UITexts.cabalEditor_remove, SWT.NONE );
-    removeButton.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    removeButton.addSelectionListener( new SelectionAdapter() {
+    removeAction = new Action( UITexts.cabalEditor_remove,
+        IAction.AS_PUSH_BUTTON ) {
 
       @Override
-      public void widgetSelected( final SelectionEvent e ) {
+      public void run() {
         // Remove the selected elements
         IStructuredSelection selection = ( IStructuredSelection )tableField
             .getSelection();
@@ -126,27 +108,29 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
           DependenciesFormEntry.this.notifyTextValueChanged();
         }
       }
-    } );
+    };
+    removeAction.setImageDescriptor( PlatformUI.getWorkbench()
+        .getSharedImages().getImageDescriptor( ISharedImages.IMG_TOOL_DELETE ) );
   }
 
   @Override
   public Control getControl() {
-    return composite;
+    return tableField.getTable();
   }
 
   @Override
   public int heightHint() {
-    return 200;
+    return 170;
   }
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
 
-    if (isCellEditing) {
+    if( isCellEditing ) {
       return;
     }
 
-    String newValue = (( value == null ) ? "" : value).trim();
+    String newValue = ( ( value == null ) ? "" : value ).trim();
     String oldValue = this.getValue().trim();
     if( newValue.equals( oldValue ) ) {
       return;
@@ -175,7 +159,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         builder.append( ", " );
       }
       builder.append( item.getPackage() );
-      if (item.getVersion().trim().length()>0) {
+      if( item.getVersion().trim().length() > 0 ) {
         builder.append( ' ' );
         builder.append( item.getVersion() );
       }
@@ -186,8 +170,6 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
   @Override
   public void setEditable( final boolean editable ) {
     tableField.getControl().setEnabled( editable );
-    addButton.setEnabled( editable );
-    removeButton.setEnabled( editable );
   }
 
   public boolean canModify( final Object element, final String property ) {
@@ -207,7 +189,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
   public void modify( final Object element, final String property,
       final Object value ) {
-    if (element == null) {
+    if( element == null ) {
       return;
     }
 
@@ -222,6 +204,14 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
       }
     }
     isCellEditing = false;
+  }
+
+  public Action getAddAction() {
+    return addAction;
+  }
+
+  public Action getRemoveAction() {
+    return removeAction;
   }
 
 }
