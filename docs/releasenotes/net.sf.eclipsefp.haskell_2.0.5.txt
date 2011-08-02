@@ -31,7 +31,12 @@ Features:
 - Quick Fix: add missing dependency on hidden package
 - run cabal update before building scion
 - Wizard on projects (cabal source export, install, test, haddock export) will ask the user to save files if there are unsaved files in the project
-- Compressed outline view: When a data declaration contains a single constructor with a name identicalto the data declaration, the node for the constructor is hidden and the constructor's children directly expanded.
+- Compressed outline view: When a data declaration contains a single constructor with a name identical to the data declaration, the node for the constructor is hidden and the constructor's children directly expanded.
+- Support for moving or renaming modules
+- SourceGraph integration
+- Support for executable profiling
+- Hoogle integration
+- Module Browser
 
 Internal:
 
@@ -42,7 +47,7 @@ Known issues:
 
 
 
-Thanks to Christopher Lane Hinson for his contributions.
+Thanks to Christopher Lane Hinson and especially Alejandro Serrano Mena for their contributions.
 Thanks to all bug reporters and users for their feedback.
 Thanks to all the people that expressed interest in EclipseFP and want to see it stay alive and improve!
 
