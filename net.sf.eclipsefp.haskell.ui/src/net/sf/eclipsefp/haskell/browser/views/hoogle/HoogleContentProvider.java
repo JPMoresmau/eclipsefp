@@ -9,6 +9,7 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -64,6 +65,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
           }
         }
       } catch( Throwable ex ) {
+        HaskellUIPlugin.log( ex );
         results = null;
         shownElements = null;
       }
