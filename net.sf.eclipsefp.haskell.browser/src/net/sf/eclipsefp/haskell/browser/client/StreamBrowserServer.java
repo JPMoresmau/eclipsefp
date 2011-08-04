@@ -129,7 +129,8 @@ public class StreamBrowserServer extends BrowserServer {
 	
 	@Override
 	public void stop() {
-		if (process != null)
+		if (process != null){
 			process.destroy();
+		}
 	}
 }
