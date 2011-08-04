@@ -15,12 +15,14 @@
                class="net.sf.eclipsefp.haskell.core.project.HaskellNature">
          </run>
       </runtime>
+      <builder id="net.sf.eclipsefp.haskell.core.builder.HaskellBuilder"/>
+      <builder id="net.sf.eclipsefp.haskell.core.hlint.HLintBuilder"/>  
    </extension>
    <extension
          id="builder.HaskellBuilder"
          name="%haskellBuilder_name"
          point="org.eclipse.core.resources.builders">
-      <builder>
+      <builder hasNature="true">
          <run
                class="net.sf.eclipsefp.haskell.core.builder.HaskellBuilder">
          </run>
@@ -82,7 +84,7 @@
          id="hlint.HLintBuilder"
          name="%hlintBuilder_name"
          point="org.eclipse.core.resources.builders">
-      <builder>
+      <builder hasNature="true">
          <run
                class="net.sf.eclipsefp.haskell.core.hlint.HLintBuilder">
          </run>
