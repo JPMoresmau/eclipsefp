@@ -56,7 +56,7 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
@@ -112,5 +112,32 @@
       <super
             type="net.sf.eclipsefp.haskell.core.problem">
       </super>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.hlint.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.hlint.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.hlint.addNatureAction"
+               label="%hlint_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectHLintBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
    </extension>
 </plugin>
