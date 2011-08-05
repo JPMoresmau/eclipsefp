@@ -75,6 +75,12 @@ public class NullBrowserServer extends BrowserServer {
 	public void downloadHoogleData() {
 		// Do nothing
 	}
+	
+	@Override
+	public boolean checkHoogle() {
+		// Do nothing
+		return true;
+	}
 
 	@Override
 	public void stop() {

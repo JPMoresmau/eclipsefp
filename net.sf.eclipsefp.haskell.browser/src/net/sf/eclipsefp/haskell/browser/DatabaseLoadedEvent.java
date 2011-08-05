@@ -4,24 +4,14 @@
  */
 package net.sf.eclipsefp.haskell.browser;
 
-public class DatabaseLoadedEvent {
-	BrowserServer server;
+public class DatabaseLoadedEvent extends BrowserEvent {
 	String db_path;
 	DatabaseType ty;
 
 	public DatabaseLoadedEvent(BrowserServer server, String db_path, DatabaseType ty) {
-		this.server = server;
+		super(server);
 		this.db_path = db_path;
 		this.ty = ty;
-	}
-	
-	/**
-	 * Returns the scion-browser instance creating this event
-	 * 
-	 * @return
-	 */
-	public BrowserServer getServer() {
-		return this.server;
 	}
 	
 	/**

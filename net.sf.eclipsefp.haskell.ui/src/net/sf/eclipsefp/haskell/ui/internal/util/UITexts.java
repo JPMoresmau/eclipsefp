@@ -158,6 +158,9 @@ public final class UITexts extends NLS {
   public static String scionBrowserRebuildingDatabaseError_title;
   public static String scionBrowserRebuildingDatabaseError_message;
 
+  public static String scionBrowserNoDatabaseLoaded;
+  public static String scionBrowserNoDatabaseLoadedOrHoogleNotPresent;
+
   public static String scionServerInstallError;
   public static String scionServerInstallFailed;
   public static String browserServerInstallError;

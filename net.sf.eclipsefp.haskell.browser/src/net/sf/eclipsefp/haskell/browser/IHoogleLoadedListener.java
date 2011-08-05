@@ -4,9 +4,9 @@
  */
 package net.sf.eclipsefp.haskell.browser;
 
-public interface IDatabaseLoadedListener {
+public interface IHoogleLoadedListener {
 
-	void databaseLoaded(DatabaseLoadedEvent e);
+	void hoogleLoaded(BrowserEvent e);
 	
-	void databaseUnloaded(BrowserEvent e);
+	void hoogleUnloaded(BrowserEvent e);
 }

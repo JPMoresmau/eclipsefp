@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
-import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -465,12 +463,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   void checkHoogleDataIsPresent() {
     boolean rebuild = false;
     try {
-      BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL,
-          null );
-      // We know that "fmap" is always present
-      HoogleResult[] mapResults = BrowserPlugin.getSharedInstance()
-          .queryHoogle( "fmap" );
-      rebuild = mapResults.length == 0;
+      rebuild = !BrowserPlugin.getSharedInstance().checkHoogle();
     } catch( Exception e ) {
       rebuild = true;
     }
@@ -1185,6 +1178,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       monitor.beginTask( UITexts.hoogle_downloadingData, IProgressMonitor.UNKNOWN );
       try {
         BrowserPlugin.getSharedInstance().downloadHoogleData();
+        BrowserPlugin.getSharedInstance().checkHoogle();
       } catch( Exception e ) {
         // Do nothing if fails
       }
