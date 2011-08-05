@@ -422,9 +422,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             display.asyncExec( new Runnable() {
               public void run() {
                 Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-                builder.setPriority( Job.BUILD );
                 builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-                builder.setUser(true);
+                builder.setPriority( Job.DECORATE );
                 builder.schedule();
               }
             } );
@@ -439,9 +438,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         display.asyncExec( new Runnable() {
           public void run() {
             Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-            builder.setPriority( Job.BUILD );
             builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-            builder.setUser(true);
+            builder.setPriority( Job.DECORATE );
             builder.schedule();
           }
         } );
@@ -486,9 +484,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
               public void run() {
                 Job builder = new HoogleDownloadDataJob(
                     UITexts.hoogle_downloadingData );
-                builder.setPriority( Job.BUILD );
                 builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-                builder.setUser( true );
+                builder.setPriority( Job.DECORATE );
                 builder.schedule();
               }
             } );
@@ -1095,28 +1092,6 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                                      UITexts.scionVersionMismatch_message );
         }
       } );
-    }
-  }
-
-  /** Specialized Job class that manages loading the Browser databases.
-   *  Based in the work of B. Scott Michel.
-   *
-    * @author B. Alejandro Serrano
-   */
-  public class BrowserDatabaseLoadJob extends Job {
-    IStatus status;
-
-    public BrowserDatabaseLoadJob(final String jobTitle) {
-      super(jobTitle);
-    }
-
-    @Override
-    protected IStatus run( final IProgressMonitor monitor ) {
-      monitor.beginTask( UITexts.scionBrowserLoadingDatabases, IProgressMonitor.UNKNOWN );
-      status = BrowserPlugin.loadLocalDatabase( false );
-      monitor.done();
-
-      return status;
     }
   }
 
