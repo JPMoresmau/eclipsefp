@@ -50,8 +50,12 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     doc.setFont( viewer.getControl().getFont() );
     form.setWeights( new int[] { 75, 25 } );
 
-    // Set "no database"
-    databaseUnloaded( null );
+    // Set database
+    if (BrowserPlugin.getDefault().isDatabaseLoaded()) {
+      databaseLoaded( null );
+    } else {
+      databaseUnloaded( null );
+    }
     // Hook for listeners
     BrowserPlugin.getDefault().addDatabaseLoadedListener( this );
     // Hook for changes in selection

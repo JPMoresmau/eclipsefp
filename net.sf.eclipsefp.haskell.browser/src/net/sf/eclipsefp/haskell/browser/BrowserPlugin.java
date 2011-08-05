@@ -332,6 +332,18 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		notifyHoogleUnloaded(e);
 	}
 	
+	public boolean isDatabaseLoaded() {
+		if (this.server == null)
+			return false;
+		return this.server.isDatabaseLoaded();
+	}
+	
+	public boolean isHoogleLoaded() {
+		if (this.server == null)
+			return false;
+		return this.server.isHoogleLoaded();
+	}
+	
 	/**
 	 * Generate the built-in Scion server's build area directory path.
 	 * 

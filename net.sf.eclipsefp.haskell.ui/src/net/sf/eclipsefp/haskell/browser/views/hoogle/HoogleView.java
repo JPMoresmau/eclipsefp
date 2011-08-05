@@ -83,8 +83,12 @@ public class HoogleView extends ViewPart implements SelectionListener,
     form.setLayoutData( formData );
     viewer = new TreeViewer( form );
 
-    // Set the "no database" content provider
-    hoogleUnloaded( null );
+    // Load if needed
+    if (BrowserPlugin.getDefault().isHoogleLoaded()) {
+      hoogleLoaded( null );
+    } else {
+      hoogleUnloaded( null );
+    }
 
     doc = new Browser( form, SWT.NONE );
     form.setWeights( new int[] { 70, 30 } );

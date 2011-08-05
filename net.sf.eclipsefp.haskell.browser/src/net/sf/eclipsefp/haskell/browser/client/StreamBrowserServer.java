@@ -38,6 +38,8 @@ public class StreamBrowserServer extends BrowserServer {
 	private Process process = null;
 	private BufferedWriter in = null;
 	private BufferedReader out = null;
+	private boolean dbLoaded = false;
+	private boolean hoogleLoaded = false;
 
 	public StreamBrowserServer(IPath serverExecutable) throws Exception {
 		this.serverExecutable = serverExecutable;
@@ -84,6 +86,16 @@ public class StreamBrowserServer extends BrowserServer {
 			log(response);
 		} while (!response.equals("\"ok\""));
 	}
+	
+	@Override
+	public boolean isDatabaseLoaded() {
+		return dbLoaded;
+	}
+	
+	@Override
+	public boolean isHoogleLoaded() {
+		return hoogleLoaded;
+	}
 
 	@Override
 	public void loadLocalDatabase(String path, boolean rebuild)
@@ -92,6 +104,7 @@ public class StreamBrowserServer extends BrowserServer {
 		// Notify listeners
 		DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
 				DatabaseType.LOCAL);
+		dbLoaded = true;
 		notifyDatabaseLoaded(e);
 	}
 
@@ -145,6 +158,7 @@ public class StreamBrowserServer extends BrowserServer {
 		boolean isPresent = mapResults.length > 0;
 		// If is present, notify the views
 		if (isPresent) {
+			hoogleLoaded = true;
 			notifyHoogleLoaded(new BrowserEvent(this));
 		}
 		return isPresent;
@@ -153,6 +167,9 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void stop() {
 		if (process != null) {
+			// Nothing is loaded
+			dbLoaded = false;
+			hoogleLoaded = false;
 			// Tell we no longer have a database
 			BrowserEvent e = new BrowserEvent(this);
 			notifyDatabaseUnloaded(e);

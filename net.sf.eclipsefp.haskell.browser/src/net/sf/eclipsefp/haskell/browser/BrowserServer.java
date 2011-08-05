@@ -82,6 +82,10 @@ public abstract class BrowserServer {
 		for (IHoogleLoadedListener listener : hoogleLoadedListeners)
 			listener.hoogleUnloaded(e);
 	}
+	
+	public abstract boolean isDatabaseLoaded();
+				
+	public abstract boolean isHoogleLoaded();
 
 	public abstract void loadLocalDatabase(String path, boolean rebuild) throws IOException,
 			JSONException;
