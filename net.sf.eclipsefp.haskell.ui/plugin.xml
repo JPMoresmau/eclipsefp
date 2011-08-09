@@ -980,4 +980,25 @@
          </enablement>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
+            extensions="x,y,ag"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.DocumentProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditorContributor"
+            extensions="x"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditor"
+            name="%alexEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.alex">
+         </contentTypeBinding>
+      </editor>
+   </extension>
 </plugin>
