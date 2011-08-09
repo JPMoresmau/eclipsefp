@@ -29,6 +29,16 @@ public class NullBrowserServer extends BrowserServer {
 	public NullBrowserServer() {
 		// Do nothing
 	}
+	
+	@Override
+	public boolean isDatabaseLoaded() {
+		return true;
+	}
+	
+	@Override
+	public boolean isHoogleLoaded() {
+		return true;
+	}
 
 	@Override
 	public void loadLocalDatabase(String path, boolean rebuild) throws IOException, JSONException {
@@ -74,6 +84,12 @@ public class NullBrowserServer extends BrowserServer {
 	@Override
 	public void downloadHoogleData() {
 		// Do nothing
+	}
+	
+	@Override
+	public boolean checkHoogle() {
+		// Do nothing
+		return true;
 	}
 
 	@Override

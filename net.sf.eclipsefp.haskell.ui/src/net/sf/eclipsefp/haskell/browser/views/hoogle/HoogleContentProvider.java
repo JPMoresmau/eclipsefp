@@ -21,7 +21,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
 
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
-    if( newInput == null ) {
+    if( newInput == null || !(newInput instanceof String) ) {
       results = null;
       shownElements = null;
       return;

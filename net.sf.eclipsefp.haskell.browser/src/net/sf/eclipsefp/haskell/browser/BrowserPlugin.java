@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedListener {
+public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedListener, IHoogleLoadedListener {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.browser"; //$NON-NLS-1$
 	public static final String BROWSER_VERSION = "0.1";
@@ -43,6 +43,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	
 	// Listeners for loading new databases
 	private ArrayList<IDatabaseLoadedListener> dbLoadedListeners;
+	private ArrayList<IHoogleLoadedListener> hoogleLoadedListeners;
 
 	/**
 	 * The constructor
@@ -51,6 +52,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		this.server = new NullBrowserServer();
 		this.logStream = null;
 		this.dbLoadedListeners = new ArrayList<IDatabaseLoadedListener>();
+		this.hoogleLoadedListeners = new ArrayList<IHoogleLoadedListener>();
 	}
 
 	/*
@@ -163,6 +165,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			try {
 				this.server = new StreamBrowserServer(path);
 				this.server.addDatabaseLoadedListener(this);
+				this.server.addHoogleLoadedListener(this);
 				this.server.setLogStream(this.logStream);
 			} catch (Throwable ex) {
 				this.server = new NullBrowserServer();
@@ -265,6 +268,15 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	}
 	
 	/**
+	 * Adds a new listener for Hoogle changes
+	 * 
+	 * @param listener
+	 */
+	public void addHoogleLoadedListener(IHoogleLoadedListener listener) {
+		hoogleLoadedListeners.add(listener);
+	}
+	
+	/**
 	 * Raises an event for all listeners currently registered
 	 * 
 	 * @param e
@@ -273,9 +285,63 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		for (IDatabaseLoadedListener listener : dbLoadedListeners)
 			listener.databaseLoaded(e);
 	}
+	
+	/**
+	 * Raises an event for all listeners currently registered
+	 * 
+	 * @param e
+	 */
+	protected void notifyDatabaseUnloaded(BrowserEvent e) {
+		for (IDatabaseLoadedListener listener : dbLoadedListeners)
+			listener.databaseUnloaded(e);
+	}
+	
+	/**
+	 * Raises an event for all listeners currently registered
+	 * 
+	 * @param e
+	 */
+	protected void notifyHoogleLoaded(BrowserEvent e) {
+		for (IHoogleLoadedListener listener : hoogleLoadedListeners)
+			listener.hoogleLoaded(e);
+	}
+	
+	/**
+	 * Raises an event for all listeners currently registered
+	 * 
+	 * @param e
+	 */
+	protected void notifyHoogleUnloaded(BrowserEvent e) {
+		for (IHoogleLoadedListener listener : hoogleLoadedListeners)
+			listener.hoogleUnloaded(e);
+	}
 
 	public void databaseLoaded(DatabaseLoadedEvent e) {
 		notifyDatabaseLoaded(e);
+	}
+	
+	public void databaseUnloaded(BrowserEvent e) {
+		notifyDatabaseUnloaded(e);
+	}
+	
+	public void hoogleLoaded(BrowserEvent e) {
+		notifyHoogleLoaded(e);
+	}
+	
+	public void hoogleUnloaded(BrowserEvent e) {
+		notifyHoogleUnloaded(e);
+	}
+	
+	public boolean isDatabaseLoaded() {
+		if (this.server == null)
+			return false;
+		return this.server.isDatabaseLoaded();
+	}
+	
+	public boolean isHoogleLoaded() {
+		if (this.server == null)
+			return false;
+		return this.server.isHoogleLoaded();
 	}
 	
 	/**

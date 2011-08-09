@@ -26,6 +26,7 @@ public abstract class BrowserServer {
 
 	protected Writer logStream = null;
 	protected ArrayList<IDatabaseLoadedListener> dbLoadedListeners = new ArrayList<IDatabaseLoadedListener>();
+	protected ArrayList<IHoogleLoadedListener> hoogleLoadedListeners = new ArrayList<IHoogleLoadedListener>();
 
 	/**
 	 * Sets the stream where log messages will be sent
@@ -57,11 +58,34 @@ public abstract class BrowserServer {
 	public void addDatabaseLoadedListener(IDatabaseLoadedListener listener) {
 		dbLoadedListeners.add(listener);
 	}
+	
+	public void addHoogleLoadedListener(IHoogleLoadedListener listener) {
+		hoogleLoadedListeners.add(listener);
+	}
 
 	protected void notifyDatabaseLoaded(DatabaseLoadedEvent e) {
 		for (IDatabaseLoadedListener listener : dbLoadedListeners)
 			listener.databaseLoaded(e);
 	}
+	
+	protected void notifyDatabaseUnloaded(BrowserEvent e) {
+		for (IDatabaseLoadedListener listener : dbLoadedListeners)
+			listener.databaseUnloaded(e);
+	}
+	
+	protected void notifyHoogleLoaded(BrowserEvent e) {
+		for (IHoogleLoadedListener listener : hoogleLoadedListeners)
+			listener.hoogleLoaded(e);
+	}
+	
+	protected void notifyHoogleUnloaded(BrowserEvent e) {
+		for (IHoogleLoadedListener listener : hoogleLoadedListeners)
+			listener.hoogleUnloaded(e);
+	}
+	
+	public abstract boolean isDatabaseLoaded();
+				
+	public abstract boolean isHoogleLoaded();
 
 	public abstract void loadLocalDatabase(String path, boolean rebuild) throws IOException,
 			JSONException;
@@ -80,6 +104,8 @@ public abstract class BrowserServer {
 	public abstract HoogleResult[] queryHoogle(String query) throws Exception;
 
 	public abstract void downloadHoogleData() throws IOException, JSONException;
+	
+	public abstract boolean checkHoogle() throws Exception;
 
 	public abstract void stop();
 }

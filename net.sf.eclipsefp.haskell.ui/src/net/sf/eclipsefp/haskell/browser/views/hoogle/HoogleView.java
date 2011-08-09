@@ -7,6 +7,9 @@ package net.sf.eclipsefp.haskell.browser.views.hoogle;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.browser.BrowserEvent;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.IHoogleLoadedListener;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
@@ -15,8 +18,12 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResultDeclaration;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultModule;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultPackage;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseLabelProvider;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -31,6 +38,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -38,7 +46,7 @@ import org.eclipse.ui.part.ViewPart;
 
 
 public class HoogleView extends ViewPart implements SelectionListener,
-    ISelectionChangedListener, IDoubleClickListener {
+    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener {
 
   /**
    * The ID of the view as specified by the extension.
@@ -48,7 +56,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
   Text text;
   TreeViewer viewer;
   Browser doc;
-  HoogleContentProvider provider;
+  IContentProvider provider;
 
   @Override
   public void createPartControl( final Composite parent ) {
@@ -74,16 +82,48 @@ public class HoogleView extends ViewPart implements SelectionListener,
     formData.grabExcessHorizontalSpace = true;
     form.setLayoutData( formData );
     viewer = new TreeViewer( form );
-    provider = new HoogleContentProvider();
-    viewer.setContentProvider( provider );
-    viewer.setLabelProvider( new HoogleLabelProvider() );
-    viewer.setInput( "" );
+
+    // Load if needed
+    if (BrowserPlugin.getDefault().isHoogleLoaded()) {
+      hoogleLoaded( null );
+    } else {
+      hoogleUnloaded( null );
+    }
+
     doc = new Browser( form, SWT.NONE );
     form.setWeights( new int[] { 70, 30 } );
     // Hook for double clicking
     viewer.addDoubleClickListener( this );
     // Hook for changes in selection
     viewer.addPostSelectionChangedListener( this );
+    // Wait the Hoogle database to be ready
+    BrowserPlugin.getDefault().addHoogleLoadedListener( this );
+  }
+
+  public void hoogleLoaded( final BrowserEvent e ) {
+    Display.getDefault().asyncExec( new Runnable() {
+
+      public void run() {
+        provider = new HoogleContentProvider();
+        viewer.setContentProvider( provider );
+        viewer.setLabelProvider( new HoogleLabelProvider() );
+        viewer.setInput( "" );
+        viewer.refresh();
+      }
+    } );
+  }
+
+  public void hoogleUnloaded( final BrowserEvent e ) {
+    Display.getDefault().asyncExec( new Runnable() {
+
+      public void run() {
+        provider = new NoDatabaseContentProvider();
+        viewer.setContentProvider( provider );
+        viewer.setLabelProvider( new NoDatabaseLabelProvider( true ) );
+        viewer.setInput( NoDatabaseRoot.ROOT );
+        viewer.refresh();
+      }
+    } );
   }
 
   @Override
@@ -102,10 +142,12 @@ public class HoogleView extends ViewPart implements SelectionListener,
     } else {
       viewer.setInput( text.getText() );
       viewer.refresh();
-      Object first = provider.getFirstElement();
-      if( first != null ) {
-        viewer.setSelection( new StructuredSelection( first ), true );
-        viewer.getControl().setFocus();
+      if (provider instanceof HoogleContentProvider) {
+        Object first = ((HoogleContentProvider)provider).getFirstElement();
+        if( first != null ) {
+          viewer.setSelection( new StructuredSelection( first ), true );
+          viewer.getControl().setFocus();
+        }
       }
     }
   }
@@ -115,7 +157,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     TreeSelection selection = ( TreeSelection )event.getSelection();
 
     Object o = selection.getFirstElement();
-    if( o == null ) {
+    if( o == null || o instanceof NoDatabaseRoot ) {
       doc.setText( "" );
       return;
     }
@@ -169,7 +211,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
-    if( o == null ) {
+    if( o == null || o instanceof NoDatabaseRoot ) {
       return;
     }
 

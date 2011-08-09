@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
-import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -424,9 +422,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             display.asyncExec( new Runnable() {
               public void run() {
                 Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-                builder.setPriority( Job.BUILD );
                 builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-                builder.setUser(true);
+                builder.setPriority( Job.DECORATE );
                 builder.schedule();
               }
             } );
@@ -441,9 +438,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         display.asyncExec( new Runnable() {
           public void run() {
             Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-            builder.setPriority( Job.BUILD );
             builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-            builder.setUser(true);
+            builder.setPriority( Job.DECORATE );
             builder.schedule();
           }
         } );
@@ -465,12 +461,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
   void checkHoogleDataIsPresent() {
     boolean rebuild = false;
     try {
-      BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL,
-          null );
-      // We know that "fmap" is always present
-      HoogleResult[] mapResults = BrowserPlugin.getSharedInstance()
-          .queryHoogle( "fmap" );
-      rebuild = mapResults.length == 0;
+      rebuild = !BrowserPlugin.getSharedInstance().checkHoogle();
     } catch( Exception e ) {
       rebuild = true;
     }
@@ -493,9 +484,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
               public void run() {
                 Job builder = new HoogleDownloadDataJob(
                     UITexts.hoogle_downloadingData );
-                builder.setPriority( Job.BUILD );
                 builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-                builder.setUser( true );
+                builder.setPriority( Job.DECORATE );
                 builder.schedule();
               }
             } );
@@ -1105,28 +1095,6 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     }
   }
 
-  /** Specialized Job class that manages loading the Browser databases.
-   *  Based in the work of B. Scott Michel.
-   *
-    * @author B. Alejandro Serrano
-   */
-  public class BrowserDatabaseLoadJob extends Job {
-    IStatus status;
-
-    public BrowserDatabaseLoadJob(final String jobTitle) {
-      super(jobTitle);
-    }
-
-    @Override
-    protected IStatus run( final IProgressMonitor monitor ) {
-      monitor.beginTask( UITexts.scionBrowserLoadingDatabases, IProgressMonitor.UNKNOWN );
-      status = BrowserPlugin.loadLocalDatabase( false );
-      monitor.done();
-
-      return status;
-    }
-  }
-
   /** Specialized Job class that manages rebuilding the Browser database.
    *  Based in the work of B. Scott Michel.
    *
@@ -1185,6 +1153,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       monitor.beginTask( UITexts.hoogle_downloadingData, IProgressMonitor.UNKNOWN );
       try {
         BrowserPlugin.getSharedInstance().downloadHoogleData();
+        BrowserPlugin.getSharedInstance().checkHoogle();
       } catch( Exception e ) {
         // Do nothing if fails
       }

@@ -38,7 +38,7 @@ public class TestSuiteHaskellLaunchDelegate extends
 
   @Override
   protected String getExtraArguments() {
-    return "--plain --jxml=\"" + getFilename() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+    return "--plain --jxml=\"" + getFilename() + "\" --jxml-nested"; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   @Override

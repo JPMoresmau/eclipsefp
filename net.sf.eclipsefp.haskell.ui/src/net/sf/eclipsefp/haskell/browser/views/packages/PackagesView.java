@@ -5,17 +5,22 @@
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import java.net.URL;
+import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseLabelProvider;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
@@ -35,7 +40,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 
   TreeViewer viewer;
   Browser doc;
-  PackagesContentProvider provider;
+  IContentProvider provider;
 
   @Override
   public void createPartControl( final Composite parent ) {
@@ -45,13 +50,12 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     doc.setFont( viewer.getControl().getFont() );
     form.setWeights( new int[] { 75, 25 } );
 
-    // Set label provider and sorter
-    viewer.setLabelProvider( new PackagesLabelProvider() );
-    viewer.setSorter( new PackagesSorter() );
-    // Set initial content provider
-    provider = new PackagesContentProvider();
-    viewer.setContentProvider( provider );
-    viewer.setInput( PackagesRoot.ROOT );
+    // Set database
+    if (BrowserPlugin.getDefault().isDatabaseLoaded()) {
+      databaseLoaded( null );
+    } else {
+      databaseUnloaded( null );
+    }
     // Hook for listeners
     BrowserPlugin.getDefault().addDatabaseLoadedListener( this );
     // Hook for changes in selection
@@ -71,8 +75,31 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     Display.getDefault().asyncExec( new Runnable() {
 
       public void run() {
+        // Set real content provider
+        PackagesContentProvider daProvider = new PackagesContentProvider();
+        provider = daProvider;
+        viewer.setContentProvider( provider );
+        viewer.setLabelProvider( new PackagesLabelProvider() );
+        viewer.setSorter( new PackagesSorter() );
+        // Refresh with the items
+        viewer.setInput( PackagesRoot.ROOT );
         // Use the new provider
-        provider.uncache();
+        daProvider.uncache();
+        viewer.refresh();
+      }
+    } );
+  }
+
+  public void databaseUnloaded( final BrowserEvent e ) {
+    Display.getDefault().asyncExec( new Runnable() {
+
+      public void run() {
+        // Put the "no database" content and label
+        viewer.setLabelProvider( new NoDatabaseLabelProvider( false ) );
+        viewer.setSorter( new ViewerSorter() );
+        provider = new NoDatabaseContentProvider();
+        viewer.setContentProvider( provider );
+        viewer.setInput( NoDatabaseRoot.ROOT );
         viewer.refresh();
       }
     } );
@@ -81,7 +108,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
-    if( o == null || o instanceof DatabaseType ) {
+    if( o == null || !( o instanceof PackagesItem ) ) {
       doc.setText( "" );
     } else {
       PackagesItem item = ( PackagesItem )o;
@@ -92,7 +119,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
-    if( o == null || o instanceof DatabaseType ) {
+    if( o == null || !( o instanceof PackagesItem ) ) {
       return;
     }
 

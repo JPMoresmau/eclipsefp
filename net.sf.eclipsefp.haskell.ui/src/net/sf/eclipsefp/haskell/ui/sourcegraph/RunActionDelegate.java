@@ -90,7 +90,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
     }
   }
 
-  public void selectionChanged( final IAction action  , final ISelection selection ) {
+  public void selectionChanged( final IAction action, final ISelection selection ) {
     Collection<IProject> prjs = ResourceUtil.getProjects( selection );
     if (prjs.size() > 0){
       project = prjs.iterator().next();
