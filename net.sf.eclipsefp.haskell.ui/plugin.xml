@@ -1001,4 +1001,11 @@
          </contentTypeBinding>
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexDocumentSeup"
+            extensions="x">
+      </participant>
+   </extension>
 </plugin>

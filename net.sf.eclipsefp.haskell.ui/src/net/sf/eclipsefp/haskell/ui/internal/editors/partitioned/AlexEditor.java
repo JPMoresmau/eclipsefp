@@ -5,6 +5,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 
 public class AlexEditor extends TextEditor {
 
+
   public AlexEditor() {
     // Do nothing by way
   }
