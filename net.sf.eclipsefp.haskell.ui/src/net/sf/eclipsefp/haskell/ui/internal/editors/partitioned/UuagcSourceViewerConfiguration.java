@@ -30,7 +30,7 @@ public class UuagcSourceViewerConfiguration extends
       "::", ":" };
   private static String[] keywords = new String[] { "data", "attr", "sem",
       "deriving", "use", "type", "include", "ext", "merge", "as", "uniqueref",
-      "around", "pragma" };
+      "around", "pragma", "module", "attach" };
   private static String[] onlySmallKeywords = new String[] { "inh", "syn" };
   private static String[] specialVariables = new String[] { "lhs", "loc" };
   private static String[] types = new String[] { "Maybe", "Either", "Map",
