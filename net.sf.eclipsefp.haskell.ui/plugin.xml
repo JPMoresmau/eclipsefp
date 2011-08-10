@@ -1000,12 +1000,29 @@
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.alex">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditorContributor"
+            extensions="y"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditor"
+            name="%happyEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.happy">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexDocumentSeup"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexDocumentSetup"
             extensions="x">
+      </participant>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyDocumentSetup"
+            extensions="y">
       </participant>
    </extension>
 </plugin>

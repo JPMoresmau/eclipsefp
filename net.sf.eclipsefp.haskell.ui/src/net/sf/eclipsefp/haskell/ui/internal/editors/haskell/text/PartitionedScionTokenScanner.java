@@ -1,17 +1,20 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
@@ -43,11 +46,29 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
 
   private final Map<String, IToken> tokenByTypes;
 
+  private final String[] initialElements;
+  private final String[] endElements;
+  private final String[] initialComments;
+  private final String[] endComments;
+
   public PartitionedScionTokenScanner( final ScannerManager man,
       final ScionInstance instance, final IFile file ) {
+    this( man, instance, file, new String[] { "{" }, new String[] { "}" },
+        new String[ 0 ], new String[ 0 ] );
+  }
+
+  public PartitionedScionTokenScanner( final ScannerManager man,
+      final ScionInstance instance, final IFile file,
+      final String[] initialElements, final String[] endElements,
+      final String[] initialComments, final String[] endComments ) {
     this.man = man;
     this.instance = instance;
     this.file = file;
+
+    this.initialElements = initialElements;
+    this.endElements = endElements;
+    this.initialComments = initialComments;
+    this.endComments = endComments;
 
     this.tokenByTypes = new HashMap<String, IToken>() {
 
@@ -156,43 +177,76 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     try {
       String prevContents = document.get( realOffset, realLength );
 
-      if (prevContents.charAt( 0 ) == '{') {
-        realOffset++;
-        realLength--;
-        for (int i = 1; i < prevContents.length(); i++) {
-          char c = prevContents.charAt( i );
-          if (Character.isWhitespace( c )) {
-            realOffset++;
-            realLength--;
-          } else {
+      // Check whether this is a comment
+      boolean isInitialComment = false, isEndComment = false;
+      for( String initialC: initialComments ) {
+        if( prevContents.startsWith( initialC ) ) {
+          isInitialComment = true;
+          break;
+        }
+      }
+      for( String endC: endComments ) {
+        if( prevContents.endsWith( endC ) ) {
+          isEndComment = true;
+          break;
+        }
+      }
+      if( isInitialComment && isEndComment ) {
+        // We found a comment
+        doc = document;
+        contents = prevContents;
+
+        TokenDef def = new TokenDef( IScionTokens.LITERATE_COMMENT,
+            new Location( "", document, new Region( realOffset, realLength ) ) );
+        lTokenDefs = new ArrayList<TokenDef>();
+        lTokenDefs.add( def );
+      } else {
+        // We are not in a comment
+        for( String initialE: initialElements ) {
+          if( prevContents.startsWith( initialE ) ) {
+            int initialLength = initialE.length();
+            realOffset += initialLength;
+            realLength -= initialLength;
+            for( int i = initialLength; i < prevContents.length(); i++ ) {
+              char c = prevContents.charAt( i );
+              if( Character.isWhitespace( c ) ) {
+                realOffset++;
+                realLength--;
+              } else {
+                break;
+              }
+            }
             break;
           }
         }
-      }
-      if( prevContents.endsWith( "}" ) ) {
-        realLength--;
-      }
+        for( String endE: endElements ) {
+          if( prevContents.endsWith( endE ) ) {
+            realLength -= endE.length();
+            break;
+          }
+        }
 
-      String newContents = document.get( realOffset, realLength );
+        String newContents = document.get( realOffset, realLength );
 
-      if( !document.equals( doc ) || !newContents.equals( contents )
-          || lTokenDefs == null ) {
-        doc = document;
-        contents = newContents;
-        lTokenDefs = instance.tokenTypes( file, contents );
-      }
-    } catch( BadLocationException ble ) {
-      HaskellUIPlugin.log( ble );
-    }
+        if( !document.equals( doc ) || !newContents.equals( contents )
+            || lTokenDefs == null ) {
+          doc = document;
+          contents = newContents;
+          lTokenDefs = instance.tokenTypes( file, contents );
+        }
 
-    try {
-      // Move the offset to the correct place
-      // First get line and character
-      int line = document.getLineOfOffset( realOffset );
-      int lineOffset = document.getLineOffset( line );
-      int column = realOffset - lineOffset;
-      for( TokenDef def: lTokenDefs ) {
-        def.move( line, column );
+        try {
+          // Move the offset to the correct place
+          // First get line and character
+          int line = document.getLineOfOffset( realOffset );
+          int lineOffset = document.getLineOffset( line );
+          int column = realOffset - lineOffset;
+          for( TokenDef def: lTokenDefs ) {
+            def.move( line, column );
+          }
+        } catch( BadLocationException ble ) {
+          HaskellUIPlugin.log( ble );
+        }
       }
     } catch( BadLocationException ble ) {
       HaskellUIPlugin.log( ble );
@@ -205,6 +259,9 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
 
     this.offset = realOffset;
     this.length = realLength;
+    this.currentTokenDef = null;
+    this.currentOffset = this.offset;
+    this.currentLength = this.length;
   }
 
   private IToken getTokenFromTokenDef( final TokenDef td ) {
