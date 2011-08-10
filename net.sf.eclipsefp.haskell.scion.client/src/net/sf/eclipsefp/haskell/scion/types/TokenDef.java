@@ -24,4 +24,10 @@ public class TokenDef {
 	public String getName() {
 		return name;
 	}
+	
+	public void move(int line, int column) {
+		boolean allInSameLine = location.getStartLine() == location.getEndLine();
+		this.location = new Location("", location.getStartLine() + line, location.getStartColumn() + column,
+				location.getEndLine() + line, location.getEndColumn() + (allInSameLine ? column : 0));
+	}
 }

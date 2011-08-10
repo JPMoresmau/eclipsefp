@@ -1,10 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
-import org.eclipse.ui.editors.text.TextEditor;
-
-
-public class AlexEditor extends TextEditor {
-
+public class AlexEditor extends PartitionEditor {
 
   public AlexEditor() {
     // Do nothing by way
