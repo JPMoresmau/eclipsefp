@@ -241,8 +241,10 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
           int line = document.getLineOfOffset( realOffset );
           int lineOffset = document.getLineOffset( line );
           int column = realOffset - lineOffset;
-          for( TokenDef def: lTokenDefs ) {
-            def.move( line, column );
+          if( lTokenDefs != null ) {
+            for( TokenDef def: lTokenDefs ) {
+              def.move( line, column );
+            }
           }
         } catch( BadLocationException ble ) {
           HaskellUIPlugin.log( ble );
