@@ -21,7 +21,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 
 public class AlexSourceViewerConfiguration extends
-PartitionSourceViewerConfiguration {
+    PartitionSourceViewerConfiguration {
 
   /**
    * The constructor
@@ -30,7 +30,7 @@ PartitionSourceViewerConfiguration {
    *          The associated Haskell editor
    */
   public AlexSourceViewerConfiguration( final PartitionEditor editor ) {
-    super(editor);
+    super( editor );
   }
 
   @Override
@@ -72,7 +72,7 @@ PartitionSourceViewerConfiguration {
         KeywordDetector.NO_DIGIT_AT_START_DETECTOR, "@", "",
         tokenByTypes.get( IScionTokens.PREPROCESSOR_TEXT ) );
     PatternRule startCodes = new PatternRule( "<", ">",
-        tokenByTypes.get( IScionTokens.SYMBOL_RESERVED ), '\\', true );
+        tokenByTypes.get( IScionTokens.IDENTIFIER_CONSTRUCTOR ), '\\', true );
     PatternRule regexSet = new PatternRule( "[", "]",
         tokenByTypes.get( IScionTokens.LITERAL_CHAR ), '\\', true );
     PatternRule string = new PatternRule( "\"", "\"",
@@ -80,19 +80,14 @@ PartitionSourceViewerConfiguration {
     EndOfLineRule comment = new EndOfLineRule( "-- ",
         tokenByTypes.get( IScionTokens.LITERATE_COMMENT ) );
     // Single words
-    WordRule colon = createRuleForToken( ";",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
-    WordRule pre = createRuleForToken( "^", IScionTokens.IDENTIFIER_CONSTRUCTOR );
-    WordRule post = createRuleForToken( "/",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
-    WordRule empty = createRuleForToken( "$",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
+    WordRule colon = createRuleForToken( ";", IScionTokens.SYMBOL_RESERVED );
+    WordRule pre = createRuleForToken( "^", IScionTokens.SYMBOL_RESERVED );
+    WordRule post = createRuleForToken( "/", IScionTokens.SYMBOL_RESERVED );
+    WordRule empty = createRuleForToken( "$", IScionTokens.SYMBOL_RESERVED );
     WordRule startRules = createRuleForToken( ":-",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
-    WordRule equals = createRuleForToken( "=",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
-    WordRule pipe = createRuleForToken( "|",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
+        IScionTokens.SYMBOL_RESERVED );
+    WordRule equals = createRuleForToken( "=", IScionTokens.SYMBOL_RESERVED );
+    WordRule pipe = createRuleForToken( "|", IScionTokens.SYMBOL_RESERVED );
     WordRule wrapper = createRuleForToken( "%wrapper", IScionTokens.KEYWORD );
 
     scanner.setRules( new IRule[] { dollarVars, atVars, startCodes, regexSet,

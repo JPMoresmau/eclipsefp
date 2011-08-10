@@ -74,13 +74,13 @@ public class HappySourceViewerConfiguration extends
         tokenByTypes.get( IScionTokens.LITERATE_COMMENT ) );
     // Single words
     WordRule semicolon = createRuleForToken( ":",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
+        IScionTokens.SYMBOL_RESERVED );
     WordRule pipe = createRuleForToken( "|",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
+        IScionTokens.SYMBOL_RESERVED );
     WordRule doublecolon = createRuleForToken( "::",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
+        IScionTokens.SYMBOL_RESERVED );
     WordRule doublepercent = createRuleForToken( "%%",
-        IScionTokens.IDENTIFIER_CONSTRUCTOR );
+        IScionTokens.SYMBOL_RESERVED );
     // Keywords
     WordRule name = createRuleForToken( "%name", IScionTokens.KEYWORD );
     WordRule error = createRuleForToken( "%error", IScionTokens.KEYWORD );
