@@ -12,7 +12,7 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
 
-public class HappyDocumentSetup implements IDocumentSetupParticipant {
+public class PartitionDocumentSetup implements IDocumentSetupParticipant {
 
   public static final String PARTITIONING = "org.eclipse.editor";
   public static final String HASKELL = "net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor";

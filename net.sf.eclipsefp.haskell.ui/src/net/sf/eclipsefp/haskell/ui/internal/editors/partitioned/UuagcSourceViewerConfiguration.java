@@ -15,11 +15,12 @@ import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 
-public class HappySourceViewerConfiguration extends
+public class UuagcSourceViewerConfiguration extends
     PartitionSourceViewerConfiguration {
 
   /**
@@ -28,7 +29,7 @@ public class HappySourceViewerConfiguration extends
    * @param editor
    *          The associated Haskell editor
    */
-  public HappySourceViewerConfiguration( final PartitionEditor editor ) {
+  public UuagcSourceViewerConfiguration( final PartitionEditor editor ) {
     super( editor );
   }
 
@@ -48,61 +49,50 @@ public class HappySourceViewerConfiguration extends
 
     IFile file = ( editor != null ? editor.findFile() : null );
     ITokenScanner codeScanner = new PartitionedScionTokenScanner(
-        getScannerManager(), instance, file, new String[] { "{%%", "{%^", "{%",
-            "{" }, new String[] { "}" }, new String[] { "{-" },
-        new String[] { "-}" } );
+        getScannerManager(), instance, file );
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
     reconciler.setRepairer( haskellDr, PartitionDocumentSetup.HASKELL );
 
-    DefaultDamagerRepairer happyDr = new DefaultDamagerRepairer(
-        createHappyScanner() );
-    reconciler.setDamager( happyDr, IDocument.DEFAULT_CONTENT_TYPE );
-    reconciler.setRepairer( happyDr, IDocument.DEFAULT_CONTENT_TYPE );
+    DefaultDamagerRepairer alexDr = new DefaultDamagerRepairer(
+        createAlexScanner() );
+    reconciler.setDamager( alexDr, IDocument.DEFAULT_CONTENT_TYPE );
+    reconciler.setRepairer( alexDr, IDocument.DEFAULT_CONTENT_TYPE );
 
     return reconciler;
   }
 
-  private ITokenScanner createHappyScanner() {
+  private ITokenScanner createAlexScanner() {
     RuleBasedScanner scanner = new RuleBasedScanner();
     // Patterns
-    PatternRule chars = new PatternRule( "'", "'",
-        tokenByTypes.get( IScionTokens.LITERAL_STRING ), '\\', true );
+    WordPatternRule dollarVars = new WordPatternRule(
+        KeywordDetector.NO_DIGIT_AT_START_DETECTOR, "$", "",
+        tokenByTypes.get( IScionTokens.PREPROCESSOR_TEXT ) );
+    WordPatternRule atVars = new WordPatternRule(
+        KeywordDetector.NO_DIGIT_AT_START_DETECTOR, "@", "",
+        tokenByTypes.get( IScionTokens.PREPROCESSOR_TEXT ) );
+    PatternRule startCodes = new PatternRule( "<", ">",
+        tokenByTypes.get( IScionTokens.IDENTIFIER_CONSTRUCTOR ), '\\', true );
+    PatternRule regexSet = new PatternRule( "[", "]",
+        tokenByTypes.get( IScionTokens.LITERAL_CHAR ), '\\', true );
     PatternRule string = new PatternRule( "\"", "\"",
         tokenByTypes.get( IScionTokens.LITERAL_STRING ), '\\', true );
     EndOfLineRule comment = new EndOfLineRule( "-- ",
         tokenByTypes.get( IScionTokens.LITERATE_COMMENT ) );
     // Single words
-    WordRule semicolon = createRuleForToken( ":",
+    WordRule colon = createRuleForToken( ";", IScionTokens.SYMBOL_RESERVED );
+    WordRule pre = createRuleForToken( "^", IScionTokens.SYMBOL_RESERVED );
+    WordRule post = createRuleForToken( "/", IScionTokens.SYMBOL_RESERVED );
+    WordRule empty = createRuleForToken( "$", IScionTokens.SYMBOL_RESERVED );
+    WordRule startRules = createRuleForToken( ":-",
         IScionTokens.SYMBOL_RESERVED );
-    WordRule pipe = createRuleForToken( "|",
-        IScionTokens.SYMBOL_RESERVED );
-    WordRule doublecolon = createRuleForToken( "::",
-        IScionTokens.SYMBOL_RESERVED );
-    WordRule doublepercent = createRuleForToken( "%%",
-        IScionTokens.SYMBOL_RESERVED );
-    // Keywords
-    WordRule name = createRuleForToken( "%name", IScionTokens.KEYWORD );
-    WordRule error = createRuleForToken( "%error", IScionTokens.KEYWORD );
-    WordRule token = createRuleForToken( "%token", IScionTokens.KEYWORD );
-    WordRule tokentype = createRuleForToken( "%tokentype", IScionTokens.KEYWORD );
-    WordRule right = createRuleForToken( "%right", IScionTokens.KEYWORD );
-    WordRule left = createRuleForToken( "%left", IScionTokens.KEYWORD );
-    WordRule nonassoc = createRuleForToken( "%nonassoc", IScionTokens.KEYWORD );
-    WordRule prec = createRuleForToken( "%prec", IScionTokens.KEYWORD );
-    WordRule monad = createRuleForToken( "%monad", IScionTokens.KEYWORD );
-    WordRule lexer = createRuleForToken( "%lexer", IScionTokens.KEYWORD );
-    WordRule attribute = createRuleForToken( "%attribute", IScionTokens.KEYWORD );
-    WordRule attributetype = createRuleForToken( "%attributetype",
-        IScionTokens.KEYWORD );
-    WordRule partial = createRuleForToken( "%partial", IScionTokens.KEYWORD );
-    WordRule expect = createRuleForToken( "%expect", IScionTokens.KEYWORD );
+    WordRule equals = createRuleForToken( "=", IScionTokens.SYMBOL_RESERVED );
+    WordRule pipe = createRuleForToken( "|", IScionTokens.SYMBOL_RESERVED );
+    WordRule wrapper = createRuleForToken( "%wrapper", IScionTokens.KEYWORD );
 
-    scanner
-        .setRules( new IRule[] { chars, string, comment, semicolon, pipe,
-            doublecolon, doublepercent, name, error, token, tokentype, right,
-            left, nonassoc, prec, monad, lexer, attribute, attributetype,
-            partial, expect } );
+    scanner.setRules( new IRule[] { dollarVars, atVars, startCodes, regexSet,
+        string, comment, colon, pre, post, empty, startRules, equals, pipe,
+        wrapper } );
     return scanner;
   }
 }

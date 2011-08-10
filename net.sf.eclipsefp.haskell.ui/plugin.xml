@@ -1010,19 +1010,22 @@
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.happy">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditorContributor"
+            extensions="ag"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditor"
+            name="%uuagcEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.uuagc">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexDocumentSetup"
-            extensions="x">
-      </participant>
-   </extension>
-   <extension
-         point="org.eclipse.core.filebuffers.documentSetup">
-      <participant
-            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyDocumentSetup"
-            extensions="y">
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.PartitionDocumentSetup"
+            extensions="x,y,ag">
       </participant>
    </extension>
 </plugin>

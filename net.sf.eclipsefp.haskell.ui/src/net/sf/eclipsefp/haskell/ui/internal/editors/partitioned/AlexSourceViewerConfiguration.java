@@ -37,7 +37,7 @@ public class AlexSourceViewerConfiguration extends
   public IPresentationReconciler getPresentationReconciler(
       final ISourceViewer viewer ) {
     PresentationReconciler reconciler = new PresentationReconciler();
-    reconciler.setDocumentPartitioning( AlexDocumentSetup.PARTITIONING );
+    reconciler.setDocumentPartitioning( PartitionDocumentSetup.PARTITIONING );
 
     ScionInstance instance = null;
     if( editor != null ) {
@@ -51,8 +51,8 @@ public class AlexSourceViewerConfiguration extends
     ITokenScanner codeScanner = new PartitionedScionTokenScanner(
         getScannerManager(), instance, file );
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
-    reconciler.setDamager( haskellDr, AlexDocumentSetup.HASKELL );
-    reconciler.setRepairer( haskellDr, AlexDocumentSetup.HASKELL );
+    reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
+    reconciler.setRepairer( haskellDr, PartitionDocumentSetup.HASKELL );
 
     DefaultDamagerRepairer alexDr = new DefaultDamagerRepairer(
         createAlexScanner() );
