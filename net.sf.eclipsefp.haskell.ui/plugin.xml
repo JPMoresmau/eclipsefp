@@ -994,6 +994,7 @@
             class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditor"
             contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditorContributor"
             extensions="x"
+            icon="icons/obj16/lhsfile_obj.gif"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditor"
             name="%alexEditor_name">
          <contentTypeBinding
@@ -1004,6 +1005,7 @@
             class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditor"
             contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditorContributor"
             extensions="y"
+            icon="icons/obj16/lhsfile_obj.gif"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditor"
             name="%happyEditor_name">
          <contentTypeBinding
@@ -1014,6 +1016,7 @@
             class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditor"
             contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditorContributor"
             extensions="ag"
+            icon="icons/obj16/testsuitestanza.gif"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditor"
             name="%uuagcEditor_name">
          <contentTypeBinding
@@ -1034,6 +1037,7 @@
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/lhsfile_obj.gif"
             id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
             name="%contenttype_alex_name"
             project="false">
@@ -1042,6 +1046,7 @@
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/lhsfile_obj.gif"
             id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
             name="%contenttype_happy_name"
             project="false">
@@ -1050,6 +1055,7 @@
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
             class="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/testsuitestanza.gif"
             id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
             name="%contenttype_uuagc_name"
             project="false">
