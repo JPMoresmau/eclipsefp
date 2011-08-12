@@ -57,9 +57,13 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
       // Get the things to write
       OutputStreamWriter inS = new OutputStreamWriter( p.getOutputStream() );
       inS.write( "user\n");
+      inS.flush();
       inS.write( name + "\n" );
+      inS.flush();
       inS.write( "Foundation\n" );
+      inS.flush();
       inS.write( "s\n" );
+      inS.flush();
       p.waitFor();
 
       IProject project = CustomProjectSupport
