@@ -37,6 +37,15 @@
             name="%newSnapWizard_name"
             project="true">
       </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/etool16/newhprj_wiz.gif"
+            id="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"
+            name="%newYesodWizard_name"
+            project="true">
+      </wizard>
    </extension>
    <extension point="org.eclipse.ui.importWizards">
      <wizard

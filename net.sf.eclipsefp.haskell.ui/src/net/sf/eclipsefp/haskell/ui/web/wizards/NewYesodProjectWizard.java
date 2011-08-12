@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.web.wizards;
 
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -13,13 +14,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 
-public class NewSnapProjectWizard extends Wizard implements INewWizard {
+public class NewYesodProjectWizard extends Wizard implements INewWizard {
 
   private WizardNewProjectCreationPage mainPage;
 
-  public NewSnapProjectWizard() {
+  public NewYesodProjectWizard() {
     super();
-    setWindowTitle( UITexts.newSnapProjectWizard_windowTitle );
+    setWindowTitle( UITexts.newYesodProjectWizard_windowTitle );
   }
 
   public void init( final IWorkbench workbench,
@@ -31,9 +32,9 @@ public class NewSnapProjectWizard extends Wizard implements INewWizard {
   public void addPages() {
     super.addPages();
     mainPage = new WizardNewProjectCreationPage(
-        UITexts.newSnapProjectWizard_pageTitle );
-    mainPage.setTitle( UITexts.newSnapProjectWizard_pageTitle );
-    mainPage.setDescription( UITexts.newSnapProjectWizard_pageDesc );
+        UITexts.newYesodProjectWizard_pageTitle );
+    mainPage.setTitle( UITexts.newYesodProjectWizard_pageTitle );
+    mainPage.setDescription( UITexts.newYesodProjectWizard_pageDesc );
     addPage( mainPage );
   }
 
@@ -44,17 +45,28 @@ public class NewSnapProjectWizard extends Wizard implements INewWizard {
     if( !mainPage.useDefaults() ) {
       location = mainPage.getLocationURI();
     } // else location == null
-    IProject project = CustomProjectSupport.createBaseProject(name, location);
-    // Then call "snap init" on the project
+
     try {
-      String[] cmdLine = new String[] { "snap", "init" };
-      IPath path = project.getLocation();
-      Process p = Runtime.getRuntime().exec(cmdLine, null, path.toFile());
-      // Parse the output
+      // Get parent path
+      IPath parentPath = mainPage.getLocationPath();
+      // IPath parentPath = path.removeLastSegments( 1 );
+      // Run "yesod init"
+      String[] cmdLine = new String[] { "yesod", "init" };
+      Process p = Runtime.getRuntime()
+          .exec( cmdLine, null, parentPath.toFile() );
+      // Get the things to write
+      OutputStreamWriter inS = new OutputStreamWriter( p.getOutputStream() );
+      inS.write( "user\n");
+      inS.write( name + "\n" );
+      inS.write( "Foundation\n" );
+      inS.write( "s\n" );
       p.waitFor();
-      CustomProjectSupport.addNature(project, HaskellNature.NATURE_ID);
+
+      IProject project = CustomProjectSupport
+          .createBaseProject( name, location );
+      CustomProjectSupport.addNature( project, HaskellNature.NATURE_ID );
       project.refreshLocal( IResource.DEPTH_INFINITE, null );
-    } catch (Exception e) {
+    } catch( Exception e ) {
       // Add error message when "snap" is not installed
       return false;
     }
