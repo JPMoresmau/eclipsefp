@@ -185,6 +185,14 @@ public final class UITexts extends NLS {
   public static String newHaskellProjectWizard_pageTitle;
   public static String newHaskellProjectWizard_windowTitle;
 
+  public static String newSnapProjectWizard_pageDesc;
+  public static String newSnapProjectWizard_pageTitle;
+  public static String newSnapProjectWizard_windowTitle;
+
+  public static String newYesodProjectWizard_pageDesc;
+  public static String newYesodProjectWizard_pageTitle;
+  public static String newYesodProjectWizard_windowTitle;
+
   public static String newProjectWizardPage_NameGroup_label_text;
   public static String newProjectWizardPage_Message_enterProjectName;
   public static String newProjectWizardPage_Message_projectAlreadyExists;
