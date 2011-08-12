@@ -1028,4 +1028,31 @@
             extensions="x,y,ag">
       </participant>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
+            name="%contenttype_alex_name"
+            project="false">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
+            name="%contenttype_happy_name"
+            project="false">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
+            name="%contenttype_uuagc_name"
+            project="false">
+      </wizard>
+   </extension>
 </plugin>

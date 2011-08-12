@@ -497,6 +497,18 @@ public final class UITexts extends NLS {
   public static String hoogle_dataNotPresent_title;
   public static String hoogle_dataNotPresent_message;
 
+  public static String alex_newFile;
+  public static String happy_newFile;
+  public static String uuagc_newFile;
+
+  public static String contenttype_alex_name;
+  public static String contenttype_happy_name;
+  public static String contenttype_uuagc_name;
+
+  public static String new_alex;
+  public static String new_happy;
+  public static String new_uuagc;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
