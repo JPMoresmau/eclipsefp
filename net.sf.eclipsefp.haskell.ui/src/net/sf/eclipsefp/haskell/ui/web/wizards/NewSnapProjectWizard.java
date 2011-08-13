@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -55,7 +56,12 @@ public class NewSnapProjectWizard extends Wizard implements INewWizard {
       CustomProjectSupport.addNature(project, HaskellNature.NATURE_ID);
       project.refreshLocal( IResource.DEPTH_INFINITE, null );
     } catch (Exception e) {
-      // Add error message when "snap" is not installed
+      MessageDialog
+      .openError(
+          getShell(),
+          "Snap could not be run",
+          "Snap was not found in your system or returned an error. "
+              + "You can install it running \"cabal install snap\" in a console." );
       return false;
     }
     return true;

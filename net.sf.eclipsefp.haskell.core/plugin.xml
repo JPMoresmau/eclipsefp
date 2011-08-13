@@ -49,6 +49,30 @@
            extension="ag"
            type="text">
      </fileTypes>
+     <fileTypes
+           extension="tpl"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="xtpl"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="cassius"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="hamlet"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="julius"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="lucius"
+           type="text">
+     </fileTypes>
    </extension>
    <extension point="org.eclipse.core.contenttype.contentTypes">
      <content-type base-type="org.eclipse.core.runtime.text"
@@ -82,6 +106,48 @@
            file-extensions="ag"
            id="net.sf.eclipsefp.haskell.contenttypes.uuagc"
            name="%contenttype_uuagc_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.html.core.htmlsource"
+           file-extensions="tpl"
+           id="net.sf.eclipsefp.haskell.contenttypes.tpl"
+           name="%contenttype_tpl_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.xml"
+           file-extensions="xtpl"
+           id="net.sf.eclipsefp.haskell.contenttypes.xtpl"
+           name="%contenttype_xtpl_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.css.core.csssource"
+           file-extensions="cassius"
+           id="net.sf.eclipsefp.haskell.contenttypes.cassius"
+           name="%contenttype_cassius_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.html.core.htmlsource"
+           file-extensions="hamlet"
+           id="net.sf.eclipsefp.haskell.contenttypes.hamlet"
+           name="%contenttype_hamlet_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.jsdt.core.jsSource"
+           file-extensions="julius"
+           id="net.sf.eclipsefp.haskell.contenttypes.julius"
+           name="%contenttype_julius_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.css.core.csssource"
+           file-extensions="lucius"
+           id="net.sf.eclipsefp.haskell.contenttypes.lucius"
+           name="%contenttype_lucius_name"
            priority="normal">
      </content-type>
    </extension>

@@ -7,16 +7,16 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 
 public class NewYesodProjectWizard extends Wizard implements INewWizard {
 
-  private WizardNewProjectCreationPage mainPage;
+  private NewYesodProjectPage mainPage;
 
   public NewYesodProjectWizard() {
     super();
@@ -31,8 +31,7 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
   @Override
   public void addPages() {
     super.addPages();
-    mainPage = new WizardNewProjectCreationPage(
-        UITexts.newYesodProjectWizard_pageTitle );
+    mainPage = new NewYesodProjectPage( UITexts.newYesodProjectWizard_pageTitle );
     mainPage.setTitle( UITexts.newYesodProjectWizard_pageTitle );
     mainPage.setDescription( UITexts.newYesodProjectWizard_pageDesc );
     addPage( mainPage );
@@ -40,6 +39,10 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
 
   @Override
   public boolean performFinish() {
+    if( !mainPage.isPageComplete() ) {
+      return false;
+    }
+
     String name = mainPage.getProjectName();
     URI location = null;
     if( !mainPage.useDefaults() ) {
@@ -56,13 +59,13 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
           .exec( cmdLine, null, parentPath.toFile() );
       // Get the things to write
       OutputStreamWriter inS = new OutputStreamWriter( p.getOutputStream() );
-      inS.write( "user\n");
+      inS.write( mainPage.getAuthor() + "\n" );
       inS.flush();
       inS.write( name + "\n" );
       inS.flush();
-      inS.write( "Foundation\n" );
+      inS.write( mainPage.getFoundation() + "\n" );
       inS.flush();
-      inS.write( "s\n" );
+      inS.write( mainPage.getDatabase() + "\n" );
       inS.flush();
       p.waitFor();
 
@@ -71,7 +74,12 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
       CustomProjectSupport.addNature( project, HaskellNature.NATURE_ID );
       project.refreshLocal( IResource.DEPTH_INFINITE, null );
     } catch( Exception e ) {
-      // Add error message when "snap" is not installed
+      MessageDialog
+          .openError(
+              getShell(),
+              "Yesod could not be run",
+              "Yesod was not found in your system or returned an error. "
+                  + "You can install it running \"cabal install yesod\" in a console." );
       return false;
     }
     return true;

@@ -1041,6 +1041,66 @@
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.uuagc">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
+            extensions="tpl"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXHTMLTemplateEditor"
+            name="%tplEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.tpl">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart"
+            contributorClass="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorActionBarContributor"
+            extensions="xtpl"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXMLTemplateEditor"
+            name="%xtplEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.xtpl">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
+            extensions="cassius"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.CassiusEditor"
+            name="%cassiusEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.cassius">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
+            extensions="hamlet"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HamletEditor"
+            name="%hamletEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.hamlet">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor"
+            contributorClass="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
+            extensions="julius"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.JuliusEditor"
+            name="%juliusEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.julius">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
+            extensions="lucius"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.LuciusEditor"
+            name="%luciusEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.lucius">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.documentSetup">
