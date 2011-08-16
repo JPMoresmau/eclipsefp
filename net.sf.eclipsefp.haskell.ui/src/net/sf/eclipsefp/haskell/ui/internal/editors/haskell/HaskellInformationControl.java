@@ -2,7 +2,6 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControl;
-import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -13,8 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 
-public abstract class HaskellInformationControl extends AbstractInformationControl
-    implements IInformationControlExtension2 {
+public class HaskellInformationControl extends AbstractInformationControl {
 
   private Browser doc;
   private boolean hasContents = false;
@@ -26,7 +24,7 @@ public abstract class HaskellInformationControl extends AbstractInformationContr
 
   @Override
   public void setInformation( final String content ) {
-    // Ignore
+    setDocumentation( content );
   }
 
   @Override
@@ -36,8 +34,6 @@ public abstract class HaskellInformationControl extends AbstractInformationContr
     doc.setBackground( parent.getBackground() );
     doc.setFont( JFaceResources.getDialogFont() );
   }
-
-  public abstract void setInput( final Object input );
 
   public void setDocumentation( final String content ) {
     hasContents = content.length() > 0;

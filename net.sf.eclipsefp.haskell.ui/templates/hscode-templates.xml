@@ -2,6 +2,7 @@
 <templates>
 
 <!-- 'import' statement -->
+<!-- 
 <template
   name="import"
   description="%CodeTemplates.import.description"
@@ -10,6 +11,7 @@
   enabled="true"
   autoinsert="false"
 >import ${module}</template>
+-->
 
 <!-- General Abstract Data Types -->
 <template

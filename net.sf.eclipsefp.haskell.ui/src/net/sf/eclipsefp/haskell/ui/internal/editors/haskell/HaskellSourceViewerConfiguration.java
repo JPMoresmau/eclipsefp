@@ -121,7 +121,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 		ca.setInformationControlCreator( new IInformationControlCreator() {
 
       public IInformationControl createInformationControl( final Shell parent ) {
-        return new HaskellModuleInformationControl(parent);
+        return new HaskellInformationControl(parent);
       }
     } );
 

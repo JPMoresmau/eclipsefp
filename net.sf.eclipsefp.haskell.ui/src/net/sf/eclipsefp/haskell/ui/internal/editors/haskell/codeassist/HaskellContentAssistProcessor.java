@@ -5,16 +5,23 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
+import net.sf.eclipsefp.haskell.browser.items.Module;
+import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.codeassist.LexerTokenCategories;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
@@ -212,13 +219,40 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
 	                                                        final int offset ) {
 	  context = CompletionContext.DEFAULT_CONTEXT;
-    IHaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset ,HaskellUIPlugin.getHaskellEditor( viewer ) );
+
+	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset ,HaskellUIPlugin.getHaskellEditor( viewer ) );
     HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
     ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
     ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );
 
+    // Get rest of proposals
+    String prefix = haskellCompletions.getPointedQualifier();
+    ImportsManager mgr = new ImportsManager( doc );
+    Map<String, Declaration> decls = mgr.getDeclarations();
+    ArrayList<String> elts = new ArrayList<String>();
+    for ( Map.Entry<String, Declaration> s : decls.entrySet() ) {
+      if ( s.getKey().startsWith( prefix ) && s.getValue().getType() == DeclarationType.FUNCTION ) {
+        elts.add( s.getKey() );
+      }
+    }
+    Collections.sort( elts, new Comparator<String>() {
+
+      public int compare( final String a, final String b ) {
+        boolean aPointed = a.indexOf( '.' ) != -1;
+        boolean bPointed = b.indexOf( '.' ) != -1;
+        if (aPointed && !bPointed) {
+          return 1;
+        } else if (!aPointed && bPointed) {
+          return -1;
+        } else {
+          return a.compareTo( b );
+        }
+      }
+
+    });
+
     // Merge the results together (templates precede generated proposals):
-    int totalSize = haskellProposals.length + templateProposals.length;
+    int totalSize = haskellProposals.length + templateProposals.length + elts.size();
     int endIndex = 0;
     ICompletionProposal[] result = new ICompletionProposal[ totalSize ];
 
@@ -229,6 +263,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
     if ( haskellProposals.length > 0 ) {
       System.arraycopy( haskellProposals, 0, result, endIndex, haskellProposals.length );
+    }
+
+    final int plength = prefix.length();
+    int i = 0;
+    for ( String s : elts ) {
+      Declaration d = decls.get( s );
+      result[templateProposals.length + haskellProposals.length + i] =
+          new CompletionProposal( s, offset - plength, plength, s.length(), ImageCache.FUNCTION, s,
+              null, HtmlUtil.generateDocument( null, d.getDoc() ) );
+      i++;
     }
 
     return (totalSize > 0 ? result : null);
@@ -296,7 +340,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       final int prefixLength = prefix.length();
 
       for (String m : modulesA) {
-        result[i] = new CompletionProposal( m, prefixOffsetAnchor, prefixLength, m.length(), ImageCache.MODULE, m, null, m );
+        Module realM = BrowserPlugin.getSharedInstance().getCachedModule( m );
+        result[i] = new CompletionProposal( m, prefixOffsetAnchor, prefixLength, m.length(), ImageCache.MODULE, m, null,
+            realM == null ? "" : HtmlUtil.generateDocument( null, realM.getDoc() ));
         ++i;
       }
 

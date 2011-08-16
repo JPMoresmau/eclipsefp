@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.core.codeassist.HaskellSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
@@ -63,7 +62,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 
 			searchDefinedNames(completedToken, result);
-			searchKeywords(completedToken, result);
+			// searchKeywords(completedToken, result);
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception ex) {
 			// ignore the error and just return an empty result
@@ -71,11 +70,11 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return new ICompletionProposal[0];
 	}
 
-	private void searchKeywords(final String prefix,
+	/*private void searchKeywords(final String prefix,
 		final List<ICompletionProposal> result)
 	{
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
-	}
+	}*/
 
   private void searchDefinedNames( final String prefix, final List<ICompletionProposal> result ) {
     if( file != null
@@ -111,7 +110,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
   }
   */
 
-	private void searchStringList(final String prefix, final String[] names, final List<ICompletionProposal> result)
+	/*private void searchStringList(final String prefix, final String[] names, final List<ICompletionProposal> result)
 	{
 		final int offset = getOffset();
 		final int plength = prefix.length();
@@ -121,7 +120,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 				result.add(new CompletionProposal(name, offset - plength, plength, name.length()));
 			}
 		}
-	}
+	}*/
 
 	 private void searchStringList(final String prefix, final Iterable<String> names, final List<ICompletionProposal> result)
 	   {
@@ -189,7 +188,11 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 //		}
 //	}
 
-	private String getQualifier( final String source, final int offset )
+	public String getQualifier( ) {
+	  return getQualifier( this.source, this.getOffset() );
+	}
+
+	public String getQualifier( final String source, final int offset )
 	{
 		StringBuffer contents = readSourceTillOffset(source, offset);
 
@@ -218,6 +221,40 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		}
 		return result;
 	}
+
+	public String getPointedQualifier( ) {
+    return getPointedQualifier( this.source, this.getOffset() );
+  }
+
+	public String getPointedQualifier( final String source, final int offset )
+  {
+    StringBuffer contents = readSourceTillOffset(source, offset);
+
+    int index = offset;
+    StringBuilder sb = new StringBuilder();
+    String result = ""; //$NON-NLS-1$
+
+    boolean finished = false;
+    while( !finished && index > 0 ) {
+      char ch = contents.charAt(--index);
+      if( isIdentifierChar(ch) || ch == '.' ) {
+        sb.append( ch );
+      } else if( ch == '\"' || ch == '\'' ) {
+//        string or char literals are not taken into account
+        finished = true;
+      } else {
+//        no more identifier part, so we use what we have collected
+        result = sb.reverse().toString();
+        finished = true;
+      }
+    }
+    if( index == 0 ) {
+//      the special case where we have collected sth. but have reached the
+//      end of the document meanwhile
+      result = sb.reverse().toString();
+    }
+    return result;
+  }
 
 	private boolean isIdentifierChar(final char ch) {
 		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1; //$NON-NLS-1$
