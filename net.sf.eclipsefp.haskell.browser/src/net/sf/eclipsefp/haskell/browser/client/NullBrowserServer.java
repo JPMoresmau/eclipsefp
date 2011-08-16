@@ -41,7 +41,7 @@ public class NullBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public void loadLocalDatabase(String path, boolean rebuild) throws IOException, JSONException {
+	protected void loadLocalDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException {
 		// Do nothing
 	}
 

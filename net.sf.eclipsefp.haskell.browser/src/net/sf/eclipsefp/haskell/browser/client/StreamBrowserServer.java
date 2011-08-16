@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
-import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
@@ -98,7 +97,7 @@ public class StreamBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public void loadLocalDatabase(String path, boolean rebuild)
+	protected void loadLocalDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
 		sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild));
 		// Notify listeners

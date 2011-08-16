@@ -4,10 +4,12 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.codeassist.LexerTokenCategories;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
@@ -159,7 +161,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
 	public char[] getCompletionProposalAutoActivationCharacters() {
 	  // unused
-		return null;
+		return new char[] { '.' };
 	}
 
 	public char[] getContextInformationAutoActivationCharacters() {
@@ -262,8 +264,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 * @return An ICompletionProposal array of matching completions, or null if none.
 	 */
 	private ICompletionProposal[] filterModuleNames( final int offset ) {
-    List<String> modules = new ArrayList<String>();
+    // List<String> modules = new ArrayList<String>();
     final String normalizedPrefix = prefix.toLowerCase();
+
+    HashSet<String> modules = new HashSet<String>();
+
+    for (String m : BrowserPlugin.getSharedInstance().getCachedModuleNames()) {
+      if (prefix.length() == 0 || m.toLowerCase().startsWith( normalizedPrefix )) {
+        modules.add(m);
+      }
+    }
 
     for (String m : moduleGraphNames ) {
       if (prefix.length() == 0 || m.toLowerCase().startsWith( normalizedPrefix )) {
@@ -278,14 +288,15 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     if (modules.size() > 0) {
-      Collections.sort( modules, String.CASE_INSENSITIVE_ORDER );
+      String[] modulesA = modules.toArray( new String[modules.size()] );
+      Arrays.sort( modulesA, String.CASE_INSENSITIVE_ORDER );
 
-      ICompletionProposal[] result = new ICompletionProposal[modules.size()];
+      ICompletionProposal[] result = new ICompletionProposal[modulesA.length];
       int i = 0;
       final int prefixLength = prefix.length();
 
-      for (String m : modules) {
-        result[i] = new CompletionProposal( m, prefixOffsetAnchor, prefixLength, m.length() );
+      for (String m : modulesA) {
+        result[i] = new CompletionProposal( m, prefixOffsetAnchor, prefixLength, m.length(), ImageCache.MODULE, m, null, m );
         ++i;
       }
 
