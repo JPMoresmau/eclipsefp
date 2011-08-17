@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
@@ -129,7 +130,7 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 
 	     for(String name : names) {
 	       if (name.startsWith(prefix)) {
-	         result.add(new CompletionProposal(name, offset - plength, plength, name.length()));
+	         result.add(new CompletionProposal(name, offset - plength, plength, name.length(), ImageCache.FUNCTION, name, null, ""));
 	       }
 	     }
 	   }

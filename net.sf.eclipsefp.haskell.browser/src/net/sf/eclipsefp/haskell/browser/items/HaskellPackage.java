@@ -29,4 +29,14 @@ public class HaskellPackage extends Documented {
 	public PackageIdentifier getIdentifier() {
 		return this.id;
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		return "package " + id.toString();
+	}
+	
+	@Override
+	public String getName() {
+		return id.toString();
+	}
 }

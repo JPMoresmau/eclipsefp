@@ -837,6 +837,20 @@ public class ScionInstance {
   }
   
   /**
+   * Get the outline for a document.
+   * 
+   * @param file The file, used to ensure that scion-server is operating on the correct file
+   * @param doc The document, i.e., the file's current editor contents.
+   * @return A list of outline definitions
+   */
+  public List<OutlineDef> outlineSync(final IFile file, final IDocument doc) {
+	final OutlineCommand cmd = new OutlineCommand(file);
+	    
+	withLoadedDocument(file, doc, cmd, NLS.bind(ScionText.outline_job_name, file.getName()));
+	return cmd.getOutlineDefs(); 
+  }
+  
+  /**
    * Get the Haskell lexer token preceding the editor's point
    * 
    * @param file The file being operated on

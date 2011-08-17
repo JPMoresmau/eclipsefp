@@ -29,4 +29,9 @@ public class Module extends Documented {
 	public String getName() {
 		return this.name;
 	}
+	
+	@Override
+	public String getCompleteDefinition() {
+		return "module " + name;
+	}
 }

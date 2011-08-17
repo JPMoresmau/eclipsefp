@@ -9,11 +9,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.TreeSet;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
-import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
+import net.sf.eclipsefp.haskell.browser.items.Documented;
+import net.sf.eclipsefp.haskell.browser.items.Function;
+import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.Module;
+import net.sf.eclipsefp.haskell.browser.items.TypeClass;
+import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.codeassist.LexerTokenCategories;
@@ -32,7 +36,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionListenerExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -64,7 +67,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   }
 
   /** Default number of tokens to grab before point when determining completion context */
-  private final static int NUM_PRECEDING_TOKENS = 8;
+  private final static int NUM_PRECEDING_TOKENS = 10;
 
   /** The current completion context state */
   private CompletionContext context;
@@ -76,10 +79,6 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   private ArrayList<String> moduleGraphNames;
   /** Module names exposed by the cabal project file */
   private ArrayList<String> exposedModules;
-
-  // Type constructor context variables:
-  private Map<String, String> completionPairs;
-  private final ContextInformation tyConContext = new ContextInformation("Type Constructor", "Type Constructor");
 
   /**
    * The constructor.
@@ -106,12 +105,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	{
 	  IFile theFile = HaskellUIPlugin.getFile( viewer );
 	  IDocument doc = viewer.getDocument();
+	  // Figure out what we're doing...
+    ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
     prefix = getCompletionPrefix( doc, offset );
     switch (context) {
       case NO_CONTEXT: {
-        // Figure out what we're doing...
-        ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
         if ( scion != null ) {
           int offsetPrefix = offset - prefix.length();
 
@@ -128,22 +127,22 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
             if (tokens != null) {
               if (LexerTokenCategories.hasImportContext( tokens, lineBegin )) {
                 return moduleNamesContext(scion, offset);
-              } else if (LexerTokenCategories.hasTyConContext( tokens )) {
-                return typeConstructorContext(scion, theFile, doc, offset);
+              } else if (LexerTokenCategories.hasTyConContext( tokens, lineBegin )) {
+                return defaultCompletionContext( scion, viewer, theFile, doc, offset, true );
               }
             }
           } catch (BadLocationException ble) {
             // Ignore, pass through to default completion context.
           }
 
-          return defaultCompletionContext(viewer, theFile, doc, offset);
+          return defaultCompletionContext( scion, viewer, theFile, doc, offset, false );
         }
 
         break;
       }
 
       case DEFAULT_CONTEXT: {
-        return defaultCompletionContext( viewer, theFile, doc, offset );
+        return defaultCompletionContext( scion, viewer, theFile, doc, offset, false );
       }
 
       case IMPORT_STMT: {
@@ -151,8 +150,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       }
 
       case TYCON_CONTEXT: {
-        return filterCompletionPairs( offset );
+        return defaultCompletionContext( scion, viewer, theFile, doc, offset, true );
       }
+
       case CONID_CONTEXT: {
         return null;
       }
@@ -193,7 +193,6 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  prefix = new String();
 	  moduleGraphNames = null;
 	  exposedModules = null;
-	  completionPairs = null;
 	}
 
 	/** Get the completion prefix from the prefix offset, if non-zero, or reverse lex */
@@ -216,26 +215,32 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Default completion context, if no other context can be determined.
 	 */
-	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
-	                                                        final int offset ) {
-	  context = CompletionContext.DEFAULT_CONTEXT;
+	private ICompletionProposal[] defaultCompletionContext( final ScionInstance scion, final ITextViewer viewer, final IFile theFile, final IDocument doc,
+	                                                        final int offset, final boolean typesHavePriority ) {
+	  context = typesHavePriority ? CompletionContext.TYCON_CONTEXT : CompletionContext.DEFAULT_CONTEXT;
 
 	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset ,HaskellUIPlugin.getHaskellEditor( viewer ) );
+	  // ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
     HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
-    ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
     ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );
 
     // Get rest of proposals
     String prefix = haskellCompletions.getPointedQualifier();
-    ImportsManager mgr = new ImportsManager( doc );
-    Map<String, Declaration> decls = mgr.getDeclarations();
+    ImportsManager mgr = new ImportsManager( theFile, doc );
+    Map<String, Documented> decls = mgr.getDeclarations( scion );
     ArrayList<String> elts = new ArrayList<String>();
-    for ( Map.Entry<String, Declaration> s : decls.entrySet() ) {
-      if ( s.getKey().startsWith( prefix ) && s.getValue().getType() == DeclarationType.FUNCTION ) {
-        elts.add( s.getKey() );
+    ArrayList<String> typeElts = new ArrayList<String>();
+    for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
+      if ( s.getKey().startsWith( prefix ) ) {
+        if (s.getValue() instanceof Constructor || s.getValue() instanceof Function) {
+          elts.add( s.getKey() );
+        } else if ( s.getValue() instanceof Gadt || s.getValue() instanceof TypeClass ||
+            s.getValue() instanceof TypeSynonym ) {
+          typeElts.add( s.getKey() );
+        }
       }
     }
-    Collections.sort( elts, new Comparator<String>() {
+    Comparator<String> pointedComparator = new Comparator<String>() {
 
       public int compare( final String a, final String b ) {
         boolean aPointed = a.indexOf( '.' ) != -1;
@@ -245,14 +250,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
         } else if (!aPointed && bPointed) {
           return -1;
         } else {
-          return a.compareTo( b );
+          return a.compareToIgnoreCase( b );
         }
       }
 
-    });
+    };
+    Collections.sort( elts, pointedComparator );
+    Collections.sort( typeElts, pointedComparator );
 
     // Merge the results together (templates precede generated proposals):
-    int totalSize = haskellProposals.length + templateProposals.length + elts.size();
+    int totalSize = templateProposals.length + elts.size() + typeElts.size();
     int endIndex = 0;
     ICompletionProposal[] result = new ICompletionProposal[ totalSize ];
 
@@ -261,18 +268,45 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       endIndex += templateProposals.length;
     }
 
-    if ( haskellProposals.length > 0 ) {
-      System.arraycopy( haskellProposals, 0, result, endIndex, haskellProposals.length );
+    final int plength = prefix.length();
+
+    int i = 0;
+
+    if (typesHavePriority) {
+      i = 0;
+      for ( String s : typeElts ) {
+        Documented d = decls.get( s );
+        result[endIndex + i] =
+            new CompletionProposal( s, offset - plength, plength, s.length(),
+                ImageCache.getImageForDeclaration( ((Declaration)d).getType() ), s,
+                null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+        i++;
+      }
+      endIndex += typeElts.size();
     }
 
-    final int plength = prefix.length();
-    int i = 0;
+    i = 0;
     for ( String s : elts ) {
-      Declaration d = decls.get( s );
-      result[templateProposals.length + haskellProposals.length + i] =
-          new CompletionProposal( s, offset - plength, plength, s.length(), ImageCache.FUNCTION, s,
-              null, HtmlUtil.generateDocument( null, d.getDoc() ) );
+      Documented d = decls.get( s );
+      result[endIndex + i] =
+          new CompletionProposal( s, offset - plength, plength, s.length(),
+              d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.FUNCTION, s,
+              null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
       i++;
+    }
+    endIndex += elts.size();
+
+    if (!typesHavePriority) {
+      i = 0;
+      for ( String s : typeElts ) {
+        Documented d = decls.get( s );
+        result[endIndex + i] =
+            new CompletionProposal( s, offset - plength, plength, s.length(),
+                ImageCache.getImageForDeclaration( ((Declaration)d).getType() ), s,
+                null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+        i++;
+      }
+      endIndex += typeElts.size();
     }
 
     return (totalSize > 0 ? result : null);
@@ -353,26 +387,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Initialize the type constructor context: this will only present type constructors as completions.
-	 *
-	 * @param scion The scion-server instance that generates the completions
-	 * @param file The file in the editor
-	 * @param doc the editor's document
-	 * @param offset The current editor point
-	 *
-	 * @return A ICompletionProposal list or null, if no completions exist
-	 */
-	private ICompletionProposal[] typeConstructorContext(final ScionInstance scion, final IFile file, final IDocument doc,
-	                                                     final int offset) {
-	  completionPairs = scion.completionsForTypes( file, doc );
-	  context = CompletionContext.TYCON_CONTEXT;
-	  return filterCompletionPairs( offset );
-	}
-
-	/**
 	 * Filter completion pairs
 	 */
-  private ICompletionProposal[] filterCompletionPairs( final int offset ) {
+  /*private ICompletionProposal[] getTypeCompletions( final ScionInstance scion, final IFile file, final IDocument doc,
+      final int offset ) {
+
+    Map<String, String> completionPairs = scion.completionsForTypes( file, doc );
     ArrayList<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
 
     if( completionPairs != null ) {
@@ -393,21 +413,21 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
         if( prefix.length() == 0
             || name.toLowerCase().startsWith( normalizedPrefix ) ) {
-          String fullProposal = name + " -- " + completionPairs.get( k );
-
-          if( !name.equals( k ) ) {
-            fullProposal = fullProposal + " as " + k;
-          }
+          // String fullProposal = name + " -- " + completionPairs.get( k );
+          //
+          // if( !name.equals( k ) ) {
+          //   fullProposal = fullProposal + " as " + k;
+          // }
 
           CompletionProposal proposal = new CompletionProposal( k,
-              prefixOffsetAnchor, prefixLength, k.length(), null, fullProposal,
-              tyConContext, null );
+              prefixOffsetAnchor, prefixLength, k.length(), ImageCache.TYPE, k,
+              null, "" );
           proposals.add( proposal );
         }
       }
     }
     return proposals.toArray( new ICompletionProposal[ proposals.size() ] );
-  }
+  }*/
 
 	/**
 	 * Get the completion prefix by reverse lexing from the offset. The reverse lexing process stops at the beginning of the

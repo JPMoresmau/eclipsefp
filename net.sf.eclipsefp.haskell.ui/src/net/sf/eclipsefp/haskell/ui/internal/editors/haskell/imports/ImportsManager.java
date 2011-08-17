@@ -3,7 +3,12 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.Documented;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -11,9 +16,11 @@ import org.eclipse.jface.text.Region;
 
 public class ImportsManager {
 
+  private final IFile file;
   private final IDocument doc;
 
-  public ImportsManager(final IDocument doc) {
+  public ImportsManager(final IFile file, final IDocument doc) {
+    this.file = file;
     this.doc = doc;
   }
 
@@ -91,8 +98,9 @@ public class ImportsManager {
     return r;
   }
 
-  public Map<String, Declaration> getDeclarations() {
+  public Map<String, Documented> getDeclarations( final ScionInstance scion ) {
     ArrayList<AnImport> imports = parseImports();
+    // Add Prelude import
     boolean hasPrelude = false;
     for (AnImport i : imports) {
       if (i.getName().equals( "Prelude" )) {
@@ -103,10 +111,21 @@ public class ImportsManager {
     if (!hasPrelude) {
       imports.add( new AnImport( "Prelude", null, true, false, null ) );
     }
+    // Add me
+    String meName = "Me";
+    IProject project = file.getProject();
+    IHaskellProject pr = HaskellProjectManager.get( project );
+    for (Map.Entry<String, IFile> f : pr.getModulesFile().entrySet()) {
+      if (f.getValue().getProjectRelativePath().equals( file.getProjectRelativePath() )) {
+        meName = f.getKey();
+        break;
+      }
+    }
+    imports.add( AnImport.createMe( meName ) );
 
-    HashMap<String, Declaration> r = new HashMap<String, Declaration>();
+    HashMap<String, Documented> r = new HashMap<String, Documented>();
     for (AnImport i : imports) {
-      r.putAll( i.getDeclarations() );
+      r.putAll( i.getDeclarations( scion, project, file, doc ) );
     }
 
     return r;

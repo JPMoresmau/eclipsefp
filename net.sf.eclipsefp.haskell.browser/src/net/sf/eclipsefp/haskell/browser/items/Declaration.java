@@ -51,7 +51,5 @@ public abstract class Declaration extends Documented {
 			throw new Exception("Declaration of unknown type");
 	}
 	
-	public abstract String getCompleteDefinition();
-	
 	public abstract String getShownName();
 }

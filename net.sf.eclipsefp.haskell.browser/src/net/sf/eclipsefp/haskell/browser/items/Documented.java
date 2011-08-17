@@ -14,6 +14,9 @@ import org.json.JSONObject;
 
 public abstract class Documented {
 	String doc;
+	
+	public abstract String getName();
+	public abstract String getCompleteDefinition();
 
 	public String getDoc() {
 		return this.doc;
