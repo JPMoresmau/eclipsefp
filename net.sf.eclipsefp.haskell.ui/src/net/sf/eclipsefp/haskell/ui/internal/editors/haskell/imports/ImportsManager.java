@@ -67,6 +67,14 @@ public class ImportsManager {
             // See if we have more things
             if (words.length > namePlace + 1) {
               int nextThings = namePlace + 1;
+              // Maybe we have a "as" clause
+              if (words[nextThings].equals("as")) {
+                nextThings++;
+                if (words.length > nextThings) {
+                  qualifiedName = words[nextThings];
+                  nextThings++;
+                }
+              }
               // Maybe we have a hiding clause
               if (words[nextThings].equals("hiding")) {
                 nextThings++;
@@ -77,11 +85,6 @@ public class ImportsManager {
               if (beginPar != -1) {
                 int endPar = contents.indexOf( ')' );
                 items = contents.substring( beginPar + 1, endPar );
-              }
-              // Try to find "as"
-              int lastElement = words.length - 1;
-              if (words[lastElement - 1].equals( "as" )) {
-                qualifiedName = words[lastElement];
               }
             }
 
