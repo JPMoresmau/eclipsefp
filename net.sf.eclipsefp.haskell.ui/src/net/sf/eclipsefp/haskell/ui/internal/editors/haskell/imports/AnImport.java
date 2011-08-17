@@ -188,7 +188,7 @@ public class AnImport {
     }
   }
 
-  private Documented outlineToBrowser( final OutlineDef def ) {
+  public static Documented outlineToBrowser( final OutlineDef def ) {
     switch (def.getType()) {
       case CLASS:
         return new TypeClass( "", new String[0], def.getName(), new String[0], new String[0] );

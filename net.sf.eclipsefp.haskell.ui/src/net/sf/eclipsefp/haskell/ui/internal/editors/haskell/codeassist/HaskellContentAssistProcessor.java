@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.browser.items.Function;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
+import net.sf.eclipsefp.haskell.browser.items.Instance;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
@@ -25,6 +26,7 @@ import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
@@ -62,6 +64,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       NO_CONTEXT
     , DEFAULT_CONTEXT
     , IMPORT_STMT
+    , IMPORT_LIST
     , TYCON_CONTEXT
     , CONID_CONTEXT
   }
@@ -79,6 +82,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   private ArrayList<String> moduleGraphNames;
   /** Module names exposed by the cabal project file */
   private ArrayList<String> exposedModules;
+
+  /** The module name for import list completion */
+  private String moduleName;
 
   /**
    * The constructor.
@@ -124,6 +130,27 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
             Region point = new Region( offsetPrefix, 0 );
             HaskellLexerToken[] tokens = scion.tokensPrecedingPoint( NUM_PRECEDING_TOKENS, theFile, doc, point );
 
+            String lineContents = doc.get( lineBegin.getStartOffset( doc ), offset - lineBegin.getStartOffset( doc ) );
+            if (lineContents.trim().startsWith( "import" ) && lineContents.contains( "(" )) {
+              context = CompletionContext.IMPORT_LIST;
+              // Get the module name
+              String[] words = lineContents.trim().split( "[ ]+" );
+              if (words.length > 1) {
+                moduleName = words[1];
+                if (moduleName.equals( "qualified" )) {
+                  if (words.length > 2) {
+                    moduleName = words[2];
+                  } else {
+                    moduleName = null;
+                  }
+                }
+              } else {
+                moduleName = null;
+              }
+              // Return imports list
+              return importsList( scion, viewer, theFile, doc, offset );
+            }
+
             if (tokens != null) {
               if (LexerTokenCategories.hasImportContext( tokens, lineBegin )) {
                 return moduleNamesContext(scion, offset);
@@ -151,6 +178,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
       case TYCON_CONTEXT: {
         return defaultCompletionContext( scion, viewer, theFile, doc, offset, true );
+      }
+
+      case IMPORT_LIST: {
+        return importsList( scion, viewer, theFile, doc, offset );
       }
 
       case CONID_CONTEXT: {
@@ -193,6 +224,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  prefix = new String();
 	  moduleGraphNames = null;
 	  exposedModules = null;
+	  moduleName = null;
 	}
 
 	/** Get the completion prefix from the prefix offset, if non-zero, or reverse lex */
@@ -310,6 +342,47 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     return (totalSize > 0 ? result : null);
+	}
+
+	private ICompletionProposal[] importsList( final ScionInstance scion, final ITextViewer viewer, final IFile theFile,
+	    final IDocument doc, final int offset ) {
+	  // Case when we don't know the module name yet
+	  if (moduleName == null) {
+      return new ICompletionProposal[0];
+    }
+
+	  // Get prefix
+	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset,
+	      HaskellUIPlugin.getHaskellEditor( viewer ) );
+	  String prefix = haskellCompletions.getPointedQualifier();
+	  int plength = prefix.length();
+	  // Reuse the general "imports" code, getting out the qualified names
+	  AnImport imp = new AnImport( moduleName, null, true, false, null );
+	  Map<String, Documented> decls = imp.getDeclarations( scion, theFile.getProject(), theFile, doc );
+
+	  ArrayList<String> names = new ArrayList<String>();
+	  for (Map.Entry<String, Documented> decl : decls.entrySet()) {
+	    String s = decl.getKey();
+	    if (s.indexOf( '.' ) == -1 && s.startsWith( prefix )) {
+        // Don't add qualified imports
+        Documented d = decl.getValue();
+        if (!(d instanceof Instance) && !(d instanceof TypeClass)) {
+          names.add( s );
+        }
+      }
+	  }
+	  Collections.sort( names );
+
+	  ICompletionProposal[] r = new ICompletionProposal[names.size()];
+	  for (int i = 0; i < names.size(); i++) {
+	    String s = names.get( i );
+	    Documented d = decls.get( s );
+	    r[i] = new CompletionProposal( s, offset - plength, plength, s.length(),
+          d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.getImageForDeclaration( ((Declaration)d).getType() ),
+          s, null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+	  }
+
+	  return r;
 	}
 
 	/**
@@ -449,10 +522,13 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       int i = offset - 1;
       final char ch = document.getChar( i );
 
-      if (HaskellText.isHaskellIdentifierPart( ch )) {
+      if (HaskellText.isHaskellIdentifierPart( ch ) || ch == '.') {
         // Scan backward until non-identifier character
-        for (--i; i >= lineBegin && HaskellText.isHaskellIdentifierPart( document.getChar( i ) ); --i) {
-          // NOP
+        for (--i; i >= lineBegin; --i) {
+          char innerC = document.getChar( i );
+          if ( !HaskellText.isHaskellIdentifierPart(innerC) && innerC != '.' ) {
+            break;
+          }
         }
 
         ++i;

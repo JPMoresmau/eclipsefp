@@ -97,4 +97,10 @@ public class HaskellInformationControl extends AbstractInformationControl {
     return this.hasContents;
   }
 
+  @Override
+  public void setFocus() {
+    // super.setFocus();
+    doc.setFocus();
+  }
+
 }
