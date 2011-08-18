@@ -120,6 +120,8 @@ public abstract class BrowserServer {
 	public abstract Module[] getModules(String module) throws IOException, JSONException;
 
 	public abstract Packaged<Declaration>[] getDeclarations(String module) throws Exception;
+	
+	public abstract Module[] findModulesForDeclaration(String decl) throws IOException, JSONException;
 
 	public abstract HoogleResult[] queryHoogle(String query) throws Exception;
 

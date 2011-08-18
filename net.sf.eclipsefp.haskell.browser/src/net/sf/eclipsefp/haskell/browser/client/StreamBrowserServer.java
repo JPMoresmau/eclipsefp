@@ -154,6 +154,12 @@ public class StreamBrowserServer extends BrowserServer {
 		}
 		return decls;
 	}
+	
+	@Override
+	public Module[] findModulesForDeclaration(String decl) throws IOException, JSONException {
+		String response = sendAndReceive(Commands.createFindModulesForDeclaration(decl));
+		return Commands.responseGetModules(response);
+	}
 
 	@Override
 	public HoogleResult[] queryHoogle(String query) throws Exception {
