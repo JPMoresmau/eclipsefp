@@ -17,6 +17,7 @@ import net.sf.eclipsefp.haskell.browser.items.NewType;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
+import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
 
 
 public class AnImport {
@@ -69,6 +71,10 @@ public class AnImport {
 
   public String getItems() {
     return this.items;
+  }
+
+  public String[] getItemsList() {
+    return this.items.trim().split( "[ ]*,[ ]*" );
   }
 
   public String getName() {
@@ -204,6 +210,49 @@ public class AnImport {
         return new Constructor( "", def.getName(), "?" );
       default:
           return null;
+    }
+  }
+
+  public CompletionProposal addItem(final IDocument doc, final String item, final String label) {
+    try {
+      String contents = doc.get(location.getOffset(), location.getLength());
+      if (items.trim().length() == 0) {
+        // We had no items
+        int pos = contents.indexOf( '(' );
+        return new CompletionProposal( item, location.getOffset() + pos + 1, 0,
+            location.getOffset() + pos + 1 + item.length(), ImageCache.MODULE, label, null, "" );
+      }
+      // We have some items
+      // Trim end the elements
+      String toSearch = "(" + items.replaceAll("\\s+$", "");
+      int pos = contents.indexOf( toSearch );
+      int newPos = location.getOffset() + pos + toSearch.length();
+      String contentsToAdd = ", " + item;
+      return new CompletionProposal( contentsToAdd, newPos, 0, newPos + contentsToAdd.length(),
+          ImageCache.MODULE, label, null, "" );
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  public CompletionProposal removeItem(final IDocument doc, final String item, final String label) {
+    try {
+      String contents = doc.get(location.getOffset(), location.getLength());
+      int pos = contents.indexOf( '(' );
+      StringBuilder newContents = new StringBuilder();
+      for (String s : getItemsList()) {
+        if (!s.equals( item )) {
+          if (newContents.length() > 0) {
+            // If not the first one, add a comma
+            newContents.append( ", " );
+          }
+          newContents.append( s );
+        }
+      }
+      return new CompletionProposal( newContents.toString(), location.getOffset() + pos + 1, items.length(),
+        0, ImageCache.MODULE, label, null, "" );
+    } catch (Exception e) {
+      return null;
     }
   }
 }

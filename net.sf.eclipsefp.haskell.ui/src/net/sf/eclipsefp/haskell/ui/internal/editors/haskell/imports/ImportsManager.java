@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
+import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
@@ -12,6 +13,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
 
 
 public class ImportsManager {
@@ -89,7 +91,7 @@ public class ImportsManager {
             }
 
             // Create the element
-            AnImport imp = new AnImport( name, reg, items != null, isHiding, isQualified, qualifiedName, items );
+            AnImport imp = new AnImport( name, reg, items == null, isHiding, isQualified, qualifiedName, items );
             r.add(imp);
           }
         }
@@ -132,5 +134,59 @@ public class ImportsManager {
     }
 
     return r;
+  }
+
+  public CompletionProposal addImport( final String name, final String place, final String qualified, final String label ) {
+    AnImport lastImport = null;
+    for (AnImport imp : parseImports()) {
+      lastImport = imp;
+      String qname = imp.getQualifiedName();
+      if (imp.getName().equals( place ) && ( (qname == null && qualified == null) || (qname != null && qname.equals( qualified )) ) ) {
+        // Change in this import
+        if (imp.isComplete()) {
+          // We didn't need to add an import in first place
+          return null;
+        }
+        if (imp.isHiding()) {
+          return imp.removeItem( doc, name, label );
+        }
+        return imp.addItem( doc, name, label );
+      }
+    }
+
+    // If we finished here, that means that we need to add a new import
+    try {
+      // 1. Get line of the last element and find offset
+      int line = doc.getLineOfOffset( doc.get().indexOf( "where" ) ) + 1;
+      if (lastImport != null) {
+        line = doc.getLineOfOffset( lastImport.getLocation().getOffset() );
+      }
+      int offsetToPut = doc.getLineOffset( line ) + doc.getLineLength( line );
+      // 2. Create contents
+      String contents;
+      if (qualified != null) {
+        contents = "import qualified " + place + " as " + qualified + " (" + name + ")";
+      } else {
+        contents = "import " + place + " (" + name + ")";
+      }
+      // 3. Create the proposal
+      return new CompletionProposal( contents + "\n", offsetToPut, 0, offsetToPut + contents.length() + 1, ImageCache.MODULE, label, null, "" );
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  public CompletionProposal removeItemInImport(final String name, final int line, final String label) {
+    try {
+      for (AnImport imp : parseImports()) {
+        int importLine = doc.getLineOfOffset( imp.getLocation().getOffset() );
+        if (importLine == line) {
+          return imp.removeItem( doc, name, label );
+        }
+      }
+    } catch (Exception e) {
+      return null;
+    }
+    return null;
   }
 }

@@ -44,11 +44,25 @@ public class BuildMarkerResolutionGenerator implements
             res.add( new ReplaceImportResolution( newImport ) );
           }
         } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS2 )>-1){
-          res.add(new RemoveImportResolution());
-          int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START2 );
-          if (ix2>-1){
-            String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START2.length() ).trim();
-            res.add( new ReplaceImportResolution( newImport ) );
+          if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_ELEMENT2 ) > -1) {
+            // Redundant element
+            // 1. Find redundant element
+            int backQuote1 = msg.indexOf( '`' );
+            int endQuote1 = msg.indexOf( '\'' );
+            String redundantElement = msg.substring( backQuote1 + 1, endQuote1 );
+            /*String rest = msg.substring( endQuote1 + 1 );
+            int backQuote2 = rest.indexOf( '`' );
+            int endQuote2 = rest.indexOf( '\'' );
+            String inImport = rest.substring( backQuote2 + 1, endQuote2 );*/
+            res.add( new RemoveRedundantElementInImportResolution( redundantElement ) );
+          } else {
+            // Redundant entire import
+            res.add(new RemoveImportResolution());
+            int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START2 );
+            if (ix2>-1){
+              String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START2.length() ).trim();
+              res.add( new ReplaceImportResolution( newImport ) );
+            }
           }
         }
         // Language pragma needed
@@ -95,7 +109,9 @@ public class BuildMarkerResolutionGenerator implements
             Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration( name );
             ArrayList<String> places = new ArrayList<String>();
             for (Module avMod : availableMods) {
-              places.add( avMod.getName() );
+              if (!places.contains( avMod.getName() )) {
+                places.add( avMod.getName() );
+              }
             }
             Collections.sort( places );
             for (String place : places) {

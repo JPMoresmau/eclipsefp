@@ -8,27 +8,24 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.osgi.util.NLS;
 
 
-public class AddImportResolution extends MarkerCompletion {
+public class RemoveRedundantElementInImportResolution extends MarkerCompletion {
 
   String element;
-  String place;
-  String qualified;
 
-  public AddImportResolution(final String element, final String place, final String qualified) {
+  public RemoveRedundantElementInImportResolution(final String element) {
     this.element = element;
-    this.place = place;
-    this.qualified = qualified;
   }
 
   public String getLabel() {
-    return NLS.bind( UITexts.resolve_import_add, element, place );
+    return NLS.bind( UITexts.resolve_import_remove_part, element );
   }
 
   @Override
   public ICompletionProposal getCompletionProposal( final IMarker marker,
       final IDocument document ) {
     ImportsManager mgr = new ImportsManager( null, document );
-    return mgr.addImport( element, place, qualified, getLabel() );
+    int line = marker.getAttribute( IMarker.LINE_NUMBER, -1 ) - 1;
+    return mgr.removeItemInImport( element, line, getLabel() );
   }
 
 }
