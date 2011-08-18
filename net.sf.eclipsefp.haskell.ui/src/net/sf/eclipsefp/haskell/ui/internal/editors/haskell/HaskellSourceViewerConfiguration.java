@@ -240,7 +240,6 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
     QuickAssistAssistant qaa=new QuickAssistAssistant();
     qaa.setQuickAssistProcessor( new QuickAssistProcessor() );
     return qaa;
-
 	}
 
 	@Override

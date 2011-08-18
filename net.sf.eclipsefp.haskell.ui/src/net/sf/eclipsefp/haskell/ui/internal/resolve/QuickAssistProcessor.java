@@ -43,9 +43,11 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
           IMarker marker=((MarkerAnnotation)ann ).getMarker();
           IMarkerResolution[] res1=generator.getResolutions( marker);
           for (IMarkerResolution imr:res1){
-            ICompletionProposal cp=((MarkerCompletion)imr).getCompletionProposal( marker, invocationContext.getSourceViewer().getDocument() );
-            if (cp!=null){
-              res.add(cp);
+            if (imr instanceof MarkerCompletion) {
+              ICompletionProposal cp=((MarkerCompletion)imr).getCompletionProposal( marker, invocationContext.getSourceViewer().getDocument() );
+              if (cp!=null){
+                res.add(cp);
+              }
             }
           }
           //res.addAll( Arrays.asList( res1 ) );
