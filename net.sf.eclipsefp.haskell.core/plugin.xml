@@ -150,6 +150,13 @@
            name="%contenttype_lucius_name"
            priority="normal">
      </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.text"
+           file-names="uuagc_options"
+           id="net.sf.eclipsefp.haskell.contenttypes.uuagc_options"
+           name="%contenttype_uuagc_options_name"
+           priority="normal">
+     </content-type>
    </extension>
 
    <extension

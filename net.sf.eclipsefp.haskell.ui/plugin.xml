@@ -1101,6 +1101,17 @@
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.lucius">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions.UuagcOptionsFormEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions.UuagcOptionsActionContributor"
+            extensions="x"
+            icon="icons/obj16/testsuitestanza.gif"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions.UuagcOptionsFormEditor"
+            name="%uuagc_options_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.uuagc_options">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.documentSetup">
