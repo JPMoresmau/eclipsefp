@@ -1,12 +1,12 @@
 package net.sf.eclipsefp.haskell.partitioned;
 
-public class Error {
+public class ProcessorError {
 	private String filename;
 	private int line;
 	private int column;
 	private String message;
 	
-	public Error(String filename, int line, int column, String message) {
+	public ProcessorError(String filename, int line, int column, String message) {
 		this.filename = filename;
 		this.line = line;
 		this.column = column;

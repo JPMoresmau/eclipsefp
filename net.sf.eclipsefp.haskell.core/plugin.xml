@@ -155,7 +155,7 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
@@ -238,5 +238,53 @@
             </adapt>
          </enablement>
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.partitioned.alex.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.partitioned.alex.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.partitioned.alex.addNatureAction"
+               label="%alex_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectAlexBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+   </extension>
+   <extension
+         id="alex"
+         name="%alexProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="partitioned.alex.AlexBuilder"
+         name="%alexBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder">
+         </run>
+      </builder>
    </extension>
 </plugin>

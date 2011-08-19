@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.ICommand;
@@ -78,5 +79,27 @@ public class HaskellResource {
 
   public boolean needsProjectHLintBuilder(){
     return !hasProjectHLintBuilder();
+  }
+
+  public boolean hasProjectAlexBuilder(){
+    if (fResource instanceof IProject){
+      IProject project=(IProject)fResource;
+      try {
+        IProjectDescription desc = project.getDescription();
+        ICommand[] commands = desc.getBuildSpec();
+        for( int i = 0; i < commands.length; ++i ) {
+          if( commands[ i ].getBuilderName().equals( AlexBuilder.BUILDER_ID ) ) {
+            return true;
+          }
+        }
+      } catch (CoreException ce){
+        HaskellCorePlugin.log( ce );
+      }
+    }
+    return false;
+  }
+
+  public boolean needsProjectAlexBuilder(){
+    return !hasProjectAlexBuilder();
   }
 }
