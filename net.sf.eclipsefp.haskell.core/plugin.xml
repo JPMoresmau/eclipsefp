@@ -155,7 +155,7 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
@@ -262,6 +262,30 @@
             </adapt>
          </enablement>
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.partitioned.happy.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.partitioned.happy.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.partitioned.happy.addNatureAction"
+               label="%happy_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectHappyBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
    </extension>
    <extension
          id="alex"
@@ -286,5 +310,28 @@
                class="net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder">
          </run>
       </builder>
+   </extension>
+   <extension
+         id="happy"
+         name="%happyProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="partitioned.happy.HappyBuilder"
+         name="%happyBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.partitioned.happy.HappyBuilder">
+         </run></builder>
    </extension>
 </plugin>

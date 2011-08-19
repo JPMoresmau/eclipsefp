@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.project;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
 import net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.happy.HappyBuilder;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.ICommand;
@@ -59,14 +60,14 @@ public class HaskellResource {
     return false;
   }
 
-  public boolean hasProjectHLintBuilder(){
+  public boolean hasProjectBuilder(final String builderId) {
     if (fResource instanceof IProject){
       IProject project=(IProject)fResource;
       try {
         IProjectDescription desc = project.getDescription();
         ICommand[] commands = desc.getBuildSpec();
         for( int i = 0; i < commands.length; ++i ) {
-          if( commands[ i ].getBuilderName().equals( HLintBuilder.BUILDER_ID ) ) {
+          if( commands[ i ].getBuilderName().equals( builderId ) ) {
             return true;
           }
         }
@@ -75,6 +76,10 @@ public class HaskellResource {
       }
     }
     return false;
+  }
+
+  public boolean hasProjectHLintBuilder(){
+    return hasProjectBuilder( HLintBuilder.BUILDER_ID );
   }
 
   public boolean needsProjectHLintBuilder(){
@@ -82,24 +87,18 @@ public class HaskellResource {
   }
 
   public boolean hasProjectAlexBuilder(){
-    if (fResource instanceof IProject){
-      IProject project=(IProject)fResource;
-      try {
-        IProjectDescription desc = project.getDescription();
-        ICommand[] commands = desc.getBuildSpec();
-        for( int i = 0; i < commands.length; ++i ) {
-          if( commands[ i ].getBuilderName().equals( AlexBuilder.BUILDER_ID ) ) {
-            return true;
-          }
-        }
-      } catch (CoreException ce){
-        HaskellCorePlugin.log( ce );
-      }
-    }
-    return false;
+    return hasProjectBuilder( AlexBuilder.BUILDER_ID );
   }
 
   public boolean needsProjectAlexBuilder(){
     return !hasProjectAlexBuilder();
+  }
+
+  public boolean hasProjectHappyBuilder(){
+    return hasProjectBuilder( HappyBuilder.BUILDER_ID );
+  }
+
+  public boolean needsProjectHappyBuilder(){
+    return !hasProjectHappyBuilder();
   }
 }
