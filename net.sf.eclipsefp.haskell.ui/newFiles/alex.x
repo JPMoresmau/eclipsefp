@@ -1,5 +1,5 @@
 {
-module Tokens (Token(..), alexScanTokens) where
+module ${module} (Token(..), alexScanTokens) where
 }
 
 %wrapper "basic"

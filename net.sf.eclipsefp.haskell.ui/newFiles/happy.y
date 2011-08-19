@@ -1,5 +1,6 @@
 {
-module Calc where
+module ${module} where
+
 import Char
 }
 

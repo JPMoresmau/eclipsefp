@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WordRule;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
@@ -127,6 +129,11 @@ public class PartitionSourceViewerConfiguration extends
       return scannerManager;
     }
     return ScannerManager.getInstance();
+  }
+
+  @Override
+  public IAnnotationHover getAnnotationHover( final ISourceViewer sourceViewer ) {
+    return new AnnotationHover();
   }
 
 }

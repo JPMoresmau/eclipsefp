@@ -25,14 +25,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -41,7 +37,7 @@ import org.eclipse.swt.widgets.Text;
   *
   * @author Leif Frenzel
   */
-public class NewModuleWizardPage extends StatusWizardPage implements IModuleCreationInfoProvider {
+public class NewPartitionedWizardPage extends StatusWizardPage implements IModuleCreationInfoProvider {
 
   private StringButtonDialogField dlgFieldSourceFolder;
   private StringButtonDialogField dlgFieldFolders;
@@ -52,16 +48,12 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   private IStatus nameStatus;
 
   private final ModuleCreationInfo currentInfo;
-  private Button chkUseLiterate;
-  private Group grpLiterate;
-  private Button rdoLiterate;
-  private Button rdoTex;
 
 
-  public NewModuleWizardPage() {
-    super( "NewModuleWizardPage" );
-    setTitle( "Haskell Module" );
-    setDescription( "Create a new Haskell module." );
+  public NewPartitionedWizardPage(final String wizardPageName, final String title, final String description) {
+    super( wizardPageName );
+    setTitle( title );
+    setDescription( description );
 
     currentInfo = new ModuleCreationInfo();
 
@@ -75,15 +67,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   }
 
   public ModuleCreationInfo getInfo() {
-    if (chkUseLiterate.getSelection()) {
-      if (rdoLiterate.getSelection()) {
-        currentInfo.setCommentStyle(EHaskellCommentStyle.LITERATE);
-      } else {
-        currentInfo.setCommentStyle(EHaskellCommentStyle.TEX);
-      }
-    } else {
-      currentInfo.setCommentStyle(EHaskellCommentStyle.USUAL);
-    }
+    currentInfo.setCommentStyle(EHaskellCommentStyle.USUAL);
     return currentInfo;
     //return new ModuleCreationOperation( currentInfo );
   }
@@ -168,74 +152,10 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     createFolderControls( composite, cols );
     createSeparator( composite, cols );
     createNameControls( composite, cols );
-    createLiterateControls( composite );
 
     setControl( composite );
 
     Dialog.applyDialogFont( composite );
-  }
-
-
-  private void createLiterateControls( final Composite composite ) {
-    createUseLiterateCheckBox( composite );
-    createLiterateBlock(composite);
-  }
-
-  private void createUseLiterateCheckBox( final Composite composite ) {
-    GridData gd = new GridData();
-    gd.horizontalAlignment = GridData.FILL;
-    gd.grabExcessHorizontalSpace = false;
-    gd.horizontalSpan = 1;
-    chkUseLiterate = new Button(composite, SWT.CHECK);
-    chkUseLiterate.setText( "Use literate style" );
-    chkUseLiterate.setLayoutData(gd);
-
-    chkUseLiterate.addSelectionListener(new SelectionListener() {
-
-      public void widgetSelected( final SelectionEvent e ) {
-        enableLiterateGroup(chkUseLiterate.getSelection());
-      }
-
-      public void widgetDefaultSelected( final SelectionEvent e ) {
-        widgetSelected( e );
-      }
-
-    });
-  }
-
-  private void createLiterateBlock( final Composite composite ) {
-    createLiterateGroup( composite );
-    createLiterateRadio();
-    createTexStyleRadio();
-  }
-
-  private void createLiterateGroup( final Composite composite ) {
-    grpLiterate = new Group(composite, SWT.NONE);
-    grpLiterate.setText("Literate Haskell");
-    grpLiterate.setEnabled( false );
-    GridData gd = new GridData();
-    gd.horizontalAlignment = GridData.FILL;
-    gd.grabExcessHorizontalSpace = false;
-    gd.horizontalSpan = 4;
-    grpLiterate.setLayoutData(gd);
-    GridLayout layout= new GridLayout();
-    layout.marginHeight= 0;
-    layout.marginWidth= 0;
-    layout.numColumns= 1;
-    grpLiterate.setLayout(layout);
-  }
-
-  private void createLiterateRadio() {
-    rdoLiterate = new Button(grpLiterate, SWT.RADIO);
-    rdoLiterate.setText("Traditional literate style");
-    rdoLiterate.setEnabled( false );
-    rdoLiterate.setSelection(true);
-  }
-
-  private void createTexStyleRadio() {
-    rdoTex = new Button(grpLiterate, SWT.RADIO);
-    rdoTex.setText("Tex literate style");
-    rdoTex.setEnabled( false );
   }
 
   // UI creation
@@ -412,13 +332,6 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
 
   // inner classes
   ////////////////
-
-  private void enableLiterateGroup(final boolean enabled) {
-    grpLiterate.setEnabled(enabled);
-    for(Control child : grpLiterate.getChildren()) {
-      child.setEnabled( enabled );
-    }
-  }
 
   private class FieldsAdapter implements IStringButtonAdapter,
                                          IDialogFieldListener {

@@ -519,6 +519,8 @@ public final class UITexts extends NLS {
   public static String new_happy;
   public static String new_uuagc;
 
+  public static String creating_file;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
