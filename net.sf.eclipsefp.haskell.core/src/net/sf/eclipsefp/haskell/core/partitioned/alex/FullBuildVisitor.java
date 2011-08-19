@@ -18,6 +18,7 @@ public class FullBuildVisitor implements IResourceVisitor {
         AlexBuilder.createMarker( resource, s );
       }
       // Set derived file as derived
+      resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
       IPath derivedPath = resource.getProjectRelativePath().removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
       resource.getProject().getFile( derivedPath ).setDerived( true, null );
     }

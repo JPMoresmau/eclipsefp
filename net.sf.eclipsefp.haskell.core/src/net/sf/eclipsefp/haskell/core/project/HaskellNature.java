@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.builder.HaskellBuilder;
 import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -26,9 +27,11 @@ public class HaskellNature implements IProjectNature {
     addBuilder( HaskellBuilder.BUILDER_ID );
     //addBuilder( CabalBuilder.BUILDER_ID );
     addBuilder( HLintBuilder.BUILDER_ID );
+    addBuilder( AlexBuilder.BUILDER_ID );
   }
 
   public void deconfigure() throws CoreException {
+    removeBuilder( AlexBuilder.BUILDER_ID );
     removeBuilder( HLintBuilder.BUILDER_ID );
     // removeBuilder( CabalBuilder.BUILDER_ID );
     removeBuilder( HaskellBuilder.BUILDER_ID );
