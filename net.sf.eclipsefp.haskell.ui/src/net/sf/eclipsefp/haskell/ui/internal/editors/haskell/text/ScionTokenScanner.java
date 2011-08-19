@@ -15,8 +15,6 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,8 +22,6 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.editors.text.TextFileDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.json.JSONArray;
 
 /**
@@ -152,21 +148,18 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
             if (contents.contains( "\t" )){
 
             if (MessageDialog.openConfirm( Display.getCurrent().getActiveShell() , UITexts.error_tabs  , UITexts.error_tabs_message )){
-              try {
-                IDocumentProvider prov=new TextFileDocumentProvider();
-                prov.connect(file);
-                IDocument doc2=prov.getDocument( file );
-                int tw=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( EDITOR_TAB_WIDTH );
-                StringBuilder sb=new StringBuilder();
-                for (int a=0;a<tw;a++){
-                  sb.append(" ");
-                }
-                contents=contents.replace( "\t",sb.toString() );
-                doc2.set(contents);
-                prov.saveDocument( new NullProgressMonitor(), file, doc2, true );
-              } catch (CoreException ce){
-                HaskellUIPlugin.log( ce );
+              /*IDocumentProvider prov=new TextFileDocumentProvider();
+              prov.connect(file);
+              IDocument doc2=prov.getDocument( file );*/
+              int tw=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( EDITOR_TAB_WIDTH );
+              StringBuilder sb=new StringBuilder();
+              for (int a=0;a<tw;a++){
+                sb.append(" ");
               }
+              contents=contents.replace( "\t",sb.toString() );
+              // doc2.set(contents);
+              document.set(contents);
+              // prov.saveDocument( new NullProgressMonitor(), file, doc2, true );
             }
           }
         }
