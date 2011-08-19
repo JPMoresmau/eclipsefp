@@ -17,6 +17,10 @@ public class UuagcFile {
     this.options = options;
   }
 
+  public String getFilename() {
+    return this.file;
+  }
+
   public void rename(final String newName) {
     this.file = newName;
   }

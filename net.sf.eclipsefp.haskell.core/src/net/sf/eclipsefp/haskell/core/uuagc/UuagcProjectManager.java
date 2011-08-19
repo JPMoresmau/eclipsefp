@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.core.uuagc;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -51,7 +53,7 @@ public class UuagcProjectManager {
         // Get filename
         int colonPos = line.indexOf( ':' );
         String filenameWithQuotes = line.substring( colonPos + 1 ).trim();
-        String filename = filenameWithQuotes.substring( 0, filenameWithQuotes.length() - 1 );
+        String filename = filenameWithQuotes.substring( 1, filenameWithQuotes.length() - 1 );
 
         // Try to find options
         for (i++; i < lines.length; i++) {
@@ -88,5 +90,9 @@ public class UuagcProjectManager {
     IDocument doc = provider.getDocument( optionsFile );
     doc.set( toUuagcString() );
     provider.saveDocument( null, optionsFile, doc, true );
+  }
+
+  public List<UuagcFile> getElements() {
+    return Collections.unmodifiableList( files );
   }
 }

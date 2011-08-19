@@ -523,6 +523,18 @@ public final class UITexts extends NLS {
 
   public static String uuagcEditor_uuagcOptions;
   public static String uuagcEditor_source;
+  public static String uuagcEditor_dataDescr;
+  public static String uuagcEditor_semfunsDescr;
+  public static String uuagcEditor_catasDescr;
+  public static String uuagcEditor_signaturesDescr;
+  public static String uuagcEditor_newtypesDescr;
+  public static String uuagcEditor_prettyDescr;
+  public static String uuagcEditor_wrappersDescr;
+  public static String uuagcEditor_renameDescr;
+  public static String uuagcEditor_nestDescr;
+  public static String uuagcEditor_haskellSyntaxDescr;
+  public static String uuagcEditor_selfDescr;
+  public static String uuagcEditor_cycleDescr;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
