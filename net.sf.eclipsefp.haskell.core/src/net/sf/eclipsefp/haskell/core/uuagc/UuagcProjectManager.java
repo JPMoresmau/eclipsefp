@@ -67,6 +67,7 @@ public class UuagcProjectManager {
               optionsList.add( option );
             }
             files.add( new UuagcFile( filename, optionsList ) );
+            break;
           }
         }
       }
