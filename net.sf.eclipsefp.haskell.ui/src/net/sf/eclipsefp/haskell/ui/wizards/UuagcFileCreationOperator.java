@@ -13,9 +13,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class UuagcFileCreationOperator extends TemplateFileCreationOperation {
 
+  private final boolean useHaskellSyntax;
+
   public UuagcFileCreationOperator( final ModuleCreationInfo info,
-      final InputStream stream, final String fileExtension ) {
+      final InputStream stream, final String fileExtension, final boolean useHaskellSyntax ) {
     super( info, stream, fileExtension );
+    this.useHaskellSyntax = useHaskellSyntax;
   }
 
   @Override
@@ -37,6 +40,9 @@ public class UuagcFileCreationOperator extends TemplateFileCreationOperation {
     uuagc.addOption( "wrappers" );
     uuagc.addOption( "rename" );
     uuagc.addOption( "module \"" + getInfo().getQualifiedModuleName() + "\"" );
+    if (useHaskellSyntax) {
+      uuagc.addOption( "haskellsyntax" );
+    }
     mgr.addElement( uuagc );
     try {
       mgr.save();

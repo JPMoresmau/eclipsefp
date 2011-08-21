@@ -18,9 +18,10 @@ public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
 
   public static final String ID = NewUuagcWizard.class.getName();
   static final String FILE_NAME = "/newFiles/uuagc.ag";
+  static final String FILE_NAME_HASKELL = "/newFiles/uuagc-haskell.ag";
 
   private IStructuredSelection selection;
-  private NewPartitionedWizardPage page0;
+  private NewUuagcWizardPage page0;
   private ModuleInclusionPage page1;
 
   public NewUuagcWizard() {
@@ -30,14 +31,16 @@ public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
   }
 
-  public void init( final IWorkbench workbench, final IStructuredSelection selection ) {
+  public void init( final IWorkbench workbench,
+      final IStructuredSelection selection ) {
     this.selection = selection;
   }
 
   @Override
   public void addPages() {
     super.addPages();
-    page0 = new NewPartitionedWizardPage( "NewUuagcPage", UITexts.new_uuagc, UITexts.uuagc_newFile );
+    page0 = new NewUuagcWizardPage( "NewUuagcPage", UITexts.new_uuagc,
+        UITexts.uuagc_newFile );
     addPage( page0 );
     page0.init( selection );
     page1 = new ModuleInclusionPage();
@@ -53,7 +56,9 @@ public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
     }
     mci.setExposed( page1.getModuleInclusionComposite().getExposed() );
     mci.setIncluded( page1.getModuleInclusionComposite().getIncluded() );
-    UuagcFileCreationOperator mco = new UuagcFileCreationOperator( mci, getInitialContents(), "ag" );
+    UuagcFileCreationOperator mco = new UuagcFileCreationOperator( mci,
+        getInitialContents( page0.getUseHaskellSyntax() ), "ag",
+        page0.getUseHaskellSyntax() );
 
     IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( mco );
     boolean result = false;
@@ -84,9 +89,11 @@ public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
     }
   }
 
-  protected InputStream getInitialContents() {
+  protected InputStream getInitialContents( final boolean useHaskellSyntax ) {
     try {
-      return HaskellUIPlugin.getDefault().getBundle().getEntry(FILE_NAME).openStream();
+      return HaskellUIPlugin.getDefault().getBundle()
+          .getEntry( useHaskellSyntax ? FILE_NAME_HASKELL : FILE_NAME )
+          .openStream();
     } catch( IOException ex ) {
       // This should never happen
       return null;
