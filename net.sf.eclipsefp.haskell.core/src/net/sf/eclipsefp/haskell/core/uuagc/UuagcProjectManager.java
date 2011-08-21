@@ -95,4 +95,8 @@ public class UuagcProjectManager {
   public List<UuagcFile> getElements() {
     return Collections.unmodifiableList( files );
   }
+
+  public void addElement( final UuagcFile file ) {
+    files.add( file );
+  }
 }

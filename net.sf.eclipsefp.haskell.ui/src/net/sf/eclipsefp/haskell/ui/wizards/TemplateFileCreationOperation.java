@@ -25,9 +25,10 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 
-/** <p>the operation that creates a new module in a Haskell project.</p>
+/** <p>the operation that creates a new file from a template.</p>
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
   */
 public class TemplateFileCreationOperation implements IRunnableWithProgress {
 
