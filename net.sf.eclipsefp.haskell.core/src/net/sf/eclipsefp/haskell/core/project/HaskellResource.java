@@ -4,6 +4,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
 import net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder;
 import net.sf.eclipsefp.haskell.core.partitioned.happy.HappyBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.uuagc.UuagcBuilder;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.ICommand;
@@ -100,5 +101,13 @@ public class HaskellResource {
 
   public boolean needsProjectHappyBuilder(){
     return !hasProjectHappyBuilder();
+  }
+
+  public boolean hasProjectUuagcBuilder(){
+    return hasProjectBuilder( UuagcBuilder.BUILDER_ID );
+  }
+
+  public boolean needsProjectUuagcBuilder(){
+    return !hasProjectUuagcBuilder();
   }
 }

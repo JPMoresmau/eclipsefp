@@ -1,8 +1,8 @@
-package net.sf.eclipsefp.haskell.core.partitioned.alex;
+package net.sf.eclipsefp.haskell.core.partitioned.uuagc;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.ProcessorError;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -15,20 +15,21 @@ public class DeltaVisitor implements IResourceDeltaVisitor {
 
   public boolean visit( final IResourceDelta delta ) throws CoreException {
     IResource resource = delta.getResource();
-    if( AlexBuilder.mustBeVisited( resource ) ) {
+    if( UuagcBuilder.mustBeVisited( resource ) ) {
       // We have to clean the previous markers
-      resource.deleteMarkers( HaskellCorePlugin.ID_ALEX_MARKER, true,
+      resource.deleteMarkers( HaskellCorePlugin.ID_UUAGC_MARKER, true,
           IResource.DEPTH_ZERO );
       // And add the new ones
       if( delta.getKind() == IResourceDelta.ADDED
           || delta.getKind() == IResourceDelta.CHANGED ) {
-        AlexRunner runner = new AlexRunner();
-        for( ProcessorError s: runner.run( resource.getLocation() ) ) {
-          AlexBuilder.createMarker( resource, s );
+        UuagcRunner runner = new UuagcRunner( resource.getProject() );
+        for( ProcessorError s: runner.run( resource ) ) {
+          UuagcBuilder.createMarker( resource, s );
         }
         // Set derived file as derived
         resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
-        IPath derivedPath = resource.getProjectRelativePath().removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
+        IPath derivedPath = resource.getProjectRelativePath()
+            .removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
         resource.getProject().getFile( derivedPath ).setDerived( true, null );
       }
     }

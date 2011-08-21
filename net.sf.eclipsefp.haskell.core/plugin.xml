@@ -162,7 +162,7 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder, hasProjectUuagcBuilder, needsProjectUuagcBuilder"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
@@ -293,6 +293,30 @@
             </adapt>
          </enablement>
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.partitioned.uuagc.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.partitioned.uuagc.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.partitioned.uuagc.addNatureAction"
+               label="%uuagc_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectUuagcBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
    </extension>
    <extension
          id="alex"
@@ -339,6 +363,29 @@
       <builder>
          <run
                class="net.sf.eclipsefp.haskell.core.partitioned.happy.HappyBuilder">
+         </run></builder>
+   </extension>
+   <extension
+         id="uuagc"
+         name="%uuagcProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="partitioned.uuagc.UuagcBuilder"
+         name="%uuagcBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.partitioned.uuagc.UuagcBuilder">
          </run></builder>
    </extension>
 </plugin>

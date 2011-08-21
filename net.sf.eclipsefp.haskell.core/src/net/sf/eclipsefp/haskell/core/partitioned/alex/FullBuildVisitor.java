@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.partitioned.alex;
 
-import net.sf.eclipsefp.haskell.partitioned.AlexRunner;
-import net.sf.eclipsefp.haskell.partitioned.ProcessorError;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.ProcessorError;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;

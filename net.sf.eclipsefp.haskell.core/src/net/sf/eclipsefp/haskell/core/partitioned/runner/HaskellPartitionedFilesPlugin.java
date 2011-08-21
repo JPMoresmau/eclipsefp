@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.partitioned;
+package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

@@ -1,8 +1,8 @@
 package net.sf.eclipsefp.haskell.core.partitioned.happy;
 
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.partitioned.HappyRunner;
-import net.sf.eclipsefp.haskell.partitioned.ProcessorError;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.ProcessorError;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;

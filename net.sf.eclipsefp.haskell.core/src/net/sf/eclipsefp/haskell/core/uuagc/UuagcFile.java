@@ -1,6 +1,8 @@
 package net.sf.eclipsefp.haskell.core.uuagc;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class UuagcFile {
@@ -37,6 +39,10 @@ public class UuagcFile {
 
   public void removeOption(final String option) {
     options.remove( option );
+  }
+
+  public List<String> getOptions() {
+    return Collections.unmodifiableList( options );
   }
 
   public String optionsString() {

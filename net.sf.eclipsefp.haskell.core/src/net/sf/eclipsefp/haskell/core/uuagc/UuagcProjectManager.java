@@ -102,6 +102,15 @@ public class UuagcProjectManager {
     return Collections.unmodifiableList( files );
   }
 
+  public UuagcFile getElement( final String location ) {
+    for (UuagcFile file : files) {
+      if (file.getFilename().equals( location )) {
+        return file;
+      }
+    }
+    return null;
+  }
+
   public void addElement( final UuagcFile file ) {
     files.add( file );
   }

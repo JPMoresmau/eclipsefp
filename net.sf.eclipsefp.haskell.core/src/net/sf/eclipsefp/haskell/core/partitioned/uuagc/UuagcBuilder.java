@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.core.partitioned.happy;
+package net.sf.eclipsefp.haskell.core.partitioned.uuagc;
 
 import java.util.Map;
 import java.util.Set;
@@ -19,11 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class HappyBuilder extends IncrementalProjectBuilder {
+public class UuagcBuilder extends IncrementalProjectBuilder {
 
-  public static String BUILDER_ID = HappyBuilder.class.getName();
+  public static String BUILDER_ID = UuagcBuilder.class.getName();
 
-  public HappyBuilder() {
+  public UuagcBuilder() {
     // Do nothing
   }
 
@@ -100,15 +100,20 @@ public class HappyBuilder extends IncrementalProjectBuilder {
     if( extension == null ) {
       return false;
     }
-    return extension.equals( FileUtil.EXTENSION_HAPPY );
+    return extension.equals( FileUtil.EXTENSION_UUAGC );
   }
 
   static void createMarker( final IResource resource, final ProcessorError e )
       throws CoreException {
+    int colonPos = e.getMessage().indexOf( ':' );
+    String severityMsg = e.getMessage().substring( 0, colonPos ).trim();
+    String theMessage = e.getMessage().substring( colonPos + 1 ).trim();
+
     IMarker marker = resource
-        .createMarker( HaskellCorePlugin.ID_HAPPY_MARKER );
-    marker.setAttribute( IMarker.MESSAGE, e.getMessage() );
-    marker.setAttribute( IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+        .createMarker( HaskellCorePlugin.ID_UUAGC_MARKER );
+    marker.setAttribute( IMarker.MESSAGE, theMessage );
+    marker.setAttribute( IMarker.SEVERITY,
+            severityMsg.equals( "error" ) ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING); //$NON-NLS-1$
     marker.setAttribute( IMarker.LINE_NUMBER, e.getLine() );
   }
 
