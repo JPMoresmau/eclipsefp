@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.core.uuagc;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,10 +87,15 @@ public class UuagcProjectManager {
   public void save() throws CoreException {
     TextFileDocumentProvider provider = new TextFileDocumentProvider();
     IFile optionsFile = project.getFile( UUAGC_OPTIONS_FILENAME );
-    provider.connect( optionsFile );
-    IDocument doc = provider.getDocument( optionsFile );
-    doc.set( toUuagcString() );
-    provider.saveDocument( null, optionsFile, doc, true );
+    if (!optionsFile.exists()) {
+      InputStream is = new ByteArrayInputStream( toUuagcString().getBytes( ) );
+      optionsFile.create( is, true, null );
+    } else {
+      provider.connect( optionsFile );
+      IDocument doc = provider.getDocument( optionsFile );
+      doc.set( toUuagcString() );
+      provider.saveDocument( null, optionsFile, doc, true );
+    }
   }
 
   public List<UuagcFile> getElements() {
