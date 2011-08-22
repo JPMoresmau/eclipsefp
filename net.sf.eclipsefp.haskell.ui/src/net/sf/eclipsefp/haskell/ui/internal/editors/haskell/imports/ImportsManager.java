@@ -78,9 +78,11 @@ public class ImportsManager {
                 }
               }
               // Maybe we have a hiding clause
-              if (words[nextThings].equals("hiding")) {
-                nextThings++;
-                isHiding = true;
+              if (words.length > nextThings) {
+                if (words[nextThings].equals("hiding")) {
+                  nextThings++;
+                  isHiding = true;
+                }
               }
               // Try to find '(' and ')'
               int beginPar = contents.indexOf( '(' );
