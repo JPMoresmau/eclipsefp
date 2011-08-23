@@ -64,7 +64,7 @@ public class ProjectCreationOperation {
     try {
       ResourcesPlugin.getWorkspace().run( operation, mon );
     } catch( CoreException cex ) {
-      HaskellCorePlugin.log( "Problem creating new project.", cex ); //$NON-NLS-1$
+      HaskellCorePlugin.log( CoreTexts.projectCreationOperation_error, cex );
     } finally {
       mon.done();
     }

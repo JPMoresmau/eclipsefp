@@ -46,6 +46,9 @@ public final class CoreTexts extends NLS {
   public static String projectCreationOperation_init;
   public static String projectCreationOperation_natures;
   public static String projectCreationOperation_settings;
+  public static String projectCreationOperation_error;
+
+  public static String projectNatureAddOperation_error;
 
   public static String sourceFileGenerator_creating;
 
