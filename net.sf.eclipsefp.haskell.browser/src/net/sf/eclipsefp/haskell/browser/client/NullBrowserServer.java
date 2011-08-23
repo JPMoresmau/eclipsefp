@@ -41,7 +41,7 @@ public class NullBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public void loadLocalDatabase(String path, boolean rebuild) throws IOException, JSONException {
+	protected void loadLocalDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException {
 		// Do nothing
 	}
 
@@ -73,6 +73,11 @@ public class NullBrowserServer extends BrowserServer {
 	public Packaged<Declaration>[] getDeclarations(String module) throws Exception {
 		// Return nothing
 		return (Packaged<Declaration>[]) new Packaged[0];
+	}
+	
+	@Override
+	public Module[] findModulesForDeclaration(String decl) throws IOException, JSONException {
+		return new Module[0];
 	}
 
 	@Override

@@ -17,13 +17,13 @@ import org.eclipse.osgi.util.NLS;
   *
   * @author JP Moresmau
  */
-public class AddLanguagePramaResolution extends MarkerCompletion {
+public class AddLanguagePragmaResolution extends MarkerCompletion {
   private final static String pragmaStart="{-# LANGUAGE "; //$NON-NLS-1$
   private final static String pragmaEnd="#-}"; //$NON-NLS-1$
 
   private final String pragma;
 
-  public AddLanguagePramaResolution( final String pragma ) {
+  public AddLanguagePragmaResolution( final String pragma ) {
     super();
     this.pragma = pragma;
   }

@@ -145,4 +145,11 @@ public class Commands {
 		o.put("command", "hoogle-data");
 		return o;
 	}
+	
+	public static JSONObject createFindModulesForDeclaration(String name) throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "get-decl-module");
+		o.put("decl", name);
+		return o;
+	}
 }

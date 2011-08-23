@@ -2,8 +2,11 @@
 package net.sf.eclipsefp.haskell.core.internal.project;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
@@ -15,6 +18,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -159,6 +164,58 @@ public final class HaskellProject implements IHaskellProject {
   private void check( final String candidate ) {
     if( candidate == null ) {
       throw new IllegalArgumentException();
+    }
+  }
+
+  public Map<String, IFile> getModulesFile( ) {
+    Set<IPath> paths = getSourcePaths();
+    HashMap<String, IFile> r = new HashMap<String, IFile>();
+    try {
+      this.getResource().accept( new ModulesVisitor( r, paths ) );
+    } catch (CoreException e) {
+      r.clear();
+    }
+    return r;
+  }
+
+  public IFile getModuleFile( final String module ) {
+    return this.getModulesFile( ).get( module );
+  }
+
+  public class ModulesVisitor implements IResourceVisitor {
+
+    public Map<String, IFile> elts;
+    public Vector<String> possiblePrefixes;
+
+    public ModulesVisitor( final Map<String, IFile> whereAdd,
+        final Set<IPath> dirs ) {
+      this.elts = whereAdd;
+      this.possiblePrefixes = new Vector<String>();
+      for( IPath dir: dirs ) {
+        this.possiblePrefixes.add( dir.toPortableString() + "/" ); //$NON-NLS-1$
+      }
+    }
+
+    public boolean visit( final IResource resource ) {
+      String path = resource.getProjectRelativePath().toString();
+      if( resource instanceof IFile ) {
+        IFile file = (IFile)resource;
+        for( String dir: possiblePrefixes ) {
+          if( path.startsWith( dir ) ) {
+            String filePath = path.substring( dir.length() );
+            if( filePath.endsWith( ".hs" ) ) { //$NON-NLS-1$
+              String module = filePath.substring( 0, filePath.length() - 3 )
+                  .replace( '/', '.' );
+              this.elts.put( module, file );
+            } else if( filePath.endsWith( ".lhs" ) ) { //$NON-NLS-1$
+              String module = filePath.substring( 0, filePath.length() - 4 )
+                  .replace( '/', '.' );
+              this.elts.put( module, file );
+            }
+          }
+        }
+      }
+      return true;
     }
   }
 }

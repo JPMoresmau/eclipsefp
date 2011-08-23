@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
@@ -39,9 +40,13 @@ public class StreamBrowserServer extends BrowserServer {
 	private BufferedReader out = null;
 	private boolean dbLoaded = false;
 	private boolean hoogleLoaded = false;
+	
+	private DatabaseType currentDatabase;
+	private HashMap<String, Packaged<Declaration>[]> declCache;
 
 	public StreamBrowserServer(IPath serverExecutable) throws Exception {
 		this.serverExecutable = serverExecutable;
+		this.declCache = new HashMap<String, Packaged<Declaration>[]>();
 		startServer();
 	}
 
@@ -97,7 +102,7 @@ public class StreamBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public void loadLocalDatabase(String path, boolean rebuild)
+	protected void loadLocalDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
 		sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild));
 		// Notify listeners
@@ -110,6 +115,7 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
 			throws IOException, JSONException {
+		this.currentDatabase = current;
 		sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
 	}
 
@@ -134,8 +140,25 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public Packaged<Declaration>[] getDeclarations(String module)
 			throws Exception {
+		// Try to find in cache
+		if (this.currentDatabase == DatabaseType.ALL) {
+			if (this.declCache.containsKey(module))
+				return this.declCache.get(module);
+		}
+		// If not, search
 		String response = sendAndReceive(Commands.createGetDeclarations(module));
-		return Commands.responseGetDeclarations(response);
+		Packaged<Declaration>[] decls = Commands.responseGetDeclarations(response);
+		// Check if we need to save in cache
+		if (this.currentDatabase == DatabaseType.ALL) {
+			this.declCache.put(module, decls);
+		}
+		return decls;
+	}
+	
+	@Override
+	public Module[] findModulesForDeclaration(String decl) throws IOException, JSONException {
+		String response = sendAndReceive(Commands.createFindModulesForDeclaration(decl));
+		return Commands.responseGetModules(response);
 	}
 
 	@Override

@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
  net.sf.eclipsefp.haskell.scion.client,
  org.eclipse.text;bundle-version="3.5.0",
  net.sf.eclipsefp.haskell.util;bundle-version="1.0.0",
- net.sf.eclipsefp.haskell.hlint;bundle-version="0.0.1"
+ net.sf.eclipsefp.haskell.hlint;bundle-version="0.0.1",
+ org.eclipse.ui.editors;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -34,6 +35,7 @@ Export-Package: net.sf.eclipsefp.haskell.core;uses:="org.osgi.framework,org.ecli
  net.sf.eclipsefp.haskell.core.internal.project.provisionary;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.internal.util;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ghccompiler",
  net.sf.eclipsefp.haskell.core.parser,
+ net.sf.eclipsefp.haskell.core.partitioned.runner,
  net.sf.eclipsefp.haskell.core.preferences;uses:="org.eclipse.core.runtime.preferences",
  net.sf.eclipsefp.haskell.core.project;
   uses:="net.sf.eclipsefp.haskell.core.internal.project,
@@ -41,4 +43,5 @@ Export-Package: net.sf.eclipsefp.haskell.core;uses:="org.osgi.framework,org.ecli
    org.eclipse.core.resources,
    org.osgi.service.prefs,
    org.eclipse.core.runtime",
- net.sf.eclipsefp.haskell.core.util;uses:="net.sf.eclipsefp.haskell.core.cabalmodel,org.eclipse.core.resources,org.eclipse.core.runtime"
+ net.sf.eclipsefp.haskell.core.util;uses:="net.sf.eclipsefp.haskell.core.cabalmodel,org.eclipse.core.resources,org.eclipse.core.runtime",
+ net.sf.eclipsefp.haskell.core.uuagc

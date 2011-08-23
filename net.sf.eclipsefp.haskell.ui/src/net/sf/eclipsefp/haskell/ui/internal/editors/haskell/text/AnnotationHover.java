@@ -115,6 +115,12 @@ public class AnnotationHover implements IAnnotationHover {
       while( it.hasNext() ) {
         Object obj = it.next();
         if( obj instanceof Annotation ) {
+          Annotation ann = (Annotation)obj;
+          // Don't add ocurrences annotations
+          if (ann.getType().equals("net.sf.eclipsefp.haskell.ui.occurrences")) {
+            continue;
+          }
+
           Position position = model.getPosition( ( Annotation )obj );
           if( position == null ) {
             continue;

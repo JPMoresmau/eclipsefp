@@ -185,6 +185,14 @@ public final class UITexts extends NLS {
   public static String newHaskellProjectWizard_pageTitle;
   public static String newHaskellProjectWizard_windowTitle;
 
+  public static String newSnapProjectWizard_pageDesc;
+  public static String newSnapProjectWizard_pageTitle;
+  public static String newSnapProjectWizard_windowTitle;
+
+  public static String newYesodProjectWizard_pageDesc;
+  public static String newYesodProjectWizard_pageTitle;
+  public static String newYesodProjectWizard_windowTitle;
+
   public static String newProjectWizardPage_NameGroup_label_text;
   public static String newProjectWizardPage_Message_enterProjectName;
   public static String newProjectWizardPage_Message_projectAlreadyExists;
@@ -254,6 +262,8 @@ public final class UITexts extends NLS {
   public static String resolve_import_remove;
   public static String resolve_import_replace;
   public static String resolve_addpackage;
+  public static String resolve_import_add;
+  public static String resolve_import_remove_part;
 
   public static String preferences_title;
 
@@ -496,6 +506,35 @@ public final class UITexts extends NLS {
   public static String hoogle_downloadingData;
   public static String hoogle_dataNotPresent_title;
   public static String hoogle_dataNotPresent_message;
+
+  public static String alex_newFile;
+  public static String happy_newFile;
+  public static String uuagc_newFile;
+
+  public static String contenttype_alex_name;
+  public static String contenttype_happy_name;
+  public static String contenttype_uuagc_name;
+
+  public static String new_alex;
+  public static String new_happy;
+  public static String new_uuagc;
+
+  public static String creating_file;
+
+  public static String uuagcEditor_uuagcOptions;
+  public static String uuagcEditor_source;
+  public static String uuagcEditor_dataDescr;
+  public static String uuagcEditor_semfunsDescr;
+  public static String uuagcEditor_catasDescr;
+  public static String uuagcEditor_signaturesDescr;
+  public static String uuagcEditor_newtypesDescr;
+  public static String uuagcEditor_prettyDescr;
+  public static String uuagcEditor_wrappersDescr;
+  public static String uuagcEditor_renameDescr;
+  public static String uuagcEditor_nestDescr;
+  public static String uuagcEditor_haskellSyntaxDescr;
+  public static String uuagcEditor_selfDescr;
+  public static String uuagcEditor_cycleDescr;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

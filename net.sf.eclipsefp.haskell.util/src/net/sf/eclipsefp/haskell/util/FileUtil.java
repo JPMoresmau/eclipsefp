@@ -36,6 +36,13 @@ public class FileUtil {
   public static final String   DEFAULT_FOLDER_SRC = "src";
   /** Default project documentation directory */
   public static final String   DEFAULT_FOLDER_DOC = "doc";
+  
+  /**  Haskell for Alex lexers. */
+  public static final String   EXTENSION_ALEX     = "x";                  //$NON-NLS-1$
+  /**  Haskell for Happy parsers. */
+  public static final String   EXTENSION_HAPPY    = "y";                  //$NON-NLS-1$
+  /**  Haskell for UU Attribute Grammars. */
+  public static final String   EXTENSION_UUAGC    = "ag";                  //$NON-NLS-1$
 
   /** Candidate locations to search for files on a path */
   static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
