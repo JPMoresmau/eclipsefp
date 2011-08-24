@@ -2,11 +2,7 @@ package net.sf.eclipsefp.haskell.core.hlint;
 
 import net.sf.eclipsefp.haskell.core.internal.project.AbstractAddNatureActionDelegate;
 
-/**
- *
- * @author serras
- *
- */
+
 public class AddNatureActionDelegate extends AbstractAddNatureActionDelegate {
 
   public AddNatureActionDelegate() {
@@ -17,6 +13,5 @@ public class AddNatureActionDelegate extends AbstractAddNatureActionDelegate {
   protected String getBuilderID() {
     return HLintBuilder.BUILDER_ID;
   }
-
 
 }
