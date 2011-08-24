@@ -16,13 +16,27 @@ public class OutputParser {
 			String msg = line.substring(parts + 2).trim();
 
 			String[] fileParts = file.split(":"); //$NON-NLS-1$
-			String fname = fileParts[0];
+			String fname;
 			int lno, cno;
-			if (fileParts.length == 3) {
-				// We have column name
-				lno = Integer.parseInt(fileParts[1]);
-				cno = Integer.parseInt(fileParts[2]);
+
+			if (fileParts.length == 4) {
+			  // We have a Windows path + line + column
+			  fname = fileParts[0] + ":" + fileParts[1]; //$NON-NLS-1$
+			  lno = Integer.parseInt(fileParts[2]);
+			  cno = Integer.parseInt(fileParts[3]);
+			} else if (fileParts.length == 3) {
+			  // Try to get it as Unix file + line + column
+			  try {
+  			  fname = fileParts[0];
+  			  lno = Integer.parseInt(fileParts[1]);
+          cno = Integer.parseInt(fileParts[2]);
+			  } catch (NumberFormatException e) {
+			    fname = fileParts[0] + ":" + fileParts[1]; //$NON-NLS-1$
+	        lno = Integer.parseInt(fileParts[2]);
+	        cno = 0;
+			  }
 			} else {
+			  fname = fileParts[0];
 				lno = Integer.parseInt(fileParts[1]);
 				cno = 0;
 			}
