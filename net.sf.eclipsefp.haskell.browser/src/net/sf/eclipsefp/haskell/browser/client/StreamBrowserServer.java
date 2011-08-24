@@ -188,17 +188,20 @@ public class StreamBrowserServer extends BrowserServer {
 
 	@Override
 	public void stop() {
-		if (process != null) {
-			// Nothing is loaded
-			dbLoaded = false;
-			hoogleLoaded = false;
-			// Tell we no longer have a database
-			BrowserEvent e = new BrowserEvent(this);
-			notifyDatabaseUnloaded(e);
-			// Nor a Hoogle connection
-			notifyHoogleUnloaded(e);
-			// Close connection with the process
+		// Nothing is loaded
+		dbLoaded = false;
+		hoogleLoaded = false;
+		// Tell we no longer have a database
+		BrowserEvent e = new BrowserEvent(this);
+		notifyDatabaseUnloaded(e);
+		// Nor a Hoogle connection
+		notifyHoogleUnloaded(e);
+		try {
+			sendAndReceiveOk(Commands.createQuit());
+			process.destroy();
+		} catch (Exception ex) {
 			process.destroy();
 		}
+		process = null;
 	}
 }
