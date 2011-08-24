@@ -17,7 +17,9 @@ public interface OutputParserConstants {
   /** RegularExpression Id. */
   int COLON = 3;
   /** RegularExpression Id. */
-  int OTHER_CHAR = 4;
+  int COLON_SLASH = 4;
+  /** RegularExpression Id. */
+  int OTHER_CHAR = 5;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -28,6 +30,7 @@ public interface OutputParserConstants {
     "\" \"",
     "<EOL>",
     "\":\"",
+    "<COLON_SLASH>",
     "<OTHER_CHAR>",
   };
 

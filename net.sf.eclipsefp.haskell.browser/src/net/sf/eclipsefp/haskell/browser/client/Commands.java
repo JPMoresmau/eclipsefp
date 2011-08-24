@@ -152,4 +152,10 @@ public class Commands {
 		o.put("decl", name);
 		return o;
 	}
+	
+	public static JSONObject createQuit() throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "quit");
+		return o;
+	}
 }

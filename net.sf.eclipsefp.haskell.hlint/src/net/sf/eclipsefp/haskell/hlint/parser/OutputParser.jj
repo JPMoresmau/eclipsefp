@@ -12,6 +12,7 @@ TOKEN :
 {  < SPACE : " " >
 | < EOL : "\n" | "\r" | "\r\n" >
 | < COLON : ":" >
+| < COLON_SLASH : ":\\" | ":/" > 
 | < OTHER_CHAR : ~[ "\n", "\r", ":" ] >
 }
 
@@ -62,6 +63,7 @@ List<Suggestion> suggestions() :
 
 StringBuilder string_until_colon() :
 {  Token c;
+  Token c1, c2;
   StringBuilder s;
 }
 {
@@ -70,6 +72,12 @@ StringBuilder string_until_colon() :
     return s;
   }
 | c = < SPACE >
+  s = string_until_colon()
+  {
+    s.insert(0, c.image);
+    return s;
+  }
+| c = < COLON_SLASH >
   s = string_until_colon()
   {
     s.insert(0, c.image);
@@ -93,6 +101,12 @@ StringBuilder string_until_eol() :
     return s;
   }
 | c = < SPACE >
+  s = string_until_eol()
+  {
+    s.insert(0, c.image);
+    return s;
+  }
+| c = < COLON_SLASH >
   s = string_until_eol()
   {
     s.insert(0, c.image);

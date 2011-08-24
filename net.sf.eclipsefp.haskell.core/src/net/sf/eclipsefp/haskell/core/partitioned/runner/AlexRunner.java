@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
-import java.io.InputStream;
+import java.io.StringWriter;
 
 public class AlexRunner extends PartitionedRunner {
 
@@ -9,9 +9,9 @@ public class AlexRunner extends PartitionedRunner {
 		return "alex";
 	}
 
-	@Override
-	public InputStream selectStream(Process p) {
-		return p.getErrorStream();
-	}
+  @Override
+  public StringWriter selectStream( final StringWriter out, final StringWriter err ) {
+    return err;
+  }
 
 }
