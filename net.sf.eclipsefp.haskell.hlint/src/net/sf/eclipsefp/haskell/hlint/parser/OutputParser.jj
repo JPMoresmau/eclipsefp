@@ -1,7 +1,7 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */options{  JDK_VERSION = "1.5";
-  LOOKAHEAD = 100;
+  LOOKAHEAD = 3;
   FORCE_LA_CHECK = true;  static = false;}PARSER_BEGIN(OutputParser)package net.sf.eclipsefp.haskell.hlint.parser;
 
 import java.util.*;
@@ -13,25 +13,20 @@ TOKEN :
 | < EOL : "\n" | "\r" | "\r\n" >
 | < COLON : ":" >
 | < COLON_SLASH : ":\\" | ":/" > 
+| < INTEGER : (["0"-"9"])+ >
 | < OTHER_CHAR : ~[ "\n", "\r", ":" ] >
+
 }
 
 List<Suggestion> suggestions() :
 {
-  ArrayList<Suggestion > sugs;
+  ArrayList<Suggestion > sugs= new ArrayList<Suggestion>();
   Suggestion sug;}
-{  string_until_eol()
-  < EOF >
-  {    return new ArrayList<Suggestion>();
-  }
-| sug = suggestion()
-  {    sugs = new ArrayList<Suggestion>();
-    sugs.add(sug);
-  }
-  (    sug = suggestion()
+{  (    sug = suggestion()
     {      sugs.add(sug);
     }
   )*
+  < INTEGER >
   string_until_eol()
   < EOF >
   {    return sugs;
@@ -44,7 +39,7 @@ List<Suggestion> suggestions() :
   StringBuilder message;
   CodeModification pre;
   CodeModification post;
-}{  filename = string_until_colon()
+}{  filename = filename()
   line = number()
   column = number()
   < SPACE >
@@ -54,21 +49,80 @@ List<Suggestion> suggestions() :
   pre = code_mod()
   post = code_mod()
   < EOL >  {    Suggestion s = new Suggestion();
-    s.setLocation(new SourceLocation(filename.toString(), line, column));
+    s.setLocation(new SourceLocation(filename.toString().replace("\\\\","\\"), line, column));
     s.setSeverity(sev);
     s.setMessage(message.toString());
     s.setPre(pre);
     s.setPost(post);
     return s;  }}
 
+StringBuilder filename():
+{
+   Token c;
+   StringBuilder s=new StringBuilder();
+   StringBuilder rest=new StringBuilder();}
+{
+  (    (
+    c=< COLON_SLASH >
+	    {
+	      s.append(c.image);
+	    }
+	  )
+	|  (
+   c=< OTHER_CHAR >
+    {
+      s.append(c.image);
+    })
+        |  (
+   c=< SPACE >
+    {
+      s.append(c.image);
+    })
+   )
+   rest=string_until_colon()
+   {	s.append(rest);
+	return s;
+   }}
+
+
 StringBuilder string_until_colon() :
 {  Token c;
   Token c1, c2;
-  StringBuilder s;
+  StringBuilder s=new StringBuilder();
 }
 {
+  ((    c=< COLON_SLASH >
+	    {
+	      s.append(c.image);	    }
+	  )
+	|  (
+   c=< OTHER_CHAR >
+    {
+      s.append(c.image);
+    })
+        |  (
+   c=< SPACE >
+    {
+      s.append(c.image);
+    })
+     |  (
+   c=< INTEGER >
+    {
+      s.append(c.image);
+    })
+  )*
+  < COLON >
+  {	return s;
+  }}
+/*{
   c = < OTHER_CHAR >  s = string_until_colon()
   {    s.insert(0, c.image);
+    return s;
+  }
+| c = < INTEGER >
+  s = string_until_colon()
+  {
+    s.insert(0, c.image);
     return s;
   }
 | c = < SPACE >
@@ -86,14 +140,46 @@ StringBuilder string_until_colon() :
 | < COLON >
   {    return new StringBuilder();
   }
-}
+}*/
 
 StringBuilder string_until_eol() :
 {
   Token c;
-  StringBuilder s;
+  StringBuilder s=new StringBuilder();
 }
-{
+{  ((
+    c=< COLON_SLASH >
+	    {
+	      s.append(c.image);
+	    }
+	  )
+	|  (
+   c=< OTHER_CHAR >
+    {
+      s.append(c.image);
+    })
+    |  (
+   c=< COLON >
+    {
+      s.append(c.image);
+    })
+    |  (
+   c=< SPACE >
+    {
+      s.append(c.image);
+    })
+     |  (
+   c=< INTEGER >
+    {
+      s.append(c.image);
+    })
+  )*
+  < EOL >
+  {
+	return s;
+  }
+}
+/*{
   c = < OTHER_CHAR >
   s = string_until_eol()
   {
@@ -122,16 +208,17 @@ StringBuilder string_until_eol() :
   {
     return new StringBuilder();
   }
-}
+}*/
 
 Integer number() :
 {
-  StringBuilder sb;
+  Token c;
 }
 {
-  sb = string_until_colon()
+  c = < INTEGER >
+  < COLON >
   {
-    return Integer.valueOf(sb.toString());
+    return Integer.valueOf(c.image);
   }
 }
 

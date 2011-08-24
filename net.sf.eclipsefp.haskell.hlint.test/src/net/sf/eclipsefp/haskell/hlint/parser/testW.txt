@@ -1,0 +1,20 @@
+D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\scion\\server\\Scion\\Server\\Protocol.hs:1:1: Error: Unused LANGUAGE pragma
+Found:
+  {-# LANGUAGE ExistentialQuantification, TypeSynonymInstances,
+    PatternGuards #-}
+Why not:
+  {-# LANGUAGE ExistentialQuantification, TypeSynonymInstances #-}
+
+D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\scion\\server\\Scion\\Server\\Protocol.hs:92:14: Error: Redundant do
+Found:
+  do (c :) `fmap` munchmunch (c == '\\')
+Why not:
+  (c :) `fmap` munchmunch (c == '\\')
+
+D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\scion\\server\\Scion\\Server\\Protocol.hs:96:10: Warning: Use fmap
+Found:
+  munch1 isDigit >>= return . read
+Why not:
+  fmap read (munch1 isDigit)
+
+3 suggestions
