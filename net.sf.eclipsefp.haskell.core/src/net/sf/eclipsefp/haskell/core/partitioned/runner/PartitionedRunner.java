@@ -1,26 +1,25 @@
 package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
-import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-
+import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.runtime.IPath;
 
 public abstract class PartitionedRunner {
-	
+
 	public abstract String getExecutableName();
-	
-	public abstract InputStream selectStream(Process p);
-	
-	public List<ProcessorError> run(IPath path) {
+
+	public abstract StringWriter selectStream(StringWriter out, StringWriter err);
+
+	public List<ProcessorError> run(final IPath path) {
 		try {
 			// Run the command
-			String[] cmdLine = new String[] { getExecutableName(), path.toOSString() };
-			Process p = Runtime.getRuntime().exec(cmdLine);
-			// Parse the output
-			p.waitFor();
-			OutputParser parser = new OutputParser(selectStream(p));
-			return parser.errors();
+			StringWriter out=new StringWriter();
+			StringWriter err=new StringWriter();
+      new ProcessRunner().executeBlocking(path.toFile().getParentFile(), out, err,  getExecutableName(), path.toOSString());
+      // Parse the output
+      return OutputParser.errors(selectStream( out, err ).toString());
 		} catch (Throwable ex) {
 			return new ArrayList<ProcessorError>();
 		}

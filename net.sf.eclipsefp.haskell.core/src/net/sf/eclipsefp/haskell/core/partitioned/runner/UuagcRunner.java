@@ -1,12 +1,14 @@
 package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
-import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.uuagc.UuagcFile;
 import net.sf.eclipsefp.haskell.core.uuagc.UuagcProjectManager;
+import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 public class UuagcRunner {
 
@@ -16,8 +18,9 @@ public class UuagcRunner {
     this.project = project;
   }
 
-  public InputStream selectStream( final Process p ) {
-    return p.getInputStream();
+  public StringWriter selectStream( final StringWriter out,
+      final StringWriter err ) {
+    return err;
   }
 
   public String[] getExecutableAndArgs( final IResource resource ) {
@@ -46,19 +49,19 @@ public class UuagcRunner {
       return r.toArray( new String[ r.size() ] );
     }
     // If no special information is found
-    return new String[] {
-        "uuagc", "--all", resource.getLocation().toOSString() }; //$NON-NLS-1$//$NON-NLS-2$
+    return new String[] { "uuagc", "--all", resource.getLocation().toOSString() }; //$NON-NLS-1$//$NON-NLS-2$
   }
 
   public List<ProcessorError> run( final IResource resource ) {
     try {
       // Run the command
-      String[] cmdLine = getExecutableAndArgs( resource );
-      Process p = Runtime.getRuntime().exec( cmdLine );
+      StringWriter out = new StringWriter();
+      StringWriter err = new StringWriter();
+      IPath path = resource.getLocation();
+      new ProcessRunner().executeBlocking( path.toFile().getParentFile(), out,
+          err, getExecutableAndArgs( resource ) );
       // Parse the output
-      p.waitFor();
-      OutputParser parser = new OutputParser( selectStream( p ) );
-      return parser.errors();
+      return OutputParser.errors( selectStream( out, err ).toString() );
     } catch( Throwable ex ) {
       return new ArrayList<ProcessorError>();
     }
