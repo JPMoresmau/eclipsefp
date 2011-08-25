@@ -29,16 +29,26 @@ Fixes:
 
 Features:
 - Quick Fix: add missing dependency on hidden package
-- run cabal update before building scion
+- Quick Fix: add missing import
+- Quick Fix: show them in the vertical ruler
+- Run cabal update before building scion
 - Wizard on projects (cabal source export, install, test, haddock export) will ask the user to save files if there are unsaved files in the project
 - Compressed outline view: When a data declaration contains a single constructor with a name identical to the data declaration, the node for the constructor is hidden and the constructor's children directly expanded.
+- More options in the visual .cabal files editor
 - Support for moving or renaming modules
 - SourceGraph integration
 - Support for executable profiling
-- Hoogle integration
-- Module Browser
+- Hoogle search integration
+- Package and Module Browser
+- Autocompletion in Haskell source files
+- Text editors and new file wizards for Alex, Happy and UUAGC
+- HLint integration
+- New project wizards and file associations for Snap and Yesod web frameworks
+- Support for running test-framework tests and showing the results in JUnit view
 
 Internal:
+- Needs BIRT Charting Engine and Web Tools Platform to build
+- Includes a packaged version of scion-browser. The development of that library is done in https://github.com/serras/scion-class-browser
 
 Upgrade notes:
   - If you had EclipseFP configured with a previous version of GHC and Cabal, run autodetect again in the Haskell Implementations and Scion and Cabal preference pages.
