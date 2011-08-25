@@ -30,7 +30,7 @@ import org.eclipse.debug.core.ILaunchManager;
  * exists) for some element and launching it.
  * </p>
  *
- * @author Leif Frenzel
+ * @author Alejandro Serrano
  */
 class TestSuiteLaunchOperation extends LaunchOperation implements IExecutableTestSuiteLaunchOperation {
   public static final String TEST_SUITE_CONFIG_TYPE = TestSuiteHaskellLaunchDelegate.class.getName();
