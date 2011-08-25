@@ -14,7 +14,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
-
+/**
+ * Manages the options for UUAGC in a project.
+ * In particular, takes care of the operation that
+ * may be performed in the uuagc_options file.
+ *
+ * @author Alejandro Serrano
+ */
 public class UuagcProjectManager {
 
   public static final String UUAGC_OPTIONS_FILENAME = "uuagc_options"; //$NON-NLS-1$

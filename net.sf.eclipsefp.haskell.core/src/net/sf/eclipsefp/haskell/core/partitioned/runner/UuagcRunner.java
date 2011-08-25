@@ -10,6 +10,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Runner for UU Attribute Grammar system.
+ *
+ * @author Alejandro Serrano
+ */
 public class UuagcRunner {
 
   private final IProject project;

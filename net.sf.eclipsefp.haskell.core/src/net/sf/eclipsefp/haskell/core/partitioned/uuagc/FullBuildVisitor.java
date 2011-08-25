@@ -8,7 +8,11 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-
+/**
+ * Builds all resources in the project.
+ *
+ * @author Alejandro Serrano
+ */
 public class FullBuildVisitor implements IResourceVisitor {
 
   public boolean visit( final IResource resource ) throws CoreException {

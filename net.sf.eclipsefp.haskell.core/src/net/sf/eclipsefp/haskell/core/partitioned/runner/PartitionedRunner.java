@@ -6,10 +6,27 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Base class for Alex, Happy and UUAGC runners, the classes
+ * which build the arguments list, calls the corresponding
+ * executable and parses the results back.
+ *
+ * @author Alejandro Serrano
+ */
 public abstract class PartitionedRunner {
 
+  /**
+   * The executable to call to run the tool.
+   * @return
+   */
 	public abstract String getExecutableName();
 
+	/**
+	 * Allows to select if output comes from stdout or stderr.
+	 * @param out Represents stdout stream.
+	 * @param err Represents stderr stream.
+	 * @return The stream to parse.
+	 */
 	public abstract StringWriter selectStream(StringWriter out, StringWriter err);
 
 	public List<ProcessorError> run(final IPath path) {

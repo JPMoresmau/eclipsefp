@@ -20,6 +20,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * HLint builder: calls HLint, parses the results and shows
+ * them as file markers in the editor.
+ *
+ * @author Alejandro Serrano
+ */
 public class HLintBuilder extends IncrementalProjectBuilder {
 
   public static String BUILDER_ID = HLintBuilder.class.getName();

@@ -5,7 +5,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-
+/**
+ * Cleans resource markers from HLint.
+ *
+ * @author Alejandro Serrano
+ */
 public class CleanVisitor implements IResourceVisitor {
 
   public boolean visit( final IResource resource ) throws CoreException {

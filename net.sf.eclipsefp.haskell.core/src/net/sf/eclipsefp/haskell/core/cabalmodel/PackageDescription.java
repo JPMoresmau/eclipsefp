@@ -1,5 +1,6 @@
 // Copyright (c) 2006 by Leif Frenzel <himself@leiffrenzel.de>
 // All rights reserved.
+// Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
   * <code>.cabal</code> file.</p>
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
   */
 public class PackageDescription {
 
