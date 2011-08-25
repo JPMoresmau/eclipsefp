@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 
 import java.util.ArrayList;
@@ -28,7 +32,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 
-
+/**
+ * Represents information about an import: if it's qualified,
+ * the list of things that imports or hides...
+ * @author Alejandro Serrano
+ *
+ */
 public class AnImport {
 
   private final String name;

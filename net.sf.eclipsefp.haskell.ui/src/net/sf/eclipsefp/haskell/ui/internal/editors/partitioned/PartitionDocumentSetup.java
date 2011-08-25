@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
@@ -11,7 +15,11 @@ import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
-
+/**
+ * Divides a document between embedded Haskell code and the rest.
+ * @author Alejandro Serrano
+ *
+ */
 public class PartitionDocumentSetup implements IDocumentSetupParticipant {
 
   public static final String PARTITIONING = "org.eclipse.editor";

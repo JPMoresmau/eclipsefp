@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.modules;
 
@@ -9,6 +9,11 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * Label provider for modules view.
+ * @author Alejandro Serrano
+ *
+ */
 public class ModulesLabelProvider implements ILabelProvider {
 
 	public Image getImage(final Object element) {

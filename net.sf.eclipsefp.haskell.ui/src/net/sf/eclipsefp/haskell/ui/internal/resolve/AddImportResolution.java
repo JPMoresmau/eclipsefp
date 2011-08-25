@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
@@ -7,7 +11,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.osgi.util.NLS;
 
-
+/**
+ * Resolution for adding an imported element to the list of imports.
+ * @author Alejandro Serrano
+ *
+ */
 public class AddImportResolution extends MarkerCompletion {
 
   String element;

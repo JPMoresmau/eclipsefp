@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.declarations;
 
@@ -12,6 +12,11 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * Label provider for declarations.
+ * @author Alejandro Serrano
+ *
+ */
 public class DeclarationsLabelProvider implements ILabelProvider {
 
 	public Image getImage(final Object element) {

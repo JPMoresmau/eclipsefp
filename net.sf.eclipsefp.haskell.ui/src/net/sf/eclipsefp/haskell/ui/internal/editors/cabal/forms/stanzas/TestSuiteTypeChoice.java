@@ -1,11 +1,16 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.Choice;
 
+/**
+ * Information associated with the choice of a type of test-suite.
+ * @author Alejandro Serrano
+ *
+ */
 public class TestSuiteTypeChoice extends Choice<TestSuiteType> {
 
   @Override

@@ -1,12 +1,20 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.modules;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 
+/**
+ * Item shown by the modules view.
+ * Includes not only module information, but also the possible
+ * parent and children modules and information about which
+ * package or database the element belongs to.
+ * @author Alejandro Serrano
+ *
+ */
 public class ModulesItem {
 	private final Object dbInfo;
 	private final String name;

@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
@@ -19,7 +19,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-
+/**
+ * Form entry for selecting a file.
+ * @author Alejandro Serrano
+ *
+ */
 public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
   CheckboxTreeViewer treeField;

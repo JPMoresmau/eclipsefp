@@ -1,4 +1,5 @@
 // Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2011 by Alejandro Serrano
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
@@ -52,6 +53,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  *
  * @author Leif Frenzel (original author)
  * @author B. Scott Michel (bscottm@ieee.org)
+ * @author Alejandro Serrano
  */
 public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   /** The associated content assistant, used to add/remove listeners */

@@ -1,6 +1,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
-
+/**
+ * Form entry for selecting the 'main-is' module for an executable.
+ * @author Alejandro Serrano
+ *
+ */
 public class FormEntryMainIs extends FormEntryModules {
 
   public FormEntryMainIs( final String exposedString ) {

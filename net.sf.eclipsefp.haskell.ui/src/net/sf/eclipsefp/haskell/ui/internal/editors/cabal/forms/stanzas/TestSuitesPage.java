@@ -38,7 +38,11 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-
+/**
+ * Page for handling test-suite stanzas in the Cabal file.
+ * @author Alejandro Serrano
+ *
+ */
 public class TestSuitesPage extends CabalFormPage implements SelectionListener {
 
   private List execsList;

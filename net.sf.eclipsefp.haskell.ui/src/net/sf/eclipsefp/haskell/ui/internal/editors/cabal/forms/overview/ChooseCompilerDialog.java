@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
@@ -17,7 +17,12 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
+/**
+ * Dialog that allows to select a compiler and a version.
+ * The compiler list is taken from the Cabal documentation.
+ * @author Alejandro Serrano
+ *
+ */
 public class ChooseCompilerDialog extends Dialog {
 
   List compilerList;

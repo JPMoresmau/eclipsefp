@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -8,7 +8,11 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-
+/**
+ * Provider for the dependencies editor, allowing to chane the version.
+ * @author Alejandro Serrano
+ *
+ */
 public class DependenciesTableLabelProvider implements ITableLabelProvider {
 
   public void dispose() {

@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.declarations;
 
@@ -30,6 +30,12 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * Base class for types and functions views, which share the
+ * idea of showing a Haskell declaration.
+ * @author Alejandro Serrano
+ *
+ */
 public abstract class DeclarationsView extends ViewPart implements
     ISelectionListener, ISelectionChangedListener, IDoubleClickListener {
 

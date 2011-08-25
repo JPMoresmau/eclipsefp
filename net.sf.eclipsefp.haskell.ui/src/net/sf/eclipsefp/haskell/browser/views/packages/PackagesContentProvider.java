@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
@@ -11,6 +11,11 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * Content provider for packages view.
+ * @author Alejandro Serrano
+ *
+ */
 public class PackagesContentProvider implements ITreeContentProvider {
 
 	PackagesItem[] localCache = null;

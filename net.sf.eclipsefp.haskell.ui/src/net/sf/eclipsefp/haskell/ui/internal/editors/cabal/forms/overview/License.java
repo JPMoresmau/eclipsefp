@@ -1,10 +1,15 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
-
+/**
+ * Licenses available by name in a Cabal file.
+ * The list is taken from Cabal documentation.
+ * @author Alejandro Serrano
+ *
+ */
 public enum License {
   GPL3 ("GPL-3", "GNU General Public License, version 3"),
   GPL2 ("GPL-2", "GNU General Public License, version 2"),

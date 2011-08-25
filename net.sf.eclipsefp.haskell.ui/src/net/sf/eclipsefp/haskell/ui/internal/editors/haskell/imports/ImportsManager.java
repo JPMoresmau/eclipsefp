@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 
 import java.util.ArrayList;
@@ -15,7 +19,13 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 
-
+/**
+ * Manages information and changed in the imports section
+ * of a Haskell source file. All imports must be in only
+ * one line to be recognized by this parser.
+ * @author Alejandro Serrano
+ *
+ */
 public class ImportsManager {
 
   private final IFile file;

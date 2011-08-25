@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -24,7 +24,11 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-
+/**
+ * Page for handling the possible library section in a Cabal file.
+ * @author Alejandro Serrano
+ *
+ */
 public class LibraryPage extends CabalFormPage implements SelectionListener {
 
   private Button isALibrary;

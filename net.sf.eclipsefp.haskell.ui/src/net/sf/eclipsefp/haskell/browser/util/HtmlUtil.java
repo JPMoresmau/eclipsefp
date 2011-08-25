@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.util;
 
@@ -11,7 +11,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 /**
  * Generates Html for showing documentation in several places.
  *
- * @author serras
+ * @author Alejandro Serrano
  */
 public class HtmlUtil {
 

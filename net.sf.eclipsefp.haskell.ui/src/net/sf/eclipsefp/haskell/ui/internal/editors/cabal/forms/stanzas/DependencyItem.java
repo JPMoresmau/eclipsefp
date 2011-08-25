@@ -1,10 +1,14 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
-
+/**
+ * Element to be shown in the list of included dependencies.
+ * @author Alejandro Serrano
+ *
+ */
 public class DependencyItem {
   private String pkg;
   private String version;

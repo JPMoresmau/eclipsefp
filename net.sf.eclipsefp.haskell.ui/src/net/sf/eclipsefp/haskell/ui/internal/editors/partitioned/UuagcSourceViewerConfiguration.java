@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import java.util.ArrayList;
@@ -22,7 +26,11 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-
+/**
+ * Configuration for highlighting of UUAGC files.
+ * @author Alejandro Serrano
+ *
+ */
 public class UuagcSourceViewerConfiguration extends
     PartitionSourceViewerConfiguration {
 

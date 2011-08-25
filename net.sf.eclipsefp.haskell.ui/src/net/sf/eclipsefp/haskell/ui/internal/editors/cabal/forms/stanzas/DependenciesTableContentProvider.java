@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -8,7 +8,11 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-
+/**
+ * Content provider for dependencies edition.
+ * @author Alejandro Serrano
+ *
+ */
 public class DependenciesTableContentProvider implements
     IStructuredContentProvider {
 

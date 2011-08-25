@@ -9,7 +9,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
+/**
+ * Form entry showing a simple checkbox.
+ * @author Alejandro Serrano
+ *
+ */
 public class FormEntryCheckBox extends FormEntry implements SelectionListener {
 
   static final String TRUE = "true";

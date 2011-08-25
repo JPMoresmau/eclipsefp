@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -12,7 +12,11 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-
+/**
+ * Content provider for the list of available dependencies.
+ * @author Alejandro Serrano
+ *
+ */
 public class DependenciesDialogContentProvider implements ITreeContentProvider {
 
   private HaskellPackage[] elements;

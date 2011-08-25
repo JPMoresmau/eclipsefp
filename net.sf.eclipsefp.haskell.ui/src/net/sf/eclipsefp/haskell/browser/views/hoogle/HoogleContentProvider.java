@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.hoogle;
 
@@ -13,7 +13,11 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-
+/**
+ * Content provider for Hoogle results.
+ * @author Alejandro Serrano
+ *
+ */
 public class HoogleContentProvider implements ITreeContentProvider {
 
   ArrayList<Map.Entry<String, ArrayList<HoogleResult>>> results = null;

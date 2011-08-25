@@ -6,7 +6,11 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-
+/**
+ * Provider used when the database or Hoogle haven't been loaded yet.
+ * @author Alejandro Serrano
+ *
+ */
 public class NoDatabaseLabelProvider implements ILabelProvider {
 
   boolean isHoogle;

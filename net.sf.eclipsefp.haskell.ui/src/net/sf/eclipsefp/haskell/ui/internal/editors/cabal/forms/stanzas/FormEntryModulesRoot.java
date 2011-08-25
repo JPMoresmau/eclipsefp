@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -8,7 +8,11 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.eclipse.core.resources.IProject;
 
-
+/**
+ * Root element for showing a list of modules in a project.
+ * @author Alejandro Serrano
+ *
+ */
 public class FormEntryModulesRoot {
   IProject project;
   PackageDescription description;

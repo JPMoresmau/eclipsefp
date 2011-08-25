@@ -1,11 +1,16 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.Choice;
 
+/**
+ * Information for showing the available licenses for a Cabal package.
+ * @author Alejandro Serrano
+ *
+ */
 public class LicenseChoice extends Choice<License> {
 
   @Override

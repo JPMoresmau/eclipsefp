@@ -1,9 +1,14 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.declarations;
 
+/**
+ * View part for 'functions' in the Browser.
+ * @author Alejandro Serrano
+ *
+ */
 public class FunctionsView extends DeclarationsView {
 
 	/**
