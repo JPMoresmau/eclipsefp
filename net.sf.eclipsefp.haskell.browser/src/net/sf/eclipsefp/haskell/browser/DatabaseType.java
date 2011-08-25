@@ -7,7 +7,7 @@ package net.sf.eclipsefp.haskell.browser;
 /**
  * Enumeration used for the "set-current-db" command in scion-browser.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
 public enum DatabaseType {
 	ALL,

@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents a "type" declaration.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class TypeSynonym extends Declaration {
 	String[] vars;
 	String equals;

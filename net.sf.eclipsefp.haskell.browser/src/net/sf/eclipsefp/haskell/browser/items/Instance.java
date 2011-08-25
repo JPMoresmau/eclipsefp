@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents an "instance" declaration.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class Instance extends Declaration {
 	String[] context;
 	String[] vars;

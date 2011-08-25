@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents a "data" declaration.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class DataType extends Gadt {
 
 	public DataType(String doc, String[] context, String name, String[] vars,

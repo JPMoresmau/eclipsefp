@@ -9,9 +9,8 @@ import org.json.JSONObject;
 /**
  * Elements in tree that have documentation.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public abstract class Documented {
 	String doc;
 	

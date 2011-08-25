@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Item representing a Haskell module.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class Module extends Documented {
 	String name;
 

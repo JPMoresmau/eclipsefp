@@ -10,6 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Represents the information from a module returned
+ * by a Hoogle search.
+ * 
+ * @author Alejandro Serrano
+ */
 public class HoogleResultModule extends HoogleResult {
 	ArrayList<PackageIdentifier> pkg;
 	Module mod;

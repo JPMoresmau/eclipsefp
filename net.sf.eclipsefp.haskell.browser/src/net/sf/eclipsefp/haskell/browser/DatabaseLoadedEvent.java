@@ -4,6 +4,11 @@
  */
 package net.sf.eclipsefp.haskell.browser;
 
+/**
+ * Information about the event of loading a database in scion-browser.
+ * 
+ * @author Alejandro Serrano
+ */
 public class DatabaseLoadedEvent extends BrowserEvent {
 	String db_path;
 	DatabaseType ty;

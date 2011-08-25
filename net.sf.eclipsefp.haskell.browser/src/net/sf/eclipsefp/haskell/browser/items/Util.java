@@ -12,9 +12,8 @@ import org.json.JSONException;
 /**
  * Utilities for using items.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class Util {
 
 	public static String[] getStringArray(JSONArray array) throws JSONException {

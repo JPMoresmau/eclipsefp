@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents the name and version of a package.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class PackageIdentifier {
 	String name;
 	String version;

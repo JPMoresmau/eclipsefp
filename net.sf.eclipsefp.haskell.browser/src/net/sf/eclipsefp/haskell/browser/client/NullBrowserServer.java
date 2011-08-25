@@ -21,9 +21,8 @@ import org.json.JSONException;
  * A virtual connection to a server which gives no responses. Used at
  * initialization time and when there is no scion-browser installed.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class NullBrowserServer extends BrowserServer {
 
 	public NullBrowserServer() {

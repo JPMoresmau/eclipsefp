@@ -6,6 +6,11 @@ package net.sf.eclipsefp.haskell.browser.items;
 
 import org.json.JSONObject;
 
+/**
+ * Represents information returned by a Hoogle search.
+ * 
+ * @author Alejandro Serrano
+ */
 public abstract class HoogleResult {
 	private HoogleResultType type;
 	

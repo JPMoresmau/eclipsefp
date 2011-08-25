@@ -7,6 +7,11 @@ package net.sf.eclipsefp.haskell.browser.items;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Represents a GADT constructor.
+ * 
+ * @author Alejandro Serrano
+ */
 public class Constructor extends Documented {
 	String name;
 	String signature;

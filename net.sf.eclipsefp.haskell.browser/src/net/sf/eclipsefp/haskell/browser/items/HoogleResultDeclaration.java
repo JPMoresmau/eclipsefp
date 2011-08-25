@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Represents the information from a declaration returned
+ * by a Hoogle search.
+ * 
+ * @author Alejandro Serrano
+ */
 public class HoogleResultDeclaration extends HoogleResult {
 	ArrayList<PackageIdentifier> pkg;
 	String mod;

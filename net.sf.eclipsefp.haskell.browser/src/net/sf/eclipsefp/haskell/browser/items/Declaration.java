@@ -9,9 +9,8 @@ import org.json.JSONObject;
 /**
  * Represents one of the top level declarations in a module.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public abstract class Declaration extends Documented {
 	DeclarationType type;
 	String name;

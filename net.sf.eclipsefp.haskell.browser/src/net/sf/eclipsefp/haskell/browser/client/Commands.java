@@ -21,9 +21,8 @@ import org.json.JSONObject;
 /**
  * Commands that can be sent to scion-browser.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class Commands {
 
 	public static JSONObject createLoadLocalDatabase(String path,

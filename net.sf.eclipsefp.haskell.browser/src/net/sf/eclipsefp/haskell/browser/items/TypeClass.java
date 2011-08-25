@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents a "class" declaration.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class TypeClass extends Declaration {
 	String[] context;
 	String[] vars;

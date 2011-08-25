@@ -4,6 +4,11 @@
  */
 package net.sf.eclipsefp.haskell.browser;
 
+/**
+ * Listener interface for loading and unloading databases.
+ * 
+ * @author Alejandro Serrano
+ */
 public interface IDatabaseLoadedListener {
 
 	void databaseLoaded(DatabaseLoadedEvent e);

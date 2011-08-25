@@ -8,6 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Represents the information from a package returned
+ * by a Hoogle search.
+ * 
+ * @author Alejandro Serrano
+ */
 public class HoogleResultPackage extends HoogleResult {
 	HaskellPackage pkg;
 

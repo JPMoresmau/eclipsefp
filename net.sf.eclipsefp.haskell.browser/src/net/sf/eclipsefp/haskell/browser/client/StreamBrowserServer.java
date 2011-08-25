@@ -29,9 +29,8 @@ import org.json.JSONObject;
 /**
  * Class used for communicating with a Scion Browser instance.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class StreamBrowserServer extends BrowserServer {
 
 	private IPath serverExecutable;

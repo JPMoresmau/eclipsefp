@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents a "newtype" declaration.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class NewType extends Gadt {
 
 	public NewType(String doc, String[] context, String name, String[] vars,

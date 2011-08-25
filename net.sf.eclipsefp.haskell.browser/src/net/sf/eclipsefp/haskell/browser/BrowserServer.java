@@ -22,7 +22,7 @@ import org.json.JSONException;
 /**
  * Abstract class for communicating with a scion-browser instance.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
 public abstract class BrowserServer {
 

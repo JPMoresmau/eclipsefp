@@ -7,7 +7,7 @@ package net.sf.eclipsefp.haskell.browser.items;
 /**
  * Kinds of possible results for a Hoogle query.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
 public enum HoogleResultType {
 	PACKAGE,

@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Item representing a Hackage package.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class HaskellPackage extends Documented {
 	PackageIdentifier id;
 

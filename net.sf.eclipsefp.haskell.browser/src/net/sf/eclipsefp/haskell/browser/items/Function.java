@@ -10,9 +10,8 @@ import org.json.JSONObject;
 /**
  * Represents a function signature.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class Function extends Declaration {
 	String signature;
 
