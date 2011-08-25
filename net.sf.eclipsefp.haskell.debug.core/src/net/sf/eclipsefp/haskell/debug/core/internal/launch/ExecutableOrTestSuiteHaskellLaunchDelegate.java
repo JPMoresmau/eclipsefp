@@ -6,8 +6,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * launch delegate for Haskell executables executables
- * @author JP Moresmau
+ * base class for launching executables and test-suites
+ *
+ * @author Alejandro Serrano
  *
  */
 public abstract class ExecutableOrTestSuiteHaskellLaunchDelegate extends

@@ -22,9 +22,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 /**
- * launch delegate for Haskell executables executables
+ * launch delegate for Haskell executables in profiling mode
  *
- * @author JP Moresmau
+ * @author Alejandro Serrano
  *
  */
 public class ExecutableProfilingHaskellLaunchDelegate extends
