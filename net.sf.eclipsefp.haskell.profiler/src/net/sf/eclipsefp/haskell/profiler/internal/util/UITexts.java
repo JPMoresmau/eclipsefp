@@ -9,6 +9,7 @@ import org.eclipse.osgi.util.NLS;
 /** <p>provides access to the internationalized UI texts.</p>
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
   */
 public final class UITexts extends NLS {
 

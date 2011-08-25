@@ -1,4 +1,7 @@
 /**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ *
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */options{  JDK_VERSION = "1.5";
   FORCE_LA_CHECK = true;  static = false;}PARSER_BEGIN(ProfilingOutputParser)package net.sf.eclipsefp.haskell.profiler.internal.parser;

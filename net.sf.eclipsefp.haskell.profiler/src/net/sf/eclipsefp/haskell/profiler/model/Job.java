@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ */
 package net.sf.eclipsefp.haskell.profiler.model;
 
 import java.io.InputStream;
@@ -16,6 +20,11 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.profiler.internal.parser.ParseException;
 import net.sf.eclipsefp.haskell.profiler.internal.parser.ProfilingOutputParser;
 
+/**
+ * Represents an entire set of profiling output.
+ * @author Alejandro Serrano
+ *
+ */
 public class Job {
 	String name;
 	String date;
