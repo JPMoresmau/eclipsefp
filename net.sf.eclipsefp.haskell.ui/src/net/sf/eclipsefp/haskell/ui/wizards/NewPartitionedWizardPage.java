@@ -1,4 +1,5 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.ui.wizards;
 
 import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
@@ -33,9 +34,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 
-/** <p>The single page for the 'New Module' wizard.</p>
+/** Base class for creating new Alex or Happy files.
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
   */
 public class NewPartitionedWizardPage extends StatusWizardPage implements IModuleCreationInfoProvider {
 

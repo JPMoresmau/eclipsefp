@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.wizards;
 
 import java.io.InputStream;
@@ -10,7 +14,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
+/**
+ * Operation for creating a new .ag file and include it in the uuagc_options file.
+ * @author Alejandro Serrano
+ *
+ */
 public class UuagcFileCreationOperator extends TemplateFileCreationOperation {
 
   private final boolean useHaskellSyntax;
