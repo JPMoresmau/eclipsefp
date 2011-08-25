@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ */
 package net.sf.eclipsefp.haskell.hlint;
 
 import java.io.StringReader;
@@ -11,6 +15,15 @@ import net.sf.eclipsefp.haskell.util.ProcessRunner;
 
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Class the encapsulates the logic of calling hlint and
+ * sending the output to the parser to generate a list
+ * of suggestions.
+ * 
+ * @author Alejandro Serrano
+ * @author JP Moresmau
+ * 
+ */
 public class HLintRunner {
 	
 	public List<Suggestion> run(IPath path) {
