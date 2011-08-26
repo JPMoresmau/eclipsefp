@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -65,9 +66,23 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		resourceBundle = ResourceBundle.getBundle("plugin");
 	}
 
+	  /**
+	   * Get the plugin's resource bundle (aka "plugin.properties").
+	   */
+	  public ResourceBundle getResourceBundle() {
+	    if (resourceBundle == null) {
+	      try {
+	        resourceBundle = Platform.getResourceBundle( getBundle() );
+	      } catch( MissingResourceException x ) {
+	        resourceBundle = null;
+	      }
+	    }
+
+	    return resourceBundle;
+	  }
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -86,7 +101,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		BrowserPlugin p = getDefault();
 		if (p != null) {
 			try {
-				return p.resourceBundle.getString(key);
+				return p.getResourceBundle().getString(key);
 			} catch (MissingResourceException ex) {
 				return key;
 			}
