@@ -584,7 +584,7 @@
 	
       </enablement>
     </objectContribution>
-    <objectContribution
+    <!--objectContribution
           id="net.sf.eclipsefp.haskell.ui.contribution1"
           objectClass="org.eclipse.core.resources.IProject">
        <action
@@ -600,7 +600,7 @@
 	      </adapt>
 	
       </enablement>
-    </objectContribution>
+    </objectContribution-->
   </extension>
   
   <!-- [Views] Project Explorer -->
