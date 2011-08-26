@@ -494,12 +494,20 @@ public class ScionInstance {
    * @param monitor Progress feedback
    * @param output If true, capture the output of the build/load process.
    * @param forceRecomp If true, force recompilation and reloading.
-   * @return
+   * @return true if at least one component
    */
   private boolean loadComponents(IProgressMonitor monitor, final BuildOptions buildOptions) {
     List<Component> cs = null;
     IProject theProject = getProject();
-    boolean failed = false;
+    //boolean failed = false;
+    /**
+     * we've changed in 2.0.5 the behavior, since the old code meant that if one component failed, we failed everything, which was a pain
+     * so now, what's happening:
+     * we process all component
+     * we always ensure the lastLoadedComponent is set to a successful component
+     * we return true if at least one component is loaded
+     */
+    boolean success=false;
     
     synchronized (components) {
       cs = new ArrayList<Component>(components);
@@ -507,7 +515,8 @@ public class ScionInstance {
     
     deleteProblems(theProject);
     final CompilationResultHandler crh = new CompilationResultHandler(theProject);
-
+    lastLoadedComponent=null;
+    boolean hasTriedAndFailed=false;
     for (Component c : cs) {
     	if (c.isBuildable()){
 	      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, theProject.getName(), c.toString() ) );
@@ -516,19 +525,27 @@ public class ScionInstance {
 	      if (server.sendCommand(loadCommand)) {
 	        crh.process(loadCommand);
 	        lastLoadedComponent = c;
+	        success=true; // at least one component works
+	        hasTriedAndFailed=false;
 	      } else {
-	        failed = true;
-	        break;
+	    	hasTriedAndFailed=true;
+	       // success = false;
+	    	  
+	      //  break;
 	      }
     	}
     }
+    // I have tried a different component and failed, let's go back to the last loaded
+    if (hasTriedAndFailed && lastLoadedComponent!=null){
+    	server.sendCommand(new LoadCommand(theProject, lastLoadedComponent, buildOptions));
+    }
       
-    if (failed) {
+    if (!success) {
       // Clear out state
-      internalReset();
+    	internalReset();
     }
     
-    return !failed;
+    return success;
   }
   // ////////////////////
   // Internal commands
@@ -672,6 +689,10 @@ public class ScionInstance {
             lastLoadedComponent = toLoad;
           } else {
             loadOK = false;
+            if (lastLoadedComponent!=null){
+            	// back to a known good component
+            	server.sendCommand(new LoadCommand(fProject, lastLoadedComponent, buildOptions2));
+            }
           }
         }
       }
