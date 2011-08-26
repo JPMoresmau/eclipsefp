@@ -41,7 +41,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  */
 public abstract class PackageBuilder {
 
-  public enum PackageBuilderMessages {
+  public static enum PackageBuilderMessages {
     UNPACK_ARCHIVE_TITLE,
     ARCHIVE_RESOURCE_NOT_FOUND,
     ARCHIVE_FILE_EXCEPTION,
@@ -229,7 +229,7 @@ public abstract class PackageBuilder {
   * A separate thread to write the communication with the server see
   * https://bugs.eclipse.org/bugs/show_bug.cgi?id=259107
   */
- public class OutputWriter extends Thread {
+ public static class OutputWriter extends Thread {
    /** the message list **/
    private final LinkedList<String> messages;
    /** should we stop? **/
@@ -312,7 +312,7 @@ public abstract class PackageBuilder {
  /**
   * The input receiver thread.
   */
- public class InputReceiver extends Thread {
+ public static class InputReceiver extends Thread {
 
    private boolean terminateFlag;
    private BufferedReader inStream;
