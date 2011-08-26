@@ -8,7 +8,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-
+/**
+ * Performs an incremental build of the resources.
+ *
+ * @author Alejandro Serrano
+ */
 public class DeltaVisitor implements IResourceDeltaVisitor {
 
   public boolean visit( final IResourceDelta delta ) throws CoreException {

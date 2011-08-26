@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -8,7 +12,12 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 
-
+/**
+ * Editor for uuagc_options file, including visual
+ * and source views of it.
+ * @author Alejandro Serrano
+ *
+ */
 public class UuagcOptionsFormEditor extends FormEditor {
 
   private UuagcOptionsPage optionsPage;

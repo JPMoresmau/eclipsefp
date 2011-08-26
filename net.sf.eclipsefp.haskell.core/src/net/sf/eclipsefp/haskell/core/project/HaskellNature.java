@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /** <p>The project nature that indicates Haskell projects.</p>
  *
  * @author Leif Frenzel
+ * @author Alejandro Serrano
  */
 public class HaskellNature implements IProjectNature {
 

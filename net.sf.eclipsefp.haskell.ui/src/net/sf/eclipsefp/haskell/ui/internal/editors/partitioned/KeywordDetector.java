@@ -1,8 +1,16 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import org.eclipse.jface.text.rules.IWordDetector;
 
-
+/**
+ * Detects keywords in a file.
+ * @author Alejandro Serrano
+ *
+ */
 public class KeywordDetector implements IWordDetector {
 
   public static KeywordDetector NO_DIGIT_AT_START_DETECTOR = new KeywordDetector(false);

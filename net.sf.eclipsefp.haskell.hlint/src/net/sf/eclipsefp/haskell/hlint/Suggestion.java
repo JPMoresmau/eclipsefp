@@ -1,5 +1,14 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.hlint;
 
+/**
+ * Represents all the information of an HLint suggestion.
+ * @author Alejandro Serrano
+ *
+ */
 public class Suggestion {
 	private SourceLocation location;
 	private Severity severity;

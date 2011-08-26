@@ -1,12 +1,17 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.items;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Represents a GADT constructor.
+ * 
+ * @author Alejandro Serrano
+ */
 public class Constructor extends Documented {
 	String name;
 	String signature;

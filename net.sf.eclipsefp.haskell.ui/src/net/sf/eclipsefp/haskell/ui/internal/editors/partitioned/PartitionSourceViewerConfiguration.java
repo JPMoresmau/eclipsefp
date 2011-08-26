@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 
@@ -15,6 +19,11 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
+/**
+ * Base class for source configuration of Alex, Happy and UUAGC editors.
+ * @author Alejandro Serrano
+ *
+ */
 public class PartitionSourceViewerConfiguration extends
     SourceViewerConfiguration implements IEditorPreferenceNames {
 

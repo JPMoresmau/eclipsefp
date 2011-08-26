@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.items;
 
@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Represents the information from a constructor returned
+ * by a Hoogle search.
+ * 
+ * @author Alejandro Serrano
+ */
 public class HoogleResultConstructor extends HoogleResult {
 	ArrayList<PackageIdentifier> pkg;
 	String mod;

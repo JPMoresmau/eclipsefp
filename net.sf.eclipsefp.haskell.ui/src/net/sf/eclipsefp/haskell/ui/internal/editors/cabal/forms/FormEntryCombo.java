@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
@@ -19,7 +19,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
+/**
+ * Form entry for selecting an element in a combo list.
+ * @author Alejandro Serrano
+ *
+ * @param <T> Type of the elements that may be chosen
+ *            from the list. In the constructor, you
+ *            must provide a Choice<T> instance for
+ *            the names of the items.
+ */
 public class FormEntryCombo<T> extends FormEntry {
 
   private CCombo comboField;

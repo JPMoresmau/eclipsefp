@@ -1,13 +1,18 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-
+/**
+ * Provider for the list of extensions to the compiler.
+ * The list is taken from GHC documentation.
+ * @author Alejandro Serrano
+ *
+ */
 public class CompilerExtensionContentProvider implements ITreeContentProvider {
 
   public static String[] extensions = new String[] { "OverlappingInstances",

@@ -30,7 +30,7 @@ import org.eclipse.debug.core.ILaunchManager;
  * exists) for some element and launching it.
  * </p>
  *
- * @author Leif Frenzel
+ * @author Alejandro Serrano
  */
 class ExecutableProfilingLaunchOperation extends LaunchOperation implements IExecutableTestSuiteLaunchOperation {
   public static final String EXECUTABLE_PROF_CONFIG_TYPE = ExecutableProfilingHaskellLaunchDelegate.class.getName();

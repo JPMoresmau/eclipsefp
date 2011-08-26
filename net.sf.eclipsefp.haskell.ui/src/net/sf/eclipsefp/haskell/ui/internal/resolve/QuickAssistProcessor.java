@@ -14,8 +14,9 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
  * <p>Compute quick assist based on the Marker resolution generator</p>
-  *
-  * @author JP Moresmau
+ *
+ * @author JP Moresmau
+ * @author Alejandro Serrano
  */
 public class QuickAssistProcessor implements IQuickAssistProcessor {
   private final BuildMarkerResolutionGenerator generator=new BuildMarkerResolutionGenerator();

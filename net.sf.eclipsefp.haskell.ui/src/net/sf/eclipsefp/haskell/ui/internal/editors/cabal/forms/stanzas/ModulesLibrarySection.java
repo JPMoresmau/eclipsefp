@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -19,7 +19,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
+/**
+ * Page section to select the modules to expose in a library.
+ * @author Alejandro Serrano
+ *
+ */
 public class ModulesLibrarySection extends CabalFormSection implements
     IOtherValueEntryListener {
 

@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.modules;
 
@@ -9,6 +9,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+/**
+ * Action that changes the way modules are shown in the
+ * view: either flat or hierarchical.
+ * @author Alejandro Serrano
+ *
+ */
 public class ModulesViewStyleDelegate implements IViewActionDelegate {
 
 	boolean isHierarchical;

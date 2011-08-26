@@ -1,6 +1,6 @@
 /**
  * (c) 2010, B. Scott Michel
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.scion.client;
 

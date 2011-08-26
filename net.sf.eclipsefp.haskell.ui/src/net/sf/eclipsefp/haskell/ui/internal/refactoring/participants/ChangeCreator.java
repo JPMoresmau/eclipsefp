@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 
 import java.util.List;
@@ -15,7 +19,12 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
-
+/**
+ * Common methods for creating changes in participants, because
+ * most of them are reused between file and folder operations.
+ * @author Alejandro Serrano
+ *
+ */
 public class ChangeCreator {
 
   public static TextFileChange createCopyChange(final IFile oldFile, final IFile newFile) {

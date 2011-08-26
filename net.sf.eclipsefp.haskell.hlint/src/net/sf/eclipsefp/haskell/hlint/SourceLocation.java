@@ -1,5 +1,14 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.hlint;
 
+/**
+ * Represents a filename + line + column.
+ * @author Alejandro Serrano
+ *
+ */
 public class SourceLocation {
 	private String filename;
 	private int line;

@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.wizards;
 
 import java.io.IOException;
@@ -13,7 +17,11 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
-
+/**
+ * Wizard for creating a new UUAGC file.
+ * @author Alejandro Serrano
+ *
+ */
 public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
 
   public static final String ID = NewUuagcWizard.class.getName();

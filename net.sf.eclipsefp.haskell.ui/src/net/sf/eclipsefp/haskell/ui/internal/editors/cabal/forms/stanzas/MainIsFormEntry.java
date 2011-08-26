@@ -1,13 +1,17 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntryMultiSelect;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
-
+/**
+ * Form entry that wraps the serialization of the 'main-is' property.
+ * @author Alejandro Serrano
+ *
+ */
 public class MainIsFormEntry extends FormEntryMultiSelect {
 
   public MainIsFormEntry( final ITreeContentProvider contents ) {

@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
@@ -14,8 +14,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 /**
  * Common class for Cabal entry widgets, which provide common functionality
  * where the editor pages can hook on.
- *
- * @author serras
+ * @author Alejandro Serrano
  */
 public abstract class FormEntry {
 

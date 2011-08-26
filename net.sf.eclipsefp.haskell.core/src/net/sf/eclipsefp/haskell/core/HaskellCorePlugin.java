@@ -1,4 +1,5 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.core;
 
 import java.util.Iterator;

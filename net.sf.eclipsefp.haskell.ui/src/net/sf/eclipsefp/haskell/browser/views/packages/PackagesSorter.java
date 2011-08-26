@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
@@ -8,6 +8,12 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
+/**
+ * Sorts packages corresponding to their names and version,
+ * in a case-insensitive way.
+ * @author Alejandro Serrano
+ *
+ */
 public class PackagesSorter extends ViewerSorter {
 
 	@Override

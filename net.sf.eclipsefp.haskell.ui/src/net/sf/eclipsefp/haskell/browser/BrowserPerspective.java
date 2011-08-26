@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser;
 
@@ -11,6 +11,10 @@ import net.sf.eclipsefp.haskell.browser.views.packages.PackagesView;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
+/**
+ * Perspective for Haskell Browser.
+ * @author Alejandro Serrano
+ */
 public class BrowserPerspective implements IPerspectiveFactory {
 
 	public void createInitialLayout(final IPageLayout layout) {

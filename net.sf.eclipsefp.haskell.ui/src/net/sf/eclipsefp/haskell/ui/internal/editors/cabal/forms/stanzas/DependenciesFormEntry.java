@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
@@ -29,7 +29,11 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
+/**
+ * Form entry for selecting the package dependencies of a stanza.
+ * @author Alejandro Serrano
+ *
+ */
 public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
   private TableViewer tableField;

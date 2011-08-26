@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.declarations;
 
@@ -11,6 +11,12 @@ import net.sf.eclipsefp.haskell.browser.items.QueryItem;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
+/**
+ * Sort declarations, usually in a case-insensitive way,
+ * but sending all instance declarations to the bottom.
+ * @author Alejandro Serrano
+ *
+ */
 public class DeclarationsSorter extends ViewerSorter {
 
   @Override

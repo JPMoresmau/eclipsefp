@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.items;
 
@@ -9,9 +9,8 @@ import org.json.JSONObject;
 /**
  * Elements in tree that have documentation.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public abstract class Documented {
 	String doc;
 	

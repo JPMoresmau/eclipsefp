@@ -3,7 +3,11 @@ package net.sf.eclipsefp.haskell.browser.views;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-
+/**
+ * Content provider used when the database or Hoogle haven't been loaded yet.
+ * @author Alejandro Serrano
+ *
+ */
 public class NoDatabaseContentProvider implements ITreeContentProvider {
 
   public void dispose() {

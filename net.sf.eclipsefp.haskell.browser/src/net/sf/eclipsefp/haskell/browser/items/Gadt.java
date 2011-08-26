@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.items;
 
@@ -13,9 +13,8 @@ import org.json.JSONObject;
 /**
  * Represents a GADT-like declaration, that is, a data or a newtype declaration.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public abstract class Gadt extends Declaration {
 	String[] context;
 	String[] vars;

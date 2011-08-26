@@ -8,6 +8,7 @@ import org.eclipse.osgi.util.NLS;
 /** <p>provides internationalized String messages for the core.</p>
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
   */
 public final class CoreTexts extends NLS {
 

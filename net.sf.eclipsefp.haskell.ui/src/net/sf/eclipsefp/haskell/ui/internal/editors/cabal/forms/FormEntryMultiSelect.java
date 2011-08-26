@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
@@ -17,7 +17,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
+/**
+ * Form entry that shows a list with attached checkboxes,
+ * where the user can select zero or more of them.
+ * @author Alejandro Serrano
+ *
+ */
 public class FormEntryMultiSelect extends FormEntry implements
     ICheckStateListener {
 

@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.client;
 
@@ -29,9 +29,8 @@ import org.json.JSONObject;
 /**
  * Class used for communicating with a Scion Browser instance.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class StreamBrowserServer extends BrowserServer {
 
 	private IPath serverExecutable;

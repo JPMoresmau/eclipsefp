@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.util;
 
@@ -9,6 +9,11 @@ import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * Cache for images used in the Haskell Browser.
+ * @author Alejandro Serrano
+ *
+ */
 public class ImageCache {
 
   public static Image MODULE = HaskellUIImages.getImage( IImageNames.MODULE );
@@ -22,6 +27,11 @@ public class ImageCache {
   public static Image FUNCTION = HaskellUIImages.getImage( IImageNames.FUNCTION_BINDING );
   public static Image TYPE = HaskellUIImages.getImage( IImageNames.TYPE_DECL );
 
+  /**
+   * Get the image corresponding to a declaration.
+   * @param type The type of the declaration to show.
+   * @return The corresponding image.
+   */
   public static Image getImageForDeclaration( final DeclarationType type ) {
     switch( type ) {
       case DATA_TYPE:

@@ -1,6 +1,10 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.xml;
 
-
+/**
+ * Constants for parsing test-framework XML output.
+ * @author Alejandro Serrano
+ *
+ */
 public interface IXMLTags {
   static final String ELEMENT_TESTSUITE = "testsuite"; //$NON-NLS-1$
   static final String ELEMENT_TESTCASE = "testcase"; //$NON-NLS-1$

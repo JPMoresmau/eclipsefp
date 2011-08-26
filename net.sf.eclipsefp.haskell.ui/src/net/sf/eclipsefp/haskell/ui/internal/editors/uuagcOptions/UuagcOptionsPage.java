@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions;
 
 import net.sf.eclipsefp.haskell.core.uuagc.UuagcFile;
@@ -13,7 +17,11 @@ import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-
+/**
+ * Visual editor for uuagc_options page.
+ * @author Alejandro Serrano
+ *
+ */
 public class UuagcOptionsPage extends FormPage {
 
   protected IProject project;

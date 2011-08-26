@@ -12,7 +12,13 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
-
+/**
+ * Represents a group or entire session in a JUnit file,
+ * used here to represent test-framework tests.
+ * This file is derived from the work in Eclipse JDT.
+ * @author Alejandro Serrano
+ *
+ */
 public class TestSuiteAndSession implements ITestRunSession, ITestSuiteElement {
 
   private final ITestElementContainer parent;

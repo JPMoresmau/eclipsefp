@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.modules;
 
@@ -13,6 +13,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 
+/**
+ * Content provider for modules view.
+ * @author Alejandro Serrano
+ *
+ */
 public class ModulesContentProvider implements ITreeContentProvider {
 
 	boolean isHierarchical;

@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.sourcegraph;
 
 import java.io.File;
@@ -27,7 +31,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
-
+/**
+ * Action that runs SourceGraph and shows the resulting analysis
+ * to the user in a browser page.
+ * @author Alejandro Serrano
+ *
+ */
 public class RunActionDelegate implements IObjectActionDelegate {
   private Shell currentShell;
   private IProject project;

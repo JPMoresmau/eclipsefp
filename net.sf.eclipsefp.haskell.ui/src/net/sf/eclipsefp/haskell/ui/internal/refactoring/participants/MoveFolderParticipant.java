@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 
 import java.util.ArrayList;
@@ -18,7 +22,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
-
+/**
+ * Manages the move of a Haskell source folder.
+ * @author Alejandro Serrano
+ *
+ */
 public class MoveFolderParticipant extends MoveParticipant {
 
   IFolder folder;

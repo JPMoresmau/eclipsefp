@@ -19,6 +19,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * UUAGC builder: calls UUAGC, parses the results and shows
+ * them as file markers in the editor. The .hs files
+ * created are marked as derived.
+ *
+ * @author Alejandro Serrano
+ */
 public class UuagcBuilder extends IncrementalProjectBuilder {
 
   public static String BUILDER_ID = UuagcBuilder.class.getName();

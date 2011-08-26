@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions;
 
 import net.sf.eclipsefp.haskell.core.uuagc.UuagcFile;
@@ -14,7 +18,12 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
-
+/**
+ * Page section that manages the options corresponding to
+ * a .ag file in the uuagc_options file.
+ * @author Alejandro Serrano
+ *
+ */
 public class UuagcFileSection extends SectionPart {
 
   UuagcFile file;

@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
+/**
+ * Represents a file and its options in the uuagc_options
+ * file of a project.
+ *
+ * @author Alejandro Serrano
+ */
 public class UuagcFile {
 
   private String file;

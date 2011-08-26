@@ -34,7 +34,11 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-
+/**
+ * Page for handling the executables defined in a Cabal file.
+ * @author Alejandro Serrano
+ *
+ */
 public class ExecutablesPage extends CabalFormPage implements SelectionListener {
 
   private List execsList;

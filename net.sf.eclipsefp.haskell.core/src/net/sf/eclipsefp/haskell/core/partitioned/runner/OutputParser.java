@@ -3,6 +3,11 @@ package net.sf.eclipsefp.haskell.core.partitioned.runner;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parses the output returned by Alex, Happy or UUAGC.
+ *
+ * @author Alejandro Serrano
+ */
 public class OutputParser {
 
 	public static List<ProcessorError> errors(final String s) {

@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.declarations;
 
@@ -18,6 +18,12 @@ import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * Content provider for declarations.
+ * Implements the nesting of instances in their parent elements.
+ * @author Alejandro Serrano
+ *
+ */
 public class DeclarationsContentProvider implements ITreeContentProvider {
 
   boolean isTypes;

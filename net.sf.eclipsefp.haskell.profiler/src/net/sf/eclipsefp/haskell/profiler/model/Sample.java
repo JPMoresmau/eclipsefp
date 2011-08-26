@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.profiler.model;
 
 import java.math.BigInteger;
@@ -5,6 +9,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents each of the samples that was taken
+ * during a profiling session.
+ * @author Alejandro Serrano
+ *
+ */
 public class Sample {
 	float time;
 	LinkedHashMap<String, Long> entries;

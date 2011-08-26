@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 
 import java.util.ArrayList;
@@ -23,7 +27,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
-
+/**
+ * Utilities and shared changes creation for participants.
+ * @author Alejandro Serrano
+ *
+ */
 public class Util {
 
   public static Set<IPath> getPaths( final IProject project ) {
@@ -328,7 +336,7 @@ public class Util {
 
     return doc.get();
   }
-  
+
   public static String newRemoveModuleCabalFile( final IProject project,
       final IFile oldFile ) {
     TextFileDocumentProvider provider = new TextFileDocumentProvider();

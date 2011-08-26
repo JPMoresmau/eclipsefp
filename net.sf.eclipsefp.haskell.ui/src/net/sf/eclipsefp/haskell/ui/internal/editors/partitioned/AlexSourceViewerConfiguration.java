@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
@@ -19,7 +23,11 @@ import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-
+/**
+ * Configures highlighting for Alex lexers.
+ * @author Alejandro Serrano
+ *
+ */
 public class AlexSourceViewerConfiguration extends
     PartitionSourceViewerConfiguration {
 

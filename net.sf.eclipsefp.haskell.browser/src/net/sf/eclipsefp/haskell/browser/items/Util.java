@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.items;
 
@@ -12,9 +12,8 @@ import org.json.JSONException;
 /**
  * Utilities for using items.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class Util {
 
 	public static String[] getStringArray(JSONArray array) throws JSONException {

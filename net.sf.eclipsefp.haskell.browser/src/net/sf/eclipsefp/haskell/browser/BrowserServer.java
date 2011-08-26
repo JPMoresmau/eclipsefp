@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser;
 
@@ -22,7 +22,7 @@ import org.json.JSONException;
 /**
  * Abstract class for communicating with a scion-browser instance.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
 public abstract class BrowserServer {
 

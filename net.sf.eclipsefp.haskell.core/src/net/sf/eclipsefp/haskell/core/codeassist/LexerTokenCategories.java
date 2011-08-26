@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.scion.types.Location;
  * longer used, and, consequently, no longer documented in previous sources.
  *
  * @author B. Scott Michel
+ * @author Alejandro Serrano
  */
 public class LexerTokenCategories {
   // Keywords

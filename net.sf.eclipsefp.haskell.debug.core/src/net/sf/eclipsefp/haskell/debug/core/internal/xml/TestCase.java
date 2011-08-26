@@ -5,7 +5,13 @@ import org.eclipse.jdt.junit.model.ITestElementContainer;
 import org.eclipse.jdt.junit.model.ITestRunSession;
 import org.jdom.Element;
 
-
+/**
+ * Represents a JUnit testcase, used in the presentation of
+ * test-framework test resuts.
+ * The code was taken from Eclipse JDT.
+ * @author Alejandro Serrano
+ *
+ */
 public class TestCase implements ITestCaseElement {
 
   private final ITestElementContainer parent;

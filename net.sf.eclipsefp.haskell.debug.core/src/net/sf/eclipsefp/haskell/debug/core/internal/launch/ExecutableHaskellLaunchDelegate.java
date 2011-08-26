@@ -9,6 +9,7 @@ import org.eclipse.debug.core.model.IProcess;
  * launch delegate for Haskell executables executables
  *
  * @author JP Moresmau
+ * @author Alejandro Serrano
  *
  */
 public class ExecutableHaskellLaunchDelegate extends

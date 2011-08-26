@@ -27,7 +27,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
+/**
+ * Form entry for selecting modules from a project.
+ * @author Alejandro Serrano
+ *
+ */
 public class FormEntryModules extends FormEntry {
 
   static final int EXPOSED_COL = 0;

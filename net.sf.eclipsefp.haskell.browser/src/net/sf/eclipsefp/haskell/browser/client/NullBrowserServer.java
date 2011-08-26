@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.client;
 
@@ -21,9 +21,8 @@ import org.json.JSONException;
  * A virtual connection to a server which gives no responses. Used at
  * initialization time and when there is no scion-browser installed.
  * 
- * @author serras
+ * @author Alejandro Serrano
  */
-
 public class NullBrowserServer extends BrowserServer {
 
 	public NullBrowserServer() {

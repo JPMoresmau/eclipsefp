@@ -1,6 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
- * Released under the condidtions of the EPL.
+ * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.modules;
 
@@ -24,6 +24,11 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * View part for showing the 'modules' in the Browser.
+ * @author Alejandro Serrano
+ *
+ */
 public class ModulesView extends ViewPart implements ISelectionListener,
     ISelectionChangedListener {
 

@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -13,7 +17,11 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
-
+/**
+ * Manages the move of a Haskell source file.
+ * @author Alejandro Serrano
+ *
+ */
 public class MoveParticipant extends
     org.eclipse.ltk.core.refactoring.participants.MoveParticipant {
 
