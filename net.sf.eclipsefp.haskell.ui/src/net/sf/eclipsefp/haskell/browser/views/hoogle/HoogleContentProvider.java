@@ -93,6 +93,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
   }
 
 
+  @SuppressWarnings ( "unchecked" )
   public Object[] getChildren( final Object parentElement ) {
     if (parentElement instanceof Map.Entry) {
       Map.Entry<String, Object> entry = (Map.Entry<String, Object>)parentElement;
@@ -112,6 +113,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     return null;
   }
 
+  @SuppressWarnings ( "unchecked" )
   public boolean hasChildren( final Object element ) {
     if (element instanceof Map.Entry) {
       Map.Entry<String, Object> entry = (Map.Entry<String, Object>)element;

@@ -19,7 +19,6 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResultModule;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultPackage;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
-import net.sf.eclipsefp.haskell.browser.views.NoDatabaseLabelProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -64,7 +63,14 @@ public class HoogleView extends ViewPart implements SelectionListener,
    * search for the given text in Hoogle as if it was typed in the view
    * @param text the text to show in the view
    */
-  public static void searchHoogle(final String text){
+  public static void searchHoogle(String text){
+    // remove prefix if qualified
+    int ix=text.lastIndexOf( '.' );
+    if (ix>-1){
+      text=text.substring( ix+1 );
+    }
+    final String txt=text;
+
     Display.getDefault().asyncExec( new Runnable() {
 
       public void run() {
@@ -75,18 +81,32 @@ public class HoogleView extends ViewPart implements SelectionListener,
             for (IWorkbenchPage page : iww.getPages()) {
               p=page.findView( ID );
               if (p!=null){
+                iww.setActivePage( page );
                 page.activate( p );
                 break;
               }
             }
           }
           if (p==null){
-            p=PlatformUI.getWorkbench().getViewRegistry().find( ID ).createView();
+            p=w.getActiveWorkbenchWindow().getActivePage().showView( ID );
+            final HoogleView hv=(HoogleView)p;
+            // will run after the notifications hoogleLoaded
+            Display.getDefault().asyncExec( new Runnable() {
+
+              public void run() {
+                hv.text.setText( txt );
+                Event evt=new Event();
+                evt.widget=hv.text;
+                hv.widgetDefaultSelected(new SelectionEvent( evt ));
+              }
+            });
+            return;
+              //PlatformUI.getWorkbench().getViewRegistry().find( ID ).createView();
           }
 
           final HoogleView hv=(HoogleView)p;
 
-          hv.text.setText( text );
+          hv.text.setText( txt );
           Event evt=new Event();
           evt.widget=hv.text;
           hv.widgetDefaultSelected(new SelectionEvent( evt ));
@@ -133,7 +153,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     formData.grabExcessHorizontalSpace = true;
     form.setLayoutData( formData );
     viewer = new TreeViewer( form );
-
+    viewer.setLabelProvider( new HoogleLabelProvider() );
     // Load if needed
     if (BrowserPlugin.getDefault().isHoogleLoaded()) {
       hoogleLoaded( null );
@@ -156,26 +176,29 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
       public void run() {
         provider = new HoogleContentProvider();
+        //viewer.setLabelProvider( new HoogleLabelProvider() );
         viewer.setContentProvider( provider );
-        viewer.setLabelProvider( new HoogleLabelProvider() );
-        viewer.setInput( "" );
+        viewer.setInput( text.getText() );
         viewer.refresh();
       }
     } );
   }
+
+
 
   public void hoogleUnloaded( final BrowserEvent e ) {
     Display.getDefault().asyncExec( new Runnable() {
 
       public void run() {
         provider = new NoDatabaseContentProvider();
+        //viewer.setLabelProvider( new NoDatabaseLabelProvider( true ) );
         viewer.setContentProvider( provider );
-        viewer.setLabelProvider( new NoDatabaseLabelProvider( true ) );
         viewer.setInput( NoDatabaseRoot.ROOT );
         viewer.refresh();
       }
     } );
   }
+
 
   @Override
   public void setFocus() {

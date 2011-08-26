@@ -11,6 +11,8 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultConstructor;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultDeclaration;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -22,8 +24,12 @@ import org.eclipse.swt.graphics.Image;
  */
 public class HoogleLabelProvider implements ILabelProvider {
 
+  @SuppressWarnings ( "unchecked" )
   public Image getImage( final Object element ) {
+    if (element instanceof NoDatabaseRoot){
+      return ImageCache.DATABASE;
 
+    }
     HoogleResult result = null;
     if (element instanceof HoogleResult) {
       result = (HoogleResult)element;
@@ -52,10 +58,14 @@ public class HoogleLabelProvider implements ILabelProvider {
     return null;
   }
 
+  @SuppressWarnings ( "unchecked" )
   public String getText( final Object element ) {
 
     HoogleResult result = null;
-    if (element instanceof HoogleResult) {
+    if (element instanceof NoDatabaseRoot){
+      return UITexts.scionBrowserNoDatabaseLoadedOrHoogleNotPresent;
+
+    } else if (element instanceof HoogleResult) {
       result = (HoogleResult)element;
       switch(result.getType()) {
         case PACKAGE:
