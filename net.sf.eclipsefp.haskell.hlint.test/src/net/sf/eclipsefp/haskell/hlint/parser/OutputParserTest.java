@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.hlint.CodeModificationText;
@@ -22,7 +23,9 @@ public class OutputParserTest {
 	@Test
 	public void testWindowsLongPath() throws Exception{
 		//File f=new File("test.txt");
-		OutputParser p=new OutputParser(OutputParserTest.class.getResourceAsStream("testW.txt"));
+		InputStream is=OutputParserTest.class.getResourceAsStream("testW.txt");
+		assertNotNull(is);
+		OutputParser p=new OutputParser(is);
 		List<Suggestion> sugs=p.suggestions();
 		assertNotNull(sugs);
 		assertEquals(3, sugs.size());
@@ -42,7 +45,9 @@ public class OutputParserTest {
 	@Test
 	public void testUnixLongPath() throws Exception{
 		//File f=new File("test.txt");
-		OutputParser p=new OutputParser(OutputParserTest.class.getResourceAsStream("testU.txt"));
+		InputStream is=OutputParserTest.class.getResourceAsStream("testU.txt");
+		assertNotNull(is);
+		OutputParser p=new OutputParser(is);
 		List<Suggestion> sugs=p.suggestions();
 		assertNotNull(sugs);
 		assertEquals(3, sugs.size());

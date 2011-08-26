@@ -335,6 +335,11 @@
             name="%openDefinitionCommand_name"
             id="net.sf.eclipsefp.ui.commands.navigate.openDefinition"/>
       <command
+            description="%searchHoogleCommand_desc"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%searchHoogleCommand_name"
+            id="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"/>
+      <command
             description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%HaddockDocumentFollowing.name"
@@ -360,9 +365,23 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="menu:navigate?after=open.ext">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="popup:#HaskellEditorContext?after=group.open">
          <command
                commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+            <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=group.open">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
             <visibleWhen checkEnabled="true"/>
          </command>
       </menuContribution>
@@ -412,6 +431,10 @@
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
               contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
               sequence="F3"/>
+          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
+              sequence="F4"/>
          <!-- other keys -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
@@ -429,6 +452,17 @@
             </reference>
          </activeWhen>
       </handler>
+     <!-- handler for the Open Definition action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.SearchInHoogleHandler"
+            commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
+         <activeWhen>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+         </activeWhen>
+      </handler>
+      
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -714,6 +748,13 @@
             tooltip="%openDefinitionAction_tooltip"
             retarget="true"
             allowLabelUpdate="true"/>
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.searchHoogle"
+            definitionId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"
+            label="%searchHoogleAction_label"
+            tooltip="%searchHoogleAction_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"/>   
        <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
  <!-- Source menu -->         
          <menu

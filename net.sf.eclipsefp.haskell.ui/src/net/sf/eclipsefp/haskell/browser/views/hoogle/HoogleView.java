@@ -1,5 +1,5 @@
 /**
- * (c) 2011, Alejandro Serrano
+ * (c) 2011, Alejandro Serrano & JP Moresmau
  * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.browser.views.hoogle;
@@ -21,7 +21,9 @@ import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseLabelProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -39,18 +41,63 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 /**
  * View part for Hoogle search.
- * @author Alejandro Serrano
+ * @author Alejandro Serrano & JP Moresmau
  *
  */
 public class HoogleView extends ViewPart implements SelectionListener,
     ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener {
+
+  /**
+   * search for the given text in Hoogle as if it was typed in the view
+   * @param text the text to show in the view
+   */
+  public static void searchHoogle(final String text){
+    Display.getDefault().asyncExec( new Runnable() {
+
+      public void run() {
+        try {
+          IWorkbench w=PlatformUI.getWorkbench();
+          IViewPart p=null;
+          for (IWorkbenchWindow iww : w.getWorkbenchWindows()) {
+            for (IWorkbenchPage page : iww.getPages()) {
+              p=page.findView( ID );
+              if (p!=null){
+                page.activate( p );
+                break;
+              }
+            }
+          }
+          if (p==null){
+            p=PlatformUI.getWorkbench().getViewRegistry().find( ID ).createView();
+          }
+
+          final HoogleView hv=(HoogleView)p;
+
+          hv.text.setText( text );
+          Event evt=new Event();
+          evt.widget=hv.text;
+          hv.widgetDefaultSelected(new SelectionEvent( evt ));
+
+
+        } catch (CoreException ce){
+          HaskellUIPlugin.log( ce );
+        }
+      }
+    });
+  }
 
   /**
    * The ID of the view as specified by the extension.
