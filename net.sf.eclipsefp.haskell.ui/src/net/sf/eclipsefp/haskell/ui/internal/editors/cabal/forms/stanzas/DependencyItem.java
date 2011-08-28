@@ -40,7 +40,7 @@ public class DependencyItem {
     if (spacePos == -1) {
       return new DependencyItem(trimmed, "");
     } else {
-      return new DependencyItem(trimmed.substring( 0, spacePos ), trimmed.substring( spacePos + 1 ));
+      return new DependencyItem(trimmed.substring( 0, spacePos ), trimmed.substring( spacePos + 1 ).trim());
     }
   }
 }
