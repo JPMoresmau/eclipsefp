@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.core;singleton:=true
-Bundle-Version: 2.0.5
+Bundle-Version: 2.1.0
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore
 Bundle-Vendor: %bundleVendor
 Require-Bundle: org.eclipse.core.runtime,

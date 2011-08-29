@@ -4,8 +4,9 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import java.util.Vector;
-import org.apache.tools.ant.util.StringUtils;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -71,13 +72,13 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     }
 
     ignoreModify = true;
-    Vector<String> elementsNotTrimmed = StringUtils.split( newValue, ',' );
-    Vector<String> elements = new Vector<String>();
-    for (String elementNotTrimmed : elementsNotTrimmed) {
-      elements.add(elementNotTrimmed.trim());
+    String[] elements = newValue.split( "," );
+    for (String element : elements) {
+      element.trim();
     }
+
     LimitedWorkbenchContentProvider provider = (LimitedWorkbenchContentProvider)treeField.getContentProvider();
-    seeChecked(provider, provider.getElements( treeField.getInput() ), elements);
+    seeChecked(provider, provider.getElements( treeField.getInput() ), new HashSet<String>(Arrays.asList(elements)));
     ignoreModify = false;
 
     /* if (!blockNotification) {
@@ -86,10 +87,10 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
   }
 
   private void seeChecked( final LimitedWorkbenchContentProvider provider,
-      final Object[] objects, final Vector<String> files ) {
+      final Object[] objects, final Set<String> files ) {
     for (Object o : objects) {
       IResource res = (IResource)o;
-      if (files.indexOf( res.getProjectRelativePath().toOSString() ) == -1) {
+      if (!files.contains( res.getProjectRelativePath().toOSString() )) {
         // Not found
         treeField.setChecked( res, false );
       } else {

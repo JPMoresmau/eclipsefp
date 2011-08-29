@@ -63,13 +63,12 @@ public class HoogleView extends ViewPart implements SelectionListener,
    * search for the given text in Hoogle as if it was typed in the view
    * @param text the text to show in the view
    */
-  public static void searchHoogle(String text){
+  public static void searchHoogle(final String text){
     // remove prefix if qualified
     int ix=text.lastIndexOf( '.' );
-    if (ix>-1){
-      text=text.substring( ix+1 );
-    }
-    final String txt=text;
+    final String txt=(ix>-1)
+      ?text.substring( ix+1 )
+      :text;
 
     Display.getDefault().asyncExec( new Runnable() {
 

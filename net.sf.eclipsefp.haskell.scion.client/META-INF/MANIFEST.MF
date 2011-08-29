@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.scion.client; singleton:=true
-Bundle-Version: 2.0.5
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
@@ -11,11 +11,10 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.core.resources;bundle-version="3.5.0",
  org.eclipse.ui,
  org.eclipse.text,
- net.sf.eclipsefp.haskell.util,
+ net.sf.eclipsefp.haskell.util;visibility:=reexport,
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.2"
 Bundle-Vendor: %bundleVendor
 Export-Package: net.sf.eclipsefp.haskell.scion.client,
  net.sf.eclipsefp.haskell.scion.exceptions,
- net.sf.eclipsefp.haskell.scion.types,
- org.json
+ net.sf.eclipsefp.haskell.scion.types

@@ -4,11 +4,12 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -39,7 +40,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
   private TableViewer tableField;
   private Action addAction;
   private Action removeAction;
-  private Vector<DependencyItem> items;
+  private List<DependencyItem> items;
   private boolean isCellEditing = false;
 
   @Override
@@ -104,7 +105,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         IStructuredSelection selection = ( IStructuredSelection )tableField
             .getSelection();
         if( !selection.isEmpty() ) {
-          Iterator<DependencyItem> iterator = selection.iterator();
+          Iterator<?> iterator = selection.iterator();
           while( iterator.hasNext() ) {
             items.remove( iterator.next() );
           }
@@ -141,8 +142,8 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     }
 
     isCellEditing = true;
-    Vector<String> elements = StringUtils.split( newValue, ',' );
-    items = new Vector<DependencyItem>();
+    String[] elements = newValue.split( "," );
+    items = new ArrayList<DependencyItem>(elements.length);
     for( String element: elements ) {
       items.add( DependencyItem.fromString( element ) );
     }

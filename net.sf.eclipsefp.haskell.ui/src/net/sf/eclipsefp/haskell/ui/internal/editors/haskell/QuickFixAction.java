@@ -104,7 +104,7 @@ public class QuickFixAction extends SelectMarkerRulerAction {
         continue;
       }
 
-      int annotationLayer = annotationAccess.getLayer( annotation );
+      int annotationLayer = annotationAccess!=null?annotationAccess.getLayer( annotation ):Integer.MIN_VALUE;
       if( annotationAccess != null ) {
         if( annotationLayer < layer ) {
           continue;

@@ -4,10 +4,8 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
-import java.util.Vector;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -95,7 +93,7 @@ public class CompilerFormEntry extends FormEntry {
     }
 
     compilerList.removeAll();
-    Vector<String> elements = StringUtils.split( newValue, ',' );
+    String[] elements = newValue.split( "," );
     compilerList.removeAll();
     for( String element: elements ) {
       compilerList.add( element.trim() );

@@ -22,6 +22,7 @@ public class DependenciesTableContentProvider implements
     // Do nothing
   }
 
+  @SuppressWarnings ( "unchecked" )
   public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
     items = (List<DependencyItem>)newInput;
   }

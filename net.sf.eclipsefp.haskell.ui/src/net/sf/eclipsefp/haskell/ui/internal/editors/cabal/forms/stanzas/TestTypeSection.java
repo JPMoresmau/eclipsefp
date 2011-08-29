@@ -73,7 +73,7 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
       addedElement = CabalSyntax.FIELD_MAIN_IS;
     }
     PackageDescriptionStanza stanza = this.getStanza();
-    if( stanza.getProperties().containsKey( deletedElement.getCabalName() ) ) {
+    if(deletedElement!=null && stanza.getProperties().containsKey( deletedElement.getCabalName() ) ) {
       String value = stanza.getProperties().get( deletedElement.getCabalName() );
       setNewValue( value, addedElement );
       setNewValue( "", deletedElement );

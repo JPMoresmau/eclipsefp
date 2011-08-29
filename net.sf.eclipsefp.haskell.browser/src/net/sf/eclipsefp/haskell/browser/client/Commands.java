@@ -101,6 +101,7 @@ public class Commands {
 		return o;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Packaged<Declaration>[] responseGetDeclarations(
 			String response) throws Exception {
 		JSONArray jDecls = new JSONArray(response);

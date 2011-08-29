@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -130,8 +129,7 @@ public class FormEntryModules extends FormEntry {
       }
 
       ArrayList<String> modules = new ArrayList<String>();
-      ModulesVisitor visitor = new ModulesVisitor( modules, StringUtils.split(
-          sourceDirs, ',' ) );
+      ModulesVisitor visitor = new ModulesVisitor( modules, sourceDirs.split( "," ) );
       try {
         root.getProject().accept( visitor );
       } catch( CoreException e ) {
@@ -383,7 +381,7 @@ public class FormEntryModules extends FormEntry {
     public Vector<String> possiblePrefixes;
 
     public ModulesVisitor( final ArrayList<String> whereAdd,
-        final Vector<String> dirs ) {
+        final String[] dirs ) {
       this.elts = whereAdd;
       this.possiblePrefixes = new Vector<String>();
       for( String dir: dirs ) {

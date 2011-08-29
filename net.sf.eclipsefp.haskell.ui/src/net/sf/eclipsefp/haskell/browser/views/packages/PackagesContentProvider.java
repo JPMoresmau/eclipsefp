@@ -32,9 +32,11 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		switch ((DatabaseType) parentElement) {
 		case LOCAL:
 			return this.localCache;
+		default:
+		  return new Object[0];
 		}
 
-		return new Object[0];
+
 	}
 
 	public Object getParent(final Object element) {

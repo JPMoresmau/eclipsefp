@@ -32,7 +32,7 @@ public class MainIsFormEntry extends FormEntryMultiSelect {
       return;
     }
 
-    if (realValue == null || !realValue.endsWith( ".hs" )) {
+    if (!realValue.endsWith( ".hs" )) {
       super.setValue( realValue, blockNotification );
     } else {
       String newValue = realValue.substring( 0, realValue.length() - 3 ).replace( '/', '.' );

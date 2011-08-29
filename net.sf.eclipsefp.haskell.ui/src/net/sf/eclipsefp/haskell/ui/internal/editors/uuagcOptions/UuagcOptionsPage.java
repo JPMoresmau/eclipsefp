@@ -27,7 +27,7 @@ public class UuagcOptionsPage extends FormPage {
   protected IProject project;
   private final UuagcProjectManager manager;
   private final UuagcOptionsFormEditor theEditor;
-  private IManagedForm theManagedForm;
+ // private IManagedForm theManagedForm;
 
   public UuagcOptionsPage( final UuagcOptionsFormEditor editor,
       final IProject project ) {

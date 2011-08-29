@@ -11,7 +11,7 @@ public class HappyRunner extends PartitionedRunner {
 
 	@Override
 	public String getExecutableName() {
-		return "happy";
+		return "happy"; //$NON-NLS-1$
 	}
 
   @Override

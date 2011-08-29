@@ -64,7 +64,7 @@ public class TestSuiteAndSession implements ITestRunSession, ITestSuiteElement {
     try {
       String timeVal = elt.getAttributeValue( IXMLTags.ATTRIB_TIME,
           IXMLTags.DEFAULT_TIME );
-      time = Double.valueOf( timeVal );
+      time = Double.parseDouble( timeVal );
     } catch( NumberFormatException e ) {
       time = 0;
     }

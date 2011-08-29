@@ -35,7 +35,7 @@ public class LimitedWorkbenchContentProvider extends WorkbenchContentProvider {
 
   @Override
   public Object[] getChildren( final Object element ) {
-    ArrayList objs = new ArrayList();
+    ArrayList<Object> objs = new ArrayList<Object>();
     for ( Object inner : super.getChildren( element )) {
       boolean include = true;
       if( !showHidden && ( ( IResource )inner ).getName().startsWith( "." ) ) {
@@ -51,14 +51,14 @@ public class LimitedWorkbenchContentProvider extends WorkbenchContentProvider {
     return objs.toArray();
   }
 
-  private Object[] filter(final Object[] elements) {
-    ArrayList<Object> objs = new ArrayList<Object>();
-    for ( Object inner : elements) {
-      IResource resource = (IResource)inner;
-      if (!resource.getName().startsWith( "." )) {
-        objs.add( resource );
-      }
-    }
-    return objs.toArray();
-  }
+//  private Object[] filter(final Object[] elements) {
+//    ArrayList<Object> objs = new ArrayList<Object>();
+//    for ( Object inner : elements) {
+//      IResource resource = (IResource)inner;
+//      if (!resource.getName().startsWith( "." )) {
+//        objs.add( resource );
+//      }
+//    }
+//    return objs.toArray();
+//  }
 }

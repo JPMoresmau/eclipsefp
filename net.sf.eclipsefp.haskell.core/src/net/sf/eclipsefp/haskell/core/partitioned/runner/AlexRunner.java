@@ -11,7 +11,7 @@ public class AlexRunner extends PartitionedRunner {
 
 	@Override
 	public String getExecutableName() {
-		return "alex";
+		return "alex"; //$NON-NLS-1$
 	}
 
   @Override

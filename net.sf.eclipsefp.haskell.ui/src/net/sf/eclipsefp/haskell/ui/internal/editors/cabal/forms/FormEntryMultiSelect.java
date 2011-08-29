@@ -4,8 +4,8 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import java.util.Vector;
-import org.apache.tools.ant.util.StringUtils;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -76,14 +76,14 @@ public class FormEntryMultiSelect extends FormEntry implements
     }
 
     ignoreModify = true;
-    Vector<String> elementsNotTrimmed = StringUtils.split( newValue, ',' );
-    Vector<String> elements = new Vector<String>();
-    for( String elementNotTrimmed: elementsNotTrimmed ) {
-      elements.add( elementNotTrimmed.trim() );
+    String[] elements = newValue.split( "," );
+    Set<String> set=new HashSet<String>();
+    for( String element: elements ) {
+      set.add(element.trim());
     }
     for( Object o: contents.getElements( null ) ) {
       String s = ( String )o;
-      if( elements.indexOf( s ) == -1 ) {
+      if( !set.contains( s ) ) {
         treeField.setChecked( s, false );
       } else {
         treeField.setChecked( s, true );

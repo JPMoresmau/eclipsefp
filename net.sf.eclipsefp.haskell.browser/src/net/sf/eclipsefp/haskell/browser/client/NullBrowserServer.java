@@ -68,6 +68,7 @@ public class NullBrowserServer extends BrowserServer {
 		return new Module[0];
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Packaged<Declaration>[] getDeclarations(String module) throws Exception {
 		// Return nothing

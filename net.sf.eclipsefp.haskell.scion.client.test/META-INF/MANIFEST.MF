@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Scion client Test Plug-in
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.scion.client.test
-Bundle-Version: 1.112.0
+Bundle-Version: 2.1.0
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.sf.eclipsefp.haskell.scion.client,

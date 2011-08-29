@@ -4,7 +4,6 @@ package net.sf.eclipsefp.haskell.ui.wizards;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Scanner;
-import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IContainer;
@@ -97,9 +96,9 @@ public class TemplateFileGenerator {
   private IFile createFile( final ModuleCreationInfo info,
       final IContainer destFolder, final IProgressMonitor monitor )
       throws CoreException {
-    final String[] segments = getPathSegments( info );
+    //final String[] segments = getPathSegments( info );
     final String moduleName = info.getModuleName();
-    final EHaskellCommentStyle style = info.getCommentStyle();
+    //final EHaskellCommentStyle style = info.getCommentStyle();
     String fileContent = contents.replace( MODULE_REPLACEMENT, info.getQualifiedModuleName() );
     String fileName = createFileName( moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
@@ -110,10 +109,10 @@ public class TemplateFileGenerator {
     return result;
   }
 
-  private static String[] getPathSegments( final ModuleCreationInfo info ) {
-    IPath path = info.getFolders();
-    return ( path == null ) ? new String[ 0 ] : path.segments();
-  }
+//  private static String[] getPathSegments( final ModuleCreationInfo info ) {
+//    IPath path = info.getFolders();
+//    return ( path == null ) ? new String[ 0 ] : path.segments();
+//  }
 
   private String createFileName( final String moduleName ) {
     return moduleName + "." + fileExtension; //$NON-NLS-1$
