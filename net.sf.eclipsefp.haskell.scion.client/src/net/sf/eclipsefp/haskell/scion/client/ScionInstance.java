@@ -100,7 +100,7 @@ public class ScionInstance {
   /** Flag that indicates that the project has been built successfully */
   private boolean                     projectIsBuilt;
   /** The Cabal project description */
-//  private JSONObject                  cabalDescription;
+//  private JSONObject                  cabalDescription;gInfo
   private Map<String, CabalPackage[]> packagesByDB;
   private List<Component>             components;
   private CabalComponentResolver      resolver;
@@ -527,8 +527,10 @@ public class ScionInstance {
 	        lastLoadedComponent = c;
 	        success=true; // at least one component works
 	        hasTriedAndFailed=false;
+	        ScionPlugin.logDebug("loadComponent: succeeded in loading: "+c.getName());
 	      } else {
 	    	hasTriedAndFailed=true;
+	    	ScionPlugin.logDebug("loadComponent: failed in loading: "+c.getName());
 	       // success = false;
 	    	  
 	      //  break;
@@ -537,10 +539,13 @@ public class ScionInstance {
     }
     // I have tried a different component and failed, let's go back to the last loaded
     if (hasTriedAndFailed && lastLoadedComponent!=null){
-    	server.sendCommand(new LoadCommand(theProject, lastLoadedComponent, buildOptions));
+    	
+    	boolean ret=server.sendCommand(new LoadCommand(theProject, lastLoadedComponent, buildOptions));
+    	ScionPlugin.logDebug("loadComponent: loading back: "+lastLoadedComponent+"->"+ret);
     }
       
     if (!success) {
+    	ScionPlugin.logDebug("loadComponent: rollback");
       // Clear out state
     	internalReset();
     }
@@ -652,6 +657,7 @@ public class ScionInstance {
       Set<String> componentNames = resolver.getComponents( file );
       
       if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
+    	ScionPlugin.logDebug("runWithComponent: lastLoadedComponent:"+String.valueOf(lastLoadedComponent)+" componentNames:"+componentNames);
         Component toLoad = null;
   
         if (!componentNames.isEmpty()) {
@@ -695,10 +701,13 @@ public class ScionInstance {
             }
           }
         }
+      } else {
+    	  ScionPlugin.logDebug("runWithComponent: lastLoadedComponent:"+String.valueOf(lastLoadedComponent)+" OK");
       }
     } else {
       // Build failed.
       loadOK = false;
+      ScionPlugin.logDebug("runWithComponent: build totally failed!");
     }
 
     return loadOK;
