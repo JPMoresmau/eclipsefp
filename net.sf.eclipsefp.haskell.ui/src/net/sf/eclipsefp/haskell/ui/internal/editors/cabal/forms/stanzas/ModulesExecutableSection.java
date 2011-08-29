@@ -84,8 +84,8 @@ public class ModulesExecutableSection extends CabalFormSection implements IOther
   }
 
   @Override
-  public void setStanza( final PackageDescriptionStanza stanza ) {
-    super.setStanza( stanza );
+  public void setStanza( final PackageDescriptionStanza stanza, final boolean first ) {
+    super.setStanza( stanza, first );
     if (stanza != null) {
       entry.setOtherModulesValue( stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() ), true );
     }

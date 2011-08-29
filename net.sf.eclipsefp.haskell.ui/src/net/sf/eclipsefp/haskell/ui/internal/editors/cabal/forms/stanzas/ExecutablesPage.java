@@ -42,7 +42,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class ExecutablesPage extends CabalFormPage implements SelectionListener {
 
   private List execsList;
-  @SuppressWarnings ( "unused" )
+
   private boolean ignoreModify = false;
   private CabalFormEditor formEditor;
 
@@ -199,12 +199,13 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
   void setStanza(final PackageDescriptionStanza stanza) {
     for( IFormPart p: getManagedForm().getParts() ) {
       if( p instanceof CabalFormSection ) {
-        ( ( CabalFormSection )p ).setStanza( stanza );
+        ( ( CabalFormSection )p ).setStanza( stanza, ignoreModify );
       }
     }
   }
 
   public void widgetSelected( final SelectionEvent e ) {
+    ignoreModify = true;
     PackageDescriptionStanza stanza;
     if (execsList.getSelectionCount() == 0) {
       stanza = null;
@@ -215,6 +216,7 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
 
     modulesSection.refreshInput( project, this.getPackageDescription(), stanza, true );
     setStanza(stanza);
+    ignoreModify = false;
   }
 
   @Override

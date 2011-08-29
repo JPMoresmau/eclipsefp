@@ -97,14 +97,14 @@ public class LibraryPage extends CabalFormPage implements SelectionListener {
       isALibrary.setSelection( false );
       for( IFormPart p: getManagedForm().getParts() ) {
         if( p instanceof CabalFormSection ) {
-          ( ( CabalFormSection )p ).setStanza( null );
+          ( ( CabalFormSection )p ).setStanza( null, ignoreModify );
         }
       }
     } else {
       isALibrary.setSelection( true );
       for( IFormPart p: getManagedForm().getParts() ) {
         if( p instanceof CabalFormSection ) {
-          ( ( CabalFormSection )p ).setStanza( libStanza );
+          ( ( CabalFormSection )p ).setStanza( libStanza, ignoreModify );
         }
       }
     }

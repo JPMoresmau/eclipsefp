@@ -71,9 +71,9 @@ public abstract class CabalFormSection extends SectionPart {
     return stanza;
   }
 
-  public void setStanza( final PackageDescriptionStanza stanza ) {
+  public void setStanza( final PackageDescriptionStanza stanza, final boolean first ) {
     this.stanza = stanza;
-    fillInValues( false );
+    fillInValues( first );
     this.setAllEditable( stanza != null );
   }
 

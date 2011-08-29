@@ -77,7 +77,7 @@ public class OverviewPage extends CabalFormPage {
     PackageDescriptionStanza stanza = packageDescription.getPackageStanza();
     for( IFormPart p: getManagedForm().getParts() ) {
       if( p instanceof CabalFormSection ) {
-        ( ( CabalFormSection )p ).setStanza( stanza );
+        ( ( CabalFormSection )p ).setStanza( stanza,false );
       }
     }
   }

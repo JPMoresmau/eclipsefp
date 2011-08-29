@@ -84,7 +84,7 @@ public class ModulesTestSuiteSection extends CabalFormSection implements IOtherV
   }
 
   @Override
-  public void setStanza( final PackageDescriptionStanza stanza ) {
+  public void setStanza( final PackageDescriptionStanza stanza,final boolean first ) {
     // Set the corresponding field for main-is or test-is entry
     if (stanza != null) {
       String testType = stanza.getProperties().get( CabalSyntax.FIELD_TYPE.getCabalName() );
@@ -97,7 +97,7 @@ public class ModulesTestSuiteSection extends CabalFormSection implements IOtherV
         entry.changeExposedColumnName( UITexts.cabalEditor_test_modules );
       }
     }
-    super.setStanza( stanza );
+    super.setStanza( stanza, first );
     if (stanza != null) {
       // other-modules
       entry.setOtherModulesValue( stanza.getProperties().get( CabalSyntax.FIELD_OTHER_MODULES.getCabalName() ), true );

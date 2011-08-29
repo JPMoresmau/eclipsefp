@@ -321,15 +321,16 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     }
   }
 
-  void setStanza(final PackageDescriptionStanza stanza) {
+  void setStanza(final PackageDescriptionStanza stanza,final boolean first) {
     for( IFormPart p: getManagedForm().getParts() ) {
       if( p instanceof CabalFormSection ) {
-        ( ( CabalFormSection )p ).setStanza( stanza );
+        ( ( CabalFormSection )p ).setStanza( stanza, first );
       }
     }
   }
 
   public void widgetSelected( final SelectionEvent e ) {
+    ignoreModify = true;
     PackageDescriptionStanza stanza;
     if (execsList.getSelectionCount() == 0) {
       stanza = null;
@@ -339,7 +340,8 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     }
 
     modulesSection.refreshInput( project, this.getPackageDescription(), stanza, true );
-    setStanza(stanza);
+    setStanza(stanza,true);
+    ignoreModify = true;
   }
 
   @Override
