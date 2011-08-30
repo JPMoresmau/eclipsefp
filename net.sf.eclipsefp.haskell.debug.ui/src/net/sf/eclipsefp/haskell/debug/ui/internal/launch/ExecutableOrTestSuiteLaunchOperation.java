@@ -8,11 +8,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -26,6 +30,19 @@ import org.eclipse.debug.core.ILaunchManager;
  */
 public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperation {
 
+  public void launch( final IResource resource, final IProgressMonitor monitor )
+  throws CoreException {
+  if( resource != null ) {
+    IProject project = resource.getProject();
+    if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      List<IFile> executables=ResourceUtil.getProjectExecutables( project );
+      ILaunchConfiguration configuration = getConfiguration( project,executables );
+      if( configuration != null ) {
+        configuration.launch( ILaunchManager.RUN_MODE, monitor );
+      }
+    }
+  }
+}
 
   protected ILaunchConfiguration getConfiguration( final IProject project,
       final List<IFile> executables ) throws CoreException {
@@ -108,7 +125,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     return result;
   }
 
-  private String createConfigId( final IFile file ) {
+  protected String createConfigId( final IFile file ) {
     String name = file.getName();
     // FIXME: Remove when Galileo is no longer supported.
     ILaunchManager mgr = getLaunchManager();

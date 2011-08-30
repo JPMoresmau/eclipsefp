@@ -48,6 +48,8 @@ public final class UITexts extends NLS {
 
   public static String evaluate_need_suspend;
 
+  public static String profiling_name;
+
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
