@@ -13,6 +13,9 @@
 *******************************************************************************/
 package net.sf.eclipsefp.haskell.profiler.internal.editors;
 
+import net.sf.eclipsefp.haskell.profiler.ProfilerPlugin;
+import net.sf.eclipsefp.haskell.profiler.internal.util.UITexts;
+
 import org.eclipse.birt.chart.device.IDeviceRenderer;
 import org.eclipse.birt.chart.exception.ChartException;
 import org.eclipse.birt.chart.factory.GeneratedChartState;
@@ -21,6 +24,7 @@ import org.eclipse.birt.chart.model.Chart;
 import org.eclipse.birt.chart.model.attribute.Bounds;
 import org.eclipse.birt.chart.model.attribute.impl.BoundsImpl;
 import org.eclipse.birt.chart.util.PluginSettings;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -121,20 +125,19 @@ public class ChartCanvas extends Canvas {
      * Builds the chart state. This method should be call when data is changed.
      */
     private void buildChart() {
+    	state=null;
         Point size = getSize();
         Bounds bo = BoundsImpl.create(0, 0, size.x, size.y);
         int resolution = render.getDisplayServer().getDpiResolution();
         bo.scale(72d / resolution);
         try {
-            Generator gr = Generator.instance();
+        	Generator gr = Generator.instance();
             state = gr.build(render.getDisplayServer(),
                     chart,
                     bo,
-                    null,
-                    null,
-                    null);
+                    null,null);
         } catch (ChartException ex) {
-            ex.printStackTrace();
+           ProfilerPlugin.log(IStatus.ERROR, UITexts.graph_generate_error, ex);
         }
     }
 
@@ -157,8 +160,9 @@ public class ChartCanvas extends Canvas {
             render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, gc);
 
             Generator gr = Generator.instance();
-
-            gr.render(render, state);
+            if (state!=null){
+            	gr.render(render, state);
+            }
         } catch (ChartException ex) {
             ex.printStackTrace();
         } finally {

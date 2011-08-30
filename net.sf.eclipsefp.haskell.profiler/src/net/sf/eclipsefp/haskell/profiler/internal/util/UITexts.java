@@ -18,7 +18,10 @@ public final class UITexts extends NLS {
   public static String graph_title;
   public static String graph_options;
   public static String graph_ungroupElements;
-
+  
+  public static String graph_requires_birt;
+  public static String graph_generate_error;
+  
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
