@@ -11,7 +11,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
-
+/**
+*
+* @author Alejandro Serrano
+*
+*/
 public class NewYesodProjectPage extends WizardNewProjectCreationPage {
 
   Text authorName;

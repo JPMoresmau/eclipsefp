@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 
 public class ProcessRunner implements IProcessRunner {
@@ -55,11 +56,17 @@ public class ProcessRunner implements IProcessRunner {
     return proc;
   }
 
-  private Thread redirect( final Reader in, final Writer out ) {
+  private static Thread redirect( final Reader in, final Writer out ) {
     Thread outRedirect = new StreamRedirect( "output_redirect", //$NON-NLS-1$
         in, out );
     outRedirect.start();
     return outRedirect;
+  }
+  
+  public static Thread[] consume(Process proc){
+	  Thread t1=redirect( new InputStreamReader( proc.getInputStream() ), new StringWriter() );
+	  Thread t2=redirect( new InputStreamReader( proc.getErrorStream() ), new StringWriter() );
+	  return new Thread[]{t1,t2};
   }
 
 }

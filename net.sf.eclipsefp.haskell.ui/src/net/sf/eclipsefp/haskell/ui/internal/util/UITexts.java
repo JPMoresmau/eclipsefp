@@ -188,10 +188,19 @@ public final class UITexts extends NLS {
   public static String newSnapProjectWizard_pageDesc;
   public static String newSnapProjectWizard_pageTitle;
   public static String newSnapProjectWizard_windowTitle;
+  public static String newSnapProjectWizard_error;
+  public static String newSnapProjectWizard_error_title;
+  public static String newSnapProjectWizard_error_message;
+  public static String newSnapProjectWizard_job;
+
 
   public static String newYesodProjectWizard_pageDesc;
   public static String newYesodProjectWizard_pageTitle;
   public static String newYesodProjectWizard_windowTitle;
+  public static String newYesodProjectWizard_error;
+  public static String newYesodProjectWizard_error_title;
+  public static String newYesodProjectWizard_error_message;
+  public static String newYesodProjectWizard_job;
 
   public static String newProjectWizardPage_NameGroup_label_text;
   public static String newProjectWizardPage_Message_enterProjectName;
