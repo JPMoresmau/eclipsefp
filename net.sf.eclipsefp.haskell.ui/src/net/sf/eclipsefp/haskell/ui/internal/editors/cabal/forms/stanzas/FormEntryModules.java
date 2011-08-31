@@ -251,7 +251,8 @@ public class FormEntryModules extends FormEntry {
           otherEditor.horizontalAlignment = SWT.CENTER;
           otherEditor.setEditor( otherButton, item, OTHER_COL );
         }
-
+        // ensure module names are visible
+        table.getColumn( 2 ).pack();
         // Tell modifications
         if( changeToExposed && !blockNotification ) {
           notifyTextValueChanged();
