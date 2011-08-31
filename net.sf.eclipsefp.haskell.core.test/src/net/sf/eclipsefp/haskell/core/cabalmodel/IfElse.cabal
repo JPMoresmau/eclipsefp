@@ -1,0 +1,30 @@
+name: ifelse
+
+library
+  if flag(cabal_1_12)
+    build-depends:
+      Cabal          >= 1.11,
+      hslogger       >= 1.1
+    cpp-options:     -DCABAL_VERSION=112
+  else
+    if flag(cabal_1_10)
+      build-depends:
+        Cabal        >= 1.10,
+        hslogger     >= 1.1
+      cpp-options:   -DCABAL_VERSION=110
+    else
+      if flag(cabal_1_8)
+        build-depends:
+          Cabal      >= 1.8,
+          hslogger   >= 1.1
+        cpp-options: -DCABAL_VERSION=108
+      else
+        build-depends:
+          Cabal      == 1.6.*
+        cpp-options: -DCABAL_VERSION=106 
+  hs-source-dirs:  lib
+
+executable ifelse
+  main-is: Main.hs
+  hs-source-dirs: lib server
+  
