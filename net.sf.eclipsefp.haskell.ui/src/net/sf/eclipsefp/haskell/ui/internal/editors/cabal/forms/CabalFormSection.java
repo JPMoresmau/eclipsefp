@@ -5,6 +5,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
@@ -121,6 +124,22 @@ public abstract class CabalFormSection extends SectionPart {
   protected FormEntry createDirFormEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
     FormEntryFile entry = new FormEntryFile(true);
     setCustomFormEntry( entry, property, toolkit, container );
+    return entry;
+  }
+
+  protected FormEntry createSourceDirEntry (final FormToolkit toolkit, final Composite container) {
+    FormEntryFile entry = new FormEntryFile(true){
+      @Override
+      public void setValue( final String value, final boolean blockNotification ) {
+        ignoreModify=true;
+        Set<String> s=getStanza()!=null?new HashSet<String>(getStanza().getSourceDirs()):Collections.<String>emptySet();
+
+        LimitedWorkbenchContentProvider provider = (LimitedWorkbenchContentProvider)treeField.getContentProvider();
+        seeChecked(provider, provider.getElements( treeField.getInput() ), s);
+        ignoreModify = false;
+      }
+    };
+    setCustomFormEntry( entry, CabalSyntax.FIELD_HS_SOURCE_DIRS, toolkit, container );
     return entry;
   }
 

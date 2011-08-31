@@ -4,7 +4,6 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
-import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
@@ -38,7 +37,8 @@ public class SourceDirsSection extends CabalFormSection implements IFormEntryLis
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    FormEntry entry = createDirFormEntry( CabalSyntax.FIELD_HS_SOURCE_DIRS, toolkit, container );
+    FormEntry entry = createSourceDirEntry( toolkit, container );
+      //createDirFormEntry( CabalSyntax.FIELD_HS_SOURCE_DIRS, toolkit, container );
     GridData entryGD = new GridData( GridData.FILL_BOTH );
     entryGD.heightHint = 120;
     entry.getControl().setLayoutData( entryGD );

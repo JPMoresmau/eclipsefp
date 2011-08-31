@@ -86,7 +86,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     } */
   }
 
-  private void seeChecked( final LimitedWorkbenchContentProvider provider,
+  protected void seeChecked( final LimitedWorkbenchContentProvider provider,
       final Object[] objects, final Set<String> files ) {
     for (Object o : objects) {
       IResource res = (IResource)o;
