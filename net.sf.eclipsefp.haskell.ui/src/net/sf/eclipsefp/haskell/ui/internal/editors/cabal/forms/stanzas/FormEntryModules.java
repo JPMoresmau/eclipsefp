@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -119,17 +120,18 @@ public class FormEntryModules extends FormEntry {
         return;
       }
 
-      String sourceDirs = null;
+      Collection<String> sourceDirs = null;
       if( root.getStanza().getProperties()
           .containsKey( CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName() ) ) {
-        sourceDirs = root.getStanza().getProperties()
-            .get( CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName() );
+        //sourceDirs = root.getStanza().getProperties()
+        //    .get( CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName() );
+        sourceDirs=root.getStanza().getSourceDirs();
       } else {
-        sourceDirs = "";
+        sourceDirs = Collections.emptyList();
       }
 
       ArrayList<String> modules = new ArrayList<String>();
-      ModulesVisitor visitor = new ModulesVisitor( modules, sourceDirs.split( "," ) );
+      ModulesVisitor visitor = new ModulesVisitor( modules, sourceDirs );
       try {
         root.getProject().accept( visitor );
       } catch( CoreException e ) {
@@ -382,7 +384,7 @@ public class FormEntryModules extends FormEntry {
     public Vector<String> possiblePrefixes;
 
     public ModulesVisitor( final ArrayList<String> whereAdd,
-        final String[] dirs ) {
+        final Collection<String> dirs ) {
       this.elts = whereAdd;
       this.possiblePrefixes = new Vector<String>();
       for( String dir: dirs ) {

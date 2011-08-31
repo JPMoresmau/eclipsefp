@@ -213,6 +213,7 @@ public class PackageDescriptionLoader {
                   name=name.substring( 0,name.length()-1 ).trim();
                 }
                 addStanza(cs,name);
+                lastStanza.setIndent( indent + 2 );
                 //lastStanza=new PackageDescriptionStanza(cs,name,count);
               } else {
                 int ix=line.indexOf(COLON );
