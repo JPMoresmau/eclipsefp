@@ -212,7 +212,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     if( e.detail == SWT.CANCEL ) {
       viewer.setInput( "" );
       viewer.refresh();
-    } else {
+    } else if (provider != null) {
       viewer.setInput( text.getText() );
       viewer.refresh();
       if (provider instanceof HoogleContentProvider) {

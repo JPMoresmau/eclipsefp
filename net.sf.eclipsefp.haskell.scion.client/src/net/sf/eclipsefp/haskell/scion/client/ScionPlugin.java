@@ -179,7 +179,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   }
 
   public static void logDebug(String message) {
-	  //	    log(Status.INFO, message, null);
+	// 	    log(Status.INFO, message, null);
   }
   
   public static void logWarning(String message, Throwable cause) {
