@@ -199,7 +199,7 @@ public abstract class CabalFormSection extends SectionPart {
       oldValue = oldValue == null ? "" : oldValue;
 
       if (!newValue.equals( oldValue )) {
-        stanza.getProperties().put( mutator.getCabalName(), newValue );
+        //stanza.getProperties().put( mutator.getCabalName(), newValue );
         RealValuePosition vp = stanza.update( mutator, newValue );
         vp.updateDocument( editor.getModel() );
       }

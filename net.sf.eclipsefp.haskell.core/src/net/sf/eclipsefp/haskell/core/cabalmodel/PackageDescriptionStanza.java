@@ -181,7 +181,7 @@ public class PackageDescriptionStanza {
     if (realValue==null){
       getPositions().remove( field.getCabalName().toLowerCase() );
       // remove field name too
-      oldVP.setInitialIndent( getIndent() );
+      oldVP.setInitialIndent( 0 );
       //oldVP.setInitialIndent( 0 );
       return new RealValuePosition( oldVP,""); //$NON-NLS-1$
     }

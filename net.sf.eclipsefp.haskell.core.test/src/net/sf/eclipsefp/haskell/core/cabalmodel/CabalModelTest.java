@@ -665,7 +665,7 @@ public class CabalModelTest extends TestCase {
     rvp=pds2.removePrefixFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "array","," );
     assertEquals(14,rvp.getStartLine());
     assertEquals(15,rvp.getEndLine());
-    assertEquals(2,rvp.getInitialIndent());
+    assertEquals(0,rvp.getInitialIndent());
   }
 
   public void testModuleInclusionType(){
@@ -704,5 +704,33 @@ public class CabalModelTest extends TestCase {
     assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss.get(2).getType());
     assertEquals("ifelse",pdss.get(2).getName());
     assertEquals(2,pdss.get(2).getIndent());
+  }
+
+  public void testRemove(){
+    String content3=getContent( "P1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    assertEquals(4,pdss.size());
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss.get(2).getType());
+    assertEquals("P1",pdss.get(2).getName());
+    assertEquals(2,pdss.get(2).getIndent());
+    assertEquals(5,pdss.get(2).getProperties().size());
+    RealValuePosition vp = pdss.get(2).update( CabalSyntax.FIELD_MAIN_IS, "" );
+    assertEquals("",vp.getRealValue());
+    assertEquals(0,vp.getInitialIndent());
+    assertEquals(11,vp.getStartLine());
+    assertEquals(12,vp.getEndLine());
+    assertEquals(4,pdss.get(2).getProperties().size());
+   /* SimpleDocument doc=new SimpleDocument(content3);
+    System.out.println(doc.get());
+    vp.updateDocument(doc );
+    System.out.println(doc.get());
+    pd=PackageDescriptionLoader.load( doc.get() );
+    pdss=pd.getStanzas();
+    assertEquals(4,pdss.size());
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss.get(2).getType());
+    assertEquals("P1",pdss.get(2).getName());
+    assertEquals(2,pdss.get(2).getIndent());
+    assertEquals(4,pdss.get(2).getProperties().size());*/
   }
 }
