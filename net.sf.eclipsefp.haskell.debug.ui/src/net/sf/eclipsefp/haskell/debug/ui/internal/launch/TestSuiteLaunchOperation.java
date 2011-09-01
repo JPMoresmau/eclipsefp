@@ -5,10 +5,16 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 
 /**
  * <p>
@@ -21,6 +27,20 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 class TestSuiteLaunchOperation extends ExecutableOrTestSuiteLaunchOperation implements IExecutableTestSuiteLaunchOperation {
   public static final String TEST_SUITE_CONFIG_TYPE = TestSuiteHaskellLaunchDelegate.class.getName();
 
+  @Override
+  public void launch( final IResource resource, final IProgressMonitor monitor )
+  throws CoreException {
+  if( resource != null ) {
+    IProject project = resource.getProject();
+    if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      List<IFile> executables=ResourceUtil.getProjectTestSuites( project );
+      ILaunchConfiguration configuration = getConfiguration( project,executables );
+      if( configuration != null ) {
+        configuration.launch( ILaunchManager.RUN_MODE, monitor );
+      }
+    }
+  }
+}
 
   // helping methods
   //////////////////
