@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.browser.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
@@ -113,8 +114,10 @@ public class Commands {
 			JSONArray declsInPkg = pair.getJSONArray(1);
 			for (int j = 0; j < declsInPkg.length(); j++) {
 				JSONObject o = declsInPkg.getJSONObject(j);
-				Declaration decl = Declaration.fromJSON(o);
-				aDecls.add(new Packaged<Declaration>(id, decl));
+				Collection<Declaration> decls = Declaration.fromJSON(o);
+				for (Declaration decl:decls){
+					aDecls.add(new Packaged<Declaration>(id, decl));
+				}
 			}
 		}
 

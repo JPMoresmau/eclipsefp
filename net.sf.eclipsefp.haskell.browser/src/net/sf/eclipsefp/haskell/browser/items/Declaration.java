@@ -4,6 +4,11 @@
  */
 package net.sf.eclipsefp.haskell.browser.items;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -31,21 +36,28 @@ public abstract class Declaration extends Documented {
 		this.name = name;
 	}
 
-	public static Declaration fromJSON(JSONObject o) throws Exception {
+	public static Collection<Declaration> fromJSON(JSONObject o) throws Exception {
 		String type = o.getString("type");
 
 		if (type.equals("data"))
-			return new DataType(o);
+			return Collections.<Declaration>singleton(new DataType(o));
 		else if (type.equals("newtype"))
-			return new NewType(o);
+			return Collections.<Declaration>singleton(new NewType(o));
 		else if (type.equals("class"))
-			return new TypeClass(o);
+			return Collections.<Declaration>singleton(new TypeClass(o));
 		else if (type.equals("instance"))
-			return new Instance(o);
-		else if (type.equals("signature"))
-			return new Function(o);
-		else if (type.equals("type"))
-			return new TypeSynonym(o);
+			return Collections.<Declaration>singleton(new Instance(o));
+		else if (type.equals("signature")){
+			Collection<Declaration> ret=new ArrayList<Declaration>();
+			JSONArray arr=o.optJSONArray("name");
+			if (arr!=null){
+				for (int a=0;a<arr.length();a++){
+					ret.add(new Function(arr.getString(a),o));
+				}
+			}
+			return ret;
+		} else if (type.equals("type"))
+			return Collections.<Declaration>singleton(new TypeSynonym(o));
 		else
 			throw new Exception("Declaration of unknown type");
 	}

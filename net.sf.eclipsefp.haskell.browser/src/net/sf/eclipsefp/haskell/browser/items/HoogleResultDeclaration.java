@@ -34,7 +34,7 @@ public class HoogleResultDeclaration extends HoogleResult {
 		// Get info from first result
 		JSONArray first_result = results.getJSONArray(0);
 		this.mod = first_result.getString(1);
-		this.decl = Declaration.fromJSON(first_result.getJSONObject(2));
+		this.decl = Declaration.fromJSON(first_result.getJSONObject(2)).iterator().next();
 		// Add packages
 		this.pkg = new ArrayList<PackageIdentifier>();
 		for (int i = 0; i < results.length(); i++) {

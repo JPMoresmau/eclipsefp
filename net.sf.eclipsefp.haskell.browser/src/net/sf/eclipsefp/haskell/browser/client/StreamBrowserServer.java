@@ -87,7 +87,7 @@ public class StreamBrowserServer extends BrowserServer {
 		do {
 			response = out.readLine();
 			log(response);
-		} while (!response.equals("\"ok\""));
+		} while (response!=null && !response.equals("\"ok\""));
 	}
 	
 	@Override

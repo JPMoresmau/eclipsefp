@@ -36,7 +36,7 @@ public class HoogleResultConstructor extends HoogleResult {
 		// Get info from first result
 		JSONArray first_result = results.getJSONArray(0);
 		this.mod = first_result.getString(1);
-		this.decl = Declaration.fromJSON(first_result.getJSONObject(2));
+		this.decl = Declaration.fromJSON(first_result.getJSONObject(2)).iterator().next();
 		this.con = new Constructor(first_result.getJSONObject(3));
 		// Add packages
 		this.pkg = new ArrayList<PackageIdentifier>();
