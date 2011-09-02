@@ -48,12 +48,15 @@ public abstract class Declaration extends Documented {
 		else if (type.equals("instance"))
 			return Collections.<Declaration>singleton(new Instance(o));
 		else if (type.equals("signature")){
-			Collection<Declaration> ret=new ArrayList<Declaration>();
-			JSONArray arr=o.optJSONArray("name");
-			if (arr!=null){
-				for (int a=0;a<arr.length();a++){
-					ret.add(new Function(arr.getString(a),o));
+			Collection<Declaration> ret = new ArrayList<Declaration>();
+			JSONArray arr = o.optJSONArray("name");
+			if (arr != null){
+				for (int a = 0; a < arr.length(); a++){
+					ret.add(new Function(arr.getString(a), o));
 				}
+			} else {
+				String name = o.getString("name");
+				ret.add(new Function(name, o));
 			}
 			return ret;
 		} else if (type.equals("type"))

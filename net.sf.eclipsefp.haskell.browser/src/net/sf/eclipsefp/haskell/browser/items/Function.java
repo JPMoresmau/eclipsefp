@@ -22,7 +22,7 @@ public class Function extends Declaration {
 		this.signature = signature;
 	}
 
-	public Function(String name,JSONObject o) throws JSONException {
+	public Function(String name, JSONObject o) throws JSONException {
 		this.setDoc(o);
 		this.setType(DeclarationType.FUNCTION);
 		this.setName(name);
