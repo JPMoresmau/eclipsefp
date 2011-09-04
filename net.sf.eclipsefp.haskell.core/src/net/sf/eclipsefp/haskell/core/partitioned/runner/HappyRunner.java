@@ -16,7 +16,7 @@ public class HappyRunner extends PartitionedRunner {
 
   @Override
   public StringWriter selectStream( final StringWriter out, final StringWriter err ) {
-    return err;
+    return out;
   }
 
 }
