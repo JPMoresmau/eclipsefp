@@ -32,19 +32,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.wst.common_ui.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.wst.jsdt.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.wst.web_ui.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.wst.xml_ui.feature"
          version="0.0.0"/>
 
    <requires>
