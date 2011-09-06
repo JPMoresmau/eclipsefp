@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2005 by Leif Frenzel
+// Copyright (c) 2004-2011 by Leif Frenzel & JP Moresmau
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.util.text;
 
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
   * <p>Taken from
   * <code>org.eclipse.jface.text.DefaultTextDoubleClickStrategy</code>.</p>
   *
-  * @author Leif Frenzel
+  * @author Leif Frenzel & JP Moresmau
   */
 public class WordFinder {
 

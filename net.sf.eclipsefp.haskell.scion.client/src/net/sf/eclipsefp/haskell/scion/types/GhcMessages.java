@@ -24,11 +24,16 @@ public interface GhcMessages {
   public static String WARNING_IMPORT_USELESS_CONTAINS="is imported, but nothing from it is used";//$NON-NLS-1$
   public static String WARNING_IMPORT_USELESS_START="to suppress this warning, use:";//$NON-NLS-1$
   
+  public static String WARNING_IMPORT_USELESS_CONTAINS2="is redundant";//$NON-NLS-1$
+  public static String WARNING_IMPORT_USELESS_START2="to import instances alone, use:";//$NON-NLS-1$
+  public static String WARNING_IMPORT_USELESS_ELEMENT2="from module";//$NON-NLS-1$
+  
   public static String ERROR_INTERACTIVE_DISABLED="interactive check disabled"; //$NON-NLS-1$
 
   public static String MISSING_MODULE="could not find module";//$NON-NLS-1$
   public static String MISSING_MODULE_ADD_START="perhaps you need to add `";//$NON-NLS-1$	  
-  public static String MISSING_MODULE_ADD_END="' to the build-depends"; //$NON-NLS-1$	
+  public static String MISSING_MODULE_ADD_END="' to the build-depends"; //$NON-NLS-1$
   
-
+  public static String NOT_IN_SCOPE_START="not in scope: `"; //$NON-NLS-1$
+  public static String NOT_IN_SCOPE_END="'"; //$NON-NLS-1$
 }

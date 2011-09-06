@@ -1,0 +1,113 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the condidtions of the EPL.
+ *
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";
+  FORCE_LA_CHECK = true;  static = false;}PARSER_BEGIN(ProfilingOutputParser)package net.sf.eclipsefp.haskell.profiler.internal.parser;
+
+import net.sf.eclipsefp.haskell.profiler.model.*;
+
+public class ProfilingOutputParser{  }PARSER_END(ProfilingOutputParser)SKIP :{  " "| "\r"| "\t"| "\n"}
+
+TOKEN :
+{  < JOB : "JOB" >
+| < DATE : "DATE" >
+| < SAMPLE_UNIT : "SAMPLE_UNIT" >
+| < VALUE_UNIT : "VALUE_UNIT" >
+| < BEGIN_SAMPLE : "BEGIN_SAMPLE" >
+| < END_SAMPLE : "END_SAMPLE" >
+}
+
+TOKEN :
+{
+  < #DIGIT : [ "0"-"9" ] >
+| < FLOAT : (< DIGIT >)+ "." (< DIGIT >)+ >
+| < INTEGER : (< DIGIT >)+ >| < IDENTIFIER : (~[" ", "\n", "\r", "\t", "\""])+ >
+| < QUOTEDSTRING : "\"" (~["\"", "\n", "\r"])* "\"" >
+}
+
+Job job() :
+{  String name;
+  String date;
+  String sampleUnit;
+  String valueUnit;
+  Job j;
+  Sample s;
+}
+{  < JOB >
+  name = quotedString()
+  < DATE >
+  date = quotedString()
+  < SAMPLE_UNIT >
+  sampleUnit = quotedString()
+  < VALUE_UNIT >
+  valueUnit = quotedString()
+  {    j = new Job(name, date, sampleUnit, valueUnit);
+  }
+  (    s = sample()
+    {      j.addSample(s);
+    }
+  )+
+  {    return j;
+  }
+}
+
+Sample sample() :
+{  float time;
+  Sample s;
+  String ident;
+  long value;
+}
+{  < BEGIN_SAMPLE >
+  time = floatNumber()
+  {    s = new Sample(time);
+  }
+  (    ident = identifier()
+    value = integerNumber()
+    {
+      s.addEntry(ident, value);    }
+  )*
+  < END_SAMPLE >
+  floatNumber()
+  {    return s;
+  }
+}
+
+float floatNumber() :
+{  Token string;
+}
+{  string = < FLOAT >
+  {    return Float.valueOf(string.image);
+  }
+}
+
+long integerNumber() :
+{
+  Token string;
+}
+{
+  string = < INTEGER >
+  {
+    return Long.valueOf(string.image);
+  }
+}
+
+String identifier() :
+{
+  Token string;
+}
+{
+  string = < IDENTIFIER >
+  {
+    return string.image;
+  }
+}
+
+String quotedString() :
+{  Token string;
+}
+{  string = < QUOTEDSTRING >
+  {    return string.image.substring(1, string.image.length() - 1);
+  }
+}

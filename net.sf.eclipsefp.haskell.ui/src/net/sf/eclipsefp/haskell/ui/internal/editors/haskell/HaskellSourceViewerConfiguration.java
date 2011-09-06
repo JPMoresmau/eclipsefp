@@ -22,6 +22,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -38,6 +40,7 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The source viewer configuration implements functionality for the Haskell editor.
@@ -115,6 +118,12 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 		ContentAssistant ca = new ContentAssistant();
 		ca.setContentAssistProcessor(new HaskellContentAssistProcessor(ca), IDocument.DEFAULT_CONTENT_TYPE);
 		ca.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		ca.setInformationControlCreator( new IInformationControlCreator() {
+
+      public IInformationControl createInformationControl( final Shell parent ) {
+        return new HaskellInformationControl(parent);
+      }
+    } );
 
 		ca.enablePrefixCompletion( true );
 		ca.setRepeatedInvocationMode( true );
@@ -231,7 +240,6 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
     QuickAssistAssistant qaa=new QuickAssistAssistant();
     qaa.setQuickAssistProcessor( new QuickAssistProcessor() );
     return qaa;
-
 	}
 
 	@Override

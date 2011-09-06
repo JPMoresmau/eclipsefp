@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.core;singleton:=true
-Bundle-Version: 2.0.5
+Bundle-Version: 2.1.0
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore
 Bundle-Vendor: %bundleVendor
 Require-Bundle: org.eclipse.core.runtime,
@@ -11,10 +11,17 @@ Require-Bundle: org.eclipse.core.runtime,
  net.sf.eclipsefp.haskell.util,
  org.eclipse.debug.ui,
  org.eclipse.ui,
- org.eclipse.ui.console
+ org.eclipse.ui.console,
+ org.eclipse.jface.text;bundle-version="3.2.0",
+ org.eclipse.ui.ide,
+ org.eclipse.core.filesystem,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.junit;bundle-version="3.3.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.core.internal,
  net.sf.eclipsefp.haskell.debug.core.internal.debug,
  net.sf.eclipsefp.haskell.debug.core.internal.launch;x-friends:="net.sf.eclipsefp.haskell.haddock,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.debug.ui"
+Bundle-ClassPath: .,
+ lib/jdom.jar

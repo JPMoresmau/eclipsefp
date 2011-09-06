@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
@@ -64,8 +65,17 @@ public class HsModuleTemplateVariable extends TemplateVariableResolver {
 
         List<String> result = new ArrayList<String>();
 
-        result.addAll( si.moduleGraph() );
-        result.addAll( si.listExposedModules() );
+        result.addAll( BrowserPlugin.getSharedInstance().getCachedModuleNames() );
+        for (String s : si.moduleGraph()) {
+          if (!result.contains( s )) {
+            result.add( s );
+          }
+        }
+        for (String s : si.listExposedModules()) {
+          if (!result.contains( s )) {
+            result.add( s );
+          }
+        }
 
         String[] strResults = new String[ result.size() ];
         result.toArray( strResults );

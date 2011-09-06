@@ -100,7 +100,7 @@ public class ScionInstance {
   /** Flag that indicates that the project has been built successfully */
   private boolean                     projectIsBuilt;
   /** The Cabal project description */
-//  private JSONObject                  cabalDescription;
+//  private JSONObject                  cabalDescription;gInfo
   private Map<String, CabalPackage[]> packagesByDB;
   private List<Component>             components;
   private CabalComponentResolver      resolver;
@@ -439,7 +439,8 @@ public class ScionInstance {
  //     }
     }
     
-    projectIsBuilt = retval;
+    // same causes will have same effect, no need trying to rebuild until we change something
+    projectIsBuilt = true;  // retval;
     return retval;
   }
 
@@ -493,12 +494,20 @@ public class ScionInstance {
    * @param monitor Progress feedback
    * @param output If true, capture the output of the build/load process.
    * @param forceRecomp If true, force recompilation and reloading.
-   * @return
+   * @return true if at least one component
    */
   private boolean loadComponents(IProgressMonitor monitor, final BuildOptions buildOptions) {
     List<Component> cs = null;
     IProject theProject = getProject();
-    boolean failed = false;
+    //boolean failed = false;
+    /**
+     * we've changed in 2.0.5 the behavior, since the old code meant that if one component failed, we failed everything, which was a pain
+     * so now, what's happening:
+     * we process all component
+     * we always ensure the lastLoadedComponent is set to a successful component
+     * we return true if at least one component is loaded
+     */
+    boolean success=false;
     
     synchronized (components) {
       cs = new ArrayList<Component>(components);
@@ -506,7 +515,8 @@ public class ScionInstance {
     
     deleteProblems(theProject);
     final CompilationResultHandler crh = new CompilationResultHandler(theProject);
-
+    lastLoadedComponent=null;
+    boolean hasTriedAndFailed=false;
     for (Component c : cs) {
     	if (c.isBuildable()){
 	      monitor.subTask( NLS.bind ( ScionText.buildProject_loadComponents, theProject.getName(), c.toString() ) );
@@ -515,19 +525,32 @@ public class ScionInstance {
 	      if (server.sendCommand(loadCommand)) {
 	        crh.process(loadCommand);
 	        lastLoadedComponent = c;
+	        success=true; // at least one component works
+	        hasTriedAndFailed=false;
+	        ScionPlugin.logDebug("loadComponent: succeeded in loading: "+c.getName());
 	      } else {
-	        failed = true;
-	        break;
+	    	hasTriedAndFailed=true;
+	    	ScionPlugin.logDebug("loadComponent: failed in loading: "+c.getName());
+	       // success = false;
+	    	  
+	      //  break;
 	      }
     	}
     }
+    // I have tried a different component and failed, let's go back to the last loaded
+    if (hasTriedAndFailed && lastLoadedComponent!=null){
+    	
+    	boolean ret=server.sendCommand(new LoadCommand(theProject, lastLoadedComponent, buildOptions));
+    	ScionPlugin.logDebug("loadComponent: loading back: "+lastLoadedComponent+"->"+ret);
+    }
       
-    if (failed) {
+    if (!success) {
+    	ScionPlugin.logDebug("loadComponent: rollback");
       // Clear out state
-      internalReset();
+    	internalReset();
     }
     
-    return !failed;
+    return success;
   }
   // ////////////////////
   // Internal commands
@@ -596,6 +619,8 @@ public class ScionInstance {
     }
     this.loadedFile = loadedFile;
   }
+  
+  final static String PROBLEM_MARKER_ID = "net.sf.eclipsefp.haskell.core.problem";
 
   /**
    * Delete all problem markers for a given file.
@@ -608,7 +633,7 @@ public class ScionInstance {
         if (r instanceof IFile) {
           r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
         }
-        r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+        r.deleteMarkers(PROBLEM_MARKER_ID, true, IResource.DEPTH_INFINITE);
       } catch (CoreException ex) {
         ScionPlugin.logError(ScionText.error_deleteMarkers, ex);
         ex.printStackTrace();
@@ -632,6 +657,7 @@ public class ScionInstance {
       Set<String> componentNames = resolver.getComponents( file );
       
       if (lastLoadedComponent == null || !componentNames.contains(lastLoadedComponent.toString())) {
+    	ScionPlugin.logDebug("runWithComponent: lastLoadedComponent:"+String.valueOf(lastLoadedComponent)+" componentNames:"+componentNames);
         Component toLoad = null;
   
         if (!componentNames.isEmpty()) {
@@ -669,12 +695,19 @@ public class ScionInstance {
             lastLoadedComponent = toLoad;
           } else {
             loadOK = false;
+            if (lastLoadedComponent!=null){
+            	// back to a known good component
+            	server.sendCommand(new LoadCommand(fProject, lastLoadedComponent, buildOptions2));
+            }
           }
         }
+      } else {
+    	  ScionPlugin.logDebug("runWithComponent: lastLoadedComponent:"+String.valueOf(lastLoadedComponent)+" OK");
       }
     } else {
       // Build failed.
       loadOK = false;
+      ScionPlugin.logDebug("runWithComponent: build totally failed!");
     }
 
     return loadOK;
@@ -831,6 +864,20 @@ public class ScionInstance {
       withLoadedDocumentAsync(file, doc, new OutlineCommand(file), NLS.bind(ScionText.outline_job_name, file.getName()),
                               handler);
     }
+  }
+  
+  /**
+   * Get the outline for a document.
+   * 
+   * @param file The file, used to ensure that scion-server is operating on the correct file
+   * @param doc The document, i.e., the file's current editor contents.
+   * @return A list of outline definitions
+   */
+  public List<OutlineDef> outlineSync(final IFile file, final IDocument doc) {
+	final OutlineCommand cmd = new OutlineCommand(file);
+	    
+	withLoadedDocument(file, doc, cmd, NLS.bind(ScionText.outline_job_name, file.getName()));
+	return cmd.getOutlineDefs(); 
   }
   
   /**

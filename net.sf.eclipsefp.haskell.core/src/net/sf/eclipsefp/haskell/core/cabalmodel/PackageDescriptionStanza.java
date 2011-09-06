@@ -40,7 +40,7 @@ public class PackageDescriptionStanza {
  }
 
   private final String name;
-  private final int startLine;
+  private int startLine;
   private int endLine;
   private int indent;
   private final Map<String, String> properties=new CabalSyntaxMap<String>();
@@ -70,6 +70,19 @@ public class PackageDescriptionStanza {
     this.name = name;
     this.startLine = startLine;
     this.endLine = endLine;
+  }
+
+  public void diffLine ( final int diff ) {
+    this.startLine += diff;
+    this.endLine += diff;
+    for (String entry : positions.keySet()) {
+      ValuePosition vp = positions.get( entry );
+      vp.diffLine( diff );
+    }
+  }
+
+  public void setStartLine ( final int startLine ) {
+    this.startLine = startLine;
   }
 
 
@@ -167,8 +180,9 @@ public class PackageDescriptionStanza {
     }
     if (realValue==null){
       getPositions().remove( field.getCabalName().toLowerCase() );
-      // remove field name to
-      oldVP.setInitialIndent( getIndent() );
+      // remove field name too
+      oldVP.setInitialIndent( 0 );
+      //oldVP.setInitialIndent( 0 );
       return new RealValuePosition( oldVP,""); //$NON-NLS-1$
     }
 

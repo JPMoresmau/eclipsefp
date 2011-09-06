@@ -287,6 +287,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
        }
       }
     });
+
+    QuickFixAction action = new QuickFixAction(HaskellUIPlugin.getDefault().getResourceBundle(), "RulerQuickFixAction", this, getVerticalRuler()); //$NON-NLS-1$
+    setAction(ITextEditorActionConstants.RULER_CLICK, action);
   }
 
 

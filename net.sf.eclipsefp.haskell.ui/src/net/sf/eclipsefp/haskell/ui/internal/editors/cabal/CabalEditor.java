@@ -87,6 +87,12 @@ public class CabalEditor extends TextEditor {
   }
 
   @Override
+  protected void firePropertyChange( final int property ) {
+    // TODO Auto-generated method stub
+    super.firePropertyChange( property );
+  }
+
+  @Override
   public void createPartControl( final Composite parent ) {
     super.createPartControl( parent );
 

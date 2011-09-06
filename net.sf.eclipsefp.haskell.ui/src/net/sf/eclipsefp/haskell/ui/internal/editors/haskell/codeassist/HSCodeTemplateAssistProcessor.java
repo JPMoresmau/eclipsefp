@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
@@ -57,7 +59,7 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
 
   @Override
   protected Image getImage( final Template template ) {
-    return null;
+    return HaskellUIImages.getImage( IImageNames.TESTSUITE_STANZA );
     // We need a template icon...
     // return HaskellUIPlugin.getDefault().getImageRegistry().get( HaskellUIPlugin.ICON_TEMPLATE );
   }

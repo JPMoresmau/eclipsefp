@@ -23,6 +23,8 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
   private CompilationResult compilationResult;
   private BuildOptions		buildOptions;
   private IProject          project;
+  
+  public static final String ID_SCION_MARKER = "net.sf.eclipsefp.haskell.core.scionProblem"; //$NON-NLS-1$
 
   public LoadCommand(IProject project, Component c, BuildOptions options) {
     super();
@@ -66,7 +68,7 @@ public class LoadCommand extends ScionCommand implements ICompilerResult {
   @Override
   public boolean onError(String name, String message) {
     try {
-      IMarker marker = project.createMarker(IMarker.PROBLEM);
+      IMarker marker = project.createMarker(ID_SCION_MARKER);
       marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
       marker.setAttribute(IMarker.MESSAGE, message);
     } catch (CoreException ce) {

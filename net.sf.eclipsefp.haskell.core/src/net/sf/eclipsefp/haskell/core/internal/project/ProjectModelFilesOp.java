@@ -93,17 +93,20 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     PackageDescription pd=new PackageDescription( name );
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_VERSION, "0.1" ); //$NON-NLS-1$
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_CABAL_VERSION, ">= 1.2" ); //$NON-NLS-1$
+    pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_BUILD_TYPE, "Simple" ); //$NON-NLS-1$
     if (isLibrary()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
       pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
-      pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base" ); //$NON-NLS-1$
+      pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" ); //$NON-NLS-1$
+      pds.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" ); //$NON-NLS-1$
     }
 
     if (isExecutable()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_EXECUTABLE, name );
       pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
       pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" ); //$NON-NLS-1$
-      pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base" ); //$NON-NLS-1$
+      pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" ); //$NON-NLS-1$
+      pds.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" ); //$NON-NLS-1$
     }
 
     for (ICabalContributor c:CabalContributorManager.getContributors()){

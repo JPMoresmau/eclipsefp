@@ -1,4 +1,11 @@
-<h2>Installation steps</h2>
+<html>
+<head>
+<link rel="stylesheet" href="../../PRODUCT_PLUGIN/book.css" type="text/css"> 
+</head>
+
+<body>
+
+<h1>Installation steps</h1>
 <p>If you see this, you have successfully installed the eclipseFP plugins. 
 However there may still be some configuration steps to be done before you can use the plugins fully.</p>
 
@@ -12,21 +19,39 @@ You can configure GHC by opening the Eclipse Preferences and going to <b>Haskell
 <h3>Cabal configuration</h3>
 <p>
 EclipseFP also requires a working Cabal. <a href="http://www.haskell.org/haskellwiki/Cabal">Cabal</a> is a build management tool for Haskell. Similarly, the Haskell Platform contains a version of Cabal compatible with the GHC it ships with.
-You can configure Cabal in the Eclipse Preferences under <b>Haskell &gt; Scion and Cabal</b>. By default EclipseFP will have looked in your PATH and use any Cabal installation it can find there.
+You can configure Cabal in the Eclipse Preferences under <b>Haskell &gt; Scion, Browser and Cabal</b>. By default EclipseFP will have looked in your PATH and use any Cabal installation it can find there.
 </p>
 
-<h3>Scion configuration</h3>
+<h3>Scion and Browser configuration</h3>
 <p>
-Scion is a Haskell program that uses GHC and Cabal to give a consistent API to manage and build Haskell projects. EclipseFP uses Scion for a lot of operations. 
-It comes with a version of Scion in source form, that should get built automatically once GHC and Cabal have been set up.
-The Eclipse Preferences page under <b>Haskell &gt; Scion and Cabal</b> allows you to change settings if required. 
+Scion is a Haskell program that uses GHC and Cabal to give a consistent API to manage and build Haskell projects. EclipseFP uses Scion for a lot of operations.
+Scion-Browser is another small component that serves information about the installed packages in your system.
+Both come in source form, and they should get built automatically once GHC and Cabal have been set up.
+The Eclipse Preferences page under <b>Haskell &gt; Scion, Browser and Cabal</b> allows you to change settings if required. 
 We recommend to stick to default setting (built-in server through Standard Stream/Pipe) unless you feel adventurous! 
 </p>
 
-<h3>Problems building Scion</h3>
+<h4>Problems building Scion and Browser</h4>
 <p>
-It may happen that Scion does not build successfully when you start EclipseFP. 
+It may happen that Scion or Browser do not build successfully when you start EclipseFP. 
 The build process dumps its outputs and errors into a Console in the Console View of Eclipse. Please check this file for errors.
-Often, the build fails due to some libraries conflict. Please run <b>cabal update</b> before restarting EclipseFP. 
+Often, the build fails due to some libraries conflict. Please run <code>cabal update</code> before restarting EclipseFP. 
 This will ensure your Cabal knows about the latest versions of libraries available on Hackage.
 </p>
+
+<h3>Extra programs</h3>
+<p>
+You will get extra functionality if you install several Haskell programs. To be more concrete:
+<ul>
+<li>If you install <a href="http://www.haskell.org/hoogle/">Hoogle</a>, you will be able to search functions or types in your installed packages. To get it, run <code>cabal install hoogle</code>
+in a console. The next time EclipseFP starts, it will detect and configure it for use.</li>
+<li>If you install <a href="http://community.haskell.org/~ndm/hlint/">HLint</a>, suggestions for improving your code will appear in the Haskell editor. Install it running 
+<code>cabal install hlint</code>.</li>
+<li>EclipseFP can run unit tests created with <a href="http://batterseapower.github.com/test-framework/">Test-framework</a>. You can install it running
+<code>cabal install test-framework test-framework-quickcheck2 test-framework-hunit</code> (to be able to use QuickCheck and HUnit tests).</li>
+<li>You can produce information about your modules using <a href="http://hackage.haskell.org/package/SourceGraph">SourceGraph</a>. Get it executing <code>cabal install SourceGraph</code>.</li>
+</ul>
+</p>
+
+</body>
+</html>

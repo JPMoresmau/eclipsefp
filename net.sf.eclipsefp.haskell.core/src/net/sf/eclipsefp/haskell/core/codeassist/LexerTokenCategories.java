@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.scion.types.Location;
  * longer used, and, consequently, no longer documented in previous sources.
  *
  * @author B. Scott Michel
+ * @author Alejandro Serrano
  */
 public class LexerTokenCategories {
   // Keywords
@@ -197,7 +198,20 @@ public class LexerTokenCategories {
    *
    * @param token The lexer token to compare
    */
-  public final static boolean hasTyConContext(final HaskellLexerToken[] tokens) {
+  public final static boolean hasTyConContext(final HaskellLexerToken[] tokens, final Location currentLine) {
+    // Work backward, keep on the same line:
+    int i = tokens.length - 1;
+    while (i>=0 && tokens[i].getTokenLoc().getStartLine() == currentLine.getStartLine()) {
+      final String theTok = tokens[i].getToken();
+      if (ITdcolon.equals(theTok) || ITrarrow.equals(theTok)) {
+        return true;
+      }
+      --i;
+    }
+    return false;
+  }
+
+  /*public final static boolean hasTyConContext(final HaskellLexerToken[] tokens) {
     int i = tokens.length - 1;
 
     // Skip backward over parens and then test if the token is '::' or '->'
@@ -209,5 +223,5 @@ public class LexerTokenCategories {
     }
     final String theTok = tokens[i].getToken();
     return (ITdcolon.equals(theTok) || ITrarrow.equals(theTok));
-  }
+  }*/
 }

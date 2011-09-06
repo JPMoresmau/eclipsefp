@@ -15,12 +15,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.DebugUITools;
@@ -42,8 +45,8 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         checkCancellation( monitor );
         File workingDir = determineWorkingDir( configuration );
         checkCancellation( monitor );
-        IProcess process = createProcess( configuration, launch, loc, cmdLine,
-            workingDir );
+        IProcess process = createProcess( configuration, mode, launch, loc,
+            cmdLine, workingDir );
         if( process != null ) {
           postProcessCreation( configuration, mode, launch, process );
         }
@@ -67,17 +70,44 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
          * } });
          */
 
-        if( process != null && !isBackground( configuration ) ) {
-          while( !process.isTerminated() ) {
-            try {
-              if( monitor.isCanceled() ) {
-                process.terminate();
-                break;
+        if( process != null ) {
+          if ( isBackground( configuration ) ) {
+            final IProcess theProcess = process;
+            Job endJob = new Job( CoreTexts.running ) {
+
+              @Override
+              protected IStatus run( final IProgressMonitor mon ) {
+                while( !theProcess.isTerminated() ) {
+                  try {
+                    if( monitor.isCanceled() ) {
+                      theProcess.terminate();
+                      return Status.CANCEL_STATUS;
+                    }
+                    Thread.sleep( 50 );
+                  } catch( InterruptedException iex ) {
+                    // ignored
+                  } catch ( DebugException ex ) {
+                    // ignored
+                  }
+                }
+                postProcessFinished();
+                return Status.OK_STATUS;
               }
-              Thread.sleep( 50 );
-            } catch( InterruptedException iex ) {
-              // ignored
+            };
+            endJob.schedule();
+          } else {
+            while( !process.isTerminated() ) {
+              try {
+                if( monitor.isCanceled() ) {
+                  process.terminate();
+                  break;
+                }
+                Thread.sleep( 50 );
+              } catch( InterruptedException iex ) {
+                // ignored
+              }
             }
+            postProcessFinished();
           }
         }
       } catch( LaunchCancelledException lcex ) {
@@ -86,11 +116,17 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     }
   }
 
-  protected abstract void postProcessCreation(final ILaunchConfiguration configuration,final String mode,final ILaunch launch,IProcess process) throws CoreException;
+  protected abstract void postProcessCreation(final ILaunchConfiguration configuration,
+      final String mode,final ILaunch launch,IProcess process) throws CoreException;
+  protected abstract void preProcessCreation(final ILaunchConfiguration configuration,
+      final String mode,final ILaunch launch,Map<String, String> processAttribs) throws CoreException;
+  protected abstract void preProcessDefinitionCreation(final ILaunchConfiguration configuration,
+      final String mode,final ILaunch launch) throws CoreException;
+  protected abstract void postProcessFinished();
 
   private IProcess createProcess( final ILaunchConfiguration configuration,
-      final ILaunch launch, final IPath location, final String[] cmdLine,
-      final File workingDir ) throws CoreException {
+      final String mode, final ILaunch launch, final IPath location,
+      final String[] cmdLine, final File workingDir ) throws CoreException {
     // Process proc = DebugPlugin.exec( cmdLine, workingDir );
     ProcessBuilder pb = new ProcessBuilder( cmdLine );
     pb.directory( workingDir );
@@ -101,10 +137,12 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       NetworkUtil.addHTTP_PROXY_env( pb,NetworkUtil.HACKAGE_URL  );
     }
     try {
+      preProcessDefinitionCreation( configuration, mode, launch );
       Process proc = pb.start();
       Map<String, String> processAttrs = new HashMap<String, String>();
       String programName = determineProgramName( location );
       processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
+      preProcessCreation( configuration, mode, launch, processAttrs );
       IProcess process = null;
       if( proc != null ) {
         //String loc = location.toOSString();
@@ -135,7 +173,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return cmdLine;
   }
 
-  private File determineWorkingDir( final ILaunchConfiguration config )
+  protected File determineWorkingDir( final ILaunchConfiguration config )
       throws CoreException {
     String name = ILaunchAttributes.WORKING_DIRECTORY;
     String attribute = config.getAttribute( name, ( String )null );
@@ -146,7 +184,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return result;
   }
 
-  private String[] determineArguments( final ILaunchConfiguration config )
+  String[] determineArguments( final ILaunchConfiguration config )
       throws CoreException {
     String extra = config.getAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
         ILaunchAttributes.EMPTY );
@@ -209,6 +247,10 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
   }
 
   public static void runInConsole(final IProject prj,final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY) throws CoreException{
+    runInConsole( prj, commands, directory, title, needsHTTP_PROXY,null );
+  }
+
+  public static void runInConsole(final IProject prj,final List<String> commands,final File directory,final String title,final boolean needsHTTP_PROXY,final Runnable after) throws CoreException{
 
     final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     String configTypeId = ExecutableHaskellLaunchDelegate.class.getName();
@@ -232,6 +274,39 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       wc.setAttribute(ILaunchAttributes.EXTRA_ARGUMENTS,CommandLineUtil.renderCommandLine( commands.subList( 1, commands.size() ) ));
     }
     wc.setAttribute( ILaunchAttributes.NEEDS_HTTP_PROXY, needsHTTP_PROXY );
+
+    if (after!=null){
+      ILaunchesListener2 l=new ILaunchesListener2() {
+
+        public void launchesRemoved( final ILaunch[] paramArrayOfILaunch ) {
+          // NOOP
+
+        }
+
+        public void launchesChanged( final ILaunch[] paramArrayOfILaunch ) {
+          // NOOP
+
+        }
+
+        public void launchesAdded( final ILaunch[] paramArrayOfILaunch ) {
+          // NOOP
+
+        }
+
+        public void launchesTerminated( final ILaunch[] paramArrayOfILaunch ) {
+         for (ILaunch la:paramArrayOfILaunch){
+           System.out.println("found launch:"+(la.getLaunchConfiguration()==wc));
+           if (la.getLaunchConfiguration()==wc){
+             after.run();
+             launchManager.removeLaunchListener( this );
+           }
+         }
+
+        }
+      };
+      launchManager.addLaunchListener( l );
+    }
+
     // makes the console opens consistently
     DebugUITools.launch( wc, ILaunchManager.RUN_MODE );
 

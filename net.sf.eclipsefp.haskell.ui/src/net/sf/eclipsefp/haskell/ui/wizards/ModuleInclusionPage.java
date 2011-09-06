@@ -40,7 +40,7 @@ public class ModuleInclusionPage extends StatusWizardPage{
   @Override
   public void setPreviousPage( final IWizardPage page ) {
     super.setPreviousPage( page );
-    ModuleCreationInfo mci=((NewModuleWizardPage)page).getInfo();
+    ModuleCreationInfo mci=((IModuleCreationInfoProvider)page).getInfo();
     IContainer src=mci.getSourceContainer();
     String module=mci.getQualifiedModuleName();
     mic.init( src, module, true );

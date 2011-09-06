@@ -14,8 +14,9 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
  * <p>Compute quick assist based on the Marker resolution generator</p>
-  *
-  * @author JP Moresmau
+ *
+ * @author JP Moresmau
+ * @author Alejandro Serrano
  */
 public class QuickAssistProcessor implements IQuickAssistProcessor {
   private final BuildMarkerResolutionGenerator generator=new BuildMarkerResolutionGenerator();
@@ -43,9 +44,11 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
           IMarker marker=((MarkerAnnotation)ann ).getMarker();
           IMarkerResolution[] res1=generator.getResolutions( marker);
           for (IMarkerResolution imr:res1){
-            ICompletionProposal cp=((MarkerCompletion)imr).getCompletionProposal( marker, invocationContext.getSourceViewer().getDocument() );
-            if (cp!=null){
-              res.add(cp);
+            if (imr instanceof MarkerCompletion) {
+              ICompletionProposal cp=((MarkerCompletion)imr).getCompletionProposal( marker, invocationContext.getSourceViewer().getDocument() );
+              if (cp!=null){
+                res.add(cp);
+              }
             }
           }
           //res.addAll( Arrays.asList( res1 ) );

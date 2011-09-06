@@ -1,0 +1,22 @@
+data Tree
+  | Node  left :: Tree  right :: Tree
+  | Tip   value :: Int
+
+attr Tree
+  syn sum :: Int
+
+sem Tree
+  | Node  lhs.sum  =  @left.sum + @right.sum
+  | Tip   lhs.sum  =  @value
+
+{
+main :: IO ()
+main = print (show test)
+
+testTree :: Tree
+testTree = Tree_Node (Tree_Tip 1) (Tree_Node (Tree_Tip 2) (Tree_Tip 3))
+
+test :: Int
+test = sem_Tree testTree
+}
+-- output of the program will be "6"

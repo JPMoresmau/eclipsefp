@@ -2,6 +2,10 @@
 package net.sf.eclipsefp.haskell.core.project;
 
 import net.sf.eclipsefp.haskell.core.builder.HaskellBuilder;
+import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.happy.HappyBuilder;
+import net.sf.eclipsefp.haskell.core.partitioned.uuagc.UuagcBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -11,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /** <p>The project nature that indicates Haskell projects.</p>
  *
  * @author Leif Frenzel
+ * @author Alejandro Serrano
  */
 public class HaskellNature implements IProjectNature {
 
@@ -24,10 +29,18 @@ public class HaskellNature implements IProjectNature {
   public void configure() throws CoreException {
     addBuilder( HaskellBuilder.BUILDER_ID );
     //addBuilder( CabalBuilder.BUILDER_ID );
+    addBuilder( HLintBuilder.BUILDER_ID );
+    addBuilder( AlexBuilder.BUILDER_ID );
+    addBuilder( HappyBuilder.BUILDER_ID );
+    addBuilder( UuagcBuilder.BUILDER_ID );
   }
 
   public void deconfigure() throws CoreException {
-   // removeBuilder( CabalBuilder.BUILDER_ID );
+    removeBuilder( UuagcBuilder.BUILDER_ID );
+    removeBuilder( HappyBuilder.BUILDER_ID );
+    removeBuilder( AlexBuilder.BUILDER_ID );
+    removeBuilder( HLintBuilder.BUILDER_ID );
+    // removeBuilder( CabalBuilder.BUILDER_ID );
     removeBuilder( HaskellBuilder.BUILDER_ID );
   }
 

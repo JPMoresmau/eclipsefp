@@ -85,6 +85,9 @@ class Validator {
     IPath folders = info.getFolders();
     IPath fullPath = ( folders != null ) ? folders.append( moduleName )
                                          : new Path( moduleName );
+    if (info.getSourceContainer()==null){
+      return false;
+    }
     IResource resource = info.getSourceContainer().findMember( fullPath );
     return resource != null && resource.exists();
   }

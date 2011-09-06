@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.project;
 
+import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.IHaskellCompiler;
 import org.eclipse.core.resources.IContainer;
@@ -62,4 +63,8 @@ public interface IHaskellProject extends IAdaptable {
 	IHaskellCompiler getCompiler();
 
 	void compile( IFile file );
+
+	Map<String, IFile> getModulesFile( );
+
+	IFile getModuleFile( String module );
 }

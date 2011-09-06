@@ -28,6 +28,24 @@
             %newModuleWizard_desc
          </description>
       </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.web.wizards.NewSnapProjectWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/etool16/newhprj_wiz.gif"
+            id="net.sf.eclipsefp.haskell.ui.web.wizards.NewSnapProjectWizard"
+            name="%newSnapWizard_name"
+            project="true">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/etool16/newhprj_wiz.gif"
+            id="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"
+            name="%newYesodWizard_name"
+            project="true">
+      </wizard>
    </extension>
    <extension point="org.eclipse.ui.importWizards">
      <wizard
@@ -137,6 +155,12 @@
             icon="icons/etool16/haskell_misc.gif"
             class="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             id="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
+      </perspective>
+      <perspective
+            class="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
+            icon="icons/etool16/haskell_misc.gif"
+            id="net.sf.eclipsefp.haskell.browser.BrowserPerspective"
+            name="%haskellBrowserPerspective_name">
       </perspective>
    </extension>
    <extension
@@ -311,6 +335,11 @@
             name="%openDefinitionCommand_name"
             id="net.sf.eclipsefp.ui.commands.navigate.openDefinition"/>
       <command
+            description="%searchHoogleCommand_desc"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%searchHoogleCommand_name"
+            id="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"/>
+      <command
             description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%HaddockDocumentFollowing.name"
@@ -336,9 +365,23 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="menu:navigate?after=open.ext">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="popup:#HaskellEditorContext?after=group.open">
          <command
                commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+            <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=group.open">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
             <visibleWhen checkEnabled="true"/>
          </command>
       </menuContribution>
@@ -388,6 +431,10 @@
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
               contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
               sequence="F3"/>
+          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
+              sequence="F4"/>
          <!-- other keys -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
@@ -405,6 +452,17 @@
             </reference>
          </activeWhen>
       </handler>
+     <!-- handler for the Open Definition action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.SearchInHoogleHandler"
+            commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
+         <activeWhen>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+         </activeWhen>
+      </handler>
+      
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -526,7 +584,7 @@
 	
       </enablement>
     </objectContribution>
-    <objectContribution
+    <!--objectContribution
           id="net.sf.eclipsefp.haskell.ui.contribution1"
           objectClass="org.eclipse.core.resources.IProject">
        <action
@@ -542,7 +600,7 @@
 	      </adapt>
 	
       </enablement>
-    </objectContribution>
+    </objectContribution-->
   </extension>
   
   <!-- [Views] Project Explorer -->
@@ -690,6 +748,13 @@
             tooltip="%openDefinitionAction_tooltip"
             retarget="true"
             allowLabelUpdate="true"/>
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.searchHoogle"
+            definitionId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"
+            label="%searchHoogleAction_label"
+            tooltip="%searchHoogleAction_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"/>   
        <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
  <!-- Source menu -->         
          <menu
@@ -767,5 +832,374 @@
             targetID="net.sf.eclipsefp.haskell.ui.CodingActionSet">
          <part id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
       </actionSetPartAssociation>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="net.sf.eclipsefp.haskell.browser"
+            name="%haskellBrowserPerspective_category">
+      </category>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
+            icon="icons/obj16/package.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
+            name="%haskellBrowser_packagesView">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"
+            icon="icons/obj16/module.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"
+            name="%haskellBrowser_modulesView">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"
+            icon="icons/obj16/datadecl.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"
+            name="%haskellBrowser_typesView"
+            restorable="true">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"
+            icon="icons/obj16/functionbinding.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"
+            name="%haskellBrowser_functionsView"
+            restorable="true">
+      </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
+            icon="icons/obj16/lambda.gif"
+            id="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
+            name="%haskellBrowser_hoogleView"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewContribution"
+            targetID="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView">
+         <action
+               class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesViewHierarchicalDelegate"
+               id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewHierarchical"
+               label="%haskellBrowser_hierarchical"
+               menubarPath="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown/content"
+               style="radio">
+         </action>
+         <action
+               class="net.sf.eclipsefp.haskell.browser.views.modules.ModulesViewFlatDelegate"
+               id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewFlat"
+               label="%haskellBrowser_flat"
+               menubarPath="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown/content"
+               style="radio">
+         </action>
+         <menu
+               id="net.sf.eclipsefp.haskell.browser.views.modules.modulesViewPulldown"
+               label="%haskellBrowser_viewStyle"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+      </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameParticipant"
+            name="Rename Haskell module">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="net.sf.eclipsefp.haskell.contenttypes.haskell">
+                  </test>
+               </adapt>
+            </with>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameFolderParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameFolderParticipant"
+            name="Rename Haskell folder">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </enablement>
+      </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveParticipant"
+            name="Move Haskell module">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="net.sf.eclipsefp.haskell.contenttypes.haskell">
+                  </test>
+               </adapt>
+            </with></enablement>
+      </moveParticipant>
+      <moveParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveFolderParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.MoveFolderParticipant"
+            name="Move Haskell folder">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </enablement>
+      </moveParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.copyParticipants">
+      <copyParticipant
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.CopyParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.CopyParticipant"
+            name="Copy Haskell module">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="net.sf.eclipsefp.haskell.contenttypes.haskell">
+                  </test>
+               </adapt>
+            </with>
+         </enablement>
+      </copyParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.ui.sourcegraph.run"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.ui.sourcegraph.RunActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.ui.sourcegraph.runAction"
+               label="%sourcegraph_run">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
+            extensions="x,y,ag"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.DocumentProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditorContributor"
+            extensions="x"
+            icon="icons/obj16/lhsfile_obj.gif"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.AlexEditor"
+            name="%alexEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.alex">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditorContributor"
+            extensions="y"
+            icon="icons/obj16/lhsfile_obj.gif"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.HappyEditor"
+            name="%happyEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.happy">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditorContributor"
+            extensions="ag"
+            icon="icons/obj16/testsuitestanza.gif"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.UuagcEditor"
+            name="%uuagcEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.uuagc">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
+            extensions="tpl"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXHTMLTemplateEditor"
+            name="%tplEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.tpl">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart"
+            contributorClass="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorActionBarContributor"
+            extensions="xtpl"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXMLTemplateEditor"
+            name="%xtplEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.xtpl">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
+            extensions="cassius"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.CassiusEditor"
+            name="%cassiusEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.cassius">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
+            extensions="hamlet"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HamletEditor"
+            name="%hamletEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.hamlet">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor"
+            contributorClass="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
+            extensions="julius"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.JuliusEditor"
+            name="%juliusEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.julius">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
+            extensions="lucius"
+            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.LuciusEditor"
+            name="%luciusEditor_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.lucius">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions.UuagcOptionsFormEditor"
+            contributorClass="net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions.UuagcOptionsActionContributor"
+            extensions="x"
+            icon="icons/obj16/testsuitestanza.gif"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.uuagcOptions.UuagcOptionsFormEditor"
+            name="%uuagc_options_name">
+         <contentTypeBinding
+               contentTypeId="net.sf.eclipsefp.haskell.contenttypes.uuagc_options">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.partitioned.PartitionDocumentSetup"
+            extensions="x,y,ag">
+      </participant>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/lhsfile_obj.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
+            name="%contenttype_alex_name"
+            project="false">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/lhsfile_obj.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
+            name="%contenttype_happy_name"
+            project="false">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/testsuitestanza.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
+            name="%contenttype_uuagc_name"
+            project="false">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
+            markerType="net.sf.eclipsefp.haskell.core.problem">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
+            markerType="net.sf.eclipsefp.haskell.core.projectProblem">
+      </markerResolutionGenerator>
    </extension>
 </plugin>

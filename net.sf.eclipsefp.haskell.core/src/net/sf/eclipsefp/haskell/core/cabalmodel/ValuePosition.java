@@ -46,7 +46,10 @@ public class ValuePosition {
       this.initialIndent = indent;
     }
 
-
+    public void diffLine ( final int diff ) {
+      this.startLine += diff;
+      this.endLine += diff;
+    }
 
     public int getSubsequentIndent() {
       return subsequentIndent;

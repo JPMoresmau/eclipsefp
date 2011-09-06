@@ -15,12 +15,14 @@
                class="net.sf.eclipsefp.haskell.core.project.HaskellNature">
          </run>
       </runtime>
+      <builder id="net.sf.eclipsefp.haskell.core.builder.HaskellBuilder"/>
+      <builder id="net.sf.eclipsefp.haskell.core.hlint.HLintBuilder"/>  
    </extension>
    <extension
          id="builder.HaskellBuilder"
          name="%haskellBuilder_name"
          point="org.eclipse.core.resources.builders">
-      <builder>
+      <builder hasNature="true">
          <run
                class="net.sf.eclipsefp.haskell.core.builder.HaskellBuilder">
          </run>
@@ -37,6 +39,42 @@
    <extension point="org.eclipse.team.core.fileTypes">
      <fileTypes type="text" extension="hs" />
      <fileTypes type="text" extension="lhs" />
+     <fileTypes
+           extension="x"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="y"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="ag"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="tpl"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="xtpl"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="cassius"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="hamlet"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="julius"
+           type="text">
+     </fileTypes>
+     <fileTypes
+           extension="lucius"
+           type="text">
+     </fileTypes>
    </extension>
    <extension point="org.eclipse.core.contenttype.contentTypes">
      <content-type base-type="org.eclipse.core.runtime.text"
@@ -51,12 +89,82 @@
                    priority="normal">
        <describer class="net.sf.eclipsefp.haskell.core.internal.contenttypes.LiterateContentDescriber" />
      </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.text"
+           file-extensions="x"
+           id="net.sf.eclipsefp.haskell.contenttypes.alex"
+           name="%contenttype_alex_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.text"
+           file-extensions="y"
+           id="net.sf.eclipsefp.haskell.contenttypes.happy"
+           name="%contenttype_happy_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.text"
+           file-extensions="ag"
+           id="net.sf.eclipsefp.haskell.contenttypes.uuagc"
+           name="%contenttype_uuagc_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.html.core.htmlsource"
+           file-extensions="tpl"
+           id="net.sf.eclipsefp.haskell.contenttypes.tpl"
+           name="%contenttype_tpl_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.xml"
+           file-extensions="xtpl"
+           id="net.sf.eclipsefp.haskell.contenttypes.xtpl"
+           name="%contenttype_xtpl_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.css.core.csssource"
+           file-extensions="cassius"
+           id="net.sf.eclipsefp.haskell.contenttypes.cassius"
+           name="%contenttype_cassius_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.html.core.htmlsource"
+           file-extensions="hamlet"
+           id="net.sf.eclipsefp.haskell.contenttypes.hamlet"
+           name="%contenttype_hamlet_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.jsdt.core.jsSource"
+           file-extensions="julius"
+           id="net.sf.eclipsefp.haskell.contenttypes.julius"
+           name="%contenttype_julius_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.wst.css.core.csssource"
+           file-extensions="lucius"
+           id="net.sf.eclipsefp.haskell.contenttypes.lucius"
+           name="%contenttype_lucius_name"
+           priority="normal">
+     </content-type>
+     <content-type
+           base-type="org.eclipse.core.runtime.text"
+           file-names="uuagc_options"
+           id="net.sf.eclipsefp.haskell.contenttypes.uuagc_options"
+           name="%contenttype_uuagc_options_name"
+           priority="normal">
+     </content-type>
    </extension>
 
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder, isHaskellFile"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder, hasProjectUuagcBuilder, needsProjectUuagcBuilder"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
@@ -77,5 +185,209 @@
          point="org.eclipse.core.resources.markers">
       <persistent value="true"/>
       <super type="net.sf.eclipsefp.haskell.core.problem"/>
+   </extension>
+   <extension
+         id="hlint.HLintBuilder"
+         name="%hlintBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder hasNature="true">
+         <run
+               class="net.sf.eclipsefp.haskell.core.hlint.HLintBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="hlint"
+         name="%hlintProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="scionProblem"
+         name="%scionProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="net.sf.eclipsefp.haskell.core.problem">
+      </super>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.hlint.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.hlint.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.hlint.addNatureAction"
+               label="%hlint_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectHLintBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.partitioned.alex.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.partitioned.alex.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.partitioned.alex.addNatureAction"
+               label="%alex_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectAlexBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.partitioned.happy.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.partitioned.happy.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.partitioned.happy.addNatureAction"
+               label="%happy_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectHappyBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.sf.eclipsefp.haskell.core.partitioned.uuagc.addNature"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="net.sf.eclipsefp.haskell.core.partitioned.uuagc.AddNatureActionDelegate"
+               enablesFor="1"
+               id="net.sf.eclipsefp.haskell.core.partitioned.uuagc.addNatureAction"
+               label="%uuagc_addNature"
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+               </test>
+               <test
+                     property="net.sf.eclipsefp.haskell.core.needsProjectUuagcBuilder">
+               </test>
+            </adapt>
+         </enablement>
+      </objectContribution>
+   </extension>
+   <extension
+         id="alex"
+         name="%alexProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="partitioned.alex.AlexBuilder"
+         name="%alexBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.partitioned.alex.AlexBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="happy"
+         name="%happyProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="partitioned.happy.HappyBuilder"
+         name="%happyBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.partitioned.happy.HappyBuilder">
+         </run></builder>
+   </extension>
+   <extension
+         id="uuagc"
+         name="%uuagcProblem_name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         id="partitioned.uuagc.UuagcBuilder"
+         name="%uuagcBuilder_name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.sf.eclipsefp.haskell.core.partitioned.uuagc.UuagcBuilder">
+         </run></builder>
    </extension>
 </plugin>

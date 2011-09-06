@@ -8,6 +8,7 @@ import org.eclipse.osgi.util.NLS;
 /** <p>provides internationalized String messages for the core.</p>
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
   */
 public final class CoreTexts extends NLS {
 
@@ -46,6 +47,9 @@ public final class CoreTexts extends NLS {
   public static String projectCreationOperation_init;
   public static String projectCreationOperation_natures;
   public static String projectCreationOperation_settings;
+  public static String projectCreationOperation_error;
+
+  public static String projectNatureAddOperation_error;
 
   public static String sourceFileGenerator_creating;
 

@@ -1,6 +1,9 @@
 // Copyright (c) 2003-2007 by Leif Frenzel - see http://leiffrenzel.de
+// Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.ui;
 
+import net.sf.eclipsefp.haskell.browser.BrowserPerspective;
+import net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView;
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
@@ -44,6 +47,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     layout.addActionSet( IDebugUIConstants.LAUNCH_ACTION_SET );
     // Add to "Open Perspective" menu
     layout.addPerspectiveShortcut( HaskellPerspective.class.getName() );
+    layout.addPerspectiveShortcut( BrowserPerspective.class.getName() );
     // Add "Haskell Project" to the File -> New menu
     layout.addNewWizardShortcut("net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"); //$NON-NLS-1$
   }
@@ -63,9 +67,10 @@ public class HaskellPerspective implements IPerspectiveFactory {
     addBottomViews( bottom );
     IFolderLayout right = layout.createFolder( "right", //$NON-NLS-1$
                                                IPageLayout.RIGHT,
-                                               0.80f,
+                                               0.75f,
                                                editorArea );
     right.addView( IPageLayout.ID_OUTLINE );
+    right.addView( HoogleView.ID );
   }
 
   private void addLeftViews( final IFolderLayout left ) {

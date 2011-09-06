@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
   *
   * @author Leif Frenzel
   */
-public class NewModuleWizardPage extends StatusWizardPage {
+public class NewModuleWizardPage extends StatusWizardPage implements IModuleCreationInfoProvider {
 
   private StringButtonDialogField dlgFieldSourceFolder;
   private StringButtonDialogField dlgFieldFolders;
@@ -74,7 +74,7 @@ public class NewModuleWizardPage extends StatusWizardPage {
     nameStatus = new DefaultStatus();
   }
 
-  ModuleCreationInfo getInfo() {
+  public ModuleCreationInfo getInfo() {
     if (chkUseLiterate.getSelection()) {
       if (rdoLiterate.getSelection()) {
         currentInfo.setCommentStyle(EHaskellCommentStyle.LITERATE);

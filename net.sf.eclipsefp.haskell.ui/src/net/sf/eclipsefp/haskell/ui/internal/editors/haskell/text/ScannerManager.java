@@ -126,7 +126,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return literateCommentScanner;
   }
 
-  IToken createToken( final String colorKey, final String boldKey ) {
+  public IToken createToken( final String colorKey, final String boldKey ) {
     IToken result = getTokenInternal( colorKey, boldKey );
     if( result == null ) {
       result = createTokenInternal( colorKey, boldKey );
@@ -134,7 +134,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return result;
   }
 
-  TextAttribute getCommentAttribute() {
+  public TextAttribute getCommentAttribute() {
     if( commentAttribute == null ) {
       commentAttribute = createTextAttribute( EDITOR_COMMENT_COLOR,
                                               EDITOR_COMMENT_BOLD );
@@ -142,7 +142,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return commentAttribute;
   }
 
-  TextAttribute getLiterateCommentAttribute() {
+  public TextAttribute getLiterateCommentAttribute() {
     if( literateCommentAttribute == null ) {
       String colorKey = EDITOR_LITERATE_COMMENT_COLOR;
       String boldKey = EDITOR_LITERATE_COMMENT_BOLD;
