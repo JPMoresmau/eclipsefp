@@ -98,9 +98,13 @@ public final class UITexts extends NLS {
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
   public static String autodetectButton_errorMessage;
+  public static String autodetectBrowserButton_label;
+  public static String autodetectBrowserButton_errorTitle;
+  public static String autodetectBrowserButton_errorMessage;
 
   public static String forceRebuildButton_label;
   public static String forceRebuildButton_text;
+  public static String forceRebuildBrowserButton_text;
   public static String cabalUpdateButton_label;
   public static String cabalUpdateButton_text;
 

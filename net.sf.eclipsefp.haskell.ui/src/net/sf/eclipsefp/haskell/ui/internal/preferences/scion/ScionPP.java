@@ -268,7 +268,7 @@ public class ScionPP
     gdata.horizontalSpan=2;
     browserBuiltInFieldC.setLayoutData( gdata );
     browserBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN,
-                                                  UITexts.scionServerBuiltIn_label,
+                                                  UITexts.scionBrowserBuiltIn_label,
                                                   browserBuiltInFieldC);
     browserBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
       public void propertyChange( final PropertyChangeEvent event ) {
@@ -286,7 +286,7 @@ public class ScionPP
     gdata.horizontalSpan=1;
     //forceRebuildC.setLayoutData( gdata );
     forceRebuildBrowser=new Button(fieldComposite,SWT.CHECK);
-    forceRebuildBrowser.setText( UITexts.forceRebuildButton_text );
+    forceRebuildBrowser.setText( UITexts.forceRebuildBrowserButton_text );
     forceRebuildBrowser.setLayoutData( gdata );
 
     forceRebuildBrowser.addSelectionListener( new SelectionAdapter() {
@@ -319,7 +319,7 @@ public class ScionPP
     gd2.horizontalSpan=2;
     autodetectBrowserC.setLayoutData( gd2 );
     autodetectBrowser = new ButtonFieldEditor(
-        String.format(UITexts.autodetectButton_label, getBrowserExecutableName()),
+        String.format(UITexts.autodetectBrowserButton_label, getBrowserExecutableName()),
         UITexts.autodetectButton_text,
         new SelectionAdapter() {
           @Override
@@ -356,8 +356,8 @@ public class ScionPP
     String server = detectBrowserServer();
     if (server == null) {
       MessageDialog.openError(getShell(),
-          UITexts.autodetectButton_errorTitle,
-          NLS.bind(UITexts.autodetectButton_errorMessage, getBrowserExecutableName()));
+          UITexts.autodetectBrowserButton_errorTitle,
+          NLS.bind(UITexts.autodetectBrowserButton_errorMessage, getBrowserExecutableName()));
     } else {
       browserExecutableField.setStringValue(server);
     }
