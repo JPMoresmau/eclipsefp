@@ -69,7 +69,7 @@ Features:
       "foo :: Bool -> String -> ..." Note that this is the common case when
       this completion is requested.
 
-    - There are a lot of other contexts in which "->" can occur, such as witin
+    - There are a lot of other contexts in which "->" can occur, such as within
       alternatives of a 'case' expression and lambda expressions. Performing the
       incremental or reverse parse is a challenging problem; this is the subject
       of current hacking toward a general solution.
