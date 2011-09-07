@@ -74,6 +74,9 @@ public class ScionText extends NLS {
   public static String		  completions_varid;
   public static String		  completions_classes;
   
+  public static String		  project_members_list_error;
+  public static String		  project_cabal_duplicate;
+  
   private static final String BUNDLE_NAME = ScionText.class.getPackage().getName() + ".sciontext"; //$NON-NLS-1$
 
   static {

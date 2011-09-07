@@ -949,13 +949,47 @@ public class ScionInstance {
   }
 
   /**
+   * cache project cabal file if cabal file doesn't have same name than project
+   */
+  private static Map<IProject,IFile> m=new HashMap<IProject,IFile>();
+  /**
    * Generate the Cabal project file's name from the Eclipse project's name.
    * 
    * @param project The Eclipse project
    * @return The "&lt;project&gt;.cabal" string.
    */
   public static IFile getCabalFile(final IProject project) {
-    return project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
+    IFile f=project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
+    if (f==null || !f.exists()){ // oh oh
+    	IFile f2=m.get(project);
+    	if (f2==null){
+    		try {
+    			// find a cabal file
+	    		IResource[] children=project.members();
+	    		int cnt=0;
+	    		for (IResource child:children){
+	    			if (child instanceof IFile){
+	    				 if ( child.getFileExtension() != null &&
+	    						 child.getFileExtension().equalsIgnoreCase(FileUtil.EXTENSION_CABAL)){
+	    					 f=(IFile)child;
+	    					 cnt++;
+	    				 }
+	    			}
+	    		}
+	    		// cnt=1 would mean only one file, we can live with that
+	    		if (cnt>1){
+	    			// log error, we've taken a random cabal file
+	    			ScionPlugin.logError(NLS.bind(ScionText.project_cabal_duplicate, project.getName()),null);
+	    		}
+	    		m.put(project, f);
+	    	} catch (CoreException ce){
+	    		ScionPlugin.logError(NLS.bind(ScionText.project_members_list_error, project.getName()), ce);
+	    	}
+    	} else {
+    		f=f2;
+    	}
+    }
+    return f;
   }
 
 //  public JSONObject getCabalDescription() {
