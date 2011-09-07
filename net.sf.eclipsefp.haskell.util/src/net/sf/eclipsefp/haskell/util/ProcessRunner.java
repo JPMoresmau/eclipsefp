@@ -10,6 +10,9 @@ import java.io.Writer;
 public class ProcessRunner implements IProcessRunner {
 
   private final IProcessFactory fProcessFactory;
+  
+  private final static String STDOUT_REDIRECT = "output_redirect";
+  private final static String STDERR_REDIRECT = "error_redirect";
 
   public ProcessRunner() {
     this( new ProcessFactory() );
@@ -24,10 +27,10 @@ public class ProcessRunner implements IProcessRunner {
 
     Process proc = doExecute( workingDir, args );
 
-    Thread outRedirect = redirect( new InputStreamReader( proc.getInputStream() ), out );
+    Thread outRedirect = redirect( new InputStreamReader( proc.getInputStream() ), out, STDOUT_REDIRECT );
     Thread errRedirect = null;
     if (err!=null){
-    	errRedirect = redirect( new InputStreamReader( proc.getErrorStream() ), err );
+    	errRedirect = redirect( new InputStreamReader( proc.getErrorStream() ), err, STDERR_REDIRECT );
     }
     int code=-1;
     try {
@@ -45,8 +48,8 @@ public class ProcessRunner implements IProcessRunner {
   public Process executeNonblocking( final File workingDir, final Writer out,
       final Writer err, final String ... args ) throws IOException {
     Process proc = doExecute( workingDir, args );
-    redirect( new InputStreamReader( proc.getInputStream() ), out );
-    redirect( new InputStreamReader( proc.getErrorStream() ), err );
+    redirect( new InputStreamReader( proc.getInputStream() ), out, STDOUT_REDIRECT );
+    redirect( new InputStreamReader( proc.getErrorStream() ), err, STDERR_REDIRECT );
     return proc;
   }
 
@@ -56,16 +59,15 @@ public class ProcessRunner implements IProcessRunner {
     return proc;
   }
 
-  private static Thread redirect( final Reader in, final Writer out ) {
-    Thread outRedirect = new StreamRedirect( "output_redirect", //$NON-NLS-1$
-        in, out );
+  private static Thread redirect( final Reader in, final Writer out, String name ) {
+    Thread outRedirect = new StreamRedirect( name, in, out );
     outRedirect.start();
     return outRedirect;
   }
   
   public static Thread[] consume(Process proc){
-	  Thread t1=redirect( new InputStreamReader( proc.getInputStream() ), new StringWriter() );
-	  Thread t2=redirect( new InputStreamReader( proc.getErrorStream() ), new StringWriter() );
+	  Thread t1=redirect( new InputStreamReader( proc.getInputStream() ), new StringWriter(), STDOUT_REDIRECT );
+	  Thread t2=redirect( new InputStreamReader( proc.getErrorStream() ), new StringWriter(), STDERR_REDIRECT );
 	  return new Thread[]{t1,t2};
   }
 

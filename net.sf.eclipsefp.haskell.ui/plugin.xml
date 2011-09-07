@@ -1083,7 +1083,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXHTMLTemplateEditor"
             contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
             extensions="tpl"
             id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXHTMLTemplateEditor"
@@ -1093,7 +1093,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart"
+            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXMLTemplateEditor"
             contributorClass="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorActionBarContributor"
             extensions="xtpl"
             id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXMLTemplateEditor"
@@ -1103,7 +1103,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.CassiusEditor"
             contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
             extensions="cassius"
             id="net.sf.eclipsefp.haskell.ui.internal.web.editors.CassiusEditor"
@@ -1113,7 +1113,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.HamletEditor"
             contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
             extensions="hamlet"
             id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HamletEditor"
@@ -1123,7 +1123,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.JuliusEditor"
             contributorClass="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
             extensions="julius"
             id="net.sf.eclipsefp.haskell.ui.internal.web.editors.JuliusEditor"
@@ -1133,7 +1133,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.eclipse.wst.sse.ui.StructuredTextEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.LuciusEditor"
             contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
             extensions="lucius"
             id="net.sf.eclipsefp.haskell.ui.internal.web.editors.LuciusEditor"

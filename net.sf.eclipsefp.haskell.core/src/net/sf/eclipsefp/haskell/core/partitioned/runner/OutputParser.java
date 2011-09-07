@@ -15,36 +15,41 @@ public class OutputParser {
 
 		String[] lines = s.split("[\r\n]+"); //$NON-NLS-1$
 		for (String line : lines) {
-			int parts = line.indexOf(": "); //$NON-NLS-1$
+		  String[] fileParts = line.split(":"); //$NON-NLS-1$
 
-			String file = line.substring(0, parts);
-			String msg = line.substring(parts + 2).trim();
+		  int current;
+		  String fname = fileParts[0];
+		  int lno, cno;
+		  try {
+		    // Try to find a line number
+		    lno = Integer.parseInt( fileParts[1].trim() );
+		    current = 1;
+		  } catch (NumberFormatException e) {
+		    // If not, it is a Windows path
+		    fname = fname + ":" + fileParts[1]; //$NON-NLS-1$
+		    current = 2;
+		  }
 
-			String[] fileParts = file.split(":"); //$NON-NLS-1$
-			String fname;
-			int lno, cno;
+		  // Parse line number
+		  lno = Integer.parseInt( fileParts[current].trim() );
+		  current++;
 
-			if (fileParts.length == 4) {
-			  // We have a Windows path + line + column
-			  fname = fileParts[0] + ":" + fileParts[1]; //$NON-NLS-1$
-			  lno = Integer.parseInt(fileParts[2]);
-			  cno = Integer.parseInt(fileParts[3]);
-			} else if (fileParts.length == 3) {
-			  // Try to get it as Unix file + line + column
-			  try {
-  			  fname = fileParts[0];
-  			  lno = Integer.parseInt(fileParts[1]);
-          cno = Integer.parseInt(fileParts[2]);
-			  } catch (NumberFormatException e) {
-			    fname = fileParts[0] + ":" + fileParts[1]; //$NON-NLS-1$
-	        lno = Integer.parseInt(fileParts[2]);
-	        cno = 0;
-			  }
-			} else {
-			  fname = fileParts[0];
-				lno = Integer.parseInt(fileParts[1]);
-				cno = 0;
-			}
+		  // Try to parse a column
+		  try {
+		    cno = Integer.parseInt( fileParts[current].trim() );
+		    current++;
+		  } catch (NumberFormatException e) {
+		    cno = 0;
+		  }
+
+		  // The rest is the message
+		  String msg = ""; //$NON-NLS-1$
+		  for (int j = current; j < fileParts.length; j++) {
+		    if (msg.length() > 0) {
+		      msg += ":"; //$NON-NLS-1$
+		    }
+		    msg += fileParts[j];
+		  }
 
 			r.add(new ProcessorError(fname, lno, cno, msg));
 		}

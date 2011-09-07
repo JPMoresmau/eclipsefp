@@ -25,7 +25,7 @@ public class UuagcRunner {
 
   public StringWriter selectStream( final StringWriter out,
       final StringWriter err ) {
-    return err;
+    return out;
   }
 
   public String[] getExecutableAndArgs( final IResource resource ) {
