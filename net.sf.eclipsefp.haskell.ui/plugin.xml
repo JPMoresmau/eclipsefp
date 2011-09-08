@@ -163,6 +163,26 @@
             name="%haskellBrowserPerspective_name">
       </perspective>
    </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
+			<viewShortcut id="org.eclipse.ui.views.ResourceNavigator"/>
+			<viewShortcut id="org.eclipse.ui.navigator.ProjectExplorer"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"/>
+			
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.web.wizards.NewSnapProjectWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"/>
+			
+		</perspectiveExtension>
+	</extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
