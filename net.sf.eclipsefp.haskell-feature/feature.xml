@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="%bundleName"
-      version="2.1.0"
+      version="2.1.1"
       provider-name="%bundleVendor">
 
    <description>
@@ -71,7 +71,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
@@ -85,7 +85,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
@@ -120,14 +120,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.scion.client"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
@@ -141,14 +141,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.util"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.browser"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
@@ -162,7 +162,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.profiler"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
 </feature>
