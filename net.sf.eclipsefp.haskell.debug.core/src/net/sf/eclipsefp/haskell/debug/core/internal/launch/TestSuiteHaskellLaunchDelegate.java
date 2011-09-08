@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.Random;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
+import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -105,10 +106,9 @@ public class TestSuiteHaskellLaunchDelegate extends
       return true;
     } catch (Throwable t) {
       Display.getCurrent().syncExec( new Runnable() {
-
         public void run() {
-          MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "AA", "BB" );
-
+          MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+              CoreTexts.jdt_notFound_title, CoreTexts.jdt_notFound_message );
         }
       } );
       return false;
