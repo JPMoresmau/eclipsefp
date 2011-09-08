@@ -45,6 +45,12 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         checkCancellation( monitor );
         File workingDir = determineWorkingDir( configuration );
         checkCancellation( monitor );
+
+        if (!shouldContinue()) {
+          // The launch cannot continue
+          return;
+        }
+
         IProcess process = createProcess( configuration, mode, launch, loc,
             cmdLine, workingDir );
         if( process != null ) {
@@ -123,6 +129,10 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
   protected abstract void preProcessDefinitionCreation(final ILaunchConfiguration configuration,
       final String mode,final ILaunch launch) throws CoreException;
   protected abstract void postProcessFinished();
+
+  protected boolean shouldContinue() {
+    return true;
+  }
 
   private IProcess createProcess( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IPath location,

@@ -27,6 +27,9 @@ public final class CoreTexts extends NLS {
   public static String testSuite_waiting;
   public static String profiling_waiting;
 
+  public static String jdt_notFound_title;
+  public static String jdt_notFound_message;
+
   private static final String BUNDLE_NAME
     = CoreTexts.class.getPackage().getName() + ".coretexts"; //$NON-NLS-1$
 

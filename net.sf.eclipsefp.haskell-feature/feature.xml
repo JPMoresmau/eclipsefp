@@ -23,18 +23,6 @@ license. A copy of the BSD3 license is provided with this content
 and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICENSE
    </license>
 
-   <includes
-         id="org.eclipse.birt.chart"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.jdt"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.wst.web_ui.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="net.sf.eclipsefp.haskell.browser" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="net.sf.eclipsefp.haskell.compat" version="2.0.2" match="greaterOrEqual"/>
