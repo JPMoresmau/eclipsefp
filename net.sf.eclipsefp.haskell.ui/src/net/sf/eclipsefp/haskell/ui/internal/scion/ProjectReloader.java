@@ -7,7 +7,6 @@ import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * <p>Reload project when Cabal file changes</p>
@@ -18,9 +17,10 @@ public class ProjectReloader implements CabalFileChangeListener {
   public void cabalFileChanged( final IFile cabalF ) {
     final ScionInstance si = ScionPlugin.getScionInstance( cabalF );
 
-    Assert.isNotNull( si );
-    // setConfigure(true) is not needed since the cabal file will be more recent, but hey
-    BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true );
-    si.buildProject(buildOptions );
+    if (si!=null){
+      // setConfigure(true) is not needed since the cabal file will be more recent, but hey
+      BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true );
+      si.buildProject(buildOptions );
+    }
   }
 }
