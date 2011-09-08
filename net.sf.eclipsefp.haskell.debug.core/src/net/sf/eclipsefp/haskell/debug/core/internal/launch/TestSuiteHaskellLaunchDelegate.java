@@ -71,20 +71,30 @@ public class TestSuiteHaskellLaunchDelegate extends
     final File file = new File( fname );
     // final TestSuiteAndSession session = TestSuiteAndSession.parseFile( file );
 
-    Display.getDefault().syncExec( new Runnable() {
+    if (canShowJUnit()) {
+      Display.getDefault().syncExec( new Runnable() {
 
-      public void run() {
-        try {
-          IWorkbenchPage page = PlatformUI.getWorkbench()
-              .getActiveWorkbenchWindow().getActivePage();
-          page.showView( JUNIT_VIEW );
-          // JUnitCorePlugin.getModel().addTestRunSession( session );
-          JUnitModel.importTestRunSession( file );
-        } catch( CoreException e ) {
-          // Do nothing
+        public void run() {
+          try {
+            IWorkbenchPage page = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getActivePage();
+            page.showView( JUNIT_VIEW );
+            // JUnitCorePlugin.getModel().addTestRunSession( session );
+            JUnitModel.importTestRunSession( file );
+          } catch( CoreException e ) {
+            // Do nothing
+          }
         }
-      }
-    } );
+      } );
+    } else {
+      Display.getCurrent().syncExec( new Runnable() {
+
+        public void run() {
+          MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+              CoreTexts.jdt_notFound_title, CoreTexts.jdt_notFound_message );
+        }
+      } );
+    }
 
     // Always delete the file at the end
     new File( getFilename() ).delete();
@@ -93,8 +103,7 @@ public class TestSuiteHaskellLaunchDelegate extends
   /* (non-Javadoc)
    * @see net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate#shouldContinue()
    */
-  @Override
-  protected boolean shouldContinue() {
+  protected boolean canShowJUnit() {
     try {
       // Try to find JDT Core
       this.getClass().getClassLoader().loadClass( "org.eclipse.jdt.core.IJavaProject" ); //$NON-NLS-1$
@@ -105,12 +114,6 @@ public class TestSuiteHaskellLaunchDelegate extends
       // Everything is OK
       return true;
     } catch (Throwable t) {
-      Display.getCurrent().syncExec( new Runnable() {
-        public void run() {
-          MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-              CoreTexts.jdt_notFound_title, CoreTexts.jdt_notFound_message );
-        }
-      } );
       return false;
     }
   }
