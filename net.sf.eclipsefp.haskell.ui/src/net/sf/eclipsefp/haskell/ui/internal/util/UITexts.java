@@ -246,6 +246,8 @@ public final class UITexts extends NLS {
   public static String scion_preferences_title;
   public static String scion_delta_error;
 
+  public static String bw_console_title;
+
   public static String libraries_description;
   public static String libraries_add_title;
   public static String libraries_add_available_title;

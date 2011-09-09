@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -811,6 +813,22 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       } catch( ScionServerStartupException ex ) {
         reportServerStartupError( ex );
       }
+
+      HaskellConsole cbw=getBWHaskellConsole( project );
+      Writer outStreamBw = cbw.createOutputWriter();
+      String bwPath="D:\\dev\\haskell\\jp-github\\eclipsefp\\buildwrapper\\dist\\build\\buildwrapper\\buildwrapper.exe";
+      final BWFacade f=BuildWrapperPlugin.createFacade(project, bwPath, CabalImplementationManager.getCabalExecutable(), outStreamBw );
+      if (f!=null){
+        new Job("BuildWrapper "+project.getName()){
+          @Override
+          protected IStatus run( final IProgressMonitor arg0 ) {
+            f.synchronize();
+            f.build( new BuildOptions().setOutput( true ) );
+            return Status.OK_STATUS;
+          }
+        }.schedule();
+
+      }
     }
 
     return instance;
@@ -865,6 +883,11 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     return NLS.bind( UITexts.scion_console_title, projectName );
   }
 
+  private final String bwconsoleName ( final IProject project ) {
+    String projectName = project != null ? project.getName() : UITexts.noproject;
+    return NLS.bind( UITexts.bw_console_title, projectName );
+  }
+
   /** Spawn a built-in server build job */
   synchronized void spawnBuildJob() {
     if (internalBuilder == null) {
@@ -910,6 +933,22 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
    */
   private HaskellConsole getHaskellConsole(final IProject project) {
     final String consoleName = consoleName(project);
+    final IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+
+    for( IConsole c: mgr.getConsoles() ) {
+      if( c.getName().equals( consoleName ) ) {
+        return (HaskellConsole) c;
+      }
+    }
+
+    HaskellConsole hCon = new HaskellConsole( consoleName );
+
+    hCon.setWaterMarks( hConLowWater, hConHighWater );
+    return hCon;
+  }
+
+  private HaskellConsole getBWHaskellConsole(final IProject project) {
+    final String consoleName = bwconsoleName(project);
     final IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
 
     for( IConsole c: mgr.getConsoles() ) {
