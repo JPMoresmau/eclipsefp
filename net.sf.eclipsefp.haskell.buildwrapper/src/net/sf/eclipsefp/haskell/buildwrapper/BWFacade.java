@@ -5,17 +5,25 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
+import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.scion.types.Note;
+import net.sf.eclipsefp.haskell.scion.types.Note.Kind;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class BWFacade {
+public class BWFacade implements IBWFacade {
 	private static final String prefix="build-wrapper-json:";
 	
 	private String bwPath;
@@ -27,17 +35,60 @@ public class BWFacade {
 	
 	private Writer outStream;
 	
-	public synchronized void build(BuildOptions bo){
+	private IProject project;
+	
+	public synchronized void build(BuildOptions buildOptions){
+		BuildWrapperPlugin.deleteProblems(getProject());
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build");
-		command.add("--output="+bo.isOutput());
-		JSONArray obj=run(command,ARRAY);
+		command.add("--output="+buildOptions.isOutput());
+		JSONArray arr=run(command,ARRAY);
+		if (arr!=null && arr.length()>1){
+			JSONArray notes=arr.optJSONArray(1);
+			parseNotes(notes);
+		}
+	}
+	
+	private void parseNotes(JSONArray notes){
+		if (notes!=null){
+			try {
+				Set<IResource> ress=new HashSet<IResource>();
+				for (int a=0;a<notes.length();a++){
+					JSONObject o=notes.getJSONObject(a);
+					String sk=o.getString("s");
+					Kind k="Error".equalsIgnoreCase(sk)?Kind.ERROR:Kind.WARNING;
+					JSONObject ol=o.getJSONObject("l");
+					String f=ol.getString("f");
+					int line=ol.getInt("l");
+					int col=ol.getInt("c");
+					Location loc=new Location(f, line, col, line, col);
+					Note n=new Note(k,loc,o.getString("t"),"");
+					final IResource res=project.findMember(f);
+					if (res!=null){
+						if (ress.add(res)){
+							BuildWrapperPlugin.deleteProblems(res);
+						}
+						try {
+							n.applyAsMarker(res);
+						} catch (CoreException ce){
+							BuildWrapperPlugin.logError(BWText.process_apply_note_error, ce);
+						}
+					}
+				}
+			} catch (JSONException je){
+				BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
+			}
+		}
 	}
 	
 	public synchronized void synchronize(){
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("synchronize");
-		JSONArray files=run(command,ARRAY);
+		JSONArray arr=run(command,ARRAY);
+		if (arr!=null && arr.length()>1){
+			JSONArray notes=arr.optJSONArray(1);
+			parseNotes(notes);
+		}
 	}
 	
 	
@@ -55,7 +106,8 @@ public class BWFacade {
 			Process p=pb.start();
 			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF8"));
 			String l=br.readLine();
-			while (l!=null){
+			boolean goOn=true;
+			while (goOn && l!=null){
 				outStream.write(l);
 				outStream.write(PlatformUtil.NL);
 				outStream.flush();
@@ -66,8 +118,11 @@ public class BWFacade {
 					} catch (JSONException je){
 						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
 					}
+					goOn=false;
 				}
-				l=br.readLine();
+				if (goOn){
+					l=br.readLine();
+				}
 			}
 		} catch (IOException ioe){
 			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
@@ -120,7 +175,7 @@ public class BWFacade {
 		return outStream;
 	}
 
-
+	
 	public void setOutStream(Writer outStream) {
 		this.outStream = outStream;
 	}
@@ -150,4 +205,12 @@ public class BWFacade {
 			return new JSONObject(json);
 		}
 	};
+
+	public IProject getProject() {
+		return project;
+	}
+
+	public void setProject(IProject project) {
+		this.project = project;
+	}
 }

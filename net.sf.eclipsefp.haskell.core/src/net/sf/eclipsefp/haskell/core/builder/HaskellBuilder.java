@@ -2,10 +2,11 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -110,12 +111,18 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       mon.subTask( CoreTexts.haskellBuilder_compiling );
       SubProgressMonitor subMon = new SubProgressMonitor( mon, 85 );
       getProject().accept( new BuildVisitor( subMon ) );*/
-      ScionInstance si = ScionPlugin.getScionInstance( getProject() );
-      if (si != null ) {
-        BuildOptions buildOptions=new BuildOptions().setOutput(true).setRecompile(false);
-        si.buildProjectForWorkspace(mon, buildOptions);
+//      ScionInstance si = ScionPlugin.getScionInstance( getProject() );
+//      if (si != null ) {
+//        BuildOptions buildOptions=new BuildOptions().setOutput(true).setRecompile(false);
+//        si.buildProjectForWorkspace(mon, buildOptions);
+//      } else {
+//        new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
+//      }
+      IBWFacade f=BuildWrapperPlugin.getWorkspaceFacade( getProject(), mon );
+      if (f!=null){
+        f.build( new BuildOptions().setOutput(true).setRecompile(false) );
       } else {
-        new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
+        new Exception("IBWFacade == null").printStackTrace(); //$NON-NLS-1$
       }
     } finally {
       mon.done();

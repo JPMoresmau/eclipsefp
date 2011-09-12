@@ -1,16 +1,17 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
-Bundle-SymbolicName: net.sf.eclipsefp.haskell.buildwrapper
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.buildwrapper;singleton:=true
 Bundle-Version: 2.1.1
 Bundle-Activator: net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- net.sf.eclipsefp.haskell.util;bundle-version="2.1.1",
- net.sf.eclipsefp.haskell.scion.client;bundle-version="2.1.1",
- org.eclipse.core.resources;bundle-version="3.5.2"
+ net.sf.eclipsefp.haskell.util;bundle-version="2.1.1";visibility:=reexport,
+ net.sf.eclipsefp.haskell.scion.client;bundle-version="2.1.1";visibility:=reexport,
+ org.eclipse.core.resources;bundle-version="3.5.2",
+ org.eclipse.ui.ide;bundle-version="3.5.2"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsefp.haskell.buildwrapper

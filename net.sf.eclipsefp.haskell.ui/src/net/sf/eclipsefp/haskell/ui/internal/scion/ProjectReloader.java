@@ -2,8 +2,8 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -15,12 +15,20 @@ import org.eclipse.core.resources.IFile;
  */
 public class ProjectReloader implements CabalFileChangeListener {
   public void cabalFileChanged( final IFile cabalF ) {
-    final ScionInstance si = ScionPlugin.getScionInstance( cabalF );
+//    final ScionInstance si = ScionPlugin.getScionInstance( cabalF );
+//
+//    if (si!=null){
+//      // setConfigure(true) is not needed since the cabal file will be more recent, but hey
+//      BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true );
+//      si.buildProject(buildOptions );
+//
+//
+//    }
 
-    if (si!=null){
-      // setConfigure(true) is not needed since the cabal file will be more recent, but hey
-      BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true );
-      si.buildProject(buildOptions );
+    IBWFacade f=BuildWrapperPlugin.getJobFacade( cabalF.getProject() );
+    if (f!=null){
+      f.synchronize();
+      f.build( new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true ) );
     }
   }
 }

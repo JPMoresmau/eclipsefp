@@ -5,12 +5,18 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -20,7 +26,8 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle
  */
 public class BuildWrapperPlugin extends AbstractUIPlugin {
-
+	final static String PROBLEM_MARKER_ID = "net.sf.eclipsefp.haskell.core.problem";
+	
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.buildwrapper";
 
@@ -72,14 +79,31 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			f.setCabalFile(cf.getLocation().toOSString());
 			f.setWorkingDir(new File(p.getLocation().toOSString()));
 			f.setOutStream(outStream);
+			f.setProject(p);
 			facades.put(p, f);
 			return f;
 		}
 		return null;
 	}
 	
-	public static BWFacade getFacade(IProject p){
+	public static IBWFacade getFacade(IProject p){
 		return facades.get(p);
+	}
+	
+	public static IBWFacade getJobFacade(IProject p){
+		IBWFacade realF=getFacade(p);
+		if (realF!=null){
+			return new JobFacade(realF);
+		}
+		return null;
+	}
+	
+	public static IBWFacade getWorkspaceFacade(IProject p,IProgressMonitor monitor){
+		IBWFacade realF=getFacade(p);
+		if (realF!=null){
+			return new WorkspaceFacade(realF,monitor);
+		}
+		return null;
 	}
 	
 	 public static void logInfo(String message) {
@@ -106,5 +130,25 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 
 	  public static void logStatus(IStatus status) {
 	    StatusManager.getManager().handle(status);
+	  }
+	  
+	  /**
+	   * Delete all problem markers for a given file.
+	   *  
+	   * @param r A resource that should be a file.
+	   */
+	  public static void deleteProblems(IResource r) {
+	    if (!r.getWorkspace().isTreeLocked() && r.exists() && r.getProject().isOpen()) {
+	      try {
+	        if (r instanceof IFile) {
+	          r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+	        }
+	        r.deleteMarkers(PROBLEM_MARKER_ID, true, IResource.DEPTH_ZERO);
+	        r.deleteMarkers(ScionPlugin.ID_PROJECT_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+	      } catch (CoreException ex) {
+	        ScionPlugin.logError(BWText.error_deleteMarkers, ex);
+	        ex.printStackTrace();
+	      }
+	    }
 	  }
 }

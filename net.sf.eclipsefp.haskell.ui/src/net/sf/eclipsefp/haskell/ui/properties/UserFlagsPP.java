@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.ui.properties;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -152,10 +154,14 @@ public class UserFlagsPP extends PropertyPage implements
       try {
         project.setPersistentProperty( ScionPlugin.USERFLAGS_PROPERTY, flagsO.toString() );
 
-        ScionInstance instance=ScionPlugin.getScionInstance( project );
+        /*ScionInstance instance=ScionPlugin.getScionInstance( project );
         if (instance !=null){
           BuildOptions buildOptions=new BuildOptions().setOutput(true).setRecompile(true).setConfigure( true );
           instance.buildProject( buildOptions );
+        }*/
+        IBWFacade f=BuildWrapperPlugin.getJobFacade( project );
+        if (f!=null){
+          f.build( new BuildOptions().setOutput(true).setRecompile(true).setConfigure( true ) );
         }
 
       } catch (CoreException ce){

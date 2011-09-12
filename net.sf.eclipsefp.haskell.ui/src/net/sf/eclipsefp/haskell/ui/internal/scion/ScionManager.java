@@ -2,12 +2,10 @@ package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.File;
 import java.io.Writer;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -21,8 +19,6 @@ import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.CabalComponentResolver;
 import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
@@ -424,7 +420,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             display.asyncExec( new Runnable() {
               public void run() {
                 Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-                builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+                //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
                 builder.setPriority( Job.DECORATE );
                 builder.schedule();
               }
@@ -440,7 +436,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
         display.asyncExec( new Runnable() {
           public void run() {
             Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-            builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+            //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
             builder.setPriority( Job.DECORATE );
             builder.schedule();
           }
@@ -596,11 +592,16 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                       prov.disconnect( cabalF );
                     }
                   }
-                  final ScionInstance si = ScionPlugin.getScionInstance( f );
+                  /* final ScionInstance si = ScionPlugin.getScionInstance( f );
                   if (si != null) {
                     BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
                     si.buildProject( buildOptions);
+                  }*/
+                  IBWFacade fa=BuildWrapperPlugin.getJobFacade( f.getProject() );
+                  if (fa!=null){
+                    fa.build( new BuildOptions().setOutput(false) );
                   }
+
                   return false;
                 } else if (f.equals( cabalF )){
                     stopInstance( f );
@@ -793,7 +794,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     ScionInstance instance = ScionPlugin.getScionInstance( project );
 
     if ( instance == null ) {
-      HaskellConsole c = getHaskellConsole( project );
+      /*HaskellConsole c = getHaskellConsole( project );
       Writer outStream = c.createOutputWriter();
 
       instance = ScionPlugin.createScionInstance( project, outStream,
@@ -813,12 +814,12 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
       } catch( ScionServerStartupException ex ) {
         reportServerStartupError( ex );
       }
-
+       */
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
       String bwPath="D:\\dev\\haskell\\jp-github\\eclipsefp\\buildwrapper\\dist\\build\\buildwrapper\\buildwrapper.exe";
-      final BWFacade f=BuildWrapperPlugin.createFacade(project, bwPath, CabalImplementationManager.getCabalExecutable(), outStreamBw );
-      if (f!=null){
+      BuildWrapperPlugin.createFacade(project, bwPath, CabalImplementationManager.getCabalExecutable(), outStreamBw );
+      /*if (f!=null){
         new Job("BuildWrapper "+project.getName()){
           @Override
           protected IStatus run( final IProgressMonitor arg0 ) {
@@ -828,7 +829,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
           }
         }.schedule();
 
-      }
+      }*/
     }
 
     return instance;
