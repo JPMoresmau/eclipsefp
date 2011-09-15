@@ -5,11 +5,13 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
@@ -49,10 +51,19 @@ public class GHCSystemLibrary implements ITreeElement {
       }
 
     }*/
-    ScionInstance si=ScionPlugin.getScionInstance( project );
+    /*ScionInstance si=ScionPlugin.getScionInstance( project );
     if (si!=null && si.getPackagesByDB()!=null){
       for (String db:si.getPackagesByDB().keySet()){
         result.add( new GHCPackageConf( this, new Path(db), si.getPackagesByDB().get( db ) ) );
+      }
+    }*/
+    BWFacade f=BuildWrapperPlugin.getFacade( project );
+    if (f!=null){
+      Map<String,CabalPackage[]> dbm= f.getPackagesByDB();
+      if (dbm!=null){
+        for (String db:dbm.keySet()){
+          result.add( new GHCPackageConf( this, new Path(db), dbm.get( db ) ) );
+        }
       }
     }
     return result;

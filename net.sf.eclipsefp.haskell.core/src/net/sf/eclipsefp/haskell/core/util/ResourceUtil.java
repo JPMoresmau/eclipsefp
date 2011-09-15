@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
@@ -53,9 +55,21 @@ public class ResourceUtil {
   static List<IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) throws CoreException {
     ArrayList<IFile> result = new ArrayList<IFile>();
     if (project.hasNature( HaskellNature.NATURE_ID ) ){
-      ScionInstance instance=ScionPlugin.getScionInstance( project );
+      /*ScionInstance instance=ScionPlugin.getScionInstance( project );
       if (instance!=null){
         for (Component c:instance.getComponents()){
+          if (c.isBuildable() &&  c.getType().equals( type )){
+            String name=FileUtil.makeExecutableName( c.getName() );
+            IFile f=project.getFile( ScionPlugin.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
+            if (f.exists()){
+              result.add( f );
+            }
+          }
+        }
+      }*/
+      BWFacade facade=BuildWrapperPlugin.getFacade( project );
+      if (facade!=null){
+        for (Component c:facade.getComponents()){
           if (c.isBuildable() &&  c.getType().equals( type )){
             String name=FileUtil.makeExecutableName( c.getName() );
             IFile f=project.getFile( ScionPlugin.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
@@ -337,7 +351,8 @@ public class ResourceUtil {
     Collection<String> ips=getImportPackages(files);
     Collection<String> hidden=new HashSet<String>();
     if (ips.size()>0){
-      Map<String,CabalPackage[]> pkgs=ScionPlugin.getScionInstance( files[0] ).getPackagesByDB();
+      Map<String,CabalPackage[]> pkgs=BuildWrapperPlugin.getFacade( files[0].getProject() ).getPackagesByDB();
+        //ScionPlugin.getScionInstance( files[0] ).getPackagesByDB();
       if (pkgs!=null){
         for (CabalPackage[] cps:pkgs.values()){
           for (CabalPackage cp:cps){

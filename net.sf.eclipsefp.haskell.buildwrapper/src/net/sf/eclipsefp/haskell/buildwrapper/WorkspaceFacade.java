@@ -1,9 +1,13 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
+import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
+import net.sf.eclipsefp.haskell.scion.types.Component;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -58,4 +62,14 @@ public class WorkspaceFacade implements IBWFacade {
 		}
 	}
 
+	public List<Component> getComponents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Map<String, CabalPackage[]> getPackagesByDB() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

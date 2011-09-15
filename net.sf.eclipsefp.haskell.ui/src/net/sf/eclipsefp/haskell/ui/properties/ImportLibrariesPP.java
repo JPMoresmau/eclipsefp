@@ -3,13 +3,14 @@ package net.sf.eclipsefp.haskell.ui.properties;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -58,7 +59,8 @@ public class ImportLibrariesPP extends PropertyPage
     container.setLayout( layout );
 
 
-    ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
+    //ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
+    BWFacade f=BuildWrapperPlugin.getFacade( ( IProject )getElement() );
 
     tablePart.setMinimumSize( 150, 200 );
     tablePart.createControl( container, SWT.BORDER, 2 );
@@ -69,17 +71,17 @@ public class ImportLibrariesPP extends PropertyPage
     ImportLibrariesLabelProvider lp = new ImportLibrariesLabelProvider();
     tablePart.getTableViewer().setLabelProvider( lp );
 
-    if (si!=null && si.getPackagesByDB()!=null){
+    if (f!=null && f.getPackagesByDB()!=null){
       List<CabalPackage> list=new ArrayList<CabalPackage>();
-      for (CabalPackage[] cps:si.getPackagesByDB().values()){
+      for (CabalPackage[] cps:f.getPackagesByDB().values()){
         for (CabalPackage cp:cps){
           if (cp.getComponents().length>0){
             list.add( cp );
           }
         }
       }
-      tablePart.setAllPackages( si.getPackagesByDB().values() );
-      tablePart.setComponents( si.getComponents() );
+      tablePart.setAllPackages( f.getPackagesByDB().values() );
+      tablePart.setComponents( f.getComponents() );
       tablePart.getTableViewer().setInput( list );
     }
 
@@ -103,8 +105,9 @@ public class ImportLibrariesPP extends PropertyPage
   public boolean performOk() {
 //    list.save();
 
-    final ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
-    if (si!=null && si.getPackagesByDB()!=null) {
+    //final ScionInstance si=ScionPlugin.getScionInstance( ( IProject )getElement() );
+    final BWFacade fa=BuildWrapperPlugin.getFacade( ( IProject )getElement()  );
+    if (fa!=null && fa.getPackagesByDB()!=null) {
       try {
         IFile f=ScionInstance.getCabalFile(  ( IProject )getElement() );
         IDocumentProvider prov=new TextFileDocumentProvider();
@@ -112,7 +115,7 @@ public class ImportLibrariesPP extends PropertyPage
         IDocument doc=prov.getDocument( f );
         PackageDescription pd=PackageDescriptionLoader.load( f );
 
-        for (CabalPackage[] cps:si.getPackagesByDB().values()){
+        for (CabalPackage[] cps:fa.getPackagesByDB().values()){
           for (CabalPackage cp:cps){
             // removed
             if (cp.getComponents().length>0 && tablePart.getRemoved().contains( cp.getName())){

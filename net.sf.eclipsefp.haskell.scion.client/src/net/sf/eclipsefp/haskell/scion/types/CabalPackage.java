@@ -17,7 +17,7 @@ public class CabalPackage {
 	private String version;
 	private boolean exposed;
 	private Component[] components;
-	private Set<String> modules;
+	private Set<String> modules=new HashSet<String>();
 	
 	public CabalPackage(){
 		

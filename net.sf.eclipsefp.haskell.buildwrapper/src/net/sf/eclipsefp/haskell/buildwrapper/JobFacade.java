@@ -1,5 +1,8 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -9,6 +12,8 @@ import org.eclipse.osgi.util.NLS;
 
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
+import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
+import net.sf.eclipsefp.haskell.scion.types.Component;
 
 public class JobFacade implements IBWFacade {
 	private IBWFacade realFacade;
@@ -55,6 +60,16 @@ public class JobFacade implements IBWFacade {
 	      buildJob.setRule( getProject() );
 	      buildJob.setPriority(Job.BUILD);
 	      buildJob.schedule();
+	}
+	
+	public List<Component> getComponents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Map<String, CabalPackage[]> getPackagesByDB() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public IProject getProject() {

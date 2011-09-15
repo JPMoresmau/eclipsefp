@@ -86,11 +86,11 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
-	public static IBWFacade getFacade(IProject p){
+	public static BWFacade getFacade(IProject p){
 		return facades.get(p);
 	}
 	
-	public static IBWFacade getJobFacade(IProject p){
+	public static JobFacade getJobFacade(IProject p){
 		IBWFacade realF=getFacade(p);
 		if (realF!=null){
 			return new JobFacade(realF);
@@ -98,7 +98,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
-	public static IBWFacade getWorkspaceFacade(IProject p,IProgressMonitor monitor){
+	public static WorkspaceFacade getWorkspaceFacade(IProject p,IProgressMonitor monitor){
 		IBWFacade realF=getFacade(p);
 		if (realF!=null){
 			return new WorkspaceFacade(realF,monitor);
