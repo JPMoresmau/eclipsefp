@@ -6,9 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-
+import net.sf.eclipsefp.haskell.util.FileUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -17,7 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
@@ -71,7 +72,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 
 	public static BWFacade createFacade(IProject p,String bwPath,String cabalPath,Writer outStream){
 
-		IFile cf=ScionInstance.getCabalFile(p);
+		IFile cf=getCabalFile(p);
 		if (cf!=null){
 			BWFacade f=new BWFacade();
 			f.setBwPath(bwPath);
@@ -151,4 +152,49 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	      }
 	    }
 	  }
+	  
+	  /**
+	   * cache project cabal file if cabal file doesn't have same name than project
+	   */
+	  private static Map<IProject,IFile> m=new HashMap<IProject,IFile>();
+	  /**
+	   * Generate the Cabal project file's name from the Eclipse project's name.
+	   * 
+	   * @param project The Eclipse project
+	   * @return The "&lt;project&gt;.cabal" string.
+	   */
+	  public static IFile getCabalFile(final IProject project) {
+	    IFile f=project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
+	    if (f==null || !f.exists()){ // oh oh
+	    	IFile f2=m.get(project);
+	    	if (f2==null){
+	    		try {
+	    			// find a cabal file
+		    		IResource[] children=project.members();
+		    		int cnt=0;
+		    		for (IResource child:children){
+		    			if (child instanceof IFile){
+		    				 if ( child.getFileExtension() != null &&
+		    						 child.getFileExtension().equalsIgnoreCase(FileUtil.EXTENSION_CABAL)){
+		    					 f=(IFile)child;
+		    					 cnt++;
+		    				 }
+		    			}
+		    		}
+		    		// cnt=1 would mean only one file, we can live with that
+		    		if (cnt>1){
+		    			// log error, we've taken a random cabal file
+		    			logError(NLS.bind(BWText.project_cabal_duplicate, project.getName()),null);
+		    		}
+		    		m.put(project, f);
+		    	} catch (CoreException ce){
+		    		logError(NLS.bind(BWText.project_members_list_error, project.getName()), ce);
+		    	}
+	    	} else {
+	    		f=f2;
+	    	}
+	    }
+	    return f;
+	  }
+	  
 }

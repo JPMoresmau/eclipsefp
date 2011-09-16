@@ -1,12 +1,12 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -36,7 +36,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
 
   public void apply( final IDocument document ) {
     IProject p=marker.getResource().getProject();
-    IFile f=ScionInstance.getCabalFile( p );
+    IFile f=BuildWrapperPlugin.getCabalFile( p );
     IDocumentProvider prov=new TextFileDocumentProvider();
     try {
       prov.connect( f );

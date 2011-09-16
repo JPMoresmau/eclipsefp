@@ -11,9 +11,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
-import net.sf.eclipsefp.haskell.scion.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 
 public class JobFacade implements IBWFacade {
 	private IBWFacade realFacade;

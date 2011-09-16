@@ -5,7 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 
 import java.util.List;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -58,7 +58,7 @@ public class ChangeCreator {
   public static Change createRenameMoveFolderCabalChange(final IProject project, final IPath oldPath, final IPath newPath) {
     // Cabal reference
     String newCabalFile = Util.newSourceFolderCabalFile( project, oldPath, newPath );
-    IFile cabalF = ScionInstance.getCabalFile( project );
+    IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
     TextFileDocumentProvider provider = new TextFileDocumentProvider();
     TextFileChange cabalChanges = null;
     try {
@@ -111,7 +111,7 @@ public class ChangeCreator {
 
       // Cabal reference
       String newCabalFile = Util.newCabalFile( file.getProject(), file, newModule );
-      IFile cabalF = ScionInstance.getCabalFile( file.getProject() );
+      IFile cabalF = BuildWrapperPlugin.getCabalFile( file.getProject() );
       TextFileDocumentProvider provider = new TextFileDocumentProvider();
       TextFileChange cabalChanges = null;
       try {
@@ -156,7 +156,7 @@ public class ChangeCreator {
 
       // Cabal reference
       String newCabalFile = Util.newRemoveModuleCabalFile( file.getProject(), file );
-      IFile cabalF = ScionInstance.getCabalFile( file.getProject() );
+      IFile cabalF = BuildWrapperPlugin.getCabalFile( file.getProject() );
       TextFileDocumentProvider provider = new TextFileDocumentProvider();
       TextFileChange cabalChanges = null;
       try {

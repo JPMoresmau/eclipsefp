@@ -2,7 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.views.outline;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -32,7 +32,8 @@ public class OutlineLabelProvider extends LabelProvider {
   @Override
   public Image getImage( final Object element ) {
     if (element instanceof OutlineDef){
-      String key=imageKeysByType.get( ((OutlineDef )element).getType());
+
+      String key=imageKeysByType.get( ((OutlineDef )element).getTypes().iterator().next());
       if (key!=null){
         return HaskellUIImages.getImage( key );
       }

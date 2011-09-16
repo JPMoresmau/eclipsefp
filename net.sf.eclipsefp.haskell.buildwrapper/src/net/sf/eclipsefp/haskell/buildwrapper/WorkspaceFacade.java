@@ -4,10 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
-import net.sf.eclipsefp.haskell.scion.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +35,7 @@ public class WorkspaceFacade implements IBWFacade {
 		} catch (InterruptedException ie){
 			// noop
 		}catch (InvocationTargetException ie){
-			ScionPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
 		}
 
 	}
@@ -58,7 +57,7 @@ public class WorkspaceFacade implements IBWFacade {
 		} catch (InterruptedException ie){
 			// noop
 		}catch (InvocationTargetException ie){
-			ScionPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
 		}
 	}
 

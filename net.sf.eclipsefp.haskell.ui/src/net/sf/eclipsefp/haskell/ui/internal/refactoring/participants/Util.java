@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -38,7 +38,7 @@ public class Util {
     HashSet<IPath> paths = new HashSet<IPath>();
 
     try {
-      IFile cabalF = ScionInstance.getCabalFile( project );
+      IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
       PackageDescription pd = PackageDescriptionLoader.load( cabalF );
       List<PackageDescriptionStanza> lpds = pd.getStanzas();
       for( PackageDescriptionStanza pds: lpds ) {
@@ -64,7 +64,7 @@ public class Util {
     HashSet<IPath> paths = new HashSet<IPath>();
 
     try {
-      IFile cabalF = ScionInstance.getCabalFile( project );
+      IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
       PackageDescription pd = PackageDescriptionLoader.load( cabalF );
       List<PackageDescriptionStanza> lpds = pd.getStanzas();
       for( PackageDescriptionStanza pds: lpds ) {
@@ -257,7 +257,7 @@ public class Util {
     TextFileDocumentProvider provider = new TextFileDocumentProvider();
     String oldModuleName = getModuleName( oldFile );
 
-    IFile cabalF = ScionInstance.getCabalFile( project );
+    IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
     PackageDescription pd = null;
     try {
       pd = PackageDescriptionLoader.load( cabalF );
@@ -342,7 +342,7 @@ public class Util {
     TextFileDocumentProvider provider = new TextFileDocumentProvider();
     String oldModuleName = getModuleName( oldFile );
 
-    IFile cabalF = ScionInstance.getCabalFile( project );
+    IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
     PackageDescription pd = null;
     try {
       pd = PackageDescriptionLoader.load( cabalF );
@@ -418,7 +418,7 @@ public class Util {
   public static String newSourceFolderCabalFile(final IProject project,
       final IPath oldPath, final IPath newPath) {
     TextFileDocumentProvider provider = new TextFileDocumentProvider();
-    IFile cabalF = ScionInstance.getCabalFile( project );
+    IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
     PackageDescription pd = null;
     try {
       pd = PackageDescriptionLoader.load( cabalF );

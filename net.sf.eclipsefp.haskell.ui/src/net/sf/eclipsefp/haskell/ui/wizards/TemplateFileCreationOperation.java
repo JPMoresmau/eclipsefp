@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
@@ -70,7 +70,7 @@ public class TemplateFileCreationOperation implements IRunnableWithProgress {
         onlyAdd=true;
       }
       IProject p=generatedFile.getProject();
-      IFile f=ScionInstance.getCabalFile( p );
+      IFile f=BuildWrapperPlugin.getCabalFile( p );
       IDocumentProvider prov=new TextFileDocumentProvider();
       prov.connect( f );
       try {

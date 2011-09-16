@@ -2,11 +2,11 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.Arrays;
 import java.util.Vector;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.scion.types.Component;
-import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;

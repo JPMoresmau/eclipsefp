@@ -4,10 +4,9 @@ package net.sf.eclipsefp.haskell.core.builder;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -52,7 +51,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   }
 
   private IFile getCabalFile() {
-    return ScionInstance.getCabalFile( getProject() );
+    return BuildWrapperPlugin.getCabalFile( getProject() );
   }
 
   // helping methods

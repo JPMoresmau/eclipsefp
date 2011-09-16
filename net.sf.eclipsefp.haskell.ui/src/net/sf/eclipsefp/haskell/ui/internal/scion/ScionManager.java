@@ -6,6 +6,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -25,7 +26,6 @@ import net.sf.eclipsefp.haskell.scion.client.ScionEventType;
 import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.scion.exceptions.ScionServerStartupException;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
@@ -558,7 +558,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             if( delta.getKind() == IResourceDelta.REMOVED ) {
               if( delta.getResource() instanceof IFile){
                 IFile f = ( IFile )delta.getResource();
-                IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
+                IFile cabalF = BuildWrapperPlugin.getCabalFile( f.getProject() );
                 if(FileUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
                   // System.out.println(delta.getFullPath());
 
@@ -711,7 +711,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
             if( delta.getKind() == IResourceDelta.CHANGED ) {
               if( delta.getResource() instanceof IFile ) {
                 IFile f = ( IFile )delta.getResource();
-                IFile cabalF = ScionInstance.getCabalFile( f.getProject() );
+                IFile cabalF = BuildWrapperPlugin.getCabalFile( f.getProject() );
                 if( f.equals( cabalF ) ) {
                   for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
                     l.cabalFileChanged( f );

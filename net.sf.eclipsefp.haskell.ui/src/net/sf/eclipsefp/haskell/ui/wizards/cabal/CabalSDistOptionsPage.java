@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -87,7 +87,7 @@ public class CabalSDistOptionsPage extends WizardPage implements PropertyChangeL
   private void getFileNames(){
     fileNamesByProjectPaths=new HashMap<String,String>();
     for (IProject prj:projects){
-      IFile cf=ScionInstance.getCabalFile( prj);
+      IFile cf=BuildWrapperPlugin.getCabalFile( prj);
       try {
         PackageDescription pd=PackageDescriptionLoader.load( cf );
         if (pd.getStanzas().size()>0){

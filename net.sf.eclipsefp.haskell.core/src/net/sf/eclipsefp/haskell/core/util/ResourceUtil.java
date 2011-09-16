@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
@@ -24,11 +27,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
-import net.sf.eclipsefp.haskell.scion.types.Component;
-import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -179,7 +178,7 @@ public class ResourceUtil {
 	  try {
   	  if( project.hasNature( HaskellNature.NATURE_ID ) ) {
 
-        IFile f=ScionInstance.getCabalFile( project );
+        IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
         Collection<IContainer> ret=new ArrayList<IContainer>();
@@ -278,7 +277,7 @@ public class ResourceUtil {
     */
     try {
       if( project.hasNature( HaskellNature.NATURE_ID ) ) {
-        IFile f=ScionInstance.getCabalFile( project );
+        IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         for (String src:pd.getStanzasBySourceDir().keySet()){
 
@@ -312,7 +311,7 @@ public class ResourceUtil {
     try {
       if(project.exists() && project.hasNature( HaskellNature.NATURE_ID ) ) {
 
-        IFile f=ScionInstance.getCabalFile( project );
+        IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         for (String src:pd.getStanzasBySourceDir().keySet()){
           if (src!=null && src.equals( "." )) { //$NON-NLS-1$
@@ -408,7 +407,7 @@ public class ResourceUtil {
     try {
       if( project.hasNature( HaskellNature.NATURE_ID ) ) {
 
-        IFile f=ScionInstance.getCabalFile( project );
+        IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
 

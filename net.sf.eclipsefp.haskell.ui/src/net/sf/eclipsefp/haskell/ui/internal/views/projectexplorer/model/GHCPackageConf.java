@@ -5,7 +5,7 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.runtime.IPath;

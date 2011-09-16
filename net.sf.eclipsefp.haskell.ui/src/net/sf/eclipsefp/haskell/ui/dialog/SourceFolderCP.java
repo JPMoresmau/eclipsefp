@@ -3,10 +3,10 @@ package net.sf.eclipsefp.haskell.ui.dialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -40,7 +40,7 @@ class SourceFolderCP implements ITreeContentProvider {
     }*/
     if (parentElement instanceof IProject){
       IProject project =(IProject)parentElement;
-      IFile f=ScionInstance.getCabalFile(project  );
+      IFile f=BuildWrapperPlugin.getCabalFile(project  );
       try {
         PackageDescription pd=PackageDescriptionLoader.load(f);
         for (String sourcePath:pd.getStanzasBySourceDir().keySet()){

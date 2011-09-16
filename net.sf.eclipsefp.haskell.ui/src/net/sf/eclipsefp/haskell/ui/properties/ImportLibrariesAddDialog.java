@@ -2,8 +2,8 @@ package net.sf.eclipsefp.haskell.ui.properties;
 
 import java.util.Collection;
 import java.util.List;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
-import net.sf.eclipsefp.haskell.scion.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;

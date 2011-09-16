@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -21,8 +22,6 @@ import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -99,8 +98,8 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   public IFile addFile(final String module,final String source) {
 
     try {
-      IFile cabal=ScionInstance.getCabalFile( project );
-      waitForScion(cabal);
+      IFile cabal=BuildWrapperPlugin.getCabalFile( project );
+      //waitForScion(cabal);
       PackageDescription pd=PackageDescriptionLoader.load(cabal);
       Map<String,List<PackageDescriptionStanza>> m=pd.getStanzasBySourceDir();
       Map.Entry<String,List<PackageDescriptionStanza>> e=m.entrySet().iterator().next();
@@ -118,10 +117,10 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
         mco.setGeneratedFile( f );
         mco.run( null );
       }
-      waitForScion(f);
+     // waitForScion(f);
      // waitForAutoBuild();
-      ScionPlugin.getScionInstance( f ).loadFile( f );
-      waitForScion(f);
+     // ScionPlugin.getScionInstance( f ).loadFile( f );
+     // waitForScion(f);
       checkProblems();
 
       return f;
@@ -133,22 +132,22 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   }
 
 
-  public static void waitForScion(final IResource r) throws CoreException {
-    IJobManager jobMan = Job.getJobManager();
-    Object family=ScionPlugin.getScionInstance( r );
-    if (family!=null){
-      boolean retry = true;
-      while( retry ) {
-        try {
-          jobMan.join( family, null );
-
-          retry = false;
-        } catch (Exception exc) {
-          // ignore and retry
-        }
-      }
-    }
-  }
+//  public static void waitForScion(final IResource r) throws CoreException {
+//    IJobManager jobMan = Job.getJobManager();
+//    Object family=ScionPlugin.getScionInstance( r );
+//    if (family!=null){
+//      boolean retry = true;
+//      while( retry ) {
+//        try {
+//          jobMan.join( family, null );
+//
+//          retry = false;
+//        } catch (Exception exc) {
+//          // ignore and retry
+//        }
+//      }
+//    }
+//  }
 
   // interface methods of TestCase
   ////////////////////////////////
@@ -194,8 +193,8 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
     project = wsRoot.getProject( PROJECT_NAME );
 
-    IFile cabal=ScionInstance.getCabalFile( project );
-    waitForScion(cabal);
+    //IFile cabal=BuildWrapperPlugin.getCabalFile( project );
+    //waitForScion(cabal);
 
     checkProblems();
   }
@@ -203,15 +202,15 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
   @Override
   protected void tearDown() throws Exception {
     try {
-      waitForScion(project);
-      ScionInstance si=ScionPlugin.getScionInstance( project );
+      //waitForScion(project);
+      //ScionInstance si=ScionPlugin.getScionInstance( project );
       project.close( new NullProgressMonitor() );
-      waitForScion(project);
-      synchronized(this){
+      //waitForScion(project);
+      /*synchronized(this){
         while (!si.isStopped()){
           wait(100);
         }
-      }
+      }*/
       project.delete( true, true, null );
     } finally {
       super.tearDown();

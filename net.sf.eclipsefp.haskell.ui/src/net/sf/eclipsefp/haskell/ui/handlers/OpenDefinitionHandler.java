@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
@@ -174,7 +175,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
         // TODO should we also check on the version
         if (p.hasNature(HaskellNature.NATURE_ID) && p.getName().equals( packageName )){
-          IFile f=ScionInstance.getCabalFile( project );
+          IFile f=BuildWrapperPlugin.getCabalFile( project );
           PackageDescription pd=PackageDescriptionLoader.load(f);
           IResource r=null;
           for (String src:pd.getStanzasBySourceDir().keySet()){

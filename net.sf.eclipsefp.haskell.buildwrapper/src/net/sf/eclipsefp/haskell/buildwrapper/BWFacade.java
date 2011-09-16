@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,16 +13,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
-import net.sf.eclipsefp.haskell.scion.types.Component;
-import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.Note;
-import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
-import net.sf.eclipsefp.haskell.scion.types.Note.Kind;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -146,6 +149,30 @@ public class BWFacade implements IBWFacade {
 		return packageDB;
 	}
 	
+	public List<OutlineDef> outline(IFile file){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("outline");
+		command.add("--file="+path);
+		JSONArray arr=run(command,ARRAY);
+		List<OutlineDef> cps=new ArrayList<OutlineDef>();
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				parseNotes(notes);
+			}
+			JSONArray objs=arr.optJSONArray(0);
+			for (int a=0;a<objs.length();a++){
+				try {
+					cps.add(new OutlineDef(file,objs.getJSONObject(a)));
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
+				}
+			}
+		}
+		return cps;
+	}
+	
 	private void parseNotes(JSONArray notes){
 		if (notes!=null){
 			try {
@@ -188,7 +215,7 @@ public class BWFacade implements IBWFacade {
 				buildable=obj.getBoolean("Executable");
 				return new Component(ComponentType.EXECUTABLE, obj.getString("e"), getCabalFile(), buildable);
 			} else if (obj.has("TestSuite")){
-				buildable=obj.getBoolean("Executable");
+				buildable=obj.getBoolean("TestSuite");
 				return new Component(ComponentType.TESTSUITE, obj.getString("t"), getCabalFile(), buildable);
 			}
 		} catch (JSONException je){
@@ -226,7 +253,6 @@ public class BWFacade implements IBWFacade {
 	}
 	
 
-	
 	
 	private <T> T run(LinkedList<String> args,JSONFactory<T> f){
 		args.addFirst(bwPath);

@@ -14,8 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import net.sf.eclipsefp.haskell.scion.types.Component;
-import net.sf.eclipsefp.haskell.scion.types.Component.ComponentType;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 
 /** <p>The root of the package description model, represents the contents of a
   * <code>.cabal</code> file.</p>

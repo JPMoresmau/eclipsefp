@@ -9,9 +9,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -51,7 +51,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
   public void run( final IAction action ) {
     if (project != null) {
       try {
-        final IFile cabalFile = ScionInstance.getCabalFile( project );
+        final IFile cabalFile = BuildWrapperPlugin.getCabalFile( project );
         // Run the command
         //String[] cmdLine = new String[] { SOURCEGRAPH, cabalFile.getRawLocation().toOSString() };
         //Process p = Runtime.getRuntime().exec(cmdLine);

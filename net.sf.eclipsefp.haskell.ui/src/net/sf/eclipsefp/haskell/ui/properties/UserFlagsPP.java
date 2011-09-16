@@ -4,13 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -57,7 +56,7 @@ public class UserFlagsPP extends PropertyPage implements
     container.setLayout( layout );
 
     IProject project=( IProject )getElement();
-    IFile f=ScionInstance.getCabalFile( project );
+    IFile f=BuildWrapperPlugin.getCabalFile( project );
     if (f!=null && f.exists()){
       try {
         String currentProp=project.getPersistentProperty( ScionPlugin.USERFLAGS_PROPERTY );

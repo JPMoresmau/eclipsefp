@@ -5,25 +5,24 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
-import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineCP;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSystemLibrary;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -54,15 +53,15 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // if we have a Haskell source file, we show the same content as outline
         // underneath
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
-          ScionInstance si = ScionPlugin.getScionInstance( f );
+          BWFacade si = BuildWrapperPlugin.getFacade( f.getProject() );//ScionPlugin.getScionInstance( f );
           if (si != null) {
             List<OutlineDef> outlineDefs = si.outline( f );
-            OutlineCP cp = new OutlineCP();
-            cp.inputChanged( null, null, outlineDefs );
+            //OutlineCP cp = new OutlineCP();
+            //cp.inputChanged( null, null, outlineDefs );
             for( OutlineDef def : outlineDefs ) {
-              if( def.getParentID() == null ) {
-                result.add( new ProjectExplorerOutlineDef( f, def, cp ) );
-              }
+              //if( def.getParentID() == null ) {
+                result.add( new ProjectExplorerOutlineDef( f, def )  );
+              //}
             }
           }
         }

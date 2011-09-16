@@ -1,10 +1,16 @@
-package net.sf.eclipsefp.haskell.scion.types;
+package net.sf.eclipsefp.haskell.buildwrapper.types;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
 import org.eclipse.core.resources.IFile;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,41 +63,42 @@ public class OutlineDef {
 		}
 	};
 	
-	private OutlineDefType type=OutlineDefType.TYPE;
+	private Set<OutlineDefType> types=new HashSet<OutlineDefType>();
 	private String name;
 	private Location loc;
-	private Location block;
-	private String parentID;
+	
+	private List<OutlineDef> children=new ArrayList<OutlineDef>();
 	
 	public OutlineDef(String name, OutlineDefType type, Location loc, Location block) {
 		super();
 		this.name = name;
-		this.type = type;
+		this.types.add(type);
 		this.loc = loc;
-		this.block=block;
 	}
 	
 	public OutlineDef(IFile f,JSONObject obj) throws JSONException{
-		this.name=obj.getString("name");
-		type=parseType(obj);
-		this.loc=new Location(f,obj.getJSONObject("location"));
-		JSONObject b=obj.optJSONObject("block");
-		if (b!=null){
-			this.block=new Location(f,b);
+		this.name=obj.getString("n");
+		JSONArray arr=obj.getJSONArray("t");
+		for (int a=0;a<arr.length();a++){
+			types.add(OutlineDefType.valueOf(arr.getString(a).toUpperCase(Locale.ENGLISH)));
 		}
-		JSONObject parent=obj.optJSONObject("parent");
-		if (parent!=null){
-			this.parentID=parseType(parent).toString()+":"+parent.getString("name");
+		this.loc=new Location(f,obj.getJSONArray("l"));
+		arr=obj.getJSONArray("c");
+		for (int a=0;a<arr.length();a++){
+			children.add(new OutlineDef(f,arr.getJSONObject(a)));
 		}
 	}
 
-	
-	public String getID(){
-		return type.toString()+":"+name;
+	public List<OutlineDef> getChildren() {
+		return children;
 	}
 	
-	public OutlineDefType getType() {
-		return type;
+	public String getID(){
+		return types.toString()+":"+name;
+	}
+	
+	public Set<OutlineDefType> getTypes() {
+		return types;
 	}
 
 	public String getName() {
@@ -101,18 +108,12 @@ public class OutlineDef {
 	public Location getLocation() {
 		return loc;
 	}
-	
-	public Location getBlock() {
-		return block;
-	}
+
 	
 	@Override
 	public String toString() {
 		return getName();
 	}
 
-	public String getParentID() {
-		return parentID;
-	}
 	
 }

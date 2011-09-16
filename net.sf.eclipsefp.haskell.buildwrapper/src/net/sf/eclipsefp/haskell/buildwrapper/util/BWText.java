@@ -17,6 +17,10 @@ public class BWText extends NLS {
   public static String        process_parse_component_error;
   public static String        process_parse_package_error;
   public static String        process_parse_path_error;
+  public static String		  process_parse_outline_error;
+  
+  public static String        project_members_list_error;
+  public static String        project_cabal_duplicate;
   
   public static String        job_build;
   public static String        job_synchronize;

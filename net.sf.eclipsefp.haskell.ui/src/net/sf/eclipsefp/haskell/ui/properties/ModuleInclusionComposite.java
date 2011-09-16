@@ -5,12 +5,12 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IResource;
@@ -71,7 +71,7 @@ public class ModuleInclusionComposite extends Composite {
     included.clear();
     exposed.clear();
     try {
-      PackageDescription cabal=PackageDescriptionLoader.load( ScionInstance.getCabalFile( srcPath.getProject() ));
+      PackageDescription cabal=PackageDescriptionLoader.load( BuildWrapperPlugin.getCabalFile( srcPath.getProject() ));
       String path=srcPath.getProjectRelativePath().toOSString();
       if (path.length()==0){
         path=".";

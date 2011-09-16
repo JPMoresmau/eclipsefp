@@ -2,8 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
-import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineCP;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import org.eclipse.core.resources.IFile;
 
 /**
@@ -20,16 +19,12 @@ public class ProjectExplorerOutlineDef {
    * the outline def itself
    */
   private final OutlineDef outlineDef;
-  /**
-   * the same provider as outline view, to show children
-   */
-  private final OutlineCP treeContentProvider;
 
-  public ProjectExplorerOutlineDef( final IFile owner, final OutlineDef outlineDef,final OutlineCP treeContentProvider) {
+
+  public ProjectExplorerOutlineDef( final IFile owner, final OutlineDef outlineDef) {
     super();
     this.owner = owner;
     this.outlineDef = outlineDef;
-    this.treeContentProvider=treeContentProvider;
   }
 
 
@@ -46,10 +41,10 @@ public class ProjectExplorerOutlineDef {
    * get the children from the tree content provider, wrapping them with the same data
    */
   public List<ProjectExplorerOutlineDef> getChildren(){
-    Object[] def=treeContentProvider.getChildren( this.getOutlineDef() );
-    List<ProjectExplorerOutlineDef> ret=new ArrayList<ProjectExplorerOutlineDef>( def.length );
+    List<OutlineDef> def=outlineDef.getChildren();
+    List<ProjectExplorerOutlineDef> ret=new ArrayList<ProjectExplorerOutlineDef>( def.size() );
     for (Object o:def){
-      ret.add(new ProjectExplorerOutlineDef( getOwner(), (OutlineDef)o, treeContentProvider ));
+      ret.add(new ProjectExplorerOutlineDef( getOwner(), (OutlineDef)o ));
     }
     return ret;
   }

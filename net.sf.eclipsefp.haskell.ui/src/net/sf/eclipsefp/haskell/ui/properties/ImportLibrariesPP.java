@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
-import net.sf.eclipsefp.haskell.scion.types.Component;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -109,7 +108,7 @@ public class ImportLibrariesPP extends PropertyPage
     final BWFacade fa=BuildWrapperPlugin.getFacade( ( IProject )getElement()  );
     if (fa!=null && fa.getPackagesByDB()!=null) {
       try {
-        IFile f=ScionInstance.getCabalFile(  ( IProject )getElement() );
+        IFile f=BuildWrapperPlugin.getCabalFile(  ( IProject )getElement() );
         IDocumentProvider prov=new TextFileDocumentProvider();
         prov.connect( f );
         IDocument doc=prov.getDocument( f );
