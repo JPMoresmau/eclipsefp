@@ -44,12 +44,12 @@ public class WorkspaceFacade implements IBWFacade {
 		return realFacade.getProject();
 	}
 
-	public void synchronize() {
+	public void synchronize(final boolean force) {
 		WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
 	    	@Override
 	    	protected void execute(IProgressMonitor arg0) throws CoreException,
 	    			InvocationTargetException, InterruptedException {
-	    		 realFacade.synchronize();
+	    		 realFacade.synchronize(force);
 	    	}
 	    };
 		try {

@@ -27,7 +27,7 @@ public class ProjectReloader implements CabalFileChangeListener {
 
     IBWFacade f=BuildWrapperPlugin.getJobFacade( cabalF.getProject() );
     if (f!=null){
-      f.synchronize();
+      f.synchronize(false);
       f.build( new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true ) );
     }
   }

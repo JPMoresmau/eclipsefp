@@ -65,7 +65,8 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   private void reconcile() {
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
     if (editor.isDirty()) {
-      editor.updateOutline();
+      editor.synchronize();
+     // editor.updateOutline();
     }
   }
 }

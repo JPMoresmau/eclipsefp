@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IProject;
 public interface IBWFacade {
 	void build(BuildOptions buildOptions);
 	
-	void synchronize();
+	void synchronize(boolean force);
 
 	IProject getProject();
 }

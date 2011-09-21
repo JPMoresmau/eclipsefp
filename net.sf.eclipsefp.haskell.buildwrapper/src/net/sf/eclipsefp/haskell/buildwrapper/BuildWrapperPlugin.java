@@ -92,7 +92,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	}
 	
 	public static JobFacade getJobFacade(IProject p){
-		IBWFacade realF=getFacade(p);
+		BWFacade realF=getFacade(p);
 		if (realF!=null){
 			return new JobFacade(realF);
 		}

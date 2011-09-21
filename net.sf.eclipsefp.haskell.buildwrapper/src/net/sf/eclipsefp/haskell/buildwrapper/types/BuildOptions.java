@@ -11,7 +11,8 @@ public class BuildOptions implements Serializable {
 	private boolean output;
 	private boolean recompile;
 	private boolean configure;
-
+	private BWTarget target=BWTarget.Source;
+	
 	public BuildOptions() {
 		super();
 
@@ -41,6 +42,15 @@ public class BuildOptions implements Serializable {
 
 	public BuildOptions setConfigure(boolean configure) {
 		this.configure = configure;
+		return this;
+	}
+
+	public BWTarget getTarget() {
+		return target;
+	}
+
+	public BuildOptions setTarget(BWTarget target) {
+		this.target = target;
 		return this;
 	}
 

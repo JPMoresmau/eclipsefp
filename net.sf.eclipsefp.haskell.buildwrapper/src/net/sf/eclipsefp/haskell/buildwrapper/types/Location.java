@@ -28,9 +28,12 @@ public class Location {
 
 	public Location(IFile f, JSONArray json) throws JSONException {
 		startLine=json.getInt(0);
-		startColumn=json.getInt(1);
+		startColumn=json.getInt(1)-1;
 		endLine=json.getInt(2);
-		endColumn=json.getInt(3);
+		endColumn=json.getInt(3)-1;
+		if (endColumn==-1 && endLine>startLine){
+			endLine--;
+		}
 		this.fileName = f.getLocation().toOSString();
 	}
 	

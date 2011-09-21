@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -47,9 +47,10 @@ public class HaskellFoldingStructureProvider {
         Set<Location> blocks=new HashSet<Location>();
         for (OutlineDef def : outlineDefs){
           // only blocks that are more than one line long can be folded
-          if (def.getBlock()!=null && def.getBlock().getEndLine()>def.getBlock().getStartLine()){
-            blocks.add( def.getBlock() );
+          if (def.getLocation()!=null && def.getLocation().getEndLine()>def.getLocation().getStartLine()){
+            blocks.add( def.getLocation() );
           }
+
         }
         Set<Position> regions=new HashSet<Position>();
         for (Location l:blocks){

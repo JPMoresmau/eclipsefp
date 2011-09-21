@@ -29,6 +29,9 @@ public class BWText extends NLS {
   
   public static String        error_deleteMarkers;
   
+  public static String 		  outline_job_name;
+  public static String 		  editor_job_name;
+  
   private static final String BUNDLE_NAME = BWText.class.getPackage().getName() + ".bwtext"; //$NON-NLS-1$
 
   static {

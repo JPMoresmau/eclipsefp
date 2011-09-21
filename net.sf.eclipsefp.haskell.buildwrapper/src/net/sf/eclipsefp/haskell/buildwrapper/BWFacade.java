@@ -56,6 +56,7 @@ public class BWFacade implements IBWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
+		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null && arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
@@ -64,9 +65,10 @@ public class BWFacade implements IBWFacade {
 		
 	}
 	
-	public void synchronize(){
+	public void synchronize(boolean force){
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("synchronize");
+		command.add("--force="+force);
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null){
 			if(arr.length()>1){
@@ -89,6 +91,28 @@ public class BWFacade implements IBWFacade {
 				}
 			}
 		}
+	}
+	
+	public boolean synchronize1(IFile file,boolean force){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("synchronize1");
+		command.add("--file="+path);
+		command.add("--force="+force);
+		String s=run(command,STRING);
+		return s!=null;
+	}
+	
+	public boolean write(IFile file,String contents){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("write");
+		command.add("--file="+path);
+		//command.add("--contents="+contents);
+		//command.add("--contents=\""+contents.replace("\"", "\\\"")+"\"");
+		command.add("--contents="+contents.replace("\"", "\\\""));
+		String s=run(command,STRING);
+		return s!=null;
 	}
 	
 	public List<Component> getComponents(){
@@ -371,6 +395,13 @@ public class BWFacade implements IBWFacade {
 		}
 	};
 
+	private static JSONFactory<String> STRING=new JSONFactory<String>() {
+		public String fromJSON(String json)throws JSONException {
+			return json;
+		}
+	};
+
+	
 	public IProject getProject() {
 		return project;
 	}

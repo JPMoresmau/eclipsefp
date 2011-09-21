@@ -11,14 +11,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
 import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
-import net.sf.eclipsefp.haskell.scion.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockBlockDocumentFollowingAction;
@@ -33,7 +34,6 @@ import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -61,7 +61,9 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -120,7 +122,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    *       scion-server. It's sole purpose is change detection, since the editor
    *       can be reused between different projects.
    */
-  private ScionInstance instance = null;
+  //private ScionInstance instance = null;
 
   private final OutlineHandler outlineHandler = new OutlineHandler() {
     @Override
@@ -353,7 +355,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if( IContentOutlinePage.class.equals( required ) ) {
       if( outlinePage == null ) {
         outlinePage = new HaskellOutlinePage( this );
-        updateOutline();
+        //updateOutline();
+        synchronize();
       }
 
       result = outlinePage;
@@ -376,8 +379,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if( outlinePage != null ) {
       outlinePage.setInput( null );
     }
-    if (instance != null) {
-      instance.removeListener( this );
+//    if (instance != null) {
+//      instance.removeListener( this );
+//    }
+    IFile file=findFile();
+    if (file!=null){
+      BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
+      if (f!=null){
+        f.synchronize1( file,true );
+      }
     }
     super.dispose();
   }
@@ -410,10 +420,25 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   protected void editorSaved() {
     // Reload the file on the Scion server side
     IFile file = findFile();
-    if( file != null && ScionPlugin.getScionInstance( file ) != null) {
-      updateOutline( file );
+    if( file != null) {
+      synchronize();
+      //updateOutline( file );
     }
   }
+
+  @Override
+  public void init( final IEditorSite site, final IEditorInput input )
+      throws PartInitException {
+      super.init( site, input );
+      IFile file = findFile();
+      if (file!=null){
+        BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
+        if (f!=null){
+          f.synchronize1( file,true );
+        }
+      }
+  }
+
 
   /**
    * Get the editor's current input file.
@@ -432,25 +457,26 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
     // unload the previous file from Scion
-    IFile file = findFile();
-    if ( file != null && ResourceUtil.isInHaskellProject( file ) ) {
-      ScionPlugin.getScionInstance( file ).unloadFile(file);
-    }
+//    IFile file = findFile();
+//    if ( file != null && ResourceUtil.isInHaskellProject( file ) ) {
+//      ScionPlugin.getScionInstance( file ).unloadFile(file);
+//    }
 
     // Disassociate the editor from the ScionInstance
-    if (instance != null) {
-      instance.removeListener( this );
-      instance = null;
-    }
+//    if (instance != null) {
+//      instance.removeListener( this );
+//      instance = null;
+//    }
 
     super.doSetInput( input );
 
     // Ensure we synchronize to the correct file, which ought to have been set by the call to super.
     // It doesn't hurt to be cautious here.
-    if ( input instanceof IFileEditorInput ) {
-      file = ((IFileEditorInput) input).getFile();
-      updateOutline( file );
-    }
+//    if ( input instanceof IFileEditorInput ) {
+//      file = ((IFileEditorInput) input).getFile();
+//      updateOutline( file );
+//    }
+    synchronize();
   }
 
   /**
@@ -460,18 +486,18 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    *          The file that identifies the project that identifies the
    *          ScionInstance we're interested in using.
    */
-  private ScionInstance getInstance(final IFile theFile){
-    if (instance == null) {
-      // load the new file into Scion
-      if (theFile != null && ResourceUtil.isInHaskellProject( theFile )) {
-        instance = ScionPlugin.getScionInstance( theFile );
-        Assert.isNotNull( instance );
-        instance.addListener( this );
-      }
-    }
-
-    return instance;
-  }
+//  private ScionInstance getInstance(final IFile theFile){
+//    if (instance == null) {
+//      // load the new file into Scion
+//      if (theFile != null && ResourceUtil.isInHaskellProject( theFile )) {
+//        instance = ScionPlugin.getScionInstance( theFile );
+//        Assert.isNotNull( instance );
+//        instance.addListener( this );
+//      }
+//    }
+//
+//    return instance;
+//  }
 
   // helping methods
   // ////////////////
@@ -558,8 +584,24 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   /**
    * Update the outline page using the current editor file.
    */
-  public void updateOutline() {
-    updateOutline(findFile());
+//  public void updateOutline() {
+//    updateOutline(findFile());
+//  }
+
+  public void synchronize(){
+    IFile file=findFile();
+    /*BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+    if (f!=null){
+      f.write( file,getDocument().get() );
+    }*/
+    if (file!=null && ResourceUtil.isInHaskellProject( file )){
+      JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
+      if (jf!=null){
+        jf.updateFromEditor( file, getDocument(), outlineHandler );
+      } else {
+        outlineHandler.handleOutline( Collections.<OutlineDef>emptyList() );
+      }
+    }
   }
 
   /**
@@ -569,17 +611,18 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    * @param currentFile
    *          The current file from which the outline is generated.
    */
-  private void updateOutline(final IFile currentFile) {
-    if ( currentFile != null && outlinePage != null ) {
-      ScionInstance instance = getInstance( currentFile );
-
-      if (instance!=null){
-        instance.outline( currentFile, getDocument(), outlineHandler);
-      } else {
-        outlineHandler.handleOutline( Collections.<OutlineDef>emptyList() );
-      }
-    }
-  }
+//  private void updateOutline(final IFile currentFile) {
+//    if ( currentFile != null && outlinePage != null ) {
+//      //ScionInstance instance = getInstance( currentFile );
+//      JobFacade jf=BuildWrapperPlugin.getJobFacade( currentFile.getProject() );
+//// getDocument(),
+//      if (jf!=null){
+//        jf.outline( currentFile, outlineHandler);
+//      } else {
+//        outlineHandler.handleOutline( Collections.<OutlineDef>emptyList() );
+//      }
+//    }
+//  }
 
   public synchronized Location getOutlineLocation(final String name) {
     if ( defByName==null ){
@@ -630,7 +673,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       for (OutlineDef od:outlinePage.getInput()){
         // here we could filter out if inside some type of outlinedef we do not want breakpoints
 
-        if (od.getBlock().getStartLine()<=line && od.getBlock().getEndLine()>=line){
+        if (od.getLocation().getStartLine()<=line && od.getLocation().getEndLine()>=line){
           return true;
         }
       }
@@ -650,10 +693,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public void processScionServerEvent( final ScionEvent ev ) {
     switch (ev.getEventType()) {
       case EXECUTABLE_CHANGED: {
-        final IFile file = findFile();
-        if (file != null && ResourceUtil.isInHaskellProject( file ) ) {
-            updateOutline( file );
-        }
+        //final IFile file = findFile();
+        //if (file != null && ResourceUtil.isInHaskellProject( file ) ) {
+            //updateOutline( file );
+          synchronize();
+        //}
         break;
       }
 
