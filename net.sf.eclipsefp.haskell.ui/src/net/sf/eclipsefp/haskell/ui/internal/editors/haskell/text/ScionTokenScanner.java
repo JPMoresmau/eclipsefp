@@ -1,18 +1,21 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,7 +34,6 @@ import org.json.JSONArray;
  */
 public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPreferenceNames {
   private final ScannerManager man;
-  private final ScionInstance instance;
   private final IFile file;
 
   private IDocument doc;
@@ -51,9 +53,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   private final Map<String,IToken> tokenByTypes;
 
-  public ScionTokenScanner(final ScannerManager man,final ScionInstance instance,final IFile file){
+  public ScionTokenScanner(final ScannerManager man,final IFile file){
     this.man=man;
-    this.instance=instance;
     this.file=file;
 
     this.tokenByTypes = new HashMap<String, IToken>() {
@@ -138,7 +139,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     // currentToken=null;
     tokenDefs = null;
 
-    if( instance != null ) {
+
+    if( file != null ) {
       String newContents = document.get();
       if( !document.equals( doc ) || !newContents.equals( contents ) || lTokenDefs == null ) {
         doc = document;
@@ -163,7 +165,16 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
             }
           }
         }
-        lTokenDefs = instance.tokenTypes( file, contents );
+        BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+        if (f==null){
+          f=new BWFacade();
+          f.setBwPath( ScionManager.getBuildWrapperPath() );
+          f.setProject( file.getProject() );
+          f.setWorkingDir(new File(file.getProject().getLocation().toOSString()));
+        }
+        f.write( file, contents );
+        lTokenDefs = f.tokenTypes( file);
+
       }
     } else {
       try {

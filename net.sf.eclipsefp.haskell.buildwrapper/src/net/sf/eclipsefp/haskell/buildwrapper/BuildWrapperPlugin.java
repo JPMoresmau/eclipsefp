@@ -79,8 +79,8 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			f.setCabalPath(cabalPath);
 			f.setCabalFile(cf.getLocation().toOSString());
 			f.setWorkingDir(new File(p.getLocation().toOSString()));
-			f.setOutStream(outStream);
 			f.setProject(p);
+			f.setOutStream(outStream);
 			facades.put(p, f);
 			return f;
 		}

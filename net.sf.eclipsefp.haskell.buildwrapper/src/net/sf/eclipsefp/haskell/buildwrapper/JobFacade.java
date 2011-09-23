@@ -93,10 +93,16 @@ public class JobFacade implements IBWFacade {
 	      protected IStatus run(IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
+	          long t0=System.currentTimeMillis();
 	          realFacade.write(f, doc.get());
-	          List<OutlineDef> defs=realFacade.outline(f);
-	          handler.handleOutline(defs);
-	          realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false));
+	          long t1=System.currentTimeMillis();
+	          //List<OutlineDef> defs=realFacade.outline(f);
+	          long t12=System.currentTimeMillis();
+	          //handler.handleOutline(defs);
+	          long t2=System.currentTimeMillis();
+	          //realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false));
+	          long t3=System.currentTimeMillis();
+	          BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t2-t1)+"ms,hanlderoutline:"+(t2-t12)+"ms,build:"+(t3-t2)+"ms");
 	        } finally {
 	          monitor.done();
 	        }
@@ -104,7 +110,7 @@ public class JobFacade implements IBWFacade {
 	      }
 	    };
 	    buildJob.setRule( getProject() );
-	    buildJob.setPriority(Job.INTERACTIVE);
+	    buildJob.setPriority(Job.DECORATE);
 	    buildJob.schedule();
 	}
 	

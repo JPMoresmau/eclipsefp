@@ -127,8 +127,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private final OutlineHandler outlineHandler = new OutlineHandler() {
     @Override
     public void handleOutline( final List<OutlineDef> defs ) {
-      outlinePage.setInput( defs );
-      foldingStructureProvider.updateFoldingRegions( defs );
+      if (outlinePage!=null){
+        outlinePage.setInput( defs );
+      }
+      if (foldingStructureProvider!=null){
+        foldingStructureProvider.updateFoldingRegions( defs );
+      }
     }
   };
 

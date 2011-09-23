@@ -68,7 +68,7 @@ public class ScionPlugin extends AbstractUIPlugin {
    * 
    * @note This is a separate object to prevent looking for the null project in the {@link #instances} map.
    */
-  private final InstanceState                sharedScionInstance;
+  //private final InstanceState                sharedScionInstance;
   /** The version number of the Scion protocol that we support. */
   public static final int                    PROTOCOL_VERSION          = 1;
   /** The plugin's resource bundle. */
@@ -116,10 +116,10 @@ public class ScionPlugin extends AbstractUIPlugin {
     serverFactory = getNullServerFactory();
     instances = new HashMap<IProject, InstanceState>();
     
-    Writer outStream = new NullWriter();
-    ScionServer server = serverFactory.createScionServer(null, outStream);
-    ScionInstance scionInstance = new ScionInstance(server, null, null);
-    sharedScionInstance = new InstanceState(scionInstance, outStream);
+   // Writer outStream = new NullWriter();
+   // ScionServer server = serverFactory.createScionServer(null, outStream);
+    //ScionInstance scionInstance = new ScionInstance(server, null, null);
+    //sharedScionInstance = new InstanceState(scionInstance, outStream);
   }
 
   @Override
@@ -233,7 +233,7 @@ public class ScionPlugin extends AbstractUIPlugin {
    * @return The shared {@link ScionInstance ScionInstance} instance.
    */
   public static ScionInstance getSharedScionInstance() {
-    return getDefault().sharedScionInstance.getInstance();
+    return null;//getDefault().sharedScionInstance.getInstance();
   }
   /** Use the null scion server factory. */
   public synchronized static void useNullScionServerFactory() throws ScionServerStartupException {
@@ -281,9 +281,9 @@ public class ScionPlugin extends AbstractUIPlugin {
     }
     
     // And remember to terminate the shared scion instance too!
-    ScionInstance sharedInstance = thePlugin.sharedScionInstance.getInstance();
-    Assert.isNotNull(sharedInstance);
-    sharedInstance.stop(true);
+//    ScionInstance sharedInstance = thePlugin.sharedScionInstance.getInstance();
+//    Assert.isNotNull(sharedInstance);
+//    sharedInstance.stop(true);
   }
   /** Create a new {@link ScionInstance ScionInstance}, using a scion-server instance from the current factory */
   public synchronized static ScionInstance createScionInstance(IProject project, Writer outStream, CabalComponentResolver resolver) {
@@ -320,10 +320,10 @@ public class ScionPlugin extends AbstractUIPlugin {
 
   /** Set the output stream writer for the shared ScionInstance */
   public synchronized static void setSharedInstanceWriter(final Writer outStream) {
-    ScionPlugin plugin = getDefault();
-    
-    plugin.sharedScionInstance.instance.setOutputStream(outStream);
-    plugin.sharedScionInstance.outStream = outStream;
+//    ScionPlugin plugin = getDefault();
+//    
+//    plugin.sharedScionInstance.instance.setOutputStream(outStream);
+//    plugin.sharedScionInstance.outStream = outStream;
   }
   
   /** Create a new ScionInstance, using a scion-server instance from the current factory */
@@ -340,55 +340,55 @@ public class ScionPlugin extends AbstractUIPlugin {
   }
   /** Change the instances' concept of the current executable */
   private void changeServerFactory(ScionServerFactory factory) throws ScionServerStartupException {
-    boolean yelp = false;
-    ScionServerStartupException startupEx = null;
-    
-    // Set the factory
-    serverFactory = factory;
-    // Updated the shared instance:
-    ScionInstance sharedState = sharedScionInstance.getInstance();
-    Writer sharedOutStream = sharedScionInstance.getOutStream();
-    try {
-      sharedState.setServerExecutable(serverFactory.createScionServer(null, sharedOutStream));
-    } catch (ScionServerStartupException ex) {
-      startupEx = ex;
-      yelp = true;
-    }
-    
-    if (!yelp) {
-      // Update the instances with the new scion servers
-      for (Map.Entry<IProject, InstanceState> pair : instances.entrySet()) {
-        IProject project = pair.getKey();
-        InstanceState instState = pair.getValue();
-        Writer outStream = instState.getOutStream();
-        
-        try {
-          instState.getInstance().setServerExecutable(serverFactory.createScionServer(project, outStream));
-        } catch (ScionServerStartupException ex) {
-          if (!yelp && startupEx == null) {
-            yelp = true;
-            startupEx = ex;
-          }
-        }
-      }
-    }
-    
-    // Encountered a startup error, only yelp at the user once.
-    if (yelp) {
-      try {
-        // Revert back to the NullScionServerFactory
-        changeServerFactory(getNullServerFactory());
-      } catch (ScionServerStartupException ex) {
-        // Ignore it, since it cannot happen. Completeness.
-      }
-      // only do this once
-      String errMsg = new String();
-      
-      errMsg = errMsg.concat(">>> Could not start server, path is").concat(PlatformUtil.NL);
-      errMsg = errMsg.concat(serverFactory.getServerExecutable().toOSString()).concat(PlatformUtil.NL);
-      logError(errMsg, startupEx);
-      throw startupEx;
-    }
+//    boolean yelp = false;
+//    ScionServerStartupException startupEx = null;
+//    
+//    // Set the factory
+//    serverFactory = factory;
+//    // Updated the shared instance:
+//    ScionInstance sharedState = sharedScionInstance.getInstance();
+//    Writer sharedOutStream = sharedScionInstance.getOutStream();
+//    try {
+//      sharedState.setServerExecutable(serverFactory.createScionServer(null, sharedOutStream));
+//    } catch (ScionServerStartupException ex) {
+//      startupEx = ex;
+//      yelp = true;
+//    }
+//    
+//    if (!yelp) {
+//      // Update the instances with the new scion servers
+//      for (Map.Entry<IProject, InstanceState> pair : instances.entrySet()) {
+//        IProject project = pair.getKey();
+//        InstanceState instState = pair.getValue();
+//        Writer outStream = instState.getOutStream();
+//        
+//        try {
+//          instState.getInstance().setServerExecutable(serverFactory.createScionServer(project, outStream));
+//        } catch (ScionServerStartupException ex) {
+//          if (!yelp && startupEx == null) {
+//            yelp = true;
+//            startupEx = ex;
+//          }
+//        }
+//      }
+//    }
+//    
+//    // Encountered a startup error, only yelp at the user once.
+//    if (yelp) {
+//      try {
+//        // Revert back to the NullScionServerFactory
+//        changeServerFactory(getNullServerFactory());
+//      } catch (ScionServerStartupException ex) {
+//        // Ignore it, since it cannot happen. Completeness.
+//      }
+//      // only do this once
+//      String errMsg = new String();
+//      
+//      errMsg = errMsg.concat(">>> Could not start server, path is").concat(PlatformUtil.NL);
+//      errMsg = errMsg.concat(serverFactory.getServerExecutable().toOSString()).concat(PlatformUtil.NL);
+//      logError(errMsg, startupEx);
+//      throw startupEx;
+//    }
   }
 
   /**

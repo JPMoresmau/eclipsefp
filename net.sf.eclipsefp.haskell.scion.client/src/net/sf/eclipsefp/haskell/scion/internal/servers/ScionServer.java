@@ -4,11 +4,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -23,6 +20,7 @@ import net.sf.eclipsefp.haskell.scion.internal.commands.QuitCommand;
 import net.sf.eclipsefp.haskell.scion.internal.commands.ScionCommand;
 import net.sf.eclipsefp.haskell.scion.internal.util.ScionText;
 import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
+import net.sf.eclipsefp.haskell.util.OutputWriter;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.resources.IProject;
@@ -32,7 +30,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWTException;
 import org.json.JSONObject;
 
 /**
@@ -165,7 +162,15 @@ public abstract class ScionServer {
     cqMonitor = new CommandQueueMonitor(serverName + "-CommandQueueMonitor");
     cqMonitor.start();
 
-    outputWriter = new OutputWriter(serverName + "-Writer");
+    outputWriter = new OutputWriter(serverName + "-Writer",serverOutput){
+	    public void onIOError(IOException ex){
+	    	 ScionPlugin.logError(ScionText.scionServerOutputError_message, ex);
+	    }
+	    
+	    public void onThrowable(Throwable se){
+	    	 ScionPlugin.logError(ScionText.scionServerOutputError_message, se);
+	    }
+    };
     outputWriter.start();
 
     doStartServer(project);
@@ -545,94 +550,5 @@ public abstract class ScionServer {
     }
   }
   
-  /**
-   * A separate thread to write the communication with the server see
-   * https://bugs.eclipse.org/bugs/show_bug.cgi?id=259107
-   */
-  public class OutputWriter extends Thread {
-    /** the message list **/
-    private final LinkedList<String> messages   = new LinkedList<String>();
-    /** should we stop? **/
-    private boolean                  terminateFlag;
 
-    public OutputWriter(String name) {
-      super(name);
-    }
-
-    public void setTerminate() {
-      terminateFlag = true;
-    }
-
-    public void addMessage(String msg) {
-      synchronized (messages) {
-        messages.add(msg);
-        messages.notify();
-      }
-    }
-
-    public void addMessage(char[] buf, int start, int length) {
-      synchronized (messages) {
-        messages.add(new String(buf, start, length));
-        messages.notify();
-      }
-    }
-
-    public void addMessage(Exception e) {
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      e.printStackTrace(pw);
-      pw.flush();
-      synchronized (messages) {
-        messages.add(sw.toString());
-        messages.notify();
-      }
-    }
-
-    @Override
-    public void run() {
-      while (!terminateFlag && serverOutput != null) {
-        String m = null;
-        synchronized (messages) {
-          try {
-            while (messages.isEmpty()) {
-              messages.wait();
-            }
-
-          } catch (InterruptedException ignore) {
-            // noop
-          }
-          if (!messages.isEmpty()) {
-            m = messages.removeFirst();
-          }
-        }
-        if (m != null) {
-          Trace.trace(serverName, m);
-          try {
-            final int mLen = m.length();
-            int i = 0;
-
-            // Break the message up into 1K chunks for better UI responsiveness, since this all is going to
-            // an IOConsole.
-            while ( mLen - i > 1024 ) {
-              serverOutput.write(m, i, 1024);
-              serverOutput.flush();
-              i += 1024;
-            }
-            serverOutput.write(m, i, mLen - i);
-            serverOutput.write(PlatformUtil.NL);
-            serverOutput.flush();
-          } catch (IOException ex) {
-            if (!terminateFlag) {
-              ScionPlugin.logError(ScionText.scionServerOutputError_message, ex);
-            }
-          } catch (SWTException se) {
-            // probably device has been disposed
-            if (!terminateFlag) {
-              ScionPlugin.logError(ScionText.scionServerOutputError_message, se);
-            }
-          }
-        }
-      }
-    }
-  }
 }

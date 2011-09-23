@@ -28,9 +28,9 @@ public class Location {
 
 	public Location(IFile f, JSONArray json) throws JSONException {
 		startLine=json.getInt(0);
-		startColumn=json.getInt(1)-1;
+		startColumn=json.getInt(1)-1; // we're zero based, Haskell code 1 based
 		endLine=json.getInt(2);
-		endColumn=json.getInt(3)-1;
+		endColumn=json.getInt(3)-1;// we're zero based, Haskell code 1 based
 		if (endColumn==-1 && endLine>startLine){
 			endLine--;
 		}

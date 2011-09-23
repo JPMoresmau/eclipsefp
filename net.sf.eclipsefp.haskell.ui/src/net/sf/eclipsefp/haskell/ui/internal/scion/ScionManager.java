@@ -817,8 +817,8 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
        */
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
-      String bwPath="D:\\dev\\haskell\\jp-github\\eclipsefp\\buildwrapper\\dist\\build\\buildwrapper\\buildwrapper.exe";
-      BuildWrapperPlugin.createFacade(project, bwPath, CabalImplementationManager.getCabalExecutable(), outStreamBw );
+
+      BuildWrapperPlugin.createFacade(project, getBuildWrapperPath(), CabalImplementationManager.getCabalExecutable(), outStreamBw );
       /*if (f!=null){
         new Job("BuildWrapper "+project.getName()){
           @Override
@@ -833,6 +833,11 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
     }
 
     return instance;
+  }
+
+  public static String getBuildWrapperPath(){
+    String bwPath="D:\\dev\\haskell\\jp-github\\eclipsefp\\buildwrapper\\dist\\build\\buildwrapper\\buildwrapper.exe";
+    return bwPath;
   }
 
   /**

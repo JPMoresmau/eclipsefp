@@ -2,8 +2,11 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +23,10 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
+import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
+import net.sf.eclipsefp.haskell.util.OutputWriter;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -47,6 +52,7 @@ public class BWFacade implements IBWFacade {
 	
 	private IProject project;
 	
+	private OutputWriter ow;
 	
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
@@ -104,7 +110,7 @@ public class BWFacade implements IBWFacade {
 	}
 	
 	public boolean write(IFile file,String contents){
-		String path=file.getProjectRelativePath().toOSString();
+		/*String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("write");
 		command.add("--file="+path);
@@ -112,7 +118,19 @@ public class BWFacade implements IBWFacade {
 		//command.add("--contents=\""+contents.replace("\"", "\\\"")+"\"");
 		command.add("--contents="+contents.replace("\"", "\\\""));
 		String s=run(command,STRING);
-		return s!=null;
+		return s!=null;*/
+		try {
+			String path=file.getProjectRelativePath().toOSString();
+			File tgt=new File(new File(workingDir,tempFolder),path);
+			tgt.getParentFile().mkdirs();
+			Writer w=new OutputStreamWriter(new FileOutputStream(tgt),"UTF8");
+			w.write(contents);
+			w.close();
+			return true;
+		} catch (Exception e){
+			BuildWrapperPlugin.logError(e.getLocalizedMessage(), e);
+		}
+		return false;
 	}
 	
 	public List<Component> getComponents(){
@@ -194,6 +212,34 @@ public class BWFacade implements IBWFacade {
 				}
 			}
 		}
+		return cps;
+	}
+	
+	public List<TokenDef> tokenTypes(IFile file){
+		long t0=System.currentTimeMillis();
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("tokentypes");
+		command.add("--file="+path);
+		JSONArray arr=run(command,ARRAY);
+		long t01=System.currentTimeMillis();
+		List<TokenDef> cps=new ArrayList<TokenDef>();
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				parseNotes(notes);
+			}
+			JSONArray objs=arr.optJSONArray(0);
+			for (int a=0;a<objs.length();a++){
+				try {
+					cps.add(new TokenDef(file,objs.getJSONObject(a)));
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
+				}
+			}
+		}
+		long t1=System.currentTimeMillis();
+		BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
 		return cps;
 	}
 	
@@ -294,9 +340,14 @@ public class BWFacade implements IBWFacade {
 			String l=br.readLine();
 			boolean goOn=true;
 			while (goOn && l!=null){
-				outStream.write(l);
-				outStream.write(PlatformUtil.NL);
-				outStream.flush();
+				/*if (outStream!=null){
+					outStream.write(l);
+					outStream.write(PlatformUtil.NL);
+					outStream.flush();
+				}*/
+				if (ow!=null) {
+					ow.addMessage(l);
+				}
 				if (l.startsWith(prefix)){
 					String jsons=l.substring(prefix.length()).trim();
 					try {
@@ -367,6 +418,23 @@ public class BWFacade implements IBWFacade {
 	
 	public void setOutStream(Writer outStream) {
 		this.outStream = outStream;
+		ow=outStream!=null?new OutputWriter("BWFacade.outputWriter: "+project.getName(),outStream) {
+			
+			@Override
+			public void onThrowable(Throwable se) {
+				BuildWrapperPlugin.logError(se.getLocalizedMessage(), se);
+				
+			}
+			
+			@Override
+			public void onIOError(IOException ex) {
+				BuildWrapperPlugin.logError(ex.getLocalizedMessage(), ex);
+				
+			}
+		}:null;
+		if (ow!=null){
+			ow.start();
+		}
 	}
 
 

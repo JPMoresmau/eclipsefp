@@ -22,10 +22,11 @@ import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.OutlineDef;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
@@ -110,7 +111,7 @@ public class AnImport {
     return this.qualifiedName;
   }
 
-  public Map<String, Documented> getDeclarations( final ScionInstance scion, final IProject project,
+  public Map<String, Documented> getDeclarations( final IProject project,
       final IFile file, final IDocument doc ) {
     // ArrayList<String> items
     String codeName =  qualifiedName != null ? qualifiedName : name;
@@ -118,7 +119,7 @@ public class AnImport {
     try {
       List<Documented> decls;
       if (isMe) {
-        decls = getDeclarationsFromFile( file, doc, scion );
+        decls = getDeclarationsFromFile( file, doc );
       } else {
         BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
         Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations( this.name );
@@ -136,7 +137,7 @@ public class AnImport {
             }
           }
         } else {
-          decls = getDeclarationsFromFile( name, scion, project );
+          decls = getDeclarationsFromFile( name, project );
         }
       }
 
@@ -171,15 +172,18 @@ public class AnImport {
     }
   }
 
-  private List<Documented> getDeclarationsFromFile( final String module, final ScionInstance scion, final IProject project ) {
+  private List<Documented> getDeclarationsFromFile( final String module, final IProject project ) {
     try {
       IHaskellProject pr = HaskellProjectManager.get( project );
       IFile file = pr.getModuleFile( module );
       ArrayList<Documented> decls = new ArrayList<Documented>();
-      for (OutlineDef def : scion.outline( file )) {
-        Documented d = outlineToBrowser( def );
-        if (d != null) {
-          decls.add( d );
+      BWFacade f=BuildWrapperPlugin.getFacade( project );
+      if (f!=null){
+        for (OutlineDef def : f.outline( file )) {
+          Documented d = outlineToBrowser( def );
+          if (d != null) {
+            decls.add( d );
+          }
         }
       }
       return decls;
@@ -188,13 +192,16 @@ public class AnImport {
     }
   }
 
-  private List<Documented> getDeclarationsFromFile( final IFile file, final IDocument doc, final ScionInstance scion ) {
+  private List<Documented> getDeclarationsFromFile( final IFile file, final IDocument doc ) {
     try {
       ArrayList<Documented> decls = new ArrayList<Documented>();
-      for (OutlineDef def : scion.outlineSync( file, doc )) {
-        Documented d = outlineToBrowser( def );
-        if (d != null) {
-          decls.add( d );
+      BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+      if (f!=null){
+        for (OutlineDef def : f.outline( file)) {
+          Documented d = outlineToBrowser( def );
+          if (d != null) {
+            decls.add( d );
+          }
         }
       }
       return decls;
@@ -204,7 +211,7 @@ public class AnImport {
   }
 
   public static Documented outlineToBrowser( final OutlineDef def ) {
-    switch (def.getType()) {
+    switch (def.getTypes().iterator().next()) {
       case CLASS:
         return new TypeClass( "", new String[0], def.getName(), new String[0], new String[0] );
       case DATA:

@@ -11,7 +11,6 @@ import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
@@ -115,7 +114,7 @@ public class ImportsManager {
     return r;
   }
 
-  public Map<String, Documented> getDeclarations( final ScionInstance scion ) {
+  public Map<String, Documented> getDeclarations() {
     ArrayList<AnImport> imports = parseImports();
     // Add Prelude import
     boolean hasPrelude = false;
@@ -142,7 +141,7 @@ public class ImportsManager {
 
     HashMap<String, Documented> r = new HashMap<String, Documented>();
     for (AnImport i : imports) {
-      r.putAll( i.getDeclarations( scion, project, file, doc ) );
+      r.putAll( i.getDeclarations( project, file, doc ) );
     }
 
     return r;

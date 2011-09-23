@@ -5,11 +5,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.PartitionedScionTokenScanner;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -46,17 +43,10 @@ public class HappySourceViewerConfiguration extends
     PresentationReconciler reconciler = new PresentationReconciler();
     reconciler.setDocumentPartitioning( PartitionDocumentSetup.PARTITIONING );
 
-    ScionInstance instance = null;
-    if( editor != null ) {
-      // Get the shared scion-server instance for lexing.
-      instance = ScionPlugin.getSharedScionInstance();
-      Assert.isNotNull( instance );
-    } // else no editor: we're in preview null instance is fine
-
 
     IFile file = ( editor != null ? editor.findFile() : null );
     ITokenScanner codeScanner = new PartitionedScionTokenScanner(
-        getScannerManager(), instance, file, new String[] { "{%%", "{%^", "{%",
+        getScannerManager(), file, new String[] { "{%%", "{%^", "{%",
             "{" }, new String[] { "}" }, new String[] { "{-" },
         new String[] { "-}" } );
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );

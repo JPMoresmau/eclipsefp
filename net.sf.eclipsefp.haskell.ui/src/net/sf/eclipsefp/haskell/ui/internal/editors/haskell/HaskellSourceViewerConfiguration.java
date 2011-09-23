@@ -3,8 +3,6 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellContentAssistProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
@@ -16,7 +14,6 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -153,19 +150,8 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
   public IPresentationReconciler getPresentationReconciler(final ISourceViewer sv) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
-		// for every content type we need a damager and a repairer:
-    //		ScannerManager man = getScannerManager();
-    // ITokenScanner codeScanner = man.getCodeScanner( isLatexLiterate() );
-		ScionInstance instance=null;
-		if ( editor != null ){
-		  // Get the shared scion-server instance for lexing.
-		  instance = ScionPlugin.getSharedScionInstance();
-		  Assert.isNotNull( instance );
-		} // else no editor: we're in preview null instance is fine
-
-
 		IFile file = (editor != null ? editor.findFile() : null);
-		ITokenScanner codeScanner=new ScionTokenScanner(getScannerManager(),instance, file);
+		ITokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file);
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );

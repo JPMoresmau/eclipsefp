@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.TokenDef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.resources.IFile;
@@ -28,7 +29,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     IEditorPreferenceNames {
 
   private final ScannerManager man;
-  private final ScionInstance instance;
+  //private final ScionInstance instance;
   private final IFile file;
 
   private IDocument doc;
@@ -51,18 +52,16 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
   private final String[] initialComments;
   private final String[] endComments;
 
-  public PartitionedScionTokenScanner( final ScannerManager man,
-      final ScionInstance instance, final IFile file ) {
-    this( man, instance, file, new String[] { "{" }, new String[] { "}" },
+  public PartitionedScionTokenScanner( final ScannerManager man, final IFile file ) {
+    this( man, file, new String[] { "{" }, new String[] { "}" },
         new String[ 0 ], new String[ 0 ] );
   }
 
-  public PartitionedScionTokenScanner( final ScannerManager man,
-      final ScionInstance instance, final IFile file,
+  public PartitionedScionTokenScanner( final ScannerManager man,final IFile file,
       final String[] initialElements, final String[] endElements,
       final String[] initialComments, final String[] endComments ) {
     this.man = man;
-    this.instance = instance;
+    //this.instance = instance;
     this.file = file;
 
     this.initialElements = initialElements;
@@ -232,7 +231,11 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
             || lTokenDefs == null ) {
           doc = document;
           contents = newContents;
-          lTokenDefs = instance.tokenTypes( file, contents );
+          BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+          if (f!=null){
+            f.write( file, contents );
+            lTokenDefs = f.tokenTypes( file );
+          }
         }
 
         try {

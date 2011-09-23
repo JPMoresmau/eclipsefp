@@ -150,28 +150,28 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
                 moduleName = null;
               }
               // Return imports list
-              return importsList( scion, viewer, theFile, doc, offset );
+              return importsList( viewer, theFile, doc, offset );
             }
 
             if (tokens != null) {
               if (LexerTokenCategories.hasImportContext( tokens, lineBegin )) {
                 return moduleNamesContext(scion, offset);
               } else if (LexerTokenCategories.hasTyConContext( tokens, lineBegin )) {
-                return defaultCompletionContext( scion, viewer, theFile, doc, offset, true );
+                return defaultCompletionContext( viewer, theFile, doc, offset, true );
               }
             }
           } catch (BadLocationException ble) {
             // Ignore, pass through to default completion context.
           }
 
-          return defaultCompletionContext( scion, viewer, theFile, doc, offset, false );
+          return defaultCompletionContext( viewer, theFile, doc, offset, false );
         }
 
         break;
       }
 
       case DEFAULT_CONTEXT: {
-        return defaultCompletionContext( scion, viewer, theFile, doc, offset, false );
+        return defaultCompletionContext( viewer, theFile, doc, offset, false );
       }
 
       case IMPORT_STMT: {
@@ -179,11 +179,11 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       }
 
       case TYCON_CONTEXT: {
-        return defaultCompletionContext( scion, viewer, theFile, doc, offset, true );
+        return defaultCompletionContext( viewer, theFile, doc, offset, true );
       }
 
       case IMPORT_LIST: {
-        return importsList( scion, viewer, theFile, doc, offset );
+        return importsList( viewer, theFile, doc, offset );
       }
 
       case CONID_CONTEXT: {
@@ -249,7 +249,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Default completion context, if no other context can be determined.
 	 */
-	private ICompletionProposal[] defaultCompletionContext( final ScionInstance scion, final ITextViewer viewer, final IFile theFile, final IDocument doc,
+	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
 	                                                        final int offset, final boolean typesHavePriority ) {
 	  context = typesHavePriority ? CompletionContext.TYCON_CONTEXT : CompletionContext.DEFAULT_CONTEXT;
 
@@ -261,7 +261,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     // Get rest of proposals
     String prefix = haskellCompletions.getPointedQualifier();
     ImportsManager mgr = new ImportsManager( theFile, doc );
-    Map<String, Documented> decls = mgr.getDeclarations( scion );
+    Map<String, Documented> decls = mgr.getDeclarations();
     ArrayList<String> elts = new ArrayList<String>();
     ArrayList<String> typeElts = new ArrayList<String>();
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
@@ -346,7 +346,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     return (totalSize > 0 ? result : null);
 	}
 
-	private ICompletionProposal[] importsList( final ScionInstance scion, final ITextViewer viewer, final IFile theFile,
+	private ICompletionProposal[] importsList( final ITextViewer viewer, final IFile theFile,
 	    final IDocument doc, final int offset ) {
 	  // Case when we don't know the module name yet
 	  if (moduleName == null) {
@@ -360,7 +360,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  int plength = prefix.length();
 	  // Reuse the general "imports" code, getting out the qualified names
 	  AnImport imp = new AnImport( moduleName, null, true, false, null );
-	  Map<String, Documented> decls = imp.getDeclarations( scion, theFile.getProject(), theFile, doc );
+	  Map<String, Documented> decls = imp.getDeclarations( theFile.getProject(), theFile, doc );
 
 	  ArrayList<String> names = new ArrayList<String>();
 	  for (Map.Entry<String, Documented> decl : decls.entrySet()) {
