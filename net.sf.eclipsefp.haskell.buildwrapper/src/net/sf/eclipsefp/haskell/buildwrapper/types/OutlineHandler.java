@@ -8,7 +8,7 @@ import java.util.List;
  * @author JP Moresmau
  *
  */
-public abstract class OutlineHandler  {
+public interface OutlineHandler  {
 
-  public abstract void handleOutline(List<OutlineDef> defs);
+  void handleOutline(List<OutlineDef> defs);
 }

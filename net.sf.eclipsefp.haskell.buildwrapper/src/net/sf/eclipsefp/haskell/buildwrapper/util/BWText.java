@@ -31,6 +31,8 @@ public class BWText extends NLS {
   
   public static String 		  outline_job_name;
   public static String 		  editor_job_name;
+  public static String 		  occurrences_job_name;
+  public static String 		  thingatpoint_job_name;
   
   private static final String BUNDLE_NAME = BWText.class.getPackage().getName() + ".bwtext"; //$NON-NLS-1$
 

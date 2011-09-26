@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.scion.types.OccurencesHandler;
-import net.sf.eclipsefp.haskell.scion.types.Occurrence;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder.EditorThing;
@@ -50,10 +51,9 @@ public class MarkOccurrenceComputer {
       WordFinder.getEditorThing( editor, false, false , new WordFinder.EditorThingHandler() {
 
         public void handle( final EditorThing thing ) {
-          thing.getInstance().getOccurrences( thing.getFile(), document, thing.getName(), new OccurencesHandler() {
+          BuildWrapperPlugin.getJobFacade( thing.getFile().getProject() ).getOccurrences( thing.getFile(), thing.getName(), new OccurrencesHandler() {
 
-            @Override
-            public void handle( final Occurrence[] occurrences ) {
+            public void handleOccurrences( final List<Occurrence> occurrences ) {
               if (occurrences != null) {
                 Map<Annotation, Position> map = computeAnnotations( occurrences );
                 IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
@@ -123,12 +123,12 @@ public class MarkOccurrenceComputer {
 //    return ( offset - document.getLineOffset( line ) + 1 );
 //  }
 
-  private List<Position> computePositions( final Occurrence[] occurrences ) {
+  private List<Position> computePositions( final List<Occurrence> occurrences ) {
     List<Position> result = new ArrayList<Position>();
     for( Occurrence occ: occurrences ) {
       try {
         int offs = document.getLineOffset( occ.getLine() - 1 );
-        offs += occ.getColumn() - 1;
+        offs += occ.getColumn() ;
         result.add( new Position( offs, occ.getLength() ) );
       } catch( final BadLocationException badlox ) {
         // ignore that occurrence then
@@ -137,7 +137,7 @@ public class MarkOccurrenceComputer {
     return result;
   }
 
-  private Map<Annotation, Position> computeAnnotations( final Occurrence[] occs ) {
+  private Map<Annotation, Position> computeAnnotations( final List<Occurrence> occs ) {
     Map<Annotation, Position> result = new HashMap<Annotation, Position>();
     List<Position> poss = computePositions( occs );
     Iterator<Position> it = poss.iterator();

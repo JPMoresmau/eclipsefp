@@ -125,7 +125,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   //private ScionInstance instance = null;
 
   private final OutlineHandler outlineHandler = new OutlineHandler() {
-    @Override
+
     public void handleOutline( final List<OutlineDef> defs ) {
       if (outlinePage!=null){
         outlinePage.setInput( defs );

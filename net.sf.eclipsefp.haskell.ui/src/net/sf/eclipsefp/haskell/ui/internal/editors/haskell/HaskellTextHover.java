@@ -4,15 +4,14 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.Iterator;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
@@ -74,12 +73,12 @@ class HaskellTextHover extends DefaultTextHover {
     if (file != null) {
       try {
         Location location = new Location(file.getLocation().toOSString(), textViewer.getDocument(), hoverRegion);
-        IDocument theDocument = textViewer.getDocument();
-        ScionInstance scionInstance = ScionPlugin.getScionInstance( file );
-
-        if (scionInstance != null) {
+        //IDocument theDocument = textViewer.getDocument();
+        //ScionInstance scionInstance = ScionPlugin.getScionInstance( file );
+        BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+        if (f != null) {
           // TODO: Would be nice to also grab the Haddock documentation for the "thing" at point too.
-          return scionInstance.thingAtPoint( theDocument, location, false, true);
+          return f.getThingAtPoint(file,location, false, true);
         }
       } catch (BadLocationException ex) {
         HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );

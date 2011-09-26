@@ -2,11 +2,11 @@
 // See http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.util.text;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
@@ -76,16 +76,16 @@ public class WordFinder {
     final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
     if( selection instanceof TextSelection && file!=null) {
-          final ScionInstance instance = ScionPlugin.getScionInstance( file );
-          if (instance!=null){
+          //final ScionInstance instance = ScionPlugin.getScionInstance( file );
+         JobFacade f=BuildWrapperPlugin.getJobFacade( file.getProject() );
+          if (f!=null){
             final TextSelection textSel = ( TextSelection )selection;
             final String fName = textSel.getText().trim();
             try {
               Location l = new Location( file.getLocation().toOSString(),
                   haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-              instance.thingAtPoint(haskellEditor.getDocument(), l, qualify, typed,new ThingAtPointHandler() {
+              f.getThingAtPoint(file, l, qualify, typed,new ThingAtPointHandler() {
 
-                @Override
                 public void handleThing( final String thing ) {
                   char haddockType = ' ';
                   String name=fName;
@@ -106,7 +106,7 @@ public class WordFinder {
                         textSel.getOffset() );
                   }
                   if (name!=null && name.length()>0){
-                    handler.handle( new EditorThing(instance, file, name, haddockType ));
+                    handler.handle( new EditorThing(file, name, haddockType ));
                   }
                 }
               });
@@ -127,21 +127,15 @@ public class WordFinder {
   public static class EditorThing {
     private final String name;
     private final char haddockType;
-    private final ScionInstance instance;
     private final IFile file;
 
-    public EditorThing(final ScionInstance instance,final IFile file, final String name, final char haddockType ) {
+    public EditorThing(final IFile file, final String name, final char haddockType ) {
       super();
-      this.instance=instance;
       this.file=file;
       this.name = name;
       this.haddockType = haddockType;
     }
 
-
-    public ScionInstance getInstance() {
-      return instance;
-    }
 
 
     public IFile getFile() {

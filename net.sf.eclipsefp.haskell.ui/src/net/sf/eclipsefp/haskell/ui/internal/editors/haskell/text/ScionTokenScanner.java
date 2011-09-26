@@ -49,6 +49,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private int offset;
   private int length;
 
+  private File tgt;
+
   private boolean checkedTabs=false;
 
   private final Map<String,IToken> tokenByTypes;
@@ -172,9 +174,19 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
           f.setProject( file.getProject() );
           f.setWorkingDir(new File(file.getProject().getLocation().toOSString()));
         }
-        f.write( file, contents );
-        lTokenDefs = f.tokenTypes( file);
 
+        //long t0=System.currentTimeMillis();
+        if (tgt==null){
+          tgt=f.write( file, contents );
+        } else {
+          f.write( tgt, contents );
+        }
+        //long t01=System.currentTimeMillis();
+        lTokenDefs = f.tokenTypes( file);
+        //long t1=System.currentTimeMillis();
+        //int l=ScionPlugin.getSharedScionInstance().tokenTypes( file, contents ).size();
+        //long t2=System.currentTimeMillis();
+        //HaskellUIPlugin.log( "bw:"+(t1-t0)+"ms ("+lTokenDefs.size()+",write: "+(t01-t0)+"ms ), scion:"+(t2-t1)+"ms ("+l+")", IStatus.INFO );
       }
     } else {
       try {

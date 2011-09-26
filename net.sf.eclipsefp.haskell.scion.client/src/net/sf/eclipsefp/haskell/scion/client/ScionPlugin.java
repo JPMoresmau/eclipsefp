@@ -116,10 +116,10 @@ public class ScionPlugin extends AbstractUIPlugin {
     serverFactory = getNullServerFactory();
     instances = new HashMap<IProject, InstanceState>();
     
-   // Writer outStream = new NullWriter();
-   // ScionServer server = serverFactory.createScionServer(null, outStream);
-    //ScionInstance scionInstance = new ScionInstance(server, null, null);
-    //sharedScionInstance = new InstanceState(scionInstance, outStream);
+//    Writer outStream = new NullWriter();
+//    ScionServer server = serverFactory.createScionServer(null, outStream);
+//    ScionInstance scionInstance = new ScionInstance(server, null, null);
+//    sharedScionInstance = new InstanceState(scionInstance, outStream);
   }
 
   @Override
@@ -233,7 +233,7 @@ public class ScionPlugin extends AbstractUIPlugin {
    * @return The shared {@link ScionInstance ScionInstance} instance.
    */
   public static ScionInstance getSharedScionInstance() {
-    return null;//getDefault().sharedScionInstance.getInstance();
+    return null; //getDefault().sharedScionInstance.getInstance();
   }
   /** Use the null scion server factory. */
   public synchronized static void useNullScionServerFactory() throws ScionServerStartupException {
@@ -321,7 +321,7 @@ public class ScionPlugin extends AbstractUIPlugin {
   /** Set the output stream writer for the shared ScionInstance */
   public synchronized static void setSharedInstanceWriter(final Writer outStream) {
 //    ScionPlugin plugin = getDefault();
-//    
+////    
 //    plugin.sharedScionInstance.instance.setOutputStream(outStream);
 //    plugin.sharedScionInstance.outStream = outStream;
   }

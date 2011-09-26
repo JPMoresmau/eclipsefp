@@ -30,8 +30,13 @@ public class TokenDef {
 	}
 	
 	public TokenDef(IFile f,JSONObject obj) throws JSONException{
-		this.name=JSONObject.getNames(obj)[0];
+		this.name=obj.keys().next();
 		this.location=new Location(f,obj.getJSONArray(name));
+	}
+	
+	public TokenDef(String fn,JSONObject obj) throws JSONException{
+		this.name=obj.keys().next();
+		this.location=new Location(fn,obj.getJSONArray(name));
 	}
 	
 	public Location getLocation() {

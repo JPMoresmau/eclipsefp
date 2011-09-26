@@ -1,9 +1,9 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,18 +16,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
-import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
+import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -109,7 +109,7 @@ public class BWFacade implements IBWFacade {
 		return s!=null;
 	}
 	
-	public boolean write(IFile file,String contents){
+	public File write(IFile file,String contents){
 		/*String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("write");
@@ -123,7 +123,17 @@ public class BWFacade implements IBWFacade {
 			String path=file.getProjectRelativePath().toOSString();
 			File tgt=new File(new File(workingDir,tempFolder),path);
 			tgt.getParentFile().mkdirs();
-			Writer w=new OutputStreamWriter(new FileOutputStream(tgt),"UTF8");
+			write(tgt, contents);
+			return tgt;
+		} catch (Exception e){
+			BuildWrapperPlugin.logError(e.getLocalizedMessage(), e);
+		}
+		return null;
+	}
+	
+	public boolean write(File tgt,String contents){
+		try {
+			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),"UTF8");
 			w.write(contents);
 			w.close();
 			return true;
@@ -223,24 +233,80 @@ public class BWFacade implements IBWFacade {
 		command.add("--file="+path);
 		JSONArray arr=run(command,ARRAY);
 		long t01=System.currentTimeMillis();
-		List<TokenDef> cps=new ArrayList<TokenDef>();
+		List<TokenDef> cps;
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
 				parseNotes(notes);
 			}
 			JSONArray objs=arr.optJSONArray(0);
+			cps=new ArrayList<TokenDef>(objs.length());
+			String fn=file.getLocation().toOSString();
 			for (int a=0;a<objs.length();a++){
 				try {
-					cps.add(new TokenDef(file,objs.getJSONObject(a)));
+					cps.add(new TokenDef(fn,objs.getJSONObject(a)));
 				} catch (JSONException je){
 					BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
 				}
 			}
+		} else {
+			cps=new ArrayList<TokenDef>();
 		}
 		long t1=System.currentTimeMillis();
 		BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
 		return cps;
+	}
+	
+	public List<Occurrence> getOccurrences(IFile file,String s){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("occurrences");
+		command.add("--file="+path);
+		command.add("--token="+s);
+		JSONArray arr=run(command,ARRAY);
+		List<Occurrence> cps;
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				parseNotes(notes);
+			}
+			JSONArray objs=arr.optJSONArray(0);
+			cps=new ArrayList<Occurrence>(objs.length());
+			String fn=file.getLocation().toOSString();
+			for (int a=0;a<objs.length();a++){
+				try {
+					TokenDef td=new TokenDef(fn,objs.getJSONObject(a));
+					cps.add(new Occurrence(td));
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
+				}
+			}
+		} else {
+			cps=new ArrayList<Occurrence>();
+		}
+		return cps;
+	}
+	
+	public String getThingAtPoint(IFile file,Location location,
+			boolean qualify, boolean typed){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("thingatpoint");
+		command.add("--file="+path);
+		command.add("--line="+location.getStartLine());
+		command.add("--column="+(location.getStartColumn()+1));
+		command.add("--qualify="+qualify);
+		command.add("--typed="+qualify);
+		JSONArray arr=run(command,ARRAY);
+		String s=null;
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				parseNotes(notes);
+			}
+			s=arr.optString(0);
+		}
+		return s;
 	}
 	
 	private void parseNotes(JSONArray notes){
@@ -337,6 +403,7 @@ public class BWFacade implements IBWFacade {
 		try {
 			Process p=pb.start();
 			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF8"));
+			long t0=System.currentTimeMillis();
 			String l=br.readLine();
 			boolean goOn=true;
 			while (goOn && l!=null){
@@ -349,6 +416,7 @@ public class BWFacade implements IBWFacade {
 					ow.addMessage(l);
 				}
 				if (l.startsWith(prefix)){
+					
 					String jsons=l.substring(prefix.length()).trim();
 					try {
 						obj=f.fromJSON(jsons);
@@ -361,6 +429,8 @@ public class BWFacade implements IBWFacade {
 					l=br.readLine();
 				}
 			}
+			long t1=System.currentTimeMillis();
+			BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
 		} catch (IOException ioe){
 			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 		}

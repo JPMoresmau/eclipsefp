@@ -2,10 +2,12 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
@@ -103,6 +105,49 @@ public class JobFacade implements IBWFacade {
 	          //realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false));
 	          long t3=System.currentTimeMillis();
 	          BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t2-t1)+"ms,hanlderoutline:"+(t2-t12)+"ms,build:"+(t3-t2)+"ms");
+	        } finally {
+	          monitor.done();
+	        }
+	        return Status.OK_STATUS;
+	      }
+	    };
+	    buildJob.setRule( getProject() );
+	    buildJob.setPriority(Job.DECORATE);
+	    buildJob.schedule();
+	}
+	
+	public void getOccurrences(final IFile f,final String token,final OccurrencesHandler handler){
+		final String jobNamePrefix = NLS.bind(BWText.occurrences_job_name, getProject().getName());
+		
+	    Job buildJob = new Job (jobNamePrefix) {
+	      @Override
+	      protected IStatus run(IProgressMonitor monitor) {
+	        try {
+	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
+	          handler.handleOccurrences(realFacade.getOccurrences(f, token));
+	         
+	        } finally {
+	          monitor.done();
+	        }
+	        return Status.OK_STATUS;
+	      }
+	    };
+	    buildJob.setRule( getProject() );
+	    buildJob.setPriority(Job.DECORATE);
+	    buildJob.schedule();
+	}
+	
+	public void getThingAtPoint(final IFile file,final Location location,
+			final boolean qualify, final boolean typed,final ThingAtPointHandler handler){
+		final String jobNamePrefix = NLS.bind(BWText.thingatpoint_job_name, getProject().getName());
+		
+	    Job buildJob = new Job (jobNamePrefix) {
+	      @Override
+	      protected IStatus run(IProgressMonitor monitor) {
+	        try {
+	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
+	          handler.handleThing(realFacade.getThingAtPoint(file, location, qualify, typed));
+	         
 	        } finally {
 	          monitor.done();
 	        }
