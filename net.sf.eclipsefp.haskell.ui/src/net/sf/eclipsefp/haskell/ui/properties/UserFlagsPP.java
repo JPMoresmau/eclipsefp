@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.ui.properties;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
@@ -158,7 +158,7 @@ public class UserFlagsPP extends PropertyPage implements
           BuildOptions buildOptions=new BuildOptions().setOutput(true).setRecompile(true).setConfigure( true );
           instance.buildProject( buildOptions );
         }*/
-        IBWFacade f=BuildWrapperPlugin.getJobFacade( project );
+        JobFacade f=BuildWrapperPlugin.getJobFacade( project );
         if (f!=null){
           f.build( new BuildOptions().setOutput(true).setRecompile(true).setConfigure( true ) );
         }

@@ -5,7 +5,7 @@ import java.io.Writer;
 import java.util.List;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
@@ -597,7 +597,7 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
                     BuildOptions buildOptions=new BuildOptions().setOutput(false).setRecompile(true);
                     si.buildProject( buildOptions);
                   }*/
-                  IBWFacade fa=BuildWrapperPlugin.getJobFacade( f.getProject() );
+                  JobFacade fa=BuildWrapperPlugin.getJobFacade( f.getProject() );
                   if (fa!=null){
                     fa.build( new BuildOptions().setOutput(false) );
                   }

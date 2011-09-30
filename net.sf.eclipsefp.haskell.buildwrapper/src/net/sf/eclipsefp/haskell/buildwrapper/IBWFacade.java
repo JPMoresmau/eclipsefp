@@ -4,8 +4,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 
 import org.eclipse.core.resources.IProject;
 
+@Deprecated
 public interface IBWFacade {
-	void build(BuildOptions buildOptions);
+	boolean build(BuildOptions buildOptions);
 	
 	void synchronize(boolean force);
 

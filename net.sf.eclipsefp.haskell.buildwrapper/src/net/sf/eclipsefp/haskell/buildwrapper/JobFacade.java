@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 
-public class JobFacade implements IBWFacade {
+public class JobFacade  {
 	private BWFacade realFacade;
 	
 	public JobFacade(BWFacade realF){
@@ -98,11 +99,16 @@ public class JobFacade implements IBWFacade {
 	          long t0=System.currentTimeMillis();
 	          realFacade.write(f, doc.get());
 	          long t1=System.currentTimeMillis();
-	          //List<OutlineDef> defs=realFacade.outline(f);
-	          long t12=System.currentTimeMillis();
-	          //handler.handleOutline(defs);
 	          long t2=System.currentTimeMillis();
-	          //realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false));
+	          BuildWrapperPlugin.deleteProblems(f);
+	          boolean buildOK=realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false));
+	          
+	          List<OutlineDef> defs=realFacade.outline(f);
+	          long t12=System.currentTimeMillis();
+	          if (defs.size()>0 || buildOK){
+	        	  handler.handleOutline(defs); // avoid removing all outline on error
+	          }
+	          
 	          long t3=System.currentTimeMillis();
 	          BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t2-t1)+"ms,hanlderoutline:"+(t2-t12)+"ms,build:"+(t3-t2)+"ms");
 	        } finally {

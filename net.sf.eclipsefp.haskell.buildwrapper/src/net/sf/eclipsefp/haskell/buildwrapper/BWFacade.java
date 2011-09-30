@@ -37,7 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class BWFacade implements IBWFacade {
+public class BWFacade {
 	private static final String prefix="build-wrapper-json:";
 	
 	private String bwPath;
@@ -57,7 +57,7 @@ public class BWFacade implements IBWFacade {
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
 	
-	public void build(BuildOptions buildOptions){
+	public boolean build(BuildOptions buildOptions){
 		BuildWrapperPlugin.deleteProblems(getProject());
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build");
@@ -66,9 +66,9 @@ public class BWFacade implements IBWFacade {
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null && arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
-			parseNotes(notes);
+			return parseNotes(notes);
 		}
-		
+		return true;
 	}
 	
 	public void synchronize(boolean force){
@@ -296,7 +296,7 @@ public class BWFacade implements IBWFacade {
 		command.add("--line="+location.getStartLine());
 		command.add("--column="+(location.getStartColumn()+1));
 		command.add("--qualify="+qualify);
-		command.add("--typed="+qualify);
+		command.add("--typed="+typed);
 		JSONArray arr=run(command,ARRAY);
 		String s=null;
 		if (arr!=null){
@@ -309,7 +309,8 @@ public class BWFacade implements IBWFacade {
 		return s;
 	}
 	
-	private void parseNotes(JSONArray notes){
+	private boolean parseNotes(JSONArray notes){
+		boolean buildOK=true;
 		if (notes!=null){
 			try {
 				Set<IResource> ress=new HashSet<IResource>();
@@ -317,6 +318,9 @@ public class BWFacade implements IBWFacade {
 					JSONObject o=notes.getJSONObject(a);
 					String sk=o.getString("s");
 					Kind k="Error".equalsIgnoreCase(sk)?Kind.ERROR:Kind.WARNING;
+					if (k.equals(Kind.ERROR)){
+						buildOK=false;
+					}
 					JSONObject ol=o.getJSONObject("l");
 					String f=ol.getString("f");
 					int line=ol.getInt("l");
@@ -339,6 +343,7 @@ public class BWFacade implements IBWFacade {
 				BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
 			}
 		}
+		return buildOK;
 	}
 	
 	private Component parseComponent(JSONObject obj){

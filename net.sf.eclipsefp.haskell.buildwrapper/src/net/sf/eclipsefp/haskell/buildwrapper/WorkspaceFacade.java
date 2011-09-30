@@ -13,11 +13,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class WorkspaceFacade implements IBWFacade {
-	private IBWFacade realFacade;
+public class WorkspaceFacade {
+	private BWFacade realFacade;
 	private IProgressMonitor monitor;
 	
-	public WorkspaceFacade(IBWFacade realF,IProgressMonitor monitor){
+	public WorkspaceFacade(BWFacade realF,IProgressMonitor monitor){
 		realFacade=realF;
 		this.monitor=monitor;
 	}

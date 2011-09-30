@@ -100,7 +100,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	}
 	
 	public static WorkspaceFacade getWorkspaceFacade(IProject p,IProgressMonitor monitor){
-		IBWFacade realF=getFacade(p);
+		BWFacade realF=getFacade(p);
 		if (realF!=null){
 			return new WorkspaceFacade(realF,monitor);
 		}

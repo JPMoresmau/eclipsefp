@@ -3,7 +3,7 @@ package net.sf.eclipsefp.haskell.core.builder;
 
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.WorkspaceFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
@@ -117,7 +117,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 //      } else {
 //        new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
 //      }
-      IBWFacade f=BuildWrapperPlugin.getWorkspaceFacade( getProject(), mon );
+      WorkspaceFacade f=BuildWrapperPlugin.getWorkspaceFacade( getProject(), mon );
       if (f!=null){
         f.build( new BuildOptions().setOutput(true).setRecompile(false) );
       } else {

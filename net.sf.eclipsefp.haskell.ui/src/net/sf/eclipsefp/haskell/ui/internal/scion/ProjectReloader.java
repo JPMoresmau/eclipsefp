@@ -3,7 +3,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.IBWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -25,7 +25,7 @@ public class ProjectReloader implements CabalFileChangeListener {
 //
 //    }
 
-    IBWFacade f=BuildWrapperPlugin.getJobFacade( cabalF.getProject() );
+    JobFacade f=BuildWrapperPlugin.getJobFacade( cabalF.getProject() );
     if (f!=null){
       f.synchronize(false);
       f.build( new BuildOptions().setOutput(false).setRecompile(true).setConfigure( true ) );
