@@ -6,6 +6,8 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -47,6 +49,9 @@ public class FileUtil {
   /** Candidate locations to search for files on a path */
   static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
 
+  
+  public static Set<String> haskellExtensions=new HashSet<String>();
+  
   static {
     // Initialize the candidate file locations list, since this doesn't
     // change during runtime.
@@ -76,6 +81,10 @@ public class FileUtil {
         candidateLocations.add(new File(home, userBin));
       }
     }
+    
+    haskellExtensions.add(EXTENSION_HS);
+    haskellExtensions.add(EXTENSION_LHS);
+    haskellExtensions.add(EXTENSION_HSC);
   }
 
   private FileUtil() {
@@ -228,6 +237,8 @@ public class FileUtil {
   public static boolean hasHaskellExtension(final IResource resource) {
     return has(resource, EXTENSION_HS) || has(resource, EXTENSION_LHS) || has(resource, EXTENSION_HSC);
   }
+  
+  
 
   private static boolean has(final IResource resource, final String extension) {
     if (resource != null) {

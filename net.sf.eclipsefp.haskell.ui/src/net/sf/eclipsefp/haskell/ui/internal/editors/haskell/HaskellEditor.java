@@ -124,11 +124,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    */
   //private ScionInstance instance = null;
 
+  private boolean hasOutline=false;
   private final OutlineHandler outlineHandler = new OutlineHandler() {
 
     public void handleOutline( final List<OutlineDef> defs ) {
       if (outlinePage!=null){
         outlinePage.setInput( defs );
+        hasOutline=true;
       }
       if (foldingStructureProvider!=null){
         foldingStructureProvider.updateFoldingRegions( defs );
@@ -458,6 +460,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return null;
   }
 
+  private String moduleName=null;
+  public String getModuleName(){
+    if (moduleName==null){
+      moduleName=ResourceUtil.getModuleName( findFile() );
+    }
+    return moduleName;
+  }
+
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
     // unload the previous file from Scion
@@ -641,6 +651,21 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return null;
   }
 
+
+  public boolean hasOutline() {
+    return hasOutline;
+  }
+
+//  public void showOutlineLocation(final String shortName){
+//    Location location = getOutlineLocation( shortName );
+//    if( location != null ) {
+//      IDocument document = getDocument();
+//      int startOffset = location.getStartOffset( document );
+//      int length = location.getLength( document );
+//      selectAndReveal( startOffset, length );
+//    }
+//  }
+
   public List<String> getLocalNames(){
     List<String> ls=new ArrayList<String>();
     if (outlinePage!=null && outlinePage.getInput()!=null){
@@ -656,13 +681,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
       defByName=new HashMap<String, List<OutlineDef>>();
       for (OutlineDef od:outlinePage.getInput()){
-        List<OutlineDef> l=defByName.get( od.getName());
-        if(l==null){
-          l=new ArrayList<OutlineDef>();
-          defByName.put( od.getName(), l );
-        }
-        l.add( od );
+        buildDefByName(od);
       }
+    }
+  }
+
+  private void buildDefByName(final OutlineDef od){
+    List<OutlineDef> l=defByName.get( od.getName());
+    if(l==null){
+      l=new ArrayList<OutlineDef>();
+      defByName.put( od.getName(), l );
+    }
+    l.add( od );
+    for (OutlineDef od2:od.getChildren()){
+      buildDefByName(od2);
     }
   }
 

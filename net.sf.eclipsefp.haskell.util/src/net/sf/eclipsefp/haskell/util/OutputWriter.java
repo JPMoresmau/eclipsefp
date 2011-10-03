@@ -26,6 +26,7 @@ public abstract class OutputWriter extends Thread {
 
 	    public void setTerminate() {
 	      terminateFlag = true;
+	      interrupt();
 	    }
 
 	    public void addMessage(String msg) {

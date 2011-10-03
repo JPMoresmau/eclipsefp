@@ -757,15 +757,15 @@ public class ScionManager implements IResourceChangeListener, IScionEventListene
    * that were opened/closed, and starts/stops Scion instances accordingly.
    */
   public void resourceChanged( final IResourceChangeEvent event ) {
-    try {
-      event.getDelta().accept( new IResourceDeltaVisitor() {
-        public boolean visit( final IResourceDelta delta ) throws CoreException {
-          return updateForResource( delta.getResource() );
-        }
-      } );
-    } catch( CoreException ex ) {
-      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
-    }
+//    try {
+//      event.getDelta().accept( new IResourceDeltaVisitor() {
+//        public boolean visit( final IResourceDelta delta ) throws CoreException {
+//          return updateForResource( delta.getResource() );
+//        }
+//      } );
+//    } catch( CoreException ex ) {
+//      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
+//    }
   }
 
   private boolean updateForResource( final IResource resource )

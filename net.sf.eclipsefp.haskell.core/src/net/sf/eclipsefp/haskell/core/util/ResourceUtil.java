@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -399,6 +400,60 @@ public class ResourceUtil {
     return ret;
   }
 
+  public static IFile findFileFromModule(final IProject project,final String module){
+    try {
+        String path=module.replace( '.', '/' );
+        if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+          IFile f=BuildWrapperPlugin.getCabalFile( project );
+          PackageDescription pd=PackageDescriptionLoader.load(f);
+          Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
+
+            for (String src:stzs.keySet()){
+              IContainer fldr=getContainer(project,src);
+              for (String ext:FileUtil.haskellExtensions){
+                IFile file=fldr.getFile( new Path( path+"."+ext ) ); //$NON-NLS-1$
+                if (file.exists()){
+                  return file;
+                }
+              }
+            }
+        }
+      } catch( CoreException ex ) {
+        HaskellCorePlugin.log( "getModuleName:", ex ); //$NON-NLS-1$
+      }
+      return null;
+
+  }
+
+  public static String getModuleName(final IFile file){
+    IProject project = file.getProject();
+    try {
+      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+
+        IFile f=BuildWrapperPlugin.getCabalFile( project );
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
+        if (FileUtil.hasHaskellExtension(file)){
+          for (String src:stzs.keySet()){
+            IContainer fldr=getContainer(project,src);
+            if (file.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
+                for (PackageDescriptionStanza stz:stzs.get(src)){
+                  String module=getQualifiedModuleName( file, fldr );
+                  if (!ModuleInclusionType.MISSING.equals( stz.getModuleInclusionType( module ) )){
+                   return module;
+                  }
+                }
+              }
+            }
+          }
+      }
+
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "getModuleName:", ex ); //$NON-NLS-1$
+    }
+    return ""; //$NON-NLS-1$
+  }
+
   public static Set<PackageDescriptionStanza> getApplicableStanzas(final IFile[] files){
     if (files==null || files.length==0){
       return Collections.emptySet();
@@ -435,7 +490,7 @@ public class ResourceUtil {
       }
 
     } catch( CoreException ex ) {
-      HaskellCorePlugin.log( "getImportLibraries:", ex ); //$NON-NLS-1$
+      HaskellCorePlugin.log( "getApplicableStanzas:", ex ); //$NON-NLS-1$
     }
     return Collections.emptySet();
   }

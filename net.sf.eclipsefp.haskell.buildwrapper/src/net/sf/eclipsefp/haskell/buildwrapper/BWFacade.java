@@ -493,6 +493,9 @@ public class BWFacade {
 	
 	public void setOutStream(Writer outStream) {
 		this.outStream = outStream;
+		if (ow!=null){
+			ow.setTerminate();
+		}
 		ow=outStream!=null?new OutputWriter("BWFacade.outputWriter: "+project.getName(),outStream) {
 			
 			@Override
