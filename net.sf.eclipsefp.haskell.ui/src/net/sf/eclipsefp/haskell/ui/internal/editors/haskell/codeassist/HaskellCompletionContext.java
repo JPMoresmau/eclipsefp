@@ -1,34 +1,21 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import net.sf.eclipsefp.haskell.util.FileUtil;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class HaskellCompletionContext implements IHaskellCompletionContext {
-  private IFile file;
+public class HaskellCompletionContext  {
+//  private IFile file;
   private String source;
   private int fOffset;
-  private HaskellEditor editor;
+//  private HaskellEditor editor;
 
 	protected HaskellCompletionContext() {
 		//placeholder constructor
 	}
 
-  public HaskellCompletionContext( final IFile file, final String source, final int offset , final HaskellEditor editor) {
-    this.file = file;
+  public HaskellCompletionContext( final String source, final int offset ) {
+   // this.file = file;
     this.source = source;
     setOffset( offset );
-    this.editor=editor;
+   // this.editor=editor;
   }
 
 //	public IHaskellModel getLanguageModel() {
@@ -55,21 +42,21 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		return fOffset;
 	}
 
-	public ICompletionProposal[] computeProposals() {
-		String completedToken;
-		try {
-			completedToken = getQualifier(source,getOffset());
-
-			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
-
-			searchDefinedNames(completedToken, result);
-			// searchKeywords(completedToken, result);
-			return result.toArray(new ICompletionProposal[result.size()]);
-		} catch (Exception ex) {
-			// ignore the error and just return an empty result
-		}
-		return new ICompletionProposal[0];
-	}
+//	public ICompletionProposal[] computeProposals() {
+//		String completedToken;
+//		try {
+//			completedToken = getQualifier(source,getOffset());
+//
+//			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
+//
+//			searchDefinedNames(completedToken, result);
+//			// searchKeywords(completedToken, result);
+//			return result.toArray(new ICompletionProposal[result.size()]);
+//		} catch (Exception ex) {
+//			// ignore the error and just return an empty result
+//		}
+//		return new ICompletionProposal[0];
+//	}
 
 	/*private void searchKeywords(final String prefix,
 		final List<ICompletionProposal> result)
@@ -77,24 +64,24 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
 	}*/
 
-  private void searchDefinedNames( final String prefix, final List<ICompletionProposal> result ) {
-    if( file != null
-        && FileUtil.hasHaskellExtension( file )
-        && ResourceUtil.isInHaskellProject( file ) ) {
-      final ScionInstance si = ScionPlugin.getScionInstance( file );
-      // sync access
-      if( si != null ) {
-        List<String> names = si.definedNames( );
-        if (editor!=null){
-          Set<String> uNames=new HashSet<String>(names);
-          uNames.addAll(editor.getLocalNames());
-          names=new ArrayList<String>(uNames);
-         }
-        searchStringList( prefix, names, result );
-
-      }
-    }
-  }
+//  private void searchDefinedNames( final String prefix, final List<ICompletionProposal> result ) {
+//    if( file != null
+//        && FileUtil.hasHaskellExtension( file )
+//        && ResourceUtil.isInHaskellProject( file ) ) {
+//      final ScionInstance si = ScionPlugin.getScionInstance( file );
+//      // sync access
+//      if( si != null ) {
+//        List<String> names = si.definedNames( );
+//        if (editor!=null){
+//          Set<String> uNames=new HashSet<String>(names);
+//          uNames.addAll(editor.getLocalNames());
+//          names=new ArrayList<String>(uNames);
+//         }
+//        searchStringList( prefix, names, result );
+//
+//      }
+//    }
+//  }
 
   /* DELETE ME AFTER NEXT RELEASE!
   private void searchModulesNames( final String prefix, final List<ICompletionProposal> result ) {
@@ -123,17 +110,17 @@ public class HaskellCompletionContext implements IHaskellCompletionContext {
 		}
 	}*/
 
-	 private void searchStringList(final String prefix, final Iterable<String> names, final List<ICompletionProposal> result)
-	   {
-	     final int offset = getOffset();
-	     final int plength = prefix.length();
-
-	     for(String name : names) {
-	       if (name.startsWith(prefix)) {
-	         result.add(new CompletionProposal(name, offset - plength, plength, name.length(), ImageCache.FUNCTION, name, null, ""));
-	       }
-	     }
-	   }
+//	 private void searchStringList(final String prefix, final Iterable<String> names, final List<ICompletionProposal> result)
+//	   {
+//	     final int offset = getOffset();
+//	     final int plength = prefix.length();
+//
+//	     for(String name : names) {
+//	       if (name.startsWith(prefix)) {
+//	         result.add(new CompletionProposal(name, offset - plength, plength, name.length(), ImageCache.FUNCTION, name, null, ""));
+//	       }
+//	     }
+//	   }
 
 //	private void searchImportableModules(final String prefix,
 //		final List<ICompletionProposal> result)

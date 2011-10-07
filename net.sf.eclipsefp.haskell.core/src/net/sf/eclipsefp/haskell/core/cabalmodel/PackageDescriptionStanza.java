@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 
@@ -482,4 +483,19 @@ public class PackageDescriptionStanza {
     return ModuleInclusionType.MISSING;
   }
 
+  public Set<String> listAllModules(){
+    Set<String> ret=new HashSet<String>();
+    String s=getProperties().get( CabalSyntax.FIELD_OTHER_MODULES );
+    ret.addAll(PackageDescriptionLoader.parseList( s ));
+    s=getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    ret.addAll(PackageDescriptionLoader.parseList( s ));
+    s=getProperties().get( CabalSyntax.FIELD_MAIN_IS );
+    if (s!=null){
+      ret.add("Main"); //$NON-NLS-1$
+    }
+    for (PackageDescriptionStanza pds:getStanzas()){
+      ret.addAll( pds.listAllModules() );
+    }
+    return ret;
+  }
 }

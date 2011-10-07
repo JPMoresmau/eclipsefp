@@ -21,7 +21,7 @@ public class HSCodeTemplateContextType extends TemplateContextType {
     addResolver( new GlobalTemplateVariables.Cursor() );
     addResolver( new GlobalTemplateVariables.WordSelection() );
     addResolver( new GlobalTemplateVariables.LineSelection() );
-    addResolver( new HsModuleTemplateVariable() );
+  //  addResolver( new HsModuleTemplateVariable() );
     addResolver( new HsClassTypeNameTemplateVariable() );
     addResolver( new HsTypeNameTemplateVariable() );
   }

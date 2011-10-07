@@ -2,10 +2,10 @@ package net.sf.eclipsefp.haskell.ghccompiler.core;
 
 import java.io.File;
 import java.io.IOException;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
-import net.sf.eclipsefp.haskell.scion.types.Note;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;

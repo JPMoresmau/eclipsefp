@@ -18,8 +18,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.IScionEventListener;
-import net.sf.eclipsefp.haskell.scion.client.ScionEvent;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockBlockDocumentFollowingAction;
@@ -82,7 +80,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  *
  * @author Leif Frenzel
  */
-public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, IScionEventListener {
+public class HaskellEditor extends TextEditor implements IEditorPreferenceNames {
   /** The Haskell editor's identifier. */
   public static final String ID = HaskellEditor.class.getName();
   /** Action string associated with a following Haddock documentation comment */
@@ -115,6 +113,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   //private List<OutlineDef> outline;
   private Map<String,List<OutlineDef>> defByName;
+
   /**
    * The scion-server supporting this editor.
    *
@@ -132,6 +131,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         outlinePage.setInput( defs );
         hasOutline=true;
       }
+
       if (foldingStructureProvider!=null){
         foldingStructureProvider.updateFoldingRegions( defs );
       }
@@ -360,9 +360,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // adapt the displayed source file to the outline viewer
     if( IContentOutlinePage.class.equals( required ) ) {
       if( outlinePage == null ) {
-        outlinePage = new HaskellOutlinePage( this );
         //updateOutline();
-        synchronize();
+          synchronize();
       }
 
       result = outlinePage;
@@ -436,6 +435,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public void init( final IEditorSite site, final IEditorInput input )
       throws PartInitException {
       super.init( site, input );
+      outlinePage = new HaskellOutlinePage( this );
       IFile file = findFile();
       if (file!=null){
         BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
@@ -602,6 +602,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 //    updateOutline(findFile());
 //  }
 
+  private boolean needWrite=false;
   public void synchronize(){
     IFile file=findFile();
     /*BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
@@ -611,7 +612,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if (file!=null && ResourceUtil.isInHaskellProject( file )){
       JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
       if (jf!=null){
-        jf.updateFromEditor( file, getDocument(), outlineHandler );
+        if (!needWrite && isDirty()){ // we need to write the docs if we're dirty
+          needWrite=true;
+        }
+        jf.updateFromEditor( file, needWrite?getDocument():null, outlineHandler );
+        if (!isDirty()){ // now we've written and not dirty
+          needWrite=false;
+        }
       } else {
         outlineHandler.handleOutline( Collections.<OutlineDef>emptyList() );
       }
@@ -719,27 +726,28 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   // Interface methods for IScionEventListener
 
-  /**
-   * Process a scion-server status change event
-   *
-   * @param ev
-   *          The {@link ScionEvent} indicating the type of server event that
-   *          happened.
-   */
-  public void processScionServerEvent( final ScionEvent ev ) {
-    switch (ev.getEventType()) {
-      case EXECUTABLE_CHANGED: {
-        //final IFile file = findFile();
-        //if (file != null && ResourceUtil.isInHaskellProject( file ) ) {
-            //updateOutline( file );
-          synchronize();
-        //}
-        break;
-      }
+//  /**
+//   * Process a scion-server status change event
+//   *
+//   * @param ev
+//   *          The {@link ScionEvent} indicating the type of server event that
+//   *          happened.
+//   */
+//  public void processScionServerEvent( final ScionEvent ev ) {
+//    switch (ev.getEventType()) {
+//      case EXECUTABLE_CHANGED: {
+//        //final IFile file = findFile();
+//        //if (file != null && ResourceUtil.isInHaskellProject( file ) ) {
+//            //updateOutline( file );
+//          synchronize();
+//        //}
+//        break;
+//      }
+//
+//      default:
+//        break;
+//    }
+//  }
 
-      default:
-        break;
-    }
-  }
 
 }

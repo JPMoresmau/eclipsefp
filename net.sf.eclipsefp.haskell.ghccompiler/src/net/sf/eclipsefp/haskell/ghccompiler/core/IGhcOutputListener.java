@@ -1,6 +1,6 @@
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
-import net.sf.eclipsefp.haskell.scion.types.Note;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
 
 /**
  * Listener that listens for particular messages spit out by the GHC compiler,

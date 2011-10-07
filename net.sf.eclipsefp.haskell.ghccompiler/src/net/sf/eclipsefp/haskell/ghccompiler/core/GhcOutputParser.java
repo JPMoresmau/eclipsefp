@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
 import net.sf.eclipsefp.haskell.core.compiler.ICompilerListener;
-import net.sf.eclipsefp.haskell.scion.types.Location;
-import net.sf.eclipsefp.haskell.scion.types.Note;
 
 /**
  * Parser that processes the GHC compiler output as it arrives and sends it off

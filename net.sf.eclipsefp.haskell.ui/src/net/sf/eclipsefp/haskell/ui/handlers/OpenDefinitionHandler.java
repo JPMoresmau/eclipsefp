@@ -253,10 +253,8 @@ public class OpenDefinitionHandler extends AbstractHandler {
               && p.getName().equals( packageName ) ) {
             IFile f = ResourceUtil.findFileFromModule( p, module );
             if( f != null ) {
-              if( f != null ) {
-                openFile( page, f, shortName );
-                 return true;
-               }
+               openFile( page, f, shortName );
+               return true;
             }
             /*
              * IFile f=BuildWrapperPlugin.getCabalFile( project );

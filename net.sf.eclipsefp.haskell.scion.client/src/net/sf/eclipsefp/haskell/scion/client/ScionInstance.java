@@ -41,7 +41,6 @@ import net.sf.eclipsefp.haskell.scion.internal.util.Trace;
 import net.sf.eclipsefp.haskell.scion.types.BuildOptions;
 import net.sf.eclipsefp.haskell.scion.types.CabalPackage;
 import net.sf.eclipsefp.haskell.scion.types.Component;
-import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
 import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
 import net.sf.eclipsefp.haskell.scion.types.IAsyncScionCommandAction;
 import net.sf.eclipsefp.haskell.scion.types.Location;
@@ -755,7 +754,7 @@ public class ScionInstance {
 	    final BackgroundTypecheckArbitraryCommand cmd = new BackgroundTypecheckArbitraryCommand(this, file, doc) {
 	      @Override
 	      public boolean onError(String name, String message) {
-	        if (message != null && message.contains(GhcMessages.ERROR_INTERACTIVE_DISABLED)) {
+	        if (message != null && message.contains(net.sf.eclipsefp.haskell.scion.types.GhcMessages.ERROR_INTERACTIVE_DISABLED)) {
 	        	// I'm in two minds here: is it better to see obsolete errors at the wrong place, or to not see any error and have to save to see again the errors?
 	        	//deleteProblems(file);
 	          if (!li.interactiveCheckDisabled) {

@@ -27,7 +27,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -72,7 +71,7 @@ public class ResourceUtil {
         for (Component c:facade.getComponents()){
           if (c.isBuildable() &&  c.getType().equals( type )){
             String name=FileUtil.makeExecutableName( c.getName() );
-            IFile f=project.getFile( ScionPlugin.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
+            IFile f=project.getFile( BWFacade.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
             if (f.exists()){
               result.add( f );
             }

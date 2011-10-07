@@ -14,7 +14,7 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.swt.graphics.RGB;
-
+@Deprecated
 public class SyntaxColoring_PDETest extends TestCase {
 
   public void testDefaultColor() throws CoreException {

@@ -1,11 +1,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
-import net.sf.eclipsefp.haskell.scion.client.IScionPreferenceNames;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -14,7 +11,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -48,11 +44,11 @@ public class ScionPP
 
 	private ExecutableFileFieldEditor serverExecutableField;
 	private Composite serverExecutableFieldC;
-	private BooleanFieldEditor serverBuiltInField;
-	private Composite serverBuiltInFieldC;
+//	private BooleanFieldEditor serverBuiltInField;
+//	private Composite serverBuiltInFieldC;
 	private ButtonFieldEditor autodetect;
 	private Composite autodetectC;
-	private Button forceRebuild;
+//	private Button forceRebuild;
 
 	private ExecutableFileFieldEditor browserExecutableField;
   private Composite browserExecutableFieldC;
@@ -62,12 +58,12 @@ public class ScionPP
   private Composite autodetectBrowserC;
   private Button forceRebuildBrowser;
 
-	private BooleanFieldEditor cabalUpdateField;
+//	private BooleanFieldEditor cabalUpdateField;
 	//private Composite forceRebuildC;
-	private RadioGroupFieldEditor serverFlavorField;
-	private Composite serverFlavorFieldC;
-	private BooleanFieldEditor verboseInteractionField;
-	private Composite verboseInteractionFieldC;
+//	private RadioGroupFieldEditor serverFlavorField;
+//	private Composite serverFlavorFieldC;
+//	private BooleanFieldEditor verboseInteractionField;
+//  private Composite verboseInteractionFieldC;
 
 	private CabalImplsBlock cabalBlock;
 	private Composite fieldComposite;
@@ -101,7 +97,7 @@ public class ScionPP
 	  // Create the page:
 	  noDefaultAndApplyButton();
 	  IPreferenceStore prefStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-	  IPreferenceStore scionPrefStore = ScionPlugin.getDefault().getPreferenceStore();
+	 //IPreferenceStore scionPrefStore = ScionPlugin.getDefault().getPreferenceStore();
     setPreferenceStore(prefStore);
     parentComposite.setLayout( new GridLayout(nColumns,false) );
 
@@ -131,33 +127,33 @@ public class ScionPP
     gridData.horizontalSpan = nColumns;
     fieldComposite.setLayoutData( gridData );
 
-    SWTUtil.createMessageLabel (fieldComposite, UITexts.scionServer_preferences_label, 2, SWT.DEFAULT);
+    SWTUtil.createMessageLabel (fieldComposite, UITexts.buildwrapper_preferences_label, 2, SWT.DEFAULT);
 
-    serverBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
-    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
-    gdata.horizontalSpan=2;
-    serverBuiltInFieldC.setLayoutData( gdata );
-		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
-		                                             UITexts.scionServerBuiltIn_label,
-		                                             serverBuiltInFieldC);
-		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
-      public void propertyChange( final PropertyChangeEvent event ) {
-        updateButtonState();
-        setValid( isValid() );
-      }
-    } );
-		serverBuiltInField.setPage( this );
-		serverBuiltInField.setPreferenceStore( prefStore );
-		serverBuiltInField.load();
+//    serverBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
+//    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
+//    gdata.horizontalSpan=2;
+//    serverBuiltInFieldC.setLayoutData( gdata );
+//		serverBuiltInField = new BooleanFieldEditor( IPreferenceConstants.SCION_SERVER_BUILTIN,
+//		                                             UITexts.scionServerBuiltIn_label,
+//		                                             serverBuiltInFieldC);
+//		serverBuiltInField.setPropertyChangeListener( new IPropertyChangeListener() {
+//      public void propertyChange( final PropertyChangeEvent event ) {
+//        updateButtonState();
+//        setValid( isValid() );
+//      }
+//    } );
+//		serverBuiltInField.setPage( this );
+//		serverBuiltInField.setPreferenceStore( prefStore );
+//		serverBuiltInField.load();
 
 		//forceRebuildC=new Composite(fieldComposite,SWT.NONE);
-    gdata = new GridData( SWT.LEFT, SWT.CENTER, true, false );
-    gdata.horizontalIndent=30;
-    gdata.horizontalSpan=1;
-    //forceRebuildC.setLayoutData( gdata );
-    forceRebuild=new Button(fieldComposite,SWT.CHECK);
-    forceRebuild.setText( UITexts.forceRebuildButton_text );
-    forceRebuild.setLayoutData( gdata );
+//    gdata = new GridData( SWT.LEFT, SWT.CENTER, true, false );
+//    gdata.horizontalIndent=30;
+//    gdata.horizontalSpan=1;
+//    //forceRebuildC.setLayoutData( gdata );
+//    forceRebuild=new Button(fieldComposite,SWT.CHECK);
+//    forceRebuild.setText( UITexts.forceRebuildButton_text );
+//    forceRebuild.setLayoutData( gdata );
 
 
     /*forceRebuild = new ButtonFieldEditor(
@@ -179,29 +175,29 @@ public class ScionPP
     forceRebuild.setPreferenceStore( prefStore );
     forceRebuild.load();*/
 
-    final Composite cabalUpdateFieldC=new Composite(fieldComposite,SWT.NONE);
-    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
-    cabalUpdateFieldC.setLayoutData( gdata );
-    cabalUpdateField=new BooleanFieldEditor( IPreferenceConstants.RUN_CABAL_UPDATE, UITexts.cabalUpdateButton_text, cabalUpdateFieldC );
-    cabalUpdateField.setPage( this );
-    cabalUpdateField.setPreferenceStore( getPreferenceStore() );
-    cabalUpdateField.load();
-    cabalUpdateField.setEnabled( false, cabalUpdateFieldC );
-
-    forceRebuild.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        rebuildBuiltin=forceRebuild.getSelection();
-        cabalUpdateField.setEnabled( rebuildBuiltin, cabalUpdateFieldC );
-      }
-    });
+//    final Composite cabalUpdateFieldC=new Composite(fieldComposite,SWT.NONE);
+//    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
+//    cabalUpdateFieldC.setLayoutData( gdata );
+//    cabalUpdateField=new BooleanFieldEditor( IPreferenceConstants.RUN_CABAL_UPDATE, UITexts.cabalUpdateButton_text, cabalUpdateFieldC );
+//    cabalUpdateField.setPage( this );
+//    cabalUpdateField.setPreferenceStore( getPreferenceStore() );
+//    cabalUpdateField.load();
+//    cabalUpdateField.setEnabled( false, cabalUpdateFieldC );
+//
+//    forceRebuild.addSelectionListener( new SelectionAdapter() {
+//      @Override
+//      public void widgetSelected( final SelectionEvent e ) {
+//        rebuildBuiltin=forceRebuild.getSelection();
+//        cabalUpdateField.setEnabled( rebuildBuiltin, cabalUpdateFieldC );
+//      }
+//    });
 
     serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
     GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd.horizontalSpan=2;
     serverExecutableFieldC.setLayoutData( gd );
-		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_SERVER_EXECUTABLE,
-				NLS.bind(UITexts.scionServerExecutable_label, getServerExecutableName()),
+		serverExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,
+				NLS.bind(UITexts.buildwrapperExecutable_label, getServerExecutableName()),
 				false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, serverExecutableFieldC );
 		serverExecutableField.setEmptyStringAllowed(true);
 		serverExecutableField.setPropertyChangeListener( new IPropertyChangeListener() {
@@ -233,31 +229,31 @@ public class ScionPP
 		autodetect.setPreferenceStore( prefStore );
 		autodetect.load();
 
-		serverFlavorFieldC = new Composite(fieldComposite, SWT.NONE);
-    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-    gd.horizontalSpan=2;
-    serverFlavorFieldC.setLayoutData( gd);
-		serverFlavorField = new RadioGroupFieldEditor( IPreferenceConstants.SCION_SERVER_FLAVOR,
-		    UITexts.scionServerFlavor_title, 1,
-		    new String[][] {
-		      { UITexts.scionServerFlavor_stdstream_label, ScionManager.STDSTREAM_SCION_FLAVOR },
-		      { UITexts.scionServerFlavor_network_label, ScionManager.NETWORK_SCION_FLAVOR }
-		    },
-		    serverFlavorFieldC, true );
-		serverFlavorField.setPage(this);
-		serverFlavorField.setPreferenceStore( prefStore );
-		serverFlavorField.load();
+//		serverFlavorFieldC = new Composite(fieldComposite, SWT.NONE);
+//    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+//    gd.horizontalSpan=2;
+//    serverFlavorFieldC.setLayoutData( gd);
+//		serverFlavorField = new RadioGroupFieldEditor( IPreferenceConstants.SCION_SERVER_FLAVOR,
+//		    UITexts.scionServerFlavor_title, 1,
+//		    new String[][] {
+//		      { UITexts.scionServerFlavor_stdstream_label, ScionManager.STDSTREAM_SCION_FLAVOR },
+//		      { UITexts.scionServerFlavor_network_label, ScionManager.NETWORK_SCION_FLAVOR }
+//		    },
+//		    serverFlavorFieldC, true );
+//		serverFlavorField.setPage(this);
+//		serverFlavorField.setPreferenceStore( prefStore );
+//		serverFlavorField.load();
 
-    verboseInteractionFieldC = new Composite(fieldComposite, SWT.NONE);
-    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-    gd.horizontalSpan=2;
-    verboseInteractionFieldC.setLayoutData( gd);
-    verboseInteractionField = new BooleanFieldEditor( IScionPreferenceNames.VERBOSE_INTERACTION,
-        UITexts.scionVerboseInteraction_title,
-        verboseInteractionFieldC );
-    verboseInteractionField.setPage(this);
-    verboseInteractionField.setPreferenceStore( scionPrefStore );
-    verboseInteractionField.load();
+//    verboseInteractionFieldC = new Composite(fieldComposite, SWT.NONE);
+//    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+//    gd.horizontalSpan=2;
+//    verboseInteractionFieldC.setLayoutData( gd);
+//    verboseInteractionField = new BooleanFieldEditor( IScionPreferenceNames.VERBOSE_INTERACTION,
+//        UITexts.scionVerboseInteraction_title,
+//        verboseInteractionFieldC );
+//    verboseInteractionField.setPage(this);
+//    verboseInteractionField.setPreferenceStore( scionPrefStore );
+//    verboseInteractionField.load();
 
     // scion-browser
 
@@ -293,7 +289,7 @@ public class ScionPP
       @Override
       public void widgetSelected( final SelectionEvent e ) {
         rebuildBrowserBuiltin=forceRebuildBrowser.getSelection();
-        cabalUpdateField.setEnabled( rebuildBrowserBuiltin, cabalUpdateFieldC );
+       // cabalUpdateField.setEnabled( rebuildBrowserBuiltin, cabalUpdateFieldC );
       }
     });
 
@@ -364,13 +360,13 @@ public class ScionPP
   }
 
 	private void updateButtonState() {
-    boolean b = serverBuiltInField.getBooleanValue();
+    boolean b = false; //serverBuiltInField.getBooleanValue();
     //forceRebuild.setEnabled( b, forceRebuildC );
-    forceRebuild.setEnabled( b);
-    if (!b){
-      forceRebuild.setSelection( false );
-      forceRebuild.notifyListeners( SWT.Selection, new Event() );
-    }
+//    forceRebuild.setEnabled( b);
+//    if (!b){
+//      forceRebuild.setSelection( false );
+//      forceRebuild.notifyListeners( SWT.Selection, new Event() );
+//    }
     autodetect.setEnabled( !b, autodetectC );
     serverExecutableField.setEnabled( !b, serverExecutableFieldC );
 
@@ -401,7 +397,7 @@ public class ScionPP
   }
 
 	public static String getServerExecutableName() {
-		return FileUtil.makeExecutableName("scion-server"); //$NON-NLS-1$
+		return FileUtil.makeExecutableName("buildwrapper"); //$NON-NLS-1$
 	}
 
 	public static String getBrowserExecutableName() {
@@ -410,26 +406,26 @@ public class ScionPP
 
 	public static void initializeDefaults(final IPreferenceStore store) {
 	  // Set reasonable defaults.
-	  store.setDefault( SCION_SERVER_BUILTIN, true );
+	 // store.setDefault( SCION_SERVER_BUILTIN, true );
 	  store.setDefault( SCION_BROWSER_SERVER_BUILTIN, true );
     store.setDefault( RUN_CABAL_UPDATE, true );
-	  store.setDefault( SCION_SERVER_EXECUTABLE, new String() );
+	  store.setDefault( BUILDWRAPPER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
-	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
+//	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
 
   @Override
   public boolean performOk() {
     cabalBlock.updateCabalImplementations();
-    serverBuiltInField.store();
+ //   serverBuiltInField.store();
     browserBuiltInField.store();
     serverExecutableField.store();
     browserExecutableField.store();
     autodetect.store();
     autodetectBrowser.store();
-    serverFlavorField.store();
-    verboseInteractionField.store();
-    cabalUpdateField.store();
+//    serverFlavorField.store();
+//    verboseInteractionField.store();
+//    cabalUpdateField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
@@ -453,12 +449,12 @@ public class ScionPP
   public boolean isValid() {
     boolean retval = cabalBlock.validate( this );
     if (retval) {
-      if (!serverBuiltInField.getBooleanValue()) {
+      //if (!serverBuiltInField.getBooleanValue()) {
         if (serverExecutableField.getStringValue().length() == 0) {
           retval = false;
-          setErrorMessage( UITexts.cabalImplsBlock_needScionExecutablePath );
+          setErrorMessage( UITexts.cabalImplsBlock_needBuildWrapperExecutablePath );
         }
-      }
+      //}
     }
 
     if (retval) {

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -17,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -32,10 +32,14 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.buildwrapper";
 
+	public static QualifiedName 				 USERFLAGS_PROPERTY=new QualifiedName("EclipseFP", "UserFlags");
+	
 	// The shared instance
 	private static BuildWrapperPlugin plugin;
 	
 	private static Map<IProject, BWFacade> facades=new HashMap<IProject, BWFacade>();
+	
+	private static String bwPath;
 	
 	/**
 	 * The constructor
@@ -70,7 +74,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static BWFacade createFacade(IProject p,String bwPath,String cabalPath,Writer outStream){
+	public static BWFacade createFacade(IProject p,String cabalPath,Writer outStream){
 
 		IFile cf=getCabalFile(p);
 		if (cf!=null){
@@ -89,6 +93,10 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	
 	public static BWFacade getFacade(IProject p){
 		return facades.get(p);
+	}
+	
+	public static BWFacade removeFacade(IProject p){
+		return facades.remove(p);
 	}
 	
 	public static JobFacade getJobFacade(IProject p){
@@ -125,7 +133,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	  }
 
 	  public static void log(int severity, String message, Throwable cause) {
-	    Status status = new Status(severity, ScionPlugin.getPluginId(), severity, message, cause);
+	    Status status = new Status(severity, BuildWrapperPlugin.PLUGIN_ID, severity, message, cause);
 	    logStatus(status);
 	  }
 
@@ -145,9 +153,9 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	          r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
 	        }
 	        r.deleteMarkers(PROBLEM_MARKER_ID, true, IResource.DEPTH_ZERO);
-	        r.deleteMarkers(ScionPlugin.ID_PROJECT_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+	        r.deleteMarkers("net.sf.eclipsefp.haskell.scion.client.ScionPlugin.projectProblem", true, IResource.DEPTH_ZERO);
 	      } catch (CoreException ex) {
-	        ScionPlugin.logError(BWText.error_deleteMarkers, ex);
+	        BuildWrapperPlugin.logError(BWText.error_deleteMarkers, ex);
 	        ex.printStackTrace();
 	      }
 	    }
@@ -196,5 +204,18 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	    }
 	    return f;
 	  }
+
+	public static String getBwPath() {
+		return bwPath;
+	}
+
+	public static void setBwPath(String bwPath) {
+		BuildWrapperPlugin.bwPath = bwPath;
+		for (BWFacade f:facades.values()){
+			if (f!=null){
+				f.setBwPath(bwPath);
+			}
+		}
+	}
 	  
 }

@@ -3,8 +3,8 @@ package net.sf.eclipsefp.haskell.buildwrapper.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -136,7 +136,7 @@ public class Note {
 				try {
 					MarkerUtilities.createMarker(resource, attributes, ID_PROBLEM_MARKER);
 				} catch (CoreException ex){
-					ScionPlugin.logError(BWText.process_apply_note_error, ex);
+					BuildWrapperPlugin.logError(BWText.process_apply_note_error, ex);
 					ex.printStackTrace();
 				}
 			};

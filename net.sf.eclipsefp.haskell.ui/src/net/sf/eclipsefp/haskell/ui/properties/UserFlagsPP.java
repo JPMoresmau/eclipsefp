@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -59,7 +58,7 @@ public class UserFlagsPP extends PropertyPage implements
     IFile f=BuildWrapperPlugin.getCabalFile( project );
     if (f!=null && f.exists()){
       try {
-        String currentProp=project.getPersistentProperty( ScionPlugin.USERFLAGS_PROPERTY );
+        String currentProp=project.getPersistentProperty( BuildWrapperPlugin.USERFLAGS_PROPERTY );
         JSONObject flagO=new JSONObject();
         if (currentProp!=null && currentProp.length()>0){
           flagO=new JSONObject( currentProp );
@@ -151,7 +150,7 @@ public class UserFlagsPP extends PropertyPage implements
       }
       IProject project=( IProject )getElement();
       try {
-        project.setPersistentProperty( ScionPlugin.USERFLAGS_PROPERTY, flagsO.toString() );
+        project.setPersistentProperty( BuildWrapperPlugin.USERFLAGS_PROPERTY, flagsO.toString() );
 
         /*ScionInstance instance=ScionPlugin.getScionInstance( project );
         if (instance !=null){

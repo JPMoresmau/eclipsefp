@@ -13,6 +13,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.ui.part.FileEditorInput;
 
+@Deprecated
 public class Partitioning_PDETest extends TestCaseWithProject {
 
   public void testEmpty() throws Exception {

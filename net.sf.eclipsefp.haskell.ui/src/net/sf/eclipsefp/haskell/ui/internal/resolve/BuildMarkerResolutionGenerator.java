@@ -6,7 +6,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Module;
-import net.sf.eclipsefp.haskell.scion.types.GhcMessages;
+import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;

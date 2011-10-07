@@ -5,7 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -37,7 +37,7 @@ public class DistFolder {
     lFolder.setText( label );
 
     tFolder=new Text(composite,SWT.BORDER);
-    tFolder.setText( ScionPlugin.DIST_FOLDER );
+    tFolder.setText( BWFacade.DIST_FOLDER_CABAL );
     GridData gd=new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
     tFolder.setLayoutData( gd );
 
@@ -45,7 +45,7 @@ public class DistFolder {
     if (projIter.hasNext()) {
       final IProject uniqueP=projIter.next();
       final String projectLocation=uniqueP.getLocation().toOSString();
-      fullPath=uniqueP.getLocation().append( ScionPlugin.DIST_FOLDER ).toOSString();
+      fullPath=uniqueP.getLocation().append( BWFacade.DIST_FOLDER_CABAL ).toOSString();
       Button bFolder=new Button(composite,SWT.PUSH);
       bFolder.setText( "..." );
       bFolder.addSelectionListener( new SelectionAdapter() {
@@ -77,7 +77,7 @@ public class DistFolder {
 
   public void addPropertyListener(final PropertyChangeListener pcl){
     pcs.addPropertyChangeListener( PROP_PATH,pcl );
-    pcs.firePropertyChange( PROP_PATH, null, ScionPlugin.DIST_FOLDER );
+    pcs.firePropertyChange( PROP_PATH, null, BWFacade.DIST_FOLDER_CABAL );
   }
 
   public String getFolder(){

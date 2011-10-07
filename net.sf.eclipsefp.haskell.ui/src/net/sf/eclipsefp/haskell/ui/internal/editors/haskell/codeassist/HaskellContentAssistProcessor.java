@@ -22,10 +22,9 @@ import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-import net.sf.eclipsefp.haskell.core.codeassist.LexerTokenCategories;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.types.HaskellLexerToken;
-import net.sf.eclipsefp.haskell.scion.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
@@ -35,7 +34,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -72,7 +70,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   }
 
   /** Default number of tokens to grab before point when determining completion context */
-  private final static int NUM_PRECEDING_TOKENS = 10;
+ // private final static int NUM_PRECEDING_TOKENS = 10;
 
   /** The current completion context state */
   private CompletionContext context;
@@ -111,15 +109,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset)
 	{
+	  //ScionTokenScanner sts=((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getScanner();
 	  IFile theFile = HaskellUIPlugin.getFile( viewer );
 	  IDocument doc = viewer.getDocument();
 	  // Figure out what we're doing...
-    ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
+    //ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
     prefix = getCompletionPrefix( doc, offset );
     switch (context) {
       case NO_CONTEXT: {
-        if ( scion != null ) {
+        //if ( scion != null ) {
           int offsetPrefix = offset - prefix.length();
 
           try {
@@ -129,8 +128,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
               offsetPrefix = 0;
             }
 
-            Region point = new Region( offsetPrefix, 0 );
-            HaskellLexerToken[] tokens = scion.tokensPrecedingPoint( NUM_PRECEDING_TOKENS, theFile, doc, point );
+            //Region point = new Region( offsetPrefix, 0 );
+            //HaskellLexerToken[] tokens = scion.tokensPrecedingPoint( NUM_PRECEDING_TOKENS, theFile, doc, point );
+            IRegion lineR=doc.getLineInformationOfOffset( offsetPrefix );
+            String line=doc.get(lineR.getOffset(),lineR.getLength());
 
             String lineContents = doc.get( lineBegin.getStartOffset( doc ), offset - lineBegin.getStartOffset( doc ) );
             if (lineContents.trim().startsWith( "import" ) && lineContents.contains( "(" )) {
@@ -153,21 +154,27 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
               return importsList( viewer, theFile, doc, offset );
             }
 
-            if (tokens != null) {
-              if (LexerTokenCategories.hasImportContext( tokens, lineBegin )) {
-                return moduleNamesContext(scion, offset);
-              } else if (LexerTokenCategories.hasTyConContext( tokens, lineBegin )) {
+              if (line.startsWith( "import" )) {
+                return moduleNamesContext(theFile,offset);
+              } else if (line.contains("::") || line.contains("->")) {
                 return defaultCompletionContext( viewer, theFile, doc, offset, true );
               }
-            }
+
+            //if (tokens != null) {
+            //  if (LexerTokenCategories.hasImportContext( tokens, lineBegin )) {
+            //    return moduleNamesContext(theFile,offset);
+            //  } else if (LexerTokenCategories.hasTyConContext( tokens, lineBegin )) {
+             //   return defaultCompletionContext( viewer, theFile, doc, offset, true );
+           //   }
+           // }
           } catch (BadLocationException ble) {
             // Ignore, pass through to default completion context.
           }
 
           return defaultCompletionContext( viewer, theFile, doc, offset, false );
-        }
+//        }
 
-        break;
+//        break;
       }
 
       case DEFAULT_CONTEXT: {
@@ -253,7 +260,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	                                                        final int offset, final boolean typesHavePriority ) {
 	  context = typesHavePriority ? CompletionContext.TYCON_CONTEXT : CompletionContext.DEFAULT_CONTEXT;
 
-	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset ,HaskellUIPlugin.getHaskellEditor( viewer ) );
+	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( doc.get(), offset );
 	  // ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
     HSCodeTemplateAssistProcessor templates = new HSCodeTemplateAssistProcessor();
     ICompletionProposal[] templateProposals = templates.computeCompletionProposals( viewer, offset );
@@ -354,8 +361,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
 	  // Get prefix
-	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( theFile, doc.get(), offset,
-	      HaskellUIPlugin.getHaskellEditor( viewer ) );
+	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( doc.get(), offset   );
 	  String prefix = haskellCompletions.getPointedQualifier();
 	  int plength = prefix.length();
 	  // Reuse the general "imports" code, getting out the qualified names
@@ -396,19 +402,28 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 *
 	 * @return A ICompletionProposal array of matching module names, or null, if none.
 	 */
-	private ICompletionProposal[] moduleNamesContext(final ScionInstance scion, final int offset) {
-	  // Grab all of the module names, keep them cached for the duration of the completion session
+//	private ICompletionProposal[] moduleNamesContext(final ScionInstance scion, final int offset) {
+//	  // Grab all of the module names, keep them cached for the duration of the completion session
+//
+//
+//	  moduleGraphNames = new ArrayList<String>();
+//	  moduleGraphNames.addAll( scion.moduleGraph() );
+//
+//	  exposedModules = new ArrayList<String>();
+//	  exposedModules.addAll( scion.listExposedModules() );
+//	  context = CompletionContext.IMPORT_STMT;
+//
+//	  return filterModuleNames( offset );
+//	}
 
+	private ICompletionProposal[] moduleNamesContext(final IFile file, final int offset) {
 	  moduleGraphNames = new ArrayList<String>();
-	  moduleGraphNames.addAll( scion.moduleGraph() );
-
+	  for (PackageDescriptionStanza pds: ResourceUtil.getApplicableStanzas( new IFile[]{file} )){
+	    moduleGraphNames.addAll(pds.listAllModules());
+	  }
 	  exposedModules = new ArrayList<String>();
-	  exposedModules.addAll( scion.listExposedModules() );
-	  context = CompletionContext.IMPORT_STMT;
-
 	  return filterModuleNames( offset );
 	}
-
 	/**
 	 * Filter module names given a matching prefix.
 	 *

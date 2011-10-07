@@ -1,8 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,7 +45,7 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
   private void shrubOutFolder( final IProgressMonitor mon )
                                                           throws CoreException {
     mon.subTask( CoreTexts.cleanOutFoldersOperation_shrubbingOut );
-    IContainer outFolder = project.getFolder( ScionPlugin.DIST_FOLDER );
+    IContainer outFolder = project.getFolder( BWFacade.DIST_FOLDER );
       //ResourceUtil.getOutFolder( project );
     if( outFolder != null && !outFolder.equals( project ) ) {
       outFolder.accept( folderCleaner, IContainer.INCLUDE_PHANTOMS );

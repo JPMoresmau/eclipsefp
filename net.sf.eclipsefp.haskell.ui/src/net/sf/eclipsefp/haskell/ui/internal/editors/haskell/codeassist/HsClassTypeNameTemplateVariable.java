@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
+import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
@@ -22,22 +24,22 @@ public class HsClassTypeNameTemplateVariable extends TemplateVariableResolver {
   /** The template variable name */
   private static final String NAME = "classTypeName";
   /** Associated Scion-server instance, if supplied. */
-  private final ScionInstance scion;
+//  private final ScionInstance scion;
 
   public HsClassTypeNameTemplateVariable() {
     super( NAME, UITexts.HaskellTemplateVariables_classTypeName_description );
-    scion = null;
+//    scion = null;
   }
 
   public HsClassTypeNameTemplateVariable(final String name, final String description) {
     super(name, description);
-    scion = null;
+//    scion = null;
   }
-
-  public HsClassTypeNameTemplateVariable(final ScionInstance scion) {
-    super( NAME, UITexts.HaskellTemplateVariables_classTypeName_description );
-    this.scion = scion;
-  }
+//
+//  public HsClassTypeNameTemplateVariable(final ScionInstance scion) {
+//    super( NAME, UITexts.HaskellTemplateVariables_classTypeName_description );
+//    this.scion = scion;
+//  }
 
   /**
    * {@inheritDoc}
@@ -55,11 +57,26 @@ public class HsClassTypeNameTemplateVariable extends TemplateVariableResolver {
         Assert.isTrue( FileUtil.hasHaskellExtension( file ) );
         Assert.isTrue( ResourceUtil.isInHaskellProject( file ) );
 
-        final ScionInstance si = getScionInstance( file );
+        ImportsManager mgr = new ImportsManager( file, doc );
+        Map<String, Documented> decls = mgr.getDeclarations();
+        List<String> keys = new ArrayList<String>();
+        for ( String s : decls.keySet() ) {
+          Documented d = decls.get( s );
+          if (d instanceof Declaration){
+            if (DeclarationType.TYPE_CLASS.equals(((Declaration)d).getType())){
+              keys.add(s);
+            }
 
-        Assert.isNotNull( si );
+          }
+        }
+        Collections.sort(keys);
+        variable.setValues( keys.toArray( new String[keys.size()] ) );
 
-        Map<String, String> completions = si.completionsForClassTypeNames( file, doc );
+        //final ScionInstance si = getScionInstance( file );
+
+        //Assert.isNotNull( si );
+
+        /*Map<String, String> completions = si.completionsForClassTypeNames( file, doc );
 
         if (completions != null) {
           List<String> keys = new ArrayList<String>( completions.keySet() );
@@ -69,19 +86,22 @@ public class HsClassTypeNameTemplateVariable extends TemplateVariableResolver {
         } else {
           variable.setValue( new String() );
           variable.setResolved( false );
-        }
+        }*/
+
+
+
       } else {
-        variable.setValue( new String() );
+        variable.setValue( "" );
       }
     } else {
-      variable.setValue( new String() );
+      variable.setValue( "" );
     }
 
     variable.setResolved( true );
   }
 
   /** scion-server instance accessor */
-  private final ScionInstance getScionInstance(final IFile file) {
-    return (scion == null ? ScionPlugin.getScionInstance( file ) : scion);
-  }
+//  private final ScionInstance getScionInstance(final IFile file) {
+//    return (scion == null ? ScionPlugin.getScionInstance( file ) : scion);
+//  }
 }

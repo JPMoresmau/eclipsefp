@@ -15,7 +15,6 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -170,7 +169,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f==null){
           f=new BWFacade();
-          f.setBwPath( ScionManager.getBuildWrapperPath() );
+          f.setBwPath( BuildWrapperPlugin.getBwPath() );
           f.setProject( file.getProject() );
           f.setWorkingDir(new File(file.getProject().getLocation().toOSString()));
         }

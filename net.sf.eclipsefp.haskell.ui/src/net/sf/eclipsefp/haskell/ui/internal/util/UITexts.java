@@ -75,6 +75,7 @@ public final class UITexts extends NLS {
   public static String cabalImplsBlock_noCabalInstallations;
   public static String cabalImplsBlock_needScionExecutablePath;
   public static String cabalImplsBlock_needBrowserExecutablePath;
+  public static String cabalImplsBlock_needBuildWrapperExecutablePath;
 
   public static String cabalImplsDialog_name;
   public static String cabalImplsDialog_executablePath;
@@ -146,6 +147,11 @@ public final class UITexts extends NLS {
 
   public static String scionServerDoesntExist_title;
   public static String scionServerDoesntExist_message;
+
+  public static String buildwrapper_preferences_label;
+  public static String buildwrapperExecutable_label;
+  public static String buildwrapperDoesntExist_title;
+  public static String buildwrapperDoesntExist_message;
 
   public static String scionBrowserDoesntExist_title;
   public static String scionBrowserDoesntExist_message;

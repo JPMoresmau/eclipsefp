@@ -97,20 +97,24 @@ public class JobFacade  {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	          long t0=System.currentTimeMillis();
-	          realFacade.write(f, doc.get());
+	          if (doc!=null){
+	        	  realFacade.write(f, doc.get());
+	          }
 	          long t1=System.currentTimeMillis();
-	          long t2=System.currentTimeMillis();
 	          BuildWrapperPlugin.deleteProblems(f);
-	          boolean buildOK=realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false));
+	          boolean buildOK= doc!=null
+	          	?realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false))
+	          			:true;
+	          long t2=System.currentTimeMillis();
 	          
 	          List<OutlineDef> defs=realFacade.outline(f);
-	          long t12=System.currentTimeMillis();
-	          if (defs.size()>0 || buildOK){
+	          long t3=System.currentTimeMillis();
+	          if (defs.size()>0 && buildOK){
 	        	  handler.handleOutline(defs); // avoid removing all outline on error
 	          }
 	          
-	          long t3=System.currentTimeMillis();
-	          BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t2-t1)+"ms,hanlderoutline:"+(t2-t12)+"ms,build:"+(t3-t2)+"ms");
+	          long t4=System.currentTimeMillis();
+	          BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t3-t2)+"ms,handleroutline:"+(t4-t3)+"ms,build:"+(t2-t1)+"ms");
 	        } finally {
 	          monitor.done();
 	        }

@@ -124,13 +124,6 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          unpack="false"/>
 
    <plugin
-         id="net.sf.eclipsefp.haskell.scion.client"
-         download-size="0"
-         install-size="0"
-         version="2.1.1"
-         unpack="false"/>
-
-   <plugin
          id="net.sf.eclipsefp.haskell.compat"
          download-size="0"
          install-size="0"
@@ -163,6 +156,13 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          download-size="0"
          install-size="0"
          version="2.1.1"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.buildwrapper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

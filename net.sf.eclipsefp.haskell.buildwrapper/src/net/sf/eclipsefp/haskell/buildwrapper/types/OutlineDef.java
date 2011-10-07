@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 
 import org.eclipse.core.resources.IFile;
 import org.json.JSONArray;
@@ -39,7 +39,7 @@ public class OutlineDef {
 			try {
 				return OutlineDefType.valueOf(sType.toUpperCase());
 			} catch (IllegalArgumentException iae){
-				ScionPlugin.logWarning(sType+" is not a valid outlinedef type", iae);
+				BuildWrapperPlugin.logWarning(sType+" is not a valid outlinedef type", iae);
 			}
 		}
 		return OutlineDefType.TYPE;

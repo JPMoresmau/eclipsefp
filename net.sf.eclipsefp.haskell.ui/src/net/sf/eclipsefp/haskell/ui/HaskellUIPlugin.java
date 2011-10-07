@@ -16,8 +16,6 @@ package net.sf.eclipsefp.haskell.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import net.sf.eclipsefp.haskell.scion.client.ScionInstance;
-import net.sf.eclipsefp.haskell.scion.client.ScionPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
@@ -189,15 +187,15 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
    * @param viewer The ITextViewer
    * @return The associated {@link ScionInstance} or null, if no association exists.
    */
-  public static ScionInstance getScionInstance( final ITextViewer viewer ) {
-    IFile viewerFile = getFile( viewer );
-
-    if ( viewerFile != null ) {
-      return ScionPlugin.getScionInstance( viewerFile );
-    }
-
-    return null;
-  }
+//  public static ScionInstance getScionInstance( final ITextViewer viewer ) {
+//    IFile viewerFile = getFile( viewer );
+//
+//    if ( viewerFile != null ) {
+//      return ScionPlugin.getScionInstance( viewerFile );
+//    }
+//
+//    return null;
+//  }
 
   /**
    * Utility function to get the IFile associated with a given text viewer

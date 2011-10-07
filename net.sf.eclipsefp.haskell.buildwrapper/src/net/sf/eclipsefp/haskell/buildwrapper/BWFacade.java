@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +39,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class BWFacade {
+	public static final String DIST_FOLDER=".dist-buildwrapper";
+	public static final String DIST_FOLDER_CABAL=DIST_FOLDER+"/dist";
+	
 	private static final String prefix="build-wrapper-json:";
 	
+	private static boolean showedNoExeError=false; 
+	
 	private String bwPath;
-	private String tempFolder=".dist-buildwrapper";
+	//private String tempFolder=".dist-buildwrapper";
 	private String cabalPath;
 	private String cabalFile;
 	private String cabalShortName;
+	
+	private String flags;
 	
 	private File workingDir;
 	
@@ -58,10 +66,30 @@ public class BWFacade {
 	private Map<String, CabalPackage[]> packageDB;
 	
 	public boolean build(BuildOptions buildOptions){
+		if (buildOptions.isConfigure()){
+			if (configure(buildOptions)){
+				return false;
+			}
+		}
+		
 		BuildWrapperPlugin.deleteProblems(getProject());
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
+		command.add("--cabaltarget="+buildOptions.getTarget().toString());
+		JSONArray arr=run(command,ARRAY);
+		if (arr!=null && arr.length()>1){
+			JSONArray notes=arr.optJSONArray(1);
+			return parseNotes(notes);
+		}
+		return true;
+	}
+	
+	public boolean configure(BuildOptions buildOptions){
+		parseFlags(); // reset flags in case they have changed
+		BuildWrapperPlugin.deleteProblems(getProject());
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("configure");
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null && arr.length()>1){
@@ -121,7 +149,7 @@ public class BWFacade {
 		return s!=null;*/
 		try {
 			String path=file.getProjectRelativePath().toOSString();
-			File tgt=new File(new File(workingDir,tempFolder),path);
+			File tgt=new File(new File(workingDir,DIST_FOLDER),path);
 			tgt.getParentFile().mkdirs();
 			write(tgt, contents);
 			return tgt;
@@ -226,13 +254,13 @@ public class BWFacade {
 	}
 	
 	public List<TokenDef> tokenTypes(IFile file){
-		long t0=System.currentTimeMillis();
+		//long t0=System.currentTimeMillis();
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("tokentypes");
 		command.add("--file="+path);
 		JSONArray arr=run(command,ARRAY);
-		long t01=System.currentTimeMillis();
+		//long t01=System.currentTimeMillis();
 		List<TokenDef> cps;
 		if (arr!=null){
 			if (arr.length()>1){
@@ -252,8 +280,8 @@ public class BWFacade {
 		} else {
 			cps=new ArrayList<TokenDef>();
 		}
-		long t1=System.currentTimeMillis();
-		BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
+		//long t1=System.currentTimeMillis();
+		//BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
 		return cps;
 	}
 	
@@ -396,10 +424,20 @@ public class BWFacade {
 
 	
 	private <T> T run(LinkedList<String> args,JSONFactory<T> f){
+		if (bwPath==null){
+			if (!showedNoExeError){
+				BuildWrapperPlugin.logError(BWText.error_noexe, null);
+				showedNoExeError=true;
+			}
+			return null;
+		}
+		showedNoExeError=false;
+		
 		args.addFirst(bwPath);
-		args.add("--tempfolder="+tempFolder);
+		args.add("--tempfolder="+DIST_FOLDER);
 		args.add("--cabalpath="+cabalPath);
 		args.add("--cabalfile="+cabalFile);
+		args.add("--cabalflags="+flags);
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);
@@ -408,7 +446,7 @@ public class BWFacade {
 		try {
 			Process p=pb.start();
 			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF8"));
-			long t0=System.currentTimeMillis();
+			//long t0=System.currentTimeMillis();
 			String l=br.readLine();
 			boolean goOn=true;
 			while (goOn && l!=null){
@@ -434,8 +472,8 @@ public class BWFacade {
 					l=br.readLine();
 				}
 			}
-			long t1=System.currentTimeMillis();
-			BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
+			//long t1=System.currentTimeMillis();
+			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
 		} catch (IOException ioe){
 			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 		}
@@ -443,14 +481,14 @@ public class BWFacade {
 	}
 
 
-	public String getTempFolder() {
-		return tempFolder;
-	}
-
-
-	public void setTempFolder(String tempFolder) {
-		this.tempFolder = tempFolder;
-	}
+//	public String getTempFolder() {
+//		return tempFolder;
+//	}
+//
+//
+//	public void setTempFolder(String tempFolder) {
+//		this.tempFolder = tempFolder;
+//	}
 
 
 	public String getCabalPath() {
@@ -535,11 +573,11 @@ public class BWFacade {
 		}
 	};
 	
-	private static JSONFactory<JSONObject> OBJECT=new JSONFactory<JSONObject>() {
-		public JSONObject fromJSON(String json)throws JSONException {
-			return new JSONObject(json);
-		}
-	};
+//	private static JSONFactory<JSONObject> OBJECT=new JSONFactory<JSONObject>() {
+//		public JSONObject fromJSON(String json)throws JSONException {
+//			return new JSONObject(json);
+//		}
+//	};
 
 	private static JSONFactory<String> STRING=new JSONFactory<String>() {
 		public String fromJSON(String json)throws JSONException {
@@ -554,5 +592,31 @@ public class BWFacade {
 
 	public void setProject(IProject project) {
 		this.project = project;
+		parseFlags();
+	}
+	
+	private void parseFlags(){
+		try {
+			String currentProp=project.getPersistentProperty( BuildWrapperPlugin.USERFLAGS_PROPERTY );
+	        JSONObject flagO=new JSONObject();
+	        if (currentProp!=null && currentProp.length()>0){
+	          flagO=new JSONObject( currentProp );
+	        }
+	        StringBuilder sb=new StringBuilder();
+	        String sep="";
+	        for (Iterator<String> it=flagO.keys();it.hasNext();){
+	        	String s=it.next();
+	        	boolean b=flagO.getBoolean(s);
+	        	sb.append(sep);
+	        	sep=" ";
+	        	if (!b){
+	        		sb.append("-");
+	        	}
+	        	sb.append(s);
+	        }
+	        flags=sb.toString();
+		} catch (Exception e){
+			BuildWrapperPlugin.logError(BWText.error_gettingFlags, e);
+		}
 	}
 }
