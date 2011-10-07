@@ -97,9 +97,9 @@ public class JobFacade  {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	          long t0=System.currentTimeMillis();
-	          if (doc!=null){
-	        	  realFacade.write(f, doc.get());
-	          }
+	          /*if (doc!=null){
+	        	  realFacade.write(f, doc.get()); // the write is done by ScionTokenScanner
+	          }*/
 	          long t1=System.currentTimeMillis();
 	          BuildWrapperPlugin.deleteProblems(f);
 	          boolean buildOK= doc!=null
