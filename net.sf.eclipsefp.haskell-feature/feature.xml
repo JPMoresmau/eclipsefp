@@ -106,14 +106,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.1.0"
+         version="2.1.1"
          unpack="false"/>
 
    <plugin
@@ -162,7 +162,7 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.buildwrapper"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.1.1"
          unpack="false"/>
 
 </feature>
