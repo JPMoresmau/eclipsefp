@@ -897,6 +897,14 @@
             name="%haskellBrowser_hoogleView"
             restorable="true">
       </view>
+      <view
+            category="net.sf.eclipsefp.haskell.browser"
+            class="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"
+            icon="icons/eview16/cabal.gif"
+            id="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"
+            name="%haskellBrowser_cabalPackagesView"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

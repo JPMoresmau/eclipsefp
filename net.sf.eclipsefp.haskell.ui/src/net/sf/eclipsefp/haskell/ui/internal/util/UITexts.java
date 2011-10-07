@@ -557,6 +557,24 @@ public final class UITexts extends NLS {
   public static String uuagcEditor_selfDescr;
   public static String uuagcEditor_cycleDescr;
 
+
+  public static String cabalPackagesView_installed;
+  public static String cabalPackagesView_all;
+  public static String cabalPackagesView_filter;
+  public static String cabalPackagesView_action_update;
+  public static String cabalPackagesView_action_update_ok;
+  public static String cabalPackagesView_action_update_error;
+  public static String cabalPackagesView_action_update_running;
+  public static String cabalPackagesView_action_install_user;
+  public static String cabalPackagesView_action_install_global;
+  public static String cabalPackagesView_action_install_error;
+  public static String cabalPackagesView_action_install_running;
+  public static String cabalPackagesView_info_running;
+  public static String cabalPackagesView_info_error;
+  public static String cabalPackagesView_list_running;
+  public static String cabalPackagesView_list_error;
+  public static String cabalPackagesView_info_installed;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {
