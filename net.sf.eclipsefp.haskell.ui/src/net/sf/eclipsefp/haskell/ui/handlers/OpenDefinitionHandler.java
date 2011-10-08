@@ -230,7 +230,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
   }
 
-  protected static boolean openExternalDefinition( final IWorkbenchPage page,
+  public static boolean openExternalDefinition( final IWorkbenchPage page,
       final IProject project, final String pkg, final String module,
       final String shortName, final char type ) {
     int ix = pkg.lastIndexOf( '-' );
@@ -244,35 +244,36 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
     try {
+        if (project!=null){
+        // String moduleHSFile=module.replace( '.', '/' );
+          for( IProject p: project.getReferencedProjects() ) {
 
-      // String moduleHSFile=module.replace( '.', '/' );
-        for( IProject p: project.getReferencedProjects() ) {
+            // TODO should we also check on the version
+            if( p.hasNature( HaskellNature.NATURE_ID )
+                && p.getName().equals( packageName ) ) {
+              IFile f = ResourceUtil.findFileFromModule( p, module );
+              if( f != null ) {
+                 openFile( page, f, shortName );
+                 return true;
+              }
+              /*
+               * IFile f=BuildWrapperPlugin.getCabalFile( project );
+               * PackageDescription pd=PackageDescriptionLoader.load(f); IResource
+               * r=null; for (String src:pd.getStanzasBySourceDir().keySet()){ if
+               * (src!=null && src.equals( "." )) { //$NON-NLS-1$ r=p.findMember(
+               * moduleHSFile +"."+ FileUtil.EXTENSION_HS); if (r==null ||
+               * !r.exists()){ r=p.findMember( moduleHSFile +"."+
+               * FileUtil.EXTENSION_LHS); } } else { IFolder fldr=p.getFolder( src
+               * ); r=fldr.findMember( moduleHSFile +"."+ FileUtil.EXTENSION_HS);
+               * if (r==null || !r.exists()){ r=fldr.findMember( moduleHSFile
+               * +"."+ FileUtil.EXTENSION_LHS); } }
+               */
 
-          // TODO should we also check on the version
-          if( p.hasNature( HaskellNature.NATURE_ID )
-              && p.getName().equals( packageName ) ) {
-            IFile f = ResourceUtil.findFileFromModule( p, module );
-            if( f != null ) {
-               openFile( page, f, shortName );
-               return true;
+              // }
             }
-            /*
-             * IFile f=BuildWrapperPlugin.getCabalFile( project );
-             * PackageDescription pd=PackageDescriptionLoader.load(f); IResource
-             * r=null; for (String src:pd.getStanzasBySourceDir().keySet()){ if
-             * (src!=null && src.equals( "." )) { //$NON-NLS-1$ r=p.findMember(
-             * moduleHSFile +"."+ FileUtil.EXTENSION_HS); if (r==null ||
-             * !r.exists()){ r=p.findMember( moduleHSFile +"."+
-             * FileUtil.EXTENSION_LHS); } } else { IFolder fldr=p.getFolder( src
-             * ); r=fldr.findMember( moduleHSFile +"."+ FileUtil.EXTENSION_HS);
-             * if (r==null || !r.exists()){ r=fldr.findMember( moduleHSFile
-             * +"."+ FileUtil.EXTENSION_LHS); } }
-             */
 
-            // }
-          }
-
-      }
+        }
+        }
 
 
     } catch( CoreException ce ) {
@@ -280,9 +281,9 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
 
-    String moduleHTMLFile = module.replace( '.', '-' ) + ".html";
+    String moduleHTMLFile = module!=null?module.replace( '.', '-' ) + ".html":"";
     // String relFile=pkg+"/"+moduleHTMLFile;
-    String anchor = type + ":" + shortName;
+    String anchor = shortName!=null?type + ":" + shortName:"";
 
     IHsImplementation hsImpl = CompilerManager.getInstance()
         .getCurrentHsImplementation();
@@ -315,6 +316,23 @@ public class OpenDefinitionHandler extends AbstractHandler {
         if( s != null && s.length() > 0 ) {
           String[] paths = SearchPathsPP.parseString( s );
           for( String p: paths ) {
+            if (module==null){
+              if (p.contains( "${MODULE}" ) || p.contains( "${MODULE_HTML}" )){
+                continue;
+              }
+              if (packageVersion.length()>0){
+                int ixPV=p.indexOf( "${PACKAGE_VERSION}" );
+                if (ixPV>-1){
+                  p=p.substring(0,ixPV+"${PACKAGE_VERSION}".length());
+                }
+              } else {
+                int ixPV=p.indexOf( "${PACKAGE_NAME}" );
+                if (ixPV>-1){
+                  p=p.substring(0,ixPV+"${PACKAGE_NAME}".length());
+                }
+              }
+            }
+
             String fullPath = mgr.performStringSubstitution( p );
             try {
               final URL url = new URL( fullPath );

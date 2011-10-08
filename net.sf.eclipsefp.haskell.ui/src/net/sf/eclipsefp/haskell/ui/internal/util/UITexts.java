@@ -574,6 +574,8 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_list_running;
   public static String cabalPackagesView_list_error;
   public static String cabalPackagesView_info_installed;
+  public static String cabalPackagesView_info_more;
+  public static String cabalPackagesView_info_more_running;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesLabelProvider;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
@@ -57,6 +59,8 @@ public class CabalPackagesView extends ViewPart {
   private Label lInstall;
 
   private Text infoViewer;
+
+  private Link lMore;
 
   private final Job refreshJob=new Job(UITexts.cabalPackagesView_list_running){
     @Override
@@ -138,6 +142,13 @@ public class CabalPackagesView extends ViewPart {
     infoViewer=new Text(parent,SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     infoViewer.setLayoutData( new GridData(GridData.FILL_BOTH) );
 
+    lMore=new Link(parent,SWT.NONE);
+    GridData gdMore=new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
+    gdMore.horizontalSpan=2;
+    lMore.setLayoutData( gdMore );
+    lMore.setText("<a>"+ UITexts.cabalPackagesView_info_more +"</a>");
+    lMore.setEnabled( false );
+
     Button bUpdate=new Button(parent,SWT.PUSH);
     bUpdate.setLayoutData( new GridData(GridData.HORIZONTAL_ALIGN_CENTER) );
     bUpdate.setText( UITexts.cabalPackagesView_action_update );
@@ -187,6 +198,7 @@ public class CabalPackagesView extends ViewPart {
             CabalPackageVersion v=(CabalPackageVersion)o;
             currentName=v.getRef().getName()+"-"+v.toString();
           }
+          lMore.setEnabled( currentName!=null );
           if (currentName!=null){
             showInfo();
           }
@@ -212,6 +224,21 @@ public class CabalPackagesView extends ViewPart {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
        install( false );
+      }
+    });
+
+    lMore.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected( final SelectionEvent e ) {
+        new Job(UITexts.cabalPackagesView_info_more_running){
+          @Override
+          protected IStatus run( final IProgressMonitor arg0 ) {
+            OpenDefinitionHandler.openExternalDefinition( getSite().getPage(), null, currentName, null, null, ' ' );
+            return Status.OK_STATUS;
+          }
+        }.schedule();
+
+
       }
     });
   }
