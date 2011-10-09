@@ -172,6 +172,7 @@
 			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.modules.ModulesView"/>
 			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"/>
 			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"/>
 			
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"/>
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"/>

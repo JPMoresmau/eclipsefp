@@ -1,12 +1,9 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +25,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
 
 import org.eclipse.core.resources.IFile;
@@ -72,7 +70,7 @@ public class BWFacade {
 			}
 		}
 		
-		BuildWrapperPlugin.deleteProblems(getProject());
+		//BuildWrapperPlugin.deleteProblems(getProject());
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
@@ -87,7 +85,7 @@ public class BWFacade {
 	
 	public boolean configure(BuildOptions buildOptions){
 		parseFlags(); // reset flags in case they have changed
-		BuildWrapperPlugin.deleteProblems(getProject());
+		//BuildWrapperPlugin.deleteProblems(getProject());
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("configure");
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
@@ -161,10 +159,7 @@ public class BWFacade {
 	
 	public boolean write(File tgt,String contents){
 		try {
-			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),"UTF8");
-			w.write(contents);
-			w.close();
-			return true;
+			FileUtil.writeSharedFile(tgt, contents, 5);
 		} catch (Exception e){
 			BuildWrapperPlugin.logError(e.getLocalizedMessage(), e);
 		}

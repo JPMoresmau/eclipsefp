@@ -1,12 +1,18 @@
 package net.sf.eclipsefp.haskell.util;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -270,5 +276,26 @@ public class FileUtil {
 		  sb.append(new String(baos.toByteArray(),f.getCharset()));
 	  }
 	  return sb.toString();
+  }
+  
+  public static void writeSharedFile(File tgt,String contents,int tries) throws IOException{
+	  try {
+			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),"UTF8");
+			w.write(contents);
+			w.close();
+	  } catch (FileNotFoundException e){
+		  if (tries>1 && e.getMessage().toLowerCase(Locale.ENGLISH).contains("another process")){
+			  try {
+				  Thread.sleep(200);
+			  } catch (InterruptedException ie){
+				  // NOOP
+			  }
+			  writeSharedFile(tgt,contents,tries-1);
+			  return;
+		  }
+		  throw e;
+		} catch (IOException e){
+			throw e;
+		}
   }
 }

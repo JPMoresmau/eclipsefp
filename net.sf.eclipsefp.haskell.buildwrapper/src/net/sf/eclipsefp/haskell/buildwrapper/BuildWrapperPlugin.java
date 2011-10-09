@@ -27,7 +27,7 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle
  */
 public class BuildWrapperPlugin extends AbstractUIPlugin {
-	final static String PROBLEM_MARKER_ID = "net.sf.eclipsefp.haskell.core.problem";
+	final public static String PROBLEM_MARKER_ID = "net.sf.eclipsefp.haskell.core.problem";
 	
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.buildwrapper";

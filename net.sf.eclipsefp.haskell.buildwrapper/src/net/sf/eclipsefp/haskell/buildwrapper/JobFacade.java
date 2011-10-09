@@ -101,7 +101,9 @@ public class JobFacade  {
 	        	  realFacade.write(f, doc.get()); // the write is done by ScionTokenScanner
 	          }*/
 	          long t1=System.currentTimeMillis();
-	          BuildWrapperPlugin.deleteProblems(f);
+	          if (doc!=null){
+	        	  BuildWrapperPlugin.deleteProblems(f);
+	          }
 	          boolean buildOK= doc!=null
 	          	?realFacade.build(new BuildOptions().setOutput(false).setTarget(BWTarget.Target).setConfigure(false).setRecompile(false))
 	          			:true;

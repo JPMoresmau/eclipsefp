@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.decorators;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -54,11 +55,12 @@ public class ProblemsLabelDecorator implements ILightweightLabelDecorator {
     try {
       if( obj instanceof IFile
           && FileUtil.hasHaskellExtension( ( IResource )obj ) ) {
-        return ( ( IResource )obj ).findMaxProblemSeverity( IMarker.PROBLEM,
+        return ( ( IResource )obj ).findMaxProblemSeverity( BuildWrapperPlugin.PROBLEM_MARKER_ID
+            ,
             true, IResource.DEPTH_ZERO );
       } else if( obj instanceof IFolder
           && ResourceUtil.isSourceFolder( ( IFolder )obj ) ) {
-        return ( ( IResource )obj ).findMaxProblemSeverity( IMarker.PROBLEM,
+        return ( ( IResource )obj ).findMaxProblemSeverity( BuildWrapperPlugin.PROBLEM_MARKER_ID,
             true, IResource.DEPTH_INFINITE );
       }
     } catch( CoreException e ) {

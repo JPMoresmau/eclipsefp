@@ -121,7 +121,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       if (f!=null){
         f.build( new BuildOptions().setOutput(true).setRecompile(false) );
       } else {
-        new Exception("IBWFacade == null").printStackTrace(); //$NON-NLS-1$
+        new Exception("WorkspaceFacade == null").printStackTrace(); //$NON-NLS-1$
       }
     } finally {
       mon.done();

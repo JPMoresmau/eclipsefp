@@ -14,10 +14,13 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Represents a warning or an error from buildwrapper (Cabal, GHC, Haskell-src-exts message)
+ * @author JP Moresmau
+ *
+ */
 public class Note {
 	
-	public static final String ID_PROBLEM_MARKER = "net.sf.eclipsefp.haskell.core.problem"; //$NON-NLS-1$
-
 	public enum Kind { ERROR, WARNING, INFO, OTHER };
 	
 	private Kind kind; // error, warning, info or other
@@ -105,7 +108,7 @@ public class Note {
 	private void addMarker(final IResource resource, int severity, int line,
 			int start, int end, String msg) throws CoreException {
 		// duplicate
-		for (IMarker m:resource.findMarkers(IMarker.PROBLEM, false, 0)){
+		for (IMarker m:resource.findMarkers(BuildWrapperPlugin.PROBLEM_MARKER_ID, false, 0)){
 			if (m.getAttribute(IMarker.SEVERITY, -1)==severity
 					&&  m.getAttribute(IMarker.LINE_NUMBER, -1)==line
 					&&  m.getAttribute(IMarker.CHAR_START, -1)==start
@@ -134,7 +137,7 @@ public class Note {
 		new Thread(new Runnable(){
 			public void run() {
 				try {
-					MarkerUtilities.createMarker(resource, attributes, ID_PROBLEM_MARKER);
+					MarkerUtilities.createMarker(resource, attributes, BuildWrapperPlugin.PROBLEM_MARKER_ID);
 				} catch (CoreException ex){
 					BuildWrapperPlugin.logError(BWText.process_apply_note_error, ex);
 					ex.printStackTrace();
