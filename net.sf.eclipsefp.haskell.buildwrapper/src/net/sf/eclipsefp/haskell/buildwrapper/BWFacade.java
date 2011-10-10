@@ -101,6 +101,23 @@ public class BWFacade {
 		return true;
 	}
 	
+	public boolean build1(IFile file){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("build1");
+		command.add("--file="+path);
+		JSONArray arr=run(command,ARRAY);
+		
+		if (arr!=null && arr.length()>1){
+			Set<IResource> ress=new HashSet<IResource>();
+			ress.add(file);
+			BuildWrapperPlugin.deleteProblems(file);
+			JSONArray notes=arr.optJSONArray(1);
+			return parseNotes(notes,ress);
+		}
+		return true;
+	}
+	
 	public boolean configure(BuildOptions buildOptions){
 		parseFlags(); // reset flags in case they have changed
 		//BuildWrapperPlugin.deleteProblems(getProject());
@@ -358,7 +375,7 @@ public class BWFacade {
 		boolean buildOK=true;
 		if (notes!=null){
 			try {
-				if (ress!=null){
+				if (ress==null){
 					ress=new HashSet<IResource>();
 				}
 				for (int a=0;a<notes.length();a++){
