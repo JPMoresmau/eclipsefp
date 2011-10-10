@@ -65,7 +65,7 @@ public class BWFacade {
 	
 	public boolean build(BuildOptions buildOptions){
 		if (buildOptions.isConfigure()){
-			if (configure(buildOptions)){
+			if (!configure(buildOptions)){
 				return false;
 			}
 		}
@@ -77,8 +77,26 @@ public class BWFacade {
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null && arr.length()>1){
+			Set<IResource> ress=new HashSet<IResource>();
+			JSONObject obj=arr.optJSONObject(0);
+			if (obj!=null){
+				JSONArray files=obj.optJSONArray("fps");
+				if (files!=null){
+					for (int a=0;a<files.length();a++){
+						String s=files.optString(a);
+						if (s!=null && s.length()>0){
+							final IResource res=project.findMember(s);
+							if (res!=null){
+								ress.add(res);
+								BuildWrapperPlugin.deleteProblems(res);
+							}
+						}
+					}
+				}
+			}
+			
 			JSONArray notes=arr.optJSONArray(1);
-			return parseNotes(notes);
+			return parseNotes(notes,ress);
 		}
 		return true;
 	}
@@ -333,10 +351,16 @@ public class BWFacade {
 	}
 	
 	private boolean parseNotes(JSONArray notes){
+		return parseNotes(notes,null);
+	}
+	
+	private boolean parseNotes(JSONArray notes,Set<IResource> ress){
 		boolean buildOK=true;
 		if (notes!=null){
 			try {
-				Set<IResource> ress=new HashSet<IResource>();
+				if (ress!=null){
+					ress=new HashSet<IResource>();
+				}
 				for (int a=0;a<notes.length();a++){
 					JSONObject o=notes.getJSONObject(a);
 					String sk=o.getString("s");
