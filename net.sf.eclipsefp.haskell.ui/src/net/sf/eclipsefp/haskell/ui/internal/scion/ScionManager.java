@@ -706,7 +706,7 @@ public class ScionManager implements IResourceChangeListener {
         event.getDelta().accept( new IResourceDeltaVisitor() {
 
           public boolean visit( final IResourceDelta delta ) {
-            if( delta.getKind() == IResourceDelta.CHANGED ) {
+            if( delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0) {
               if( delta.getResource() instanceof IFile ) {
                 IFile f = ( IFile )delta.getResource();
                 IFile cabalF = BuildWrapperPlugin.getCabalFile( f.getProject() );
