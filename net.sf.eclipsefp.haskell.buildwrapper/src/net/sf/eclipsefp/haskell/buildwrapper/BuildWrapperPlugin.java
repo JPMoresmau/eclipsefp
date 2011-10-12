@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -152,8 +153,11 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	        if (r instanceof IFile) {
 	          r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
 	        }
+	        //org.eclipse.core.resources.problemmarker
 	        r.deleteMarkers(PROBLEM_MARKER_ID, true, IResource.DEPTH_ZERO);
 	        r.deleteMarkers("net.sf.eclipsefp.haskell.scion.client.ScionPlugin.projectProblem", true, IResource.DEPTH_ZERO);
+	        r.deleteMarkers("net.sf.eclipsefp.haskell.core.scionProblem", true, IResource.DEPTH_ZERO);
+	        r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 	      } catch (CoreException ex) {
 	        BuildWrapperPlugin.logError(BWText.error_deleteMarkers, ex);
 	        ex.printStackTrace();
