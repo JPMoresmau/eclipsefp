@@ -128,6 +128,16 @@ public class PackageDescription {
     return result;
   }
 
+
+  public Collection<String> getAllNonHaskellFiles() {
+    HashSet<String> result = new HashSet<String>();
+    for (PackageDescriptionStanza pds:stanzas){
+      Collection<String> sds=pds.getNonHaskellFiles();
+      result.addAll( sds );
+    }
+    return result;
+  }
+
   public void dump(final Writer w) throws IOException {
     for (PackageDescriptionStanza pds:stanzas){
       pds.dump( w, 0 );

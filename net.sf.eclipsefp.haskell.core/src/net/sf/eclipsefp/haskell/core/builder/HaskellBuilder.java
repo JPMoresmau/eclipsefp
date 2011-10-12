@@ -1,11 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import java.util.Collection;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.WorkspaceFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -117,14 +120,35 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 //      } else {
 //        new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
 //      }
+
       WorkspaceFacade f=BuildWrapperPlugin.getWorkspaceFacade( getProject(), mon );
       if (f!=null){
+        BuildWrapperPlugin.deleteProblems( getProject() );
+        cleanNonHaskellSources();
         f.build( new BuildOptions().setOutput(true).setRecompile(false) );
       } else {
         new Exception("WorkspaceFacade == null").printStackTrace(); //$NON-NLS-1$
       }
     } finally {
       mon.done();
+    }
+  }
+
+  private void cleanNonHaskellSources(){
+    IFile cabal=BuildWrapperPlugin.getCabalFile( getProject() );
+    try {
+      PackageDescription pd=PackageDescriptionLoader.load(cabal);
+      Collection<String> nhfs=pd.getAllNonHaskellFiles();
+      for (String s:nhfs){
+        if (s!=null && s.length()>0){
+          IResource r=getProject().findMember( s );
+          if (r!=null){
+            BuildWrapperPlugin.deleteProblems( r );
+          }
+        }
+      }
+    } catch (CoreException ce){
+      HaskellCorePlugin.log( ce );
     }
   }
 

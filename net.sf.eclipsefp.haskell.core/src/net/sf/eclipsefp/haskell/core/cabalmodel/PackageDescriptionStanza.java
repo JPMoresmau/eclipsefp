@@ -408,6 +408,22 @@ public class PackageDescriptionStanza {
     return ret;
    }
 
+  public Collection<String> getNonHaskellFiles(){
+    Collection<String> ret=new HashSet<String>();
+    String val=getProperties().get( CabalSyntax.FIELD_INCLUDES);
+    if (val!=null && val.length()>0){
+      ret.addAll(PackageDescriptionLoader.parseList( val));
+    }
+    val=getProperties().get( CabalSyntax.FIELD_C_SOURCES);
+    if (val!=null && val.length()>0){
+      ret.addAll(PackageDescriptionLoader.parseList( val));
+    }
+    for (PackageDescriptionStanza st:getStanzas()){
+      ret.addAll(st.getNonHaskellFiles());
+    }
+    return ret;
+  }
+
   public void dump(final Writer w,final int indent) throws IOException {
     int indent2=indent;
     if (getType()!=null){
