@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.views;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
@@ -164,6 +165,7 @@ public class CabalPackagesView extends ViewPart {
       @Override
       public void widgetSelected(final org.eclipse.swt.events.SelectionEvent e) {
         onlyInstalled=true;
+        packageViewer.setInput( Collections.emptyList());
         refreshJob.schedule();
       }
     });
@@ -171,6 +173,7 @@ public class CabalPackagesView extends ViewPart {
       @Override
       public void widgetSelected(final org.eclipse.swt.events.SelectionEvent e) {
         onlyInstalled=false;
+        packageViewer.setInput( Collections.emptyList());
         refreshJob.schedule();
       }
     });

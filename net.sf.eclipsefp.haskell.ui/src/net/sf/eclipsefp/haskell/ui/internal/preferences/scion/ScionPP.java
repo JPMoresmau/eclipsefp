@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -66,7 +67,7 @@ public class ScionPP
 //  private Composite verboseInteractionFieldC;
 
 	private CabalImplsBlock cabalBlock;
-	private Composite fieldComposite;
+	//private Group fieldComposite;
 	private boolean rebuildBuiltin;
 	private boolean rebuildBrowserBuiltin;
 
@@ -121,13 +122,13 @@ public class ScionPP
     IDialogSettings dlgSettings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.restoreColumnSettings( dlgSettings, PAGE_ID );
 
-    fieldComposite = new Composite(parentComposite, SWT.NONE);
-    fieldComposite.setLayout( new GridLayout( 2, false ) );
+    Group bwComposite = new Group(parentComposite, SWT.NONE);
+    bwComposite.setLayout( new GridLayout( 2, false ) );
     GridData gridData = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
     gridData.horizontalSpan = nColumns;
-    fieldComposite.setLayoutData( gridData );
-
-    SWTUtil.createMessageLabel (fieldComposite, UITexts.buildwrapper_preferences_label, 2, SWT.DEFAULT);
+    bwComposite.setLayoutData( gridData );
+    bwComposite.setText( UITexts.buildwrapper_preferences_label );
+    //SWTUtil.createMessageLabel (fieldComposite, UITexts.buildwrapper_preferences_label, 2, SWT.DEFAULT);
 
 //    serverBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
 //    gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
@@ -192,7 +193,7 @@ public class ScionPP
 //      }
 //    });
 
-    serverExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
+    serverExecutableFieldC=new Composite(bwComposite,SWT.NONE);
     GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd.horizontalSpan=2;
     serverExecutableFieldC.setLayoutData( gd );
@@ -209,7 +210,7 @@ public class ScionPP
 		serverExecutableField.setPreferenceStore( prefStore );
 		serverExecutableField.load();
 
-		autodetectC=new Composite(fieldComposite,SWT.NONE);
+		autodetectC=new Composite(bwComposite,SWT.NONE);
     gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd.horizontalSpan=2;
     autodetectC.setLayoutData( gd );
@@ -257,9 +258,16 @@ public class ScionPP
 
     // scion-browser
 
-    SWTUtil.createMessageLabel (fieldComposite, UITexts.scionBrowser_preferences_label, 2, SWT.DEFAULT);
+		Group sbComposite = new Group(parentComposite, SWT.NONE);
+		sbComposite.setLayout( new GridLayout( 2, false ) );
+    gridData = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+    gridData.horizontalSpan = nColumns;
+    sbComposite.setLayoutData( gridData );
+    sbComposite.setText( UITexts.scionBrowser_preferences_label );
 
-    browserBuiltInFieldC=new Composite(fieldComposite,SWT.NONE);
+    //SWTUtil.createMessageLabel (bwComposite, UITexts.scionBrowser_preferences_label, 2, SWT.DEFAULT);
+
+    browserBuiltInFieldC=new Composite(sbComposite,SWT.NONE);
     gdata = new GridData( SWT.FILL, SWT.CENTER, true, false );
     gdata.horizontalSpan=2;
     browserBuiltInFieldC.setLayoutData( gdata );
@@ -281,7 +289,7 @@ public class ScionPP
     gdata.horizontalIndent=30;
     gdata.horizontalSpan=1;
     //forceRebuildC.setLayoutData( gdata );
-    forceRebuildBrowser=new Button(fieldComposite,SWT.CHECK);
+    forceRebuildBrowser=new Button(sbComposite,SWT.CHECK);
     forceRebuildBrowser.setText( UITexts.forceRebuildBrowserButton_text );
     forceRebuildBrowser.setLayoutData( gdata );
 
@@ -293,7 +301,7 @@ public class ScionPP
       }
     });
 
-    browserExecutableFieldC=new Composite(fieldComposite,SWT.NONE);
+    browserExecutableFieldC=new Composite(sbComposite,SWT.NONE);
     GridData gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd2.horizontalSpan=2;
     browserExecutableFieldC.setLayoutData( gd2 );
@@ -310,7 +318,7 @@ public class ScionPP
     browserExecutableField.setPreferenceStore( prefStore );
     browserExecutableField.load();
 
-    autodetectBrowserC=new Composite(fieldComposite,SWT.NONE);
+    autodetectBrowserC=new Composite(sbComposite,SWT.NONE);
     gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd2.horizontalSpan=2;
     autodetectBrowserC.setLayoutData( gd2 );
