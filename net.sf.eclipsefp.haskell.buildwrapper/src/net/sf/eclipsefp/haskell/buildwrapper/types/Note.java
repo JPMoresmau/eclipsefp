@@ -78,13 +78,13 @@ public class Note {
 			/**
 			 * this causes scheduling rule issues sometimes
 			 */
-			if (!resource.getWorkspace().isTreeLocked()){
-				try {
-					resource.refreshLocal(0, new NullProgressMonitor());
-				} catch (CoreException ce){
-					// ignore
-				}
-			}
+//			if (!resource.getWorkspace().isTreeLocked()){
+//				try {
+//					resource.refreshLocal(0, new NullProgressMonitor());
+//				} catch (CoreException ce){
+//					// ignore
+//				}
+//			}
 			
 	        int severity;
 	        switch (kind) {

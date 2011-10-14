@@ -391,7 +391,14 @@ public class BWFacade {
 					int col=ol.getInt("c");
 					Location loc=new Location(f, line, col, line, col);
 					Note n=new Note(k,loc,o.getString("t"),"");
-					final IResource res=project.findMember(f);
+					IResource res=project.findMember(f);
+//					if (res==null){
+//						f=f.replace("\\\\", "\\");
+//						String pos=project.getLocation().toOSString();
+//						if (f.startsWith(pos)){
+//							res=project.findMember(f.substring(pos.length()));
+//						}
+//					}
 					if (res!=null){
 						if (ress.add(res)){
 							BuildWrapperPlugin.deleteProblems(res);

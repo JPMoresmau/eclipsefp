@@ -2,7 +2,6 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.List;
 
-import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
@@ -83,12 +82,12 @@ public class JobFacade  {
 	          return Status.OK_STATUS;
 	        }
 	      };
-	      buildJob.setRule( getProject() );
-	      buildJob.setPriority(Job.INTERACTIVE);
+	      buildJob.setRule( f );
+	      buildJob.setPriority(Job.SHORT);
 	      buildJob.schedule();
 	}
 	
-	public void updateFromEditor(final IFile f,final IDocument doc,final OutlineHandler handler){
+	public void updateFromEditor(final IFile file,final IDocument doc,final OutlineHandler handler){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
 	    Job buildJob = new Job (jobNamePrefix) {
@@ -96,35 +95,35 @@ public class JobFacade  {
 	      protected IStatus run(IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	          long t0=System.currentTimeMillis();
+	          //long t0=System.currentTimeMillis();
 	          /*if (doc!=null){
 	        	  realFacade.write(f, doc.get()); // the write is done by ScionTokenScanner
 	          }*/
-	          long t1=System.currentTimeMillis();
-	          boolean buildOK= realFacade.build1(f);
+	          //long t1=System.currentTimeMillis();
+	          boolean buildOK= realFacade.build1(file);
 	          		
-	          long t2=System.currentTimeMillis();
+	          //long t2=System.currentTimeMillis();
 	          
-	          List<OutlineDef> defs=realFacade.outline(f);
-	          long t3=System.currentTimeMillis();
+	          List<OutlineDef> defs=realFacade.outline(file);
+	          //long t3=System.currentTimeMillis();
 	          if (defs.size()>0 && buildOK){
 	        	  handler.handleOutline(defs); // avoid removing all outline on error
 	          }
 	          
-	          long t4=System.currentTimeMillis();
-	          BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t3-t2)+"ms,handleroutline:"+(t4-t3)+"ms,build:"+(t2-t1)+"ms");
+	          //long t4=System.currentTimeMillis();
+	          //BuildWrapperPlugin.logInfo("write:"+(t1-t0)+"ms,outline:"+(t3-t2)+"ms,handleroutline:"+(t4-t3)+"ms,build:"+(t2-t1)+"ms");
 	        } finally {
 	          monitor.done();
 	        }
 	        return Status.OK_STATUS;
 	      }
 	    };
-	    buildJob.setRule( getProject() );
-	    buildJob.setPriority(Job.DECORATE);
+	    buildJob.setRule( file );
+	    buildJob.setPriority(Job.SHORT);
 	    buildJob.schedule();
 	}
 	
-	public void getOccurrences(final IFile f,final String token,final OccurrencesHandler handler){
+	public void getOccurrences(final IFile file,final String token,final OccurrencesHandler handler){
 		final String jobNamePrefix = NLS.bind(BWText.occurrences_job_name, getProject().getName());
 		
 	    Job buildJob = new Job (jobNamePrefix) {
@@ -132,7 +131,7 @@ public class JobFacade  {
 	      protected IStatus run(IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	          handler.handleOccurrences(realFacade.getOccurrences(f, token));
+	          handler.handleOccurrences(realFacade.getOccurrences(file, token));
 	         
 	        } finally {
 	          monitor.done();
@@ -140,8 +139,8 @@ public class JobFacade  {
 	        return Status.OK_STATUS;
 	      }
 	    };
-	    buildJob.setRule( getProject() );
-	    buildJob.setPriority(Job.DECORATE);
+	    buildJob.setRule( file );
+	    buildJob.setPriority(Job.SHORT);
 	    buildJob.schedule();
 	}
 	
@@ -162,8 +161,8 @@ public class JobFacade  {
 	        return Status.OK_STATUS;
 	      }
 	    };
-	    buildJob.setRule( getProject() );
-	    buildJob.setPriority(Job.DECORATE);
+	    buildJob.setRule( file );
+	    buildJob.setPriority(Job.SHORT);
 	    buildJob.schedule();
 	}
 	

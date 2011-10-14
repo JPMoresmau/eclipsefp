@@ -145,19 +145,19 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	  /**
 	   * Delete all problem markers for a given file.
 	   *  
-	   * @param r A resource that should be a file.
+	   * @param r A resource that could be a file or a project.
 	   */
 	  public static void deleteProblems(IResource r) {
 	    if (!r.getWorkspace().isTreeLocked() && r.exists() && r.getProject().isOpen()) {
 	      try {
-	        if (r instanceof IFile) {
-	          r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
-	        }
+//	        if (r instanceof IFile) {
+//	          r.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+//	        }
 	        //org.eclipse.core.resources.problemmarker
 	        r.deleteMarkers(PROBLEM_MARKER_ID, true, IResource.DEPTH_ZERO);
 	        r.deleteMarkers("net.sf.eclipsefp.haskell.scion.client.ScionPlugin.projectProblem", true, IResource.DEPTH_ZERO);
 	        r.deleteMarkers("net.sf.eclipsefp.haskell.core.scionProblem", true, IResource.DEPTH_ZERO);
-	        r.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+	        r.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO); // delete problems but not subtypes (HLint, etc are not managed by us)
 	      } catch (CoreException ex) {
 	        BuildWrapperPlugin.logError(BWText.error_deleteMarkers, ex);
 	        ex.printStackTrace();
