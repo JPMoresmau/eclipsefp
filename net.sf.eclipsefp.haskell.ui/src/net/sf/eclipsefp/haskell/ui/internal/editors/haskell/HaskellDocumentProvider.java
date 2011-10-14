@@ -59,6 +59,12 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
   }
 
   @Override
+    protected IDocument createEmptyDocument() {
+      SynchronizableDocument sd= new SynchronizableDocument();
+      return sd;
+    }
+
+  @Override
   protected IAnnotationModel createAnnotationModel( final Object element )
                                                           throws CoreException {
     IAnnotationModel result = null;
