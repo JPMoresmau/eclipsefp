@@ -261,7 +261,7 @@ public final class UITexts extends NLS {
   public static String libraries_add_component_all;
   public static String libraries_add_component_selected;
   public static String libraries_add_version_title;
-  public static String libraries_add_version_none;
+  public static String none;
   public static String libraries_add_version_specific;
 
   public static String outline_sortByName;
@@ -436,7 +436,6 @@ public final class UITexts extends NLS {
   public static String test_options_folder_choose;
   public static String test_options_testsuites;
   public static String test_options_testsuites_all;
-  public static String test_options_testsuites_none;
   public static String test_error;
   public static String test_error_text;
   public static String test_version_fail;
@@ -569,6 +568,7 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_action_install_global;
   public static String cabalPackagesView_action_install_error;
   public static String cabalPackagesView_action_install_running;
+  public static String cabalPackagesView_action_install_options;
   public static String cabalPackagesView_info_running;
   public static String cabalPackagesView_info_error;
   public static String cabalPackagesView_list_running;
@@ -576,6 +576,9 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_info_installed;
   public static String cabalPackagesView_info_more;
   public static String cabalPackagesView_info_more_running;
+  public static String cabalPackagesView_selected;
+  public static String cabalPackagesView_list;
+  public static String cabalPackagesView_matching;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

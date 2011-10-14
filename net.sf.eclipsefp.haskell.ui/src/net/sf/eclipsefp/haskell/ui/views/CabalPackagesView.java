@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.views;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +12,7 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalPackageHelper;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.CommandLineUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -26,6 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -63,6 +66,8 @@ public class CabalPackagesView extends ViewPart {
 
   private Link lMore;
 
+  private Label lSelected;
+
   private final Job refreshJob=new Job(UITexts.cabalPackagesView_list_running){
     @Override
     protected IStatus run( final IProgressMonitor arg0 ) {
@@ -85,24 +90,46 @@ public class CabalPackagesView extends ViewPart {
   public void createPartControl( final Composite parent ) {
     parent.setLayout( new GridLayout(2,true) );
 
-    final Button bInstalled=new Button( parent, SWT.RADIO );
+    Composite buttons=new Composite(parent,SWT.NONE);
+    buttons.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+    buttons.setLayout( new GridLayout(2,true) );
+    final Button bInstalled=new Button( buttons, SWT.RADIO );
     bInstalled.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
     bInstalled.setText( UITexts.cabalPackagesView_installed );
     bInstalled.setSelection( true );
 
-    bAll=new Button( parent, SWT.RADIO );
+    bAll=new Button( buttons, SWT.RADIO );
     bAll.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
     bAll.setText( UITexts.cabalPackagesView_all );
 
-    Label lFilter=new Label(parent,SWT.NONE);
+    lSelected=new Label(parent,SWT.NONE);
     GridData gd=new GridData(GridData.FILL_HORIZONTAL);
+    lSelected.setLayoutData(gd);
+    lSelected.setText( NLS.bind( UITexts.cabalPackagesView_selected, UITexts.none ) );
+
+    Label lFilter=new Label(parent,SWT.NONE);
+    gd=new GridData(GridData.FILL_HORIZONTAL);
     lFilter.setLayoutData(gd);
     lFilter.setText( UITexts.cabalPackagesView_filter );
 
+    Label lOptions=new Label(parent,SWT.NONE);
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    lOptions.setLayoutData(gd);
+    lOptions.setText( UITexts.cabalPackagesView_action_install_options );
+
+    final Text tFilter=new Text(parent,SWT.BORDER);
+    tFilter.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+
+    final Text tOptions=new Text(parent,SWT.BORDER);
+    tOptions.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+
+    final Label lMatching=new Label(parent,SWT.NONE);
+    lMatching.setLayoutData( new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END) );
+    lMatching.setText( UITexts.cabalPackagesView_matching );
 
     Composite cInstallButtons=new Composite(parent,SWT.NONE);
     cInstallButtons.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    cInstallButtons.setLayout( new GridLayout(2,true) );
+    cInstallButtons.setLayout( new GridLayout(3,false) );
 
     final Button bUser=new Button(cInstallButtons,SWT.PUSH);
     bUser.setLayoutData( new GridData(GridData.HORIZONTAL_ALIGN_CENTER) );
@@ -114,12 +141,9 @@ public class CabalPackagesView extends ViewPart {
     bGlobal.setText(UITexts.cabalPackagesView_action_install_global);
     bGlobal.setEnabled( false );
 
-    final Text tFilter=new Text(parent,SWT.BORDER);
-    tFilter.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-
-    lInstall=new Label(parent,SWT.NONE);
-    GridData gdInstall=new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-    gdInstall.horizontalSpan=2;
+    lInstall=new Label(cInstallButtons,SWT.NONE);
+    GridData gdInstall=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+    gdInstall.grabExcessHorizontalSpace=true;
     lInstall.setLayoutData( gdInstall );
 
     packageViewer=new TreeViewer(parent,SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
@@ -143,19 +167,23 @@ public class CabalPackagesView extends ViewPart {
     infoViewer=new Text(parent,SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     infoViewer.setLayoutData( new GridData(GridData.FILL_BOTH) );
 
+    Composite cUpdate=new Composite(parent,SWT.NONE);
+    cUpdate.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+    cUpdate.setLayout( new GridLayout(2,false) );
+    Button bUpdate=new Button(cUpdate,SWT.PUSH);
+    bUpdate.setLayoutData( new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING) );
+    bUpdate.setText( UITexts.cabalPackagesView_action_update );
+
+    lUpdate=new Label(cUpdate,SWT.NONE);
+    lUpdate.setLayoutData(  new GridData(GridData.FILL_HORIZONTAL) );
+
     lMore=new Link(parent,SWT.NONE);
     GridData gdMore=new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
-    gdMore.horizontalSpan=2;
     lMore.setLayoutData( gdMore );
     lMore.setText("<a>"+ UITexts.cabalPackagesView_info_more +"</a>");
     lMore.setEnabled( false );
 
-    Button bUpdate=new Button(parent,SWT.PUSH);
-    bUpdate.setLayoutData( new GridData(GridData.HORIZONTAL_ALIGN_CENTER) );
-    bUpdate.setText( UITexts.cabalPackagesView_action_update );
 
-    lUpdate=new Label(parent,SWT.NONE);
-    lUpdate.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
 
     helper=new CabalPackageHelper( CabalImplementationManager.getCabalExecutable() );
 
@@ -220,13 +248,13 @@ public class CabalPackagesView extends ViewPart {
     bGlobal.addSelectionListener( new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
-       install( true );
+       install( true, tOptions.getText() );
       }
     });
     bUser.addSelectionListener( new SelectionAdapter() {
       @Override
       public void widgetSelected( final SelectionEvent e ) {
-       install( false );
+       install( false, tOptions.getText() );
       }
     });
 
@@ -247,11 +275,13 @@ public class CabalPackagesView extends ViewPart {
   }
 
   private void showInfo(){
+    lSelected.setText( NLS.bind( UITexts.cabalPackagesView_selected, currentName ) );
     if (bAll.getSelection()){
       lInstall.setText( "" );
     } else {
       lInstall.setText( UITexts.cabalPackagesView_info_installed );
     }
+    lInstall.getParent().layout( true );
     new Job(UITexts.cabalPackagesView_info_running){
       @Override
       protected IStatus run( final IProgressMonitor arg0 ) {
@@ -271,7 +301,7 @@ public class CabalPackagesView extends ViewPart {
     }.schedule();
   }
 
-  private void install(final boolean global){
+  private void install(final boolean global,final String options){
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
       final List<String> commands = new ArrayList<String>();
@@ -286,6 +316,9 @@ public class CabalPackagesView extends ViewPart {
       }
       // force reinstall
       commands.add( "--reinstall" );
+      if (options!=null && options.trim().length()>0){
+        commands.addAll(Arrays.asList(CommandLineUtil.parse( options.trim() )));
+      }
       try {
         AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_install_running,true, new Runnable() {
 

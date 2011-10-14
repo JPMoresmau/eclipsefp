@@ -54,7 +54,7 @@ public class CommandLineUtil {
     * at the start and end. Two double quotes together is taken to mean an
     * embedded double quote in the argument text.</p>
     */
-  static String[] parse( final String content ) {
+  public static String[] parse( final String content ) {
     String[] result = new String[ 0 ];
     if( content != null && content.length() > 0 ) {
       List<String> alResult = new ArrayList<String>();

@@ -296,7 +296,6 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
 
         public void launchesTerminated( final ILaunch[] paramArrayOfILaunch ) {
          for (ILaunch la:paramArrayOfILaunch){
-           System.out.println("found launch:"+(la.getLaunchConfiguration()==wc));
            if (la.getLaunchConfiguration()==wc){
              after.run();
              launchManager.removeLaunchListener( this );

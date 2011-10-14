@@ -161,7 +161,7 @@ public class ImportLibrariesAddDialog extends Dialog {
     gVersion.setLayout( new GridLayout( 2, true ) );
 
     Button bNone=new Button(gVersion,SWT.RADIO);
-    bNone.setText( UITexts.libraries_add_version_none);
+    bNone.setText( UITexts.none);
     GridData gdNone=new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
     gdNone.horizontalSpan=2;
     bNone.setLayoutData( gdNone );
