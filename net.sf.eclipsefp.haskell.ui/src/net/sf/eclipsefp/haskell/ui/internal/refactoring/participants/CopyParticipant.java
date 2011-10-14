@@ -7,6 +7,8 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
@@ -51,8 +53,18 @@ public class CopyParticipant extends
   @Override
   public Change createChange( final IProgressMonitor pm ) throws OperationCanceledException {
     // Get arguments
-    IFile newFile = (IFile)getArguments().getDestination();
-    return ChangeCreator.createCopyChange( oldFile, newFile );
+    Object dest=getArguments().getDestination();
+    if (dest instanceof IFile){
+      IFile newFile = (IFile)dest;
+      return ChangeCreator.createCopyChange( oldFile, newFile );
+    } else if (dest instanceof IFolder){
+      IFile newFile = ((IFolder)dest).getFile( oldFile.getName() );
+      return ChangeCreator.createCopyChange( oldFile, newFile );
+    } else if (dest instanceof IProject){
+      IFile newFile = ((IProject)dest).getFile( oldFile.getName() );
+      return ChangeCreator.createCopyChange( oldFile, newFile );
+    }
+    return null;
   }
 
 }
