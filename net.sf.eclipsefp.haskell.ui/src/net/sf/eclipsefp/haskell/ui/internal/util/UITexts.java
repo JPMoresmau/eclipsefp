@@ -564,6 +564,7 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_action_update_ok;
   public static String cabalPackagesView_action_update_error;
   public static String cabalPackagesView_action_update_running;
+  public static String cabalPackagesView_action_install;
   public static String cabalPackagesView_action_install_user;
   public static String cabalPackagesView_action_install_global;
   public static String cabalPackagesView_action_install_error;
@@ -576,6 +577,7 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_info_installed;
   public static String cabalPackagesView_info_more;
   public static String cabalPackagesView_info_more_running;
+  public static String cabalPackagesView_info_browser;
   public static String cabalPackagesView_selected;
   public static String cabalPackagesView_list;
   public static String cabalPackagesView_matching;

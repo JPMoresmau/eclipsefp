@@ -43,6 +43,7 @@ public class HaskellUIImages implements IImageNames {
   private final static String WIZARD = "wizban/";  // wizard banners //$NON-NLS-1$
   private final static String ACTION_E = "elcl16/"; //$NON-NLS-1$
   private final static String TOOLS = "etool16/"; //$NON-NLS-1$
+  private final static String VIEW = "eview16/"; //$NON-NLS-1$
 
   private static void declareImages() {
     // objects
@@ -111,6 +112,10 @@ public class HaskellUIImages implements IImageNames {
     declare(IMPORT_REMOVE,OBJECT+"correction_delete_import.gif"); //$NON-NLS-1$
     declare(EXPORT_SRC,OBJECT+"export_src.gif"); //$NON-NLS-1$
     declare(HASKELL_MISC,TOOLS+"haskell_misc.gif"); //$NON-NLS-1$
+
+    declare(HACKAGE_UPDATE,VIEW+"hackage_update.png");
+    declare(HACKAGE_INSTALL,VIEW+"hackage_install.png");
+
   }
 
   private final static void declare( final String key,

@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -141,6 +142,16 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
       browser.openURL( webUrl );
     } catch( Throwable ex ) {
       // Do nothing
+    }
+  }
+
+  public void select(final String name){
+    PackagesContentProvider pcp=(PackagesContentProvider)viewer.getContentProvider();
+    for (PackagesItem pi:pcp.getLocalCache()){
+      if (pi.getPackage().getIdentifier().toString().equals( name )){
+        viewer.setSelection( new StructuredSelection(pi) );
+        break;
+      }
     }
   }
 }

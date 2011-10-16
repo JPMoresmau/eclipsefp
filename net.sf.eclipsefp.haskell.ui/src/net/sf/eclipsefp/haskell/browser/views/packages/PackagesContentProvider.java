@@ -69,6 +69,14 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		}
 	}
 
+
+  public PackagesItem[] getLocalCache() {
+    if (localCache == null) {
+      cache();
+    }
+    return localCache;
+  }
+
 	public void dispose() {
 		// Do nothing
 	}

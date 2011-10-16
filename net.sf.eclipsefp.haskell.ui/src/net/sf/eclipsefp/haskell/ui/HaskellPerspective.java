@@ -4,6 +4,7 @@ package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.browser.BrowserPerspective;
 import net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView;
+import net.sf.eclipsefp.haskell.ui.views.CabalPackagesView;
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
@@ -43,6 +44,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     layout.addShowViewShortcut( IPageLayout.ID_TASK_LIST );
     layout.addShowViewShortcut( IPageLayout.ID_OUTLINE );
     layout.addShowViewShortcut( IConsoleConstants.ID_CONSOLE_VIEW );
+    layout.addShowViewShortcut( CabalPackagesView.ID );
     // Add toolbar and menu actions
     layout.addActionSet( IDebugUIConstants.LAUNCH_ACTION_SET );
     // Add to "Open Perspective" menu
@@ -82,6 +84,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     bottom.addView( IPageLayout.ID_PROBLEM_VIEW );
     bottom.addView( IConsoleConstants.ID_CONSOLE_VIEW );
     bottom.addView( IProgressConstants.PROGRESS_VIEW_ID);
+    bottom.addView( CabalPackagesView.ID);
   }
 
   private void addNewShortcuts( final IPageLayout layout ) {
