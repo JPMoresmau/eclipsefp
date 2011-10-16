@@ -27,6 +27,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
+import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +37,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * API facade to buildwrapper: exposes all operations and calls the build wrapper executable
+ * @author JPMoresmau
+ *
+ */
 public class BWFacade {
 	public static final String DIST_FOLDER=".dist-buildwrapper";
 	public static final String DIST_FOLDER_CABAL=DIST_FOLDER+"/dist";
@@ -63,10 +69,22 @@ public class BWFacade {
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
 	
-	public boolean build(BuildOptions buildOptions){
+	/**
+	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
+	 */
+	private SingleJobQueue buildJobQueue=new SingleJobQueue();
+	
+	public SingleJobQueue getBuildJobQueue() {
+		return buildJobQueue;
+	}
+	
+	
+	public JSONArray build(BuildOptions buildOptions){
+		JSONArray arrC=null;
 		if (buildOptions.isConfigure()){
-			if (!configure(buildOptions)){
-				return false;
+			arrC=configure(buildOptions);
+			if (!isOK(arrC)){
+				return arrC;
 			}
 		}
 		
@@ -76,6 +94,19 @@ public class BWFacade {
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
+		if (arrC!=null){
+			for (int a=0;a<arrC.length();a++){
+				try {
+					arr.put(a, arrC.get(a));
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
+				}
+			}
+		}
+		return arr;
+	}
+	
+	public boolean parseBuildResult(JSONArray arr){
 		if (arr!=null && arr.length()>1){
 			Set<IResource> ress=new HashSet<IResource>();
 			JSONObject obj=arr.optJSONObject(0);
@@ -118,18 +149,19 @@ public class BWFacade {
 		return true;
 	}
 	
-	public boolean configure(BuildOptions buildOptions){
+	public JSONArray configure(BuildOptions buildOptions){
 		parseFlags(); // reset flags in case they have changed
 		//BuildWrapperPlugin.deleteProblems(getProject());
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("configure");
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
-		if (arr!=null && arr.length()>1){
+		/*if (arr!=null && arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
 			return parseNotes(notes);
 		}
-		return true;
+		return true;*/
+		return arr;
 	}
 	
 	public void synchronize(boolean force){
@@ -369,6 +401,24 @@ public class BWFacade {
 	
 	private boolean parseNotes(JSONArray notes){
 		return parseNotes(notes,null);
+	}
+	
+	private boolean isOK(JSONArray notes){
+		if (notes!=null){
+			try {
+				for (int a=0;a<notes.length();a++){	
+					JSONObject o=notes.getJSONObject(a);
+					String sk=o.getString("s");
+					Kind k="Error".equalsIgnoreCase(sk)?Kind.ERROR:Kind.WARNING;
+					if (k.equals(Kind.ERROR)){
+						return false;
+					}
+				}
+			} catch (JSONException je){
+				BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
+			}
+		}
+		return true;
 	}
 	
 	private boolean parseNotes(JSONArray notes,Set<IResource> ress){

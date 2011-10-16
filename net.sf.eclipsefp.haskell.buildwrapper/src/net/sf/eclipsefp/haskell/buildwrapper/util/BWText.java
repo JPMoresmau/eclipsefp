@@ -5,7 +5,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Provides access to the internationalized UI texts.
  * 
- * @author Thomas ten Cate
+ * @author JP Moresmau
  */
 public class BWText extends NLS {
   public static String        process_launch_error;

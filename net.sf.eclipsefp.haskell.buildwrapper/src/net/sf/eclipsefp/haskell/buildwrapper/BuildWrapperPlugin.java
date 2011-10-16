@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -25,7 +24,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The plugin class for buildwrapper operations, providing utility methods and ways to obtain a Build Wrapper Facade for a given Haskell project
+ * @author JPMoresmau
  */
 public class BuildWrapperPlugin extends AbstractUIPlugin {
 	final public static String PROBLEM_MARKER_ID = "net.sf.eclipsefp.haskell.core.problem";

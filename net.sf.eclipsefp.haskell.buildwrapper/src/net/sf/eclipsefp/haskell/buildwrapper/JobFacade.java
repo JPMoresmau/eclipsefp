@@ -15,35 +15,79 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
+import org.json.JSONArray;
 
+/**
+ * performs operations in a job
+ * @author JP Moresmau
+ *
+ */
 public class JobFacade  {
 	private BWFacade realFacade;
+	
+
 	
 	public JobFacade(BWFacade realF){
 		realFacade=realF;
 	}
 	
+
+	public static class BuildJob extends Job {
+		private JSONArray notes;
+		private BuildOptions buildOptions;
+		private BWFacade realFacade;
+		
+		public BuildJob(String name,BWFacade realFacade,BuildOptions buildOptions) {
+			super(name);
+			this.realFacade=realFacade;
+			this.buildOptions=buildOptions;
+			
+		}
+		@Override
+        protected IStatus run(IProgressMonitor monitor) {
+          try {
+           notes=realFacade.build(buildOptions);
+          } finally {
+            monitor.done();
+          }
+          return Status.OK_STATUS;
+        }
+		
+		public JSONArray getNotes() {
+			return notes;
+		}
+	}
+	
 	public void build(final BuildOptions buildOptions) {
 		final String jobNamePrefix = NLS.bind(BWText.job_build, getProject().getName());
-
-	      Job buildJob = new Job (jobNamePrefix) {
-	        @Override
-	        protected IStatus run(IProgressMonitor monitor) {
-	          try {
-	            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	            realFacade.build(buildOptions);
-	          } finally {
-	            monitor.done();
-	          }
-	          return Status.OK_STATUS;
-	        }
-	      };
-	      buildJob.setRule( getProject() );
+		
+	    final BuildJob buildJob=new BuildJob(jobNamePrefix,realFacade,buildOptions);
+	    
+	     buildJob.addJobChangeListener(new JobChangeAdapter(){
+	    	  @Override
+	    	public void done(IJobChangeEvent event) {
+	    		if (event.getResult().isOK()){
+	    			Job parseJob = new Job (jobNamePrefix) {
+	    				protected IStatus run(IProgressMonitor arg0) {
+	    					realFacade.parseBuildResult(buildJob.getNotes());
+	    					return Status.OK_STATUS;
+	    				};
+	    			};
+	    			parseJob.setRule( getProject() );
+	    			parseJob.setPriority(Job.BUILD);
+	    			parseJob.schedule();
+	    		}
+	    	}
+	      });
+	      //buildJob.setRule( getProject() );
 	      buildJob.setPriority(Job.BUILD);
-	      buildJob.schedule();
+	      realFacade.getBuildJobQueue().addJob(buildJob);
+	      //buildJob.schedule();
 	}
 
 	public void synchronize(final boolean force) {

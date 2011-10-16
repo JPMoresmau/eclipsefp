@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
