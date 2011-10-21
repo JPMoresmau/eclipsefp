@@ -6,18 +6,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
-import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
-import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
-import net.sf.eclipsefp.haskell.ui.util.text.WordFinder.EditorThing;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -48,22 +47,36 @@ public class MarkOccurrenceComputer {
   public void compute() {
     final IAnnotationModel model = getAnnotationModel( editor );
     if( model instanceof IAnnotationModelExtension ) {
-      WordFinder.getEditorThing( editor, false, false , new WordFinder.EditorThingHandler() {
-
-        public void handle( final EditorThing thing ) {
-          BuildWrapperPlugin.getJobFacade( thing.getFile().getProject() ).getOccurrences( thing.getFile(), thing.getName(), new OccurrencesHandler() {
-
-            public void handleOccurrences( final List<Occurrence> occurrences ) {
-              if (occurrences != null) {
-                Map<Annotation, Position> map = computeAnnotations( occurrences );
-                IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
-                amx.replaceAnnotations( collectToRemove( model ), map );
-              }
-
-            }
-          });
+      ISelection selection = editor.getSelectionProvider().getSelection();
+      if( selection instanceof ITextSelection ) {
+        ITextSelection textSelection = ( ITextSelection )selection;
+        int offset = textSelection.getOffset();
+        ScionTokenScanner sts=editor.getTokenScanner();
+        if (sts!=null){
+          List<Occurrence> occurrences=sts.getOccurrences( offset );
+          if (occurrences != null) {
+            Map<Annotation, Position> map = computeAnnotations( occurrences );
+            IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+            amx.replaceAnnotations( collectToRemove( model ), map );
+          }
         }
-      });
+      }
+//      WordFinder.getEditorThing( editor, false, false , new WordFinder.EditorThingHandler() {
+//
+//        public void handle( final EditorThing thing ) {
+//          BuildWrapperPlugin.getJobFacade( thing.getFile().getProject() ).getOccurrences( thing.getFile(), thing.getName(), new OccurrencesHandler() {
+//
+//            public void handleOccurrences( final List<Occurrence> occurrences ) {
+//              if (occurrences != null) {
+//                Map<Annotation, Position> map = computeAnnotations( occurrences );
+//                IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+//                amx.replaceAnnotations( collectToRemove( model ), map );
+//              }
+//
+//            }
+//          });
+//        }
+//      });
 
     }
 //    String content = document.get();
