@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.osgi.util.NLS;
 
 
 public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationDelegate{
@@ -37,7 +38,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       throws CoreException {
     if( !monitor.isCanceled() ) {
       try {
-        IPath loc = getExecutableLocation( configuration );
+        final IPath loc = getExecutableLocation( configuration );
         checkCancellation( monitor );
         String[] arguments = determineArguments( configuration );
         checkCancellation( monitor );
@@ -74,7 +75,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         if( process != null ) {
           if ( isBackground( configuration ) ) {
             final IProcess theProcess = process;
-            Job endJob = new Job( CoreTexts.running ) {
+            Job endJob = new Job( NLS.bind( CoreTexts.running , loc.toOSString() )) {
 
               @Override
               protected IStatus run( final IProgressMonitor mon ) {

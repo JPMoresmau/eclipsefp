@@ -71,7 +71,7 @@ public class ResourceUtil {
         for (Component c:facade.getComponents()){
           if (c.isBuildable() &&  c.getType().equals( type )){
             String name=FileUtil.makeExecutableName( c.getName() );
-            IFile f=project.getFile( BWFacade.DIST_FOLDER+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$
+            IFile f=project.getFile( BWFacade.DIST_FOLDER+File.separator+"dist"+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$ //$NON-NLS-2$
             if (f.exists()){
               result.add( f );
             }
