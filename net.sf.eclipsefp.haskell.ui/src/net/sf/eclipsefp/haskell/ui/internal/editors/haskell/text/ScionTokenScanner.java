@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -41,6 +43,10 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private TokenDef currentTokenDef;
   private List<TokenDef> lTokenDefs;
   private ListIterator<TokenDef> tokenDefs;
+
+  private final Map<List<String>,List<TokenDef>> occurrences=new HashMap<List<String>,List<TokenDef>>();
+  private final List<List<String>> tokenLocations=new ArrayList<List<String>>();
+
   private IToken currentToken;
   private int currentOffset;
   private int currentLength;
@@ -57,7 +63,6 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   public ScionTokenScanner(final ScannerManager man,final IFile file){
     this.man=man;
     this.file=file;
-
     this.tokenByTypes = new HashMap<String, IToken>() {
       // Eclipse insists on a serial version identifier, not that this hash map will ever
       // get serialized...
@@ -108,6 +113,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
            int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
            int end=Math.min( offset+length,nextEnd);
 
+           addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
+
            IToken nextToken=getTokenFromTokenDef( nextTokenDef);
            if (currentToken!=null && currentToken.getData().equals( nextToken.getData() ) &&
                currentOffset+currentLength<nextOffset){
@@ -135,11 +142,60 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   }
 
+  private void addTokenOccurence(final int offset,final int end,final TokenDef td){
+    String name=td.getName();
+    if (name.equals( IScionTokens.KEYWORD )
+        || name.equals( IScionTokens.GHC_EXTENSION_KEYWORD )
+        || name.equals( IScionTokens.IDENTIFIER_CONSTRUCTOR )
+        || name.equals( IScionTokens.IDENTIFIER_VARIABLE )
+        || name.equals( IScionTokens.SYMBOL_RESERVED )
+        || name.equals( IScionTokens.SYMBOL_SPECIAL )){
+
+      List<String> key=new LinkedList<String>();
+      key.add(td.getName());
+      key.add( doc.get().substring(offset,end) );
+
+      while (tokenLocations.size()<offset){
+        tokenLocations.add( null );
+      }
+      while(tokenLocations.size()<end){
+        tokenLocations.add(key);
+      }
+      List<TokenDef> l=occurrences.get( key );
+      if (l==null){
+        l=new LinkedList<TokenDef>();
+        occurrences.put( key, l );
+      }
+      l.add(td);
+
+    }
+  }
+
+  public List<Occurrence> getOccurrences(final int offset){
+    LinkedList<Occurrence> ret=new LinkedList<Occurrence>();
+    if (offset>0 && offset<tokenLocations.size()){
+      List<String> key=tokenLocations.get( offset );
+      if (key!=null){
+        List<TokenDef> l=occurrences.get( key );
+        if (l!=null){
+
+          for (TokenDef td:l){
+            ret.add(new Occurrence( td ));
+          }
+          return ret;
+        }
+      }
+    }
+    return ret;
+  }
+
   public void setRange( final IDocument document, final int offset, final int length ) {
     currentTokenDef = null;
     // currentToken=null;
     tokenDefs = null;
 
+    occurrences.clear();
+    tokenLocations.clear();
 
     if( file != null ) {
       String newContents = document.get();
@@ -206,6 +262,15 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       tokenDefs = lTokenDefs.listIterator();
     }
 
+    for (TokenDef nextTokenDef:lTokenDefs){
+      try {
+        int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
+        int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
+        addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
+      } catch (BadLocationException ble){
+        HaskellUIPlugin.log( ble );
+      }
+    }
     this.offset = offset;
     this.length = length;
   }
@@ -222,4 +287,5 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       final String contentType, final int partitionOffset ) {
     setRange( document, offset, length );
   }
+
 }

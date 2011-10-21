@@ -26,6 +26,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocum
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.PragmaCommentAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
@@ -113,6 +114,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
   //private List<OutlineDef> outline;
   private Map<String,List<OutlineDef>> defByName;
+
+  private ScionTokenScanner tokenScanner;
 
   /**
    * The scion-server supporting this editor.
@@ -311,9 +314,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
     // ensure decoration support has been created and configured.
     getSourceViewerDecorationSupport( viewer );
-
     return viewer;
   }
+
 
   @Override
   public void createPartControl( final Composite parent ) {
@@ -324,7 +327,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     projectionSupport.install();
     projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
     projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
-
     projectionViewer.doOperation( ProjectionViewer.TOGGLE );
 
     if( markOccurrencesComputer != null ) {
@@ -722,6 +724,16 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       }
     }
     return false;
+  }
+
+
+  public ScionTokenScanner getTokenScanner() {
+    return tokenScanner;
+  }
+
+
+  public void setTokenScanner( final ScionTokenScanner tokenScanner ) {
+    this.tokenScanner = tokenScanner;
   }
 
   // Interface methods for IScionEventListener
