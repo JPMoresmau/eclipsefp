@@ -73,11 +73,23 @@ public class BWFacade {
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
 	 */
 	private SingleJobQueue buildJobQueue=new SingleJobQueue();
+	/**
+	 * query for thing at point for a given file, so that we never have more than two jobs at one time
+	 */
+	private Map<IFile,SingleJobQueue> tapQueuesByFiles=new HashMap<IFile, SingleJobQueue>();
 	
 	public SingleJobQueue getBuildJobQueue() {
 		return buildJobQueue;
 	}
 	
+	public synchronized SingleJobQueue getThingAtPointJobQueue(IFile f){
+		SingleJobQueue sjq=tapQueuesByFiles.get(f);
+		if (sjq==null){
+			sjq=new SingleJobQueue();
+			tapQueuesByFiles.put(f, sjq);
+		}
+		return sjq;
+	}
 	
 	public JSONArray build(BuildOptions buildOptions){
 		JSONArray arrC=null;

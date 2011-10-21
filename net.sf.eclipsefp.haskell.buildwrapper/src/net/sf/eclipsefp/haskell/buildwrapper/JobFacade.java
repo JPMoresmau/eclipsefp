@@ -188,6 +188,7 @@ public class JobFacade  {
 	    buildJob.schedule();
 	}
 	
+	
 	public void getThingAtPoint(final IFile file,final Location location,
 			final boolean qualify, final boolean typed,final ThingAtPointHandler handler){
 		final String jobNamePrefix = NLS.bind(BWText.thingatpoint_job_name, getProject().getName());
@@ -207,7 +208,8 @@ public class JobFacade  {
 	    };
 	    buildJob.setRule( file );
 	    buildJob.setPriority(Job.SHORT);
-	    buildJob.schedule();
+	    //buildJob.schedule();
+	    realFacade.getThingAtPointJobQueue(file).addJob(buildJob);
 	}
 	
 	public IProject getProject() {
