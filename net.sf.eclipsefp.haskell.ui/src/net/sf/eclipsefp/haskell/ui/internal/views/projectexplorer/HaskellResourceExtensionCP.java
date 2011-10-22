@@ -9,6 +9,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -20,9 +22,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -65,6 +67,12 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
             }
           }
         }
+        // if we have a Haskell source file, we show the same content as outline
+        // underneath
+        else if( FileUtil.hasCabalExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
+          PackageDescription descr = PackageDescriptionLoader.load( f );
+          result.addAll(descr.getStanzas());
+        }
       } else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
         result.addAll( treeElement.getChildren() );
@@ -90,7 +98,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   public boolean hasChildren( final Object element ) {
     if( element instanceof IFile ) {
       IFile f = ( IFile )element;
-      if( FileUtil.hasHaskellExtension( f ) ) {
+      if( FileUtil.hasHaskellExtension( f ) || FileUtil.hasCabalExtension( f ) ) {
         return true;
       }
       return false;
