@@ -99,10 +99,10 @@ public abstract class BrowserServer {
 	public void loadHackageDatabase(String path, boolean rebuild) throws IOException, JSONException {
 		loadHackageDatabaseInternal(path, rebuild);
 		// Cache information of all the modules
-		this.setCurrentDatabase(DatabaseType.ALL, null);
+		/*this.setCurrentDatabase(DatabaseType.ALL, null);
 		for (Module m : this.getAllModules()) {
 			moduleDocs.put(m.getName(), m);
-		}
+		}*/
 	}
 	
 	public Module getCachedModule(String module) {
