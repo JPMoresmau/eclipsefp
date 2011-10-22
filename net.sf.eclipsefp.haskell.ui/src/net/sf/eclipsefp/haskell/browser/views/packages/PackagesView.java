@@ -155,12 +155,26 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     }
   }
 
+  public boolean has(final String name) {
+    PackagesContentProvider pcp=(PackagesContentProvider)viewer.getContentProvider();
+    for (PackagesItem[] items : new PackagesItem[][]{ pcp.getLocalCache(), pcp.getHackageCache() }) {
+      for (PackagesItem pi : items){
+        if (pi.getPackage().getIdentifier().toString().equals( name )){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   public void select(final String name){
     PackagesContentProvider pcp=(PackagesContentProvider)viewer.getContentProvider();
-    for (PackagesItem pi:pcp.getLocalCache()){
-      if (pi.getPackage().getIdentifier().toString().equals( name )){
-        viewer.setSelection( new StructuredSelection(pi) );
-        break;
+    for (PackagesItem[] items : new PackagesItem[][]{ pcp.getLocalCache(), pcp.getHackageCache() }) {
+      for (PackagesItem pi : items){
+        if (pi.getPackage().getIdentifier().toString().equals( name )){
+          viewer.setSelection( new StructuredSelection(pi) );
+          return;
+        }
       }
     }
   }

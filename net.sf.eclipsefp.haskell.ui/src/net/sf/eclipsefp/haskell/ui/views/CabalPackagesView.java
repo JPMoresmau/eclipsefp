@@ -320,7 +320,7 @@ public class CabalPackagesView extends ViewPart {
         getSite().getShell().getDisplay().syncExec( new Runnable() {
 
           public void run() {
-            lBrowser.setEnabled( false);
+            lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
           }
         });
       }
@@ -363,8 +363,9 @@ public class CabalPackagesView extends ViewPart {
         try {
           IWorkbenchPage page=getViewSite().getWorkbenchWindow().getWorkbench().showPerspective( BrowserPerspective.class.getName(), getViewSite().getWorkbenchWindow() );
           PackagesView view=(PackagesView)page.showView( PackagesView.ID );
-
-          view.select(currentNameWithVersion);
+          if (view.has( currentNameWithVersion )) {
+            view.select(currentNameWithVersion);
+          }
         } catch (Throwable t){
           HaskellUIPlugin.log( t );
         }
