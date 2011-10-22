@@ -37,7 +37,8 @@ public class StreamBrowserServer extends BrowserServer {
 	private Process process = null;
 	private BufferedWriter in = null;
 	private BufferedReader out = null;
-	private boolean dbLoaded = false;
+	private boolean localDbLoaded = false;
+	private boolean hackageDbLoaded = false;
 	private boolean hoogleLoaded = false;
 	
 	private DatabaseType currentDatabase;
@@ -91,8 +92,13 @@ public class StreamBrowserServer extends BrowserServer {
 	}
 	
 	@Override
-	public boolean isDatabaseLoaded() {
-		return dbLoaded;
+	public boolean isLocalDatabaseLoaded() {
+		return localDbLoaded;
+	}
+	
+	@Override
+	public boolean isHackageDatabaseLoaded() {
+		return hackageDbLoaded;
 	}
 	
 	@Override
@@ -107,7 +113,18 @@ public class StreamBrowserServer extends BrowserServer {
 		// Notify listeners
 		DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
 				DatabaseType.LOCAL);
-		dbLoaded = true;
+		localDbLoaded = true;
+		notifyDatabaseLoaded(e);
+	}
+	
+	@Override
+	protected void loadHackageDatabaseInternal(String path, boolean rebuild)
+			throws IOException, JSONException {
+		sendAndReceiveOk(Commands.createLoadHackageDatabase(path, rebuild));
+		// Notify listeners
+		DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
+				DatabaseType.HACKAGE);
+		hackageDbLoaded = true;
 		notifyDatabaseLoaded(e);
 	}
 
@@ -188,7 +205,7 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void stop() {
 		// Nothing is loaded
-		dbLoaded = false;
+		localDbLoaded = false;
 		hoogleLoaded = false;
 		// Tell we no longer have a database
 		BrowserEvent e = new BrowserEvent(this);

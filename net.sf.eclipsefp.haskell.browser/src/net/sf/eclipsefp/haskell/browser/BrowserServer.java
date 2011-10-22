@@ -96,6 +96,15 @@ public abstract class BrowserServer {
 		}
 	}
 	
+	public void loadHackageDatabase(String path, boolean rebuild) throws IOException, JSONException {
+		loadHackageDatabaseInternal(path, rebuild);
+		// Cache information of all the modules
+		this.setCurrentDatabase(DatabaseType.ALL, null);
+		for (Module m : this.getAllModules()) {
+			moduleDocs.put(m.getName(), m);
+		}
+	}
+	
 	public Module getCachedModule(String module) {
 		return moduleDocs.get(module);
 	}
@@ -103,12 +112,20 @@ public abstract class BrowserServer {
 	public Set<String> getCachedModuleNames() {
 		return moduleDocs.keySet();
 	}
+	
+	public boolean isAnyDatabaseLoaded() {
+		return isLocalDatabaseLoaded() || isHackageDatabaseLoaded();
+	}
 
-	public abstract boolean isDatabaseLoaded();
+	public abstract boolean isLocalDatabaseLoaded();
+	
+	public abstract boolean isHackageDatabaseLoaded();
 
 	public abstract boolean isHoogleLoaded();
 
 	protected abstract void loadLocalDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException;
+	
+	protected abstract void loadHackageDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException;
 
 	public abstract void setCurrentDatabase(DatabaseType current, PackageIdentifier id) throws IOException,
 			JSONException;

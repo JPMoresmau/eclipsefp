@@ -240,6 +240,21 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			return new Status(Status.ERROR, PLUGIN_ID, "", ex);
 		}
 	}
+	
+	/**
+	 * Loads the Hackage database in the current shared instance
+	 * 
+	 * @param rebuild if true, Hoogle data is downloaded and the database is rebuilt
+	 * @return OK or ERROR
+	 */
+	public static IStatus loadHackageDatabase(boolean rebuild) {
+		try {
+			getSharedInstance().loadHackageDatabase(getHackageDatabasePath().toOSString(), rebuild);
+			return Status.OK_STATUS;
+		} catch (Throwable ex) {
+			return new Status(Status.ERROR, PLUGIN_ID, "", ex);
+		}
+	}
 
 	/**
 	 * Returns the path to the place where databases are saved
@@ -347,10 +362,22 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		notifyHoogleUnloaded(e);
 	}
 	
-	public boolean isDatabaseLoaded() {
+	public boolean isAnyDatabaseLoaded() {
 		if (this.server == null)
 			return false;
-		return this.server.isDatabaseLoaded();
+		return this.server.isAnyDatabaseLoaded();
+	}
+	
+	public boolean isLocalDatabaseLoaded() {
+		if (this.server == null)
+			return false;
+		return this.server.isLocalDatabaseLoaded();
+	}
+	
+	public boolean isHackageDatabaseLoaded() {
+		if (this.server == null)
+			return false;
+		return this.server.isHackageDatabaseLoaded();
 	}
 	
 	public boolean isHoogleLoaded() {
