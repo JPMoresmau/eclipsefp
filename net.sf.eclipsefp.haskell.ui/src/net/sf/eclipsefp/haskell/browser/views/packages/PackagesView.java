@@ -57,7 +57,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     form.setWeights( new int[] { 75, 25 } );
 
     // Set database
-    if (BrowserPlugin.getDefault().isDatabaseLoaded()) {
+    if (BrowserPlugin.getDefault().isAnyDatabaseLoaded()) {
       databaseLoaded( null );
     } else {
       databaseUnloaded( null );
@@ -100,13 +100,23 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     Display.getDefault().asyncExec( new Runnable() {
 
       public void run() {
-        // Put the "no database" content and label
-        viewer.setLabelProvider( new NoDatabaseLabelProvider( false ) );
-        viewer.setSorter( new ViewerSorter() );
-        provider = new NoDatabaseContentProvider();
-        viewer.setContentProvider( provider );
-        viewer.setInput( NoDatabaseRoot.ROOT );
-        viewer.refresh();
+        if (!BrowserPlugin.getDefault().isAnyDatabaseLoaded()) {
+          // Put the "no database" content and label
+          viewer.setLabelProvider( new NoDatabaseLabelProvider( false ) );
+          viewer.setSorter( new ViewerSorter() );
+          provider = new NoDatabaseContentProvider();
+          viewer.setContentProvider( provider );
+          viewer.setInput( NoDatabaseRoot.ROOT );
+          viewer.refresh();
+        } else {
+          PackagesContentProvider daProvider =
+              (PackagesContentProvider)viewer.getContentProvider();
+          // Refresh with the items
+          viewer.setInput( PackagesRoot.ROOT );
+          // Use the new provider
+          daProvider.uncache();
+          viewer.refresh();
+        }
       }
     } );
   }

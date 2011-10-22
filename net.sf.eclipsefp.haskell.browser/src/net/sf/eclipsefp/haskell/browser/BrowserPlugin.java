@@ -28,7 +28,7 @@ import org.osgi.framework.BundleContext;
 public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedListener, IHoogleLoadedListener {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.browser"; //$NON-NLS-1$
-	public static final String BROWSER_VERSION = "0.1.1";
+	public static final String BROWSER_VERSION = "0.1.2";
 	public static final String DIST_FOLDER = ".dist-scion-browser";
 	
 	/** The plugin's resource bundle. */

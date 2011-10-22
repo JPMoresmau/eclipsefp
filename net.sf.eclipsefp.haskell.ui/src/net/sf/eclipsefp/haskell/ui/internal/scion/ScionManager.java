@@ -416,7 +416,7 @@ public class ScionManager implements IResourceChangeListener {
 
             display.asyncExec( new Runnable() {
               public void run() {
-                Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+                Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
                 //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
                 builder.setPriority( Job.DECORATE );
                 builder.schedule();
@@ -432,7 +432,7 @@ public class ScionManager implements IResourceChangeListener {
 
         display.asyncExec( new Runnable() {
           public void run() {
-            Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+            Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
             //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
             builder.setPriority( Job.DECORATE );
             builder.schedule();
@@ -451,6 +451,20 @@ public class ScionManager implements IResourceChangeListener {
         BrowserPlugin.useNullSharedInstance();
       }
     }
+  }
+
+  void loadHackageDatabase() {
+    final boolean rebuild = !BrowserPlugin.getHackageDatabasePath().toFile().exists();
+    final Display display = Display.getDefault();
+    display.asyncExec( new Runnable() {
+      public void run() {
+    	Job builder = new BrowserHackageDatabaseRebuildJob(
+    	    UITexts.scionBrowserRebuildingDatabase, rebuild );
+    	// builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+    	builder.setPriority( Job.DECORATE );
+    	builder.schedule();
+      }
+    } );
   }
 
   void checkHoogleDataIsPresent() {
@@ -1142,13 +1156,57 @@ public class ScionManager implements IResourceChangeListener {
   /** Specialized Job class that manages rebuilding the Browser database.
    *  Based in the work of B. Scott Michel.
    *
-    * @author B. Alejandro Serrano
+   * @author B. Alejandro Serrano
    */
-  public class BrowserDatabaseRebuildJob extends Job {
+  public class BrowserLocalDatabaseRebuildJob extends Job {
     IStatus status;
 
-    public BrowserDatabaseRebuildJob(final String jobTitle) {
+    public BrowserLocalDatabaseRebuildJob(final String jobTitle) {
       super(jobTitle);
+
+      // If the build failed, there will be some indication of why it failed.
+      addJobChangeListener( new JobChangeAdapter() {
+        @Override
+        public void done( final IJobChangeEvent event ) {
+          if (event.getResult().isOK()) {
+            loadHackageDatabase();
+          } else {
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openError( Display.getDefault().getActiveShell(),
+                                         UITexts.scionBrowserRebuildingDatabaseError_title,
+                                         UITexts.scionBrowserRebuildingDatabaseError_message );
+              }
+            } );
+          }
+
+          super.done( event );
+        }
+      });
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.scionBrowserRebuildingDatabase, IProgressMonitor.UNKNOWN );
+      status = BrowserPlugin.loadLocalDatabase( true );
+      monitor.done();
+
+      return status;
+    }
+  }
+
+  /** Specialized Job class that manages loading the Hackage part of Browser database.
+   *  Based in the work of B. Scott Michel.
+   *
+   * @author B. Alejandro Serrano
+   */
+  public class BrowserHackageDatabaseRebuildJob extends Job {
+    IStatus status;
+    boolean rebuild;
+
+    public BrowserHackageDatabaseRebuildJob(final String jobTitle, final boolean rebuild) {
+      super(jobTitle);
+      this.rebuild = rebuild;
 
       // If the build failed, there will be some indication of why it failed.
       addJobChangeListener( new JobChangeAdapter() {
@@ -1174,7 +1232,7 @@ public class ScionManager implements IResourceChangeListener {
     @Override
     protected IStatus run( final IProgressMonitor monitor ) {
       monitor.beginTask( UITexts.scionBrowserRebuildingDatabase, IProgressMonitor.UNKNOWN );
-      status = BrowserPlugin.loadLocalDatabase( true );
+      status = BrowserPlugin.loadHackageDatabase( rebuild );
       monitor.done();
 
       return status;

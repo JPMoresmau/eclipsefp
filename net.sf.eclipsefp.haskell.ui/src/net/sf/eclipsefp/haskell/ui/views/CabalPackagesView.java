@@ -304,7 +304,7 @@ public class CabalPackagesView extends ViewPart {
             }
           }
           lMore.setEnabled( currentName!=null );
-          lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection() && BrowserPlugin.getDefault().isDatabaseLoaded());
+          lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection() && BrowserPlugin.getDefault().isAnyDatabaseLoaded());
           if (currentName!=null){
             showInfo();
           }
