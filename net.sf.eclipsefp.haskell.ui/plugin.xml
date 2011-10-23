@@ -675,7 +675,10 @@
           <instanceof value="org.eclipse.core.resources.IResource" /> 
           <instanceof value="org.eclipse.core.resources.IFolder" />
           <instanceof value="org.eclipse.core.resources.IFile" />
-          <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerOutlineDef" />  
+          <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerOutlineDef" />
+          <instanceof
+                value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.CabalFolder">
+          </instanceof>  
         </or>
       </possibleChildren>
        <actionProvider
@@ -1230,5 +1233,22 @@
             class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
             markerType="net.sf.eclipsefp.haskell.core.projectProblem">
       </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            id="net.sf.eclipsefp.haskell.ui.haskellContentSorter"
+            name="name"
+            sortOnly="true">
+         <commonSorter
+               class="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionSorter"
+               id="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionSorter">
+            <parentExpression>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+            </parentExpression>
+         </commonSorter>
+      </navigatorContent>
    </extension>
 </plugin>

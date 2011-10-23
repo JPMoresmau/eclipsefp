@@ -11,8 +11,11 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
@@ -21,6 +24,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -48,7 +52,16 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
       if( parentElement instanceof IProject
           && ( ( IProject )parentElement ).isOpen()
           && ( ( IProject )parentElement ).hasNature( HaskellNature.NATURE_ID ) ) {
-        result.add( new GHCSystemLibrary( ( IProject )parentElement ) );
+        IProject p = ( IProject )parentElement;
+        result.add( new GHCSystemLibrary( p ));
+        IFile f = BuildWrapperPlugin.getCabalFile( p );
+        if (f != null) {
+          result.add( f );
+        }
+        IHaskellProject hp = HaskellProjectManager.get( p );
+        for (IPath path : hp.getSourcePaths()) {
+          result.add( p.getFolder( path ) );
+        }
         // addProjectExecutable( ( IProject )parentElement, result );
       } else if( parentElement instanceof IFile ) {
         final IFile f = ( IFile )parentElement;
@@ -71,9 +84,21 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         // underneath
         else if( FileUtil.hasCabalExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
           PackageDescription descr = PackageDescriptionLoader.load( f );
-          result.addAll(descr.getStanzas());
+          PackageDescriptionStanza lib = descr.getLibraryStanza();
+          if (lib != null) {
+            result.add( descr.getLibraryStanza() );
+          }
+          if (descr.getExecutableStanzas().size() > 0) {
+            result.add( new CabalFolder(f, CabalFolderType.EXECUTABLE ));
+          }
+          if (descr.getTestSuiteStanzas().size() > 0) {
+            result.add( new CabalFolder(f, CabalFolderType.TEST_SUITE ));
+          }
         }
-      } else if( parentElement instanceof ITreeElement ) {
+      } else if (parentElement instanceof CabalFolder) {
+        CabalFolder folder = ( CabalFolder )parentElement;
+        result.addAll( folder.getStanzas() );
+      }else if( parentElement instanceof ITreeElement ) {
         ITreeElement treeElement = ( ITreeElement )parentElement;
         result.addAll( treeElement.getChildren() );
         // outline results are wrapped in a structure keeping the tree and the file
@@ -102,6 +127,8 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         return true;
       }
       return false;
+    } else if ( element instanceof CabalFolder ) {
+      return true;
     }
     Object[] children = getChildren( element );
     return children == null ? false : children.length > 0;
