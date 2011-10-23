@@ -116,26 +116,25 @@ public abstract class CabalFormSection extends SectionPart {
   }
 
   protected FormEntry createFileFormEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
-    FormEntryFile entry = new FormEntryFile();
+    FormEntryFile entry = new FormEntryFile(FormEntryFile.FILES);
     setCustomFormEntry( entry, property, toolkit, container );
     return entry;
   }
 
   protected FormEntry createDirFormEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
-    FormEntryFile entry = new FormEntryFile(true);
+    FormEntryFile entry = new FormEntryFile(FormEntryFile.DIRECTORIES);
     setCustomFormEntry( entry, property, toolkit, container );
     return entry;
   }
 
   protected FormEntry createSourceDirEntry (final FormToolkit toolkit, final Composite container) {
-    FormEntryFile entry = new FormEntryFile(true){
+    FormEntryFile entry = new FormEntryFile(FormEntryFile.DIRECTORIES){
       @Override
       public void setValue( final String value, final boolean blockNotification ) {
         ignoreModify=true;
         Set<String> s=getStanza()!=null?new HashSet<String>(getStanza().getSourceDirs()):Collections.<String>emptySet();
 
-        LimitedWorkbenchContentProvider provider = (LimitedWorkbenchContentProvider)treeField.getContentProvider();
-        seeChecked(provider, provider.getElements( treeField.getInput() ), s);
+        setValues(s);
         ignoreModify = false;
       }
     };

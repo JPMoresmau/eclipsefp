@@ -4,9 +4,11 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -26,18 +28,21 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  *
  */
 public class FormEntryFile extends FormEntry implements ICheckStateListener {
+  public static int FILES=1;
+  public static int DIRECTORIES=2;
+
 
   CheckboxTreeViewer treeField;
   boolean ignoreModify = false;
-  boolean onlyDirs;
+  int typeFields;
 
   public FormEntryFile() {
-    this(false);
+    this(FILES | DIRECTORIES);
   }
 
-  public FormEntryFile(final boolean onlyDirs) {
+  public FormEntryFile(final int typeFields) {
     super();
-    this.onlyDirs = onlyDirs;
+    this.typeFields = typeFields;
   }
 
   @Override
@@ -47,7 +52,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     toolkit.adapt( treeField.getControl(), true, true );
 
     treeField.setLabelProvider( new WorkbenchLabelProvider() );
-    treeField.setContentProvider( new LimitedWorkbenchContentProvider( onlyDirs ) );
+    treeField.setContentProvider( new LimitedWorkbenchContentProvider( (typeFields & FILES) ==0 ) );
     treeField.setComparator( new ResourceComparator( ResourceComparator.NAME ) );
     treeField.addCheckStateListener( this );
     treeField.setInput( project );
@@ -73,12 +78,13 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
     ignoreModify = true;
     String[] elements = newValue.split( "," );
+    Set<String> ss=new HashSet<String>();
+
     for (String element : elements) {
-      element.trim();
+      ss.add(element.trim());
     }
 
-    LimitedWorkbenchContentProvider provider = (LimitedWorkbenchContentProvider)treeField.getContentProvider();
-    seeChecked(provider, provider.getElements( treeField.getInput() ), new HashSet<String>(Arrays.asList(elements)));
+    setValues(ss);
     ignoreModify = false;
 
     /* if (!blockNotification) {
@@ -86,18 +92,31 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     } */
   }
 
+  protected void setValues(final Set<String> files){
+    LimitedWorkbenchContentProvider provider = (LimitedWorkbenchContentProvider)treeField.getContentProvider();
+    Set<IResource> parents=new HashSet<IResource>();
+    seeChecked(provider, provider.getElements( treeField.getInput() ), files,parents);
+    for (IResource parent:parents){
+      manageParentState( parent );
+    }
+  }
+
   protected void seeChecked( final LimitedWorkbenchContentProvider provider,
-      final Object[] objects, final Set<String> files ) {
+      final Object[] objects, final Set<String> files,final Set<IResource> parents ) {
     for (Object o : objects) {
       IResource res = (IResource)o;
-      if (!files.contains( res.getProjectRelativePath().toOSString() )) {
+      if (!files.contains( res.getProjectRelativePath().toString() )) {
         // Not found
         treeField.setChecked( res, false );
       } else {
         treeField.setChecked( res, true );
+        IContainer parent=res.getParent();
+        if (parent instanceof IFolder){
+          parents.add(parent);
+        }
       }
 
-      seeChecked(provider, provider.getChildren( o ), files);
+      seeChecked(provider, provider.getChildren( o ), files,parents);
     }
   }
 
@@ -106,6 +125,16 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     StringBuilder builder = new StringBuilder();
     for( Object o: treeField.getCheckedElements() ) {
       IResource res = ( IResource )o;
+      if ((typeFields & DIRECTORIES)==0){
+        if (res instanceof IFolder){
+          continue;
+        }
+      }
+      if ((typeFields & FILES)==0){
+        if (res instanceof IFile){
+          continue;
+        }
+      }
       IPath path = res.getProjectRelativePath();
 
       if( builder.length() > 0 ) {
@@ -123,7 +152,49 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
   public void checkStateChanged( final CheckStateChangedEvent event ) {
     if( !ignoreModify ) {
+      if (event.getElement() instanceof IFolder){
+        treeField.setSubtreeChecked( event.getElement(), event.getChecked() );
+      }
+
       notifyTextValueChanged();
+    }
+    LimitedWorkbenchContentProvider provider=(LimitedWorkbenchContentProvider)treeField.getContentProvider();
+    Object parent=provider.getParent( event.getElement() );
+    manageParentState(parent);
+  }
+
+  private void manageParentState(final Object parent){
+    if (parent!=null && ((typeFields & DIRECTORIES)==0)){
+      LimitedWorkbenchContentProvider provider=(LimitedWorkbenchContentProvider)treeField.getContentProvider();
+      boolean gotGrayed=false;
+      boolean gotUnchecked=false;
+      boolean gotChecked=false;
+      for (Object child:provider.getChildren( parent )){
+        boolean c=treeField.getChecked( child );
+        boolean g=treeField.getGrayed( child );
+        if (g){
+          gotGrayed=true;
+        }
+        if (c){
+          gotChecked=true;
+        } else {
+          gotUnchecked=true;
+        }
+
+      }
+      if (gotChecked){
+        if (gotUnchecked || gotGrayed){
+          treeField.setGrayChecked( parent, true );
+        } else {
+          treeField.setGrayed( parent, false );
+          treeField.setChecked( parent, true );
+        }
+      } else if (gotGrayed){
+        treeField.setGrayChecked( parent, true );
+      } else {
+        treeField.setGrayed( parent, false );
+        treeField.setChecked( parent, false );
+      }
     }
   }
 
