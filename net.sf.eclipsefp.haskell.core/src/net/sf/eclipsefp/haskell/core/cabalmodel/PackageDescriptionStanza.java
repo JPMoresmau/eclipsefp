@@ -273,9 +273,12 @@ public class PackageDescriptionStanza {
          if (!s.trim().endsWith( "," )){ //$NON-NLS-1$
            newValue.append(","); //$NON-NLS-1$
          }
-         if (!s.endsWith( " " )){ //$NON-NLS-1$
-           newValue.append(" "); //$NON-NLS-1$
+         if (!s.endsWith( PlatformUtil.NL )){
+           newValue.append(PlatformUtil.NL);
          }
+         /*if (!s.endsWith( " " )){ //$NON-NLS-1$
+           newValue.append(" "); //$NON-NLS-1$
+         }*/
        }
      }
      newValue.append(value);
@@ -294,7 +297,7 @@ public class PackageDescriptionStanza {
       for (String token:ls){
         if (!value.equals( token )){
           if(newValue.length()>0){
-            newValue.append( ", " ); //$NON-NLS-1$
+            newValue.append( ","+PlatformUtil.NL ); //$NON-NLS-1$
           }
           newValue.append( token);
         } else {

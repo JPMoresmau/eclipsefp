@@ -125,11 +125,12 @@ public class ModuleInclusionComposite extends Composite {
               public void widgetSelected( final SelectionEvent e ) {
                 if(bInclude.getSelection()){
                   included.add( pd );
+                  exposed.remove( pd );
                   bExpose.setSelection( false );
                 } else {
                   included.remove( pd );
                 }
-                bExpose.setEnabled(CabalSyntax.SECTION_LIBRARY.equals( pd.getType() ) && !bInclude.getSelection() );
+              // bExpose.setEnabled(CabalSyntax.SECTION_LIBRARY.equals( pd.getType() ) && !bInclude.getSelection() );
               }
 
             });
@@ -150,11 +151,12 @@ public class ModuleInclusionComposite extends Composite {
               public void widgetSelected( final SelectionEvent e ) {
                 if(bExpose.getSelection()){
                   exposed.add( pd );
+                  included.remove( pd );
                   bInclude.setSelection( false );
                 } else {
                   exposed.remove( pd );
                 }
-                bInclude.setEnabled( !bExpose.getSelection() );
+              //  bInclude.setEnabled( !bExpose.getSelection() );
               }
             });
             if (ModuleInclusionType.EXPOSED.equals( mit ) || (isNew && !bInclude.isEnabled())){

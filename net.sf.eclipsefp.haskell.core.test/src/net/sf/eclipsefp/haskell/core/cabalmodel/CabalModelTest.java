@@ -348,7 +348,7 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pdss.get(1);
     pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New" );
     String s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+PlatformUtil.NL+"Test.HUnit.Text, Test.HUnit, Test.New",s);
+    assertEquals("Test.HUnit.Base, Test.HUnit.Lang, Test.HUnit.Terminal,"+PlatformUtil.NL+"Test.HUnit.Text, Test.HUnit,"+PlatformUtil.NL+"Test.New",s);
 
     pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
@@ -364,12 +364,17 @@ public class CabalModelTest extends TestCase {
     pds.update(  CabalSyntax.FIELD_EXPOSED_MODULES,"Test.New,");
     pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New2" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.New, Test.New2",s);
+    assertEquals("Test.New,"+PlatformUtil.NL+"Test.New2",s);
 
     pds.update(  CabalSyntax.FIELD_EXPOSED_MODULES,"Test.New, ");
     pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New2" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.New, Test.New2",s);
+    assertEquals("Test.New, "+PlatformUtil.NL+"Test.New2",s);
+
+    pds.update(  CabalSyntax.FIELD_EXPOSED_MODULES,"Test.New,"+PlatformUtil.NL);
+    pds.addToPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.New2" );
+    s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    assertEquals("Test.New,"+PlatformUtil.NL+"Test.New2",s);
   }
 
   public void testSourceDirs(){
@@ -470,7 +475,7 @@ public class CabalModelTest extends TestCase {
     assertEquals(136,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     //assertEquals(4,rvp.getSubsequentIndent());
-    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+", Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\n", "\n    " )+","+PlatformUtil.NL+"    Scion.Test"+PlatformUtil.NL,rvp.getRealValue());
 
     rvp=pds.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertNull(rvp);
@@ -482,7 +487,7 @@ public class CabalModelTest extends TestCase {
 
     rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
-    assertEquals(134,rvp.getEndLine());
+    assertEquals(135,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
     assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+PlatformUtil.NL,rvp.getRealValue());
 

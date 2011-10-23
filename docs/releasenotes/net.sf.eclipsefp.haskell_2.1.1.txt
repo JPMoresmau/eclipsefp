@@ -19,13 +19,16 @@ Setup.hs configure/build/install)
 Fixes:
 	- The profiler plugin references properly all needed plugins to compile under all versions of Eclipse
 	- Fix issues with special editors (Happy, Alex and web based editors)
+	- 3406524: Multi valued fields in Cabal are generated one value on each line
+	- 3421901: Data Files form section in Cabal Editor only takes files. you can still select directories in the UI, all files underneath will be selected
 
 Features:
 	- JDT and WST can be automatically installed when installing EClipseFP
 	- It is now allowed to have a project name that is not the same as the name of the cabal file. EclipseFP uses the cabal file found under the project. An error is logged if several cabal files exist.
-	- Field names on the preferences page for Scion have been changed to make it clearer: what applies to Scion, what applies to Browser
 
 Internal:
+	- uses BuildWrapper instead of Scion, which allows building of projects that have Cabal>1.8 references between components (bug 3421334), C sources, etc
+
 
 Upgrade notes:
 

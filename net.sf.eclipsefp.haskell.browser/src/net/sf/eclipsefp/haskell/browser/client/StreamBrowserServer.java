@@ -227,9 +227,13 @@ public class StreamBrowserServer extends BrowserServer {
 		notifyHoogleUnloaded(e);
 		try {
 			sendAndReceiveOk(Commands.createQuit());
-			process.destroy();
+			if (process!=null){
+				process.destroy();
+			}
 		} catch (Exception ex) {
-			process.destroy();
+			if (process!=null){
+				process.destroy();
+			}
 		}
 		process = null;
 	}

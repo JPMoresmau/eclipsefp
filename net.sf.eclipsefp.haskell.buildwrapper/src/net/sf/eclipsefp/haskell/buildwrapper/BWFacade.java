@@ -168,12 +168,11 @@ public class BWFacade {
 		command.add("configure");
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
-		/*if (arr!=null && arr.length()>1){
+		if (arr!=null && arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
-			return parseNotes(notes);
+			return notes;
 		}
-		return true;*/
-		return arr;
+		return null;
 	}
 	
 	public void synchronize(boolean force){
