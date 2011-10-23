@@ -158,6 +158,12 @@ public class Commands {
 		return o;
 	}
 	
+	public static JSONObject createCheckHoogleData() throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "hoogle-check");
+		return o;
+	}
+	
 	public static JSONObject createFindModulesForDeclaration(String name) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "get-decl-module");

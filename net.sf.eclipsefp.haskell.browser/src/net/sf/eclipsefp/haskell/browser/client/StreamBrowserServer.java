@@ -91,6 +91,22 @@ public class StreamBrowserServer extends BrowserServer {
 		} while (response!=null && !response.equals("\"ok\""));
 	}
 	
+	public synchronized boolean sendAndReceiveBoolean(JSONObject input)
+			throws IOException {
+		String jsonInput = input.toString();
+		log(">> " + jsonInput);
+		in.write(jsonInput + "\n");
+		in.flush();
+
+		String response = null;
+		do {
+			response = out.readLine();
+			log(response);
+		} while (response!=null && !response.equals("true") && !response.equals("false"));
+		
+		return "true".equals(response);
+	}
+	
 	@Override
 	public boolean isLocalDatabaseLoaded() {
 		return localDbLoaded;
@@ -190,10 +206,7 @@ public class StreamBrowserServer extends BrowserServer {
 
 	@Override
 	public boolean checkHoogle() throws Exception {
-		this.setCurrentDatabase(DatabaseType.ALL, null);
-		// We know that "fmap" is always present
-		HoogleResult[] mapResults = this.queryHoogle("fmap");
-		boolean isPresent = mapResults.length > 0;
+		boolean isPresent = sendAndReceiveBoolean(Commands.createCheckHoogleData());
 		// If is present, notify the views
 		if (isPresent) {
 			hoogleLoaded = true;
