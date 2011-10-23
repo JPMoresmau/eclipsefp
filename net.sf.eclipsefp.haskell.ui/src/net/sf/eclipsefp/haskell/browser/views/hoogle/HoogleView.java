@@ -38,9 +38,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -127,6 +129,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
   TreeViewer viewer;
   Browser doc;
   IContentProvider provider;
+  Button localDb;
+  Button hackageDb;
 
   @Override
   public void createPartControl( final Composite parent ) {
@@ -135,6 +139,27 @@ public class HoogleView extends ViewPart implements SelectionListener,
     layout.verticalSpacing = layout.horizontalSpacing = 0;
     layout.marginBottom = layout.marginHeight = layout.marginLeft = layout.marginRight = layout.marginTop = layout.marginWidth = 0;
     parent.setLayout( layout );
+
+    Composite dbSelection = new Composite( parent, SWT.NULL );
+    GridLayout innerLayout = new GridLayout();
+    innerLayout.numColumns = 3;
+    innerLayout.makeColumnsEqualWidth= true;
+    GridData innerData = new GridData();
+    innerData.horizontalAlignment = SWT.FILL;
+    innerData.grabExcessHorizontalSpace = true;
+    dbSelection.setLayoutData( innerData );
+    dbSelection.setLayout( innerLayout );
+
+    Label searchInLabel = new Label( dbSelection, SWT.NULL );
+    searchInLabel.setText( UITexts.browser_hoogleSearchIn );
+
+    localDb = new Button( dbSelection, SWT.CHECK );
+    localDb.setText( UITexts.browser_localDatabase );
+    localDb.setSelection( true );
+
+    hackageDb = new Button( dbSelection, SWT.CHECK );
+    hackageDb.setText( UITexts.browser_hackageDatabase );
+    hackageDb.setSelection( false );
 
     text = new Text( parent, SWT.SINGLE | SWT.SEARCH | SWT.ICON_SEARCH
         | SWT.ICON_CANCEL );
@@ -174,7 +199,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     Display.getDefault().asyncExec( new Runnable() {
 
       public void run() {
-        provider = new HoogleContentProvider();
+        provider = new HoogleContentProvider(localDb, hackageDb);
         //viewer.setLabelProvider( new HoogleLabelProvider() );
         viewer.setContentProvider( provider );
         viewer.setInput( text.getText() );

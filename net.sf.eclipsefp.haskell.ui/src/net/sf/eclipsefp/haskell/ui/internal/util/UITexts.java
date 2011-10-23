@@ -582,6 +582,12 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_list;
   public static String cabalPackagesView_matching;
 
+  public static String browser_allDatabases;
+  public static String browser_localDatabase;
+  public static String browser_hackageDatabase;
+  public static String browser_packageDatabase;
+  public static String browser_hoogleSearchIn;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {

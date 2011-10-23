@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Button;
 
 /**
  * Content provider for Hoogle results.
@@ -22,6 +23,14 @@ public class HoogleContentProvider implements ITreeContentProvider {
 
   ArrayList<Map.Entry<String, ArrayList<HoogleResult>>> results = null;
   ArrayList<Object> shownElements = null;
+
+  Button localDbCheck;
+  Button hackageDbCheck;
+
+  public HoogleContentProvider(final Button localDbCheck, final Button hackageDbCheck) {
+    this.localDbCheck = localDbCheck;
+    this.hackageDbCheck = hackageDbCheck;
+  }
 
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
@@ -37,8 +46,21 @@ public class HoogleContentProvider implements ITreeContentProvider {
       shownElements = null;
     } else {
       try {
-        BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-        HoogleResult[] initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+        // Get results depending of set of databases to check
+        HoogleResult[] initialResults;
+        if (localDbCheck.getSelection() && hackageDbCheck.getSelection()) {
+          BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+          initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+        } else if (localDbCheck.getSelection()) {
+          BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.LOCAL, null );
+          initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+        } else if (hackageDbCheck.getSelection()) {
+          BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.HACKAGE, null );
+          initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+        } else {
+          initialResults = new HoogleResult[0];
+        }
+
         results = new ArrayList<Map.Entry<String,ArrayList<HoogleResult>>>();
         for( HoogleResult result: initialResults ) {
           String key = result.getCompleteDefinition();
