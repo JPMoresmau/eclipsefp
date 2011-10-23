@@ -23,9 +23,9 @@ Fixes:
 Features:
 	- JDT and WST can be automatically installed when installing EClipseFP
 	- It is now allowed to have a project name that is not the same as the name of the cabal file. EclipseFP uses the cabal file found under the project. An error is logged if several cabal files exist.
-	- Field names on the preferences page for Scion have been changed to make it clearer: what applies to Scion, what applies to Browser
 
 Internal:
+	- uses BuildWrapper instead of Scion, which allows building of projects that have Cabal>1.8 references between components, C sources, etc
 
 Upgrade notes:
 
