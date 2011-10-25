@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
@@ -531,6 +532,11 @@ public class BWFacade {
 
 	
 	private <T> T run(LinkedList<String> args,JSONFactory<T> f){
+		return run(args,f,true);
+	}
+	
+	private <T> T run(LinkedList<String> args,JSONFactory<T> f,boolean canRerun){
+	
 		if (bwPath==null){
 			if (!showedNoExeError){
 				BuildWrapperPlugin.logError(BWText.error_noexe, null);
@@ -556,6 +562,7 @@ public class BWFacade {
 			//long t0=System.currentTimeMillis();
 			String l=br.readLine();
 			boolean goOn=true;
+			boolean needConfigure=false;
 			while (goOn && l!=null){
 				/*if (outStream!=null){
 					outStream.write(l);
@@ -574,10 +581,16 @@ public class BWFacade {
 						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
 					}
 					goOn=false;
+				} else if (l.contains(" re-run the 'configure'") || l.contains("cannot satisfy -package-id")){
+					needConfigure=true;
 				}
 				if (goOn){
 					l=br.readLine();
 				}
+			}
+			if (needConfigure && canRerun){
+				configure(new BuildOptions().setTarget(BWTarget.Target));
+				return run(new LinkedList<String>(args.subList(1, args.size()-4)),f,false);
 			}
 			//long t1=System.currentTimeMillis();
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
