@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
  *
  * @author B. Scott Michel (bscottm@ieee.org)
  */
+@Deprecated
 public class BrowserBuilder extends PackageBuilder {
 
   @Override
