@@ -278,6 +278,9 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("dependencies");
 		JSONArray arr=run(command,ARRAY);
+		if (arr==null){
+			return new HashMap<String, CabalPackage[]>();
+		}
 		Map<String, CabalPackage[]> cps=new HashMap<String, CabalPackage[]>();
 		if (arr!=null && arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
