@@ -33,7 +33,7 @@ public class BuildMarkerResolutionGenerator implements
           res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_INFERREDTYPE_START));
         } else if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS )>-1){
           // type is given on next line
-          res.add(new MissingTypeWarningResolution("\n"));
+          res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS));
         }
         // Useless import
         else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
