@@ -141,15 +141,18 @@ public class ScionManager implements IResourceChangeListener {
     }
 
     if (serverExecutablePath==null || browserExecutablePath==null){
-      final Display display = HaskellUIPlugin.getStandardDisplay();
-      display.asyncExec( new Runnable() {
-        public void run() {
-          Shell parent = display.getActiveShell();
+      boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE );
+      if (!ignore){
+        final Display display = HaskellUIPlugin.getStandardDisplay();
+        display.asyncExec( new Runnable() {
+          public void run() {
+            Shell parent = display.getActiveShell();
 
-          InstallExecutableDialog ied=new InstallExecutableDialog(parent , serverExecutablePath==null, browserExecutablePath==null );
-          ied.open();
-        }
-      });
+            InstallExecutableDialog ied=new InstallExecutableDialog(parent , serverExecutablePath==null, browserExecutablePath==null );
+            ied.open();
+          }
+        });
+      }
     }
 
     // Set up the output logging console for the shared ScionInstance:

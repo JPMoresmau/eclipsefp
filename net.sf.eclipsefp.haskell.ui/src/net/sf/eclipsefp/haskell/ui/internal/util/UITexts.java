@@ -397,6 +397,7 @@ public final class UITexts extends NLS {
   public static String installExecutableMissing;
   public static String executablesmissing_install;
   public static String executablesmissing_user;
+  public static String executablesmissing_ignore;
 
   public static String executablesmissing_title;
   public static String executablesmissing_message1;

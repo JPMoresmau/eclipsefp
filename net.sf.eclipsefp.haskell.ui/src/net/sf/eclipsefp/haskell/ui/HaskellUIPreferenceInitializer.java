@@ -13,6 +13,7 @@ package net.sf.eclipsefp.haskell.ui;
 
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.NewHaskellProjectPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AbstractEditorPP;
@@ -33,6 +34,8 @@ public class HaskellUIPreferenceInitializer extends
 		ScionPP.initializeDefaults(prefs);
 		DebugPP.initializeDefaults( prefs );
 		SearchPathsPP.initializeDefaults( prefs );
+
+		prefs.setDefault( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, false );
 	}
 
 }
