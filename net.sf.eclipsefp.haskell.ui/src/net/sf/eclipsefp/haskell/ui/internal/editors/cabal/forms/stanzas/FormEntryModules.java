@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -339,7 +340,7 @@ public class FormEntryModules extends FormEntry {
     StringBuilder builder = new StringBuilder();
     for( String s: strings ) {
       if( builder.length() > 0 ) {
-        builder.append( ", " );
+        builder.append( ","+PlatformUtil.NL );
       }
       builder.append( s );
     }

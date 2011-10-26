@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -110,7 +111,7 @@ public class CompilerFormEntry extends FormEntry {
     StringBuilder builder = new StringBuilder();
     for( String element: compilerList.getItems() ) {
       if( builder.length() > 0 ) {
-        builder.append( ", " );
+        builder.append( ","+PlatformUtil.NL );
       }
       builder.append( element );
     }

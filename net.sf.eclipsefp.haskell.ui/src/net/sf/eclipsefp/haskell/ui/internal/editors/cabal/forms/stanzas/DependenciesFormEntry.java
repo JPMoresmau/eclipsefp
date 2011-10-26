@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Vector;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -49,7 +50,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
     items = new Vector<DependencyItem>();
 
-    Table table = toolkit.createTable( parent, SWT.SINGLE );
+    Table table = toolkit.createTable( parent, SWT.MULTI );
     GridData listGD = new GridData( GridData.FILL_BOTH );
     listGD.grabExcessHorizontalSpace = true;
     listGD.grabExcessVerticalSpace = true;
@@ -86,8 +87,12 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         DependenciesDialog dialog = new DependenciesDialog( tableField
             .getTable().getShell(), alreadySelected );
         if( dialog.open() == Window.OK && dialog.getValue() != null ) {
-          DependencyItem item = new DependencyItem( dialog.getValue(), "" );
-          items.add( item );
+          String s=dialog.getValue();
+          String[] ss=s.split( "," );
+          for (String s2:ss){
+            DependencyItem item = new DependencyItem( s2.trim(), "" );
+            items.add( item );
+          }
           tableField.setInput( items );
           DependenciesFormEntry.this.notifyTextValueChanged();
         }
@@ -161,7 +166,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     StringBuilder builder = new StringBuilder();
     for( DependencyItem item: items ) {
       if( builder.length() > 0 ) {
-        builder.append( ", " );
+        builder.append( ","+PlatformUtil.NL );
       }
       builder.append( item.getPackage() );
       if( item.getVersion().trim().length() > 0 ) {
