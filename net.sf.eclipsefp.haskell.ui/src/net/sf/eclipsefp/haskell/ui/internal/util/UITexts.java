@@ -391,6 +391,17 @@ public final class UITexts extends NLS {
   public static String scionServerProgress_subtask1;
   public static String scionServerProgress_subtask2;
   public static String cabalUpdateProgress;
+  public static String installExecutablesProgress;
+  public static String builWrapperInstallProgress;
+  public static String scionBrowserInstallProgress;
+  public static String installExecutableMissing;
+  public static String executablesmissing_install;
+  public static String executablesmissing_user;
+  public static String executablesmissing_ignore;
+
+  public static String executablesmissing_title;
+  public static String executablesmissing_message1;
+  public static String executablesmissing_message2;
   // public static String scionServerProgress_completed_title;
   // public static String scionServerProgress_completed_message;
 

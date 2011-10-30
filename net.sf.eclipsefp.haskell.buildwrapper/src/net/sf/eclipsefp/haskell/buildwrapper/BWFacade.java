@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
@@ -30,6 +31,7 @@ import net.sf.eclipsefp.haskell.util.OutputWriter;
 import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -77,6 +79,11 @@ public class BWFacade {
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
 	 */
 	private Map<IFile,SingleJobQueue> tapQueuesByFiles=new HashMap<IFile, SingleJobQueue>();
+	
+	/**
+	 * do we need to set derived on dist dir?
+	 */
+	private boolean needSetDerivedOnDistDir=false;
 	
 	public SingleJobQueue getBuildJobQueue() {
 		return buildJobQueue;
@@ -278,6 +285,9 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("dependencies");
 		JSONArray arr=run(command,ARRAY);
+		if (arr==null){
+			return new HashMap<String, CabalPackage[]>();
+		}
 		Map<String, CabalPackage[]> cps=new HashMap<String, CabalPackage[]>();
 		if (arr!=null && arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
@@ -528,6 +538,11 @@ public class BWFacade {
 
 	
 	private <T> T run(LinkedList<String> args,JSONFactory<T> f){
+		return run(args,f,true);
+	}
+	
+	private <T> T run(LinkedList<String> args,JSONFactory<T> f,boolean canRerun){
+	
 		if (bwPath==null){
 			if (!showedNoExeError){
 				BuildWrapperPlugin.logError(BWText.error_noexe, null);
@@ -553,6 +568,7 @@ public class BWFacade {
 			//long t0=System.currentTimeMillis();
 			String l=br.readLine();
 			boolean goOn=true;
+			boolean needConfigure=false;
 			while (goOn && l!=null){
 				/*if (outStream!=null){
 					outStream.write(l);
@@ -571,10 +587,20 @@ public class BWFacade {
 						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
 					}
 					goOn=false;
+				} else if (l.contains(" re-run the 'configure'") || l.contains("cannot satisfy -package-id")){
+					needConfigure=true;
 				}
 				if (goOn){
 					l=br.readLine();
 				}
+			}
+			if (needConfigure && canRerun){
+				configure(new BuildOptions().setTarget(BWTarget.Target));
+				return run(new LinkedList<String>(args.subList(1, args.size()-4)),f,false);
+			}
+			// maybe now the folder exists...
+			if (needSetDerivedOnDistDir){
+				setDerived();
 			}
 			//long t1=System.currentTimeMillis();
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
@@ -697,6 +723,30 @@ public class BWFacade {
 	public void setProject(IProject project) {
 		this.project = project;
 		parseFlags();
+		setDerived();
+	}
+	
+	/**
+	 * set dist folder as derived so that it will be ignored in searches, etc.
+	 */
+	private void setDerived(){
+		if (project!=null){
+			IFolder fldr=project.getFolder(DIST_FOLDER);
+			if (fldr.exists()){
+				if (!fldr.isDerived()){
+					try {
+						fldr.setDerived(true);
+					} catch (CoreException ce){
+						// log error and leave flag to false, let's hope it'll be better at next run
+						BuildWrapperPlugin.logError(BWText.error_derived, ce);
+					}
+				}
+				needSetDerivedOnDistDir=false;
+				
+			} else {
+				needSetDerivedOnDistDir=true;
+			}
+		}
 	}
 	
 	private void parseFlags(){

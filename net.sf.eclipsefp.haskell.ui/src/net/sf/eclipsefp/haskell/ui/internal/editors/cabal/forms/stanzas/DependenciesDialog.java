@@ -109,10 +109,18 @@ public class DependenciesDialog extends Dialog implements
     Object o = selection.getFirstElement();
     if( o == null ) {
       packageDocs.setText( "" );
+      packageName.setText( "" );
     } else {
       HaskellPackage item = ( HaskellPackage )o;
       packageDocs.setText( HtmlUtil.generateDocument( null, item.getDoc() ) );
-      packageName.setText( item.getIdentifier().getName() );
+      StringBuilder sb=new StringBuilder();
+      String sep="";
+      for (Object o2:selection.toList()){
+        sb.append(sep);
+        sep=", ";
+        sb.append((( HaskellPackage )o2).getIdentifier().getName());
+      }
+      packageName.setText( sb.toString() );
     }
   }
 

@@ -38,6 +38,22 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
     if (ix>-1){
       String type=msg.substring(ix+toSearch.length()).trim();
 
+      int ixStartType=type.indexOf( "::" );
+      if (ixStartType>-1){
+        for (int a=ixStartType;a<type.length();a++){
+          if (Character.isUpperCase( type.charAt( a ) )){
+            break;
+          } else if (Character.isLowerCase(  type.charAt( a ) )){
+            int start=a;
+            int end=type.indexOf( ":",a );
+            if (end>-1){
+              type=type.substring( 0,start )+type.substring( end+1,type.length() );
+              break;
+            }
+          }
+        }
+      }
+
       int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
       try {
 

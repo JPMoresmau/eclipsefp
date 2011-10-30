@@ -39,6 +39,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  * @author B. Scott Michel (bscottm@ieee.org)
  * @author Alejandro Serrano (trupill@gmail.com)
  */
+@Deprecated
 public abstract class PackageBuilder {
 
   public static enum PackageBuilderMessages {

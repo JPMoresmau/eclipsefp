@@ -149,7 +149,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         || name.equals( IScionTokens.IDENTIFIER_CONSTRUCTOR )
         || name.equals( IScionTokens.IDENTIFIER_VARIABLE )
         || name.equals( IScionTokens.SYMBOL_RESERVED )
-        || name.equals( IScionTokens.SYMBOL_SPECIAL )){
+        ){  //|| name.equals( IScionTokens.SYMBOL_SPECIAL )
 
       List<String> key=new LinkedList<String>();
       key.add(td.getName());
