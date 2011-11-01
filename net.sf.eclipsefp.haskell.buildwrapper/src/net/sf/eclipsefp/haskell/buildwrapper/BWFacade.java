@@ -122,6 +122,7 @@ public class BWFacade {
 				}
 			}
 		}
+		
 		return arr;
 	}
 	

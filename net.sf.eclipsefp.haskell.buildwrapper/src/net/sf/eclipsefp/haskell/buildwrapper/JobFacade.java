@@ -12,6 +12,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -52,6 +54,19 @@ public class JobFacade  {
         protected IStatus run(IProgressMonitor monitor) {
           try {
            notes=realFacade.build(buildOptions);
+	       if (buildOptions.isOutput()){
+	   			try {
+	   				IResource res=realFacade.getProject().findMember(BWFacade.DIST_FOLDER);
+	   				if (res!=null){
+	   					res.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+	   				} else {
+	   					realFacade.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+	   				}
+	   			} catch (CoreException ce){
+	   				BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
+	   				ce.printStackTrace();
+	   			}
+	   		}
           } finally {
             monitor.done();
           }
