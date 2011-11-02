@@ -151,7 +151,9 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 
 		IFile file = (editor != null ? editor.findFile() : null);
 		ScionTokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file);
-		editor.setTokenScanner( codeScanner );
+		if (editor!=null){
+		  editor.setTokenScanner( codeScanner );
+		}
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
