@@ -38,7 +38,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
         result = false;
       }
     } else if( res instanceof IFolder ) {
-      result = true;
+      result = !res.isDerived();
     } else if( res instanceof IFile ) {
       result = handleFileVisit( delta, ( IFile )res );
     }
