@@ -830,10 +830,12 @@ public class ScionManager implements IResourceChangeListener {
         reportServerStartupError( ex );
       }
        */
+    if (BuildWrapperPlugin.getFacade( project )==null){
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
 
       BuildWrapperPlugin.createFacade(project, CabalImplementationManager.getCabalExecutable(), outStreamBw );
+    }
       /*if (f!=null){
         new Job("BuildWrapper "+project.getName()){
           @Override
