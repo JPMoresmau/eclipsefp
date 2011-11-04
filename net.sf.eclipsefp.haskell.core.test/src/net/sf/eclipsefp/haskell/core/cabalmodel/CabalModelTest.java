@@ -352,7 +352,7 @@ public class CabalModelTest extends TestCase {
 
     pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES , "Test.HUnit.Base" );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
-    assertEquals("Test.HUnit.Lang, Test.HUnit.Terminal, Test.HUnit.Text, Test.HUnit, Test.New",s);
+    assertEquals("Test.HUnit.Lang,"+PlatformUtil.NL+"Test.HUnit.Terminal,"+PlatformUtil.NL+"Test.HUnit.Text,"+PlatformUtil.NL+"Test.HUnit,"+PlatformUtil.NL+"Test.New",s);
 
     pds.update( CabalSyntax.FIELD_EXPOSED_MODULES, null );
     s=pds.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
@@ -487,9 +487,9 @@ public class CabalModelTest extends TestCase {
 
     rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, "Scion.Test" );
     assertEquals(122,rvp.getStartLine());
-    assertEquals(135,rvp.getEndLine());
+    assertEquals(136,rvp.getEndLine());
     assertEquals(16,rvp.getInitialIndent());
-    assertEquals(initial.replaceAll( "\\r\\n", ", " ).replaceAll( "\\n", ", " )+PlatformUtil.NL,rvp.getRealValue());
+    assertEquals(PlatformUtil.NL+"    "+initial.replaceAll( "\\r\\n", ",\r\n    " )+PlatformUtil.NL,rvp.getRealValue());
 
     String bd=pds.getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS );
     assertNotNull(bd);
@@ -603,7 +603,7 @@ public class CabalModelTest extends TestCase {
     try {
       pd.dump( sw );
       String s=sw.toString();
-      System.out.println(s);
+      //System.out.println(s);
       PackageDescription pd2=PackageDescriptionLoader.load( s );
       assertEquals(3,pd2.getStanzas().size());
       pds=pd.getStanzas().get(0);
@@ -726,16 +726,74 @@ public class CabalModelTest extends TestCase {
     assertEquals(11,vp.getStartLine());
     assertEquals(12,vp.getEndLine());
     assertEquals(4,pdss.get(2).getProperties().size());
-   /* SimpleDocument doc=new SimpleDocument(content3);
-    System.out.println(doc.get());
+    TestDocument doc=new TestDocument(content3);
+    //System.out.println(doc.get());
     vp.updateDocument(doc );
-    System.out.println(doc.get());
+    //System.out.println(doc.get());
     pd=PackageDescriptionLoader.load( doc.get() );
     pdss=pd.getStanzas();
     assertEquals(4,pdss.size());
     assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss.get(2).getType());
     assertEquals("P1",pdss.get(2).getName());
     assertEquals(2,pdss.get(2).getIndent());
-    assertEquals(4,pdss.get(2).getProperties().size());*/
+    assertEquals(4,pdss.get(2).getProperties().size());
+  }
+
+  public void testMultipleUpdate() throws IOException{
+    String content3=getContent( "P1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    assertEquals(4,pdss.size());
+    PackageDescriptionStanza pds=pdss.get(2);
+    pds.update( CabalSyntax.FIELD_EXTENSIONS, "UndecidableInstances,"+PlatformUtil.NL+"OverlappingInstances" );
+    pds.update( CabalSyntax.FIELD_BUILD_DEPENDS,"array,"+PlatformUtil.NL+"random");
+    StringWriter sw=new StringWriter();
+    pd.dump(sw );
+    sw.flush();
+    String s=sw.toString();
+    //System.out.println(s);
+    pd=PackageDescriptionLoader.load( s );
+    pdss=pd.getStanzas();
+    assertEquals(4,pdss.size());
+    pds=pdss.get(2);
+    String val=pds.getProperties().get(CabalSyntax.FIELD_BUILD_DEPENDS);
+    List<String> ls=PackageDescriptionLoader.parseList( val );
+    assertEquals(2,ls.size());
+    assertTrue(ls.contains( "array" ));
+    assertTrue(ls.contains( "random" ));
+    val=pds.getProperties().get(CabalSyntax.FIELD_EXTENSIONS);
+    ls=PackageDescriptionLoader.parseList( val );
+    assertEquals(2,ls.size());
+    assertTrue(ls.contains( "UndecidableInstances" ));
+    assertTrue(ls.contains( "OverlappingInstances" ));
+  }
+
+  public void testMultipleDocUpdate() throws IOException{
+    String content3=getContent( "P1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    assertEquals(4,pdss.size());
+    PackageDescriptionStanza pds=pdss.get(2);
+    TestDocument doc=new TestDocument( content3 );
+    RealValuePosition rvp1=pds.update( CabalSyntax.FIELD_EXTENSIONS, "UndecidableInstances,"+PlatformUtil.NL+"OverlappingInstances" );
+    rvp1.updateDocument( doc );
+    RealValuePosition rvp2=pds.update( CabalSyntax.FIELD_BUILD_DEPENDS,"array,"+PlatformUtil.NL+"random");
+    rvp2.updateDocument( doc );
+    String s=doc.get();
+    System.out.println(s);
+    pd=PackageDescriptionLoader.load( s );
+    pdss=pd.getStanzas();
+    assertEquals(4,pdss.size());
+    pds=pdss.get(2);
+    String val=pds.getProperties().get(CabalSyntax.FIELD_BUILD_DEPENDS);
+    List<String> ls=PackageDescriptionLoader.parseList( val );
+    assertEquals(2,ls.size());
+    assertTrue(ls.contains( "array" ));
+    assertTrue(ls.contains( "random" ));
+    val=pds.getProperties().get(CabalSyntax.FIELD_EXTENSIONS);
+    ls=PackageDescriptionLoader.parseList( val );
+    assertEquals(2,ls.size());
+    assertTrue(ls.contains( "UndecidableInstances" ));
+    assertTrue(ls.contains( "OverlappingInstances" ));
   }
 }

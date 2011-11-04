@@ -56,21 +56,18 @@ public class PackageDescriptionStanza {
    */
   boolean needNL=false;
 
-  PackageDescriptionStanza(final CabalSyntax type,final String name,
+  private final PackageDescription pd;
+
+  PackageDescriptionStanza(final PackageDescription pd,final CabalSyntax type,final String name,
       final int startLine){
     this.type=type;
     this.name = name;
     this.startLine = startLine;
+    this.pd=pd;
   }
 
-  PackageDescriptionStanza( final CabalSyntax type,
-                            final String name,
-                            final int startLine,
-                            final int endLine ) {
-    this.type=type;
-    this.name = name;
-    this.startLine = startLine;
-    this.endLine = endLine;
+  public PackageDescription getPackageDescription(){
+    return this.pd;
   }
 
   public void diffLine ( final int diff ) {
@@ -79,6 +76,29 @@ public class PackageDescriptionStanza {
     for (String entry : positions.keySet()) {
       ValuePosition vp = positions.get( entry );
       vp.diffLine( diff );
+    }
+  }
+
+  public void diffLineIf ( final int diff, final int linePos ) {
+    boolean needPos=false;
+    if (this.startLine>=linePos){
+      this.startLine += diff;
+      needPos=true;
+    }
+    if (this.endLine>=linePos){
+      this.endLine += diff;
+      needPos=true;
+    }
+    if ( needPos){
+      for (String entry : positions.keySet()) {
+        ValuePosition vp = positions.get( entry );
+        if (vp.getStartLine()>=linePos){
+          vp.diffLine( diff );
+        }
+      }
+    }
+    for (PackageDescriptionStanza st:stanzas){
+      st.diffLineIf( diff, linePos );
     }
   }
 
@@ -204,11 +224,12 @@ public class PackageDescriptionStanza {
         sb.append( PlatformUtil.NL );
         line=br.readLine();
       }
-      if (count>1){
+      if (count>1){ // when several line, start at next one
         for (int a=0;a<subIndent;a++){
           sb.insert( 0, ' ');
         }
         sb.insert( 0, PlatformUtil.NL );
+        count++;
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);
       newVP.setSubsequentIndent( subIndent );
@@ -216,6 +237,10 @@ public class PackageDescriptionStanza {
       int diff=newVP.getEndLine()-oldVP.getEndLine();
       if (oldVP.getEndLine()==getEndLine()){
         needNL=false;
+      } else {
+        for (PackageDescriptionStanza st:getPackageDescription().getStanzas()){
+          st.diffLineIf( diff, oldVP.getEndLine() );
+        }
       }
       setEndLine( getEndLine()+diff );
       return new RealValuePosition( oldVP,sb.toString());
@@ -456,16 +481,21 @@ public class PackageDescriptionStanza {
       String value=properties.get(p);
       BufferedReader br=new BufferedReader( new StringReader( value ) );
       try {
-        if (!first){
-          for (int a=0;a<vp.getSubsequentIndent();a++){
-            w.write(" "); //$NON-NLS-1$
-          }
-        } else {
-          first=false;
-        }
         String line=br.readLine();
-        w.write(line);
-        w.write(PlatformUtil.NL);
+        while (line!=null){
+          if (!first){
+            for (int a=0;a<vp.getSubsequentIndent();a++){
+              w.write(" "); //$NON-NLS-1$
+            }
+          } else {
+            first=false;
+          }
+
+            w.write(line);
+            w.write(PlatformUtil.NL);
+            line=br.readLine();
+          }
+
       } catch (IOException ignore){
         // cannot happen
       }
