@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="%bundleName"
-      version="2.1.1"
+      version="2.2.0"
       provider-name="%bundleVendor">
 
    <description>
@@ -71,21 +71,21 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
@@ -106,21 +106,21 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
@@ -134,14 +134,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.util"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.browser"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
@@ -155,14 +155,14 @@ and is also available at http://github.com/JPMoresmau/scion/raw/master/docs/LICE
          id="net.sf.eclipsefp.haskell.profiler"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.buildwrapper"
          download-size="0"
          install-size="0"
-         version="2.1.1"
+         version="2.2.0"
          unpack="false"/>
 
 </feature>
