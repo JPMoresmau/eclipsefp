@@ -25,8 +25,7 @@ import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
@@ -174,8 +173,7 @@ public class AnImport {
 
   private List<Documented> getDeclarationsFromFile( final String module, final IProject project ) {
     try {
-      IHaskellProject pr = HaskellProjectManager.get( project );
-      IFile file = pr.getModuleFile( module );
+      IFile file = ResourceUtil.findFileFromModule( project, module );
       ArrayList<Documented> decls = new ArrayList<Documented>();
       BWFacade f=BuildWrapperPlugin.getFacade( project );
       if (f!=null){

@@ -14,8 +14,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
@@ -24,11 +22,10 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -58,10 +55,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         if (f != null) {
           result.add( f );
         }
-        IHaskellProject hp = HaskellProjectManager.get( p );
-        for (IPath path : hp.getSourcePaths()) {
-          result.add( p.getFolder( path ) );
-        }
+        result.addAll( ResourceUtil.getSourceFolders( p ));
         // addProjectExecutable( ( IProject )parentElement, result );
       } else if( parentElement instanceof IFile ) {
         final IFile f = ( IFile )parentElement;
@@ -86,7 +80,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           PackageDescription descr = PackageDescriptionLoader.load( f );
           PackageDescriptionStanza lib = descr.getLibraryStanza();
           if (lib != null) {
-            result.add( descr.getLibraryStanza() );
+            result.add( new ProjectExplorerStanza( f,descr.getLibraryStanza() ));
           }
           if (descr.getExecutableStanzas().size() > 0) {
             result.add( new CabalFolder(f, CabalFolderType.EXECUTABLE ));

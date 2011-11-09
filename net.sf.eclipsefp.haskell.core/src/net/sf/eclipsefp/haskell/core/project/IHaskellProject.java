@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
  *
  * @author Leif Frenzel
  */
+@Deprecated
 public interface IHaskellProject extends IAdaptable {
 
 	String PROPERTY_SOURCE_PATH = "sourcePath"; //$NON-NLS-1$
@@ -38,6 +39,7 @@ public interface IHaskellProject extends IAdaptable {
 	 * returns the paths to the source folders of this IHaskellProject.
 	 * </p>
 	 */
+	@Deprecated
 	Set<IPath> getSourcePaths();
 
 	/** <p>returns the paths to the targets (executables or libs) of this
@@ -64,6 +66,7 @@ public interface IHaskellProject extends IAdaptable {
 
 	void compile( IFile file );
 
+	@Deprecated
 	Map<String, IFile> getModulesFile( );
 
 	IFile getModuleFile( String module );

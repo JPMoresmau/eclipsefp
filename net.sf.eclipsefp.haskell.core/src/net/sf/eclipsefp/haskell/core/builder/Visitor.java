@@ -1,12 +1,9 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
-import java.util.Set;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
@@ -50,14 +47,7 @@ abstract class Visitor {
     if( file == null || !file.isAccessible() ) {
       throw new IllegalArgumentException();
     }
-    boolean result = false;
-    IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
-    Set<IPath> sourcePaths = hsProject.getSourcePaths();
-    for( IPath sourcePath: sourcePaths ) {
-      IPath src = file.getProject().getFullPath().append( sourcePath );
-      result |= src.isPrefixOf( file.getFullPath() );
-    }
-    return result;
+    return ResourceUtil.isInSourceFolder( file );
   }
 
 

@@ -1,7 +1,6 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.dialog;
 
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
@@ -29,7 +28,7 @@ public class DialogLabelProvider extends LabelProvider {
   @Override
   public Image getImage( final Object element ) {
     Image result = null;
-    if( element instanceof IHaskellProject ) {
+    if( element instanceof IProject  && ResourceUtil.hasHaskellNature( (IProject )element )) {
       result = HaskellUIImages.getImage( IImageNames.HASKELL_PROJECT );
     } else if( isSourceFolder( element ) ) {
       result = HaskellUIImages.getImage( IImageNames.SOURCE_FOLDER );

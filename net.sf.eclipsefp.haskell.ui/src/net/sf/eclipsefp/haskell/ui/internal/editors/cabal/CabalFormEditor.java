@@ -27,7 +27,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
   * @author Leif Frenzel
   */
 public class CabalFormEditor extends FormEditor {
-
+  public static final String ID="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor";
   private CabalEditor cabalSourceEditor;
   private PackageDescription packageDescription;
   private OverviewPage overview;

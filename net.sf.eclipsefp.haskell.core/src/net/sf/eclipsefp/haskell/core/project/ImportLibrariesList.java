@@ -23,6 +23,7 @@ import org.osgi.service.prefs.Preferences;
  *
  * @author Leif Frenzel
  */
+@Deprecated
 public class ImportLibrariesList {
 
 	private static final String KEY = "PROJECT_IMPORT_LIBRARIES"; //$NON-NLS-1$

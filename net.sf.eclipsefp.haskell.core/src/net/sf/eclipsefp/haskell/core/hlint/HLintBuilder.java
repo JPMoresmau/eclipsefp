@@ -1,10 +1,8 @@
 package net.sf.eclipsefp.haskell.core.hlint;
 
 import java.util.Map;
-import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.Severity;
 import net.sf.eclipsefp.haskell.hlint.Suggestion;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -82,24 +80,10 @@ public class HLintBuilder extends IncrementalProjectBuilder {
   static boolean mustBeVisited( final IResource resource ) {
     return ( resource instanceof IFile
         && hasCorrectExtension( resource.getProjectRelativePath() )
-        && isInSourceFolder( ( IFile )resource )
+        && ResourceUtil.isInSourceFolder( ( IFile )resource )
         && !resource.isDerived() );
   }
 
-  static boolean isInSourceFolder( final IFile file ) {
-    if( file == null || !file.isAccessible() ) {
-      // throw new IllegalArgumentException();
-      return false;
-    }
-    boolean result = false;
-    IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
-    Set<IPath> sourcePaths = hsProject.getSourcePaths();
-    for( IPath sourcePath: sourcePaths ) {
-      IPath src = file.getProject().getFullPath().append( sourcePath );
-      result |= src.isPrefixOf( file.getFullPath() );
-    }
-    return result;
-  }
 
   static boolean hasCorrectExtension( final IPath path ) {
     if( path == null ) {

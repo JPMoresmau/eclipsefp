@@ -6,7 +6,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
 class SourceFolderCP implements ITreeContentProvider {
 
   public Object[] getElements( final Object inputElement ) {
-    return HaskellProjectManager.getAllStandard( ( IWorkspaceRoot )inputElement );
+    return ResourceUtil.getHaskellProjects( ( IWorkspaceRoot )inputElement );
   }
 
   public Object[] getChildren( final Object parentElement ) {

@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -50,6 +51,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * @author Leif Frenzel
  */
 public class ResourceUtil {
+
+  public static boolean hasHaskellNature(final IProject p){
+    try {
+      return p.hasNature( HaskellNature.NATURE_ID );
+    } catch (CoreException ce){
+      HaskellCorePlugin.log( ce );
+    }
+    return false;
+  }
 
   static List<IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) throws CoreException {
     ArrayList<IFile> result = new ArrayList<IFile>();
@@ -292,6 +302,19 @@ public class ResourceUtil {
     }
     return false;
   }
+
+	public static boolean isInSourceFolder( final IFile file ) {
+	  if( file == null || !file.isAccessible() ) {
+      return false;
+    }
+	  Collection<IContainer> sourcePaths =ResourceUtil.getSourceFolders( file.getProject() );
+    for( IContainer sourcePath: sourcePaths ) {
+      if (sourcePath.getLocation().isPrefixOf( file.getLocation())){
+        return true;
+      }
+    }
+    return false;
+	}
 
 	public static boolean isInHaskellProject(final IResource resource) {
 		boolean result = false;
@@ -605,5 +628,18 @@ public class ResourceUtil {
       }
     }
     return projects;
+  }
+
+  public static IProject[] getHaskellProjects( final IWorkspaceRoot root ) {
+    List<IProject> list = new ArrayList<IProject>();
+    for( IProject project:root.getProjects() ) {
+       if(  project.isOpen()
+             && hasHaskellNature( project )) {
+          list.add( project );
+        }
+    }
+    IProject[] result = new IProject[ list.size() ];
+    list.toArray( result );
+    return result;
   }
 }

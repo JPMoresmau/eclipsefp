@@ -10,22 +10,18 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.IProcessRunner;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * <p>
@@ -56,15 +52,12 @@ public class GhcCompiler extends DefaultHaskellCompiler {
   @Override
   public void compile( final IFile file, final Writer outputWriter ) {
     final IProject project = file.getProject();
-    IHaskellProject hsProject = HaskellProjectManager.get( project );
-    String[] cmdLine = buildCommandLine( file, hsProject );
+    String[] cmdLine = buildCommandLine( file, project );
     File workDir = null;
-    Set<IPath> sourcePaths = hsProject.getSourcePaths();
-    for( IPath sourcePath: sourcePaths ) {
-      IPath src = project.getFullPath().append( sourcePath );
+    for(IContainer c:ResourceUtil.getSourceFolders( project ) ) {
+      IPath src = c.getFullPath();
       if( src.isPrefixOf( file.getFullPath() ) ) {
-        IPath loc = project.getFolder( sourcePath ).getLocation();
-        workDir = new File( loc.toOSString() );
+        workDir = new File( src.toOSString() );
       }
     }
     if( workDir == null ) {
@@ -109,13 +102,12 @@ public class GhcCompiler extends DefaultHaskellCompiler {
   }
 
   private String[] buildCommandLine( final IFile file,
-      final IHaskellProject haskellProject ) {
+      final IProject project ) {
     if( trace ) {
       System.out.println( "Constructing command line for file " + file ); //$NON-NLS-1$
     }
 
-    IProject project = haskellProject.getResource();
-    String outDir = getAbsPath( project, haskellProject.getOutputPath() );
+    String outDir = project.getFolder( "bin" ).getFullPath().toOSString();//getAbsPath( project, haskellProject.getOutputPath() ); //$NON-NLS-1$
 
     List<String> cmdLine = new ArrayList<String>();
     // command and special options
@@ -131,7 +123,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     cmdLine.add( outDir );
     cmdLine.add( "-ferror-spans" ); //$NON-NLS-1$
 
-    cmdLine.add( "-o" ); //$NON-NLS-1$
+    /*cmdLine.add( "-o" ); //$NON-NLS-1$
     IPath targetName = getTargetName( haskellProject );
     if( targetName.segmentCount() > 1 ) {
       try {
@@ -140,8 +132,8 @@ public class GhcCompiler extends DefaultHaskellCompiler {
         String msg = "Could not create folders for target executable"; //$NON-NLS-1$
         GhcCompilerPlugin.log( msg, cex );
       }
-    }
-    cmdLine.add( project.getLocation().append( targetName ).toOSString() );
+    }*/
+    //cmdLine.add( project.getLocation().append( targetName ).toOSString() );
     cmdLine.addAll( compilerParams.construct(null) );
     cmdLine.add( ResourceUtil.getSourceFolderRelativeName( file ).toOSString() );
     if( trace ) {
@@ -153,17 +145,17 @@ public class GhcCompiler extends DefaultHaskellCompiler {
   // helping methods
   // ////////////////
 
-  private String getAbsPath( final IProject project, final IPath path ) {
-    return project.getLocation().toOSString() + File.separator
-        + path.toOSString();
-  }
-
-  private IPath getTargetName( final IHaskellProject haskellProject ) {
-    String result = "theResult"; //$NON-NLS-1$
-    Set<IPath> targetNames = haskellProject.getTargetNames();
-    if( targetNames.size() > 0 ) {
-      result = targetNames.iterator().next().toOSString();
-    }
-    return new Path( result );
-  }
+//  private String getAbsPath( final IProject project, final IPath path ) {
+//    return project.getLocation().toOSString() + File.separator
+//        + path.toOSString();
+//  }
+//
+//  private IPath getTargetName( final IHaskellProject haskellProject ) {
+//    String result = "theResult"; //$NON-NLS-1$
+//    Set<IPath> targetNames = haskellProject.getTargetNames();
+//    if( targetNames.size() > 0 ) {
+//      result = targetNames.iterator().next().toOSString();
+//    }
+//    return new Path( result );
+//  }
 }

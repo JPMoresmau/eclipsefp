@@ -5,7 +5,6 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -18,6 +17,7 @@ import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
@@ -37,8 +37,8 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
   @Override
   public String getText( final Object element ) {
     String result;
-    if( element instanceof IHaskellProject ) {
-      result = ( ( IHaskellProject )element ).getResource().getName();
+    if( element instanceof IProject && ResourceUtil.hasHaskellNature( (IProject )element )) {
+      result = ( (IProject )element ).getName();
     } else if( element instanceof ITreeElement ) {
       result = ( ( ITreeElement )element ).getText();
     } else if( element instanceof IFolder ) {
@@ -59,8 +59,8 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
         default:
             result = "";
       }
-    } else if (element instanceof PackageDescriptionStanza) {
-      PackageDescriptionStanza stanza = (PackageDescriptionStanza)element;
+    } else if (element instanceof ProjectExplorerStanza) {
+      PackageDescriptionStanza stanza = ((ProjectExplorerStanza)element).getStanza();
       result = stanza.getName() != null ? stanza.getName() : String.valueOf( stanza.getType() );
     } else {
       result = super.getText( element );
@@ -74,7 +74,7 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
     if( element instanceof ITreeElement ) {
       String key = ( ( ITreeElement )element ).getImageKey();
       result = HaskellUIImages.getImage( key );
-    } else if( element instanceof IHaskellProject ) {
+    } else if( element instanceof IProject  && ResourceUtil.hasHaskellNature( (IProject )element )) {
       result = HaskellUIImages.getImage( IImageNames.HASKELL_PROJECT );
     } else if( element instanceof IImportLibrary ) {
       result = HaskellUIImages.getImage( IImageNames.IMPORT_LIBRARY );
@@ -86,8 +86,8 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
       result =super.getImage(( ( ProjectExplorerOutlineDef )element ).getOutlineDef());
     } else if (element instanceof CabalFolder) {
       result = HaskellUIImages.getImage( IImageNames.SOURCE_FOLDER );
-    }else if (element instanceof PackageDescriptionStanza) {
-      result = lp.getImage( element );
+    }else if (element instanceof ProjectExplorerStanza) {
+      result = lp.getImage( ((ProjectExplorerStanza)element).getStanza() );
     } else {
       result=super.getImage( element );
     }

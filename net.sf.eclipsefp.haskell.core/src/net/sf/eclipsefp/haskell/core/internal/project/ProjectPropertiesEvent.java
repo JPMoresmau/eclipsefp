@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.core.project.IProjectPropertiesEvent;
   *
   * @author Leif Frenzel
   */
+@Deprecated
 public class ProjectPropertiesEvent implements IProjectPropertiesEvent {
 
   private final IHaskellProject source;

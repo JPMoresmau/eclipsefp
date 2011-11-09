@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
  *
  * @author Leif Frenzel
  */
+@Deprecated
 public final class HaskellProject implements IHaskellProject {
 
 	private final IProject project;

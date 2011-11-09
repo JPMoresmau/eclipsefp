@@ -2,8 +2,7 @@
 package net.sf.eclipsefp.haskell.ui.decorators;
 
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
@@ -11,7 +10,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -38,9 +36,7 @@ public class ProjectFoldersDecorator extends LabelProvider
         IProject project = folder.getProject();
         if(    project.isOpen()
             && project.hasNature( HaskellNature.NATURE_ID ) ) {
-          result = decorate( folder.getProjectRelativePath(),
-                             HaskellProjectManager.get( project ),
-                             baseImage );
+          result = decorate( folder,baseImage );
         }
       } catch( CoreException cex ) {
         HaskellUIPlugin.log( "Could not decorate Haskell project folders.",
@@ -72,11 +68,10 @@ public class ProjectFoldersDecorator extends LabelProvider
     return result;
   }
 
-  private Image decorate( final IPath folderPath,
-                          final IHaskellProject hsProject,
+  private Image decorate( final IFolder folder,
                           final Image baseImage ) {
     Image result = null;
-    if( folderPath.equals( hsProject.getSourcePaths() ) ) {
+    if( ResourceUtil.isSourceFolder( folder ) )  {
       result = getImage( baseImage, IImageNames.SRC_FOLDER_DECORATOR );
     }
     return result;

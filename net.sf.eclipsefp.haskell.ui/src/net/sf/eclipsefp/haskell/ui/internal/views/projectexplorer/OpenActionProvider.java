@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
@@ -61,6 +62,7 @@ public class OpenActionProvider extends CommonActionProvider {
     private final IWorkbenchPage page;
     private final ISelectionProvider selectionProvider;
     private ProjectExplorerOutlineDef def;
+    private ProjectExplorerStanza stanza;
 
     private OpenComponentAction( final IWorkbenchPage p,
         final ISelectionProvider selProvider ) {
@@ -73,16 +75,19 @@ public class OpenActionProvider extends CommonActionProvider {
     public boolean isEnabled() {
       ISelection selection = selectionProvider.getSelection();
       def = null;
+      stanza=null;
       if( selection != null && !selection.isEmpty() ) {
         IStructuredSelection ss = ( ( IStructuredSelection )selection );
         if( ss.size() == 1 ) {
           Object o = ss.getFirstElement();
           if( o instanceof ProjectExplorerOutlineDef ) {
             def = ( ProjectExplorerOutlineDef )o;
+          } else if (o instanceof ProjectExplorerStanza){
+            stanza=(ProjectExplorerStanza)o;
           }
         }
       }
-      return def != null;
+      return def != null || stanza!=null;
     }
 
    /* @Override
@@ -95,9 +100,16 @@ public class OpenActionProvider extends CommonActionProvider {
     @Override
     public void run() {
       try {
-        IEditorPart p = page.openEditor( new FileEditorInput( def.getOwner() ),
-            HaskellEditor.ID );
-        HaskellOutlinePage.reveal( ( HaskellEditor )p, def.getOutlineDef() );
+        if (def!=null){
+
+            IEditorPart p = page.openEditor( new FileEditorInput( def.getOwner() ),
+                HaskellEditor.ID );
+            HaskellOutlinePage.reveal( ( HaskellEditor )p, def.getOutlineDef() );
+
+        } else if (stanza!=null){
+          CabalFormEditor e=(CabalFormEditor)page.openEditor( new FileEditorInput( stanza.getOwner() ), CabalFormEditor.ID );
+          e.getCabalSourceEditor().selectAndReveal( stanza );
+        }
       } catch( Exception e ) {
         HaskellUIPlugin.log( e );
       }

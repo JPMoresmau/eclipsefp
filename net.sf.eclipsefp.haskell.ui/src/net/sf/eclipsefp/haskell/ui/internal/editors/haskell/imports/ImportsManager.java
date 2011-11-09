@@ -9,10 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -128,20 +126,12 @@ public class ImportsManager {
       imports.add( new AnImport( "Prelude", null, true, false, null ) );
     }
     // Add me
-    String meName = "Me";
-    IProject project = file.getProject();
-    IHaskellProject pr = HaskellProjectManager.get( project );
-    for (Map.Entry<String, IFile> f : pr.getModulesFile().entrySet()) {
-      if (f.getValue().getProjectRelativePath().equals( file.getProjectRelativePath() )) {
-        meName = f.getKey();
-        break;
-      }
-    }
+    String meName = ResourceUtil.getModuleName( file );
     imports.add( AnImport.createMe( meName ) );
 
     HashMap<String, Documented> r = new HashMap<String, Documented>();
     for (AnImport i : imports) {
-      r.putAll( i.getDeclarations( project, file, doc ) );
+      r.putAll( i.getDeclarations( file.getProject(), file, doc ) );
     }
 
     return r;

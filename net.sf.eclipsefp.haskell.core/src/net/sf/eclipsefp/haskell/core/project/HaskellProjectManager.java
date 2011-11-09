@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.jobs.Job;
   *
   * @author Leif Frenzel
   */
+@Deprecated
 public class HaskellProjectManager {
 
   public static final String HASKELL_PROJECT_DESCRIPTOR = ".hsproject"; //$NON-NLS-1$

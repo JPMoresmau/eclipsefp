@@ -1,11 +1,9 @@
 package net.sf.eclipsefp.haskell.core.partitioned.happy;
 
 import java.util.Map;
-import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.ProcessorError;
-import net.sf.eclipsefp.haskell.core.project.HaskellProjectManager;
-import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -81,23 +79,9 @@ public class HappyBuilder extends IncrementalProjectBuilder {
 
   static boolean mustBeVisited( final IResource resource ) {
     return ( resource instanceof IFile
-        && hasCorrectExtension( resource.getProjectRelativePath() ) && isInSourceFolder( ( IFile )resource ) );
+        && hasCorrectExtension( resource.getProjectRelativePath() ) && ResourceUtil.isInSourceFolder( ( IFile )resource ) );
   }
 
-  static boolean isInSourceFolder( final IFile file ) {
-    if( file == null || !file.isAccessible() ) {
-      // throw new IllegalArgumentException();
-      return false;
-    }
-    boolean result = false;
-    IHaskellProject hsProject = HaskellProjectManager.get( file.getProject() );
-    Set<IPath> sourcePaths = hsProject.getSourcePaths();
-    for( IPath sourcePath: sourcePaths ) {
-      IPath src = file.getProject().getFullPath().append( sourcePath );
-      result |= src.isPrefixOf( file.getFullPath() );
-    }
-    return result;
-  }
 
   static boolean hasCorrectExtension( final IPath path ) {
     if( path == null ) {
