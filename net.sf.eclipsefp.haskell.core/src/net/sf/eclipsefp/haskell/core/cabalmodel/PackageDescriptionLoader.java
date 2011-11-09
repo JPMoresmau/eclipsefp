@@ -171,7 +171,7 @@ public class PackageDescriptionLoader {
         if (!isComment( line )){
           if(! isEmpty( line ) ) {
             if (lastStanza==null){
-              lastStanza=new PackagePropertiesStanza(count);
+              lastStanza=new PackagePropertiesStanza(pd,count);
             }
             int indent=getIndent(line);
             if (indent>currentIndent && field!=null && fieldVP!=null){
@@ -284,7 +284,7 @@ public class PackageDescriptionLoader {
         lastStanza.setEndLine( count-empty );
         pd.getStanzas().add(lastStanza);
       }
-      lastStanza=new PackageDescriptionStanza(type,name,count);
+      lastStanza=new PackageDescriptionStanza(pd,type,name,count);
     }
 
     private void popStanza(){

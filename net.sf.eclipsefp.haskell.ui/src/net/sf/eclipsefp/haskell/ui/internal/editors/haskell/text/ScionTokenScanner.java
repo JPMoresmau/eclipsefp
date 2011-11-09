@@ -113,7 +113,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
            int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
            int end=Math.min( offset+length,nextEnd);
 
-           addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
+           //addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
 
            IToken nextToken=getTokenFromTokenDef( nextTokenDef);
            if (currentToken!=null && currentToken.getData().equals( nextToken.getData() ) &&
@@ -142,7 +142,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   }
 
-  private void addTokenOccurence(final int offset,final int end,final TokenDef td){
+  private void addTokenOccurence(final String s,final int offset,final int end,final TokenDef td){
     String name=td.getName();
     if (name.equals( IScionTokens.KEYWORD )
         || name.equals( IScionTokens.GHC_EXTENSION_KEYWORD )
@@ -153,7 +153,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
       List<String> key=new LinkedList<String>();
       key.add(td.getName());
-      key.add( doc.get().substring(offset,end) );
+      key.add( s.substring(offset,end) );
 
       while (tokenLocations.size()<offset){
         tokenLocations.add( null );
@@ -261,12 +261,12 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     if( lTokenDefs != null && lTokenDefs.size() > 0 ) {
       tokenDefs = lTokenDefs.listIterator();
     }
-
+    String s=doc.get();
     for (TokenDef nextTokenDef:lTokenDefs){
       try {
         int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
         int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
-        addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
+        addTokenOccurence( s,nextOffset, nextEnd, nextTokenDef );
       } catch (BadLocationException ble){
         HaskellUIPlugin.log( ble );
       }

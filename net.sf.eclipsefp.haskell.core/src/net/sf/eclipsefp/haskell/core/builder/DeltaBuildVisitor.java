@@ -38,7 +38,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
         result = false;
       }
     } else if( res instanceof IFolder ) {
-      result = true;
+      result = !res.isDerived();
     } else if( res instanceof IFile ) {
       result = handleFileVisit( delta, ( IFile )res );
     }
@@ -48,7 +48,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
   private boolean handleFileVisit( final IResourceDelta delta,
                                    final IFile file ) {
     boolean result = false;
-    if( file.exists() && (isHaskellFile( file ) || isCabalFile( file ))) {
+    if( file.exists() && (isHaskellFile( file ) || isCabalFile( file )) && !file.isDerived()) {
       switch( delta.getKind() ) {
         case IResourceDelta.ADDED:
         case IResourceDelta.CHANGED:

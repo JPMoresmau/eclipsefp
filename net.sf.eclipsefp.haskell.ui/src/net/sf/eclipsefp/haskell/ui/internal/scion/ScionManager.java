@@ -579,6 +579,9 @@ public class ScionManager implements IResourceChangeListener {
             if( delta.getKind() == IResourceDelta.REMOVED ) {
               if( delta.getResource() instanceof IFile){
                 IFile f = ( IFile )delta.getResource();
+                if (!f.getProject().isOpen()){
+                  return false;
+                }
                 IFile cabalF = BuildWrapperPlugin.getCabalFile( f.getProject() );
                 if(FileUtil.hasHaskellExtension( f ) && f.getProject().isOpen()) {
                   // System.out.println(delta.getFullPath());
@@ -783,15 +786,15 @@ public class ScionManager implements IResourceChangeListener {
    * that were opened/closed, and starts/stops Scion instances accordingly.
    */
   public void resourceChanged( final IResourceChangeEvent event ) {
-//    try {
-//      event.getDelta().accept( new IResourceDeltaVisitor() {
-//        public boolean visit( final IResourceDelta delta ) throws CoreException {
-//          return updateForResource( delta.getResource() );
-//        }
-//      } );
-//    } catch( CoreException ex ) {
-//      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
-//    }
+    try {
+      event.getDelta().accept( new IResourceDeltaVisitor() {
+        public boolean visit( final IResourceDelta delta ) throws CoreException {
+          return updateForResource( delta.getResource() );
+        }
+      } );
+    } catch( CoreException ex ) {
+      HaskellUIPlugin.log( UITexts.scion_delta_error, ex );
+    }
   }
 
   private boolean updateForResource( final IResource resource )
@@ -841,10 +844,12 @@ public class ScionManager implements IResourceChangeListener {
         reportServerStartupError( ex );
       }
        */
+    if (BuildWrapperPlugin.getFacade( project )==null){
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
 
       BuildWrapperPlugin.createFacade(project, CabalImplementationManager.getCabalExecutable(), outStreamBw );
+    }
       /*if (f!=null){
         new Job("BuildWrapper "+project.getName()){
           @Override

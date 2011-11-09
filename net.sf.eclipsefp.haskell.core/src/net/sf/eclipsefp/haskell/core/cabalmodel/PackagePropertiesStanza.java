@@ -10,13 +10,10 @@ package net.sf.eclipsefp.haskell.core.cabalmodel;
   */
 public class PackagePropertiesStanza extends PackageDescriptionStanza {
 
-  PackagePropertiesStanza(final int startLine) {
-    super(null, null, startLine);
+  PackagePropertiesStanza(final PackageDescription pd,final int startLine) {
+    super(pd,null, null, startLine);
   }
 
-  PackagePropertiesStanza(final int startLine, final int endLine ) {
-    super(null, null, startLine, endLine );
-  }
 
   @Override
   public String getName() {

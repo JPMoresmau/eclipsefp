@@ -30,7 +30,8 @@ public class OutlineDef {
 		TYPE,
 		INSTANCE,
 		FIELD,
-		CONSTRUCTOR
+		CONSTRUCTOR,
+		SPLICE
 	}
 
 	public static OutlineDefType parseType(JSONObject obj){

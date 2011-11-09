@@ -49,6 +49,7 @@ public interface IImageNames {
   String PATTERN_BINDING       = ID + ".PATTERN_BINDING"; //$NON-NLS-1$
   String DATA_DECL             = ID + ".DATA_DECL"; //$NON-NLS-1$
   String CONSTRUCTOR_DECL      = ID + ".CONSTRUCTOR_DECL"; //$NON-NLS-1$
+  String SPLICE_DECL          = ID + ".SPLICE_DECL"; //$NON-NLS-1$
   String TYPE_SIGNATURE        = ID + ".TYPE_SIGNATURE"; //$NON-NLS-1$
   String TYPE_DECL             = ID + ".TYPE_DECL"; //$NON-NLS-1$
   String NEWTYPE_DECL          = ID + ".NEWTYPE_DECL"; //$NON-NLS-1$

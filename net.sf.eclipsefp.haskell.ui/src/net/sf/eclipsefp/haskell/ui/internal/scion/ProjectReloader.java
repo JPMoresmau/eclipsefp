@@ -24,7 +24,7 @@ public class ProjectReloader implements CabalFileChangeListener {
 //
 //
 //    }
-
+    BuildWrapperPlugin.deleteProblems( cabalF );
     JobFacade f=BuildWrapperPlugin.getJobFacade( cabalF.getProject() );
     if (f!=null){
       f.synchronize(false);

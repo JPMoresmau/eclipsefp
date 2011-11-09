@@ -1,20 +1,13 @@
-EclipseFP Haskell 2.1.0
+EclipseFP Haskell 2.2.0
 
 Release Notes
 
 
-Scion:
+Necessary Haskell packages:
 
-  EclipseFP relies on Scion, the Haskell IDE library, for a lot of its
-functionality. See http://code.google.com/p/scion-lib/ for more information.
-
-  You cannot use the version from Hackage  since commands have been
-added for eclipsefp. From version 1.111, eclipsefp includes a modified source
-distribution of scion, that is built and used by eclipsefp if the use built-in
-server preferences option is checked. Since it is by default, eclipse might be
-a bit slow to start the first time scion is built. Otherwise, you can build
-Scion from source (git clone git://github.com/JPMoresmau/scion.git, runhaskell
-Setup.hs configure/build/install)
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.2 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP also uses scion-browser. Version 0.1.3 has been validated with this version of EclipseFP
+ 
 
 Fixes:
 	- The profiler plugin references properly all needed plugins to compile under all versions of Eclipse
@@ -25,12 +18,14 @@ Fixes:
 Features:
 	- JDT and WST can be automatically installed when installing EClipseFP
 	- It is now allowed to have a project name that is not the same as the name of the cabal file. EclipseFP uses the cabal file found under the project. An error is logged if several cabal files exist.
+	- Cabal packages view to install packages from Hackage
 
 Internal:
 	- uses BuildWrapper instead of Scion, which allows building of projects that have Cabal>1.8 references between components (bug 3421334), C sources, etc
 
 
 Upgrade notes:
+	- You'll need to install buildwrapper and scion-browser and configure their paths in the Haskell preferences tab.
 
 Known issues:
 

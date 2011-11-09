@@ -33,7 +33,7 @@ public class PackageDescription {
 
   public PackageDescription(final String name){
     this();
-    PackageDescriptionStanza pds = new PackagePropertiesStanza( 0 );
+    PackageDescriptionStanza pds = new PackagePropertiesStanza(this, 0 );
     stanzas.add( pds );
     pds.update( CabalSyntax.FIELD_NAME, name );
   }
@@ -75,7 +75,7 @@ public class PackageDescription {
 
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
-    PackageDescriptionStanza pds=new PackageDescriptionStanza( type, name, startLine );
+    PackageDescriptionStanza pds=new PackageDescriptionStanza(this, type, name, startLine );
     pds.setEndLine( startLine+1 );
     stanzas.add( pds );
     return pds;
