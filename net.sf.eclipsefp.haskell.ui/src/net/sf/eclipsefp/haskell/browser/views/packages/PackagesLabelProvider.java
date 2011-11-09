@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -25,13 +26,13 @@ public class PackagesLabelProvider implements ILabelProvider {
 		if (element instanceof DatabaseType) {
 			switch ((DatabaseType) element) {
 			case ALL:
-				return "All";
+				return UITexts.browser_allDatabases;
 			case HACKAGE:
-				return "Hackage";
+				return UITexts.browser_hackageDatabase;
 			case LOCAL:
-				return "Local";
+				return UITexts.browser_localDatabase;
 			case PACKAGE:
-				return "Package";
+				return UITexts.browser_packageDatabase;
 			}
 			return "";
 		} else {

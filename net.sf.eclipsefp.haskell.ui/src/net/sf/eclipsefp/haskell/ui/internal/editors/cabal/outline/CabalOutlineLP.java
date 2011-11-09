@@ -13,7 +13,7 @@ import org.eclipse.swt.graphics.Image;
   *
   * @author Leif Frenzel
   */
-class CabalOutlineLP extends LabelProvider {
+public class CabalOutlineLP extends LabelProvider {
 
   @Override
   public Image getImage( final Object element ) {

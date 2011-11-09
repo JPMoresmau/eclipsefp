@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
+import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.IHoogleLoadedListener;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
@@ -38,9 +41,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -57,7 +62,7 @@ import org.eclipse.ui.part.ViewPart;
  *
  */
 public class HoogleView extends ViewPart implements SelectionListener,
-    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener {
+    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener, IDatabaseLoadedListener {
 
   /**
    * search for the given text in Hoogle as if it was typed in the view
@@ -127,6 +132,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
   TreeViewer viewer;
   Browser doc;
   IContentProvider provider;
+  Button localDb;
+  Button hackageDb;
 
   @Override
   public void createPartControl( final Composite parent ) {
@@ -135,6 +142,31 @@ public class HoogleView extends ViewPart implements SelectionListener,
     layout.verticalSpacing = layout.horizontalSpacing = 0;
     layout.marginBottom = layout.marginHeight = layout.marginLeft = layout.marginRight = layout.marginTop = layout.marginWidth = 0;
     parent.setLayout( layout );
+
+    Composite dbSelection = new Composite( parent, SWT.NULL );
+    GridLayout innerLayout = new GridLayout();
+    innerLayout.numColumns = 3;
+    innerLayout.makeColumnsEqualWidth= true;
+    GridData innerData = new GridData();
+    innerData.horizontalAlignment = SWT.FILL;
+    innerData.grabExcessHorizontalSpace = true;
+    dbSelection.setLayoutData( innerData );
+    dbSelection.setLayout( innerLayout );
+
+    Label searchInLabel = new Label( dbSelection, SWT.NULL );
+    searchInLabel.setText( UITexts.browser_hoogleSearchIn );
+
+    BrowserPlugin.getDefault().addDatabaseLoadedListener( this );
+
+    localDb = new Button( dbSelection, SWT.CHECK );
+    localDb.setText( UITexts.browser_localDatabase );
+    localDb.setSelection( true );
+    localDb.setEnabled( BrowserPlugin.getDefault().isLocalDatabaseLoaded() );
+
+    hackageDb = new Button( dbSelection, SWT.CHECK );
+    hackageDb.setText( UITexts.browser_hackageDatabase );
+    hackageDb.setSelection( false );
+    hackageDb.setEnabled( BrowserPlugin.getDefault().isHackageDatabaseLoaded() );
 
     text = new Text( parent, SWT.SINGLE | SWT.SEARCH | SWT.ICON_SEARCH
         | SWT.ICON_CANCEL );
@@ -174,7 +206,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     Display.getDefault().asyncExec( new Runnable() {
 
       public void run() {
-        provider = new HoogleContentProvider();
+        provider = new HoogleContentProvider(localDb, hackageDb);
         //viewer.setLabelProvider( new HoogleLabelProvider() );
         viewer.setContentProvider( provider );
         viewer.setInput( text.getText() );
@@ -343,5 +375,37 @@ public class HoogleView extends ViewPart implements SelectionListener,
         // Do nothing
       }
     }
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener#databaseLoaded(net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent)
+   */
+  public void databaseLoaded( final DatabaseLoadedEvent e ) {
+    final Display display = Display.getDefault();
+    display.asyncExec( new Runnable() {
+      public void run() {
+        if (e.getType() == DatabaseType.LOCAL) {
+          localDb.setEnabled( true );
+        } else if (e.getType() == DatabaseType.HACKAGE) {
+          hackageDb.setEnabled( true );
+        }
+      }
+    } );
+
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener#databaseUnloaded(net.sf.eclipsefp.haskell.browser.BrowserEvent)
+   */
+  public void databaseUnloaded( final BrowserEvent e ) {
+    final Display display = Display.getDefault();
+    display.asyncExec( new Runnable() {
+      public void run() {
+        localDb.setSelection( false );
+        localDb.setEnabled( false );
+        hackageDb.setSelection( false );
+        hackageDb.setEnabled( false );
+      }
+    } );
   }
 }

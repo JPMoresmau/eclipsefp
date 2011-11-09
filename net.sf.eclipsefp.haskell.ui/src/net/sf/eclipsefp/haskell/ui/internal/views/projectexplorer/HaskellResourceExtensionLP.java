@@ -3,11 +3,14 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.IHaskellProject;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline.CabalOutlineLP;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineLabelProvider;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -26,6 +29,7 @@ import org.eclipse.swt.graphics.Image;
   */
 public class HaskellResourceExtensionLP extends OutlineLabelProvider {
 
+  CabalOutlineLP lp = new CabalOutlineLP();
 
   // interface methods
   ////////////////////
@@ -42,7 +46,22 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
     } else if( element instanceof IFile ) {
       result = ( ( IResource )element ).getName();
     } else if( element instanceof ProjectExplorerOutlineDef ) {
-      result =super.getText(( ( ProjectExplorerOutlineDef )element ).getOutlineDef());
+      result = super.getText(( ( ProjectExplorerOutlineDef )element ).getOutlineDef());
+    } else if (element instanceof CabalFolder) {
+      CabalFolder folder = (CabalFolder)element;
+      switch(folder.getType()) {
+        case EXECUTABLE:
+          result = UITexts.cabalEditor_executables;
+          break;
+        case TEST_SUITE:
+          result = UITexts.cabalEditor_testSuites;
+          break;
+        default:
+            result = "";
+      }
+    } else if (element instanceof PackageDescriptionStanza) {
+      PackageDescriptionStanza stanza = (PackageDescriptionStanza)element;
+      result = stanza.getName() != null ? stanza.getName() : String.valueOf( stanza.getType() );
     } else {
       result = super.getText( element );
     }
@@ -65,6 +84,10 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
       result = getFileImage( ( IFile )element );
     } else if( element instanceof ProjectExplorerOutlineDef ) {
       result =super.getImage(( ( ProjectExplorerOutlineDef )element ).getOutlineDef());
+    } else if (element instanceof CabalFolder) {
+      result = HaskellUIImages.getImage( IImageNames.SOURCE_FOLDER );
+    }else if (element instanceof PackageDescriptionStanza) {
+      result = lp.getImage( element );
     } else {
       result=super.getImage( element );
     }

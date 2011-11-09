@@ -94,6 +94,11 @@ public final class UITexts extends NLS {
   public static String scionBrowser_preferences_label;
   public static String scionBrowserBuiltIn_label;
   public static String scionBrowserExecutable_label;
+  public static String scionBrowserUseHackage_label;
+  public static String scionBrowserUseHackage_QuestionNew_title;
+  public static String scionBrowserUseHackage_QuestionNew_label;
+  public static String scionBrowserUseHackage_QuestionUpdate_title;
+  public static String scionBrowserUseHackage_QuestionUpdate_label;
 
   public static String autodetectButton_label;
   public static String autodetectButton_text;
@@ -592,6 +597,12 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_selected;
   public static String cabalPackagesView_list;
   public static String cabalPackagesView_matching;
+
+  public static String browser_allDatabases;
+  public static String browser_localDatabase;
+  public static String browser_hackageDatabase;
+  public static String browser_packageDatabase;
+  public static String browser_hoogleSearchIn;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

@@ -30,7 +30,12 @@ public class NullBrowserServer extends BrowserServer {
 	}
 	
 	@Override
-	public boolean isDatabaseLoaded() {
+	public boolean isLocalDatabaseLoaded() {
+		return true;
+	}
+	
+	@Override
+	public boolean isHackageDatabaseLoaded() {
 		return true;
 	}
 	
@@ -41,6 +46,11 @@ public class NullBrowserServer extends BrowserServer {
 
 	@Override
 	protected void loadLocalDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException {
+		// Do nothing
+	}
+	
+	@Override
+	protected void loadHackageDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException {
 		// Do nothing
 	}
 

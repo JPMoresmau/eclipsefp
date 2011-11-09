@@ -1,7 +1,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.Writer;
+import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
@@ -442,7 +444,7 @@ public class ScionManager implements IResourceChangeListener {
 
         display.asyncExec( new Runnable() {
           public void run() {
-            Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+            Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
             //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
             builder.setPriority( Job.DECORATE );
             builder.schedule();
@@ -461,6 +463,63 @@ public class ScionManager implements IResourceChangeListener {
         BrowserPlugin.useNullSharedInstance();
       }
  //   }
+  }
+
+  void loadHackageDatabase() {
+    final Display display = Display.getDefault();
+
+    final IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    boolean questionWasAnswered = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_HACKAGE_QUESTION_ANSWERED );
+    if( !questionWasAnswered ) {
+      display.asyncExec( new Runnable() {
+        public void run() {
+          // needs ui thread
+          final Shell parentShell = display.getActiveShell();
+          boolean result = MessageDialog.openQuestion( parentShell,
+              UITexts.scionBrowserUseHackage_QuestionNew_title,
+              UITexts.scionBrowserUseHackage_QuestionNew_label );
+          preferenceStore.setValue( IPreferenceConstants.SCION_BROWSER_HACKAGE_QUESTION_ANSWERED, true );
+          preferenceStore.setValue( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE, result );
+        }
+      } );
+    }
+
+    if (preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE )) {
+      boolean rebuild = !questionWasAnswered || !BrowserPlugin.getHackageDatabasePath().toFile().exists();
+      if (!rebuild) {
+        /* Check time of the Hackage database */
+        long timeDiff = BrowserPlugin.getHackageDatabasePath().toFile().lastModified() - (new Date()).getTime();
+        /* We ask to rebuild if more than one week passed since last update */
+        boolean askRebuild = timeDiff > 7 /* days */ * 24 /* h/day */ * 3600 /* s/h */ * 1000 /* ms/s */;
+        if (askRebuild) {
+          final Stack<Boolean> response = new Stack<Boolean>();
+          display.asyncExec( new Runnable() {
+            public void run() {
+              // needs ui thread
+              final Shell parentShell = display.getActiveShell();
+              boolean result = MessageDialog.openQuestion( parentShell,
+                  UITexts.scionBrowserUseHackage_QuestionUpdate_title,
+                  UITexts.scionBrowserUseHackage_QuestionUpdate_label );
+              response.push(result);
+            }
+          } );
+          rebuild = response.pop();
+        }
+      }
+      /* Execute build job */
+      final boolean doRebuild = rebuild;
+      display.asyncExec( new Runnable() {
+        public void run() {
+        Job builder = new BrowserHackageDatabaseRebuildJob(
+            UITexts.scionBrowserRebuildingDatabase, doRebuild );
+        // builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+        builder.setPriority( Job.DECORATE );
+        builder.schedule();
+        }
+      } );
+    } else {
+      checkHoogleDataIsPresent();
+    }
   }
 
   void checkHoogleDataIsPresent() {
@@ -1161,13 +1220,57 @@ public class ScionManager implements IResourceChangeListener {
   /** Specialized Job class that manages rebuilding the Browser database.
    *  Based in the work of B. Scott Michel.
    *
-    * @author B. Alejandro Serrano
+   * @author B. Alejandro Serrano
    */
-  public class BrowserDatabaseRebuildJob extends Job {
+  public class BrowserLocalDatabaseRebuildJob extends Job {
     IStatus status;
 
-    public BrowserDatabaseRebuildJob(final String jobTitle) {
+    public BrowserLocalDatabaseRebuildJob(final String jobTitle) {
       super(jobTitle);
+
+      // If the build failed, there will be some indication of why it failed.
+      addJobChangeListener( new JobChangeAdapter() {
+        @Override
+        public void done( final IJobChangeEvent event ) {
+          if (event.getResult().isOK()) {
+            loadHackageDatabase();
+          } else {
+            Display.getDefault().syncExec( new Runnable() {
+              public void run() {
+                MessageDialog.openError( Display.getDefault().getActiveShell(),
+                                         UITexts.scionBrowserRebuildingDatabaseError_title,
+                                         UITexts.scionBrowserRebuildingDatabaseError_message );
+              }
+            } );
+          }
+
+          super.done( event );
+        }
+      });
+    }
+
+    @Override
+    protected IStatus run( final IProgressMonitor monitor ) {
+      monitor.beginTask( UITexts.scionBrowserRebuildingDatabase, IProgressMonitor.UNKNOWN );
+      status = BrowserPlugin.loadLocalDatabase( true );
+      monitor.done();
+
+      return status;
+    }
+  }
+
+  /** Specialized Job class that manages loading the Hackage part of Browser database.
+   *  Based in the work of B. Scott Michel.
+   *
+   * @author B. Alejandro Serrano
+   */
+  public class BrowserHackageDatabaseRebuildJob extends Job {
+    IStatus status;
+    boolean rebuild;
+
+    public BrowserHackageDatabaseRebuildJob(final String jobTitle, final boolean rebuild) {
+      super(jobTitle);
+      this.rebuild = rebuild;
 
       // If the build failed, there will be some indication of why it failed.
       addJobChangeListener( new JobChangeAdapter() {
@@ -1193,7 +1296,7 @@ public class ScionManager implements IResourceChangeListener {
     @Override
     protected IStatus run( final IProgressMonitor monitor ) {
       monitor.beginTask( UITexts.scionBrowserRebuildingDatabase, IProgressMonitor.UNKNOWN );
-      status = BrowserPlugin.loadLocalDatabase( true );
+      status = BrowserPlugin.loadHackageDatabase( rebuild );
       monitor.done();
 
       return status;

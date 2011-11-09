@@ -34,6 +34,15 @@ public class Commands {
 		o.put("rebuild", rebuild);
 		return o;
 	}
+	
+	public static JSONObject createLoadHackageDatabase(String path,
+			boolean rebuild) throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "load-hackage-db");
+		o.put("filepath", path);
+		o.put("rebuild", rebuild);
+		return o;
+	}
 
 	public static JSONObject createSetCurrentDatabase(DatabaseType current,
 			PackageIdentifier id) throws JSONException {
@@ -146,6 +155,12 @@ public class Commands {
 	public static JSONObject createDownloadHoogleData() throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-data");
+		return o;
+	}
+	
+	public static JSONObject createCheckHoogleData() throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "hoogle-check");
 		return o;
 	}
 	
