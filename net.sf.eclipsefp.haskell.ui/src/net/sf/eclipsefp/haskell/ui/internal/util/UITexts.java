@@ -94,6 +94,11 @@ public final class UITexts extends NLS {
   public static String scionBrowser_preferences_label;
   public static String scionBrowserBuiltIn_label;
   public static String scionBrowserExecutable_label;
+  public static String scionBrowserUseHackage_label;
+  public static String scionBrowserUseHackage_QuestionNew_title;
+  public static String scionBrowserUseHackage_QuestionNew_label;
+  public static String scionBrowserUseHackage_QuestionUpdate_title;
+  public static String scionBrowserUseHackage_QuestionUpdate_label;
 
   public static String autodetectButton_label;
   public static String autodetectButton_text;

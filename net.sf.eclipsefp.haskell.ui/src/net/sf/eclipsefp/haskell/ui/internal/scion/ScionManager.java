@@ -1,7 +1,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.Writer;
+import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
@@ -464,17 +466,60 @@ public class ScionManager implements IResourceChangeListener {
   }
 
   void loadHackageDatabase() {
-    final boolean rebuild = !BrowserPlugin.getHackageDatabasePath().toFile().exists();
     final Display display = Display.getDefault();
-    display.asyncExec( new Runnable() {
-      public void run() {
-    	Job builder = new BrowserHackageDatabaseRebuildJob(
-    	    UITexts.scionBrowserRebuildingDatabase, rebuild );
-    	// builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-    	builder.setPriority( Job.DECORATE );
-    	builder.schedule();
+
+    final IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    boolean questionWasAnswered = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_HACKAGE_QUESTION_ANSWERED );
+    if( !questionWasAnswered ) {
+      display.asyncExec( new Runnable() {
+        public void run() {
+          // needs ui thread
+          final Shell parentShell = display.getActiveShell();
+          boolean result = MessageDialog.openQuestion( parentShell,
+              UITexts.scionBrowserUseHackage_QuestionNew_title,
+              UITexts.scionBrowserUseHackage_QuestionNew_label );
+          preferenceStore.setValue( IPreferenceConstants.SCION_BROWSER_HACKAGE_QUESTION_ANSWERED, true );
+          preferenceStore.setValue( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE, result );
+        }
+      } );
+    }
+
+    if (preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE )) {
+      boolean rebuild = !questionWasAnswered || !BrowserPlugin.getHackageDatabasePath().toFile().exists();
+      if (!rebuild) {
+        /* Check time of the Hackage database */
+        long timeDiff = BrowserPlugin.getHackageDatabasePath().toFile().lastModified() - (new Date()).getTime();
+        /* We ask to rebuild if more than one week passed since last update */
+        boolean askRebuild = timeDiff > 7 /* days */ * 24 /* h/day */ * 3600 /* s/h */ * 1000 /* ms/s */;
+        if (askRebuild) {
+          final Stack<Boolean> response = new Stack<Boolean>();
+          display.asyncExec( new Runnable() {
+            public void run() {
+              // needs ui thread
+              final Shell parentShell = display.getActiveShell();
+              boolean result = MessageDialog.openQuestion( parentShell,
+                  UITexts.scionBrowserUseHackage_QuestionUpdate_title,
+                  UITexts.scionBrowserUseHackage_QuestionUpdate_label );
+              response.push(result);
+            }
+          } );
+          rebuild = response.pop();
+        }
       }
-    } );
+      /* Execute build job */
+      final boolean doRebuild = rebuild;
+      display.asyncExec( new Runnable() {
+        public void run() {
+        Job builder = new BrowserHackageDatabaseRebuildJob(
+            UITexts.scionBrowserRebuildingDatabase, doRebuild );
+        // builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+        builder.setPriority( Job.DECORATE );
+        builder.schedule();
+        }
+      } );
+    } else {
+      checkHoogleDataIsPresent();
+    }
   }
 
   void checkHoogleDataIsPresent() {

@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -55,6 +56,7 @@ public class ScionPP
   private ButtonFieldEditor autodetectBrowser;
   private Composite autodetectBrowserC;
 //  private Button forceRebuildBrowser;
+  private BooleanFieldEditor browserUseHackage;
 
 //	private BooleanFieldEditor cabalUpdateField;
 	//private Composite forceRebuildC;
@@ -335,6 +337,11 @@ public class ScionPP
     autodetectBrowser.setPreferenceStore( prefStore );
     autodetectBrowser.load();
 
+    browserUseHackage = new BooleanFieldEditor( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE, UITexts.scionBrowserUseHackage_label, sbComposite );
+    browserUseHackage.setPage( this );
+    browserUseHackage.setPreferenceStore( prefStore );
+    browserUseHackage.load();
+
 		// Update the dialog's state and validity:
 		updateButtonState();
 		setValid(isValid());
@@ -416,6 +423,7 @@ public class ScionPP
    // store.setDefault( RUN_CABAL_UPDATE, true );
 	  store.setDefault( BUILDWRAPPER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
+	  store.setDefault( SCION_BROWSER_USE_HACKAGE, false );
 //	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
 
@@ -428,6 +436,7 @@ public class ScionPP
     browserExecutableField.store();
     autodetect.store();
     autodetectBrowser.store();
+    browserUseHackage.store();
 //    serverFlavorField.store();
 //    verboseInteractionField.store();
 //    cabalUpdateField.store();

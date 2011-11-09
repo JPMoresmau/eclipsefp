@@ -37,4 +37,6 @@ public interface IPreferenceConstants {
   // Browser
 //  public final static String SCION_BROWSER_SERVER_BUILTIN = "SCION_BROWSER_SERVER_BUILTIN" ; //$NON-NLS-1$
   public final static String SCION_BROWSER_SERVER_EXECUTABLE = "SCION_BROWSER_SERVER_EXECUTABLE";  //$NON-NLS-1$
+  public final static String SCION_BROWSER_USE_HACKAGE = "SCION_BROWSER_USE_HACKAGE"; //$NON-NLS-1$
+  public final static String SCION_BROWSER_HACKAGE_QUESTION_ANSWERED = "SCION_BROWSER_HACKAGE_QUESTION_ANSWERED"; //$NON-NLS-1$
 }

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
+import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.IHoogleLoadedListener;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
@@ -59,7 +62,7 @@ import org.eclipse.ui.part.ViewPart;
  *
  */
 public class HoogleView extends ViewPart implements SelectionListener,
-    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener {
+    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener, IDatabaseLoadedListener {
 
   /**
    * search for the given text in Hoogle as if it was typed in the view
@@ -153,13 +156,17 @@ public class HoogleView extends ViewPart implements SelectionListener,
     Label searchInLabel = new Label( dbSelection, SWT.NULL );
     searchInLabel.setText( UITexts.browser_hoogleSearchIn );
 
+    BrowserPlugin.getDefault().addDatabaseLoadedListener( this );
+
     localDb = new Button( dbSelection, SWT.CHECK );
     localDb.setText( UITexts.browser_localDatabase );
     localDb.setSelection( true );
+    localDb.setEnabled( BrowserPlugin.getDefault().isLocalDatabaseLoaded() );
 
     hackageDb = new Button( dbSelection, SWT.CHECK );
     hackageDb.setText( UITexts.browser_hackageDatabase );
     hackageDb.setSelection( false );
+    hackageDb.setEnabled( BrowserPlugin.getDefault().isHackageDatabaseLoaded() );
 
     text = new Text( parent, SWT.SINGLE | SWT.SEARCH | SWT.ICON_SEARCH
         | SWT.ICON_CANCEL );
@@ -368,5 +375,37 @@ public class HoogleView extends ViewPart implements SelectionListener,
         // Do nothing
       }
     }
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener#databaseLoaded(net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent)
+   */
+  public void databaseLoaded( final DatabaseLoadedEvent e ) {
+    final Display display = Display.getDefault();
+    display.asyncExec( new Runnable() {
+      public void run() {
+        if (e.getType() == DatabaseType.LOCAL) {
+          localDb.setEnabled( true );
+        } else if (e.getType() == DatabaseType.HACKAGE) {
+          hackageDb.setEnabled( true );
+        }
+      }
+    } );
+
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener#databaseUnloaded(net.sf.eclipsefp.haskell.browser.BrowserEvent)
+   */
+  public void databaseUnloaded( final BrowserEvent e ) {
+    final Display display = Display.getDefault();
+    display.asyncExec( new Runnable() {
+      public void run() {
+        localDb.setSelection( false );
+        localDb.setEnabled( false );
+        hackageDb.setSelection( false );
+        hackageDb.setEnabled( false );
+      }
+    } );
   }
 }
