@@ -214,9 +214,17 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
       stanza = getPackageDescription().getComponentStanza( new Component( getComponentType(), name, "", true ) );
     }
 
-    modulesSection.refreshInput( project, this.getPackageDescription(), stanza, true );
+   modulesSection.refreshInput( project, this.getPackageDescription(), stanza, true );
     setStanza(stanza);
     ignoreModify = false;
+  }
+
+  public void selectStanza(final PackageDescriptionStanza stanza){
+    if (execsList.getItemCount()==0){
+      nextSelected=stanza.getName();
+    } else {
+      execsList.setSelection( new String[]{stanza.getName()} );
+    }
   }
 
   @Override

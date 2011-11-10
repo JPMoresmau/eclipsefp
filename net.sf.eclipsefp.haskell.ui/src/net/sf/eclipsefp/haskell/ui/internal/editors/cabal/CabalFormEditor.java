@@ -3,7 +3,9 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview.OverviewPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.ExecutablesPage;
@@ -135,6 +137,24 @@ public class CabalFormEditor extends FormEditor {
     }
   }
 
+  /**
+   * show the appropriate gui page in the form editor for the given stanza
+   * @param stanza
+   */
+  public void selectAndReveal(final PackageDescriptionStanza stanza){
+    if (CabalSyntax.SECTION_LIBRARY.equals( stanza.getType() )){
+      setActivePage( library.getId() );
+    } else if (CabalSyntax.SECTION_EXECUTABLE.equals( stanza.getType() )){
+      setActivePage( executables.getId() );
+      executables.selectStanza( stanza );
+    } else if (CabalSyntax.SECTION_TESTSUITE.equals( stanza.getType() )){
+      setActivePage( testSuites.getId() );
+      testSuites.selectStanza( stanza );
+    } else {
+      setActivePage(pages.size()-1);
+      cabalSourceEditor.selectAndReveal( stanza );
+    }
+  }
 
   // interface methods of IAdaptable
   //////////////////////////////////

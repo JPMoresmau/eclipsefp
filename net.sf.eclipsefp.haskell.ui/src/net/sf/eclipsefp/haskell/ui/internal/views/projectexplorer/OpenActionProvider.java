@@ -108,7 +108,7 @@ public class OpenActionProvider extends CommonActionProvider {
 
         } else if (stanza!=null){
           CabalFormEditor e=(CabalFormEditor)page.openEditor( new FileEditorInput( stanza.getOwner() ), CabalFormEditor.ID );
-          e.getCabalSourceEditor().selectAndReveal( stanza );
+          e.selectAndReveal( stanza.getStanza() );
         }
       } catch( Exception e ) {
         HaskellUIPlugin.log( e );

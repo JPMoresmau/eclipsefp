@@ -341,7 +341,16 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
 
     modulesSection.refreshInput( project, this.getPackageDescription(), stanza, true );
     setStanza(stanza,true);
-    ignoreModify = true;
+    ignoreModify = false;
+  }
+
+  public void selectStanza(final PackageDescriptionStanza stanza){
+    if (execsList.getItemCount()==0){
+      nextSelected=stanza.getName();
+    } else {
+      execsList.setSelection( new String[]{stanza.getName()} );
+    }
+
   }
 
   @Override
