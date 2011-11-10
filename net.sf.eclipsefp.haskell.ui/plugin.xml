@@ -661,20 +661,13 @@
             <test property="org.eclipse.core.resources.projectNature" 
                   value="net.sf.eclipsefp.haskell.core.project.HaskellNature"/>
           </adapt>
-          <instanceof value="org.eclipse.core.resources.IWorkspaceRoot" /> 
-          <instanceof value="org.eclipse.core.resources.IProject" />  
-          <instanceof value="org.eclipse.core.resources.IFolder" /> 
-          <instanceof value="org.eclipse.core.resources.IFile" /> 
+          <instanceof value="org.eclipse.core.resources.IResource" /> 
           <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerOutlineDef" />  
         </or>
       </triggerPoints>
       <possibleChildren>
         <or>         
-          <instanceof value="org.eclipse.core.resources.IWorkspaceRoot" /> 
-          <instanceof value="org.eclipse.core.resources.IProject" /> 
           <instanceof value="org.eclipse.core.resources.IResource" /> 
-          <instanceof value="org.eclipse.core.resources.IFolder" />
-          <instanceof value="org.eclipse.core.resources.IFile" />
           <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSystemLibrary" /> 
           <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerOutlineDef" />
           <instanceof
@@ -682,13 +675,6 @@
           </instanceof>  
         </or>
       </possibleChildren>
-      <commonSorter
-               class="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionSorter"
-               id="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionSorter">
-            <parentExpression>
-              <instanceof value="org.eclipse.core.resources.IProject" /> 
-            </parentExpression>
-         </commonSorter>
        <actionProvider
             class="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.OpenActionProvider"
             id="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.OpenActionProvider"
@@ -700,7 +686,13 @@
              	</or>
           </enablement>
         </actionProvider>
-      
+            <commonSorter
+               class="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionSorter"
+               id="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionSorter">
+            <parentExpression>
+              <instanceof value="org.eclipse.core.resources.IProject" /> 
+            </parentExpression>
+         </commonSorter>
     </navigatorContent>
     <!--commonFilter
         activeByDefault="false"

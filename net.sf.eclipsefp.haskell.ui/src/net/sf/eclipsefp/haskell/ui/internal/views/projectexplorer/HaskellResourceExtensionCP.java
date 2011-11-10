@@ -4,7 +4,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
@@ -19,8 +21,10 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.model.GHCSystemLibrary;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -55,7 +59,14 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         if (f != null) {
           result.add( f );
         }
-        result.addAll( ResourceUtil.getSourceFolders( p ));
+        Set<IContainer> srcs=new HashSet<IContainer>(ResourceUtil.getSourceFolders( p ));
+        result.addAll(srcs);
+        // add all remaining members so that they appear after the haskell content in view
+        for (IResource r:p.members()){
+          if (!r.equals( f ) && !srcs.contains( r )){
+            result.add(r);
+          }
+        }
         // addProjectExecutable( ( IProject )parentElement, result );
       } else if( parentElement instanceof IFile ) {
         final IFile f = ( IFile )parentElement;
