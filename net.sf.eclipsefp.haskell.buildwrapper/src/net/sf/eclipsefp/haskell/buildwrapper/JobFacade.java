@@ -177,7 +177,10 @@ public class JobFacade  {
 	        return Status.OK_STATUS;
 	      }
 	    };
-	    buildJob.setRule( file );
+	    String path=file.getProjectRelativePath().toOSString();
+	    // schedule using target file to not stop operations on source file (like save...)
+	    IResource r=file.getProject().findMember(BWFacade.DIST_FOLDER+"/"+path);
+		buildJob.setRule( r );
 	    buildJob.setPriority(Job.SHORT);
 	    buildJob.schedule();
 	}
