@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.Date;
 import java.util.List;
@@ -132,6 +133,15 @@ public class ScionManager implements IResourceChangeListener {
         serverExecutablePath=null;
       }
     }
+    // look in path
+    if (serverExecutablePath==null){
+      File f=FileUtil.findExecutableInPath( "buildwrapper" );
+      if (f!=null){
+        serverExecutablePath=new Path(f.getAbsolutePath());
+        // set preference
+        HaskellUIPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,f.getAbsolutePath());
+      }
+    }
 
     //browserUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN );
     final String browserExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
@@ -139,6 +149,16 @@ public class ScionManager implements IResourceChangeListener {
       browserExecutablePath = new Path(browserExecutable);
       if (!browserExecutablePath.toFile().exists()){
         browserExecutablePath=null;
+      }
+
+    }
+    // look in path
+    if (browserExecutablePath==null){
+      File f=FileUtil.findExecutableInPath( "scion-browser" );
+      if (f!=null){
+        browserExecutablePath=new Path(f.getAbsolutePath());
+        // set preference
+        HaskellUIPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,f.getAbsolutePath());
       }
     }
 
