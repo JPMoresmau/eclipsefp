@@ -63,7 +63,7 @@ public class HaskellUIImages implements IImageNames {
     declare( ELSE_STANZA,          OBJECT + "else.gif" ); //$NON-NLS-1$
     declare( FLAG_STANZA,          OBJECT + "flag.gif" ); //$NON-NLS-1$
     declare( TEMPLATE,             OBJECT + "template.gif" ); //$NON-NLS-1$
-
+    declare( SOURCEREP_STANZA,     OBJECT + "sourcerepstanza.gif" ); //$NON-NLS-1$
     // decorators
     declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" ); //$NON-NLS-1$
     declare( ERROR_OVERLAY,        OVR + "error_co.gif"); //$NON-NLS-1$
