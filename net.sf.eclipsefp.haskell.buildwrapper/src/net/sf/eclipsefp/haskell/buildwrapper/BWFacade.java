@@ -41,7 +41,7 @@ import org.json.JSONObject;
 
 /**
  * API facade to buildwrapper: exposes all operations and calls the build wrapper executable
- * @author JPMoresmau
+ * @author JP Moresmau
  *
  */
 public class BWFacade {
@@ -576,11 +576,11 @@ public class BWFacade {
 					outStream.write(PlatformUtil.NL);
 					outStream.flush();
 				}*/
-				if (ow!=null) {
-					ow.addMessage(l);
-				}
+				
 				if (l.startsWith(prefix)){
-					
+					if (ow!=null && BuildWrapperPlugin.logAnswers) {
+						ow.addMessage(l);
+					}					
 					String jsons=l.substring(prefix.length()).trim();
 					try {
 						obj=f.fromJSON(jsons);
@@ -588,8 +588,14 @@ public class BWFacade {
 						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
 					}
 					goOn=false;
-				} else if (l.contains(" re-run the 'configure'") || l.contains("cannot satisfy -package-id")){
-					needConfigure=true;
+
+				} else {
+					if (l.contains(" re-run the 'configure'") || l.contains("cannot satisfy -package-id")){
+						needConfigure=true;
+					}
+					if (ow!=null) {
+						ow.addMessage(l);
+					}
 				}
 				if (goOn){
 					l=br.readLine();

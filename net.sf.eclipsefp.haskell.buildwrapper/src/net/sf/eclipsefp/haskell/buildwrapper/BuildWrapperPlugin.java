@@ -42,6 +42,8 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	
 	private static String bwPath;
 	
+	public static boolean logAnswers=false;
+	
 	/**
 	 * The constructor
 	 */
@@ -55,6 +57,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
 	}
 
 	/*

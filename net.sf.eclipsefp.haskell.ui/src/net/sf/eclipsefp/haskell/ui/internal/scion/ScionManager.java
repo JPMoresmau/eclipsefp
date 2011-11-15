@@ -338,8 +338,13 @@ public class ScionManager implements IResourceChangeListener {
    * Server factory setup. This is common code used by both start() and handlePreferenceChanges() for setting
    * and starting scion server factories.
    */
-  private synchronized void serverFactorySetup()
-  {
+  private synchronized void serverFactorySetup(){
+    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    // boolean newUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
+    // String newServerFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
+    boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.VERBOSE_INTERACTION );
+    BuildWrapperPlugin.logAnswers=verbose;
+
 //    try {
 //      if (useBuiltIn) {
 //        if (   CompilerManager.getInstance().getCurrentHsImplementation() != null

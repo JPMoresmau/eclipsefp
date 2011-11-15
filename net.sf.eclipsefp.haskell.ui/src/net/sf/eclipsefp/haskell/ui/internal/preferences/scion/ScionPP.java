@@ -62,8 +62,8 @@ public class ScionPP
 	//private Composite forceRebuildC;
 //	private RadioGroupFieldEditor serverFlavorField;
 //	private Composite serverFlavorFieldC;
-//	private BooleanFieldEditor verboseInteractionField;
-//  private Composite verboseInteractionFieldC;
+	private BooleanFieldEditor verboseInteractionField;
+  private Composite verboseInteractionFieldC;
 
 	private CabalImplsBlock cabalBlock;
 	//private Group fieldComposite;
@@ -244,16 +244,16 @@ public class ScionPP
 //		serverFlavorField.setPreferenceStore( prefStore );
 //		serverFlavorField.load();
 
-//    verboseInteractionFieldC = new Composite(fieldComposite, SWT.NONE);
-//    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-//    gd.horizontalSpan=2;
-//    verboseInteractionFieldC.setLayoutData( gd);
-//    verboseInteractionField = new BooleanFieldEditor( IScionPreferenceNames.VERBOSE_INTERACTION,
-//        UITexts.scionVerboseInteraction_title,
-//        verboseInteractionFieldC );
-//    verboseInteractionField.setPage(this);
-//    verboseInteractionField.setPreferenceStore( scionPrefStore );
-//    verboseInteractionField.load();
+    verboseInteractionFieldC = new Composite(bwComposite, SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    verboseInteractionFieldC.setLayoutData( gd);
+    verboseInteractionField = new BooleanFieldEditor( IPreferenceConstants.VERBOSE_INTERACTION,
+        UITexts.scionVerboseInteraction_title,
+        verboseInteractionFieldC );
+    verboseInteractionField.setPage(this);
+    verboseInteractionField.setPreferenceStore( prefStore );
+    verboseInteractionField.load();
 
     // scion-browser
 
@@ -424,6 +424,7 @@ public class ScionPP
 	  store.setDefault( BUILDWRAPPER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_USE_HACKAGE, false );
+	  store.setDefault( VERBOSE_INTERACTION, false );
 //	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
 
@@ -438,7 +439,7 @@ public class ScionPP
     autodetectBrowser.store();
     browserUseHackage.store();
 //    serverFlavorField.store();
-//    verboseInteractionField.store();
+   verboseInteractionField.store();
 //    cabalUpdateField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
