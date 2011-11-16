@@ -80,8 +80,7 @@ public class ResourceUtil {
       if (facade!=null){
         for (Component c:facade.getComponents()){
           if (c.isBuildable() &&  c.getType().equals( type )){
-            String name=FileUtil.makeExecutableName( c.getName() );
-            IFile f=project.getFile( BWFacade.DIST_FOLDER+File.separator+"dist"+File.separator+"build"+File.separator+c.getName()+File.separator+name ); //$NON-NLS-1$ //$NON-NLS-2$
+            IFile f = getExecutableLocation( project, c.getName() );
             if (f.exists()){
               result.add( f );
             }
@@ -91,6 +90,13 @@ public class ResourceUtil {
     }
 
     return result;
+  }
+
+  public static IFile getExecutableLocation (final IProject project, final String componentName) {
+    String name=FileUtil.makeExecutableName( componentName );
+    String exe = BWFacade.DIST_FOLDER + File.separator + "dist" + File.separator +  //$NON-NLS-1$
+        "build" + File.separator + componentName + File.separator + name; //$NON-NLS-1$
+    return project.getFile( exe );
   }
 
   /**
