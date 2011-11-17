@@ -290,7 +290,7 @@
                id="net.sf.eclipsefp.haskell.ui.launch.young.launchProfilingIcon">
          </launchConfigurationTypeImage>
          <launchConfigurationTypeImage
-               configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.young.BaseExecutableLaunchDelegate"
+               configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.young.TestSuiteLaunchDelegate"
                icon="icons/etool16/hsexe16.gif"
                id="net.sf.eclipsefp.haskell.ui.launch.young.launchTestSuiteIcon">
          </launchConfigurationTypeImage>

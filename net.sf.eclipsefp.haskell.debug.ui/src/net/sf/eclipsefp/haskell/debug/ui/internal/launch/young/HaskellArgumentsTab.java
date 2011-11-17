@@ -219,14 +219,24 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   private void createStanzaComponent( final Composite parent ) {
     Font font = parent.getFont();
 
-    Label label = new Label( parent, SWT.NONE );
+    Composite composite = new Composite( parent, SWT.NONE );
+    GridLayout layout = new GridLayout();
+    layout.marginWidth = 0;
+    layout.marginHeight = 0;
+    layout.numColumns = 2;
+    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
+    gridData.horizontalSpan = 2;
+    composite.setLayout( layout );
+    composite.setLayoutData( gridData );
+
+    Label label = new Label( composite, SWT.NONE );
     label.setText( UITexts.haskellArgumentsTab_lblStanza );
-    GridData data = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
+    GridData data = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
     label.setLayoutData( data );
     label.setFont( font );
 
-    stanzaField = new Text( parent, SWT.NONE );
-    GridData stanzaData = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
+    stanzaField = new Text( composite, SWT.BORDER );
+    GridData stanzaData = new GridData( GridData.FILL_HORIZONTAL );
     stanzaField.setLayoutData( stanzaData );
     stanzaField.setFont( font );
     stanzaField.addModifyListener( modifyListener );
@@ -244,9 +254,10 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 
     int style = SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL;
     argumentField = new Text( parent, style );
-    data = new GridData( GridData.FILL_BOTH );
+    data = new GridData( GridData.FILL_HORIZONTAL );
     data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-    data.heightHint = 30;
+    data.heightHint = 40;
+    data.horizontalSpan = 2;
     argumentField.setLayoutData( data );
     argumentField.setFont( font );
     argumentField.addModifyListener( modifyListener );
