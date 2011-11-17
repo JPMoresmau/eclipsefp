@@ -321,11 +321,11 @@
       <extension
             point="org.eclipse.debug.ui.launchShortcuts">
          <shortcut
-               class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.ExecutableLaunchShortcut"
-               icon="icons/etool16/hsicon16.gif"
-               id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.ExecutableLaunchShortcut"
-               label="%appLaunchShortcut_label"
-               modes="run">
+               class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchShortcut"
+               icon="icons/etool16/ghci16.gif"
+               id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchShortcut"
+               label="%ghciShortcut_label"
+               modes="run, debug">
             <contextualLaunch>
                <enablement>
                   <with
@@ -334,14 +334,17 @@
                            value="1">
                      </count>
                      <iterate>
-                        <test
-                              property="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.isExecutableStanza">
-                        </test>
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                           <test
+                                 property="net.sf.eclipsefp.haskell.core.isHaskellFile">
+                           </test>
+                        </adapt>
                      </iterate>
                   </with>
                </enablement>
                <contextLabel
-                     label="%appLaunchContextLabel_label"
+                     label="%ghciContextLabel_label"
                      mode="run">
                </contextLabel>
             </contextualLaunch>
