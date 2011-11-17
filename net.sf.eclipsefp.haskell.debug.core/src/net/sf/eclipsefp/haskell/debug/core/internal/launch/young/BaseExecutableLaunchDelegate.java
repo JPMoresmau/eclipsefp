@@ -93,7 +93,7 @@ public class BaseExecutableLaunchDelegate extends
         ILaunchAttributes.EMPTY );
     IProject project = ResourcesPlugin.getWorkspace().getRoot()
         .getProject( projectName );
-    return ResourceUtil.getExecutableLocation( project, stanza ).getFullPath();
+    return ResourceUtil.getExecutableLocation( project, stanza ).getRawLocation();
   }
 
   @Override

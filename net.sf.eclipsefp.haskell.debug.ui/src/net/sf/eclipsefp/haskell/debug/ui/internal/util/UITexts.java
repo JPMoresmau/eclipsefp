@@ -26,6 +26,8 @@ public final class UITexts extends NLS {
   public static String haskellArgumentsTab_selectDir;
   public static String haskellArgumentsTab_workDir;
   public static String haskellArgumentsTab_syncStreams;
+  public static String haskellArgumentsTab_lblStanza;
+  public static String haskellArgumentsTab_noStanza;
 
   public static String haskellAutomationTab_name;
   public static String haskellAutomationTab_command;
@@ -49,6 +51,10 @@ public final class UITexts extends NLS {
   public static String evaluate_need_suspend;
 
   public static String profiling_name;
+
+  public static String runExecutable;
+  public static String runProfiling;
+  public static String runTestSuite;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
