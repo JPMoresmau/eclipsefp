@@ -20,7 +20,7 @@ public class CabalDocProvider extends FileDocumentProvider {
 
   public static final String COMMENT_CONTENT_TYPE = "__comment"; //$NON-NLS-1$
 
-  private static final String[] TOKEN_TYPES = new String[] {
+  public static final String[] TOKEN_TYPES = new String[] {
     IDocument.DEFAULT_CONTENT_TYPE,
     COMMENT_CONTENT_TYPE
   };

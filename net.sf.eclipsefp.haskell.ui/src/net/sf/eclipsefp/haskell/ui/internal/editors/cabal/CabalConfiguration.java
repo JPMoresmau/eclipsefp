@@ -146,6 +146,16 @@ class CabalConfiguration extends SourceViewerConfiguration {
     };
   }
 
+  @Override
+  public String[] getConfiguredContentTypes( final ISourceViewer sourceViewer ) {
+   return CabalDocProvider.TOKEN_TYPES;
+  }
+
+  @Override
+  public String[] getDefaultPrefixes(final ISourceViewer sourceViewer, final String contentType) {
+     return new String[] { "--" }; //$NON-NLS-1$
+  }
+
   // helping methods
   //////////////////
 

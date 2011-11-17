@@ -97,9 +97,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   /** Action string associated with pragma comments insertion */
   public static final String COMMENT_PRAGMA_ACTION = "Comment.Pragma"; //$NON-NLS-1$
   /** Resource prefix used to query properties for line comments (see plugin.properties) */
-  private static final String commentResourcePrefix = "CommentAction"; //$NON-NLS-1$
+  public static final String commentResourcePrefix = "CommentAction"; //$NON-NLS-1$
   /** Resource prefix used to query properties for line commenting */
-  private static final String uncommentResourcePrefix = "UncommentAction";
+  public static final String uncommentResourcePrefix = "UncommentAction";
   /** Resource prefix used to query properties for pragma comments */
   private static final String commentPragmaResourcePrefix = "CommentPragmaAction"; //$NON-NLS-1$
 
@@ -251,12 +251,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
     setAction("ContentAssistProposal",
-              createTextOpAction( "ContentAssistProposal", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId )); //$NON-NLS-1$
+              createTextOpAction(this, "ContentAssistProposal", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId )); //$NON-NLS-1$
 
     // comment/uncomment
-    createTextOpAction( LINE_COMMENT_ACTION, commentResourcePrefix, ITextOperationTarget.PREFIX,
+    createTextOpAction(this, LINE_COMMENT_ACTION, commentResourcePrefix, ITextOperationTarget.PREFIX,
                         IEditorActionDefinitionIds.COMMENT );
-    createTextOpAction( LINE_UNCOMMENT_ACTION, uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
+    createTextOpAction(this, LINE_UNCOMMENT_ACTION, uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
                         IEditorActionDefinitionIds.UNCOMMENT );
 
     // New actions that we contribute:
@@ -550,13 +550,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   /**
    * Create a standard text operation action
    */
-  private TextOperationAction createTextOpAction( final String actionIdName, final String resourcePrefix, final int targetId,
+  public static TextOperationAction createTextOpAction( final TextEditor ed,final String actionIdName, final String resourcePrefix, final int targetId,
                                                   final String actionDefinitionId ) {
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
-    TextOperationAction action = new TextOperationAction( bundle, resourcePrefix + ".", this, targetId );  //$NON-NLS-1$
+    TextOperationAction action = new TextOperationAction( bundle, resourcePrefix + ".", ed, targetId );  //$NON-NLS-1$
     action.setActionDefinitionId( actionDefinitionId );
-    setAction( actionIdName, action );
-    markAsStateDependentAction( actionIdName, true );
+    ed.setAction( actionIdName, action );
+    ed.markAsStateDependentAction( actionIdName, true );
 
     return action;
   }
