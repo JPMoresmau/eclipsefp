@@ -5,7 +5,6 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.ILaunchAttributes;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.InteractiveLaunchDelegate;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -93,7 +92,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
         resourcePaths
             .add( resource.getProjectRelativePath().toPortableString() );
       }
-      String configName = InteractiveLaunchDelegate.class.getName();
+      String configName = GhciInteractiveLaunchDelegate.class.getName();
       ILaunchConfigurationType type = LaunchOperation
           .getConfigType( configName );
       IProject project = resources[ 0 ].getProject();

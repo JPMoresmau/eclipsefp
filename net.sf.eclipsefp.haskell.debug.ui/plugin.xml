@@ -275,7 +275,7 @@
       <extension
             point="org.eclipse.debug.ui.launchConfigurationTypeImages">
          <launchConfigurationTypeImage
-               configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.young.InteractiveLaunchDelegate"
+               configTypeID="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchDelegate"
                icon="icons/etool16/ghci16.gif"
                id="net.sf.eclipsefp.haskell.ui.launch.young.launchInteractiveIcon">
          </launchConfigurationTypeImage>
@@ -300,7 +300,7 @@
          <launchConfigurationTabGroup
                class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.InteractiveLaunchTabGroup"
                id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.InteractiveLaunchTabGroup"
-               type="net.sf.eclipsefp.haskell.debug.core.internal.launch.young.InteractiveLaunchDelegate">
+               type="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchDelegate">
          </launchConfigurationTabGroup>
          <launchConfigurationTabGroup
                class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.ExecutableLaunchTabGroup"
@@ -372,6 +372,17 @@
                </instanceof>
             </enablement>
          </actionProvider>
+      </extension>
+      <extension
+            point="org.eclipse.debug.core.launchConfigurationTypes">
+         <launchConfigurationType
+               delegate="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchDelegate"
+               id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchDelegate"
+               modes="run,debug"
+               name="%haskellInteractiveLaunchType_name"
+               sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+               sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+         </launchConfigurationType>
       </extension>
       
 </plugin>

@@ -24,4 +24,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.ui.internal;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test",
  net.sf.eclipsefp.haskell.debug.ui.internal.launch;x-friends:="net.sf.eclipsefp.haskell.hugs",
- net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test"
+ net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test",
+ net.sf.eclipsefp.haskell.debug.ui.internal.launch.young

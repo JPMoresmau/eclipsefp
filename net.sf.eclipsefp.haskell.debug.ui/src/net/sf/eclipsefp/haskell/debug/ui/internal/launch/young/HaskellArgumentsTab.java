@@ -54,6 +54,12 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 
   private SelectionAdapter selectionAdapter;
 
+  private final boolean withStanza;
+
+  public HaskellArgumentsTab(final boolean withStanza) {
+    this.withStanza = withStanza;
+  }
+
   private final ModifyListener modifyListener = new ModifyListener() {
     public void modifyText( final ModifyEvent e ) {
       updateLaunchConfigurationDialog();
@@ -74,7 +80,9 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     mainComposite.setLayout( layout );
     mainComposite.setLayoutData( gridData );
     mainComposite.setFont( parent.getFont() );
-    createStanzaComponent( mainComposite );
+    if (withStanza) {
+      createStanzaComponent( mainComposite );
+    }
     createWorkDirectoryComponent( mainComposite );
     createArgumentComponent( mainComposite );
     createVerticalSpacer( mainComposite, 2 );
@@ -91,7 +99,9 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   }
 
   public void initializeFrom( final ILaunchConfiguration configuration ) {
-    updateStanza ( configuration );
+    if (withStanza) {
+      updateStanza ( configuration );
+    }
     updateWorkingDirectory( configuration );
     updateArgument( configuration );
     updateRunBackground( configuration );
@@ -125,11 +135,13 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       configWc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS, arguments );
     }
 
-    String stanza = stanzaField.getText().trim();
-    if( stanza.length() == 0 ) {
-      configWc.setAttribute( ILaunchAttributes.STANZA, ( String )null );
-    } else {
-      configWc.setAttribute( ILaunchAttributes.STANZA, stanza );
+    if (withStanza) {
+      String stanza = stanzaField.getText().trim();
+      if( stanza.length() == 0 ) {
+        configWc.setAttribute( ILaunchAttributes.STANZA, ( String )null );
+      } else {
+        configWc.setAttribute( ILaunchAttributes.STANZA, stanza );
+      }
     }
   }
 
@@ -137,7 +149,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   public boolean isValid( final ILaunchConfiguration launchConfig ) {
     setErrorMessage( null );
     setMessage( null );
-    return validateWorkDirectory() && validateStanza();
+    return validateWorkDirectory() && (!withStanza || validateStanza());
   }
 
   public String getName() {
