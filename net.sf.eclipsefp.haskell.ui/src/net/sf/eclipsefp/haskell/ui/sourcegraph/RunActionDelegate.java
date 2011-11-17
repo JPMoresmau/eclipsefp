@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.CustomExecutableLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -60,7 +60,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
         commands.add( SOURCEGRAPH );
         commands.add(cabalFile.getRawLocation().toOSString());
 
-        AbstractHaskellLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), "SourceGraph", false,new Runnable(){
+        CustomExecutableLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), "SourceGraph", false,new Runnable(){
           public void run() {
          // Get path name
             final IPath projectPath = cabalFile.getRawLocation().removeLastSegments( 1 );

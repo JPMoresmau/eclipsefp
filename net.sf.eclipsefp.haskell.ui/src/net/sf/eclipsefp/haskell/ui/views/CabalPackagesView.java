@@ -17,8 +17,8 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageHelper;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.CommandLineUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.CustomExecutableLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -455,7 +455,7 @@ public class CabalPackagesView extends ViewPart {
         commands.addAll(Arrays.asList(CommandLineUtil.parse( options.trim() )));
       }
       try {
-        AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_install_running,true, new Runnable() {
+        CustomExecutableLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_install_running,true, new Runnable() {
 
           public void run() {
             lInstall.getDisplay().asyncExec( new Runnable() {
@@ -488,7 +488,7 @@ public class CabalPackagesView extends ViewPart {
       commands.add( cabalExecutable );
       commands.add("update");
       try {
-        AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_update_running,true, new Runnable() {
+        CustomExecutableLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_update_running,true, new Runnable() {
 
           public void run() {
             lUpdate.getDisplay().asyncExec( new Runnable() {
