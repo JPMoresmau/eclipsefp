@@ -127,6 +127,13 @@ public class Commands {
 		return aDecls.toArray(elts);
 	}
 	
+	public static JSONObject createSetExtraHooglePath(String newPath) throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "extra-hoogle-path");
+		o.put("path", newPath);
+		return o;
+	}
+	
 	public static JSONObject createHoogleQuery(String query) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-query");

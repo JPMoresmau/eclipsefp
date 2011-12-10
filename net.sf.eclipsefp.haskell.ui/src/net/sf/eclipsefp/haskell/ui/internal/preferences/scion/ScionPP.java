@@ -58,6 +58,9 @@ public class ScionPP
 //  private Button forceRebuildBrowser;
   private BooleanFieldEditor browserUseHackage;
 
+  private ExecutableFileFieldEditor hoogleExecutableField;
+  private Composite hoogleExecutableFieldC;
+
 //	private BooleanFieldEditor cabalUpdateField;
 	//private Composite forceRebuildC;
 //	private RadioGroupFieldEditor serverFlavorField;
@@ -342,6 +345,23 @@ public class ScionPP
     browserUseHackage.setPreferenceStore( prefStore );
     browserUseHackage.load();
 
+    hoogleExecutableFieldC=new Composite(sbComposite,SWT.NONE);
+    GridData gd3 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd3.horizontalSpan=2;
+    hoogleExecutableFieldC.setLayoutData( gd3 );
+    hoogleExecutableField = new ExecutableFileFieldEditor(IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH,
+        NLS.bind(UITexts.scionBrowserExecutable_label, getHoogleExecutableName()),
+        false, StringFieldEditor.VALIDATE_ON_KEY_STROKE, hoogleExecutableFieldC );
+    hoogleExecutableField.setEmptyStringAllowed(true);
+    /* hoogleExecutableField.setPropertyChangeListener( new IPropertyChangeListener() {
+      public void propertyChange( final PropertyChangeEvent event ) {
+        setValid( isValid() );
+      }
+    }); */
+    hoogleExecutableField.setPage( this );
+    hoogleExecutableField.setPreferenceStore( prefStore );
+    hoogleExecutableField.load();
+
 		// Update the dialog's state and validity:
 		updateButtonState();
 		setValid(isValid());
@@ -416,6 +436,10 @@ public class ScionPP
     return FileUtil.makeExecutableName("scion-browser"); //$NON-NLS-1$
   }
 
+	public static String getHoogleExecutableName() {
+    return FileUtil.makeExecutableName("hoogle"); //$NON-NLS-1$
+  }
+
 	public static void initializeDefaults(final IPreferenceStore store) {
 	  // Set reasonable defaults.
 	 // store.setDefault( SCION_SERVER_BUILTIN, true );
@@ -425,6 +449,7 @@ public class ScionPP
 	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_USE_HACKAGE, false );
 	  store.setDefault( VERBOSE_INTERACTION, false );
+	  store.setDefault( SCION_BROWSER_EXTRA_HOOGLE_PATH, "" );
 //	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
 
@@ -435,6 +460,7 @@ public class ScionPP
   //  browserBuiltInField.store();
     serverExecutableField.store();
     browserExecutableField.store();
+    hoogleExecutableField.store();
     autodetect.store();
     autodetectBrowser.store();
     browserUseHackage.store();

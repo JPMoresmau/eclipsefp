@@ -192,6 +192,11 @@ public class StreamBrowserServer extends BrowserServer {
 		String response = sendAndReceive(Commands.createFindModulesForDeclaration(decl));
 		return Commands.responseGetModules(response);
 	}
+	
+	@Override
+	public void setExtraHooglePath(String newPath) throws IOException, JSONException {
+		sendAndReceiveOk(Commands.createSetExtraHooglePath(newPath));
+	}
 
 	@Override
 	public HoogleResult[] queryHoogle(String query) throws Exception {

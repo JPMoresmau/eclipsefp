@@ -604,6 +604,8 @@ public final class UITexts extends NLS {
   public static String browser_packageDatabase;
   public static String browser_hoogleSearchIn;
 
+  public static String scionBrowser_hooglePath;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
   static {

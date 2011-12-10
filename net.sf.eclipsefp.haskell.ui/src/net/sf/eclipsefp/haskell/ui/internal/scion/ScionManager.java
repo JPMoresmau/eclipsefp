@@ -550,6 +550,12 @@ public class ScionManager implements IResourceChangeListener {
   void checkHoogleDataIsPresent() {
     boolean rebuild = false;
     try {
+      // Set extra paths if needed
+      final IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+      String extraHooglePath = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH );
+      if (extraHooglePath != null && extraHooglePath.length() > 0) {
+        BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
+      }
       rebuild = !BrowserPlugin.getSharedInstance().checkHoogle();
     } catch( Exception e ) {
       rebuild = true;

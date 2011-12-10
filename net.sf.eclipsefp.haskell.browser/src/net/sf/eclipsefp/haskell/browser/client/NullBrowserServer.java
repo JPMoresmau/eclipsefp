@@ -89,6 +89,11 @@ public class NullBrowserServer extends BrowserServer {
 	public Module[] findModulesForDeclaration(String decl) throws IOException, JSONException {
 		return new Module[0];
 	}
+	
+	@Override
+	public void setExtraHooglePath(String newPath) throws IOException, JSONException {
+		// Do nothing
+	}
 
 	@Override
 	public HoogleResult[] queryHoogle(String query) throws Exception {
