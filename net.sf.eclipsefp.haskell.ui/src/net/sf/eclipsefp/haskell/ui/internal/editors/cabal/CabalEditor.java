@@ -2,21 +2,26 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
-import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline.CabalOutlinePage;
-import org.eclipse.jface.action.IAction;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /** <p>an editor for Cabal package description files.</p>
@@ -87,12 +92,6 @@ public class CabalEditor extends TextEditor {
   }
 
   @Override
-  protected void firePropertyChange( final int property ) {
-    // TODO Auto-generated method stub
-    super.firePropertyChange( property );
-  }
-
-  @Override
   public void createPartControl( final Composite parent ) {
     super.createPartControl( parent );
 
@@ -101,23 +100,43 @@ public class CabalEditor extends TextEditor {
                                                getAnnotationAccess(),
                                                getSharedColors() );
     projectionSupport.install();
+    projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+    projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
     pv.doOperation( ProjectionViewer.TOGGLE );
   }
 
   @Override
   protected void createActions() {
     super.createActions();
-    IAction action = new TextOperationAction(
-        ResourceBundle.getBundle( CabalEditor.class.getName() ),
-        "ContentAssistProposal.", //$NON-NLS-1$
-        this,
-        ISourceViewer.CONTENTASSIST_PROPOSALS );
-    String adi = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
-    action.setActionDefinitionId( adi );
-    setAction( "ContentAssist.", action ); //$NON-NLS-1$
-    markAsStateDependentAction( "ContentAssist.", true ); //$NON-NLS-1$
+    HaskellEditor.createTextOpAction(this,  "ContentAssist.", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS,
+        ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS );
+
+    // comment/uncomment
+    HaskellEditor.createTextOpAction(this, HaskellEditor.LINE_COMMENT_ACTION, HaskellEditor.commentResourcePrefix, ITextOperationTarget.PREFIX,
+                        IEditorActionDefinitionIds.COMMENT );
+    HaskellEditor.createTextOpAction(this, HaskellEditor.LINE_UNCOMMENT_ACTION, HaskellEditor.uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
+                        IEditorActionDefinitionIds.UNCOMMENT );
   }
 
+  @Override
+  protected void initializeEditor() {
+    super.initializeEditor();
+  }
+
+  @Override
+  public void editorContextMenuAboutToShow( final IMenuManager menu ) {
+    super.editorContextMenuAboutToShow( menu );
+    if( isEditable() ) {
+      IMenuManager mmSource = new MenuManager( UITexts.editor_actions_source, "source" ); //$NON-NLS-1$
+      menu.prependToGroup( ITextEditorActionConstants.GROUP_EDIT, mmSource );
+
+      mmSource.add( new Separator( "comments" ) ); //$NON-NLS-1$
+
+      addAction( mmSource, "comments", HaskellEditor.LINE_COMMENT_ACTION ); //$NON-NLS-1$
+      addAction( mmSource, "comments", HaskellEditor.LINE_UNCOMMENT_ACTION ); //$NON-NLS-1$
+
+    }
+  }
 
   // interface methods of IAdaptable
   //////////////////////////////////

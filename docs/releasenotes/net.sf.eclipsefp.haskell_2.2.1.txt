@@ -16,6 +16,7 @@ Fixes:
 Features:
 	- autodetect buildwrapper and scion-browser if they're in the PATH
 	- preference to turn on/off the logging of buildwrapper JSON response in console (default: off)
+	- comment/uncomment lines on cabal sources
 
 Internal:
 

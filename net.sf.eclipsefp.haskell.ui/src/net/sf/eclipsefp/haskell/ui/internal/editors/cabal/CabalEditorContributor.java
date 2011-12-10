@@ -3,6 +3,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.ui.actions.IHaskellActionConstants;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -37,12 +39,18 @@ public class CabalEditorContributor extends BasicTextEditorActionContributor {
 		ITextEditor editor = ( part instanceof ITextEditor ) ? ( ITextEditor )part
                                                          : null;
 		action.setAction( getAction( editor, CONTENTASSIST_ACTION ) );
+		IActionBars actionBars= getActionBars();
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.COMMENT,
+        getAction(editor, HaskellEditor.LINE_COMMENT_ACTION));
+    actionBars.setGlobalActionHandler(IHaskellActionConstants.UNCOMMENT,
+        getAction(editor, HaskellEditor.LINE_UNCOMMENT_ACTION));
 	}
 
 	@Override
 	public void init( final IActionBars bars, final IWorkbenchPage page ) {
 		super.init( bars, page );
 		bars.setGlobalActionHandler( CONTENTASSIST_ACTION, action );
+
 	}
 
 	@Override
