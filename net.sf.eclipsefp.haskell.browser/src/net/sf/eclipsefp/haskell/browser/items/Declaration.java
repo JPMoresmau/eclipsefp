@@ -65,5 +65,31 @@ public abstract class Declaration extends Documented {
 			throw new Exception("Declaration of unknown type");
 	}
 	
+	public static Declaration fromJSONSingleton(JSONObject o) throws Exception {
+		String type = o.getString("type");
+
+		if (type.equals("data"))
+			return new DataType(o);
+		else if (type.equals("newtype"))
+			return new NewType(o);
+		else if (type.equals("class"))
+			return new TypeClass(o);
+		else if (type.equals("instance"))
+			return new Instance(o);
+		else if (type.equals("signature")){
+			JSONArray arr = o.optJSONArray("name");
+			String name = null;
+			if (arr != null){
+				name = arr.getString(0);
+			} else {
+				name = o.getString("name");
+			}
+			return new Function(name, o);
+		} else if (type.equals("type"))
+			return new TypeSynonym(o);
+		else
+			throw new Exception("Declaration of unknown type");
+	}
+	
 	public abstract String getShownName();
 }
