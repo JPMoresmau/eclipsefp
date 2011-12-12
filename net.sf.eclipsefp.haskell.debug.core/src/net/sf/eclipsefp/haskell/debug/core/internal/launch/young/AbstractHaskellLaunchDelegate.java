@@ -174,7 +174,7 @@ public abstract class AbstractHaskellLaunchDelegate extends
       throws CoreException {
     String args = getUserArguments( config );
     String rts = getRTSArguments( config );
-    if( !rts.trim().isEmpty() ) {
+    if( rts.trim().length()>0 ) {
       args += " +RTS " + rts; //$NON-NLS-1$
     }
     return CommandLineUtil.parse( args );
