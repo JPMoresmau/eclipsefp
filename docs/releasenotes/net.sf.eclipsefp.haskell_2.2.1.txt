@@ -5,13 +5,13 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.2 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.2.2 of buildwrapper has been validated with this version of EclipseFP
 	- EclipseFP also uses scion-browser. Version 0.1.3 has been validated with this version of EclipseFP
  
 
 Fixes:
 	- there is now an icon in the Outline of the Cabal editor for source-repository entries
-
+	- a project that used its root as a source folder showed itself recursively in project explorer
 
 Features:
 	- autodetect buildwrapper and scion-browser if they're in the PATH
