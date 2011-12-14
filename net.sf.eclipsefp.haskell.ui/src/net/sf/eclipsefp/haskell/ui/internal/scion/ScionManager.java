@@ -666,30 +666,32 @@ public class ScionManager implements IResourceChangeListener {
                   ModuleCreationInfo info = new ModuleCreationInfo( f );
                   if (info.getSourceContainer()!=null){
                     List<PackageDescriptionStanza> lpds = pd.getStanzasBySourceDir().get( info.getSourceContainer().getProjectRelativePath().toOSString() );
-                    String qn = info.getQualifiedModuleName();
+                    if (lpds!=null && lpds.size()>0){
+                      String qn = info.getQualifiedModuleName();
 
-                    IDocumentProvider prov = new TextFileDocumentProvider();
-                    prov.connect( cabalF );
-                    try {
-                      IDocument doc = prov.getDocument( cabalF );
+                      IDocumentProvider prov = new TextFileDocumentProvider();
+                      prov.connect( cabalF );
+                      try {
+                        IDocument doc = prov.getDocument( cabalF );
 
-                      for( PackageDescriptionStanza pds: lpds ) {
-                        pds=pd.getSameStanza(pds);
-                        RealValuePosition rvp = pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, qn );
-                        if (rvp!=null){
-                          rvp.updateDocument( doc );
-                          pd=PackageDescriptionLoader.load( doc.get() );
+                        for( PackageDescriptionStanza pds: lpds ) {
                           pds=pd.getSameStanza(pds);
+                          RealValuePosition rvp = pds.removeFromPropertyList( CabalSyntax.FIELD_EXPOSED_MODULES, qn );
+                          if (rvp!=null){
+                            rvp.updateDocument( doc );
+                            pd=PackageDescriptionLoader.load( doc.get() );
+                            pds=pd.getSameStanza(pds);
+                          }
+                          rvp = pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, qn );
+                          if (rvp!=null){
+                            rvp.updateDocument( doc );
+                            pd=PackageDescriptionLoader.load( doc.get() );
+                          }
                         }
-                        rvp = pds.removeFromPropertyList( CabalSyntax.FIELD_OTHER_MODULES, qn );
-                        if (rvp!=null){
-                          rvp.updateDocument( doc );
-                          pd=PackageDescriptionLoader.load( doc.get() );
-                        }
+                        prov.saveDocument( null, cabalF, doc, true );
+                      } finally {
+                        prov.disconnect( cabalF );
                       }
-                      prov.saveDocument( null, cabalF, doc, true );
-                    } finally {
-                      prov.disconnect( cabalF );
                     }
                   }
                   /* final ScionInstance si = ScionPlugin.getScionInstance( f );
