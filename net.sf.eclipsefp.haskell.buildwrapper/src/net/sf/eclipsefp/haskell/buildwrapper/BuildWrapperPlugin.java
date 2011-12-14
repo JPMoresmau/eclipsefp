@@ -90,6 +90,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			f.setProject(p);
 			f.setOutStream(outStream);
 			facades.put(p, f);
+			new JobFacade(f).synchronize(false);
 			return f;
 		}
 		return null;
