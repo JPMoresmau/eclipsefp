@@ -60,7 +60,9 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           result.add( f );
         }
         Set<IContainer> srcs=new HashSet<IContainer>(ResourceUtil.getSourceFolders( p ));
+        srcs.remove( parentElement ); // may happen if . is a source folder
         result.addAll(srcs);
+
         // add all remaining members so that they appear after the haskell content in view
         for (IResource r:p.members()){
           if (!r.equals( f ) && !srcs.contains( r )){
