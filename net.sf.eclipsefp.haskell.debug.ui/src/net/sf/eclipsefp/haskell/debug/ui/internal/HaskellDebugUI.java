@@ -19,6 +19,7 @@ public class HaskellDebugUI extends AbstractUIPlugin {
   }
 
 
+
   // interface methods of Activator
   /////////////////////////////////
 

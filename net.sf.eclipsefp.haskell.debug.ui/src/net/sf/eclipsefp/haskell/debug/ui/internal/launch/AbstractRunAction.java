@@ -1,20 +1,20 @@
 /**
  *
  */
-package net.sf.eclipsefp.haskell.debug.ui.internal.launch.young;
+package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
-import java.util.List;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.debug.ui.internal.HaskellDebugUI;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerStanza;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 /**
@@ -29,18 +29,24 @@ public abstract class AbstractRunAction extends Action {
 
   protected AbstractRunAction( final String title,
       final ISelectionProvider selProvider ) {
-    super( title );
+    super( title ,AbstractUIPlugin.imageDescriptorFromPlugin( HaskellDebugUI.getDefault().getBundle().getSymbolicName(), "icons/etool16/hsexe16.gif" ) ); //$NON-NLS-1$
     this.selectionProvider = selProvider;
   }
 
   protected abstract CabalSyntax getTargetSection();
 
-  protected abstract String getLaunchConfigName();
+  protected String getLaunchMode() {
+    return ILaunchManager.RUN_MODE;
+  }
+
+ /* protected abstract String getLaunchConfigName();
 
   protected abstract ILaunchConfigurationWorkingCopy createLaunchConfig()
       throws CoreException;
 
   protected abstract String getLaunchMode();
+*/
+  protected abstract ILaunchShortcut2 getShortcut();
 
   @Override
   public boolean isEnabled() {
@@ -63,7 +69,7 @@ public abstract class AbstractRunAction extends Action {
   @Override
   public void run() {
     try {
-      ILaunchConfigurationType type = LaunchOperation
+      /*ILaunchConfigurationType type = LaunchOperation
           .getConfigType( getLaunchConfigName() );
       List<ILaunchConfiguration> launches = LaunchOperation
           .getConfigurationsForProject( type, project.getName() );
@@ -76,7 +82,8 @@ public abstract class AbstractRunAction extends Action {
         wc.doSave();
         launch = wc;
       }
-      launch.launch( getLaunchMode(), null );
+      launch.launch( getLaunchMode(), null );*/
+      getShortcut().launch( new StructuredSelection(stanza), getLaunchMode() );
     } catch( Exception e ) {
       // Do nothing
     }

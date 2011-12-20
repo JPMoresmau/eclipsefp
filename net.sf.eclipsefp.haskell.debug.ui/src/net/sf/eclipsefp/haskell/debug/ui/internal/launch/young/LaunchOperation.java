@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchManager;
  *
  * @author Leif Frenzel
  * @author Alejandro Serrano
+ * @deprecated
  */
 public abstract class LaunchOperation {
 

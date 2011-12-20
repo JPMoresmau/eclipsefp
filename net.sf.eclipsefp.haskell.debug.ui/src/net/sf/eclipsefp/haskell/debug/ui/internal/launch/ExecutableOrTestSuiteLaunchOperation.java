@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
@@ -30,13 +31,13 @@ import org.eclipse.debug.core.ILaunchManager;
  */
 public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperation {
 
-  public void launch( final IResource resource, final IProgressMonitor monitor )
+  public void launch( final IResource resource, final IProgressMonitor monitor,final PackageDescriptionStanza stanza  )
   throws CoreException {
   if( resource != null ) {
     IProject project = resource.getProject();
     if( project.hasNature( HaskellNature.NATURE_ID ) ) {
       List<IFile> executables=ResourceUtil.getProjectExecutables( project );
-      ILaunchConfiguration configuration = getConfiguration( project,executables );
+      ILaunchConfiguration configuration = getConfiguration( project,executables,stanza );
       if( configuration != null ) {
         configuration.launch( ILaunchManager.RUN_MODE, monitor );
       }
@@ -45,8 +46,8 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
 }
 
   protected ILaunchConfiguration getConfiguration( final IProject project,
-      final List<IFile> executables ) throws CoreException {
-    List<ILaunchConfiguration> configurations = findConfiguration( project,getConfigTypeName() );
+      final List<IFile> executables ,final PackageDescriptionStanza stanza) throws CoreException {
+    List<ILaunchConfiguration> configurations = findConfiguration( project,getConfigTypeName(),stanza );
     // match existing configurations with executables
     Set<String> exesExisting=new HashSet<String> ();
     for (Iterator<ILaunchConfiguration> it=configurations.iterator();it.hasNext();){
@@ -59,10 +60,17 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
         }
     }
     ILaunchConfiguration result = null;
+    IFile exe=null;
+    if (stanza!=null){
+      exe=ResourceUtil.getExecutableLocation( project, stanza.getName() );
+    }
+
     for( IFile f: executables ) {
-      String exe=getExePath( f );
-      if (!exesExisting.contains(exe)){
-        configurations.add( createConfiguration( f,exe ) );
+      String exe1=getExePath( f );
+      if(exe==null || exe.getLocation().toOSString().equals( exe1 )){
+        if (!exesExisting.contains(exe1)){
+          configurations.add( createConfiguration( f,exe1 ) );
+        }
       }
     }
 
@@ -106,20 +114,31 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
   }
 
   public static List<ILaunchConfiguration> findConfiguration(
-      final IProject project,final String configTypeName ) throws CoreException {
+      final IProject project,final String configTypeName,final PackageDescriptionStanza stanza  ) throws CoreException {
     List<ILaunchConfiguration> result = new LinkedList<ILaunchConfiguration>();
     ILaunchConfiguration[] configurations = LaunchOperation
         .getConfigurations( LaunchOperation
             .getConfigType( configTypeName ) );
+
+    IFile exe=null;
+    if (stanza!=null){
+      exe=ResourceUtil.getExecutableLocation( project, stanza.getName() );
+    }
     result = new ArrayList<ILaunchConfiguration>( configurations.length );
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
       // String exePath = getExePath( file );
       String projectName = project.getName();
-      if( getExePath( configuration ).startsWith(
-          project.getLocation().toOSString() )
-          && getProjectName( configuration ).equals( projectName ) ) {
-        result.add( configuration );
+      if (exe!=null){
+        if (getExePath( configuration ).equals( exe.getLocation().toOSString() )){
+          result.add( configuration );
+        }
+      } else {
+        if( getExePath( configuration ).startsWith(
+            project.getLocation().toOSString() )
+            && getProjectName( configuration ).equals( projectName ) ) {
+          result.add( configuration );
+        }
       }
     }
     return result;

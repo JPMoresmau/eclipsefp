@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  *
  * @author JP Moresmau
- *
+ *@deprecated
  */
 public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
 

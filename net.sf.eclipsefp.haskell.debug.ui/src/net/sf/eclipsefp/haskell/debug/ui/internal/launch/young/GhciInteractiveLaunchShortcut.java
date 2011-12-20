@@ -8,7 +8,7 @@ import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.IInteractiveLau
 
 /**
  * @author Alejandro Serrano
- *
+ *@deprecated
  */
 public class GhciInteractiveLaunchShortcut extends InteractiveLaunchShortcut {
 

@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -31,9 +32,9 @@ class ExecutableProfilingLaunchOperation extends ExecutableOrTestSuiteLaunchOper
     return EXECUTABLE_PROF_CONFIG_TYPE;
   }
 
-  public static List<ILaunchConfiguration> findConfiguration( final IProject project )
+  public static List<ILaunchConfiguration> findConfiguration( final IProject project,final PackageDescriptionStanza stanza )
       throws CoreException {
-    return ExecutableOrTestSuiteLaunchOperation.findConfiguration( project, EXECUTABLE_PROF_CONFIG_TYPE );
+    return ExecutableOrTestSuiteLaunchOperation.findConfiguration( project, EXECUTABLE_PROF_CONFIG_TYPE,stanza );
   }
 
   @Override

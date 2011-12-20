@@ -5,8 +5,10 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerStanza;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -23,7 +25,7 @@ import org.eclipse.ui.IEditorPart;
  */
 public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortcut2 {
 
- public abstract List<ILaunchConfiguration> findConfiguration(IProject project) throws CoreException;
+ public abstract List<ILaunchConfiguration> findConfiguration(IProject project,final PackageDescriptionStanza stanza) throws CoreException;
 
  public abstract IExecutableTestSuiteLaunchOperation getLaunchOperation();
 
@@ -34,23 +36,28 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
    // launched from workbench selection
    if( selection instanceof IStructuredSelection ) {
      Object element = ( ( IStructuredSelection )selection ).getFirstElement();
-     launch( ResourceUtil.findResource( element ) );
+     if (element instanceof ProjectExplorerStanza){
+       ProjectExplorerStanza st=(ProjectExplorerStanza)element;
+       launch(st.getOwner(),st.getStanza());
+     } else {
+       launch( ResourceUtil.findResource( element ),null );
+     }
    }
  }
 
  public void launch( final IEditorPart editor, final String mode ) {
    // launched from editor part
-   launch( ResourceUtil.findResource( editor.getEditorInput() ) );
+   launch( ResourceUtil.findResource( editor.getEditorInput() ),null );
  }
 
 
  // helping methods
  //////////////////
 
- private void launch( final IResource resource ) {
+ private void launch( final IResource resource, final PackageDescriptionStanza stanza ) {
    // TODO put this in a Job and use the progress monitor
    try {
-     getLaunchOperation().launch( resource, null );
+     getLaunchOperation().launch( resource, null,stanza );
    } catch( CoreException cex ) {
      // TODO show msg box
      String msg = "Could not launch Haskell application."; //$NON-NLS-1$
@@ -68,7 +75,7 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
      final IEditorPart paramIEditorPart ) {
    IResource resource = ResourceUtil.findResource( paramIEditorPart.getEditorInput() );
    try {
-     List<ILaunchConfiguration> cs=findConfiguration( resource.getProject() );
+     List<ILaunchConfiguration> cs=findConfiguration( resource.getProject(),null );
      return cs.toArray( new ILaunchConfiguration[cs.size()] );
  } catch (CoreException cex){
    HaskellUIPlugin.log( cex );
@@ -82,9 +89,10 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
  public ILaunchConfiguration[] getLaunchConfigurations(
      final ISelection paramISelection ) {
    try {
+       PackageDescriptionStanza stanza=findStanza( paramISelection );
        IResource[] res=ResourceUtil.getResourcesFromSelection( paramISelection ) ;
        if (res.length>0){
-         List<ILaunchConfiguration> cs=findConfiguration(res[0].getProject());
+         List<ILaunchConfiguration> cs=findConfiguration(res[0].getProject(),stanza);
          return cs.toArray( new ILaunchConfiguration[cs.size()] );
        }
    } catch (CoreException cex){
@@ -93,4 +101,23 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
    return null;
  }
 
+   private static PackageDescriptionStanza findStanza(final ISelection paramISelection){
+     if (paramISelection instanceof IStructuredSelection){
+       IStructuredSelection sel=(IStructuredSelection)paramISelection;
+       if (sel.size()==1){
+         return findStanza( sel.getFirstElement() );
+       }
+     }
+     return null;
+   }
+
+   private static PackageDescriptionStanza findStanza(final Object o){
+     if (o instanceof ProjectExplorerStanza){
+       return ((ProjectExplorerStanza)o).getStanza();
+     }
+     if (o instanceof PackageDescriptionStanza){
+       return (PackageDescriptionStanza)o;
+     }
+     return null;
+   }
 }

@@ -40,6 +40,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
   *
   * @author Leif Frenzel
   * @author Alejandro Serrano
+  * @deprecated
   */
 public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 

@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -54,9 +55,9 @@ class ExecutableLaunchOperation extends ExecutableOrTestSuiteLaunchOperation imp
   }
 
 
-  public static List<ILaunchConfiguration> findConfiguration( final IProject project )
+  public static List<ILaunchConfiguration> findConfiguration( final IProject project,final PackageDescriptionStanza stanza )
       throws CoreException {
-    return ExecutableOrTestSuiteLaunchOperation.findConfiguration( project, EXECUTABLE_CONFIG_TYPE );
+    return ExecutableOrTestSuiteLaunchOperation.findConfiguration( project, EXECUTABLE_CONFIG_TYPE,stanza );
   }
 
 

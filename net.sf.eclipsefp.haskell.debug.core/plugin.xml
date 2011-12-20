@@ -3,6 +3,41 @@
 <plugin>
 
    <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate"
+            modes="run, debug"
+            name="%haskellInteractiveLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
+            modes="run"
+            name="%haskellApplicationLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate"
+            modes="run"
+            name="%testSuiteLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate"
+            modes="run"
+            name="%haskellProfilingLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+   <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
             class="net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellBreakpoint"
@@ -35,7 +70,7 @@
             id="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </sourcePathComputer>
    </extension>
-   <extension
+<!--   <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.young.BaseExecutableLaunchDelegate"
@@ -69,5 +104,5 @@
             sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
             sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </launchConfigurationType>
-   </extension>
+   </extension>-->
 </plugin>

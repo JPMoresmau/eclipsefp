@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -10,6 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  */
 public interface IExecutableTestSuiteLaunchOperation {
-  void launch( final IResource resource, final IProgressMonitor monitor )
+  void launch( final IResource resource, final IProgressMonitor monitor ,final PackageDescriptionStanza stanza )
       throws CoreException;
 }

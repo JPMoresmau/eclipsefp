@@ -12,6 +12,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
   * applications.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class InteractiveLaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
 

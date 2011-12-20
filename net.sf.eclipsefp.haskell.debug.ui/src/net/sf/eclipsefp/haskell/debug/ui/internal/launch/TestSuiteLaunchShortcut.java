@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -17,8 +18,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public class TestSuiteLaunchShortcut extends ExecutableTestSuiteLaunchShortcut {
 
   @Override
-  public List<ILaunchConfiguration> findConfiguration( final IProject project ) throws CoreException {
-    return TestSuiteLaunchOperation.findConfiguration(project);
+  public List<ILaunchConfiguration> findConfiguration( final IProject project,final PackageDescriptionStanza stanza ) throws CoreException {
+    return TestSuiteLaunchOperation.findConfiguration(project,stanza);
   }
 
   @Override

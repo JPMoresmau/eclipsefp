@@ -8,7 +8,7 @@ import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.InteractiveLaun
 
 /**
  * @author Alejandro Serrano
- *
+ *@deprecated
  */
 public class GhciInteractiveLaunchDelegate extends InteractiveLaunchDelegate {
   // Nothing to add

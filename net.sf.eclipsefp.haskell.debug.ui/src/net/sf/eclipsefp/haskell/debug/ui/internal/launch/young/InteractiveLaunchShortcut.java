@@ -31,6 +31,7 @@ import org.eclipse.ui.IEditorPart;
  *
  * @author Leif Frenzel
  * @author Alejandro Serrano
+ * @deprecated
  */
 public abstract class InteractiveLaunchShortcut implements ILaunchShortcut {
 

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 /** <p>implements a delegate for launching GHCi.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
   */
 public class GhciLaunchOperationDelegate
        implements IInteractiveLaunchOperationDelegate {

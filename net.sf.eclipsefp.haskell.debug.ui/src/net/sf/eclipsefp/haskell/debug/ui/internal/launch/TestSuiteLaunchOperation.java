@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate;
@@ -28,13 +29,13 @@ class TestSuiteLaunchOperation extends ExecutableOrTestSuiteLaunchOperation impl
   public static final String TEST_SUITE_CONFIG_TYPE = TestSuiteHaskellLaunchDelegate.class.getName();
 
   @Override
-  public void launch( final IResource resource, final IProgressMonitor monitor )
+  public void launch( final IResource resource, final IProgressMonitor monitor,final PackageDescriptionStanza stanza )
   throws CoreException {
   if( resource != null ) {
     IProject project = resource.getProject();
     if( project.hasNature( HaskellNature.NATURE_ID ) ) {
       List<IFile> executables=ResourceUtil.getProjectTestSuites( project );
-      ILaunchConfiguration configuration = getConfiguration( project,executables );
+      ILaunchConfiguration configuration = getConfiguration( project,executables,stanza );
       if( configuration != null ) {
         configuration.launch( ILaunchManager.RUN_MODE, monitor );
       }
@@ -71,9 +72,9 @@ class TestSuiteLaunchOperation extends ExecutableOrTestSuiteLaunchOperation impl
     return TEST_SUITE_CONFIG_TYPE;
   }
 
-  public static List<ILaunchConfiguration> findConfiguration( final IProject project )
+  public static List<ILaunchConfiguration> findConfiguration( final IProject project,final PackageDescriptionStanza stanza )
       throws CoreException {
-    return ExecutableOrTestSuiteLaunchOperation.findConfiguration( project, TEST_SUITE_CONFIG_TYPE );
+    return ExecutableOrTestSuiteLaunchOperation.findConfiguration( project, TEST_SUITE_CONFIG_TYPE,stanza );
 
   }
 
