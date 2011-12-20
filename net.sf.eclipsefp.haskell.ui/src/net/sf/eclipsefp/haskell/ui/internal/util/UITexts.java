@@ -377,6 +377,7 @@ public final class UITexts extends NLS {
   public static String explorer_libraries;
   public static String explorer_libraries_noimpl;
   public static String explorer_outline_open;
+  public static String explorer_outline_open_cabal;
 
   public static String log_nodetails;
   public static String noproject;
