@@ -262,11 +262,28 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       tokenDefs = lTokenDefs.listIterator();
     }
     String s=doc.get();
+    //long previousOffset=-1;
+    //long previousEnd=-1;
     for (TokenDef nextTokenDef:lTokenDefs){
       try {
         int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
+//        if (nextOffset<previousOffset){
+//          HaskellUIPlugin.log( "offset error: "+nextOffset+"<"+previousOffset, IStatus.ERROR );
+//        }
+//        if (nextOffset<previousEnd){
+//          HaskellUIPlugin.log( "offset error at line "+nextTokenDef.getLocation().getStartLine()+": "+nextOffset+"<"+previousEnd, IStatus.ERROR );
+//        }
         int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
+//        if (nextOffset>nextEnd){
+//          HaskellUIPlugin.log( "extent error: "+nextOffset+">"+nextEnd, IStatus.ERROR );
+//        }
+//        if (previousOffset>nextEnd){
+//          HaskellUIPlugin.log( "extent error: "+nextEnd+">"+previousOffset, IStatus.ERROR );
+//        }
+        //HaskellUIPlugin.log(nextOffset+"->"+nextEnd, IStatus.INFO);
         addTokenOccurence( s,nextOffset, nextEnd, nextTokenDef );
+//        previousOffset=nextOffset;
+//        previousEnd=nextEnd;
       } catch (BadLocationException ble){
         HaskellUIPlugin.log( ble );
       }
