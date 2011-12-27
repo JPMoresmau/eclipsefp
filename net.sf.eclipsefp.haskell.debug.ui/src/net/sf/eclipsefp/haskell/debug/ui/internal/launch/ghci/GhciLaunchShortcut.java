@@ -3,7 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
-import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.InteractiveLaunchShortcut;
 
 

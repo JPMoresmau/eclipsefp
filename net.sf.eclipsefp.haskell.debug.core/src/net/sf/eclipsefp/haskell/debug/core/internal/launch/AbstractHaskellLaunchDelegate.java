@@ -2,13 +2,17 @@ package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.util.NetworkUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,14 +37,30 @@ import org.eclipse.osgi.util.NLS;
 
 public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationDelegate{
 
+  public static IInteractiveLaunchOperationDelegate getDelegate(final ILaunchConfiguration configuration) throws CoreException{
+    String delegateClass=configuration.getAttribute( ILaunchAttributes.DELEGATE, "" ); //$NON-NLS-1$
+    IInteractiveLaunchOperationDelegate delegate=null;
+    if (delegateClass.length()>0){
+      try {
+        delegate = InteractiveDelegateManager.getContributors().get( delegateClass );
+      } catch (Throwable e){
+        HaskellDebugCore.log( e.getLocalizedMessage(), e );
+      }
+    }
+    return delegate;
+  }
+
   public void launch( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProgressMonitor monitor )
       throws CoreException {
     if( !monitor.isCanceled() ) {
       try {
-        final IPath loc = getExecutableLocation( configuration );
+        IInteractiveLaunchOperationDelegate delegate=getDelegate( configuration );
+
+        final IPath loc =delegate!=null?new Path(delegate.getExecutable()) :
+          getExecutableLocation( configuration );
         checkCancellation( monitor );
-        String[] arguments = determineArguments( configuration );
+        String[] arguments = determineArguments( configuration,delegate );
         checkCancellation( monitor );
         String[] cmdLine = createCmdLine( loc, arguments );
         checkCancellation( monitor );
@@ -162,7 +182,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
 
   }
 
-  private String[] createCmdLine( final IPath location, final String[] arguments ) {
+  private String[] createCmdLine(final IPath location, final String[] arguments ) {
     int cmdLineLength = 1;
     if( arguments != null ) {
       cmdLineLength += arguments.length;
@@ -186,13 +206,36 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return result;
   }
 
-  String[] determineArguments( final ILaunchConfiguration config )
+  String[] determineArguments( final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate )
       throws CoreException {
     String extra = config.getAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
         ILaunchAttributes.EMPTY );
     String args = config.getAttribute( ILaunchAttributes.ARGUMENTS,
         ILaunchAttributes.EMPTY );
-    return CommandLineUtil.parse( extra + " " + args ); //$NON-NLS-1$
+    String[] fullArgs=CommandLineUtil.parse( extra + " " + args ); //$NON-NLS-1$
+
+    String[] delegateArgs=getDelegateArguments(config,delegate);
+    if (delegateArgs.length>0){
+      String[] newArgs=new String[fullArgs.length+delegateArgs.length];
+      System.arraycopy( fullArgs, 0, newArgs, 0, fullArgs.length );
+      System.arraycopy( delegateArgs, 0, newArgs, fullArgs.length, delegateArgs.length );
+      fullArgs=newArgs;
+    }
+
+    return fullArgs;
+  }
+
+  public static String[] getDelegateArguments(final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate)throws CoreException{
+    if (delegate!=null){
+      IProject p=getProject( config );
+      List<String> fileNames=config.getAttribute( ILaunchAttributes.FILES, new ArrayList<String>() );
+      IFile[] files=new IFile[fileNames.size()];
+      for (int a=0;a<fileNames.size();a++){
+        files[a]=p.getFile( fileNames.get(a) );
+      }
+      return delegate.createArguments(p , files );
+    }
+    return new String[0];
   }
 
   private void checkCancellation( final IProgressMonitor monitor ) {
@@ -217,17 +260,33 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
 
   public IPath getExecutableLocation( final ILaunchConfiguration config )
       throws CoreException {
-    String defaultValue = null;
     String location = config.getAttribute( ILaunchAttributes.EXECUTABLE,
-        defaultValue );
+        (String)null );
     if( isEmpty( location ) ) {
-      String msg = CoreTexts.haskellLaunchDelegate_noExe;
-      String pluginId = HaskellDebugCore.getPluginId();
-      IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
-      throw new CoreException( status );
+      String stanza = config.getAttribute( ILaunchAttributes.STANZA,
+          (String)null );
+      if (isEmpty( stanza )){
+        String msg = CoreTexts.haskellLaunchDelegate_noExe;
+        String pluginId = HaskellDebugCore.getPluginId();
+        IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
+        throw new CoreException( status );
+      }
+      return ResourceUtil.getExecutableLocation( getProject( config ), stanza ).getLocation();
+
     }
 
     return new Path( location );
+  }
+
+  public static IProject getProject(final ILaunchConfiguration config)throws CoreException{
+    String prj=config.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );
+    if (prj!=null){
+     IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject( prj );
+     if (p!=null){
+       return p;
+     }
+    }
+    return null;
   }
 
   private boolean isEmpty( final String location ) {

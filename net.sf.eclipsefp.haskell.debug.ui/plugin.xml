@@ -8,6 +8,13 @@
             id="net.sf.eclipsefp.haskell.debug.ui.listener2">
       </listener>
    </extension>
+   <extension
+         point="net.sf.eclipsefp.haskell.debug.core.interactiveDelegates">
+      <delegate
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchOperationDelegate"
+            id="net.sf.eclipsefp.haskell.debug.ui.ghci">
+      </delegate>
+   </extension>
       <extension
          point="org.eclipse.core.runtime.adapters">
     <factory

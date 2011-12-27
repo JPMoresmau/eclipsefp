@@ -4,6 +4,8 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.io.File;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -298,7 +300,10 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     try {
       String att = ILaunchAttributes.EXTRA_ARGUMENTS;
       arguments = configuration.getAttribute( att, ILaunchAttributes.EMPTY );
-      forcedArguments=configuration.getAttribute( ILaunchAttributes.ARGUMENTS, ILaunchAttributes.EMPTY );
+      IInteractiveLaunchOperationDelegate delegate=AbstractHaskellLaunchDelegate.getDelegate( configuration );
+
+      forcedArguments=InteractiveLaunchOperation.concatenate( AbstractHaskellLaunchDelegate.getDelegateArguments( configuration, delegate ));
+        //configuration.getAttribute( ILaunchAttributes.ARGUMENTS, ILaunchAttributes.EMPTY );
       fullArguments=arguments+" "+forcedArguments; //$NON-NLS-1$
     } catch( CoreException ce ) {
       HaskellUIPlugin.log( UITexts.error_read_configuration, ce );

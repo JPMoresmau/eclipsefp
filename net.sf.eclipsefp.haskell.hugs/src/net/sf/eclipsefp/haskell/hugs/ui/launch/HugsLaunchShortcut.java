@@ -1,7 +1,7 @@
 //Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.hugs.ui.launch;
 
-import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.debug.ui.internal.launch.InteractiveLaunchShortcut;
 
 /** <p>launch shortcut for running GHCi.</p>

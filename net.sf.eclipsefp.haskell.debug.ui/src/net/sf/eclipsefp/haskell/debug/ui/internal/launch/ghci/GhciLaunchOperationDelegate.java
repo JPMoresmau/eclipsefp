@@ -11,7 +11,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.debug.ui.internal.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import net.sf.eclipsefp.haskell.ghccompiler.core.Util;
 import org.eclipse.core.resources.IFile;

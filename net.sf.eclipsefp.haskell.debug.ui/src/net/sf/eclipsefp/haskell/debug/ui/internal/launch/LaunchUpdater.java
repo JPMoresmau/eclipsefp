@@ -19,14 +19,14 @@ public class LaunchUpdater implements CabalFileChangeListener {
 
   public void cabalFileChanged( final IFile cabalF ) {
     try {
-      final ClassLoader cl=getClass().getClassLoader();
+     // final ClassLoader cl=getClass().getClassLoader();
      String projectName=cabalF.getProject().getName();
      for(ILaunchConfiguration c:LaunchOperation.getConfigurationsForProject(LaunchOperation.getConfigType( InteractiveLaunchOperation.INTERACTIVE_CONFIG_TYPE ), projectName )){
        String delegateClass=InteractiveLaunchOperation.getDelegate( c );
        if (delegateClass!=null){
          try {
 
-           IInteractiveLaunchOperationDelegate delegate=(IInteractiveLaunchOperationDelegate)cl.loadClass( delegateClass).newInstance();
+           //IInteractiveLaunchOperationDelegate delegate=(IInteractiveLaunchOperationDelegate)cl.loadClass( delegateClass).newInstance();
 
            List<?> fileNames=c.getAttribute( ILaunchAttributes.FILES, new ArrayList<Object>() );
            //IFile[] files=new IFile[fileNames.size()];
@@ -40,9 +40,9 @@ public class LaunchUpdater implements CabalFileChangeListener {
            }
 
            if (files.size()>0){
-             String args=InteractiveLaunchOperation.getArguments(delegate,cabalF.getProject(),files.toArray( new IFile[files.size()]));
+             //String args=InteractiveLaunchOperation.getArguments(delegate,cabalF.getProject(),files.toArray( new IFile[files.size()]));
              ILaunchConfigurationWorkingCopy wc=c.getWorkingCopy();
-             wc.setAttribute( ILaunchAttributes.ARGUMENTS,args);
+             //wc.setAttribute( ILaunchAttributes.ARGUMENTS,args);
              wc.doSave();
            } else {
              // we do not find any of the files to launch: remove the configuration

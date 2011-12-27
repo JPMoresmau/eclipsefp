@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -61,8 +62,8 @@ public class ResourceUtil {
     return false;
   }
 
-  static List<IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) throws CoreException {
-    ArrayList<IFile> result = new ArrayList<IFile>();
+  static Map<String,IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) throws CoreException {
+    Map<String,IFile> result = new HashMap<String, IFile>();
     if (project.hasNature( HaskellNature.NATURE_ID ) ){
       /*ScionInstance instance=ScionPlugin.getScionInstance( project );
       if (instance!=null){
@@ -82,7 +83,7 @@ public class ResourceUtil {
           if (c.isBuildable() &&  c.getType().equals( type )){
             IFile f = getExecutableLocation( project, c.getName() );
             if (f.exists()){
-              result.add( f );
+              result.put(c.getName(), f );
             }
           }
         }
@@ -104,13 +105,13 @@ public class ResourceUtil {
    * project has the Haskell nature.
    */
 
-	public static List<IFile> getProjectExecutables( final IProject project)
+	public static Map<String,IFile> getProjectExecutables( final IProject project)
 	  throws CoreException
 	{
 	  return getExecutablesOfComponentType( project, ComponentType.EXECUTABLE );
 	}
 
-	public static List<IFile> getProjectTestSuites( final IProject project)
+	public static Map<String,IFile> getProjectTestSuites( final IProject project)
 	  throws CoreException
   {
     return getExecutablesOfComponentType( project, ComponentType.TESTSUITE );
@@ -145,14 +146,14 @@ public class ResourceUtil {
 	 */
 	public static IFile[] getProjectExecutablesArray( final IProject project )
       throws CoreException {
-	  List<IFile> executables = getProjectExecutables(project);
-    return executables.toArray( new IFile[ executables.size() ] );
+	  Map<String,IFile> executables = getProjectExecutables(project);
+    return executables.values().toArray( new IFile[ executables.size() ] );
   }
 
 	public static IFile[] getProjectTestSuitesArray( final IProject project )
       throws CoreException {
-    List<IFile> executables = getProjectTestSuites( project );
-    return executables.toArray( new IFile[ executables.size() ] );
+	  Map<String,IFile> executables = getProjectTestSuites( project );
+    return executables.values().toArray( new IFile[ executables.size() ] );
   }
 
 	/**

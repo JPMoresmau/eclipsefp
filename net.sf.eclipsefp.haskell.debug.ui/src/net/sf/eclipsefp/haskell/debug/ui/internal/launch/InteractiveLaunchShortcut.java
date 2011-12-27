@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

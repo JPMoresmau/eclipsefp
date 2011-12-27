@@ -1,7 +1,7 @@
 // Copyright (c) 2003-2008 by Leif Frenzel. All rights reserved.
 // This code is made available under the terms of the Eclipse Public License,
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
-package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
+package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

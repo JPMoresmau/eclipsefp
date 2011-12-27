@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
@@ -36,7 +37,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
   if( resource != null ) {
     IProject project = resource.getProject();
     if( project.hasNature( HaskellNature.NATURE_ID ) ) {
-      List<IFile> executables=ResourceUtil.getProjectExecutables( project );
+      Map<String,IFile> executables=ResourceUtil.getProjectExecutables( project );
       ILaunchConfiguration configuration = getConfiguration( project,executables,stanza );
       if( configuration != null ) {
         configuration.launch( ILaunchManager.RUN_MODE, monitor );
@@ -46,13 +47,13 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
 }
 
   protected ILaunchConfiguration getConfiguration( final IProject project,
-      final List<IFile> executables ,final PackageDescriptionStanza stanza) throws CoreException {
+      final Map<String,IFile> executables ,final PackageDescriptionStanza stanza) throws CoreException {
     List<ILaunchConfiguration> configurations = findConfiguration( project,getConfigTypeName(),stanza );
     // match existing configurations with executables
     Set<String> exesExisting=new HashSet<String> ();
     for (Iterator<ILaunchConfiguration> it=configurations.iterator();it.hasNext();){
         ILaunchConfiguration c=it.next();
-        String exe=c.getAttribute( ILaunchAttributes.EXECUTABLE, "" ); //$NON-NLS-1$
+        String exe=getExePath( c );
         if (exe!=null && exe.length()>0 && new File(exe).exists()){
            exesExisting.add( exe );
         } else {
@@ -60,18 +61,20 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
         }
     }
     ILaunchConfiguration result = null;
-    IFile exe=null;
+    /*IFile exe=null;
     if (stanza!=null){
       exe=ResourceUtil.getExecutableLocation( project, stanza.getName() );
-    }
+    }*/
 
-    for( IFile f: executables ) {
-      String exe1=getExePath( f );
-      if(exe==null || exe.getLocation().toOSString().equals( exe1 )){
-        if (!exesExisting.contains(exe1)){
-          configurations.add( createConfiguration( f,exe1 ) );
+
+    for( String s:executables.keySet() ) {
+      String exe1=getExePath( executables.get( s ) );
+      if (!exesExisting.contains(exe1)){
+        if (stanza==null || stanza.equals(s)){
+          configurations.add( createConfiguration(project, s ) );
         }
       }
+
     }
 
     int count = configurations.size();
@@ -89,16 +92,15 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     return result;
   }
 
-  private ILaunchConfiguration createConfiguration( final IFile executable,final String exePath )
+  private ILaunchConfiguration createConfiguration(final IProject proj, final String stanza )
       throws CoreException {
     ILaunchConfigurationType configType = getConfigType();
-    String id = createConfigId( executable );
+    String id = createConfigId( stanza );
     ILaunchConfigurationWorkingCopy wc = configType.newInstance( null, id );
-    wc.setAttribute( ILaunchAttributes.EXECUTABLE, exePath );
-    wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, executable
-        .getProject().getLocation().toOSString() );
-    String projectName = ILaunchAttributes.PROJECT_NAME;
-    wc.setAttribute( projectName, executable.getProject().getName() );
+    wc.setAttribute( ILaunchAttributes.STANZA, stanza );
+   // wc.setAttribute( ILaunchAttributes.EXECUTABLE, exePath );
+    wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, proj.getLocation().toOSString() );
+    wc.setAttribute( ILaunchAttributes.PROJECT_NAME, proj.getName() );
     wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
     return wc.doSave();
   }
@@ -127,27 +129,31 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     result = new ArrayList<ILaunchConfiguration>( configurations.length );
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
-      // String exePath = getExePath( file );
-      String projectName = project.getName();
-      if (exe!=null){
-        if (getExePath( configuration ).equals( exe.getLocation().toOSString() )){
-          result.add( configuration );
-        }
-      } else {
-        if( getExePath( configuration ).startsWith(
-            project.getLocation().toOSString() )
-            && getProjectName( configuration ).equals( projectName ) ) {
-          result.add( configuration );
-        }
+      String thisProject=configuration.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );
+      if (project.getName().equals( thisProject )){
+          // String exePath = getExePath( file );
+          String projectName = project.getName();
+          if (exe!=null){
+            if (getExePath( configuration ).equals( exe.getLocation().toOSString() )){
+              result.add( configuration );
+            }
+          } else {
+            if( getExePath( configuration ).startsWith(
+                project.getLocation().toOSString() )
+                && getProjectName( configuration ).equals( projectName ) ) {
+              result.add( configuration );
+            }
+          }
       }
     }
     return result;
   }
 
-  protected String createConfigId( final IFile file ) {
-    String name = file.getName();
+  @Override
+  protected String createConfigId( final String stanza ) {
+    //String name = file.getName();
     // FIXME: Remove when Galileo is no longer supported.
     ILaunchManager mgr = getLaunchManager();
-    return ILaunchManagerCompat.generateLaunchConfigurationName( mgr, name );
+    return ILaunchManagerCompat.generateLaunchConfigurationName( mgr, stanza );
   }
 }

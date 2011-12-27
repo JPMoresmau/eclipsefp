@@ -7,6 +7,13 @@
             class="net.sf.eclipsefp.haskell.hugs.core.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+      <extension
+         point="net.sf.eclipsefp.haskell.debug.core.interactiveDelegates">
+      <delegate
+            class="net.sf.eclipsefp.haskell.hugs.ui.launch.HugsLaunchOperationDelegate"
+            id="net.sf.eclipsefp.haskell.hugs.ui.launch.hugs">
+      </delegate>
+   </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page name="%hugsPP_name"

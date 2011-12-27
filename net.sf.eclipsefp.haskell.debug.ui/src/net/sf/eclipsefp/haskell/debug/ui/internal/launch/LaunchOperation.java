@@ -6,9 +6,12 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -81,9 +84,19 @@ public abstract class LaunchOperation {
     return configuration.getAttribute( att, ILaunchAttributes.EMPTY );
   }
 
-  static String getExePath( final ILaunchConfiguration config ) throws CoreException {
+  public static String getExePath( final ILaunchConfiguration config ) throws CoreException {
     String att = ILaunchAttributes.EXECUTABLE;
-    return config.getAttribute( att, ILaunchAttributes.EMPTY );
+    String exeP=config.getAttribute( att, ILaunchAttributes.EMPTY );
+    if (exeP.length()==0){
+      String stanza=config.getAttribute( ILaunchAttributes.STANZA, ILaunchAttributes.EMPTY );
+      if (stanza.length()>0){
+        IFile f=ResourceUtil.getExecutableLocation( AbstractHaskellLaunchDelegate.getProject( config ), stanza );
+        if (f!=null){
+          exeP=f.getLocation().toOSString();
+        }
+      }
+    }
+    return exeP;
   }
 
   ILaunchConfiguration choose( final List<ILaunchConfiguration> configs ) {

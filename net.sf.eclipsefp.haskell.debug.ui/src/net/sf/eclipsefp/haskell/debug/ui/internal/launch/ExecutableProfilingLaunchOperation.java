@@ -9,7 +9,6 @@ import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,9 +37,9 @@ class ExecutableProfilingLaunchOperation extends ExecutableOrTestSuiteLaunchOper
   }
 
   @Override
-  protected String createConfigId( final IFile file ) {
-    String name = file.getName();
-    name = NLS.bind( UITexts.profiling_name, name );
+  protected String createConfigId( final String stanza ) {
+   // String name = file.getName();
+    String name = NLS.bind( UITexts.profiling_name, stanza );
     // FIXME: Remove when Galileo is no longer supported.
     ILaunchManager mgr = getLaunchManager();
     return ILaunchManagerCompat.generateLaunchConfigurationName(mgr, name);

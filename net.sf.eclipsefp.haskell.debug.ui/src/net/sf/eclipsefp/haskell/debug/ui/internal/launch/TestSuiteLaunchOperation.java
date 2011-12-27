@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -34,8 +35,8 @@ class TestSuiteLaunchOperation extends ExecutableOrTestSuiteLaunchOperation impl
   if( resource != null ) {
     IProject project = resource.getProject();
     if( project.hasNature( HaskellNature.NATURE_ID ) ) {
-      List<IFile> executables=ResourceUtil.getProjectTestSuites( project );
-      ILaunchConfiguration configuration = getConfiguration( project,executables,stanza );
+      Map<String,IFile> testSuites=ResourceUtil.getProjectTestSuites( project );
+      ILaunchConfiguration configuration = getConfiguration( project,testSuites,stanza );
       if( configuration != null ) {
         configuration.launch( ILaunchManager.RUN_MODE, monitor );
       }

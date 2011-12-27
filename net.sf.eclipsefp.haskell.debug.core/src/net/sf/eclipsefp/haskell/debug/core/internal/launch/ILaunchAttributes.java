@@ -7,6 +7,8 @@ package net.sf.eclipsefp.haskell.debug.core.internal.launch;
   * attributes.</p>
   *
   * @author Leif Frenzel
+  * @author Alejandro Serrano
+  *
   */
 public interface ILaunchAttributes {
 
@@ -20,6 +22,8 @@ public interface ILaunchAttributes {
   String PROJECT_NAME      = "PROJECT_NAME"; //$NON-NLS-1$
   String FILES             = "FILES"; //$NON-NLS-1$
   String DELEGATE          = "DELEGATE"; //$NON-NLS-1$
+  String STANZA            = "STANZA"; //$NON-NLS-1$
+  String RTS_ARGUMENTS     = "RTS_ARGUMENTS"; //$NON-NLS-1$
 
   String SYNC_STREAMS      = "SYNC_STREAMS"; //$NON-NLS-1$
   String RELOAD_COMMAND    = "RELOAD_COMMAND";//$NON-NLS-1$

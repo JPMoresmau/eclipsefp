@@ -9,6 +9,7 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IContainer;
@@ -109,12 +110,12 @@ public class InteractiveLaunchOperation extends LaunchOperation {
 
 
     ILaunchConfigurationWorkingCopy wc = configType.newInstance( null, id );
-    String exePath = delegate.getExecutable();
-    wc.setAttribute( ILaunchAttributes.EXECUTABLE, exePath );
+    //String exePath = delegate.getExecutable();
+    //wc.setAttribute( ILaunchAttributes.EXECUTABLE, exePath );
     String projectLocation = project.getLocation().toOSString();
     wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, projectLocation );
-    wc.setAttribute( ILaunchAttributes.ARGUMENTS,
-                     getArguments(delegate, project, files ) );
+    //wc.setAttribute( ILaunchAttributes.ARGUMENTS,
+    //                 getArguments(delegate, project, files ) );
     wc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
         ILaunchAttributes.EMPTY );
     wc.setAttribute( ILaunchAttributes.DELEGATE, delegate.getClass().getName() );
@@ -127,7 +128,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     String projectName = ILaunchAttributes.PROJECT_NAME;
     wc.setAttribute( projectName, project.getName() );
     wc.setAttribute( FIRST_SELECTED_RESOURCE, resources[ 0 ].getName() );
-    wc.setAttribute( ILaunchAttributes.RELOAD_COMMAND, delegate.getReloadCommand() );
+    //wc.setAttribute( ILaunchAttributes.RELOAD_COMMAND, delegate.getReloadCommand() );
     // by default, reload when saving, that's why interactive sessions are good
     wc.setAttribute( ILaunchAttributes.RELOAD,true);
     return wc.doSave();
@@ -173,12 +174,12 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     return config.getAttribute( ILaunchAttributes.DELEGATE, (String)null );
   }
 
-  public static String getArguments(final IInteractiveLaunchOperationDelegate delegate,final IProject project, final IFile[] files ) {
-    //IHaskellProject hsProject = HaskellProjectManager.get( project );
-    return concatenate( delegate.createArguments( project, files ) );
-  }
+//  public static String getArguments(final IInteractiveLaunchOperationDelegate delegate,final IProject project, final IFile[] files ) {
+//    //IHaskellProject hsProject = HaskellProjectManager.get( project );
+//    return concatenate( delegate.createArguments( project, files ) );
+//  }
 
-  private static String concatenate( final String[] args ) {
+  public static String concatenate( final String[] args ) {
     StringBuffer sb = new StringBuffer();
     if( args.length > 0 ) {
       sb.append( args[ 0 ] );

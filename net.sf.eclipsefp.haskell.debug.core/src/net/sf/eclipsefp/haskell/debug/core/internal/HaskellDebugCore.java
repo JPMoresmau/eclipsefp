@@ -3,7 +3,10 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.core.internal;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -16,6 +19,8 @@ public class HaskellDebugCore extends Plugin {
 
   public static final String ID_HASKELL_DEBUG_MODEL = "net.sf.eclipsefp.haskell.debug"; //$NON-NLS-1$
 
+  public static final String ID_EXT_POINT_INTERACTIVE_DELEGATES = "interactiveDelegates"; //$NON-NLS-1$
+
   // The shared instance
   private static HaskellDebugCore plugin;
 
@@ -27,6 +32,10 @@ public class HaskellDebugCore extends Plugin {
     return getDefault().getBundle().getSymbolicName();
   }
 
+  public IConfigurationElement[] getExtensions(final String key) {
+    IExtensionRegistry registry = Platform.getExtensionRegistry();
+    return registry.getConfigurationElementsFor(getPluginId(), key);
+  }
 
   // interface methods of Activator
   /////////////////////////////////
