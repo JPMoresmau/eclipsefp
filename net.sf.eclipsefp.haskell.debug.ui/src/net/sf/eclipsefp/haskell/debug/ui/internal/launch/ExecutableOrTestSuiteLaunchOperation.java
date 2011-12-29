@@ -70,7 +70,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     for( String s:executables.keySet() ) {
       String exe1=getExePath( executables.get( s ) );
       if (!exesExisting.contains(exe1)){
-        if (stanza==null || stanza.equals(s)){
+        if (stanza==null || stanza.getName().equals(s)){
           configurations.add( createConfiguration(project, s ) );
         }
       }

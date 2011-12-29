@@ -25,7 +25,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * @author Alejandro Serrano
- *
+ * @deprecated
  */
 public class CustomExecutableLaunchDelegate extends
     AbstractHaskellLaunchDelegate {
