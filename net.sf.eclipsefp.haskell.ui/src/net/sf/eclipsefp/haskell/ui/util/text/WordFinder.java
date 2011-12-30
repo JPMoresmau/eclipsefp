@@ -89,7 +89,7 @@ public class WordFinder {
                 public void handleThing( final String thing ) {
                   char haddockType = ' ';
                   String name=fName;
-                  if( thing != null && thing.length() > 0 ) {
+                  if( thing != null && thing.length() > 0 && !"no info".equals(thing) ) {
                     name = thing;
                     if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
                       name="";

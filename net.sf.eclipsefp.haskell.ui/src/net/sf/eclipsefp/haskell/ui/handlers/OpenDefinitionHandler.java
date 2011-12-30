@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
@@ -14,6 +15,7 @@ import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.SearchPathsPP;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -124,6 +126,20 @@ public class OpenDefinitionHandler extends AbstractHandler {
                     }
                   }.schedule();
                   return;
+                }
+              }
+              if (module==null){
+                ImportsManager mgr = new ImportsManager( file,  haskellEditor.getDocument() );
+                Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
+                for ( String s : decls.keySet() ) {
+                  ImportsManager.Imported i=decls.get(s);
+                  if (i.getDocumented().getName().equals( name )){
+                    module=i.getAnimport().getName();
+                    if (haddockType==' '){
+                      haddockType='t'; // assume types since not resolved
+                    }
+                    break;
+                  }
                 }
               }
 

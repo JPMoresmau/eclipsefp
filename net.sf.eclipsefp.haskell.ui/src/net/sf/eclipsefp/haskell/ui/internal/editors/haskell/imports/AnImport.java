@@ -156,6 +156,7 @@ public class AnImport {
         }
       }
     } catch( Exception e ) {
+      e.printStackTrace();
       r.clear();
     }
     return r;

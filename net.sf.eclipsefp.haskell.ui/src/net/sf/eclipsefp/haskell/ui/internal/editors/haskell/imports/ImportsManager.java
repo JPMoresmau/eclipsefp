@@ -113,6 +113,16 @@ public class ImportsManager {
   }
 
   public Map<String, Documented> getDeclarations() {
+    HashMap<String, Documented> r = new HashMap<String, Documented>();
+    Map<String, Imported> si=getImportedDeclarations();
+    for (String i:si.keySet()) {
+      r.put(i,si.get( i ).getDocumented()  );
+    }
+
+    return r;
+  }
+
+  public Map<String, Imported> getImportedDeclarations() {
     ArrayList<AnImport> imports = parseImports();
     // Add Prelude import
     boolean hasPrelude = false;
@@ -129,9 +139,12 @@ public class ImportsManager {
     String meName = ResourceUtil.getModuleName( file );
     imports.add( AnImport.createMe( meName ) );
 
-    HashMap<String, Documented> r = new HashMap<String, Documented>();
+    HashMap<String, Imported> r = new HashMap<String, Imported>();
     for (AnImport i : imports) {
-      r.putAll( i.getDeclarations( file.getProject(), file, doc ) );
+      Map<String, Documented> ir=i.getDeclarations( file.getProject(), file, doc );
+      for (String s:ir.keySet()){
+        r.put(s,new Imported( ir.get( s ), i )  );
+      }
     }
 
     return r;
@@ -189,5 +202,28 @@ public class ImportsManager {
       return null;
     }
     return null;
+  }
+
+  public class Imported {
+      private final Documented documented;
+      private final AnImport animport;
+
+
+
+      public Imported( final Documented documented, final AnImport animport ) {
+        super();
+        this.documented = documented;
+        this.animport = animport;
+      }
+
+      public Documented getDocumented() {
+        return documented;
+      }
+
+      public AnImport getAnimport() {
+        return animport;
+      }
+
+
   }
 }
