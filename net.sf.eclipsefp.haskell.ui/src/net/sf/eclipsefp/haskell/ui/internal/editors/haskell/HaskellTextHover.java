@@ -16,11 +16,12 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
-class HaskellTextHover extends DefaultTextHover {
+public class HaskellTextHover extends DefaultTextHover {
 
   private final HaskellEditor editor;
 
@@ -41,7 +42,7 @@ class HaskellTextHover extends DefaultTextHover {
                               final IRegion hoverRegion ) {
     // TODO TtC this method does not get called when hovering over a string literal
     // which leads to potential problem annotation hovers not appearing
-	  String hoverInfo = computeProblemInfo( textViewer, hoverRegion );
+	  String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess );
 	  if (hoverInfo != null) {
 	    return hoverInfo;
 	  }
@@ -49,7 +50,7 @@ class HaskellTextHover extends DefaultTextHover {
   }
 
   @SuppressWarnings ( "unchecked" )
-  private String computeProblemInfo( final ITextViewer textViewer, final IRegion hoverRegion ) {
+  public static String computeProblemInfo( final ITextViewer textViewer, final IRegion hoverRegion,final IAnnotationAccessExtension  fMarkerAnnotationAccess) {
     if (textViewer instanceof ISourceViewer) {
       IAnnotationModel annotationModel = ((ISourceViewer)textViewer).getAnnotationModel();
       Iterator<Annotation> i = annotationModel.getAnnotationIterator();
@@ -68,7 +69,7 @@ class HaskellTextHover extends DefaultTextHover {
     return null;
   }
 
-  private String computeThingAtPoint( final ITextViewer textViewer, final IRegion hoverRegion  ) {
+  protected String computeThingAtPoint( final ITextViewer textViewer, final IRegion hoverRegion  ) {
     IFile file = editor.findFile();
     if (file != null) {
       try {

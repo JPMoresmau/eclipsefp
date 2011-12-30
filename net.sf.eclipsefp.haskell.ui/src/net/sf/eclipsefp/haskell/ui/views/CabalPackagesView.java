@@ -317,12 +317,14 @@ public class CabalPackagesView extends ViewPart {
     BrowserPlugin.getDefault().addDatabaseLoadedListener( new IDatabaseLoadedListener() {
 
       public void databaseUnloaded( final BrowserEvent e ) {
-        getSite().getShell().getDisplay().syncExec( new Runnable() {
+        if (getSite()!=null && getSite().getShell()!=null && getSite().getShell().getDisplay()!=null){
+          getSite().getShell().getDisplay().syncExec( new Runnable() {
 
-          public void run() {
-            lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
-          }
-        });
+            public void run() {
+              lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
+            }
+          });
+        }
       }
 
       public void databaseLoaded( final DatabaseLoadedEvent e ) {

@@ -12,11 +12,13 @@ Necessary Haskell packages:
 Fixes:
 	- there is now an icon in the Outline of the Cabal editor for source-repository entries
 	- a project that used its root as a source folder showed itself recursively in project explorer
+	- haskell and cabal editors show readonly/writable, overwrite/insert, line and column information like other text editors
 
 Features:
 	- autodetect buildwrapper and scion-browser if they're in the PATH
 	- preference to turn on/off the logging of buildwrapper JSON response in console (default: off)
 	- comment/uncomment lines on cabal sources
+	- run executables and test suites from project explorer cabal stanzas
 
 Internal:
 

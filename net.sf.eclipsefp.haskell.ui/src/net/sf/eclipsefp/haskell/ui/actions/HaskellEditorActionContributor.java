@@ -53,5 +53,7 @@ public class HaskellEditorActionContributor extends BasicTextEditorActionContrib
                                       getAction(textEditor, HaskellEditor.HADDOCK_DOCUMENT_PREVIOUS_ACTION));
     actionBars.setGlobalActionHandler(IHaskellActionConstants.HADDOCK_BLOCK_FOLLOWING,
                                       getAction(textEditor, HaskellEditor.HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION));
+
+    super.setActiveEditor( editorPart );
   }
 }

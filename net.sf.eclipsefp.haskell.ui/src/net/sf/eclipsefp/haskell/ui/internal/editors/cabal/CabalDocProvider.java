@@ -3,11 +3,16 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text.CabalPartitionScanner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellAnnotationModel;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 /** <p>document provider for <code>.cabal</code> files.</p>
@@ -47,5 +52,21 @@ public class CabalDocProvider extends FileDocumentProvider {
   private IDocumentPartitioner createDocumentPartitioner() {
     IPartitionTokenScanner partitionScanner = new CabalPartitionScanner();
     return new FastPartitioner( partitionScanner, TOKEN_TYPES );
+  }
+
+  @Override
+  protected IAnnotationModel createAnnotationModel( final Object element )
+                                                          throws CoreException {
+    IAnnotationModel result = null;
+    if( element instanceof IFile ) {
+      result = new HaskellAnnotationModel( ( IResource )element );
+    } else if( element instanceof IFileEditorInput ) {
+      IFileEditorInput editorInput = ( IFileEditorInput )element;
+      IFile file = editorInput.getFile();
+      result = new HaskellAnnotationModel( file );
+    } else {
+      result = super.createAnnotationModel( element );
+    }
+    return result;
   }
 }

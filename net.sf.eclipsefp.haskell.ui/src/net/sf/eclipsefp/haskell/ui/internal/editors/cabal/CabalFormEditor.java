@@ -15,12 +15,15 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.texteditor.IStatusField;
+import org.eclipse.ui.texteditor.ITextEditorExtension;
 
 /** <p>an editor for Cabal package description files.</p>
   *
@@ -28,7 +31,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
   *
   * @author Leif Frenzel
   */
-public class CabalFormEditor extends FormEditor {
+public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
   public static final String ID="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor";
   private CabalEditor cabalSourceEditor;
   private PackageDescription packageDescription;
@@ -104,6 +107,7 @@ public class CabalFormEditor extends FormEditor {
     }
   }
 
+
   @Override
   public void doSave( final IProgressMonitor monitor ) {
     if( cabalSourceEditor != null ) {
@@ -166,5 +170,30 @@ public class CabalFormEditor extends FormEditor {
       result = cabalSourceEditor.getAdapter( adapter );
     }
     return result;
+  }
+
+   public void addRulerContextMenuListener( final IMenuListener paramIMenuListener ) {
+     if (cabalSourceEditor!=null){
+       cabalSourceEditor.addRulerContextMenuListener( paramIMenuListener );
+     }
+  }
+
+   public void removeRulerContextMenuListener( final IMenuListener paramIMenuListener ) {
+     if (cabalSourceEditor!=null){
+       cabalSourceEditor.removeRulerContextMenuListener( paramIMenuListener );
+     }
+  }
+
+   public boolean isEditorInputReadOnly() {
+     if (cabalSourceEditor!=null){
+       return cabalSourceEditor.isEditorInputReadOnly();
+     }
+    return false;
+  }
+
+   public void setStatusField( final IStatusField paramIStatusField, final String paramString ) {
+     if (cabalSourceEditor!=null){
+       cabalSourceEditor.setStatusField( paramIStatusField, paramString );
+     }
   }
 }
