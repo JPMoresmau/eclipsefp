@@ -115,6 +115,10 @@ public class Location {
 	public int getLength(IDocument document) throws BadLocationException {
 		return getEndOffset(document) - getStartOffset(document);
 	}
+	
+	public String getContents(IDocument document) throws BadLocationException {
+		return document.get(getStartOffset(document),getEndOffset(document));
+	}
 
 	public String getFileName() {
 		return fileName;

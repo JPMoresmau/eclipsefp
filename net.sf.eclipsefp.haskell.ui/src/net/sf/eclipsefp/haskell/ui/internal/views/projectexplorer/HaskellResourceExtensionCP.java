@@ -77,7 +77,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         if( FileUtil.hasHaskellExtension( f ) && ResourceUtil.isInHaskellProject( f )) {
           BWFacade si = BuildWrapperPlugin.getFacade( f.getProject() );//ScionPlugin.getScionInstance( f );
           if (si != null) {
-            List<OutlineDef> outlineDefs = si.outline( f );
+            List<OutlineDef> outlineDefs = si.outline( f ).getOutlineDefs();
             //OutlineCP cp = new OutlineCP();
             //cp.inputChanged( null, null, outlineDefs );
             for( OutlineDef def : outlineDefs ) {

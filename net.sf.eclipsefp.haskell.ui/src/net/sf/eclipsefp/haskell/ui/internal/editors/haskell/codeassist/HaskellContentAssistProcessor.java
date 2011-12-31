@@ -22,12 +22,14 @@ import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
@@ -365,15 +367,15 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  String prefix = haskellCompletions.getPointedQualifier();
 	  int plength = prefix.length();
 	  // Reuse the general "imports" code, getting out the qualified names
-	  AnImport imp = new AnImport( moduleName, null, true, false, null );
-	  Map<String, Documented> decls = imp.getDeclarations( theFile.getProject(), theFile, doc );
+	  AnImport imp = new AnImport( new ImportDef(moduleName, null, true, false, null ),false);
+	  Map<String, FileDocumented> decls = imp.getDeclarations( theFile.getProject(), theFile, doc );
 
 	  ArrayList<String> names = new ArrayList<String>();
-	  for (Map.Entry<String, Documented> decl : decls.entrySet()) {
+	  for (Map.Entry<String, FileDocumented> decl : decls.entrySet()) {
 	    String s = decl.getKey();
 	    if (s.indexOf( '.' ) == -1 && s.startsWith( prefix )) {
         // Don't add qualified imports
-        Documented d = decl.getValue();
+        Documented d = decl.getValue().getDocumented();
         if (!(d instanceof Instance) && !(d instanceof TypeClass)) {
           names.add( s );
         }
@@ -384,7 +386,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  ICompletionProposal[] r = new ICompletionProposal[names.size()];
 	  for (int i = 0; i < names.size(); i++) {
 	    String s = names.get( i );
-	    Documented d = decls.get( s );
+	    Documented d = decls.get( s ).getDocumented();
 	    r[i] = new CompletionProposal( s, offset - plength, plength, s.length(),
           d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.getImageForDeclaration( ((Declaration)d).getType() ),
           s, null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );

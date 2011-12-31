@@ -128,17 +128,25 @@ public class OpenDefinitionHandler extends AbstractHandler {
                   return;
                 }
               }
+
               if (module==null){
                 ImportsManager mgr = new ImportsManager( file,  haskellEditor.getDocument() );
                 Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
                 for ( String s : decls.keySet() ) {
                   ImportsManager.Imported i=decls.get(s);
-                  if (i.getDocumented().getName().equals( name )){
-                    module=i.getAnimport().getName();
+                  if (i.getDocumented().getDocumented().getName().equals( name )){
+                    //
+                    IFile fi=i.getDocumented().getFile();
+                    if (fi!=null){
+                      openFile( haskellEditor
+                          .getEditorSite().getPage(), fi, shortName );
+                      return;
+                    }
+                    module=i.getAnimport().getImportDef().getModule();
                     if (haddockType==' '){
                       haddockType='t'; // assume types since not resolved
                     }
-                    break;
+                    //break;
                   }
                 }
               }

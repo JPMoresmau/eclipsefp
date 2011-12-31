@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
@@ -133,8 +134,8 @@ public class JobFacade  {
 	        protected IStatus run(IProgressMonitor monitor) {
 	          try {
 	            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	            List<OutlineDef> defs=realFacade.outline(f);
-	            handler.handleOutline(defs);
+	            OutlineResult or=realFacade.outline(f);
+	            handler.handleOutline(or.getOutlineDefs());
 	          } finally {
 	            monitor.done();
 	          }
@@ -163,7 +164,7 @@ public class JobFacade  {
 	          		
 	          //long t2=System.currentTimeMillis();
 	          
-	          List<OutlineDef> defs=realFacade.outline(file);
+	          List<OutlineDef> defs=realFacade.outline(file).getOutlineDefs();
 	          //long t3=System.currentTimeMillis();
 	          if (defs.size()>0 && buildOK){
 	        	  handler.handleOutline(defs); // avoid removing all outline on error

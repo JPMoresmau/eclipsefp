@@ -22,6 +22,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
@@ -313,28 +314,38 @@ public class BWFacade {
 		return packageDB;
 	}
 	
-	public List<OutlineDef> outline(IFile file){
+	public OutlineResult outline(IFile file){
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("outline");
 		command.add("--file="+path);
 		JSONArray arr=run(command,ARRAY);
-		List<OutlineDef> cps=new ArrayList<OutlineDef>();
+		OutlineResult or=new OutlineResult();
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
 				parseNotes(notes);
 			}
-			JSONArray objs=arr.optJSONArray(0);
-			for (int a=0;a<objs.length();a++){
+			JSONObject obj=arr.optJSONObject(0);
+			if (obj!=null){
 				try {
-					cps.add(new OutlineDef(file,objs.getJSONObject(a)));
+					or=new OutlineResult(file, obj);
 				} catch (JSONException je){
 					BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
 				}
+			} else {
+				// old version pre 0.2.3
+				JSONArray objs=arr.optJSONArray(0);
+				for (int a=0;a<objs.length();a++){
+					try {
+						or.getOutlineDefs().add(new OutlineDef(file,objs.getJSONObject(a)));
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
+					}
+				}
 			}
 		}
-		return cps;
+		return or;
 	}
 	
 	public List<TokenDef> tokenTypes(IFile file){

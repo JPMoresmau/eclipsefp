@@ -9,11 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 
 /**
@@ -35,78 +38,86 @@ public class ImportsManager {
 
   public ArrayList<AnImport> parseImports() {
     ArrayList<AnImport> r = new ArrayList<AnImport>();
-    int lines = doc.getNumberOfLines();
-    for (int line = 0; line < lines; line++) {
-      try {
-        IRegion reg = doc.getLineInformation( line );
-        String contents = doc.get( reg.getOffset(), reg.getLength() );
-
-        // Take blanks appart
-        int realInit = reg.getOffset();
-        int realLength = reg.getLength();
-        for (int i = 0; i < contents.length(); i++) {
-          if (Character.isWhitespace( i )) {
-            realInit++;
-            realLength--;
-          } else {
-            break;
-          }
-        }
-
-        // Get contents another time
-        reg = new Region( realInit, realLength );
-        contents = doc.get( reg.getOffset(), reg.getLength() );
-        if (contents.startsWith( "import" )) {
-          // We are in an import declaration
-          String[] words = contents.split( "[ \t\n\r]+" );
-          if (words.length > 1) {
-            // We are in an import with more than "import" on it
-            int namePlace = 1;
-            boolean isQualified = false;
-            // See if we have a "qualified"
-            if (words[1].equals("qualified")) {
-              namePlace = 2;
-              isQualified = true;
-            }
-            // Take the name of the import
-            String name = words[namePlace];
-            String items = null;
-            String qualifiedName = null;
-            boolean isHiding = false;
-            // See if we have more things
-            if (words.length > namePlace + 1) {
-              int nextThings = namePlace + 1;
-              // Maybe we have a "as" clause
-              if (words[nextThings].equals("as")) {
-                nextThings++;
-                if (words.length > nextThings) {
-                  qualifiedName = words[nextThings];
-                  nextThings++;
-                }
-              }
-              // Maybe we have a hiding clause
-              if (words.length > nextThings) {
-                if (words[nextThings].equals("hiding")) {
-                  nextThings++;
-                  isHiding = true;
-                }
-              }
-              // Try to find '(' and ')'
-              int beginPar = contents.indexOf( '(' );
-              if (beginPar != -1) {
-                int endPar = contents.indexOf( ')' );
-                items = contents.substring( beginPar + 1, endPar );
-              }
-            }
-
-            // Create the element
-            AnImport imp = new AnImport( name, reg, items == null, isHiding, isQualified, qualifiedName, items );
-            r.add(imp);
-          }
-        }
-
-      } catch (Exception ex) {
-        // We continue with the next line
+//    int lines = doc.getNumberOfLines();
+//    for (int line = 0; line < lines; line++) {
+//      try {
+//        IRegion reg = doc.getLineInformation( line );
+//        String contents = doc.get( reg.getOffset(), reg.getLength() );
+//
+//        // Take blanks appart
+//        int realInit = reg.getOffset();
+//        int realLength = reg.getLength();
+//        for (int i = 0; i < contents.length(); i++) {
+//          if (Character.isWhitespace( i )) {
+//            realInit++;
+//            realLength--;
+//          } else {
+//            break;
+//          }
+//        }
+//
+//        // Get contents another time
+//        reg = new Region( realInit, realLength );
+//        contents = doc.get( reg.getOffset(), reg.getLength() );
+//        if (contents.startsWith( "import" )) {
+//          // We are in an import declaration
+//          String[] words = contents.split( "[ \t\n\r]+" );
+//          if (words.length > 1) {
+//            // We are in an import with more than "import" on it
+//            int namePlace = 1;
+//            boolean isQualified = false;
+//            // See if we have a "qualified"
+//            if (words[1].equals("qualified")) {
+//              namePlace = 2;
+//              isQualified = true;
+//            }
+//            // Take the name of the import
+//            String name = words[namePlace];
+//            String items = null;
+//            String qualifiedName = null;
+//            boolean isHiding = false;
+//            // See if we have more things
+//            if (words.length > namePlace + 1) {
+//              int nextThings = namePlace + 1;
+//              // Maybe we have a "as" clause
+//              if (words[nextThings].equals("as")) {
+//                nextThings++;
+//                if (words.length > nextThings) {
+//                  qualifiedName = words[nextThings];
+//                  nextThings++;
+//                }
+//              }
+//              // Maybe we have a hiding clause
+//              if (words.length > nextThings) {
+//                if (words[nextThings].equals("hiding")) {
+//                  nextThings++;
+//                  isHiding = true;
+//                }
+//              }
+//              // Try to find '(' and ')'
+//              int beginPar = contents.indexOf( '(' );
+//              if (beginPar != -1) {
+//                int endPar = contents.indexOf( ')' );
+//                items = contents.substring( beginPar + 1, endPar );
+//              }
+//            }
+//
+//            // Create the element
+//            AnImport imp = new AnImport( name, reg, items == null, isHiding, isQualified, qualifiedName, items );
+//            r.add(imp);
+//          }
+//        }
+//
+//      } catch (Exception ex) {
+//        // We continue with the next line
+//      }
+//    }
+    BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+    if (f!=null){
+      OutlineResult or=f.outline( file );
+      for (ImportDef id:or.getImportDefs()){
+        AnImport imp = new AnImport( id,false );
+        r.add(imp);
       }
     }
     return r;
@@ -116,7 +127,7 @@ public class ImportsManager {
     HashMap<String, Documented> r = new HashMap<String, Documented>();
     Map<String, Imported> si=getImportedDeclarations();
     for (String i:si.keySet()) {
-      r.put(i,si.get( i ).getDocumented()  );
+      r.put(i,si.get( i ).getDocumented().getDocumented()  );
     }
 
     return r;
@@ -127,13 +138,13 @@ public class ImportsManager {
     // Add Prelude import
     boolean hasPrelude = false;
     for (AnImport i : imports) {
-      if (i.getName().equals( "Prelude" )) {
+      if (i.getImportDef().getModule().equals( "Prelude" )) {
         hasPrelude = true;
         break;
       }
     }
     if (!hasPrelude) {
-      imports.add( new AnImport( "Prelude", null, true, false, null ) );
+      imports.add( new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
     }
     // Add me
     String meName = ResourceUtil.getModuleName( file );
@@ -141,7 +152,7 @@ public class ImportsManager {
 
     HashMap<String, Imported> r = new HashMap<String, Imported>();
     for (AnImport i : imports) {
-      Map<String, Documented> ir=i.getDeclarations( file.getProject(), file, doc );
+      Map<String, FileDocumented> ir=i.getDeclarations( file.getProject(), file, doc );
       for (String s:ir.keySet()){
         r.put(s,new Imported( ir.get( s ), i )  );
       }
@@ -154,14 +165,14 @@ public class ImportsManager {
     AnImport lastImport = null;
     for (AnImport imp : parseImports()) {
       lastImport = imp;
-      String qname = imp.getQualifiedName();
-      if (imp.getName().equals( place ) && ( (qname == null && qualified == null) || (qname != null && qname.equals( qualified )) ) ) {
+      String qname = imp.getImportDef().getAlias();
+      if (imp.getImportDef().getModule().equals( place ) && ( (qname == null && qualified == null) || (qname != null && qname.equals( qualified )) ) ) {
         // Change in this import
-        if (imp.isComplete()) {
+        if (imp.getImportDef().getChildren()==null) {
           // We didn't need to add an import in first place
           return null;
         }
-        if (imp.isHiding()) {
+        if (imp.getImportDef().isHiding()) {
           return imp.removeItem( doc, name, label );
         }
         return imp.addItem( doc, name, label );
@@ -173,7 +184,8 @@ public class ImportsManager {
       // 1. Get line of the last element and find offset
       int line = doc.getLineOfOffset( doc.get().indexOf( "where" ) ) + 1;
       if (lastImport != null) {
-        line = doc.getLineOfOffset( lastImport.getLocation().getOffset() );
+        line=lastImport.getImportDef().getLocation().getEndLine();
+        //line = doc.getLineOfOffset( lastImport.getLocation().getOffset() );
       }
       int offsetToPut = doc.getLineOffset( line ) + doc.getLineLength( line );
       // 2. Create contents
@@ -193,7 +205,8 @@ public class ImportsManager {
   public CompletionProposal removeItemInImport(final String name, final int line, final String label) {
     try {
       for (AnImport imp : parseImports()) {
-        int importLine = doc.getLineOfOffset( imp.getLocation().getOffset() );
+        int importLine =imp.getImportDef().getLocation().getStartLine();
+          //doc.getLineOfOffset( imp.getLocation().getOffset() );
         if (importLine == line) {
           return imp.removeItem( doc, name, label );
         }
@@ -204,19 +217,19 @@ public class ImportsManager {
     return null;
   }
 
-  public class Imported {
-      private final Documented documented;
+  public static class Imported {
+      private final FileDocumented documented;
       private final AnImport animport;
 
 
 
-      public Imported( final Documented documented, final AnImport animport ) {
+      public Imported( final FileDocumented documented, final AnImport animport ) {
         super();
         this.documented = documented;
         this.animport = animport;
       }
 
-      public Documented getDocumented() {
+      public FileDocumented getDocumented() {
         return documented;
       }
 
