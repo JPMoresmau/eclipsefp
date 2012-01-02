@@ -95,9 +95,14 @@ public class OpenDefinitionHandler extends AbstractHandler {
               String module = null;
               String shortName = name;
               int ix = name.lastIndexOf( '.' );
-              if( ix > 0 && ix < name.length() - 1 ) {
-                module = name.substring( 0, ix );
-                shortName = name.substring( ix + 1 );
+              if ('m'==haddockType){
+                shortName=null;
+                module=name;
+              } else {
+                if( ix > 0 && ix < name.length() - 1 ) {
+                  module = name.substring( 0, ix );
+                  shortName = name.substring( ix + 1 );
+                }
               }
               final IProject p = file.getProject();
               final BWFacade f = BuildWrapperPlugin.getFacade( p );
@@ -134,7 +139,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
                 Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
                 for ( String s : decls.keySet() ) {
                   ImportsManager.Imported i=decls.get(s);
-                  if (i.getDocumented().getDocumented().getName().equals( name )){
+                  if (i.getDocumented().getDocumented().getName().equals( name ) || i.getAnimport().getImportDef().getModule().equals( name )){
                     //
                     IFile fi=i.getDocumented().getFile();
                     if (fi!=null){
@@ -210,7 +215,9 @@ public class OpenDefinitionHandler extends AbstractHandler {
           IEditorPart editor = IDE.openEditor( page, file, true );
           if( editor instanceof HaskellEditor ) {
             HaskellEditor hEditor = ( HaskellEditor )editor;
-            openLocation( hEditor, shortName );
+            if (shortName!=null){
+              openLocation( hEditor, shortName );
+            }
           }
         } catch (CoreException ce){
           HaskellUIPlugin.log( ce );
@@ -232,7 +239,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
               // ignore;
             }
           }
-          if (hEditor.hasOutline()){
+          if (shortName!=null && hEditor.hasOutline()){
             new UIJob( UITexts.openDefinition_select_job ) {
 
               @Override

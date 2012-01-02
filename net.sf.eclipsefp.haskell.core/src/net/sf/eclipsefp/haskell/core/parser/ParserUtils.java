@@ -15,7 +15,7 @@ public class ParserUtils {
     int st=offset;
     while (st>=0){
       char c=line.charAt( st );
-      if (Character.isLetter( c ) || Character.isDigit( c ) || c=='_' || c=='\''){
+      if (isHaskellWordChar(c)){
         sb.insert( 0, c );
       } else {
         break;
@@ -25,7 +25,7 @@ public class ParserUtils {
     st=offset+1;
     while (st<line.length()){
       char c=line.charAt( st );
-      if (Character.isLetter( c ) || Character.isDigit( c ) || c=='_' || c=='\''){
+      if (isHaskellWordChar(c)){
         sb.append( c );
       } else {
         break;
@@ -35,5 +35,8 @@ public class ParserUtils {
     return sb.toString();
   }
 
+  private static boolean isHaskellWordChar(final char c){
+    return (Character.isLetter( c ) || Character.isDigit( c ) || c=='_' || c=='\'' || c=='.');
+  }
 
 }

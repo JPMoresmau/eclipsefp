@@ -102,8 +102,19 @@ public class WordFinder {
 
 
                   if( name.length() == 0 ) {
-                    name = WordFinder.findWord( haskellEditor.getDocument(),
-                        textSel.getOffset() );
+                   // name = WordFinder.findWord( haskellEditor.getDocument(),
+                   //     textSel.getOffset() );
+                    try {
+                      IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( textSel.getOffset() );
+                      String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
+                      int off=textSel.getOffset()-r.getOffset();
+                      name= ParserUtils.getHaskellWord(line,off);
+                      if (line.startsWith( "import" ) && name.contains( "." )){
+                        haddockType='m';
+                      }
+                    } catch( final BadLocationException badlox ) {
+                      badlox.printStackTrace();
+                    }
                   }
                   if (name!=null && name.length()>0){
                     handler.handle( new EditorThing(file, name, haddockType ));

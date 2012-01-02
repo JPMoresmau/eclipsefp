@@ -19,6 +19,7 @@ Features:
 	- preference to turn on/off the logging of buildwrapper JSON response in console (default: off)
 	- comment/uncomment lines on cabal sources
 	- run executables and test suites from project explorer cabal stanzas
+	- open declaration should work from type annotations and import statements
 
 Internal:
 
