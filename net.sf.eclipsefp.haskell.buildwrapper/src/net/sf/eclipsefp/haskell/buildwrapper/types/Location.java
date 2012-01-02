@@ -117,7 +117,8 @@ public class Location {
 	}
 	
 	public String getContents(IDocument document) throws BadLocationException {
-		return document.get(getStartOffset(document),getEndOffset(document));
+		int st=getStartOffset(document);
+		return document.get(st,getEndOffset(document)-st);
 	}
 
 	public String getFileName() {

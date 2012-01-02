@@ -282,8 +282,13 @@ public class AnImport {
       //String toSearch = "(" + items.replaceAll("\\s+$", "");
       //int pos = contents.indexOf( toSearch );
       //int newPos = location.getOffset() + pos + toSearch.length();
-      String contentsToAdd = ", " + item;
-      return new CompletionProposal( contentsToAdd, en+1, 0, en +1+ contentsToAdd.length(),
+      int pos2=contents.lastIndexOf( ')' );
+      int insert=en-contents.length()+pos2;
+      String contentsToAdd =  item;
+      if (importDef.getChildren().size()>0){
+        contentsToAdd = ", " + item;
+      }
+      return new CompletionProposal( contentsToAdd, insert, 0, insert+ contentsToAdd.length(),
           ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
@@ -303,9 +308,12 @@ public class AnImport {
         if (contents.charAt( end )==','){
           end++;
         }
+        if (contents.charAt( end )==')' && contents.charAt( ix-1 )!='('){
+          ix--;
+        }
         int st=importDef.getLocation().getStartOffset( doc );
         String newContents=contents.substring( 0,ix )+contents.substring( end );
-        return new CompletionProposal( newContents.toString(), st, newContents.length(),
+        return new CompletionProposal( newContents.toString(), st, contents.length(),
           0, ImageCache.MODULE, label, null, "" );
       }
     } catch (Exception e) {
@@ -313,6 +321,11 @@ public class AnImport {
     }
     return null;
   }
+
+  @Override
+    public String toString() {
+      return importDef.toString();
+    }
 
   public static class FileDocumented {
       private Documented documented;

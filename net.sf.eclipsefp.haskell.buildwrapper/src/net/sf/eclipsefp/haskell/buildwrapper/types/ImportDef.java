@@ -49,6 +49,35 @@ public class ImportDef {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb=new StringBuilder();
+		sb.append("import ");
+		if (qualified){
+			sb.append("qualified ");
+		}
+		sb.append(module);
+		sb.append(" ");
+		if (alias!=null && alias.length()>0){
+			sb.append("as "+alias);
+		}
+		if (hiding){
+			sb.append("hiding ");
+		}
+		if (children!=null){
+			sb.append("(");
+			String sep="";
+			for (ImportSpecDef child:children){
+				sb.append(sep);
+				sep=",";
+				sb.append(child.toString());
+			}
+			sb.append(")");
+		}
+		
+		return sb.toString();
+	}
+	
 	public String getModule() {
 		return module;
 	}

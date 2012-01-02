@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -166,7 +167,7 @@ public class ImportsManager {
     for (AnImport imp : parseImports()) {
       lastImport = imp;
       String qname = imp.getImportDef().getAlias();
-      if (imp.getImportDef().getModule().equals( place ) && ( (qname == null && qualified == null) || (qname != null && qname.equals( qualified )) ) ) {
+      if (imp.getImportDef().getModule().equals( place ) && ( ((qname == null || qname.length()==0) && qualified == null) || (qname != null && qname.equals( qualified )) ) ) {
         // Change in this import
         if (imp.getImportDef().getChildren()==null) {
           // We didn't need to add an import in first place
@@ -198,6 +199,7 @@ public class ImportsManager {
       // 3. Create the proposal
       return new CompletionProposal( contents + "\n", offsetToPut, 0, offsetToPut + contents.length() + 1, ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
+      HaskellUIPlugin.log( e );
       return null;
     }
   }
@@ -207,12 +209,12 @@ public class ImportsManager {
       for (AnImport imp : parseImports()) {
         int importLine =imp.getImportDef().getLocation().getStartLine();
           //doc.getLineOfOffset( imp.getLocation().getOffset() );
-        if (importLine == line) {
+        if (importLine-1 == line) {
           return imp.removeItem( doc, name, label );
         }
       }
     } catch (Exception e) {
-      return null;
+      HaskellUIPlugin.log( e );
     }
     return null;
   }

@@ -36,6 +36,23 @@ public class ImportSpecDef {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb=new StringBuilder();
+		sb.append(name);
+		if (children!=null){
+			sb.append("(");
+			String sep="";
+			for (String child:children){
+				sb.append(sep);
+				sep=",";
+				sb.append(child);
+			}
+			sb.append(")");
+		}
+		return sb.toString();
+	}
+	
 	public String getName() {
 		return name;
 	}

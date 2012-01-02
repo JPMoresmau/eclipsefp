@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -31,7 +32,7 @@ public class RemoveRedundantElementInImportResolution extends MarkerCompletion {
   @Override
   public ICompletionProposal getCompletionProposal( final IMarker marker,
       final IDocument document ) {
-    ImportsManager mgr = new ImportsManager( null, document );
+    ImportsManager mgr = new ImportsManager( (IFile)marker.getResource(), document );
     int line = marker.getAttribute( IMarker.LINE_NUMBER, -1 ) - 1;
     return mgr.removeItemInImport( element, line, getLabel() );
   }
