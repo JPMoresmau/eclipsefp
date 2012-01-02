@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -185,7 +186,7 @@ public class ImportsManager {
       // 1. Get line of the last element and find offset
       int line = doc.getLineOfOffset( doc.get().indexOf( "where" ) ) + 1;
       if (lastImport != null) {
-        line=lastImport.getImportDef().getLocation().getEndLine();
+        line=lastImport.getImportDef().getLocation().getEndLine()-1;
         //line = doc.getLineOfOffset( lastImport.getLocation().getOffset() );
       }
       int offsetToPut = doc.getLineOffset( line ) + doc.getLineLength( line );
@@ -197,7 +198,7 @@ public class ImportsManager {
         contents = "import " + place + " (" + name + ")";
       }
       // 3. Create the proposal
-      return new CompletionProposal( contents + "\n", offsetToPut, 0, offsetToPut + contents.length() + 1, ImageCache.MODULE, label, null, "" );
+      return new CompletionProposal( contents + PlatformUtil.NL, offsetToPut, 0, offsetToPut + contents.length() + 1, ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
       return null;
@@ -211,6 +212,21 @@ public class ImportsManager {
           //doc.getLineOfOffset( imp.getLocation().getOffset() );
         if (importLine-1 == line) {
           return imp.removeItem( doc, name, label );
+        }
+      }
+    } catch (Exception e) {
+      HaskellUIPlugin.log( e );
+    }
+    return null;
+  }
+
+  public CompletionProposal replaceItemInImport(final String name,final String newName, final int line, final String label) {
+    try {
+      for (AnImport imp : parseImports()) {
+        int importLine =imp.getImportDef().getLocation().getStartLine();
+          //doc.getLineOfOffset( imp.getLocation().getOffset() );
+        if (importLine-1 == line) {
+          return imp.replaceItem( doc, name,newName, label );
         }
       }
     } catch (Exception e) {

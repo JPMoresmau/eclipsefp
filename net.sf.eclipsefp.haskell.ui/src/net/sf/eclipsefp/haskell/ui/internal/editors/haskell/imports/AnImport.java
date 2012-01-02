@@ -322,6 +322,25 @@ public class AnImport {
     return null;
   }
 
+  public CompletionProposal replaceItem(final IDocument doc, final String item, final String newItem, final String label) {
+    try {
+      String contents = importDef.getLocation().getContents( doc );
+
+      int ix=contents.indexOf( item );
+      if (ix>-1){
+        int end=ix+item.length();
+
+        int st=importDef.getLocation().getStartOffset( doc );
+        String newContents=contents.substring( 0,ix )+newItem+contents.substring( end );
+        return new CompletionProposal( newContents.toString(), st, contents.length(),
+          0, ImageCache.MODULE, label, null, "" );
+      }
+    } catch (Exception e) {
+      HaskellUIPlugin.log( e );
+    }
+    return null;
+  }
+
   @Override
     public String toString() {
       return importDef.toString();

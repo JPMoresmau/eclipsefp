@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -24,7 +25,7 @@ public class BuildMarkerResolutionGenerator implements
     if (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_WARNING || (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_ERROR)){
       String msg=marker.getAttribute(IMarker.MESSAGE,""); //$NON-NLS-1$
       if (msg!=null){
-        String msgL=msg.toLowerCase();
+        String msgL=msg.toLowerCase(Locale.ENGLISH);
 
         int ix=-1;
 
@@ -92,9 +93,9 @@ public class BuildMarkerResolutionGenerator implements
         }
         // Not in scope
         else if (msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START )>-1){
-          int start = msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START );
+          int start = msgL.indexOf( '`',msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START ));
           int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
-          String notInScope = msg.substring( start + GhcMessages.NOT_IN_SCOPE_START.length(), end );
+          String notInScope = msg.substring( start + 1, end );
           String name, qualified;
           int pointPos = notInScope.lastIndexOf( '.' );
           if (pointPos != -1) {
@@ -120,6 +121,35 @@ public class BuildMarkerResolutionGenerator implements
           } catch (Exception e) {
             // Do nothing
           }
+        } else if (msg.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
+          int btix=msg.indexOf('`');
+          int sqix=msg.indexOf('\'',btix);
+          //String module=msg.substring(btix+1,sqix);
+          btix=msg.indexOf('`',sqix);
+          sqix=msg.indexOf('\'',btix);
+          String constructor=msg.substring(btix+1,sqix);
+          btix=msg.indexOf('`',sqix);
+          sqix=msg.indexOf('\'',btix);
+          String type=msg.substring(btix+1,sqix);
+          res.add( new ReplaceImportElement( constructor, type+"("+constructor+")" ) );
+          res.add( new ReplaceImportElement( constructor, type+"(..)" ) );
+         /* btix=msg.indexOf('`',btix+1);
+          sqix=msg.indexOf('\'',btix);
+          String import1=msg.substring(btix+1,sqix);
+          btix=msg.indexOf('`',sqix);
+          sqix=msg.indexOf('\'',btix);
+          String import2=msg.substring(btix+1,sqix);
+          res.add(new ReplaceImportResolution( import1 ));
+          res.add(new ReplaceImportResolution( import2 ));*/
+          /*
+          Description Resource  Path  Location  Type  ID
+          In module `System.Exit':
+            `ExitFailure' is a data constructor of `ExitCode'
+          To import it use
+            `import System.Exit (ExitCode (ExitFailure))'
+          or
+            `import System.Exit (ExitCode (..))'
+            Main.hs /nxt/test line 16 Haskell Problem 39935*/
         }
       }
     }

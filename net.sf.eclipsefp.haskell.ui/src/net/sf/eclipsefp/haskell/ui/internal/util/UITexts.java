@@ -287,6 +287,7 @@ public final class UITexts extends NLS {
   public static String resolve_addpragma;
   public static String resolve_import_remove;
   public static String resolve_import_replace;
+  public static String resolve_import_element_replace;
   public static String resolve_addpackage;
   public static String resolve_import_add;
   public static String resolve_import_remove_part;
