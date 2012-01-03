@@ -367,7 +367,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  String prefix = haskellCompletions.getPointedQualifier();
 	  int plength = prefix.length();
 	  // Reuse the general "imports" code, getting out the qualified names
-	  AnImport imp = new AnImport( new ImportDef(moduleName, null, true, false, null ),false);
+	  AnImport imp = new AnImport( new ImportDef(moduleName, null, false, false, null ),false);
 	  Map<String, FileDocumented> decls = imp.getDeclarations( theFile.getProject(), theFile, doc );
 
 	  ArrayList<String> names = new ArrayList<String>();
