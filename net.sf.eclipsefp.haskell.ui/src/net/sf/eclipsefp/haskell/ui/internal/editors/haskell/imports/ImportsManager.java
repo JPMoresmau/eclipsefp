@@ -5,20 +5,24 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
-import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
-import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ImportExportType;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ImportSpecDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 
 /**
@@ -40,88 +44,99 @@ public class ImportsManager {
 
   public ArrayList<AnImport> parseImports() {
     ArrayList<AnImport> r = new ArrayList<AnImport>();
-//    int lines = doc.getNumberOfLines();
-//    for (int line = 0; line < lines; line++) {
-//      try {
-//        IRegion reg = doc.getLineInformation( line );
-//        String contents = doc.get( reg.getOffset(), reg.getLength() );
-//
-//        // Take blanks appart
-//        int realInit = reg.getOffset();
-//        int realLength = reg.getLength();
-//        for (int i = 0; i < contents.length(); i++) {
-//          if (Character.isWhitespace( i )) {
-//            realInit++;
-//            realLength--;
-//          } else {
-//            break;
-//          }
-//        }
-//
-//        // Get contents another time
-//        reg = new Region( realInit, realLength );
-//        contents = doc.get( reg.getOffset(), reg.getLength() );
-//        if (contents.startsWith( "import" )) {
-//          // We are in an import declaration
-//          String[] words = contents.split( "[ \t\n\r]+" );
-//          if (words.length > 1) {
-//            // We are in an import with more than "import" on it
-//            int namePlace = 1;
-//            boolean isQualified = false;
-//            // See if we have a "qualified"
-//            if (words[1].equals("qualified")) {
-//              namePlace = 2;
-//              isQualified = true;
-//            }
-//            // Take the name of the import
-//            String name = words[namePlace];
-//            String items = null;
-//            String qualifiedName = null;
-//            boolean isHiding = false;
-//            // See if we have more things
-//            if (words.length > namePlace + 1) {
-//              int nextThings = namePlace + 1;
-//              // Maybe we have a "as" clause
-//              if (words[nextThings].equals("as")) {
-//                nextThings++;
-//                if (words.length > nextThings) {
-//                  qualifiedName = words[nextThings];
-//                  nextThings++;
-//                }
-//              }
-//              // Maybe we have a hiding clause
-//              if (words.length > nextThings) {
-//                if (words[nextThings].equals("hiding")) {
-//                  nextThings++;
-//                  isHiding = true;
-//                }
-//              }
-//              // Try to find '(' and ')'
-//              int beginPar = contents.indexOf( '(' );
-//              if (beginPar != -1) {
-//                int endPar = contents.indexOf( ')' );
-//                items = contents.substring( beginPar + 1, endPar );
-//              }
-//            }
-//
-//            // Create the element
-//            AnImport imp = new AnImport( name, reg, items == null, isHiding, isQualified, qualifiedName, items );
-//            r.add(imp);
-//          }
-//        }
-//
-//      } catch (Exception ex) {
-//        // We continue with the next line
-//      }
-//    }
-    BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
-    if (f!=null){
-      OutlineResult or=f.outline( file );
-      for (ImportDef id:or.getImportDefs()){
-        AnImport imp = new AnImport( id,false );
-        r.add(imp);
+    int lines = doc.getNumberOfLines();
+    for (int line = 0; line < lines; line++) {
+      try {
+        IRegion reg = doc.getLineInformation( line );
+        String contents = doc.get( reg.getOffset(), reg.getLength() );
+
+        // Take blanks appart
+        int realInit = reg.getOffset();
+        int realLength = reg.getLength();
+        for (int i = 0; i < contents.length(); i++) {
+          if (Character.isWhitespace( i )) {
+            realInit++;
+            realLength--;
+          } else {
+            break;
+          }
+        }
+
+        // Get contents another time
+        reg = new Region( realInit, realLength );
+        contents = doc.get( reg.getOffset(), reg.getLength() );
+        if (contents.startsWith( "import" )) {
+          // We are in an import declaration
+          String[] words = contents.split( "[ \t\n\r]+" );
+          if (words.length > 1) {
+            // We are in an import with more than "import" on it
+            int namePlace = 1;
+            boolean isQualified = false;
+            // See if we have a "qualified"
+            if (words[1].equals("qualified")) {
+              namePlace = 2;
+              isQualified = true;
+            }
+            // Take the name of the import
+            String name = words[namePlace];
+            String items = null;
+            String qualifiedName = null;
+            boolean isHiding = false;
+            // See if we have more things
+            if (words.length > namePlace + 1) {
+              int nextThings = namePlace + 1;
+              // Maybe we have a "as" clause
+              if (words[nextThings].equals("as")) {
+                nextThings++;
+                if (words.length > nextThings) {
+                  qualifiedName = words[nextThings];
+                  nextThings++;
+                }
+              }
+              // Maybe we have a hiding clause
+              if (words.length > nextThings) {
+                if (words[nextThings].equals("hiding")) {
+                  nextThings++;
+                  isHiding = true;
+                }
+              }
+              // Try to find '(' and ')'
+              int beginPar = contents.indexOf( '(' );
+              if (beginPar != -1) {
+                int endPar = contents.indexOf( ')' );
+                items = contents.substring( beginPar + 1, endPar );
+              }
+            }
+
+            // Create the element
+            Location importLocation = new Location(file.getName(), doc, reg);
+            ImportDef def = new ImportDef( name, new Location(file.getName(), doc, reg), isQualified, isHiding, qualifiedName );
+            if (items != null) {
+              List<String> itemsExplode = Arrays.asList( items.split( "[ ]*,[ ]*" ) );
+              List<ImportSpecDef> importDefs = new ArrayList<ImportSpecDef>();
+              for (String item : itemsExplode) {
+                ImportSpecDef importDef = new ImportSpecDef(item, importLocation, ImportExportType.IEAbs);
+                importDefs.add(importDef);
+              }
+              def.setChildren( importDefs );
+            }
+            AnImport imp = new AnImport(def, false);
+            r.add(imp);
+          }
+        }
+
+      } catch (Exception ex) {
+        // We continue with the next line
       }
     }
+//    BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+//    if (f!=null){
+//      OutlineResult or=f.outline( file );
+//      for (ImportDef id:or.getImportDefs()){
+//        AnImport imp = new AnImport( id,false );
+//        r.add(imp);
+//      }
+//    }
     return r;
   }
 

@@ -106,17 +106,19 @@ public class BuildMarkerResolutionGenerator implements
             qualified = null;
           }
           try {
-            BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-            Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration( name );
-            ArrayList<String> places = new ArrayList<String>();
-            for (Module avMod : availableMods) {
-              if (!places.contains( avMod.getName() )) {
-                places.add( avMod.getName() );
+            if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {
+              BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+              Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration( name );
+              ArrayList<String> places = new ArrayList<String>();
+              for (Module avMod : availableMods) {
+                if (!places.contains( avMod.getName() )) {
+                  places.add( avMod.getName() );
+                }
               }
-            }
-            Collections.sort( places );
-            for (String place : places) {
-              res.add( new AddImportResolution( name, place, qualified ) );
+              Collections.sort( places );
+              for (String place : places) {
+                res.add( new AddImportResolution( name, place, qualified ) );
+              }
             }
           } catch (Exception e) {
             // Do nothing

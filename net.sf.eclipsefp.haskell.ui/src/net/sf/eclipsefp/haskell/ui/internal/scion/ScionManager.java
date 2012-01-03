@@ -543,7 +543,16 @@ public class ScionManager implements IResourceChangeListener {
         }
       } );
     } else {
+      preloadPrelude();
       checkHoogleDataIsPresent();
+    }
+  }
+
+  void preloadPrelude() {
+    try {
+      BrowserPlugin.getSharedInstance().getDeclarations( "Prelude" );
+    } catch (Exception e) {
+      // Do nothing
     }
   }
 
@@ -1310,6 +1319,7 @@ public class ScionManager implements IResourceChangeListener {
         @Override
         public void done( final IJobChangeEvent event ) {
           if (event.getResult().isOK()) {
+            preloadPrelude();
             checkHoogleDataIsPresent();
           } else {
             Display.getDefault().syncExec( new Runnable() {

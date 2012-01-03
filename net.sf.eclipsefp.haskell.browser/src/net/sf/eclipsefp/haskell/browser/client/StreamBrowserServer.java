@@ -7,9 +7,11 @@ package net.sf.eclipsefp.haskell.browser.client;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.zip.InflaterInputStream;
 
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
@@ -36,10 +38,13 @@ public class StreamBrowserServer extends BrowserServer {
 	private IPath serverExecutable;
 	private Process process = null;
 	private BufferedWriter in = null;
-	private BufferedReader out = null;
+	// private BufferedReader err = null;
+	private InputStream out = null;
 	private boolean localDbLoaded = false;
 	private boolean hackageDbLoaded = false;
 	private boolean hoogleLoaded = false;
+	
+	public Object lock;
 	
 	private DatabaseType currentDatabase;
 	private HashMap<String, Packaged<Declaration>[]> declCache;
@@ -47,64 +52,89 @@ public class StreamBrowserServer extends BrowserServer {
 	public StreamBrowserServer(IPath serverExecutable) throws Exception {
 		this.serverExecutable = serverExecutable;
 		this.declCache = new HashMap<String, Packaged<Declaration>[]>();
+		lock = new Object();
 		startServer();
 	}
 
 	public void startServer() throws Exception {
 		ProcessBuilder builder = new ProcessBuilder(
 				serverExecutable.toOSString());
-		builder.redirectErrorStream(true);
+		builder.redirectErrorStream(false);
 
 		try {
 			process = builder.start();
-			out = new BufferedReader(new InputStreamReader(
-					process.getInputStream(), "UTF8"));
-			in = new BufferedWriter(new OutputStreamWriter(
+			out = process.getInputStream();
+			/*out = new BufferedReader(new InputStreamReader(
+					process.getInputStream(), "UTF8"));*/
+			/*err = new BufferedReader(new InputStreamReader(
+					process.getErrorStream(), "UTF8")); */
+			in  = new BufferedWriter(new OutputStreamWriter(
 					process.getOutputStream(), "UTF8"));
 		} catch (Throwable ex) {
 			throw new Exception("Could not load");
 		}
 	}
 
-	public synchronized String sendAndReceive(JSONObject input)
+	public String sendAndReceive(JSONObject input)
 			throws IOException {
-		String jsonInput = input.toString();
-		log(">> " + jsonInput);
-		in.write(jsonInput + "\n");
-		in.flush();
-		String response = out.readLine();
-		// log(response);
-		return response;
+		synchronized(lock) {
+			String jsonInput = input.toString();
+			log(">> " + jsonInput);
+			in.write(jsonInput + "\n");
+			in.flush();
+			return getALine();
+			// String response = out.readLine();
+			// log(response);
+			// return response;
+		}
 	}
 
-	public synchronized void sendAndReceiveOk(JSONObject input)
+	public void sendAndReceiveOk(JSONObject input)
 			throws IOException {
-		String jsonInput = input.toString();
-		log(">> " + jsonInput);
-		in.write(jsonInput + "\n");
-		in.flush();
-
-		String response = null;
-		do {
-			response = out.readLine();
-			log(response);
-		} while (response!=null && !response.equals("\"ok\""));
+		synchronized(lock) {
+			String jsonInput = input.toString();
+			log(">> " + jsonInput);
+			in.write(jsonInput + "\n");
+			in.flush();
+	
+			String response = null;
+			do {
+				response = getALine(); // out.readLine();
+				log(response);
+			} while (response!=null && !response.equals("\"ok\""));
+		}
 	}
 	
 	public synchronized boolean sendAndReceiveBoolean(JSONObject input)
 			throws IOException {
-		String jsonInput = input.toString();
-		log(">> " + jsonInput);
-		in.write(jsonInput + "\n");
-		in.flush();
-
-		String response = null;
-		do {
-			response = out.readLine();
-			log(response);
-		} while (response!=null && !response.equals("true") && !response.equals("false"));
-		
-		return "true".equals(response);
+		synchronized(lock) {
+			String jsonInput = input.toString();
+			log(">> " + jsonInput);
+			in.write(jsonInput + "\n");
+			in.flush();
+	
+			String response = null;
+			do {
+				response = getALine(); // out.readLine();
+				log(response);
+			} while (response!=null && !response.equals("true") && !response.equals("false"));
+			
+			return "true".equals(response);
+		}
+	}
+	
+	public String getALine() {
+		try {			
+			InflaterInputStream gzip = new InflaterInputStream(out);
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(gzip, "UTF8"));
+			
+			return reader.readLine();
+		} catch (Exception e) {
+			// Do nothing
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override
