@@ -28,7 +28,6 @@ import org.osgi.framework.BundleContext;
 public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedListener, IHoogleLoadedListener {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.browser"; //$NON-NLS-1$
-	@Deprecated
 	public static final String BROWSER_VERSION = "0.2";
 	public static final String DIST_FOLDER = ".dist-scion-browser";
 	
@@ -263,7 +262,6 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * 
 	 * @return the path to the directory
 	 */
-	@Deprecated
 	public static IPath builtinBrowserDirectoryPath() {
 		IPath path = getDefault().getStateLocation().append(
 				"scion-browser-".concat(BROWSER_VERSION).concat("-dbs")); //$NON-NLS-1$
@@ -394,7 +392,6 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * @return An IPath to the build area subdirectory off the workspace's state
 	 *         location.
 	 */
-	@Deprecated
 	public static IPath builtinServerDirectoryPath() {
 		return getDefault().getStateLocation().append("scion-browser-".concat(BROWSER_VERSION));
 	}
