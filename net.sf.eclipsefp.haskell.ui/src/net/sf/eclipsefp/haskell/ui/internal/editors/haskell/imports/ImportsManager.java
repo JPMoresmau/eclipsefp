@@ -1,5 +1,6 @@
 /**
  * (c) 2011, Alejandro Serrano
+ * (c) 2012 by JP Moresmau
  * Released under the terms of the EPL.
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
@@ -15,6 +16,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
@@ -26,7 +28,7 @@ import org.eclipse.jface.text.contentassist.CompletionProposal;
  * of a Haskell source file. All imports must be in only
  * one line to be recognized by this parser.
  * @author Alejandro Serrano
- *
+ * @author JP Moresmau
  */
 public class ImportsManager {
 
@@ -125,9 +127,21 @@ public class ImportsManager {
 //        // We continue with the next line
 //      }
 //    }
-    BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
-    if (f!=null){
-      OutlineResult or=f.outline( file );
+    OutlineResult or=null;
+    if (doc!=null){
+      HaskellEditor editor=HaskellUIPlugin.getHaskellEditor( doc );
+      if (editor!=null){
+        or=editor.getLastOutlineResult();
+      }
+    }
+    if (or==null){
+      BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+      if (f!=null){
+        or=f.outline( file );
+
+      }
+    }
+    if (or!=null){
       for (ImportDef id:or.getImportDefs()){
         AnImport imp = new AnImport( id,false );
         r.add(imp);

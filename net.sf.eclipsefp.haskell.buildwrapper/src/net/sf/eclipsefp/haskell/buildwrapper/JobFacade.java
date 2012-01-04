@@ -1,11 +1,13 @@
+/**
+ *  Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.buildwrapper;
-
-import java.util.List;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
-import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
@@ -135,7 +137,7 @@ public class JobFacade  {
 	          try {
 	            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	            OutlineResult or=realFacade.outline(f);
-	            handler.handleOutline(or.getOutlineDefs());
+	            handler.handleOutline(or);
 	          } finally {
 	            monitor.done();
 	          }
@@ -164,10 +166,10 @@ public class JobFacade  {
 	          		
 	          //long t2=System.currentTimeMillis();
 	          
-	          List<OutlineDef> defs=realFacade.outline(file).getOutlineDefs();
+	          OutlineResult or=realFacade.outline(file);
 	          //long t3=System.currentTimeMillis();
-	          if (defs.size()>0 && buildOK){
-	        	  handler.handleOutline(defs); // avoid removing all outline on error
+	          if (!or.isEmpty() || buildOK){
+	        	  handler.handleOutline(or); // avoid removing all outline on error
 	          }
 	          
 	          //long t4=System.currentTimeMillis();

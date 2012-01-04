@@ -1,11 +1,14 @@
-// Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
-// This code is made available under the terms of the Eclipse Public License,
-// version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+/**
+ *  Copyright (c) 2003-2008 by Leif Frenzel - see http://leiffrenzel.de
+ * (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ *
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +20,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
@@ -126,17 +130,17 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
    */
   //private ScionInstance instance = null;
 
-  private boolean hasOutline=false;
+  private OutlineResult lastOutlineResult=null;
   private final OutlineHandler outlineHandler = new OutlineHandler() {
 
-    public void handleOutline( final List<OutlineDef> defs ) {
+    public void handleOutline( final OutlineResult or ) {
       if (outlinePage!=null){
-        outlinePage.setInput( defs );
-        hasOutline=true;
+        outlinePage.setInput( or.getOutlineDefs() );
+        lastOutlineResult=or;
       }
 
       if (foldingStructureProvider!=null){
-        foldingStructureProvider.updateFoldingRegions( defs );
+        foldingStructureProvider.updateFoldingRegions( or.getOutlineDefs() );
       }
     }
   };
@@ -622,7 +626,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
           needWrite=false;
         }
       } else {
-        outlineHandler.handleOutline( Collections.<OutlineDef>emptyList() );
+        outlineHandler.handleOutline( new OutlineResult());
       }
     }
   }
@@ -662,7 +666,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
 
   public boolean hasOutline() {
-    return hasOutline;
+    return lastOutlineResult!=null;
+  }
+
+
+  public OutlineResult getLastOutlineResult() {
+    return lastOutlineResult;
   }
 
 //  public void showOutlineLocation(final String shortName){

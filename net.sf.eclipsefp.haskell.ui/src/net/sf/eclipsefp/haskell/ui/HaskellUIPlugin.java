@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2003-2005, Leif Frenzel and others. See http://leiffrenzel.de
  * Copyright (c) 2011, Alejandro Serrano
- *
+ * Copyright (c) 2012, JP Moresmau
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Leif Frenzel - Initial API and implementation
  *     Thiago Arrais - Preference controls
  *     Alejandro Serrano - Browser integration
+ *     JP Moresmau -
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui;
 
@@ -278,11 +279,41 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   }
 
   /**
+   * get the Haskell Editor that has the given document opened
+   * @param currentDocument the document
+   * @return
+   */
+  public static HaskellEditor getHaskellEditor(final IDocument currentDocument) {
+    if (currentDocument==null){
+      return null;
+    }
+    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+
+    for (int i = 0; i < editorReferences.length; i++) {
+      IEditorPart editor = editorReferences[i].getEditor(false);
+      if (editor instanceof HaskellEditor) {
+        HaskellEditor textEditor = (HaskellEditor) editor;
+        IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+        if (currentDocument.equals(doc)) {
+          return textEditor;
+        }
+      }
+    }
+
+    return null;
+  }
+
+
+  /**
    * Get the file object corresponding to the a document.
    *
    * @param currentDocument The document whose file we want.
    */
   public static IFile getFile(final IDocument currentDocument) {
+    if (currentDocument==null){
+      return null;
+    }
     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
     IEditorInput input = null;

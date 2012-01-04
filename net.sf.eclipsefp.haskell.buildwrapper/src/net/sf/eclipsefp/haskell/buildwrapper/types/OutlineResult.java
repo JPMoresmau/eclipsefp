@@ -1,3 +1,8 @@
+/** 
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
 import java.util.ArrayList;
@@ -24,6 +29,13 @@ public class OutlineResult {
 
 	}
 
+	/**
+	 * is there nothing in that result
+	 * @return true if no declarations, no import and no export are contained in the result
+	 */
+	public boolean isEmpty(){
+		return outlineDefs.isEmpty() && exportDefs.isEmpty() && importDefs.isEmpty();
+	}
 	
 	public OutlineResult(IFile f,JSONObject obj) throws JSONException{
 		JSONArray arr=obj.getJSONArray("o");
