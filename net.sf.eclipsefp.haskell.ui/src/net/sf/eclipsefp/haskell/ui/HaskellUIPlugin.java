@@ -254,19 +254,20 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     IDocument currentDocument = viewer.getDocument();
 
     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+    if (window!=null && window.getActivePage()!=null){
+      IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
 
-    for (int i = 0; i < editorReferences.length; i++) {
-      IEditorPart editor = editorReferences[i].getEditor(false);
-      if (editor instanceof ITextEditor) {
-        ITextEditor textEditor = (ITextEditor) editor;
-        IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
-        if (currentDocument.equals(doc)) {
-          return textEditor;
+      for (int i = 0; i < editorReferences.length; i++) {
+        IEditorPart editor = editorReferences[i].getEditor(false);
+        if (editor instanceof ITextEditor) {
+          ITextEditor textEditor = (ITextEditor) editor;
+          IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+          if (currentDocument.equals(doc)) {
+            return textEditor;
+          }
         }
       }
     }
-
     return null;
   }
 
@@ -288,19 +289,22 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
       return null;
     }
     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+    if (window!=null && window.getActivePage()!=null){
 
-    for (int i = 0; i < editorReferences.length; i++) {
-      IEditorPart editor = editorReferences[i].getEditor(false);
-      if (editor instanceof HaskellEditor) {
-        HaskellEditor textEditor = (HaskellEditor) editor;
-        IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
-        if (currentDocument.equals(doc)) {
-          return textEditor;
+
+      IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+
+      for (int i = 0; i < editorReferences.length; i++) {
+        IEditorPart editor = editorReferences[i].getEditor(false);
+        if (editor instanceof HaskellEditor) {
+          HaskellEditor textEditor = (HaskellEditor) editor;
+          IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+          if (currentDocument.equals(doc)) {
+            return textEditor;
+          }
         }
       }
     }
-
     return null;
   }
 
@@ -315,24 +319,25 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
       return null;
     }
     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
-    IEditorInput input = null;
+    if (window!=null && window.getActivePage()!=null){
+      IEditorReference editorReferences[] = window.getActivePage().getEditorReferences();
+      IEditorInput input = null;
 
-    for (int i = 0; i < editorReferences.length; i++) {
-      IEditorPart editor = editorReferences[i].getEditor(false);
-      if (editor instanceof ITextEditor) {
-        ITextEditor textEditor = (ITextEditor) editor;
-        IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
-        if (currentDocument.equals(doc)) {
-          input = textEditor.getEditorInput();
-          if (input instanceof IFileEditorInput) {
-            IFileEditorInput fileInput = (IFileEditorInput) input;
-            return fileInput.getFile();
+      for (int i = 0; i < editorReferences.length; i++) {
+        IEditorPart editor = editorReferences[i].getEditor(false);
+        if (editor instanceof ITextEditor) {
+          ITextEditor textEditor = (ITextEditor) editor;
+          IDocument doc = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+          if (currentDocument.equals(doc)) {
+            input = textEditor.getEditorInput();
+            if (input instanceof IFileEditorInput) {
+              IFileEditorInput fileInput = (IFileEditorInput) input;
+              return fileInput.getFile();
+            }
           }
         }
       }
     }
-
     // Return a null IFile, which is handled in HaskellCompletionContext.
     return null;
   }
