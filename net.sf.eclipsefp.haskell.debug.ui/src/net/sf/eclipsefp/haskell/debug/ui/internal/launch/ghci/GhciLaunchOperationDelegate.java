@@ -4,11 +4,16 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
@@ -93,7 +98,23 @@ public class GhciLaunchOperationDelegate
       final List<String> cmdLine,
       final Set<IProject> visited,final IFile[] selectedFiles ) throws CoreException {
     /*Set<IPath> sourcePaths = hsProject.getSourcePaths();*/
-    for( String sourcePath: ResourceUtil.getSourceFolders( selectedFiles ) ) {
+    Collection<String> srcs=new ArrayList<String>();
+    // if we reference our own library, we need to include the sources
+    if( hsProject.hasNature( HaskellNature.NATURE_ID ) ) {
+
+      IFile f=BuildWrapperPlugin.getCabalFile( hsProject );
+      PackageDescription pd=PackageDescriptionLoader.load(f);
+      if (ResourceUtil.getImportPackages(selectedFiles).contains( pd.getPackageStanza().getName())){
+
+        for (PackageDescriptionStanza sts:pd.getStanzas()){
+          if (CabalSyntax.SECTION_LIBRARY.equals(sts.getType())){
+            srcs.addAll(sts.getSourceDirs());
+          }
+        }
+      }
+    }
+    srcs.addAll( ResourceUtil.getSourceFolders( selectedFiles ));
+    for( String sourcePath: srcs ) {
       IResource r=hsProject;
       if (!sourcePath.equals( "." )){ //$NON-NLS-1$
         r=hsProject.getFolder( sourcePath );
