@@ -56,7 +56,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         IProject p = ( IProject )parentElement;
         result.add( new GHCSystemLibrary( p ));
         IFile f = BuildWrapperPlugin.getCabalFile( p );
-        if (f != null) {
+        if (f != null && f.exists()) {
           result.add( f );
         }
         Set<IContainer> srcs=new HashSet<IContainer>(ResourceUtil.getSourceFolders( p ));

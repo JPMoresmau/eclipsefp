@@ -16,6 +16,8 @@ Fixes:
 		(http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/4889457)
 	- you can now open a Haskell file in GHCi even if it doesn't belong to a project source folder
 		(http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/4928771)
+	- do not show cabal file in project explorer if it doesn't exist
+		(http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/4928771)
 	- running a file in GHCi uses the library source folders if the component the file belongs to references its own library
 
 Features:
