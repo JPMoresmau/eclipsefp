@@ -81,7 +81,11 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
     final String command= configuration.getAttribute( ILaunchAttributes.COMMAND, (String)null );
     commandToProcess( process, command );
 
-    final String reloadCommand=configuration.getAttribute( ILaunchAttributes.RELOAD_COMMAND, (String)null );
+    String reloadCommand=configuration.getAttribute( ILaunchAttributes.RELOAD_COMMAND, (String)null );
+    IInteractiveLaunchOperationDelegate del=getDelegate( configuration );
+    if (del!=null && del.getReloadCommand()!=null){
+      reloadCommand=del.getReloadCommand();
+    }
     final String project=configuration.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );
 
     if (reloadCommand!=null && configuration.getAttribute( ILaunchAttributes.RELOAD, false )){
