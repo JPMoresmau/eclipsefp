@@ -321,7 +321,9 @@ public class CabalPackagesView extends ViewPart {
           getSite().getShell().getDisplay().syncExec( new Runnable() {
 
             public void run() {
-              lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
+              if (lBrowser!=null && !lBrowser.isDisposed()){
+                lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
+              }
             }
           });
         }
@@ -331,7 +333,9 @@ public class CabalPackagesView extends ViewPart {
         getSite().getShell().getDisplay().syncExec( new Runnable() {
 
           public void run() {
-            lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection());
+            if (lBrowser!=null && !lBrowser.isDisposed() && !bInstalled.isDisposed()){
+              lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection());
+            }
           }
         });
 
