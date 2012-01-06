@@ -99,12 +99,16 @@ public class GhciLaunchOperationDelegate
       final Set<IProject> visited,final IFile[] selectedFiles ) throws CoreException {
     /*Set<IPath> sourcePaths = hsProject.getSourcePaths();*/
     Collection<String> srcs=new ArrayList<String>();
+
+    srcs.addAll( ResourceUtil.getSourceFolders( selectedFiles ));
+
     // if we reference our own library, we need to include the sources
+    // also if we don't belong to a source folder
     if( hsProject.hasNature( HaskellNature.NATURE_ID ) ) {
 
       IFile f=BuildWrapperPlugin.getCabalFile( hsProject );
       PackageDescription pd=PackageDescriptionLoader.load(f);
-      if (ResourceUtil.getImportPackages(selectedFiles).contains( pd.getPackageStanza().getName())){
+      if (srcs.isEmpty() || ResourceUtil.getImportPackages(selectedFiles).contains( pd.getPackageStanza().getName())){
 
         for (PackageDescriptionStanza sts:pd.getStanzas()){
           if (CabalSyntax.SECTION_LIBRARY.equals(sts.getType())){
@@ -113,7 +117,7 @@ public class GhciLaunchOperationDelegate
         }
       }
     }
-    srcs.addAll( ResourceUtil.getSourceFolders( selectedFiles ));
+
     for( String sourcePath: srcs ) {
       IResource r=hsProject;
       if (!sourcePath.equals( "." )){ //$NON-NLS-1$

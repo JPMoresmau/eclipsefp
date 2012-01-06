@@ -13,6 +13,10 @@ Fixes:
 	- there is now an icon in the Outline of the Cabal editor for source-repository entries
 	- a project that used its root as a source folder showed itself recursively in project explorer
 	- haskell and cabal editors show readonly/writable, overwrite/insert, line and column information like other text editors
+		(http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/4889457)
+	- you can now open a Haskell file in GHCi even if it doesn't belong to a project source folder
+		(http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/4928771)
+	- running a file in GHCi uses the library source folders if the component the file belongs to references its own library
 
 Features:
 	- autodetect buildwrapper and scion-browser if they're in the PATH

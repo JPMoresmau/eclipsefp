@@ -578,10 +578,11 @@ public class ResourceUtil {
     }
 
     if( result == null ) {
-      String msg =   file.getFullPath()
-                   + " is in no source folder in project " //$NON-NLS-1$
-                   + file.getProject().getName();
-      throw new IllegalArgumentException( msg );
+      return file.getFullPath();
+//      String msg =   file.getFullPath()
+//                   + " is in no source folder in project " //$NON-NLS-1$
+//                   + file.getProject().getName();
+//      throw new IllegalArgumentException( msg );
     }
     return result;
   }
