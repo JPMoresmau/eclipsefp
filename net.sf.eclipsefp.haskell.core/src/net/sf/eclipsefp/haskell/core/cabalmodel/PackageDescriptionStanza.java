@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -44,7 +45,17 @@ public class PackageDescriptionStanza {
   private int startLine;
   private int endLine;
   private int indent;
+  /**
+   * field names to values
+   */
   private final Map<String, String> properties=new CabalSyntaxMap<String>();
+  /**
+   * field names to real names (case may be different)
+   */
+  private final Map<String, String> realNames=new CabalSyntaxMap<String>();
+  /**
+   * field names to positions
+   */
   private final Map<String, ValuePosition> positions=new CabalSyntaxMap<ValuePosition>();
   private final CabalSyntax type;
 
@@ -153,6 +164,7 @@ public class PackageDescriptionStanza {
   }*/
 
   public RealValuePosition update(final CabalSyntax field,final String value){
+    String key=field.getCabalName().toLowerCase( Locale.ENGLISH );
     String realValue = value;
     if (value!=null && value.trim().length()==0){
       realValue=null;
@@ -164,9 +176,9 @@ public class PackageDescriptionStanza {
           eLast=e;
         }
       }
-      getProperties().put(field.getCabalName().toLowerCase(),realValue);
+      getProperties().put(key,realValue);
     } else {
-      getProperties().remove(field.getCabalName().toLowerCase());
+      getProperties().remove(key);
     }
     ValuePosition oldVP=getPositions().get( field );
     int indent=0;
@@ -178,15 +190,16 @@ public class PackageDescriptionStanza {
       for (int a=0;a<getIndent();a++){
         sb.append( ' ');
       }
-      sb.append( field.getCabalName() );
+      String name=getRealNames().get( key );
+      sb.append(name!=null?name: field.getCabalName() );
       sb.append( ":" ); //$NON-NLS-1$
       int spaces=4;
       if (vps.isEmpty()){
-        subIndent=getIndent()+field.getCabalName().length()+5;
+        subIndent=getIndent()+key.length()+5;
       } else {
         ValuePosition vp=vps.iterator().next();
         indent=subIndent=vp.getSubsequentIndent();
-        spaces=indent-(field.getCabalName().length() +1+getIndent());
+        spaces=indent-(key.length() +1+getIndent());
         if (needNL && eLast!=null){
           addLeadingNL(sb,oldVP,eLast);
         }
@@ -200,7 +213,7 @@ public class PackageDescriptionStanza {
       indent=oldVP.getInitialIndent();
     }
     if (realValue==null){
-      getPositions().remove( field.getCabalName().toLowerCase() );
+      getPositions().remove( key );
       // remove field name too
       oldVP.setInitialIndent( 0 );
       //oldVP.setInitialIndent( 0 );
@@ -233,7 +246,7 @@ public class PackageDescriptionStanza {
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);
       newVP.setSubsequentIndent( subIndent );
-      getPositions().put( field.getCabalName().toLowerCase(), newVP );
+      getPositions().put( key, newVP );
       int diff=newVP.getEndLine()-oldVP.getEndLine();
       if (oldVP.getEndLine()==getEndLine()){
         needNL=false;
@@ -471,7 +484,8 @@ public class PackageDescriptionStanza {
       for (int a=0;a<indent2;a++){
         w.write(" "); //$NON-NLS-1$
       }
-      w.write( p );
+      String name=getRealNames().get( p );
+      w.write( name!=null?name:p );
       ValuePosition vp=positions.get(p);
       w.write( ":" ); //$NON-NLS-1$
       for (int a=0;a<max+2-p.length();a++){
@@ -490,7 +504,9 @@ public class PackageDescriptionStanza {
           } else {
             first=false;
           }
-
+          if (line.trim().length()==0){
+            line= "."+line ; //$NON-NLS-1$
+          }
             w.write(line);
             w.write(PlatformUtil.NL);
             line=br.readLine();
@@ -546,5 +562,10 @@ public class PackageDescriptionStanza {
       ret.addAll( pds.listAllModules() );
     }
     return ret;
+  }
+
+
+  public Map<String, String> getRealNames() {
+    return realNames;
   }
 }

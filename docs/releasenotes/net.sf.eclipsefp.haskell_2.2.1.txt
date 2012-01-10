@@ -19,6 +19,8 @@ Fixes:
 	- do not show cabal file in project explorer if it doesn't exist
 		(http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/4928771)
 	- running a file in GHCi uses the library source folders if the component the file belongs to references its own library
+	- preserve case of Cabal field names in editor
+	- preserve empty lines of Cabal field values in editor
 
 Features:
 	- autodetect buildwrapper and scion-browser if they're in the PATH

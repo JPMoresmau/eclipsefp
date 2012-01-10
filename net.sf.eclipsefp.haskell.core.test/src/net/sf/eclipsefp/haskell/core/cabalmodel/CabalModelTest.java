@@ -339,6 +339,9 @@ public class CabalModelTest extends TestCase {
     assertEquals(12,rvp.getInitialIndent());
     assertEquals(8,rvp.getStartLine());
     assertEquals(17,rvp.getEndLine());
+
+    String s=pd.dump();
+    assertTrue(s.contains( "  First line"+PlatformUtil.NL+"  ."+PlatformUtil.NL+"  Line2" ) );
   }
 
   public void testList(){
@@ -795,5 +798,13 @@ public class CabalModelTest extends TestCase {
     assertEquals(2,ls.size());
     assertTrue(ls.contains( "UndecidableInstances" ));
     assertTrue(ls.contains( "OverlappingInstances" ));
+  }
+
+  public void testParseDumpExample1KeepCase(){
+    String content1=getContent( "Example1.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content1 );
+    String content2=pd.dump();
+    assertEquals(content1.substring(0,5),content2.substring(0,5));
+
   }
 }

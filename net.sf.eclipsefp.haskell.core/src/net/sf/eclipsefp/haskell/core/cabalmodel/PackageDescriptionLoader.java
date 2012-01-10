@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -218,7 +219,7 @@ public class PackageDescriptionLoader {
               } else {
                 int ix=line.indexOf(COLON );
                 if (ix>-1){
-                  field=line.substring( 0,ix ).trim().toLowerCase();
+                  field=line.substring( 0,ix ).trim();
                   int initialIndent=ix+1;
                   int subsequentIndent=initialIndent;
 
@@ -267,9 +268,11 @@ public class PackageDescriptionLoader {
       if(lastStanza!=null && field!=null){
         // fieldValue.length()>0 &&
         if(fieldVP!=null){
-          lastStanza.getProperties().put( field, fieldValue.toString() );
+          String key=field.toLowerCase( Locale.ENGLISH );
+          lastStanza.getProperties().put( key, fieldValue.toString() );
           fieldVP.setEndLine( count - empty);
-          lastStanza.getPositions().put( field, fieldVP );
+          lastStanza.getPositions().put( key, fieldVP );
+          lastStanza.getRealNames().put( key, field );
           fieldValue.setLength( 0 );
           fieldVP=null;
         }
