@@ -805,6 +805,6 @@ public class CabalModelTest extends TestCase {
     PackageDescription pd=PackageDescriptionLoader.load( content1 );
     String content2=pd.dump();
     assertEquals(content1.substring(0,5),content2.substring(0,5));
-
+    assertTrue(content2,content2.contains("Library"));
   }
 }

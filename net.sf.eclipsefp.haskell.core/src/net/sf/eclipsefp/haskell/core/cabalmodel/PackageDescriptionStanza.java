@@ -69,6 +69,8 @@ public class PackageDescriptionStanza {
 
   private final PackageDescription pd;
 
+  private String realTypeName;
+
   PackageDescriptionStanza(final PackageDescription pd,final CabalSyntax type,final String name,
       final int startLine){
     this.type=type;
@@ -391,7 +393,8 @@ public class PackageDescriptionStanza {
 
   public String toTypeName(){
  // this is equivalent to Component toString()
-    return String.valueOf( getType() ) + (getName()!=null?" "+getName():"");  //$NON-NLS-1$//$NON-NLS-2$
+    String tn=realTypeName!=null?realTypeName:String.valueOf( getType() ) ;
+    return tn + (getName()!=null?" "+getName():"");  //$NON-NLS-1$//$NON-NLS-2$
   }
 
   // interface methods of Object
@@ -567,5 +570,15 @@ public class PackageDescriptionStanza {
 
   public Map<String, String> getRealNames() {
     return realNames;
+  }
+
+
+  public String getRealTypeName() {
+    return realTypeName;
+  }
+
+
+  public void setRealTypeName( final String realTypeName ) {
+    this.realTypeName = realTypeName;
   }
 }

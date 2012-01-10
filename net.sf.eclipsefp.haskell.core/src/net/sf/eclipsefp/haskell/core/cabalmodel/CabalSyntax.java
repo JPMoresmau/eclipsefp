@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -47,6 +48,7 @@ public enum CabalSyntax {
   FIELD_EXTENSIONS("extensions"),//$NON-NLS-1$
   FIELD_GHC_OPTIONS("ghc-options"),//$NON-NLS-1$
   FIELD_GHC_PROF_OPTIONS("ghc-prof-options"),//$NON-NLS-1$
+  FIELD_GHC_SHARED_OPTIONS("ghc-shared-options"),//$NON-NLS-1$
   FIELD_HUGS_OPTIONS("hugs-options"),//$NON-NLS-1$
   FIELD_NHC_OPTIONS("nhc-options"),//$NON-NLS-1$
   FIELD_INCLUDES("includes"),//$NON-NLS-1$
@@ -122,7 +124,7 @@ public enum CabalSyntax {
   static {
     for (CabalSyntax cs:CabalSyntax.values() ){
       if (cs.isSectionHeader()){
-        sections.put(cs.getCabalName().toLowerCase(),cs);
+        sections.put(cs.getCabalName().toLowerCase(Locale.ENGLISH),cs);
       }
     }
   }

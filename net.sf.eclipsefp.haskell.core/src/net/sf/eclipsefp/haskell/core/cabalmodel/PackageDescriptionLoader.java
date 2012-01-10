@@ -203,7 +203,7 @@ public class PackageDescriptionLoader {
               }
 
               String start=getSectionHeader( line );
-              CabalSyntax cs=CabalSyntax.sections.get( start );
+              CabalSyntax cs=CabalSyntax.sections.get( start.toLowerCase( Locale.ENGLISH ) );
               if (cs != null){
                 String name=null;
                 if (line.length()>start.length()+indent){
@@ -213,7 +213,7 @@ public class PackageDescriptionLoader {
                   braces++;
                   name=name.substring( 0,name.length()-1 ).trim();
                 }
-                addStanza(cs,name);
+                addStanza(cs,start,name);
                 lastStanza.setIndent( indent + 2 );
                 //lastStanza=new PackageDescriptionStanza(cs,name,count);
               } else {
@@ -260,7 +260,7 @@ public class PackageDescriptionLoader {
         if (!gotNLAtEnd){
           lastStanza.needNL=true;
         }
-        addStanza(null,null);
+        addStanza(null,null,null);
       }
     }
 
@@ -280,7 +280,7 @@ public class PackageDescriptionLoader {
       }
     }
 
-    private void addStanza(final CabalSyntax type,final String name){
+    private void addStanza(final CabalSyntax type,final String realTypeName,final String name){
       if (type!=null && (type.equals( CabalSyntax.SECTION_IF ) || type.equals( CabalSyntax.SECTION_ELSE ))){
         stanzaStack.addLast( lastStanza );
       } else {
@@ -288,6 +288,7 @@ public class PackageDescriptionLoader {
         pd.getStanzas().add(lastStanza);
       }
       lastStanza=new PackageDescriptionStanza(pd,type,name,count);
+      lastStanza.setRealTypeName( realTypeName );
     }
 
     private void popStanza(){
@@ -328,7 +329,7 @@ public class PackageDescriptionLoader {
     }
 
     private static String getSectionHeader(final String line ) {
-      String section=line.trim().toLowerCase();
+      String section=line.trim();
       int ix=section.indexOf( ' ' );
       if (ix>-1){
         section=section.substring( 0,ix );
