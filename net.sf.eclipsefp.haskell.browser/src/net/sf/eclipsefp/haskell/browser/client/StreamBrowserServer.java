@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.zip.InflaterInputStream;
 
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
@@ -23,8 +24,10 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
+import net.sf.eclipsefp.haskell.browser.util.BrowserText;
 
 import org.eclipse.core.runtime.IPath;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,14 +85,17 @@ public class StreamBrowserServer extends BrowserServer {
 			log(">> " + jsonInput);
 			in.write(jsonInput + "\n");
 			in.flush();
-			return getALine();
+			String response=getALine();
 			// String response = out.readLine();
-			// log(response);
-			// return response;
+			//log(response);
+			if (response==null){
+				response=new JSONArray().toString();
+			}
+			return response;
 		}
 	}
 
-	public void sendAndReceiveOk(JSONObject input)
+	public boolean sendAndReceiveOk(JSONObject input)
 			throws IOException {
 		synchronized(lock) {
 			String jsonInput = input.toString();
@@ -102,6 +108,7 @@ public class StreamBrowserServer extends BrowserServer {
 				response = getALine(); // out.readLine();
 				log(response);
 			} while (response!=null && !response.equals("\"ok\""));
+			return "\"ok\"".equals(response);
 		}
 	}
 	
@@ -123,18 +130,17 @@ public class StreamBrowserServer extends BrowserServer {
 		}
 	}
 	
-	public String getALine() {
+	public String getALine() throws IOException{
 		try {			
 			InflaterInputStream gzip = new InflaterInputStream(out);
 			BufferedReader reader = new BufferedReader(
 					new InputStreamReader(gzip, "UTF8"));
 			
 			return reader.readLine();
-		} catch (Exception e) {
-			// Do nothing
-			e.printStackTrace();
+		} catch (IOException e) {
+			BrowserPlugin.logError(BrowserText.error_read, e);
+			throw e;
 		}
-		return null;
 	}
 	
 	@Override
@@ -155,23 +161,25 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	protected void loadLocalDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
-		sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild));
-		// Notify listeners
-		DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
-				DatabaseType.LOCAL);
-		localDbLoaded = true;
-		notifyDatabaseLoaded(e);
+		if (sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild))){
+			// Notify listeners
+			DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
+					DatabaseType.LOCAL);
+			localDbLoaded = true;
+			notifyDatabaseLoaded(e);
+		}
 	}
 	
 	@Override
 	protected void loadHackageDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
-		sendAndReceiveOk(Commands.createLoadHackageDatabase(path, rebuild));
-		// Notify listeners
-		DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
-				DatabaseType.HACKAGE);
-		hackageDbLoaded = true;
-		notifyDatabaseLoaded(e);
+		if (sendAndReceiveOk(Commands.createLoadHackageDatabase(path, rebuild))){
+			// Notify listeners
+			DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
+					DatabaseType.HACKAGE);
+			hackageDbLoaded = true;
+			notifyDatabaseLoaded(e);
+		}
 	}
 
 	@Override
