@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -23,6 +25,7 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -84,6 +87,9 @@ public class ScionManager implements IResourceChangeListener {
   private int hConLowWater;
   /** Haskell console high water mark */
   private int hConHighWater;
+
+  private final static String MINIMUM_BUILDWRAPPER="0.3.0";
+  private final static String MINIMUM_SCIONBROWSER="0.2.1";
 
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
    * being fired off.
@@ -177,19 +183,45 @@ public class ScionManager implements IResourceChangeListener {
       }
     }
 
+    boolean doBuildWrapperSetup=true;
+    boolean doBrowserSetup=true;
+    boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE );
+    if (!ignore){
+      boolean buildwrapperVersionOK=serverExecutablePath==null || checkVersion( serverExecutablePath, MINIMUM_BUILDWRAPPER );
+      boolean browserVersionOK=browserExecutablePath==null || checkVersion( browserExecutablePath, MINIMUM_SCIONBROWSER );
+
+      doBuildWrapperSetup=buildwrapperVersionOK; // do not launch if too old
+      doBrowserSetup=browserVersionOK;// do not launch if too old
+      if (!buildwrapperVersionOK || !browserVersionOK){
+          final Display display = HaskellUIPlugin.getStandardDisplay();
+          display.asyncExec( new Runnable() {
+            public void run() {
+              Shell parent = display.getActiveShell();
+
+              InstallOutdatedExecutableDialog ied=new InstallOutdatedExecutableDialog(parent , serverExecutablePath==null, browserExecutablePath==null );
+              ied.open();
+            }
+          });
+
+      }
+    }
+
     // Set up the output logging console for the shared ScionInstance:
 //    HaskellConsole c = new HaskellConsole( UITexts.sharedScionInstance_console );
 //    ScionPlugin.setSharedInstanceWriter( c.createOutputWriter() );
 //    c.setWaterMarks( hConLowWater, hConHighWater );
-
-    serverFactorySetup();
+    if (doBuildWrapperSetup){
+      serverFactorySetup();
+    }
 
     // Set up the output logging console for the shared Browser
     HaskellConsole cBrowser = new HaskellConsole(  UITexts.sharedBrowserInstance_console );
     BrowserPlugin.setSharedLogStream( cBrowser.createOutputWriter() );
     cBrowser.setWaterMarks( hConLowWater, hConHighWater );
 
-    browserSetup();
+    if (doBrowserSetup){
+      browserSetup();
+    }
 
     // Sit and listen to the core preference store changes
     //IEclipsePreferences instanceScope = HaskellCorePlugin.instanceScopedPreferences();
@@ -366,6 +398,8 @@ public class ScionManager implements IResourceChangeListener {
 //          } else {
 //            ScionPlugin.useNetworkStreamScionServerFactory( serverExecutablePath );
 //          }
+
+
           BuildWrapperPlugin.setBwPath( serverExecutablePath.toOSString() );
         } else {
 
@@ -392,6 +426,22 @@ public class ScionManager implements IResourceChangeListener {
 //      reportServerStartupError( ex );
 //    }
   }
+
+  public static boolean checkVersion(final IPath path,final String minimal){
+    if (path!=null){
+      try {
+        String currentVersion=ProcessRunner.getExecutableVersion(path.toOSString());
+        if (currentVersion==null){
+          return false;
+        }
+        return CabalPackageVersion.compare( currentVersion, minimal )>=0;
+      } catch (IOException ioe){
+        HaskellUIPlugin.log(UITexts.error_checkVersion, ioe);
+      }
+    }
+    return true;
+  }
+
 
   /**
    * Build the built-in scion-server: unpack the internal scion-x.y.z.a.zip archive into the destination

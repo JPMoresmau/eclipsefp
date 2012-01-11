@@ -25,16 +25,32 @@ public class CabalPackageHelper {
   }
 
 
+  public boolean hasInstalledVersion(final String name,final String version) throws IOException{
+    String s=getLastInstalledVersion(name);
+    if (s!=null){
+      return CabalPackageVersion.compare( s, version )>=0;
+    }
+    return false;
+  }
+
+  public String getLastInstalledVersion(final String name)throws IOException{
+    List<CabalPackageRef> r=list(name,"--installed");//$NON-NLS-1$
+    if (r.size()>0){
+      return r.get( r.size()-1 ).toString();
+    }
+    return null;
+  }
+
   public List<CabalPackageRef> getInstalled()throws IOException {
     if (installed==null){
-      installed=list("--installed"); //$NON-NLS-1$
+      installed=list("","--installed"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     return installed;
   }
 
   public List<CabalPackageRef> getAll()throws IOException {
     if (all==null){
-      all=list(""); //$NON-NLS-1$
+      all=list("",""); //$NON-NLS-1$ //$NON-NLS-2$
     }
     return all;
   }
@@ -53,9 +69,9 @@ public class CabalPackageHelper {
     return sb.toString().substring( 2 ); // starts with *<space>
   }
 
-  private List<CabalPackageRef> list(final String opt)throws IOException{
+  private List<CabalPackageRef> list(final String pkg,final String opt)throws IOException{
     List<CabalPackageRef> ret=new LinkedList<CabalPackageRef>();
-    BufferedReader br=run(cabalPath,"list",opt,"--simple-output");  //$NON-NLS-1$//$NON-NLS-2$
+    BufferedReader br=run(cabalPath,"list",pkg,opt,"--simple-output");  //$NON-NLS-1$//$NON-NLS-2$
     String line=br.readLine();
     CabalPackageRef last=null;
     while (line!=null){

@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 
@@ -35,16 +40,31 @@ public class InstallExecutableDialog extends Dialog {
     this.scionBrowser=scionBrowser;
   }
 
+
+
   @Override
   protected void createButtonsForButtonBar( final Composite parent ) {
     super.createButtonsForButtonBar( parent );
     getButton( OK ).setText( UITexts.executablesmissing_install );
   }
 
+  protected String getTitle(){
+    return UITexts.executablesmissing_title;
+  }
+
+  protected String getMessage1(){
+    return UITexts.executablesmissing_message1;
+  }
+
+  protected String getMessage2(){
+    return UITexts.executablesmissing_message2;
+  }
+
+
   @Override
   protected void configureShell( final Shell newShell ) {
     super.configureShell( newShell );
-    newShell.setText( UITexts.executablesmissing_title );
+    newShell.setText( getTitle() );
     newShell.setImage( HaskellUIImages.getImage( IImageNames.HASKELL_MISC ) );
   }
 
@@ -55,12 +75,12 @@ public class InstallExecutableDialog extends Dialog {
     String msg=null;
     if (buildWrapper){
       if (scionBrowser){
-        msg=NLS.bind( UITexts.executablesmissing_message2, "buildwrapper","scion-browser" );
+        msg=NLS.bind( getMessage2(), "buildwrapper","scion-browser" );
       } else {
-        msg=NLS.bind( UITexts.executablesmissing_message1, "buildwrapper");
+        msg=NLS.bind( getMessage1(), "buildwrapper");
       }
     } else {
-      msg=NLS.bind( UITexts.executablesmissing_message1, "scion-browser");
+      msg=NLS.bind( getMessage1(), "scion-browser");
     }
     Label l=new Label(c,SWT.NONE);
     l.setText( msg );
@@ -77,9 +97,13 @@ public class InstallExecutableDialog extends Dialog {
     return c;
   }
 
+  protected String getIgnorePreference(){
+    return IPreferenceConstants.IGNORE_MISSING_EXECUTABLE;
+  }
+
   private void setIgnoreFlag(){
     IPreferenceStore prefs = HaskellUIPlugin.getDefault().getPreferenceStore();
-    prefs.setValue( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, bIgnore.getSelection() );
+    prefs.setValue( getIgnorePreference(), bIgnore.getSelection() );
 
   }
 

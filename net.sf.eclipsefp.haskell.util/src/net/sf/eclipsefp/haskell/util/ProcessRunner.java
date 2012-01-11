@@ -46,10 +46,14 @@ public class ProcessRunner implements IProcessRunner {
   }
 
   public Process executeNonblocking( final File workingDir, final Writer out,
-      final Writer err, final String ... args ) throws IOException {
+      Writer err, final String ... args ) throws IOException {
     Process proc = doExecute( workingDir, args );
     redirect( new InputStreamReader( proc.getInputStream() ), out, STDOUT_REDIRECT );
+    if (err==null){
+    	err=new StringWriter();
+    }
     redirect( new InputStreamReader( proc.getErrorStream() ), err, STDERR_REDIRECT );
+    
     return proc;
   }
 
@@ -71,4 +75,34 @@ public class ProcessRunner implements IProcessRunner {
 	  return new Thread[]{t1,t2};
   }
 
+  public static String getExecutableVersion(String path) throws IOException{
+	  File f=new File(path);
+	  if (f.exists()){
+		  StringWriter sw=new StringWriter();
+		  Process p=new ProcessRunner().executeNonblocking(f.getParentFile(), sw, null, f.getAbsolutePath(),"--version");
+		  for (int a=0;a<10;a++){
+			  try {
+				  p.exitValue();
+				  break;
+			  } catch (IllegalThreadStateException ise){
+				  // still running
+			  }
+			  try {
+				  Thread.sleep(100);
+			  } catch (InterruptedException ie){
+				  //
+			  }
+		  }
+		  try {
+			  String line=sw.toString().trim();
+			  int ix=line.lastIndexOf(' ');
+			  if (ix>-1){
+				  return line.substring(ix+1);
+			  }
+		  } finally {
+			  p.destroy();
+		  }
+	  }
+	  return null;
+  }
 }

@@ -108,6 +108,9 @@ public final class UITexts extends NLS {
   public static String autodetectBrowserButton_errorTitle;
   public static String autodetectBrowserButton_errorMessage;
 
+  public static String ignore_missing_button;
+  public static String ignore_tooold_button;
+
   public static String forceRebuildButton_label;
   public static String forceRebuildButton_text;
   public static String forceRebuildBrowserButton_text;
@@ -405,6 +408,10 @@ public final class UITexts extends NLS {
   public static String executablesmissing_install;
   public static String executablesmissing_user;
   public static String executablesmissing_ignore;
+  public static String executablestoo_old_title;
+  public static String executablestoo_old_message1;
+  public static String executablestoo_old_message2;
+  public static String error_checkVersion;
 
   public static String executablesmissing_title;
   public static String executablesmissing_message1;

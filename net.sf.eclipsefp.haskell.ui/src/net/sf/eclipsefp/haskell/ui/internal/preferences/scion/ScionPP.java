@@ -69,6 +69,10 @@ public class ScionPP
   private Composite verboseInteractionFieldC;
 
 	private CabalImplsBlock cabalBlock;
+
+  private BooleanFieldEditor ignoreMissing;
+  private BooleanFieldEditor ignoreTooOld;
+
 	//private Group fieldComposite;
 //	private boolean rebuildBuiltin;
 //	private boolean rebuildBrowserBuiltin;
@@ -362,6 +366,16 @@ public class ScionPP
     hoogleExecutableField.setPreferenceStore( prefStore );
     hoogleExecutableField.load();
 
+    ignoreMissing=new BooleanFieldEditor( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, UITexts.ignore_missing_button, parentComposite );
+    ignoreMissing.setPage( this );
+    ignoreMissing.setPreferenceStore( prefStore );
+    ignoreMissing.load();
+
+    ignoreTooOld=new BooleanFieldEditor( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE, UITexts.ignore_tooold_button, parentComposite );
+    ignoreTooOld.setPage( this );
+    ignoreTooOld.setPreferenceStore( prefStore );
+    ignoreTooOld.load();
+
 		// Update the dialog's state and validity:
 		updateButtonState();
 		setValid(isValid());
@@ -464,6 +478,8 @@ public class ScionPP
     autodetect.store();
     autodetectBrowser.store();
     browserUseHackage.store();
+    ignoreMissing.store();
+    ignoreTooOld.store();
 //    serverFlavorField.store();
    verboseInteractionField.store();
 //    cabalUpdateField.store();
