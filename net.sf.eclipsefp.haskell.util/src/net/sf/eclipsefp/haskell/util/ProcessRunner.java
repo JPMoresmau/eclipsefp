@@ -96,8 +96,11 @@ public class ProcessRunner implements IProcessRunner {
 		  try {
 			  String line=sw.toString().trim();
 			  int ix=line.lastIndexOf(' ');
-			  if (ix>-1){
-				  return line.substring(ix+1);
+			  if (ix>-1 && ix<line.length()){
+				  line=line.substring(ix+1);
+				  if (Character.isDigit(line.charAt(0))){
+					  return line;
+				  }
 			  }
 		  } finally {
 			  p.destroy();

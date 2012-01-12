@@ -187,8 +187,8 @@ public class ScionManager implements IResourceChangeListener {
     boolean doBrowserSetup=true;
     boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE );
     if (!ignore){
-      boolean buildwrapperVersionOK=serverExecutablePath==null || checkVersion( serverExecutablePath, MINIMUM_BUILDWRAPPER );
-      boolean browserVersionOK=browserExecutablePath==null || checkVersion( browserExecutablePath, MINIMUM_SCIONBROWSER );
+      final boolean buildwrapperVersionOK=serverExecutablePath==null || checkVersion( serverExecutablePath, MINIMUM_BUILDWRAPPER );
+      final boolean browserVersionOK=browserExecutablePath==null || checkVersion( browserExecutablePath, MINIMUM_SCIONBROWSER );
 
       doBuildWrapperSetup=buildwrapperVersionOK; // do not launch if too old
       doBrowserSetup=browserVersionOK;// do not launch if too old
@@ -198,7 +198,7 @@ public class ScionManager implements IResourceChangeListener {
             public void run() {
               Shell parent = display.getActiveShell();
 
-              InstallOutdatedExecutableDialog ied=new InstallOutdatedExecutableDialog(parent , serverExecutablePath==null, browserExecutablePath==null );
+              InstallOutdatedExecutableDialog ied=new InstallOutdatedExecutableDialog(parent , !buildwrapperVersionOK, !browserVersionOK );
               ied.open();
             }
           });
