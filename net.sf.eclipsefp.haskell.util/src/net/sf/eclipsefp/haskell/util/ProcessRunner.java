@@ -80,7 +80,7 @@ public class ProcessRunner implements IProcessRunner {
 	  if (f.exists()){
 		  StringWriter sw=new StringWriter();
 		  Process p=new ProcessRunner().executeNonblocking(f.getParentFile(), sw, null, f.getAbsolutePath(),"--version");
-		  for (int a=0;a<10;a++){
+		  for (int a=0;a<50;a++){ // 50 * 100 -> 5 seconds maxi
 			  try {
 				  p.exitValue();
 				  break;
