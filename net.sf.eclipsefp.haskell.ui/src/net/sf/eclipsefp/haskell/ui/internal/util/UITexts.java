@@ -149,6 +149,7 @@ public final class UITexts extends NLS {
   public static String scionServerFlavor_network_label;
 
   public static String scionVerboseInteraction_title;
+  public static String browserVerboseInteraction_title;
 
   public static String scionVersionMismatch_title;
   public static String scionVersionMismatch_message;

@@ -19,13 +19,13 @@ public class StreamRedirect extends Thread {
 
   private final Reader fInput;
 
-  private final Writer fOutput;
+  private Writer output;
 
   public StreamRedirect( final String name, final Reader in,
       final Writer out ) {
     super( name );
     fInput = in;
-    fOutput = out;
+    output = out;
     setPriority( Thread.MAX_PRIORITY - 1 );
   }
 
@@ -42,13 +42,29 @@ public class StreamRedirect extends Thread {
     int count;
     try {
       while( ( count = fInput.read( cbuf, 0, BUFFER_SIZE ) ) >= 0 ) {
-        fOutput.write( cbuf, 0, count );
+        output.write( cbuf, 0, count );
       }
-      fOutput.flush();
+      output.flush();
 
-      fOutput.close();
+      output.close();
     } catch( IOException ex ) {
       // reading error, abort multiplexing
     }
   }
+
+	public Writer getOutput() {
+		return output;
+	}
+	
+	public void setOutput(Writer output) {
+		if (this.output!=null){
+			 try {
+				 this.output.flush();
+				 this.output.close();
+		    } catch( IOException ignore ) {
+		      // noop
+		    }
+		}
+		this.output = output;
+	}
 }

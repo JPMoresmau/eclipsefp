@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.zip.InflaterInputStream;
 
@@ -25,6 +26,8 @@ import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
+import net.sf.eclipsefp.haskell.util.NullWriter;
+import net.sf.eclipsefp.haskell.util.StreamRedirect;
 
 import org.eclipse.core.runtime.IPath;
 import org.json.JSONArray;
@@ -46,20 +49,35 @@ public class StreamBrowserServer extends BrowserServer {
 	private boolean localDbLoaded = false;
 	private boolean hackageDbLoaded = false;
 	private boolean hoogleLoaded = false;
-	
+	private StreamRedirect errorRedirect;
 	public Object lock;
 	
 	private DatabaseType currentDatabase;
 	private HashMap<String, Packaged<Declaration>[]> declCache;
 
-	public StreamBrowserServer(IPath serverExecutable) throws Exception {
+	private boolean logError;
+	
+	public StreamBrowserServer(IPath serverExecutable,boolean logError) throws Exception {
 		this.serverExecutable = serverExecutable;
 		this.declCache = new HashMap<String, Packaged<Declaration>[]>();
 		lock = new Object();
-		startServer();
+		this.logError=logError;
+		startServer(logError);
 	}
 
-	public void startServer() throws Exception {
+	@Override
+	public void setLogStream(Writer logStream) {
+		super.setLogStream(logStream);
+		if (logError){
+			errorRedirect.setOutput(logStream);
+		}
+	}
+	
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
+	public void startServer(boolean logError) throws Exception {
 		ProcessBuilder builder = new ProcessBuilder(
 				serverExecutable.toOSString());
 		builder.redirectErrorStream(false);
@@ -67,6 +85,9 @@ public class StreamBrowserServer extends BrowserServer {
 		try {
 			process = builder.start();
 			out = process.getInputStream();
+			Writer errorWriter=logError && logStream!=null?logStream:new NullWriter();
+			errorRedirect=new StreamRedirect(new InputStreamReader(process.getErrorStream(),"UTF8"), errorWriter);
+			errorRedirect.start();
 			/*out = new BufferedReader(new InputStreamReader(
 					process.getInputStream(), "UTF8"));*/
 			/*err = new BufferedReader(new InputStreamReader(
@@ -268,6 +289,20 @@ public class StreamBrowserServer extends BrowserServer {
 		notifyDatabaseUnloaded(e);
 		// Nor a Hoogle connection
 		notifyHoogleUnloaded(e);
+		try {
+			if (out!=null){
+				out.close();
+			}
+		} catch (Exception ignore){
+			// noop
+		}
+		try {
+			if (in!=null){
+				in.close();
+			}
+		} catch (Exception ignore){
+			//noop
+		}
 		try {
 			sendAndReceiveOk(Commands.createQuit());
 			if (process!=null){

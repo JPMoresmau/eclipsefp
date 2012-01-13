@@ -515,7 +515,9 @@ public class ScionManager implements IResourceChangeListener {
 //      }
 //    } else {
       if ( browserExecutablePath != null && browserExecutablePath.toFile().exists() ) {
-        BrowserPlugin.changeSharedInstance( browserExecutablePath );
+        IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+        boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION );
+        BrowserPlugin.changeSharedInstance( browserExecutablePath ,verbose );
 
         display.asyncExec( new Runnable() {
           public void run() {

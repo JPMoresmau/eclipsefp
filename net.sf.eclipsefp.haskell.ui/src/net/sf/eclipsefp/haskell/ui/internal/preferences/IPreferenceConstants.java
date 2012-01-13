@@ -31,6 +31,7 @@ public interface IPreferenceConstants {
   public final static String IGNORE_MISSING_EXECUTABLE = "IGNORE_MISSING_EXECUTABLE";
   public final static String IGNORE_TOOOLD_EXECUTABLE = "IGNORE_TOOOLD_EXECUTABLE";
   public final static String VERBOSE_INTERACTION = "VERBOSE_INTERACTION";  //$NON-NLS-1$
+  public final static String BROWSER_VERBOSE_INTERACTION = "BROWSER_VERBOSE_INTERACTION";  //$NON-NLS-1$
   //public final static String RUN_CABAL_UPDATE = "RUN_CABAL_UPDATE" ; //$NON-NLS-1$
 
   // search paths

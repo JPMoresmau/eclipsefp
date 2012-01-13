@@ -68,6 +68,9 @@ public class ScionPP
 	private BooleanFieldEditor verboseInteractionField;
   private Composite verboseInteractionFieldC;
 
+  private BooleanFieldEditor verboseBrowserInteractionField;
+  private Composite verboseBrowserInteractionFieldC;
+
 	private CabalImplsBlock cabalBlock;
 
   private BooleanFieldEditor ignoreMissing;
@@ -349,6 +352,18 @@ public class ScionPP
     browserUseHackage.setPreferenceStore( prefStore );
     browserUseHackage.load();
 
+    verboseBrowserInteractionFieldC = new Composite(sbComposite, SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    verboseBrowserInteractionFieldC.setLayoutData( gd);
+    verboseBrowserInteractionField = new BooleanFieldEditor( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION,
+        UITexts.browserVerboseInteraction_title,
+        verboseBrowserInteractionFieldC );
+    verboseBrowserInteractionField.setPage(this);
+    verboseBrowserInteractionField.setPreferenceStore( prefStore );
+    verboseBrowserInteractionField.load();
+
+
     hoogleExecutableFieldC=new Composite(sbComposite,SWT.NONE);
     GridData gd3 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd3.horizontalSpan=2;
@@ -463,6 +478,7 @@ public class ScionPP
 	  store.setDefault( SCION_BROWSER_SERVER_EXECUTABLE, new String() );
 	  store.setDefault( SCION_BROWSER_USE_HACKAGE, false );
 	  store.setDefault( VERBOSE_INTERACTION, false );
+	  store.setDefault( BROWSER_VERBOSE_INTERACTION, false );
 	  store.setDefault( SCION_BROWSER_EXTRA_HOOGLE_PATH, "" );
 //	  store.setDefault( IScionPreferenceNames.VERBOSE_INTERACTION, false );
 	}
@@ -482,6 +498,7 @@ public class ScionPP
     ignoreTooOld.store();
 //    serverFlavorField.store();
    verboseInteractionField.store();
+   verboseBrowserInteractionField.store();
 //    cabalUpdateField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();

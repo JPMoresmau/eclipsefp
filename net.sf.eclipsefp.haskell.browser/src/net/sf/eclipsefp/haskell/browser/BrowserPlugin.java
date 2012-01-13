@@ -173,14 +173,14 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * 
 	 * @param path file path to the server executable
 	 */
-	public void changeInstance(IPath path) {
+	public void changeInstance(IPath path,boolean logError) {
 		// Destroy previous scion-browser
 		if (this.server != null)
 			this.server.stop();
 		
 		if (path.toFile().exists()) {
 			try {
-				this.server = new StreamBrowserServer(path);
+				this.server = new StreamBrowserServer(path,logError);
 				this.server.addDatabaseLoadedListener(this);
 				this.server.addHoogleLoadedListener(this);
 				this.server.setLogStream(this.logStream);
@@ -197,8 +197,8 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * 
 	 * @param path
 	 */
-	public static void changeSharedInstance(IPath path) {
-		getDefault().changeInstance(path);
+	public static void changeSharedInstance(IPath path,boolean logError) {
+		getDefault().changeInstance(path,logError);
 	}
 
 	/**
@@ -223,9 +223,9 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	/**
 	 * Makes the plug-in to use the buil-in browser
 	 */
-	public static void useSharedBuiltinInstance() {
+	public static void useSharedBuiltinInstance(boolean logError) {
 		IPath path = builtinServerExecutablePath();
-		changeSharedInstance(path);
+		changeSharedInstance(path,logError);
 	}
 
 	/**
