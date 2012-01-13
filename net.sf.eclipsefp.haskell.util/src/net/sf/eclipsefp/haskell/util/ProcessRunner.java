@@ -75,22 +75,30 @@ public class ProcessRunner implements IProcessRunner {
 	  return new Thread[]{t1,t2};
   }
 
-  public static String getExecutableVersion(String path) throws IOException{
+  public static String getExecutableVersion(String path,boolean wait) throws IOException{
 	  File f=new File(path);
 	  if (f.exists()){
 		  StringWriter sw=new StringWriter();
 		  Process p=new ProcessRunner().executeNonblocking(f.getParentFile(), sw, null, f.getAbsolutePath(),"--version");
-		  for (int a=0;a<50;a++){ // 50 * 100 -> 5 seconds maxi
+		  if (wait){
 			  try {
-				  p.exitValue();
-				  break;
-			  } catch (IllegalThreadStateException ise){
-				  // still running
-			  }
-			  try {
-				  Thread.sleep(100);
+				  p.waitFor();
 			  } catch (InterruptedException ie){
 				  //
+			  }
+		  } else {
+			  for (int a=0;a<50;a++){ // 50 * 100 -> 5 seconds maxi
+				  try {
+					  p.exitValue();
+					  break;
+				  } catch (IllegalThreadStateException ise){
+					  // still running
+				  }
+				  try {
+					  Thread.sleep(100);
+				  } catch (InterruptedException ie){
+					  //
+				  }
 			  }
 		  }
 		  try {
