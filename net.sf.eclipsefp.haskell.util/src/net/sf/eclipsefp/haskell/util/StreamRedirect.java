@@ -43,9 +43,9 @@ public class StreamRedirect extends Thread {
     try {
       while( ( count = fInput.read( cbuf, 0, BUFFER_SIZE ) ) >= 0 ) {
         output.write( cbuf, 0, count );
+        output.flush(); // flush straight away
       }
-      output.flush();
-
+      
       output.close();
     } catch( IOException ex ) {
       // reading error, abort multiplexing

@@ -74,7 +74,7 @@ public class InstallExecutableRunnable implements Runnable {
       commands.add(new Command(UITexts.builWrapperInstallProgress,"buildwrapper",IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","buildwrapper", global?"--global": "--user" )));
     }
     if (scionBrowser){
-      commands.add(new Command(UITexts.builWrapperInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
+      commands.add(new Command(UITexts.scionBrowserInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
     }
     final File fBinDir=binDir;
 
