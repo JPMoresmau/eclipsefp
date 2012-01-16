@@ -28,7 +28,6 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -89,7 +88,7 @@ public class ScionManager implements IResourceChangeListener {
   private int hConHighWater;
 
   private final static String MINIMUM_BUILDWRAPPER="0.3.0";
-  private final static String MINIMUM_SCIONBROWSER="0.2.1";
+  private final static String MINIMUM_SCIONBROWSER="0.2.3";
 
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
    * being fired off.
