@@ -28,6 +28,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
