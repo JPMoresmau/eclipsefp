@@ -105,9 +105,10 @@ public class HLintBuilder extends IncrementalProjectBuilder {
       marker.setAttribute( IMarker.SEVERITY,
           s.getSeverity() == Severity.ERROR ? IMarker.SEVERITY_WARNING
               : IMarker.SEVERITY_INFO );
-      // marker.setAttribute( IMarker.CHAR_START, 0 );
+      //marker.setAttribute( IMarker.CHAR_START, s.getLocation().getColumn() );
       // marker.setAttribute( IMarker.CHAR_END, 1 );
       marker.setAttribute( IMarker.LINE_NUMBER, s.getLocation().getLine() );
+      marker.setAttribute( HaskellCorePlugin.ATT_HLINT_SUGGESTION, s.toString() );
     }
   }
 

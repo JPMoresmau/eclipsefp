@@ -62,6 +62,7 @@ public abstract class MarkerCompletion implements IMarkerResolution {
         if(prov!=null){
           prov.saveDocument( new NullProgressMonitor(), f, doc, true );
         }
+        marker.delete();
       }
     } catch( CoreException ex ) {
       HaskellUIPlugin.log( ex );

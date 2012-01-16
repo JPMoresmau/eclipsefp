@@ -8,7 +8,10 @@ import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
@@ -21,142 +24,163 @@ public class BuildMarkerResolutionGenerator implements
     IMarkerResolutionGenerator {
 
   public IMarkerResolution[] getResolutions( final IMarker marker ) {
+    if (marker==null || !marker.exists()){
+      return new IMarkerResolution[0];
+    }
     List<IMarkerResolution> res=new ArrayList<IMarkerResolution>();
-    if (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_WARNING || (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_ERROR)){
-      String msg=marker.getAttribute(IMarker.MESSAGE,""); //$NON-NLS-1$
-      if (msg!=null){
-        String msgL=msg.toLowerCase(Locale.ENGLISH);
 
-        int ix=-1;
+    IMarkerResolution hlr=getHLintResolution( marker );
+    if (hlr!=null){
+      res.add( hlr );
+    } else {
 
-        // Type signature not found
-        if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
-          res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_INFERREDTYPE_START));
-        } else if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS )>-1){
-          // type is given on next line
-          res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS));
-        }
-        // Useless import
-        else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
-          res.add(new RemoveImportResolution());
-          int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START );
-          if (ix2>-1){
-            String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START.length() ).trim();
-            res.add( new ReplaceImportResolution( newImport ) );
+      if (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_WARNING || (marker.getAttribute( IMarker.SEVERITY , IMarker.SEVERITY_ERROR)==IMarker.SEVERITY_ERROR)){
+        String msg=marker.getAttribute(IMarker.MESSAGE,""); //$NON-NLS-1$
+        if (msg!=null){
+          String msgL=msg.toLowerCase(Locale.ENGLISH);
+
+          int ix=-1;
+
+          // Type signature not found
+          if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
+            res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_INFERREDTYPE_START));
+          } else if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS )>-1){
+            // type is given on next line
+            res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS));
           }
-        } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS2 )>-1){
-          if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_ELEMENT2 ) > -1) {
-            // Redundant element
-            // 1. Find redundant element
-            int backQuote1 = msg.indexOf( '`' );
-            int endQuote1 = msg.indexOf( '\'' );
-            String redundantElement = msg.substring( backQuote1 + 1, endQuote1 );
-            /*String rest = msg.substring( endQuote1 + 1 );
-            int backQuote2 = rest.indexOf( '`' );
-            int endQuote2 = rest.indexOf( '\'' );
-            String inImport = rest.substring( backQuote2 + 1, endQuote2 );*/
-            res.add( new RemoveRedundantElementInImportResolution( redundantElement ) );
-          } else {
-            // Redundant entire import
+          // Useless import
+          else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
             res.add(new RemoveImportResolution());
-            int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START2 );
+            int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START );
             if (ix2>-1){
-              String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START2.length() ).trim();
+              String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START.length() ).trim();
               res.add( new ReplaceImportResolution( newImport ) );
             }
-          }
-        }
-        // Language pragma needed
-        else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3)){
-          //
-        } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
-           int end=ix-2;
-           int ix2=msg.lastIndexOf( ' ',end);
-           if (ix2>-1){
-             String flag=msg.substring( ix2+1,end+1 ).trim();
-             addPragma(res,flag);
-           }
-        }
-        // Import a package
-        else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
-          int start=GhcMessages.MISSING_MODULE.length();
-          ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,start );
-          while (ix>-1){
-            int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
-            if (ix2>-1){
-              String pkg=msgL.substring( ix+GhcMessages.MISSING_MODULE_ADD_START.length(),ix2 );
-              res.add(new AddPackageDependency( pkg ));
-              ix=ix2;
+          } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS2 )>-1){
+            if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_ELEMENT2 ) > -1) {
+              // Redundant element
+              // 1. Find redundant element
+              int backQuote1 = msg.indexOf( '`' );
+              int endQuote1 = msg.indexOf( '\'' );
+              String redundantElement = msg.substring( backQuote1 + 1, endQuote1 );
+              /*String rest = msg.substring( endQuote1 + 1 );
+              int backQuote2 = rest.indexOf( '`' );
+              int endQuote2 = rest.indexOf( '\'' );
+              String inImport = rest.substring( backQuote2 + 1, endQuote2 );*/
+              res.add( new RemoveRedundantElementInImportResolution( redundantElement ) );
+            } else {
+              // Redundant entire import
+              res.add(new RemoveImportResolution());
+              int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START2 );
+              if (ix2>-1){
+                String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START2.length() ).trim();
+                res.add( new ReplaceImportResolution( newImport ) );
+              }
             }
-            ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,ix+1 );
           }
-        }
-        // Not in scope
-        else if (msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START )>-1){
-          int start = msgL.indexOf( '`',msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START ));
-          int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
-          String notInScope = msg.substring( start + 1, end );
-          String name, qualified;
-          int pointPos = notInScope.lastIndexOf( '.' );
-          if (pointPos != -1) {
-            name = notInScope.substring( pointPos + 1 );
-            qualified = notInScope.substring( 0, pointPos );
-          } else {
-            name = notInScope;
-            qualified = null;
+          // Language pragma needed
+          else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3)){
+            //
+          } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
+             int end=ix-2;
+             int ix2=msg.lastIndexOf( ' ',end);
+             if (ix2>-1){
+               String flag=msg.substring( ix2+1,end+1 ).trim();
+               addPragma(res,flag);
+             }
           }
-          try {
-            if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {
-              BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-              Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration( name );
-              ArrayList<String> places = new ArrayList<String>();
-              for (Module avMod : availableMods) {
-                if (!places.contains( avMod.getName() )) {
-                  places.add( avMod.getName() );
+          // Import a package
+          else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
+            int start=GhcMessages.MISSING_MODULE.length();
+            ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,start );
+            while (ix>-1){
+              int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
+              if (ix2>-1){
+                String pkg=msgL.substring( ix+GhcMessages.MISSING_MODULE_ADD_START.length(),ix2 );
+                res.add(new AddPackageDependency( pkg ));
+                ix=ix2;
+              }
+              ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,ix+1 );
+            }
+          }
+          // Not in scope
+          else if (msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START )>-1){
+            int start = msgL.indexOf( '`',msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START ));
+            int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
+            String notInScope = msg.substring( start + 1, end );
+            String name, qualified;
+            int pointPos = notInScope.lastIndexOf( '.' );
+            if (pointPos != -1) {
+              name = notInScope.substring( pointPos + 1 );
+              qualified = notInScope.substring( 0, pointPos );
+            } else {
+              name = notInScope;
+              qualified = null;
+            }
+            try {
+              if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {
+                BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+                Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration( name );
+                ArrayList<String> places = new ArrayList<String>();
+                for (Module avMod : availableMods) {
+                  if (!places.contains( avMod.getName() )) {
+                    places.add( avMod.getName() );
+                  }
+                }
+                Collections.sort( places );
+                for (String place : places) {
+                  res.add( new AddImportResolution( name, place, qualified ) );
                 }
               }
-              Collections.sort( places );
-              for (String place : places) {
-                res.add( new AddImportResolution( name, place, qualified ) );
-              }
+            } catch (Exception e) {
+              // Do nothing
             }
-          } catch (Exception e) {
-            // Do nothing
+          } else if (msg.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
+            int btix=msg.indexOf('`');
+            int sqix=msg.indexOf('\'',btix);
+            //String module=msg.substring(btix+1,sqix);
+            btix=msg.indexOf('`',sqix);
+            sqix=msg.indexOf('\'',btix);
+            String constructor=msg.substring(btix+1,sqix);
+            btix=msg.indexOf('`',sqix);
+            sqix=msg.indexOf('\'',btix);
+            String type=msg.substring(btix+1,sqix);
+            res.add( new ReplaceImportElement( constructor, type+"("+constructor+")" ) );
+            res.add( new ReplaceImportElement( constructor, type+"(..)" ) );
+           /* btix=msg.indexOf('`',btix+1);
+            sqix=msg.indexOf('\'',btix);
+            String import1=msg.substring(btix+1,sqix);
+            btix=msg.indexOf('`',sqix);
+            sqix=msg.indexOf('\'',btix);
+            String import2=msg.substring(btix+1,sqix);
+            res.add(new ReplaceImportResolution( import1 ));
+            res.add(new ReplaceImportResolution( import2 ));*/
+            /*
+            Description Resource  Path  Location  Type  ID
+            In module `System.Exit':
+              `ExitFailure' is a data constructor of `ExitCode'
+            To import it use
+              `import System.Exit (ExitCode (ExitFailure))'
+            or
+              `import System.Exit (ExitCode (..))'
+              Main.hs /nxt/test line 16 Haskell Problem 39935*/
           }
-        } else if (msg.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
-          int btix=msg.indexOf('`');
-          int sqix=msg.indexOf('\'',btix);
-          //String module=msg.substring(btix+1,sqix);
-          btix=msg.indexOf('`',sqix);
-          sqix=msg.indexOf('\'',btix);
-          String constructor=msg.substring(btix+1,sqix);
-          btix=msg.indexOf('`',sqix);
-          sqix=msg.indexOf('\'',btix);
-          String type=msg.substring(btix+1,sqix);
-          res.add( new ReplaceImportElement( constructor, type+"("+constructor+")" ) );
-          res.add( new ReplaceImportElement( constructor, type+"(..)" ) );
-         /* btix=msg.indexOf('`',btix+1);
-          sqix=msg.indexOf('\'',btix);
-          String import1=msg.substring(btix+1,sqix);
-          btix=msg.indexOf('`',sqix);
-          sqix=msg.indexOf('\'',btix);
-          String import2=msg.substring(btix+1,sqix);
-          res.add(new ReplaceImportResolution( import1 ));
-          res.add(new ReplaceImportResolution( import2 ));*/
-          /*
-          Description Resource  Path  Location  Type  ID
-          In module `System.Exit':
-            `ExitFailure' is a data constructor of `ExitCode'
-          To import it use
-            `import System.Exit (ExitCode (ExitFailure))'
-          or
-            `import System.Exit (ExitCode (..))'
-            Main.hs /nxt/test line 16 Haskell Problem 39935*/
         }
       }
     }
 
     return res.toArray( new IMarkerResolution[res.size()] );
+  }
+
+  private IMarkerResolution getHLintResolution(final IMarker marker) {
+    try {
+      if (marker.getType().equals(HaskellCorePlugin.ID_HLINT_MARKER)){
+        return new HLintResolution();
+      }
+    }catch (CoreException ce){
+      HaskellUIPlugin.log( ce );
+    }
+    return null;
   }
 
   private boolean addFlagPragma(final List<IMarkerResolution> res,final String msg,final String msgL,final String... toSearch){

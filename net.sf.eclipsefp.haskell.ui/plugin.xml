@@ -1235,5 +1235,10 @@
             class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
             markerType="net.sf.eclipsefp.haskell.core.projectProblem">
       </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="net.sf.eclipsefp.haskell.ui.internal.resolve.BuildMarkerResolutionGenerator"
+            markerType="net.sf.eclipsefp.haskell.core.hlint">
+      </markerResolutionGenerator>      
+      
    </extension>
 </plugin>

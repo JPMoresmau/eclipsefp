@@ -4,12 +4,17 @@
  */
 package net.sf.eclipsefp.haskell.hlint;
 
+import java.io.Serializable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Represents all the information of an HLint suggestion.
  * @author Alejandro Serrano
  *
  */
-public class Suggestion {
+public class Suggestion implements Serializable {
 	private SourceLocation location;
 	private Severity severity;
 	private String message;
@@ -54,5 +59,39 @@ public class Suggestion {
 
 	public void setPost(CodeModification post) {
 		this.post = post;
+	}
+	
+	public String toString() {
+		JSONObject obj=new JSONObject();
+		try {
+			if (pre!=null){
+				obj.put("pre", pre.toJSON());
+			}
+			if (post!=null){
+				obj.put("post", post.toJSON());
+			}
+			if (location!=null){
+				obj.put("line", location.getLine());
+				obj.put("column", location.getColumn());
+			}
+		} catch (JSONException je){
+			je.printStackTrace();
+		}
+		return obj.toString();
+	}
+	
+	public void fromString(String s){
+		try {
+			JSONObject obj=new JSONObject(s);
+			pre=CodeModification.fromJSON(obj.opt("pre"));
+			post=CodeModification.fromJSON(obj.opt("post"));
+			int line=obj.optInt("line", -1);
+			int column=obj.optInt("column",-1);
+			if (line>-1 && column>-1){
+				location=new SourceLocation("", line, column);
+			}
+		} catch (JSONException je){
+			je.printStackTrace();
+		}
 	}
 }

@@ -38,6 +38,8 @@ public class HaskellCorePlugin extends Plugin {
 	public static final String ID_HAPPY_MARKER = "net.sf.eclipsefp.haskell.core.happy"; //$NON-NLS-1$
 	public static final String ID_UUAGC_MARKER = "net.sf.eclipsefp.haskell.core.uuagc"; //$NON-NLS-1$
 
+	public static final String ATT_HLINT_SUGGESTION = "suggestion"; //$NON-NLS-1$
+
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
