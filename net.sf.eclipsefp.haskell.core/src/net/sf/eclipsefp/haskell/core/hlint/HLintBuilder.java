@@ -102,14 +102,21 @@ public class HLintBuilder extends IncrementalProjectBuilder {
       IMarker marker = resource
           .createMarker( HaskellCorePlugin.ID_HLINT_MARKER );
       marker.setAttribute( IMarker.MESSAGE, s.getMessage() );
-      marker.setAttribute( IMarker.SEVERITY,
-          s.getSeverity() == Severity.ERROR ? IMarker.SEVERITY_WARNING
-              : IMarker.SEVERITY_INFO );
-      //marker.setAttribute( IMarker.CHAR_START, s.getLocation().getColumn() );
-      // marker.setAttribute( IMarker.CHAR_END, 1 );
+      marker.setAttribute( IMarker.SEVERITY,getMarkerSeverity(s.getSeverity()) );
       marker.setAttribute( IMarker.LINE_NUMBER, s.getLocation().getLine() );
       marker.setAttribute( HaskellCorePlugin.ATT_HLINT_SUGGESTION, s.toString() );
     }
   }
 
+
+  private static int getMarkerSeverity(final Severity sev){
+    switch( sev ) {
+      case ERROR:
+        return IMarker.SEVERITY_WARNING;
+      case WARNING:
+        return IMarker.SEVERITY_WARNING;
+      default:
+        return IMarker.SEVERITY_INFO;
+    }
+  }
 }
