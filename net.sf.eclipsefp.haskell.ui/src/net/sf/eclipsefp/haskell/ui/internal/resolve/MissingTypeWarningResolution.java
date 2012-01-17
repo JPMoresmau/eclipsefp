@@ -59,7 +59,7 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
 
         int offset=document.getLineOffset( line-1 );
         String txt=type+PlatformUtil.NL;
-        return new CompletionProposal(getLineStartAddition(txt,marker.getResource()) , offset, 0, offset+txt.length(),HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
+        return new CompletionProposal(getLineStartAddition(txt,marker.getResource()) , offset, 0, txt.length(),HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
        // doc.replace( offset, 0, type+NL );
 
       } catch( BadLocationException ex ) {

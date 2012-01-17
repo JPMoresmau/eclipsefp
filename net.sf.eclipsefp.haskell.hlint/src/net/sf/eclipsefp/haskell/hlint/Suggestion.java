@@ -61,6 +61,20 @@ public class Suggestion implements Serializable {
 		this.post = post;
 	}
 	
+	public String getPreText(){
+		if (pre instanceof CodeModificationText){
+			return ((CodeModificationText)pre).getText();
+		}
+		return null;
+	}
+	
+	public String getPostText(){
+		if (post instanceof CodeModificationText){
+			return ((CodeModificationText)post).getText();
+		}
+		return null;
+	}
+	
 	public String toString() {
 		JSONObject obj=new JSONObject();
 		try {

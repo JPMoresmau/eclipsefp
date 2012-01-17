@@ -35,9 +35,9 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
 
   @Override
   public ICompletionProposal getCompletionProposal( final IMarker marker,final IDocument document){
-    int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
+   //int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
     try {
-      int offset=document.getLineOffset( line-1 );
+      //int offset=document.getLineOffset( line-1 );
       int ix=0;
       int pragmaOffset=0;
       int lineOffset=0;
@@ -82,7 +82,7 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
         }
       }
 
-      return new CompletionProposal(repl, lineOffset+pragmaOffset, 0, offset,null,getLabel(),null,null );
+      return new CompletionProposal(repl, lineOffset+pragmaOffset, 0, 0,null,getLabel(),null,null );
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );
     }

@@ -296,6 +296,9 @@ public final class UITexts extends NLS {
   public static String resolve_import_add;
   public static String resolve_import_remove_part;
   public static String resolve_hlint;
+  public static String resolve_hlint_explain;
+  public static String resolve_hlint_remove;
+  public static String resolve_hlint_replace;
 
   public static String preferences_title;
 

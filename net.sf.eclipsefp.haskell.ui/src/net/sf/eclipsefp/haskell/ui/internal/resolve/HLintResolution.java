@@ -14,8 +14,8 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.osgi.util.NLS;
 
 
 /**
@@ -46,12 +46,27 @@ public class HLintResolution extends MarkerCompletion {
           try {
             int offset=document.getLineOffset( line-1 )+s.getLocation().getColumn()-1;
             HLintFix fix=HLintFixer.fix( document.get(), offset, s );
-            return new CompletionProposal( fix.getValue(), offset, fix.getLength(), offset+fix.getLength(),null,getLabel(),null,null );
+            String add=getAdditionalInfo(s) ;
+            String label=NLS.bind( UITexts.resolve_hlint_explain,add);
+            return new MarkerCompletionProposal( fix.getValue(), offset, fix.getLength(), fix.getLength(),label,marker,add);
           } catch( BadLocationException ex ) {
             HaskellUIPlugin.log( ex );
           }
         }
 
+    }
+    return null;
+  }
+
+  private String getAdditionalInfo(final Suggestion s){
+    String pre=s.getPreText();
+    String post=s.getPostText();
+    if (pre!=null){
+      if (post!=null){
+        return NLS.bind( UITexts.resolve_hlint_replace,pre,post);
+      } else {
+        return NLS.bind( UITexts.resolve_hlint_remove,pre);
+      }
     }
     return null;
   }
