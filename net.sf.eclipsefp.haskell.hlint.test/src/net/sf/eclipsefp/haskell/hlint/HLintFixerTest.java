@@ -66,4 +66,21 @@ public class HLintFixerTest {
 		String newDoc=doc.substring(0,47)+fix.getValue()+doc.substring(47+fix.getLength());
 		assertEquals("        in DM.assocs $ DM.fromListWith (++) $ ((map (\\ (a, b) -> (a, [b])) cpkgs) ++\n    map (\\ (a, _) -> (a, [])) pkgs   )",newDoc);
 	}
+	
+	@Test
+	public void testDiscardComment(){
+		Suggestion sug=new Suggestion();
+		sug.setPre(new CodeModificationText("do copyFile src tgt"));
+		sug.setPost(new CodeModificationText("copyFile src tgt"));
+		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
+		sug.setMessage("Warning: Redundant do");
+		String doc="copyFileFull src tgt=do\n    --createDirectoryIfMissing True (takeDirectory tgt)\n    --putStrLn tgt\n    copyFile src tgt";
+		HLintFix fix=HLintFixer.fix(doc, 21, sug);
+		assertNotNull(fix);
+		assertEquals(98,fix.getLength());
+		String newDoc=doc.substring(0,21)+fix.getValue()+doc.substring(21+fix.getLength());
+		assertEquals("copyFileFull src tgt=copyFile src tgt",newDoc);
+	}
 }
+
+

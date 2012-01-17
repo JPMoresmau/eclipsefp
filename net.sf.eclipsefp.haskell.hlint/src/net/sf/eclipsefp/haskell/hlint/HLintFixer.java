@@ -75,6 +75,10 @@ public class HLintFixer {
 		if (txtIdx2<txt.length()){
 			int offset2=ignoreSpace(doc, offset);
 			if (offset2<doc.length()){
+				while (doc.substring(offset2).startsWith("--")){
+					int ix=doc.indexOf("\n",offset2);
+					offset2=ignoreSpace(doc, ix);
+				}
 				char c1=doc.charAt(offset2);
 				char c2=txt.charAt(txtIdx2);
 				if (c1==c2){
