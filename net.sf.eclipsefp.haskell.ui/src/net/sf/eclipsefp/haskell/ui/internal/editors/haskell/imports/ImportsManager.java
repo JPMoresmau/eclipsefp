@@ -151,8 +151,9 @@ public class ImportsManager {
   }
 
   public Map<String, Documented> getDeclarations() {
-    HashMap<String, Documented> r = new HashMap<String, Documented>();
+
     Map<String, Imported> si=getImportedDeclarations();
+    HashMap<String, Documented> r = new HashMap<String, Documented>(si.size());
     for (String i:si.keySet()) {
       r.put(i,si.get( i ).getDocumented().getDocumented()  );
     }
@@ -164,28 +165,33 @@ public class ImportsManager {
     ArrayList<AnImport> imports = parseImports();
     // Add Prelude import
     boolean hasPrelude = false;
-    for (AnImport i : imports) {
-      if (i.getImportDef().getModule().equals( "Prelude" )) {
-        hasPrelude = true;
-        break;
-      }
-    }
-    if (!hasPrelude) {
-      imports.add( new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
-    }
+    HashMap<String, Imported> r = new HashMap<String, Imported>();
+
+
     // Add me
     String meName = ResourceUtil.getModuleName( file );
-    imports.add( AnImport.createMe( meName ) );
 
-    HashMap<String, Imported> r = new HashMap<String, Imported>();
+    getImportDeclarations(r, AnImport.createMe( meName ) );
+
     for (AnImport i : imports) {
-      Map<String, FileDocumented> ir=i.getDeclarations( file.getProject(), file, doc );
-      for (String s:ir.keySet()){
-        r.put(s,new Imported( ir.get( s ), i )  );
+      getImportDeclarations(r,i);
+      if (i.getImportDef().getModule().equals( "Prelude" )) {
+        hasPrelude = true;
       }
+    }
+
+    if (!hasPrelude) {
+      getImportDeclarations(r, new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
     }
 
     return r;
+  }
+
+  private void getImportDeclarations(final HashMap<String, Imported> r,final AnImport i){
+    Map<String, FileDocumented> ir=i.getDeclarations( file.getProject(), file, doc );
+    for (String s:ir.keySet()){
+      r.put(s,new Imported( ir.get( s ), i )  );
+    }
   }
 
   public CompletionProposal addImport( final String name, final String place, final String qualified, final String label ) {

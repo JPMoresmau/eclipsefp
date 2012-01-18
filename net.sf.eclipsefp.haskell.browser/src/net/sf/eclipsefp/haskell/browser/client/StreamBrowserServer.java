@@ -206,8 +206,10 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
 			throws IOException, JSONException {
-		this.currentDatabase = current;
-		sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
+		if (this.currentDatabase==null || !this.currentDatabase.equals(current)){
+			this.currentDatabase = current;
+			sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
+		}
 	}
 
 	@Override
@@ -228,17 +230,23 @@ public class StreamBrowserServer extends BrowserServer {
 		return Commands.responseGetModules(response);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Packaged<Declaration>[] getDeclarations(String module)
 			throws Exception {
 		// Try to find in cache
 		if (this.currentDatabase == DatabaseType.ALL) {
-			if (this.declCache.containsKey(module))
-				return this.declCache.get(module);
+			Packaged<Declaration>[] decls=this.declCache.get(module);
+			if (decls!=null){
+				return decls;
+			}
 		}
 		// If not, search
 		String response = sendAndReceive(Commands.createGetDeclarations(module));
 		Packaged<Declaration>[] decls = Commands.responseGetDeclarations(response);
+		if (decls==null){
+			decls=new Packaged[0];
+		}
 		// Check if we need to save in cache
 		if (this.currentDatabase == DatabaseType.ALL) {
 			this.declCache.put(module, decls);
