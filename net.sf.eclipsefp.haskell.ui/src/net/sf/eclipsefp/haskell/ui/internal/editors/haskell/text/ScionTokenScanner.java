@@ -234,7 +234,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         if (tgt==null){
           tgt=f.write( file, contents );
         } else {
-          f.write( tgt, contents );
+          f.write( file,tgt, contents );
         }
         //long t01=System.currentTimeMillis();
         lTokenDefs = f.tokenTypes( file);

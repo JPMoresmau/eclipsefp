@@ -82,6 +82,11 @@ public class BWFacade {
 	private Map<IFile,SingleJobQueue> tapQueuesByFiles=new HashMap<IFile, SingleJobQueue>();
 	
 	/**
+	 * maps of outlines for files (key is relative path)
+	 */
+	private Map<String,OutlineResult> outlines=new HashMap<String, OutlineResult>();
+	
+	/**
 	 * do we need to set derived on dist dir?
 	 */
 	private boolean needSetDerivedOnDistDir=false;
@@ -204,6 +209,8 @@ public class BWFacade {
 							components=null;
 							packageDB=null;
 						}
+						// remove from cache if file has changed
+						outlines.remove(p);
 					} catch (JSONException je){
 						BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
 					}
@@ -236,7 +243,7 @@ public class BWFacade {
 			String path=file.getProjectRelativePath().toOSString();
 			File tgt=new File(new File(workingDir,DIST_FOLDER),path);
 			tgt.getParentFile().mkdirs();
-			write(tgt, contents);
+			write(file,tgt, contents);
 			return tgt;
 		} catch (Exception e){
 			BuildWrapperPlugin.logError(e.getLocalizedMessage(), e);
@@ -244,7 +251,8 @@ public class BWFacade {
 		return null;
 	}
 	
-	public boolean write(File tgt,String contents){
+	public boolean write(IFile file,File tgt,String contents){
+		outlines.remove(file.getProjectRelativePath().toOSString());
 		try {
 			FileUtil.writeSharedFile(tgt, contents, 5);
 		} catch (Exception e){
@@ -315,12 +323,17 @@ public class BWFacade {
 	}
 	
 	public OutlineResult outline(IFile file){
+
 		String path=file.getProjectRelativePath().toOSString();
+		OutlineResult or=outlines.get(path);
+		if (or!=null){
+			return or;
+		}
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("outline");
 		command.add("--file="+path);
 		JSONArray arr=run(command,ARRAY);
-		OutlineResult or=new OutlineResult();
+		or=new OutlineResult();
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
@@ -345,6 +358,7 @@ public class BWFacade {
 				}
 			}
 		}
+		outlines.put(path,or);
 		return or;
 	}
 	

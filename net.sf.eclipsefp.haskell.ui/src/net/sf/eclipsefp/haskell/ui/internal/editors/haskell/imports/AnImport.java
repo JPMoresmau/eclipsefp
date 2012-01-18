@@ -33,6 +33,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
@@ -138,7 +139,13 @@ public class AnImport {
     try {
       List<FileDocumented> decls;
       if (isMe) {
-        decls = getDeclarationsFromFile( file, doc );
+        HaskellEditor ed=HaskellUIPlugin.getHaskellEditor( doc );
+        OutlineResult or=ed!=null?ed.getLastOutlineResult():null;
+        if (or!=null){
+          decls=getDeclarationsFromOutlineResult(file,or);
+        } else {
+          decls = getDeclarationsFromFile( file, doc );
+        }
       } else {
         BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
         Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations( importDef.getModule() );
@@ -207,12 +214,26 @@ public class AnImport {
   }
 
   private List<FileDocumented> getDeclarationsFromFile( final IFile file, final IDocument doc ) {
-    ArrayList<FileDocumented> decls = new ArrayList<FileDocumented>();
     try {
       if (file!=null){
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f!=null){
           OutlineResult or=f.outline( file );
+          return getDeclarationsFromOutlineResult( file, or );
+        }
+      }
+    } catch (Exception e) {
+      HaskellUIPlugin.log( e );
+
+    }
+      return new ArrayList<FileDocumented>();
+
+  }
+
+
+  private List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or ) {
+    ArrayList<FileDocumented> decls = new ArrayList<FileDocumented>();
+
           for (OutlineDef def : or.getOutlineDefs()) {
             FileDocumented d = outlineToBrowser( def,file );
             if (d != null) {
@@ -224,15 +245,11 @@ public class AnImport {
               decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject() ) );
             }
           }
-        }
-      }
-    } catch (Exception e) {
-      HaskellUIPlugin.log( e );
 
-    }
       return decls;
 
   }
+
 
   private static Documented outlineToBrowser( final OutlineDef def ) {
     switch (def.getTypes().iterator().next()) {
