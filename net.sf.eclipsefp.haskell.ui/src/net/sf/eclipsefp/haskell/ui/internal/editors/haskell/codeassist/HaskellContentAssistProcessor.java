@@ -30,9 +30,9 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -89,6 +89,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   /** The module name for import list completion */
   private String moduleName;
 
+  private char[] autoCompletionCharacters=null;
+
   /**
    * The constructor.
    *
@@ -98,6 +100,11 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  super();
 	  this.assistant = assistant;
 	  internalReset();
+
+	  String s= HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_AUTOACTIVATION_TRIGGERS ); //new char[] { '.' };
+    if (s!=null){
+      autoCompletionCharacters=s.toCharArray();
+    }
 
 	  // Add the listener, who modulates the completion context
 	  this.assistant.addCompletionListener( new CAListener() );
@@ -210,8 +217,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	public char[] getCompletionProposalAutoActivationCharacters() {
-	  // unused
-		return new char[] { '.' };
+		return autoCompletionCharacters;
 	}
 
 	public char[] getContextInformationAutoActivationCharacters() {
@@ -271,10 +277,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     // Get rest of proposals
     String prefix = haskellCompletions.getPointedQualifier();
     ImportsManager mgr = new ImportsManager( theFile, doc );
-    long t0=System.currentTimeMillis();
+    //long t0=System.currentTimeMillis();
     Map<String, Documented> decls = mgr.getDeclarations();
-    long t1=System.currentTimeMillis();
-    HaskellUIPlugin.log( "getDeclarations:"+(t1-t0), IStatus.INFO );
+    //long t1=System.currentTimeMillis();
+    //HaskellUIPlugin.log( "getDeclarations:"+(t1-t0), IStatus.INFO );
     ArrayList<String> elts = new ArrayList<String>();
     ArrayList<String> typeElts = new ArrayList<String>();
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {

@@ -198,8 +198,13 @@ public class AppearancePP extends AbstractEditorPP {
 //    createBooleanField( parent, UITexts.preferences_editor_appearance_overview_ruler, orKey );
 //    String lnrKey = EDITOR_LINE_NUMBER_RULER;
 //    createBooleanField( parent, UITexts.preferences_editor_appearance_line_numbers, lnrKey );
+    String atText = UITexts.preferences_editor_contentass_autoactivation_triggers;
+    String atKey = CA_AUTOACTIVATION_TRIGGERS;
+    tab.addTextField( parent, atText, atKey, 4, 0 );
+
     String mbKey = EDITOR_MATCHING_BRACKETS;
     createBooleanField( parent, UITexts.preferences_editor_appearance_matching_brackets, mbKey );
+
  //   String clKey = EDITOR_CURRENT_LINE;
   //  createBooleanField( parent, UITexts.preferences_editor_appearance_current_line, clKey );
  //   createBooleanField( parent, UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN );
