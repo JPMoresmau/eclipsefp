@@ -206,7 +206,7 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
 			throws IOException, JSONException {
-		if (this.currentDatabase==null || !this.currentDatabase.equals(current)){
+		if (this.currentDatabase==null || !this.currentDatabase.equals(current) || id!=null){
 			this.currentDatabase = current;
 			sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
 		}
