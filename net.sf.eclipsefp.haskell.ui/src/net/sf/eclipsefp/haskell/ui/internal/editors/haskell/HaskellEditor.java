@@ -397,7 +397,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if (file!=null){
       BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
       if (f!=null){
+        // synchronize and rebuild to be sure that we're in sync if we close a dirty editor
         f.synchronize1( file,true );
+        f.build1( file );
       }
     }
     super.dispose();
