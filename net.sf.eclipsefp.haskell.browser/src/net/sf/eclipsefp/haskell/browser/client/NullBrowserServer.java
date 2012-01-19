@@ -7,12 +7,11 @@ package net.sf.eclipsefp.haskell.browser.client;
 import java.io.IOException;
 
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
-import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 
 import org.json.JSONException;
@@ -54,39 +53,39 @@ public class NullBrowserServer extends BrowserServer {
 		// Do nothing
 	}
 
-	@Override
-	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id) throws IOException,
-			JSONException {
-		// Do nothing
-	}
+//	@Override
+//	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id) throws IOException,
+//			JSONException {
+//		// Do nothing
+//	}
 
 	@Override
-	public HaskellPackage[] getPackages() throws IOException, JSONException {
+	public HaskellPackage[] getPackages(Database db) throws IOException, JSONException {
 		// Return nothing
 		return new HaskellPackage[0];
 	}
 
 	@Override
-	public Module[] getAllModules() throws IOException, JSONException {
+	public Module[] getAllModules(Database db) throws IOException, JSONException {
 		// Return nothing
 		return new Module[0];
 	}
 
 	@Override
-	public Module[] getModules(String module) throws IOException, JSONException {
+	public Module[] getModules(Database db,String module) throws IOException, JSONException {
 		// Return nothing
 		return new Module[0];
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Packaged<Declaration>[] getDeclarations(String module) throws Exception {
+	public Packaged<Declaration>[] getDeclarations(Database db,String module) throws Exception {
 		// Return nothing
 		return (Packaged<Declaration>[]) new Packaged[0];
 	}
 	
 	@Override
-	public Module[] findModulesForDeclaration(String decl) throws IOException, JSONException {
+	public Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
 		return new Module[0];
 	}
 	
@@ -96,7 +95,7 @@ public class NullBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public HoogleResult[] queryHoogle(String query) throws Exception {
+	public HoogleResult[] queryHoogle(Database db,String query) throws Exception {
 		// Return nothing
 		return new HoogleResult[0];
 	}

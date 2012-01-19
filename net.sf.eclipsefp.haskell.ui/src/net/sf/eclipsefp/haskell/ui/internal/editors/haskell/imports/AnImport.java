@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.DataType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
@@ -147,8 +147,8 @@ public class AnImport {
           decls = getDeclarationsFromFile( file, doc );
         }
       } else {
-        BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-        Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations( importDef.getModule() );
+        //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+        Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations(Database.ALL, importDef.getModule() );
 
         if (browserDecls.length > 0) {
           // If the browser found the module

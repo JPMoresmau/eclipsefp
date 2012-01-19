@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
@@ -89,7 +90,7 @@ public class ScionManager implements IResourceChangeListener {
   private int hConHighWater;
 
   private final static String MINIMUM_BUILDWRAPPER="0.3.0";
-  private final static String MINIMUM_SCIONBROWSER="0.2.3";
+  private final static String MINIMUM_SCIONBROWSER="0.2.4";
 
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
    * being fired off.
@@ -602,7 +603,7 @@ public class ScionManager implements IResourceChangeListener {
 
   void preloadPrelude() {
     try {
-      BrowserPlugin.getSharedInstance().getDeclarations( "Prelude" );
+      BrowserPlugin.getSharedInstance().getDeclarations(Database.ALL, "Prelude" );
     } catch (Exception e) {
       // Do nothing
     }

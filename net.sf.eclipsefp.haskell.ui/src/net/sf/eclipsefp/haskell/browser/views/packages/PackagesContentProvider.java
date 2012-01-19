@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.browser.views.packages;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,11 +25,11 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	  boolean local = BrowserPlugin.getDefault().isLocalDatabaseLoaded();
 	  boolean hackage = BrowserPlugin.getDefault().isHackageDatabaseLoaded();
 	  if (local && hackage) {
-      return new Object[] { DatabaseType.LOCAL, DatabaseType.HACKAGE };
+      return new Object[] { Database.LOCAL, Database.HACKAGE };
     } else if (local) {
-      return new Object[] { DatabaseType.LOCAL };
+      return new Object[] { Database.LOCAL };
     } else if (hackage) {
-      return new Object[] { DatabaseType.HACKAGE };
+      return new Object[] { Database.HACKAGE };
     } else {
       return new Object[0];
     }
@@ -37,7 +37,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(final Object parentElement) {
 
-		switch ((DatabaseType) parentElement) {
+		switch (((Database) parentElement).getType()) {
 		case LOCAL:
 		  if (localCache == null) {
 	      cacheLocal();
@@ -56,7 +56,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(final Object element) {
-		if (element instanceof DatabaseType) {
+		if (element instanceof Database) {
 			return PackagesRoot.ROOT;
 		} else {
 			PackagesItem pkg = (PackagesItem)element;
@@ -65,7 +65,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	}
 
 	public boolean hasChildren(final Object element) {
-		return (element instanceof PackagesRoot || element instanceof DatabaseType);
+		return (element instanceof PackagesRoot || element instanceof Database);
 	}
 
 	public void uncache() {
@@ -75,10 +75,10 @@ public class PackagesContentProvider implements ITreeContentProvider {
 
 	private void cacheLocal() {
 		try {
-			BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.LOCAL, null);
+			//BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.LOCAL, null);
 			ArrayList<PackagesItem> cache = new ArrayList<PackagesItem>();
-			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages()) {
-        cache.add(new PackagesItem(DatabaseType.LOCAL, pkg));
+			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages(Database.LOCAL)) {
+        cache.add(new PackagesItem(Database.LOCAL, pkg));
       }
 			this.localCache = cache.toArray(new PackagesItem[cache.size()]);
 		} catch (Throwable ex) {
@@ -88,10 +88,10 @@ public class PackagesContentProvider implements ITreeContentProvider {
 
 	private void cacheHackage() {
     try {
-      BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.HACKAGE, null);
+      //BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.HACKAGE, null);
       ArrayList<PackagesItem> cache = new ArrayList<PackagesItem>();
-      for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages()) {
-        cache.add(new PackagesItem(DatabaseType.HACKAGE, pkg));
+      for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages(Database.HACKAGE)) {
+        cache.add(new PackagesItem(Database.HACKAGE, pkg));
       }
       this.hackageCache = cache.toArray(new PackagesItem[cache.size()]);
     } catch (Throwable ex) {

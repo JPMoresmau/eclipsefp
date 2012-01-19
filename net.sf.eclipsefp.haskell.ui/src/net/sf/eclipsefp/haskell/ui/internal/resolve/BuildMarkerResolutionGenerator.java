@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
@@ -119,8 +119,8 @@ public class BuildMarkerResolutionGenerator implements
             }
             try {
               if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {
-                BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-                Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration( name );
+                //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+                Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
                 ArrayList<String> places = new ArrayList<String>();
                 for (Module avMod : availableMods) {
                   if (!places.contains( avMod.getName() )) {

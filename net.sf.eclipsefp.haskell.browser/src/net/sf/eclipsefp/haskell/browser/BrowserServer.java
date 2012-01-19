@@ -14,7 +14,6 @@ import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
-import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 
 import org.json.JSONException;
@@ -90,8 +89,8 @@ public abstract class BrowserServer {
 	public void loadLocalDatabase(String path, boolean rebuild) throws IOException, JSONException {
 		loadLocalDatabaseInternal(path, rebuild);
 		// Cache information of all the modules
-		this.setCurrentDatabase(DatabaseType.ALL, null);
-		for (Module m : this.getAllModules()) {
+		//this.setCurrentDatabase(DatabaseType.ALL, null);
+		for (Module m : this.getAllModules(Database.ALL)) {
 			moduleDocs.put(m.getName(), m);
 		}
 	}
@@ -127,22 +126,22 @@ public abstract class BrowserServer {
 	
 	protected abstract void loadHackageDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException;
 
-	public abstract void setCurrentDatabase(DatabaseType current, PackageIdentifier id) throws IOException,
-			JSONException;
+//	public abstract void setCurrentDatabase(DatabaseType current, PackageIdentifier id) throws IOException,
+//			JSONException;
 
-	public abstract HaskellPackage[] getPackages() throws IOException, JSONException;
+	public abstract HaskellPackage[] getPackages(Database db) throws IOException, JSONException;
 
-	public abstract Module[] getAllModules() throws IOException, JSONException;
+	public abstract Module[] getAllModules(Database db) throws IOException, JSONException;
 
-	public abstract Module[] getModules(String module) throws IOException, JSONException;
+	public abstract Module[] getModules(Database db,String module) throws IOException, JSONException;
 
-	public abstract Packaged<Declaration>[] getDeclarations(String module) throws Exception;
+	public abstract Packaged<Declaration>[] getDeclarations(Database db,String module) throws Exception;
 	
-	public abstract Module[] findModulesForDeclaration(String decl) throws IOException, JSONException;
+	public abstract Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException;
 	
 	public abstract void setExtraHooglePath(String newPath) throws IOException, JSONException;
 
-	public abstract HoogleResult[] queryHoogle(String query) throws Exception;
+	public abstract HoogleResult[] queryHoogle(Database db,String query) throws Exception;
 
 	public abstract void downloadHoogleData() throws IOException, JSONException;
 

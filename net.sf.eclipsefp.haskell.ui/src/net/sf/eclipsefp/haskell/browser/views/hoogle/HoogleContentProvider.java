@@ -7,7 +7,7 @@ package net.sf.eclipsefp.haskell.browser.views.hoogle;
 import java.util.ArrayList;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -49,14 +49,14 @@ public class HoogleContentProvider implements ITreeContentProvider {
         // Get results depending of set of databases to check
         HoogleResult[] initialResults;
         if (localDbCheck.getSelection() && hackageDbCheck.getSelection()) {
-          BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-          initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+          //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+          initialResults = BrowserPlugin.getSharedInstance().queryHoogle(Database.ALL, newQuery );
         } else if (localDbCheck.getSelection()) {
-          BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.LOCAL, null );
-          initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+          //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.LOCAL, null );
+          initialResults = BrowserPlugin.getSharedInstance().queryHoogle(Database.LOCAL, newQuery );
         } else if (hackageDbCheck.getSelection()) {
-          BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.HACKAGE, null );
-          initialResults = BrowserPlugin.getSharedInstance().queryHoogle( newQuery );
+          //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.HACKAGE, null );
+          initialResults = BrowserPlugin.getSharedInstance().queryHoogle(Database.HACKAGE, newQuery );
         } else {
           initialResults = new HoogleResult[0];
         }

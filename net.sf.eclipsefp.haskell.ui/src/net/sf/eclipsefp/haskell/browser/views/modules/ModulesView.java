@@ -4,7 +4,7 @@
  */
 package net.sf.eclipsefp.haskell.browser.views.modules;
 
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
 import org.eclipse.jface.viewers.ISelection;
@@ -103,7 +103,7 @@ public class ModulesView extends ViewPart implements ISelectionListener,
     if( o == null ) {
       return;
     }
-    if( o instanceof DatabaseType || o instanceof PackagesItem ) {
+    if( o instanceof Database || o instanceof PackagesItem ) {
       viewer.setInput( o );
     }
   }

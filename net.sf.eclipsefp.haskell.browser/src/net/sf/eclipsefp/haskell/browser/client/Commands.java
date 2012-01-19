@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.browser.client;
 
 import java.util.ArrayList;
 
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
@@ -42,31 +42,51 @@ public class Commands {
 		o.put("rebuild", rebuild);
 		return o;
 	}
+//
+//	public static JSONObject createSetCurrentDatabase(DatabaseType current,
+//			PackageIdentifier id) throws JSONException {
+//		JSONObject o = new JSONObject();
+//		o.put("command", "set-current-db");
+//		switch (current) {
+//		case ALL:
+//			o.put("new-db", "_all");
+//			break;
+//		case HACKAGE:
+//			o.put("new-db", "_hackage");
+//			break;
+//		case LOCAL:
+//			o.put("new-db", "_local");
+//			break;
+//		case PACKAGE:
+//			o.put("new-db", id.toJSON());
+//			break;
+//		}
+//		return o;
+//	}
 
-	public static JSONObject createSetCurrentDatabase(DatabaseType current,
-			PackageIdentifier id) throws JSONException {
-		JSONObject o = new JSONObject();
-		o.put("command", "set-current-db");
-		switch (current) {
+	public static void setCurrentDatabase(Database db,JSONObject o) throws JSONException {
+		
+		switch (db.getType()) {
 		case ALL:
-			o.put("new-db", "_all");
+			o.put("db", "_all");
 			break;
 		case HACKAGE:
-			o.put("new-db", "_hackage");
+			o.put("db", "_hackage");
 			break;
 		case LOCAL:
-			o.put("new-db", "_local");
+			o.put("db", "_local");
 			break;
 		case PACKAGE:
-			o.put("new-db", id.toJSON());
+			o.put("db", db.getPkgId().toJSON());
 			break;
 		}
-		return o;
 	}
-
-	public static JSONObject createGetPackages() throws JSONException {
+	
+	
+	public static JSONObject createGetPackages(Database db) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "get-packages");
+		setCurrentDatabase(db,o);
 		return o;
 	}
 
@@ -80,14 +100,15 @@ public class Commands {
 		return aPkgs.toArray(new HaskellPackage[jPkgs.length()]);
 	}
 
-	public static JSONObject createGetAllModules() throws JSONException {
-		return createGetModules("");
+	public static JSONObject createGetAllModules(Database db) throws JSONException {
+		return createGetModules(db,"");
 	}
 
-	public static JSONObject createGetModules(String module)
+	public static JSONObject createGetModules(Database db,String module)
 			throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "get-modules");
+		setCurrentDatabase(db,o);
 		o.put("module", module);
 		return o;
 	}
@@ -102,10 +123,11 @@ public class Commands {
 		return aMods.toArray(new Module[jMods.length()]);
 	}
 
-	public static JSONObject createGetDeclarations(String module)
+	public static JSONObject createGetDeclarations(Database db,String module)
 			throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "get-declarations");
+		setCurrentDatabase(db,o);
 		o.put("module", module);
 		return o;
 	}
@@ -134,9 +156,10 @@ public class Commands {
 		return o;
 	}
 	
-	public static JSONObject createHoogleQuery(String query) throws JSONException {
+	public static JSONObject createHoogleQuery(Database db,String query) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-query");
+		setCurrentDatabase(db,o);
 		o.put("query", query);
 		return o;
 	}
@@ -164,9 +187,10 @@ public class Commands {
 		return o;
 	}
 	
-	public static JSONObject createFindModulesForDeclaration(String name) throws JSONException {
+	public static JSONObject createFindModulesForDeclaration(Database db,String name) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "get-decl-module");
+		setCurrentDatabase(db,o);
 		o.put("decl", name);
 		return o;
 	}

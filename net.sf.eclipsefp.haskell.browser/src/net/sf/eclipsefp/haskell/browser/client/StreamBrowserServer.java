@@ -17,13 +17,13 @@ import java.util.zip.InflaterInputStream;
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
-import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
 import net.sf.eclipsefp.haskell.util.NullWriter;
@@ -52,7 +52,7 @@ public class StreamBrowserServer extends BrowserServer {
 	private StreamRedirect errorRedirect;
 	public Object lock;
 	
-	private DatabaseType currentDatabase;
+	//private DatabaseType currentDatabase;
 	private HashMap<String, Packaged<Declaration>[]> declCache;
 
 	private boolean logError;
@@ -203,60 +203,60 @@ public class StreamBrowserServer extends BrowserServer {
 		}
 	}
 
-	@Override
-	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
-			throws IOException, JSONException {
-		if (this.currentDatabase==null || !this.currentDatabase.equals(current) || id!=null){
-			this.currentDatabase = current;
-			sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
-		}
-	}
+//	@Override
+//	public void setCurrentDatabase(DatabaseType current, PackageIdentifier id)
+//			throws IOException, JSONException {
+//		if (this.currentDatabase==null || !this.currentDatabase.equals(current) || id!=null){
+//			this.currentDatabase = current;
+//			sendAndReceiveOk(Commands.createSetCurrentDatabase(current, id));
+//		}
+//	}
 
 	@Override
-	public HaskellPackage[] getPackages() throws IOException, JSONException {
-		String response = sendAndReceive(Commands.createGetPackages());
+	public HaskellPackage[] getPackages(Database db) throws IOException, JSONException {
+		String response = sendAndReceive(Commands.createGetPackages(db));
 		return Commands.responseGetPackages(response);
 	}
 
 	@Override
-	public Module[] getAllModules() throws IOException, JSONException {
-		String response = sendAndReceive(Commands.createGetAllModules());
+	public Module[] getAllModules(Database db) throws IOException, JSONException {
+		String response = sendAndReceive(Commands.createGetAllModules(db));
 		return Commands.responseGetModules(response);
 	}
 
 	@Override
-	public Module[] getModules(String module) throws IOException, JSONException {
-		String response = sendAndReceive(Commands.createGetModules(module));
+	public Module[] getModules(Database db,String module) throws IOException, JSONException {
+		String response = sendAndReceive(Commands.createGetModules(db,module));
 		return Commands.responseGetModules(response);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Packaged<Declaration>[] getDeclarations(String module)
+	public Packaged<Declaration>[] getDeclarations(Database db,String module)
 			throws Exception {
 		// Try to find in cache
-		if (this.currentDatabase == DatabaseType.ALL) {
-			Packaged<Declaration>[] decls=this.declCache.get(module);
-			if (decls!=null){
-				return decls;
-			}
+		//if (this.currentDatabase == DatabaseType.ALL) {
+		Packaged<Declaration>[] decls=this.declCache.get(module);
+		if (decls!=null){
+			return decls;
 		}
+		//}
 		// If not, search
-		String response = sendAndReceive(Commands.createGetDeclarations(module));
-		Packaged<Declaration>[] decls = Commands.responseGetDeclarations(response);
+		String response = sendAndReceive(Commands.createGetDeclarations(db,module));
+		decls = Commands.responseGetDeclarations(response);
 		if (decls==null){
 			decls=new Packaged[0];
 		}
 		// Check if we need to save in cache
-		if (this.currentDatabase == DatabaseType.ALL) {
-			this.declCache.put(module, decls);
-		}
+		//if (this.currentDatabase == DatabaseType.ALL) {
+		this.declCache.put(module, decls);
+		//}
 		return decls;
 	}
 	
 	@Override
-	public Module[] findModulesForDeclaration(String decl) throws IOException, JSONException {
-		String response = sendAndReceive(Commands.createFindModulesForDeclaration(decl));
+	public Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
+		String response = sendAndReceive(Commands.createFindModulesForDeclaration(db,decl));
 		return Commands.responseGetModules(response);
 	}
 	
@@ -266,8 +266,8 @@ public class StreamBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public HoogleResult[] queryHoogle(String query) throws Exception {
-		String response = sendAndReceive(Commands.createHoogleQuery(query));
+	public HoogleResult[] queryHoogle(Database db,String query) throws Exception {
+		String response = sendAndReceive(Commands.createHoogleQuery(db,query));
 		return Commands.responseHoogleQuery(response);
 	}
 

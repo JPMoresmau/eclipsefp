@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.browser.views.declarations;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
@@ -48,18 +48,21 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
         }
 
         Object o = mitem.getDatabaseInfo();
-        if( o instanceof DatabaseType ) {
-          BrowserPlugin.getSharedInstance().setCurrentDatabase(
-              ( DatabaseType )o, null );
+        Database db=Database.ALL;
+        if( o instanceof Database ) {
+          //BrowserPlugin.getSharedInstance().setCurrentDatabase(
+          //    ( DatabaseType )o, null );
+          db=(Database)o;
         } else {
           PackagesItem item = ( PackagesItem )o;
-          BrowserPlugin.getSharedInstance().setCurrentDatabase(
-              DatabaseType.PACKAGE, item.getPackage().getIdentifier() );
+         // BrowserPlugin.getSharedInstance().setCurrentDatabase(
+          //    DatabaseType.PACKAGE, item.getPackage().getIdentifier() );
+          db=Database.Package( item.getPackage().getIdentifier() );
         }
 
         cache = new ArrayList<QueryItem>();
         Packaged<Declaration>[] decls = BrowserPlugin.getSharedInstance()
-            .getDeclarations( mitem.getModule().getName() );
+            .getDeclarations( db,mitem.getModule().getName() );
         for( QueryItem decl: QueryItem.convertToQueryItem( decls ) ) {
           if( decl.getType() == DeclarationType.FUNCTION && !isTypes ) {
             cache.add( decl );

@@ -6,7 +6,7 @@ package net.sf.eclipsefp.haskell.browser.views.modules;
 
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -83,18 +83,22 @@ public class ModulesContentProvider implements ITreeContentProvider {
 			hierarchicalCache = new ArrayList<ModulesItem>();
 		} else {
 			try {
-				if (newInput instanceof DatabaseType) {
-					BrowserPlugin.getSharedInstance().setCurrentDatabase((DatabaseType) newInput,
-							null);
-				} else {
-					PackagesItem item = (PackagesItem) newInput;
-					BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.PACKAGE,
-							item.getPackage().getIdentifier());
-				}
+			  Database db=Database.ALL;
+        if( newInput instanceof Database ) {
+          //BrowserPlugin.getSharedInstance().setCurrentDatabase(
+          //    ( DatabaseType )newInput, null );
+          db=(Database)newInput;
+        } else {
+          PackagesItem item = ( PackagesItem )newInput;
+         // BrowserPlugin.getSharedInstance().setCurrentDatabase(
+          //    DatabaseType.PACKAGE, item.getPackage().getIdentifier() );
+          db=Database.Package( item.getPackage().getIdentifier() );
+        }
+
 
 				linearCache = new ArrayList<ModulesItem>();
 				hierarchicalCache = new ArrayList<ModulesItem>();
-				Module[] modules = BrowserPlugin.getSharedInstance().getAllModules();
+				Module[] modules = BrowserPlugin.getSharedInstance().getAllModules(db);
 				for (Module module : modules) {
 					linearCache.add(new ModulesItem(newInput, module.getName(), module));
 					addModuleToHierarchy(newInput, module);

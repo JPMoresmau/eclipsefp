@@ -4,7 +4,7 @@
  */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
-import net.sf.eclipsefp.haskell.browser.DatabaseType;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 
 /**
@@ -15,16 +15,16 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
  *
  */
 public class PackagesItem {
-	private final DatabaseType ty;
+	private final Database db;
 	private final HaskellPackage pkg;
 
-	public PackagesItem(final DatabaseType ty, final HaskellPackage pkg) {
-		this.ty = ty;
+	public PackagesItem(final Database db, final HaskellPackage pkg) {
+		this.db = db;
 		this.pkg = pkg;
 	}
 
-	public DatabaseType getDatabase() {
-		return this.ty;
+	public Database getDatabase() {
+		return this.db;
 	}
 
 	public HaskellPackage getPackage() {
