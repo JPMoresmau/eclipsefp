@@ -136,9 +136,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     public void handleOutline( final OutlineResult or ) {
       if (outlinePage!=null){
         outlinePage.setInput( or.getOutlineDefs() );
-        lastOutlineResult=or;
       }
-
+      lastOutlineResult=or;
       if (foldingStructureProvider!=null){
         foldingStructureProvider.updateFoldingRegions( or.getOutlineDefs() );
       }
@@ -393,13 +392,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 //    if (instance != null) {
 //      instance.removeListener( this );
 //    }
-    IFile file=findFile();
+    final IFile file=findFile();
     if (file!=null){
-      BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
+      final BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
       if (f!=null){
-        // synchronize and rebuild to be sure that we're in sync if we close a dirty editor
-        f.synchronize1( file,true );
-        f.build1( file );
+        new Thread(new Runnable() {
+
+          public void run() {
+            // synchronize and rebuild to be sure that we're in sync if we close a dirty editor
+            f.synchronize1( file,true );
+            f.build1( file );
+
+          }
+        }).start();
+
       }
     }
     super.dispose();
