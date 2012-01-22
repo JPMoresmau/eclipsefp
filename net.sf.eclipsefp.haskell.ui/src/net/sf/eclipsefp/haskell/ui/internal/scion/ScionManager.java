@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
@@ -882,9 +883,14 @@ public class ScionManager implements IResourceChangeListener {
                 IFile f = ( IFile )delta.getResource();
                 IFile cabalF = BuildWrapperPlugin.getCabalFile( f.getProject() );
                 if( f.equals( cabalF ) ) {
+                  BWFacade bwf=BuildWrapperPlugin.getFacade( f.getProject() );
+                  if (bwf!=null){
+                    bwf.cabalFileChanged();
+                  }
                   for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
                     l.cabalFileChanged( f );
                   }
+
                 }
                 return false;
               }

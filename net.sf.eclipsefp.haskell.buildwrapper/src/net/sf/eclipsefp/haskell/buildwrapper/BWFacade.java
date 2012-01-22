@@ -244,9 +244,7 @@ public class BWFacade {
 					try {
 						String p=paths.getString(a);
 						if (p!=null && p.equals(cabalShortName)){
-							components=null;
-							packageDB=null;
-							flagInfos.clear();
+							cabalFileChanged();
 						}
 						// remove from cache if file has changed
 						outlines.remove(p);
@@ -256,6 +254,12 @@ public class BWFacade {
 				}
 			}
 		}
+	}
+	
+	public void cabalFileChanged(){
+		components=null;
+		packageDB=null;
+		flagInfos.clear();
 	}
 	
 	public boolean synchronize1(IFile file,boolean force){
