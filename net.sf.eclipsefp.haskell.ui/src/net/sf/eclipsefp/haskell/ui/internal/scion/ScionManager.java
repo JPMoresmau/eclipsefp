@@ -89,7 +89,7 @@ public class ScionManager implements IResourceChangeListener {
   /** Haskell console high water mark */
   private int hConHighWater;
 
-  private final static String MINIMUM_BUILDWRAPPER="0.3.0";
+  private final static String MINIMUM_BUILDWRAPPER="0.4.0";
   private final static String MINIMUM_SCIONBROWSER="0.2.4";
 
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from

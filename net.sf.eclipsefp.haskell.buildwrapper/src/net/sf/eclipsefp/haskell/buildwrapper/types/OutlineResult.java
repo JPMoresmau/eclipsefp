@@ -24,6 +24,11 @@ public class OutlineResult {
 	private List<ExportDef> exportDefs=new ArrayList<ExportDef>();
 	private List<ImportDef> importDefs=new ArrayList<ImportDef>();
 
+	/**
+	 * was the build ok (no error in notes)
+	 */
+	private boolean buildOK=true;
+	
 	public OutlineResult() {
 		super();
 
@@ -62,6 +67,14 @@ public class OutlineResult {
 
 	public List<ImportDef> getImportDefs() {
 		return importDefs;
+	}
+
+	public boolean isBuildOK() {
+		return buildOK;
+	}
+
+	public void setBuildOK(boolean buildOK) {
+		this.buildOK = buildOK;
 	}
 	
 	

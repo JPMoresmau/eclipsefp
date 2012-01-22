@@ -87,7 +87,7 @@ public class ProcessRunner implements IProcessRunner {
 				  //
 			  }
 		  } else {
-			  for (int a=0;a<50;a++){ // 50 * 100 -> 5 seconds maxi
+			  for (int a=0;a<200;a++){ // 200 * 100 -> 20 seconds maxi
 				  try {
 					  p.exitValue();
 					  break;

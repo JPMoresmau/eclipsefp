@@ -1,9 +1,5 @@
 - achievements!
 
-- pref for autocompletion characters (default: none)
-
-- rebuild file when closed without saving
-
 - autocomplete perf
 
 - format using haskell-src-exts

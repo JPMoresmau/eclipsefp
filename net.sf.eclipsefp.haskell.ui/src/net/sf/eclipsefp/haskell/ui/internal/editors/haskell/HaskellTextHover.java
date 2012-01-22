@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IRegion;
@@ -79,7 +80,13 @@ public class HaskellTextHover extends DefaultTextHover {
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f != null) {
           // TODO: Would be nice to also grab the Haddock documentation for the "thing" at point too.
-          return f.getThingAtPoint(file,location, false, true);
+          long t0=System.currentTimeMillis();
+          try {
+            return f.getThingAtPoint(file,location, false, true);
+          } finally {
+            long t1=System.currentTimeMillis();
+            HaskellUIPlugin.log( "computethingAtPoint: "+(t1-t0)+"ms", IStatus.INFO );
+          }
         }
       } catch (BadLocationException ex) {
         HaskellUIPlugin.log( UITexts.editor_textHover_error, ex );

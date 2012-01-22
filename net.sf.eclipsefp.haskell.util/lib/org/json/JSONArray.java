@@ -958,4 +958,8 @@ public class JSONArray {
            throw new JSONException(e);
         }
     }
+    
+    public void putAll(JSONArray arr){
+    	 this.myArrayList.addAll(arr.myArrayList);
+    }
 }

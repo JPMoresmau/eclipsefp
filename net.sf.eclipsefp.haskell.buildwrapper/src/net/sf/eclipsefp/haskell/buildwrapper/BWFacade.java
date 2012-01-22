@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlagInfo;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
@@ -82,9 +83,16 @@ public class BWFacade {
 	private Map<IFile,SingleJobQueue> tapQueuesByFiles=new HashMap<IFile, SingleJobQueue>();
 	
 	/**
-	 * maps of outlines for files (key is relative path)
+	 * map of outlines for files (key is relative path)
 	 */
 	private Map<String,OutlineResult> outlines=new HashMap<String, OutlineResult>();
+	
+	
+	/**
+	 * map of flag info for files
+	 */
+	private Map<IFile, BuildFlagInfo> flagInfos=new HashMap<IFile, BuildFlagInfo>();
+	
 	
 	/**
 	 * do we need to set derived on dist dir?
@@ -158,11 +166,18 @@ public class BWFacade {
 		return true;
 	}
 	
+	private static String escapeFlags(String flag){
+		flag=flag.replace("\"", "\\\"");
+		return flag;
+	}
+	
 	public boolean build1(IFile file){
+		BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build1");
 		command.add("--file="+path);
+		command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		
 		if (arr!=null && arr.length()>1){
@@ -170,9 +185,32 @@ public class BWFacade {
 			ress.add(file);
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
+			notes.putAll(i.getNotes());
 			return parseNotes(notes,ress);
 		}
 		return true;
+	}
+	
+	public BuildFlagInfo getBuildFlags(IFile file){
+		BuildFlagInfo i=flagInfos.get(file);
+		if (i==null){
+			String path=file.getProjectRelativePath().toOSString();
+			LinkedList<String> command=new LinkedList<String>();
+			command.add("getbuildflags");
+			command.add("--file="+path);
+			JSONArray arr=run(command,ARRAY);
+			String s="";
+			JSONArray notes=new JSONArray();
+			if (arr!=null && arr.length()>1){
+				Set<IResource> ress=new HashSet<IResource>();
+				ress.add(file);
+				s=arr.optString(0);
+				notes=arr.optJSONArray(1);
+			}
+			i=new BuildFlagInfo(s, notes);
+			flagInfos.put(file, i);
+		}
+		return i;
 	}
 	
 	public JSONArray configure(BuildOptions buildOptions){
@@ -208,6 +246,7 @@ public class BWFacade {
 						if (p!=null && p.equals(cabalShortName)){
 							components=null;
 							packageDB=null;
+							flagInfos.clear();
 						}
 						// remove from cache if file has changed
 						outlines.remove(p);
@@ -329,15 +368,19 @@ public class BWFacade {
 		if (or!=null){
 			return or;
 		}
+		BuildFlagInfo i=getBuildFlags(file);
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("outline");
 		command.add("--file="+path);
+		command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		or=new OutlineResult();
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
-				parseNotes(notes);
+				notes.putAll(i.getNotes());
+				boolean b=parseNotes(notes);
+				or.setBuildOK(b);
 			}
 			JSONObject obj=arr.optJSONObject(0);
 			if (obj!=null){
@@ -395,16 +438,19 @@ public class BWFacade {
 	}
 	
 	public List<Occurrence> getOccurrences(IFile file,String s){
+		BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("occurrences");
 		command.add("--file="+path);
 		command.add("--token="+s);
+		command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		List<Occurrence> cps;
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
+				notes.putAll(i.getNotes());
 				parseNotes(notes);
 			}
 			JSONArray objs=arr.optJSONArray(0);
@@ -426,6 +472,7 @@ public class BWFacade {
 	
 	public String getThingAtPoint(IFile file,Location location,
 			boolean qualify, boolean typed){
+		BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("thingatpoint");
@@ -434,11 +481,13 @@ public class BWFacade {
 		command.add("--column="+(location.getStartColumn()+1));
 		command.add("--qualify="+qualify);
 		command.add("--typed="+typed);
+		command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		String s=null;
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
+				notes.putAll(i.getNotes());
 				parseNotes(notes);
 			}
 			s=arr.optString(0);
@@ -805,4 +854,5 @@ public class BWFacade {
 			BuildWrapperPlugin.logError(BWText.error_gettingFlags, e);
 		}
 	}
+
 }
