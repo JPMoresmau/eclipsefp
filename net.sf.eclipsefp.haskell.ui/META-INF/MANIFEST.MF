@@ -61,6 +61,7 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell;x-friends:="net.sf.eclipsefp.haskell.ui.test,net.sf.eclipsefp.haskell.debug.ui",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;x-friends:="net.sf.eclipsefp.haskell.ui.test",
+ net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports,
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.syntax;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.editors.text;x-friends:="net.sf.eclipsefp.haskell.ui.test",

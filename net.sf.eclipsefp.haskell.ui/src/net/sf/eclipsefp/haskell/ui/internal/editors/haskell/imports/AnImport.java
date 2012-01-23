@@ -278,21 +278,25 @@ public class AnImport {
     return null;
   }
 
-  public CompletionProposal addItem(final IDocument doc, final String item, final String label) {
+  public CompletionProposal addItem(final IDocument doc, String item, final String label) {
     try {
-
+      char c0=item.charAt( 0 );
+      // operators need to be surrounded by parens
+      if (!Character.isLetter(c0) && (c0!='(')){
+        item="("+item+")";
+      }
       String contents = importDef.getLocation().getContents( doc );
       // We had no items
       int en=importDef.getLocation().getEndOffset( doc );
-      if (importDef.getChildren()==null) {
-        return new CompletionProposal( item, en + 1, 0,
-            en + 1 + item.length(), ImageCache.MODULE, label, null, "" );
-      }
+      /*if (importDef.getChildren()==null) {
+        return new CompletionProposal( " ("+item+")", en, 0,
+            en + item.length(), ImageCache.MODULE, label, null, "" );
+      }*/
 
       int pos = contents.indexOf( '(' );
       if (pos==-1){
-        return new CompletionProposal( "("+item+")", en + 1, 0,
-            en + 1 + item.length(), ImageCache.MODULE, label, null, "" );
+        return new CompletionProposal( " ("+item+")", en, 0,
+            en + item.length(), ImageCache.MODULE, label, null, "" );
       }
       // We have some items
       // Trim end the elements
@@ -302,31 +306,60 @@ public class AnImport {
       int pos2=contents.lastIndexOf( ')' );
       int insert=en-contents.length()+pos2;
       String contentsToAdd =  item;
-      if (importDef.getChildren().size()>0){
+      if (importDef.getChildren()!=null && importDef.getChildren().size()>0){
         contentsToAdd = ", " + item;
       }
       return new CompletionProposal( contentsToAdd, insert, 0, insert+ contentsToAdd.length(),
           ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
+      e.printStackTrace();
       HaskellUIPlugin.log( e );
     }
     return null;
   }
 
+  private int[] trimRemovedImport(final String contents,final int ixParens,int start,int end){
+    while (contents.charAt( end )==' '){ // remove spaces after me
+      end++;
+    }
+    if (contents.charAt( end )==','){ // remove comma after me
+      end++;
+    }
+    while (start>1 && contents.charAt( start-1 )==' '){ // remove spaces before me
+      start--;
+    }
+
+    if (start-1==ixParens){//at start: remove spaces after removed comma
+      while (contents.charAt( end )==' '){
+        end++;
+      }
+    }
+    return new int[]{start,end};
+  }
+
   public CompletionProposal removeItem(final IDocument doc, final String item, final String label) {
     try {
       String contents = importDef.getLocation().getContents( doc );
-      int ix=contents.indexOf( item );
+      int ixP=contents.indexOf( "(" );
+      int ix=contents.indexOf( item,ixP );
       if (ix>-1){
         int end=ix+item.length();
-        while (contents.charAt( end )==' '){
-          end++;
-        }
-        if (contents.charAt( end )==','){
-          end++;
-        }
-        if (contents.charAt( end )==')' && contents.charAt( ix-1 )!='('){
-          ix--;
+        int[] trimmed=trimRemovedImport( contents, ixP, ix, end );
+        ix=trimmed[0];
+        end=trimmed[1];
+        if (contents.charAt( end )==')'){
+          if (contents.charAt( ix-1 )=='('){
+            if (ix-1>ixP){
+              // we're in between (): remove them
+              end++;
+              ix--;
+              trimmed=trimRemovedImport( contents, ixP, ix, end );
+              ix=trimmed[0];
+              end=trimmed[1];
+            }
+          } else {
+            ix--; // remove preceding comma if we're at end
+          }
         }
         int st=importDef.getLocation().getStartOffset( doc );
         String newContents=contents.substring( 0,ix )+contents.substring( end );
