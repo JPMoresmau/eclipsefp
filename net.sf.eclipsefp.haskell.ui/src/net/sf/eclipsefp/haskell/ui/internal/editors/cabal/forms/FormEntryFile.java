@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import java.util.HashSet;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -138,7 +139,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
       IPath path = res.getProjectRelativePath();
 
       if( builder.length() > 0 ) {
-        builder.append( ", " );
+        builder.append( ", "+PlatformUtil.NL);
       }
       builder.append( path.toString() );
     }

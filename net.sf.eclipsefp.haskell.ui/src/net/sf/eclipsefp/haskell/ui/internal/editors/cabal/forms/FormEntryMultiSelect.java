@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms;
 
 import java.util.HashSet;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -102,7 +103,7 @@ public class FormEntryMultiSelect extends FormEntry implements
     for( Object o: treeField.getCheckedElements() ) {
       String s = ( String )o;
       if( builder.length() > 0 ) {
-        builder.append( ", " );
+        builder.append( ", "+PlatformUtil.NL );
       }
       builder.append( s );
     }
@@ -115,7 +116,7 @@ public class FormEntryMultiSelect extends FormEntry implements
       if( !treeField.getChecked( o ) ) {
         String s = ( String )o;
         if( builder.length() > 0 ) {
-          builder.append( ", " );
+          builder.append( ", "+PlatformUtil.NL );
         }
         builder.append( s );
       }

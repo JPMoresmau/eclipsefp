@@ -5,19 +5,23 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.3.0 of buildwrapper has been validated with this version of EclipseFP
-	- EclipseFP also uses scion-browser. Version 0.2.1 has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.4.0 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP also uses scion-browser. Version 0.2.4 has been validated with this version of EclipseFP
  
 
 Fixes:
-	-
+	- Remove redundant import leaves behind "()" after removing operator
+		http://sourceforge.net/tracker/?func=detail&aid=3477415&group_id=108233&atid=1000719
+
+	- data files and compiler options are formatted on several lines for better readability
+		https://sourceforge.net/tracker/?func=detail&aid=3452813&group_id=108233&atid=1000719
 
 Features:
 	- Quick fix: apply hlint suggestion
 	- auto completion: "." is not a autocompletion trigger by default, but it can be set in the preferences	
 
 Internal:
-	- Performance enhancements: cache outlines
+	- Performance enhancements: cache outlines, pass flags to certain buildwrapper operations
 
 Upgrade notes:
 
