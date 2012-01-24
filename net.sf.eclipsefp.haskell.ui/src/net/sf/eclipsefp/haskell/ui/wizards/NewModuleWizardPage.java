@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IStringButtonAdapter;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.Separator;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringButtonDialogField;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringDialogField;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -25,6 +26,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -47,6 +49,8 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   private StringButtonDialogField dlgFieldFolders;
   private StringDialogField dlgFieldName;
 
+  private Button dlgFieldFoldersQualify;
+
   private IStatus sourceFolderStatus;
   private IStatus folderStatus;
   private IStatus nameStatus;
@@ -59,9 +63,9 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
 
 
   public NewModuleWizardPage() {
-    super( "NewModuleWizardPage" );
-    setTitle( "Haskell Module" );
-    setDescription( "Create a new Haskell module." );
+    super( "NewModuleWizardPage" ); //$NON-NLS-1$
+    setTitle( UITexts.NewModuleWizardPage_1 );
+    setDescription( UITexts.NewModuleWizardPage_2 );
 
     currentInfo = new ModuleCreationInfo();
 
@@ -103,7 +107,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
         currentInfo.setFolders( sourceRelPath );
       }
       String text = dlgFieldFolders.getText();
-      folderStatus = Validator.validateFolders( text );
+      folderStatus = Validator.validateFolders( text,currentInfo.isFoldersQualify() );
       if( folderStatus.isOK() ) {
         currentInfo.setFolders( new Path( text.replace( '.', '/' ) ) );
       }
@@ -187,7 +191,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     gd.grabExcessHorizontalSpace = false;
     gd.horizontalSpan = 1;
     chkUseLiterate = new Button(composite, SWT.CHECK);
-    chkUseLiterate.setText( "Use literate style" );
+    chkUseLiterate.setText( UITexts.NewModuleWizardPage_3 );
     chkUseLiterate.setLayoutData(gd);
 
     chkUseLiterate.addSelectionListener(new SelectionListener() {
@@ -211,7 +215,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
 
   private void createLiterateGroup( final Composite composite ) {
     grpLiterate = new Group(composite, SWT.NONE);
-    grpLiterate.setText("Literate Haskell");
+    grpLiterate.setText(UITexts.NewModuleWizardPage_4);
     grpLiterate.setEnabled( false );
     GridData gd = new GridData();
     gd.horizontalAlignment = GridData.FILL;
@@ -227,14 +231,14 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
 
   private void createLiterateRadio() {
     rdoLiterate = new Button(grpLiterate, SWT.RADIO);
-    rdoLiterate.setText("Traditional literate style");
+    rdoLiterate.setText(UITexts.NewModuleWizardPage_5);
     rdoLiterate.setEnabled( false );
     rdoLiterate.setSelection(true);
   }
 
   private void createTexStyleRadio() {
     rdoTex = new Button(grpLiterate, SWT.RADIO);
-    rdoTex.setText("Tex literate style");
+    rdoTex.setText(UITexts.NewModuleWizardPage_6);
     rdoTex.setEnabled( false );
   }
 
@@ -245,23 +249,26 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     FieldsAdapter adapter = new FieldsAdapter();
     dlgFieldName = new StringDialogField();
     dlgFieldName.setDialogFieldListener( adapter );
-    dlgFieldName.setLabelText( "Name" );
+    dlgFieldName.setLabelText( UITexts.NewModuleWizardPage_7 );
   }
 
   private void createDlgFieldFolder() {
     FieldsAdapter adapter = new FieldsAdapter();
     dlgFieldFolders = new StringButtonDialogField( adapter );
     dlgFieldFolders.setDialogFieldListener( adapter );
-    dlgFieldFolders.setLabelText( "Folder" );
-    dlgFieldFolders.setButtonLabel( "Browse" );
+    dlgFieldFolders.setLabelText( UITexts.NewModuleWizardPage_8 );
+    dlgFieldFolders.setButtonLabel( UITexts.NewModuleWizardPage_9 );
+
+    adapter = new FieldsAdapter();
+
   }
 
   private void createDlgFieldSourceFolder() {
     FieldsAdapter adapter = new FieldsAdapter();
     dlgFieldSourceFolder = new StringButtonDialogField( adapter );
     dlgFieldSourceFolder.setDialogFieldListener( adapter );
-    dlgFieldSourceFolder.setLabelText( "Source folder" );
-    dlgFieldSourceFolder.setButtonLabel( "Browse" );
+    dlgFieldSourceFolder.setLabelText( UITexts.NewModuleWizardPage_10 );
+    dlgFieldSourceFolder.setButtonLabel( UITexts.NewModuleWizardPage_11 );
   }
 
   private void initSourceFolderField( final IContainer sourceContainer ) {
@@ -294,6 +301,24 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     if( ld instanceof GridData ) {
       ( ( GridData )ld ).grabExcessHorizontalSpace = true;
     }
+
+    dlgFieldFoldersQualify =   new Button( parent, SWT.CHECK );
+    dlgFieldFoldersQualify.setSelection( true );
+    dlgFieldFoldersQualify.setText( UITexts.NewModuleWizardPage_FolderIsParent );
+    GridData gd=new GridData();
+    gd.horizontalSpan=cols;
+    dlgFieldFoldersQualify.setLayoutData( gd );
+    dlgFieldFoldersQualify.addSelectionListener( new SelectionAdapter() {
+      /* (non-Javadoc)
+       * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+       */
+      @Override
+      public void widgetSelected( final SelectionEvent e ) {
+       currentInfo.setFoldersQualify( dlgFieldFoldersQualify.getSelection() );
+       folderStatus = Validator.validateFolders( dlgFieldFolders.getText(),currentInfo.isFoldersQualify() );
+       doStatusUpdate();
+      }
+    } );
   }
 
   private void createSeparator( final Composite composite, final int cols ) {
@@ -393,7 +418,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   private void initAllStatus() {
     IContainer sourceContainer = currentInfo.getSourceContainer();
     sourceFolderStatus = Validator.validateSourceFolder( sourceContainer );
-    folderStatus = Validator.validateFolders( dlgFieldFolders.getText() );
+    folderStatus = Validator.validateFolders( dlgFieldFolders.getText(),currentInfo.isFoldersQualify() );
     nameStatus = Validator.validateModuleName( currentInfo );
     doStatusUpdate();
   }

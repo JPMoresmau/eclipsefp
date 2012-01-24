@@ -618,7 +618,52 @@ public final class UITexts extends NLS {
   public static String browser_packageDatabase;
   public static String browser_hoogleSearchIn;
 
+  public static String NewModuleWizard_0;
+
+  public static String NewModuleWizard_1;
+
+  public static String NewModuleWizard_2;
+
+  public static String NewModuleWizard_4;
+
+  public static String NewModuleWizardPage_1;
+
+  public static String NewModuleWizardPage_10;
+
+  public static String NewModuleWizardPage_11;
+
+  public static String NewModuleWizardPage_2;
+
+  public static String NewModuleWizardPage_3;
+
+  public static String NewModuleWizardPage_4;
+
+  public static String NewModuleWizardPage_5;
+
+  public static String NewModuleWizardPage_6;
+
+  public static String NewModuleWizardPage_7;
+
+  public static String NewModuleWizardPage_8;
+
+  public static String NewModuleWizardPage_9;
+  public static String NewModuleWizardPage_FolderIsParent;
+
   public static String scionBrowser_hooglePath;
+
+  public static String Validator_0;
+
+  public static String Validator_1;
+
+  public static String Validator_2;
+
+  public static String Validator_3;
+
+  public static String Validator_4;
+
+  public static String Validator_5;
+
+  public static String Validator_6;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.DefaultStatus;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
@@ -24,20 +25,20 @@ class Validator {
     * segments), not as paths (no slashes allowed). Segments must be valid
     * module qualifiers, that is, start with uppercase letter. Empty string
     * is ok. */
-  static IStatus validateFolders( final String textFieldContent ) {
+  static IStatus validateFolders( final String textFieldContent, final boolean qualify ) {
     DefaultStatus status = new DefaultStatus();
     if( textFieldContent.length() > 0 ) {
       if(    textFieldContent.indexOf( '/' ) != -1
           || textFieldContent.indexOf( '\\' ) != -1 ) {
-        status.setError( "Specify folders with '.', not as path." );
-      } else {
+        status.setError( UITexts.Validator_0 );
+      } else if (qualify){
         String[] segments = getSegments( textFieldContent );
         boolean stillValid = true;
         for( int i = 0; stillValid && i < segments.length; i++ ) {
           stillValid = isValidModuleName( segments[ i ] );
         }
         if( !stillValid ) {
-          status.setError( "Invalid qualifier." );
+          status.setError( UITexts.Validator_1 );
         }
       }
     }
@@ -47,7 +48,7 @@ class Validator {
   static IStatus validateSourceFolder( final IContainer sourceContainer ) {
     DefaultStatus status = new DefaultStatus();
     if( sourceContainer == null ) {
-     status.setError( "Select a source folder." );
+     status.setError( UITexts.Validator_2 );
     }
     return status;
   }
@@ -57,15 +58,15 @@ class Validator {
     DefaultStatus result = new DefaultStatus();
     if( moduleName.length() == 0 ) {
       // must not be empty
-      result.setError( "Module name is empty." );
+      result.setError( UITexts.Validator_3 );
     } else if( moduleName.indexOf( '.' ) != -1 ) {
       // must not be qualified
-      result.setError( "Module name must not be qualified." );
+      result.setError( UITexts.Validator_4 );
     } else if( !isValidModuleName( moduleName ) ) {
-      result.setError( "Invalid module name." );
+      result.setError( UITexts.Validator_5 );
     } else if( existsAlready( info ) ) {
       // module must not yet exist
-      result.setError( "A module with this name exists already." );
+      result.setError( UITexts.Validator_6 );
     }
     return result;
   }

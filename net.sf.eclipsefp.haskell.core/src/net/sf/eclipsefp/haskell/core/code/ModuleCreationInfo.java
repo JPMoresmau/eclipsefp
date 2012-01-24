@@ -24,6 +24,10 @@ public class ModuleCreationInfo {
   private Set<PackageDescriptionStanza> included;
   private Set<PackageDescriptionStanza> exposed;
 
+  /**
+   * are the source folders used to generate the qualified name
+   */
+  private boolean foldersQualify=true;
 
 
   // attribute setters and getters
@@ -60,14 +64,14 @@ public class ModuleCreationInfo {
 
   public String getQualifiedModuleName(){
     StringBuilder sb=new StringBuilder();
-    if (getFolders()!=null && getFolders().segmentCount()>0){
+    if (foldersQualify && getFolders()!=null && getFolders().segmentCount()>0){
       String ps=getFolders().toPortableString().replace( '/', '.' ) ;
       sb.append(ps);
       if (!ps.endsWith( "." )){ //$NON-NLS-1$
           sb.append("."); //$NON-NLS-1$
       }
     }
-     sb.append(getModuleName());
+    sb.append(getModuleName());
     return sb.toString();
   }
 
@@ -109,6 +113,16 @@ public class ModuleCreationInfo {
 
   public void setExposed( final Set<PackageDescriptionStanza> exposed ) {
     this.exposed = exposed;
+  }
+
+
+  public boolean isFoldersQualify() {
+    return foldersQualify;
+  }
+
+
+  public void setFoldersQualify( final boolean foldersQualify ) {
+    this.foldersQualify = foldersQualify;
   }
 
 

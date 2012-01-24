@@ -89,7 +89,7 @@ public class NewPartitionedWizardPage extends StatusWizardPage implements IModul
         currentInfo.setFolders( sourceRelPath );
       }
       String text = dlgFieldFolders.getText();
-      folderStatus = Validator.validateFolders( text );
+      folderStatus = Validator.validateFolders( text,currentInfo.isFoldersQualify() );
       if( folderStatus.isOK() ) {
         currentInfo.setFolders( new Path( text.replace( '.', '/' ) ) );
       }
@@ -315,7 +315,7 @@ public class NewPartitionedWizardPage extends StatusWizardPage implements IModul
   private void initAllStatus() {
     IContainer sourceContainer = currentInfo.getSourceContainer();
     sourceFolderStatus = Validator.validateSourceFolder( sourceContainer );
-    folderStatus = Validator.validateFolders( dlgFieldFolders.getText() );
+    folderStatus = Validator.validateFolders( dlgFieldFolders.getText(),currentInfo.isFoldersQualify() );
     nameStatus = Validator.validateModuleName( currentInfo );
     doStatusUpdate();
   }

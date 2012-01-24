@@ -106,7 +106,7 @@ public class SourceFileGenerator {
 
   private static String[] getPathSegments( final ModuleCreationInfo info ) {
     IPath path = info.getFolders();
-    return ( path == null ) ? new String[ 0 ] : path.segments();
+    return ( path == null || !info.isFoldersQualify() ) ? new String[ 0 ] : path.segments();
   }
 
   private static String createFileName(final EHaskellCommentStyle style, final String moduleName ) {

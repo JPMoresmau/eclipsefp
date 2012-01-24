@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.ui.wizards;
 
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IFile;
@@ -10,6 +11,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
@@ -33,7 +35,7 @@ public class NewModuleWizard extends RevealAtEndWizard implements INewWizard {
   public NewModuleWizard() {
     super();
     setNeedsProgressMonitor( true );
-    setWindowTitle( "New Haskell Module" );
+    setWindowTitle( UITexts.NewModuleWizard_0 );
     initBannerImage();
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
   }
@@ -73,7 +75,7 @@ public class NewModuleWizard extends RevealAtEndWizard implements INewWizard {
       finish( mco.getGeneratedFile() );
     } catch( Exception ex ) {
       handleFinishException( ex );
-      HaskellUIPlugin.log( "Error creating new module.", ex );
+      HaskellUIPlugin.log( UITexts.NewModuleWizard_1, ex );
     }
     return result;
   }
@@ -83,9 +85,8 @@ public class NewModuleWizard extends RevealAtEndWizard implements INewWizard {
   // ////////////////
 
   private void handleFinishException( final Exception ex ) {
-    String msg = "The following error occured: " + ex.getLocalizedMessage()
-        + "Please see workspace/.metadata/.log for more information.";
-    MessageDialog.openError( getShell(), "Problem occured", msg );
+    String msg = NLS.bind( UITexts.NewModuleWizard_2 , ex.getLocalizedMessage());
+    MessageDialog.openError( getShell(), UITexts.NewModuleWizard_4, msg );
   }
 
   private void finish( final IFile createdFile ) {
