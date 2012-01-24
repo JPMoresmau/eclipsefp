@@ -33,6 +33,7 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 
 
 public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationDelegate{
@@ -93,7 +94,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
          */
 
         if( process != null ) {
-          if ( isBackground( configuration ) ) {
+          if ( isBackground( configuration ) || Display.findDisplay( Thread.currentThread())!=null) {
             final IProcess theProcess = process;
             Job endJob = new Job( NLS.bind( CoreTexts.running , loc.toOSString() )) {
 
