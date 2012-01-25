@@ -69,14 +69,30 @@ public class PackageDescriptionLoader {
 
     if (value!=null && value.length()>0){
       StringTokenizer st=new StringTokenizer( value,seps );
+      boolean expectVersion=false;
       while (st.hasMoreTokens()){
         String t=st.nextToken();
         if (t.length()>0){
-          ret.add(t);
+          if (isBuildDependsCharacter( t.charAt( 0 )) && ret.size()>0){
+            String s=ret.get( ret.size()-1);
+            ret.set( ret.size()-1, s+" "+t ); //$NON-NLS-1$
+            expectVersion=true;
+          } else if (expectVersion&& ret.size()>0){
+            String s=ret.get( ret.size()-1);
+            ret.set( ret.size()-1, s+" "+t ); //$NON-NLS-1$
+            expectVersion=false;
+          } else {
+            expectVersion=false;
+            ret.add(t);
+          }
         }
       }
     }
     return ret;
+  }
+
+  private static boolean isBuildDependsCharacter(final char c){
+    return c=='<' || c=='>' || c=='='  || c=='|' || c=='&';
   }
 
   public static List<String> parseList(final String value){

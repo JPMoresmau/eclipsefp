@@ -807,4 +807,106 @@ public class CabalModelTest extends TestCase {
     assertEquals(content1.substring(0,5),content2.substring(0,5));
     assertTrue(content2,content2.contains("Library"));
   }
+
+  public void testRemoveEntry(){
+      String content1="name:     P1"+PlatformUtil.NL+
+        "version:  0.1"+PlatformUtil.NL+
+        "cabal-version: >= 1.2"+PlatformUtil.NL+
+        "author:   JP2"+PlatformUtil.NL+
+        "build-type: Simple"+PlatformUtil.NL+
+        ""+PlatformUtil.NL+
+        "executable P1"+PlatformUtil.NL+
+        "  main-is:         Main.hs"+PlatformUtil.NL+
+        "  ghc-options:     -O1 -fglasgow-exts -Wall"+PlatformUtil.NL+
+        "  extensions:      OverlappingInstances"+PlatformUtil.NL+
+        "  build-depends:   "+PlatformUtil.NL+
+        "    multiset     >= 0.1 && < 0.3,"+PlatformUtil.NL+
+        "    time, base"+PlatformUtil.NL+
+        "  other-modules:   "+PlatformUtil.NL+
+        "                   M2,"+PlatformUtil.NL+
+        "                   M4"+PlatformUtil.NL;
+      PackageDescription pd=PackageDescriptionLoader.load( content1 );
+      List<PackageDescriptionStanza> pdss=pd.getStanzas();
+      assertEquals(2,pdss.size());
+      PackageDescriptionStanza pds=pdss.get(1);
+      RealValuePosition rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_EXTENSIONS, "OverlappingInstances" );
+      TestDocument doc=new TestDocument( content1 );
+      rvp.updateDocument( doc );
+      String content2="name:     P1"+PlatformUtil.NL+
+          "version:  0.1"+PlatformUtil.NL+
+          "cabal-version: >= 1.2"+PlatformUtil.NL+
+          "author:   JP2"+PlatformUtil.NL+
+          "build-type: Simple"+PlatformUtil.NL+
+          ""+PlatformUtil.NL+
+          "executable P1"+PlatformUtil.NL+
+          "  main-is:         Main.hs"+PlatformUtil.NL+
+          "  ghc-options:     -O1 -fglasgow-exts -Wall"+PlatformUtil.NL+
+          "  build-depends:   "+PlatformUtil.NL+
+          "    multiset     >= 0.1 && < 0.3,"+PlatformUtil.NL+
+          "    time, base"+PlatformUtil.NL+
+          "  other-modules:   "+PlatformUtil.NL+
+          "                   M2,"+PlatformUtil.NL+
+          "                   M4"+PlatformUtil.NL;
+      assertEquals(content2,doc.get());
+      rvp=pds.removeFromPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "time" );
+      rvp.updateDocument( doc );
+      String content3="name:     P1"+PlatformUtil.NL+
+          "version:  0.1"+PlatformUtil.NL+
+          "cabal-version: >= 1.2"+PlatformUtil.NL+
+          "author:   JP2"+PlatformUtil.NL+
+          "build-type: Simple"+PlatformUtil.NL+
+          ""+PlatformUtil.NL+
+          "executable P1"+PlatformUtil.NL+
+          "  main-is:         Main.hs"+PlatformUtil.NL+
+          "  ghc-options:     -O1 -fglasgow-exts -Wall"+PlatformUtil.NL+
+          "  build-depends:   "+PlatformUtil.NL+
+          "    multiset >= 0.1 && < 0.3,"+PlatformUtil.NL+
+          "    base"+PlatformUtil.NL+
+          "  other-modules:   "+PlatformUtil.NL+
+          "                   M2,"+PlatformUtil.NL+
+          "                   M4"+PlatformUtil.NL;
+      assertEquals(content3,doc.get());
+  }
+
+  public void testRemoveEntryBySettingEmpty(){
+    String content1="name:     P1"+PlatformUtil.NL+
+      "version:  0.1"+PlatformUtil.NL+
+      "cabal-version: >= 1.2"+PlatformUtil.NL+
+      "author:   JP2"+PlatformUtil.NL+
+      "build-type: Simple"+PlatformUtil.NL+
+      ""+PlatformUtil.NL+
+      "executable P1"+PlatformUtil.NL+
+      "  main-is:         Main.hs"+PlatformUtil.NL+
+      "  ghc-options:     -O1 -fglasgow-exts -Wall"+PlatformUtil.NL+
+      "  extensions:      OverlappingInstances"+PlatformUtil.NL+
+      "  build-depends:   "+PlatformUtil.NL+
+      "    multiset     >= 0.1 && < 0.3,"+PlatformUtil.NL+
+      "    time, base"+PlatformUtil.NL+
+      "  other-modules:   "+PlatformUtil.NL+
+      "                   M2,"+PlatformUtil.NL+
+      "                   M4"+PlatformUtil.NL;
+    PackageDescription pd=PackageDescriptionLoader.load( content1 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    assertEquals(2,pdss.size());
+    PackageDescriptionStanza pds=pdss.get(1);
+    RealValuePosition rvp=pds.update( CabalSyntax.FIELD_EXTENSIONS, "" );
+    TestDocument doc=new TestDocument( content1 );
+    rvp.updateDocument( doc );
+    String content2="name:     P1"+PlatformUtil.NL+
+        "version:  0.1"+PlatformUtil.NL+
+        "cabal-version: >= 1.2"+PlatformUtil.NL+
+        "author:   JP2"+PlatformUtil.NL+
+        "build-type: Simple"+PlatformUtil.NL+
+        ""+PlatformUtil.NL+
+        "executable P1"+PlatformUtil.NL+
+        "  main-is:         Main.hs"+PlatformUtil.NL+
+        "  ghc-options:     -O1 -fglasgow-exts -Wall"+PlatformUtil.NL+
+        "  build-depends:   "+PlatformUtil.NL+
+        "    multiset     >= 0.1 && < 0.3,"+PlatformUtil.NL+
+        "    time, base"+PlatformUtil.NL+
+        "  other-modules:   "+PlatformUtil.NL+
+        "                   M2,"+PlatformUtil.NL+
+        "                   M4"+PlatformUtil.NL;
+    assertEquals(content2,doc.get());
+}
 }

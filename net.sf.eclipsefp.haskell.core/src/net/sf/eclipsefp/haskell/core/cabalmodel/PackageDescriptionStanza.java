@@ -218,6 +218,9 @@ public class PackageDescriptionStanza {
       getPositions().remove( key );
       // remove field name too
       oldVP.setInitialIndent( 0 );
+      for (PackageDescriptionStanza st:getPackageDescription().getStanzas()){
+        st.diffLineIf( oldVP.getStartLine()-oldVP.getEndLine(), oldVP.getEndLine() );
+      }
       //oldVP.setInitialIndent( 0 );
       return new RealValuePosition( oldVP,""); //$NON-NLS-1$
     }
