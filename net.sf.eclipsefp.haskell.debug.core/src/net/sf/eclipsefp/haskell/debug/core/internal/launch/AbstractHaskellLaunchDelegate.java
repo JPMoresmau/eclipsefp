@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -52,12 +53,15 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
   }
 
   public void launch( final ILaunchConfiguration configuration,
-      final String mode, final ILaunch launch, final IProgressMonitor monitor )
+      final String mode, final ILaunch launch, IProgressMonitor monitor )
       throws CoreException {
+    if (monitor==null){
+      monitor=new NullProgressMonitor();
+    }
     if( !monitor.isCanceled() ) {
       try {
         IInteractiveLaunchOperationDelegate delegate=getDelegate( configuration );
-
+        monitor.beginTask( configuration.getName(), 3 );
         final IPath loc =delegate!=null?new Path(delegate.getExecutable()) :
           getExecutableLocation( configuration );
         checkCancellation( monitor );
@@ -67,12 +71,14 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         checkCancellation( monitor );
         File workingDir = determineWorkingDir( configuration );
         checkCancellation( monitor );
-
+        monitor.worked( 1 );
         IProcess process = createProcess( configuration, mode, launch, loc,
             cmdLine, workingDir );
+        monitor.worked( 1 );
         if( process != null ) {
           postProcessCreation( configuration, mode, launch, process );
         }
+        monitor.done();
         /*
          * DebugPlugin.getDefault().getLaunchManager().addLaunchListener( new
          * ILaunchesListener() {
@@ -102,7 +108,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
               protected IStatus run( final IProgressMonitor mon ) {
                 while( !theProcess.isTerminated() ) {
                   try {
-                    if( monitor.isCanceled() ) {
+                    if( mon.isCanceled()) {
                       theProcess.terminate();
                       return Status.CANCEL_STATUS;
                     }
@@ -121,7 +127,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
           } else {
             while( !process.isTerminated() ) {
               try {
-                if( monitor.isCanceled() ) {
+                if(monitor!=null && monitor.isCanceled() ) {
                   process.terminate();
                   break;
                 }
@@ -240,7 +246,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
   }
 
   private void checkCancellation( final IProgressMonitor monitor ) {
-    if( monitor.isCanceled() ) {
+    if(monitor!=null && monitor.isCanceled() ) {
       throw new LaunchCancelledException();
     }
   }

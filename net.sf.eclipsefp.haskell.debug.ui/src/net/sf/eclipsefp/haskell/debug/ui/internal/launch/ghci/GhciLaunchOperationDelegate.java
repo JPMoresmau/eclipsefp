@@ -125,7 +125,8 @@ public class GhciLaunchOperationDelegate
       }
       // getRawLocation gives us the real FS path even if the resource is linked
       IPath loc = new Path( r.getLocationURI().getPath() );
-      cmdLine.add( "-i\"" + loc.toOSString() + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
+      // AbstractHaskellLaunchDelegate uses ProcessBuilder, which will do the proper escaping if needed, so no need to wrap in quotes here
+      cmdLine.add( "-i" + loc.toOSString()  ); //$NON-NLS-1$
     }
     IProject[] refs = hsProject.getReferencedProjects();
     for( IProject ref: refs ) {
@@ -145,7 +146,8 @@ public class GhciLaunchOperationDelegate
   private void addAll( final List<String> cmdLine, final IFile[] selectedFiles ) {
     for( int i = 0; i < selectedFiles.length; i++ ) {
       String path = selectedFiles[ i ].getLocation().toOSString();
-      cmdLine.add( "\"" + path + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
+      // AbstractHaskellLaunchDelegate uses ProcessBuilder, which will do the proper escaping, so no need to wrap in quotes here
+      cmdLine.add( path );
     }
   }
 
