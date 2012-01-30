@@ -19,6 +19,7 @@ Fixes:
 Features:
 	- Quick fix: apply hlint suggestion
 	- auto completion: "." is not a autocompletion trigger by default, but it can be set in the preferences	
+	- project clean delete .dist-buildwrapper folder
 
 Internal:
 	- Performance enhancements: cache outlines, pass flags to certain buildwrapper operations
