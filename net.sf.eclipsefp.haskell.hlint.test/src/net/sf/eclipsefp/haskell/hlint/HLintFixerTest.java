@@ -81,6 +81,21 @@ public class HLintFixerTest {
 		String newDoc=doc.substring(0,21)+fix.getValue()+doc.substring(21+fix.getLength());
 		assertEquals("copyFileFull src tgt=copyFile src tgt",newDoc);
 	}
+	
+	@Test
+	public void testAddSpace(){
+		Suggestion sug=new Suggestion();
+		sug.setPre(new CodeModificationText("(cbi)"));
+		sug.setPost(new CodeModificationText("cbi"));
+		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
+		sug.setMessage("Warning: Redundant bracket");
+		String doc="case mcbi of\n    Just(cbi)->do";
+		HLintFix fix=HLintFixer.fix(doc, 21, sug);
+		assertNotNull(fix);
+		assertEquals(5,fix.getLength());
+		String newDoc=doc.substring(0,21)+fix.getValue()+doc.substring(21+fix.getLength());
+		assertEquals("case mcbi of\n    Just cbi->do",newDoc);
+	}
 }
 
 

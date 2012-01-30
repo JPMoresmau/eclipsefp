@@ -11,9 +11,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,32 +39,32 @@ public class HLintBuilder extends IncrementalProjectBuilder {
       if( delta == null ) {
         return null;
       }
-      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        public void run( final IProgressMonitor monitor ) {
-          try {
+    //  ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+     //   public void run( final IProgressMonitor monitor ) {
+      //    try {
             delta.accept( new DeltaVisitor() );
-          } catch (CoreException e) {
+      //    } catch (CoreException e) {
             // Do nothing
-          }
-        }
-      }, monitor );
+      //    }
+      //  }
+      //}, monitor );
     } else if( kind == CLEAN_BUILD ) {
-      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        public void run( final IProgressMonitor monitor ) throws CoreException {
+     // ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+      //  public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
-        }
-      }, monitor );
+      //  }
+      //}, monitor );
     } else if( kind == FULL_BUILD ) {
-      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        public void run( final IProgressMonitor monitor ) throws CoreException {
+     // ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+     //   public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
-          try {
+     //     try {
             getProject().accept( new FullBuildVisitor() );
-          } catch (CoreException e) {
+     //     } catch (CoreException e) {
             // Do nothing
-          }
-        }
-      }, monitor );
+     //     }
+      //  }
+      //}, monitor );
     }
     // Complete code here
     return null;

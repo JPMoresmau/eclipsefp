@@ -58,7 +58,11 @@ public class HLintFixer {
 		if (s.getPost().getType().equals(CodeModificationType.TEXT)){
 			fix.value=((CodeModificationText)s.getPost()).getText().trim();
 		}
-		
+		if (offset>0){
+			if (Character.isJavaIdentifierPart(doc.charAt(offset-1))){
+				fix.value=" "+fix.value;	
+			}
+		}
 		return fix;
 	}
 	
