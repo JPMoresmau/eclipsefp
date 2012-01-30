@@ -37,6 +37,8 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -812,6 +814,21 @@ public class BWFacade {
 	}
 	
 	/**
+	 * clean: delete the .dist-buildwrapper folder, and synchronize the full content
+	 * @param mon the progress monitor
+	 * @throws CoreException
+	 */
+	public void clean(IProgressMonitor mon) throws CoreException{
+		if (project!=null){
+			IFolder fldr=project.getFolder(DIST_FOLDER);
+			if (fldr.exists()){
+				fldr.delete(IResource.FORCE, mon);
+			}
+			synchronize(false);
+		}
+	}
+	
+	/**
 	 * set dist folder as derived so that it will be ignored in searches, etc.
 	 */
 	private void setDerived(){
@@ -820,7 +837,7 @@ public class BWFacade {
 			if (fldr.exists()){
 				if (!fldr.isDerived()){
 					try {
-						fldr.setDerived(true);
+						fldr.setDerived(true,new NullProgressMonitor());
 					} catch (CoreException ce){
 						// log error and leave flag to false, let's hope it'll be better at next run
 						BuildWrapperPlugin.logError(BWText.error_derived, ce);

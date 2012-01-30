@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * HLint builder: calls HLint, parses the results and shows
@@ -73,6 +74,12 @@ public class HLintBuilder extends IncrementalProjectBuilder {
   @Override
   protected void clean( final IProgressMonitor monitor ) throws CoreException {
     getProject().accept( new CleanVisitor() );
+  }
+
+  @Override
+  public ISchedulingRule getRule( final int kind, final Map<String, String> args ) {
+    // prevent other project operations, but operations elsewhere in the workspace are fine
+    return getProject();
   }
 
   static boolean mustBeVisited( final IResource resource ) {

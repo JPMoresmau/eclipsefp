@@ -4,6 +4,7 @@ package net.sf.eclipsefp.haskell.core.builder;
 import java.util.Collection;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.WorkspaceFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
@@ -18,6 +19,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /** <p>The incremental builder for Haskell projects.</p>
   *
@@ -72,8 +74,10 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
   private void performBuild( final int kind,
                              final IProgressMonitor mon ) throws CoreException {
-    if( kind == IncrementalProjectBuilder.FULL_BUILD ) {
+    if( kind == FULL_BUILD ) {
       fullBuild( mon );
+    } else if( kind == CLEAN_BUILD ) {
+      clean(mon);
     } else {
       IResourceDelta delta = getDelta( getProject() );
       if( delta == null ) {
@@ -85,44 +89,28 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   }
 
 
-  /*private void scheduleRefresh() {
-    Job job = new Job( CoreTexts.haskellBuilder_refreshing ) {
-      @Override
-      public IStatus run( final IProgressMonitor monitor ) {
-        IStatus result = Status.OK_STATUS;
-        try {
-          getProject().refreshLocal( IResource.DEPTH_INFINITE, monitor );
-        } catch( CoreException cex ) {
-          String msg = "Problem during resource refresh after build."; //$NON-NLS-1$
-          HaskellCorePlugin.log( msg, cex );
-          result = cex.getStatus();
-        }
-        return result;
-      }
-    };
-    job.schedule();
-  }*/
+  @Override
+  public ISchedulingRule getRule( final int kind, final Map<String, String> args ) {
+    // prevent other project operations, but operations elsewhere in the workspace are fine
+    return getProject();
+  }
+
+  @Override
+  protected void clean( final IProgressMonitor mon) throws CoreException {
+    // need a workspace operation here
+    WorkspaceFacade f=BuildWrapperPlugin.getWorkspaceFacade( getProject(),mon);
+    if (f!=null){
+      // clean
+      f.clean( mon );
+    }
+  }
 
   public void fullBuild( final IProgressMonitor mon )  {
     mon.beginTask( CoreTexts.haskellBuilder_full, 100 );
     try {
-     /* IWorkspaceRunnable op = new CleanOutFoldersOperation( getProject() );
-      ResourcesPlugin.getWorkspace().run( op,
-                                          new SubProgressMonitor( mon, 15 ) );
-
-      mon.subTask( CoreTexts.haskellBuilder_compiling );
-      SubProgressMonitor subMon = new SubProgressMonitor( mon, 85 );
-      getProject().accept( new BuildVisitor( subMon ) );*/
-//      ScionInstance si = ScionPlugin.getScionInstance( getProject() );
-//      if (si != null ) {
-//        BuildOptions buildOptions=new BuildOptions().setOutput(true).setRecompile(false);
-//        si.buildProjectForWorkspace(mon, buildOptions);
-//      } else {
-//        new Exception("ScionInstance == null").printStackTrace(); //$NON-NLS-1$
-//      }
-
-      WorkspaceFacade f=BuildWrapperPlugin.getWorkspaceFacade( getProject(), mon );
+      JobFacade f=BuildWrapperPlugin.getJobFacade( getProject());
       if (f!=null){
+
         BuildWrapperPlugin.deleteProblems( getProject() );
         cleanNonHaskellSources();
         f.build( new BuildOptions().setOutput(true).setRecompile(false) );
@@ -133,6 +121,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       mon.done();
     }
   }
+
 
   private void cleanNonHaskellSources(){
     IFile cabal=BuildWrapperPlugin.getCabalFile( getProject() );

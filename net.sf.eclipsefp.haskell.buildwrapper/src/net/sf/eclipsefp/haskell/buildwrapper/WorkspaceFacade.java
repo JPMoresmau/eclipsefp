@@ -1,13 +1,9 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade.BuildJob;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
-import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IProject;
@@ -103,14 +99,26 @@ public class WorkspaceFacade {
 		}
 	}
 
-	public List<Component> getComponents() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * perform a clean
+	 * @param mon
+	 * @throws CoreException
+	 */
+	public void clean(IProgressMonitor mon) throws CoreException{
+		WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
+	    	@Override
+	    	protected void execute(IProgressMonitor arg0) throws CoreException,
+	    			InvocationTargetException, InterruptedException {
+	    		realFacade.clean(arg0);
+	    	}
+	    };
+		try {
+			wmo.run(monitor);
+		} catch (InterruptedException ie){
+			// noop
+		}catch (InvocationTargetException ie){
+			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+		}
+		
 	}
-	
-	public Map<String, CabalPackage[]> getPackagesByDB() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

@@ -244,6 +244,7 @@ public class JobFacade  {
 	    realFacade.getThingAtPointJobQueue(file).addJob(buildJob);
 	}
 	
+	
 	public IProject getProject() {
 		return realFacade.getProject();
 	}
