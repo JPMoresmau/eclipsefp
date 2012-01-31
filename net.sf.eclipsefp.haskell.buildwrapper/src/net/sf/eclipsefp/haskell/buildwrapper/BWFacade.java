@@ -15,18 +15,17 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
-import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlagInfo;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
@@ -93,7 +92,7 @@ public class BWFacade {
 	/**
 	 * map of flag info for files
 	 */
-	private Map<IFile, BuildFlagInfo> flagInfos=new HashMap<IFile, BuildFlagInfo>();
+	//private Map<IFile, BuildFlagInfo> flagInfos=new HashMap<IFile, BuildFlagInfo>();
 	
 	
 	/**
@@ -168,18 +167,19 @@ public class BWFacade {
 		return true;
 	}
 	
-	private static String escapeFlags(String flag){
-		flag=flag.replace("\"", "\\\"");
-		return flag;
-	}
+//	private static String escapeFlags(String flag){
+//		// not needed any more: we have encoded them in Base 64
+//		//flag=flag.replace("\"", "\\\"");
+//		return flag;
+//	}
 	
 	public boolean build1(IFile file){
-		BuildFlagInfo i=getBuildFlags(file);
+		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build1");
 		command.add("--file="+path);
-		command.add("--buildflags="+escapeFlags(i.getFlags()));
+		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		
 		if (arr!=null && arr.length()>1){
@@ -187,33 +187,33 @@ public class BWFacade {
 			ress.add(file);
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
-			notes.putAll(i.getNotes());
+			//notes.putAll(i.getNotes());
 			return parseNotes(notes,ress);
 		}
 		return true;
 	}
 	
-	public BuildFlagInfo getBuildFlags(IFile file){
-		BuildFlagInfo i=flagInfos.get(file);
-		if (i==null){
-			String path=file.getProjectRelativePath().toOSString();
-			LinkedList<String> command=new LinkedList<String>();
-			command.add("getbuildflags");
-			command.add("--file="+path);
-			JSONArray arr=run(command,ARRAY);
-			String s="";
-			JSONArray notes=new JSONArray();
-			if (arr!=null && arr.length()>1){
-				Set<IResource> ress=new HashSet<IResource>();
-				ress.add(file);
-				s=arr.optString(0);
-				notes=arr.optJSONArray(1);
-			}
-			i=new BuildFlagInfo(s, notes);
-			flagInfos.put(file, i);
-		}
-		return i;
-	}
+//	public BuildFlagInfo getBuildFlags(IFile file){
+//		BuildFlagInfo i=flagInfos.get(file);
+//		if (i==null){
+//			String path=file.getProjectRelativePath().toOSString();
+//			LinkedList<String> command=new LinkedList<String>();
+//			command.add("getbuildflags");
+//			command.add("--file="+path);
+//			JSONArray arr=run(command,ARRAY);
+//			String s="";
+//			JSONArray notes=new JSONArray();
+//			if (arr!=null && arr.length()>1){
+//				Set<IResource> ress=new HashSet<IResource>();
+//				ress.add(file);
+//				s=arr.optString(0);
+//				notes=arr.optJSONArray(1);
+//			}
+//			i=new BuildFlagInfo(s, notes);
+//			flagInfos.put(file, i);
+//		}
+//		return i;
+//	}
 	
 	public JSONArray configure(BuildOptions buildOptions){
 		parseFlags(); // reset flags in case they have changed
@@ -261,7 +261,7 @@ public class BWFacade {
 	public void cabalFileChanged(){
 		components=null;
 		packageDB=null;
-		flagInfos.clear();
+		//flagInfos.clear();
 	}
 	
 	public boolean synchronize1(IFile file,boolean force){
@@ -374,17 +374,17 @@ public class BWFacade {
 		if (or!=null){
 			return or;
 		}
-		BuildFlagInfo i=getBuildFlags(file);
+		//BuildFlagInfo i=getBuildFlags(file);
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("outline");
 		command.add("--file="+path);
-		command.add("--buildflags="+escapeFlags(i.getFlags()));
+		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		or=new OutlineResult();
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
-				notes.putAll(i.getNotes());
+				//notes.putAll(i.getNotes());
 				boolean b=parseNotes(notes);
 				or.setBuildOK(b);
 			}
@@ -444,19 +444,19 @@ public class BWFacade {
 	}
 	
 	public List<Occurrence> getOccurrences(IFile file,String s){
-		BuildFlagInfo i=getBuildFlags(file);
+		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("occurrences");
 		command.add("--file="+path);
 		command.add("--token="+s);
-		command.add("--buildflags="+escapeFlags(i.getFlags()));
+		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		List<Occurrence> cps;
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
-				notes.putAll(i.getNotes());
+				//notes.putAll(i.getNotes());
 				parseNotes(notes);
 			}
 			JSONArray objs=arr.optJSONArray(0);
@@ -478,7 +478,7 @@ public class BWFacade {
 	
 	public String getThingAtPoint(IFile file,Location location,
 			boolean qualify, boolean typed){
-		BuildFlagInfo i=getBuildFlags(file);
+		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("thingatpoint");
@@ -487,13 +487,13 @@ public class BWFacade {
 		command.add("--column="+(location.getStartColumn()+1));
 		command.add("--qualify="+qualify);
 		command.add("--typed="+typed);
-		command.add("--buildflags="+escapeFlags(i.getFlags()));
+		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		String s=null;
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
-				notes.putAll(i.getNotes());
+			//	notes.putAll(i.getNotes());
 				parseNotes(notes);
 			}
 			s=arr.optString(0);
@@ -824,6 +824,8 @@ public class BWFacade {
 			if (fldr.exists()){
 				fldr.delete(IResource.FORCE, mon);
 			}
+			cabalFileChanged();
+			outlines.clear();
 			synchronize(false);
 		}
 	}
