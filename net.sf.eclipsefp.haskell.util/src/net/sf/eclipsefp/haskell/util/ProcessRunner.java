@@ -79,40 +79,56 @@ public class ProcessRunner implements IProcessRunner {
 	  File f=new File(path);
 	  if (f.exists()){
 		  StringWriter sw=new StringWriter();
-		  Process p=new ProcessRunner().executeNonblocking(f.getParentFile(), sw, null, f.getAbsolutePath(),"--version");
-		  if (wait){
-			  try {
-				  p.waitFor();
-			  } catch (InterruptedException ie){
-				  //
-			  }
-		  } else {
-			  for (int a=0;a<200;a++){ // 200 * 100 -> 20 seconds maxi
+		  // get the process
+		  Process p = new ProcessRunner().doExecute( f.getParentFile(), f.getAbsolutePath(),"--version" );
+		  // redirect output into string writer
+		  Thread t1= redirect( new InputStreamReader( p.getInputStream() ), sw, STDOUT_REDIRECT );
+		  // ignore error
+    	  redirect( new InputStreamReader( p.getErrorStream() ), new StringWriter(), STDERR_REDIRECT );
+
+		  try {
+			  // we trust the process to be short lived
+			  if (wait){
 				  try {
-					  p.exitValue();
-					  break;
-				  } catch (IllegalThreadStateException ise){
-					  // still running
-				  }
-				  try {
-					  Thread.sleep(100);
+					  p.waitFor();
 				  } catch (InterruptedException ie){
 					  //
 				  }
-			  }
-		  }
-		  try {
-			  String line=sw.toString().trim();
-			  int ix=line.lastIndexOf(' ');
-			  if (ix>-1 && ix<line.length()){
-				  line=line.substring(ix+1);
-				  if (Character.isDigit(line.charAt(0))){
-					  return line;
+			  } else {
+				  // we do not trust the process to be short lived
+				  for (int a=0;a<200;a++){ // 200 * 100 -> 20 seconds maxi
+					  try {
+						  p.exitValue();
+						  break;
+					  } catch (IllegalThreadStateException ise){
+						  // still running
+					  }
+					  try {
+						  Thread.sleep(100);
+					  } catch (InterruptedException ie){
+						  //
+					  }
 				  }
 			  }
 		  } finally {
 			  p.destroy();
+		  }		  
+		  // we wait for the redirect thread to finish reading/writing
+		  try {
+			  t1.join(10*1000); // 10 seconds max waiting for write
+		  } catch (InterruptedException ignore){
+			  // noop
 		  }
+		  // now we should have the proper result
+		  String line=sw.toString().trim();
+		  int ix=line.lastIndexOf(' ');
+		  if (ix>-1 && ix<line.length()){
+			  line=line.substring(ix+1);
+			  if (Character.isDigit(line.charAt(0))){
+				  return line;
+			  }
+		  }
+
 	  }
 	  return null;
   }
