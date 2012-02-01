@@ -164,25 +164,25 @@ public class JobFacade  {
 	          //long t0=System.currentTimeMillis();
 	          //realFacade.getBuildFlags(file);
 	          
-	          long t1=System.currentTimeMillis();
+	         // long t1=System.currentTimeMillis();
 	          OutlineResult or=realFacade.outline(file);
-	          long t2=System.currentTimeMillis();
+	          //long t2=System.currentTimeMillis();
 	          if (!or.isEmpty() || or.isBuildOK()){
 	        	  handler.handleOutline(or); // avoid removing all outline on error
 	          }
 
-	          long t3=System.currentTimeMillis();
+	          //long t3=System.currentTimeMillis();
 	          
 	          
 	          if (or.isBuildOK()){
 	        	  realFacade.build1(file);
 		          
 	          }
-	          long t4=System.currentTimeMillis();
+	          //long t4=System.currentTimeMillis();
 	          //,getBuildFlags:"+(t1-t0)
 
 	          
-	          BuildWrapperPlugin.logInfo("outline:"+(t2-t1)+"ms,handleroutline:"+(t3-t2)+"ms,build:"+(t4-t3)+"ms");
+	          //BuildWrapperPlugin.logInfo("outline:"+(t2-t1)+"ms,handleroutline:"+(t3-t2)+"ms,build:"+(t4-t3)+"ms");
 	        } finally {
 	          monitor.done();
 	        }
@@ -228,10 +228,10 @@ public class JobFacade  {
 	      protected IStatus run(IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	          long t0=System.currentTimeMillis();
+	          //long t0=System.currentTimeMillis();
 	          handler.handleThing(realFacade.getThingAtPoint(file, location, qualify, typed));
-	          long t1=System.currentTimeMillis();
-	          BuildWrapperPlugin.logInfo("thingAtPoint:"+(t1-t0)+"ms");
+	          //long t1=System.currentTimeMillis();
+	          //BuildWrapperPlugin.logInfo("thingAtPoint:"+(t1-t0)+"ms");
 	        } finally {
 	          monitor.done();
 	        }
