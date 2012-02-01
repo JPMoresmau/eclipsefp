@@ -91,7 +91,7 @@ public class ScionManager implements IResourceChangeListener {
   private int hConHighWater;
 
   private final static String MINIMUM_BUILDWRAPPER="0.4.0";
-  private final static String MINIMUM_SCIONBROWSER="0.2.4";
+  private final static String MINIMUM_SCIONBROWSER="0.2.5";
 
   /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
    * being fired off.
