@@ -339,7 +339,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
            }
          }
 
-         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,hb!=null?DebugEvent.UNSPECIFIED:DebugEvent.BREAKPOINT )});
+         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,hb!=null?DebugEvent.BREAKPOINT:DebugEvent.UNSPECIFIED )});
 
 
        } else {
