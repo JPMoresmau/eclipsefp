@@ -450,6 +450,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       throws PartInitException {
       super.init( site, input );
       outlinePage = new HaskellOutlinePage( this );
+      if (lastOutlineResult!=null){
+        outlinePage.setInput( lastOutlineResult.getOutlineDefs() );
+      }
       IFile file = findFile();
       if (file!=null){
         BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
