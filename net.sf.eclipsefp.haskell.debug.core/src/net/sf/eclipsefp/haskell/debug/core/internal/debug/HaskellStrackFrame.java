@@ -1,10 +1,9 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
-import java.io.InputStream;
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -15,8 +14,9 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * stack frame for debugging haskell. For the moment there is always one stack frame.
@@ -104,14 +104,23 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
         if (fname.startsWith( projectLocation )){
           fname=fname.substring( projectLocation.length()+1 );
         }
-        InputStream st = p.getFile( fname ).getContents();
-        // Get document info
-        IDocument d = new Document( ResourceUtil.readStream( st ) );
-        st.close();
-        int initLineOffset = d.getLineOffset( lineNumber - 1 );
-        int endLineOffset = d.getLineOffset( endLineNumber - 1 );
-        charStart = initLineOffset + tmpCharStart - 1;
-        charEnd = endLineOffset + tmpCharEnd;
+        IFile f= p.getFile( fname );
+        IDocumentProvider prov=new TextFileDocumentProvider();
+        prov.connect( f );
+        try {
+          IDocument doc=prov.getDocument( f );
+
+          //InputStream st = p.getFile( fname ).getContents();
+          // Get document info
+          //IDocument d = new Document( ResourceUtil.readStream( st ) );
+          //st.close();
+          int initLineOffset = doc.getLineOffset( lineNumber - 1 );
+          int endLineOffset = doc.getLineOffset( endLineNumber - 1  );
+          charStart = initLineOffset + tmpCharStart - 1;
+          charEnd = endLineOffset + tmpCharEnd;
+        } finally {
+          prov.disconnect( f );
+        }
       } catch (Exception e) {
         lineNumber = -1;
         charStart = -1;
@@ -128,9 +137,9 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
       fileName=unprocessedFileName;
       IProject p = getProject();
       String projectLocation=p.getLocation().toOSString();
+      // return file relative to project, since we may have the same file in different folders (Main.hs)
       if (fileName.startsWith( projectLocation )){
         fileName=fileName.substring( projectLocation.length()+1 );
-        fileName=ResourceUtil.getSourceFolderRelativeName( p.findMember( fileName ) ).toString();
       }
     }
     return fileName;

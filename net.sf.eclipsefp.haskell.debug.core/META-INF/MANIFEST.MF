@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.core;singleton:=true
-Bundle-Version: 2.2.2
+Bundle-Version: 2.2.3
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore
 Bundle-Vendor: %bundleVendor
 Require-Bundle: org.eclipse.core.runtime,
@@ -16,7 +16,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.core.filesystem,
  org.eclipse.jdt.core;resolution:=optional,
- org.eclipse.jdt.junit;bundle-version="3.5.0";resolution:=optional
+ org.eclipse.jdt.junit;bundle-version="3.5.0";resolution:=optional,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.editors
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
