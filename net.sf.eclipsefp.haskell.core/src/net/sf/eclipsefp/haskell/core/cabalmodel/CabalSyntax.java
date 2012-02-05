@@ -46,6 +46,10 @@ public enum CabalSyntax {
   FIELD_OTHER_MODULES("other-modules"),//$NON-NLS-1$
   FIELD_HS_SOURCE_DIRS("hs-source-dirs"),//$NON-NLS-1$
   FIELD_EXTENSIONS("extensions"),//$NON-NLS-1$
+  FIELD_DEFAULT_EXTENSIONS("default-extension"),//$NON-NLS-1$
+  FIELD_OTHER_EXTENSIONS("other-extensions"),//$NON-NLS-1$
+  FIELD_DEFAULT_LANGUAGE("default-language"),//$NON-NLS-1$
+  FIELD_OTHER_LANGUAGES("other-languages"),//$NON-NLS-1$
   FIELD_GHC_OPTIONS("ghc-options"),//$NON-NLS-1$
   FIELD_GHC_PROF_OPTIONS("ghc-prof-options"),//$NON-NLS-1$
   FIELD_GHC_SHARED_OPTIONS("ghc-shared-options"),//$NON-NLS-1$
