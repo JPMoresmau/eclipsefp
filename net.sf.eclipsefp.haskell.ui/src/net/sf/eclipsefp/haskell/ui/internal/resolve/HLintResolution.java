@@ -46,9 +46,11 @@ public class HLintResolution extends MarkerCompletion {
           try {
             int offset=document.getLineOffset( line-1 )+s.getLocation().getColumn()-1;
             HLintFix fix=HLintFixer.fix( document.get(), offset, s );
-            String add=getAdditionalInfo(s) ;
-            String label=NLS.bind( UITexts.resolve_hlint_explain,add);
-            return new MarkerCompletionProposal( fix.getValue(), offset, fix.getLength(), fix.getLength(),label,marker,add);
+            if (fix.isFullMatch()){
+              String add=getAdditionalInfo(s) ;
+              String label=NLS.bind( UITexts.resolve_hlint_explain,add);
+              return new MarkerCompletionProposal( fix.getValue(), offset, fix.getLength(), fix.getLength(),label,marker,add);
+            }
           } catch( BadLocationException ex ) {
             HaskellUIPlugin.log( ex );
           }

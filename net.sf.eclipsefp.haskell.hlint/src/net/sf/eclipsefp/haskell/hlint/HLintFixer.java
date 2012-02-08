@@ -27,6 +27,11 @@ public class HLintFixer {
 		private String value="";
 		
 		/**
+		 * have we fully matched the input
+		 */
+		private boolean fullMatch=false;
+		
+		/**
 		 * @return the length
 		 */
 		public int getLength() {
@@ -38,6 +43,13 @@ public class HLintFixer {
 		 */
 		public String getValue() {
 			return value;
+		}
+		
+		/**
+		 * @return the fullMatch
+		 */
+		public boolean isFullMatch() {
+			return fullMatch;
 		}
 	}
 	
@@ -53,7 +65,10 @@ public class HLintFixer {
 		if (s.getPre().getType().equals(CodeModificationType.TEXT)){
 			String txt=((CodeModificationText)s.getPre()).getText();
 			int offset2=matchIgnoreSpace(doc, offset, txt, 0);
+			fix.fullMatch=offset2>-1;
 			fix.length=offset2-offset;
+		} else {
+			fix.fullMatch=true;
 		}
 		if (s.getPost().getType().equals(CodeModificationType.TEXT)){
 			fix.value=((CodeModificationText)s.getPost()).getText().trim();
@@ -87,6 +102,10 @@ public class HLintFixer {
 				char c2=txt.charAt(txtIdx2);
 				if (c1==c2){
 					return matchIgnoreSpace(doc, offset2+1, txt, txtIdx2+1);
+				} else if (c2=='(' || c2==')'){ // hlint sometimes adds extra brackets in the text it tells you to replace
+					return matchIgnoreSpace(doc, offset2, txt, txtIdx2+1);
+				} else {
+					return -1;
 				}
 			}
 			offset=offset2;
