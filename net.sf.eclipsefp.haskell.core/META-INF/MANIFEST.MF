@@ -24,8 +24,7 @@ Export-Package: net.sf.eclipsefp.haskell.core;uses:="org.osgi.framework,org.ecli
  net.sf.eclipsefp.haskell.core.cabalmodel;
   uses:="org.eclipse.jface.text,
    org.json,
-   org.eclipse.core.resources,
-   net.sf.eclipsefp.haskell.scion.types",
+   org.eclipse.core.resources",
  net.sf.eclipsefp.haskell.core.code;uses:="net.sf.eclipsefp.haskell.core.internal.code,org.eclipse.core.resources,org.eclipse.core.runtime",
  net.sf.eclipsefp.haskell.core.codeassist;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.compiler;uses:="org.eclipse.core.resources,net.sf.eclipsefp.haskell.core.internal.hsimpl,org.eclipse.core.runtime",
