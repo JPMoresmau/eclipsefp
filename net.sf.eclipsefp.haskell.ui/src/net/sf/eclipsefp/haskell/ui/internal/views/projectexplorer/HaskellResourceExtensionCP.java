@@ -27,9 +27,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -161,7 +161,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   // TODO lf note to self: config -> navigator service -> can be used to
   // get state information from the View
   public void init( final ICommonContentExtensionSite config ) {
-    IEclipsePreferences node = new InstanceScope().getNode( HaskellCorePlugin
+    IEclipsePreferences node = InstanceScope.INSTANCE.getNode( HaskellCorePlugin
         .getPluginId() );
     node.addPreferenceChangeListener( new IPreferenceChangeListener() {
 

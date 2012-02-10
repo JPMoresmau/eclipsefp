@@ -104,7 +104,7 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
 
   @Override
   protected IPreferenceStore doGetPreferenceStore() {
-    return new ScopedPreferenceStore(new InstanceScope(),
+    return new ScopedPreferenceStore(InstanceScope.INSTANCE,
                HaskellCorePlugin.getPluginId());
   }
 

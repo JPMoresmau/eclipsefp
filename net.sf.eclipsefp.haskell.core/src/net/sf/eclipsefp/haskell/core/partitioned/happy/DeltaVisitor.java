@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Performs an incremental build of the resources.
@@ -33,7 +34,7 @@ public class DeltaVisitor implements IResourceDeltaVisitor {
         // Set derived file as derived
         resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
         IPath derivedPath = resource.getProjectRelativePath().removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
-        resource.getProject().getFile( derivedPath ).setDerived( true );
+        resource.getProject().getFile( derivedPath ).setDerived( true,new NullProgressMonitor() );
       }
     }
     return true;

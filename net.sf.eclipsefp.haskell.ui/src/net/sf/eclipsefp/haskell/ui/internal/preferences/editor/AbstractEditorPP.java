@@ -46,7 +46,7 @@ public abstract class AbstractEditorPP extends PreferencePage implements IWorkbe
   public boolean performOk() {
     overlayStore.propagate();
     try {
-      new InstanceScope().getNode(HaskellUIPlugin.getPluginId()).flush();
+      InstanceScope.INSTANCE.getNode(HaskellUIPlugin.getPluginId()).flush();
     } catch( BackingStoreException ex ) {
       HaskellUIPlugin.log( ex );
     }

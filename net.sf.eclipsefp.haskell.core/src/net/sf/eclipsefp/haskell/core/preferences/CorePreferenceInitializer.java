@@ -17,7 +17,7 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
                                        implements ICorePreferenceNames {
   @Override
   public void initializeDefaultPreferences() {
-    IEclipsePreferences coreNode = new DefaultScope().getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences coreNode = DefaultScope.INSTANCE.getNode( HaskellCorePlugin.getPluginId() );
     coreNode.put( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
     coreNode.put( FOLDERS_SRC, FileUtil.DEFAULT_FOLDER_SRC );
     coreNode.put( FOLDERS_DOC, FileUtil.DEFAULT_FOLDER_DOC );

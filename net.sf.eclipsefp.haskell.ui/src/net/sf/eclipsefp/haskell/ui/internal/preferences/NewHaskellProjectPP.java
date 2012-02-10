@@ -341,7 +341,7 @@ public class NewHaskellProjectPP extends PreferencePage
       store.setValue( key, text.getText() );
     }
     try {
-      new InstanceScope().getNode(HaskellCorePlugin.getPluginId()).flush();
+      InstanceScope.INSTANCE.getNode(HaskellCorePlugin.getPluginId()).flush();
     } catch( BackingStoreException ex ) {
       HaskellCorePlugin.log( ex );
     }
@@ -350,7 +350,7 @@ public class NewHaskellProjectPP extends PreferencePage
 
   @Override
   protected IPreferenceStore doGetPreferenceStore() {
-	  return new ScopedPreferenceStore(new InstanceScope(),
+	  return new ScopedPreferenceStore(InstanceScope.INSTANCE,
 	      HaskellCorePlugin.getPluginId());
   }
 

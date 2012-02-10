@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Builds all resources in the project.
@@ -25,7 +26,7 @@ public class FullBuildVisitor implements IResourceVisitor {
       resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
       IPath derivedPath = resource.getProjectRelativePath()
           .removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
-      resource.getProject().getFile( derivedPath ).setDerived( true );
+      resource.getProject().getFile( derivedPath ).setDerived( true,new NullProgressMonitor() );
     }
     return true;
   }

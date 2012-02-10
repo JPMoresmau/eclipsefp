@@ -71,7 +71,7 @@ public class HSCodeTemplateManager {
   /** Save the template's preferences: */
   public void savePluginPreferences() {
     try {
-      new InstanceScope().getNode(CUSTOM_TEMPLATES_KEY).flush();
+      InstanceScope.INSTANCE.getNode(CUSTOM_TEMPLATES_KEY).flush();
     } catch( BackingStoreException ex ) {
       HaskellUIPlugin.log( UITexts.template_prefSave_backingStore_exception, ex );
     }

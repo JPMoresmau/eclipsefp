@@ -21,7 +21,9 @@ import org.xml.sax.InputSource;
  * </p>
  *
  * @author Leif Frenzel
+ *
  */
+@Deprecated
 public class Parser implements IXMLNames {
 
 	public static void readIn(final IFile projectDescriptor,

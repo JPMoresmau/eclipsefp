@@ -161,6 +161,6 @@ public class HaskellCorePlugin extends Plugin {
 
 	/** Get an instance-scoped preference store for the plug-in */
 	public static final IEclipsePreferences instanceScopedPreferences() {
-	  return new InstanceScope().getNode( getPluginId() );
+	  return InstanceScope.INSTANCE.getNode( getPluginId() );
 	}
 }
