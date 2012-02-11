@@ -36,6 +36,8 @@ public abstract class HoogleResult {
 			return new HoogleResultDeclaration(o);
 		else if (type.equals("constructor"))
 			return new HoogleResultConstructor(o);
+		else if (type.equals("keyword"))
+			return new HoogleResultKeyword(o);
 		else
 			return null;
 	}

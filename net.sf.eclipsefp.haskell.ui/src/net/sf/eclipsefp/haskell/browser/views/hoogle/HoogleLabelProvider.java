@@ -53,6 +53,8 @@ public class HoogleLabelProvider implements ILabelProvider {
       case DECLARATION:
         Declaration decl = ((HoogleResultDeclaration)result).getDeclaration();
         return ImageCache.getImageForDeclaration( decl.getType() );
+      case KEYWORD:
+        return ImageCache.KEYWORD;
     }
 
     return null;
@@ -70,6 +72,7 @@ public class HoogleLabelProvider implements ILabelProvider {
       switch(result.getType()) {
         case PACKAGE:
         case MODULE:
+        case KEYWORD:
           return result.getName();
         case DECLARATION:
           Declaration decl = ((HoogleResultDeclaration)result).getDeclaration();
@@ -90,6 +93,7 @@ public class HoogleLabelProvider implements ILabelProvider {
         switch(result.getType()) {
           case PACKAGE:
           case MODULE:
+          case KEYWORD:
             return null; // This should not happen
           case DECLARATION:
             HoogleResultDeclaration decl = (HoogleResultDeclaration)result;

@@ -127,6 +127,10 @@ public class HtmlUtil {
     return builder.toString();
   }
 
+  public static String generateKeywordUrl( final String keyword ) {
+    return "http://www.haskell.org/haskellwiki/Keywords#" + keyword;
+  }
+
   public static String generatePackageUrl( final PackageIdentifier item ) {
     if( item.getName().equals( "ghc" ) ) {
       // GHC libraries are a special case

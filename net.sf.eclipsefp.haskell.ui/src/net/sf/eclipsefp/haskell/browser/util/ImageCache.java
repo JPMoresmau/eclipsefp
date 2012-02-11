@@ -26,6 +26,7 @@ public class ImageCache {
   public static Image INSTANCE = HaskellUIImages.getImage( IImageNames.INSTANCE_DECL );
   public static Image FUNCTION = HaskellUIImages.getImage( IImageNames.FUNCTION_BINDING );
   public static Image TYPE = HaskellUIImages.getImage( IImageNames.TYPE_DECL );
+  public static Image KEYWORD = HaskellUIImages.getImage( IImageNames.PATTERN_BINDING );
 
   /**
    * Get the image corresponding to a declaration.

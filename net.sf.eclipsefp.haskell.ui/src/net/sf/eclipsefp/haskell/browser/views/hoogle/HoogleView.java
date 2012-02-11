@@ -281,6 +281,10 @@ public class HoogleView extends ViewPart implements SelectionListener,
     if( result != null ) {
       String text = null;
       switch( result.getType() ) {
+        case KEYWORD:
+          text = HtmlUtil.generateDocument( "keyword "
+              + result.getName(), "" );
+          break;
         case PACKAGE:
           HaskellPackage pkg = ( ( HoogleResultPackage )result ).getPackage();
           text = HtmlUtil.generateDocument( "package "
@@ -336,6 +340,9 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
     String url = null;
     switch( result.getType() ) {
+      case KEYWORD:
+        url = HtmlUtil.generateKeywordUrl( result.getName() );
+        break;
       case PACKAGE:
         HoogleResultPackage pkg = ( HoogleResultPackage )result;
         url = HtmlUtil.generatePackageUrl( pkg.getPackage().getIdentifier() );

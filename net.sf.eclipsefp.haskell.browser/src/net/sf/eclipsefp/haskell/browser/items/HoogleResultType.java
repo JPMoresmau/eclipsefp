@@ -13,5 +13,6 @@ public enum HoogleResultType {
 	PACKAGE,
 	MODULE,
 	DECLARATION,
-	CONSTRUCTOR
+	CONSTRUCTOR,
+	KEYWORD
 }
