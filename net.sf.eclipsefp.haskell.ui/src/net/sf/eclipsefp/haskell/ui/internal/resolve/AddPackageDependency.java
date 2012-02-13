@@ -13,11 +13,11 @@ import org.eclipse.osgi.util.NLS;
   * @author JP Moresmau
  */
 public class AddPackageDependency extends MarkerCompletion {
-  private final String pkg;
+  private final String value;
 
-  public AddPackageDependency( final String pkg ) {
+  public AddPackageDependency( final String value ) {
     super();
-    this.pkg = pkg;
+    this.value = value;
   }
 
   @Override
@@ -25,14 +25,22 @@ public class AddPackageDependency extends MarkerCompletion {
     getCompletionProposal( marker, null ).apply( null );
   }
 
+
+  /**
+   * @return the pkg
+   */
+  public String getValue() {
+    return value;
+  }
+
   public String getLabel() {
-    return NLS.bind( UITexts.resolve_addpackage, pkg );
+    return NLS.bind( UITexts.resolve_addpackage, value );
   }
 
   @Override
   public ICompletionProposal getCompletionProposal( final IMarker marker,
       final IDocument document ) {
-    return new AddPackageDependencyProposal( pkg, marker );
+    return new AddPackageDependencyProposal( value, marker );
   }
 
 }

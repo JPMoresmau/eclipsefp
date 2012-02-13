@@ -135,7 +135,7 @@ public class BuildMarkerResolutionGenerator implements
             } catch (Exception e) {
               // Do nothing
             }
-          } else if (msg.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
+          } else if (msgL.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
             int btix=msg.indexOf('`');
             int sqix=msg.indexOf('\'',btix);
             //String module=msg.substring(btix+1,sqix);
@@ -164,6 +164,13 @@ public class BuildMarkerResolutionGenerator implements
             or
               `import System.Exit (ExitCode (..))'
               Main.hs /nxt/test line 16 Haskell Problem 39935*/
+          }  else if (msgL.indexOf( GhcMessages.DO_DISCARDED_START )>-1){
+            res.add(new AddGhcPragmaResolution( "-fno-warn-unused-do-bind" ));
+            res.add(new AddGHCOptionResolution( "-fno-warn-unused-do-bind" ));
+//            int fixIx=msgL.indexOf( GhcMessages.DO_DISCARDED_FIX );
+//            if (fixIx>-1){
+//
+//            }
           }
         }
       }

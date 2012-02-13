@@ -1,5 +1,10 @@
+/**
+ *
+ */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -7,6 +12,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -23,14 +29,18 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-
+/**
+ * Add a package to the build-depends of cabal stanzas
+ * @author JP Moresmau
+ *
+ */
 public class AddPackageDependencyProposal implements ICompletionProposal {
 
-  private final String pkg;
+  private final String value;
   private final IMarker marker;
 
-  public AddPackageDependencyProposal(final String pkg, final IMarker marker) {
-    this.pkg = pkg;
+  public AddPackageDependencyProposal(final String value, final IMarker marker) {
+    this.value = value;
     this.marker = marker;
   }
 
@@ -42,15 +52,23 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       prov.connect( f );
       IDocument doc=prov.getDocument( f );
       PackageDescription pd=PackageDescriptionLoader.load( f );
+      // find applicable stanzas if any, to not modify all of the cabal stanzas
+      Set<PackageDescriptionStanza> apps=ResourceUtil.getApplicableStanzas( new IFile[]{(IFile)marker.getResource()} );
+      Set<String> appNames=new HashSet<String>();
+      for (PackageDescriptionStanza pds:apps){
+        appNames.add(pds.toTypeName());
+      }
       int length=pd.getStanzas().size();
       for (int a=0;a<length;a++){
         PackageDescriptionStanza pds=pd.getStanzas().get(a);
         CabalSyntax cs=pds.getType();
-        if (CabalSyntax.SECTION_EXECUTABLE.equals(cs) || CabalSyntax.SECTION_LIBRARY.equals(cs) || CabalSyntax.SECTION_TESTSUITE.equals(cs)){
-          RealValuePosition rvp=pds.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, pkg );
-          if (rvp!=null){
-            rvp.updateDocument( doc );
-            pd=PackageDescriptionLoader.load( doc.get() );
+        if (appNames.isEmpty() || appNames.contains( pds.toTypeName() )){
+          if (CabalSyntax.SECTION_EXECUTABLE.equals(cs) || CabalSyntax.SECTION_LIBRARY.equals(cs) || CabalSyntax.SECTION_TESTSUITE.equals(cs)){
+            RealValuePosition rvp=update(pds);
+            if (rvp!=null){
+              rvp.updateDocument( doc );
+              pd=PackageDescriptionLoader.load( doc.get() );
+            }
           }
         }
       }
@@ -59,6 +77,22 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       HaskellUIPlugin.log( ce );
 
     }
+  }
+
+  protected RealValuePosition update(final PackageDescriptionStanza pds){
+    return pds.addToPropertyList( getCabalField(), getValue() );
+  }
+
+  protected CabalSyntax getCabalField(){
+    return CabalSyntax.FIELD_BUILD_DEPENDS;
+  }
+
+
+  /**
+   * @return the value
+   */
+  public String getValue() {
+    return value;
   }
 
   public Point getSelection( final IDocument document ) {
@@ -70,7 +104,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
   }
 
   public String getDisplayString() {
-    return NLS.bind( UITexts.resolve_addpackage, pkg );
+    return NLS.bind( UITexts.resolve_addpackage, value );
   }
 
   public Image getImage() {

@@ -18,8 +18,6 @@ import org.eclipse.osgi.util.NLS;
   * @author JP Moresmau
  */
 public class AddLanguagePragmaResolution extends MarkerCompletion {
-  private final static String pragmaStart="{-# LANGUAGE "; //$NON-NLS-1$
-  private final static String pragmaEnd="#-}"; //$NON-NLS-1$
 
   private final String pragma;
 
@@ -29,9 +27,28 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
   }
 
   public String getLabel() {
-    return NLS.bind( UITexts.resolve_addpragma, pragma );
+    return NLS.bind( UITexts.resolve_addpragma, pragma,"LANGUAGE" );//$NON-NLS-1$
   }
 
+
+  /**
+   * @return the pragma
+   */
+  public String getPragma() {
+    return pragma;
+  }
+
+  protected String getPragmaStart(){
+    return "{-# LANGUAGE "; //$NON-NLS-1$
+  }
+
+  protected String getPragmaEnd(){
+    return "#-}"; //$NON-NLS-1$
+  }
+
+  protected String getSeparator(){
+    return ", "; //$NON-NLS-1$
+  }
 
   @Override
   public ICompletionProposal getCompletionProposal( final IMarker marker,final IDocument document){
@@ -56,18 +73,18 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
       if (ix>0){
         lineOffset=document.getLineOffset( ix );
       }
-      String repl=pragmaStart+pragma+" "+pragmaEnd+PlatformUtil.NL; //$NON-NLS-1$
+      String repl=getPragmaStart()+pragma+" "+getPragmaEnd()+PlatformUtil.NL; //$NON-NLS-1$
       while (ix<document.getNumberOfLines()){
         IRegion r=document.getLineInformation( ix );
         String l=document.get( r.getOffset(), r.getLength() ).trim();
         if (FileUtil.hasLiterateExtension( marker.getResource() )){
           l=l.substring( 1 ).trim();
         }
-        if (l.startsWith(pragmaStart)){
-          int ixEnd=l.indexOf( pragmaEnd,pragmaStart.length());
+        if (l.startsWith(getPragmaStart())){
+          int ixEnd=l.indexOf( getPragmaEnd(),getPragmaStart().length());
           if (ixEnd>-1){
             pragmaOffset=r.getOffset()+l.substring( 0,ixEnd ).trim().length();
-            repl=", "+pragma; //$NON-NLS-1$
+            repl=getSeparator()+pragma;
           }
         } else if (l.startsWith( "module" )){ //$NON-NLS-1$
           break;

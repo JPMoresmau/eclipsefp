@@ -39,6 +39,9 @@ public interface GhcMessages {
   
   public static String IS_A_DATA_CONSTRUCTOR="is a data constructor"; //$NON-NLS-1$
   
+  public static String DO_DISCARDED_START="a do-notation statement discarded a result";
+  public static String DO_DISCARDED_FIX="by saying \"_ <- ";
+  //-fno-warn-unused-do-bind
 
 
 }
