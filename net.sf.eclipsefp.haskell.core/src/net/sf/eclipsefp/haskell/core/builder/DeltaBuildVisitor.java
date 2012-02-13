@@ -1,15 +1,13 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
-import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
@@ -30,13 +28,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
     IResource res = delta.getResource();
     if( res instanceof IProject ) {
       IProject project = ( IProject )res;
-      try {
-        result = project.hasNature( HaskellNature.NATURE_ID );
-      } catch( CoreException cex ) {
-        String msg = "Error checking Haskell project nature."; //$NON-NLS-1$
-        HaskellCorePlugin.log( msg, cex );
-        result = false;
-      }
+       result = ResourceUtil.hasHaskellNature(project);
     } else if( res instanceof IFolder ) {
       result = !res.isDerived();
     } else if( res instanceof IFile ) {

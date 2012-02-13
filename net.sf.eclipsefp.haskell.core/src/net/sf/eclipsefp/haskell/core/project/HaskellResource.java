@@ -40,11 +40,7 @@ public class HaskellResource {
   public boolean isProjectExecutable(){
     if (fResource instanceof IProject){
       IProject project=(IProject)fResource;
-      try {
-        return !ResourceUtil.getProjectExecutables( project ).isEmpty();
-      } catch (CoreException ce){
-        HaskellCorePlugin.log( ce );
-      }
+       return !ResourceUtil.getProjectExecutables( project ).isEmpty();
     }
     return false;
   }
@@ -52,11 +48,7 @@ public class HaskellResource {
   public boolean isProjectTestSuite(){
     if (fResource instanceof IProject){
       IProject project=(IProject)fResource;
-      try {
-        return !ResourceUtil.getProjectTestSuites( project ).isEmpty();
-      } catch (CoreException ce){
-        HaskellCorePlugin.log( ce );
-      }
+       return !ResourceUtil.getProjectTestSuites( project ).isEmpty();
     }
     return false;
   }

@@ -55,16 +55,16 @@ public class ResourceUtil {
 
   public static boolean hasHaskellNature(final IProject p){
     try {
-      return p.hasNature( HaskellNature.NATURE_ID );
+      return p.isAccessible() && p.hasNature( HaskellNature.NATURE_ID );
     } catch (CoreException ce){
       HaskellCorePlugin.log( ce );
     }
     return false;
   }
 
-  static Map<String,IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) throws CoreException {
+  static Map<String,IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) {
     Map<String,IFile> result = new HashMap<String, IFile>();
-    if (project.hasNature( HaskellNature.NATURE_ID ) ){
+    if (hasHaskellNature(project) ){
       /*ScionInstance instance=ScionPlugin.getScionInstance( project );
       if (instance!=null){
         for (Component c:instance.getComponents()){
@@ -105,15 +105,11 @@ public class ResourceUtil {
    * project has the Haskell nature.
    */
 
-	public static Map<String,IFile> getProjectExecutables( final IProject project)
-	  throws CoreException
-	{
+	public static Map<String,IFile> getProjectExecutables( final IProject project){
 	  return getExecutablesOfComponentType( project, ComponentType.EXECUTABLE );
 	}
 
-	public static Map<String,IFile> getProjectTestSuites( final IProject project)
-	  throws CoreException
-  {
+	public static Map<String,IFile> getProjectTestSuites( final IProject project)  {
     return getExecutablesOfComponentType( project, ComponentType.TESTSUITE );
   }
 
@@ -144,14 +140,12 @@ public class ResourceUtil {
 	 * project must have the Haskell nature.
 	 * </p>
 	 */
-	public static IFile[] getProjectExecutablesArray( final IProject project )
-      throws CoreException {
+	public static IFile[] getProjectExecutablesArray( final IProject project ) {
 	  Map<String,IFile> executables = getProjectExecutables(project);
     return executables.values().toArray( new IFile[ executables.size() ] );
   }
 
-	public static IFile[] getProjectTestSuitesArray( final IProject project )
-      throws CoreException {
+	public static IFile[] getProjectTestSuitesArray( final IProject project ) {
 	  Map<String,IFile> executables = getProjectTestSuites( project );
     return executables.values().toArray( new IFile[ executables.size() ] );
   }
@@ -193,7 +187,7 @@ public class ResourceUtil {
 
 	public static Collection<IContainer> getSourceFolders(final IProject project){
 	  try {
-  	  if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+  	  if( hasHaskellNature(project) ) {
 
         IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
@@ -293,7 +287,7 @@ public class ResourceUtil {
     return hsProject.getSourcePaths().contains( folderPath );
     */
     try {
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if( hasHaskellNature(project) ) {
         IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         for (String src:pd.getStanzasBySourceDir().keySet()){
@@ -327,11 +321,7 @@ public class ResourceUtil {
 		boolean result = false;
 		if (resource != null) {
   		IProject project = resource.getProject();
-  		try {
-  			result = project.hasNature(HaskellNature.NATURE_ID);
-  		} catch (CoreException cex) {
-  			// ignore, we must assume this is not a Haskell project
-  		}
+ 			result = hasHaskellNature(project);
 		}
 		return result;
 	}
@@ -339,7 +329,7 @@ public class ResourceUtil {
   public static IContainer getSourceContainer( final IResource resource ) {
     IProject project = resource.getProject();
     try {
-      if(project.exists() && project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if(project.exists() && hasHaskellNature(project) ) {
 
         IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
@@ -432,7 +422,7 @@ public class ResourceUtil {
   public static IFile findFileFromModule(final IProject project,final String module){
     try {
         String path=module.replace( '.', '/' );
-        if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+        if(hasHaskellNature(project ) ) {
           IFile f=BuildWrapperPlugin.getCabalFile( project );
           PackageDescription pd=PackageDescriptionLoader.load(f);
           Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
@@ -457,7 +447,7 @@ public class ResourceUtil {
   public static String getModuleName(final IFile file){
     IProject project = file.getProject();
     try {
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if( hasHaskellNature(project ) ) {
 
         IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
@@ -489,7 +479,7 @@ public class ResourceUtil {
     }
     IProject project = files[0].getProject();
     try {
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if( hasHaskellNature(project) ) {
 
         IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
@@ -626,13 +616,9 @@ public class ResourceUtil {
     if (arg1 instanceof IStructuredSelection){
       for (Iterator<?> it=((IStructuredSelection)arg1).iterator();it.hasNext();){
         IResource res = ResourceUtil.findResource( it.next() );
-        try {
-          if( res != null && res.getProject()!=null  && res.getProject().hasNature(HaskellNature.NATURE_ID)) {
+          if( res != null && res.getProject()!=null  && hasHaskellNature(res.getProject())) {
             projects.add( res.getProject() );
           }
-        } catch (CoreException cex) {
-          // ignore, we must assume this is not a Haskell project
-        }
       }
     }
     return projects;
