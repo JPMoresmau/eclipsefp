@@ -28,6 +28,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
 import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 
@@ -642,6 +643,9 @@ public class BWFacade {
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);
 		pb.command(args);
+		if (ow!=null && BuildWrapperPlugin.logAnswers) {
+			ow.addMessage(LangUtil.join(args, " "));
+		}					
 		T obj=null;
 		try {
 			Process p=pb.start();

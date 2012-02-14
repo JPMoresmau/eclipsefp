@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.buildwrapper.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.util.LangUtil;
+
 import org.eclipse.core.resources.IFile;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,12 +68,7 @@ public class ImportDef {
 		}
 		if (children!=null){
 			sb.append("(");
-			String sep="";
-			for (ImportSpecDef child:children){
-				sb.append(sep);
-				sep=",";
-				sb.append(child.toString());
-			}
+			sb.append(LangUtil.join(children, ","));
 			sb.append(")");
 		}
 		
