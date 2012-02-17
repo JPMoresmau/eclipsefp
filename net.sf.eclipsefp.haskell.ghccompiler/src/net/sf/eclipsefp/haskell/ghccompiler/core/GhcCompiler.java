@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.DefaultHaskellCompiler;
 import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -111,7 +112,7 @@ public class GhcCompiler extends DefaultHaskellCompiler {
 
     List<String> cmdLine = new ArrayList<String>();
     // command and special options
-    cmdLine.add( Util.getCompilerExecutable() );
+    cmdLine.add( CompilerManager.getCompilerExecutable() );
     String libPath = Util.constructLibPath( file);
     if( !libPath.equals( "" ) ) { //$NON-NLS-1$
       cmdLine.add( libPath );

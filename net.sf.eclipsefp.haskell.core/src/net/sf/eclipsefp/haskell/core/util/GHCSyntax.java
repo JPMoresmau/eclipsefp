@@ -58,4 +58,6 @@ public class GHCSyntax {
   public static final String OPT_END_RTS   = "-RTS"; //$NON-NLS-1$
   /** <p>The <code>--RTS</code> option.</p> */
   public static final String OPT_NO_RTS    = "--RTS"; //$NON-NLS-1$
+
+  public static final String EXTENSIONS="--supported-extensions"; //$NON-NLS-1$
 }

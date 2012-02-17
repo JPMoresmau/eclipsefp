@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.young.IInteractiveLaunchOperationDelegate;
@@ -69,7 +70,7 @@ public class GhciLaunchOperationDelegate
   }
 
   public String getExecutable() {
-    return Util.getCompilerExecutable();
+    return CompilerManager.getCompilerExecutable();
   }
 
 

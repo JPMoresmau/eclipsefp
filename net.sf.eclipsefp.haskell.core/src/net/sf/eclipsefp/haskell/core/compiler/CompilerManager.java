@@ -1,9 +1,14 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.compiler;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -14,14 +19,17 @@ import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -95,6 +103,53 @@ public class CompilerManager implements ICompilerManager {
 	public static final ICompilerManager getInstance() {
 		return CompilerManagerHolder.theInstance;
 	}
+
+	/**
+	 * get the path name to the compiler executable
+	 * @return
+	 */
+	 public static String getCompilerExecutable() {
+	    IPath result = null;
+
+	    ICompilerManager msn = CompilerManager.getInstance();
+	    IHsImplementation impl = msn.getCurrentHsImplementation();
+	    if( impl != null && impl.getBinDir() != null ) {
+	      result = new Path( impl.getBinDir() );
+	      result = result.append( GHCSyntax.GHC );
+	    }
+	    return result == null ? GHCSyntax.GHC : result.toOSString();
+	  }
+
+	 private static List<String> extensions;
+
+	 /**
+	  * get the extensions as given by GHC
+	  * @return the list of extensions known to the compiler
+	  */
+	  public static List<String> getExtensions(){
+	    if (extensions==null){
+
+	      File f=new File(getCompilerExecutable());
+	      if (f.exists()){
+	          StringWriter sw=new StringWriter();
+	          try {
+	            new ProcessRunner().executeBlocking( f.getParentFile(), sw, null, f.getAbsolutePath(),GHCSyntax.EXTENSIONS );
+	            String s=sw.toString();
+	            BufferedReader br=new BufferedReader( new StringReader( s ) );
+	            extensions=new ArrayList<String>();
+	            String line=br.readLine();
+	            while (line!=null){
+	              extensions.add(line.trim());
+	              line=br.readLine();
+	            }
+	            Collections.sort( extensions, String.CASE_INSENSITIVE_ORDER );
+	          } catch (IOException ioe){
+	            HaskellCorePlugin.log( ioe );
+	          }
+	      }
+	    }
+	    return extensions;
+	  }
 
 	/**
 	 * <p>

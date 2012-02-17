@@ -106,14 +106,14 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="2.2.1"
+         version="2.2.3"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.2.2"
+         version="2.2.3"
          unpack="false"/>
 
    <plugin
@@ -148,7 +148,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.hlint"
          download-size="0"
          install-size="0"
-         version="2.2.2"
+         version="2.2.3"
          unpack="false"/>
 
    <plugin

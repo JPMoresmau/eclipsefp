@@ -9,7 +9,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
@@ -25,6 +28,7 @@ import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
@@ -70,6 +74,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     , IMPORT_LIST
     , TYCON_CONTEXT
     , CONID_CONTEXT
+    , LANGUAGE_EXTENSIONS_CONTEXT
   }
 
   /** Default number of tokens to grab before point when determining completion context */
@@ -166,7 +171,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
               if (line.startsWith( "import" )) {
                 return moduleNamesContext(theFile,offset);
-              } else if (line.contains("::") || line.contains("->")) {
+              } else if (line.startsWith("{-# LANGUAGE")){
+                return getLanguageExtensions( offset );
+              }  else if (line.contains("::") || line.contains("->")) {
+
                 return defaultCompletionContext( viewer, theFile, doc, offset, true );
               }
 
@@ -205,6 +213,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
       case CONID_CONTEXT: {
         return null;
+      }
+      case LANGUAGE_EXTENSIONS_CONTEXT: {
+        return getLanguageExtensions( offset );
       }
     }
 
@@ -445,9 +456,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	private ICompletionProposal[] filterModuleNames( final int offset ) {
     // List<String> modules = new ArrayList<String>();
-    final String normalizedPrefix = prefix.toLowerCase();
+    final String normalizedPrefix = prefix.toLowerCase(Locale.ENGLISH);
 
-    HashSet<String> modules = new HashSet<String>();
+    Set<String> modules = new HashSet<String>();
 
     for (String m : BrowserPlugin.getSharedInstance().getCachedModuleNames()) {
       if (prefix.length() == 0 || m.toLowerCase().startsWith( normalizedPrefix )) {
@@ -486,6 +497,36 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 
     return null;
+	}
+
+	private ICompletionProposal[] getLanguageExtensions(final int offset ) {
+	  String normalizedPrefix = prefix.toUpperCase(Locale.ENGLISH);
+	  int ix=normalizedPrefix.lastIndexOf( ',' );
+	  if (ix==-1){
+	    ix=normalizedPrefix.lastIndexOf( ' ' );
+	  }
+	  if (ix>-1){
+	    prefixOffsetAnchor+=ix+1;
+	    normalizedPrefix=normalizedPrefix.substring( ix+1 ).trim();
+	  }
+	  List<String> extensions=CompilerManager.getExtensions();
+	  if (extensions!=null){
+	    List<String> ext = new ArrayList<String>();
+	    for (String e:extensions){
+	      if (normalizedPrefix.equals("") || e.toUpperCase( Locale.ENGLISH ).startsWith( normalizedPrefix )){
+	        ext.add(e);
+	      }
+	    }
+	    ICompletionProposal[] result = new ICompletionProposal[ext.size()];
+	    int i=0;
+	    final int prefixLength = normalizedPrefix.length();
+	    for (String e:ext){
+	      result[i]=new CompletionProposal( e, prefixOffsetAnchor, prefixLength, e.length());
+	      i++;
+	    }
+	    return result;
+	  }
+	  return null;
 	}
 
 	/**
