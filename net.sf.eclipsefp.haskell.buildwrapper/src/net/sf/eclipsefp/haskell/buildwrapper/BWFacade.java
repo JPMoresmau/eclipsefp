@@ -128,7 +128,7 @@ public class BWFacade {
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
-		JSONArray arr=run(command,ARRAY);
+		JSONArray arr=run(command,ARRAY,false); // no need to run since build in Cabal.hs already does it
 		if (arrC!=null){
 			for (int a=0;a<arrC.length();a++){
 				try {
