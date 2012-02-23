@@ -70,6 +70,11 @@ public class OutlineDef {
 	
 	private List<OutlineDef> children=new ArrayList<OutlineDef>();
 	
+	/**
+	 * the type signature or "?" if not known
+	 */
+	private String typeSignature;
+	
 	public OutlineDef(String name, OutlineDefType type, Location loc, Location block) {
 		super();
 		this.name = name;
@@ -87,6 +92,10 @@ public class OutlineDef {
 		arr=obj.getJSONArray("c");
 		for (int a=0;a<arr.length();a++){
 			children.add(new OutlineDef(f,arr.getJSONObject(a)));
+		}
+		typeSignature=obj.optString("s");
+		if (typeSignature==null || "null".equals(typeSignature)){
+			typeSignature="?";
 		}
 	}
 
@@ -114,6 +123,10 @@ public class OutlineDef {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public String getTypeSignature() {
+		return typeSignature;
 	}
 
 	

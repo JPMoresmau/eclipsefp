@@ -253,6 +253,11 @@ public class AnImport {
   }
 
 
+  /**
+   * build a Documented structure from an outline definition
+   * @param def
+   * @return
+   */
   private static Documented outlineToBrowser( final OutlineDef def ) {
     switch (def.getTypes().iterator().next()) {
       case CLASS:
@@ -262,7 +267,7 @@ public class AnImport {
       case TYPE:
         return new NewType( "", new String[0], def.getName(), new String[0], "", new Constructor[0] );
       case FUNCTION:
-        return new Function( "", def.getName(), "?" );
+        return new Function( "", def.getName(), def.getTypeSignature() );
       case SYN:
         return new TypeSynonym( "", def.getName(), new String[0], "?" );
       case CONSTRUCTOR:
