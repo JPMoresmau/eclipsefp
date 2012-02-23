@@ -5,6 +5,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -338,34 +340,75 @@ public class AnImport {
   }
 
   public CompletionProposal removeItem(final IDocument doc, final String item, final String label) {
+//    try {
+//      String contents = importDef.getLocation().getContents( doc );
+//      int ixP=contents.indexOf( "(" );
+//      int ix=contents.indexOf( item,ixP );
+//      if (ix>-1){
+//        int end=ix+item.length();
+//        int[] trimmed=trimRemovedImport( contents, ixP, ix, end );
+//        ix=trimmed[0];
+//        end=trimmed[1];
+//        if (contents.charAt( end )==')'){
+//          if (contents.charAt( ix-1 )=='('){
+//            if (ix-1>ixP){
+//              // we're in between (): remove them
+//              end++;
+//              ix--;
+//              trimmed=trimRemovedImport( contents, ixP, ix, end );
+//              ix=trimmed[0];
+//              end=trimmed[1];
+//            }
+//          } else {
+//            ix--; // remove preceding comma if we're at end
+//          }
+//        }
+//        int st=importDef.getLocation().getStartOffset( doc );
+//        String newContents=contents.substring( 0,ix )+contents.substring( end );
+//        return new CompletionProposal( newContents.toString(), st, contents.length(),
+//          0, ImageCache.MODULE, label, null, "" );
+//      }
+//    } catch (Exception e) {
+//      HaskellUIPlugin.log( e );
+//    }
+//    return null;
+    return removeItem( doc, Collections.singleton( item ),label);
+  }
+
+  public CompletionProposal removeItem(final IDocument doc, final Collection<String> items, final String label) {
     try {
       String contents = importDef.getLocation().getContents( doc );
+      String newContents=contents;
       int ixP=contents.indexOf( "(" );
-      int ix=contents.indexOf( item,ixP );
-      if (ix>-1){
-        int end=ix+item.length();
-        int[] trimmed=trimRemovedImport( contents, ixP, ix, end );
-        ix=trimmed[0];
-        end=trimmed[1];
-        if (contents.charAt( end )==')'){
-          if (contents.charAt( ix-1 )=='('){
-            if (ix-1>ixP){
-              // we're in between (): remove them
-              end++;
-              ix--;
-              trimmed=trimRemovedImport( contents, ixP, ix, end );
-              ix=trimmed[0];
-              end=trimmed[1];
+      for (String item:items){
+        int ix=newContents.indexOf( item,ixP );
+        if (ix>-1){
+          int end=ix+item.length();
+          int[] trimmed=trimRemovedImport( newContents, ixP, ix, end );
+          ix=trimmed[0];
+          end=trimmed[1];
+          if (newContents.charAt( end )==')'){
+            if (newContents.charAt( ix-1 )=='('){
+              if (ix-1>ixP){
+                // we're in between (): remove them
+                end++;
+                ix--;
+                trimmed=trimRemovedImport( newContents, ixP, ix, end );
+                ix=trimmed[0];
+                end=trimmed[1];
+              }
+            } else {
+              ix--; // remove preceding comma if we're at end
             }
-          } else {
-            ix--; // remove preceding comma if we're at end
           }
+
+          newContents=newContents.substring( 0,ix )+newContents.substring( end );
+
         }
-        int st=importDef.getLocation().getStartOffset( doc );
-        String newContents=contents.substring( 0,ix )+contents.substring( end );
-        return new CompletionProposal( newContents.toString(), st, contents.length(),
-          0, ImageCache.MODULE, label, null, "" );
       }
+      int st=importDef.getLocation().getStartOffset( doc );
+      return new CompletionProposal( newContents.toString(), st, contents.length(),
+          0, ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
     }

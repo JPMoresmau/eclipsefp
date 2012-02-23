@@ -6,6 +6,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
@@ -236,13 +237,28 @@ public class ImportsManager {
     }
   }
 
-  public CompletionProposal removeItemInImport(final String name, final int line, final String label) {
+//  public CompletionProposal removeItemInImport(final String name, final int line, final String label) {
+//    try {
+//      for (AnImport imp : parseImports()) {
+//        int importLine =imp.getImportDef().getLocation().getStartLine();
+//          //doc.getLineOfOffset( imp.getLocation().getOffset() );
+//        if (importLine-1 == line) {
+//          return imp.removeItem( doc, name, label );
+//        }
+//      }
+//    } catch (Exception e) {
+//      HaskellUIPlugin.log( e );
+//    }
+//    return null;
+//  }
+
+  public CompletionProposal removeItemInImport(final Collection<String> names, final int line, final String label) {
     try {
       for (AnImport imp : parseImports()) {
         int importLine =imp.getImportDef().getLocation().getStartLine();
           //doc.getLineOfOffset( imp.getLocation().getOffset() );
         if (importLine-1 == line) {
-          return imp.removeItem( doc, name, label );
+          return imp.removeItem( doc, names, label );
         }
       }
     } catch (Exception e) {

@@ -4,6 +4,8 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -34,7 +36,12 @@ public class RemoveRedundantElementInImportResolution extends MarkerCompletion {
       final IDocument document ) {
     ImportsManager mgr = new ImportsManager( (IFile)marker.getResource(), document );
     int line = marker.getAttribute( IMarker.LINE_NUMBER, -1 ) - 1;
-    return mgr.removeItemInImport( element, line, getLabel() );
+    String[] ss=element.split( "," );
+    List<String> elements=new ArrayList<String>(ss.length);
+    for (String s:ss){
+      elements.add(s.trim());
+    }
+    return mgr.removeItemInImport( elements, line, getLabel() );
   }
 
 }
