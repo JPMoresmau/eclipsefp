@@ -261,17 +261,17 @@ public class AnImport {
   private static Documented outlineToBrowser( final OutlineDef def ) {
     switch (def.getTypes().iterator().next()) {
       case CLASS:
-        return new TypeClass( "", new String[0], def.getName(), new String[0], new String[0] );
+        return new TypeClass( def.getComment(), new String[0], def.getName(), new String[0], new String[0] );
       case DATA:
-        return new DataType( "", new String[0], def.getName(), new String[0], "", new Constructor[0] );
+        return new DataType( def.getComment(), new String[0], def.getName(), new String[0], "", new Constructor[0] );
       case TYPE:
-        return new NewType( "", new String[0], def.getName(), new String[0], "", new Constructor[0] );
+        return new NewType( def.getComment(), new String[0], def.getName(), new String[0], "", new Constructor[0] );
       case FUNCTION:
-        return new Function( "", def.getName(), def.getTypeSignature() );
+        return new Function( def.getComment(), def.getName(), def.getTypeSignature() );
       case SYN:
-        return new TypeSynonym( "", def.getName(), new String[0], "?" );
+        return new TypeSynonym( def.getComment(), def.getName(), new String[0], "?" );
       case CONSTRUCTOR:
-        return new Constructor( "", def.getName(), "?" );
+        return new Constructor( def.getComment(), def.getName(), "?" );
       default:
           return null;
     }

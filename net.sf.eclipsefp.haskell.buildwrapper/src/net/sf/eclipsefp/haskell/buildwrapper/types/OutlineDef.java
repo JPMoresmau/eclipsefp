@@ -75,6 +75,11 @@ public class OutlineDef {
 	 */
 	private String typeSignature;
 	
+	/**
+	 * the comment or "" if none
+	 */
+	private String comment;
+	
 	public OutlineDef(String name, OutlineDefType type, Location loc, Location block) {
 		super();
 		this.name = name;
@@ -96,6 +101,10 @@ public class OutlineDef {
 		typeSignature=obj.optString("s");
 		if (typeSignature==null || "null".equals(typeSignature)){
 			typeSignature="?";
+		}
+		comment=obj.optString("d");
+		if (comment==null || "null".equals(comment)){
+			comment="";
 		}
 	}
 
@@ -127,6 +136,10 @@ public class OutlineDef {
 
 	public String getTypeSignature() {
 		return typeSignature;
+	}
+
+	public String getComment() {
+		return comment;
 	}
 
 	

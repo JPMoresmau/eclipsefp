@@ -12,11 +12,18 @@ Necessary Haskell packages:
 Fixes:
 	- EclipseFP/buildwrapper have now been extensively tested on MacOs, and a few fixes have been done to make it happen. Thanks to Michael Jones for his time!
 	- HLint auto fix feature handles extra parenthesis that HLint adds in its messages
-	- Browser now supports searches that return haskell keywords
+	- Browser now supports Hoogle searches that return haskell keywords
 	- Breakpoint location in source when suspended didn't always show in right place
+	- Quick fix on multiple useless imports fixed: all redundant imports removed properly
+	- Do not check Haskell nature on closed projects
+	- Quick fix on add package to build-depends preserve package case
 
 Features:
-	- autocomplete list of language extensions in Language pragma
+	- Autocomplete list of language extensions in Language pragma
+	- Autocomplete shows the type signature of functions from the project
+	- Autocomplete shows the haddock comments of functions from the project
+	- Quick fix for unused do bind
+	- Scion-Browser and BuildWrapper should compile and work under GHC 7.4.1
 
 Internal:
 
