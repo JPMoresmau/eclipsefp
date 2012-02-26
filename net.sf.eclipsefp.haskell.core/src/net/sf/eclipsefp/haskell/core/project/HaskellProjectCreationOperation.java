@@ -40,22 +40,23 @@ public class HaskellProjectCreationOperation extends ProjectCreationOperation {
 
 	@Override
 	protected DescriptorFileInfo getDescFileInfo() {
-		return new DescriptorFileInfo(
-				       HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR,
-				       createDescriptorContent());
+		return null;
+//		new DescriptorFileInfo(
+//				       HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR,
+//				       createDescriptorContent());
 	}
 
-	private String createDescriptorContent() {
-		if (! createFolders() ) {
-			return ""; //$NON-NLS-1$
-		}
-		IPreferencesService service = Platform.getPreferencesService();
-		return HaskellProjectManager.createDescriptorContent(
-		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null ),
-		   // service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null ),
-		    //service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.TARGET_BINARY, null, null ),
-		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_COMPILER, null, null ));
-	}
+//	private String createDescriptorContent() {
+//		if (! createFolders() ) {
+//			return ""; //$NON-NLS-1$
+//		}
+//		IPreferencesService service = Platform.getPreferencesService();
+//		return HaskellProjectManager.createDescriptorContent(
+//		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_SRC, null, null ),
+//		   // service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_OUT, null, null ),
+//		    //service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.TARGET_BINARY, null, null ),
+//		    service.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_COMPILER, null, null ));
+//	}
 
 	public static boolean createFolders() {
 	  return Platform.getPreferencesService().getBoolean( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.FOLDERS_IN_NEW_PROJECT, false, null );

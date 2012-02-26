@@ -132,7 +132,7 @@ public class ProjectCreationOperation {
 	 * Returns an array of project nature ids to be added to the created
 	 * project.
 	 *
-	 * This method should be overriden by clients.
+	 * This method should be overridden by clients.
 	 */
 	protected String[] getProjectNatures() {
     return new String[ 0 ];
@@ -141,7 +141,7 @@ public class ProjectCreationOperation {
 	/**
 	 * Returns an array of directory names to be created inside the project.
 	 *
-	 * This method should be overriden by clients.
+	 * This method should be overridden by clients.
 	 */
 	protected String[] getDirectories() {
 		return new String[0];
@@ -150,7 +150,7 @@ public class ProjectCreationOperation {
 	/**
 	 * Returns an object describing the project descriptor file
 	 *
-	 * This method should be overriden by clients.
+	 * This method should be overridden by clients.
 	 */
 	protected DescriptorFileInfo getDescFileInfo() {
 		return null;
@@ -162,7 +162,9 @@ public class ProjectCreationOperation {
 		for (int i = 0; i < directories.length; i++) {
 			if (!"".equals(directories[i])) { //$NON-NLS-1$
 				IFolder dir = proj.getFolder(directories[i]);
-				dir.create(true, true, new SubProgressMonitor(mon, 1));
+				if (!dir.exists()){
+				  dir.create(true, true, new SubProgressMonitor(mon, 1));
+				}
 			}
 		}
 	}
@@ -172,6 +174,7 @@ public class ProjectCreationOperation {
 		DescriptorFileInfo descFileInfo = getDescFileInfo();
 		if (descFileInfo != null && !"".equals(descFileInfo.getName())) { //$NON-NLS-1$
 			IFile file = project.getFile(descFileInfo.getName());
+
 			String content = descFileInfo.getContent();
 			InputStream is = new ByteArrayInputStream(content.getBytes());
 			file.create(is, true, new SubProgressMonitor(monitor, 1));
