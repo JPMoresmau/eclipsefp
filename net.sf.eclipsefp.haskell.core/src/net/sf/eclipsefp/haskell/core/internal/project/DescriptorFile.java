@@ -9,7 +9,9 @@ package net.sf.eclipsefp.haskell.core.internal.project;
  * </p>
  *
  * @author Leif Frenzel
+ *
  */
+@Deprecated
 public class DescriptorFile implements IXMLNames {
 
 	private static final String OPEN_TAG = "<haskellProject>"; //$NON-NLS-1$

@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.core.internal.project;
   *
   * @author Leif Frenzel
   */
+@Deprecated
 interface IXMLNames {
 
   public static final String COMPILER_ELEMENT = "compiler"; //$NON-NLS-1$

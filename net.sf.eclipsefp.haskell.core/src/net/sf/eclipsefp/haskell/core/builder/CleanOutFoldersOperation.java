@@ -73,7 +73,7 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
         IResource resource = proxy.requestResource();
         // TODO need more general approach here
         String name = resource.getName();
-        if( !name.equals( ".project" ) && !name.equals( ".hsproject" ) ) { //$NON-NLS-1$ //$NON-NLS-2$
+        if( !name.equals( ".project" ) ) { //$NON-NLS-1$
           resource.delete( IResource.FORCE, null );
         }
       }
