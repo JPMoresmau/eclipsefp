@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.ui.util.text;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.core.parser.ParserUtils;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -71,7 +72,7 @@ public class WordFinder {
     //return result;
   }
 
-  public static EditorThing getEditorThing(final HaskellEditor haskellEditor,final boolean qualify, final boolean typed,final EditorThingHandler handler){
+  public static EditorThing getEditorThing(final HaskellEditor haskellEditor,final EditorThingHandler handler){
     final IFile file = haskellEditor.findFile();
     final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
@@ -80,15 +81,15 @@ public class WordFinder {
          JobFacade f=BuildWrapperPlugin.getJobFacade( file.getProject() );
           if (f!=null){
             final TextSelection textSel = ( TextSelection )selection;
-            final String fName = textSel.getText().trim();
+            //final String fName = textSel.getText().trim();
             try {
               Location l = new Location( file.getLocation().toOSString(),
                   haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-              f.getThingAtPoint(file, l, qualify, typed,new ThingAtPointHandler() {
+              f.getThingAtPoint(file, l, new ThingAtPointHandler() {
 
-                public void handleThing( final String thing ) {
-                  char haddockType = ' ';
-                  String name=fName;
+                public void handleThing( ThingAtPoint thing ) {
+                  String haddockType = null;
+                  /*String name=fName;
                   if( thing != null && thing.length() > 0 && !"no info".equals(thing) ) {
                     name = thing;
                     if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
@@ -98,26 +99,27 @@ public class WordFinder {
                       haddockType = name.charAt( name.length() - 1 );
                       name = name.substring( 0, name.length() - 2 );
                     }
-                  }
+                  }*/
 
 
-                  if( name.length() == 0 ) {
+                  if( thing==null) {
                    // name = WordFinder.findWord( haskellEditor.getDocument(),
                    //     textSel.getOffset() );
                     try {
                       IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( textSel.getOffset() );
                       String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
                       int off=textSel.getOffset()-r.getOffset();
-                      name= ParserUtils.getHaskellWord(line,off);
+                      String name= ParserUtils.getHaskellWord(line,off);
                       if (line.startsWith( "import" ) && name.contains( "." )){
-                        haddockType='m';
+                        haddockType="m";
                       }
+                      thing=new ThingAtPoint( name,haddockType );
                     } catch( final BadLocationException badlox ) {
                       badlox.printStackTrace();
                     }
                   }
-                  if (name!=null && name.length()>0){
-                    handler.handle( new EditorThing(file, name, haddockType ));
+                  if (thing!=null){
+                    handler.handle( new EditorThing(file, thing ));
                   }
                 }
               });
@@ -136,15 +138,13 @@ public class WordFinder {
     * @author JP Moresmau
    */
   public static class EditorThing {
-    private final String name;
-    private final char haddockType;
+    private final ThingAtPoint thing;
     private final IFile file;
 
-    public EditorThing(final IFile file, final String name, final char haddockType ) {
+    public EditorThing(final IFile file, final ThingAtPoint thing ) {
       super();
       this.file=file;
-      this.name = name;
-      this.haddockType = haddockType;
+      this.thing =thing;
     }
 
 
@@ -153,13 +153,12 @@ public class WordFinder {
       return file;
     }
 
-    public String getName() {
-      return name;
-    }
 
-
-    public char getHaddockType() {
-      return haddockType;
+    /**
+     * @return the thing
+     */
+    public ThingAtPoint getThing() {
+      return thing;
     }
 
   }

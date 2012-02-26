@@ -386,7 +386,7 @@ public class CabalPackagesView extends ViewPart {
         new Job(UITexts.cabalPackagesView_info_more_running){
           @Override
           protected IStatus run( final IProgressMonitor arg0 ) {
-            OpenDefinitionHandler.openExternalDefinition( getSite().getPage(), null, currentName, null, null, ' ' );
+            OpenDefinitionHandler.openExternalDefinition( getSite().getPage(), null, currentName, null, null, " " );
             return Status.OK_STATUS;
           }
         }.schedule();

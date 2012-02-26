@@ -7,6 +7,7 @@ import java.util.Iterator;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
@@ -81,7 +82,16 @@ public class HaskellTextHover extends DefaultTextHover {
           // TODO: Would be nice to also grab the Haddock documentation for the "thing" at point too.
           //long t0=System.currentTimeMillis();
           //try {
-            return f.getThingAtPoint(file,location, false, true);
+            ThingAtPoint tap=f.getThingAtPoint(file,location);
+            if (tap!=null){
+              StringBuilder sb=new StringBuilder();
+              sb.append(tap.getName());
+              if (tap.getType()!=null){
+                sb.append(" :: ");
+                sb.append(tap.getType());
+              }
+              return sb.toString();
+            }
           //} finally {
           //  long t1=System.currentTimeMillis();
           //  HaskellUIPlugin.log( "computethingAtPoint: "+(t1-t0)+"ms", IStatus.INFO );

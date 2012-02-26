@@ -69,15 +69,17 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
     final HaskellEditor haskellEditor = ( HaskellEditor )editor;
-    WordFinder.getEditorThing( haskellEditor, true, false,
+    WordFinder.getEditorThing( haskellEditor,
         new WordFinder.EditorThingHandler() {
 
           public void handle( final EditorThing thing ) {
-            String name = thing.getName();
-            char haddockType = thing.getHaddockType();
+            //String name = thing.getName();
+            //char haddockType = thing.getHaddockType();
             // final ScionInstance instance=thing.getInstance();
-            final IFile file = thing.getFile();
-            if( name != null && name.length() > 0 ) {
+
+            if(thing!=null &&  thing.getThing()!=null) {
+              final IFile file = thing.getFile();
+              String haddockType=thing.getThing().getHaddockType();
               /*
                * Location location = instance.firstDefinitionLocation( name );
                *
@@ -93,16 +95,16 @@ public class OpenDefinitionHandler extends AbstractHandler {
                * return Status.OK_STATUS; } }.schedule(); } else {
                */
               String module = null;
-              String shortName = name;
-              int ix = name.lastIndexOf( '.' );
-              if ('m'==haddockType){
+              String shortName = thing.getThing().getName();
+              String fullName=shortName;
+              if ("m".equals(thing.getThing().getHaddockType())){
                 shortName=null;
-                module=name;
+                module=thing.getThing().getName();
               } else {
-                if( ix > 0 && ix < name.length() - 1 ) {
-                  module = name.substring( 0, ix );
-                  shortName = name.substring( ix + 1 );
-                }
+                  module = thing.getThing().getModule();
+                  if (module!=null){
+                    fullName=module+"."+shortName;
+                  }
               }
               final IProject p = file.getProject();
               final BWFacade f = BuildWrapperPlugin.getFacade( p );
@@ -139,7 +141,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
                 Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
                 for ( String s : decls.keySet() ) {
                   ImportsManager.Imported i=decls.get(s);
-                  if (i.getDocumented().getDocumented().getName().equals( name ) || i.getAnimport().getImportDef().getModule().equals( name )){
+                  if (i.getDocumented().getDocumented().getName().equals( fullName ) || i.getAnimport().getImportDef().getModule().equals( fullName )){
                     //
                     IFile fi=i.getDocumented().getFile();
                     if (fi!=null){
@@ -148,8 +150,8 @@ public class OpenDefinitionHandler extends AbstractHandler {
                       return;
                     }
                     module=i.getAnimport().getImportDef().getModule();
-                    if (haddockType==' '){
-                      haddockType='t'; // assume types since not resolved
+                    if (haddockType==null){
+                      haddockType="t"; // assume types since not resolved
                     }
                     //break;
                   }
@@ -166,7 +168,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
                 final String moduleF = module;
                 final String shortNameF = shortName;
-                final char haddockTypeF = haddockType;
+                final String haddockTypeF = haddockType;
 
                 new Thread( new Runnable() {
 
@@ -263,7 +265,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
   public static boolean openExternalDefinition( final IWorkbenchPage page,
       final IProject project, final String pkg, final String module,
-      final String shortName, final char type ) {
+      final String shortName, final String type ) {
     int ix = pkg.lastIndexOf( '-' );
     String packageName = pkg;
     String packageVersion = "";

@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
@@ -477,8 +478,7 @@ public class BWFacade {
 		return cps;
 	}
 	
-	public String getThingAtPoint(IFile file,Location location,
-			boolean qualify, boolean typed){
+	public ThingAtPoint getThingAtPoint(IFile file,Location location){
 		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
@@ -486,20 +486,25 @@ public class BWFacade {
 		command.add("--file="+path);
 		command.add("--line="+location.getStartLine());
 		command.add("--column="+(location.getStartColumn()+1));
-		command.add("--qualify="+qualify);
-		command.add("--typed="+typed);
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
-		String s=null;
+		ThingAtPoint tap=null;
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
 			//	notes.putAll(i.getNotes());
 				parseNotes(notes);
 			}
-			s=arr.optString(0);
+			JSONObject o=arr.optJSONObject(0);
+			if (o!=null){
+				try {
+					tap=new ThingAtPoint(o);
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_thingatpoint_error, je);
+				}
+			}
 		}
-		return s;
+		return tap;
 	}
 	
 	private boolean parseNotes(JSONArray notes){

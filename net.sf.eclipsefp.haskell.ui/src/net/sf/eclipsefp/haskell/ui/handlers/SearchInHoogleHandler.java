@@ -28,11 +28,13 @@ public class SearchInHoogleHandler extends AbstractHandler {
     }
 
     final HaskellEditor haskellEditor = ( HaskellEditor )editor;
-    WordFinder.getEditorThing( haskellEditor, false, false,new WordFinder.EditorThingHandler() {
+    WordFinder.getEditorThing( haskellEditor,new WordFinder.EditorThingHandler() {
 
       public void handle( final EditorThing thing ) {
-        String name = thing.getName();
-        HoogleView.searchHoogle( name );
+        if (thing!=null && thing.getThing()!=null){
+          String name = thing.getThing().getName();
+          HoogleView.searchHoogle( name );
+        }
       }
     });
     return null;

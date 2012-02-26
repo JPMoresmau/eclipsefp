@@ -18,6 +18,7 @@ public class BWText extends NLS {
   public static String        process_parse_package_error;
   public static String        process_parse_path_error;
   public static String		  process_parse_outline_error;
+  public static String 		  process_parse_thingatpoint_error;
   
   public static String        project_members_list_error;
   public static String        project_cabal_duplicate;
@@ -37,6 +38,7 @@ public class BWText extends NLS {
   public static String 		  editor_job_name;
   public static String 		  occurrences_job_name;
   public static String 		  thingatpoint_job_name;
+
   
   private static final String BUNDLE_NAME = BWText.class.getPackage().getName() + ".bwtext"; //$NON-NLS-1$
 

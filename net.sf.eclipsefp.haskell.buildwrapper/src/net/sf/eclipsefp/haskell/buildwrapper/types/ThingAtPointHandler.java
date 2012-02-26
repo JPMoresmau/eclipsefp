@@ -9,6 +9,6 @@ package net.sf.eclipsefp.haskell.buildwrapper.types;
  */
 public interface ThingAtPointHandler  {
 
-	void handleThing(String thing);
+	void handleThing(ThingAtPoint thing);
 	
 }

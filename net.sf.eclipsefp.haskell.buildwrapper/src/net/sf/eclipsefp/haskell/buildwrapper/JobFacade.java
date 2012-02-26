@@ -219,8 +219,7 @@ public class JobFacade  {
 	}
 	
 	
-	public void getThingAtPoint(final IFile file,final Location location,
-			final boolean qualify, final boolean typed,final ThingAtPointHandler handler){
+	public void getThingAtPoint(final IFile file,final Location location,final ThingAtPointHandler handler){
 		final String jobNamePrefix = NLS.bind(BWText.thingatpoint_job_name, getProject().getName());
 		
 	    Job buildJob = new Job (jobNamePrefix) {
@@ -229,7 +228,7 @@ public class JobFacade  {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	          //long t0=System.currentTimeMillis();
-	          handler.handleThing(realFacade.getThingAtPoint(file, location, qualify, typed));
+	          handler.handleThing(realFacade.getThingAtPoint(file, location));
 	          //long t1=System.currentTimeMillis();
 	          //BuildWrapperPlugin.logInfo("thingAtPoint:"+(t1-t0)+"ms");
 	        } finally {
