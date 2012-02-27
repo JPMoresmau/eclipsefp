@@ -31,6 +31,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
@@ -287,7 +288,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
     // Get rest of proposals
     String prefix = haskellCompletions.getPointedQualifier();
-    ImportsManager mgr = new ImportsManager( theFile, doc );
+    ImportsManager mgr =((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getImportsManager();
+        //new ImportsManager( theFile, doc );
     //long t0=System.currentTimeMillis();
     Map<String, Documented> decls = mgr.getDeclarations();
     //long t1=System.currentTimeMillis();

@@ -36,159 +36,87 @@ public class ImportsManager {
   private final IFile file;
   private final IDocument doc;
 
+  private ArrayList<AnImport> imports=null;
+  private HashMap<String, Documented> decls=null;
+  private Map<String, Imported> importedDecls=null;
+
   public ImportsManager(final IFile file, final IDocument doc) {
     this.file = file;
     this.doc = doc;
   }
 
-  public ArrayList<AnImport> parseImports() {
-    ArrayList<AnImport> r = new ArrayList<AnImport>();
-//    int lines = doc.getNumberOfLines();
-//    for (int line = 0; line < lines; line++) {
-//      try {
-//        IRegion reg = doc.getLineInformation( line );
-//        String contents = doc.get( reg.getOffset(), reg.getLength() );
-//
-//        // Take blanks appart
-//        int realInit = reg.getOffset();
-//        int realLength = reg.getLength();
-//        for (int i = 0; i < contents.length(); i++) {
-//          if (Character.isWhitespace( i )) {
-//            realInit++;
-//            realLength--;
-//          } else {
-//            break;
-//          }
-//        }
-//
-//        // Get contents another time
-//        reg = new Region( realInit, realLength );
-//        contents = doc.get( reg.getOffset(), reg.getLength() );
-//        if (contents.startsWith( "import" )) {
-//          // We are in an import declaration
-//          String[] words = contents.split( "[ \t\n\r]+" );
-//          if (words.length > 1) {
-//            // We are in an import with more than "import" on it
-//            int namePlace = 1;
-//            boolean isQualified = false;
-//            // See if we have a "qualified"
-//            if (words[1].equals("qualified")) {
-//              namePlace = 2;
-//              isQualified = true;
-//            }
-//            // Take the name of the import
-//            String name = words[namePlace];
-//            String items = null;
-//            String qualifiedName = null;
-//            boolean isHiding = false;
-//            // See if we have more things
-//            if (words.length > namePlace + 1) {
-//              int nextThings = namePlace + 1;
-//              // Maybe we have a "as" clause
-//              if (words[nextThings].equals("as")) {
-//                nextThings++;
-//                if (words.length > nextThings) {
-//                  qualifiedName = words[nextThings];
-//                  nextThings++;
-//                }
-//              }
-//              // Maybe we have a hiding clause
-//              if (words.length > nextThings) {
-//                if (words[nextThings].equals("hiding")) {
-//                  nextThings++;
-//                  isHiding = true;
-//                }
-//              }
-//              // Try to find '(' and ')'
-//              int beginPar = contents.indexOf( '(' );
-//              if (beginPar != -1) {
-//                int endPar = contents.indexOf( ')' );
-//                items = contents.substring( beginPar + 1, endPar );
-//              }
-//            }
-//
-//            // Create the element
-//            Location importLocation = new Location(file.getName(), doc, reg);
-//            ImportDef def = new ImportDef( name, new Location(file.getName(), doc, reg), isQualified, isHiding, qualifiedName );
-//            if (items != null) {
-//              List<String> itemsExplode = Arrays.asList( items.split( "[ ]*,[ ]*" ) );
-//              List<ImportSpecDef> importDefs = new ArrayList<ImportSpecDef>();
-//              for (String item : itemsExplode) {
-//                ImportSpecDef importDef = new ImportSpecDef(item, importLocation, ImportExportType.IEAbs);
-//                importDefs.add(importDef);
-//              }
-//              def.setChildren( importDefs );
-//            }
-//            AnImport imp = new AnImport(def, false);
-//            r.add(imp);
-//          }
-//        }
-//
-//      } catch (Exception ex) {
-//        // We continue with the next line
-//      }
-//    }
-    OutlineResult or=null;
-    if (doc!=null){
-      HaskellEditor editor=HaskellUIPlugin.getHaskellEditor( doc );
-      if (editor!=null){
-        or=editor.getLastOutlineResult();
-      }
-    }
-    if (or==null){
-      BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
-      if (f!=null){
-        or=f.outline( file );
+  public void reset(){
+    imports=null;
+    decls=null;
+    importedDecls=null;
+  }
 
+  public ArrayList<AnImport> parseImports() {
+    if(imports==null){
+      imports = new ArrayList<AnImport>();
+      OutlineResult or=null;
+      if (doc!=null){
+        HaskellEditor editor=HaskellUIPlugin.getHaskellEditor( doc );
+        if (editor!=null){
+          or=editor.getLastOutlineResult();
+        }
+      }
+      if (or==null){
+        BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+        if (f!=null){
+          or=f.outline( file );
+
+        }
+      }
+      if (or!=null){
+        for (ImportDef id:or.getImportDefs()){
+          AnImport imp = new AnImport( id,false );
+          imports.add(imp);
+        }
       }
     }
-    if (or!=null){
-      for (ImportDef id:or.getImportDefs()){
-        AnImport imp = new AnImport( id,false );
-        r.add(imp);
-      }
-    }
-    return r;
+    return imports;
   }
 
   public Map<String, Documented> getDeclarations() {
-
-    Map<String, Imported> si=getImportedDeclarations();
-    HashMap<String, Documented> r = new HashMap<String, Documented>(si.size());
-    for (String i:si.keySet()) {
-      r.put(i,si.get( i ).getDocumented().getDocumented()  );
+    if(decls==null){
+      Map<String, Imported> si=getImportedDeclarations();
+      decls = new HashMap<String, Documented>(si.size());
+      for (String i:si.keySet()) {
+        decls.put(i,si.get( i ).getDocumented().getDocumented()  );
+      }
     }
-
-    return r;
+    return decls;
   }
 
   public Map<String, Imported> getImportedDeclarations() {
-    ArrayList<AnImport> imports = parseImports();
-    // Add Prelude import
-    boolean hasPrelude = false;
-    HashMap<String, Imported> r = new HashMap<String, Imported>();
+    if(importedDecls==null){
+      ArrayList<AnImport> imports = parseImports();
+      // Add Prelude import
+      boolean hasPrelude = false;
+      importedDecls = new HashMap<String, Imported>();
 
 
-    // Add me
-    String meName = ResourceUtil.getModuleName( file );
+      // Add me
+      String meName = ResourceUtil.getModuleName( file );
 
-    getImportDeclarations(r, AnImport.createMe( meName ) );
+      getImportDeclarations(importedDecls, AnImport.createMe( meName ) );
 
-    for (AnImport i : imports) {
-      getImportDeclarations(r,i);
-      if (i.getImportDef().getModule().equals( "Prelude" )) {
-        hasPrelude = true;
+      for (AnImport i : imports) {
+        getImportDeclarations(importedDecls,i);
+        if (i.getImportDef().getModule().equals( "Prelude" )) {
+          hasPrelude = true;
+        }
+      }
+
+      if (!hasPrelude) {
+        getImportDeclarations(importedDecls, new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
       }
     }
-
-    if (!hasPrelude) {
-      getImportDeclarations(r, new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
-    }
-
-    return r;
+    return importedDecls;
   }
 
-  private void getImportDeclarations(final HashMap<String, Imported> r,final AnImport i){
+  private void getImportDeclarations(final Map<String, Imported> r,final AnImport i){
     Map<String, FileDocumented> ir=i.getDeclarations( file.getProject(), file, doc );
     for (String s:ir.keySet()){
       r.put(s,new Imported( ir.get( s ), i )  );

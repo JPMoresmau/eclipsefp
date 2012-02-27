@@ -127,7 +127,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
                 sb.insert( 0, "<b>" );
                 sb.append( "</b>" );
               }
-              ImportsManager im=new ImportsManager( file, editor.getDocument() );
+              ImportsManager im=editor.getImportsManager();
               Documented d=im.getDeclarations().get( tap.getName() );
               if (d!=null && d.getDoc()!=null && d.getDoc().length()>0){
                 if(html){

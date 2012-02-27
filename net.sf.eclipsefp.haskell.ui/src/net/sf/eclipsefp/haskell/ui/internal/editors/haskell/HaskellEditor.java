@@ -28,6 +28,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockBlock
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentFollowingAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentPreviousAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.PragmaCommentAction;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
@@ -62,7 +63,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -121,6 +121,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private Map<String,List<OutlineDef>> defByName;
 
   private ScionTokenScanner tokenScanner;
+
+  private ImportsManager importsManager;
 
   /**
    * The scion-server supporting this editor.
@@ -623,6 +625,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private boolean needWrite=false;
   public void synchronize(){
     IFile file=findFile();
+    if(importsManager!=null){
+      importsManager.reset();
+    }
     /*BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
     if (f!=null){
       f.write( file,getDocument().get() );
@@ -641,6 +646,17 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         outlineHandler.handleOutline( new OutlineResult());
       }
     }
+  }
+
+
+  /**
+   * @return the importsManager
+   */
+  public ImportsManager getImportsManager() {
+    if(importsManager==null){
+      importsManager=new ImportsManager(findFile(),getDocument());
+    }
+    return importsManager;
   }
 
   /**
@@ -757,9 +773,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     this.tokenScanner = tokenScanner;
   }
 
-  Font getFont(){
-    return getSourceViewer().getTextWidget().getFont();
-  }
 
   // Interface methods for IScionEventListener
 

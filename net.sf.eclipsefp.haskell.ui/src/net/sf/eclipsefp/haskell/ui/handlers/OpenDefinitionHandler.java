@@ -137,7 +137,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
               }
 
               if (module==null){
-                ImportsManager mgr = new ImportsManager( file,  haskellEditor.getDocument() );
+                ImportsManager mgr = haskellEditor.getImportsManager();
                 Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
                 for ( String s : decls.keySet() ) {
                   ImportsManager.Imported i=decls.get(s);
