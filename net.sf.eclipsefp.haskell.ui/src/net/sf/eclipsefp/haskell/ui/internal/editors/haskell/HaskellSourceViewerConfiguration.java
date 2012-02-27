@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -114,10 +115,12 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 		ContentAssistant ca = new ContentAssistant();
 		ca.setContentAssistProcessor(new HaskellContentAssistProcessor(ca), IDocument.DEFAULT_CONTENT_TYPE);
 		ca.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+
 		ca.setInformationControlCreator( new IInformationControlCreator() {
 
       public IInformationControl createInformationControl( final Shell parent ) {
-        return new HaskellInformationControl(parent);
+        //return new HaskellInformationControl(parent,viewer.getTextWidget().getFont());
+        return new DefaultInformationControl( parent, false );
       }
     } );
 

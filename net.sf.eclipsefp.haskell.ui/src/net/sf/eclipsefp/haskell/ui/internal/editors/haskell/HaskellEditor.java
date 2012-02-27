@@ -62,6 +62,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -754,6 +755,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
   public void setTokenScanner( final ScionTokenScanner tokenScanner ) {
     this.tokenScanner = tokenScanner;
+  }
+
+  Font getFont(){
+    return getSourceViewer().getTextWidget().getFont();
   }
 
   // Interface methods for IScionEventListener

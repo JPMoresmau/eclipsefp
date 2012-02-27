@@ -149,23 +149,24 @@ public class AnImport {
           decls = getDeclarationsFromFile( file, doc );
         }
       } else {
-        //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-        Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations(Database.ALL, importDef.getModule() );
+        decls = getDeclarationsFromFile( importDef.getModule(), project );
+        if (decls.size()==0){
+          //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+          Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations(Database.ALL, importDef.getModule() );
 
-        if (browserDecls.length > 0) {
-          // If the browser found the module
-          decls = new ArrayList<FileDocumented>();
-          for (Packaged<Declaration> browserDecl : browserDecls) {
-            decls.add(new FileDocumented( browserDecl.getElement(),null) );
-            if (browserDecl.getElement() instanceof Gadt) {
-              Gadt g = (Gadt)browserDecl.getElement();
-              for (Constructor c : g.getConstructors()) {
-                decls.add(new FileDocumented(  c, null) );
+          if (browserDecls.length > 0) {
+            // If the browser found the module
+            decls = new ArrayList<FileDocumented>();
+            for (Packaged<Declaration> browserDecl : browserDecls) {
+              decls.add(new FileDocumented( browserDecl.getElement(),null) );
+              if (browserDecl.getElement() instanceof Gadt) {
+                Gadt g = (Gadt)browserDecl.getElement();
+                for (Constructor c : g.getConstructors()) {
+                  decls.add(new FileDocumented(  c, null) );
+                }
               }
             }
           }
-        } else {
-          decls = getDeclarationsFromFile( importDef.getModule(), project );
         }
       }
 
@@ -208,11 +209,14 @@ public class AnImport {
   private List<FileDocumented> getDeclarationsFromFile( final String module, final IProject project ) {
     try {
       IFile file = ResourceUtil.findFileFromModule( project, module );
-      return getDeclarationsFromFile( file, null );
+      if (file!=null){
+        return getDeclarationsFromFile( file, null );
+      }
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
-      return new ArrayList<FileDocumented>();
+
     }
+    return new ArrayList<FileDocumented>();
   }
 
   private List<FileDocumented> getDeclarationsFromFile( final IFile file, final IDocument doc ) {

@@ -1,3 +1,7 @@
+/**
+ * (c) 2011, Alejandro Serrano
+ * Released under the terms of the EPL.
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -11,7 +15,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-
+/**
+ * Control showing hover or autocomplete info
+ * @author Alejandro Serrano
+ *
+ */
+@Deprecated
 public class HaskellInformationControl extends AbstractInformationControl {
 
   private Browser doc;
@@ -30,8 +39,11 @@ public class HaskellInformationControl extends AbstractInformationControl {
   @Override
   protected void createContent( final Composite parent ) {
     doc = new Browser( parent, SWT.NONE );
-    doc.setForeground( parent.getForeground() );
-    doc.setBackground( parent.getBackground() );
+
+    //doc.setForeground( parent.getForeground() );
+    //doc.setBackground( parent.getBackground() );
+    doc.setForeground( parent.getDisplay().getSystemColor( SWT.COLOR_INFO_FOREGROUND ) );
+    doc.setBackground( parent.getDisplay().getSystemColor( SWT.COLOR_INFO_BACKGROUND ) );
     doc.setFont( JFaceResources.getDialogFont() );
   }
 
