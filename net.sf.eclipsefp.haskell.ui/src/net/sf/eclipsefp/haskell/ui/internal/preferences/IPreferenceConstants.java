@@ -44,4 +44,6 @@ public interface IPreferenceConstants {
   public final static String SCION_BROWSER_HACKAGE_QUESTION_ANSWERED = "SCION_BROWSER_HACKAGE_QUESTION_ANSWERED"; //$NON-NLS-1$
 
   public final static String SCION_BROWSER_EXTRA_HOOGLE_PATH = "SCION_BROWSER_EXTRA_HOOGLE_PATH"; //$NON-NLS-1$
+
+  public final static String HLINT_EXECUTABLE="HLINT_EXECUTABLE"; //$NON-NLS-1$
 }

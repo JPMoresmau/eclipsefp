@@ -24,6 +24,7 @@ Features:
 	- Autocomplete shows the haddock comments of functions from the project
 	- Quick fix for unused do bind
 	- Scion-Browser and BuildWrapper should compile and work under GHC 7.4.1
+	- Preferences allow to specify path to hlint
 
 Internal:
 

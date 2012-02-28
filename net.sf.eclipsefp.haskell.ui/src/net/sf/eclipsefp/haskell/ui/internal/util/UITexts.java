@@ -104,9 +104,7 @@ public final class UITexts extends NLS {
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
   public static String autodetectButton_errorMessage;
-  public static String autodetectBrowserButton_label;
-  public static String autodetectBrowserButton_errorTitle;
-  public static String autodetectBrowserButton_errorMessage;
+  public static String executable_label;
 
   public static String ignore_missing_button;
   public static String ignore_tooold_button;
@@ -158,9 +156,10 @@ public final class UITexts extends NLS {
   public static String scionServerDoesntExist_message;
 
   public static String buildwrapper_preferences_label;
-  public static String buildwrapperExecutable_label;
   public static String buildwrapperDoesntExist_title;
   public static String buildwrapperDoesntExist_message;
+
+  public static String hlint_preferences_label;
 
   public static String scionBrowserDoesntExist_title;
   public static String scionBrowserDoesntExist_message;

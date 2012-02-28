@@ -21,6 +21,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.hlint.HLintPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
@@ -75,14 +76,10 @@ public class ScionManager implements IResourceChangeListener {
   public final static String STDSTREAM_SCION_FLAVOR = "stdstream";
   /** Preference value for using the network-based connection to the scion-server */
   public final static String NETWORK_SCION_FLAVOR = "network";
-  /** Current "use builtin" state */
-  //private boolean useBuiltIn;
   /** Current server flavor */
   //private String serverFlavor;
   /** Current executable path string */
-  private IPath serverExecutablePath;
-  /** Current "use builtin" state */
-  //private boolean browserUseBuiltIn;
+  private IPath buildWrapperExecutablePath;
   /** Current browser executable path string */
   private IPath browserExecutablePath;
   /** Haskell console low water mark */
@@ -93,21 +90,10 @@ public class ScionManager implements IResourceChangeListener {
   private final static String MINIMUM_BUILDWRAPPER="0.4.0";
   private final static String MINIMUM_SCIONBROWSER="0.2.5";
 
-  /** The Job that builds the built-in scion-server, when required. This prevents multiple build jobs from
-   * being fired off.
-   */
- // private ScionBuildJob internalBuilder;
-//  private BrowserBuildJob internalBrowserBuilder;
-
   public ScionManager() {
     // The interesting stuff is done in the start() method
-   // useBuiltIn = true;
-//    browserUseBuiltIn = true;
-   // serverFlavor = STDSTREAM_SCION_FLAVOR;
-    serverExecutablePath = null;
+    buildWrapperExecutablePath = null;
     browserExecutablePath = null;
- //   internalBuilder = null;
- //   internalBrowserBuilder = null;
     hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
     hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
   }
@@ -127,31 +113,23 @@ public class ScionManager implements IResourceChangeListener {
       hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
     }
 
-//    useBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
-//    serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
-//    // If the server flavor isn't set, default to standard stream.
-//    if (serverFlavor.length() == 0) {
-//      serverFlavor = STDSTREAM_SCION_FLAVOR;
-//    }
-
     final String serverExecutable = preferenceStore.getString( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE );
     if (serverExecutable.length() > 0) {
-      serverExecutablePath = new Path(serverExecutable);
-      if (!serverExecutablePath.toFile().exists()){
-        serverExecutablePath=null;
+      buildWrapperExecutablePath = new Path(serverExecutable);
+      if (!buildWrapperExecutablePath.toFile().exists()){
+        buildWrapperExecutablePath=null;
       }
     }
     // look in path
-    if (serverExecutablePath==null){
+    if (buildWrapperExecutablePath==null){
       File f=FileUtil.findExecutableInPath( "buildwrapper" );
       if (f!=null){
-        serverExecutablePath=new Path(f.getAbsolutePath());
+        buildWrapperExecutablePath=new Path(f.getAbsolutePath());
         // set preference
         HaskellUIPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,f.getAbsolutePath());
       }
     }
 
-    //browserUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN );
     final String browserExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
     if (browserExecutable.length() > 0) {
       browserExecutablePath = new Path(browserExecutable);
@@ -170,7 +148,7 @@ public class ScionManager implements IResourceChangeListener {
       }
     }
 
-    if (serverExecutablePath==null || browserExecutablePath==null){
+    if (buildWrapperExecutablePath==null || browserExecutablePath==null){
       boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE );
       if (!ignore){
         final Display display = HaskellUIPlugin.getStandardDisplay();
@@ -178,7 +156,7 @@ public class ScionManager implements IResourceChangeListener {
           public void run() {
             Shell parent = display.getActiveShell();
 
-            InstallExecutableDialog ied=new InstallExecutableDialog(parent , serverExecutablePath==null, browserExecutablePath==null );
+            InstallExecutableDialog ied=new InstallExecutableDialog(parent , buildWrapperExecutablePath==null, browserExecutablePath==null );
             ied.open();
           }
         });
@@ -189,7 +167,7 @@ public class ScionManager implements IResourceChangeListener {
     boolean doBrowserSetup=true;
     boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE );
     if (!ignore){
-      final boolean buildwrapperVersionOK=serverExecutablePath==null || checkVersion( serverExecutablePath, MINIMUM_BUILDWRAPPER ,true);
+      final boolean buildwrapperVersionOK=buildWrapperExecutablePath==null || checkVersion( buildWrapperExecutablePath, MINIMUM_BUILDWRAPPER ,true);
       final boolean browserVersionOK=browserExecutablePath==null || checkVersion( browserExecutablePath, MINIMUM_SCIONBROWSER,false );
 
       doBuildWrapperSetup=buildwrapperVersionOK; // do not launch if too old
@@ -207,13 +185,8 @@ public class ScionManager implements IResourceChangeListener {
 
       }
     }
-
-    // Set up the output logging console for the shared ScionInstance:
-//    HaskellConsole c = new HaskellConsole( UITexts.sharedScionInstance_console );
-//    ScionPlugin.setSharedInstanceWriter( c.createOutputWriter() );
-//    c.setWaterMarks( hConLowWater, hConHighWater );
     if (doBuildWrapperSetup){
-      serverFactorySetup();
+      buildWrapperFactorySetup();
     }
 
     // Set up the output logging console for the shared Browser
@@ -225,10 +198,13 @@ public class ScionManager implements IResourceChangeListener {
       browserSetup();
     }
 
-    // Sit and listen to the core preference store changes
-    //IEclipsePreferences instanceScope = HaskellCorePlugin.instanceScopedPreferences();
-//    instanceScope.addPreferenceChangeListener( new CorePreferencesChangeListener() );
-    preferenceStore.addPropertyChangeListener( new ScionServerPropertiesListener() );
+    String hlint=preferenceStore.getString( IPreferenceConstants.HLINT_EXECUTABLE );
+    if (hlint!=null){
+      HLintPlugin.setHlintPath( hlint );
+    }
+
+    // Sit and listen to the preference store changes
+    preferenceStore.addPropertyChangeListener( new ExecutablesPropertiesListener() );
 
     try {
       workSpace.getRoot().accept( new UpdateResourceVisitor() );
@@ -256,62 +232,13 @@ public class ScionManager implements IResourceChangeListener {
 
   public void handlePreferenceChangesServer() {
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-   // boolean newUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
-   // String newServerFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
+
     final String newServerExecutable = preferenceStore.getString( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE );
     IPath newServerExecutablePath = new Path(newServerExecutable);
 
-    // Did any of the major properties change, and we're not forcing a rebuild?
-//    if (   !forceRebuild
-//        && newUseBuiltIn == useBuiltIn
-//        && newServerFlavor.equals( serverFlavor )
-//        && (useBuiltIn || newServerExecutablePath.equals( serverExecutablePath ))) {
-//      return;
-//    }
+    buildWrapperExecutablePath = newServerExecutablePath;
+    buildWrapperFactorySetup();
 
-//    // Yup, something changed, so shut down the instances...
-//    ScionPlugin.shutdownAllInstances();
-//
-//    // Switch over to the null instance factory
-//    try {
-//      ScionPlugin.useNullScionServerFactory();
-//    } catch (ScionServerStartupException ex) {
-//      // Should never get generated, but make Java happy.
-//    }
-
-    // And update...
-//    useBuiltIn = newUseBuiltIn;
-//    serverFlavor = newServerFlavor;
-    serverExecutablePath = newServerExecutablePath;
-
-    // Can we forcibly rebuild (must use builtin, have Haskell and Cabal implementations
-//    if ( forceRebuild ) {
-//      if ( useBuiltIn
-//          && CompilerManager.getInstance().getCurrentHsImplementation() != null
-//          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
-//        final Display display = HaskellUIPlugin.getStandardDisplay();
-//        display.asyncExec( new Runnable() {
-//          public void run() {
-//            Shell parent = display.getActiveShell();
-//            if ( MessageDialog.openConfirm( parent, UITexts.scionRebuild_title, UITexts.scionRebuild_message ) ) {
-//              IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
-//              File scionBuildDir = scionBuildDirPath.toFile();
-//
-//              FileUtil.deleteRecursively( scionBuildDir );
-//              if ( scionBuildDir.exists() ) {
-//                MessageDialog.openError( parent, UITexts.scionRebuild_DirectoryExists_title,
-//                                         UITexts.scionRebuild_DirectoryExists_message );
-//              } else {
-//                serverFactorySetup();
-//              }
-//            }
-//          }
-//        } );
-//      }
-//    } else {
-      // Everything else is handled by serverFactorySetup...
-      serverFactorySetup();
-//    }
   }
 
   public void handlePreferenceChangesBrowser() {
@@ -320,11 +247,8 @@ public class ScionManager implements IResourceChangeListener {
     final String newServerExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
     IPath newServerExecutablePath = new Path(newServerExecutable);
 
-    // Did any of the major properties change, and we're not forcing a rebuild?
-    if ( //  !forceRebuild
-        //&& newUseBuiltIn == browserUseBuiltIn
-        //&& (browserUseBuiltIn ||
-        newServerExecutablePath.equals( browserExecutablePath )) {
+    // Did something change?
+    if (newServerExecutablePath.equals( browserExecutablePath )) {
       return;
     }
 
@@ -335,98 +259,29 @@ public class ScionManager implements IResourceChangeListener {
     BrowserPlugin.useNullSharedInstance();
 
     // And update...
-   // browserUseBuiltIn = newUseBuiltIn;
     browserExecutablePath = newServerExecutablePath;
+    browserSetup();
 
-    // Can we forcibly rebuild (must use builtin, have Haskell and Cabal implementations
-//    if ( forceRebuild ) {
-//      if ( browserUseBuiltIn
-//          && CompilerManager.getInstance().getCurrentHsImplementation() != null
-//          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
-//        final Display display = HaskellUIPlugin.getStandardDisplay();
-//        display.asyncExec( new Runnable() {
-//          public void run() {
-//            Shell parent = display.getActiveShell();
-//            if ( MessageDialog.openConfirm( parent, UITexts.browserRebuild_title, UITexts.browserRebuild_message ) ) {
-//              IPath browserBuildDirPath = BrowserPlugin.builtinServerDirectoryPath();
-//              File browserBuildDir = browserBuildDirPath.toFile();
-//
-//              FileUtil.deleteRecursively( browserBuildDir );
-//              if ( browserBuildDir.exists() ) {
-//                MessageDialog.openError( parent, UITexts.browserRebuild_DirectoryExists_title,
-//                                         UITexts.browserRebuild_DirectoryExists_message );
-//              } else {
-//                browserSetup();
-//              }
-//            }
-//          }
-//        } );
-//      }
-//    } else {
-      // Everything else is handled by browserSetup...
-      browserSetup();
-//    }
   }
 
   /**
    * Server factory setup. This is common code used by both start() and handlePreferenceChanges() for setting
    * and starting scion server factories.
    */
-  private synchronized void serverFactorySetup(){
+  private synchronized void buildWrapperFactorySetup(){
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-    // boolean newUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN );
-    // String newServerFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
+
     boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.VERBOSE_INTERACTION );
     BuildWrapperPlugin.logAnswers=verbose;
 
-//    try {
-//      if (useBuiltIn) {
-//        if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
-//            && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
-//            if ( !ScionBuilder.scionNeedsBuilding() ) {
-//              if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
-//                ScionPlugin.useBuiltInStdStreamServerFactory();
-//              } else {
-//                ScionPlugin.useBuiltInNetworkServerFactory();
-//              }
-//            } else {
-//              spawnBuildJob();
-//            }
-//        }
-//      } else {
-        if ( serverExecutablePath != null && serverExecutablePath.toFile().exists() ) {
-//          if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
-//            ScionPlugin.useStdStreamScionServerFactory( serverExecutablePath );
-//          } else {
-//            ScionPlugin.useNetworkStreamScionServerFactory( serverExecutablePath );
-//          }
 
+    if ( buildWrapperExecutablePath != null && buildWrapperExecutablePath.toFile().exists() ) {
+      BuildWrapperPlugin.setBwPath( buildWrapperExecutablePath.toOSString() );
+    } else {
+      BuildWrapperPlugin.setBwPath(null);
+      buildWrapperExecutablePath = null;
 
-          BuildWrapperPlugin.setBwPath( serverExecutablePath.toOSString() );
-        } else {
-
-//            final Display display = Display.getDefault();
-//
-//            display.asyncExec( new Runnable() {
-//              public void run() {
-//                // needs ui thread
-//                Shell parentShell = display.getActiveShell();
-//                String errMsg =BWText.error_noexe;
-//                if (serverExecutablePath!=null){
-//                  errMsg = NLS.bind( UITexts.buildwrapperDoesntExist_message, serverExecutablePath.toOSString() );
-//                }
-//                MessageDialog.openError( parentShell, UITexts.buildwrapperDoesntExist_title, errMsg );
-//              }
-//            } );
-
-          BuildWrapperPlugin.setBwPath(null);
-          serverExecutablePath = null;
-//          ScionPlugin.useNullScionServerFactory();
-        }
-//      }
-//    } catch (ScionServerStartupException ex) {
-//      reportServerStartupError( ex );
-//    }
+    }
   }
 
   public static boolean checkVersion(final IPath path,final String minimal,final boolean wait){
@@ -445,77 +300,10 @@ public class ScionManager implements IResourceChangeListener {
   }
 
 
-  /**
-   * Build the built-in scion-server: unpack the internal scion-x.y.z.a.zip archive into the destination
-   * folder, then kick of a "cabal install" compilation.
-   *
-   * @param monitor The progress monitor
-   * @param conout The console output stream
-   */
-//  private ScionBuildStatus buildBuiltIn(final IProgressMonitor monitor, final IOConsoleOutputStream conout) {
-//    IPath scionBuildDirPath = ScionPlugin.builtinServerDirectoryPath();
-//    File scionBuildDir = scionBuildDirPath.toFile();
-//    ScionBuilder builder = new ScionBuilder();
-//    ScionBuildStatus retval;
-//
-//    monitor.subTask( UITexts.scionServerProgress_subtask1 );
-//    retval = builder.unpackScionArchive( scionBuildDir );
-//    if (retval.isOK()) {
-//
-//      // build final exe location
-//      IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
-//      CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
-//      CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
-//
-//      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-//      boolean updateCabal = preferenceStore.getBoolean( IPreferenceConstants.RUN_CABAL_UPDATE );
-//      if (updateCabal){
-//        preferenceStore.setValue( IPreferenceConstants.RUN_CABAL_UPDATE, false );
-//        monitor.subTask( UITexts.cabalUpdateProgress );
-//        builder.update( cabalImpl, conout );
-//        // we ignore the return so that failing update does not stop the compilation
-//      }
-//
-//      IPath exePath = ScionPlugin.serverExecutablePath( scionBuildDirPath );
-//      File  exeFile = exePath.toFile();
-//
-//      if( !exeFile.exists() && hsImpl != null && cabalImpl != null) {
-//        monitor.subTask( UITexts.scionServerProgress_subtask2 );
-//        retval = builder.build( cabalImpl, scionBuildDir, conout);
-//        if (retval.isOK() && exeFile.exists() ) {
-//          retval.setExecutable( exePath.toOSString() );
-//        }
-//      } else {
-//        if (cabalImpl == null ) {
-//          retval.buildFailed(UITexts.noCabalImplementation_title, UITexts.noCabalImplementation_message);
-//        }
-//      }
-//    }
-//    return retval;
-//  }
 
   private synchronized void browserSetup() {
     final Display display = Display.getDefault();
 
-//    if (browserUseBuiltIn) {
-//      if (   CompilerManager.getInstance().getCurrentHsImplementation() != null
-//          && CabalImplementationManager.getInstance().getDefaultCabalImplementation() != null) {
-//          if ( !BrowserBuilder.browserNeedsBuilding() ) {
-//            BrowserPlugin.useSharedBuiltinInstance();
-//
-//            display.asyncExec( new Runnable() {
-//              public void run() {
-//                Job builder =  new BrowserDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-//                //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-//                builder.setPriority( Job.DECORATE );
-//                builder.schedule();
-//              }
-//            } );
-//          } else {
-//            spawnBrowserBuildJob();
-//          }
-//      }
-//    } else {
       if ( browserExecutablePath != null && browserExecutablePath.toFile().exists() ) {
         IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
         boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION );
@@ -530,18 +318,9 @@ public class ScionManager implements IResourceChangeListener {
           }
         } );
       } else {
-//        display.asyncExec( new Runnable() {
-//          public void run() {
-//            // needs ui thread
-//            Shell parentShell = display.getActiveShell();
-//            MessageDialog.openError( parentShell, UITexts.scionBrowserNotConfigured_title, UITexts.scionBrowserNotConfigured_message );
-//          }
-//        } );
-
         browserExecutablePath = null;
         BrowserPlugin.useNullSharedInstance();
       }
- //   }
   }
 
   void loadHackageDatabase() {
@@ -611,12 +390,17 @@ public class ScionManager implements IResourceChangeListener {
   }
 
   void checkHoogleDataIsPresent() {
+    final IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    String extraHooglePath = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH );
+    checkHoogleDataIsPresent(extraHooglePath);
+
+  }
+
+  void checkHoogleDataIsPresent(final String extraHooglePath) {
     boolean rebuild = false;
     try {
       // Set extra paths if needed
-      final IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-      String extraHooglePath = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH );
-      if (extraHooglePath != null && extraHooglePath.length() > 0) {
+     if (extraHooglePath != null && extraHooglePath.length() > 0) {
         BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
       }
       rebuild = !BrowserPlugin.getSharedInstance().checkHoogle();
@@ -653,53 +437,6 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
-  /**
-   * Build the built-in scion-server: unpack the internal scion-browser-x.y.z.a.zip archive into the destination
-   * folder, then kick of a "cabal install" compilation.
-   *
-   * @param monitor The progress monitor
-   * @param conout The console output stream
-   */
-//  private ScionBuildStatus buildBrowserBuiltIn(final IProgressMonitor monitor, final IOConsoleOutputStream conout) {
-//    IPath browserBuildDirPath = BrowserPlugin.builtinServerDirectoryPath();
-//    File browserBuildDir = browserBuildDirPath.toFile();
-//    BrowserBuilder builder = new BrowserBuilder();
-//    ScionBuildStatus retval;
-//
-//    monitor.subTask( UITexts.browserServerProgress_subtask1 );
-//    retval = builder.unpackScionArchive( browserBuildDir );
-//    if (retval.isOK()) {
-//      // build final exe location
-//      IHsImplementation hsImpl = CompilerManager.getInstance().getCurrentHsImplementation();
-//      CabalImplementationManager cabalMgr = CabalImplementationManager.getInstance();
-//      CabalImplementation cabalImpl = cabalMgr.getDefaultCabalImplementation();
-//
-//      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-//      boolean updateCabal = preferenceStore.getBoolean( IPreferenceConstants.RUN_CABAL_UPDATE );
-//      if (updateCabal){
-//        preferenceStore.setValue( IPreferenceConstants.RUN_CABAL_UPDATE, false );
-//        monitor.subTask( UITexts.cabalUpdateProgress );
-//        builder.update( cabalImpl, conout );
-//        // we ignore the return so that failing update does not stop the compilation
-//      }
-//
-//      IPath exePath = BrowserPlugin.serverExecutablePath( browserBuildDirPath );
-//      File  exeFile = exePath.toFile();
-//
-//      if( !exeFile.exists() && hsImpl != null && cabalImpl != null) {
-//        monitor.subTask( UITexts.browserServerProgress_subtask2 );
-//        retval = builder.build( cabalImpl, browserBuildDir, conout);
-//        if (retval.isOK() && exeFile.exists() ) {
-//          retval.setExecutable( exePath.toOSString() );
-//        }
-//      } else {
-//        if (cabalImpl == null ) {
-//          retval.buildFailed(UITexts.noCabalImplementation_title, UITexts.noCabalImplementation_message);
-//        }
-//      }
-//    }
-//    return retval;
-//  }
 
   /**
    * Detects when a file is deleted and updates the Cabal file accordingly (remove the module).
@@ -802,67 +539,30 @@ public class ScionManager implements IResourceChangeListener {
   }
 
   /** */
-  public class ScionServerPropertiesListener implements IPropertyChangeListener {
+  public class ExecutablesPropertiesListener implements IPropertyChangeListener {
     public void propertyChange( final PropertyChangeEvent event ) {
-//      try {
- //       IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-        // built in state has changed
-//        if (event.getProperty().equals( IPreferenceConstants.SCION_SERVER_BUILTIN )) {
-//          if (event.getNewValue() instanceof Boolean) {
-//            // true -> build
-//            if (((Boolean)event.getNewValue()).booleanValue()) {
-//              spawnBuildJob();
-//            } else {
-//              // false: read user-specified server executable property
-//              String serverExecutable =  preferenceStore.getString( IPreferenceConstants.SCION_SERVER_EXECUTABLE );
-//              IPath serverExecutablePath = new Path(serverExecutable);
-//              String serverFlavor = preferenceStore.getString( IPreferenceConstants.SCION_SERVER_FLAVOR );
-//
-//              if (serverFlavor.length() == 0) {
-//                serverFlavor = STDSTREAM_SCION_FLAVOR;
-//              }
-//
-//              if (STDSTREAM_SCION_FLAVOR.equals( serverFlavor )) {
-//                ScionPlugin.useStdStreamScionServerFactory( serverExecutablePath );
-//              } else {
-//                ScionPlugin.useNetworkStreamScionServerFactory( serverExecutablePath );
-//              }
-//            }
-//          }
-//          // if we're not using built in
-//        } else if (!preferenceStore.getBoolean( IPreferenceConstants.SCION_SERVER_BUILTIN ) ) {
           if( event.getProperty().equals( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE ) ) {
             if( event.getNewValue() instanceof String ) {
-              serverExecutablePath=new Path((String)event.getNewValue());
-              serverFactorySetup();
+              buildWrapperExecutablePath=new Path((String)event.getNewValue());
+              buildWrapperFactorySetup();
             }
           } else if (event.getProperty().equals( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE)) {
               if (event.getNewValue() instanceof String) {
                 browserExecutablePath = new Path((String)event.getNewValue());
                 browserSetup();
               }
+          } else if (event.getProperty().equals( IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH)) {
+            if (event.getNewValue() instanceof String) {
+              checkHoogleDataIsPresent((String)event.getNewValue());
+            }
+          } else if (event.getProperty().equals(IPreferenceConstants.HLINT_EXECUTABLE)){
+            if (event.getNewValue() instanceof String){
+              HLintPlugin.setHlintPath( (String)event.getNewValue() );
+            }
           }
-//        }
-//      }  catch (ScionServerStartupException ex) {
-//        reportServerStartupError( ex );
-//      }
+
     }
   }
-
-//  public class ScionBrowserServerPropertiesListener implements IPropertyChangeListener {
-//    public void propertyChange( final PropertyChangeEvent event ) {
-//      try {
-//        if (event.getProperty().equals( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE)) {
-//          if (event.getNewValue() instanceof String) {
-//            browserExecutablePath = new Path((String)event.getNewValue());
-//            browserSetup();
-//          }
-//        }
-//      } catch (Throwable ex) {
-//        // Do nothing
-//      }
-//    }
-//  }
 
   /** */
   public class UpdateResourceVisitor implements IResourceVisitor {
@@ -966,56 +666,15 @@ public class ScionManager implements IResourceChangeListener {
    * the instance to the instances map.
    */
   private synchronized void startInstance( final IProject project ) {
-   // ScionInstance instance = ScionPlugin.getScionInstance( project );
-
-   // if ( instance == null ) {
-      /*HaskellConsole c = getHaskellConsole( project );
-      Writer outStream = c.createOutputWriter();
-
-      instance = ScionPlugin.createScionInstance( project, outStream,
-          new CabalComponentResolver() {
-            public Set<String> getComponents( final IFile file ) {
-              Set<PackageDescriptionStanza> pds= ResourceUtil.getApplicableStanzas( new IFile[]{file} );
-              Set<String> ret=new HashSet<String>(pds.size());
-              for (PackageDescriptionStanza pd:pds){
-                ret.add(pd.toTypeName());
-              }
-              return ret;
-            }
-          } );
-      try {
-        instance.start();
-        instance.addListener( this );
-      } catch( ScionServerStartupException ex ) {
-        reportServerStartupError( ex );
-      }
-       */
     if (BuildWrapperPlugin.getFacade( project )==null){
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
 
       BuildWrapperPlugin.createFacade(project, CabalImplementationManager.getCabalExecutable(), outStreamBw );
     }
-      /*if (f!=null){
-        new Job("BuildWrapper "+project.getName()){
-          @Override
-          protected IStatus run( final IProgressMonitor arg0 ) {
-            f.synchronize();
-            f.build( new BuildOptions().setOutput( true ) );
-            return Status.OK_STATUS;
-          }
-        }.schedule();
-
-      }*/
- //   }
-
-    //return instance;
   }
 
-//  public static String getBuildWrapperPath(){
-//    String bwPath="D:\\dev\\haskell\\jp-github\\eclipsefp\\buildwrapper\\dist\\build\\buildwrapper\\buildwrapper.exe";
-//    return bwPath;
-//  }
+
 
   /**
    * Stops the Scion instance for the given project. Does not remove the
@@ -1042,94 +701,13 @@ public class ScionManager implements IResourceChangeListener {
       stopInstance( res.getProject() );
     }
   }
-//
-//  private void reportServerStartupError( final ScionServerStartupException ex ) {
-//    IStatus status = new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), ex.getMessage(), ex );
-//    StatusManager.getManager().handle( status, StatusManager.LOG );
-//    HaskellUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
-//      public void run() {
-//        Shell parent = HaskellUIPlugin.getStandardDisplay().getActiveShell();
-//        String text = NLS.bind( UITexts.scionServerStartupError_message, ScionPlugin.getFactoryExecutablePath().toOSString() );
-//        if( MessageDialog.openQuestion( parent, UITexts.scionServerStartupError_title, text ) ) {
-//          PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn( parent, ScionPP.PAGE_ID, null, null );
-//          prefDialog.open();
-//        }
-//      }
-//    } );
-//  }
 
-  /** Create a console name string using the project name, if available.
-   * @param project The project
-   * @return A console name
-   */
-//  private final String consoleName ( final IProject project ) {
-//    String projectName = project != null ? project.getName() : UITexts.noproject;
-//    return NLS.bind( UITexts.scion_console_title, projectName );
-//  }
+
 
   private final String bwconsoleName ( final IProject project ) {
     String projectName = project != null ? project.getName() : UITexts.noproject;
     return NLS.bind( UITexts.bw_console_title, projectName );
   }
-
-//  /** Spawn a built-in server build job */
-//  synchronized void spawnBuildJob() {
-//    if (internalBuilder == null) {
-//      IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-//      IOConsole console = new IOConsole(UITexts.scionServerBuildJob, null);
-//      internalBuilder = new ScionBuildJob(UITexts.scionServerBuildJob, console);
-//
-//      mgr.addConsoles(new IConsole[] {console});
-//      mgr.showConsoleView( console );
-//      internalBuilder.setPriority( Job.BUILD );
-//      // Important to ensure that we schedule ourselves as a workspace job to prevent
-//      // other jobs from running (not that they can, but...)
-//      internalBuilder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-//      // This is a user visible task, so set the annoy bit:
-//      internalBuilder.setUser(true);
-//      internalBuilder.schedule();
-//    }
-//  }
-
-  /** Spawn a built-in server build job */
-//  synchronized void spawnBrowserBuildJob() {
-//    if (internalBrowserBuilder == null) {
-//      IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-//      IOConsole console = new IOConsole(UITexts.browserServerBuildJob, null);
-//      internalBrowserBuilder = new BrowserBuildJob(UITexts.browserServerBuildJob, console);
-//
-//      mgr.addConsoles(new IConsole[] {console});
-//      mgr.showConsoleView( console );
-//      internalBrowserBuilder.setPriority( Job.BUILD );
-//      // Important to ensure that we schedule ourselves as a workspace job to prevent
-//      // other jobs from running (not that they can, but...)
-//      internalBrowserBuilder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-//      // This is a user visible task, so set the annoy bit:
-//      internalBrowserBuilder.setUser(true);
-//      internalBrowserBuilder.schedule();
-//    }
-//  }
-
-  /**
-   * Get the Haskell console for a project, creating one if necessary.
-   *
-   * @param consoleName The console's name
-   */
-//  private HaskellConsole getHaskellConsole(final IProject project) {
-//    final String consoleName = consoleName(project);
-//    final IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-//
-//    for( IConsole c: mgr.getConsoles() ) {
-//      if( c.getName().equals( consoleName ) ) {
-//        return (HaskellConsole) c;
-//      }
-//    }
-//
-//    HaskellConsole hCon = new HaskellConsole( consoleName );
-//
-//    hCon.setWaterMarks( hConLowWater, hConHighWater );
-//    return hCon;
-//  }
 
   private HaskellConsole getBWHaskellConsole(final IProject project) {
     final String consoleName = bwconsoleName(project);
@@ -1147,176 +725,7 @@ public class ScionManager implements IResourceChangeListener {
     return hCon;
   }
 
-  /** Specialized Job class that manages building the built-in Scion server,
-   * providing some feedback to the user as the build progresses.
-   *
-    * @author B. Scott Michel
-   */
-//  public class ScionBuildJob extends Job {
-//    ScionBuildStatus status;
-//    IOConsole fConsole;
-//    IOConsoleOutputStream fConOut;
-//
-//    public ScionBuildJob(final String jobTitle, final IOConsole console) {
-//      super(jobTitle);
-//      status = new ScionBuildStatus();
-//      fConsole = console;
-//      fConOut = console.newOutputStream();
-//
-//      console.activate();
-//      console.clearConsole();
-//
-//      // If the build failed, there will be some indication of why it failed in the
-//      // ScionBuildStatus object. This is where we get to present that back to the
-//      // user:
-//      addJobChangeListener( new JobChangeAdapter() {
-//        @Override
-//        public void done( final IJobChangeEvent event ) {
-//          if (!event.getResult().isOK()) {
-//            Display.getDefault().syncExec( new Runnable() {
-//              public void run() {
-//                MessageDialog.openError( Display.getDefault().getActiveShell(),
-//                                         status.getTitle(),
-//                                         status.getMessage() );
-//              }
-//            } );
-//          } else {
-//            /*  Yippee! The server built successfully: Tell user and delete the console.
-//            Display.getDefault().syncExec( new Runnable() {
-//              public void run() {
-//                MessageDialog.openInformation( Display.getDefault().getActiveShell(),
-//                                               UITexts.scionServerProgress_completed_title,
-//                                               UITexts.scionServerProgress_completed_message );
-//              }
-//            } ); */
-//
-//            // Dispose of the console on a successful build
-//            IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-//            mgr.removeConsoles( new IConsole[] { fConsole } );
-//          }
-//          // reset builder even on failure otherwise it never launches again
-//          ScionManager.this.internalBuilder = null;
-//          super.done( event );
-//        }
-//      });
-//    }
-//
-//    @Override
-//    protected IStatus run( final IProgressMonitor monitor ) {
-//      monitor.beginTask( UITexts.scionServerProgress_title, IProgressMonitor.UNKNOWN );
-//      status = buildBuiltIn(monitor, fConOut);
-//      monitor.done();
-//
-//      if (status.isOK()) {
-//        synchronized (ScionManager.this) {
-//          ScionPlugin.shutdownAllInstances();
-//          ScionManager.this.serverFactorySetup();
-//        }
-//      }
-//      return status.getStatus();
-//    }
-//  }
 
-  /** Specialized Job class that manages building the built-in Browser server,
-   * providing some feedback to the user as the build progresses.
-   *
-    * @author B. Scott Michel
-   */
-//  public class BrowserBuildJob extends Job {
-//    ScionBuildStatus status;
-//    IOConsole fConsole;
-//    IOConsoleOutputStream fConOut;
-//
-//    public BrowserBuildJob(final String jobTitle, final IOConsole console) {
-//      super(jobTitle);
-//      status = new ScionBuildStatus();
-//      fConsole = console;
-//      fConOut = console.newOutputStream();
-//
-//      console.activate();
-//      console.clearConsole();
-//
-//      // If the build failed, there will be some indication of why it failed in the
-//      // ScionBuildStatus object. This is where we get to present that back to the
-//      // user:
-//      addJobChangeListener( new JobChangeAdapter() {
-//        @Override
-//        public void done( final IJobChangeEvent event ) {
-//          if (!event.getResult().isOK()) {
-//            Display.getDefault().syncExec( new Runnable() {
-//              public void run() {
-//                MessageDialog.openError( Display.getDefault().getActiveShell(),
-//                                         status.getTitle(),
-//                                         status.getMessage() );
-//              }
-//            } );
-//          } else {
-//            /*  Yippee! The server built successfully: Tell user and delete the console.
-//            Display.getDefault().syncExec( new Runnable() {
-//              public void run() {
-//                MessageDialog.openInformation( Display.getDefault().getActiveShell(),
-//                                               UITexts.scionServerProgress_completed_title,
-//                                               UITexts.scionServerProgress_completed_message );
-//              }
-//            } ); */
-//
-//            // Dispose of the console on a successful build
-//            IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-//            mgr.removeConsoles( new IConsole[] { fConsole } );
-//          }
-//          // reset builder even on failure otherwise it never launches again
-//          //ScionManager.this.internalBrowserBuilder = null;
-//          super.done( event );
-//        }
-//      });
-//    }
-//
-//    @Override
-//    protected IStatus run( final IProgressMonitor monitor ) {
-//      monitor.beginTask( UITexts.scionServerProgress_title, IProgressMonitor.UNKNOWN );
-//      status = buildBrowserBuiltIn(monitor, fConOut);
-//      monitor.done();
-//
-//      if (status.isOK()) {
-//        synchronized (ScionManager.this) {
-//          BrowserPlugin.getSharedInstance().stop();
-//          ScionManager.this.browserSetup();
-//        }
-//      }
-//      return status.getStatus();
-//    }
-//  }
-
-//  public void processScionServerEvent( final ScionEvent ev ) {
-//    ScionEventType evType = ev.getEventType();
-//    final ScionInstance instance = (ScionInstance) ev.getSource();
-//    final Display display = Display.getDefault();
-//
-//    if ( evType == ScionEventType.ABNORMAL_TERMINATION ) {
-//      // Ask the user if they'd like the server to be restarted.
-//      display.asyncExec( new Runnable() {
-//        public void run() {
-//          final String projectName = instance.getProject().getName();
-//          final String msg = NLS.bind( UITexts.scionServerAbnormalTermination_message, projectName );
-//          if ( MessageDialog.openQuestion( display.getActiveShell(), UITexts.scionServerAbnormalTermination_title, msg ) ) {
-//            ScionInstance instance = (ScionInstance) ev.getSource();
-//            try {
-//              instance.start();
-//            } catch( ScionServerStartupException ex ) {
-//              reportServerStartupError( ex );
-//            }
-//          }
-//        }
-//      } );
-//    } else if ( evType == ScionEventType.PROTOCOL_VERSION_MISMATCH ) {
-//      display.asyncExec( new Runnable() {
-//        public void run() {
-//          MessageDialog.openWarning( display.getActiveShell(), UITexts.scionVersionMismatch_title,
-//                                     UITexts.scionVersionMismatch_message );
-//        }
-//      } );
-//    }
-//  }
 
   /** Specialized Job class that manages rebuilding the Browser database.
    *  Based in the work of B. Scott Michel.

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.hlint.parser.OutputParser;
+import net.sf.eclipsefp.haskell.hlint.util.HLintText;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 
 import org.eclipse.core.runtime.IPath;
@@ -28,20 +29,20 @@ public class HLintRunner {
 	
 	public List<Suggestion> run(IPath path) {
 		try {
-			// Run the command
-			//String[] cmdLine = new String[] { "hlint", path.toOSString() };
-			//Process p = Runtime.getRuntime().exec(cmdLine);
 			StringWriter out=new StringWriter();
 			Writer err=new StringWriter();
-			new ProcessRunner().executeBlocking(path.toFile().getParentFile(), out, err,  "hlint", path.toOSString());
+			String exe=HLintPlugin.getHlintPath();
+			if (exe==null || exe.length()==0){
+				exe="hlint"; // hope it's in the path
+			}
+			new ProcessRunner().executeBlocking(path.toFile().getParentFile(), out, err,  exe, path.toOSString());
 			
 			OutputParser parser = new OutputParser(new StringReader(out.toString()));
-			// Parse the output
-			//p.waitFor();
 			return parser.suggestions();
 		} catch (Throwable ex) {
-			return new ArrayList<Suggestion>();
+			HLintPlugin.logError(HLintText.error_run, ex);
 		}
+		return new ArrayList<Suggestion>();
 	}
 	
 	public static List<Suggestion> runHLintOn(IPath path) {

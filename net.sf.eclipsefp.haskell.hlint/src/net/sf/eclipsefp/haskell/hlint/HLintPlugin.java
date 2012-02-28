@@ -1,6 +1,9 @@
 package net.sf.eclipsefp.haskell.hlint;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -13,6 +16,8 @@ public class HLintPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static HLintPlugin plugin;
+	
+	private static String hlintPath;
 	
 	/**
 	 * The constructor
@@ -47,4 +52,24 @@ public class HLintPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	  public static void logError(String message, Throwable cause) {
+	    log(Status.ERROR, message, cause);
+	  }
+
+	  public static void log(int severity, String message, Throwable cause) {
+	    Status status = new Status(severity, HLintPlugin.PLUGIN_ID, severity, message, cause);
+	    logStatus(status);
+	  }
+
+	  public static void logStatus(IStatus status) {
+	    StatusManager.getManager().handle(status);
+	  }
+
+	public static String getHlintPath() {
+		return hlintPath;
+	}
+
+	public static void setHlintPath(String hlintPath) {
+		HLintPlugin.hlintPath = hlintPath;
+	}
 }
