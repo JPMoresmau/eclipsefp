@@ -6,6 +6,9 @@ package net.sf.eclipsefp.haskell.hlint;
 
 import java.io.Serializable;
 
+import net.sf.eclipsefp.haskell.hlint.util.HLintText;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,6 +76,33 @@ public class Suggestion implements Serializable {
 			return ((CodeModificationText)post).getText();
 		}
 		return null;
+	}
+	
+	/**
+	 * get the text suitable for the marker description
+	 * @return
+	 */
+	public String getMarkerText(){
+		// we can't fix automatically, let's give as much info as we can
+		if (!HLintFixer.canFix(this)){
+			String pre=getPreText();
+			String post=getPostText();
+			if (pre!=null && post!=null){
+				String nl=" "+PlatformUtil.NL; // leave space for problems view visibility
+				StringBuilder sb=new StringBuilder();
+				sb.append(getMessage());
+				sb.append(nl);
+				sb.append(HLintText.suggestion_found);
+				sb.append(nl);
+				sb.append(pre);
+				sb.append(nl);
+				sb.append(HLintText.suggestion_post);
+				sb.append(nl);
+				sb.append(post);
+				return sb.toString();
+			}
+		}
+		return getMessage();
 	}
 	
 	public String toString() {

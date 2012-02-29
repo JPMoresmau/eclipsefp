@@ -9,6 +9,8 @@ import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.hlint.HLintFixer;
+import net.sf.eclipsefp.haskell.hlint.Suggestion;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -182,7 +184,11 @@ public class BuildMarkerResolutionGenerator implements
   private IMarkerResolution getHLintResolution(final IMarker marker) {
     try {
       if (marker.getType().equals(HaskellCorePlugin.ID_HLINT_MARKER)){
-        return new HLintResolution();
+        Suggestion s=new Suggestion();
+        s.fromString( marker.getAttribute( HaskellCorePlugin.ATT_HLINT_SUGGESTION,"" ));
+        if (HLintFixer.canFix( s )){
+          return new HLintResolution();
+        }
       }
     }catch (CoreException ce){
       HaskellUIPlugin.log( ce );

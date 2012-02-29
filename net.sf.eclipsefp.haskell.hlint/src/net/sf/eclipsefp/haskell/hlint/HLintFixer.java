@@ -5,6 +5,8 @@
  */
 package net.sf.eclipsefp.haskell.hlint;
 
+import java.util.Locale;
+
 /**
  * fixes HLint warning
  * @author JP Moresmau
@@ -51,6 +53,20 @@ public class HLintFixer {
 		public boolean isFullMatch() {
 			return fullMatch;
 		}
+	}
+	
+	public static boolean canFix(Suggestion s){
+		if (s.getPre().getType().equals(CodeModificationType.TEXT)){
+			if (s.getPost().getType().equals(CodeModificationType.TEXT)){
+				String p=((CodeModificationText)s.getPost()).getText().trim();
+				// we cannot replace automatically when we're just told to combine with another line
+				if (p.length()>0 && p.toLowerCase(Locale.ENGLISH).startsWith("combine with") && Character.isDigit(p.charAt(p.length()-1))){
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**

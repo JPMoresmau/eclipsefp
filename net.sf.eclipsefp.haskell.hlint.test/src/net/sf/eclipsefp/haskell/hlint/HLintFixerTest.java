@@ -28,7 +28,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText("[CCLibrary\n     (PD.buildable $ PD.libBuildInfo $ fromJust (PD.library pd)) \n   | isJust (PD.library pd)]"));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 560, 8));
 		sug.setMessage("Warning: Use list comprehension");
-		
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="      (if isJust (PD.library pd) then [CCLibrary (PD.buildable $ PD.libBuildInfo $ fromJust (PD.library pd))] else []) ++";
 		HLintFix fix=HLintFixer.fix(doc, 7, sug);
 		assertNotNull(fix);
@@ -45,7 +45,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText("  (map (\\ (a, b) -> (a, [b])) cpkgs) ++\n    map (\\ (a, _) -> (a, [])) pkgs"));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
 		sug.setMessage("Warning: Redundant bracket");
-		
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="        in DM.assocs $ DM.fromListWith (++) $ ((map (\\(a,b)->(a,[b])) cpkgs) ++ (map (\\(a,_)->(a,[])) pkgs))";
 		HLintFix fix=HLintFixer.fix(doc, 47, sug);
 		assertNotNull(fix);
@@ -62,7 +62,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText("  (map (\\ (a, b) -> (a, [b])) cpkgs) ++\n    map (\\ (a, _) -> (a, [])) pkgs"));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
 		sug.setMessage("Warning: Redundant bracket");
-		
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="        in DM.assocs $ DM.fromListWith (++) $ ((map (\\(a,b)->(a,[b])) cpkgs) ++ (map (\\(a,_)->(a,[])) pkgs)   )";
 		HLintFix fix=HLintFixer.fix(doc, 47, sug);
 		assertNotNull(fix);
@@ -79,6 +79,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText("copyFile src tgt"));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
 		sug.setMessage("Warning: Redundant do");
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="copyFileFull src tgt=do\n    --createDirectoryIfMissing True (takeDirectory tgt)\n    --putStrLn tgt\n    copyFile src tgt";
 		HLintFix fix=HLintFixer.fix(doc, 21, sug);
 		assertNotNull(fix);
@@ -95,6 +96,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText("cbi"));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
 		sug.setMessage("Warning: Redundant bracket");
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="case mcbi of\n    Just(cbi)->do";
 		HLintFix fix=HLintFixer.fix(doc, 21, sug);
 		assertNotNull(fix);
@@ -113,6 +115,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText(t1));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 338, 28));
 		sug.setMessage("Warning: Redundant bracket");
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="                        in case ls of\n                                (loc:line:col:[])-> (Just $ BWNote BWError (dropWhile isSpace aft) (BWLocation loc (read line) (read col)))\n                                _ -> Nothing";
 		HLintFix fix=HLintFixer.fix(doc, 27, sug);
 		assertTrue(fix.isFullMatch());
@@ -129,6 +132,7 @@ public class HLintFixerTest {
 		sug.setPost(new CodeModificationText("cbi"));
 		sug.setLocation(new SourceLocation("src/Language/Haskell/BuildWrapper/Cabal.hs", 537, 48));
 		sug.setMessage("Warning: Redundant bracket");
+		assertTrue(HLintFixer.canFix(sug));
 		String doc="case mcbi of\n    Just(cbi)->do";
 		HLintFix fix=HLintFixer.fix(doc, 21, sug);
 		assertNotNull(fix);

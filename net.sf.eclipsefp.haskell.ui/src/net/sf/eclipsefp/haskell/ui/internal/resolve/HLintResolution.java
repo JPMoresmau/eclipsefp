@@ -48,8 +48,10 @@ public class HLintResolution extends MarkerCompletion {
             HLintFix fix=HLintFixer.fix( document.get(), offset, s );
             if (fix.isFullMatch()){
               String add=getAdditionalInfo(s) ;
-              String label=NLS.bind( UITexts.resolve_hlint_explain,add);
-              return new MarkerCompletionProposal( fix.getValue(), offset, fix.getLength(), fix.getLength(),label,marker,add);
+              if (add!=null){
+                String label=NLS.bind( UITexts.resolve_hlint_explain,add);
+                return new MarkerCompletionProposal( fix.getValue(), offset, fix.getLength(), fix.getLength(),label,marker,add);
+              }
             }
           } catch( BadLocationException ex ) {
             HaskellUIPlugin.log( ex );
