@@ -63,21 +63,13 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
- * Manages instances of Scion servers.
+ * Manages helper executables
  *
- * This class ensures that there is exactly one running Scion instance for each
- * open project. This instance can be accessed through
- * {@link #getScionInstance(IResource)}.
+ * This class manages buildwrappers, scion-browser, etc. It gets the path from the preferences and does the initalization
  *
  * This works by listening for resource changes.
  */
 public class ScionManager implements IResourceChangeListener {
-  /** Preference value for using the standard stream-based connection to the scion-server */
-  public final static String STDSTREAM_SCION_FLAVOR = "stdstream";
-  /** Preference value for using the network-based connection to the scion-server */
-  public final static String NETWORK_SCION_FLAVOR = "network";
-  /** Current server flavor */
-  //private String serverFlavor;
   /** Current executable path string */
   private IPath buildWrapperExecutablePath;
   /** Current browser executable path string */
@@ -87,8 +79,8 @@ public class ScionManager implements IResourceChangeListener {
   /** Haskell console high water mark */
   private int hConHighWater;
 
-  private final static String MINIMUM_BUILDWRAPPER="0.4.0";
-  private final static String MINIMUM_SCIONBROWSER="0.2.5";
+  private final static String MINIMUM_BUILDWRAPPER="0.5.0";
+  private final static String MINIMUM_SCIONBROWSER="0.2.7";
 
   public ScionManager() {
     // The interesting stuff is done in the start() method
