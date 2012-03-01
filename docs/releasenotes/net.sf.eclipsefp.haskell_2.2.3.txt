@@ -5,7 +5,7 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.4.2 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.5.0 of buildwrapper has been validated with this version of EclipseFP
 	- EclipseFP also uses scion-browser. Version 0.2.7 has been validated with this version of EclipseFP
  
 
@@ -16,7 +16,7 @@ Fixes:
 	- Breakpoint location in source when suspended didn't always show in right place
 	- Quick fix on multiple useless imports fixed: all redundant imports removed properly
 	- Do not check Haskell nature on closed projects
-	- Quick fix on add package to build-depends preserve package case
+	- Quick fix: add package to build-depends: preserve package case
 
 Features:
 	- Autocomplete list of language extensions in Language pragma
