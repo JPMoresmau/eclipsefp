@@ -12,7 +12,6 @@ import net.sf.eclipsefp.haskell.core.compiler.ListenableCompilerDecorator_Test;
 import net.sf.eclipsefp.haskell.core.internal.util.MultiplexedWriter_Test;
 import net.sf.eclipsefp.haskell.core.parser.ParserUtilsTest;
 import net.sf.eclipsefp.haskell.core.project.ImportLibrariesList_Test;
-import net.sf.eclipsefp.haskell.core.util.ProcessRunner_Test;
 
 public class AllTests_Suite {
 
@@ -21,7 +20,6 @@ public class AllTests_Suite {
 		suite.addTestSuite( ImportLibrariesList_Test.class );
 		suite.addTestSuite( ListenableCompilerDecorator_Test.class );
 		suite.addTestSuite( MultiplexedWriter_Test.class );
-		suite.addTestSuite( ProcessRunner_Test.class );
 		suite.addTestSuite( CabalModelTest.class );
 		suite.addTestSuite( ParserUtilsTest.class );
 		suite.addTest( new JUnit4TestAdapter(JSONDescriptionHelperTest.class) );

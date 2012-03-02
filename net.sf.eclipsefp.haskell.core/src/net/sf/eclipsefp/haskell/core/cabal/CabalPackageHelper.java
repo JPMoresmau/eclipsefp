@@ -1,11 +1,16 @@
 package net.sf.eclipsefp.haskell.core.cabal;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import net.sf.eclipsefp.haskell.util.ProcessRunner;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * helper wrapping cabal list and cabal info operations
@@ -76,14 +81,16 @@ public class CabalPackageHelper {
     CabalPackageRef last=null;
     while (line!=null){
       CabalPackageRef r=parseRef(line);
-      if (last==null || !r.getName().equals( last.getName() )){
-        if (last!=null){
-          last.getVersions().trimToSize();
+      if (r!=null){
+        if (last==null || !r.getName().equals( last.getName() )){
+          if (last!=null){
+            last.getVersions().trimToSize();
+          }
+          ret.add(r);
+          last=r;
+        } else {
+          last.getVersions().addAll(r.getVersions());
         }
-        ret.add(r);
-        last=r;
-      } else {
-        last.getVersions().addAll(r.getVersions());
       }
       line=br.readLine();
     }
@@ -105,13 +112,22 @@ public class CabalPackageHelper {
   }
 
   private BufferedReader run(final String... opts) throws IOException{
-    ProcessBuilder pb=new ProcessBuilder();
+    ProcessRunner pr=new ProcessRunner();
+    StringWriter swOut=new StringWriter();
+    StringWriter swErr=new StringWriter();
+    pr.executeBlocking( new File("."), swOut, swErr, opts ); //$NON-NLS-1$
+    String err=swErr.toString();
+    if (err.length()>0){
+      HaskellCorePlugin.log( err, IStatus.ERROR );
+    }
+    return new BufferedReader( new StringReader(swOut.toString()) );
+    /*ProcessBuilder pb=new ProcessBuilder();
     pb.redirectErrorStream(false);
     pb.command(opts);
 
     Process p=pb.start();
     return new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF8")); //$NON-NLS-1$
-
+     */
   }
 
 

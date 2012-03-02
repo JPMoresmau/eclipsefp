@@ -9,23 +9,23 @@ import java.io.Writer;
 
 public class ProcessRunner implements IProcessRunner {
 
-  private final IProcessFactory fProcessFactory;
+//  private final IProcessFactory fProcessFactory;
   
   private final static String STDOUT_REDIRECT = "output_redirect";
   private final static String STDERR_REDIRECT = "error_redirect";
 
   public ProcessRunner() {
-    this( new ProcessFactory() );
+    //this( new ProcessFactory() );
   }
 
-  public ProcessRunner( final IProcessFactory factory ) {
-    fProcessFactory = factory;
-  }
+//  public ProcessRunner( final IProcessFactory factory ) {
+//    fProcessFactory = factory;
+//  }
 
   public int executeBlocking( final File workingDir, final Writer out,
       final Writer err, final String ... args ) throws IOException {
 
-    Process proc = doExecute( workingDir, args );
+    Process proc = doExecute( workingDir,err==null, args );
 
     Thread outRedirect = redirect( new InputStreamReader( proc.getInputStream() ), out, STDOUT_REDIRECT );
     Thread errRedirect = null;
@@ -47,7 +47,7 @@ public class ProcessRunner implements IProcessRunner {
 
   public Process executeNonblocking( final File workingDir, final Writer out,
       Writer err, final String ... args ) throws IOException {
-    Process proc = doExecute( workingDir, args );
+    Process proc = doExecute( workingDir,err==null, args );
     redirect( new InputStreamReader( proc.getInputStream() ), out, STDOUT_REDIRECT );
     if (err==null){
     	err=new StringWriter();
@@ -57,10 +57,13 @@ public class ProcessRunner implements IProcessRunner {
     return proc;
   }
 
-  private Process doExecute( final File workingDir, final String ... args )
+  private Process doExecute( final File workingDir, final boolean redirect,final String ... args )
       throws IOException {
-    Process proc = fProcessFactory.startProcess( workingDir, args );
-    return proc;
+    //Process proc = fProcessFactory.startProcess( workingDir, args );
+	ProcessBuilder builder = new ProcessBuilder(args);
+	builder.directory( workingDir );
+	builder.redirectErrorStream(redirect);
+    return builder.start();
   }
 
   private static Thread redirect( final Reader in, final Writer out, String name ) {
@@ -80,7 +83,7 @@ public class ProcessRunner implements IProcessRunner {
 	  if (f.exists()){
 		  StringWriter sw=new StringWriter();
 		  // get the process
-		  Process p = new ProcessRunner().doExecute( f.getParentFile(), f.getAbsolutePath(),"--version" );
+		  Process p = new ProcessRunner().doExecute( f.getParentFile(), false,f.getAbsolutePath(),"--version" );
 		  // redirect output into string writer
 		  Thread t1= redirect( new InputStreamReader( p.getInputStream() ), sw, STDOUT_REDIRECT );
 		  // ignore error
