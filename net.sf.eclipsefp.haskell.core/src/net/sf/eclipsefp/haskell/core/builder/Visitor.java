@@ -16,6 +16,8 @@ abstract class Visitor {
   private final IProgressMonitor monitor;
 
   private boolean needBuild=false;
+  private boolean needSynchronize=false;
+
 
   Visitor( final IProgressMonitor monitor ) {
     this.monitor = monitor;
@@ -48,6 +50,16 @@ abstract class Visitor {
       throw new IllegalArgumentException();
     }
     return ResourceUtil.isInSourceFolder( file );
+  }
+
+
+  public boolean isNeedSynchronize() {
+    return needSynchronize;
+  }
+
+
+  public void setNeedSynchronize( final boolean needSynchronize ) {
+    this.needSynchronize = needSynchronize;
   }
 
 

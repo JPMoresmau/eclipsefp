@@ -102,13 +102,27 @@ public class JobFacade  {
 	    		}
 	    	}
 	      });
+	      // not needed since we put the job in a query ourselves
+	      // except if both synchronized and build are run concurrently
 	      //buildJob.setRule( getProject() );
 	      buildJob.setPriority(Job.BUILD);
 	      realFacade.getBuildJobQueue().addJob(buildJob);
-	      //buildJob.schedule();
 	}
 
-	public void synchronize(final boolean force) {
+	public void synchronizeAndBuild(final boolean force,final BuildOptions buildOptions){
+		Job sj=getSynchronizeJob(force);
+		sj.addJobChangeListener(new JobChangeAdapter(){
+	    	  @Override
+	    	public void done(IJobChangeEvent event) {
+	    		if (event.getResult().isOK()){
+	    			build(buildOptions);
+	    		}
+	    	  }
+		});
+		sj.schedule();
+	}
+	
+	private Job getSynchronizeJob(final boolean force) {
 		final String jobNamePrefix = NLS.bind(BWText.job_synchronize, getProject().getName());
 
 	      Job buildJob = new Job (jobNamePrefix) {
@@ -125,7 +139,11 @@ public class JobFacade  {
 	      };
 	      buildJob.setRule( getProject() );
 	      buildJob.setPriority(Job.BUILD);
-	      buildJob.schedule();
+	      return buildJob;
+	}
+	
+	public void synchronize(final boolean force) {
+		getSynchronizeJob(force).schedule();
 	}
 	
 	public void outline(final IFile f,final OutlineHandler handler){

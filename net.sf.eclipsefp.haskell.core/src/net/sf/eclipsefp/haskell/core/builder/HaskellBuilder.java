@@ -75,13 +75,13 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   private void performBuild( final int kind,
                              final IProgressMonitor mon ) throws CoreException {
     if( kind == FULL_BUILD ) {
-      fullBuild( mon );
+      fullBuild(false, mon );
     } else if( kind == CLEAN_BUILD ) {
       clean(mon);
     } else {
       IResourceDelta delta = getDelta( getProject() );
       if( delta == null ) {
-        fullBuild( mon );
+        fullBuild(false, mon );
       } else {
         incrementalBuild( delta, mon );
       }
@@ -105,7 +105,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
     }
   }
 
-  public void fullBuild( final IProgressMonitor mon )  {
+  public void fullBuild(final boolean synchronize, final IProgressMonitor mon )  {
     mon.beginTask( CoreTexts.haskellBuilder_full, 100 );
     try {
       JobFacade f=BuildWrapperPlugin.getJobFacade( getProject());
@@ -113,7 +113,12 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
         BuildWrapperPlugin.deleteProblems( getProject() );
         cleanNonHaskellSources();
-        f.build( new BuildOptions().setOutput(true).setRecompile(false) );
+        BuildOptions bo=new BuildOptions().setOutput(true).setRecompile(false);
+        if (synchronize){
+          f.synchronizeAndBuild( false, bo );
+        } else {
+          f.build( bo );
+        }
       } else {
         new Exception("WorkspaceFacade == null").printStackTrace(); //$NON-NLS-1$
       }
@@ -147,7 +152,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
     DeltaBuildVisitor v=new DeltaBuildVisitor(mon ) ;
     delta.accept(v);
     if (v.isNeedBuild()){
-      fullBuild( mon );
+      fullBuild(v.isNeedSynchronize(), mon );
     }
   }
 }

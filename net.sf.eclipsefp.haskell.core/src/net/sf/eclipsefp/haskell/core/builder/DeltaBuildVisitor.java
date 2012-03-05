@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -45,10 +46,15 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
         case IResourceDelta.ADDED:
         case IResourceDelta.CHANGED:
           setNeedBuild( true );
+          if (isCabalFile( file )){
+            setNeedSynchronize( true);
+            BuildWrapperPlugin.deleteProblems( file );
+          }
           result = true;
           break;
         case IResourceDelta.REMOVED:
           setNeedBuild( true );
+          setNeedSynchronize(  isCabalFile( file ) );
           result = true;
           break;
       }

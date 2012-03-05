@@ -731,13 +731,13 @@
            markerType="org.eclipse.core.resources.problemmarker">
      </markerResolutionGenerator>
   </extension>
-  <extension
+  <!--extension
         point="net.sf.eclipsefp.haskell.ui.CabalChangeListener">
      <listener
            class="net.sf.eclipsefp.haskell.ui.internal.scion.ProjectReloader"
            id="net.sf.eclipsefp.haskell.ui.listener1">
      </listener>
-  </extension>
+  </extension-->
      <extension
          point="org.eclipse.ui.exportWizards">
       <wizard
