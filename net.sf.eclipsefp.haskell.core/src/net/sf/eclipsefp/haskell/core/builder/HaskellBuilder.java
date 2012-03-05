@@ -75,13 +75,13 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   private void performBuild( final int kind,
                              final IProgressMonitor mon ) throws CoreException {
     if( kind == FULL_BUILD ) {
-      fullBuild(false, mon );
+      fullBuild(true, mon );
     } else if( kind == CLEAN_BUILD ) {
       clean(mon);
     } else {
       IResourceDelta delta = getDelta( getProject() );
       if( delta == null ) {
-        fullBuild(false, mon );
+        fullBuild(true, mon );
       } else {
         incrementalBuild( delta, mon );
       }
