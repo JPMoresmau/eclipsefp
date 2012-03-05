@@ -6,7 +6,6 @@ package net.sf.eclipsefp.haskell.hlint;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import net.sf.eclipsefp.haskell.hlint.util.HLintText;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Class the encapsulates the logic of calling hlint and
@@ -28,9 +28,9 @@ import org.eclipse.core.runtime.IPath;
 public class HLintRunner {
 	
 	public List<Suggestion> run(IPath path) {
+		StringWriter err=new StringWriter();
 		try {
 			StringWriter out=new StringWriter();
-			Writer err=new StringWriter();
 			String exe=HLintPlugin.getHlintPath();
 			if (exe==null || exe.length()==0){
 				exe="hlint"; // hope it's in the path
@@ -40,7 +40,7 @@ public class HLintRunner {
 			OutputParser parser = new OutputParser(new StringReader(out.toString()));
 			return parser.suggestions();
 		} catch (Throwable ex) {
-			HLintPlugin.logError(HLintText.error_run, ex);
+			HLintPlugin.logError(NLS.bind(HLintText.error_run,err.toString()), ex);
 		}
 		return new ArrayList<Suggestion>();
 	}

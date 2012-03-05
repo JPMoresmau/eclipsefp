@@ -35,6 +35,7 @@ public interface OutputParserConstants {
     "<COLON_SLASH>",
     "<INTEGER>",
     "<OTHER_CHAR>",
+    "\"No suggestions\"",
   };
 
 }

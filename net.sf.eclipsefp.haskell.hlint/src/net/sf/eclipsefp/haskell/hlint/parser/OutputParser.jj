@@ -22,12 +22,19 @@ List<Suggestion> suggestions() :
 {
   ArrayList<Suggestion > sugs= new ArrayList<Suggestion>();
   Suggestion sug;}
-{  (    sug = suggestion()
-    {      sugs.add(sug);
-    }
-  )*
-  < INTEGER >
-  string_until_eol()
+{  (	    (		    (		    sug = suggestion()
+		    {		      sugs.add(sug);
+		    }
+		  )*
+		  < INTEGER >
+		  string_until_eol()
+	  ) |
+	  ("No suggestions"
+	  < EOL >	  )
+  )
+  
+	  
+  
   < EOF >
   {    return sugs;
   }
