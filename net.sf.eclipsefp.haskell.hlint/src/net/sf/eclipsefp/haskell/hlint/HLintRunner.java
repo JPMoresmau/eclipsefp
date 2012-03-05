@@ -29,8 +29,8 @@ public class HLintRunner {
 	
 	public List<Suggestion> run(IPath path) {
 		StringWriter err=new StringWriter();
+		StringWriter out=new StringWriter();
 		try {
-			StringWriter out=new StringWriter();
 			String exe=HLintPlugin.getHlintPath();
 			if (exe==null || exe.length()==0){
 				exe="hlint"; // hope it's in the path
@@ -40,7 +40,8 @@ public class HLintRunner {
 			OutputParser parser = new OutputParser(new StringReader(out.toString()));
 			return parser.suggestions();
 		} catch (Throwable ex) {
-			HLintPlugin.logError(NLS.bind(HLintText.error_run,err.toString()), ex);
+			String msg=err.toString().length()>0?err.toString():out.toString();
+			HLintPlugin.logError(NLS.bind(HLintText.error_run,msg), ex);
 		}
 		return new ArrayList<Suggestion>();
 	}
