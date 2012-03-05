@@ -1,10 +1,14 @@
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -175,5 +179,22 @@ public class Location {
 			return (IFile)p.getFile(loc.substring(pl.length()));
 		}
 		return null;
+	}
+	
+	public Map<Object,Object> getMarkerProperties(int maxLines){
+		int line= Math.min(getStartLine(),maxLines);
+		final Map<Object,Object> attributes=new HashMap<Object,Object>();
+		MarkerUtilities.setLineNumber(attributes, line);
+		int start=getStartColumn();
+	    int end=getEndColumn();
+		// if we have startColumn==endColumn we could take end+1
+		// BUT if end goes over the document size, or start is zero, or if Eclipse feels like it, the marker is not shown on the document
+		// so it's better to just show the line without more info 
+		if (end>start){
+			MarkerUtilities.setCharStart(attributes, start);
+			// exclusive
+			MarkerUtilities.setCharEnd(attributes, end-1);
+		}
+		return attributes;
 	}
 }

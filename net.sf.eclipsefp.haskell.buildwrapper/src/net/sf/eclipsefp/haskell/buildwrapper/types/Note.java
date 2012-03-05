@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
@@ -92,20 +91,16 @@ public class Note {
 	          case INFO: severity = IMarker.SEVERITY_INFO; break;
 	          default: severity = IMarker.SEVERITY_INFO; break;
 	        }
-	        int line= Math.min(location.getStartLine(),maxLines);
-	     // we may not have any character to show
-	        int start=location.getStartColumn();
-	        int end=location.getEndColumn();
-	        	        
 	        String msg= message + (additionalInfo != null ? "\n" + additionalInfo : "");
 	        
-	        addMarker(resource, severity, line, start, end, msg);
+	        addMarker(resource, severity, maxLines, msg);
 		  
 		}
 	}
 
-	private void addMarker(final IResource resource, int severity, int line,
-			int start, int end, String msg) throws CoreException {
+	private void addMarker(final IResource resource, int severity, int maxLines, String msg) throws CoreException {
+		int line= Math.min(location.getStartLine(),maxLines);
+		int start=location.getStartColumn();
 		// duplicate
 		for (IMarker m:resource.findMarkers(BuildWrapperPlugin.PROBLEM_MARKER_ID, false, 0)){
 			if (m.getAttribute(IMarker.SEVERITY, -1)==severity
@@ -116,17 +111,7 @@ public class Note {
 				return;
 		}
 
-		final Map<Object,Object> attributes=new HashMap<Object,Object>();
-		MarkerUtilities.setLineNumber(attributes, line);
-		
-		// if we have startColumn==endColumn we could take end+1
-		// BUT if end goes over the document size, or start is zero, or if Eclipse feels like it, the marker is not shown on the document
-		// so it's better to just show the line without more info 
-		if (end>start){
-			MarkerUtilities.setCharStart(attributes, start);
-			// exclusive
-			MarkerUtilities.setCharEnd(attributes, end-1);
-		}
+		final Map<Object,Object> attributes=location.getMarkerProperties(maxLines);
 		attributes.put(IMarker.SEVERITY, severity);
 		attributes.put(IMarker.MESSAGE,msg);
 		
@@ -139,9 +124,8 @@ public class Note {
 					MarkerUtilities.createMarker(resource, attributes, BuildWrapperPlugin.PROBLEM_MARKER_ID);
 				} catch (CoreException ex){
 					BuildWrapperPlugin.logError(BWText.process_apply_note_error, ex);
-					ex.printStackTrace();
 				}
-			};
+			}
 		}).start();
 		
 	}

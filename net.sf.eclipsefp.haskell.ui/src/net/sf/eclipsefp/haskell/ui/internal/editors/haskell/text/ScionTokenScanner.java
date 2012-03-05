@@ -19,6 +19,9 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -26,6 +29,7 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONArray;
 
 /**
@@ -120,6 +124,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
                currentOffset+currentLength<nextOffset){
              nextOffset= currentOffset+currentLength;
            }
+
            int nextLength=end-nextOffset;
            currentLength=nextLength;
            currentOffset=nextOffset;
@@ -282,6 +287,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 //        }
         //HaskellUIPlugin.log(nextOffset+"->"+nextEnd, IStatus.INFO);
         addTokenOccurence( s,nextOffset, nextEnd, nextTokenDef );
+
 //        previousOffset=nextOffset;
 //        previousEnd=nextEnd;
       } catch (BadLocationException ble){
@@ -290,6 +296,51 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     }
     this.offset = offset;
     this.length = length;
+  }
+
+  public void getTaskTags(){
+    if (file!=null){
+      try {
+        file.deleteMarkers( IMarker.TASK , true, IResource.DEPTH_ZERO );
+        for (TokenDef nextTokenDef:lTokenDefs){
+          if (nextTokenDef.getName().equals(IScionTokens.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(IScionTokens.LITERATE_COMMENT)){
+            String s=nextTokenDef.getLocation().getContents( doc );
+            for (int a=0;a<s.length();a++){
+              if (Character.isLetter( s.charAt( a ) )){
+                String s1=s.substring( a );
+                if (s1.startsWith( "TODO" )){
+
+                  final Map<Object,Object> attributes=nextTokenDef.getLocation().getMarkerProperties( doc.getNumberOfLines() );
+                  attributes.put(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+                  attributes.put(IMarker.MESSAGE,s1);
+
+                  /**
+                   * this locks the workspace, so fire a new thread
+                   */
+                  new Thread(new Runnable(){
+                    public void run() {
+                      try {
+                        MarkerUtilities.createMarker(file, attributes,  IMarker.TASK);
+                      } catch (CoreException ex){
+                        BuildWrapperPlugin.logError(UITexts.tasks_create_error, ex);
+                      }
+                    }
+                  }).start();
+
+
+                }
+                break;
+              }
+            }
+          }
+
+        }
+      } catch (Exception ble){
+        HaskellUIPlugin.log( ble );
+      }
+    }
+
+
   }
 
   private IToken getTokenFromTokenDef(final TokenDef td){

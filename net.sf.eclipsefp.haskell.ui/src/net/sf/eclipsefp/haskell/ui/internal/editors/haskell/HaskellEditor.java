@@ -417,34 +417,19 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   @Override
   public void doRevertToSaved() {
     super.doRevertToSaved();
-    /*if( outlinePage != null ) {
-      outlinePage.update();
-    }*/
+    editorSaved();
   }
 
-  @Override
-  public void doSave( final IProgressMonitor monitor ) {
-    super.doSave( monitor );
-    /*if( outlinePage != null ) {
-      outlinePage.update();
-    }*/
-  }
-
-  @Override
-  public void doSaveAs() {
-    super.doSaveAs();
-    /*if( outlinePage != null ) {
-      outlinePage.update();
-    }*/
-  }
 
   @Override
   protected void editorSaved() {
-    // Reload the file on the Scion server side
+    // Reload the file on the buildwrapper server side
     IFile file = findFile();
     if( file != null) {
       synchronize();
-      //updateOutline( file );
+      if (tokenScanner!=null){
+        tokenScanner.getTaskTags();
+      }
     }
   }
 

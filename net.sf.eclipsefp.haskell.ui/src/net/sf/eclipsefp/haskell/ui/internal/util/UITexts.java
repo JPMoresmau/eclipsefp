@@ -666,6 +666,7 @@ public final class UITexts extends NLS {
   public static String Validator_6;
 
   public static String      thingatpoint_none;
+  public static String      tasks_create_error;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
 
