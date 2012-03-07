@@ -117,7 +117,7 @@ public class WorkspaceFacade {
 		} catch (InterruptedException ie){
 			// noop
 		}catch (InvocationTargetException ie){
-			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+			BuildWrapperPlugin.logError(BWText.error_clean, ie.getCause());
 		}
 		
 	}
