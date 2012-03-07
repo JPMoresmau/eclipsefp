@@ -36,6 +36,10 @@ public interface OutputParserConstants {
     "<INTEGER>",
     "<OTHER_CHAR>",
     "\"No suggestions\"",
+    "\"Parse error\"",
+    "\"Error message:\"",
+    "\"Code:\"",
+    "\"Note:\"",
   };
 
 }

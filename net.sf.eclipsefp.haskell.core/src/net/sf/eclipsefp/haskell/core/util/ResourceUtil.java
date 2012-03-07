@@ -308,6 +308,15 @@ public class ResourceUtil {
 	  if( file == null || !file.isAccessible() ) {
       return false;
     }
+	  // check if we're not in .buildwrapper for example
+	  IPath p=file.getProjectRelativePath();
+	  if (p.segmentCount()>1){
+	    IFolder f=file.getProject().getFolder( p.segments()[0]);
+	    if (f!=null && f.isDerived()){
+	      return false;
+	    }
+	  }
+
 	  Collection<IContainer> sourcePaths =ResourceUtil.getSourceFolders( file.getProject() );
     for( IContainer sourcePath: sourcePaths ) {
       if (sourcePath.getLocation().isPrefixOf( file.getLocation())){

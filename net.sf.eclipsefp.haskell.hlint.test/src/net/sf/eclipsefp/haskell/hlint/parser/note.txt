@@ -1,0 +1,29 @@
+D:\dev\haskell\jp-github\runtime-New_configuration\P1\.dist-scion\build\autogen\Paths_P1.hs:21:13: Error: Use Control.Exception.catch
+Found:
+  catch
+Why not:
+  Control.Exception.catch
+Note: Prelude.catch does not catch most exceptions
+
+D:\dev\haskell\jp-github\runtime-New_configuration\P1\.dist-scion\build\autogen\Paths_P1.hs:22:13: Error: Use Control.Exception.catch
+Found:
+  catch
+Why not:
+  Control.Exception.catch
+Note: Prelude.catch does not catch most exceptions
+
+D:\dev\haskell\jp-github\runtime-New_configuration\P1\.dist-scion\build\autogen\Paths_P1.hs:23:14: Error: Use Control.Exception.catch
+Found:
+  catch
+Why not:
+  Control.Exception.catch
+Note: Prelude.catch does not catch most exceptions
+
+D:\dev\haskell\jp-github\runtime-New_configuration\P1\.dist-scion\build\autogen\Paths_P1.hs:24:17: Error: Use Control.Exception.catch
+Found:
+  catch
+Why not:
+  Control.Exception.catch
+Note: Prelude.catch does not catch most exceptions
+
+4 suggestions

@@ -21,11 +21,19 @@ TOKEN :
 List<Suggestion> suggestions() :
 {
   ArrayList<Suggestion > sugs= new ArrayList<Suggestion>();
-  Suggestion sug;}
-{  (	    (		    (		    sug = suggestion()
-		    {		      sugs.add(sug);
-		    }
-		  )*
+  Suggestion sug;
+  SourceLocation loc;
+}
+{  (	    (		    (
+			  loc=location()
+		      (		         error()
+		         |			     (					    sug = suggestion()
+					    {
+					      sug.setLocation(loc);					      sugs.add(sug);
+					    }
+				 )	
+			  )
+			)*
 		  < INTEGER >
 		  string_until_eol()
 	  ) |
@@ -38,25 +46,54 @@ List<Suggestion> suggestions() :
   < EOF >
   {    return sugs;
   }
-}Suggestion suggestion() :{
-  StringBuilder filename;
+}
+void error() :
+{
+}
+{  "Parse error"
+  < EOL >
+  "Error message:"
+  < EOL >
+  < SPACE >
+  < SPACE >
+  "Parse error"
+  string_until_eol()
+  "Code:"
+  < EOL >
+  source_code()
+  < EOL >
+}
+
+SourceLocation location():
+{  StringBuilder filename;
   Integer line;
   Integer column;
+}
+{
+  filename = filename()
+  line = number()
+  column = number()
+  < SPACE >
+  {
+    return new SourceLocation(filename.toString().replace("\\\\","\\"), line, column);  }}
+Suggestion suggestion() :{
+  StringBuilder filename;
+  Integer line;
+  ;
   Severity sev;
   StringBuilder message;
   CodeModification pre;
   CodeModification post;
-}{  filename = filename()
-  line = number()
-  column = number()
-  < SPACE >
+}{
   sev = severity()
   < SPACE >
   message = string_until_eol()
   pre = code_mod()
   post = code_mod()
-  < EOL >  {    Suggestion s = new Suggestion();
-    s.setLocation(new SourceLocation(filename.toString().replace("\\\\","\\"), line, column));
+  ("Note:" string_until_eol()
+  )?
+  < EOL >
+  {    Suggestion s = new Suggestion();
     s.setSeverity(sev);
     s.setMessage(message.toString());
     s.setPre(pre);

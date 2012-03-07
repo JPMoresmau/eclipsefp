@@ -1,0 +1,11 @@
+ D:\dev\haskell\jp-github\runtime-New_configuration\Y1\Model.hs:12:1: Parse error
+Error message:
+  Parse error: ;
+Code:
+    -- http://docs.yesodweb.com/book/persistent/
+    share2 mkPersist (mkMigrate "migrateAll") [persist|
+  > User
+        ident String
+        password String Maybe Update
+
+1 suggestion

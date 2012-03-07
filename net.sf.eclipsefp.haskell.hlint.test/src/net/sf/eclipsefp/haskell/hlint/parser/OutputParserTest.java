@@ -64,4 +64,35 @@ public class OutputParserTest {
 		assertEquals("{-# LANGUAGE ExistentialQuantification, TypeSynonymInstances #-}",((CodeModificationText)sug.getPost()).getText());
 	}
 
+	@Test
+	public void testWithNote() throws Exception {
+		InputStream is=OutputParserTest.class.getResourceAsStream("note.txt");
+		assertNotNull(is);
+		OutputParser p=new OutputParser(is);
+		List<Suggestion> sugs=p.suggestions();
+		assertNotNull(sugs);
+		assertEquals(4, sugs.size());
+		Suggestion sug=sugs.get(0);
+		assertEquals("Use Control.Exception.catch",sug.getMessage());
+		SourceLocation sl=sug.getLocation();
+		assertNotNull(sl);
+		assertEquals("D:\\dev\\haskell\\jp-github\\runtime-New_configuration\\P1\\.dist-scion\\build\\autogen\\Paths_P1.hs",sl.getFilename());
+		assertEquals(21,sl.getLine());
+		assertEquals(13,sl.getColumn());
+		assertTrue(sug.getPre() instanceof CodeModificationText);
+		assertEquals("catch",((CodeModificationText)sug.getPre()).getText());
+		assertTrue(sug.getPost() instanceof CodeModificationText);
+		assertEquals("Control.Exception.catch",((CodeModificationText)sug.getPost()).getText());
+
+	}
+	
+	@Test
+	public void testYesod() throws Exception {
+		InputStream is=OutputParserTest.class.getResourceAsStream("yesod.txt");
+		assertNotNull(is);
+		OutputParser p=new OutputParser(is);
+		List<Suggestion> sugs=p.suggestions();
+		assertNotNull(sugs);
+		assertEquals(0, sugs.size());
+	}
 }
