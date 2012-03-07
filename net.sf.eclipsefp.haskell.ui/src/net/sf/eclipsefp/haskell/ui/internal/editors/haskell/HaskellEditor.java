@@ -392,6 +392,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if( outlinePage != null ) {
       outlinePage.setInput( null );
     }
+    if (tokenScanner!=null){
+      tokenScanner.dispose();
+    }
 //    if (instance != null) {
 //      instance.removeListener( this );
 //    }
@@ -411,6 +414,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
       }
     }
+
     super.dispose();
   }
 
@@ -428,7 +432,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if( file != null) {
       synchronize();
       if (tokenScanner!=null){
-        tokenScanner.getTaskTags();
+        tokenScanner.markTaskTags();
       }
     }
   }

@@ -221,7 +221,12 @@
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP">
       </page>      
-      
+      <page
+            name="%editorPP_tasktags_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TaskTagsPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TaskTagsPP">
+      </page>      
       <page
             name="%projectWizardPP"
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP"

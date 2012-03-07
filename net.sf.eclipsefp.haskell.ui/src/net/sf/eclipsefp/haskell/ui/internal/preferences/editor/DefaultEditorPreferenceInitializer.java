@@ -1,11 +1,15 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /** <p>runs initialization code for default preference settings for the
@@ -20,6 +24,31 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     initColors( store );
     initCA( store );
     initTyping( store );
+
+    initTaskTags(store);
+
+  }
+
+  private static void initTaskTags( final IPreferenceStore store ) {
+    store.setDefault( EDITOR_TASK_TAGS_CASE, false );
+    try {
+      JSONObject obj=new JSONObject();
+      JSONArray high=new JSONArray();
+      high.put( "FIXME" );
+      obj.put( EDITOR_TASK_TAGS_HIGH, high );
+
+      JSONArray normal=new JSONArray();
+      normal.put( "TODO" );
+      obj.put( EDITOR_TASK_TAGS_NORMAL, normal );
+
+      JSONArray low=new JSONArray();
+      low.put( "XXX" );
+      obj.put( EDITOR_TASK_TAGS_LOW, low );
+      store.setDefault( EDITOR_TASK_TAGS, obj.toString() );
+
+    } catch (JSONException je){
+      HaskellUIPlugin.log( je );
+    }
   }
 
   private static void initColors( final IPreferenceStore store ) {

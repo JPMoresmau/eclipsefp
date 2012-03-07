@@ -60,12 +60,16 @@ public abstract class AbstractEditorPP extends PreferencePage implements IWorkbe
     super.performDefaults();
   }
 
-
   // interface methods of IWorkbenchPreferencePage
   ////////////////////////////////////////////////
 
   public void init( final IWorkbench workbench ) {
-    setPreferenceStore( HaskellUIPlugin.getDefault() .getPreferenceStore() );
+    //setPreferenceStore( HaskellUIPlugin.getDefault() .getPreferenceStore() );
+    overlayStore = createOverlayStore();
+    overlayStore.load();
+    overlayStore.startListening();
+    setPreferenceStore(overlayStore);
+
     tab=new Tab(getPreferenceStore()){
       @Override
       public Control createControl( final Composite parent ) {
@@ -75,14 +79,12 @@ public abstract class AbstractEditorPP extends PreferencePage implements IWorkbe
         // NOOP
       }
     };
-    overlayStore = createOverlayStore();
-    overlayStore.load();
-    overlayStore.startListening();
+
   }
 
   private OverlayPreferenceStore createOverlayStore() {
-    IPreferenceStore prefStore = getPreferenceStore();
-    OverlayPreferenceStore store = new OverlayPreferenceStore( prefStore );
+    //IPreferenceStore prefStore = getPreferenceStore();
+    OverlayPreferenceStore store = new OverlayPreferenceStore( HaskellUIPlugin.getDefault() .getPreferenceStore() );
 
     addPreferences( store );
 

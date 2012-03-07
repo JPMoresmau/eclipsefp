@@ -74,6 +74,12 @@ public interface IEditorPreferenceNames {
   String EDITOR_CLOSE_BRACES               = "closeBraces";  //$NON-NLS-1$
   String EDITOR_SHOW_SELECTED_ELEMENT_ONLY = "showSelectedElementOnly";  //$NON-NLS-1$
 
+  String EDITOR_TASK_TAGS                  = "taskTags";  //$NON-NLS-1$
+  String EDITOR_TASK_TAGS_HIGH             = "high";  //$NON-NLS-1$
+  String EDITOR_TASK_TAGS_NORMAL           = "normal";  //$NON-NLS-1$
+  String EDITOR_TASK_TAGS_LOW              = "low";  //$NON-NLS-1$
+  String EDITOR_TASK_TAGS_CASE                = "taskTagsCase";  //$NON-NLS-1$
+
   String CA_AUTOACTIVATION          = "contentAssistAutoActivation";  //$NON-NLS-1$
   String CA_AUTOACTIVATION_DELAY    = "contentAssistAutoActivationDelay";  //$NON-NLS-1$
   String CA_AUTOACTIVATION_TRIGGERS = "contentAssistAutoActivationTriggers";  //$NON-NLS-1$

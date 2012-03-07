@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
@@ -28,6 +30,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONArray;
@@ -37,7 +40,7 @@ import org.json.JSONArray;
   *
   * @author JP Moresmau
  */
-public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPreferenceNames {
+public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPreferenceNames, org.eclipse.jface.util.IPropertyChangeListener {
   private final ScannerManager man;
   private final IFile file;
 
@@ -63,6 +66,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private boolean checkedTabs=false;
 
   private final Map<String,IToken> tokenByTypes;
+
+  private Set<TaskTag> tags;
+  private boolean caseS;
 
   public ScionTokenScanner(final ScannerManager man,final IFile file){
     this.man=man;
@@ -90,6 +96,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         put( IScionTokens.TEMPLATE_HASKELL, man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
       }
     };
+    getCaseS();
+    HaskellUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
   }
 
   public int getTokenLength() {
@@ -298,38 +306,50 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     this.length = length;
   }
 
-  public void getTaskTags(){
-    if (file!=null){
+  /**
+   * mark task tags
+   */
+  public void markTaskTags(){
+    if (file!=null && tags!=null){
       try {
         file.deleteMarkers( IMarker.TASK , true, IResource.DEPTH_ZERO );
         for (TokenDef nextTokenDef:lTokenDefs){
           if (nextTokenDef.getName().equals(IScionTokens.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(IScionTokens.LITERATE_COMMENT)){
             String s=nextTokenDef.getLocation().getContents( doc );
-            for (int a=0;a<s.length();a++){
+            outer:for (int a=0;a<s.length();a++){
               if (Character.isLetter( s.charAt( a ) )){
-                String s1=s.substring( a );
-                if (s1.startsWith( "TODO" )){
+                // substring
+                String orig=s.substring( a );
+                // what we'll test again, maybe changed in case
+                String test=orig;
+                if (!caseS){
+                  test=orig.toUpperCase( Locale.ENGLISH );
+                }
+                for (TaskTag tt:tags){
+                  if (test.startsWith( tt.getName())){
 
-                  final Map<Object,Object> attributes=nextTokenDef.getLocation().getMarkerProperties( doc.getNumberOfLines() );
-                  attributes.put(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-                  attributes.put(IMarker.MESSAGE,s1);
+                    final Map<Object,Object> attributes=nextTokenDef.getLocation().getMarkerProperties( doc.getNumberOfLines() );
+                    attributes.put(IMarker.PRIORITY, tt.getMarkerPriority());
+                    // use original text
+                    attributes.put(IMarker.MESSAGE,orig);
 
-                  /**
-                   * this locks the workspace, so fire a new thread
-                   */
-                  new Thread(new Runnable(){
-                    public void run() {
-                      try {
-                        MarkerUtilities.createMarker(file, attributes,  IMarker.TASK);
-                      } catch (CoreException ex){
-                        BuildWrapperPlugin.logError(UITexts.tasks_create_error, ex);
+                    /**
+                     * this locks the workspace, so fire a new thread
+                     */
+                    new Thread(new Runnable(){
+                      public void run() {
+                        try {
+                          MarkerUtilities.createMarker(file, attributes,  IMarker.TASK);
+                        } catch (CoreException ex){
+                          BuildWrapperPlugin.logError(UITexts.tasks_create_error, ex);
+                        }
                       }
-                    }
-                  }).start();
+                    }).start();
 
+                    break outer;
+                  }
 
                 }
-                break;
               }
             }
           }
@@ -355,5 +375,38 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       final String contentType, final int partitionOffset ) {
     setRange( document, offset, length );
   }
+
+  public void dispose(){
+    HaskellUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
+  }
+
+  private void getTags(){
+    tags=TaskTag.getTasksTags( HaskellUIPlugin.getDefault().getPreferenceStore() );
+    // we're case insensitive, let's change all to upper case
+    if (tags!=null && !caseS){
+      for (TaskTag tt:tags){
+        tt.setName( tt.getName().toUpperCase( Locale.ENGLISH ) );
+      }
+    }
+  }
+
+  private void getCaseS(){
+    caseS=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( EDITOR_TASK_TAGS_CASE);
+    getTags();
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+   */
+  public void propertyChange( final PropertyChangeEvent arg0 ) {
+    // listen to relevant property changes and update ourselves
+    if (arg0.getProperty().equals( EDITOR_TASK_TAGS )){
+      getTags();
+    } else if (arg0.getProperty().equals( EDITOR_TASK_TAGS_CASE )){
+      getCaseS();
+    }
+
+  }
+
 
 }

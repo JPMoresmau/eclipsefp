@@ -5,10 +5,13 @@ package net.sf.eclipsefp.haskell.ui.internal.util;
 
 import org.eclipse.osgi.util.NLS;
 
-/** <p>provides access to the internationalized UI texts.</p>
-  *
-  * @author Leif Frenzel
-  */
+/**
+ * <p>
+ * provides access to the internationalized UI texts.
+ * </p>
+ *
+ * @author Leif Frenzel
+ */
 public final class UITexts extends NLS {
 
   // message fields
@@ -665,10 +668,26 @@ public final class UITexts extends NLS {
 
   public static String Validator_6;
 
-  public static String      thingatpoint_none;
-  public static String      tasks_create_error;
+  public static String thingatpoint_none;
+  public static String tasks_create_error;
+  public static String tasks_pref_title;
+  public static String tasks_pref_text;
+  public static String tasks_pref_tag;
+  public static String tasks_pref_priority;
+  public static String tasks_pref_priority_high;
+  public static String tasks_pref_priority_normal;
+  public static String tasks_pref_priority_low;
+  public static String tasks_pref_case;
+  public static String tasks_pref_edit;
+  public static String tasks_pref_new;
 
-  private static final String BUNDLE_NAME = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$
+  public static String generic_new;
+  public static String generic_edit;
+  public static String generic_remove;
+
+
+  private static final String BUNDLE_NAME = UITexts.class.getPackage()
+      .getName() + ".uitexts"; //$NON-NLS-1$
 
 
   static {
