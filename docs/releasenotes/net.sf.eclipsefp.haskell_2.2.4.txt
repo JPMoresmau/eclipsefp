@@ -1,4 +1,4 @@
-EclipseFP Haskell 2.2.3
+EclipseFP Haskell 2.2.4
 
 Release Notes
 
@@ -16,8 +16,10 @@ Fixes:
 
 Features:
 	- Task tags: special words in comment create tasks (TODO, FIXME, XXX by default)
+	- Search for breakpoints and breakpoints source in referenced projects, not only current projects
 
 Internal:
+	- On files bigger than 20k, do syntax coloring in a job
 
 Upgrade notes:
 

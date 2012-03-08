@@ -18,6 +18,7 @@ import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -91,17 +92,39 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   public boolean supportsBreakpoint( final IBreakpoint breakpoint ) {
     if (breakpoint.getModelIdentifier().equals(HaskellDebugCore.ID_HASKELL_DEBUG_MODEL)) {
-      try {
-        String project = getLaunch().getLaunchConfiguration().getAttribute(ILaunchAttributes.PROJECT_NAME, (String)null);
-        if (project != null) {
-          IMarker marker = breakpoint.getMarker();
-          if (marker != null) {
-            return project.equals(marker.getResource().getProject().getName());
+
+// see http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/5091430, we don't want to reduce only to our project
+        IMarker marker = breakpoint.getMarker();
+        if (marker != null) {
+          try {
+            String project = getLaunch().getLaunchConfiguration().getAttribute(ILaunchAttributes.PROJECT_NAME, (String)null);
+            IProject launchProject=marker.getResource().getProject().getWorkspace().getRoot().getProject( project );
+            if (launchProject!=null){
+              if (launchProject.equals(marker.getResource().getProject())){
+                return true;
+              }
+              for( IProject p: launchProject.getReferencedProjects() ) {
+                if (p.equals(marker.getResource().getProject())){
+                  return true;
+                }
+              }
+            }
+          } catch (CoreException e) {
+            HaskellCorePlugin.log( e );
           }
         }
-      } catch (CoreException e) {
-        HaskellCorePlugin.log( e );
-      }
+//      try {
+//        String project = getLaunch().getLaunchConfiguration().getAttribute(ILaunchAttributes.PROJECT_NAME, (String)null);
+//        if (project != null) {
+//          IMarker marker = breakpoint.getMarker();
+//          if (marker != null) {
+//            return project.equals(marker.getResource().getProject().getName());
+//          }
+//        }
+//      } catch (CoreException e) {
+//        HaskellCorePlugin.log( e );
+//      }
+
     }
     return false;
   }

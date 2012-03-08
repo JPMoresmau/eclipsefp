@@ -140,6 +140,18 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
       // return file relative to project, since we may have the same file in different folders (Main.hs)
       if (fileName.startsWith( projectLocation )){
         fileName=fileName.substring( projectLocation.length()+1 );
+        return fileName;
+      }
+      // see http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/5091430, we don't want to reduce only to our project
+      // not found in my project, look in all reference projects
+      for (IProject p1:getProject().getReferencedProjects()){
+        //
+        String projectLocation1=p1.getLocation().toOSString();
+        // return file relative to project, since we may have the same file in different folders (Main.hs)
+        if (fileName.startsWith( projectLocation1 )){
+          fileName=fileName.substring( projectLocation1.length()+1 );
+          break;
+        }
       }
     }
     return fileName;
