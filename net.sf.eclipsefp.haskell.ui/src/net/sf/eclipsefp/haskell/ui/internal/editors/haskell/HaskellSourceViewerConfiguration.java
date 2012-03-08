@@ -150,8 +150,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	/** the presentation reconciler is responsible for syntax coloring. */
 	@Override
   public IPresentationReconciler getPresentationReconciler(final ISourceViewer sv) {
-		PresentationReconciler reconciler = new PresentationReconciler();
-
+		PresentationReconciler reconciler = new HaskellPresentationReconciler();
 		IFile file = (editor != null ? editor.findFile() : null);
 		ScionTokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file);
 		if (editor!=null){
@@ -160,6 +159,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
     DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
+
     // comments
     //HaskellCommentScanner commentScanner = man.getCommentScanner();
     //DefaultDamagerRepairer cndr = new DefaultDamagerRepairer( codeScanner );

@@ -685,6 +685,7 @@ public final class UITexts extends NLS {
   public static String generic_edit;
   public static String generic_remove;
 
+  public static String job_syntax_coloring;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
