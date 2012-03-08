@@ -181,9 +181,11 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build1");
 		command.add("--file="+path);
+		//long t0=System.currentTimeMillis();
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
-		
+		//long t1=System.currentTimeMillis();
+		//BuildWrapperPlugin.logInfo("build:"+(t1-t0)+"ms");
 		if (arr!=null && arr.length()>1){
 			Set<IResource> ress=new HashSet<IResource>();
 			ress.add(file);

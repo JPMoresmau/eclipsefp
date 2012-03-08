@@ -31,21 +31,22 @@ public class Location {
 	}
 
 	public Location(IFile f, JSONArray json) throws JSONException {
-		startLine=json.getInt(0);
-		startColumn=json.getInt(1)-1; // we're zero based, Haskell code 1 based
-		endLine=json.getInt(2);
-		endColumn=json.getInt(3)-1;// we're zero based, Haskell code 1 based
-		if (endColumn==-1 && endLine>startLine){
-			endLine--;
-		}
-		this.fileName = f.getLocation().toOSString();
+		this(f.getLocation().toOSString(),json);
 	}
 	
 	public Location(String fn, JSONArray json) throws JSONException {
 		startLine=json.getInt(0);
 		startColumn=json.getInt(1)-1; // we're zero based, Haskell code 1 based
-		endLine=json.getInt(2);
-		endColumn=json.getInt(3)-1;// we're zero based, Haskell code 1 based
+		if (json.length()>3){
+			endLine=json.getInt(2);
+			endColumn=json.getInt(3)-1;// we're zero based, Haskell code 1 based
+		} else if (json.length()>2){
+			endLine=startLine;
+			endColumn=json.getInt(2)-1;// we're zero based, Haskell code 1 based
+		} else {
+			endLine=startLine;
+			endColumn=startColumn+1;
+		}
 		if (endColumn==-1 && endLine>startLine){
 			endLine--;
 		}
