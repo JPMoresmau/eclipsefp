@@ -89,13 +89,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          unpack="false"/>
 
    <plugin
-         id="net.sf.eclipsefp.haskell.haddock"
-         download-size="0"
-         install-size="0"
-         version="2.1.0"
-         unpack="false"/>
-
-   <plugin
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"

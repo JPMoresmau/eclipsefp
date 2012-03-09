@@ -10,8 +10,12 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -57,10 +61,24 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
         commands.add( "--snapshot" );
       }
 
+      final String fold= optionsPage.getFolder();
       for (final IProject p:projects){
+        Runnable r=new Runnable() {
 
+          public void run() {
+            IFolder f=p.getFolder(fold );
+            if (f!=null){
+              // refresh folder
+              try {
+                f.refreshLocal( IResource.DEPTH_INFINITE, new NullProgressMonitor() );
+              } catch ( CoreException ce ) {
+                HaskellUIPlugin.log( ce );
+              }
+            }
+          }
+        };
         try {
-          AbstractHaskellLaunchDelegate.runInConsole(p, commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.exportSource_job, p.getName() ),false );
+          AbstractHaskellLaunchDelegate.runInConsole(p, commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.exportSource_job, p.getName() ),false,r );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);

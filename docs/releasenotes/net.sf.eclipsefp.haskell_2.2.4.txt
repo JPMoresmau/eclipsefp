@@ -18,6 +18,8 @@ Fixes:
 Features:
 	- Task tags: special words in comment create tasks (TODO, FIXME, XXX by default)
 	- Search for breakpoints and breakpoints source in referenced projects, not only current projects
+	- Haddock generation now uses cabal haddock instead of calling haddock directly
+		- wizard is simpler
 
 Internal:
 	- On files bigger than 20k, do syntax coloring in a job

@@ -753,6 +753,14 @@
             id="net.sf.eclipsefp.haskell.ui.wizards.CabalSDistWizard">
          <description>%cabalSDistWizard.description</description>
       </wizard>
+       <wizard
+            icon="icons/obj16/haddock.gif"
+            class="net.sf.eclipsefp.haskell.ui.wizards.cabal.CabalHaddockWizard"
+            name="%cabalHaddockWizard.name"
+            category="net.sf.eclipsefp.haskell.ui.exportWizardCategory"
+            id="net.sf.eclipsefp.haskell.ui.wizards.CabalHaddockWizard">
+         <description>%cabalHaddockWizard.description</description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors.templates">

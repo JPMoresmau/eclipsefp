@@ -473,6 +473,22 @@ public final class UITexts extends NLS {
   public static String test_error_text;
   public static String test_version_fail;
 
+  public static String exportDoc_job;
+  public static String exportDoc_error;
+  public static String exportDoc_error_text;
+  public static String exportDoc_options;
+  public static String exportDoc_options_hoogle;
+  public static String exportDoc_options_html;
+  public static String exportDoc_options_executables;
+  public static String exportDoc_options_internal;
+  public static String exportDoc_options_css;
+  public static String exportDoc_options_css_choose;
+  public static String exportDoc_options_filter_css;
+  public static String exportDoc_options_filter_all;
+  public static String exportDoc_options_hscolour;
+  public static String exportDoc_options_hscolour_css;
+  public static String exportDoc_options_hscolour_css_choose;
+
   public static String template_prefSave_backingStore_exception;
   public static String HaskellTemplateVariables_module_description;
   public static String HaskellTemplateVariables_classTypeName_description;
