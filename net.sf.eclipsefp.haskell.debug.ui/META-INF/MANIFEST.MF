@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.debug.ui;singleton:=true
-Bundle-Version: 2.2.3
+Bundle-Version: 2.2.4
 Bundle-Activator: net.sf.eclipsefp.haskell.debug.ui.internal.HaskellDebugUI
 Bundle-Vendor: %bundleVendor
 Require-Bundle: net.sf.eclipsefp.haskell.ghccompiler,
@@ -24,6 +24,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.ui.internal;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test",
  net.sf.eclipsefp.haskell.debug.ui.internal.launch;x-friends:="net.sf.eclipsefp.haskell.hugs",
- net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test",
- net.sf.eclipsefp.haskell.debug.ui.internal.launch.young
+ net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test"
 Bundle-ActivationPolicy: lazy

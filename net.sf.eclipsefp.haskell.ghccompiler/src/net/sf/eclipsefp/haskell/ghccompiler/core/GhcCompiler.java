@@ -113,10 +113,8 @@ public class GhcCompiler extends DefaultHaskellCompiler {
     List<String> cmdLine = new ArrayList<String>();
     // command and special options
     cmdLine.add( CompilerManager.getCompilerExecutable() );
-    String libPath = Util.constructLibPath( file);
-    if( !libPath.equals( "" ) ) { //$NON-NLS-1$
-      cmdLine.add( libPath );
-    }
+    cmdLine.addAll(Util.constructLibPath( file));
+
     cmdLine.add( "--make" ); //$NON-NLS-1$
     cmdLine.add( "-odir" ); //$NON-NLS-1$
     cmdLine.add( outDir );

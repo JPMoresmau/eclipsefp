@@ -1,6 +1,8 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ghccompiler.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 
@@ -15,27 +17,19 @@ public class Util {
   public static String r6_8_1="6.8.1"; //$NON-NLS-1$
 
 
+  /**
+   * adds the command line options to include hidden packages
+   */
+  public static List<String> constructLibPath( final IFile... files ) {
+    List<String> ret=new ArrayList<String>();
 
-  public static String constructLibPath( final IFile... files ) {
-    StringBuilder sbResult = new StringBuilder();
-    /*IImportLibrary[] libs = hsProject.getImportLibraries();
-
-    for( int i = 0; i < libs.length; i++ ) {
-      if( i == 0 ) {
-        sbResult.append( "-i" ); //$NON-NLS-1$
-      } else {
-        sbResult.append( File.pathSeparator );
-      }
-      IPath path = libs[ i ].getPath();
-      sbResult.append( path.toOSString() );
-    }*/
     // we only need hidden packages
     for (String s:ResourceUtil.getHiddenImportPackages( files )){
-      sbResult.append(" -package "); //$NON-NLS-1$
-      sbResult.append(s);
+      ret.add("-package"); //$NON-NLS-1$
+      ret.add(s);
     }
 
-    return sbResult.toString();
+    return ret;
   }
 
   public static int compareTargets(final String target,final String version){

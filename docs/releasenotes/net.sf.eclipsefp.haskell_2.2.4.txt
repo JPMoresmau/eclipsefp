@@ -13,6 +13,7 @@ Fixes:
 	- Supports hlint Notes in hlint output parser
 	- Support hlint not managing to parse sources (example with Template Haskell)
 	- Do not run HLint on sources inside .dist-buildwrapper
+	- 2.2.3 regression fixed: running GHCi with hidden packages failed (wrong quoting)	
 
 Features:
 	- Task tags: special words in comment create tasks (TODO, FIXME, XXX by default)
