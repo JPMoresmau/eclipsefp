@@ -1,6 +1,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Locale;
 import net.sf.eclipsefp.common.ui.preferences.overlay.OverlayPreferenceStore;
 import net.sf.eclipsefp.common.ui.util.DialogUtil;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -9,6 +12,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -22,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 
 
@@ -32,6 +38,8 @@ public class SyntaxPP extends AbstractEditorPP {
   private ColorSelector colorSelector;
   private Button cbBold;
   private List colorList;
+
+  private Text coloringThreadT;
 
   public static final ColorListEntry[] colorListModel = new ColorListEntry[] {
     new ColorListEntry( UITexts.preferences_editor_syntax_comments, EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ),
@@ -92,6 +100,7 @@ public class SyntaxPP extends AbstractEditorPP {
     store.addStringKey( EDITOR_DEFAULT_COLOR );
     store.addBooleanKey( EDITOR_DEFAULT_BOLD );
 
+    store.addIntKey( EDITOR_COLORING_THREAD_THRESHOLD );
   }
 
   @Override
@@ -110,6 +119,9 @@ public class SyntaxPP extends AbstractEditorPP {
     initializeBoldCheckBox( stylesComposite );
 
     createPreviewer( composite );
+
+    createColoringThreadThreshold(composite);
+
     initialize();
 
     return composite;
@@ -259,6 +271,47 @@ public class SyntaxPP extends AbstractEditorPP {
     previewer.getControl().setLayoutData( gridData );
   }
 
+  private void createColoringThreadThreshold(final Composite parent){
+
+    Composite cColoring=new Composite(parent,SWT.NONE);
+    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
+    cColoring.setLayoutData( gridData );
+
+    cColoring.setLayout( new GridLayout(2,false) );
+
+    Label lColoring=new Label(cColoring,SWT.NONE);
+    lColoring.setText( UITexts.preferences_editor_syntax_thread_threshold );
+    GridData gd=new GridData( GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    lColoring.setLayoutData(gd);
+
+    coloringThreadT=new Text(cColoring,SWT.BORDER | SWT.RIGHT);
+    coloringThreadT.setLayoutData( new GridData( GridData.FILL_HORIZONTAL) );
+
+    final NumberFormat nf=NumberFormat.getIntegerInstance( Locale.getDefault() );
+
+    int t=getPreferenceStore().getInt( EDITOR_COLORING_THREAD_THRESHOLD );
+    coloringThreadT.setText( nf.format( t ));
+    coloringThreadT.addModifyListener( new ModifyListener() {
+
+      public void modifyText( final ModifyEvent paramModifyEvent ) {
+        String s=coloringThreadT.getText();
+        try {
+          int t=nf.parse( s ).intValue();
+          setErrorMessage( null );
+          getPreferenceStore().setValue( EDITOR_COLORING_THREAD_THRESHOLD, t );
+        } catch (ParseException pe){
+          setErrorMessage( pe.getLocalizedMessage() );
+        }
+
+      }
+    } );
+    Label lNote=new Label(cColoring,SWT.NONE);
+    lNote.setText( UITexts.preferences_editor_syntax_thread_threshold_note );
+    lNote.setLayoutData( new GridData( GridData.FILL_HORIZONTAL) );
+
+  }
+
   public void propertyChange( final PropertyChangeEvent event ) {
     colorList.getDisplay().asyncExec( new Runnable() {
       public void run() {
@@ -269,6 +322,8 @@ public class SyntaxPP extends AbstractEditorPP {
     } );
 
   }
+
+
 
   // helping methods
   //////////////////

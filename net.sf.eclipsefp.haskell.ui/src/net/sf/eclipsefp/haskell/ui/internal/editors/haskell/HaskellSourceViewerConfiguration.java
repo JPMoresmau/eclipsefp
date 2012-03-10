@@ -150,9 +150,17 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	/** the presentation reconciler is responsible for syntax coloring. */
 	@Override
   public IPresentationReconciler getPresentationReconciler(final ISourceViewer sv) {
-	  int length=editor!=null && editor.getDocument()!=null?editor.getDocument().get().length():0;
-    boolean big=length>20000; // more than 20K is big
-	  PresentationReconciler reconciler = big?new HaskellPresentationReconciler():new PresentationReconciler();
+	  boolean colorInThread=false;
+
+	  if (editor!=null && editor.getDocument()!=null){
+  	  int sizeInK=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( IEditorPreferenceNames.EDITOR_COLORING_THREAD_THRESHOLD );
+  	  if (sizeInK>-1){
+  	    int length=editor.getDocument().get().length();
+  	    colorInThread=length>=sizeInK*1024;
+  	  }
+	  }
+	  //boolean big=length>20000; // more than 20K is big
+	  PresentationReconciler reconciler = colorInThread?new HaskellPresentationReconciler():new PresentationReconciler();
 		IFile file = (editor != null ? editor.findFile() : null);
 
 		ScionTokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file);

@@ -22,6 +22,9 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
   static void initializeDefaultValues( final IPreferenceStore store ) {
     initAppearance( store );
     initColors( store );
+
+    store.setDefault( EDITOR_COLORING_THREAD_THRESHOLD, 20 );
+
     initCA( store );
     initTyping( store );
 

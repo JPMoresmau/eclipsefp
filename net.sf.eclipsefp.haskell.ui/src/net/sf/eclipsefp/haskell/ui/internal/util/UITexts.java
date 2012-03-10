@@ -369,6 +369,8 @@ public final class UITexts extends NLS {
   public static String preferences_editor_syntax_background;
   public static String preferences_editor_syntax_systemdefault;
   public static String preferences_editor_syntax_custom;
+  public static String preferences_editor_syntax_thread_threshold;
+  public static String preferences_editor_syntax_thread_threshold_note;
 
   public static String preferences_editor_typing_title;
   public static String preferences_editor_typing_spaces_tabs;
