@@ -88,15 +88,17 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   public static String computeProblemInfo( final ITextViewer textViewer, final IRegion hoverRegion,final IAnnotationAccessExtension  fMarkerAnnotationAccess) {
     if (textViewer instanceof ISourceViewer) {
       IAnnotationModel annotationModel = ((ISourceViewer)textViewer).getAnnotationModel();
-      Iterator<Annotation> i = annotationModel.getAnnotationIterator();
-      while (i.hasNext()) {
-        Annotation a = i.next();
-        String type = a.getType();
-        if (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE ) ||
-            fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )) {
-          Position p = annotationModel.getPosition( a );
-          if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
-            return a.getText();
+      if (annotationModel!=null){
+        Iterator<Annotation> i = annotationModel.getAnnotationIterator();
+        while (i.hasNext()) {
+          Annotation a = i.next();
+          String type = a.getType();
+          if (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE ) ||
+              fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )) {
+            Position p = annotationModel.getPosition( a );
+            if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
+              return a.getText();
+            }
           }
         }
       }
