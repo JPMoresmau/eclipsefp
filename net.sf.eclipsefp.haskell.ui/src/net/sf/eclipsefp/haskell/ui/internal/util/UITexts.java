@@ -223,6 +223,10 @@ public final class UITexts extends NLS {
   public static String newYesodProjectWizard_error_message;
   public static String newYesodProjectWizard_job;
 
+  public static String newGtkProjectWizard_pageDesc;
+  public static String newGtkProjectWizard_pageTitle;
+  public static String newGtkProjectWizard_windowTitle;
+
   public static String newProjectWizardPage_NameGroup_label_text;
   public static String newProjectWizardPage_Message_enterProjectName;
   public static String newProjectWizardPage_Message_projectAlreadyExists;

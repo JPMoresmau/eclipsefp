@@ -2,7 +2,7 @@
  * http://cvalcarcel.wordpress.com/2009/07/26/writing-an-eclipse-plug-in-part-4-create-a-custom-project-in-eclipse-new-project-wizard-the-behavior/
  */
 
-package net.sf.eclipsefp.haskell.ui.web.wizards;
+package net.sf.eclipsefp.haskell.ui.wizards.web;
 
 import java.net.URI;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;

@@ -30,21 +30,58 @@
       </wizard>
       <wizard
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
-            class="net.sf.eclipsefp.haskell.ui.web.wizards.NewSnapProjectWizard"
+            class="net.sf.eclipsefp.haskell.ui.wizards.web.NewSnapProjectWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             icon="icons/etool16/newhprj_wiz.gif"
-            id="net.sf.eclipsefp.haskell.ui.web.wizards.NewSnapProjectWizard"
+            id="net.sf.eclipsefp.haskell.ui.wizards.web.NewSnapProjectWizard"
             name="%newSnapWizard_name"
             project="true">
       </wizard>
       <wizard
             category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
-            class="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"
+            class="net.sf.eclipsefp.haskell.ui.wizards.web.NewYesodProjectWizard"
             finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
             icon="icons/etool16/newhprj_wiz.gif"
-            id="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"
+            id="net.sf.eclipsefp.haskell.ui.wizards.web.NewYesodProjectWizard"
             name="%newYesodWizard_name"
             project="true">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewGtkProjectWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/etool16/newhprj_wiz.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewGtkProjectWizard"
+            name="%newGtkWizard_name"
+            project="true">
+      </wizard>
+      
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/lhsfile_obj.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
+            name="%contenttype_alex_name"
+            project="false">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/lhsfile_obj.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
+            name="%contenttype_happy_name"
+            project="false">
+      </wizard>
+      <wizard
+            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
+            class="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
+            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
+            icon="icons/obj16/testsuitestanza.gif"
+            id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
+            name="%contenttype_uuagc_name"
+            project="false">
       </wizard>
    </extension>
    <extension point="org.eclipse.ui.importWizards">
@@ -179,9 +216,9 @@
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"/>
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard"/>
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard"/>
-			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.web.wizards.NewSnapProjectWizard"/>
-			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.web.wizards.NewYesodProjectWizard"/>
-			
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.web.NewSnapProjectWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.web.NewYesodProjectWizard"/>
+			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewGtkProjectWizard"/>
 		</perspectiveExtension>
 	</extension>
    <extension
@@ -1130,60 +1167,60 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXHTMLTemplateEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.web.HeistXHTMLTemplateEditor"
             contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
             extensions="tpl"
-            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXHTMLTemplateEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.web.HeistXHTMLTemplateEditor"
             name="%tplEditor_name">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.tpl">
          </contentTypeBinding>
       </editor>
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXMLTemplateEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.web.HeistXMLTemplateEditor"
             contributorClass="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorActionBarContributor"
             extensions="xtpl"
-            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HeistXMLTemplateEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.web.HeistXMLTemplateEditor"
             name="%xtplEditor_name">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.xtpl">
          </contentTypeBinding>
       </editor>
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.CassiusEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.web.CassiusEditor"
             contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
             extensions="cassius"
-            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.CassiusEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.web.CassiusEditor"
             name="%cassiusEditor_name">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.cassius">
          </contentTypeBinding>
       </editor>
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.HamletEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.web.HamletEditor"
             contributorClass="org.eclipse.wst.html.ui.internal.edit.ui.ActionContributorHTML"
             extensions="hamlet"
-            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.HamletEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.web.HamletEditor"
             name="%hamletEditor_name">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.hamlet">
          </contentTypeBinding>
       </editor>
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.JuliusEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.web.JuliusEditor"
             contributorClass="org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
             extensions="julius"
-            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.JuliusEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.web.JuliusEditor"
             name="%juliusEditor_name">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.julius">
          </contentTypeBinding>
       </editor>
       <editor
-            class="net.sf.eclipsefp.haskell.ui.internal.web.editors.LuciusEditor"
+            class="net.sf.eclipsefp.haskell.ui.internal.editors.web.LuciusEditor"
             contributorClass="org.eclipse.wst.css.ui.internal.ActionContributorCSS"
             extensions="lucius"
-            id="net.sf.eclipsefp.haskell.ui.internal.web.editors.LuciusEditor"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.web.LuciusEditor"
             name="%luciusEditor_name">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.lucius">
@@ -1208,36 +1245,7 @@
             extensions="x,y,ag">
       </participant>
    </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
-            class="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
-            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
-            icon="icons/obj16/lhsfile_obj.gif"
-            id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"
-            name="%contenttype_alex_name"
-            project="false">
-      </wizard>
-      <wizard
-            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
-            class="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
-            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
-            icon="icons/obj16/lhsfile_obj.gif"
-            id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"
-            name="%contenttype_happy_name"
-            project="false">
-      </wizard>
-      <wizard
-            category="net.sf.eclipsefp.haskell.ui.newWizardCategory"
-            class="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
-            finalPerspective="net.sf.eclipsefp.haskell.ui.HaskellPerspective"
-            icon="icons/obj16/testsuitestanza.gif"
-            id="net.sf.eclipsefp.haskell.ui.wizards.NewUuagcWizard"
-            name="%contenttype_uuagc_name"
-            project="false">
-      </wizard>
-   </extension>
+
    <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator

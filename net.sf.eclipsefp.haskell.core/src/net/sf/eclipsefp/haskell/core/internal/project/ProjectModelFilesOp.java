@@ -65,13 +65,17 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   // helping methods
   //////////////////
 
-  private String getMainFileContent() {
+  protected String getMainFileContent() {
    return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+"main::IO()"+PlatformUtil.NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 
 
 
   private String getCabalFileContent( final String name ) {
+    return getCabalFile( name ).dump();
+  }
+
+  protected PackageDescription getCabalFile(final String name){
 
     /*String s=CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
            + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL + NL //$NON-NLS-1$
@@ -113,7 +117,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
       c.contributeOnNewProject( pd );
     }
 
-    return pd.dump();
+    return pd;
   }
 
   private void createFile( final IProject project,

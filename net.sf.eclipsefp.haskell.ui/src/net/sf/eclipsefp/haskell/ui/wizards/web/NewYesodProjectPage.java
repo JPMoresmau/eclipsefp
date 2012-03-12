@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.web.wizards;
+package net.sf.eclipsefp.haskell.ui.wizards.web;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

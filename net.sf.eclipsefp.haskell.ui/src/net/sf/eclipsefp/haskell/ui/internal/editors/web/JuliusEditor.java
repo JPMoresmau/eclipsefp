@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.web.editors;
+package net.sf.eclipsefp.haskell.ui.internal.editors.web;
 
 import org.eclipse.wst.sse.ui.StructuredTextEditor;
 
