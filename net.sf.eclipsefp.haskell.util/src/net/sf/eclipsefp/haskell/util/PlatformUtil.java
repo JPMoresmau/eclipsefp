@@ -33,4 +33,20 @@ public class PlatformUtil {
 	public static boolean runningOnWindows() {
 		return Platform.getOS().equals(Platform.OS_WIN32);
 	}
+	
+	/**
+	 * get the current user name
+	 * @return
+	 */
+	public static String getCurrentUser(){
+	    try {
+	        String userName=System.getProperty( "user.name" );//$NON-NLS-1$
+	        if (userName!=null && userName.length()>0){
+	          return userName;
+	        }
+	      } catch (Throwable t){
+	        // ignore: security permission not given?
+	      }
+	    return null;
+	}
 }

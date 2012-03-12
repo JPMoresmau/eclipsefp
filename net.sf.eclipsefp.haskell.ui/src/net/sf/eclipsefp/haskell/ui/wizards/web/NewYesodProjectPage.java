@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.wizards.web;
 
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -44,7 +45,11 @@ public class NewYesodProjectPage extends WizardNewProjectCreationPage {
     authorNameL.setText( "Author" );
     authorName = new Text( inner, SWT.BORDER );
     authorName.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    authorName.setText( "user" );
+    String userName=PlatformUtil.getCurrentUser();
+    if (userName==null){
+      userName="user";
+    }
+    authorName.setText( userName );
     authorName.addModifyListener( new ModifyListener() {
 
       public void modifyText( final ModifyEvent e ) {

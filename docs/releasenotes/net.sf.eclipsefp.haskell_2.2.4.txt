@@ -20,9 +20,11 @@ Features:
 	- Search for breakpoints and breakpoints source in referenced projects, not only current projects
 	- Haddock generation now uses cabal haddock instead of calling haddock directly
 		- wizard is simpler
+	- GTK new project wizard: creates an executable with a dependency on GTK and showing a simple Hello World Button application
+	- New projects use current user name as default author name
 
 Internal:
-	- On files bigger than 20k, do syntax coloring in a job
+	- On files bigger than 20k, do syntax coloring in a job. There is a preference to change the threshold.
 
 Upgrade notes:
 
