@@ -102,6 +102,8 @@ public class BWFacade {
 	 */
 	private boolean needSetDerivedOnDistDir=false;
 	
+	private boolean hasCabalProblems=false;
+	
 	public SingleJobQueue getBuildJobQueue() {
 		return buildJobQueue;
 	}
@@ -124,12 +126,20 @@ public class BWFacade {
 			}
 		}
 		
-		//BuildWrapperPlugin.deleteProblems(getProject());
+		if (hasCabalProblems){
+			String relCabal=getCabalFile().substring(getProject().getLocation().toOSString().length());
+			IFile f=getProject().getFile(relCabal);
+			if (f!=null && f.exists()){
+				BuildWrapperPlugin.deleteProblems(f);
+			}
+			hasCabalProblems=false;
+		}
+
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
-		JSONArray arr=run(command,ARRAY,false); // no need to run since build in Cabal.hs already does it
+		JSONArray arr=run(command,ARRAY,false);
 		if (arrC!=null){
 			for (int a=0;a<arrC.length();a++){
 				try {
@@ -157,7 +167,7 @@ public class BWFacade {
 							if (res!=null){
 								ress.add(res);
 								BuildWrapperPlugin.deleteProblems(res);
-							}
+							} 
 						}
 					}
 				}
@@ -552,13 +562,14 @@ public class BWFacade {
 					Location loc=new Location(f, line, col, line, col);
 					Note n=new Note(k,loc,o.getString("t"),"");
 					IResource res=project.findMember(f);
-//					if (res==null){
-//						f=f.replace("\\\\", "\\");
-//						String pos=project.getLocation().toOSString();
-//						if (f.startsWith(pos)){
-//							res=project.findMember(f.substring(pos.length()));
-//						}
-//					}
+					// linker errors may have full path
+					if (res==null){
+						f=f.replace("\\\\", "\\");
+						String pos=project.getLocation().toOSString();
+						if (f.startsWith(pos)){
+							res=project.findMember(f.substring(pos.length()));
+						}
+					}
 					if (res!=null){
 						if (ress.add(res)){
 							BuildWrapperPlugin.deleteProblems(res);
@@ -567,6 +578,9 @@ public class BWFacade {
 							n.applyAsMarker(res);
 						} catch (CoreException ce){
 							BuildWrapperPlugin.logError(BWText.process_apply_note_error, ce);
+						}
+						if (res.getLocation().toOSString().equals(getCabalFile())){
+							hasCabalProblems=true;
 						}
 					}
 				}
