@@ -34,7 +34,10 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 /** <p>The property page for libraries on Haskell projects.</p>
   *
   * @author Leif Frenzel
+  * @deprecated
+  * Use cabal editor
   */
+@Deprecated
 public class ImportLibrariesPP extends PropertyPage
                                implements IWorkbenchPreferencePage {
 

@@ -303,7 +303,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
-      <page
+      <!--page
             name="%projectLibrariesPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP"
             id="net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesPP">
@@ -318,7 +318,7 @@
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
-      </page>
+      </page-->
 	 <page
             name="%projectFlagsPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.UserFlagsPP"
@@ -335,7 +335,22 @@
             <adapt type="org.eclipse.core.resources.IProject" />
          </enabledWhen>
       </page>
-      
+      <page
+            name="%projectParamsPP_name"
+            class="net.sf.eclipsefp.haskell.ui.properties.ExtraCabalParamsPP"
+            id="net.sf.eclipsefp.haskell.ui.properties.ExtraCabalParamsPP">
+         <filter
+               name="nature"
+               value="net.sf.eclipsefp.haskell.core.project.HaskellNature">
+         </filter>
+         <filter
+               name="open"
+               value="true">
+         </filter>
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject" />
+         </enabledWhen>
+      </page>
       <page
             name="%fileExposeModulesPP_name"
             class="net.sf.eclipsefp.haskell.ui.properties.ModuleInclusionPP"

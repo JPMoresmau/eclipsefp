@@ -64,6 +64,7 @@ public class BWFacade {
 	private String cabalShortName;
 	
 	private String flags;
+	private List<String> extraOpts=new LinkedList<String>();
 	
 	private File workingDir;
 	
@@ -660,6 +661,9 @@ public class BWFacade {
 		args.add("--cabalpath="+cabalPath);
 		args.add("--cabalfile="+cabalFile);
 		args.add("--cabalflags="+flags);
+		for (String s:extraOpts){
+			args.add("--cabaloption="+s);
+		}
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);
@@ -898,6 +902,20 @@ public class BWFacade {
 	        	sb.append(s);
 	        }
 	        flags=sb.toString();
+	        
+	        extraOpts.clear();
+	        currentProp=project.getPersistentProperty( BuildWrapperPlugin.EXTRAOPTS_PROPERTY );
+	        JSONArray arrOpts=new JSONArray();
+	        if (currentProp!=null && currentProp.length()>0){
+	        	arrOpts=new JSONArray( currentProp );
+		    }
+	        for (int a=0;a<arrOpts.length();a++){
+	        	String s=arrOpts.getString(a);
+	        	if (s!=null && s.length()>0){
+	        		extraOpts.add(s);
+	        	}
+	        }
+	        
 		} catch (Exception e){
 			BuildWrapperPlugin.logError(BWText.error_gettingFlags, e);
 		}

@@ -507,6 +507,12 @@ public final class UITexts extends NLS {
 
   public static String properties_userflags_description;
   public static String properties_userflags_none;
+  public static String properties_extra_description;
+  public static String properties_extra_libdirs;
+  public static String properties_extra_incdirs;
+  public static String properties_extra_free;
+  public static String properties_extra_free_title;
+  public static String properties_extra_free_message;
 
   public static String error_tabs;
   public static String error_tabs_message;

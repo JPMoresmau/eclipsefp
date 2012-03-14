@@ -34,6 +34,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.buildwrapper";
 
 	public static QualifiedName 				 USERFLAGS_PROPERTY=new QualifiedName("EclipseFP", "UserFlags");
+	public static QualifiedName 				 EXTRAOPTS_PROPERTY=new QualifiedName("EclipseFP", "ExtraOpts");
 	
 	// The shared instance
 	private static BuildWrapperPlugin plugin;
