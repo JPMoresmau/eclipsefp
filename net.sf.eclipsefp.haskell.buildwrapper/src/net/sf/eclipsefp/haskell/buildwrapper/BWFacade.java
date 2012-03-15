@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
@@ -456,6 +457,26 @@ public class BWFacade {
 		//long t1=System.currentTimeMillis();
 		//BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
 		return cps;
+	}
+	
+	public BuildFlags getBuildFlags(IFile file){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("getbuildflags");
+		command.add("--file="+path);
+		JSONArray arr=run(command,ARRAY);
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				//notes.putAll(i.getNotes());
+				parseNotes(notes);
+			}
+			JSONObject obj=arr.optJSONObject(0);
+			if (obj!=null){
+				return new BuildFlags(obj);
+			}
+		}
+		return null;
 	}
 	
 	public List<Occurrence> getOccurrences(IFile file,String s){

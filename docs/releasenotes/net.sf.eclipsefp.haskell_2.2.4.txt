@@ -14,6 +14,7 @@ Fixes:
 	- Support hlint not managing to parse sources (example with Template Haskell)
 	- Do not run HLint on sources inside .dist-buildwrapper
 	- 2.2.3 regression fixed: running GHCi with hidden packages failed (wrong quoting)	
+	- Show constructors from same project in auto completion
 
 Features:
 	- Task tags: special words in comment create tasks (TODO, FIXME, XXX by default)
@@ -22,6 +23,9 @@ Features:
 		- wizard is simpler
 	- GTK new project wizard: creates an executable with a dependency on GTK and showing a simple Hello World Button application
 	- New projects use current user name as default author name
+	- Extra cabal parameters in project properties
+		- pass to Cabal configure
+		- special UI for extra lib dirs and extra include dirs
 
 Internal:
 	- On files bigger than 20k, do syntax coloring in a job. There is a preference to change the threshold.
