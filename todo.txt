@@ -1,8 +1,14 @@
-- achievements!
-
-- autocomplete perf
 
 - format using haskell-src-exts
+	- doesn't support comments
+- format using scan
+	- very limited	
+
+- occurrences + search for Haskell objects in project/workspace
+	- refactor -> rename renames all occurrences
+
+- achievements!
+
 
 - clean up preferences
 	- no option for GHC/GHCi: we need to know what options to ignore for GHCi, since these options are going to appear in the Cabal file
@@ -15,12 +21,7 @@
 
 - files not haskell in source folders could go into data-files automatically
 
-- project actions
-	- clean
- -> via scion or via cabal impl directly
 
-
-- occurences + search for Haskell objects in project/workspace
 
 
 - run Ghci with proper flags done partially
@@ -31,8 +32,7 @@
 
 .ghci file parsing/editor?? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
 
-- integrate analysis tools like SourceGraph, HLINT, hpc, HaskaBelle
-- integrate doc tools hoogle,haddock
+- integrate analysis tools like hpc, HaskaBelle
 - integrate runtime tools like criterion
 - integrate HaRe for refactoring?
 
@@ -42,12 +42,12 @@
 	- better system to force evaluation? Done with custom value setter calling :force what about calling seq ... ()?
 	- reloading modules when stopped seems to cause breakpoints to disappear in GHCi, to check
 
-- add Haskell nature + related file to existing project
+- add Haskell nature + related files to existing project
 
 - import management (order import, only import what's needed, add proper import for function?)
 
 - project rename
-- module rename (rename file + module name + imports + in cabal)
+- module rename (rename file + module name + imports ) (in cabal already done)
 
 - CAPRI http://www.haskell.org/haskellwiki/Capri to install scion
 	- built-in -> install global/local/project
