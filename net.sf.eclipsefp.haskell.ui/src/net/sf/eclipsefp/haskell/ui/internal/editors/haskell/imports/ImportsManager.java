@@ -37,7 +37,7 @@ public class ImportsManager {
   private final IDocument doc;
 
   private ArrayList<AnImport> imports=null;
-  private HashMap<String, Documented> decls=null;
+  private Map<String, Documented> decls=null;
   private Map<String, Imported> importedDecls=null;
 
   public ImportsManager(final IFile file, final IDocument doc) {
@@ -53,7 +53,7 @@ public class ImportsManager {
 
   public ArrayList<AnImport> parseImports() {
     if(imports==null){
-      imports = new ArrayList<AnImport>();
+      ArrayList<AnImport> myImports = new ArrayList<AnImport>();
       OutlineResult or=null;
       if (doc!=null){
         HaskellEditor editor=HaskellUIPlugin.getHaskellEditor( doc );
@@ -71,9 +71,10 @@ public class ImportsManager {
       if (or!=null){
         for (ImportDef id:or.getImportDefs()){
           AnImport imp = new AnImport( id,false );
-          imports.add(imp);
+          myImports.add(imp);
         }
       }
+      imports=myImports;
     }
     return imports;
   }
@@ -81,10 +82,11 @@ public class ImportsManager {
   public Map<String, Documented> getDeclarations() {
     if(decls==null){
       Map<String, Imported> si=getImportedDeclarations();
-      decls = new HashMap<String, Documented>(si.size());
+      Map<String, Documented> myDecls = new HashMap<String, Documented>(si.size());
       for (String i:si.keySet()) {
-        decls.put(i,si.get( i ).getDocumented().getDocumented()  );
+        myDecls.put(i,si.get( i ).getDocumented().getDocumented()  );
       }
+      decls=myDecls;
     }
     return decls;
   }
@@ -94,24 +96,25 @@ public class ImportsManager {
       ArrayList<AnImport> imports = parseImports();
       // Add Prelude import
       boolean hasPrelude = false;
-      importedDecls = new HashMap<String, Imported>();
+      Map<String, Imported> myImportedDecls = new HashMap<String, Imported>();
 
 
       // Add me
       String meName = ResourceUtil.getModuleName( file );
 
-      getImportDeclarations(importedDecls, AnImport.createMe( meName ) );
+      getImportDeclarations(myImportedDecls, AnImport.createMe( meName ) );
 
       for (AnImport i : imports) {
-        getImportDeclarations(importedDecls,i);
+        getImportDeclarations(myImportedDecls,i);
         if (i.getImportDef().getModule().equals( "Prelude" )) {
           hasPrelude = true;
         }
       }
 
       if (!hasPrelude) {
-        getImportDeclarations(importedDecls, new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
+        getImportDeclarations(myImportedDecls, new AnImport(new ImportDef("Prelude", null, false, false, null ),false ));
       }
+      importedDecls=myImportedDecls;
     }
     return importedDecls;
   }
