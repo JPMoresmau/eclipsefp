@@ -240,19 +240,16 @@ public class AnImport {
   private List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or ) {
     ArrayList<FileDocumented> decls = new ArrayList<FileDocumented>();
 
-          for (OutlineDef def : or.getOutlineDefs()) {
-            FileDocumented d = outlineToBrowser( def,file );
-            if (d != null) {
-              decls.add( d );
-            }
-          }
-          for (ExportDef ed:or.getExportDefs()){
-            if (ed.getType().equals( ImportExportType.IEModule )){
-              decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject() ) );
-            }
-          }
+    for (OutlineDef def : or.getOutlineDefs()) {
+      outlineToBrowser( def,file,decls );
+    }
+    for (ExportDef ed:or.getExportDefs()){
+      if (ed.getType().equals( ImportExportType.IEModule )){
+        decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject() ) );
+      }
+    }
 
-      return decls;
+    return decls;
 
   }
 
@@ -281,12 +278,14 @@ public class AnImport {
     }
   }
 
-  public static FileDocumented outlineToBrowser( final OutlineDef def , final IFile file) {
+  public static void outlineToBrowser( final OutlineDef def , final IFile file,final List<FileDocumented> ret) {
     Documented d=outlineToBrowser( def );
     if (d!=null){
-      return new FileDocumented( d, file );
+      ret.add( new FileDocumented( d, file ) );
     }
-    return null;
+    for (OutlineDef c:def.getChildren()){
+      outlineToBrowser(c,file,ret);
+    }
   }
 
   public CompletionProposal addItem(final IDocument doc, String item, final String label) {
