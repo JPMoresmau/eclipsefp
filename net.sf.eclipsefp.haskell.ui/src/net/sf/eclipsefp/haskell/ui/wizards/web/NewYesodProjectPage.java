@@ -52,6 +52,7 @@ public class NewYesodProjectPage extends WizardNewProjectCreationPage {
     authorName.setText( userName );
     authorName.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent e ) {
         verify();
       }
@@ -64,6 +65,7 @@ public class NewYesodProjectPage extends WizardNewProjectCreationPage {
     foundation.setText( "Foundation" );
     foundation.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent e ) {
         verify();
       }

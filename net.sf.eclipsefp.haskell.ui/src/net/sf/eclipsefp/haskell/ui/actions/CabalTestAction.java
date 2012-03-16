@@ -28,12 +28,14 @@ public class CabalTestAction implements IObjectActionDelegate {
   private Shell currentShell;
   private IProject project;
 
+  @Override
   public void setActivePart( final IAction arg0, final IWorkbenchPart arg1 ) {
     currentShell=arg1.getSite().getShell();
 
   }
 
 
+  @Override
   public void run( final IAction arg0 ) {
     if (project!=null){
       Version v=CabalImplementationManager.getCabalLibraryVersion();
@@ -47,6 +49,7 @@ public class CabalTestAction implements IObjectActionDelegate {
     }
   }
 
+  @Override
   public void selectionChanged( final IAction arg0, final ISelection arg1 ) {
     Collection<IProject> prjs=ResourceUtil.getProjects( arg1 );
     if (prjs.size()>0){

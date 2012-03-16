@@ -127,6 +127,7 @@ public class FormEntryText extends FormEntry {
     } );
     textField.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         if( !textField.getText().equals( value ) ) {
           editOccured( evt );

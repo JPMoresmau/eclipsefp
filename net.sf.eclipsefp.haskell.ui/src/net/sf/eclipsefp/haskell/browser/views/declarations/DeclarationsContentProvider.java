@@ -33,6 +33,7 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
     this.isTypes = isTypes;
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
     if( newInput == null || !( newInput instanceof ModulesItem ) ) {
@@ -77,10 +78,12 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
     }
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return cache.toArray();
   }
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     if( parentElement instanceof QueryItem ) {
       QueryItem item = ( QueryItem )parentElement;
@@ -99,14 +102,17 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
     }
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     return this.getChildren( element ).length > 0;
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }

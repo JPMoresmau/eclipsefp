@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class HoogleLabelProvider implements ILabelProvider {
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public Image getImage( final Object element ) {
     if (element instanceof NoDatabaseRoot){
@@ -60,6 +61,7 @@ public class HoogleLabelProvider implements ILabelProvider {
     return null;
   }
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public String getText( final Object element ) {
 
@@ -111,19 +113,23 @@ public class HoogleLabelProvider implements ILabelProvider {
   }
 
   // Listeners: not used
+  @Override
   public void addListener( final ILabelProviderListener listener ) {
     // Do nothing
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public boolean isLabelProperty( final Object element, final String property ) {
     // Do nothing
     return false;
   }
 
+  @Override
   public void removeListener( final ILabelProviderListener listener ) {
     // Do nothing
   }

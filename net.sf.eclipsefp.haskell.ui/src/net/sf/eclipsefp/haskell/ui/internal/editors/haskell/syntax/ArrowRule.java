@@ -19,10 +19,12 @@ public class ArrowRule extends WordRule implements IPredicateRule {
 
   public ArrowRule( final IToken successToken ) {
     super( new IWordDetector() {
+      @Override
       public boolean isWordStart( final char c ) {
         return( c == '-' );
       }
 
+      @Override
       public boolean isWordPart( final char c ) {
         return( c == '-' || c == '>' );
       }
@@ -31,11 +33,13 @@ public class ArrowRule extends WordRule implements IPredicateRule {
     addWord( "->", successToken );  //$NON-NLS-1$
   }
 
+  @Override
   public IToken evaluate( final ICharacterScanner scanner,
                           final boolean resume ) {
     return super.evaluate( scanner );
   }
 
+  @Override
   public IToken getSuccessToken() {
     return successToken;
   }

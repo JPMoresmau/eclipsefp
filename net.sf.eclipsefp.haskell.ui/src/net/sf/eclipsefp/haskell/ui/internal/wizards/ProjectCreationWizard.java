@@ -93,13 +93,15 @@ public abstract class ProjectCreationWizard
 	  * Stores the configuration element for the wizard. The config element will
 	  * be used in <code>performFinish</code> to set the result perspective.
 	  */
-	public void setInitializationData(
+	@Override
+  public void setInitializationData(
 	    final IConfigurationElement configElement,
       final String propertyName,
       final Object data ) {
     this.configElement = configElement;
   }
 
+  @Override
   public void init(
       final IWorkbench workbench,
       final IStructuredSelection selection ) {
@@ -138,6 +140,7 @@ public abstract class ProjectCreationWizard
     operation.setLibrary(page.isLibrary());
      */
     IRunnableWithProgress rwp = new IRunnableWithProgress() {
+      @Override
       public void run( final IProgressMonitor monitor ) {
         operation.run( monitor );
       }

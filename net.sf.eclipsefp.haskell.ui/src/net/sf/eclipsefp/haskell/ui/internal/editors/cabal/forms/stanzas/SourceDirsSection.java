@@ -52,20 +52,24 @@ public class SourceDirsSection extends CabalFormSection implements IFormEntryLis
     this.listener = listener;
   }
 
+  @Override
   public void textValueChanged( final FormEntry entry ) {
     if (listener != null) {
       listener.textValueChanged( entry );
     }
   }
 
+  @Override
   public void focusGained( final FormEntry entry ) {
     // Do nothing
   }
 
+  @Override
   public void textDirty( final FormEntry entry ) {
     // Do nothing
   }
 
+  @Override
   public void selectionChanged( final FormEntry entry ) {
     // Do nothing
   }

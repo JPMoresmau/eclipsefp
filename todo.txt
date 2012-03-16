@@ -9,6 +9,11 @@
 
 - achievements!
 
+- "visual programming"
+	- define expressions
+	- the expressions get revaluated every time the file is changed
+	- expressions could be assigned with "viewers"
+		-> show images, play sound, etc
 
 - clean up preferences
 	- no option for GHC/GHCi: we need to know what options to ignore for GHCi, since these options are going to appear in the Cabal file

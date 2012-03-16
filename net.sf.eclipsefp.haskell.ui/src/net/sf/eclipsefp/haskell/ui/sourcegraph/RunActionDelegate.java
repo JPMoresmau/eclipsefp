@@ -48,6 +48,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
     // Nothing special
   }
 
+  @Override
   public void run( final IAction action ) {
     if (project != null) {
       try {
@@ -61,6 +62,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
         commands.add(cabalFile.getRawLocation().toOSString());
 
         AbstractHaskellLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), "SourceGraph", false,new Runnable(){
+          @Override
           public void run() {
          // Get path name
             final IPath projectPath = cabalFile.getRawLocation().removeLastSegments( 1 );
@@ -69,6 +71,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
 
             Display.getDefault().syncExec( new Runnable() {
 
+              @Override
               public void run() {
                 try {
                   if( htmlFile.exists() && htmlFile.isFile() ) {
@@ -99,6 +102,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
     }
   }
 
+  @Override
   public void selectionChanged( final IAction action, final ISelection selection ) {
     Collection<IProject> prjs = ResourceUtil.getProjects( selection );
     if (prjs.size() > 0){
@@ -106,6 +110,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
     }
   }
 
+  @Override
   public void setActivePart( final IAction action, final IWorkbenchPart targetPart ) {
     currentShell = targetPart.getSite().getShell();
   }

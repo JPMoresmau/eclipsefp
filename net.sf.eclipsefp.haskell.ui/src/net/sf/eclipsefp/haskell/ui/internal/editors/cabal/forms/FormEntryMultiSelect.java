@@ -129,6 +129,7 @@ public class FormEntryMultiSelect extends FormEntry implements
     this.treeField.getControl().setEnabled( editable );
   }
 
+  @Override
   public void checkStateChanged( final CheckStateChangedEvent event ) {
     if (onlyOneSelected) {
       boolean previousIgnoreModify = ignoreModify;

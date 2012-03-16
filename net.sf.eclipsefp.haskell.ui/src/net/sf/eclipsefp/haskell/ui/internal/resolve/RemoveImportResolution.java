@@ -37,6 +37,7 @@ public class RemoveImportResolution extends MarkerCompletion {
     return null;
   }
 
+  @Override
   public String getLabel() {
     return UITexts.resolve_import_remove;
   }

@@ -34,6 +34,7 @@ public abstract class AbstractAddNatureActionDelegate  implements IObjectActionD
 
     protected abstract String getBuilderID();
 
+    @Override
     public void run( final IAction action ) {
       if( project != null ) {
         IProgressMonitor mon = new NullProgressMonitor();
@@ -69,6 +70,7 @@ public abstract class AbstractAddNatureActionDelegate  implements IObjectActionD
       }
     }
 
+    @Override
     public void selectionChanged( final IAction action, final ISelection selection ) {
       Collection<IProject> prjs = ResourceUtil.getProjects( selection );
       if( prjs.size() > 0 ) {
@@ -76,6 +78,7 @@ public abstract class AbstractAddNatureActionDelegate  implements IObjectActionD
       }
     }
 
+    @Override
     public void setActivePart( final IAction action,
         final IWorkbenchPart targetPart ) {
       // NOOP

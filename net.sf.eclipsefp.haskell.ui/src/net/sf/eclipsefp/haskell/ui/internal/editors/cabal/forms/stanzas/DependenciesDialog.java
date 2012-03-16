@@ -104,6 +104,7 @@ public class DependenciesDialog extends Dialog implements
     super.okPressed();
   }
 
+  @Override
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
@@ -124,6 +125,7 @@ public class DependenciesDialog extends Dialog implements
     }
   }
 
+  @Override
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();

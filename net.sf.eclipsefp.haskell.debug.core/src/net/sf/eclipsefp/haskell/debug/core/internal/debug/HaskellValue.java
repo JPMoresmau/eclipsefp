@@ -25,22 +25,27 @@ public class HaskellValue extends HaskellDebugElement implements IValue {
     this.val=val;
   }
 
+  @Override
   public String getReferenceTypeName() {
    return type;
   }
 
+  @Override
   public String getValueString()  {
    return val;
   }
 
+  @Override
   public IVariable[] getVariables() {
     return new IVariable[0];
   }
 
+  @Override
   public boolean hasVariables() {
     return false;
   }
 
+  @Override
   public boolean isAllocated()  {
    return !GHCiSyntax.UNRESOLVED.equals(val);
   }

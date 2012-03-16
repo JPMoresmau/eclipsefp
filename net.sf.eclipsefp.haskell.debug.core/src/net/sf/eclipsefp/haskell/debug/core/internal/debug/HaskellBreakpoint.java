@@ -32,6 +32,7 @@ public class HaskellBreakpoint extends LineBreakpoint {
   public HaskellBreakpoint(final IResource resource, final int lineNumber)
       throws CoreException {
     IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+      @Override
       public void run(final IProgressMonitor monitor) throws CoreException {
         IMarker marker = resource
             .createMarker("net.sf.eclipsefp.haskell.debug.core.breakpoint"); //$NON-NLS-1$
@@ -46,6 +47,7 @@ public class HaskellBreakpoint extends LineBreakpoint {
     run(getMarkerRule(resource), runnable);
   }
 
+  @Override
   public String getModelIdentifier() {
     return HaskellDebugCore.ID_HASKELL_DEBUG_MODEL;
   }

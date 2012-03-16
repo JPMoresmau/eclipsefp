@@ -118,6 +118,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 
 		ca.setInformationControlCreator( new IInformationControlCreator() {
 
+      @Override
       public IInformationControl createInformationControl( final Shell parent ) {
         //return new HaskellInformationControl(parent,viewer.getTextWidget().getFont());
         return new DefaultInformationControl( parent, false );

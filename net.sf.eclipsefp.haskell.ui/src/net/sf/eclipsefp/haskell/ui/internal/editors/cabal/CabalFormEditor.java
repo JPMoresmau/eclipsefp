@@ -172,26 +172,30 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
     return result;
   }
 
-   public void addRulerContextMenuListener( final IMenuListener paramIMenuListener ) {
+   @Override
+  public void addRulerContextMenuListener( final IMenuListener paramIMenuListener ) {
      if (cabalSourceEditor!=null){
        cabalSourceEditor.addRulerContextMenuListener( paramIMenuListener );
      }
   }
 
-   public void removeRulerContextMenuListener( final IMenuListener paramIMenuListener ) {
+   @Override
+  public void removeRulerContextMenuListener( final IMenuListener paramIMenuListener ) {
      if (cabalSourceEditor!=null){
        cabalSourceEditor.removeRulerContextMenuListener( paramIMenuListener );
      }
   }
 
-   public boolean isEditorInputReadOnly() {
+   @Override
+  public boolean isEditorInputReadOnly() {
      if (cabalSourceEditor!=null){
        return cabalSourceEditor.isEditorInputReadOnly();
      }
     return false;
   }
 
-   public void setStatusField( final IStatusField paramIStatusField, final String paramString ) {
+   @Override
+  public void setStatusField( final IStatusField paramIStatusField, final String paramString ) {
      if (cabalSourceEditor!=null){
        cabalSourceEditor.setStatusField( paramIStatusField, paramString );
      }

@@ -39,27 +39,33 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
     }
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
     // Do nothing
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return elements;
   }
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     return new Object[ 0 ];
   }
 
+  @Override
   public Object getParent( final Object element ) {
     // TODO Auto-generated method stub
     return null;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     // TODO Auto-generated method stub
     return false;

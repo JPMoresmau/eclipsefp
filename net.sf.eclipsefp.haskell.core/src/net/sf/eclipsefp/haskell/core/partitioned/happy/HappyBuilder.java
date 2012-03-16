@@ -42,6 +42,7 @@ public class HappyBuilder extends IncrementalProjectBuilder {
         return null;
       }
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+        @Override
         public void run( final IProgressMonitor monitor ) {
           try {
             delta.accept( new DeltaVisitor() );
@@ -52,12 +53,14 @@ public class HappyBuilder extends IncrementalProjectBuilder {
       }, monitor );
     } else if( kind == CLEAN_BUILD ) {
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+        @Override
         public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
         }
       }, monitor );
     } else if( kind == FULL_BUILD ) {
       ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
+        @Override
         public void run( final IProgressMonitor monitor ) throws CoreException {
           clean( monitor );
           try {

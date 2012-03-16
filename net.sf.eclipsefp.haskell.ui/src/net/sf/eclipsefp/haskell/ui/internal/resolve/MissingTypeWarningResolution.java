@@ -26,6 +26,7 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
     this.toSearch = toSearch;
   }
 
+  @Override
   public String getLabel() {
     return UITexts.resolve_missingtype;
   }

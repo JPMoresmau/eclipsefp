@@ -25,6 +25,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 public class BuildMarkerResolutionGenerator implements
     IMarkerResolutionGenerator {
 
+  @Override
   public IMarkerResolution[] getResolutions( final IMarker marker ) {
     if (marker==null || !marker.exists()){
       return new IMarkerResolution[0];

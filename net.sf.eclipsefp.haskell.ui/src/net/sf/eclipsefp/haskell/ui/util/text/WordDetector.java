@@ -13,10 +13,12 @@ import org.eclipse.jface.text.rules.IWordDetector;
   */
 public class WordDetector implements IWordDetector {
 
+  @Override
   public boolean isWordPart( final char character ) {
     return Character.isJavaIdentifierPart( character );
   }
   
+  @Override
   public boolean isWordStart( final char character ) {
     return Character.isJavaIdentifierStart( character );
   }

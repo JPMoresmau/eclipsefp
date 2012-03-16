@@ -51,10 +51,12 @@ public class UuagcOptionsPage extends FormPage {
 
     theEditor.getModel().addDocumentListener( new IDocumentListener() {
 
+      @Override
       public void documentAboutToBeChanged( final DocumentEvent event ) {
         // Nothing
       }
 
+      @Override
       public void documentChanged( final DocumentEvent event ) {
         // Nothing
         String pastContents = manager.toUuagcString();

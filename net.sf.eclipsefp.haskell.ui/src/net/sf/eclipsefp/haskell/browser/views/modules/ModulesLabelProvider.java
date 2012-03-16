@@ -16,30 +16,36 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ModulesLabelProvider implements ILabelProvider {
 
-	public Image getImage(final Object element) {
+	@Override
+  public Image getImage(final Object element) {
 		return ImageCache.MODULE;
 	}
 
-	public String getText(final Object element) {
+	@Override
+  public String getText(final Object element) {
 		ModulesItem item = (ModulesItem)element;
 		return item.getShownName();
 	}
 
 	// Listeners: not used
-	public void addListener(final ILabelProviderListener listener) {
+	@Override
+  public void addListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Do nothing
 	}
 
-	public boolean isLabelProperty(final Object element, final String property) {
+	@Override
+  public boolean isLabelProperty(final Object element, final String property) {
 		// Do nothing
 		return false;
 	}
 
-	public void removeListener(final ILabelProviderListener listener) {
+	@Override
+  public void removeListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 }

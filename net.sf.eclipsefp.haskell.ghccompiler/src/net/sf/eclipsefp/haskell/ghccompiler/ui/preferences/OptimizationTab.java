@@ -51,6 +51,7 @@ public class OptimizationTab extends GhcCompilerTab  {
     dlgField.setInfo( info );
 
     dlgField.addDialogFieldListener( new IDialogFieldListener() {
+      @Override
       public void infoChanged( final Object newInfo ) {
         String key = IGhcPreferenceNames.OPTIMIZATION_LEVEL;
         int value = ( ( Integer )newInfo ).intValue();
@@ -84,6 +85,7 @@ public class OptimizationTab extends GhcCompilerTab  {
     createBooleanField( grpIndividual, OPT_UNBOX_STRICT_FIELDS );
   }*/
 
+  @Override
   public void propertyChange( final PropertyChangeEvent event ) {
     String key = IGhcPreferenceNames.OPTIMIZATION_LEVEL;
     Integer info = new Integer( getPreferenceStore().getInt( key ) );

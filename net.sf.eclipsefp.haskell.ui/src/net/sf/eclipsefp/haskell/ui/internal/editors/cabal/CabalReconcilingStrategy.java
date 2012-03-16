@@ -28,14 +28,17 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
   // interface methods of IReconcilingStrategy
   ////////////////////////////////////////////
 
+  @Override
   public void reconcile( final IRegion partition ) {
     reconcile();
   }
 
+  @Override
   public void reconcile( final DirtyRegion dirtyRegion, final IRegion subRegion ) {
     reconcile();
   }
 
+  @Override
   public void setDocument( final IDocument document ) {
     this.document = document;
     foldingStructureProvider.setDocument( document );
@@ -45,10 +48,12 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
   // interface methods of IReconcilingStrategyExtension
   /////////////////////////////////////////////////////
 
+  @Override
   public void initialReconcile() {
     reconcile();
   }
 
+  @Override
   public void setProgressMonitor( final IProgressMonitor monitor ) {
     // unused
   }
@@ -61,6 +66,7 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
     String content = document.get();
     final PackageDescription pd = PackageDescriptionLoader.load( content );
     Display.getDefault().asyncExec( new Runnable() {
+      @Override
       public void run() {
         editor.setPackageDescription( pd );
       }

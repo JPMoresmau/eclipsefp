@@ -20,6 +20,7 @@ public abstract class HaskellDebugElement implements IDebugElement {
     setTarget( target );
   }
 
+  @Override
   public HaskellDebugTarget getDebugTarget() {
     return target;
   }
@@ -29,14 +30,17 @@ public abstract class HaskellDebugElement implements IDebugElement {
     this.target = target;
   }
 
+  @Override
   public ILaunch getLaunch() {
     return getDebugTarget().getLaunch();
   }
 
+  @Override
   public String getModelIdentifier() {
     return HaskellDebugCore.ID_HASKELL_DEBUG_MODEL;
   }
 
+  @Override
   public Object getAdapter( final Class adapter ) {
     if (adapter.isAssignableFrom(this.getClass() )){
       return this;

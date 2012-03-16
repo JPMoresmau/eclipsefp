@@ -52,6 +52,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return delegate;
   }
 
+  @Override
   public void launch( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, IProgressMonitor monitor )
       throws CoreException {
@@ -346,21 +347,25 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     if (after!=null){
       ILaunchesListener2 l=new ILaunchesListener2() {
 
+        @Override
         public void launchesRemoved( final ILaunch[] paramArrayOfILaunch ) {
           // NOOP
 
         }
 
+        @Override
         public void launchesChanged( final ILaunch[] paramArrayOfILaunch ) {
           // NOOP
 
         }
 
+        @Override
         public void launchesAdded( final ILaunch[] paramArrayOfILaunch ) {
           // NOOP
 
         }
 
+        @Override
         public void launchesTerminated( final ILaunch[] paramArrayOfILaunch ) {
          for (ILaunch la:paramArrayOfILaunch){
            if (la.getLaunchConfiguration()==wc){

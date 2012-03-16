@@ -151,6 +151,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
     treeField.getControl().setEnabled( editable );
   }
 
+  @Override
   public void checkStateChanged( final CheckStateChangedEvent event ) {
     if( !ignoreModify ) {
       if (event.getElement() instanceof IFolder){

@@ -80,6 +80,7 @@ public class ScionPP
 
     IPropertyChangeListener propertyListener=new IPropertyChangeListener() {
 
+      @Override
       public void propertyChange( final PropertyChangeEvent arg0 ) {
         updateButtonState();
         setValid( isValid() );
@@ -92,6 +93,7 @@ public class ScionPP
     cabalBlock = new CabalImplsBlock();
     Control control = cabalBlock.createControl( parentComposite, this );
     cabalBlock.addSelectionChangedListener( new ISelectionChangedListener() {
+      @Override
       public void selectionChanged( final SelectionChangedEvent event ) {
         setValid( isValid() );
       }
@@ -271,6 +273,7 @@ public class ScionPP
 	  // unused
 	}
 
+  @Override
   public void init( final IWorkbench workbench ) {
     // unused
   }

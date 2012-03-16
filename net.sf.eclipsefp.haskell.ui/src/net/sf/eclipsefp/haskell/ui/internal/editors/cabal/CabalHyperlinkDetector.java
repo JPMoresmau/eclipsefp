@@ -43,6 +43,7 @@ class CabalHyperlinkDetector implements IHyperlinkDetector {
   // interface methods of IHyperlinkDetector
   //////////////////////////////////////////
 
+  @Override
   public IHyperlink[] detectHyperlinks( final ITextViewer textViewer,
                                         final IRegion region,
                                         final boolean canShowMultiple ) {
@@ -132,10 +133,12 @@ class CabalHyperlinkDetector implements IHyperlinkDetector {
     // interface methods of IHyperlink
     //////////////////////////////////
 
+    @Override
     public IRegion getHyperlinkRegion() {
       return region;
     }
 
+    @Override
     public void open() {
       IWorkbench workbench = PlatformUI.getWorkbench();
       IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
@@ -150,11 +153,13 @@ class CabalHyperlinkDetector implements IHyperlinkDetector {
       }
     }
 
+    @Override
     public String getHyperlinkText() {
       // unused
       return null;
     }
 
+    @Override
     public String getTypeLabel() {
       // unused
       return null;

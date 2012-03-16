@@ -136,6 +136,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private OutlineResult lastOutlineResult=null;
   private final OutlineHandler outlineHandler = new OutlineHandler() {
 
+    @Override
     public void handleOutline( final OutlineResult or ) {
       if (outlinePage!=null){
         outlinePage.setInput( or.getOutlineDefs() );
@@ -279,6 +280,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
     addRulerContextMenuListener( new IMenuListener() {
 
+      @Override
       public void menuAboutToShow( final IMenuManager manager ) {
        IVerticalRulerInfo service= (IVerticalRulerInfo)getAdapter(IVerticalRulerInfo.class);
        if (service!=null){
@@ -338,6 +340,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     if( markOccurrencesComputer != null ) {
       ISelectionChangedListener listener = new ISelectionChangedListener() {
 
+        @Override
         public void selectionChanged( final SelectionChangedEvent event ) {
           IDocument doc = getSourceViewer().getDocument();
           markOccurrencesComputer.setDocument( doc );
@@ -404,6 +407,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
       if (f!=null){
         new Thread(new Runnable() {
 
+          @Override
           public void run() {
             // synchronize and rebuild to be sure that we're in sync if we close a dirty editor
             f.synchronize1( file,true );

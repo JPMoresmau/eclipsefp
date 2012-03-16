@@ -29,6 +29,7 @@ public class CabalInstallOptionsPage extends WizardPage {
 
   }
 
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );

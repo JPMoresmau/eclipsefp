@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class HaskellToggleBreakpointTargetFactory implements
     IToggleBreakpointsTargetFactory {
 
+  @Override
   public IToggleBreakpointsTarget createToggleTarget( final String targetID ) {
     if (HaskellDebugCore.ID_HASKELL_DEBUG_MODEL.equals( targetID )){
       return new HaskellLineBreakpointAdapter();
@@ -24,6 +25,7 @@ public class HaskellToggleBreakpointTargetFactory implements
     return null;
   }
 
+  @Override
   public String getDefaultToggleTarget( final IWorkbenchPart part,
       final ISelection selection ) {
    if (HaskellLineBreakpointAdapter.getEditor( part )!=null){
@@ -32,6 +34,7 @@ public class HaskellToggleBreakpointTargetFactory implements
    return null;
   }
 
+  @Override
   public String getToggleTargetDescription( final String targetID ) {
     if (HaskellDebugCore.ID_HASKELL_DEBUG_MODEL.equals( targetID )){
       return UITexts.breakpoint_toggle_description;
@@ -39,6 +42,7 @@ public class HaskellToggleBreakpointTargetFactory implements
     return null;
   }
 
+  @Override
   public String getToggleTargetName( final String targetID ) {
     if (HaskellDebugCore.ID_HASKELL_DEBUG_MODEL.equals( targetID )){
       return UITexts.breakpoint_toggle;
@@ -46,6 +50,7 @@ public class HaskellToggleBreakpointTargetFactory implements
     return null;
   }
 
+  @Override
   public Set<String> getToggleTargets( final IWorkbenchPart part, final ISelection selection ) {
     Set<String> ret=new HashSet<String>();
     if (HaskellLineBreakpointAdapter.getEditor( part )!=null){

@@ -28,6 +28,7 @@ public class HLintResolution extends MarkerCompletion {
   /* (non-Javadoc)
    * @see org.eclipse.ui.IMarkerResolution#getLabel()
    */
+  @Override
   public String getLabel() {
     return UITexts.resolve_hlint;
   }

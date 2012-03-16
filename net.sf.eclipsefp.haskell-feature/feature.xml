@@ -58,13 +58,21 @@ available at http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.core.resources" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.5.2" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsefp.haskell.ui"/>
+      <import plugin="net.sf.eclipsefp.haskell.haddock"/>
+      <import plugin="net.sf.eclipsefp.haskell.core"/>
+      <import plugin="net.sf.eclipsefp.haskell.util"/>
+      <import plugin="net.sf.eclipsefp.haskell.debug.ui"/>
+      <import plugin="net.sf.eclipsefp.haskell.debug.core"/>
+      <import plugin="net.sf.eclipsefp.haskell.ghccompiler"/>
+      <import plugin="net.sf.eclipsefp.haskell.compat"/>
    </requires>
 
    <plugin
          id="net.sf.eclipsefp.haskell"
          download-size="0"
          install-size="0"
-         version="2.0.3"
+         version="2.2.4"
          unpack="false"/>
 
    <plugin
@@ -92,7 +100,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="2.2.1"
+         version="2.2.4"
          unpack="false"/>
 
    <plugin
@@ -120,7 +128,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.compat"
          download-size="0"
          install-size="0"
-         version="2.0.2"
+         version="2.2.4"
          unpack="false"/>
 
    <plugin
@@ -134,21 +142,21 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.browser"
          download-size="0"
          install-size="0"
-         version="2.2.3"
+         version="2.2.4"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hlint"
          download-size="0"
          install-size="0"
-         version="2.2.3"
+         version="2.2.4"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.profiler"
          download-size="0"
          install-size="0"
-         version="2.2.0"
+         version="2.2.4"
          unpack="false"/>
 
    <plugin

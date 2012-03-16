@@ -41,6 +41,7 @@ public class InstallExecutableRunnable implements Runnable {
     super( );
   }
 
+  @Override
   public void run(){
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     final File folder=new File(cabalExecutable).getParentFile();
@@ -79,6 +80,7 @@ public class InstallExecutableRunnable implements Runnable {
     final File fBinDir=binDir;
 
     Runnable r=new Runnable(){
+      @Override
       public void run() {
         if (commands.size()>0){
           final Command c=commands.removeFirst();
@@ -87,6 +89,7 @@ public class InstallExecutableRunnable implements Runnable {
           if (c.exeName!=null){
             next=new Runnable() {
 
+              @Override
               public void run() {
                 File f=new File(fBinDir,FileUtil.makeExecutableName( c.exeName ));
                 if (f.exists()){
@@ -104,6 +107,7 @@ public class InstallExecutableRunnable implements Runnable {
           final Runnable fNext=next;
           HaskellUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 
+            @Override
             public void run() {
               try {
                 AbstractHaskellLaunchDelegate.runInConsole( null, c.commands, folder, c.title, true,fNext );

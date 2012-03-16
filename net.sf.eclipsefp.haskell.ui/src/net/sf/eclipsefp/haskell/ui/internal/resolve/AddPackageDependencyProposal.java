@@ -44,6 +44,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
     this.marker = marker;
   }
 
+  @Override
   public void apply( final IDocument document ) {
     IProject p=marker.getResource().getProject();
     IFile f=BuildWrapperPlugin.getCabalFile( p );
@@ -95,22 +96,27 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
     return value;
   }
 
+  @Override
   public Point getSelection( final IDocument document ) {
     return null;
   }
 
+  @Override
   public String getAdditionalProposalInfo() {
     return null;
   }
 
+  @Override
   public String getDisplayString() {
     return NLS.bind( UITexts.resolve_addpackage, value );
   }
 
+  @Override
   public Image getImage() {
     return ImageCache.PACKAGE;
   }
 
+  @Override
   public IContextInformation getContextInformation() {
     return null;
   }

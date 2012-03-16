@@ -71,6 +71,7 @@ public class ModulesTestSuiteSection extends CabalFormSection implements IOtherV
     }
   }
 
+  @Override
   public void otherTextValueChanged( final FormEntry entry ) {
     if( this.stanza != null ) {
       FormEntryMainIs multi = ( FormEntryMainIs )entry;

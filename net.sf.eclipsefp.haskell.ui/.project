@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>net.sf.eclipsefp.haskell.ui</name>
-	<comment></comment>
+	<comment>Nature JavaCC</comment>
 	<projects>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>sf.eclipse.javacc.javaccbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -26,5 +31,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
 		<nature>de.leiffrenzel.cohatoe.pde.core.CohatoeProjectNature</nature>
+		<nature>sf.eclipse.javacc.javaccnature</nature>
 	</natures>
 </projectDescription>

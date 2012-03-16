@@ -143,6 +143,7 @@ public class ImportLibrariesAddDialog extends Dialog {
 
     lvLCompo.addSelectionChangedListener( new ISelectionChangedListener() {
 
+      @Override
       public void selectionChanged( final SelectionChangedEvent event ) {
         Object[] objs=((IStructuredSelection)event.getSelection()).toArray();
         Component[] cps=new Component[objs.length];
@@ -201,6 +202,7 @@ public class ImportLibrariesAddDialog extends Dialog {
 
     tSpecific.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent e ) {
         cabalPackage.setVersion( tSpecific.getText()  );
       }
@@ -211,6 +213,7 @@ public class ImportLibrariesAddDialog extends Dialog {
 
     tv.addSelectionChangedListener( new ISelectionChangedListener() {
 
+      @Override
       public void selectionChanged( final SelectionChangedEvent event ) {
         CabalPackage cp=(CabalPackage)((IStructuredSelection)event.getSelection()).getFirstElement();
         cabalPackage.setName( cp.getName() );

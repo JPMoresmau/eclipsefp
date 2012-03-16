@@ -109,6 +109,7 @@ public class Util {
     try {
       project.accept( new IResourceVisitor() {
 
+        @Override
         public boolean visit( final IResource resource ) {
           if( resource instanceof IFile && !( file.equals( resource ) )
               && FileUtil.hasHaskellExtension( resource )) {

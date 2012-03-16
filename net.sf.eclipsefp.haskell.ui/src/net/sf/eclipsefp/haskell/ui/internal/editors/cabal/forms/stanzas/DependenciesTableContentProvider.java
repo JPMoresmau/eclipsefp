@@ -18,15 +18,18 @@ public class DependenciesTableContentProvider implements
 
   List<DependencyItem> items;
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
     items = (List<DependencyItem>)newInput;
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return items.toArray();
   }

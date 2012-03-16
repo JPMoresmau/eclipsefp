@@ -166,6 +166,7 @@ public class FormEntryCombo<T> extends FormEntry {
     } );
     comboField.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         if( !comboField.getText().equals( value ) ) {
           editOccured( );
@@ -190,12 +191,14 @@ public class FormEntryCombo<T> extends FormEntry {
     if (!choices.allowOther()) {
       comboField.addSelectionListener( new SelectionListener() {
 
+        @Override
         public void widgetSelected( final SelectionEvent e ) {
           if( !comboField.getText().equals( value ) ) {
             commit();
           }
         }
 
+        @Override
         public void widgetDefaultSelected( final SelectionEvent e ) {
           // Do nothing
         }

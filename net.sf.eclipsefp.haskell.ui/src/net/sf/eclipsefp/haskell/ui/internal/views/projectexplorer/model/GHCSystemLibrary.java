@@ -32,6 +32,7 @@ public class GHCSystemLibrary implements ITreeElement {
   // interface methods of ITreeElement
   ////////////////////////////////////
 
+  @Override
   public List<GHCPackageConf> getChildren() {
     List<GHCPackageConf> result = new ArrayList<GHCPackageConf>();
     /*ICompilerManager man = CompilerManager.getInstance();
@@ -69,10 +70,12 @@ public class GHCSystemLibrary implements ITreeElement {
     return result;
   }
 
+  @Override
   public Object getParent() {
     return project;
   }
 
+  @Override
   public String getText() {
     ICompilerManager man = CompilerManager.getInstance();
     IHsImplementation impl = man.getCurrentHsImplementation();
@@ -83,6 +86,7 @@ public class GHCSystemLibrary implements ITreeElement {
     return NLS.bind( UITexts.explorer_libraries, name );
   }
 
+  @Override
   public String getImageKey() {
     return IImageNames.IMPORT_LIBRARY;
   }

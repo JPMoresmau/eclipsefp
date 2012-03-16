@@ -182,10 +182,12 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     tableField.getControl().setEnabled( editable );
   }
 
+  @Override
   public boolean canModify( final Object element, final String property ) {
     return ( property.equals( "version" ) );
   }
 
+  @Override
   public Object getValue( final Object element, final String property ) {
     DependencyItem item = ( DependencyItem )element;
     if( property.equals( "package" ) ) {
@@ -197,6 +199,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
     }
   }
 
+  @Override
   public void modify( final Object element, final String property,
       final Object value ) {
     if( element == null ) {

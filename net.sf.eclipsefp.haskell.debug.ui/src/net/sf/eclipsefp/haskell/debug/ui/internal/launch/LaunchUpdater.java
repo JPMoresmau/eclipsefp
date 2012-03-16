@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  */
 public class LaunchUpdater implements CabalFileChangeListener {
 
+  @Override
   public void cabalFileChanged( final IFile cabalF ) {
     try {
      // final ClassLoader cl=getClass().getClassLoader();

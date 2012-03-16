@@ -90,6 +90,7 @@ public class ModulesView extends ViewPart implements ISelectionListener,
   }
 
   // This will be called when a new package is selected
+  @Override
   public void selectionChanged( final IWorkbenchPart part,
       final ISelection selection ) {
     if( part == this ) {
@@ -119,6 +120,7 @@ public class ModulesView extends ViewPart implements ISelectionListener,
     return provider.getHierarchical();
   }
 
+  @Override
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     ModulesItem item = ( ModulesItem )selection.getFirstElement();

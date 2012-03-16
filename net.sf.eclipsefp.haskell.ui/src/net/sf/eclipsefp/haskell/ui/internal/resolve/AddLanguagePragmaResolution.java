@@ -26,6 +26,7 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
     this.pragma = pragma;
   }
 
+  @Override
   public String getLabel() {
     return NLS.bind( UITexts.resolve_addpragma, pragma,"LANGUAGE" );//$NON-NLS-1$
   }

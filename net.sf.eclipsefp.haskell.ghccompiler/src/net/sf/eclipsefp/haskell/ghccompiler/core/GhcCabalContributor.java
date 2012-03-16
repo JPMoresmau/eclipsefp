@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
  */
 public class GhcCabalContributor implements ICabalContributor {
 
+  @Override
   public void contributeOnNewProject( final PackageDescription pd ) {
     IHsImplementation impl=CompilerManager.getInstance().getCurrentHsImplementation();
     if (impl!=null && impl.getType().equals( HsImplementationType.GHC )){

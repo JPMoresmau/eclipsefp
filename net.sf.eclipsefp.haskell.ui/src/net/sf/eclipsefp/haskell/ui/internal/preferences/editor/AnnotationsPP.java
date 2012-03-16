@@ -175,6 +175,7 @@ public class AnnotationsPP extends AbstractEditorPP {
 
   public void propertyChange( final PropertyChangeEvent event ) {
     colorList.getDisplay().asyncExec( new Runnable() {
+      @Override
       public void run() {
         if( ( colorList != null ) && !colorList.isDisposed() ) {
           handleAnnotationColorListSelection();
@@ -228,6 +229,7 @@ public class AnnotationsPP extends AbstractEditorPP {
       }
     }
     colorList.getDisplay().asyncExec( new Runnable() {
+      @Override
       public void run() {
         if( ( colorList != null ) && !colorList.isDisposed() ) {
           colorList.select( 0 );

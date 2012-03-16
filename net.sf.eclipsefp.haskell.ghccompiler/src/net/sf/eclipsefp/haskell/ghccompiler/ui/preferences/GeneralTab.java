@@ -90,6 +90,7 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
     text.setText( getPreferenceStore().getString( EXTRA_OPTIONS ) );
     text.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
     text.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent event ) {
         getPreferenceStore().setValue( EXTRA_OPTIONS, text.getText() );
       }
@@ -106,6 +107,7 @@ public class GeneralTab extends Tab implements IGhcPreferenceNames {
     } );
   }
 
+  @Override
   public void propertyChange( final PropertyChangeEvent event ) {
     if (cbActive!=null){
       cbActive.setSelection( getPreferenceStore().getBoolean( USE_EXTRA_OPTIONS ) );

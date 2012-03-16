@@ -46,6 +46,7 @@ public abstract class Tab implements IPropertyChangeListener{
   };
 
   private final ModifyListener fTextFieldListener = new ModifyListener() {
+    @Override
     public void modifyText( final ModifyEvent event ) {
       Text text = ( Text )event.widget;
       String key = textFields.get( text );
@@ -55,6 +56,7 @@ public abstract class Tab implements IPropertyChangeListener{
 
   private final VerifyListener integerVerify=new VerifyListener() {
 
+    @Override
     public void verifyText( final VerifyEvent e ) {
      try {
        Integer.parseInt(e.text);

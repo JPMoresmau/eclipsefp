@@ -28,10 +28,12 @@ public class CommandOnChangeListener implements IResourceChangeListener {
     this.projectName=projectName;
   }
 
+  @Override
   public void resourceChanged( final IResourceChangeEvent event ) {
     try {
       event.getDelta().accept( new IResourceDeltaVisitor() {
 
+        @Override
         public boolean visit( final IResourceDelta delta )
             throws CoreException {
           if (delta.getResource().getProject()==null || delta.getResource().getProject().getName().equals(projectName)){

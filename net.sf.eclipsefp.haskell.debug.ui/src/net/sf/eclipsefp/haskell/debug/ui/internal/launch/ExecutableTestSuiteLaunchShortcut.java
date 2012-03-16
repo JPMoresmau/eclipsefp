@@ -32,7 +32,8 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
  //interface methods of ILaunchShortcut
  ///////////////////////////////////////
 
- public void launch( final ISelection selection, final String mode ) {
+ @Override
+public void launch( final ISelection selection, final String mode ) {
    // launched from workbench selection
    if( selection instanceof IStructuredSelection ) {
      Object element = ( ( IStructuredSelection )selection ).getFirstElement();
@@ -45,7 +46,8 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
    }
  }
 
- public void launch( final IEditorPart editor, final String mode ) {
+ @Override
+public void launch( final IEditorPart editor, final String mode ) {
    // launched from editor part
    launch( ResourceUtil.findResource( editor.getEditorInput() ),null );
  }
@@ -65,13 +67,16 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
    }
  }
 
- public IResource getLaunchableResource( final IEditorPart paramIEditorPart ) {
+ @Override
+public IResource getLaunchableResource( final IEditorPart paramIEditorPart ) {
    return null;
  }
- public IResource getLaunchableResource( final ISelection paramISelection ) {
+ @Override
+public IResource getLaunchableResource( final ISelection paramISelection ) {
    return null;
  }
- public ILaunchConfiguration[] getLaunchConfigurations(
+ @Override
+public ILaunchConfiguration[] getLaunchConfigurations(
      final IEditorPart paramIEditorPart ) {
    IResource resource = ResourceUtil.findResource( paramIEditorPart.getEditorInput() );
    try {
@@ -86,7 +91,8 @@ public abstract class ExecutableTestSuiteLaunchShortcut implements ILaunchShortc
  /**
   * this allows launching a new configuration
   */
- public ILaunchConfiguration[] getLaunchConfigurations(
+ @Override
+public ILaunchConfiguration[] getLaunchConfigurations(
      final ISelection paramISelection ) {
    try {
        PackageDescriptionStanza stanza=findStanza( paramISelection );

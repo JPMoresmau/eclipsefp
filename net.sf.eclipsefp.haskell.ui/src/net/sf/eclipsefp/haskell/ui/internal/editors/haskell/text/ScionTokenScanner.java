@@ -100,6 +100,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     HaskellUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
   }
 
+  @Override
   public int getTokenLength() {
     if (currentTokenDef!=null){
       return currentLength;
@@ -108,6 +109,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     return 0;
   }
 
+  @Override
   public int getTokenOffset() {
     if (currentTokenDef!=null){
       return currentOffset;
@@ -115,6 +117,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     return 0;
   }
 
+  @Override
   public IToken nextToken() {
 
      do {
@@ -202,6 +205,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     return ret;
   }
 
+  @Override
   public void setRange( final IDocument document, final int offset, final int length ) {
     currentTokenDef = null;
     // currentToken=null;
@@ -337,6 +341,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
                      * this locks the workspace, so fire a new thread
                      */
                     new Thread(new Runnable(){
+                      @Override
                       public void run() {
                         try {
                           MarkerUtilities.createMarker(file, attributes,  IMarker.TASK);
@@ -371,6 +376,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     return man.createToken( EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD );
   }
 
+  @Override
   public void setPartialRange( final IDocument document, final int offset, final int length,
       final String contentType, final int partitionOffset ) {
     setRange( document, offset, length );
@@ -398,6 +404,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   /* (non-Javadoc)
    * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
    */
+  @Override
   public void propertyChange( final PropertyChangeEvent arg0 ) {
     // listen to relevant property changes and update ourselves
     if (arg0.getProperty().equals( EDITOR_TASK_TAGS )){

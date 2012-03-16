@@ -136,6 +136,7 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
 
   private void initializePropertyListener() {
     propertyChangeListener = new IPropertyChangeListener() {
+      @Override
       public void propertyChange( final PropertyChangeEvent event ) {
         if( affectsPresentation( event ) ) {
           updateColors();

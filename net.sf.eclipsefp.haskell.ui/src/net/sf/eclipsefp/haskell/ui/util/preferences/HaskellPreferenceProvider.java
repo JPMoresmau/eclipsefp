@@ -9,7 +9,8 @@ public class HaskellPreferenceProvider implements IHaskellPreferenceProvider,
                                                   IEditorPreferenceNames
 {
 
-	public int getTabSize() {
+	@Override
+  public int getTabSize() {
 		return getPreferenceStore().getInt(EDITOR_TAB_WIDTH);
 	}
 

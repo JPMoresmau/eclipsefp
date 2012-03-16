@@ -24,11 +24,13 @@ public class ModulesViewStyleDelegate implements IViewActionDelegate {
 		this.isHierarchical = isHierarchical;
 	}
 
-	public void run(final IAction action) {
+	@Override
+  public void run(final IAction action) {
 		view.setHierarchical(this.isHierarchical);
 	}
 
-	public void selectionChanged(final IAction action, final ISelection selection) {
+	@Override
+  public void selectionChanged(final IAction action, final ISelection selection) {
 		// Do nothing
 
 		if (view.getHierarchical() == this.isHierarchical) {
@@ -36,7 +38,8 @@ public class ModulesViewStyleDelegate implements IViewActionDelegate {
     }
 	}
 
-	public void init(final IViewPart view) {
+	@Override
+  public void init(final IViewPart view) {
 		this.view = (ModulesView)view;
 	}
 

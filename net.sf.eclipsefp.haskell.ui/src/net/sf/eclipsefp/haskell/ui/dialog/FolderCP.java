@@ -22,6 +22,7 @@ class FolderCP implements ITreeContentProvider {
   // interface methods of ITreeContentProvider
   ////////////////////////////////////////////
   
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     IResource[] members = getMembers( parentElement );
     List<IResource> list = new ArrayList<IResource>();
@@ -34,22 +35,27 @@ class FolderCP implements ITreeContentProvider {
     return list.toArray();
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     return getChildren( element ).length > 0;
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return getChildren( inputElement );
   }
 
+  @Override
   public void dispose() {
     // unused
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, 
                             final Object oldInput, 
                             final Object newInput ) {

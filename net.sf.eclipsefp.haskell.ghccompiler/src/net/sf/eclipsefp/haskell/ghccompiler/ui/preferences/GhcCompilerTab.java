@@ -35,6 +35,7 @@ public abstract class GhcCompilerTab extends Tab {
     String tooltip = text + "\n" + name; //$NON-NLS-1$
     BooleanDialogField result = new BooleanDialogField( parent, text, tooltip );
     result.addDialogFieldListener( new IDialogFieldListener() {
+      @Override
       public void infoChanged( final Object newInfo ) {
         boolean selected = ( ( Boolean )newInfo ).booleanValue();
         getPreferenceStore().setValue( name, selected );
@@ -55,6 +56,7 @@ public abstract class GhcCompilerTab extends Tab {
     String tooltip = text + "\n" + displayName; //$NON-NLS-1$
     BooleanDialogField result = new BooleanDialogField( parent, text, tooltip );
     result.addDialogFieldListener( new IDialogFieldListener() {
+      @Override
       public void infoChanged( final Object newInfo ) {
         boolean selected = ( ( Boolean )newInfo ).booleanValue();
         getPreferenceStore().setValue( name, selected );

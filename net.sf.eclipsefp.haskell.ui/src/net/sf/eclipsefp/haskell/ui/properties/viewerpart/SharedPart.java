@@ -138,10 +138,12 @@ public abstract class SharedPart {
       this.part = part;
     }
 
+    @Override
     public void widgetSelected( final SelectionEvent e ) {
       buttonSelected( e );
     }
 
+    @Override
     public void widgetDefaultSelected( final SelectionEvent e ) {
       buttonSelected( e );
     }

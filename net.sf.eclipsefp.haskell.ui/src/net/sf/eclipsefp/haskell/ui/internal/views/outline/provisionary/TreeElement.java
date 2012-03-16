@@ -46,6 +46,7 @@ public class TreeElement implements ITreeElement, ICohatoeData {
   // interface methods of ICohatoeData
   ////////////////////////////////////
 
+  @Override
   public List<String> marshal() {
     // if you need it, write a test case and implement it
     throw new UnsupportedOperationException();
@@ -55,18 +56,22 @@ public class TreeElement implements ITreeElement, ICohatoeData {
   // interface methods of ITreeElement
   ////////////////////////////////////
 
+  @Override
   public List<?> getChildren() {
     return children;
   }
 
+  @Override
   public String getImageKey() {
     return imageKey;
   }
 
+  @Override
   public Object getParent() {
     return parent;
   }
 
+  @Override
   public String getText() {
     return text;
   }

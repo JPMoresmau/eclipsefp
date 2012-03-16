@@ -88,6 +88,7 @@ public class ButtonFieldEditor extends FieldEditor {
       button.addSelectionListener( buttonListener );
       button.addDisposeListener( new DisposeListener() {
 
+        @Override
         public void widgetDisposed( final DisposeEvent event ) {
           button = null;
         }

@@ -34,6 +34,7 @@ public class NewSnapProjectWizard extends Wizard implements INewWizard {
     setWindowTitle( UITexts.newSnapProjectWizard_windowTitle );
   }
 
+  @Override
   public void init( final IWorkbench workbench,
       final IStructuredSelection selection ) {
     // Do nothing
@@ -76,6 +77,7 @@ public class NewSnapProjectWizard extends Wizard implements INewWizard {
         } catch (Exception e) {
           HaskellCorePlugin.log(  UITexts.newSnapProjectWizard_error, e );
           Display.getDefault().asyncExec( new Runnable(){
+            @Override
             public void run() {
               MessageDialog
               .openError(

@@ -29,6 +29,7 @@ public class ProblemsLabelDecorator implements ILightweightLabelDecorator {
 
   private final ListenerList listeners = new ListenerList();
 
+  @Override
   public void decorate( final Object element, final IDecoration decoration ) {
     int adornmentFlags = computeAdornmentFlags( element );
     ImageDescriptor desc;
@@ -73,19 +74,23 @@ public class ProblemsLabelDecorator implements ILightweightLabelDecorator {
     return HaskellUIImages.getImageDescriptor( name );
   }
 
+  @Override
   public boolean isLabelProperty( final Object element, final String property ) {
     // We currently only support labelling (some kinds of) resources
     return element instanceof IResource;
   }
 
+  @Override
   public void dispose() {
     // nothing to dispose
   }
 
+  @Override
   public void removeListener( final ILabelProviderListener listener ) {
     listeners.remove(listener);
   }
 
+  @Override
   public void addListener( final ILabelProviderListener listener ) {
     listeners.add(listener);
   }

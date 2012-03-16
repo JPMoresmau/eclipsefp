@@ -23,6 +23,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
     super( monitor );
   }
 
+  @Override
   public boolean visit( final IResourceDelta delta ) {
     // we return whether to visit the children also
     boolean result = false;

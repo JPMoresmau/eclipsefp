@@ -58,6 +58,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   private String forcedArguments=ILaunchAttributes.EMPTY;
 
   private final ModifyListener modifyListener = new ModifyListener() {
+    @Override
     public void modifyText( final ModifyEvent e ) {
       updateLaunchConfigurationDialog();
     }
@@ -67,6 +68,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
   // interface methods of ILaunchConfigurationTab
   ///////////////////////////////////////////////
 
+  @Override
   public void createControl( final Composite parent ) {
     Composite mainComposite = new Composite( parent, SWT.NONE );
     setControl( mainComposite );
@@ -84,6 +86,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     createSyncStreamsComponent( mainComposite );
   }
 
+  @Override
   public void setDefaults( final ILaunchConfigurationWorkingCopy configWc ) {
     configWc.setAttribute( ILaunchAttributes.RUN_IN_BACKGROUND, true );
     configWc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, ILaunchAttributes.EMPTY );
@@ -91,6 +94,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     configWc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
   }
 
+  @Override
   public void initializeFrom( final ILaunchConfiguration configuration ) {
     updateWorkingDirectory( configuration );
     updateArgument( configuration );
@@ -98,6 +102,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     updateSyncStreams ( configuration );
   }
 
+  @Override
   public void performApply( final ILaunchConfigurationWorkingCopy configWc ) {
     String workingDirectory = txtWorkDirectory.getText().trim();
     if( workingDirectory.length() == 0 ) {
@@ -133,6 +138,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
     return validateWorkDirectory();
   }
 
+  @Override
   public String getName() {
     return UITexts.haskellArgumentsTab_name;
   }
@@ -252,6 +258,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
 
     argumentField.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent e ) {
         fullArgumentField.setText( argumentField.getText()+" "+forcedArguments); //$NON-NLS-1$
       }

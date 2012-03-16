@@ -191,6 +191,7 @@ public class FormEntryModules extends FormEntry {
           exposedButton.pack();
           exposedButton.addSelectionListener( new SelectionListener() {
 
+            @Override
             public void widgetSelected( final SelectionEvent e ) {
               if( !ignoreModify ) {
                 String mod = item.getText( NAME_COL );
@@ -216,6 +217,7 @@ public class FormEntryModules extends FormEntry {
               }
             }
 
+            @Override
             public void widgetDefaultSelected( final SelectionEvent e ) {
               // Do nothing
             }
@@ -231,6 +233,7 @@ public class FormEntryModules extends FormEntry {
           otherButton.pack();
           otherButton.addSelectionListener( new SelectionListener() {
 
+            @Override
             public void widgetSelected( final SelectionEvent e ) {
               if( !ignoreModify ) {
                 String mod = item.getText( NAME_COL );
@@ -244,6 +247,7 @@ public class FormEntryModules extends FormEntry {
               }
             }
 
+            @Override
             public void widgetDefaultSelected( final SelectionEvent e ) {
               // Do nothing
             }
@@ -393,6 +397,7 @@ public class FormEntryModules extends FormEntry {
       }
     }
 
+    @Override
     public boolean visit( final IResource resource ) {
       String path = resource.getProjectRelativePath().toString();
       if( resource instanceof IFile ) {

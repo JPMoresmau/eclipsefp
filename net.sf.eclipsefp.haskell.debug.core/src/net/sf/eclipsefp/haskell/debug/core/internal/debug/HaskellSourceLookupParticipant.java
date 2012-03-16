@@ -11,6 +11,7 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 public class HaskellSourceLookupParticipant extends
     AbstractSourceLookupParticipant {
 
+  @Override
   public String getSourceName( final Object object ) throws CoreException {
    if (object instanceof HaskellStrackFrame){
      return ((HaskellStrackFrame)object).getFileName();

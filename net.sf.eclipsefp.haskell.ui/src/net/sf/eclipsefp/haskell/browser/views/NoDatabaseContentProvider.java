@@ -10,26 +10,32 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class NoDatabaseContentProvider implements ITreeContentProvider {
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
     // Do nothing
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return new Object[] { NoDatabaseRoot.ROOT };
   }
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     return new Object[0];
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     return false;
   }

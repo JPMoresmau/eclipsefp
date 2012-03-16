@@ -18,11 +18,13 @@ import org.eclipse.swt.graphics.Image;
  */
 public class PackagesLabelProvider implements ILabelProvider {
 
-	public Image getImage(final Object element) {
+	@Override
+  public Image getImage(final Object element) {
 		return element instanceof Database ? ImageCache.DATABASE : ImageCache.PACKAGE;
 	}
 
-	public String getText(final Object element) {
+	@Override
+  public String getText(final Object element) {
 		if (element instanceof Database) {
 			switch (((Database) element).getType()) {
 			case ALL:
@@ -42,20 +44,24 @@ public class PackagesLabelProvider implements ILabelProvider {
 	}
 
 	// Listeners: not used
-	public void addListener(final ILabelProviderListener listener) {
+	@Override
+  public void addListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Do nothing
 	}
 
-	public boolean isLabelProperty(final Object element, final String property) {
+	@Override
+  public boolean isLabelProperty(final Object element, final String property) {
 		// Do nothing
 		return false;
 	}
 
-	public void removeListener(final ILabelProviderListener listener) {
+	@Override
+  public void removeListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 }

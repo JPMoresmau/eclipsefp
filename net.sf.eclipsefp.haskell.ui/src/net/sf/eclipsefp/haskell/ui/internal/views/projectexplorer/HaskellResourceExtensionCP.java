@@ -47,6 +47,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
   // interface methods of ITreeContentProvider
   // //////////////////////////////////////////
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     final List<Object> result = new ArrayList<Object>();
     try {
@@ -119,6 +120,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
     return result.toArray();
   }
 
+  @Override
   public Object getParent( final Object element ) {
     Object result = null;
     if( element instanceof ITreeElement ) {
@@ -127,6 +129,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
     return result;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     if( element instanceof IFile ) {
       IFile f = ( IFile )element;
@@ -141,14 +144,17 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
     return children == null ? false : children.length > 0;
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return new Object[ 0 ];
   }
 
+  @Override
   public void dispose() {
     // unused
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
     // unused
@@ -160,11 +166,13 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
 
   // TODO lf note to self: config -> navigator service -> can be used to
   // get state information from the View
+  @Override
   public void init( final ICommonContentExtensionSite config ) {
     IEclipsePreferences node = InstanceScope.INSTANCE.getNode( HaskellCorePlugin
         .getPluginId() );
     node.addPreferenceChangeListener( new IPreferenceChangeListener() {
 
+      @Override
       public void preferenceChange( final PreferenceChangeEvent event ) {
         String prop = event.getKey();
         if( ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( prop )
@@ -175,10 +183,12 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
     } );
   }
 
+  @Override
   public void restoreState( final IMemento memento ) {
     // unused
   }
 
+  @Override
   public void saveState( final IMemento memento ) {
     // unused
   }

@@ -27,6 +27,7 @@ public class ProjectFoldersDecorator extends LabelProvider
   // interface methods of ILabelDecorator
   ///////////////////////////////////////
 
+  @Override
   public Image decorateImage( final Image baseImage, final Object element ) {
     // if it remains null, this means no special decoration
     Image result = null;
@@ -46,6 +47,7 @@ public class ProjectFoldersDecorator extends LabelProvider
     return result;
   }
 
+  @Override
   public String decorateText( final String text, final Object element ) {
     // no special text decorations
     return text;

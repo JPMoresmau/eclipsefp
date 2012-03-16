@@ -58,6 +58,7 @@ public abstract class TablePart extends SharedPart {
     int extendedStyle = style | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI;
     TableViewer tableViewer=new TableViewer( parent, extendedStyle );
     tableViewer.addSelectionChangedListener( new ISelectionChangedListener() {
+      @Override
       public void selectionChanged( final SelectionChangedEvent evt ) {
         IStructuredSelection ssel = ( IStructuredSelection )evt.getSelection();
         TablePart.this.selectionChanged( ssel );

@@ -101,21 +101,25 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
 
       ILaunchesListener2 ll=new ILaunchesListener2() {
 
+        @Override
         public void launchesRemoved( final ILaunch[] launches ) {
           // NOOP
 
         }
 
+        @Override
         public void launchesChanged( final ILaunch[] launches ) {
           // NOOP
 
         }
 
+        @Override
         public void launchesAdded( final ILaunch[] launches ) {
           // NOOP
 
         }
 
+        @Override
         public void launchesTerminated( final ILaunch[] launches ) {
           for (ILaunch l:launches){
             if (launch.equals( l )){

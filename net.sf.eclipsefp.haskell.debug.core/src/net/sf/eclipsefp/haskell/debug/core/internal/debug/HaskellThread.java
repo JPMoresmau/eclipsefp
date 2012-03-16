@@ -24,6 +24,7 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
     super( target );
   }
 
+  @Override
   public IBreakpoint[] getBreakpoints() {
     if (breakpoint!=null){
       return new IBreakpoint[]{breakpoint};
@@ -35,6 +36,7 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
     this.breakpoint = breakpoint;
   }
 
+  @Override
   public String getName() {
     return name;
   }
@@ -44,10 +46,12 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
     this.name = name;
   }
 
+  @Override
   public int getPriority()  {
     return 0;
   }
 
+  @Override
   public IStackFrame[] getStackFrames()  {
     if (isSuspended()){
       return new IStackFrame[]{frame};
@@ -56,6 +60,7 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
 
   }
 
+  @Override
   public IStackFrame getTopStackFrame()  {
     if (isSuspended()){
       return frame;
@@ -63,70 +68,86 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
     return null;
   }
 
+  @Override
   public boolean hasStackFrames() {
    return isSuspended();
   }
 
-   public boolean canResume() {
+   @Override
+  public boolean canResume() {
     return isSuspended();
   }
 
+  @Override
   public boolean canSuspend() {
     return false;
   }
 
+  @Override
   public boolean isSuspended() {
     return target.isSuspended();
   }
 
+  @Override
   public void resume() throws DebugException {
    target.resume();
   }
 
+  @Override
   public void suspend()  {
     getDebugTarget().suspend();
 
   }
 
+  @Override
   public boolean canStepInto() {
     return isSuspended();
   }
 
+  @Override
   public boolean canStepOver() {
     return false;
   }
 
+  @Override
   public boolean canStepReturn() {
     return false;
   }
 
+  @Override
   public boolean isStepping() {
     return false;
   }
 
+  @Override
   public void stepInto() throws DebugException {
     target.sendRequest( GHCiSyntax.STEP_COMMAND, true );
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( frame, DebugEvent.CHANGE,DebugEvent.CONTENT )});
 
   }
 
+  @Override
   public void stepOver() {
     // NOOP
 
   }
 
+  @Override
   public void stepReturn() {
     // NOOP
   }
 
+  @Override
   public boolean canTerminate() {
     return target.canTerminate();
   }
 
+  @Override
   public boolean isTerminated() {
     return target.isTerminated();
   }
 
+  @Override
   public void terminate() throws DebugException {
     target.terminate();
   }

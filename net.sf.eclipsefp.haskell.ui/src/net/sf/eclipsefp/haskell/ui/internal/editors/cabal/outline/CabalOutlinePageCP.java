@@ -18,6 +18,7 @@ class CabalOutlinePageCP implements ITreeContentProvider {
   // interface methods of ITreeContentProvider
   ////////////////////////////////////////////
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     Object[] result = new Object[ 0 ];
     if( inputElement instanceof PackageDescription ) {
@@ -27,10 +28,12 @@ class CabalOutlinePageCP implements ITreeContentProvider {
     return result;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     return getChildren( element ).length > 0;
   }
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     if (parentElement instanceof PackageDescriptionStanza){
       return ((PackageDescriptionStanza)parentElement).getStanzas().toArray();
@@ -38,14 +41,17 @@ class CabalOutlinePageCP implements ITreeContentProvider {
     return new Object[ 0 ];
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   public void dispose() {
     // unused
   }
 
+  @Override
   public void inputChanged( final Viewer viewer,
                             final Object oldInput,
                             final Object newInput ) {

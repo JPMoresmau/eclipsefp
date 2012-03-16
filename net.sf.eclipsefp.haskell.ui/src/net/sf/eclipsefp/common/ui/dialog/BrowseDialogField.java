@@ -71,6 +71,7 @@ abstract class BrowseDialogField extends DialogField {
 
   private void addModifyListener() {
     text.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent event ) {
         Text text = ( Text )event.widget;
         info = text.getText();

@@ -22,6 +22,7 @@ class SourceFolderValidator implements ISelectionStatusValidator {
   // interface methods of ISelectionStatusValidator
   /////////////////////////////////////////////////
   
+  @Override
   public IStatus validate( final Object[] selection ) {
     IStatus result = ERROR;
     if( isOk( selection ) ) {

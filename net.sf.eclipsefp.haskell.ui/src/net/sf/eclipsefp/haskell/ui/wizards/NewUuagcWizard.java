@@ -39,6 +39,7 @@ public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
     setDialogSettings( HaskellUIPlugin.getDefault().getDialogSettings() );
   }
 
+  @Override
   public void init( final IWorkbench workbench,
       final IStructuredSelection selection ) {
     this.selection = selection;

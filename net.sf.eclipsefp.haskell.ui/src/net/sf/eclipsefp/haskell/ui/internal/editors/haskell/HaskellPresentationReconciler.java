@@ -68,6 +68,7 @@ public class HaskellPresentationReconciler extends PresentationReconciler{
           /* (non-Javadoc)
            * @see java.lang.Runnable#run()
            */
+          @Override
           public void run() {
             viewer.changeTextPresentation(p, false);
           }

@@ -56,23 +56,28 @@ public class HaskellVariable extends HaskellDebugElement implements IVariable {
     }
   }
 
+  @Override
   public String getName() {
    return name;
   }
 
+  @Override
   public String getReferenceTypeName()  {
    return type;
   }
 
+  @Override
   public IValue getValue()  {
    return new HaskellValue( this, value );
   }
 
+  @Override
   public boolean hasValueChanged()  {
     return false;
   }
 
 
+  @Override
   public void setValue( final String expression ) throws DebugException {
     // for the time being, setting the expression is only a way of forcing the evaluation
     frame.getDebugTarget().forceVariable( this );
@@ -81,18 +86,22 @@ public class HaskellVariable extends HaskellDebugElement implements IVariable {
      }*/
   }
 
+  @Override
   public void setValue( final IValue value ) throws DebugException {
     setValue(value!=null?value.getValueString():""); //$NON-NLS-1$
   }
 
+  @Override
   public boolean supportsValueModification() {
     return GHCiSyntax.UNRESOLVED.equals( value );
   }
 
+  @Override
   public boolean verifyValue( final String expression )  {
     return GHCiSyntax.UNRESOLVED.equals( value );
   }
 
+  @Override
   public boolean verifyValue( final IValue val )  {
     return GHCiSyntax.UNRESOLVED.equals( value );
   }

@@ -26,6 +26,7 @@ public class HaskellNature implements IProjectNature {
   // interface methods of IProjectNature
   //////////////////////////////////////
 
+  @Override
   public void configure() throws CoreException {
     addBuilder( HaskellBuilder.BUILDER_ID );
     //addBuilder( CabalBuilder.BUILDER_ID );
@@ -35,6 +36,7 @@ public class HaskellNature implements IProjectNature {
     addBuilder( UuagcBuilder.BUILDER_ID );
   }
 
+  @Override
   public void deconfigure() throws CoreException {
     removeBuilder( UuagcBuilder.BUILDER_ID );
     removeBuilder( HappyBuilder.BUILDER_ID );
@@ -44,10 +46,12 @@ public class HaskellNature implements IProjectNature {
     removeBuilder( HaskellBuilder.BUILDER_ID );
   }
 
+  @Override
   public IProject getProject() {
     return project;
   }
 
+  @Override
   public void setProject( final IProject project ) {
     this.project = project;
   }

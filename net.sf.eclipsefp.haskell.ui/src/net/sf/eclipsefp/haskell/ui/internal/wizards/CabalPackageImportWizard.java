@@ -34,6 +34,7 @@ public class CabalPackageImportWizard extends ProjectCreationWizard
   @Override
   public boolean performFinish() {
     getOperation().setExtraOperation( new IProjectCreationOperationExtraOp() {
+      @Override
       public void run( final IProject project,
                        final IProgressMonitor mo ) throws CoreException {
         mo.beginTask( "Importing files", 100 );

@@ -12,6 +12,7 @@ public class ExecutableTestSuiteHaskellLaunchTabGroup extends
   // interface methods of ILaunchConfigurationTabGroup
   ////////////////////////////////////////////////////
 
+  @Override
   public void createTabs( final ILaunchConfigurationDialog dialog,
                           final String mode ) {
     setTabs( new ILaunchConfigurationTab[] { new HaskellArgumentsTab(),

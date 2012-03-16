@@ -64,6 +64,7 @@ class CabalPackageImportWP extends NewProjectWizardPage {
       return composite;
     }
 
+    @Override
     public void changeControlPressed( final DialogField field ) {
       FileDialog dialog = new FileDialog( getShell() );
       dialog.setText( "Select a cabalized archive" );
@@ -74,6 +75,7 @@ class CabalPackageImportWP extends NewProjectWizardPage {
       }
     }
 
+    @Override
     public void dialogFieldChanged( final DialogField field ) {
       setChanged();
       notifyObservers();

@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CleanVisitor implements IResourceVisitor {
 
+  @Override
   public boolean visit( final IResource resource ) throws CoreException {
     if( UuagcBuilder.mustBeVisited( resource ) ) {
       // We have to clean the previous markers

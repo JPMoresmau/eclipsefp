@@ -21,6 +21,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class SearchInHoogleHandler extends AbstractHandler {
 
+  @Override
   public Object execute( final ExecutionEvent event ) {
     IEditorPart editor = HandlerUtil.getActiveEditor( event );
     if( !( editor instanceof HaskellEditor ) ) {
@@ -30,6 +31,7 @@ public class SearchInHoogleHandler extends AbstractHandler {
     final HaskellEditor haskellEditor = ( HaskellEditor )editor;
     WordFinder.getEditorThing( haskellEditor,new WordFinder.EditorThingHandler() {
 
+      @Override
       public void handle( final EditorThing thing ) {
         if (thing!=null && thing.getThing()!=null){
           String name = thing.getThing().getName();

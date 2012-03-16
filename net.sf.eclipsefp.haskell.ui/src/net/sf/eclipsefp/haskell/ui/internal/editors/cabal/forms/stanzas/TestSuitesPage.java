@@ -150,6 +150,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
             UITexts.cabalEditor_newTestSuiteString,
             "", new IInputValidator() {
 
+              @Override
               public String isValid( final String newText ) {
                 String value = newText.trim();
                 if (value.length()==0) {
@@ -181,6 +182,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
             UITexts.cabalEditor_newTestSuiteString,
             "", new IInputValidator() {
 
+              @Override
               public String isValid( final String newText ) {
                 String value = newText.trim();
                 if (value.length()==0) {
@@ -212,6 +214,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
             UITexts.cabalEditor_newTestSuiteString,
             "", new IInputValidator() {
 
+              @Override
               public String isValid( final String newText ) {
                 String value = newText.trim();
                 if (value.length()==0) {
@@ -240,11 +243,13 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
       Menu menu;
       MenuManager menuManager;
 
+      @Override
       public Menu getMenu( final Menu parent ) {
         // Not expected
         return null;
       }
 
+      @Override
       public Menu getMenu( final Control parent ) {
         menuManager = new MenuManager();
         menu = menuManager.createContextMenu( parent );
@@ -258,6 +263,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         return menu;
       }
 
+      @Override
       public void dispose() {
         menuManager.dispose();
       }
@@ -329,6 +335,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     }
   }
 
+  @Override
   public void widgetSelected( final SelectionEvent e ) {
     ignoreModify = true;
     PackageDescriptionStanza stanza;
@@ -381,6 +388,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     ignoreModify = false;
   }
 
+  @Override
   public void widgetDefaultSelected( final SelectionEvent e ) {
     // Do nothing
   }

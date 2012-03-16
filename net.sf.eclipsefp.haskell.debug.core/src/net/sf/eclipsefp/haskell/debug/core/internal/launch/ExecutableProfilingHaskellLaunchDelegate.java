@@ -109,6 +109,7 @@ public class ExecutableProfilingHaskellLaunchDelegate extends
 
     Display.getDefault().syncExec( new Runnable() {
 
+      @Override
       public void run() {
         try {
           if( fileToOpen.exists() && fileToOpen.isFile() ) {

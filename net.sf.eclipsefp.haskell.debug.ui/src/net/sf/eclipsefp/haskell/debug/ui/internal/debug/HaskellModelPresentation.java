@@ -24,6 +24,7 @@ public class HaskellModelPresentation extends LabelProvider implements IDebugMod
     //NOOP
   }
 
+  @Override
   public void computeDetail( final IValue value, final IValueDetailListener listener ) {
     String detail = ""; //$NON-NLS-1$
     try {
@@ -44,11 +45,13 @@ public class HaskellModelPresentation extends LabelProvider implements IDebugMod
     return null;
   }
 
+  @Override
   public void setAttribute( final String attribute, final Object value ) {
     // noop
   }
 
 
+  @Override
   public String getEditorId( final IEditorInput input, final Object element ) {
     if (element instanceof IFile || element instanceof ILineBreakpoint) {
       return HaskellEditor.ID;
@@ -56,6 +59,7 @@ public class HaskellModelPresentation extends LabelProvider implements IDebugMod
     return null;
   }
 
+  @Override
   public IEditorInput getEditorInput( final Object element ) {
     if (element instanceof IFile) {
       return new FileEditorInput((IFile)element);

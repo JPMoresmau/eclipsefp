@@ -45,34 +45,42 @@ public class TestCase implements ITestCaseElement {
     }
   }
 
+  @Override
   public String getTestMethodName() {
     return name;
   }
 
+  @Override
   public Result getTestResult( final boolean includeChildren ) {
     return trace != null ? Result.FAILURE : Result.OK;
   }
 
+  @Override
   public double getElapsedTimeInSeconds() {
     return time;
   }
 
+  @Override
   public FailureTrace getFailureTrace() {
     return trace;
   }
 
+  @Override
   public ITestElementContainer getParentContainer() {
     return parent;
   }
 
+  @Override
   public ITestRunSession getTestRunSession() {
     return session;
   }
 
+  @Override
   public ProgressState getProgressState() {
     return ProgressState.COMPLETED;
   }
 
+  @Override
   public String getTestClassName() {
     return null;
   }

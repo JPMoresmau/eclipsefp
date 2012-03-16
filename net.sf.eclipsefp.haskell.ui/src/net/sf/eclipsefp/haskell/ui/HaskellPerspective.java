@@ -24,6 +24,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
   // interface methods of IPerspectiveFactory
   ///////////////////////////////////////////
 
+  @Override
   public void createInitialLayout( final IPageLayout layout ) {
     defineActions( layout );
     defineLayout( layout );

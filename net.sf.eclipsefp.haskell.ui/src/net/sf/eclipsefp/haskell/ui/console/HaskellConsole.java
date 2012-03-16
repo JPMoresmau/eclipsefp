@@ -41,6 +41,7 @@ public class HaskellConsole extends IOConsole {
     final IOConsoleOutputStream outputStream = newOutputStream();
     final Display stdDisplay = HaskellUIPlugin.getStandardDisplay();
     stdDisplay.syncExec( new Runnable() {
+      @Override
       public void run() {
         // JP likes blue for the console's text color.
         outputStream.setColor(stdDisplay.getSystemColor( SWT.COLOR_BLUE ));

@@ -44,6 +44,7 @@ public class MoveFolderParticipant extends MoveParticipant {
       this.haskellFiles = new ArrayList<IFile>();
       try {
         folder.accept( new IResourceVisitor() {
+          @Override
           public boolean visit( final IResource resource ) {
             if (resource instanceof IFile && FileUtil.hasHaskellExtension( resource )) {
               haskellFiles.add( (IFile )resource ); // Found a Haskell file

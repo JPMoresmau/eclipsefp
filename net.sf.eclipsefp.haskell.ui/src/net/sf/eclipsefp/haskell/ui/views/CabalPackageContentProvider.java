@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class CabalPackageContentProvider implements ITreeContentProvider {
 
+  @Override
   public Object[] getChildren( final Object arg0 ) {
     if (arg0 instanceof CabalPackageRef){
       return ((CabalPackageRef)arg0).getCabalPackageVersions().toArray();
@@ -20,6 +21,7 @@ public class CabalPackageContentProvider implements ITreeContentProvider {
     return new Object[0];
   }
 
+  @Override
   public Object getParent( final Object arg0 ) {
    if (arg0 instanceof CabalPackageVersion){
      return ((CabalPackageVersion)arg0).getRef();
@@ -27,6 +29,7 @@ public class CabalPackageContentProvider implements ITreeContentProvider {
     return null;
   }
 
+  @Override
   public boolean hasChildren( final Object arg0 ) {
     if (arg0 instanceof CabalPackageRef){
       return true;
@@ -34,6 +37,7 @@ public class CabalPackageContentProvider implements ITreeContentProvider {
     return false;
   }
 
+  @Override
   public Object[] getElements( final Object arg0 ) {
     if (arg0 instanceof Collection<?>){
       return ((Collection<?>)arg0).toArray();
@@ -41,11 +45,13 @@ public class CabalPackageContentProvider implements ITreeContentProvider {
     return null;
   }
 
+  @Override
   public void dispose() {
     // TODO Auto-generated method stub
 
   }
 
+  @Override
   public void inputChanged( final Viewer arg0, final Object arg1, final Object arg2 ) {
     // TODO Auto-generated method stub
 

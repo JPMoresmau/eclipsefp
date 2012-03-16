@@ -104,10 +104,12 @@ public class HaskellCodeScanner extends RuleBasedScanner
 
     public LiterateRule() {
       super( new IWordDetector() {
+        @Override
         public boolean isWordStart( final char c ) {
           return( c == '\\' );
         }
 
+        @Override
         public boolean isWordPart( final char c ) {
           return    "\\begin{code}".indexOf( c ) != -1 //$NON-NLS-1$
                  || "\\end{code}".indexOf( c ) != -1; //$NON-NLS-1$
@@ -119,11 +121,13 @@ public class HaskellCodeScanner extends RuleBasedScanner
       addWord( "\\end{code}", successToken ); //$NON-NLS-1$
     }
 
+    @Override
     public IToken evaluate( final ICharacterScanner scanner,
                             final boolean resume ) {
       return super.evaluate( scanner );
     }
 
+    @Override
     public IToken getSuccessToken() {
       return successToken;
     }

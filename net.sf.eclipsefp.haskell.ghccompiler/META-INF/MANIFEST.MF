@@ -15,7 +15,7 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.ui.forms
 Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: net.sf.eclipsefp.haskell.ghccompiler;x-friends:="net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.ui.test,net.sf.eclipsefp.haskell.debug.core",
  net.sf.eclipsefp.haskell.ghccompiler.core;x-friends:="net.sf.eclipsefp.haskell.ghccompiler.test,net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.core",
  net.sf.eclipsefp.haskell.ghccompiler.core.preferences;x-friends:="net.sf.eclipsefp.haskell.debug.ui,net.sf.eclipsefp.haskell.debug.ui.test,net.sf.eclipsefp.haskell.debug.core"

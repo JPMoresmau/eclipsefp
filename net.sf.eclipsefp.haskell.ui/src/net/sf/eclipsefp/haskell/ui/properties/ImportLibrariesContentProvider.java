@@ -18,14 +18,17 @@ class ImportLibrariesContentProvider implements IStructuredContentProvider {
   // interface methods of IStructuredContentProvider
   //////////////////////////////////////////////////
 
+  @Override
   public Object[] getElements( final Object input ) {
     return list == null ? new Object[ 0 ] : list.getAll();
   }
 
+  @Override
   public void dispose() {
     // unused
   }
 
+  @Override
   public void inputChanged( final Viewer viewer,
                             final Object oldInput,
                             final Object newInput ) {

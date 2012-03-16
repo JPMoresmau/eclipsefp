@@ -45,6 +45,7 @@ public abstract class RevealAtEndWizard extends Wizard {
       if( display != null ) {
         display.asyncExec( new Runnable() {
 
+          @Override
           public void run() {
             try {
               IDE.openEditor( activePage, resource, true );

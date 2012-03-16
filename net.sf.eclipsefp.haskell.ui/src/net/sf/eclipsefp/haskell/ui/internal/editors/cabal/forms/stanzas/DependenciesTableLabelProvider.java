@@ -15,18 +15,22 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DependenciesTableLabelProvider implements ITableLabelProvider {
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public boolean isLabelProperty( final Object element, final String property ) {
     return (property.equals("package") || property.equals("version")); // $NON-NLS-1
   }
 
+  @Override
   public Image getColumnImage( final Object element, final int columnIndex ) {
     return null;
   }
 
+  @Override
   public String getColumnText( final Object element, final int columnIndex ) {
     DependencyItem item = (DependencyItem)element;
     if (columnIndex == 0) {
@@ -38,10 +42,12 @@ public class DependenciesTableLabelProvider implements ITableLabelProvider {
     }
   }
 
+  @Override
   public void addListener( final ILabelProviderListener listener ) {
     // Do nothing
   }
 
+  @Override
   public void removeListener( final ILabelProviderListener listener ) {
     // Do nothing
   }

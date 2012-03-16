@@ -73,6 +73,7 @@ public class UuagcFileSection extends SectionPart {
     b.setLayoutData( data );
     b.addSelectionListener( new SelectionListener() {
 
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         if( b.getSelection() ) {
           file.addOption( option );
@@ -82,6 +83,7 @@ public class UuagcFileSection extends SectionPart {
         page.makeChanges();
       }
 
+      @Override
       public void widgetDefaultSelected( final SelectionEvent e ) {
         // Nothing here
       }

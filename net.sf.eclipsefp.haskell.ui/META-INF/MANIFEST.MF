@@ -89,6 +89,6 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets
  net.sf.eclipsefp.haskell.ui.util.preferences;uses:="net.sf.eclipsefp.haskell.ui.internal.preferences.editor",
  net.sf.eclipsefp.haskell.ui.util.text;uses:="org.eclipse.jface.text,org.eclipse.jface.text.rules",
  net.sf.eclipsefp.haskell.ui.wizards;x-friends:="net.sf.eclipsefp.haskell.ui.test,net.sf.eclipsefp.haskell.core.test"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.core.filesystem
 Bundle-ActivationPolicy: lazy

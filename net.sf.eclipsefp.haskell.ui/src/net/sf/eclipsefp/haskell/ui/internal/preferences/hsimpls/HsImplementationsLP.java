@@ -13,6 +13,7 @@ class HsImplementationsLP extends LabelProvider implements ITableLabelProvider {
   // interface methods of ITableLabelProvider
   ///////////// //////////////////////////////
 
+  @Override
   public String getColumnText( final Object elem, final int column ) {
     String result = null;
     if( elem instanceof IHsImplementation ) {
@@ -34,6 +35,7 @@ class HsImplementationsLP extends LabelProvider implements ITableLabelProvider {
     return result;
   }
 
+  @Override
   public Image getColumnImage( final Object elem, final int column ) {
     return null;
   }

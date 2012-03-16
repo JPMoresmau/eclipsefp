@@ -89,6 +89,7 @@ public class OverlayPreferenceStore implements IPreferenceStore {
   public void startListening() {
     if( propertyListener == null ) {
       propertyListener = new IPropertyChangeListener() {
+        @Override
         public void propertyChange( final PropertyChangeEvent event ) {
           OverlayKey key = findOverlayKey( event.getProperty() );
           if( key != null ) {
@@ -109,156 +110,188 @@ public class OverlayPreferenceStore implements IPreferenceStore {
 
   // IPreferenceStore Implementation -----------------------------------------
 
+  @Override
   public void addPropertyChangeListener( final IPropertyChangeListener li ) {
     store.addPropertyChangeListener( li );
   }
 
+  @Override
   public void removePropertyChangeListener( final IPropertyChangeListener li ) {
     store.removePropertyChangeListener( li );
   }
 
+  @Override
   public void firePropertyChangeEvent( final String name, 
                                        final Object oldValue,
                                        final Object newValue ) {
     store.firePropertyChangeEvent( name, oldValue, newValue );
   }
 
+  @Override
   public boolean contains( final String name ) {
     return store.contains( name );
   }
 
+  @Override
   public boolean getBoolean( final String name ) {
     return store.getBoolean( name );
   }
 
+  @Override
   public boolean getDefaultBoolean( final String name ) {
     return store.getDefaultBoolean( name );
   }
 
+  @Override
   public double getDefaultDouble( final String name ) {
     return store.getDefaultDouble( name );
   }
 
+  @Override
   public float getDefaultFloat( final String name ) {
     return store.getDefaultFloat( name );
   }
 
+  @Override
   public int getDefaultInt( final String name ) {
     return store.getDefaultInt( name );
   }
 
+  @Override
   public long getDefaultLong( final String name ) {
     return store.getDefaultLong( name );
   }
 
+  @Override
   public String getDefaultString( final String name ) {
     return store.getDefaultString( name );
   }
 
+  @Override
   public double getDouble( final String name ) {
     return store.getDouble( name );
   }
 
+  @Override
   public float getFloat( final String name ) {
     return store.getFloat( name );
   }
 
+  @Override
   public int getInt( final String name ) {
     return store.getInt( name );
   }
 
+  @Override
   public long getLong( final String name ) {
     return store.getLong( name );
   }
 
+  @Override
   public String getString( final String name ) {
     return store.getString( name );
   }
 
+  @Override
   public boolean isDefault( final String name ) {
     return store.isDefault( name );
   }
 
+  @Override
   public boolean needsSaving() {
     return store.needsSaving();
   }
 
+  @Override
   public void putValue( final String name, final String value ) {
     if( covers( name ) ) {
       store.putValue( name, value );
     }
   }
 
+  @Override
   public void setDefault( final String name, final double value ) {
     if( covers( name ) ) {
       store.setDefault( name, value );
     }
   }
 
+  @Override
   public void setDefault( final String name, final float value ) {
     if( covers( name ) ) {
       store.setDefault( name, value );
     }
   }
 
+  @Override
   public void setDefault( final String name, final int value ) {
     if( covers( name ) ) {
       store.setDefault( name, value );
     }
   }
 
+  @Override
   public void setDefault( final String name, final long value ) {
     if( covers( name ) ) {
       store.setDefault( name, value );
     }
   }
 
+  @Override
   public void setDefault( final String name, final String value ) {
     if( covers( name ) ) {
       store.setDefault( name, value );
     }
   }
 
+  @Override
   public void setDefault( final String name, final boolean value ) {
     if( covers( name ) ) {
       store.setDefault( name, value );
     }
   }
 
+  @Override
   public void setToDefault( final String name ) {
     store.setToDefault( name );
   }
 
+  @Override
   public void setValue( final String name, final double value ) {
     if( covers( name ) ) {
       store.setValue( name, value );
     }
   }
 
+  @Override
   public void setValue( final String name, final float value ) {
     if( covers( name ) ) {
       store.setValue( name, value );
     }
   }
 
+  @Override
   public void setValue( final String name, final int value ) {
     if( covers( name ) ) {
       store.setValue( name, value );
     }
   }
 
+  @Override
   public void setValue( final String name, final long value ) {
     if( covers( name ) ) {
       store.setValue( name, value );
     }
   }
 
+  @Override
   public void setValue( final String name, final String value ) {
     if( covers( name ) ) {
       store.setValue( name, value );
     }
   }
 
+  @Override
   public void setValue( final String name, final boolean value ) {
     if( covers( name ) ) {
       store.setValue( name, value );

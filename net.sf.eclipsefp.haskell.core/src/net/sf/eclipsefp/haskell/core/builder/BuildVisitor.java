@@ -16,6 +16,7 @@ class BuildVisitor extends Visitor implements IResourceVisitor {
     super( monitor );
   }
 
+  @Override
   public boolean visit( final IResource res ) {
     //build the specified resource.
     //return true to continue visiting children.

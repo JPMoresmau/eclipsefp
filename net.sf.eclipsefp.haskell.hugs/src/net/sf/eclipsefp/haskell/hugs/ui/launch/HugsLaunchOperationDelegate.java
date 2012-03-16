@@ -20,6 +20,7 @@ public class HugsLaunchOperationDelegate
   // interface methods of IInteractiveLaunchOperationDelegate
   ///////////////////////////////////////////////////////////
 
+  @Override
   public String[] createArguments( final IProject hsProject,
                                    final IFile[] selectedFiles ) {
     List<String> cmdLine = new ArrayList<String>();
@@ -46,10 +47,12 @@ public class HugsLaunchOperationDelegate
     }
   }
 
+  @Override
   public String getExecutable() {
     return Util.getCompilerExecutable();
   }
 
+  @Override
   public String getReloadCommand() {
     return ":reload";
   }

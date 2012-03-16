@@ -37,6 +37,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   // interface methods of IProjectCreationOperationExtraOp
   ////////////////////////////////////////////////////////
 
+  @Override
   public void run( final IProject project,
                    final IProgressMonitor mo ) throws CoreException {
     // we create nothing if no component selected, probably we're getting files from source control system or something

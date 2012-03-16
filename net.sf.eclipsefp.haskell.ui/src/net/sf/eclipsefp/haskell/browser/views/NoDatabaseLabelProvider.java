@@ -19,27 +19,33 @@ public class NoDatabaseLabelProvider implements ILabelProvider {
     this.isHoogle = isHoogle;
   }
 
+  @Override
   public Image getImage( final Object element ) {
     return ImageCache.DATABASE;
   }
 
+  @Override
   public String getText( final Object element ) {
     return isHoogle ? UITexts.scionBrowserNoDatabaseLoadedOrHoogleNotPresent :
       UITexts.scionBrowserNoDatabaseLoaded;
   }
 
+  @Override
   public void addListener( final ILabelProviderListener listener ) {
     // Do nothing
   }
 
+  @Override
   public void removeListener( final ILabelProviderListener listener ) {
     // Do nothing
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public boolean isLabelProperty( final Object element, final String property ) {
     // Do nothing
     return false;

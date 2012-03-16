@@ -28,6 +28,7 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
     this.project = project;
   }
 
+  @Override
   public void run( final IProgressMonitor mon ) throws CoreException {
     mon.beginTask( CoreTexts.cleanOutFoldersOperation_cleaning, 12 );
     try {
@@ -68,6 +69,7 @@ class CleanOutFoldersOperation implements IWorkspaceRunnable {
   ////////////////
 
   private static class FolderCleaner implements IResourceProxyVisitor {
+    @Override
     public boolean visit( final IResourceProxy proxy ) throws CoreException {
       if( proxy.getType() == IResource.FILE ) {
         IResource resource = proxy.requestResource();

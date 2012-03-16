@@ -156,7 +156,8 @@ public class CompilerManager implements ICompilerManager {
 	 * returns the ids of all compilers registered with the compiler manager.
 	 * </p>
 	 */
-	public String[] getRegisteredCompilers() {
+	@Override
+  public String[] getRegisteredCompilers() {
 		int size = htRegisteredCompilers.size();
 		String[] result = new String[size + 1];
 		htRegisteredCompilers.keySet().toArray(result);
@@ -169,7 +170,8 @@ public class CompilerManager implements ICompilerManager {
 	 * returns the currently used Haskell compiler.
 	 * </p>
 	 */
-	public IHaskellCompiler getCompiler() {
+	@Override
+  public IHaskellCompiler getCompiler() {
 		return htInstalledCompilers.get(selectedCompiler);
 	}
 
@@ -179,7 +181,8 @@ public class CompilerManager implements ICompilerManager {
 	 * selected and will be the one returned by getCompiler() from now on.
 	 * </p>
 	 */
-	public boolean selectCompiler(final String id) throws Exception {
+	@Override
+  public boolean selectCompiler(final String id) throws Exception {
 		boolean result = false;
 		if (htInstalledCompilers.containsKey(id)) {
 			selectedCompiler = id;
@@ -205,7 +208,8 @@ public class CompilerManager implements ICompilerManager {
 	 * plugin.xml with the CompilerManager.
 	 * </p>
 	 */
-	public void registerCompiler(final String id, final IConfigurationElement info) {
+	@Override
+  public void registerCompiler(final String id, final IConfigurationElement info) {
 		htRegisteredCompilers.put(id, info);
 	}
 
@@ -215,7 +219,8 @@ public class CompilerManager implements ICompilerManager {
 	 * (if it is a registered compiler).
 	 * </p>
 	 */
-	public String getCompilerName( final String id ) {
+	@Override
+  public String getCompilerName( final String id ) {
     String result;
     if( id.equals( DEFAULT ) ) {
       result = CoreTexts.compilerManager_noNamePlaceHolder;
@@ -226,7 +231,8 @@ public class CompilerManager implements ICompilerManager {
     return result;
   }
 
-	public IHsImplementation getCurrentHsImplementation() {
+	@Override
+  public IHsImplementation getCurrentHsImplementation() {
 	  return currentHsImplementation;
 	}
 
@@ -259,7 +265,8 @@ public class CompilerManager implements ICompilerManager {
 		installCompiler(id, haskellCompiler);
 	}
 
-	public void installCompiler(final String id,
+	@Override
+  public void installCompiler(final String id,
 			final IHaskellCompiler haskellCompiler) {
 		htInstalledCompilers.put(id, new ListenableCompilerDecorator(
 				haskellCompiler));
@@ -269,11 +276,13 @@ public class CompilerManager implements ICompilerManager {
 		throw new HaskellCoreException(message);
 	}
 
-	public void addCompilerListener(final ICompilerListener listener) {
+	@Override
+  public void addCompilerListener(final ICompilerListener listener) {
 		getSelectedCompilerDecorator().addListener(listener);
 	}
 
-	public void removeCompilerListener(final ICompilerListener listener) {
+	@Override
+  public void removeCompilerListener(final ICompilerListener listener) {
 		getSelectedCompilerDecorator().removeListener(listener);
 	}
 
@@ -320,6 +329,7 @@ public class CompilerManager implements ICompilerManager {
 
   private void listenForImplPref() {
     HaskellCorePlugin.instanceScopedPreferences().addPreferenceChangeListener( new IPreferenceChangeListener() {
+      @Override
       public void preferenceChange( final PreferenceChangeEvent event ) {
         String key = event.getKey();
         if(    ICorePreferenceNames.HS_IMPLEMENTATIONS.equals( key )
@@ -335,6 +345,7 @@ public class CompilerManager implements ICompilerManager {
     List<IHsImplementation> impls=new ArrayList<IHsImplementation>();
     for (File loc : candidateLocs) {
       File[] files = loc.listFiles( new FilenameFilter() {
+        @Override
         public boolean accept( final File dir, final String name ) {
           return name.equals( GHCSyntax.GHC );
         }

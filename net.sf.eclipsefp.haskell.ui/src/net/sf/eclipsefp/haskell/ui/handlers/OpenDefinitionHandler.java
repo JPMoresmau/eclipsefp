@@ -62,6 +62,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     // explicit default constructor
   }
 
+  @Override
   public Object execute( final ExecutionEvent event ) {
     IEditorPart editor = HandlerUtil.getActiveEditor( event );
     if( !( editor instanceof HaskellEditor ) ) {
@@ -72,6 +73,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     WordFinder.getEditorThing( haskellEditor,
         new WordFinder.EditorThingHandler() {
 
+          @Override
           public void handle( final EditorThing thing ) {
             //String name = thing.getName();
             //char haddockType = thing.getHaddockType();
@@ -172,6 +174,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
                 new Thread( new Runnable() {
 
+                  @Override
                   public void run() {
                     // find in outside location...
                     outer: for( CabalPackage[] pkgs: f.getPackagesByDB()
@@ -233,6 +236,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     if (!hEditor.hasOutline()){
       new Thread(new Runnable() {
 
+        @Override
         public synchronized void run() {
           for (int i=0;i<10 && !hEditor.hasOutline();i++){
             try {
@@ -374,6 +378,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
               if( exists( url ) ) {
                 page.getWorkbenchWindow().getShell().getDisplay().asyncExec( new Runnable() {
 
+                  @Override
                   public void run() {
                     try {
                       PlatformUI.getWorkbench().getBrowserSupport().createBrowser(

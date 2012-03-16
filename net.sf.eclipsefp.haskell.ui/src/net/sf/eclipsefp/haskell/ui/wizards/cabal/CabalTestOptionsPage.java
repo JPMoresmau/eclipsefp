@@ -24,6 +24,7 @@ public class CabalTestOptionsPage extends WizardPage {
     this.project=project;
   }
 
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );

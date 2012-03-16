@@ -22,10 +22,12 @@ import org.eclipse.jface.viewers.Viewer;
   */
 class SourceFolderCP implements ITreeContentProvider {
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return ResourceUtil.getHaskellProjects( ( IWorkspaceRoot )inputElement );
   }
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     List<IFolder> list = new ArrayList<IFolder>();
     /*if( parentElement instanceof IHaskellProject ) {
@@ -55,18 +57,22 @@ class SourceFolderCP implements ITreeContentProvider {
     return list.toArray();
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     return element instanceof IProject;
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   public void dispose() {
     // unused
   }
 
+  @Override
   public void inputChanged( final Viewer viewer,
                             final Object oldInput,
                             final Object newInput ) {

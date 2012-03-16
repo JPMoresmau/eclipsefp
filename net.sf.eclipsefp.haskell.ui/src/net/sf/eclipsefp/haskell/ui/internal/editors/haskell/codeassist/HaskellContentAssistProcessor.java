@@ -123,7 +123,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset)
+	@Override
+  public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset)
 	{
 	  //ScionTokenScanner sts=((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getScanner();
 	  IFile theFile = HaskellUIPlugin.getFile( viewer );
@@ -223,26 +224,31 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     return null;
 	}
 
+  @Override
   public IContextInformation[] computeContextInformation(final ITextViewer viewer, final int documentOffset) {
 		// unused
 		return null;
 	}
 
-	public char[] getCompletionProposalAutoActivationCharacters() {
+	@Override
+  public char[] getCompletionProposalAutoActivationCharacters() {
 		return autoCompletionCharacters;
 	}
 
-	public char[] getContextInformationAutoActivationCharacters() {
+	@Override
+  public char[] getContextInformationAutoActivationCharacters() {
 	  // unused
 		return null;
 	}
 
-	public String getErrorMessage() {
+	@Override
+  public String getErrorMessage() {
 		// return null to indicate we had no problems
 		return null;
 	}
 
-	public IContextInformationValidator getContextInformationValidator() {
+	@Override
+  public IContextInformationValidator getContextInformationValidator() {
 	  // unused
 		return null;
 	}
@@ -308,6 +314,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
     Comparator<String> pointedComparator = new Comparator<String>() {
 
+      @Override
       public int compare( final String a, final String b ) {
         boolean aPointed = a.indexOf( '.' ) != -1;
         boolean bPointed = b.indexOf( '.' ) != -1;
@@ -656,7 +663,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	    // NOP
 	  }
 
-	  public void assistSessionStarted( final ContentAssistEvent event ) {
+	  @Override
+    public void assistSessionStarted( final ContentAssistEvent event ) {
 	    // HaskellUIPlugin.log( "CA session starts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
 
 	    // Reset the context to force computeCompletionProposals to figure out what the context,
@@ -664,6 +672,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	    HaskellContentAssistProcessor.this.internalReset();
     }
 
+    @Override
     public void assistSessionEnded( final ContentAssistEvent event ) {
       // HaskellUIPlugin.log( "CA session ends.", null);
 
@@ -671,10 +680,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       HaskellContentAssistProcessor.this.internalReset();
     }
 
+    @Override
     public void assistSessionRestarted( final ContentAssistEvent event ) {
       // HaskellUIPlugin.log( "CA session restarts, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
     }
 
+    @Override
     public void selectionChanged( final ICompletionProposal proposal, final boolean smartToggle ) {
       // HaskellUIPlugin.log( "CA session selection changed, prefix = '" + (prefix != null ? prefix : "<null>") + "', context = " + context, null );
       // NOP

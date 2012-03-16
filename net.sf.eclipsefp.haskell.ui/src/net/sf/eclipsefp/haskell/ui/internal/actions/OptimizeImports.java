@@ -22,6 +22,7 @@ public class OptimizeImports implements IEditorActionDelegate {
   // interface methods of IEditorActionDelegate
   /////////////////////////////////////////////
 
+  @Override
   public void run( final IAction action ) {
     Shell shell = editor.getSite().getShell();
     MessageDialog.openInformation(
@@ -46,10 +47,12 @@ public class OptimizeImports implements IEditorActionDelegate {
 //    }
   }
 
+  @Override
   public void selectionChanged( final IAction action, final ISelection sel ) {
     // unused
   }
 
+  @Override
   public void setActiveEditor( final IAction act, final IEditorPart editor ) {
     this.editor = editor;
   }

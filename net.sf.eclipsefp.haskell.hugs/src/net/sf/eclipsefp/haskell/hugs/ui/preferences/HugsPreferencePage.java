@@ -85,6 +85,7 @@ public class HugsPreferencePage extends PreferencePage
   // interface methods of IWorkbenchPreferencePage
   ////////////////////////////////////////////////
 
+  @Override
   public void init( final IWorkbench workbench ) {
     setPreferenceStore( HugsPlugin.getDefault().getPreferenceStore() );
 

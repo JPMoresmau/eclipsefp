@@ -21,7 +21,8 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	PackagesItem[] localCache = null;
 	PackagesItem[] hackageCache = null;
 
-	public Object[] getElements(final Object inputElement) {
+	@Override
+  public Object[] getElements(final Object inputElement) {
 	  boolean local = BrowserPlugin.getDefault().isLocalDatabaseLoaded();
 	  boolean hackage = BrowserPlugin.getDefault().isHackageDatabaseLoaded();
 	  if (local && hackage) {
@@ -35,7 +36,8 @@ public class PackagesContentProvider implements ITreeContentProvider {
     }
 	}
 
-	public Object[] getChildren(final Object parentElement) {
+	@Override
+  public Object[] getChildren(final Object parentElement) {
 
 		switch (((Database) parentElement).getType()) {
 		case LOCAL:
@@ -55,7 +57,8 @@ public class PackagesContentProvider implements ITreeContentProvider {
 
 	}
 
-	public Object getParent(final Object element) {
+	@Override
+  public Object getParent(final Object element) {
 		if (element instanceof Database) {
 			return PackagesRoot.ROOT;
 		} else {
@@ -64,7 +67,8 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	public boolean hasChildren(final Object element) {
+	@Override
+  public boolean hasChildren(final Object element) {
 		return (element instanceof PackagesRoot || element instanceof Database);
 	}
 
@@ -113,11 +117,13 @@ public class PackagesContentProvider implements ITreeContentProvider {
     return hackageCache;
   }
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Do nothing
 	}
 
-	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+	@Override
+  public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		// Do nothing
 	}
 }

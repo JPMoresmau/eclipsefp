@@ -60,10 +60,12 @@ public class CabalScanner extends RuleBasedScanner {
     // interface methods of IWordDetector
     /////////////////////////////////////
 
+    @Override
     public boolean isWordStart( final char ch ) {
       return isWordPart( ch );
     }
 
+    @Override
     public boolean isWordPart( final char ch ) {
       return !Character.isWhitespace( ch );
     }

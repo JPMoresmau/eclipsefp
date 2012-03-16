@@ -17,7 +17,8 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class BrowserPerspective implements IPerspectiveFactory {
 
-	public void createInitialLayout(final IPageLayout layout) {
+	@Override
+  public void createInitialLayout(final IPageLayout layout) {
 		// Get the editor area
 		String editorArea = layout.getEditorArea();
 

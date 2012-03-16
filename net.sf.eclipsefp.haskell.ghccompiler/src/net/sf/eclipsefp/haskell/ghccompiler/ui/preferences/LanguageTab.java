@@ -42,6 +42,7 @@ public class LanguageTab extends GhcCompilerTab {
     return composite;
   }
 
+  @Override
   public void propertyChange( final PropertyChangeEvent event ) {
     Iterator<DialogField> it=fields.iterator();
     for (GhcParameter p:GhcParameter.values()){

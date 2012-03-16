@@ -88,6 +88,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
     dlgField.setInfo( getPreferenceStore().getString( EXECUTABLE_NAME ) );
 
     dlgField.addDialogFieldListener( new IDialogFieldListener() {
+      @Override
       public void infoChanged( final Object newInfo ) {
         getPreferenceStore().setValue( EXECUTABLE_NAME, ( String )newInfo );
       }
@@ -95,6 +96,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
     return dlgField;
   }
 
+  @Override
   public void propertyChange( final PropertyChangeEvent event ) {
     dlgField.setInfo( getPreferenceStore().getString( EXECUTABLE_NAME ) );
 

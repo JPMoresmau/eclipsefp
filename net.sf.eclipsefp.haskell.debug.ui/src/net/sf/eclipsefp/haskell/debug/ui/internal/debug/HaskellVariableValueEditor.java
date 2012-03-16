@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
 public class HaskellVariableValueEditor implements IVariableValueEditor {
 
 
+  @Override
   public boolean editVariable( final IVariable variable, final Shell shell ) {
 
     Dialog d=new Dialog(shell) {
@@ -54,6 +55,7 @@ public class HaskellVariableValueEditor implements IVariableValueEditor {
     return true;
   }
 
+  @Override
   public boolean saveVariable( final IVariable variable, final String expression,
       final Shell shell ) {
     return false;

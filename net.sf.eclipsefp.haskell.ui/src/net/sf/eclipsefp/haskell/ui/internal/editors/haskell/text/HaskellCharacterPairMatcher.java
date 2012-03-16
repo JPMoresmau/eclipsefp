@@ -27,14 +27,17 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
   // interface methods of ICharacterPairMatcher
   /////////////////////////////////////////////
 
+  @Override
   public void clear() {
     anchor = 0;
   }
 
+  @Override
   public void dispose() {
     //nothing to dispose
   }
 
+  @Override
   public IRegion match(final IDocument document, final int theOffset) {
     Assert.isNotNull( document );
     Assert.isLegal( theOffset >= 0 );
@@ -95,6 +98,7 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     return null;
   }
 
+  @Override
   public int getAnchor() {
     return anchor;
   }

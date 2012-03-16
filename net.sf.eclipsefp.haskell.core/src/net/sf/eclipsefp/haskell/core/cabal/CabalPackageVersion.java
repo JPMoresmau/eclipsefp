@@ -34,6 +34,7 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
     return index==ref.getVersions().size()-1;
   }
 
+  @Override
   public int compareTo( final CabalPackageVersion o ) {
     String s1=toString();
     String s2=o.toString();

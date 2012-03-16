@@ -16,19 +16,23 @@ public class DefaultPartitionScanner implements IPartitionTokenScanner {
   private int length;
   private boolean has=true;
 
+  @Override
   public void setPartialRange( final IDocument document, final int offset, final int length,
       final String contentType, final int partitionOffset ) {
     setRange(document,offset,length);
   }
 
+  @Override
   public int getTokenLength() {
    return length;
   }
 
+  @Override
   public int getTokenOffset() {
    return offset;
   }
 
+  @Override
   public IToken nextToken() {
     if (has){
       has=false;
@@ -37,6 +41,7 @@ public class DefaultPartitionScanner implements IPartitionTokenScanner {
     return Token.EOF;
   }
 
+  @Override
   public void setRange( final IDocument document, final int offset, final int length ) {
    this.offset=offset;
    this.length=length;

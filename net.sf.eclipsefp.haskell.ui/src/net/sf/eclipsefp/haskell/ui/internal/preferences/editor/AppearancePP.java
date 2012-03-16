@@ -212,6 +212,7 @@ public class AppearancePP extends AbstractEditorPP {
 
   public void propertyChange( final PropertyChangeEvent event ) {
     colorList.getDisplay().asyncExec( new Runnable() {
+      @Override
       public void run() {
         if( ( colorList != null ) && !colorList.isDisposed() ) {
           handleColorListSelection();
@@ -239,6 +240,7 @@ public class AppearancePP extends AbstractEditorPP {
     }
     colorList.getDisplay().asyncExec( new Runnable() {
 
+      @Override
       public void run() {
         if( ( colorList != null ) && !colorList.isDisposed() ) {
           colorList.select( 0 );

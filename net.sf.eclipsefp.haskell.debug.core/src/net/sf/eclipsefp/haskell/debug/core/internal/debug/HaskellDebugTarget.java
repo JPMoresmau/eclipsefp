@@ -71,6 +71,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   }
 
+  @Override
   public String getName(){
     if (fName == null) {
        fName = getLaunch().getLaunchConfiguration().getName();
@@ -78,18 +79,22 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     return fName;
   }
 
+  @Override
   public IProcess getProcess() {
     return fProcess;
   }
 
+  @Override
   public IThread[] getThreads(){
    return new IThread[]{thread};
   }
 
+  @Override
   public boolean hasThreads() {
     return true;
   }
 
+  @Override
   public boolean supportsBreakpoint( final IBreakpoint breakpoint ) {
     if (breakpoint.getModelIdentifier().equals(HaskellDebugCore.ID_HASKELL_DEBUG_MODEL)) {
 
@@ -135,10 +140,12 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   }
 
 
+  @Override
   public boolean canTerminate() {
    return fProcess.canTerminate();
   }
 
+  @Override
   public boolean isTerminated() {
    return fProcess.isTerminated();
   }
@@ -173,22 +180,27 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }
   }
 
+  @Override
   public void terminate() throws DebugException {
     sendRequest( GHCiSyntax.QUIT_COMMAND,false );
   }
 
+  @Override
   public boolean canResume() {
    return isSuspended();
   }
 
+  @Override
   public boolean canSuspend() {
     return false;
   }
 
+  @Override
   public boolean isSuspended() {
     return thread.getBreakpoints().length>0 || thread.getStopLocation()!=null;
   }
 
+  @Override
   public void resume() throws DebugException {
     thread.setBreakpoint( null );
     thread.setStopLocation( null );
@@ -197,10 +209,12 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   }
 
+  @Override
   public void suspend()  {
     // NOOP
   }
 
+  @Override
   public synchronized void breakpointAdded( final IBreakpoint breakpoint ) {
     if (supportsBreakpoint(breakpoint)) {
       try {
@@ -245,6 +259,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   }
 
+  @Override
   public void breakpointChanged( final IBreakpoint breakpoint, final IMarkerDelta delta ) {
     if (supportsBreakpoint(breakpoint)) {
       try {
@@ -259,6 +274,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }
   }
 
+  @Override
   public void breakpointRemoved( final IBreakpoint breakpoint, final IMarkerDelta delta ) {
     // TODO take out GHCi specific
     Integer id=breakpointIds.get(breakpoint);
@@ -271,10 +287,12 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }
   }
 
+  @Override
   public boolean canDisconnect() {
     return connected;
   }
 
+  @Override
   public void disconnect() throws DebugException {
     connected=false;
     try {
@@ -287,14 +305,17 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   }
 
+  @Override
   public boolean isDisconnected() {
       return !connected;
   }
 
+  @Override
   public IMemoryBlock getMemoryBlock( final long startAddress, final long length ) {
     return null;
   }
 
+  @Override
   public boolean supportsStorageRetrieval() {
     return false;
   }
@@ -318,6 +339,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   }
 
   //boolean runContext=true;
+  @Override
   public synchronized void streamAppended( final String text, final IStreamMonitor monitor ) {
     //boolean needContext=false;
     synchronized( response ) {

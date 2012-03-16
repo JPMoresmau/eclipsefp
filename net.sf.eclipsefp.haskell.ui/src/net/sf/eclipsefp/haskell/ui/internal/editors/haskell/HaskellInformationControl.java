@@ -105,6 +105,7 @@ public class HaskellInformationControl extends AbstractInformationControl {
   /*
    * @see IInformationControlExtension#hasContents()
    */
+  @Override
   public boolean hasContents() {
     return this.hasContents;
   }

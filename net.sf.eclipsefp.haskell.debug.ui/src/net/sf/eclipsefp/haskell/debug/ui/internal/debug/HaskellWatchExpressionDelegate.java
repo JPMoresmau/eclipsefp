@@ -18,6 +18,7 @@ import org.eclipse.debug.core.model.IWatchExpressionResult;
  */
 public class HaskellWatchExpressionDelegate implements IWatchExpressionDelegate {
 
+  @Override
   public void evaluateExpression( final String expression, final IDebugElement context,
       final IWatchExpressionListener listener ) {
       HaskellDebugElement hde=(HaskellDebugElement)context;
@@ -58,22 +59,27 @@ public class HaskellWatchExpressionDelegate implements IWatchExpressionDelegate 
       this.exception = exception;
     }
 
+    @Override
     public boolean hasErrors() {
       return exception!=null;
     }
 
+    @Override
     public IValue getValue() {
       return val;
     }
 
+    @Override
     public String getExpressionText() {
       return expression;
     }
 
+    @Override
     public DebugException getException() {
       return exception;
     }
 
+    @Override
     public String[] getErrorMessages() {
       if (val==null && exception==null){
         return new String[]{UITexts.evaluate_need_suspend};

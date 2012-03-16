@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class DeltaVisitor implements IResourceDeltaVisitor {
 
+  @Override
   public boolean visit( final IResourceDelta delta ) throws CoreException {
     IResource resource = delta.getResource();
     if( HappyBuilder.mustBeVisited( resource ) ) {

@@ -65,6 +65,7 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
       for (final IProject p:projects){
         Runnable r=new Runnable() {
 
+          @Override
           public void run() {
             IFolder f=p.getFolder(fold );
             if (f!=null){
@@ -144,6 +145,7 @@ public class CabalSDistWizard extends Wizard implements IExportWizard {
 //    return false;
 //  }
 
+  @Override
   public void init( final IWorkbench arg0, final IStructuredSelection arg1 ) {
     projects.addAll( ResourceUtil.getProjects( arg1 ) );
 

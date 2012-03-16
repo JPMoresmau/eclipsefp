@@ -61,6 +61,7 @@ public class StringDialogField extends DialogField {
   
   private void addListener( final Text text ) {
     text.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent event ) {
         Text widget = ( Text )event.widget;
         Object newInfo = widget.getText();

@@ -21,17 +21,20 @@ public class CabalInstallAction implements IObjectActionDelegate {
   private final Set<IProject> projects=new LinkedHashSet<IProject>();
   private Shell currentShell;
 
+  @Override
   public void setActivePart( final IAction arg0, final IWorkbenchPart arg1 ) {
     currentShell=arg1.getSite().getShell();
 
   }
 
+  @Override
   public void run( final IAction arg0 ) {
    WizardDialog wd=new WizardDialog( currentShell, new CabalInstallWizard( projects ) );
    wd.open();
 
   }
 
+  @Override
   public void selectionChanged( final IAction arg0, final ISelection arg1 ) {
     projects.clear();
     projects.addAll( ResourceUtil.getProjects( arg1 ) );

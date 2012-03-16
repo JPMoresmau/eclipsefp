@@ -169,6 +169,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   private void initializePropertyListener() {
     propertyChangeListener = new IPropertyChangeListener() {
+      @Override
       public void propertyChange( final PropertyChangeEvent event ) {
         getColorProvider().changeColor( event.getProperty(),
                                                  event.getNewValue() );

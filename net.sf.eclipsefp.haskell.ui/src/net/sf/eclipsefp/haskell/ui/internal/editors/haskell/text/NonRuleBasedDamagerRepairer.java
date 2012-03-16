@@ -36,6 +36,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager,
     this.literate = literate;
   }
 
+  @Override
   public void setDocument( final IDocument document ) {
     this.document = document;
   }
@@ -66,6 +67,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager,
     return result;
   }
 
+  @Override
   public IRegion getDamageRegion( final ITypedRegion partition,
                                   final DocumentEvent event,
                                   final boolean documentPartitioningChanged ) {
@@ -92,6 +94,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager,
     return result;
   }
 
+  @Override
   public void createPresentation( final TextPresentation presentation,
                                   final ITypedRegion region ) {
     int offset = region.getOffset();

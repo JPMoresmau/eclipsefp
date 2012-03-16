@@ -87,6 +87,7 @@ public class WordFinder {
                   haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
               f.getThingAtPoint(file, l, new ThingAtPointHandler() {
 
+                @Override
                 public void handleThing( ThingAtPoint thing ) {
                   String haddockType = null;
                   /*String name=fName;

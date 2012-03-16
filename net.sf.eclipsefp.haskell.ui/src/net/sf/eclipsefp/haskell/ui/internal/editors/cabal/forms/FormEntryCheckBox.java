@@ -61,12 +61,14 @@ public class FormEntryCheckBox extends FormEntry implements SelectionListener {
     checkbox.setEnabled( editable );
   }
 
+  @Override
   public void widgetSelected( final SelectionEvent e ) {
     if (!ignoreModify) {
       notifyTextValueChanged();
     }
   }
 
+  @Override
   public void widgetDefaultSelected( final SelectionEvent e ) {
     // Do nothing
   }

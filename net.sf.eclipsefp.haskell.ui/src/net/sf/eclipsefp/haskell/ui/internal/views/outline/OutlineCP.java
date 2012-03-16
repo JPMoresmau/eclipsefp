@@ -34,6 +34,7 @@ public class OutlineCP implements ITreeContentProvider{
            ((OutlineDef)children[0]).getName().equals( ((OutlineDef)o).getName() );
     }
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     Object[] result = getRawChildren( parentElement );
     if( hasSingularChild( parentElement ) ) {
@@ -54,10 +55,12 @@ public class OutlineCP implements ITreeContentProvider{
     return new Object[0];
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     if (element instanceof OutlineDef){
       List<OutlineDef> l=((OutlineDef)element).getChildren();
@@ -66,6 +69,7 @@ public class OutlineCP implements ITreeContentProvider{
    return true;
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
      //return input.toArray();
     //List<OutlineDef> l=input.get( null );
@@ -81,11 +85,13 @@ public class OutlineCP implements ITreeContentProvider{
     return new Object[0];
   }
 
+  @Override
   public void dispose() {
 //   input=null;
 
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
 //   if (newInput instanceof List<?>){
 //     input=(List<OutlineDef>)newInput;

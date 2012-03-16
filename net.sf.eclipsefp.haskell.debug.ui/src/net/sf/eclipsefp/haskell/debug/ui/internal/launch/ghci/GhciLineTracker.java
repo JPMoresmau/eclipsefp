@@ -13,10 +13,12 @@ public class GhciLineTracker implements IConsoleLineTrackerExtension {
 
   IConsole console;
 
+  @Override
   public void init( final IConsole con ) {
     this.console = con;
   }
 
+  @Override
   public void lineAppended( final IRegion line ) {
     try {
       IDocument doc = console.getDocument();
@@ -37,10 +39,12 @@ public class GhciLineTracker implements IConsoleLineTrackerExtension {
     }
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public void consoleClosed() {
     // Do nothing
   }

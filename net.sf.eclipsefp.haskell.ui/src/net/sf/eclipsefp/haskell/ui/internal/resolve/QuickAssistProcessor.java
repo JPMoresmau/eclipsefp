@@ -21,10 +21,12 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 public class QuickAssistProcessor implements IQuickAssistProcessor {
   private final BuildMarkerResolutionGenerator generator=new BuildMarkerResolutionGenerator();
 
+  @Override
   public boolean canAssist( final IQuickAssistInvocationContext invocationContext ) {
     return false;
   }
 
+  @Override
   public boolean canFix( final Annotation annotation ) {
     if (annotation instanceof MarkerAnnotation){
       return generator.getResolutions( ((MarkerAnnotation)annotation ).getMarker()).length>0;
@@ -32,6 +34,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
     return false;
   }
 
+  @Override
   public ICompletionProposal[] computeQuickAssistProposals(
       final IQuickAssistInvocationContext invocationContext ) {
     List<ICompletionProposal> res=new ArrayList<ICompletionProposal>();
@@ -59,6 +62,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
     return res.toArray( new ICompletionProposal[res.size()] );
   }
 
+  @Override
   public String getErrorMessage() {
      return null;
   }

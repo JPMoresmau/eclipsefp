@@ -78,22 +78,27 @@ public class TestSuiteAndSession implements ITestRunSession, ITestSuiteElement {
     }
   }
 
+  @Override
   public ITestElement[] getChildren() {
     return children.toArray( new ITestElement[ children.size() ] );
   }
 
+  @Override
   public String getTestRunName() {
     return name;
   }
 
+  @Override
   public String getSuiteTypeName() {
     return name;
   }
 
+  @Override
   public double getElapsedTimeInSeconds() {
     return time;
   }
 
+  @Override
   public Result getTestResult( final boolean includeChildren ) {
     if( !includeChildren ) {
       return Result.OK;
@@ -109,22 +114,27 @@ public class TestSuiteAndSession implements ITestRunSession, ITestSuiteElement {
     return result;
   }
 
+  @Override
   public ITestElementContainer getParentContainer() {
     return parent;
   }
 
+  @Override
   public ITestRunSession getTestRunSession() {
     return session;
   }
 
+  @Override
   public FailureTrace getFailureTrace() {
     return null;
   }
 
+  @Override
   public ProgressState getProgressState() {
     return ProgressState.COMPLETED;
   }
 
+  @Override
   public IJavaProject getLaunchedProject() {
     return null;
   }

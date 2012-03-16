@@ -74,6 +74,7 @@ public class TestSuiteHaskellLaunchDelegate extends
     if (canShowJUnit()) {
       Display.getDefault().syncExec( new Runnable() {
 
+        @Override
         public void run() {
           try {
             IWorkbenchPage page = PlatformUI.getWorkbench()
@@ -89,6 +90,7 @@ public class TestSuiteHaskellLaunchDelegate extends
     } else {
       Display.getCurrent().syncExec( new Runnable() {
 
+        @Override
         public void run() {
           MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
               CoreTexts.jdt_notFound_title, CoreTexts.jdt_notFound_message );

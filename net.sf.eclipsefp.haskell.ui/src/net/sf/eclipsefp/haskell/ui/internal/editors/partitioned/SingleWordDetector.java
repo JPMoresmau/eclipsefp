@@ -20,10 +20,12 @@ public class SingleWordDetector implements IWordDetector {
     this.string = string;
   }
 
+  @Override
   public boolean isWordStart( final char c ) {
     return c == string.charAt( 0 );
   }
 
+  @Override
   public boolean isWordPart( final char c ) {
     return string.indexOf( c, 1 ) != -1;
   }

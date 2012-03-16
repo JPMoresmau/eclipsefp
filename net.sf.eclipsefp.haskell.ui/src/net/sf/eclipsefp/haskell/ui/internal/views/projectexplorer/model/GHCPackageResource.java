@@ -21,10 +21,12 @@ public abstract class GHCPackageResource implements ITreeElement {
   // interface methods of ITreeElement
   ////////////////////////////////////
 
+  @Override
   public Object getParent() {
     return parent;
   }
 
+  @Override
   public String getText() {
     return location.lastSegment();
   }

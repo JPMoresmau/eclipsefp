@@ -89,7 +89,8 @@ public class DialogField {
 		if (display != null) {
 			display.asyncExec(
 				new Runnable() {
-					public void run() {
+					@Override
+          public void run() {
 						setFocus();
 					}
 				}

@@ -69,16 +69,19 @@ public class NewHaskellProjectPP extends PreferencePage
     alTextControls = new ArrayList<Text>();
 
     selectionListener = new SelectionListener() {
+      @Override
       public void widgetDefaultSelected( final SelectionEvent e ) {
         // unused
       }
 
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         controlChanged( e.widget );
       }
     };
 
     modifyListener = new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         controlModified( evt.widget );
       }
@@ -93,6 +96,7 @@ public class NewHaskellProjectPP extends PreferencePage
 //  store.setDefault( ICorePreferenceNames.TARGET_BINARY, "bin/theResult" );
   }
 
+  @Override
   public void init( final IWorkbench workbench ) {
     // empty implementation
   }

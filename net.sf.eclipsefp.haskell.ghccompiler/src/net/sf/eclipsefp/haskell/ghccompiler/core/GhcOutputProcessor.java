@@ -27,10 +27,12 @@ public class GhcOutputProcessor implements IGhcOutputProcessor {
     this.workingDir = new File(""); //$NON-NLS-1$
   }
 
+  @Override
   public void setWorkingDir(final File workingDir) {
     this.workingDir = workingDir;
   }
 
+  @Override
   public void compiling( final String fileName, final int number, final int total ) {
     IFile file = findFile(fileName);
     try {
@@ -40,6 +42,7 @@ public class GhcOutputProcessor implements IGhcOutputProcessor {
     }
   }
 
+  @Override
   public void message( final Note note ) {
     IFile file = findFile( note.getLocation().getFileName() );
     try {

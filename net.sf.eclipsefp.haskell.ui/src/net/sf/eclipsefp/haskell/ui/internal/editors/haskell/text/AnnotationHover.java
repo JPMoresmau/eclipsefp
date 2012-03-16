@@ -28,6 +28,7 @@ public class AnnotationHover implements IAnnotationHover {
   // interface methods of IAnnotationHover
   ////////////////////////////////////////
 
+  @Override
   public String getHoverInfo( final ISourceViewer sv, final int line ) {
     String result = null;
 

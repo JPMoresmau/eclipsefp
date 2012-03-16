@@ -50,19 +50,23 @@ public final class HaskellProject implements IHaskellProject {
 	// interface methods of IHaskellProject
 	// /////////////////////////////////////
 
-	public IProject getResource() {
+	@Override
+  public IProject getResource() {
 		return project;
 	}
 
-	public Set<IPath> getSourcePaths() {
+	@Override
+  public Set<IPath> getSourcePaths() {
     return Collections.unmodifiableSet( sourcePaths );
   }
 
-	public Set<IPath> getTargetNames() {
+	@Override
+  public Set<IPath> getTargetNames() {
 	  return Collections.unmodifiableSet( targetNames );
 	}
 
-	public IPath getOutputPath() {
+	@Override
+  public IPath getOutputPath() {
 		return getProjectRelativePath(outputPath);
 	}
 
@@ -70,7 +74,8 @@ public final class HaskellProject implements IHaskellProject {
 		return getProjectRelativePath(binPath);
 	}
 
-	public IImportLibrary[] getImportLibraries() {
+	@Override
+  public IImportLibrary[] getImportLibraries() {
     ImportLibrariesList list = new ImportLibrariesList( getResource() );
     return list.getAll();
   }
@@ -78,7 +83,8 @@ public final class HaskellProject implements IHaskellProject {
 	// interface methods of IAdaptable
 	// ////////////////////////////////
 
-	public Object getAdapter( final Class required ) {
+	@Override
+  public Object getAdapter( final Class required ) {
     Object result = null;
     if( required == IResource.class ) {
       result = getResource();
@@ -126,6 +132,7 @@ public final class HaskellProject implements IHaskellProject {
     HaskellProjectManager.broadcast( event );
   }
 
+  @Override
   public IContainer getSourceFolder() {
     IContainer result = project;
     if( !getSourcePaths().isEmpty() ) {
@@ -137,6 +144,7 @@ public final class HaskellProject implements IHaskellProject {
     return result;
   }
 
+  @Override
   public IHaskellCompiler getCompiler() {
     return compiler;
   }
@@ -145,6 +153,7 @@ public final class HaskellProject implements IHaskellProject {
     compiler = ( comp == null ) ? new DefaultHaskellCompiler() : comp;
   }
 
+  @Override
   public void compile( final IFile file ) {
     getCompiler().compile( file );
   }
@@ -168,6 +177,7 @@ public final class HaskellProject implements IHaskellProject {
     }
   }
 
+  @Override
   public Map<String, IFile> getModulesFile( ) {
     Set<IPath> paths = getSourcePaths();
     HashMap<String, IFile> r = new HashMap<String, IFile>();
@@ -179,6 +189,7 @@ public final class HaskellProject implements IHaskellProject {
     return r;
   }
 
+  @Override
   public IFile getModuleFile( final String module ) {
     return this.getModulesFile( ).get( module );
   }
@@ -197,6 +208,7 @@ public final class HaskellProject implements IHaskellProject {
       }
     }
 
+    @Override
     public boolean visit( final IResource resource ) {
       String path = resource.getProjectRelativePath().toString();
       if( resource instanceof IFile ) {

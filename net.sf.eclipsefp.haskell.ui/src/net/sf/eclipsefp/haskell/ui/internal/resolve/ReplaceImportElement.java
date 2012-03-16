@@ -33,6 +33,7 @@ public class ReplaceImportElement extends MarkerCompletion {
     return mgr.replaceItemInImport( oldElement,newElement, line, getLabel() );
   }
 
+  @Override
   public String getLabel() {
     return NLS.bind(UITexts.resolve_import_element_replace,newElement);
   }

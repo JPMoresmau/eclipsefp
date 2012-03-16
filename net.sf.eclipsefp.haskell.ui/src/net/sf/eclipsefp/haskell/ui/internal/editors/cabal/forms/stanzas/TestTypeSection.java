@@ -58,6 +58,7 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
     getSection().setClient( container );
   }
 
+  @Override
   public void textValueChanged( final FormEntry entry ) {
     @SuppressWarnings ( "unchecked" )
     FormEntryCombo<TestSuiteType> fEntry = ( FormEntryCombo<TestSuiteType> )entry;
@@ -80,14 +81,17 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
     }
   }
 
+  @Override
   public void focusGained( final FormEntry entry ) {
     // Do nothing
   }
 
+  @Override
   public void textDirty( final FormEntry entry ) {
     // Do nothing
   }
 
+  @Override
   public void selectionChanged( final FormEntry entry ) {
     // Do nothing
   }

@@ -77,9 +77,11 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     viewer.getControl().setFocus();
   }
 
+  @Override
   public void databaseLoaded( final DatabaseLoadedEvent e ) {
     Display.getDefault().asyncExec( new Runnable() {
 
+      @Override
       public void run() {
         // Set real content provider
         PackagesContentProvider daProvider = new PackagesContentProvider();
@@ -96,9 +98,11 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     } );
   }
 
+  @Override
   public void databaseUnloaded( final BrowserEvent e ) {
     Display.getDefault().asyncExec( new Runnable() {
 
+      @Override
       public void run() {
         if (!BrowserPlugin.getDefault().isAnyDatabaseLoaded()) {
           // Put the "no database" content and label
@@ -121,6 +125,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     } );
   }
 
+  @Override
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
@@ -132,6 +137,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     }
   }
 
+  @Override
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();

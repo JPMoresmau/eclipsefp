@@ -5,7 +5,8 @@ import org.eclipse.ui.console.TextConsole;
 @Deprecated
 public class FakeCleaner implements IConsoleCleaner {
 
-	public void clean(final TextConsole console) {
+	@Override
+  public void clean(final TextConsole console) {
 		//fake cleaner does not clean anything
 	}
 

@@ -22,6 +22,7 @@ public class KeywordDetector implements IWordDetector {
     this.allowDigitAtStart = allowDigitAtStart;
   }
 
+  @Override
   public boolean isWordStart( final char c ) {
     if( allowDigitAtStart ) {
       return Character.isLetter( c ) || Character.isDigit( c ) || c == '_';
@@ -30,6 +31,7 @@ public class KeywordDetector implements IWordDetector {
     }
   }
 
+  @Override
   public boolean isWordPart( final char c ) {
     return Character.isLetter( c ) || Character.isDigit( c ) || c == '_';
   }

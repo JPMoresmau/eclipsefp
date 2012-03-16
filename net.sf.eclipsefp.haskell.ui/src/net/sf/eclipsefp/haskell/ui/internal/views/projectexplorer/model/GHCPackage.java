@@ -25,6 +25,7 @@ public class GHCPackage extends GHCPackageResource {
   // interface methods of ITreeElement
   ////////////////////////////////////
 
+  @Override
   public List<GHCPackageResource> getChildren() {
     return Collections.emptyList();
   }
@@ -35,6 +36,7 @@ public class GHCPackage extends GHCPackageResource {
     return nameVersion;
   }
 
+  @Override
   public String getImageKey() {
     return hidden ? IImageNames.HIDDEN_PACKAGE : IImageNames.PACKAGE;
   }

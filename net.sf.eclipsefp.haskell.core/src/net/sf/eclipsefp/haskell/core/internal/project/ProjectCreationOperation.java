@@ -42,6 +42,7 @@ public class ProjectCreationOperation {
         : passedMon;
     IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 
+      @Override
       public void run( final IProgressMonitor monitor ) throws CoreException {
         String msg = CoreTexts.projectCreationOperation_creating;
         monitor.beginTask( msg, getDirectories().length + 7 );

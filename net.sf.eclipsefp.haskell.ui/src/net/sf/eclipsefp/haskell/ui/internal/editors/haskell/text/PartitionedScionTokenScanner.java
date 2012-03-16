@@ -112,6 +112,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     };
   }
 
+  @Override
   public int getTokenLength() {
     if( currentTokenDef != null ) {
       return currentLength;
@@ -120,6 +121,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     return 0;
   }
 
+  @Override
   public int getTokenOffset() {
     if( currentTokenDef != null ) {
       return currentOffset;
@@ -127,6 +129,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     return 0;
   }
 
+  @Override
   public IToken nextToken() {
 
     do {
@@ -165,6 +168,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
 
   }
 
+  @Override
   public void setRange( final IDocument document, final int offset,
       final int length ) {
     currentTokenDef = null;
@@ -277,6 +281,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     return man.createToken( EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD );
   }
 
+  @Override
   public void setPartialRange( final IDocument document, final int offset,
       final int length, final String contentType, final int partitionOffset ) {
     setRange( document, offset, length );

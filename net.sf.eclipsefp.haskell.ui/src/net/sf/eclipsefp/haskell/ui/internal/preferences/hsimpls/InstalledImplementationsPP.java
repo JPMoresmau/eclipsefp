@@ -106,6 +106,7 @@ public Point computeSize() {
   // interface methods of IWorkbenchPreferencePage
   ////////////////////////////////////////////////
 
+  @Override
   public void init( final IWorkbench workbench ) {
     // unused
   }
@@ -116,6 +117,7 @@ public Point computeSize() {
 
   private void initLogic() {
     ISelectionChangedListener listener = new ISelectionChangedListener() {
+      @Override
       public void selectionChanged( final SelectionChangedEvent event ) {
         IHsImplementation install = implementationsBlock.getCheckedHsImplementation();
         if( install == null ) {

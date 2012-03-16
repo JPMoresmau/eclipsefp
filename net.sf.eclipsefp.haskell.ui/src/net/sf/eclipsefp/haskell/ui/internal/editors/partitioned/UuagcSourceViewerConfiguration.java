@@ -109,6 +109,7 @@ public class UuagcSourceViewerConfiguration extends
 
     IRule names = new IRule() {
 
+      @Override
       public IToken evaluate( final ICharacterScanner scanner ) {
         // First we need an uppercase letter
         int firstLetter = scanner.read();

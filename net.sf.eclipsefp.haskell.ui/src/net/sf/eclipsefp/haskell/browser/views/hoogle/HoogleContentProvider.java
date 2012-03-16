@@ -32,6 +32,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     this.hackageDbCheck = hackageDbCheck;
   }
 
+  @Override
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
     if( newInput == null || !(newInput instanceof String) ) {
@@ -98,6 +99,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     }
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     if( shownElements == null ) {
       return new Object[ 0 ];
@@ -115,6 +117,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
   }
 
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public Object[] getChildren( final Object parentElement ) {
     if (parentElement instanceof Map.Entry) {
@@ -131,10 +134,12 @@ public class HoogleContentProvider implements ITreeContentProvider {
     return new Object[0];
   }
 
+  @Override
   public Object getParent( final Object element ) {
     return null;
   }
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public boolean hasChildren( final Object element ) {
     if (element instanceof Map.Entry) {
@@ -145,6 +150,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     }
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }
@@ -158,10 +164,12 @@ public class HoogleContentProvider implements ITreeContentProvider {
       this.value = value;
     }
 
+    @Override
     public K getKey() {
       return key;
     }
 
+    @Override
     public V getValue() {
       return value;
     }
@@ -172,6 +180,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     }
 
 
+    @Override
     public V setValue( final V value ) {
       V ret=this.value;
       this.value = value;

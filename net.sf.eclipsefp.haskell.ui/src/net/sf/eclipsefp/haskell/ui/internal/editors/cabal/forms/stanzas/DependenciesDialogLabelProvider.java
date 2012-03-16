@@ -17,29 +17,35 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DependenciesDialogLabelProvider implements ILabelProvider {
 
+  @Override
   public Image getImage( final Object element ) {
     return ImageCache.PACKAGE;
   }
 
+  @Override
   public String getText( final Object element ) {
     HaskellPackage pkg = (HaskellPackage)element;
     return pkg.getIdentifier().getName();
   }
 
   // Listeners: not used
+  @Override
   public void addListener( final ILabelProviderListener listener ) {
     // Do nothing
   }
 
+  @Override
   public void dispose() {
     // Do nothing
   }
 
+  @Override
   public boolean isLabelProperty( final Object element, final String property ) {
     // Do nothing
     return false;
   }
 
+  @Override
   public void removeListener( final ILabelProviderListener listener ) {
     // Do nothing
   }

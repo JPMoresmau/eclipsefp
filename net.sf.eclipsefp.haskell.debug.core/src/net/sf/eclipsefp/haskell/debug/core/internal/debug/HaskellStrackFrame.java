@@ -43,20 +43,24 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
     this.thread=thread;
   }
 
+  @Override
   public int getCharEnd() {
     // return -1
     return this.charEnd;
   }
 
+  @Override
   public int getCharStart() {
     // return -1;
     return this.charStart;
   }
 
+  @Override
   public int getLineNumber() {
     return lineNumber;
   }
 
+  @Override
   public String getName() {
     return name;
   }
@@ -166,85 +170,105 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
     return null;
   }
 
+  @Override
   public IRegisterGroup[] getRegisterGroups()  {
    return new IRegisterGroup[0];
   }
 
+  @Override
   public IThread getThread() {
    return thread;
   }
 
+  @Override
   public IVariable[] getVariables() throws DebugException {
     return getDebugTarget().getVariables(this);
   }
 
+  @Override
   public boolean hasRegisterGroups() {
     return false;
   }
 
+  @Override
   public boolean hasVariables() {
    return true;
   }
 
+  @Override
   public boolean canStepInto() {
     return thread.canStepInto();
   }
 
+  @Override
   public boolean canStepOver() {
     return thread.canStepOver();
   }
 
+  @Override
   public boolean canStepReturn() {
     return thread.canStepReturn();
   }
 
+  @Override
   public boolean isStepping() {
    return thread.isStepping();
   }
 
+  @Override
   public void stepInto() throws DebugException {
     thread.stepInto();
 
   }
 
+  @Override
   public void stepOver() {
    thread.stepOver();
 
   }
 
+  @Override
   public void stepReturn()  {
     thread.stepReturn();
 
   }
 
+  @Override
   public boolean canResume() {
     return thread.canResume();
   }
 
+  @Override
   public boolean canSuspend() {
     return thread.canSuspend();
   }
 
+  @Override
   public boolean isSuspended() {
     return thread.isSuspended();
   }
 
+  @Override
   public void resume() throws DebugException {
     thread.resume();
   }
 
+  @Override
   public void suspend()  {
     thread.suspend();
   }
 
+  @Override
   public boolean canTerminate() {
    return thread.canTerminate();
   }
 
+  @Override
   public boolean isTerminated() {
    return thread.isTerminated();
   }
 
+  @Override
   public void terminate() throws DebugException {
     thread.terminate();
 

@@ -41,6 +41,7 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
     return null;
   }
 
+  @Override
   public boolean canToggleLineBreakpoints( final IWorkbenchPart part,
       final ISelection selection ) {
     if (getEditor(part) != null){
@@ -52,15 +53,18 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
     return false;
   }
 
+  @Override
   public boolean canToggleMethodBreakpoints( final IWorkbenchPart part,
       final ISelection selection ) {
     return false;
   }
 
+  @Override
   public boolean canToggleWatchpoints( final IWorkbenchPart part, final ISelection selection ) {
     return false;
   }
 
+  @Override
   public void toggleLineBreakpoints( final IWorkbenchPart part, final ISelection selection )
       throws CoreException {
     ITextEditor textEditor = getEditor(part);
@@ -86,11 +90,13 @@ public class HaskellLineBreakpointAdapter implements IToggleBreakpointsTarget {
 
   }
 
+  @Override
   public void toggleMethodBreakpoints( final IWorkbenchPart part, final ISelection selection )
        {
     // NOOP
   }
 
+  @Override
   public void toggleWatchpoints( final IWorkbenchPart part, final ISelection selection )
       {
     // NOOP

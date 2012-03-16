@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class FullBuildVisitor implements IResourceVisitor {
 
+  @Override
   public boolean visit( final IResource resource ) throws CoreException {
     if( HappyBuilder.mustBeVisited( resource ) ) {
       HappyRunner runner = new HappyRunner();

@@ -78,6 +78,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     nameStatus = new DefaultStatus();
   }
 
+  @Override
   public ModuleCreationInfo getInfo() {
     if (chkUseLiterate.getSelection()) {
       if (rdoLiterate.getSelection()) {
@@ -159,6 +160,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     }
   }
 
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );
@@ -196,10 +198,12 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
 
     chkUseLiterate.addSelectionListener(new SelectionListener() {
 
+      @Override
       public void widgetSelected( final SelectionEvent e ) {
         enableLiterateGroup(chkUseLiterate.getSelection());
       }
 
+      @Override
       public void widgetDefaultSelected( final SelectionEvent e ) {
         widgetSelected( e );
       }
@@ -448,11 +452,13 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   private class FieldsAdapter implements IStringButtonAdapter,
                                          IDialogFieldListener {
     // interface methods of  IStringButtonAdapter
+    @Override
     public void changeControlPressed( final DialogField field ) {
       doChangeControlPressed( field );
     }
 
     // interface methods of IDialogFieldListener
+    @Override
     public void dialogFieldChanged( final DialogField field ) {
       doDialogFieldChanged( field );
     }

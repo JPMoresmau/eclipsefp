@@ -53,6 +53,7 @@ public class CabalHaddockOptionsPage extends WizardPage  {
   /* (non-Javadoc)
    * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );

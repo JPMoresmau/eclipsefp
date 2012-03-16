@@ -6,4 +6,4 @@ Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

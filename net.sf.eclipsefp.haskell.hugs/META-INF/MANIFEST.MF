@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.hugs;singleton:=true
-Bundle-Version: 2.2.1
+Bundle-Version: 2.2.4
 Bundle-Activator: net.sf.eclipsefp.haskell.hugs.HugsPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
@@ -17,4 +17,4 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
 Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsefp.haskell.hugs.ui.launch
 Bundle-ManifestVersion: 2
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

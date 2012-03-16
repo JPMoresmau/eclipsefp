@@ -69,6 +69,7 @@ public class NewUuagcWizardPage extends StatusWizardPage implements IModuleCreat
     nameStatus = new DefaultStatus();
   }
 
+  @Override
   public ModuleCreationInfo getInfo() {
     currentInfo.setCommentStyle(EHaskellCommentStyle.USUAL);
     return currentInfo;
@@ -146,6 +147,7 @@ public class NewUuagcWizardPage extends StatusWizardPage implements IModuleCreat
     }
   }
 
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );
@@ -354,11 +356,13 @@ public class NewUuagcWizardPage extends StatusWizardPage implements IModuleCreat
   private class FieldsAdapter implements IStringButtonAdapter,
                                          IDialogFieldListener {
     // interface methods of  IStringButtonAdapter
+    @Override
     public void changeControlPressed( final DialogField field ) {
       doChangeControlPressed( field );
     }
 
     // interface methods of IDialogFieldListener
+    @Override
     public void dialogFieldChanged( final DialogField field ) {
       doDialogFieldChanged( field );
     }

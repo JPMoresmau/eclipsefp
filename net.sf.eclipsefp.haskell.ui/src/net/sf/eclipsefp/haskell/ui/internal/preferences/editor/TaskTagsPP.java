@@ -183,6 +183,7 @@ public class TaskTagsPP extends AbstractEditorPP {
 
     tableViewer.addSelectionChangedListener( new ISelectionChangedListener() {
 
+      @Override
       public void selectionChanged( final SelectionChangedEvent paramSelectionChangedEvent ) {
         boolean sel=((IStructuredSelection)tableViewer.getSelection()).size()==1;
         bRemove.setEnabled( sel );
@@ -209,6 +210,7 @@ public class TaskTagsPP extends AbstractEditorPP {
       /* (non-Javadoc)
        * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
        */
+      @Override
       public int compare( final TaskTag o1, final TaskTag o2 ) {
         int ix=tTags.getSortColumn().getText().equals( UITexts.tasks_pref_tag )?0:1;
         String s1=ix==0?o1.getName():o1.getPriority();
@@ -255,10 +257,12 @@ public class TaskTagsPP extends AbstractEditorPP {
    */
   private static class TaskTagLabelProvider extends LabelProvider implements ITableLabelProvider{
 
+    @Override
     public Image getColumnImage( final Object paramObject, final int paramInt ) {
       return null;
     }
 
+    @Override
     public String getColumnText( final Object paramObject, final int paramInt ) {
       TaskTag tt=(TaskTag)paramObject;
       if (0==paramInt){
@@ -360,6 +364,7 @@ public class TaskTagsPP extends AbstractEditorPP {
 
       tTag.addModifyListener( new ModifyListener() {
 
+        @Override
         public void modifyText( final ModifyEvent arg0 ) {
          if (tt==null){
            tt=new TaskTag( tTag.getText(), cPriority.getItem( cPriority.getSelectionIndex() ) );

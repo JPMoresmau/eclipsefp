@@ -27,6 +27,7 @@ public class GhciLaunchOperationDelegate
   // interface methods of IInteractiveLaunchOperationDelegate
   ///////////////////////////////////////////////////////////
 
+  @Override
   public String[] createArguments( final IProject hsProject,
                                    final IFile[] selectedFiles ) {
     List<String> cmdLine = new ArrayList<String>();
@@ -70,6 +71,7 @@ public class GhciLaunchOperationDelegate
     return result;
   }
 
+  @Override
   public String getExecutable() {
     return CompilerManager.getCompilerExecutable();
   }
@@ -149,6 +151,7 @@ public class GhciLaunchOperationDelegate
     }
   }
 
+  @Override
   public String getReloadCommand() {
     return ":r"; //$NON-NLS-1$
   }

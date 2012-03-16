@@ -11,6 +11,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 public class HaskellSourceLookupDirector extends AbstractSourceLookupDirector {
 
 
+  @Override
   public void initializeParticipants() {
    addParticipants( new ISourceLookupParticipant[]{new HaskellSourceLookupParticipant()} );
   }

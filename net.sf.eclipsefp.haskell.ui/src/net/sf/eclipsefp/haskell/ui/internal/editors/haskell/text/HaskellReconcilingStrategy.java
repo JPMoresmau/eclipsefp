@@ -32,15 +32,18 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   // interface methods of IReconcilingStrategy
   // //////////////////////////////////////////
 
+  @Override
   public void reconcile( final DirtyRegion dirtyRegion, final IRegion subRegion ) {
     reconcile();
   }
 
+  @Override
   public void reconcile( final IRegion partition ) {
     reconcile();
   }
 
 
+  @Override
   public void setDocument( final IDocument document ) {
 //    this.document = document;
   }
@@ -48,10 +51,12 @@ public class HaskellReconcilingStrategy implements IReconcilingStrategy,
   // interface methods of IReconcilingStrategyExtension
   // ///////////////////////////////////////////////////
 
+  @Override
   public void setProgressMonitor( final IProgressMonitor monitor ) {
     // NOP
   }
 
+  @Override
   public void initialReconcile() {
     //reconcile();
     // done in setInput

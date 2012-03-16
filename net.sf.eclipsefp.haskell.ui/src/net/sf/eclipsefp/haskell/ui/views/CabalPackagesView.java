@@ -101,6 +101,7 @@ public class CabalPackagesView extends ViewPart {
       try {
         final List<CabalPackageRef> l=onlyInstalled?helper.getInstalled():helper.getAll();
         CabalPackagesView.this.getSite().getShell().getDisplay().asyncExec( new Runnable(){
+          @Override
           public void run() {
             packageViewer.setInput( l );
           }
@@ -269,6 +270,7 @@ public class CabalPackagesView extends ViewPart {
 
     tFilter.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent paramModifyEvent ) {
         packageViewer.refresh();
       }
@@ -278,6 +280,7 @@ public class CabalPackagesView extends ViewPart {
 
     packageViewer.addSelectionChangedListener( new ISelectionChangedListener() {
 
+      @Override
       public void selectionChanged( final SelectionChangedEvent arg0 ) {
         IStructuredSelection sel=(IStructuredSelection)arg0.getSelection();
         boolean installPossible=sel.size()==1 && bAll.getSelection(); // ignore for now the fact that all show also what's installed...
@@ -316,10 +319,12 @@ public class CabalPackagesView extends ViewPart {
     // listen to changes in browser database
     BrowserPlugin.getDefault().addDatabaseLoadedListener( new IDatabaseLoadedListener() {
 
+      @Override
       public void databaseUnloaded( final BrowserEvent e ) {
         if (getSite()!=null && getSite().getShell()!=null && getSite().getShell().getDisplay()!=null){
           getSite().getShell().getDisplay().syncExec( new Runnable() {
 
+            @Override
             public void run() {
               if (lBrowser!=null && !lBrowser.isDisposed()){
                 lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
@@ -329,9 +334,11 @@ public class CabalPackagesView extends ViewPart {
         }
       }
 
+      @Override
       public void databaseLoaded( final DatabaseLoadedEvent e ) {
         getSite().getShell().getDisplay().syncExec( new Runnable() {
 
+          @Override
           public void run() {
             if (lBrowser!=null && !lBrowser.isDisposed() && !bInstalled.isDisposed()){
               lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection());
@@ -424,6 +431,7 @@ public class CabalPackagesView extends ViewPart {
         try {
           final String s=helper.getInfo( currentName );
           CabalPackagesView.this.getSite().getShell().getDisplay().asyncExec( new Runnable(){
+            @Override
             public void run() {
               infoViewer.setText(s);
             }
@@ -463,9 +471,11 @@ public class CabalPackagesView extends ViewPart {
       try {
         AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_install_running,true, new Runnable() {
 
+          @Override
           public void run() {
             lInstall.getDisplay().asyncExec( new Runnable() {
 
+              @Override
               public void run() {
                 lInstall.setText( UITexts.cabalPackagesView_info_installed );
                 helper.setInstalled( null );
@@ -496,9 +506,11 @@ public class CabalPackagesView extends ViewPart {
       try {
         AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_update_running,true, new Runnable() {
 
+          @Override
           public void run() {
             lUpdate.getDisplay().asyncExec( new Runnable() {
 
+              @Override
               public void run() {
                 lUpdate.setText( UITexts.cabalPackagesView_action_update_ok );
                 helper.setAll( null );
@@ -594,6 +606,7 @@ public class CabalPackagesView extends ViewPart {
 
       tOptions.addModifyListener( new ModifyListener() {
 
+        @Override
         public void modifyText( final ModifyEvent arg0 ) {
          options=tOptions.getText();
 

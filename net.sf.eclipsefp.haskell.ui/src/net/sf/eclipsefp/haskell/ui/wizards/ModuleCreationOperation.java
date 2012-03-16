@@ -55,6 +55,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
   // interface methods of IRunnableWithProgress
   /////////////////////////////////////////////
 
+  @Override
   public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
     Assert.isNotNull( info );
     try {

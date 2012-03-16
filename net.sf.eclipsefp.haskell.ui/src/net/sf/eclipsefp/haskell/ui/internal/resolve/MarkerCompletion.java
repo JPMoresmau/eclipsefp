@@ -45,6 +45,7 @@ public abstract class MarkerCompletion implements IMarkerResolution {
   /**
    * applies the completion chosen for the given marker to the document
    */
+  @Override
   public void run( final IMarker marker ) {
     try {
       IFile f = ( IFile )marker.getResource();
@@ -117,6 +118,7 @@ public abstract class MarkerCompletion implements IMarkerResolution {
 
     }
 
+    @Override
     public void apply( final IDocument document ) {
       try {
         document.replace( this.fReplacementOffset, this.fReplacementLength,
@@ -134,18 +136,22 @@ public abstract class MarkerCompletion implements IMarkerResolution {
       }
     }
 
+    @Override
     public Point getSelection( final IDocument document ) {
       return new Point( this.fReplacementOffset + this.fCursorPosition, 0 );
     }
 
+    @Override
     public IContextInformation getContextInformation() {
       return null;
     }
 
+    @Override
     public Image getImage() {
       return null;
     }
 
+    @Override
     public String getDisplayString() {
       if( this.fDisplayString != null ) {
         return this.fDisplayString;
@@ -153,6 +159,7 @@ public abstract class MarkerCompletion implements IMarkerResolution {
       return this.fReplacementString;
     }
 
+    @Override
     public String getAdditionalProposalInfo() {
       return fAdditionalInfo;
     }

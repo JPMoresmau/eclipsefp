@@ -27,6 +27,7 @@ public class RemoveRedundantElementInImportResolution extends MarkerCompletion {
     this.element = element;
   }
 
+  @Override
   public String getLabel() {
     return NLS.bind( UITexts.resolve_import_remove_part, element );
   }

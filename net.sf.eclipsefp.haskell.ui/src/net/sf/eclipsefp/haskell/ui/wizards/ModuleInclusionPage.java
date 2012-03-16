@@ -23,6 +23,7 @@ public class ModuleInclusionPage extends StatusWizardPage{
     setDescription( UITexts.module_inclusion_page_description );
   }
 
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
 

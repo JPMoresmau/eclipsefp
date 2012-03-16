@@ -63,6 +63,7 @@ public abstract class AbstractEditorPP extends PreferencePage implements IWorkbe
   // interface methods of IWorkbenchPreferencePage
   ////////////////////////////////////////////////
 
+  @Override
   public void init( final IWorkbench workbench ) {
     //setPreferenceStore( HaskellUIPlugin.getDefault() .getPreferenceStore() );
     overlayStore = createOverlayStore();
@@ -75,6 +76,7 @@ public abstract class AbstractEditorPP extends PreferencePage implements IWorkbe
       public Control createControl( final Composite parent ) {
         return null;
       }
+      @Override
       public void propertyChange( final PropertyChangeEvent arg0 ) {
         // NOOP
       }
@@ -100,6 +102,7 @@ public abstract class AbstractEditorPP extends PreferencePage implements IWorkbe
                                   final String name ) {
     BooleanDialogField result = new BooleanDialogField( parent, text );
     result.addDialogFieldListener( new IDialogFieldListener() {
+      @Override
       public void infoChanged( final Object newInfo ) {
         boolean selected = ( ( Boolean )newInfo ).booleanValue();
         getPreferenceStore().setValue( name, selected );

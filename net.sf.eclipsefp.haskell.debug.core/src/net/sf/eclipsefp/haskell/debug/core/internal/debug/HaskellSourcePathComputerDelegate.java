@@ -23,6 +23,7 @@ public class HaskellSourcePathComputerDelegate implements
    * we only return the project, since getSourceName() now returns the file relative to the project
    * since we may have the same file name (Main.hs) in different folders
    */
+  @Override
   public ISourceContainer[] computeSourceContainers(
       final ILaunchConfiguration configuration, final IProgressMonitor monitor )
       throws CoreException {

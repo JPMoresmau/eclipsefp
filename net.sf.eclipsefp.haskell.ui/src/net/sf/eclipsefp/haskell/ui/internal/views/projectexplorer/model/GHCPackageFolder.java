@@ -19,10 +19,12 @@ public class GHCPackageFolder extends GHCPackageResource {
   // interface methods of ITreeElement
   ////////////////////////////////////
 
+  @Override
   public List<?> getChildren() {
     return Collections.emptyList();
   }
 
+  @Override
   public String getImageKey() {
     return IImageNames.PACKAGE_FOLDER;
   }

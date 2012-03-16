@@ -124,7 +124,8 @@ public class HaskellOutlinePage extends ContentOutlinePage {
   public void update() {
     if (getControl()!=null && !getControl().isDisposed()){
        getControl().getDisplay().syncExec( new Runnable(){
-         public void run() {
+         @Override
+        public void run() {
            TreeViewer viewer = getTreeViewer();
            if( viewer != null ) {
              Control control= viewer.getControl();
@@ -166,6 +167,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
     private void valueChanged(final boolean on, final boolean store) {
       setChecked(on);
       BusyIndicator.showWhile(getTreeViewer().getControl().getDisplay(), new Runnable() {
+        @Override
         public void run() {
           if (on) {
             getTreeViewer().setComparator(new OutlineDefComparator( OutlineDef.BY_NAME));

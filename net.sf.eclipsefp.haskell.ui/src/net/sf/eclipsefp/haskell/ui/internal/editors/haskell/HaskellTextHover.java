@@ -61,6 +61,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   /* (non-Javadoc)
    * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
    */
+  @Override
   public Object getHoverInfo2( final ITextViewer textViewer,
       final IRegion hoverRegion) {
     String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess );
@@ -73,9 +74,11 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   /* (non-Javadoc)
    * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
    */
+  @Override
   public IInformationControlCreator getHoverControlCreator() {
     return new IInformationControlCreator() {
 
+      @Override
       public IInformationControl createInformationControl( final Shell parent ) {
         //return new HaskellInformationControl(parent,editor.getFont());
         return new DefaultInformationControl( parent, false );

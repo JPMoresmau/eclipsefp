@@ -115,6 +115,7 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
             UITexts.cabalEditor_newExecutableString,
             "", new IInputValidator() {
 
+              @Override
               public String isValid( final String newText ) {
                 String value = newText.trim();
                 if (value.length()==0) {
@@ -204,6 +205,7 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
     }
   }
 
+  @Override
   public void widgetSelected( final SelectionEvent e ) {
     ignoreModify = true;
     PackageDescriptionStanza stanza;
@@ -255,6 +257,7 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
     ignoreModify = false;
   }
 
+  @Override
   public void widgetDefaultSelected( final SelectionEvent e ) {
     // Do nothing
   }

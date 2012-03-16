@@ -225,6 +225,7 @@ public class CabalImplementationManager {
     List<CabalImplementation> impls=new ArrayList<CabalImplementation>();
     for (File loc : candidateLocs) {
       File[] files = loc.listFiles( new FilenameFilter() {
+        @Override
         public boolean accept( final File dir, final String name ) {
           // Catch anything starting with "cabal", because MacPorts (and others) may install
           // "cabal-1.8.0" as a legitimate cabal executable.

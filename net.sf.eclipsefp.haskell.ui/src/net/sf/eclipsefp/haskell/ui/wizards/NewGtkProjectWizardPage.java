@@ -26,6 +26,7 @@ public class NewGtkProjectWizardPage extends WizardPage {
   /* (non-Javadoc)
    * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   public void createControl( final Composite arg0 ) {
     // TODO Auto-generated method stub
 

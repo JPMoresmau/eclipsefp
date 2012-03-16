@@ -91,6 +91,7 @@ public abstract class DeclarationsView extends ViewPart implements
   ModulesItem lastModulesItem = null;
 
   // This will be called when a new package is selected
+  @Override
   public void selectionChanged( final IWorkbenchPart part,
       final ISelection selection ) {
     if( part == this ) {
@@ -115,6 +116,7 @@ public abstract class DeclarationsView extends ViewPart implements
     }
   }
 
+  @Override
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
 
@@ -136,6 +138,7 @@ public abstract class DeclarationsView extends ViewPart implements
     }
   }
 
+  @Override
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();

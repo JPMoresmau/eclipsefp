@@ -49,6 +49,7 @@ public class CabalSDistOptionsPage extends WizardPage implements PropertyChangeL
     getFileNames();
   }
 
+  @Override
   public void createControl( final Composite parent ) {
     initializeDialogUnits( parent );
     Composite composite = new Composite( parent, SWT.NONE );
@@ -107,6 +108,7 @@ public class CabalSDistOptionsPage extends WizardPage implements PropertyChangeL
   /**
    * check if the file already exists to display a warning
    */
+  @Override
   public void propertyChange( final PropertyChangeEvent evt ) {
     String exists=null;
     String toDisplay=(String)evt.getNewValue();

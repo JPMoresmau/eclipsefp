@@ -34,6 +34,7 @@ public class LiterateContentDescriber implements IContentDescriber {
   // interface methods of IContentDescriber
   /////////////////////////////////////////
 
+  @Override
   public int describe( final InputStream contents,
                        final IContentDescription description ) throws IOException {
     int result = INDETERMINATE;
@@ -53,6 +54,7 @@ public class LiterateContentDescriber implements IContentDescriber {
     return result;
   }
 
+  @Override
   public QualifiedName[] getSupportedOptions() {
     return new QualifiedName[] { STYLE };
   }

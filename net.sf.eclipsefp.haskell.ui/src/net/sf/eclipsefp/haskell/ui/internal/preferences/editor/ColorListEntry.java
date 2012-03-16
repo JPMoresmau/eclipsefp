@@ -44,6 +44,7 @@ class ColorListEntry implements Comparable<ColorListEntry>{
     return label;
   }
 
+  @Override
   public int compareTo( final ColorListEntry o ) {
     // label should be non null
     return label.compareToIgnoreCase( o.getLabel() );

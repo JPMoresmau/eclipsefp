@@ -54,6 +54,7 @@ public class CabalHaddockWizard extends Wizard implements IExportWizard {
   /* (non-Javadoc)
    * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
    */
+  @Override
   public void init( final IWorkbench arg0, final IStructuredSelection arg1 ) {
     projects.addAll( ResourceUtil.getProjects( arg1 ) );
 
@@ -107,6 +108,7 @@ public class CabalHaddockWizard extends Wizard implements IExportWizard {
       for (final IProject p:projects){
         Runnable r=new Runnable() {
 
+          @Override
           public void run() {
             IFolder f=p.getFolder(fold );
             if (f!=null){

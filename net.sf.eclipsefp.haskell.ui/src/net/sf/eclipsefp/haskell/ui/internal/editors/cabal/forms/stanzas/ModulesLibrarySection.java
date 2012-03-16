@@ -66,6 +66,7 @@ public class ModulesLibrarySection extends CabalFormSection implements
     }
   }
 
+  @Override
   public void otherTextValueChanged( final FormEntry entry ) {
     if( this.stanza != null ) {
       FormEntryModules multi = ( FormEntryModules )entry;

@@ -77,6 +77,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
     Display.getDefault().asyncExec( new Runnable() {
 
+      @Override
       public void run() {
         try {
           IWorkbench w=PlatformUI.getWorkbench();
@@ -97,6 +98,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
             // will run after the notifications hoogleLoaded
             Display.getDefault().asyncExec( new Runnable() {
 
+              @Override
               public void run() {
                 hv.text.setText( txt );
                 Event evt=new Event();
@@ -202,9 +204,11 @@ public class HoogleView extends ViewPart implements SelectionListener,
     BrowserPlugin.getDefault().addHoogleLoadedListener( this );
   }
 
+  @Override
   public void hoogleLoaded( final BrowserEvent e ) {
     Display.getDefault().asyncExec( new Runnable() {
 
+      @Override
       public void run() {
         provider = new HoogleContentProvider(localDb, hackageDb);
         //viewer.setLabelProvider( new HoogleLabelProvider() );
@@ -217,9 +221,11 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
 
 
+  @Override
   public void hoogleUnloaded( final BrowserEvent e ) {
     Display.getDefault().asyncExec( new Runnable() {
 
+      @Override
       public void run() {
         provider = new NoDatabaseContentProvider();
         //viewer.setLabelProvider( new NoDatabaseLabelProvider( true ) );
@@ -236,10 +242,12 @@ public class HoogleView extends ViewPart implements SelectionListener,
     text.setFocus();
   }
 
+  @Override
   public void widgetSelected( final SelectionEvent e ) {
     // Do nothing
   }
 
+  @Override
   public void widgetDefaultSelected( final SelectionEvent e ) {
     if( e.detail == SWT.CANCEL ) {
       viewer.setInput( "" );
@@ -257,6 +265,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     }
   }
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public void selectionChanged( final SelectionChangedEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
@@ -316,6 +325,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     }
   }
 
+  @Override
   @SuppressWarnings ( "unchecked" )
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
@@ -387,9 +397,11 @@ public class HoogleView extends ViewPart implements SelectionListener,
   /* (non-Javadoc)
    * @see net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener#databaseLoaded(net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent)
    */
+  @Override
   public void databaseLoaded( final DatabaseLoadedEvent e ) {
     final Display display = Display.getDefault();
     display.asyncExec( new Runnable() {
+      @Override
       public void run() {
         if (e.getType() == DatabaseType.LOCAL) {
           localDb.setEnabled( true );
@@ -404,9 +416,11 @@ public class HoogleView extends ViewPart implements SelectionListener,
   /* (non-Javadoc)
    * @see net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener#databaseUnloaded(net.sf.eclipsefp.haskell.browser.BrowserEvent)
    */
+  @Override
   public void databaseUnloaded( final BrowserEvent e ) {
     final Display display = Display.getDefault();
     display.asyncExec( new Runnable() {
+      @Override
       public void run() {
         localDb.setSelection( false );
         localDb.setEnabled( false );

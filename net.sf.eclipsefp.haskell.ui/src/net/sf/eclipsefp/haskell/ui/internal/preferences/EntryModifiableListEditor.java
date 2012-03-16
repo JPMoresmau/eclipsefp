@@ -55,7 +55,8 @@ public abstract class EntryModifiableListEditor extends ListEditor {
              }
          });
          buttonBoxControl.addDisposeListener(new DisposeListener() {
-             public void widgetDisposed(final DisposeEvent event) {
+             @Override
+            public void widgetDisposed(final DisposeEvent event) {
                  editButton = null;
              }
          });

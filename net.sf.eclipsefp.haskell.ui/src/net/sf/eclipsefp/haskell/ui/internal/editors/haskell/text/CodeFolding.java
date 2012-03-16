@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IFile;
 
 public class CodeFolding implements ICodeFolding {
 
+  @Override
   public List<ICodeFoldingRegion> performCodeFolding(
       final IContainer srcRoot, final IFile file ) {
     List<ICodeFoldingRegion> result = new ArrayList<ICodeFoldingRegion>();

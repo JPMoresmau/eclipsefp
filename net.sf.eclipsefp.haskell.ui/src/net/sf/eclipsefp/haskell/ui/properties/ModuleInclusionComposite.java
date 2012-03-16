@@ -98,6 +98,7 @@ public class ModuleInclusionComposite extends Composite {
 
 
         Collections.sort( l,new Comparator<PackageDescriptionStanza>() {
+          @Override
           public int compare( final PackageDescriptionStanza o1,
               final PackageDescriptionStanza o2 ) {
              return o1.toTypeName().compareToIgnoreCase( o2.toTypeName() );

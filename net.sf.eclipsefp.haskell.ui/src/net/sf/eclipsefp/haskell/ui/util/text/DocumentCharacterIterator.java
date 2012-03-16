@@ -35,16 +35,19 @@ class DocumentCharacterIterator implements CharacterIterator {
   // interface methods of CharacterIterator
   /////////////////////////////////////////
   
+  @Override
   public char first() {
     index = offset;
     return current();
   }
   
+  @Override
   public char last() {
     index = offset < endOffset ? endOffset - 1 : endOffset;
     return current();
   }
   
+  @Override
   public char current() {
     if( offset <= index && index < endOffset ) {
       try {
@@ -56,6 +59,7 @@ class DocumentCharacterIterator implements CharacterIterator {
     return DONE;
   }
   
+  @Override
   public char next() {
     char result = DONE;
     if( index != endOffset - 1 ) {
@@ -67,6 +71,7 @@ class DocumentCharacterIterator implements CharacterIterator {
     return result;
   }
   
+  @Override
   public char previous() {
     char result = DONE;
     if( index != offset ) {
@@ -78,19 +83,23 @@ class DocumentCharacterIterator implements CharacterIterator {
     return result;
   }
   
+  @Override
   public char setIndex( final int index ) {
     this.index = index;
     return current();
   }
   
+  @Override
   public int getBeginIndex() {
     return offset;
   }
   
+  @Override
   public int getEndIndex() {
     return endOffset;
   }
   
+  @Override
   public int getIndex() {
     return index;
   }

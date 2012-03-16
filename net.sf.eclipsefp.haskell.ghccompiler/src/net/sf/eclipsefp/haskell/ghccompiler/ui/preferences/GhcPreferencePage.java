@@ -128,6 +128,7 @@ public class GhcPreferencePage extends PreferencePage
   // interface methods of IWorkbenchPreferencePage
   ////////////////////////////////////////////////
 
+  @Override
   public void init( final IWorkbench workbench ) {
     setDescription( UITexts.ghcPreferencePage_desc );
     setPreferenceStore( GhcCompilerPlugin.getDefault().getPreferenceStore() );

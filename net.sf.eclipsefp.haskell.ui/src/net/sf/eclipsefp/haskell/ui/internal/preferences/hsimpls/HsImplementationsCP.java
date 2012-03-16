@@ -22,16 +22,19 @@ class HsImplementationsCP implements IStructuredContentProvider {
   // interface methods of IStructuredContentProvider
   //////////////////////////////////////////////////
 
+  @Override
   public Object[] getElements( final Object input ) {
     return installations.toArray();
   }
 
+  @Override
   public void inputChanged( final Viewer viewer,
                             final Object oldInput,
                             final Object newInput ) {
     // unused
   }
 
+  @Override
   public void dispose() {
     // unused
   }

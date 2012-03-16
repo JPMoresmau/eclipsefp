@@ -294,6 +294,7 @@ public class SyntaxPP extends AbstractEditorPP {
     coloringThreadT.setText( nf.format( t ));
     coloringThreadT.addModifyListener( new ModifyListener() {
 
+      @Override
       public void modifyText( final ModifyEvent paramModifyEvent ) {
         String s=coloringThreadT.getText();
         try {
@@ -314,6 +315,7 @@ public class SyntaxPP extends AbstractEditorPP {
 
   public void propertyChange( final PropertyChangeEvent event ) {
     colorList.getDisplay().asyncExec( new Runnable() {
+      @Override
       public void run() {
         if( ( colorList != null ) && !colorList.isDisposed() ) {
           handleSyntaxColorListSelection();
@@ -342,6 +344,7 @@ public class SyntaxPP extends AbstractEditorPP {
       colorList.add( colorListModel[ i ].getLabel() );
     }
     colorList.getDisplay().asyncExec( new Runnable() {
+      @Override
       public void run() {
         if( ( colorList != null ) && !colorList.isDisposed() ) {
           colorList.select( 0 );

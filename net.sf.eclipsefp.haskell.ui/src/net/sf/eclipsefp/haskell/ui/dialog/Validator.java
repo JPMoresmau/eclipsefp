@@ -86,6 +86,7 @@ public abstract class Validator implements Observer {
   // //////////////////////////
   // methods from Observable
 
+  @Override
   public void update( final Observable o, final Object arg ) {
     update();
   }

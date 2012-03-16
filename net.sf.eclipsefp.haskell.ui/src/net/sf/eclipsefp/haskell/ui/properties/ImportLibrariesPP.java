@@ -99,6 +99,7 @@ public class ImportLibrariesPP extends PropertyPage
   // interface methods of IPreferencePage / IWorkbenchPreferencePage
   //////////////////////////////////////////////////////////////////
 
+  @Override
   public void init( final IWorkbench workbench ) {
     // unused
   }

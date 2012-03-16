@@ -33,6 +33,7 @@ public class AddPackageDependency extends MarkerCompletion {
     return value;
   }
 
+  @Override
   public String getLabel() {
     return NLS.bind( UITexts.resolve_addpackage, value );
   }

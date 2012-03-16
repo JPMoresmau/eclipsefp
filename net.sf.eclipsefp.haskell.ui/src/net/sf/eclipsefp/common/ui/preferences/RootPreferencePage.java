@@ -25,6 +25,7 @@ public abstract class RootPreferencePage extends FieldEditorPreferencePage
     // empty implementation
   }
   
+  @Override
   public void init( final IWorkbench workbench ) {
     // empty implementation
   }

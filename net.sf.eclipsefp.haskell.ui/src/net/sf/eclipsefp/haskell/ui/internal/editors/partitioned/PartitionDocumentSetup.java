@@ -27,6 +27,7 @@ public class PartitionDocumentSetup implements IDocumentSetupParticipant {
   public static final String[] TYPES = new String[] {
       IDocument.DEFAULT_CONTENT_TYPE, HASKELL };
 
+  @Override
   public void setup( final IDocument document ) {
     IDocumentPartitioner p = new FastPartitioner(
         createHaskellPartitionScanner(), TYPES );

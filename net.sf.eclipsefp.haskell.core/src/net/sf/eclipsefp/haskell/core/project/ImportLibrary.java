@@ -41,18 +41,22 @@ public String toString() {
   // interface methods of IImportLibrary
   //////////////////////////////////////
   
+  @Override
   public IPath getPath() {
     return path;
   }
 
+  @Override
   public void setPath( final IPath path ) {
     this.path = path;
   }
 
+  @Override
   public boolean isUsed() {
     return used;
   }
 
+  @Override
   public void setUsed( final boolean enabled ) {
     this.used = enabled;
   }

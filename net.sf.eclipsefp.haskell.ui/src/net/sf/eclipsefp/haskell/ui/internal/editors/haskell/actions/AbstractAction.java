@@ -32,6 +32,7 @@ public abstract class AbstractAction implements IEditorActionDelegate {
     ex.printStackTrace();
   }
 
+  @Override
   public void selectionChanged( final IAction action,
                                 final ISelection selection ) {
     // unused
@@ -51,6 +52,7 @@ public abstract class AbstractAction implements IEditorActionDelegate {
   /**
    * Run to the first char (other than whitespaces) or to the real first char.
    */
+  @Override
   public void setActiveEditor( final IAction action,
                                final IEditorPart targetEditor ) {
     this.targetEditor = targetEditor;

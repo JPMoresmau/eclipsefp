@@ -39,6 +39,7 @@ public class ReplaceImportResolution extends MarkerCompletion {
     return null;
   }
 
+  @Override
   public String getLabel() {
     return NLS.bind(UITexts.resolve_import_replace,newImport);
   }

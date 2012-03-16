@@ -97,6 +97,7 @@ public class StringDialogField extends DialogField {
       Assert.isNotNull(parent,
           "uncreated control requested with composite null"); //$NON-NLS-1$
       fModifyListener = new ModifyListener() {
+        @Override
         public void modifyText( final ModifyEvent event ) {
           doModifyText();
         }

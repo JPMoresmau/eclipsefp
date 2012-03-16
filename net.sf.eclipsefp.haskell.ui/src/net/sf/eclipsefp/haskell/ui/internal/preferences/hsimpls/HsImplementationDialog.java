@@ -98,6 +98,7 @@ public class HsImplementationDialog extends StatusDialog {
 
     initializeFields();
     txtName.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         currentImpl.setName( txtName.getText() );
         validate();
@@ -105,6 +106,7 @@ public class HsImplementationDialog extends StatusDialog {
       }
     } );
     txtBinFolder.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         currentImpl.setBinDir( txtBinFolder.getText() );
         validate();

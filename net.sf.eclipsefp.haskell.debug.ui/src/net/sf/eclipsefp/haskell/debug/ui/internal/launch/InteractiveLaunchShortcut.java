@@ -41,6 +41,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
   // interface methods of ILaunchShortcut
   ///////////////////////////////////////
 
+  @Override
   public void launch( final ISelection selection, final String mode ) {
     // launched from workbench selection
     if( selection != null && selection instanceof IStructuredSelection ) {
@@ -59,6 +60,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
 
 
 
+  @Override
   public void launch( final IEditorPart editor, final String mode ) {
     // launched from editor part
     IResource resource = ResourceUtil.findResource( editor.getEditorInput() );
@@ -84,12 +86,15 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
   }
 
 
+  @Override
   public IResource getLaunchableResource( final IEditorPart paramIEditorPart ) {
     return null;
   }
+  @Override
   public IResource getLaunchableResource( final ISelection paramISelection ) {
     return null;
   }
+  @Override
   public ILaunchConfiguration[] getLaunchConfigurations(
       final IEditorPart paramIEditorPart ) {
     IResource resource = ResourceUtil.findResource( paramIEditorPart.getEditorInput() );
@@ -105,6 +110,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
   /**
    * this allows launching a new configuration
    */
+  @Override
   public ILaunchConfiguration[] getLaunchConfigurations(
       final ISelection paramISelection ) {
     try {

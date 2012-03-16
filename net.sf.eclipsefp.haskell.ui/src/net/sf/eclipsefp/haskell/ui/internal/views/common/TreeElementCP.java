@@ -15,6 +15,7 @@ public class TreeElementCP implements ITreeContentProvider {
   // interface methods of ITreeContentProvider
   ////////////////////////////////////////////
 
+  @Override
   public Object[] getChildren( final Object parentElement ) {
     Object[] result = new Object[ 0 ];
     if( parentElement instanceof ITreeElement ) {
@@ -24,6 +25,7 @@ public class TreeElementCP implements ITreeContentProvider {
     return result;
   }
 
+  @Override
   public Object getParent( final Object element ) {
     Object result = null;
     if( element instanceof ITreeElement ) {
@@ -32,19 +34,23 @@ public class TreeElementCP implements ITreeContentProvider {
     return result;
   }
 
+  @Override
   public boolean hasChildren( final Object element ) {
     Object[] children = getChildren( element );
     return children != null && children.length > 0;
   }
 
+  @Override
   public Object[] getElements( final Object inputElement ) {
     return getChildren( inputElement );
   }
 
+  @Override
   public void dispose() {
     // unused
   }
 
+  @Override
   public void inputChanged( final Viewer viewer,
                             final Object oldInput,
                             final Object newInput ) {

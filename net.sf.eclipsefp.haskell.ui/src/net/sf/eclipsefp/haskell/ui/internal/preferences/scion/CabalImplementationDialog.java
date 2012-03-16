@@ -90,12 +90,14 @@ public class CabalImplementationDialog extends StatusDialog {
     validate();
 
     txtIdent.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         currentImpl.setUserIdentifier( txtIdent.getText( ).trim() );
         validate();
       }
     } );
     txtExecutablePath.addModifyListener( new ModifyListener() {
+      @Override
       public void modifyText( final ModifyEvent evt ) {
         updateExecutable();
       }

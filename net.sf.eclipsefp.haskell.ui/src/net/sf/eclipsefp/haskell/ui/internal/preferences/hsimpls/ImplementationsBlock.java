@@ -223,18 +223,22 @@ class ImplementationsBlock implements ISelectionProvider {
   // interface methods of ISelectionProvider
   //////////////////////////////////////////
 
+  @Override
   public void addSelectionChangedListener( final ISelectionChangedListener li ) {
     selectionListeners.add( li );
   }
 
+  @Override
   public ISelection getSelection() {
     return new StructuredSelection( viewer.getCheckedElements() );
   }
 
+  @Override
   public void removeSelectionChangedListener( final ISelectionChangedListener li ) {
     selectionListeners.remove( li );
   }
 
+  @Override
   public void setSelection( final ISelection selection ) {
     if( selection instanceof IStructuredSelection ) {
       if( !selection.equals( lastSelection ) ) {
@@ -320,6 +324,7 @@ class ImplementationsBlock implements ISelectionProvider {
     String sAdd = UITexts.implementationsBlock_btnAdd;
     btnAdd = SWTUtil.createPushButton( buttonsComp, sAdd );
     btnAdd.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent( final Event evt ) {
         addHsImplementation();
       }
@@ -328,6 +333,7 @@ class ImplementationsBlock implements ISelectionProvider {
     String sEdit = UITexts.implementationsBlock_btnEdit;
     btnEdit = SWTUtil.createPushButton( buttonsComp, sEdit );
     btnEdit.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent( final Event evt ) {
         editHsImplementation();
       }
@@ -336,6 +342,7 @@ class ImplementationsBlock implements ISelectionProvider {
     String sRemove = UITexts.implementationsBlock_btnRemove;
     btnRemove = SWTUtil.createPushButton( buttonsComp, sRemove );
     btnRemove.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent( final Event evt ) {
         removeSelectedInstallations();
       }
@@ -344,6 +351,7 @@ class ImplementationsBlock implements ISelectionProvider {
     String sDetect = UITexts.cabalImplsBlock_btnAutoDetect;
     btnAutoDetect = SWTUtil.createPushButton( buttonsComp, sDetect );
     btnAutoDetect.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent (final Event ev) {
         autoDetectGHCImpls();
       }
@@ -361,12 +369,14 @@ class ImplementationsBlock implements ISelectionProvider {
     sortByName();
 
     viewer.addSelectionChangedListener( new ISelectionChangedListener() {
+      @Override
       public void selectionChanged( final SelectionChangedEvent evt ) {
         enableButtons();
       }
     } );
 
     viewer.addCheckStateListener( new ICheckStateListener() {
+      @Override
       public void checkStateChanged( final CheckStateChangedEvent event ) {
         if( event.getChecked() ) {
           IHsImplementation element
@@ -379,6 +389,7 @@ class ImplementationsBlock implements ISelectionProvider {
     } );
 
     viewer.addDoubleClickListener( new IDoubleClickListener() {
+      @Override
       public void doubleClick( final DoubleClickEvent e ) {
         if( !viewer.getSelection().isEmpty() ) {
           editHsImplementation();
@@ -573,14 +584,17 @@ class ImplementationsBlock implements ISelectionProvider {
     // interface methods of IStructuredContentProvider
     //////////////////////////////////////////////////
 
+    @Override
     public Object[] getElements( final Object input ) {
       return installations.toArray();
     }
 
+    @Override
     public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
       // unused
     }
 
+    @Override
     public void dispose() {
       // unused
     }
@@ -588,6 +602,7 @@ class ImplementationsBlock implements ISelectionProvider {
 
   /** The internal label provider class */
   class HsImplementationsLP extends LabelProvider implements ITableLabelProvider {
+    @Override
     public String getColumnText( final Object elem, final int column ) {
       String result = null;
       if( elem instanceof IHsImplementation ) {
@@ -609,6 +624,7 @@ class ImplementationsBlock implements ISelectionProvider {
       return result;
     }
 
+    @Override
     public Image getColumnImage( final Object elem, final int column ) {
       return null;
     }

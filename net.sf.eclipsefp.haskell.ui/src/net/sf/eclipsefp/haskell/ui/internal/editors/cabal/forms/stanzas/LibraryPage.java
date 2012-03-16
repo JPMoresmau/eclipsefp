@@ -111,6 +111,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener {
     ignoreModify = false;
   }
 
+  @Override
   public void widgetSelected( final SelectionEvent e ) {
     if (!ignoreModify) {
       PackageDescription lastDescription = this.formEditor.getPackageDescription();
@@ -131,6 +132,7 @@ public class LibraryPage extends CabalFormPage implements SelectionListener {
     }
   }
 
+  @Override
   public void widgetDefaultSelected( final SelectionEvent e ) {
     // Do nothing
   }

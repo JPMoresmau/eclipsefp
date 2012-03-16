@@ -104,6 +104,7 @@ public class NewProjectWizardPage extends WizardPage {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField)
      */
+    @Override
     public void dialogFieldChanged(final DialogField field) {
       fireEvent();
     }
@@ -173,6 +174,7 @@ public class NewProjectWizardPage extends WizardPage {
     /* (non-Javadoc)
      * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
      */
+    @Override
     public void update(final Observable o, final Object arg) {
       if (isWorkspaceRadioSelected()) {
         fLocation.setText(getDefaultPath(getProjectName()));
@@ -216,6 +218,7 @@ public class NewProjectWizardPage extends WizardPage {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter#changeControlPressed(org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField)
      */
+    @Override
     public void changeControlPressed(final DialogField field) {
       final DirectoryDialog dialog= new DirectoryDialog(getShell());
       dialog.setMessage(UITexts.newProjectWizardPage_directory_message);
@@ -248,6 +251,7 @@ public class NewProjectWizardPage extends WizardPage {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField)
      */
+    @Override
     public void dialogFieldChanged(final DialogField field) {
       if (field == fWorkspaceRadio) {
         final boolean checked= fWorkspaceRadio.isSelected();
@@ -296,6 +300,7 @@ public class NewProjectWizardPage extends WizardPage {
       notifyObservers();
     }
 
+    @Override
     public void dialogFieldChanged( final DialogField field ) {
       fireEvent();
 
@@ -503,6 +508,7 @@ public class NewProjectWizardPage extends WizardPage {
    *
    * Subclasses should not override; rather, override {@link #createControls}.
    */
+  @Override
   public void createControl(final Composite parent) {
     initializeDialogUnits(parent);
 

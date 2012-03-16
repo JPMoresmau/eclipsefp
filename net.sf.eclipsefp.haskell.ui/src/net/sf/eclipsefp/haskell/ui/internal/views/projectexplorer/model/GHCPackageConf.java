@@ -54,6 +54,7 @@ public class GHCPackageConf implements ITreeElement {
   // interface methods of ITreeElement
   ////////////////////////////////////
 
+  @Override
   public List<GHCPackage> getChildren() {
 //    if (children==null){
 //      List<GHCPackage> result = new ArrayList<GHCPackage>();
@@ -63,14 +64,17 @@ public class GHCPackageConf implements ITreeElement {
     return children;
   }
 
+  @Override
   public Object getParent() {
     return systemLibrary;
   }
 
+  @Override
   public String getText() {
     return location.toOSString();
   }
 
+  @Override
   public String getImageKey() {
     return IImageNames.PACKAGE_CONF;
   }

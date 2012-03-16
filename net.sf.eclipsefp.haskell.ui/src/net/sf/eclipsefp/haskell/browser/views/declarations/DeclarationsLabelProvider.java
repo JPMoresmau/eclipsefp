@@ -19,7 +19,8 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DeclarationsLabelProvider implements ILabelProvider {
 
-	public Image getImage(final Object element) {
+	@Override
+  public Image getImage(final Object element) {
 		if (element instanceof QueryItem) {
 			QueryItem item = (QueryItem) element;
 			return ImageCache.getImageForDeclaration( item.getType() );
@@ -30,7 +31,8 @@ public class DeclarationsLabelProvider implements ILabelProvider {
 		return null;
 	}
 
-	public String getText(final Object element) {
+	@Override
+  public String getText(final Object element) {
 		if (element instanceof QueryItem) {
 			Declaration elt = ((QueryItem) element).getDeclaration();
 			return elt.getShownName();
@@ -43,20 +45,24 @@ public class DeclarationsLabelProvider implements ILabelProvider {
 	}
 
 	// Listeners: not used
-	public void addListener(final ILabelProviderListener listener) {
+	@Override
+  public void addListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Do nothing
 	}
 
-	public boolean isLabelProperty(final Object element, final String property) {
+	@Override
+  public boolean isLabelProperty(final Object element, final String property) {
 		// Do nothing
 		return false;
 	}
 
-	public void removeListener(final ILabelProviderListener listener) {
+	@Override
+  public void removeListener(final ILabelProviderListener listener) {
 		// Do nothing
 	}
 

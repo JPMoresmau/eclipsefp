@@ -46,6 +46,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
   // interface methods of IContentAssistProcessor
   ///////////////////////////////////////////////
 
+  @Override
   public ICompletionProposal[] computeCompletionProposals( final ITextViewer tv,
                                                            final int offset ) {
     //ICompletionProposal[] result = new ICompletionProposal[ 0 ];
@@ -84,27 +85,32 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
     return icps.toArray( new ICompletionProposal[icps.size()] );
   }
 
+  @Override
   public IContextInformation[] computeContextInformation( final ITextViewer viewer,
                                                           final int offset ) {
     // unused
     return null;
   }
 
+  @Override
   public char[] getCompletionProposalAutoActivationCharacters() {
     // unused
     return null;
   }
 
+  @Override
   public char[] getContextInformationAutoActivationCharacters() {
     // unused
     return null;
   }
 
+  @Override
   public IContextInformationValidator getContextInformationValidator() {
     // unused
     return null;
   }
 
+  @Override
   public String getErrorMessage() {
     // unused
     return null;

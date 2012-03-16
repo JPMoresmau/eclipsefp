@@ -44,11 +44,13 @@ public class ModulesContentProvider implements ITreeContentProvider {
 		memento.putBoolean(MEMENTO_KEY, isHierarchical);
 	}
 
-	public Object[] getElements(final Object inputElement) {
+	@Override
+  public Object[] getElements(final Object inputElement) {
 		return isHierarchical ? hierarchicalCache.toArray() : linearCache.toArray();
 	}
 
-	public Object[] getChildren(final Object parentElement) {
+	@Override
+  public Object[] getChildren(final Object parentElement) {
 		if (!isHierarchical) {
 			return new Object[0];
 		} else {
@@ -57,12 +59,14 @@ public class ModulesContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	public Object getParent(final Object element) {
+	@Override
+  public Object getParent(final Object element) {
 		ModulesItem item = (ModulesItem) element;
 		return item.getParent();
 	}
 
-	public boolean hasChildren(final Object element) {
+	@Override
+  public boolean hasChildren(final Object element) {
 		if (!isHierarchical) {
 			return false;
 		} else {
@@ -71,11 +75,13 @@ public class ModulesContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Do nothing
 	}
 
-	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+	@Override
+  public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		// Do nothing
 
 		if (newInput == null) {

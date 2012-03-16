@@ -36,11 +36,13 @@ public class ListenableCompilerDecorator implements IHaskellCompiler {
 		fListeners.remove(listener);
 	}
 
-	public void compile(final IFile file, final Writer outputWriter) {
+	@Override
+  public void compile(final IFile file, final Writer outputWriter) {
 		// TODO Auto-generated method stub
 	}
 
-	public void compile(final IFile file) {
+	@Override
+  public void compile(final IFile file) {
 	  MultiplexedWriter outWriter = new MultiplexedWriter();
     for (ICompilerListener listener : fListeners) {
       outWriter.addOutput( listener.createOutputWriter() );

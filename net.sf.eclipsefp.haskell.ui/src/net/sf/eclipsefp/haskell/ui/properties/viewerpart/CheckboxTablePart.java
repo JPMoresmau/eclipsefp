@@ -60,12 +60,14 @@ public abstract class CheckboxTablePart extends SharedPart {
     CheckboxTableViewer tableViewer
       = CheckboxTableViewer.newCheckList( parent, extendedStyle );
     tableViewer.addSelectionChangedListener( new ISelectionChangedListener() {
+      @Override
       public void selectionChanged( final SelectionChangedEvent evt ) {
         IStructuredSelection ssel = ( IStructuredSelection )evt.getSelection();
         CheckboxTablePart.this.selectionChanged( ssel );
       }
     } );
     tableViewer.addCheckStateListener( new ICheckStateListener() {
+      @Override
       public void checkStateChanged( final CheckStateChangedEvent event ) {
         Object element = event.getElement();
         elementChecked( element, event.getChecked() );

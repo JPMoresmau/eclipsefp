@@ -72,6 +72,7 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
 
   }
 
+  @Override
   public void init( final IWorkbench workbench ) {
     // NOOP
   }

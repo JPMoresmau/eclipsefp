@@ -58,22 +58,27 @@ public class HsImplementation implements IHsImplementation {
   // interface methods of IInstalledHaskellImplementation
   // /////////////////////////////////////////////////////
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public HsImplementationType getType() {
     return type;
   }
 
+  @Override
   public String getVersion() {
     return version;
   }
 
+  @Override
   public String getLibDir() {
    return libDir;
   }
 
+  @Override
   public String getBinDir() {
     return binDir;
   }

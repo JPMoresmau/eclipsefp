@@ -117,6 +117,7 @@ public class UserFlagsPP extends PropertyPage implements
     return container;
   }
 
+  @Override
   public void init( final IWorkbench arg0 ) {
     // NOOP
   }

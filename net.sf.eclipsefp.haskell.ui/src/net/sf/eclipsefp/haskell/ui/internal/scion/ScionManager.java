@@ -145,6 +145,7 @@ public class ScionManager implements IResourceChangeListener {
       if (!ignore){
         final Display display = HaskellUIPlugin.getStandardDisplay();
         display.asyncExec( new Runnable() {
+          @Override
           public void run() {
             Shell parent = display.getActiveShell();
 
@@ -167,6 +168,7 @@ public class ScionManager implements IResourceChangeListener {
       if (!buildwrapperVersionOK || !browserVersionOK){
           final Display display = HaskellUIPlugin.getStandardDisplay();
           display.asyncExec( new Runnable() {
+            @Override
             public void run() {
               Shell parent = display.getActiveShell();
 
@@ -302,6 +304,7 @@ public class ScionManager implements IResourceChangeListener {
         BrowserPlugin.changeSharedInstance( browserExecutablePath ,verbose );
 
         display.asyncExec( new Runnable() {
+          @Override
           public void run() {
             Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
             //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
@@ -322,6 +325,7 @@ public class ScionManager implements IResourceChangeListener {
     boolean questionWasAnswered = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_HACKAGE_QUESTION_ANSWERED );
     if( !questionWasAnswered ) {
       display.asyncExec( new Runnable() {
+        @Override
         public void run() {
           // needs ui thread
           final Shell parentShell = display.getActiveShell();
@@ -344,6 +348,7 @@ public class ScionManager implements IResourceChangeListener {
         if (askRebuild) {
           final Stack<Boolean> response = new Stack<Boolean>();
           display.asyncExec( new Runnable() {
+            @Override
             public void run() {
               // needs ui thread
               final Shell parentShell = display.getActiveShell();
@@ -359,6 +364,7 @@ public class ScionManager implements IResourceChangeListener {
       /* Execute build job */
       final boolean doRebuild = rebuild;
       display.asyncExec( new Runnable() {
+        @Override
         public void run() {
         Job builder = new BrowserHackageDatabaseRebuildJob(
             UITexts.scionBrowserRebuildingDatabase, doRebuild );
@@ -405,6 +411,7 @@ public class ScionManager implements IResourceChangeListener {
 
       display.asyncExec( new Runnable() {
 
+        @Override
         public void run() {
           // needs ui thread
           Shell parentShell = display.getActiveShell();
@@ -415,6 +422,7 @@ public class ScionManager implements IResourceChangeListener {
                   UITexts.hoogle_dataNotPresent_message ) ) {
             display.asyncExec( new Runnable() {
 
+              @Override
               public void run() {
                 Job builder = new HoogleDownloadDataJob(
                     UITexts.hoogle_downloadingData );
@@ -438,10 +446,12 @@ public class ScionManager implements IResourceChangeListener {
    */
   private class FileDeletionListener implements IResourceChangeListener {
 
+    @Override
     public void resourceChanged( final IResourceChangeEvent event ) {
       try {
         event.getDelta().accept( new IResourceDeltaVisitor() {
 
+          @Override
           public boolean visit( final IResourceDelta delta )
               throws CoreException {
             if( delta.getKind() == IResourceDelta.REMOVED ) {
@@ -523,6 +533,7 @@ public class ScionManager implements IResourceChangeListener {
   * @author JP Moresmau
  */
   public class ProjectDeletionListener implements IResourceChangeListener{
+    @Override
     public void resourceChanged( final IResourceChangeEvent event ) {
       if (event.getResource() instanceof IProject){
         stopInstance( event.getResource() );
@@ -532,6 +543,7 @@ public class ScionManager implements IResourceChangeListener {
 
   /** */
   public class ExecutablesPropertiesListener implements IPropertyChangeListener {
+    @Override
     public void propertyChange( final PropertyChangeEvent event ) {
           if( event.getProperty().equals( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE ) ) {
             if( event.getNewValue() instanceof String ) {
@@ -558,6 +570,7 @@ public class ScionManager implements IResourceChangeListener {
 
   /** */
   public class UpdateResourceVisitor implements IResourceVisitor {
+    @Override
     public boolean visit( final IResource resource ) throws CoreException {
       return updateForResource( resource );
     }
@@ -565,10 +578,12 @@ public class ScionManager implements IResourceChangeListener {
 
   /** */
   public class CabalFileResourceChangeListener implements IResourceChangeListener {
+    @Override
     public void resourceChanged( final IResourceChangeEvent event ) {
       try {
         event.getDelta().accept( new IResourceDeltaVisitor() {
 
+          @Override
           public boolean visit( final IResourceDelta delta ) {
             if( delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0) {
               if( delta.getResource() instanceof IFile ) {
@@ -623,9 +638,11 @@ public class ScionManager implements IResourceChangeListener {
    * Called after a resource in the workspace was changed. It finds all projects
    * that were opened/closed, and starts/stops Scion instances accordingly.
    */
+  @Override
   public void resourceChanged( final IResourceChangeEvent event ) {
     try {
       event.getDelta().accept( new IResourceDeltaVisitor() {
+        @Override
         public boolean visit( final IResourceDelta delta ) throws CoreException {
           return updateForResource( delta.getResource() );
         }
@@ -738,6 +755,7 @@ public class ScionManager implements IResourceChangeListener {
             loadHackageDatabase();
           } else {
             Display.getDefault().syncExec( new Runnable() {
+              @Override
               public void run() {
                 MessageDialog.openError( Display.getDefault().getActiveShell(),
                                          UITexts.scionBrowserRebuildingDatabaseError_title,
@@ -783,6 +801,7 @@ public class ScionManager implements IResourceChangeListener {
             checkHoogleDataIsPresent();
           } else {
             Display.getDefault().syncExec( new Runnable() {
+              @Override
               public void run() {
                 MessageDialog.openError( Display.getDefault().getActiveShell(),
                                          UITexts.scionBrowserRebuildingDatabaseError_title,

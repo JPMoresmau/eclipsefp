@@ -39,11 +39,13 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
   private SelectionAdapter selectionAdapter;
 
   private final ModifyListener modifyListener = new ModifyListener() {
+    @Override
     public void modifyText( final ModifyEvent e ) {
       updateLaunchConfigurationDialog();
     }
   };
 
+  @Override
   public void createControl( final Composite parent ) {
     Composite mainComposite = new Composite( parent, SWT.NONE );
     setControl( mainComposite );
@@ -63,6 +65,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
 
 
 
+  @Override
   public String getName() {
     return UITexts.haskellAutomationTab_name;
   }
@@ -73,6 +76,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
   }
 
 
+  @Override
   public void initializeFrom( final ILaunchConfiguration configuration ) {
     updateCommand( configuration );
     updateReloadSave( configuration );
@@ -80,6 +84,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
 
   }
 
+  @Override
   public void performApply( final ILaunchConfigurationWorkingCopy configWc ) {
     String command = txtCommand.getText().trim();
     if( command.length() == 0 ) {
@@ -95,6 +100,7 @@ public class HaskellAutomationTab extends AbstractLaunchConfigurationTab {
         .getSelection(), false );
   }
 
+  @Override
   public void setDefaults( final ILaunchConfigurationWorkingCopy configuration ) {
     configuration.setAttribute( ILaunchAttributes.COMMAND,  (String)null );
     configuration.setAttribute( ILaunchAttributes.RELOAD, false );

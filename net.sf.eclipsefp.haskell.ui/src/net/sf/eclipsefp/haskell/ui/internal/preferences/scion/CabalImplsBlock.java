@@ -176,10 +176,12 @@ public class CabalImplsBlock implements ISelectionProvider {
     }
   }
 
+  @Override
   public void addSelectionChangedListener( final ISelectionChangedListener listener ) {
     selectionListeners.add( listener );
   }
 
+  @Override
   public ISelection getSelection() {
     return new StructuredSelection( viewer.getCheckedElements() );
   }
@@ -194,10 +196,12 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
 
+  @Override
   public void removeSelectionChangedListener( final ISelectionChangedListener listener ) {
     selectionListeners.remove( listener );
   }
 
+  @Override
   public void setSelection( final ISelection selection ) {
     if( selection instanceof IStructuredSelection ) {
       Object elem = ( ( IStructuredSelection )selection ).getFirstElement();
@@ -282,6 +286,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     String sAdd = UITexts.cabalImplsBlock_btnAdd;
     btnAdd = SWTUtil.createPushButton( buttonsComp, sAdd );
     btnAdd.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent( final Event evt ) {
         addCabalImplementation();
       }
@@ -290,6 +295,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     String sEdit = UITexts.implementationsBlock_btnEdit;
     btnEdit = SWTUtil.createPushButton( buttonsComp, sEdit );
     btnEdit.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent( final Event evt ) {
         editCabalImplementation();
       }
@@ -298,6 +304,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     String sRemove = UITexts.cabalImplsBlock_btnRemove;
     btnRemove = SWTUtil.createPushButton( buttonsComp, sRemove );
     btnRemove.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent( final Event evt ) {
         removeSelectedCabalImplementations();
       }
@@ -306,6 +313,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     String sDetect = UITexts.cabalImplsBlock_btnAutoDetect;
     btnAutoDetect = SWTUtil.createPushButton( buttonsComp, sDetect );
     btnAutoDetect.addListener( SWT.Selection, new Listener() {
+      @Override
       public void handleEvent (final Event ev) {
         autoDetectCabalImpls();
       }
@@ -319,12 +327,14 @@ public class CabalImplsBlock implements ISelectionProvider {
     sortByUserIdentifier();
 
     viewer.addSelectionChangedListener( new ISelectionChangedListener() {
+      @Override
       public void selectionChanged( final SelectionChangedEvent evt ) {
         enableButtons();
       }
     } );
 
     viewer.addCheckStateListener( new ICheckStateListener() {
+      @Override
       public void checkStateChanged( final CheckStateChangedEvent event ) {
 
         CabalImplementation element = ( CabalImplementation ) event.getElement();
@@ -336,6 +346,7 @@ public class CabalImplsBlock implements ISelectionProvider {
     } );
 
     viewer.addDoubleClickListener( new IDoubleClickListener() {
+      @Override
       public void doubleClick( final DoubleClickEvent e ) {
         if( !viewer.getSelection().isEmpty() ) {
           editCabalImplementation();
@@ -531,15 +542,18 @@ public class CabalImplsBlock implements ISelectionProvider {
       // Unused.
     }
 
+    @Override
     public void dispose() {
       // Unused.
     }
 
+    @Override
     public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
       // unused
 
     }
 
+    @Override
     public Object[] getElements( final Object inputElement ) {
       return impls.toArray();
     }
@@ -548,10 +562,12 @@ public class CabalImplsBlock implements ISelectionProvider {
   /** Internal table label provider class */
   public class CabalImplsLP extends LabelProvider implements ITableLabelProvider {
 
+    @Override
     public Image getColumnImage( final Object element, final int columnIndex ) {
       return null;
     }
 
+    @Override
     public String getColumnText( final Object elem, final int columnIndex ) {
       String result = null;
       if ( elem instanceof CabalImplementation ) {

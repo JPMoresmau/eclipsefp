@@ -36,18 +36,22 @@ public class ProjectPropertiesEvent implements IProjectPropertiesEvent {
   // interface methods of IProjectPropertiesEvent
   ///////////////////////////////////////////////
 
+  @Override
   public IHaskellProject getSource() {
     return source;
   }
 
+  @Override
   public String getPropertyName() {
     return propertyName;
   }
 
+  @Override
   public Object getOldValue() {
     return oldValue;
   }
 
+  @Override
   public Object getNewValue() {
     return newValue;
   }

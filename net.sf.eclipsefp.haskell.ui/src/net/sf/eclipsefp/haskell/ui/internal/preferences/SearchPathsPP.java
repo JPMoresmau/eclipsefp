@@ -57,6 +57,7 @@ public class SearchPathsPP extends FieldEditorPreferencePage implements IWorkben
     setPreferenceStore( HaskellUIPlugin.getDefault().getPreferenceStore() );
   }
 
+  @Override
   public void init( final IWorkbench arg0 ) {
     // NOOP
 
@@ -79,6 +80,7 @@ public class SearchPathsPP extends FieldEditorPreferencePage implements IWorkben
       private String getPath(final String original){
         InputDialog id=new InputDialog( getShell(), UITexts.preferences_search_haddock_new, UITexts.preferences_search_haddock_help, original, new IInputValidator() {
 
+          @Override
           public String isValid( final String arg0 ) {
             if (arg0==null || arg0.length()==0){
               return UITexts.preferences_search_haddock_new_empty;

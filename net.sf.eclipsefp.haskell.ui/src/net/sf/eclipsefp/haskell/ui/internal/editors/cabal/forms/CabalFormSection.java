@@ -54,10 +54,12 @@ public abstract class CabalFormSection extends SectionPart {
     fillInValues( true );
     editor.getModel().addDocumentListener( new IDocumentListener() {
 
+      @Override
       public void documentAboutToBeChanged( final DocumentEvent event ) {
         // unused
       }
 
+      @Override
       public void documentChanged( final DocumentEvent event ) {
         fillInValues( false );
       }

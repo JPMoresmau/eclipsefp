@@ -71,6 +71,7 @@ public class ModulesExecutableSection extends CabalFormSection implements IOther
     }
   }
 
+  @Override
   public void otherTextValueChanged( final FormEntry entry ) {
     if( this.stanza != null ) {
       FormEntryMainIs multi = ( FormEntryMainIs )entry;
