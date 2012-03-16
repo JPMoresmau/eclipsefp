@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -56,7 +58,24 @@ public class CabalInstallWizard extends Wizard {
       commands.add( "--reinstall" );
       for (final IProject p:projects){
         try {
-          AbstractHaskellLaunchDelegate.runInConsole(p, commands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ),true );
+          List<String> prjCommands = new ArrayList<String>(commands);
+          BWFacade bf=BuildWrapperPlugin.getFacade( p );
+          // need to provide user supplied info
+          if(bf!=null){
+            String f=bf.getFlags();
+            if (f!=null && f.length()>0){
+              prjCommands.add("--flags="+f);
+            }
+            List<String> extraOpts=bf.getExtraOpts();
+            if (extraOpts!=null){
+              for (String eo:extraOpts){
+                prjCommands.add(eo);
+              }
+            }
+          }
+
+
+          AbstractHaskellLaunchDelegate.runInConsole(p, prjCommands, new File(p.getLocation().toOSString()), NLS.bind( UITexts.install_job, p.getName() ),true );
         } catch (Exception ioe){
           HaskellUIPlugin.log(ioe);
           final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);

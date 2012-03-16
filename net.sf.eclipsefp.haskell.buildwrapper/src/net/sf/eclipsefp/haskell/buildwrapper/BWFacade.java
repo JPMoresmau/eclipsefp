@@ -903,6 +903,22 @@ public class BWFacade {
 		}
 	}
 	
+	/**
+	 * Return the flags parameter to cabal configure
+	 * @return the flags
+	 */
+	public String getFlags() {
+		return flags;
+	}
+	
+	/**
+	 * Return the extra options passed to cabal configure
+	 * @return the extraOpts
+	 */
+	public List<String> getExtraOpts() {
+		return extraOpts;
+	}
+	
 	private void parseFlags(){
 		try {
 			String currentProp=project.getPersistentProperty( BuildWrapperPlugin.USERFLAGS_PROPERTY );
