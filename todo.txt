@@ -1,4 +1,9 @@
 
+- open Module page (like open Type in Java)
+	search in all cabal files
+	but modules can not be referenced
+	list all haskell files in source folders-> probably slow, cache in each project?
+
 - format using haskell-src-exts
 	- doesn't support comments
 - format using scan

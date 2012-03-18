@@ -9,6 +9,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
@@ -284,14 +287,19 @@ public class OpenDefinitionHandler extends AbstractHandler {
         if (project!=null){
         // String moduleHSFile=module.replace( '.', '/' );
           for( IProject p: project.getReferencedProjects() ) {
-
-            // TODO should we also check on the version
             if( p.hasNature( HaskellNature.NATURE_ID )
-                && p.getName().equals( packageName ) ) {
-              IFile f = ResourceUtil.findFileFromModule( p, module );
-              if( f != null ) {
-                 openFile( page, f, shortName );
-                 return true;
+                 ) {
+              IFile cf=BuildWrapperPlugin.getCabalFile( p );
+              if (cf!=null){
+                PackageDescription pd=PackageDescriptionLoader.load(cf);
+                // check on name in cabal file, not project name, as their may be differences
+                if (pd.getPackageStanza()!=null && packageName.equals( pd.getPackageStanza().getProperties().get( CabalSyntax.FIELD_NAME.getCabalName() ))){
+                  IFile f = ResourceUtil.findFileFromModule( p, module );
+                  if( f != null ) {
+                     openFile( page, f, shortName );
+                     return true;
+                  }
+                  }
               }
               /*
                * IFile f=BuildWrapperPlugin.getCabalFile( project );
