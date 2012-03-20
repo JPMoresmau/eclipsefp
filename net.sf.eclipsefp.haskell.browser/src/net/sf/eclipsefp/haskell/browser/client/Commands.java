@@ -132,6 +132,15 @@ public class Commands {
 		return o;
 	}
 
+	public static JSONObject createGetDeclarationsFromPrefix(Database db,String prefix)
+			throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "get-decl-prefix");
+		setCurrentDatabase(db,o);
+		o.put("prefix", prefix);
+		return o;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static Packaged<Declaration>[] responseGetDeclarations(
 			String response) throws Exception {
@@ -142,6 +151,25 @@ public class Commands {
 			JSONArray pair = jDecls.getJSONArray(i);
 			PackageIdentifier id = new PackageIdentifier(pair.getJSONObject(0));
 			Declaration decl = Declaration.fromJSONSingleton(pair.getJSONObject(1));
+			aDecls.add(new Packaged<Declaration>(id, decl));
+		}
+
+		Packaged<Declaration>[] elts = (Packaged<Declaration>[]) new Packaged[aDecls.size()];
+		return aDecls.toArray(elts);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Packaged<Declaration>[] responseGetDeclarationsFromPrefix(
+			String response) throws Exception {
+		JSONArray jDecls = new JSONArray(response);
+		ArrayList<Packaged<Declaration>> aDecls = new ArrayList<Packaged<Declaration>>();
+
+		for (int i = 0; i < jDecls.length(); i++) {
+			JSONArray pair = jDecls.getJSONArray(i);
+			PackageIdentifier id = new PackageIdentifier(pair.getJSONObject(0));
+			Module m=new Module(pair.getJSONObject(1));
+			Declaration decl = Declaration.fromJSONSingleton(pair.getJSONObject(2));
+			decl.setModule(m);
 			aDecls.add(new Packaged<Declaration>(id, decl));
 		}
 

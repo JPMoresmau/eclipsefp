@@ -84,6 +84,16 @@ public class NullBrowserServer extends BrowserServer {
 		return (Packaged<Declaration>[]) new Packaged[0];
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.BrowserServer#getDeclarationsFromPrefix(net.sf.eclipsefp.haskell.browser.Database, java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Packaged<Declaration>[] getDeclarationsFromPrefix(Database db,
+			String prefix) throws Exception {
+		return (Packaged<Declaration>[]) new Packaged[0];
+	}
+	
 	@Override
 	public Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
 		return new Module[0];

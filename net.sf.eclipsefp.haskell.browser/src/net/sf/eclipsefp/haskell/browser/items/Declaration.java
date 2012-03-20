@@ -20,6 +20,11 @@ public abstract class Declaration extends Documented {
 	DeclarationType type;
 	String name;
 
+	/**
+	 * optional module info
+	 */
+	private Module module;
+	
 	public DeclarationType getType() {
 		return this.type;
 	}
@@ -92,4 +97,12 @@ public abstract class Declaration extends Documented {
 	}
 	
 	public abstract String getShownName();
+
+	public Module getModule() {
+		return module;
+	}
+
+	public void setModule(Module module) {
+		this.module = module;
+	}
 }

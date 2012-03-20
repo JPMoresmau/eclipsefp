@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
+import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
@@ -21,6 +23,7 @@ import net.sf.eclipsefp.haskell.browser.items.Function;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.Instance;
 import net.sf.eclipsefp.haskell.browser.items.Module;
+import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
@@ -38,6 +41,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManag
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -51,6 +55,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Computes the content assist completion proposals and context information. This class is fairly stateful, since
@@ -177,7 +182,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
                 return getLanguageExtensions( offset );
               }  else if (line.contains("::") || line.contains("->")) {
 
-                return defaultCompletionContext( viewer, theFile, doc, offset, true );
+                return defaultCompletionContext( viewer, theFile, doc, offset, true,true );
               }
 
             //if (tokens != null) {
@@ -191,14 +196,14 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
             // Ignore, pass through to default completion context.
           }
 
-          return defaultCompletionContext( viewer, theFile, doc, offset, false );
+          return defaultCompletionContext( viewer, theFile, doc, offset, false,true );
 //        }
 
 //        break;
       }
 
       case DEFAULT_CONTEXT: {
-        return defaultCompletionContext( viewer, theFile, doc, offset, false );
+        return defaultCompletionContext( viewer, theFile, doc, offset, false,false );
       }
 
       case IMPORT_STMT: {
@@ -206,7 +211,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       }
 
       case TYCON_CONTEXT: {
-        return defaultCompletionContext( viewer, theFile, doc, offset, true );
+        return defaultCompletionContext( viewer, theFile, doc, offset, true,true );
       }
 
       case IMPORT_LIST: {
@@ -284,7 +289,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 * Default completion context, if no other context can be determined.
 	 */
 	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
-	                                                        final int offset, final boolean typesHavePriority ) {
+	                                                        final int offset, final boolean typesHavePriority,final boolean searchAll ) {
 	  context = typesHavePriority ? CompletionContext.TYCON_CONTEXT : CompletionContext.DEFAULT_CONTEXT;
 
 	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( doc.get(), offset );
@@ -297,11 +302,91 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     ImportsManager mgr =((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getImportsManager();
         //new ImportsManager( theFile, doc );
     //long t0=System.currentTimeMillis();
-    Map<String, Documented> decls = mgr.getDeclarations();
+    Map<String, Documented> decls = new HashMap<String, Documented>();
     //long t1=System.currentTimeMillis();
     //HaskellUIPlugin.log( "getDeclarations:"+(t1-t0), IStatus.INFO );
     ArrayList<String> elts = new ArrayList<String>();
     ArrayList<String> typeElts = new ArrayList<String>();
+
+    // declaration key to package
+    Map<String,String> packages=new HashMap<String, String>();
+    // constructor key to declaration name (if we use a constructor from a new module, we need to import to data type, not the constructor)
+    Map<String,String> constructors=new HashMap<String, String>();
+
+    if (prefix.length()>0 && searchAll){
+      try {
+        long t0=System.currentTimeMillis();
+        Set<String> pkgs=ResourceUtil.getImportPackages( new IFile[]{theFile});
+        // TODO select between "only imported","only dependent" and ALL according to some preference
+
+        // search on everything
+        Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
+        if (browserDecls.length > 0) {
+          // If the browser found the module
+          for (Packaged<Declaration> browserDecl : browserDecls) {
+            boolean newPackage=!pkgs.contains( browserDecl.getPackage().getName() );
+            String key= browserDecl.getElement().getName()+" ("+browserDecl.getElement().getModule().getName()+")";
+            if (!decls.containsKey( key ) && !decls.containsKey( browserDecl.getElement().getModule().getName()+"."+key )){
+              decls.put(key,browserDecl.getElement() );
+              if (newPackage){
+                packages.put( key, browserDecl.getPackage().getName() );
+              }
+              if (browserDecl.getElement() instanceof Gadt) {
+                Gadt g = (Gadt)browserDecl.getElement();
+                for (Constructor c : g.getConstructors()) {
+                  key=  c.getName()+" ("+browserDecl.getElement().getModule().getName()+")";
+                  decls.put(key,c );
+                  constructors.put( key, browserDecl.getElement().getName() );
+                  if (newPackage){
+                    packages.put( key, browserDecl.getPackage().getName() );
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // search on dependent packages only
+//        BWFacade f=BuildWrapperPlugin.getFacade( theFile.getProject() );
+//        if (f!=null){
+//
+//          for (CabalPackage[] cps:f.getPackagesByDB().values()){
+//            for (CabalPackage cp:cps){
+//              if (pkgs.contains( cp.getName() )){
+//
+//                Database pkg=Database.Package( new PackageIdentifier( cp.getName(), cp.getVersion() ) );
+//                Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(pkg, prefix);
+//                if (browserDecls.length > 0) {
+//                  // If the browser found the module
+//                  for (Packaged<Declaration> browserDecl : browserDecls) {
+//                    String key= browserDecl.getElement().getName();
+//                    if (!decls.containsKey( key ) && !decls.containsKey( browserDecl.getElement().getModule().getName()+"."+key )){
+//                      decls.put(key,browserDecl.getElement() );
+//                      if (browserDecl.getElement() instanceof Gadt) {
+//                        Gadt g = (Gadt)browserDecl.getElement();
+//                        for (Constructor c : g.getConstructors()) {
+//                          key=  c.getName();
+//                          decls.put(key,c );
+//                        }
+//                      }
+//                    }
+//                  }
+//
+//                }
+//              }
+//            }
+//          }
+//
+//        }
+
+        long t1=System.currentTimeMillis();
+        HaskellUIPlugin.log( "FromPrefix:"+(t1-t0)+"ms", IStatus.INFO);
+      } catch (Exception e){
+        HaskellUIPlugin.log( e );
+      }
+    }
+    decls.putAll(mgr.getDeclarations());
+
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
       if ( s.getKey().startsWith( prefix ) ) {
         if (s.getValue() instanceof Constructor || s.getValue() instanceof Function) {
@@ -312,12 +397,15 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
         }
       }
     }
+
+
+
     Comparator<String> pointedComparator = new Comparator<String>() {
 
       @Override
       public int compare( final String a, final String b ) {
-        boolean aPointed = a.indexOf( '.' ) != -1;
-        boolean bPointed = b.indexOf( '.' ) != -1;
+        boolean aPointed = isPointed(a);
+        boolean bPointed = isPointed(b);
         if (aPointed && !bPointed) {
           return 1;
         } else if (!aPointed && bPointed) {
@@ -349,10 +437,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       i = 0;
       for ( String s : typeElts ) {
         Documented d = decls.get( s );
-        result[endIndex + i] =
-            new CompletionProposal( s, offset - plength, plength, s.length(),
-                ImageCache.getImageForDeclaration( ((Declaration)d).getType() ), s,
-                null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+        result[endIndex + i] = getCompletionProposal( s, d, offset, plength, true,packages.get( s ) ,null);
         i++;
       }
       endIndex += typeElts.size();
@@ -361,10 +446,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     i = 0;
     for ( String s : elts ) {
       Documented d = decls.get( s );
-      result[endIndex + i] =
-          new CompletionProposal( s, offset - plength, plength, s.length(),
-              d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.FUNCTION, s,
-              null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+      String realImport=null;
+      if (d instanceof Constructor){
+        realImport=constructors.get( s );
+
+      }
+      result[endIndex + i] =getCompletionProposal( s, d, offset, plength, false,packages.get( s )  ,realImport);
       i++;
     }
     endIndex += elts.size();
@@ -373,16 +460,41 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       i = 0;
       for ( String s : typeElts ) {
         Documented d = decls.get( s );
-        result[endIndex + i] =
-            new CompletionProposal( s, offset - plength, plength, s.length(),
-                ImageCache.getImageForDeclaration( ((Declaration)d).getType() ), s,
-                null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+        result[endIndex + i] = getCompletionProposal( s, d, offset, plength, true,packages.get( s )  ,null);
         i++;
       }
       endIndex += typeElts.size();
     }
 
     return (totalSize > 0 ? result : null);
+	}
+
+	private static boolean isPointed(final String name){
+	  int ix=name.indexOf( " (" );
+	  if (ix>-1){
+	    return name.substring(0,ix).indexOf( '.' ) != -1;
+	  }
+	  return name.indexOf( '.' ) != -1;
+	}
+
+
+	private ICompletionProposal getCompletionProposal(final String s,final Documented d,final int offset,final int length,final boolean isType,final String pkg,final String realImport){
+	  Image i=isType?
+	      ImageCache.getImageForDeclaration( ((Declaration)d).getType() ):
+	      d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.FUNCTION;
+
+	  // new modules are shown after the declaration name
+	  String repl=s;
+	  int ix=s.indexOf( " (" );
+	  String module=null;
+	  if (ix>-1){
+	    repl=s.substring( 0,ix );
+	    module=s.substring( ix+2,s.length()-1 );
+	  }
+
+	  return new FullHaskellCompletionProposal( repl, offset - length, length, s.length(),
+        i, s,
+         HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ),pkg,module,realImport);
 	}
 
 	private ICompletionProposal[] importsList( final ITextViewer viewer, final IFile theFile,

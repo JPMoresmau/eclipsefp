@@ -137,6 +137,8 @@ public abstract class BrowserServer {
 
 	public abstract Packaged<Declaration>[] getDeclarations(Database db,String module) throws Exception;
 	
+	public abstract Packaged<Declaration>[] getDeclarationsFromPrefix(Database db,String prefix) throws Exception ;
+	
 	public abstract Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException;
 	
 	public abstract void setExtraHooglePath(String newPath) throws IOException, JSONException;

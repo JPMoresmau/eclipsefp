@@ -254,6 +254,20 @@ public class StreamBrowserServer extends BrowserServer {
 		return decls;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Packaged<Declaration>[] getDeclarationsFromPrefix(Database db,String prefix)
+			throws Exception {
+
+		String response = sendAndReceive(Commands.createGetDeclarationsFromPrefix(db, prefix));
+		Packaged<Declaration>[] decls = Commands.responseGetDeclarationsFromPrefix(response);
+		if (decls==null){
+			decls=new Packaged[0];
+		}
+
+		return decls;
+	}
+	
 	@Override
 	public Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
 		String response = sendAndReceive(Commands.createFindModulesForDeclaration(db,decl));

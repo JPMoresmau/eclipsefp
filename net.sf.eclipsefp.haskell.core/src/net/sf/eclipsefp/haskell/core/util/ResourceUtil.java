@@ -360,11 +360,11 @@ public class ResourceUtil {
     return null;
   }
 
-  public static Collection<String> getImportPackages(final IFile[] files){
+  public static Set<String> getImportPackages(final IFile[] files){
     if (files==null || files.length==0){
       return Collections.emptySet();
     }
-    Collection<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<String>();
 
     Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
 
@@ -375,9 +375,9 @@ public class ResourceUtil {
     return ret;
   }
 
-  public static Collection<String> getHiddenImportPackages(final IFile[] files){
+  public static Set<String> getHiddenImportPackages(final IFile[] files){
     Collection<String> ips=getImportPackages(files);
-    Collection<String> hidden=new HashSet<String>();
+    Set<String> hidden=new HashSet<String>();
     if (ips.size()>0){
       Map<String,CabalPackage[]> pkgs=BuildWrapperPlugin.getFacade( files[0].getProject() ).getPackagesByDB();
         //ScionPlugin.getScionInstance( files[0] ).getPackagesByDB();

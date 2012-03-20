@@ -17,7 +17,6 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
@@ -44,17 +43,26 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
     this.marker = marker;
   }
 
+  public AddPackageDependencyProposal(final String value) {
+    this.value = value;
+    this.marker = null;
+  }
+
+
   @Override
   public void apply( final IDocument document ) {
-    IProject p=marker.getResource().getProject();
-    IFile f=BuildWrapperPlugin.getCabalFile( p );
+    apply((IFile)marker.getResource());
+  }
+
+  public void apply(final IFile res) {
+    IFile f=BuildWrapperPlugin.getCabalFile( res.getProject() );
     IDocumentProvider prov=new TextFileDocumentProvider();
     try {
       prov.connect( f );
       IDocument doc=prov.getDocument( f );
       PackageDescription pd=PackageDescriptionLoader.load( f );
       // find applicable stanzas if any, to not modify all of the cabal stanzas
-      Set<PackageDescriptionStanza> apps=ResourceUtil.getApplicableStanzas( new IFile[]{(IFile)marker.getResource()} );
+      Set<PackageDescriptionStanza> apps=ResourceUtil.getApplicableStanzas( new IFile[]{res} );
       Set<String> appNames=new HashSet<String>();
       for (PackageDescriptionStanza pds:apps){
         appNames.add(pds.toTypeName());
@@ -79,6 +87,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
 
     }
   }
+
 
   protected RealValuePosition update(final PackageDescriptionStanza pds){
     return pds.addToPropertyList( getCabalField(), getValue() );
