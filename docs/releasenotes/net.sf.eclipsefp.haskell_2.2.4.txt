@@ -15,6 +15,7 @@ Fixes:
 	- Do not run HLint on sources inside .dist-buildwrapper
 	- 2.2.3 regression fixed: running GHCi with hidden packages failed (wrong quoting)	
 	- Show constructors from same project in auto completion
+	- Removing Cabal implementations when executable is not found
 
 Features:
 	- Task tags: special words in comment create tasks (TODO, FIXME, XXX by default)
@@ -26,6 +27,11 @@ Features:
 	- Extra cabal parameters in project properties
 		- pass to Cabal configure
 		- special UI for extra lib dirs and extra include dirs
+	- Content assist can search for symbols that are:
+		- already imported (as before)
+		- in all the packages referenced by the project. The module import will be automatically added.
+		- in all the packages in the local package databases. The module import and the package reference in build-depends will be automatically added
+		- A preference allows the user to specify which scope to use. Default is to search in all packages.
 
 Internal:
 	- On files bigger than 20k, do syntax coloring in a job. There is a preference to change the threshold.
