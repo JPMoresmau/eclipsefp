@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -164,17 +165,24 @@ public class CabalImplementationManager {
                 && exePath != null
                 && installVersion != null
                 && libraryVersion != null) {
-              CabalImplementation impl = new CabalImplementation(ident, Path.fromPortableString( exePath ));
-              impls.add(impl);
-              if (!installVersion.equals(impl.getInstallVersion())){
+              IPath path= Path.fromPortableString( exePath );
+              CabalImplementation impl = new CabalImplementation(ident,path);
+              File f=new File(path.toOSString());
+              if (!f.exists()){
                 shouldSave=true;
-                HaskellCorePlugin.log( NLS.bind( CoreTexts.cabalversion_mismatch_install, installVersion,impl.getInstallVersion() ),  IStatus.WARNING );
-              }
-              if (!libraryVersion.equals(impl.getLibraryVersion())){
-                shouldSave=true;
-                HaskellCorePlugin.log( NLS.bind( CoreTexts.cabalversion_mismatch_library, libraryVersion,impl.getLibraryVersion() ),  IStatus.WARNING );
-              }
+                HaskellCorePlugin.log( NLS.bind( CoreTexts.cabalexe_notfound, f.getAbsolutePath() ),  IStatus.ERROR );
+              } else {
+                impls.add(impl);
 
+                if (!installVersion.equals(impl.getInstallVersion())){
+                  shouldSave=true;
+                  HaskellCorePlugin.log( NLS.bind( CoreTexts.cabalversion_mismatch_install, installVersion,impl.getInstallVersion() ),  IStatus.WARNING );
+                }
+                if (!libraryVersion.equals(impl.getLibraryVersion())){
+                  shouldSave=true;
+                  HaskellCorePlugin.log( NLS.bind( CoreTexts.cabalversion_mismatch_library, libraryVersion,impl.getLibraryVersion() ),  IStatus.WARNING );
+                }
+              }
             } else {
               String diagnostic = "Invalid cabal implementation (".concat( String.valueOf(i) ).concat( "), missing items: "); //$NON-NLS-1$ //$NON-NLS-2$
               int diagLen = diagnostic.length();
@@ -209,7 +217,8 @@ public class CabalImplementationManager {
           serializePrefs( defaultImplIdent);
         }
 
-      } else {
+      }
+      if (impls.size()==0){
         List<CabalImplementation> detectedImpls=autoDetectCabalImpls();
         if (detectedImpls.size()>0){
           setCabalImplementations( detectedImpls, detectedImpls.get(0).getUserIdentifier() );
