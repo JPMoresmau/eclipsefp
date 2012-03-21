@@ -6,7 +6,7 @@ Release Notes
 Necessary Haskell packages:
 
 	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.5.1 of buildwrapper has been validated with this version of EclipseFP
-	- EclipseFP also uses scion-browser. Version 0.2.7 has been validated with this version of EclipseFP
+	- EclipseFP also uses scion-browser. Version 0.2.8 has been validated with this version of EclipseFP
  
 
 Fixes:
