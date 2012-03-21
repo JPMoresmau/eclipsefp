@@ -345,13 +345,11 @@ public final class UITexts extends NLS {
   public static String preferences_editor_appearance_current_line;
   public static String preferences_editor_appearance_print_margin;
 
-  public static String preferences_editor_contentass_background;
-  public static String preferences_editor_contentass_foreground;
-  public static String preferences_editor_contentass_color_options;
-  public static String preferences_editor_contentass_autoinsert;
-  public static String preferences_editor_contentass_alpha;
-  public static String preferences_editor_contentass_autoactivation;
-  public static String preferences_editor_contentass_autoactivation_delay;
+  public static String preferences_editor_contentass;
+  public static String preferences_editor_contentass_scope;
+  public static String preferences_editor_contentass_scope_imported;
+  public static String preferences_editor_contentass_scope_project;
+  public static String preferences_editor_contentass_scope_all;
   public static String preferences_editor_contentass_autoactivation_triggers;
 
   public static String preferences_editor_syntax_title;

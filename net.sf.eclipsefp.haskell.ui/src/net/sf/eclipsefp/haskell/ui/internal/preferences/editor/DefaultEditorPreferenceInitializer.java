@@ -90,13 +90,8 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
   }
 
   private static void initCA( final IPreferenceStore store ) {
-    store.setDefault( CA_AUTOINSERT, false );
-    store.setDefault( CA_ORDER_PROPOSALS, false );
-    store.setDefault( CA_AUTOACTIVATION, true );
-    store.setDefault( CA_AUTOACTIVATION_DELAY, 500 );
-    store.setDefault( CA_AUTOACTIVATION_TRIGGERS, "" ); //$NON-NLS-1$
-    conv( store, CA_PROPOSALS_BACKGROUND, new RGB( 254, 241, 233 ) );
-    conv( store, CA_PROPOSALS_FOREGROUND, new RGB( 0, 0, 0 ) );
+      store.setDefault( CA_AUTOACTIVATION_TRIGGERS, "" ); //$NON-NLS-1$
+      store.setDefault( CA_PROPOSALS_SCOPE,ProposalScope.ALL.toString());
   }
 
   private static void initTyping( final IPreferenceStore store ) {

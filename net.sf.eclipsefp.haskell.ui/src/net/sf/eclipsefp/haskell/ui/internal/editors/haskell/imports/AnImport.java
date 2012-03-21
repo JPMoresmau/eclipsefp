@@ -21,12 +21,14 @@ import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.browser.items.Function;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.NewType;
+import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ExportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportExportType;
@@ -151,22 +153,33 @@ public class AnImport {
       } else {
         decls = getDeclarationsFromFile( importDef.getModule(), project );
         if (decls.size()==0){
-          //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-          Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations(Database.ALL, importDef.getModule() );
-
-          if (browserDecls.length > 0) {
-            // If the browser found the module
-            decls = new ArrayList<FileDocumented>();
-            for (Packaged<Declaration> browserDecl : browserDecls) {
-              decls.add(new FileDocumented( browserDecl.getElement(),null) );
-              if (browserDecl.getElement() instanceof Gadt) {
-                Gadt g = (Gadt)browserDecl.getElement();
-                for (Constructor c : g.getConstructors()) {
-                  decls.add(new FileDocumented(  c, null) );
+          BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+          if (f!=null){
+            // reducing the scope of the query
+            for (CabalPackage[] cps:f.getPackagesByDB().values()){
+              for (CabalPackage cp:cps){
+                if (cp.getModules().contains( importDef.getModule() )){
+                  Database pkg=Database.Package( new PackageIdentifier( cp.getName(), cp.getVersion() ) );
+                  Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations(pkg, importDef.getModule() );
+                  if (browserDecls.length > 0) {
+                    // If the browser found the module
+                    decls = new ArrayList<FileDocumented>();
+                    for (Packaged<Declaration> browserDecl : browserDecls) {
+                      decls.add(new FileDocumented( browserDecl.getElement(),null) );
+                      if (browserDecl.getElement() instanceof Gadt) {
+                        Gadt g = (Gadt)browserDecl.getElement();
+                        for (Constructor c : g.getConstructors()) {
+                          decls.add(new FileDocumented(  c, null) );
+                        }
+                      }
+                    }
+                  }
+                  break;
                 }
               }
             }
           }
+
         }
       }
 

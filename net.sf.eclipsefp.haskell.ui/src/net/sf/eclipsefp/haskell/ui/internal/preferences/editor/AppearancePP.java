@@ -6,6 +6,13 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,39 +35,26 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  */
 public class AppearancePP extends AbstractEditorPP {
   private final ColorListEntry[] colorListModel = new ColorListEntry[] {
-//      new ColorListEntry( UITexts.preferences_editor_appearance_line_number_color,
-//                          EDITOR_LINE_NUMBER_RULER_COLOR ),
-      new ColorListEntry( UITexts.preferences_editor_appearance_matching_brackets_color,
+        new ColorListEntry( UITexts.preferences_editor_appearance_matching_brackets_color,
                           EDITOR_MATCHING_BRACKETS_COLOR )};
-//      new ColorListEntry( UITexts.preferences_editor_appearance_current_line_color, EDITOR_CURRENT_LINE_COLOR ),
-//      new ColorListEntry( UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN_COLOR ) };
 
     private List colorList;
     private ColorSelector colorSelector;
- //   private DialogField spaceForTabs;
+
 
   @Override
   public void init( final IWorkbench workbench ) {
-    //setDescription( UITexts.preferences_editor_description );
-
     super.init( workbench );
   }
 
   @Override
   protected void addPreferences( final OverlayPreferenceStore store ) {
-//    store.addBooleanKey( EDITOR_CURRENT_LINE );
-//    store.addStringKey( EDITOR_CURRENT_LINE_COLOR );
     store.addBooleanKey( EDITOR_MATCHING_BRACKETS );
     store.addStringKey( EDITOR_MATCHING_BRACKETS_COLOR );
-//    store.addBooleanKey( EDITOR_PRINT_MARGIN );
-//    store.addStringKey( EDITOR_PRINT_MARGIN_COLOR );
-//    store.addIntKey( EDITOR_PRINT_MARGIN_COLUMN );
-//    store.addBooleanKey( EDITOR_OVERVIEW_RULER );
-//    store.addStringKey( EDITOR_LINE_NUMBER_RULER_COLOR );
-//    store.addBooleanKey( EDITOR_LINE_NUMBER_RULER );
-//    store.addBooleanKey( EDITOR_SPACES_FOR_TABS );
     store.addIntKey( EDITOR_TAB_WIDTH );
     store.addIntKey( EDITOR_CABAL_TAB_WIDTH );
+    store.addStringKey( CA_AUTOACTIVATION_TRIGGERS );
+    store.addStringKey( CA_PROPOSALS_SCOPE );
   }
 
 
@@ -88,9 +82,6 @@ public class AppearancePP extends AbstractEditorPP {
     gd.horizontalSpan=2;
     link.setLayoutData( gd );
 
-//    String prefName = IEditorPreferenceNames.EDITOR_SPACES_FOR_TABS;
-//    spaceForTabs=createBooleanField( control, UITexts.preferences_editor_typing_spaces_tabs, prefName );
- //   new Label(control,SWT.NONE);
 
     tab.addIntegerField( control, UITexts.preferences_editor_typing_tab_width, IEditorPreferenceNames.EDITOR_TAB_WIDTH, 3, 0 );
     tab.addIntegerField( control, UITexts.preferences_editor_typing_cabal_tab_width, IEditorPreferenceNames.EDITOR_CABAL_TAB_WIDTH, 3, 0 );
@@ -192,22 +183,55 @@ public class AppearancePP extends AbstractEditorPP {
   }
 
   private void addFields( final Composite parent ) {
- //   String pmKey = EDITOR_PRINT_MARGIN_COLUMN;
- //   tab.addIntegerField( parent, UITexts.preferences_editor_appearance_print_margin_column, pmKey, 3, 0 );
-//    String orKey = EDITOR_OVERVIEW_RULER;
-//    createBooleanField( parent, UITexts.preferences_editor_appearance_overview_ruler, orKey );
-//    String lnrKey = EDITOR_LINE_NUMBER_RULER;
-//    createBooleanField( parent, UITexts.preferences_editor_appearance_line_numbers, lnrKey );
+    Label labelControl = new Label( parent, SWT.NONE );
+    labelControl.setText( UITexts.preferences_editor_contentass );
+    GridData gd = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
+    gd.horizontalSpan=2;
+    labelControl.setLayoutData( gd );
+
     String atText = UITexts.preferences_editor_contentass_autoactivation_triggers;
     String atKey = CA_AUTOACTIVATION_TRIGGERS;
-    tab.addTextField( parent, atText, atKey, 4, 0 );
+    tab.addTextField( parent, atText, atKey, 4, 10 );
+
+    Label labelScope=new Label( parent, SWT.NONE );
+    labelScope.setText( UITexts.preferences_editor_contentass_scope );
+    gd = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
+    gd.horizontalIndent=10;
+    labelScope.setLayoutData( gd );
+
+    ComboViewer cv=new ComboViewer( parent,SWT.READ_ONLY );
+    cv.setContentProvider( new ArrayContentProvider() );
+    cv.setLabelProvider( new LabelProvider(){
+      @Override
+      public String getText(final Object element) {
+        ProposalScope ps=(ProposalScope)element;
+         switch (ps){
+            case ALL:
+              return UITexts.preferences_editor_contentass_scope_all;
+            case IMPORTED:
+              return UITexts.preferences_editor_contentass_scope_imported;
+            case PROJECT:
+              return UITexts.preferences_editor_contentass_scope_project;
+          }
+         return super.getText( element );
+      }
+    } );
+    cv.setInput( ProposalScope.values() );
+    cv.getCombo().setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING) );
+    cv.addSelectionChangedListener( new ISelectionChangedListener() {
+
+      @Override
+      public void selectionChanged( final SelectionChangedEvent arg0 ) {
+        ProposalScope ps=(ProposalScope)((IStructuredSelection)arg0.getSelection()).getFirstElement();
+        getPreferenceStore().setValue( CA_PROPOSALS_SCOPE, ps.toString() );
+      }
+    } );
+    ProposalScope ps=ProposalScope.valueOf(getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
+    cv.setSelection( new StructuredSelection( ps ) );
 
     String mbKey = EDITOR_MATCHING_BRACKETS;
     createBooleanField( parent, UITexts.preferences_editor_appearance_matching_brackets, mbKey );
 
- //   String clKey = EDITOR_CURRENT_LINE;
-  //  createBooleanField( parent, UITexts.preferences_editor_appearance_current_line, clKey );
- //   createBooleanField( parent, UITexts.preferences_editor_appearance_print_margin, EDITOR_PRINT_MARGIN );
   }
 
   public void propertyChange( final PropertyChangeEvent event ) {

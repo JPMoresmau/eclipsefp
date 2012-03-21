@@ -23,11 +23,15 @@ import net.sf.eclipsefp.haskell.browser.items.Function;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.Instance;
 import net.sf.eclipsefp.haskell.browser.items.Module;
+import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
@@ -39,9 +43,9 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ProposalScope;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -102,6 +106,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
   private char[] autoCompletionCharacters=null;
 
+  private Boolean searchAll;
+
   /**
    * The constructor.
    *
@@ -142,7 +148,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       case NO_CONTEXT: {
         //if ( scion != null ) {
           int offsetPrefix = offset - prefix.length();
-
+          searchAll=prefix.length()>0;
           try {
             Location lineBegin = new Location(theFile.toString(), doc, doc.getLineInformationOfOffset( offset ));
 
@@ -182,7 +188,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
                 return getLanguageExtensions( offset );
               }  else if (line.contains("::") || line.contains("->")) {
 
-                return defaultCompletionContext( viewer, theFile, doc, offset, true,true );
+                return defaultCompletionContext( viewer, theFile, doc, offset, true );
               }
 
             //if (tokens != null) {
@@ -196,14 +202,14 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
             // Ignore, pass through to default completion context.
           }
 
-          return defaultCompletionContext( viewer, theFile, doc, offset, false,true );
+          return defaultCompletionContext( viewer, theFile, doc, offset, false );
 //        }
 
 //        break;
       }
 
       case DEFAULT_CONTEXT: {
-        return defaultCompletionContext( viewer, theFile, doc, offset, false,false );
+        return defaultCompletionContext( viewer, theFile, doc, offset, false );
       }
 
       case IMPORT_STMT: {
@@ -211,7 +217,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       }
 
       case TYCON_CONTEXT: {
-        return defaultCompletionContext( viewer, theFile, doc, offset, true,true );
+        return defaultCompletionContext( viewer, theFile, doc, offset, true );
       }
 
       case IMPORT_LIST: {
@@ -289,7 +295,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 * Default completion context, if no other context can be determined.
 	 */
 	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
-	                                                        final int offset, final boolean typesHavePriority,final boolean searchAll ) {
+	                                                        final int offset, final boolean typesHavePriority) {
 	  context = typesHavePriority ? CompletionContext.TYCON_CONTEXT : CompletionContext.DEFAULT_CONTEXT;
 
 	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( doc.get(), offset );
@@ -313,80 +319,53 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     // constructor key to declaration name (if we use a constructor from a new module, we need to import to data type, not the constructor)
     Map<String,String> constructors=new HashMap<String, String>();
 
-    if (prefix.length()>0 && searchAll){
-      try {
-        long t0=System.currentTimeMillis();
-        Set<String> pkgs=ResourceUtil.getImportPackages( new IFile[]{theFile});
-        // TODO select between "only imported","only dependent" and ALL according to some preference
+    ProposalScope ps=ProposalScope.valueOf( HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
 
-        // search on everything
-        Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
-        if (browserDecls.length > 0) {
-          // If the browser found the module
-          for (Packaged<Declaration> browserDecl : browserDecls) {
-            boolean newPackage=!pkgs.contains( browserDecl.getPackage().getName() );
-            String key= browserDecl.getElement().getName()+" ("+browserDecl.getElement().getModule().getName()+")";
-            if (!decls.containsKey( key ) && !decls.containsKey( browserDecl.getElement().getModule().getName()+"."+key )){
-              decls.put(key,browserDecl.getElement() );
-              if (newPackage){
-                packages.put( key, browserDecl.getPackage().getName() );
-              }
-              if (browserDecl.getElement() instanceof Gadt) {
-                Gadt g = (Gadt)browserDecl.getElement();
-                for (Constructor c : g.getConstructors()) {
-                  key=  c.getName()+" ("+browserDecl.getElement().getModule().getName()+")";
-                  decls.put(key,c );
-                  constructors.put( key, browserDecl.getElement().getName() );
-                  if (newPackage){
-                    packages.put( key, browserDecl.getPackage().getName() );
+    if (prefix.length()>0 && Boolean.TRUE.equals(searchAll) && !ps.equals( ProposalScope.IMPORTED )){
+      try {
+        Set<String> pkgs=ResourceUtil.getImportPackages( new IFile[]{theFile});
+
+        if (ps.equals( ProposalScope.ALL )){
+          // search on everything
+          Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
+          if (browserDecls.length > 0) {
+            // If the browser found the module
+            for (Packaged<Declaration> browserDecl : browserDecls) {
+              boolean newPackage=!pkgs.contains( browserDecl.getPackage().getName() );
+              addBrowserDecl( browserDecl, decls, packages, constructors, newPackage );
+            }
+          }
+        } else if (ps.equals( ProposalScope.PROJECT )){
+          // search on dependent packages only
+          BWFacade f=BuildWrapperPlugin.getFacade( theFile.getProject() );
+          if (f!=null){
+
+            for (CabalPackage[] cps:f.getPackagesByDB().values()){
+              for (CabalPackage cp:cps){
+                if (pkgs.contains( cp.getName() )){
+
+                  Database pkg=Database.Package( new PackageIdentifier( cp.getName(), cp.getVersion() ) );
+                  Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(pkg, prefix);
+                  if (browserDecls.length > 0) {
+                    // If the browser found the module
+                    for (Packaged<Declaration> browserDecl : browserDecls) {
+                      addBrowserDecl( browserDecl, decls, packages, constructors, false );
+
+                    }
+
                   }
                 }
               }
             }
+
           }
         }
 
-        // search on dependent packages only
-//        BWFacade f=BuildWrapperPlugin.getFacade( theFile.getProject() );
-//        if (f!=null){
-//
-//          for (CabalPackage[] cps:f.getPackagesByDB().values()){
-//            for (CabalPackage cp:cps){
-//              if (pkgs.contains( cp.getName() )){
-//
-//                Database pkg=Database.Package( new PackageIdentifier( cp.getName(), cp.getVersion() ) );
-//                Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(pkg, prefix);
-//                if (browserDecls.length > 0) {
-//                  // If the browser found the module
-//                  for (Packaged<Declaration> browserDecl : browserDecls) {
-//                    String key= browserDecl.getElement().getName();
-//                    if (!decls.containsKey( key ) && !decls.containsKey( browserDecl.getElement().getModule().getName()+"."+key )){
-//                      decls.put(key,browserDecl.getElement() );
-//                      if (browserDecl.getElement() instanceof Gadt) {
-//                        Gadt g = (Gadt)browserDecl.getElement();
-//                        for (Constructor c : g.getConstructors()) {
-//                          key=  c.getName();
-//                          decls.put(key,c );
-//                        }
-//                      }
-//                    }
-//                  }
-//
-//                }
-//              }
-//            }
-//          }
-//
-//        }
-
-        long t1=System.currentTimeMillis();
-        HaskellUIPlugin.log( "FromPrefix:"+(t1-t0)+"ms", IStatus.INFO);
       } catch (Exception e){
         HaskellUIPlugin.log( e );
       }
     }
     decls.putAll(mgr.getDeclarations());
-
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
       if ( s.getKey().startsWith( prefix ) ) {
         if (s.getValue() instanceof Constructor || s.getValue() instanceof Function) {
@@ -448,8 +427,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       Documented d = decls.get( s );
       String realImport=null;
       if (d instanceof Constructor){
-        realImport=constructors.get( s );
-
+        realImport=constructors.get( s )+"(..)";
       }
       result[endIndex + i] =getCompletionProposal( s, d, offset, plength, false,packages.get( s )  ,realImport);
       i++;
@@ -477,6 +455,27 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  return name.indexOf( '.' ) != -1;
 	}
 
+
+	private void addBrowserDecl(final Packaged<Declaration> browserDecl,final Map<String, Documented> decls,final Map<String,String> packages,final Map<String,String> constructors, final boolean newPackage){
+	  String key= browserDecl.getElement().getName()+" ("+browserDecl.getElement().getModule().getName()+")";
+    if (!decls.containsKey( key ) && !decls.containsKey( browserDecl.getElement().getModule().getName()+"."+key )){
+      decls.put(key,browserDecl.getElement() );
+      if (newPackage){
+        packages.put( key, browserDecl.getPackage().getName() );
+      }
+      if (browserDecl.getElement() instanceof Gadt) {
+        Gadt g = (Gadt)browserDecl.getElement();
+        for (Constructor c : g.getConstructors()) {
+          key=  c.getName()+" ("+browserDecl.getElement().getModule().getName()+")";
+          decls.put(key,c );
+          constructors.put( key, browserDecl.getElement().getName() );
+          if (newPackage){
+            packages.put( key, browserDecl.getPackage().getName() );
+          }
+        }
+      }
+    }
+	}
 
 	private ICompletionProposal getCompletionProposal(final String s,final Documented d,final int offset,final int length,final boolean isType,final String pkg,final String realImport){
 	  Image i=isType?
