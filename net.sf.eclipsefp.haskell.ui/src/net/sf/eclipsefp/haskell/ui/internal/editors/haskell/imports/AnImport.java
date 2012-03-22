@@ -35,6 +35,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.ImportExportType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportSpecDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
+import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -222,6 +223,17 @@ public class AnImport {
   private List<FileDocumented> getDeclarationsFromFile( final String module, final IProject project ) {
     try {
       IFile file = ResourceUtil.findFileFromModule( project, module );
+      // search in referenced projects
+      if (file==null){
+        for( IProject p: project.getReferencedProjects() ) {
+          if( p.hasNature( HaskellNature.NATURE_ID )          ) {
+            file = ResourceUtil.findFileFromModule( p, module );
+            if (file!=null){
+              break;
+            }
+          }
+        }
+      }
       if (file!=null){
         return getDeclarationsFromFile( file, null );
       }
