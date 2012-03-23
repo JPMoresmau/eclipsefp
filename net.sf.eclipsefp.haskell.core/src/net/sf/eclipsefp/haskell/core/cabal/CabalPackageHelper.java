@@ -75,7 +75,11 @@ public class CabalPackageHelper {
   }
 
   private List<CabalPackageRef> list(final String pkg,final String opt)throws IOException{
+
     List<CabalPackageRef> ret=new LinkedList<CabalPackageRef>();
+    if (cabalPath==null){
+      return ret;
+    }
     BufferedReader br=run(cabalPath,"list",pkg,opt,"--simple-output");  //$NON-NLS-1$//$NON-NLS-2$
     String line=br.readLine();
     CabalPackageRef last=null;
