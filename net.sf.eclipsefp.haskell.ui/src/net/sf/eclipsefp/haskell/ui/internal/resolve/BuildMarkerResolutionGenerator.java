@@ -1,12 +1,13 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
-import net.sf.eclipsefp.haskell.browser.items.Module;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
@@ -123,16 +124,34 @@ public class BuildMarkerResolutionGenerator implements
             try {
               if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {
                 //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-                Module[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
-                ArrayList<String> places = new ArrayList<String>();
-                for (Module avMod : availableMods) {
+                DeclarationId[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
+                /*ArrayList<String> places = new ArrayList<String>();
+                for (DeclarationId avMod : availableMods) {
                   if (!places.contains( avMod.getName() )) {
                     places.add( avMod.getName() );
                   }
                 }
-                Collections.sort( places );
-                for (String place : places) {
-                  res.add( new AddImportResolution( name, place, qualified ) );
+                Collections.sort( places );*/
+                Arrays.sort(availableMods,new Comparator<DeclarationId>() {
+                  /* (non-Javadoc)
+                   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+                   */
+                  @Override
+                  public int compare( final DeclarationId o1, final DeclarationId o2 ) {
+                    int c=o1.getModule().getName().compareToIgnoreCase( o2.getModule().getName() );
+                    if (c==0){
+                      c=o1.getName().compareTo( o2.getName() );
+                    }
+                    return c;
+                  }
+                });
+                for (DeclarationId place : availableMods) {
+                  if (place.getName().length()>0){
+                    res.add( new AddImportResolution( place.getName()+"(..)", place.getModule().getName(), qualified ) );
+                    res.add( new AddImportResolution( place.getName()+"("+name+")", place.getModule().getName(), qualified ) );
+                  } else {
+                    res.add( new AddImportResolution( name, place.getModule().getName(), qualified ) );
+                  }
                 }
               }
             } catch (Exception e) {

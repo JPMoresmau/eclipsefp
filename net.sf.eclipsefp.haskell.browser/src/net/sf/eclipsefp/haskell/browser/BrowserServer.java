@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -139,7 +140,7 @@ public abstract class BrowserServer {
 	
 	public abstract Packaged<Declaration>[] getDeclarationsFromPrefix(Database db,String prefix) throws Exception ;
 	
-	public abstract Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException;
+	public abstract DeclarationId[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException;
 	
 	public abstract void setExtraHooglePath(String newPath) throws IOException, JSONException;
 

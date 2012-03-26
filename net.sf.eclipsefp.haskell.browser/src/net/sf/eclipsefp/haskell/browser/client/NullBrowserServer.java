@@ -9,6 +9,7 @@ import java.io.IOException;
 import net.sf.eclipsefp.haskell.browser.BrowserServer;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -95,8 +96,8 @@ public class NullBrowserServer extends BrowserServer {
 	}
 	
 	@Override
-	public Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
-		return new Module[0];
+	public DeclarationId[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
+		return new DeclarationId[0];
 	}
 	
 	@Override

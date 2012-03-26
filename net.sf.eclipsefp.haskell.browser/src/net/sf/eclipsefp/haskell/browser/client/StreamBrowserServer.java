@@ -21,6 +21,7 @@ import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.DatabaseType;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -269,9 +270,9 @@ public class StreamBrowserServer extends BrowserServer {
 	}
 	
 	@Override
-	public Module[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
+	public DeclarationId[] findModulesForDeclaration(Database db,String decl) throws IOException, JSONException {
 		String response = sendAndReceive(Commands.createFindModulesForDeclaration(db,decl));
-		return Commands.responseGetModules(response);
+		return Commands.responseGetDeclarationId(response);
 	}
 	
 	@Override

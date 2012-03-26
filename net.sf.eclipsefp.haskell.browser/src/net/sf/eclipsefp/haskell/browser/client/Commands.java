@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Module;
@@ -123,6 +124,16 @@ public class Commands {
 		return aMods.toArray(new Module[jMods.length()]);
 	}
 
+	public static DeclarationId[] responseGetDeclarationId(String response)
+			throws JSONException {
+		JSONArray jMods = new JSONArray(response);
+		ArrayList<DeclarationId> aMods = new ArrayList<DeclarationId>();
+		for (int i = 0; i < jMods.length(); i++) {
+			aMods.add(new DeclarationId(jMods.getJSONArray(i)));
+		}
+		return aMods.toArray(new DeclarationId[jMods.length()]);
+	}
+	
 	public static JSONObject createGetDeclarations(Database db,String module)
 			throws JSONException {
 		JSONObject o = new JSONObject();
