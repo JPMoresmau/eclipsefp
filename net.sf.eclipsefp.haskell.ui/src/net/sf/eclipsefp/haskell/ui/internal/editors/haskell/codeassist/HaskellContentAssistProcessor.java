@@ -494,6 +494,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  if (ix>-1){
 	    repl=s.substring( 0,ix );
 	    module=s.substring( ix+2,s.length()-1 );
+	    ix=module.indexOf( ":" );
+	    if (ix>-1){
+	      module=module.substring( ix+1 );
+	    }
 	  }
 
 	  return new FullHaskellCompletionProposal( repl, offset - length, length, s.length(),
