@@ -457,7 +457,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
 
 	private void addBrowserDecl(final Packaged<Declaration> browserDecl,final Map<String, Documented> decls,final Map<String,String> packages,final Map<String,String> constructors, final boolean newPackage){
-	  String key= browserDecl.getElement().getName()+" ("+browserDecl.getElement().getModule().getName()+")";
+	  String key= browserDecl.getElement().getName()+" (";
+	  // prepend package name before module to indicate this will create a new reference
+	  if (newPackage){
+	    key+=browserDecl.getPackage().getName()+":";
+	  }
+	  key+=browserDecl.getElement().getModule().getName()+")";
     if (!decls.containsKey( key ) && !decls.containsKey( browserDecl.getElement().getModule().getName()+"."+key )){
       decls.put(key,browserDecl.getElement() );
       if (newPackage){

@@ -16,6 +16,7 @@ Fixes:
 	- 2.2.3 regression fixed: running GHCi with hidden packages failed (wrong quoting)	
 	- Show constructors from same project in auto completion
 	- Removing Cabal implementations when executable is not found
+	- Quick fix for import of constructor gives choice between importing Type(Constructor) or Type(..)
 
 Features:
 	- Task tags: special words in comment create tasks (TODO, FIXME, XXX by default)
