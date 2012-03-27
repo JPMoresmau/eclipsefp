@@ -102,7 +102,7 @@ public class JobFacade  {
 	    		}
 	    	}
 	      });
-	      // not needed since we put the job in a query ourselves
+	      // not needed since we put the job in a queue ourselves
 	      // except if both synchronized and build are run concurrently
 	      //buildJob.setRule( getProject() );
 	      buildJob.setPriority(Job.BUILD);
@@ -137,7 +137,8 @@ public class JobFacade  {
 	          return Status.OK_STATUS;
 	        }
 	      };
-	      buildJob.setRule( getProject() );
+	      //
+	      buildJob.setRule( getProject().getWorkspace().getRoot() );
 	      buildJob.setPriority(Job.BUILD);
 	      return buildJob;
 	}

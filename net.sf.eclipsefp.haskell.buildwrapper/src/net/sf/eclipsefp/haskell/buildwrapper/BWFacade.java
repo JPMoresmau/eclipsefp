@@ -119,6 +119,14 @@ public class BWFacade {
 		return sjq;
 	}
 	
+	private void deleteCabalProblems(){
+		String relCabal=getCabalFile().substring(getProject().getLocation().toOSString().length());
+		IFile f=getProject().getFile(relCabal);
+		if (f!=null && f.exists()){
+			BuildWrapperPlugin.deleteProblems(f);
+		}
+	}
+	
 	public JSONArray build(BuildOptions buildOptions){
 		JSONArray arrC=null;
 		if (buildOptions.isConfigure()){
@@ -129,11 +137,7 @@ public class BWFacade {
 		}
 		
 		if (hasCabalProblems){
-			String relCabal=getCabalFile().substring(getProject().getLocation().toOSString().length());
-			IFile f=getProject().getFile(relCabal);
-			if (f!=null && f.exists()){
-				BuildWrapperPlugin.deleteProblems(f);
-			}
+			deleteCabalProblems();
 			hasCabalProblems=false;
 		}
 
@@ -700,6 +704,7 @@ public class BWFacade {
 			String l=br.readLine();
 			boolean goOn=true;
 			boolean needConfigure=false;
+			boolean needDelete=false;
 			while (goOn && l!=null){
 				/*if (outStream!=null){
 					outStream.write(l);
@@ -721,6 +726,9 @@ public class BWFacade {
 
 				} else {
 					if (l.contains(" re-run the 'configure'") || l.contains("cannot satisfy -package-id")){
+						if (l.contains("The version of Cabal")){
+							needDelete=true;
+						}
 						needConfigure=true;
 					}
 					if (ow!=null) {
@@ -732,6 +740,16 @@ public class BWFacade {
 				}
 			}
 			if (needConfigure && canRerun){
+				if (needDelete){
+					try {
+						IFolder fldr=project.getFolder(DIST_FOLDER);
+						if (fldr.exists()){
+							fldr.delete(IResource.FORCE, new NullProgressMonitor());
+						}
+					} catch (CoreException ce){
+						BuildWrapperPlugin.logError(BWText.process_launch_error, ce);
+					}
+				}
 				configure(new BuildOptions().setTarget(BWTarget.Target));
 				return run(new LinkedList<String>(args.subList(1, args.size()-4)),f,false);
 			}
@@ -874,6 +892,7 @@ public class BWFacade {
 			if (fldr.exists()){
 				fldr.delete(IResource.FORCE, mon);
 			}
+			deleteCabalProblems();
 			cabalFileChanged();
 			outlines.clear();
 			synchronize(false);

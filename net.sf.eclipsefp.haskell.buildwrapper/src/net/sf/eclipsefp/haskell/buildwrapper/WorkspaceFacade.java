@@ -98,6 +98,24 @@ public class WorkspaceFacade {
 			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
 		}
 	}
+	
+	public void synchronizeAndBuild(final boolean force,final BuildOptions buildOptions) {
+		WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
+	    	@Override
+	    	protected void execute(IProgressMonitor arg0) throws CoreException,
+	    			InvocationTargetException, InterruptedException {
+	    		 realFacade.synchronize(force);
+	    		 realFacade.build(buildOptions);
+	    	}
+	    };
+		try {
+			wmo.run(monitor);
+		} catch (InterruptedException ie){
+			// noop
+		}catch (InvocationTargetException ie){
+			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+		}
+	}
 
 	/**
 	 * perform a clean
