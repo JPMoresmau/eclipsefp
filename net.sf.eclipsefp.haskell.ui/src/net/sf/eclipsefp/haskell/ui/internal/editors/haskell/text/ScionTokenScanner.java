@@ -70,9 +70,15 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private Set<TaskTag> tags;
   private boolean caseS;
 
-  public ScionTokenScanner(final ScannerManager man,final IFile file){
+  /**
+   * since we may run in a job for big files, we need a handle to the GUI display
+   */
+  private final Display display;
+
+  public ScionTokenScanner(final ScannerManager man,final IFile file,final Display display){
     this.man=man;
     this.file=file;
+    this.display=display;
     this.tokenByTypes = new HashMap<String, IToken>() {
       // Eclipse insists on a serial version identifier, not that this hash map will ever
       // get serialized...
@@ -222,22 +228,28 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         if (!checkedTabs){
             checkedTabs=true;
             if (contents.contains( "\t" )){
+              // we may be in a job
+              display.syncExec( new Runnable(){
+                @Override
+                public void run() {
+                  if (MessageDialog.openConfirm( display.getActiveShell() , UITexts.error_tabs  , UITexts.error_tabs_message )){
+                    /*IDocumentProvider prov=new TextFileDocumentProvider();
+                    prov.connect(file);
+                    IDocument doc2=prov.getDocument( file );*/
+                    int tw=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( EDITOR_TAB_WIDTH );
+                    StringBuilder sb=new StringBuilder();
+                    for (int a=0;a<tw;a++){
+                      sb.append(" ");
+                    }
+                    contents=contents.replace( "\t",sb.toString() );
+                    // doc2.set(contents);
+                    document.set(contents);
+                    // prov.saveDocument( new NullProgressMonitor(), file, doc2, true );
+                  }
+                }
+              } );
 
-            if (MessageDialog.openConfirm( Display.getCurrent().getActiveShell() , UITexts.error_tabs  , UITexts.error_tabs_message )){
-              /*IDocumentProvider prov=new TextFileDocumentProvider();
-              prov.connect(file);
-              IDocument doc2=prov.getDocument( file );*/
-              int tw=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( EDITOR_TAB_WIDTH );
-              StringBuilder sb=new StringBuilder();
-              for (int a=0;a<tw;a++){
-                sb.append(" ");
-              }
-              contents=contents.replace( "\t",sb.toString() );
-              // doc2.set(contents);
-              document.set(contents);
-              // prov.saveDocument( new NullProgressMonitor(), file, doc2, true );
             }
-          }
         }
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f==null){

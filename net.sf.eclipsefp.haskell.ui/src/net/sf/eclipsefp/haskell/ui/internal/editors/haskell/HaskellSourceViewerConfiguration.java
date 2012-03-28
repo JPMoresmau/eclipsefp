@@ -164,7 +164,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	  PresentationReconciler reconciler = colorInThread?new HaskellPresentationReconciler():new PresentationReconciler();
 		IFile file = (editor != null ? editor.findFile() : null);
 
-		ScionTokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file);
+		ScionTokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file,sv.getTextWidget().getDisplay());
 		if (editor!=null){
 		  editor.setTokenScanner( codeScanner );
 		}
