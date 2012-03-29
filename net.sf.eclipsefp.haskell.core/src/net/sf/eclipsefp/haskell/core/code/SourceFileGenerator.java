@@ -74,6 +74,9 @@ public class SourceFileGenerator {
       result = folder;
     } else {
       result = sourceContainer;
+      if (!result.exists()){
+        result.getLocation().toFile().mkdirs();
+      }
     }
     return result;
   }

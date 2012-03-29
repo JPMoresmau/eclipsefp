@@ -80,9 +80,9 @@ public class HaskellProjectCreationOperation_PDETest extends
     runOperation();
 
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
-    // should only contain the project descriptors (.project and .hsproject)
+    // should only contain the project descriptors (.project)
     // and the generated Setup.hs and cabal file
-    assertEquals( 5, prj.members().length );
+    assertEquals( 4, prj.members().length );
 
     assertValid( prj.getFile( prj.getName() + ".cabal" ) );
     assertValid( prj.getFile( "Setup.hs" ) );

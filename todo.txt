@@ -1,3 +1,8 @@
+- quick fix on missing package 
+	-> install package
+	-> event when installing packages
+		-> parse package name
+		-> clean and rebuild projects that are broken because of this missing package
 
 - open Module page (like open Type in Java)
 	search in all cabal files

@@ -40,7 +40,7 @@ public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 
 		codeGen.verify();
 
-		assertContents(expectedContents, MODULE_NAME + USUAL_SUFFIX);
+		assertContents(expectedContents, MODULE_NAME +"."+ USUAL_SUFFIX);
 	}
 
 	public void testLiterateModule() throws InvocationTargetException, InterruptedException, CoreException, IOException {
@@ -54,7 +54,7 @@ public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 
 		codeGen.verify();
 
-		assertContents(expectedContents, MODULE_NAME + LITERATE_SUFFIX);
+		assertContents(expectedContents, MODULE_NAME +"."+ LITERATE_SUFFIX);
 	}
 
 	public void testTexStyleModule() throws InvocationTargetException, InterruptedException, CoreException, IOException {
@@ -70,7 +70,7 @@ public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 
 		codeGen.verify();
 
-		assertContents(expectedContents, MODULE_NAME + LITERATE_SUFFIX);
+		assertContents(expectedContents, MODULE_NAME +"."+ LITERATE_SUFFIX);
 	}
 
 	private MockCodeGenerator createCodeGenerator(
