@@ -4,6 +4,9 @@
 		-> parse package name
 		-> clean and rebuild projects that are broken because of this missing package
 
+- global action to remove all useless imports
+- global action to clean all imports: only import what's needed
+
 - open Module page (like open Type in Java)
 	search in all cabal files
 	but modules can not be referenced

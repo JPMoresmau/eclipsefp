@@ -331,7 +331,7 @@ public class AnImport {
       int pos = contents.indexOf( '(' );
       if (pos==-1){
         return new CompletionProposal( " ("+item+")", en, 0,
-            en + item.length(), ImageCache.MODULE, label, null, "" );
+            item.length(), ImageCache.MODULE, label, null, "" );
       }
       // We have some items
       // Trim end the elements
@@ -344,7 +344,7 @@ public class AnImport {
       if (importDef.getChildren()!=null && importDef.getChildren().size()>0){
         contentsToAdd = ", " + item;
       }
-      return new CompletionProposal( contentsToAdd, insert, 0, insert+ contentsToAdd.length(),
+      return new CompletionProposal( contentsToAdd, insert, 0, contentsToAdd.length(),
           ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       e.printStackTrace();

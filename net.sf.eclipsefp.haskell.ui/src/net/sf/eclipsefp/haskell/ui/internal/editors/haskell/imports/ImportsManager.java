@@ -161,7 +161,7 @@ public class ImportsManager {
         contents = "import " + place + " (" + name + ")";
       }
       // 3. Create the proposal
-      return new CompletionProposal( contents + PlatformUtil.NL, offsetToPut, 0, offsetToPut + contents.length() + 1, ImageCache.MODULE, label, null, "" );
+      return new CompletionProposal( contents + PlatformUtil.NL, offsetToPut, 0, contents.length() + 1, ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
       return null;

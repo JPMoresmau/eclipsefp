@@ -3,8 +3,10 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
@@ -145,12 +147,17 @@ public class BuildMarkerResolutionGenerator implements
                     return c;
                   }
                 });
+                Set<String> modules=new HashSet<String>();
                 for (DeclarationId place : availableMods) {
-                  if (place.getName().length()>0){
-                    res.add( new AddImportResolution( place.getName()+"(..)", place.getModule().getName(), qualified ) );
-                    res.add( new AddImportResolution( place.getName()+"("+name+")", place.getModule().getName(), qualified ) );
-                  } else {
-                    res.add( new AddImportResolution( name, place.getModule().getName(), qualified ) );
+                  String module=place.getModule().getName();
+                  if (!modules.contains(module  )){
+                    modules.add(module);
+                    if (place.getName().length()>0){
+                      res.add( new AddImportResolution( place.getName()+"(..)", module, qualified ) );
+                      res.add( new AddImportResolution( place.getName()+"("+name+")", module, qualified ) );
+                    } else {
+                      res.add( new AddImportResolution( name, module, qualified ) );
+                    }
                   }
                 }
               }
