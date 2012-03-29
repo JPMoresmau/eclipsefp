@@ -313,12 +313,13 @@ public class AnImport {
     }
   }
 
-  public CompletionProposal addItem(final IDocument doc, String item, final String label) {
+  public CompletionProposal addItem(final IDocument doc, final String item, final String label) {
     try {
-      char c0=item.charAt( 0 );
+      String ritem=item;
+      char c0=ritem.charAt( 0 );
       // operators need to be surrounded by parens
       if (!Character.isLetter(c0) && (c0!='(')){
-        item="("+item+")";
+        ritem="("+ritem+")";
       }
       String contents = importDef.getLocation().getContents( doc );
       // We had no items
@@ -330,8 +331,8 @@ public class AnImport {
 
       int pos = contents.indexOf( '(' );
       if (pos==-1){
-        return new CompletionProposal( " ("+item+")", en, 0,
-            item.length(), ImageCache.MODULE, label, null, "" );
+        return new CompletionProposal( " ("+ritem+")", en, 0,
+            ritem.length(), ImageCache.MODULE, label, null, "" );
       }
       // We have some items
       // Trim end the elements
@@ -340,9 +341,9 @@ public class AnImport {
       //int newPos = location.getOffset() + pos + toSearch.length();
       int pos2=contents.lastIndexOf( ')' );
       int insert=en-contents.length()+pos2;
-      String contentsToAdd =  item;
+      String contentsToAdd =  ritem;
       if (importDef.getChildren()!=null && importDef.getChildren().size()>0){
-        contentsToAdd = ", " + item;
+        contentsToAdd = ", " + ritem;
       }
       return new CompletionProposal( contentsToAdd, insert, 0, contentsToAdd.length(),
           ImageCache.MODULE, label, null, "" );
@@ -353,23 +354,25 @@ public class AnImport {
     return null;
   }
 
-  private int[] trimRemovedImport(final String contents,final int ixParens,int start,int end){
-    while (contents.charAt( end )==' '){ // remove spaces after me
-      end++;
+  private static int[] trimRemovedImport(final String contents,final int ixParens,final int start,final int end){
+    int tstart=start;
+    int tend=end;
+    while (contents.charAt( tend )==' '){ // remove spaces after me
+      tend++;
     }
-    if (contents.charAt( end )==','){ // remove comma after me
-      end++;
+    if (contents.charAt( tend )==','){ // remove comma after me
+      tend++;
     }
-    while (start>1 && contents.charAt( start-1 )==' '){ // remove spaces before me
-      start--;
+    while (tstart>1 && contents.charAt( tstart-1 )==' '){ // remove spaces before me
+      tstart--;
     }
 
-    if (start-1==ixParens){//at start: remove spaces after removed comma
-      while (contents.charAt( end )==' '){
-        end++;
+    if (tstart-1==ixParens){//at start: remove spaces after removed comma
+      while (contents.charAt( tend )==' '){
+        tend++;
       }
     }
-    return new int[]{start,end};
+    return new int[]{tstart,tend};
   }
 
   public CompletionProposal removeItem(final IDocument doc, final String item, final String label) {
