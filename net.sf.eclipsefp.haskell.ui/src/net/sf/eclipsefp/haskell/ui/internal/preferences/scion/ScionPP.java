@@ -254,7 +254,7 @@ public class ScionPP
       //if (!browserBuiltInField.getBooleanValue()) {
         if (!browserExecutableField.isValid()) {
           retval = false;
-          setErrorMessage( UITexts.cabalImplsBlock_needScionExecutablePath );
+          setErrorMessage( UITexts.cabalImplsBlock_needBrowserExecutablePath );
         }
       //}
     }
