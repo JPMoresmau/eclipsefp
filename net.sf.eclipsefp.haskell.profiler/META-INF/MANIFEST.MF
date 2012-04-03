@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.profiler;singleton:=true
-Bundle-Version: 2.2.4
+Bundle-Version: 2.2.5
 Bundle-Activator: net.sf.eclipsefp.haskell.profiler.ProfilerPlugin
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.commands,
@@ -10,7 +10,12 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.ide,
  org.eclipse.ui.forms,
  org.eclipse.birt.chart.ui;resolution:=optional,
- org.eclipse.birt.chart.engine.extension;resolution:=optional
+ org.eclipse.birt.chart.engine.extension;resolution:=optional,
+ org.eclipse.core.jobs,
+ org.eclipse.emf.ecore;resolution:=optional,
+ org.eclipse.birt.core;resolution:=optional,
+ org.eclipse.birt.chart.engine;resolution:=optional,
+ org.eclipse.ui.workbench
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %bundleVendor
