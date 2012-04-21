@@ -1,0 +1,72 @@
+# BW-DB
+
+A database approach to EclipseFP and buildwrapper
+
+## Goals
+- find all usages of a symbol 
+	in particular project
+	in workspace
+- open a module anywhere in the workspace
+
+-> enables
+	- haskell sensitive searches
+	- haskell sensitive renames
+	- remove unused packages in dependencies
+	
+## BuildWrapper
+BuildWrapper can already provide usage info on one file
+	- load a single file and dependant in the API
+	- get AST and generate JSON
+	- stores it in .bwinfo file
+-> but we need it at the project level since
+	- we cannot be sure every file has been opened in the editor
+	- reusing that function file by file, restarting buildwrapper and a new GHC session will be too slow
+	
+### Project resolution
+	- for each cabal component
+		- find "start" modules
+			- Main for executables and tests
+			- All exposed modules for library
+		- load start modules in GHC API
+		- get all modules from module dependency graph
+		- for each module
+			- get AST and generate needed information
+				package, module, symbol -> all locations used
+				
+### File resolution
+	- when a file is saved, get the info for that file and save it
+				
+### Error handling
+	- if the project doesn't build, we won't get all modules
+		- can we still get some info?
+	- when the project finally builds, we need to get all new files info (files after the last modified file)
+		- cabal build already gives us that
+		
+So ->
+	- no info for project: get info for everything
+	- file saved: get info for file
+	- project built: get info for all built files
+		
+How do we get the info? 
+	- along the bwinfo file for each file?
+	- json result?
+
+## Eclipse
+
+### Database solution
+The database will be on the Eclipse side to not have a long running process to manage. Use an embeded database
+	- SQLLite: same as scion-browser, need native layer, probably more cumbersome
+		- do it in scion-browser (additional tables) performance? Fact that we keep references to local files problematic?
+	- Derby/HSQLDB or other pure java implementation: provide jar in plugin, less headaches
+	
+### Info
+need module + package to resolve duplicates?
+file in Eclipse -> file id so that we can easily delete all info pertaining to one file
+package + module -> unique module id + file where defined  (for local modules)
+	-> get all modules from package
+	-> need to get local modules from name and then get package 
+	-> can list all modules for project: module where package=cabal name and defined file exist
+module id + name -> unique symbol id + definition  (for local symbols)
+symbol id -> usages (file in Eclipse format (project + path), line span)
+module id -> usages (import)
+

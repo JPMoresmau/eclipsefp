@@ -36,7 +36,18 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
                                                           throws CoreException {
     //checkOutFolders( new SubProgressMonitor( monitor, 5 ) );
     checkCabalFileExists();
-    performBuild( kind, monitor);//new SubProgressMonitor( monitor, 95 ) );
+    // disable output if asked for
+    boolean output=true;
+    if (args!=null ){
+      Object o=args.get("output") ;//$NON-NLS-1$
+      if (o instanceof String){
+        String s=(String)o;
+        if ("false".equalsIgnoreCase( s )){ //$NON-NLS-1$
+          output=false;
+        }
+      }
+    }
+    performBuild( kind,output, monitor);//new SubProgressMonitor( monitor, 95 ) );
     //scheduleRefresh();
     return null;
   }
@@ -72,18 +83,18 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
     }
   }*/
 
-  private void performBuild( final int kind,
+  private void performBuild( final int kind,final boolean output,
                              final IProgressMonitor mon ) throws CoreException {
     if( kind == FULL_BUILD ) {
-      fullBuild(true, mon );
+      fullBuild(true,output, mon );
     } else if( kind == CLEAN_BUILD ) {
       clean(mon);
     } else {
       IResourceDelta delta = getDelta( getProject() );
       if( delta == null ) {
-        fullBuild(true, mon );
+        fullBuild(true,output, mon );
       } else {
-        incrementalBuild( delta, mon );
+        incrementalBuild( delta,output, mon );
       }
     }
   }
@@ -105,7 +116,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
     }
   }
 
-  public void fullBuild(final boolean synchronize, final IProgressMonitor mon )  {
+  public void fullBuild(final boolean synchronize,final boolean output, final IProgressMonitor mon )  {
     mon.beginTask( CoreTexts.haskellBuilder_full, 100 );
     try {
       JobFacade f=BuildWrapperPlugin.getJobFacade( getProject());
@@ -113,7 +124,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
         BuildWrapperPlugin.deleteProblems( getProject() );
         cleanNonHaskellSources();
-        BuildOptions bo=new BuildOptions().setOutput(true).setRecompile(false);
+        BuildOptions bo=new BuildOptions().setOutput(output).setRecompile(false);
         if (synchronize){
           f.synchronizeAndBuild( false, bo );
         } else {
@@ -147,12 +158,13 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   }
 
   private void incrementalBuild( final IResourceDelta delta,
+                                 final boolean output,
                                  final IProgressMonitor mon )
                                                           throws CoreException {
     DeltaBuildVisitor v=new DeltaBuildVisitor(mon ) ;
     delta.accept(v);
     if (v.isNeedBuild()){
-      fullBuild(v.isNeedSynchronize(), mon );
+      fullBuild(v.isNeedSynchronize(),output, mon );
     }
   }
 }
