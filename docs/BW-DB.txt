@@ -61,11 +61,14 @@ The database will be on the Eclipse side to not have a long running process to m
 	
 ### Info
 need module + package to resolve duplicates?
+	versioning of packages?
+	maybe important for local projects (do we reference the project or an older version)
 file in Eclipse -> file id so that we can easily delete all info pertaining to one file
 package + module -> unique module id + file where defined  (for local modules)
 	-> get all modules from package
 	-> need to get local modules from name and then get package 
 	-> can list all modules for project: module where package=cabal name and defined file exist
+	-> several Main for one project can exist!! -> need component name for main
 module id + name -> unique symbol id + definition  (for local symbols)
 symbol id -> usages (file in Eclipse format (project + path), line span)
 module id -> usages (import)

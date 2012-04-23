@@ -260,18 +260,21 @@ public class BWFacade {
 				JSONArray notes=arr.optJSONArray(1);
 				parseNotes(notes);
 			}
-			JSONArray paths=arr.optJSONArray(0);
-			if (paths!=null){
-				for (int a=0;a<paths.length();a++){
-					try {
-						String p=paths.getString(a);
-						if (p!=null && p.equals(cabalShortName)){
-							cabalFileChanged();
+			JSONArray allPaths=arr.optJSONArray(0);
+			if (allPaths!=null){
+				JSONArray paths=allPaths.optJSONArray(0);
+				if (paths!=null){
+					for (int a=0;a<paths.length();a++){
+						try {
+							String p=paths.getString(a);
+							if (p!=null && p.equals(cabalShortName)){
+								cabalFileChanged();
+							}
+							// remove from cache if file has changed
+							outlines.remove(p);
+						} catch (JSONException je){
+							BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
 						}
-						// remove from cache if file has changed
-						outlines.remove(p);
-					} catch (JSONException je){
-						BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
 					}
 				}
 			}
