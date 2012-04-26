@@ -713,6 +713,12 @@ public final class UITexts extends NLS {
 
   public static String job_syntax_coloring;
 
+  public static String OpenModuleAction_title;
+  public static String OpenModuleAction_matching;
+  public static String  OpenModuleAction_text;
+  public static String OpenModuleAction_nomodule;
+  public static String OpenModuleAction_nomodulesel;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
 

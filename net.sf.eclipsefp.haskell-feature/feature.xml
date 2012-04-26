@@ -93,7 +93,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.2.4"
+         version="2.2.5"
          unpack="false"/>
 
    <plugin
@@ -163,7 +163,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.buildwrapper"
          download-size="0"
          install-size="0"
-         version="2.2.4"
+         version="2.2.5"
          unpack="false"/>
 
 </feature>

@@ -277,6 +277,52 @@ public class BWFacade {
 						}
 					}
 				}
+				JSONArray dels=allPaths.optJSONArray(1);
+				if (dels!=null){
+					for (int a=0;a<dels.length();a++){
+						try {
+							String p=dels.getString(a);
+							BuildWrapperPlugin.getDefault().getUsageAPI().removeFile(getProject(), p);
+						} catch (JSONException je){
+							BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void generateUsage(Component c){
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("generateusage");
+		command.add("--cabalcomponent="+serializeComponent(c));
+		JSONArray arr=run(command,ARRAY);
+		if (arr!=null){
+			if(arr.length()>1){
+		
+				JSONArray notes=arr.optJSONArray(1);
+				parseNotes(notes);
+			}
+			JSONArray allPaths=arr.optJSONArray(0);
+			if (allPaths!=null){
+				if (allPaths.length()>0){
+					IFolder fldr=getProject().getFolder(BWFacade.DIST_FOLDER);
+					if (fldr!=null && fldr.exists()){
+						try {
+							fldr.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+						} catch (CoreException ce){
+							BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
+						}
+					}
+				}
+				for (int a=0;a<allPaths.length();a++){
+					try {
+						String p=allPaths.getString(a);
+						BuildWrapperPlugin.getDefault().getUsageAPI().addFile(getProject(),c, p);
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.error_parsing_usage_path, je);
+					}
+				}
 			}
 		}
 	}
@@ -637,6 +683,10 @@ public class BWFacade {
 			BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
 		}
 		return null;
+	}
+	
+	private String serializeComponent(Component c) {
+	 return ComponentType.LIBRARY.equals(c.getType())?"":c.getName();
 	}
 	
 	private CabalPackage parsePackage(JSONObject obj){

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.buildwrapper;singleton:=true
-Bundle-Version: 2.2.4
+Bundle-Version: 2.2.5
 Bundle-Activator: net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
@@ -17,4 +17,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsefp.haskell.buildwrapper,
  net.sf.eclipsefp.haskell.buildwrapper.types,
+ net.sf.eclipsefp.haskell.buildwrapper.usage,
  net.sf.eclipsefp.haskell.buildwrapper.util
+Bundle-ClassPath: lib/sqlitejdbc-v056.jar,
+ .

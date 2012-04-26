@@ -432,6 +432,16 @@
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%HaddocDocumentBlockFollow.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following"/>
+      <category
+            description="%haskellNavigateCategory_desc"
+            name="%haskellNavigateCategory_name"
+            id="net.sf.eclipsefp.haskell.ui.category.navigate"/>
+       <command
+            description="%OpenModuleAction.tooltip"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.navigate"
+            name="%OpenModuleAction.label"
+            id="net.sf.eclipsefp.haskell.ui.OpenModuleActionCommand"/>     
+            
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -517,6 +527,9 @@
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
               sequence="Home"/>
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              commandId="net.sf.eclipsefp.haskell.ui.OpenModuleActionCommand"
+              sequence="Ctrl+Shift+M"/>              
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -915,6 +928,19 @@
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/editGroup"
                id="net.sf.eclipsefp.haskell.ui.actions.ShiftRight">
          </action>
+        
+      </actionSet>
+	  <actionSet id="net.sf.eclipsefp.haskell.ui.navigation" label="%NavigationActionSet.label" visible="true">
+        <action 
+        	class="net.sf.eclipsefp.haskell.ui.actions.OpenModuleAction" 
+        	icon="icons/obj16/module.gif" 
+        	id="net.sf.eclipsefp.haskell.ui.actions.OpenModuleAction" 
+        	label="%OpenModuleAction.label" 
+        	menubarPath="navigate/open.ext3" 
+        	style="push" 
+        	toolbarPath="org.eclipse.search.searchActionSet/Search" 
+        	tooltip="%OpenModuleAction.tooltip" 
+        	definitionId="net.sf.eclipsefp.haskell.ui.OpenModuleActionCommand"/> 
       </actionSet>
    </extension>
    <extension

@@ -136,10 +136,22 @@ public class JobFacade  {
 	          }
 	          return Status.OK_STATUS;
 	        }
+	        
 	      };
 	      //
 	      buildJob.setRule( getProject().getWorkspace().getRoot() );
 	      buildJob.setPriority(Job.BUILD);
+	      buildJob.addJobChangeListener(new JobChangeAdapter(){
+	    	  /* (non-Javadoc)
+	    	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	    	 */
+	    	@Override
+	    	public void done(IJobChangeEvent event) {
+	    		if (event.getResult().isOK()){
+	    			BuildWrapperPlugin.getDefault().getUsageThread().addProject(getProject());
+	    		}
+	    	}
+	      });
 	      return buildJob;
 	}
 	

@@ -5,6 +5,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 
@@ -15,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -46,6 +47,9 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	
 	public static boolean logAnswers=false;
 	
+	private UsageAPI usageAPI;
+	private UsageThread usageThread=new UsageThread();
+	
 	/**
 	 * The constructor
 	 */
@@ -59,7 +63,8 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
+		usageAPI=new UsageAPI();
+		usageThread.start();
 	}
 
 	/*
@@ -68,6 +73,12 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		usageThread.setShouldStop();
+		usageThread.interrupt();
+		// wait for all pending writes for 10 secs
+		usageThread.join(10000);
+		// then close api and db
+		usageAPI.close();
 		super.stop(context);
 	}
 
@@ -80,6 +91,20 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	/**
+	 * @return the usageAPI
+	 */
+	public UsageAPI getUsageAPI() {
+		return usageAPI;
+	}
+	
+	/**
+	 * @return the usageThread
+	 */
+	public UsageThread getUsageThread() {
+		return usageThread;
+	}
+	
 	public static BWFacade createFacade(IProject p,String cabalPath,Writer outStream){
 
 		IFile cf=getCabalFile(p);

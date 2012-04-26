@@ -1,13 +1,13 @@
 % EclipseFP-JE.tex
 \begin{hcarentry}{EclipseFP}
 \report{JP Moresmau}%11/11
-\status{stable, maintained}
-\participants{B.\ Scott Michel, Alejandro Serrano, building on code from Thiago Arrais, Leif Frenzel, Thomas ten Cate, and others}
+\status{stable, maintained and actively developed}
+\participants{JP Moresmau, building on code from B.\ Scott Michel, Alejandro Serrano, Thiago Arrais, Leif Frenzel, Thomas ten Cate, and others}
 \makeheader
 
 EclipseFP is a set of Eclipse plugins to allow working on Haskell code projects.
-It features Cabal integration (.cabal file editor, uses Cabal settings for compilation), and GHC integration. Compilation is done via the GHC API, syntax coloring uses the GHC Lexer. Other standard Eclipse features like code outline, folding, and quick fixes for common errors are also provided. EclipseFP also allows launching GHCi sessions on any module including extensive debugging facilities. It uses Scion to bridge between the Java code for Eclipse and the Haskell APIs.
-The source code is fully open source (Eclipse License) and anyone can contribute. Current version is 2.1.0, released in September 2011 and supporting GHC 6.12 and 7.0, and more versions with additional features are planned. Feedback on what is needed is welcome! The website has information on downloading binary releases and getting a copy of the source code. Support and bug tracking is handled through Sourceforge forums.
+It features Cabal integration (.cabal file editor, uses Cabal settings for compilation, allows the user to install Cabal packages from within the IDE), and GHC integration. Compilation is done via the GHC API, syntax coloring uses the GHC Lexer. Other standard Eclipse features like code outline, folding, and quick fixes for common errors are also provided. HLint suggestions can be applied in one click. EclipseFP also allows launching GHCi sessions on any module including extensive debugging facilities. It uses BuildWrapper to bridge between the Java code for Eclipse and the Haskell APIs. It also provides a full package and module browser to navigate the Haskell packages installed on your system, integrated with Hackage.
+The source code is fully open source (Eclipse License) on github and anyone can contribute. Current version is 2.2.4, released in March 2012 and supporting GHC 7.0 and above, and more versions with additional features are planned and actively worked on. Feedback on what is needed is welcome! The website has information on downloading binary releases and getting a copy of the source code. Support and bug tracking is handled through Sourceforge forums.
 
 %**<img width=500 src="./eclipsefp-screenshot1.jpg">
 %*ignore
@@ -17,5 +17,5 @@ The source code is fully open source (Eclipse License) and anyone can contribute
 %*endignore
 
 \FurtherReading 
-\url{http://eclipsefp.sourceforge.net/}
+\url{http://eclipsefp.github.com/}
 \end{hcarentry}
