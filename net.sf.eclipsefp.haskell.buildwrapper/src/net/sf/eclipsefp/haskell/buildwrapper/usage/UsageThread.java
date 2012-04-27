@@ -39,10 +39,10 @@ public class UsageThread extends Thread {
 					IProject p=getNext();
 						
 					while (p!=null){
-						
+						boolean retAll=!BuildWrapperPlugin.getDefault().getUsageAPI().knowsProject(p);
 						List<Component> cs=BuildWrapperPlugin.getFacade(p).getComponents();
 						for (Component c:cs){
-							BuildWrapperPlugin.getFacade(p).generateUsage(c);
+							BuildWrapperPlugin.getFacade(p).generateUsage(c,retAll);
 						}
 						p=getNext();
 					}

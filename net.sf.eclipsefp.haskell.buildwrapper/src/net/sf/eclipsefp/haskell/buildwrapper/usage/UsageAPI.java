@@ -21,7 +21,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -42,7 +41,7 @@ public class UsageAPI {
 	}
 	
 	public void removeFile(IProject p, String relPath){
-		BuildWrapperPlugin.log(IStatus.INFO, "Removing "+p.getName()+"/"+relPath, null);
+		//BuildWrapperPlugin.log(IStatus.INFO, "Removing "+p.getName()+"/"+relPath, null);
 	}
 	
 	public void addFile(Component c,IFile f){
@@ -52,10 +51,10 @@ public class UsageAPI {
 	public void addFile(IProject p,Component c, String relPath){
 		IFile f=p.getFile(relPath);
 		if (f!=null && f.exists()){
-			BuildWrapperPlugin.log(IStatus.INFO, "Adding "+p.getName()+"/"+f.getProjectRelativePath().toPortableString(), null);
+			//BuildWrapperPlugin.log(IStatus.INFO, "Adding "+p.getName()+"/"+f.getProjectRelativePath().toPortableString(), null);
 			IFile uf=getUsageFile(p, relPath);
 			if (uf!=null){
-				BuildWrapperPlugin.log(IStatus.INFO, "Adding "+p.getName()+"/"+f.getProjectRelativePath().toPortableString()+": usage file found", null);
+				//BuildWrapperPlugin.log(IStatus.INFO, "Adding "+p.getName()+"/"+f.getProjectRelativePath().toPortableString()+": usage file found", null);
 				JSONArray arr=parseUsageFile(uf);
 				if (arr!=null){
 					try {
@@ -90,6 +89,15 @@ public class UsageAPI {
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
 		return new ArrayList<Module>();
+	}
+	
+	public boolean knowsProject(IProject p){
+		try {
+			return db.knowsProject(p.getName());
+		} catch (SQLException sqle){
+			BuildWrapperPlugin.logError(BWText.error_db, sqle);
+		} 
+		return false;
 	}
 	
 	private JSONArray parseUsageFile(IFile uf){

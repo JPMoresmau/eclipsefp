@@ -292,10 +292,11 @@ public class BWFacade {
 		}
 	}
 	
-	public void generateUsage(Component c){
+	public void generateUsage(Component c,boolean returnAll){
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("generateusage");
 		command.add("--cabalcomponent="+serializeComponent(c));
+		command.add("--returnall="+returnAll);
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null){
 			if(arr.length()>1){

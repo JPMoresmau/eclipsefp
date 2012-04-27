@@ -162,10 +162,12 @@ public class OpenModuleAction extends Action implements
             // reset text to unselected
             for (Integer i:lastTis.keySet()){
               TableItem ti=lastTis.get(i);
-              String s=ti.getText();
-              int ix=s.indexOf( " - " );
-              if (ix>-1){
-                ti.setText( s.substring( 0,ix ) );
+              if (ti!=null && !ti.isDisposed()){
+                String s=ti.getText();
+                int ix=s.indexOf( " - " );
+                if (ix>-1){
+                  ti.setText( s.substring( 0,ix ) );
+                }
               }
             }
             lastTis.clear();

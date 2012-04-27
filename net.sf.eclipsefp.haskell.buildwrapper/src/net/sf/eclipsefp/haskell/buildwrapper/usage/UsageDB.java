@@ -227,4 +227,20 @@ public class UsageDB {
 		}
 		return null;
 	}
+	
+	public boolean knowsProject(String project) throws SQLException{
+		PreparedStatement ps=conn.prepareStatement("select project from files where project=?");
+		try {
+			ps.setString(1, project);
+			ResultSet rs=ps.executeQuery();
+			try {
+				return rs.next();
+			}	finally {
+				rs.close();
+			}	
+		} finally {
+			ps.close();
+		}
+		
+	}
 }
