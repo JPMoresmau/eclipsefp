@@ -74,7 +74,6 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		usageThread.setShouldStop();
-		usageThread.interrupt();
 		// wait for all pending writes for 10 secs
 		usageThread.join(10000);
 		// then close api and db

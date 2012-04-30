@@ -71,6 +71,6 @@ package + module -> unique module id + file where defined  (for local modules)
 	-> several Main for one project can exist!! -> need component name for main
 module id + name -> unique symbol id + definition  (for local symbols)
 symbol id -> usages (file in Eclipse format (project + path), line span)
-module id -> usages (import)
+module id -> usages (import/export)
 
 

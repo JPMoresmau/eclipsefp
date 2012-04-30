@@ -387,6 +387,10 @@
             description="%haskellEditorCategory_desc"
             name="%haskellEditorCategory_name"
             id="net.sf.eclipsefp.haskell.ui.category.source"/>
+      <category
+            description="%references_tooltip"
+            name="%references_label"
+            id="org.eclipse.ui.category.references"/>
       <command
             description="%firstCharCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
@@ -417,6 +421,16 @@
             categoryId="org.eclipse.ui.category.navigate"
             name="%searchHoogleCommand_name"
             id="net.sf.eclipsefp.ui.commands.navigate.searchHoogle"/>
+      <command
+            description="%references_workspace_tooltip"
+            categoryId="org.eclipse.ui.category.references"
+            name="%references_workspace_label"
+            id="net.sf.eclipsefp.ui.commands.references.workspace"/>
+      <command
+            description="%references_project_tooltip"
+            categoryId="org.eclipse.ui.category.references"
+            name="%references_project_label"
+            id="net.sf.eclipsefp.ui.commands.references.project"/>
       <command
             description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
@@ -472,6 +486,37 @@
                commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
             <visibleWhen checkEnabled="true"/>
          </command>
+      </menuContribution>
+       <menuContribution
+            locationURI="menu:navigate?after=open.ext">
+            <menu
+               id="net.sf.eclipsefp.haskell.ui.refsMenu"
+               path="edit"
+               label="%references_label">
+		         <command
+		               commandId="net.sf.eclipsefp.ui.commands.references.workspace">
+		          </command>
+		         <command
+		               commandId="net.sf.eclipsefp.ui.commands.references.project">
+		          </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=group.open">
+             <menu
+               id="net.sf.eclipsefp.haskell.ui.refsMenu.popup"
+               path="edit"
+               label="%references_label">
+		         <command
+		               commandId="net.sf.eclipsefp.ui.commands.references.workspace">
+		            <visibleWhen checkEnabled="true"/>
+		         </command>
+		    
+		         <command
+		               commandId="net.sf.eclipsefp.ui.commands.references.project">
+		            <visibleWhen checkEnabled="true"/>
+		         </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -543,7 +588,7 @@
             </reference>
          </activeWhen>
       </handler>
-     <!-- handler for the Open Definition action when invoked from the HaskellEditor -->
+     <!-- handler for the Search in Hoogle action when invoked from the HaskellEditor -->
       <handler
             class="net.sf.eclipsefp.haskell.ui.handlers.SearchInHoogleHandler"
             commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
@@ -553,14 +598,32 @@
             </reference>
          </activeWhen>
       </handler>
-      
+      <!-- handler for the references in worskpace action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.ReferencesWorkspaceHandler"
+            commandId="net.sf.eclipsefp.ui.commands.references.workspace">
+         <activeWhen>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.ReferencesProjectHandler"
+            commandId="net.sf.eclipsefp.ui.commands.references.project">
+         <activeWhen>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
       <!-- expression that is true when the HaskellEditor is the active part -->
       <definition
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
-         <with variable="activePartId">
+         <with variable="activeEditorId">
             <equals value="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"/>
          </with>
       </definition>
@@ -845,7 +908,7 @@
             id="net.sf.eclipsefp.haskell.ui.CodingActionSet"
             label="%CodingActionSet.label"
             visible="false">
-         <action
+         <!--action
             id="net.sf.eclipsefp.haskell.ui.actions.openDefinition"
             definitionId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"
             label="%openDefinitionAction_label"
@@ -858,8 +921,43 @@
             label="%searchHoogleAction_label"
             tooltip="%searchHoogleAction_tooltip"
             retarget="true"
-            allowLabelUpdate="true"/>   
-       <!-- class="net.sf.eclipsefp.haskell.ui.actions.OpenDefinitionAction" -->
+            allowLabelUpdate="true"/-->   
+
+       <!-- references -->
+       <!--menu
+		  id="org.eclipse.search.menu"
+		  label="%searchMenu.label"
+		  path="navigate">
+		  <groupMarker name="internalDialogGroup"/>  
+		  <groupMarker name="dialogGroup"/>          
+		  <separator name="contextMenuActionsGroup"/>
+		</menu>
+         <menu
+               id="net.sf.eclipsefp.haskell.ui.refsMenu"
+               path="org.eclipse.search.menu/contextMenuActionsGroup"
+               label="%references_label">
+               <groupMarker name="main"/>
+         </menu>
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.references.workspace"
+            definitionId="net.sf.eclipsefp.ui.commands.references.workspace"
+            label="%references_workspace_label"
+            tooltip="%references_workspace_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"
+            menubarPath="org.eclipse.search.menu/net.sf.eclipsefp.haskell.ui.refsMenu/main"
+            /> 
+         <action
+            id="net.sf.eclipsefp.haskell.ui.actions.references.project"
+            definitionId="net.sf.eclipsefp.ui.commands.references.project"
+            label="%references_project_label"
+            tooltip="%references_project_tooltip"
+            retarget="true"
+            allowLabelUpdate="true"
+            menubarPath="org.eclipse.search.menu/net.sf.eclipsefp.haskell.ui.refsMenu/main"
+          	/--> 
+             
+
  <!-- Source menu -->         
          <menu
                id="net.sf.eclipsefp.haskell.ui.sourceMenu"
@@ -1303,4 +1401,13 @@
       </markerResolutionGenerator>      
       
    </extension>
+   
+   <extension
+	    point="org.eclipse.search.searchResultViewPages">
+	 <viewPage
+	  	id="net.sf.eclipsefp.haskell.ui.HaskellUsageResultPage"
+	  	searchResultClass="net.sf.eclipsefp.haskell.ui.internal.search.UsageSearchResult"
+	  	class="net.sf.eclipsefp.haskell.ui.internal.search.UsageSearchPage">
+	 </viewPage>
+	</extension>
 </plugin>

@@ -719,6 +719,12 @@ public final class UITexts extends NLS {
   public static String OpenModuleAction_nomodule;
   public static String OpenModuleAction_nomodulesel;
 
+  public static String References_result_label;
+  public static String References_result_tooltip;
+  public static String References_query_label;
+  public static String References_result_refreshing;
+  public static String References_result_location;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
 

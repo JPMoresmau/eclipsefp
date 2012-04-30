@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -309,6 +310,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 
     QuickFixAction action = new QuickFixAction(HaskellUIPlugin.getDefault().getResourceBundle(), "RulerQuickFixAction", this, getVerticalRuler()); //$NON-NLS-1$
     setAction(ITextEditorActionConstants.RULER_CLICK, action);
+
+
   }
 
 
@@ -435,6 +438,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     IFile file = findFile();
     if( file != null) {
       synchronize();
+      BuildWrapperPlugin.getDefault().getUsageThread().addProject(file.getProject());
       if (tokenScanner!=null){
         tokenScanner.markTaskTags();
       }
@@ -456,6 +460,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
           f.synchronize1( file,true );
         }
       }
+      Action aa=new Action(){
+
+      };
+      site.getActionBars().setGlobalActionHandler( "net.sf.eclipsefp.haskell.ui.actions.references.workspace", aa );
+
   }
 
 

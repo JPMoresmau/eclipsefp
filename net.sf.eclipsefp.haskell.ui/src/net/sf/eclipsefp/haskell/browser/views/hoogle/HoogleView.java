@@ -212,9 +212,13 @@ public class HoogleView extends ViewPart implements SelectionListener,
       public void run() {
         provider = new HoogleContentProvider(localDb, hackageDb);
         //viewer.setLabelProvider( new HoogleLabelProvider() );
-        viewer.setContentProvider( provider );
-        viewer.setInput( text.getText() );
-        viewer.refresh();
+        if (!viewer.getTree().isDisposed()){
+          viewer.setContentProvider( provider );
+          if (!text.isDisposed()){
+            viewer.setInput( text.getText() );
+          }
+          viewer.refresh();
+        }
       }
     } );
   }

@@ -10,12 +10,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
+import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
@@ -23,6 +25,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
@@ -69,13 +72,70 @@ public class UsageAPI {
 						String module=formatModule(c, arr.getString(1));
 						if (module!=null){
 							long fileID=db.getFileID(f);
-							long moduleID=db.getModuleID(pkg, module, fileID);
+							db.clearUsageInFile(fileID);
+							
+							//long moduleID=
+							db.getModuleID(pkg, module, fileID);
+							List<ModuleUsage> modUsages=new ArrayList<ModuleUsage>();
+							buildUsage(arr,modUsages);
+							db.setModuleUsages(fileID, modUsages);
 							db.commit();
 						}
 					} catch (SQLException sqle){
 						BuildWrapperPlugin.logError(BWText.error_db, sqle);
 					} catch (JSONException je){
 						BuildWrapperPlugin.logError(BWText.error_parsing_usage_file, je);
+					}
+				}
+			}
+		}
+	}
+	
+	private void buildUsage(JSONArray arr,List<ModuleUsage> modUsages){
+		JSONObject pkgs=arr.optJSONObject(2);
+		if (pkgs!=null){
+			for (Iterator<String> itPkg=pkgs.keys();itPkg.hasNext();){
+				String pkgKey=itPkg.next();
+				JSONObject mods=pkgs.optJSONObject(pkgKey);
+				if (mods!=null){
+					String pkg=formatPackage(pkgKey);
+					buildUsageModule(pkg,mods,modUsages);
+				}
+			}
+		}
+	}
+	
+	private void buildUsageModule(String pkg,JSONObject mods,List<ModuleUsage> modUsages){
+		for (Iterator<String> itMod=mods.keys();itMod.hasNext();){
+			String modKey=itMod.next();
+			JSONObject types=mods.optJSONObject(modKey);
+			if (types!=null){
+				try {
+					long modID=db.getModuleID(pkg, modKey, null);
+				
+					buildUsage(modID,types.optJSONObject("vars"),false,modUsages);
+				} catch (SQLException sqle){
+					BuildWrapperPlugin.logError(BWText.error_db, sqle);
+				}
+			}
+		}
+	}
+	
+	private void buildUsage(long modID,JSONObject symbols,boolean isType,List<ModuleUsage> modUsages){
+		if (symbols!=null){
+			for (Iterator<String> itSym=symbols.keys();itSym.hasNext();){
+				String symKey=itSym.next();
+				JSONArray locs=symbols.optJSONArray(symKey);
+				if (locs!=null){
+					
+					for (int a=0;a<locs.length();a++){
+						JSONArray loc=locs.optJSONArray(a);
+						if (loc!=null){
+							String sloc=loc.toString();
+							if (!isType && symKey.length()==0){
+								modUsages.add(new ModuleUsage(modID, sloc));
+							}
+						}
 					}
 				}
 			}
@@ -107,6 +167,15 @@ public class UsageAPI {
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
 		return false;
+	}
+	
+	public UsageResults getModuleReferences(String pkg,String module){
+		try {
+			return db.getModuleReferences(pkg, module);
+		} catch (SQLException sqle){
+			BuildWrapperPlugin.logError(BWText.error_db, sqle);
+		} 
+		return new UsageResults();
 	}
 	
 	private JSONArray parseUsageFile(IFile uf){
@@ -161,4 +230,6 @@ public class UsageAPI {
 		}
 		return ret;
 	}
+	
+	
 }

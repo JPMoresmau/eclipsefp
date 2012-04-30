@@ -31,7 +31,8 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.wst.xml.ui;bundle-version="1.1.0";resolution:=optional,
  net.sf.eclipsefp.haskell.buildwrapper;bundle-version="2.1.1";visibility:=reexport,
  org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
- net.sf.eclipsefp.haskell.hlint;bundle-version="2.2.3"
+ net.sf.eclipsefp.haskell.hlint;bundle-version="2.2.3",
+ org.eclipse.search
 Bundle-ManifestVersion: 2
 Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets",
  net.sf.eclipsefp.common.ui.preferences;

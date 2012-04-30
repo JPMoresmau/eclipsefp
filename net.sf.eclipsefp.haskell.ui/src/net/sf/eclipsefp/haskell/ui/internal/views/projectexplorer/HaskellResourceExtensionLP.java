@@ -3,6 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
@@ -20,6 +21,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 /** <p>the label provider for elements in a Haskell project. Functionality
@@ -62,7 +64,10 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
     } else if (element instanceof ProjectExplorerStanza) {
       PackageDescriptionStanza stanza = ((ProjectExplorerStanza)element).getStanza();
       result = stanza.getName() != null ? stanza.getName() : String.valueOf( stanza.getType() );
-    } else {
+    } else if (element instanceof UsageResults.UsageLocation){
+      UsageResults.UsageLocation loc=(UsageResults.UsageLocation)element;
+      result=NLS.bind( UITexts.References_result_location, loc.getStartLine() );
+    }else {
       result = super.getText( element );
     }
     return result;
@@ -126,6 +131,8 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
           && ResourceUtil.isSourceFolder( folder ) ) {
         String id = IImageNames.SOURCE_FOLDER;
         result = HaskellUIImages.getImage( id );
+      } else {
+        result=super.getImage( folder );
       }
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log(  cex );

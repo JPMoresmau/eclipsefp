@@ -14,16 +14,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
+import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults.UsageLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 
 /**
  * @author JP Moresmau
@@ -92,6 +101,8 @@ public class UsageDB {
 			s.execute("create unique index if not exists modulenames on modules (package,module)");
 			
 			//s.execute("create index if not exists modulefiles on modules (fileid)");
+			
+			s.execute("create table if not exists module_usages (moduleid INTEGER not null,fileid INTEGER not null,location TEXT not null,foreign key (fileid) references files(fileid) on delete cascade,foreign key (moduleid) references modules(moduleid) on delete cascade)");
 		} finally {
 			s.close();
 		}
@@ -165,6 +176,33 @@ public class UsageDB {
 				ps.close();
 			}
 			
+		}
+	}
+	
+	public void clearUsageInFile(long fileid) throws SQLException{
+		checkConnection();
+		PreparedStatement ps=conn.prepareStatement("delete from module_usages where fileid=?");
+		try {
+			ps.setLong(1, fileid);
+			ps.executeUpdate();
+		} finally {
+			ps.close();
+		}
+	}
+	
+	public void setModuleUsages(long fileid,Collection<ModuleUsage> usages) throws SQLException{
+		checkConnection();
+		PreparedStatement ps=conn.prepareStatement("insert into module_usages values(?,?,?)");
+		try {
+			for (ModuleUsage usg:usages){
+				ps.setLong(1, usg.getModuleID());
+				ps.setLong(2, fileid);
+				ps.setString(3, usg.getLocation());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		} finally {
+			ps.close();
 		}
 	}
 	
@@ -266,13 +304,14 @@ public class UsageDB {
 	}
 	
 	public boolean knowsProject(String project) throws SQLException{
+		checkConnection();
 		PreparedStatement ps=conn.prepareStatement("select project from files where project=?");
 		try {
 			ps.setString(1, project);
 			ResultSet rs=ps.executeQuery();
 			try {
 				return rs.next();
-			}	finally {
+			}finally {
 				rs.close();
 			}	
 		} finally {
@@ -280,4 +319,54 @@ public class UsageDB {
 		}
 		
 	}
+	
+	public UsageResults getModuleReferences(String pkg,String module) throws SQLException {
+		checkConnection();
+		StringBuilder sb=new StringBuilder("select mu.fileid,mu.location from module_usages mu, modules m where mu.moduleid=m.moduleid and m.module=?");
+		if (pkg!=null){
+			sb.append(" and m.package=?");
+		}
+		PreparedStatement ps=conn.prepareStatement(sb.toString());
+		Map<Long,Collection<UsageLocation>> m=new HashMap<Long, Collection<UsageLocation>>();
+		try {
+			ps.setString(1, module);
+			if (pkg!=null){
+				ps.setString(2, pkg);
+			}
+			ResultSet rs=ps.executeQuery();
+			try {
+				while (rs.next()){
+					long fileid=rs.getLong(1);
+					Collection<UsageLocation> locs=m.get(fileid);
+					if (locs==null){
+						locs=new ArrayList<UsageResults.UsageLocation>();
+						m.put(fileid,locs);
+					}
+					//IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject(project);
+					//if (p!=null){
+						//IFile f=p.getFile(name);
+						String loc=rs.getString(2);
+						try {
+							Location l=new net.sf.eclipsefp.haskell.buildwrapper.types.Location("", new JSONArray(loc));
+							locs.add(new UsageLocation(l));
+							
+						} catch (JSONException je){
+							BuildWrapperPlugin.logError(je.getLocalizedMessage(), je);
+						}
+					//}
+				}
+			}finally {
+				rs.close();
+			}	
+		} finally {
+			ps.close();
+		}
+		UsageResults ret=new UsageResults();
+		for (Long fileid:m.keySet()){
+			IFile f=getFile(fileid);
+			ret.put(f, m.get(fileid));
+		}
+		return ret;
+	}
+	
 }

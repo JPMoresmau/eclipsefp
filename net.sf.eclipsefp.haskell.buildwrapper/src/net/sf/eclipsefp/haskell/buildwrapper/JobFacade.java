@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
@@ -147,8 +148,11 @@ public class JobFacade  {
 	    	 */
 	    	@Override
 	    	public void done(IJobChangeEvent event) {
-	    		if (event.getResult().isOK()){
-	    			BuildWrapperPlugin.getDefault().getUsageThread().addProject(getProject());
+	    		if (event.getResult().isOK() && BuildWrapperPlugin.getDefault()!=null){
+	    			UsageThread ut=BuildWrapperPlugin.getDefault().getUsageThread();
+	    			if (ut!=null){
+	    				ut.addProject(getProject());
+	    			}
 	    		}
 	    	}
 	      });

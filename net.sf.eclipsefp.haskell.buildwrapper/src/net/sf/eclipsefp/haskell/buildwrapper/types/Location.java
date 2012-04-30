@@ -88,6 +88,7 @@ public class Location {
 		this.endLine = endLine;
 		this.endColumn = endColumn+mv;
 	}
+
 	
 	public Location(String fileName, IDocument document, IRegion region) throws BadLocationException {
 		this.fileName = fileName;
@@ -100,6 +101,9 @@ public class Location {
 		this.endLine = docLine+1;
 		this.endColumn = endOffset - document.getLineOffset(docLine);
 	}
+	
+	
+
 	
 	/**
 	 * Returns the offset within the given document
