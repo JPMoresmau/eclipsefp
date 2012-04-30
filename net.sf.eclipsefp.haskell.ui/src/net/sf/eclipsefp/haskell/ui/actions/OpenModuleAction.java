@@ -133,6 +133,15 @@ public class OpenModuleAction extends Action implements
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.ui.dialogs.SelectionStatusDialog#configureShell(org.eclipse.swt.widgets.Shell)
+     */
+    @Override
+    protected void configureShell( final Shell shell ) {
+      super.configureShell( shell );
+      shell.setImage( HaskellUIImages.getImage( IImageNames.HASKELL_MISC ));
+    }
+
+    /* (non-Javadoc)
      * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#createFilteredList(org.eclipse.swt.widgets.Composite)
      */
     @Override
