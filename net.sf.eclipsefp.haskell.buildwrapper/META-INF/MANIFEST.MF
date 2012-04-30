@@ -19,5 +19,5 @@ Export-Package: net.sf.eclipsefp.haskell.buildwrapper,
  net.sf.eclipsefp.haskell.buildwrapper.types,
  net.sf.eclipsefp.haskell.buildwrapper.usage,
  net.sf.eclipsefp.haskell.buildwrapper.util
-Bundle-ClassPath: lib/sqlitejdbc-v056.jar,
- .
+Bundle-ClassPath: .,
+ lib/sqlite-jdbc-3.7.2.jar

@@ -16,14 +16,14 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
+import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-
-import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
-import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 /**
  * @author JP Moresmau
@@ -41,8 +41,14 @@ public class UsageDB {
 			Class.forName("org.sqlite.JDBC");
 			conn =
 			      DriverManager.getConnection("jdbc:sqlite:"+f.getAbsolutePath());
+			conn.setAutoCommit(true);
+			Statement s=conn.createStatement();
+			try {
+				s.executeUpdate("PRAGMA foreign_keys = ON;");
+			}  finally {
+				s.close();
+			}
 			conn.setAutoCommit(false);
-			
 			setup();
 		} catch (Exception e){
 			BuildWrapperPlugin.logError(BWText.error_setup_db, e);
@@ -129,6 +135,37 @@ public class UsageDB {
 			}
 		}
 		return fileID;
+	}
+	
+	public void removeFile(IFile f) throws SQLException{
+		checkConnection();
+		PreparedStatement ps=conn.prepareStatement("select fileid from files where project=? and name=?");
+		Long fileID=null;
+		try {
+			ps.setString(1, f.getProject().getName());
+			ps.setString(2, f.getProjectRelativePath().toPortableString());
+			ResultSet rs=ps.executeQuery();
+			try {
+				if (rs.next()){
+					fileID=rs.getLong(1);
+				}
+			} finally {
+				rs.close();
+			}
+			
+		} finally {
+			ps.close();
+		}
+		if (fileID!=null){
+			ps=conn.prepareStatement("delete from files where fileid=?");
+			try {
+				ps.setLong(1, fileID);
+				ps.executeUpdate();
+			} finally {
+				ps.close();
+			}
+			
+		}
 	}
 	
 	public long getModuleID(String pkg,String module,Long fileID) throws SQLException {

@@ -37,11 +37,18 @@ public class UsageAPI {
 	}
 	
 	public void removeFile(IFile f){
-		removeFile(f.getProject(),f.getProjectRelativePath().toOSString());
+		if (f!=null){
+			try {
+				db.removeFile(f);
+				db.commit();
+			} catch (SQLException sqle){
+				BuildWrapperPlugin.logError(BWText.error_db, sqle);
+			}
+		}
 	}
 	
 	public void removeFile(IProject p, String relPath){
-		//BuildWrapperPlugin.log(IStatus.INFO, "Removing "+p.getName()+"/"+relPath, null);
+		removeFile(p.getFile(relPath));
 	}
 	
 	public void addFile(Component c,IFile f){
@@ -60,9 +67,11 @@ public class UsageAPI {
 					try {
 						String pkg=formatPackage(arr.getString(0));
 						String module=formatModule(c, arr.getString(1));
-						long fileID=db.getFileID(f);
-						long moduleID=db.getModuleID(pkg, module, fileID);
-						db.commit();
+						if (module!=null){
+							long fileID=db.getFileID(f);
+							long moduleID=db.getModuleID(pkg, module, fileID);
+							db.commit();
+						}
 					} catch (SQLException sqle){
 						BuildWrapperPlugin.logError(BWText.error_db, sqle);
 					} catch (JSONException je){
@@ -145,6 +154,9 @@ public class UsageAPI {
 	private String formatModule(Component c,String module){
 		String ret=module;
 		if("Main".equals(module)){
+			if (c.getName()==null){ // Main but a library, ignore
+				return null;
+			}
 			ret=module+" "+c.getName();
 		}
 		return ret;
