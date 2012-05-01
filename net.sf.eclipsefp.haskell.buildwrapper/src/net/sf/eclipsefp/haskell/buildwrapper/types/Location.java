@@ -21,6 +21,7 @@ import org.json.JSONObject;
  * @author Thomas ten Cate
  */
 public class Location {
+	private IFile ifile;
 	private String fileName;
 	private String otherName;
 
@@ -32,6 +33,7 @@ public class Location {
 
 	public Location(IFile f, JSONArray json) throws JSONException {
 		this(f.getLocation().toOSString(),json);
+		this.ifile=f;
 	}
 	
 	public Location(String fn, JSONArray json) throws JSONException {
@@ -62,6 +64,7 @@ public class Location {
 		    && (this.otherName == null || this.otherName.length() == 0) ) {
 		  // Default the file name to the Java file resource
 		  this.fileName = f.getLocation().toOSString();
+		  this.ifile=f;
 		} 
 		
 		if (json.optString("no-location").length() == 0) {
@@ -201,5 +204,13 @@ public class Location {
 			MarkerUtilities.setCharEnd(attributes, end-1);
 		}
 		return attributes;
+	}
+
+	public IFile getIFile() {
+		return ifile;
+	}
+
+	public void setIFile(IFile ifile) {
+		this.ifile = ifile;
 	}
 }

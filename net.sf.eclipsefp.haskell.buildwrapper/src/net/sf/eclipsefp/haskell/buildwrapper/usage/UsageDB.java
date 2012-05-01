@@ -23,7 +23,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
-import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults.UsageLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
@@ -327,7 +326,7 @@ public class UsageDB {
 			sb.append(" and m.package=?");
 		}
 		PreparedStatement ps=conn.prepareStatement(sb.toString());
-		Map<Long,Collection<UsageLocation>> m=new HashMap<Long, Collection<UsageLocation>>();
+		Map<Long,Collection<Location>> m=new HashMap<Long, Collection<Location>>();
 		try {
 			ps.setString(1, module);
 			if (pkg!=null){
@@ -337,9 +336,9 @@ public class UsageDB {
 			try {
 				while (rs.next()){
 					long fileid=rs.getLong(1);
-					Collection<UsageLocation> locs=m.get(fileid);
+					Collection<Location> locs=m.get(fileid);
 					if (locs==null){
-						locs=new ArrayList<UsageResults.UsageLocation>();
+						locs=new ArrayList<Location>();
 						m.put(fileid,locs);
 					}
 					//IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject(project);
@@ -348,7 +347,7 @@ public class UsageDB {
 						String loc=rs.getString(2);
 						try {
 							Location l=new net.sf.eclipsefp.haskell.buildwrapper.types.Location("", new JSONArray(loc));
-							locs.add(new UsageLocation(l));
+							locs.add(l);
 							
 						} catch (JSONException je){
 							BuildWrapperPlugin.logError(je.getLocalizedMessage(), je);

@@ -7,9 +7,12 @@ package net.sf.eclipsefp.haskell.ui.internal.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
@@ -22,6 +25,7 @@ import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
+import org.eclipse.ui.IEditorPart;
 
 
 /**
@@ -34,6 +38,7 @@ public class UsageSearchResult extends AbstractTextSearchResult {
  // private final List<ISearchResultListener> ll=new ArrayList<ISearchResultListener>();
 
   private UsageResults results=null;
+  private final Map<IFile,Match[]> matchByFile=new HashMap<IFile, Match[]>();
 
   public UsageSearchResult(final ISearchQuery query) {
     super();
@@ -85,17 +90,20 @@ public class UsageSearchResult extends AbstractTextSearchResult {
 
   public void setResults( final UsageResults results ) {
     this.results = results;
-
+    matchByFile.clear();
     final List<Match> matches=new ArrayList<Match>();
     if (this.results!=null){
       for (IProject p:this.results.listProjects()){
-        Map<IFile,Collection<UsageResults.UsageLocation>> m=this.results.getUsageInProject( p );
+        Map<IFile,Collection<Location>> m=this.results.getUsageInProject( p );
         for (IFile f:m.keySet()){
-          for (UsageResults.UsageLocation loc:m.get( f )){
-            Match match=new Match(loc,Match.UNIT_LINE,loc.getStartLine(),loc.getLengthInLine());
+          List<Match> myMatches=new ArrayList<Match>();
+          for (Location loc:m.get( f )){
+            Match match=new Match(loc,Match.UNIT_LINE,loc.getStartLine()-1,1);
             addMatch( match );
-            matches.add(match);
+            myMatches.add(match);
           }
+          matchByFile.put( f, myMatches.toArray( new Match[myMatches.size()] ) );
+          matches.addAll(myMatches);
         }
       }
     }
@@ -128,8 +136,7 @@ public class UsageSearchResult extends AbstractTextSearchResult {
    */
   @Override
   public IFileMatchAdapter getFileMatchAdapter() {
-    // TODO Auto-generated method stub
-    return null;
+    return new FileMatchAdapter() ;
   }
 
   /* (non-Javadoc)
@@ -137,8 +144,52 @@ public class UsageSearchResult extends AbstractTextSearchResult {
    */
   @Override
   public IEditorMatchAdapter getEditorMatchAdapter() {
-    // TODO Auto-generated method stub
-    return null;
+    return new EditorMatchAdapter();
+  }
+
+  private static class FileMatchAdapter implements IFileMatchAdapter{
+    @Override
+    public IFile getFile( final Object paramObject ) {
+      if (paramObject instanceof Location){
+        return ((Location)paramObject).getIFile();
+      }
+      return null;
+    }
+
+    @Override
+    public Match[] computeContainedMatches(
+        final AbstractTextSearchResult paramAbstractTextSearchResult, final IFile paramIFile ) {
+      return ((UsageSearchResult)paramAbstractTextSearchResult).matchByFile.get( paramIFile );
+    }
+  }
+
+  private static class EditorMatchAdapter implements IEditorMatchAdapter {
+    /* (non-Javadoc)
+     * @see org.eclipse.search.ui.text.IEditorMatchAdapter#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
+     */
+    @Override
+    public boolean isShownInEditor( final Match paramMatch,
+        final IEditorPart paramIEditorPart ) {
+      if (paramIEditorPart instanceof HaskellEditor){
+        IFile f=((Location)paramMatch.getElement()).getIFile();
+        return f.equals(((HaskellEditor)paramIEditorPart).findFile());
+      }
+      return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
+     */
+    @Override
+    public Match[] computeContainedMatches(
+        final AbstractTextSearchResult paramAbstractTextSearchResult,
+        final IEditorPart paramIEditorPart ) {
+      if (paramIEditorPart instanceof HaskellEditor){
+        IFile f=((HaskellEditor)paramIEditorPart).findFile();
+        return ((UsageSearchResult)paramAbstractTextSearchResult).matchByFile.get( f );
+      }
+      return null;
+    }
   }
 
 }

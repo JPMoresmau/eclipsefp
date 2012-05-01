@@ -19,19 +19,22 @@ import org.eclipse.core.resources.IProject;
  *
  */
 public class UsageResults {
-	private Map<IProject,Map<IFile,Collection<UsageLocation>>> allResults=new HashMap<IProject, Map<IFile,Collection<UsageLocation>>>();
+	private Map<IProject,Map<IFile,Collection<Location>>> allResults=new HashMap<IProject, Map<IFile,Collection<Location>>>();
 	
-	public void put(IFile file,Collection<UsageLocation> locs){
+	public void put(IFile file,Collection<Location> locs){
 		IProject p=file.getProject();
-		Map<IFile,Collection<UsageLocation>> m=allResults.get(p);
+		Map<IFile,Collection<Location>> m=allResults.get(p);
 		if (m==null){
-			m=new HashMap<IFile, Collection<UsageLocation>>();
+			m=new HashMap<IFile, Collection<Location>>();
 			allResults.put(p, m);
 		}
-		Collection<UsageLocation> allLocs=m.get(file);
+		Collection<Location> allLocs=m.get(file);
 		if (allLocs==null){
-			allLocs=new ArrayList<UsageResults.UsageLocation>();
+			allLocs=new ArrayList<Location>();
 			m.put(file, allLocs);
+		}
+		for (Location l:locs){
+			l.setIFile(file);
 		}
 		allLocs.addAll(locs);
 	}
@@ -40,38 +43,8 @@ public class UsageResults {
 		return allResults.keySet();
 	}
 	
-	public Map<IFile,Collection<UsageLocation>> getUsageInProject(IProject p){
+	public Map<IFile,Collection<Location>> getUsageInProject(IProject p){
 		return allResults.get(p);
 	}
 	
-	public static class UsageLocation {
-		private int startLine;
-		private int lengthInLine;
-		
-		public UsageLocation(int startLine, int lengthInLine) {
-			super();
-			this.startLine = startLine;
-			this.lengthInLine = lengthInLine;
-		}
-
-		public UsageLocation(Location l) {
-			super();
-			this.startLine = l.getStartLine();
-			this.lengthInLine = Math.max(1, l.getEndLine()-getStartLine());
-		}
-		
-		/**
-		 * @return the lengthInLine
-		 */
-		public int getLengthInLine() {
-			return lengthInLine;
-		}
-		
-		/**
-		 * @return the startLine
-		 */
-		public int getStartLine() {
-			return startLine;
-		}
-	}
 }

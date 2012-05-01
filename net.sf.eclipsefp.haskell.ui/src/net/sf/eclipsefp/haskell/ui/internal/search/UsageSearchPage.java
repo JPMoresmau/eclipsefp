@@ -5,12 +5,22 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.search;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionLP;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 
 /**
@@ -45,7 +55,6 @@ public class UsageSearchPage extends AbstractTextSearchViewPage {
   @Override
   protected void elementsChanged( final Object[] paramArrayOfObject ) {
     getViewer().setInput( lastResults);
-    //getViewer().refresh();
   }
 
   /* (non-Javadoc)
@@ -83,8 +92,18 @@ public class UsageSearchPage extends AbstractTextSearchViewPage {
    */
   @Override
   protected void clear() {
-    // NOOP
+   lastResults=null;
 
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
+   */
+  @Override
+  protected void showMatch( final Match match, final int currentOffset, final int currentLength,
+      final boolean activate ) throws PartInitException {
+    IWorkbenchPage page = getSite().getPage();
+    openAndSelect( page, ((Location)match.getElement()).getIFile(), currentOffset, currentLength, activate );
   }
 
   /* (non-Javadoc)
@@ -105,6 +124,28 @@ public class UsageSearchPage extends AbstractTextSearchViewPage {
   protected void configureTableViewer( final TableViewer tableViewer ) {
     // NOOP
 
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#getCurrentMatchLocation(org.eclipse.search.ui.text.Match)
+   */
+  @Override
+  public IRegion getCurrentMatchLocation( final Match match ) {
+    IDocumentProvider prov=new TextFileDocumentProvider();
+    Location loc=(Location)match.getElement();
+    try {
+      prov.connect( loc.getIFile() );
+      try {
+        IDocument doc=prov.getDocument(  loc.getIFile() );
+        int off1=loc.getStartOffset( doc );
+        return new Region(off1,loc.getLength( doc ));
+      } finally {
+        prov.disconnect( loc.getIFile() );
+      }
+    } catch (Exception ce){
+      HaskellUIPlugin.log( ce );
+    }
+    return super.getCurrentMatchLocation( match );
   }
 
 }
