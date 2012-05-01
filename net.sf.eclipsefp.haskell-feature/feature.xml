@@ -135,7 +135,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.util"
          download-size="0"
          install-size="0"
-         version="2.2.4"
+         version="2.2.5"
          unpack="false"/>
 
    <plugin

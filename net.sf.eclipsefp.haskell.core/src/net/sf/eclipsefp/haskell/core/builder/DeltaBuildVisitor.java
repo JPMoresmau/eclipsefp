@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.builder;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -42,12 +43,13 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
   private boolean handleFileVisit( final IResourceDelta delta,
                                    final IFile file ) {
     boolean result = false;
-    if( file.exists() && (isHaskellFile( file ) || isCabalFile( file )) && !file.isDerived()) {
+    // && !file.isDerived() even if file is derived, it's been modified, hence we rebuild
+    if( file.exists() && (FileUtil.hasHaskellExtension( file ) || FileUtil.hasCabalExtension( file )) ) {
       switch( delta.getKind() ) {
         case IResourceDelta.ADDED:
         case IResourceDelta.CHANGED:
           setNeedBuild( true );
-          if (isCabalFile( file )){
+          if (FileUtil.hasCabalExtension( file )){
             setNeedSynchronize( true);
             BuildWrapperPlugin.deleteProblems( file );
           }
@@ -55,7 +57,7 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
           break;
         case IResourceDelta.REMOVED:
           setNeedBuild( true );
-          setNeedSynchronize(  isCabalFile( file ) );
+          setNeedSynchronize( FileUtil.hasCabalExtension( file ));
           result = true;
           break;
       }

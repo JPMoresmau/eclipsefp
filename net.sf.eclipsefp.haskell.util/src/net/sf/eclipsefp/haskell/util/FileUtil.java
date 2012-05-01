@@ -244,6 +244,12 @@ public class FileUtil {
     return has(resource, EXTENSION_HS) || has(resource, EXTENSION_LHS) || has(resource, EXTENSION_HSC);
   }
   
+  public static boolean hasAnySourceExtension(final IResource resource) {
+	  return hasHaskellExtension(resource) || hasCabalExtension(resource)
+			 || has(resource,EXTENSION_ALEX)
+			 || has(resource,EXTENSION_HAPPY)
+			 || has(resource,EXTENSION_UUAGC);
+  }
   
 
   private static boolean has(final IResource resource, final String extension) {

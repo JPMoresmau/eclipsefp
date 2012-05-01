@@ -2,7 +2,6 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -37,13 +36,13 @@ abstract class Visitor {
     this.needBuild = needBuild;
   }
 
-  boolean isHaskellFile( final IFile file ) {
-    return FileUtil.hasHaskellExtension( file );
-  }
-
-  boolean isCabalFile( final IFile file ) {
-    return FileUtil.hasCabalExtension( file );
-  }
+//  boolean isHaskellFile( final IFile file ) {
+//    return FileUtil.hasHaskellExtension( file );
+//  }
+//
+//  boolean isCabalFile( final IFile file ) {
+//    return FileUtil.hasCabalExtension( file );
+//  }
 
   boolean isInSourceFolder( final IFile file ) {
     if( file == null || !file.isAccessible() ) {

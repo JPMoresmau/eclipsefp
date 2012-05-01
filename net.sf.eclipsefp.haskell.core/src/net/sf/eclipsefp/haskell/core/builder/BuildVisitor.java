@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
@@ -22,7 +23,7 @@ class BuildVisitor extends Visitor implements IResourceVisitor {
     //return true to continue visiting children.
     if( res instanceof IFile ) {
       IFile file = ( IFile )res;
-      if( isHaskellFile( file ) && isInSourceFolder( file ) ) {
+      if( FileUtil.hasHaskellExtension( file ) && isInSourceFolder( file ) ) {
         //compileFile( file );
         setNeedBuild( true );
       }
