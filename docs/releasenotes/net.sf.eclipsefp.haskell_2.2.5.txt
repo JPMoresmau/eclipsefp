@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- rebuild project correctly if a Happy, Alez or UUAGC file is modified
+	- Accept space only as separator for extensions field in cabal file
 
 Features:
 	- Output (exe) generation on build can be disabled by adding output=true to the haskell builder command of the .project file

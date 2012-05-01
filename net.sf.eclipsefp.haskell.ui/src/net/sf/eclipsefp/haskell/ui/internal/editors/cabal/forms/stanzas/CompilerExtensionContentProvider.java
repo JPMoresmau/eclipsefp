@@ -37,7 +37,9 @@ public class CompilerExtensionContentProvider implements ITreeContentProvider {
       "XmlSyntax", "RegularPatterns", "TupleSections", "GHCForeignImportPrim",
       "NPlusKPatterns", "DoAndIfThenElse", "RebindableSyntax",
       "ExplicitForAll", "DatatypeContexts", "MonoLocalBinds", "DeriveFunctor",
-      "DeriveTraversable", "DeriveFoldable" };
+      "DeriveTraversable", "DeriveFoldable","Safe","Trustworthy","Unsafe",
+      "AlternativeLayoutRule","AlternativeLayoutRuleTransitional","NondecreasingIndentation",
+      "RelaxedLayout","TraditionalRecordSyntax"};
 
   @Override
   public void dispose() {
