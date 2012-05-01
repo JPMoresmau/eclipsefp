@@ -93,6 +93,8 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
       result = HaskellUIImages.getImage( IImageNames.SOURCE_FOLDER );
     }else if (element instanceof ProjectExplorerStanza) {
       result = lp.getImage( ((ProjectExplorerStanza)element).getStanza() );
+    } else if (element instanceof UsageResults.UsageLocation){
+      result = HaskellUIImages.getImage( IImageNames.SEARCH_LINE );
     } else {
       result=super.getImage( element );
     }
@@ -133,6 +135,9 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
         result = HaskellUIImages.getImage( id );
       } else {
         result=super.getImage( folder );
+        if (result==null){
+            return HaskellUIImages.getImage( IImageNames.FOLDER);
+        }
       }
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log(  cex );

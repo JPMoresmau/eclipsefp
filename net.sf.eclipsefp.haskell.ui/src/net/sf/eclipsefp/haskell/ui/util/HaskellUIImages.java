@@ -51,6 +51,7 @@ public class HaskellUIImages implements IImageNames {
     declare( LAUNCH_TAB_AUTOMATION, OBJECT + "automation_tab.gif" ); //$NON-NLS-1$
     declare( IMPORT_LIBRARY,       OBJECT + "library.gif" ); //$NON-NLS-1$
     declare( SOURCE_FOLDER,        OBJECT + "srcfolder_obj.gif" ); //$NON-NLS-1$
+    declare( FOLDER,            OBJECT + "fldr_obj.gif" ); //$NON-NLS-1$
     declare( SOURCE_FILE,          OBJECT + "hsfile_obj.gif" ); //$NON-NLS-1$
     declare( LITERATE_SOURCE_FILE, OBJECT + "lhsfile_obj.gif" ); //$NON-NLS-1$
     declare( PROJECT_EXECUTABLE,   OBJECT + "projexe.gif" ); //$NON-NLS-1$
@@ -116,7 +117,7 @@ public class HaskellUIImages implements IImageNames {
 
     declare(HACKAGE_UPDATE,VIEW+"hackage_update.png");
     declare(HACKAGE_INSTALL,VIEW+"hackage_install.png");
-
+    declare(SEARCH_LINE,OBJECT+"search_ref_obj.gif");
   }
 
   private final static void declare( final String key,

@@ -28,6 +28,7 @@ public interface IImageNames {
   // Haskell project elements
   String HASKELL_PROJECT      = ID + ".HASKELL_PROJECT"; //$NON-NLS-1$
   String SOURCE_FOLDER        = ID + ".SOURCE_FOLDER"; //$NON-NLS-1$
+  String FOLDER               = ID + ".FOLDER"; //$NON-NLS-1$
   String SOURCE_FILE          = ID + ".SOURCE_FILE"; //$NON-NLS-1$
   String LITERATE_SOURCE_FILE = ID + ".LITERATE_SOURCE_FILE"; //$NON-NLS-1$
   String IMPORT_LIBRARY       = ID + ".IMPORT_LIBRARY"; //$NON-NLS-1$
@@ -91,4 +92,6 @@ public interface IImageNames {
 
   String HACKAGE_UPDATE= ID+".HACKAGE_UPDATE"; //$NON-NLS-1$
   String HACKAGE_INSTALL= ID+".HACKAGE_INSTALL"; //$NON-NLS-1$
+
+  String SEARCH_LINE=ID+".SEARCH_LINE"; //$NON-NLS-1$
 }
