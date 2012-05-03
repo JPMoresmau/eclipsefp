@@ -21,6 +21,8 @@ import org.eclipse.core.resources.IProject;
 public class UsageResults {
 	private Map<IProject,Map<IFile,Collection<Location>>> allResults=new HashMap<IProject, Map<IFile,Collection<Location>>>();
 	
+	private int size=0;
+	
 	public void put(IFile file,Collection<Location> locs){
 		IProject p=file.getProject();
 		Map<IFile,Collection<Location>> m=allResults.get(p);
@@ -36,7 +38,15 @@ public class UsageResults {
 		for (Location l:locs){
 			l.setIFile(file);
 		}
+		size+=locs.size();
 		allLocs.addAll(locs);
+	}
+	
+	/**
+	 * @return the size
+	 */
+	public int getSize() {
+		return size;
 	}
 	
 	public Set<IProject> listProjects(){

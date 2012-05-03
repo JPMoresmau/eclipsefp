@@ -169,9 +169,9 @@ public class UsageAPI {
 		return false;
 	}
 	
-	public UsageResults getModuleReferences(String pkg,String module){
+	public UsageResults getModuleReferences(String pkg,String module,IProject p){
 		try {
-			return db.getModuleReferences(pkg, module);
+			return db.getModuleReferences(pkg, module,p);
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 

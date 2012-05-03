@@ -19,6 +19,7 @@ import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
@@ -40,14 +41,35 @@ public class UsageSearchResult extends AbstractTextSearchResult {
   private UsageResults results=null;
   private final Map<IFile,Match[]> matchByFile=new HashMap<IFile, Match[]>();
 
-  public UsageSearchResult(final ISearchQuery query) {
+  private final String search;
+  private final IProject project;
+
+  public UsageSearchResult(final ISearchQuery query,final String search,final IProject project) {
     super();
     this.query=query;
+    this.search=search;
+    this.project=project;
   }
 
   @Override
   public String getLabel() {
-    return UITexts.References_result_label;
+    if (results==null){
+      return UITexts.References_result_label;
+    }
+    int sz=results.getSize();
+    if (project==null){
+
+      if (sz<2){
+        return NLS.bind( UITexts.References_result_label_worskpace_single, search,sz );
+      } else {
+        return NLS.bind( UITexts.References_result_label_worskpace, search,sz );
+      }
+    }
+    if (sz<2){
+      return NLS.bind( UITexts.References_result_label_project_single, new Object[]{search,sz,project.getName() });
+    } else {
+      return NLS.bind( UITexts.References_result_label_project, new Object[]{search,sz,project.getName() });
+    }
   }
 
   @Override
@@ -159,7 +181,11 @@ public class UsageSearchResult extends AbstractTextSearchResult {
     @Override
     public Match[] computeContainedMatches(
         final AbstractTextSearchResult paramAbstractTextSearchResult, final IFile paramIFile ) {
-      return ((UsageSearchResult)paramAbstractTextSearchResult).matchByFile.get( paramIFile );
+      Match[] ms= ((UsageSearchResult)paramAbstractTextSearchResult).matchByFile.get( paramIFile );
+      if (ms==null){
+        ms=new Match[0];
+      }
+      return ms;
     }
   }
 
@@ -184,11 +210,15 @@ public class UsageSearchResult extends AbstractTextSearchResult {
     public Match[] computeContainedMatches(
         final AbstractTextSearchResult paramAbstractTextSearchResult,
         final IEditorPart paramIEditorPart ) {
+      Match[] ms=null;
       if (paramIEditorPart instanceof HaskellEditor){
         IFile f=((HaskellEditor)paramIEditorPart).findFile();
-        return ((UsageSearchResult)paramAbstractTextSearchResult).matchByFile.get( f );
+        ms= ((UsageSearchResult)paramAbstractTextSearchResult).matchByFile.get( f );
       }
-      return null;
+      if (ms==null){
+        ms=new Match[0];
+      }
+      return ms;
     }
   }
 

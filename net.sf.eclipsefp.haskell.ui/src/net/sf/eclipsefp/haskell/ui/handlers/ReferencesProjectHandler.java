@@ -5,25 +5,31 @@
  */
 package net.sf.eclipsefp.haskell.ui.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 
 /**
  * @author JP Moresmau
  *
  */
-public class ReferencesProjectHandler extends AbstractHandler {
+public class ReferencesProjectHandler extends ReferencesWorkspaceHandler {
 
   /* (non-Javadoc)
    * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
    */
   @Override
-  public Object execute( final ExecutionEvent event )
-      throws ExecutionException {
-    // TODO Auto-generated method stub
-    return null;
+  public Object execute( final ExecutionEvent event ) {
+    IEditorPart editor = HandlerUtil.getActiveEditor( event );
+    if( !( editor instanceof HaskellEditor ) ) {
+      return null;
+    }
+
+    final HaskellEditor haskellEditor = ( HaskellEditor )editor;
+    project=haskellEditor.findFile().getProject();
+    return super.execute( event );
   }
 
 }

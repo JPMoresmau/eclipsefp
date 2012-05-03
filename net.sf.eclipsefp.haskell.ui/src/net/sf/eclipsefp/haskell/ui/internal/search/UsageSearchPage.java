@@ -5,21 +5,39 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.search;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionLP;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.search.internal.ui.text.NewTextSearchActionGroup;
 import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 
@@ -28,8 +46,9 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * @author JP Moresmau
  *
  */
-public class UsageSearchPage extends AbstractTextSearchViewPage {
+public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
   private UsageSearchResult lastResults;
+  private ActionGroup fActionGroup;
 //  private final ISearchResultListener listener=new ISearchResultListener() {
 //
 //    @Override
@@ -148,4 +167,72 @@ public class UsageSearchPage extends AbstractTextSearchViewPage {
     return super.getCurrentMatchLocation( match );
   }
 
+  private static final String[] SHOW_IN_TARGETS = { "org.eclipse.ui.views.ResourceNavigator" };
+  private static final IShowInTargetList SHOW_IN_TARGET_LIST = new IShowInTargetList() {
+    @Override
+    public String[] getShowInTargetIds() {
+      return SHOW_IN_TARGETS;
+    }
+  };
+
+  /* (non-Javadoc)
+   * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+   */
+  @Override
+  public Object getAdapter( final Class arg0 ) {
+    if( arg0.equals( IShowInTarget.class ) ) {
+      return SHOW_IN_TARGET_LIST;
+    }
+    if(arg0.equals( IShowInSource.class ) ) {
+      ISelectionProvider selectionProvider = getSite().getSelectionProvider();
+      if( selectionProvider == null ) {
+        return null;
+      }
+      ISelection selection = selectionProvider.getSelection();
+      if( selection instanceof IStructuredSelection ) {
+        IStructuredSelection structuredSelection = ( IStructuredSelection )selection;
+        final Set<Object> newSelection = new HashSet<Object>(
+            structuredSelection.size() );
+
+        Iterator iter = structuredSelection.iterator();
+
+        while( iter.hasNext() ) {
+
+          Object element = iter.next();
+          if (element instanceof Location){
+            element = ((Location)element).getIFile();
+          }
+          if (element!=null){
+            newSelection.add( element );
+          }
+        }
+
+        return new IShowInSource() {
+
+            @Override
+            public ShowInContext getShowInContext() {
+              return new ShowInContext( null, new StructuredSelection(
+                  new ArrayList<Object>( newSelection ) ) );
+            }
+          };
+
+
+      }
+      return null;
+    }
+    return null;
+  }
+
+  @Override
+  public void setViewPart(final ISearchResultViewPart part) {
+        super.setViewPart(part);
+       this.fActionGroup = new NewTextSearchActionGroup(part);
+   }
+
+  @Override
+  protected void fillContextMenu(final IMenuManager mgr) {
+        super.fillContextMenu(mgr);
+        this.fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
+        this.fActionGroup.fillContextMenu(mgr);
+  }
 }

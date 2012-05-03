@@ -12,7 +12,7 @@ import net.sf.eclipsefp.haskell.ui.util.text.WordFinder;
 import net.sf.eclipsefp.haskell.ui.util.text.WordFinder.EditorThing;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,13 +28,13 @@ import org.eclipse.ui.progress.UIJob;
  *
  */
 public class ReferencesWorkspaceHandler extends AbstractHandler {
+  protected IProject project=null;
 
   /* (non-Javadoc)
    * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
    */
   @Override
-  public Object execute( final ExecutionEvent event )
-      throws ExecutionException {
+  public Object execute( final ExecutionEvent event )     {
     IEditorPart editor = HandlerUtil.getActiveEditor( event );
     if( !( editor instanceof HaskellEditor ) ) {
       return null;
@@ -49,10 +49,6 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
 
           @Override
           public void handle( final EditorThing thing ) {
-            //String name = thing.getName();
-            //char haddockType = thing.getHaddockType();
-            // final ScionInstance instance=thing.getInstance();
-
             if(thing!=null &&  thing.getThing()!=null) {
 
             }
@@ -61,7 +57,7 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
 
               @Override
               public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                UsageQuery uq=new UsageQuery(myModule);
+                UsageQuery uq=new UsageQuery(myModule,project);
                 NewSearchUI.runQueryInBackground( uq,p);
                 return Status.OK_STATUS;
               }

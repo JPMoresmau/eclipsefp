@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.ui.internal.search;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -23,12 +24,15 @@ import org.eclipse.search.ui.ISearchResult;
  */
 public class UsageQuery implements ISearchQuery {
   private final String module;
-  private final UsageSearchResult sr=new UsageSearchResult( this );
+  private final IProject project;
+  private final UsageSearchResult sr;
 
 
-  public UsageQuery( final String module ) {
+  public UsageQuery( final String module,final IProject p ) {
     super();
     this.module = module;
+    this.project=p;
+    sr=new UsageSearchResult( this,module, project );
   }
 
   /* (non-Javadoc)
@@ -37,7 +41,7 @@ public class UsageQuery implements ISearchQuery {
   @Override
   public IStatus run( final IProgressMonitor paramIProgressMonitor )
       throws OperationCanceledException {
-    UsageResults results=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module );
+    UsageResults results=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module,project );
     sr.setResults( results );
 
     return Status.OK_STATUS;

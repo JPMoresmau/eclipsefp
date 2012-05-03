@@ -319,18 +319,30 @@ public class UsageDB {
 		
 	}
 	
-	public UsageResults getModuleReferences(String pkg,String module) throws SQLException {
+	public UsageResults getModuleReferences(String pkg,String module,IProject p) throws SQLException {
 		checkConnection();
-		StringBuilder sb=new StringBuilder("select mu.fileid,mu.location from module_usages mu, modules m where mu.moduleid=m.moduleid and m.module=?");
+		StringBuilder sb=new StringBuilder("select mu.fileid,mu.location from module_usages mu, modules m");
+		if (p!=null){
+			sb.append(",files f");
+		}
+		sb.append(" where mu.moduleid=m.moduleid and m.module=?");
 		if (pkg!=null){
 			sb.append(" and m.package=?");
+		}
+		if (p!=null){
+			sb.append("and f.fileid=mu.fileid and f.project=?");
 		}
 		PreparedStatement ps=conn.prepareStatement(sb.toString());
 		Map<Long,Collection<Location>> m=new HashMap<Long, Collection<Location>>();
 		try {
-			ps.setString(1, module);
+			int ix=1;
+			ps.setString(ix++, module);
+			
 			if (pkg!=null){
-				ps.setString(2, pkg);
+				ps.setString(ix++, pkg);
+			}
+			if (p!=null){
+				ps.setString(ix++, p.getName());
 			}
 			ResultSet rs=ps.executeQuery();
 			try {

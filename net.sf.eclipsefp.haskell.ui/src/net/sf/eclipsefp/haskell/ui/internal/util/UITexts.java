@@ -720,6 +720,10 @@ public final class UITexts extends NLS {
   public static String OpenModuleAction_nomodulesel;
 
   public static String References_result_label;
+  public static String References_result_label_project;
+  public static String References_result_label_project_single;
+  public static String References_result_label_worskpace;
+  public static String References_result_label_worskpace_single;
   public static String References_result_tooltip;
   public static String References_query_label;
   public static String References_result_refreshing;
