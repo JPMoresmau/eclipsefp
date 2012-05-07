@@ -41,8 +41,10 @@ public class UsageQuery implements ISearchQuery {
   @Override
   public IStatus run( final IProgressMonitor paramIProgressMonitor )
       throws OperationCanceledException {
-    UsageResults results=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module,project );
-    sr.setResults( results );
+    UsageResults resultsRefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module,project );
+    UsageResults resultsDefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleDefinitions( null, module,project );
+    resultsRefs.add(resultsDefs);
+    sr.setResults( resultsRefs );
 
     return Status.OK_STATUS;
   }

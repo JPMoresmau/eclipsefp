@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -54,10 +54,14 @@ public class UsageResultContentProvider implements ITreeContentProvider {
         Set<IProject> ps=results.listProjects();
         roots=ps.toArray( new Object[ps.size()] );
         for (IProject p:ps){
-          Map<IFile,Collection<Location>> m=results.getUsageInProject( p );
+          Map<IFile,Map<String,Collection<SearchResultLocation>>> m=results.getUsageInProject( p );
           for (IFile f:m.keySet()){
-            Collection<Location> uls=m.get( f );
-            uiresults.put( f, new ArrayList<Object>(uls));
+            Map<String,Collection<SearchResultLocation>> uls=m.get( f );
+            Collection<Object> l=new ArrayList<Object>();
+            for (String sec:uls.keySet()){
+              l.add(new SectionSearchResult( f,sec, uls.get( sec ) ));
+            }
+            uiresults.put( f, l);
             IContainer parent=f.getParent();
             Object child=f;
             while (!(parent instanceof IWorkspaceRoot)){

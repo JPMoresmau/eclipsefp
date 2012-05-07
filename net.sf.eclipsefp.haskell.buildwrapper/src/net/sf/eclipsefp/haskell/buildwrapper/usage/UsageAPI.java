@@ -70,12 +70,13 @@ public class UsageAPI {
 					try {
 						String pkg=formatPackage(arr.getString(0));
 						String module=formatModule(c, arr.getString(1));
+						String loc=arr.optString(2);
 						if (module!=null){
 							long fileID=db.getFileID(f);
 							db.clearUsageInFile(fileID);
 							
 							//long moduleID=
-							db.getModuleID(pkg, module, fileID);
+							db.getModuleID(pkg, module, fileID, loc);
 							List<ModuleUsage> modUsages=new ArrayList<ModuleUsage>();
 							buildUsage(arr,modUsages);
 							db.setModuleUsages(fileID, modUsages);
@@ -92,7 +93,7 @@ public class UsageAPI {
 	}
 	
 	private void buildUsage(JSONArray arr,List<ModuleUsage> modUsages){
-		JSONObject pkgs=arr.optJSONObject(2);
+		JSONObject pkgs=arr.optJSONObject(3);
 		if (pkgs!=null){
 			for (Iterator<String> itPkg=pkgs.keys();itPkg.hasNext();){
 				String pkgKey=itPkg.next();
@@ -111,7 +112,7 @@ public class UsageAPI {
 			JSONObject types=mods.optJSONObject(modKey);
 			if (types!=null){
 				try {
-					long modID=db.getModuleID(pkg, modKey, null);
+					long modID=db.getModuleID(pkg, modKey, null,null);
 				
 					buildUsage(modID,types.optJSONObject("vars"),false,modUsages);
 				} catch (SQLException sqle){
@@ -129,11 +130,15 @@ public class UsageAPI {
 				if (locs!=null){
 					
 					for (int a=0;a<locs.length();a++){
-						JSONArray loc=locs.optJSONArray(a);
-						if (loc!=null){
-							String sloc=loc.toString();
-							if (!isType && symKey.length()==0){
-								modUsages.add(new ModuleUsage(modID, sloc));
+						JSONObject secLoc=locs.optJSONObject(a);
+						if (secLoc!=null){
+							String sec=secLoc.optString("s");
+							JSONArray loc=secLoc.optJSONArray("l");
+							if (sec!=null && loc!=null){
+								String sloc=loc.toString();
+								if (!isType && symKey.length()==0){
+									modUsages.add(new ModuleUsage(modID, sec,sloc));
+								}
 							}
 						}
 					}
@@ -172,6 +177,15 @@ public class UsageAPI {
 	public UsageResults getModuleReferences(String pkg,String module,IProject p){
 		try {
 			return db.getModuleReferences(pkg, module,p);
+		} catch (SQLException sqle){
+			BuildWrapperPlugin.logError(BWText.error_db, sqle);
+		} 
+		return new UsageResults();
+	}
+	
+	public UsageResults getModuleDefinitions(String pkg,String module,IProject p){
+		try {
+			return db.getModuleDefinitions(pkg, module,p);
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 

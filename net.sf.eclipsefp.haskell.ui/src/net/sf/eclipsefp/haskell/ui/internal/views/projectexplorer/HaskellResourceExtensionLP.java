@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline.CabalOutlineLP;
+import net.sf.eclipsefp.haskell.ui.internal.search.SectionSearchResult;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.OutlineLabelProvider;
@@ -99,6 +100,8 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
       result = HaskellUIImages.getImage( IImageNames.SEARCH_LINE );
 //    } else if (element instanceof MatchInfo){
 //      result = HaskellUIImages.getImage( IImageNames.SEARCH_LINE );
+    } else if (element instanceof SectionSearchResult){
+      result = HaskellUIImages.getImage( IImageNames.SEARCH_LINE );
     } else {
       result=super.getImage( element );
     }

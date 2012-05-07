@@ -19,27 +19,46 @@ import org.eclipse.core.resources.IProject;
  *
  */
 public class UsageResults {
-	private Map<IProject,Map<IFile,Collection<Location>>> allResults=new HashMap<IProject, Map<IFile,Collection<Location>>>();
+	private Map<IProject,Map<IFile,Map<String,Collection<SearchResultLocation>>>> allResults=new HashMap<IProject, Map<IFile,Map<String,Collection<SearchResultLocation>>>>();
 	
 	private int size=0;
 	
-	public void put(IFile file,Collection<Location> locs){
+	public void put(IFile file,Map<String,Collection<SearchResultLocation>> locs){
 		IProject p=file.getProject();
-		Map<IFile,Collection<Location>> m=allResults.get(p);
+		Map<IFile,Map<String,Collection<SearchResultLocation>>> m=allResults.get(p);
 		if (m==null){
-			m=new HashMap<IFile, Collection<Location>>();
+			m=new HashMap<IFile, Map<String,Collection<SearchResultLocation>>>();
 			allResults.put(p, m);
 		}
-		Collection<Location> allLocs=m.get(file);
-		if (allLocs==null){
-			allLocs=new ArrayList<Location>();
-			m.put(file, allLocs);
+		Map<String,Collection<SearchResultLocation>> sections=m.get(file);
+		if (sections==null){
+			sections=new HashMap<String, Collection<SearchResultLocation>>();
+			m.put(file, sections);
 		}
-		for (Location l:locs){
-			l.setIFile(file);
+		for (String s:locs.keySet()){
+			Collection<SearchResultLocation> allLocs=sections.get(s);
+			if (allLocs==null){
+				allLocs=new ArrayList<SearchResultLocation>();
+				sections.put(s, allLocs);
+			}
+			Collection<SearchResultLocation> sLocs=locs.get(s);
+			for (SearchResultLocation l:sLocs){
+				l.setIFile(file);
+			}
+			size+=sLocs.size();
+			allLocs.addAll(sLocs);
 		}
-		size+=locs.size();
-		allLocs.addAll(locs);
+	}
+	
+	public void add(UsageResults r){
+		if (r!=null){
+			for (IProject p:r.listProjects()){
+				Map<IFile,Map<String,Collection<SearchResultLocation>>> m=r.getUsageInProject(p);
+				for (IFile f:m.keySet()){
+					put(f, m.get(f));
+				}
+			}
+		}
 	}
 	
 	/**
@@ -53,7 +72,7 @@ public class UsageResults {
 		return allResults.keySet();
 	}
 	
-	public Map<IFile,Collection<Location>> getUsageInProject(IProject p){
+	public Map<IFile,Map<String,Collection<SearchResultLocation>>> getUsageInProject(IProject p){
 		return allResults.get(p);
 	}
 	

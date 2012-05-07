@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.HaskellResourceExtensionLP;
 import org.eclipse.core.runtime.IAdaptable;
@@ -122,7 +122,7 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
   protected void showMatch( final Match match, final int currentOffset, final int currentLength,
       final boolean activate ) throws PartInitException {
     IWorkbenchPage page = getSite().getPage();
-    openAndSelect( page, ((Location)match.getElement()).getIFile(), currentOffset, currentLength, activate );
+    openAndSelect( page, ((SectionSearchResult)match.getElement()).getFile(), currentOffset, currentLength, activate );
   }
 
   /* (non-Javadoc)
@@ -151,7 +151,7 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
   @Override
   public IRegion getCurrentMatchLocation( final Match match ) {
     IDocumentProvider prov=new TextFileDocumentProvider();
-    Location loc=(Location)match.getElement();
+    SearchResultLocation loc=((SectionSearchResult)match.getElement()).getLocations().iterator().next();
     try {
       prov.connect( loc.getIFile() );
       try {
@@ -199,8 +199,8 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
         while( iter.hasNext() ) {
 
           Object element = iter.next();
-          if (element instanceof Location){
-            element = ((Location)element).getIFile();
+          if (element instanceof SectionSearchResult){
+            element = ((SectionSearchResult)element).getFile();
           }
           if (element!=null){
             newSelection.add( element );

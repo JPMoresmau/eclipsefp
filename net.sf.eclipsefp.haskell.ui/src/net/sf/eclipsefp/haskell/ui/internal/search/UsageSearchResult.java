@@ -7,10 +7,11 @@ package net.sf.eclipsefp.haskell.ui.internal.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -116,14 +117,22 @@ public class UsageSearchResult extends AbstractTextSearchResult {
     final List<Match> matches=new ArrayList<Match>();
     if (this.results!=null){
       for (IProject p:this.results.listProjects()){
-        Map<IFile,Collection<Location>> m=this.results.getUsageInProject( p );
+        Map<IFile,Map<String,Collection<SearchResultLocation>>> m=this.results.getUsageInProject( p );
         for (IFile f:m.keySet()){
           List<Match> myMatches=new ArrayList<Match>();
-          for (Location loc:m.get( f )){
-            Match match=new Match(loc,Match.UNIT_LINE,loc.getStartLine()-1,1);
-            addMatch( match );
-            myMatches.add(match);
+          Map<String,Collection<SearchResultLocation>> uls=m.get( f );
+          for (String sec:uls.keySet()){
+
+            for (Collection<SearchResultLocation> locs:m.get( f ).values()){
+              for (SearchResultLocation loc:locs){
+                SectionSearchResult ssr=new SectionSearchResult( f,sec, Collections.singleton( loc ) );
+                Match match=new Match(ssr,Match.UNIT_LINE,loc.getStartLine()-1,1);
+                addMatch( match );
+                myMatches.add(match);
+              }
+            }
           }
+
           matchByFile.put( f, myMatches.toArray( new Match[myMatches.size()] ) );
           matches.addAll(myMatches);
         }
@@ -172,8 +181,8 @@ public class UsageSearchResult extends AbstractTextSearchResult {
   private static class FileMatchAdapter implements IFileMatchAdapter{
     @Override
     public IFile getFile( final Object paramObject ) {
-      if (paramObject instanceof Location){
-        return ((Location)paramObject).getIFile();
+      if (paramObject instanceof SearchResultLocation){
+        return ((SearchResultLocation)paramObject).getIFile();
       }
       return null;
     }
@@ -197,7 +206,7 @@ public class UsageSearchResult extends AbstractTextSearchResult {
     public boolean isShownInEditor( final Match paramMatch,
         final IEditorPart paramIEditorPart ) {
       if (paramIEditorPart instanceof HaskellEditor){
-        IFile f=((Location)paramMatch.getElement()).getIFile();
+        IFile f=((SectionSearchResult)paramMatch.getElement()).getLocations().iterator().next().getIFile();
         return f.equals(((HaskellEditor)paramIEditorPart).findFile());
       }
       return false;

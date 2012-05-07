@@ -12,12 +12,13 @@ package net.sf.eclipsefp.haskell.buildwrapper.usage;
 public class ModuleUsage {
 	private long moduleID;
 	private String location;
+	private String section;
 	
 	
-	
-	public ModuleUsage(long moduleID, String location) {
+	public ModuleUsage(long moduleID, String section,String location) {
 		super();
 		this.moduleID = moduleID;
+		this.section = section;
 		this.location = location;
 	}
 	public long getModuleID() {
@@ -26,6 +27,11 @@ public class ModuleUsage {
 	public String getLocation() {
 		return location;
 	}
-		
+	/**
+	 * @return the section
+	 */
+	public String getSection() {
+		return section;
+	}
 	
 }

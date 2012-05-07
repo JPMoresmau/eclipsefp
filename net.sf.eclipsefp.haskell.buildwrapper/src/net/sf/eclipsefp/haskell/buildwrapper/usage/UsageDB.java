@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
-import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
@@ -96,12 +96,12 @@ public class UsageDB {
 			s.execute("create table if not exists files (fileid INTEGER PRIMARY KEY ASC,project TEXT not null, name TEXT not null)");
 			s.execute("create unique index if not exists filenames on files (project, name)");
 			
-			s.execute("create table if not exists modules (moduleid INTEGER PRIMARY KEY ASC,package TEXT not null, module TEXT not null,fileid INTEGER,foreign key (fileid) references files(fileid) on delete set null)");
+			s.execute("create table if not exists modules (moduleid INTEGER PRIMARY KEY ASC,package TEXT not null, module TEXT not null,fileid INTEGER,location TEXT,foreign key (fileid) references files(fileid) on delete set null)");
 			s.execute("create unique index if not exists modulenames on modules (package,module)");
 			
 			//s.execute("create index if not exists modulefiles on modules (fileid)");
 			
-			s.execute("create table if not exists module_usages (moduleid INTEGER not null,fileid INTEGER not null,location TEXT not null,foreign key (fileid) references files(fileid) on delete cascade,foreign key (moduleid) references modules(moduleid) on delete cascade)");
+			s.execute("create table if not exists module_usages (moduleid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (fileid) references files(fileid) on delete cascade,foreign key (moduleid) references modules(moduleid) on delete cascade)");
 		} finally {
 			s.close();
 		}
@@ -191,12 +191,13 @@ public class UsageDB {
 	
 	public void setModuleUsages(long fileid,Collection<ModuleUsage> usages) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("insert into module_usages values(?,?,?)");
+		PreparedStatement ps=conn.prepareStatement("insert into module_usages values(?,?,?,?)");
 		try {
 			for (ModuleUsage usg:usages){
 				ps.setLong(1, usg.getModuleID());
 				ps.setLong(2, fileid);
-				ps.setString(3, usg.getLocation());
+				ps.setString(3, usg.getSection());
+				ps.setString(4, usg.getLocation());
 				ps.addBatch();
 			}
 			ps.executeBatch();
@@ -205,7 +206,7 @@ public class UsageDB {
 		}
 	}
 	
-	public long getModuleID(String pkg,String module,Long fileID) throws SQLException {
+	public long getModuleID(String pkg,String module,Long fileID,String loc) throws SQLException {
 		checkConnection();
 		PreparedStatement ps=conn.prepareStatement("select moduleid from modules where package=? and module=?");
 		Long moduleID=null;
@@ -225,7 +226,7 @@ public class UsageDB {
 			ps.close();
 		}
 		if (moduleID==null){
-			 ps=conn.prepareStatement("insert into modules (package,module,fileid) values(?,?,?)");
+			 ps=conn.prepareStatement("insert into modules (package,module,fileid,location) values(?,?,?,?)");
 			 try {
 				ps.setString(1, pkg);
 				ps.setString(2, module);
@@ -233,6 +234,11 @@ public class UsageDB {
 					ps.setLong(3, fileID);
 				} else {
 					ps.setNull(3, Types.NUMERIC);
+				}
+				if (loc!=null){
+					ps.setString(4, loc);
+				} else {
+					ps.setNull(4, Types.VARCHAR);
 				}
 				ps.execute();
 				ResultSet rs=ps.getGeneratedKeys();
@@ -318,22 +324,26 @@ public class UsageDB {
 		}
 		
 	}
-	
-	public UsageResults getModuleReferences(String pkg,String module,IProject p) throws SQLException {
+
+	public UsageResults getModuleDefinitions(String pkg,String module,IProject p) throws SQLException {
 		checkConnection();
-		StringBuilder sb=new StringBuilder("select mu.fileid,mu.location from module_usages mu, modules m");
+		StringBuilder sb=new StringBuilder("select m.fileid,'module ' || module,m.location,1 from modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
-		sb.append(" where mu.moduleid=m.moduleid and m.module=?");
+		sb.append(" where m.module=?");
 		if (pkg!=null){
 			sb.append(" and m.package=?");
 		}
 		if (p!=null){
-			sb.append("and f.fileid=mu.fileid and f.project=?");
+			sb.append("and f.fileid=m.fileid and f.project=?");
 		}
-		PreparedStatement ps=conn.prepareStatement(sb.toString());
-		Map<Long,Collection<Location>> m=new HashMap<Long, Collection<Location>>();
+		return getUsageResults(pkg, module, p, sb.toString());
+	}
+	
+	private UsageResults getUsageResults(String pkg,String module,IProject p,String query) throws SQLException{
+		PreparedStatement ps=conn.prepareStatement(query);
+		Map<Long,Map<String,Collection<SearchResultLocation>>> m=new HashMap<Long, Map<String,Collection<SearchResultLocation>>>();
 		try {
 			int ix=1;
 			ps.setString(ix++, module);
@@ -348,17 +358,25 @@ public class UsageDB {
 			try {
 				while (rs.next()){
 					long fileid=rs.getLong(1);
-					Collection<Location> locs=m.get(fileid);
+					Map<String,Collection<SearchResultLocation>> sections=m.get(fileid);
+					if (sections==null){
+						sections=new HashMap<String, Collection<SearchResultLocation>>();
+						m.put(fileid, sections);
+					}
+					String section=rs.getString(2);
+					Collection<SearchResultLocation> locs=sections.get(section);
 					if (locs==null){
-						locs=new ArrayList<Location>();
-						m.put(fileid,locs);
+						locs=new ArrayList<SearchResultLocation>();
+						sections.put(section,locs);
 					}
 					//IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject(project);
 					//if (p!=null){
 						//IFile f=p.getFile(name);
-						String loc=rs.getString(2);
+						String loc=rs.getString(3);
+						boolean def=rs.getBoolean(4);
 						try {
-							Location l=new net.sf.eclipsefp.haskell.buildwrapper.types.Location("", new JSONArray(loc));
+							SearchResultLocation l=new SearchResultLocation(null, new JSONArray(loc));
+							l.setDefinition(def);
 							locs.add(l);
 							
 						} catch (JSONException je){
@@ -379,5 +397,21 @@ public class UsageDB {
 		}
 		return ret;
 	}
+
+		
+	public UsageResults getModuleReferences(String pkg,String module,IProject p) throws SQLException {
+		checkConnection();
+		StringBuilder sb=new StringBuilder("select mu.fileid,mu.section,mu.location,0 from module_usages mu, modules m");
+		if (p!=null){
+			sb.append(",files f");
+		}
+		sb.append(" where mu.moduleid=m.moduleid and m.module=?");
+		if (pkg!=null){
+			sb.append(" and m.package=?");
+		}
+		if (p!=null){
+			sb.append("and f.fileid=mu.fileid and f.project=?");
+		}
+		return getUsageResults(pkg, module, p, sb.toString());	}
 	
 }
