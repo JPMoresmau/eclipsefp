@@ -9,20 +9,20 @@ package net.sf.eclipsefp.haskell.buildwrapper.usage;
  * @author JP Moresmau
  *
  */
-public class ModuleUsage {
-	private long moduleID;
+public class ObjectUsage {
+	private long objectID;
 	private String location;
 	private String section;
 	
 	
-	public ModuleUsage(long moduleID, String section,String location) {
+	public ObjectUsage(long moduleID, String section,String location) {
 		super();
-		this.moduleID = moduleID;
+		this.objectID = moduleID;
 		this.section = section;
 		this.location = location;
 	}
-	public long getModuleID() {
-		return moduleID;
+	public long getObjectID() {
+		return objectID;
 	}
 	public String getLocation() {
 		return location;

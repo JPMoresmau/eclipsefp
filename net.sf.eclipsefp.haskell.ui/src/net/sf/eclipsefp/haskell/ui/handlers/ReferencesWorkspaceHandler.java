@@ -5,6 +5,7 @@
  */
 package net.sf.eclipsefp.haskell.ui.handlers;
 
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.search.UsageQuery;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -49,15 +50,33 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
 
           @Override
           public void handle( final EditorThing thing ) {
+            String term=haskellEditor.getModuleName();
+            int typeFlags=UsageQueryFlags.TYPE_ALL;
             if(thing!=null &&  thing.getThing()!=null) {
-
+              String shortName = thing.getThing().getName();
+              term=shortName;
+              if ("m".equals(thing.getThing().getHaddockType())){
+                typeFlags=UsageQueryFlags.TYPE_MODULE;
+              } else {
+                  String module = thing.getThing().getModule();
+                  if (module!=null){
+                    term=module+"."+shortName;
+                  }
+                  if (shortName.length()>0 && Character.isUpperCase( shortName.charAt( 0 ) )){
+                    typeFlags=UsageQueryFlags.TYPE_TYPE | UsageQueryFlags.TYPE_CONSTRUCTOR;
+                  } else {
+                    typeFlags=UsageQueryFlags.TYPE_VAR;
+                  }
+              }
             }
-            final String myModule = haskellEditor.getModuleName();
+
+            final UsageQuery uq=new UsageQuery(term,project);
+            uq.setTypeFlags( typeFlags );
             new UIJob( UITexts.openDefinition_select_job ) {
 
               @Override
               public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                UsageQuery uq=new UsageQuery(myModule,project);
+
                 NewSearchUI.runQueryInBackground( uq,p);
                 return Status.OK_STATUS;
               }

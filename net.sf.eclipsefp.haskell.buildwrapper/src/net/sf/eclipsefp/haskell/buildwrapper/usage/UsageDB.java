@@ -102,6 +102,13 @@ public class UsageDB {
 			//s.execute("create index if not exists modulefiles on modules (fileid)");
 			
 			s.execute("create table if not exists module_usages (moduleid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (fileid) references files(fileid) on delete cascade,foreign key (moduleid) references modules(moduleid) on delete cascade)");
+		
+			s.execute("create table if not exists symbols(symbolid INTEGER PRIMARY KEY ASC,symbol TEXT,type INTEGER,moduleid INTEGER not null,fileid INTEGER,section TEXT,location TEXT,foreign key (fileid) references files(fileid) on delete set null,foreign key (moduleid) references modules(moduleid) on delete set null)");
+			s.execute("create index if not exists symbolnames on symbols (symbol,type,moduleid)");
+			
+			s.execute("create table if not exists symbol_usages(symbolid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (symbolid) references symbols(symbolid) on delete cascade,foreign key (fileid) references files(fileid) on delete cascade)");
+			
+			
 		} finally {
 			s.close();
 		}
@@ -187,14 +194,45 @@ public class UsageDB {
 		} finally {
 			ps.close();
 		}
+		ps=conn.prepareStatement("delete from symbol_usages where fileid=?");
+		try {
+			ps.setLong(1, fileid);
+			ps.executeUpdate();
+		} finally {
+			ps.close();
+		}
+		ps=conn.prepareStatement("update symbols set fileid=null,section=null,location=null where fileid=?");
+		try {
+			ps.setLong(1, fileid);
+			ps.executeUpdate();
+		} finally {
+			ps.close();
+		}
 	}
 	
-	public void setModuleUsages(long fileid,Collection<ModuleUsage> usages) throws SQLException{
+	public void setModuleUsages(long fileid,Collection<ObjectUsage> usages) throws SQLException{
 		checkConnection();
 		PreparedStatement ps=conn.prepareStatement("insert into module_usages values(?,?,?,?)");
 		try {
-			for (ModuleUsage usg:usages){
-				ps.setLong(1, usg.getModuleID());
+			for (ObjectUsage usg:usages){
+				ps.setLong(1, usg.getObjectID());
+				ps.setLong(2, fileid);
+				ps.setString(3, usg.getSection());
+				ps.setString(4, usg.getLocation());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		} finally {
+			ps.close();
+		}
+	}
+	
+	public void setSymbolUsages(long fileid,Collection<ObjectUsage> usages) throws SQLException{
+		checkConnection();
+		PreparedStatement ps=conn.prepareStatement("insert into symbol_usages values(?,?,?,?)");
+		try {
+			for (ObjectUsage usg:usages){
+				ps.setLong(1, usg.getObjectID());
 				ps.setLong(2, fileid);
 				ps.setString(3, usg.getSection());
 				ps.setString(4, usg.getLocation());
@@ -251,8 +289,99 @@ public class UsageDB {
 			 } finally {
 				ps.close();
 			}
+		} else if (fileID!=null){
+			 ps=conn.prepareStatement("update modules set fileid=?,location=? where moduleid=?");
+			 try {
+				
+				ps.setLong(1, fileID);
+				if (loc!=null){
+					ps.setString(2, loc);
+				} else {
+					ps.setNull(2, Types.VARCHAR);
+				}
+				ps.setLong(3, moduleID);
+				ps.execute();
+			} finally {
+				ps.close();
+			}
 		}
 		return moduleID;
+	}
+	
+	public long getSymbolID(long moduleid,String symbol,int type,Long fileID,String section,String loc) throws SQLException {
+		checkConnection();
+		PreparedStatement ps=conn.prepareStatement("select symbolid from symbols where moduleid=? and symbol=? and type=?");
+		Long symbolID=null;
+		try {
+			ps.setLong(1, moduleid);
+			ps.setString(2, symbol);
+			ps.setInt(3, type);
+			ResultSet rs=ps.executeQuery();
+			try {
+				if (rs.next()){
+					symbolID=rs.getLong(1);
+				}
+			} finally {
+				rs.close();
+			}
+			
+		} finally {
+			ps.close();
+		}
+		if (symbolID==null){
+			 ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid,fileid,section,location) values(?,?,?,?,?,?)");
+			 try {
+				ps.setString(1, symbol);
+				ps.setInt(2, type);
+				ps.setLong(3, moduleid);
+				if (fileID!=null){
+					ps.setLong(4, fileID);
+				} else {
+					ps.setNull(4, Types.NUMERIC);
+				}
+				if (section!=null){
+					ps.setString(5, section);
+				} else {
+					ps.setNull(5, Types.VARCHAR);
+				}
+				if (loc!=null){
+					ps.setString(6, loc);
+				} else {
+					ps.setNull(6, Types.VARCHAR);
+				}
+				ps.execute();
+				ResultSet rs=ps.getGeneratedKeys();
+				try {
+					rs.next();
+					symbolID=rs.getLong(1);
+				} finally {
+					rs.close();
+				}
+			 } finally {
+				ps.close();
+			}
+		} else if (fileID!=null){
+			 ps=conn.prepareStatement("update symbols set fileid=?,section=?,location=? where symbolid=?");
+			 try {
+				
+				ps.setLong(1, fileID);
+				if (section!=null){
+					ps.setString(2, section);
+				} else {
+					ps.setNull(2, Types.VARCHAR);
+				}
+				if (loc!=null){
+					ps.setString(3, loc);
+				} else {
+					ps.setNull(3, Types.VARCHAR);
+				}
+				ps.setLong(4, symbolID);
+				ps.execute();
+			} finally {
+				ps.close();
+			}
+		}
+		return symbolID;
 	}
 	
 	public List<Module> listLocalModules() throws SQLException {
@@ -336,69 +465,32 @@ public class UsageDB {
 			sb.append(" and m.package=?");
 		}
 		if (p!=null){
-			sb.append("and f.fileid=m.fileid and f.project=?");
+			sb.append(" and f.fileid=m.fileid and f.project=?");
 		}
 		return getUsageResults(pkg, module, p, sb.toString());
 	}
 	
-	private UsageResults getUsageResults(String pkg,String module,IProject p,String query) throws SQLException{
-		PreparedStatement ps=conn.prepareStatement(query);
-		Map<Long,Map<String,Collection<SearchResultLocation>>> m=new HashMap<Long, Map<String,Collection<SearchResultLocation>>>();
-		try {
-			int ix=1;
-			ps.setString(ix++, module);
-			
-			if (pkg!=null){
-				ps.setString(ix++, pkg);
-			}
-			if (p!=null){
-				ps.setString(ix++, p.getName());
-			}
-			ResultSet rs=ps.executeQuery();
-			try {
-				while (rs.next()){
-					long fileid=rs.getLong(1);
-					Map<String,Collection<SearchResultLocation>> sections=m.get(fileid);
-					if (sections==null){
-						sections=new HashMap<String, Collection<SearchResultLocation>>();
-						m.put(fileid, sections);
-					}
-					String section=rs.getString(2);
-					Collection<SearchResultLocation> locs=sections.get(section);
-					if (locs==null){
-						locs=new ArrayList<SearchResultLocation>();
-						sections.put(section,locs);
-					}
-					//IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject(project);
-					//if (p!=null){
-						//IFile f=p.getFile(name);
-						String loc=rs.getString(3);
-						boolean def=rs.getBoolean(4);
-						try {
-							SearchResultLocation l=new SearchResultLocation(null, new JSONArray(loc));
-							l.setDefinition(def);
-							locs.add(l);
-							
-						} catch (JSONException je){
-							BuildWrapperPlugin.logError(je.getLocalizedMessage(), je);
-						}
-					//}
-				}
-			}finally {
-				rs.close();
-			}	
-		} finally {
-			ps.close();
+	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol,int type,IProject p) throws SQLException {
+		checkConnection();
+		StringBuilder sb=new StringBuilder("select s.fileid,s.section,s.location,1 from symbols s,modules m");
+		if (p!=null){
+			sb.append(",files f");
 		}
-		UsageResults ret=new UsageResults();
-		for (Long fileid:m.keySet()){
-			IFile f=getFile(fileid);
-			ret.put(f, m.get(fileid));
+		sb.append(" where m.module=?");
+		sb.append(" and m.moduleid=s.moduleid");
+		if (pkg!=null){
+			sb.append(" and m.package=?");
 		}
-		return ret;
+		if (p!=null){
+			sb.append(" and f.fileid=s.fileid and f.project=?");
+		}
+		sb.append(" and s.symbol=?");
+		if (type>0){
+			sb.append(" and s.type=?");
+		}
+		return getUsageResults(pkg, module, p,symbol,type, sb.toString());
 	}
-
-		
+			
 	public UsageResults getModuleReferences(String pkg,String module,IProject p) throws SQLException {
 		checkConnection();
 		StringBuilder sb=new StringBuilder("select mu.fileid,mu.section,mu.location,0 from module_usages mu, modules m");
@@ -410,8 +502,115 @@ public class UsageDB {
 			sb.append(" and m.package=?");
 		}
 		if (p!=null){
-			sb.append("and f.fileid=mu.fileid and f.project=?");
+			sb.append(" and f.fileid=mu.fileid and f.project=?");
 		}
-		return getUsageResults(pkg, module, p, sb.toString());	}
+		return getUsageResults(pkg, module, p, sb.toString());	
+	}
 	
+	public UsageResults getSymbolReferences(String pkg,String module,String symbol,int type,IProject p) throws SQLException {
+		checkConnection();
+		StringBuilder sb=new StringBuilder("select su.fileid,su.section,su.location,0 from symbol_usages su,symbols s, modules m");
+		if (p!=null){
+			sb.append(",files f");
+		}
+		sb.append(" where s.symbolid=su.symbolid and s.moduleid=m.moduleid and m.module=?");
+		if (pkg!=null){
+			sb.append(" and m.package=?");
+		}
+		if (p!=null){
+			sb.append(" and f.fileid=su.fileid and f.project=?");
+		}
+		sb.append(" and s.symbol=?");
+		if (type>0){
+			sb.append(" and s.type=?");
+		}
+		return getUsageResults(pkg, module, p,symbol,type, sb.toString());	
+	}
+	
+	private UsageResults getUsageResults(String pkg,String module,IProject p,String query) throws SQLException{
+		PreparedStatement ps=conn.prepareStatement(query);
+		
+		try {
+			int ix=1;
+			ps.setString(ix++, module);
+			
+			if (pkg!=null){
+				ps.setString(ix++, pkg);
+			}
+			if (p!=null){
+				ps.setString(ix++, p.getName());
+			}
+			return getUsageResults(ps,query);
+		} finally {
+			ps.close();
+		}
+	}
+	
+	private UsageResults getUsageResults(String pkg,String module,IProject p,String symbol,int type,String query) throws SQLException{
+		PreparedStatement ps=conn.prepareStatement(query);
+		
+		try {
+			int ix=1;
+			ps.setString(ix++, module);
+			
+			if (pkg!=null){
+				ps.setString(ix++, pkg);
+			}
+			if (p!=null){
+				ps.setString(ix++, p.getName());
+			}
+			ps.setString(ix++,symbol);
+			if (type>0){
+				ps.setInt(ix++, type);
+			}
+			return getUsageResults(ps,query);
+		} finally {
+			ps.close();
+		}
+	}
+		
+	private UsageResults getUsageResults(PreparedStatement ps,String query) throws SQLException{
+		Map<Long,Map<String,Collection<SearchResultLocation>>> m=new HashMap<Long, Map<String,Collection<SearchResultLocation>>>();
+	
+		ResultSet rs=ps.executeQuery();
+		try {
+			while (rs.next()){
+				long fileid=rs.getLong(1);
+				Map<String,Collection<SearchResultLocation>> sections=m.get(fileid);
+				if (sections==null){
+					sections=new HashMap<String, Collection<SearchResultLocation>>();
+					m.put(fileid, sections);
+				}
+				String section=rs.getString(2);
+				Collection<SearchResultLocation> locs=sections.get(section);
+				if (locs==null){
+					locs=new ArrayList<SearchResultLocation>();
+					sections.put(section,locs);
+				}
+				//IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject(project);
+				//if (p!=null){
+					//IFile f=p.getFile(name);
+					String loc=rs.getString(3);
+					boolean def=rs.getBoolean(4);
+					try {
+						SearchResultLocation l=new SearchResultLocation(null, new JSONArray(loc));
+						l.setDefinition(def);
+						locs.add(l);
+						
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(je.getLocalizedMessage(), je);
+					}
+				//}
+			}
+		}finally {
+			rs.close();
+		}	
+
+		UsageResults ret=new UsageResults();
+		for (Long fileid:m.keySet()){
+			IFile f=getFile(fileid);
+			ret.put(f, m.get(fileid));
+		}
+		return ret;
+	}
 }

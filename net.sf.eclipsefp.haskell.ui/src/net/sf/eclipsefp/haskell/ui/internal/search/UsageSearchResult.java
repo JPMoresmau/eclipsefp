@@ -123,14 +123,13 @@ public class UsageSearchResult extends AbstractTextSearchResult {
           Map<String,Collection<SearchResultLocation>> uls=m.get( f );
           for (String sec:uls.keySet()){
 
-            for (Collection<SearchResultLocation> locs:m.get( f ).values()){
-              for (SearchResultLocation loc:locs){
-                SectionSearchResult ssr=new SectionSearchResult( f,sec, Collections.singleton( loc ) );
-                Match match=new Match(ssr,Match.UNIT_LINE,loc.getStartLine()-1,1);
-                addMatch( match );
-                myMatches.add(match);
-              }
+            for (SearchResultLocation loc:uls.get( sec )){
+              SectionSearchResult ssr=new SectionSearchResult( f,sec, Collections.singleton( loc ) );
+              Match match=new Match(ssr,Match.UNIT_LINE,loc.getStartLine()-1,1);
+              addMatch( match );
+              myMatches.add(match);
             }
+
           }
 
           matchByFile.put( f, myMatches.toArray( new Match[myMatches.size()] ) );

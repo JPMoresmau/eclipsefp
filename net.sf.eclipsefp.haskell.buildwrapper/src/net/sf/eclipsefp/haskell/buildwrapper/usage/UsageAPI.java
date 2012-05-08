@@ -77,9 +77,11 @@ public class UsageAPI {
 							
 							//long moduleID=
 							db.getModuleID(pkg, module, fileID, loc);
-							List<ModuleUsage> modUsages=new ArrayList<ModuleUsage>();
-							buildUsage(arr,modUsages);
+							List<ObjectUsage> modUsages=new ArrayList<ObjectUsage>();
+							List<ObjectUsage> objUsages=new ArrayList<ObjectUsage>();
+							buildUsage(fileID,arr,modUsages,objUsages);
 							db.setModuleUsages(fileID, modUsages);
+							db.setSymbolUsages(fileID, objUsages);
 							db.commit();
 						}
 					} catch (SQLException sqle){
@@ -92,7 +94,7 @@ public class UsageAPI {
 		}
 	}
 	
-	private void buildUsage(JSONArray arr,List<ModuleUsage> modUsages){
+	private void buildUsage(long fileID,JSONArray arr,List<ObjectUsage> modUsages,List<ObjectUsage> objUsages){
 		JSONObject pkgs=arr.optJSONObject(3);
 		if (pkgs!=null){
 			for (Iterator<String> itPkg=pkgs.keys();itPkg.hasNext();){
@@ -100,13 +102,13 @@ public class UsageAPI {
 				JSONObject mods=pkgs.optJSONObject(pkgKey);
 				if (mods!=null){
 					String pkg=formatPackage(pkgKey);
-					buildUsageModule(pkg,mods,modUsages);
+					buildUsageModule(fileID,pkg,mods,modUsages,objUsages);
 				}
 			}
 		}
 	}
 	
-	private void buildUsageModule(String pkg,JSONObject mods,List<ModuleUsage> modUsages){
+	private void buildUsageModule(long fileID,String pkg,JSONObject mods,List<ObjectUsage> modUsages,List<ObjectUsage> objUsages){
 		for (Iterator<String> itMod=mods.keys();itMod.hasNext();){
 			String modKey=itMod.next();
 			JSONObject types=mods.optJSONObject(modKey);
@@ -114,7 +116,8 @@ public class UsageAPI {
 				try {
 					long modID=db.getModuleID(pkg, modKey, null,null);
 				
-					buildUsage(modID,types.optJSONObject("vars"),false,modUsages);
+					buildUsage(fileID,modID,types.optJSONObject("vars"),false,modUsages,objUsages);
+					buildUsage(fileID,modID,types.optJSONObject("types"),true,modUsages,objUsages);
 				} catch (SQLException sqle){
 					BuildWrapperPlugin.logError(BWText.error_db, sqle);
 				}
@@ -122,7 +125,7 @@ public class UsageAPI {
 		}
 	}
 	
-	private void buildUsage(long modID,JSONObject symbols,boolean isType,List<ModuleUsage> modUsages){
+	private void buildUsage(long fileID,long modID,JSONObject symbols,boolean isType,List<ObjectUsage> modUsages,List<ObjectUsage> objUsages) throws SQLException{
 		if (symbols!=null){
 			for (Iterator<String> itSym=symbols.keys();itSym.hasNext();){
 				String symKey=itSym.next();
@@ -137,7 +140,21 @@ public class UsageAPI {
 							if (sec!=null && loc!=null){
 								String sloc=loc.toString();
 								if (!isType && symKey.length()==0){
-									modUsages.add(new ModuleUsage(modID, sec,sloc));
+									modUsages.add(new ObjectUsage(modID, sec,sloc));
+								} else {
+									boolean def=secLoc.optBoolean("d", false);
+									int type=UsageQueryFlags.TYPE_VAR;
+									if (isType){
+										type=UsageQueryFlags.TYPE_TYPE;
+									} else if (Character.isUpperCase(symKey.charAt(0))){
+										type=UsageQueryFlags.TYPE_CONSTRUCTOR;
+									}
+									if (def){
+										db.getSymbolID(modID, symKey, type, fileID, sec, sloc);
+									} else {
+										long symbolID=db.getSymbolID(modID, symKey, type, null, null, null);
+										objUsages.add(new ObjectUsage(symbolID, sec, sloc));
+									}
 								}
 							}
 						}
@@ -190,6 +207,60 @@ public class UsageAPI {
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
 		return new UsageResults();
+	}
+	
+	public UsageResults getSymbolReferences(String pkg,String module,String symbol, int type,IProject p){
+		try {
+			return db.getSymbolReferences(pkg, module,symbol,type,p);
+		} catch (SQLException sqle){
+			BuildWrapperPlugin.logError(BWText.error_db, sqle);
+		} 
+		return new UsageResults();
+	}
+	
+	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol, int type,IProject p){
+		try {
+			return db.getSymbolDefinitions(pkg, module,symbol,type,p);
+		} catch (SQLException sqle){
+			BuildWrapperPlugin.logError(BWText.error_db, sqle);
+		} 
+		return new UsageResults();
+	}
+	
+	public UsageResults exactSearch(String pkg,String term,IProject p,int typeFlags,int scopeFlags){
+		UsageResults ret=new UsageResults();
+		if ((typeFlags & UsageQueryFlags.TYPE_MODULE) == UsageQueryFlags.TYPE_MODULE){
+			if ((scopeFlags & UsageQueryFlags.SCOPE_DEFINITIONS) ==UsageQueryFlags.SCOPE_DEFINITIONS){
+				ret.add(getModuleDefinitions(pkg, term, p));
+			}
+			if ((scopeFlags & UsageQueryFlags.SCOPE_REFERENCES) ==UsageQueryFlags.SCOPE_REFERENCES){
+				ret.add(getModuleReferences(pkg, term, p));
+			}
+		}
+		int ix=term.lastIndexOf('.');
+		if (ix>-1 && ix<term.length()-1){
+			String module=term.substring(0,ix);
+			String symbol=term.substring(ix+1);
+			if (Character.isUpperCase(symbol.charAt(0))){
+				exactSymbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_TYPE, p, typeFlags, scopeFlags);
+				exactSymbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_CONSTRUCTOR, p, typeFlags, scopeFlags);
+			} else {
+				exactSymbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_VAR, p, typeFlags, scopeFlags);
+			}
+		}
+		
+		return ret;
+	}
+	
+	private void exactSymbolSearch(UsageResults ret,String pkg,String module,String symbol,int type,IProject p,int typeFlags,int scopeFlags){
+		if ((typeFlags & type) == type){
+			if ((scopeFlags & UsageQueryFlags.SCOPE_DEFINITIONS) ==UsageQueryFlags.SCOPE_DEFINITIONS){
+				ret.add(getSymbolDefinitions(pkg, module,symbol,type, p));
+			}
+			if ((scopeFlags & UsageQueryFlags.SCOPE_REFERENCES) ==UsageQueryFlags.SCOPE_REFERENCES){
+				ret.add(getSymbolReferences(pkg,  module,symbol,type, p));
+			}
+		}
 	}
 	
 	private JSONArray parseUsageFile(IFile uf){

@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.ui.internal.search;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,16 +24,18 @@ import org.eclipse.search.ui.ISearchResult;
  *
  */
 public class UsageQuery implements ISearchQuery {
-  private final String module;
+  private final String term;
   private final IProject project;
   private final UsageSearchResult sr;
 
+  private int typeFlags=UsageQueryFlags.TYPE_ALL;
+  private int scopeFlags=UsageQueryFlags.SCOPE_ALL;
 
-  public UsageQuery( final String module,final IProject p ) {
+  public UsageQuery( final String term,final IProject p ) {
     super();
-    this.module = module;
+    this.term = term;
     this.project=p;
-    sr=new UsageSearchResult( this,module, project );
+    sr=new UsageSearchResult( this,term, project );
   }
 
   /* (non-Javadoc)
@@ -41,10 +44,11 @@ public class UsageQuery implements ISearchQuery {
   @Override
   public IStatus run( final IProgressMonitor paramIProgressMonitor )
       throws OperationCanceledException {
-    UsageResults resultsRefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module,project );
+    /*UsageResults resultsRefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module,project );
     UsageResults resultsDefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleDefinitions( null, module,project );
-    resultsRefs.add(resultsDefs);
-    sr.setResults( resultsRefs );
+    resultsRefs.add(resultsDefs);*/
+    UsageResults results=BuildWrapperPlugin.getDefault().getUsageAPI().exactSearch( null, term, project, typeFlags, scopeFlags );
+    sr.setResults( results);
 
     return Status.OK_STATUS;
   }
@@ -79,6 +83,26 @@ public class UsageQuery implements ISearchQuery {
   @Override
   public ISearchResult getSearchResult() {
     return sr;
+  }
+
+
+  public int getTypeFlags() {
+    return typeFlags;
+  }
+
+
+  public void setTypeFlags( final int typeFlags ) {
+    this.typeFlags = typeFlags;
+  }
+
+
+  public int getScopeFlags() {
+    return scopeFlags;
+  }
+
+
+  public void setScopeFlags( final int scopeFlags ) {
+    this.scopeFlags = scopeFlags;
   }
 
 }
