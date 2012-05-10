@@ -63,7 +63,9 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
                     term=module+"."+shortName;
                   }
                   if (shortName.length()>0 && Character.isUpperCase( shortName.charAt( 0 ) )){
-                    typeFlags=UsageQueryFlags.TYPE_TYPE | UsageQueryFlags.TYPE_CONSTRUCTOR;
+                    String ht=thing.getThing().getHaddockType();
+
+                    typeFlags="t".equals( ht )?UsageQueryFlags.TYPE_TYPE : UsageQueryFlags.TYPE_CONSTRUCTOR;
                   } else {
                     typeFlags=UsageQueryFlags.TYPE_VAR;
                   }
@@ -72,6 +74,7 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
 
             final UsageQuery uq=new UsageQuery(term,project);
             uq.setTypeFlags( typeFlags );
+            uq.setScopeFlags( UsageQueryFlags.SCOPE_REFERENCES );
             new UIJob( UITexts.openDefinition_select_job ) {
 
               @Override
