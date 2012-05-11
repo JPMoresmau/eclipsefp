@@ -52,10 +52,10 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
           public void handle( final EditorThing thing ) {
             String term=haskellEditor.getModuleName();
             int typeFlags=UsageQueryFlags.TYPE_ALL;
-            if(thing!=null &&  thing.getThing()!=null) {
+            if(thing!=null &&  thing.getThing()!=null && thing.getThing().getName()!=null  && thing.getThing().getName().length()>0) {
               String shortName = thing.getThing().getName();
               term=shortName;
-              if ("m".equals(thing.getThing().getHaddockType())){
+              if ("m".equals(thing.getThing().getHaddockType()) || term.equals( haskellEditor.getModuleName() )){
                 typeFlags=UsageQueryFlags.TYPE_MODULE;
               } else {
                   String module = thing.getThing().getModule();
