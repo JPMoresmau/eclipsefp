@@ -23,8 +23,10 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * Uses Scion tokenTypesArbitrary function to get tokens for a haskell source
  *
- * @author JP Moresmau
+ * @author Alejandro Serrano
+ * @deprecated i don't see the use of that, use ScionTokenScanner instead
  */
+@Deprecated
 public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
     IEditorPreferenceNames {
 

@@ -5,7 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.PartitionedScionTokenScanner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -45,8 +45,8 @@ public class AlexSourceViewerConfiguration extends
     reconciler.setDocumentPartitioning( PartitionDocumentSetup.PARTITIONING );
 
     IFile file = ( editor != null ? editor.findFile() : null );
-    ITokenScanner codeScanner = new PartitionedScionTokenScanner(
-        getScannerManager(), file );
+    ITokenScanner codeScanner = new ScionTokenScanner(
+        getScannerManager(), file,viewer.getTextWidget().getDisplay() );
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
     reconciler.setRepairer( haskellDr, PartitionDocumentSetup.HASKELL );

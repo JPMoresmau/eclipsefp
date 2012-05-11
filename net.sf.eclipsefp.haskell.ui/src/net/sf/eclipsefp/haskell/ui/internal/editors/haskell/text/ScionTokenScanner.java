@@ -65,7 +65,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   private boolean checkedTabs=false;
 
-  private final Map<String,IToken> tokenByTypes;
+  protected Map<String,IToken> tokenByTypes;
 
   private Set<TaskTag> tags;
   private boolean caseS;
