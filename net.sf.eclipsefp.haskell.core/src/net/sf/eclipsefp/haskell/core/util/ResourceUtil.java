@@ -467,7 +467,10 @@ public class ResourceUtil {
             if (file.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
                 for (PackageDescriptionStanza stz:stzs.get(src)){
                   String module=getQualifiedModuleName( file, fldr );
-                  if (!ModuleInclusionType.MISSING.equals( stz.getModuleInclusionType( module ) )){
+                  ModuleInclusionType mit=stz.getModuleInclusionType( module );
+                  if (ModuleInclusionType.MAIN.equals( mit )){
+                    return "Main"; //$NON-NLS-1$
+                  } else if (!ModuleInclusionType.MISSING.equals(mit  )){
                    return module;
                   }
                 }

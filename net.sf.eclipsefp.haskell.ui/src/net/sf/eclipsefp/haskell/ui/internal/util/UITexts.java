@@ -729,6 +729,19 @@ public final class UITexts extends NLS {
   public static String References_result_refreshing;
   public static String References_result_location;
 
+
+  public static String SearchPage_text;
+  public static String SearchPage_type;
+  public static String SearchPage_type_types;
+  public static String SearchPage_type_modules;
+  public static String SearchPage_type_constructors;
+  public static String SearchPage_type_functions;
+  public static String SearchPage_scope;
+  public static String SearchPage_scope_declarations;
+  public static String SearchPage_scope_references;
+  public static String SearchPage_scope_all;
+
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
 

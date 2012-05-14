@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -191,36 +192,36 @@ public class UsageAPI {
 		return false;
 	}
 	
-	public UsageResults getModuleReferences(String pkg,String module,IProject p){
+	public UsageResults getModuleReferences(String pkg,String module,IProject p,boolean exact){
 		try {
-			return db.getModuleReferences(pkg, module,p);
+			return db.getModuleReferences(pkg, module,p,exact);
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
 		return new UsageResults();
 	}
 	
-	public UsageResults getModuleDefinitions(String pkg,String module,IProject p){
+	public UsageResults getModuleDefinitions(String pkg,String module,IProject p,boolean exact){
 		try {
-			return db.getModuleDefinitions(pkg, module,p);
+			return db.getModuleDefinitions(pkg, module,p,exact);
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
 		return new UsageResults();
 	}
 	
-	public UsageResults getSymbolReferences(String pkg,String module,String symbol, int type,IProject p){
+	public UsageResults getSymbolReferences(String pkg,String module,String symbol, int type,IProject p,boolean exact){
 		try {
-			return db.getSymbolReferences(pkg, module,symbol,type,p);
+			return db.getSymbolReferences(pkg, module,symbol,type,p,exact);
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
 		return new UsageResults();
 	}
 	
-	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol, int type,IProject p){
+	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol, int type,IProject p,boolean exact){
 		try {
-			return db.getSymbolDefinitions(pkg, module,symbol,type,p);
+			return db.getSymbolDefinitions(pkg, module,symbol,type,p,exact);
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
@@ -231,10 +232,10 @@ public class UsageAPI {
 		UsageResults ret=new UsageResults();
 		if ((typeFlags & UsageQueryFlags.TYPE_MODULE) == UsageQueryFlags.TYPE_MODULE){
 			if ((scopeFlags & UsageQueryFlags.SCOPE_DEFINITIONS) ==UsageQueryFlags.SCOPE_DEFINITIONS){
-				ret.add(getModuleDefinitions(pkg, term, p));
+				ret.add(getModuleDefinitions(pkg, term, p,true));
 			}
 			if ((scopeFlags & UsageQueryFlags.SCOPE_REFERENCES) ==UsageQueryFlags.SCOPE_REFERENCES){
-				ret.add(getModuleReferences(pkg, term, p));
+				ret.add(getModuleReferences(pkg, term, p,true));
 			}
 		}
 		int ix=term.lastIndexOf('.');
@@ -242,25 +243,89 @@ public class UsageAPI {
 			String module=term.substring(0,ix);
 			String symbol=term.substring(ix+1);
 			if (Character.isUpperCase(symbol.charAt(0))){
-				exactSymbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_TYPE, p, typeFlags, scopeFlags);
-				exactSymbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_CONSTRUCTOR, p, typeFlags, scopeFlags);
+				symbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_TYPE, p, typeFlags, scopeFlags,true);
+				symbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_CONSTRUCTOR, p, typeFlags, scopeFlags,true);
 			} else {
-				exactSymbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_VAR, p, typeFlags, scopeFlags);
+				symbolSearch(ret, pkg, module, symbol, UsageQueryFlags.TYPE_VAR, p, typeFlags, scopeFlags,true);
 			}
 		}
 		
 		return ret;
 	}
 	
-	private void exactSymbolSearch(UsageResults ret,String pkg,String module,String symbol,int type,IProject p,int typeFlags,int scopeFlags){
+	private void symbolSearch(UsageResults ret,String pkg,String module,String symbol,int type,IProject p,int typeFlags,int scopeFlags,boolean exact){
 		if ((typeFlags & type) == type){
 			if ((scopeFlags & UsageQueryFlags.SCOPE_DEFINITIONS) ==UsageQueryFlags.SCOPE_DEFINITIONS){
-				ret.add(getSymbolDefinitions(pkg, module,symbol,type, p));
+				ret.add(getSymbolDefinitions(pkg, module,symbol,type, p,exact));
 			}
 			if ((scopeFlags & UsageQueryFlags.SCOPE_REFERENCES) ==UsageQueryFlags.SCOPE_REFERENCES){
-				ret.add(getSymbolReferences(pkg,  module,symbol,type, p));
+				ret.add(getSymbolReferences(pkg,  module,symbol,type, p,exact));
 			}
 		}
+	}
+	
+	
+	
+	public UsageResults likeSearch(String pkg,String term,IProject p,int typeFlags,int scopeFlags){
+		UsageResults ret=new UsageResults();
+		
+		
+		// replace Eclipse wildcards by SQLLite wildcards
+		StringBuilder newTerm=new StringBuilder();
+		for (int a=0;a<term.length();a++){
+			char c=term.charAt(a);
+			Character prev=a>0?term.charAt(a-1):null;
+			boolean isEscaped=prev!=null && prev.charValue()=='\\';
+			if (c=='%'){
+				newTerm.append("\\%");
+			} else if (c=='_'){
+				newTerm.append("\\_");
+			} else if (c=='*'){
+				if (isEscaped){
+					newTerm.replace(newTerm.length()-1, 1, "*");
+				} else {
+					newTerm.append("%");
+				}
+			} else if (c=='?' && !isEscaped){
+				if (isEscaped){
+					newTerm.replace(newTerm.length()-1, 1, "?");
+				} else {
+					newTerm.append("_");
+				}
+			} else {
+				newTerm.append(c);
+			}
+		}
+		String sqlLiteTerm=newTerm.toString();
+		if ((typeFlags & UsageQueryFlags.TYPE_MODULE) == UsageQueryFlags.TYPE_MODULE){
+			if ((scopeFlags & UsageQueryFlags.SCOPE_DEFINITIONS) ==UsageQueryFlags.SCOPE_DEFINITIONS){
+				ret.add(getModuleDefinitions(pkg, sqlLiteTerm, p,false));
+			}
+			if ((scopeFlags & UsageQueryFlags.SCOPE_REFERENCES) ==UsageQueryFlags.SCOPE_REFERENCES){
+				ret.add(getModuleReferences(pkg, sqlLiteTerm, p,false));
+			}
+		}
+		if (typeFlags != UsageQueryFlags.TYPE_MODULE){
+			// there is a dot: qualified name
+			int ix=sqlLiteTerm.lastIndexOf(".");
+			List<String> mods=Collections.singletonList(null);
+			try {
+				if (ix>-1){
+					String modTerm=sqlLiteTerm.substring(0,ix);
+					mods=db.findModules(pkg, modTerm, p);
+				} 
+				for (String m:mods){
+					symbolSearch(ret, pkg, m, sqlLiteTerm, UsageQueryFlags.TYPE_TYPE, p, typeFlags, scopeFlags,false);
+					symbolSearch(ret, pkg, m, sqlLiteTerm, UsageQueryFlags.TYPE_CONSTRUCTOR, p, typeFlags, scopeFlags,false);
+					symbolSearch(ret, pkg, m, sqlLiteTerm, UsageQueryFlags.TYPE_VAR, p, typeFlags, scopeFlags,false);
+				}
+			} catch (SQLException sqle){
+				BuildWrapperPlugin.logError(BWText.error_db, sqle);
+			} 
+		}
+		
+		
+		return ret;
 	}
 	
 	private JSONArray parseUsageFile(IFile uf){

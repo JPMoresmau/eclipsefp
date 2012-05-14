@@ -454,13 +454,17 @@ public class UsageDB {
 		
 	}
 
-	public UsageResults getModuleDefinitions(String pkg,String module,IProject p) throws SQLException {
+	public UsageResults getModuleDefinitions(String pkg,String module,IProject p,boolean exact) throws SQLException {
 		checkConnection();
 		StringBuilder sb=new StringBuilder("select m.fileid,'module ' || module,m.location,1 from modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
-		sb.append(" where m.module=?");
+		if (exact){
+			sb.append(" where m.module=?");
+		} else {
+			sb.append(" where m.module LIKE ? ESCAPE '\\'");
+		}
 		if (pkg!=null){
 			sb.append(" and m.package=?");
 		}
@@ -470,34 +474,87 @@ public class UsageDB {
 		return getUsageResults(pkg, module, p, sb.toString());
 	}
 	
-	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol,int type,IProject p) throws SQLException {
+	public List<String> findModules(String pkg,String module,IProject p) throws SQLException {
+		checkConnection();
+		StringBuilder sb=new StringBuilder("select module from modules m");
+		if (p!=null){
+			sb.append(",files f");
+		}
+		sb.append(" where m.module LIKE ? ESCAPE '\\'");
+		if (pkg!=null){
+			sb.append(" and m.package=?");
+		}
+		if (p!=null){
+			sb.append(" and f.fileid=m.fileid and f.project=?");
+		}
+		PreparedStatement ps=conn.prepareStatement(sb.toString());
+		List<String> ret=new ArrayList<String>();
+		try {
+			int ix=1;
+			if (module!=null){
+				ps.setString(ix++, module);
+			}
+			if (pkg!=null){
+				ps.setString(ix++, pkg);
+			}
+			if (p!=null){
+				ps.setString(ix++, p.getName());
+			}
+
+			ResultSet rs=ps.executeQuery();
+			try {
+				while (rs.next()){
+					ret.add(rs.getString(1));
+				}
+			} finally {
+				rs.close();
+			}
+		} finally {
+			ps.close();
+		}
+		return ret;
+	}
+	
+	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol,int type,IProject p,boolean exact) throws SQLException {
 		checkConnection();
 		StringBuilder sb=new StringBuilder("select s.fileid,s.section,s.location,1 from symbols s,modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
-		sb.append(" where m.module=?");
-		sb.append(" and m.moduleid=s.moduleid");
+		sb.append(" where ");
+		if (module!=null){
+			sb.append("m.module=? and");
+		}
+		sb.append(" m.moduleid=s.moduleid");
 		if (pkg!=null){
 			sb.append(" and m.package=?");
 		}
 		if (p!=null){
 			sb.append(" and f.fileid=s.fileid and f.project=?");
 		}
-		sb.append(" and s.symbol=?");
+		if (exact){
+			sb.append(" and s.symbol=?");
+		} else {
+			sb.append(" and s.symbol LIKE ? ESCAPE '\\'");
+		}
 		if (type>0){
 			sb.append(" and s.type=?");
 		}
 		return getUsageResults(pkg, module, p,symbol,type, sb.toString());
 	}
 			
-	public UsageResults getModuleReferences(String pkg,String module,IProject p) throws SQLException {
+	public UsageResults getModuleReferences(String pkg,String module,IProject p,boolean exact) throws SQLException {
 		checkConnection();
 		StringBuilder sb=new StringBuilder("select mu.fileid,mu.section,mu.location,0 from module_usages mu, modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
-		sb.append(" where mu.moduleid=m.moduleid and m.module=?");
+		sb.append(" where mu.moduleid=m.moduleid");
+		if (exact){
+			sb.append(" and m.module=?");
+		} else {
+			sb.append(" and m.module LIKE ? ESCAPE '\\'");
+		}
 		if (pkg!=null){
 			sb.append(" and m.package=?");
 		}
@@ -507,20 +564,27 @@ public class UsageDB {
 		return getUsageResults(pkg, module, p, sb.toString());	
 	}
 	
-	public UsageResults getSymbolReferences(String pkg,String module,String symbol,int type,IProject p) throws SQLException {
+	public UsageResults getSymbolReferences(String pkg,String module,String symbol,int type,IProject p,boolean exact) throws SQLException {
 		checkConnection();
 		StringBuilder sb=new StringBuilder("select su.fileid,su.section,su.location,0 from symbol_usages su,symbols s, modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
-		sb.append(" where s.symbolid=su.symbolid and s.moduleid=m.moduleid and m.module=?");
+		sb.append(" where s.symbolid=su.symbolid and s.moduleid=m.moduleid");
+		if (module!=null){
+			sb.append(" and m.module=?");
+		}
 		if (pkg!=null){
 			sb.append(" and m.package=?");
 		}
 		if (p!=null){
 			sb.append(" and f.fileid=su.fileid and f.project=?");
 		}
-		sb.append(" and s.symbol=?");
+		if (exact){
+			sb.append(" and s.symbol=?");
+		} else {
+			sb.append(" and s.symbol LIKE ? ESCAPE '\\'");
+		}
 		if (type>0){
 			sb.append(" and s.type=?");
 		}
@@ -532,8 +596,9 @@ public class UsageDB {
 		
 		try {
 			int ix=1;
-			ps.setString(ix++, module);
-			
+			if (module!=null){
+				ps.setString(ix++, module);
+			}
 			if (pkg!=null){
 				ps.setString(ix++, pkg);
 			}
@@ -551,8 +616,9 @@ public class UsageDB {
 		
 		try {
 			int ix=1;
-			ps.setString(ix++, module);
-			
+			if (module!=null){
+				ps.setString(ix++, module);
+			}
 			if (pkg!=null){
 				ps.setString(ix++, pkg);
 			}

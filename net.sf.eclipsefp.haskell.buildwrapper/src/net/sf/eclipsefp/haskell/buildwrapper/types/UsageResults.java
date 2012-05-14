@@ -8,11 +8,14 @@ package net.sf.eclipsefp.haskell.buildwrapper.types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 /**
  * @author JP Moresmau
@@ -56,6 +59,34 @@ public class UsageResults {
 				Map<IFile,Map<String,Collection<SearchResultLocation>>> m=r.getUsageInProject(p);
 				for (IFile f:m.keySet()){
 					put(f, m.get(f));
+				}
+			}
+		}
+	}
+	
+	public void filter(Set<IResource> workingSet){
+		for (Iterator<IProject> itP=allResults.keySet().iterator();itP.hasNext();){
+			IProject p=itP.next();
+			if (!workingSet.contains(p)){
+				Map<IFile,Map<String,Collection<SearchResultLocation>>> m=allResults.get(p);
+				for (Iterator<IFile> itF=m.keySet().iterator();itF.hasNext();){
+					IFile f=itF.next();
+					if (!workingSet.contains(f)){
+						IContainer pa=f.getParent();
+						boolean remove=true;
+						while (pa!=null && !(pa instanceof IProject) && remove){
+							if (workingSet.contains(pa)){
+								remove=false;
+							}
+							pa=pa.getParent();
+						}
+						if (remove){
+							itF.remove();
+						}
+					}
+				}
+				if (m.isEmpty()){
+					itP.remove();
 				}
 			}
 		}

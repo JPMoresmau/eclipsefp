@@ -1410,4 +1410,16 @@
 	  	class="net.sf.eclipsefp.haskell.ui.internal.search.UsageSearchPage">
 	 </viewPage>
 	</extension>
+	
+	<extension point="org.eclipse.search.searchPages">
+	   <page id="net.sf.eclipsefp.haskell.ui.HaskellSearchPage"
+			icon="icons/obj16/hsearch_obj.gif"
+			label="%HaskellSearchPage.label"
+			sizeHint="460,160"
+			extensions="hs:90, lhs:90"
+			showScopeSection="true"
+			canSearchEnclosingProjects="true"
+			class="net.sf.eclipsefp.haskell.ui.internal.search.HaskellSearchPage">
+		</page>
+</extension>
 </plugin>

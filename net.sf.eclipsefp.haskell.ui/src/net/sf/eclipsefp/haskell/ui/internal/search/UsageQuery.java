@@ -5,11 +5,16 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.search;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -25,17 +30,31 @@ import org.eclipse.search.ui.ISearchResult;
  */
 public class UsageQuery implements ISearchQuery {
   private final String term;
-  private final IProject project;
+  private final Collection<IProject> projects=new LinkedList<IProject>();
   private final UsageSearchResult sr;
 
   private int typeFlags=UsageQueryFlags.TYPE_ALL;
   private int scopeFlags=UsageQueryFlags.SCOPE_ALL;
 
+  private boolean exact=true;
+
+  private Set<IResource> restrictedResources=null;
+
   public UsageQuery( final String term,final IProject p ) {
     super();
     this.term = term;
-    this.project=p;
-    sr=new UsageSearchResult( this,term, project );
+    this.projects.add(p);
+    sr=new UsageSearchResult( this,term, p );
+  }
+
+  public UsageQuery( final String term,final Collection<IProject> projects ) {
+    super();
+    this.term = term;
+    this.projects.addAll(projects);
+    if (this.projects.isEmpty()){
+      this.projects.add(null);
+    }
+    sr=new UsageSearchResult( this,term, null );
   }
 
   /* (non-Javadoc)
@@ -47,7 +66,18 @@ public class UsageQuery implements ISearchQuery {
     /*UsageResults resultsRefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, module,project );
     UsageResults resultsDefs=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleDefinitions( null, module,project );
     resultsRefs.add(resultsDefs);*/
-    UsageResults results=BuildWrapperPlugin.getDefault().getUsageAPI().exactSearch( null, term, project, typeFlags, scopeFlags );
+    UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
+    UsageResults results=new UsageResults();
+    for (IProject p:projects){
+      UsageResults res=exact?
+             api.exactSearch( null, term, p, typeFlags, scopeFlags )
+             :api.likeSearch( null, term, p, typeFlags, scopeFlags );
+      if (restrictedResources!=null){
+        res.filter( restrictedResources );
+      }
+      results.add(res);
+    }
+
     sr.setResults( results);
 
     return Status.OK_STATUS;
@@ -103,6 +133,26 @@ public class UsageQuery implements ISearchQuery {
 
   public void setScopeFlags( final int scopeFlags ) {
     this.scopeFlags = scopeFlags;
+  }
+
+
+  public boolean isExact() {
+    return exact;
+  }
+
+
+  public void setExact( final boolean exact ) {
+    this.exact = exact;
+  }
+
+
+  public Set<IResource> getRestrictedResources() {
+    return restrictedResources;
+  }
+
+
+  public void setRestrictedResources( final Set<IResource> restrictedResources ) {
+    this.restrictedResources = restrictedResources;
   }
 
 }
