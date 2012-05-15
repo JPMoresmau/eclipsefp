@@ -28,8 +28,13 @@ import org.eclipse.jface.viewers.Viewer;
  *
  */
 public class UsageResultContentProvider implements ITreeContentProvider {
-  //private UsageResults results;
+  /**
+   * children by parents
+   */
   private Map<Object,Collection<Object>> uiresults=new HashMap<Object,Collection<Object>>();
+  /**
+   * roots
+   */
   private Object[] roots=new Object[0];
 
   /* (non-Javadoc)

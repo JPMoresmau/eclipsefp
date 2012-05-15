@@ -14,6 +14,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import org.eclipse.core.resources.IProject;
 
 /**
+ * This thread calls the BuildWrapper executable and populates the database when needed
+ * All requests to update a project are queued here
  * @author JP Moresmau
  *
  */

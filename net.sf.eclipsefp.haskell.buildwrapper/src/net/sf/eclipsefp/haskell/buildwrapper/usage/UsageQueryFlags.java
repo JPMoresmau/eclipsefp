@@ -6,6 +6,7 @@
 package net.sf.eclipsefp.haskell.buildwrapper.usage;
 
 /**
+ * Bit fields for query flags
  * @author JP Moresmau
  *
  */

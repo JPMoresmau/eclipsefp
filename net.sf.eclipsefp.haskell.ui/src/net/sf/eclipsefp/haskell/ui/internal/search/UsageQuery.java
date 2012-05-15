@@ -29,15 +29,36 @@ import org.eclipse.search.ui.ISearchResult;
  *
  */
 public class UsageQuery implements ISearchQuery {
+  /**
+   * the term to search for
+   */
   private final String term;
+  /**
+   * projects to search into (if it contains null -> all projects)
+   */
   private final Collection<IProject> projects=new LinkedList<IProject>();
+  /**
+   * result structure
+   */
   private final UsageSearchResult sr;
 
+  /**
+   * type flags
+   */
   private int typeFlags=UsageQueryFlags.TYPE_ALL;
+  /**
+   * scope flags
+   */
   private int scopeFlags=UsageQueryFlags.SCOPE_ALL;
 
+  /**
+   * exact or LIKE search
+   */
   private boolean exact=true;
 
+  /**
+   * restrict results to specified resources
+   */
   private Set<IResource> restrictedResources=null;
 
   public UsageQuery( final String term,final IProject p ) {
@@ -69,12 +90,15 @@ public class UsageQuery implements ISearchQuery {
     UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
     UsageResults results=new UsageResults();
     for (IProject p:projects){
+      // search for each project
       UsageResults res=exact?
              api.exactSearch( null, term, p, typeFlags, scopeFlags )
              :api.likeSearch( null, term, p, typeFlags, scopeFlags );
+      // restrict if needed
       if (restrictedResources!=null){
         res.filter( restrictedResources );
       }
+      // add to global
       results.add(res);
     }
 

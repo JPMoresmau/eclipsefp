@@ -6,12 +6,22 @@
 package net.sf.eclipsefp.haskell.buildwrapper.usage;
 
 /**
+ * Simple structure for recording where an object is used
  * @author JP Moresmau
  *
  */
 public class ObjectUsage {
+	/**
+	 * the object id in the db
+	 */
 	private long objectID;
+	/**
+	 * location string
+	 */
 	private String location;
+	/**
+	 * section name
+	 */
 	private String section;
 	
 	

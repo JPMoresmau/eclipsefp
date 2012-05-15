@@ -11,12 +11,22 @@ import org.eclipse.core.resources.IFile;
 
 
 /**
+ * All the result locations inside the same section are collapsed into one structure in the result tree
  * @author JP Moresmau
  *
  */
 public class SectionSearchResult {
+  /**
+   * the file
+   */
   private final IFile file;
+  /**
+   * the name of the section
+   */
   private final String section;
+  /**
+   * all the locations inside this section
+   */
   private final Collection<SearchResultLocation> locations;
 
   public SectionSearchResult( final IFile file,final String section,

@@ -28,12 +28,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,21 +45,44 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.progress.UIJob;
 
 
 /**
+ * The page presenting criteria for a Haskell search
  * @author JP Moresmau
  *
  */
 public class HaskellSearchPage extends DialogPage implements ISearchPage{
+  /**
+   * previous search terms
+   */
   private static LinkedList<String> previous=new LinkedList<String>();
+  /**
+   * previous type
+   */
+  private static int previousType=UsageQueryFlags.TYPE_VAR;
+  /**
+   * previous scope
+   */
+  private static int previousScope=UsageQueryFlags.SCOPE_ALL;
+
   private ISearchPageContainer container;
 
+  /**
+   * list of terms
+   */
   private ComboViewer termList;
 
+  /**
+   * type buttons: buttons to type
+   */
   private final Map<Button,Integer> buttonsToType=new HashMap<Button, Integer>();
+  /**
+   * scope buttons: buttons to scope
+   */
   private final Map<Button,Integer> buttonsToScope=new HashMap<Button, Integer>();
 
   public HaskellSearchPage() {
@@ -68,6 +95,10 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
 
   public HaskellSearchPage( final String title ) {
     super( title );
+  }
+
+  protected void updateStatus(){
+    container.setPerformActionEnabled( termList.getCombo().getText().trim().length()>0 );
   }
 
   /* (non-Javadoc)
@@ -90,23 +121,42 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
     termList.setContentProvider( new ArrayContentProvider() );
     termList.setInput( previous );
 
+    if (previous.size()>0){
+      termList.getCombo().select( 0 );
+    }
+
+    termList.getCombo().addModifyListener( new ModifyListener() {
+
+      @Override
+      public void modifyText( final ModifyEvent arg0 ) {
+        updateStatus();
+      }
+    } );
+    termList.addSelectionChangedListener( new ISelectionChangedListener() {
+
+      @Override
+      public void selectionChanged( final SelectionChangedEvent arg0 ) {
+        updateStatus();
+      }
+    } );
 
     Group gType=new Group(main,SWT.NONE);
     gType.setText( UITexts.SearchPage_type );
     gType.setLayout( new GridLayout(2,true) );
-    final Button bModule=createTypeButton(gType,UsageQueryFlags.TYPE_MODULE,UITexts.SearchPage_type_modules,false);
-    createTypeButton(gType,UsageQueryFlags.TYPE_TYPE,UITexts.SearchPage_type_types,false);
-    createTypeButton(gType,UsageQueryFlags.TYPE_CONSTRUCTOR,UITexts.SearchPage_type_constructors,false);
-    final Button bFunctions=createTypeButton(gType,UsageQueryFlags.TYPE_VAR,UITexts.SearchPage_type_functions,true);
+    final Button bModule=createTypeButton(gType,UsageQueryFlags.TYPE_MODULE,UITexts.SearchPage_type_modules);
+    createTypeButton(gType,UsageQueryFlags.TYPE_TYPE,UITexts.SearchPage_type_types);
+    createTypeButton(gType,UsageQueryFlags.TYPE_CONSTRUCTOR,UITexts.SearchPage_type_constructors);
+    final Button bFunctions=createTypeButton(gType,UsageQueryFlags.TYPE_VAR,UITexts.SearchPage_type_functions);
 
     Group gScope=new Group(main,SWT.NONE);
     gScope.setText( UITexts.SearchPage_scope );
     gScope.setLayout( new GridLayout(2,true) );
-    final Button bAll=createScopeButton( gScope, UsageQueryFlags.SCOPE_ALL, UITexts.SearchPage_scope_all, true );
-    createScopeButton( gScope, UsageQueryFlags.SCOPE_DEFINITIONS, UITexts.SearchPage_scope_declarations, false );
-    final Button bRefs=createScopeButton( gScope, UsageQueryFlags.SCOPE_REFERENCES, UITexts.SearchPage_scope_references, false );
+    final Button bAll=createScopeButton( gScope, UsageQueryFlags.SCOPE_ALL, UITexts.SearchPage_scope_all );
+    createScopeButton( gScope, UsageQueryFlags.SCOPE_DEFINITIONS, UITexts.SearchPage_scope_declarations );
+    final Button bRefs=createScopeButton( gScope, UsageQueryFlags.SCOPE_REFERENCES, UITexts.SearchPage_scope_references );
     setControl( main );
 
+    // preselect module if we have a file
     if (container.getSelection() instanceof IStructuredSelection){
       Object o=((IStructuredSelection)container.getSelection()).getFirstElement();
       if (o instanceof IFile){
@@ -122,23 +172,39 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
         }
       }
     }
-
+    updateStatus();
     setErrorMessage( null );
   }
 
-  private Button createTypeButton(final Group gType,final int type,final String text,final boolean selected){
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+   */
+  @Override
+  public void setVisible( final boolean visible ) {
+    if (visible){
+      updateStatus();
+      IEditorInput editorInput =container.getActiveEditorInput();
+      container.setActiveEditorCanProvideScopeSelection((editorInput != null) && (editorInput.getAdapter(IFile.class) != null));
+    }
+    super.setVisible( visible );
+    if (visible){
+      termList.getCombo().setFocus();
+    }
+  }
+
+  private Button createTypeButton(final Group gType,final int type,final String text){
     Button b=new Button(gType,SWT.RADIO);
     b.setText( text );
     buttonsToType.put( b, type );
-    b.setSelection( selected );
+    b.setSelection( type == previousType );
     return b;
   }
 
-  private Button createScopeButton(final Group gScope,final int type,final String text,final boolean selected){
+  private Button createScopeButton(final Group gScope,final int type,final String text){
     Button b=new Button(gScope,SWT.RADIO);
     b.setText( text );
     buttonsToScope.put( b, type );
-    b.setSelection( selected );
+    b.setSelection( type == previousScope);
     return b;
   }
 
@@ -155,8 +221,11 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
       String[] projects=container.getSelectedProjectNames();
       IWorkingSet[] sets=container.getSelectedWorkingSets();
 
+      // get all projects referenced in scope
       Set<IProject> projs=new HashSet<IProject>();
+      // other resources to filter with
       Set<IResource> otherResources=new HashSet<IResource>();
+      // projects selected
       if (projects!=null){
         IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
         for (String pn:projects){
@@ -165,6 +234,7 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
             projs.add(p);
           }
         }
+        // working sets
       } else if (sets!=null) {
         for (IWorkingSet set:sets){
           for (IAdaptable adp:set.getElements()){
@@ -184,7 +254,8 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
         }
       } else if (container.getSelectedScope()==ISearchPageContainer.SELECTION_SCOPE){
         ISelection sel=container.getSelection();
-        if (sel instanceof IStructuredSelection){
+        // selection
+        if (sel instanceof IStructuredSelection && (!(sel.isEmpty()))){
           for (Iterator<?> it=((IStructuredSelection)sel).iterator();it.hasNext();){
             Object o=it.next();
             if (o instanceof IProject){
@@ -193,9 +264,16 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
               otherResources.add( (IResource )o);
             }
           }
+          // editor
+        } else if (container.getActiveEditorInput()!=null){
+          Object o=container.getActiveEditorInput().getAdapter(IFile.class);
+          if (o instanceof IResource){
+            otherResources.add((IResource) o);
+          }
         }
       }
 
+      // get flags from checked buttons
       final UsageQuery uq=new UsageQuery( term, projs );
       uq.setExact( false );
       for (Map.Entry<Button,Integer> me:buttonsToType.entrySet()){
@@ -208,6 +286,8 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
           uq.setScopeFlags( me.getValue() );
         }
       }
+      previousScope=uq.getScopeFlags();
+      previousType=uq.getTypeFlags();
       if (otherResources.size()>0){
         uq.setRestrictedResources( otherResources );
       }

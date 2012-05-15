@@ -34,6 +34,7 @@ import org.json.JSONException;
 
 
 /**
+ * The DB side (sqlite) of usage queries
  * @author JP Moresmau
  *
  */
@@ -42,6 +43,7 @@ public class UsageDB {
 
 	
 	public UsageDB(){
+		// the db file is inside the project metadata folder
 		IPath p=BuildWrapperPlugin.getDefault().getStateLocation().append("usage.db");
 		File f=p.toFile();
 		f.getParentFile().mkdirs();
@@ -51,11 +53,13 @@ public class UsageDB {
 			      DriverManager.getConnection("jdbc:sqlite:"+f.getAbsolutePath());
 			conn.setAutoCommit(true);
 			Statement s=conn.createStatement();
+			// foreign key support
 			try {
 				s.executeUpdate("PRAGMA foreign_keys = ON;");
 			}  finally {
 				s.close();
 			}
+			// we do explicit commits for performance and coherence
 			conn.setAutoCommit(false);
 			setup();
 		} catch (Exception e){
@@ -89,6 +93,10 @@ public class UsageDB {
 		}
 	}
 	
+	/**
+	 * create tables and indices if needed
+	 * @throws SQLException
+	 */
 	protected void setup() throws SQLException{
 		checkConnection();
 		Statement s=conn.createStatement();
@@ -471,6 +479,7 @@ public class UsageDB {
 		if (p!=null){
 			sb.append(" and f.fileid=m.fileid and f.project=?");
 		}
+		sb.append(" and m.location is not null");
 		return getUsageResults(pkg, module, p, sb.toString());
 	}
 	
@@ -540,6 +549,7 @@ public class UsageDB {
 		if (type>0){
 			sb.append(" and s.type=?");
 		}
+		sb.append(" and s.location is not null");
 		return getUsageResults(pkg, module, p,symbol,type, sb.toString());
 	}
 			

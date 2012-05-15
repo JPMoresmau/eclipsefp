@@ -42,31 +42,13 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 
 
 /**
- * Search page for Haskell usage searches
+ * Search page for Haskell usage searches: does the plumbing with the Eclipse search result handling
  * @author JP Moresmau
  *
  */
 public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
   private UsageSearchResult lastResults;
   private ActionGroup fActionGroup;
-//  private final ISearchResultListener listener=new ISearchResultListener() {
-//
-//    @Override
-//    public void searchResultChanged( final SearchResultEvent paramSearchResultEvent ) {
-//      new UIJob(UITexts.References_result_refreshing) {
-//
-//        @Override
-//        public IStatus runInUIThread( final IProgressMonitor paramIProgressMonitor ) {
-//          if (lastResults!=null){
-//            getViewer().setInput( lastResults.getResults() );
-//          }
-//          return Status.OK_STATUS;
-//        }
-//      }.schedule();
-//
-//
-//    }
-//  };
 
   /* (non-Javadoc)
    * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
@@ -85,26 +67,6 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
     final UsageSearchResult results=(UsageSearchResult)newSearch;
     lastResults=results;
   }
-
-  /* (non-Javadoc)
-   * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#setInput(org.eclipse.search.ui.ISearchResult, java.lang.Object)
-   */
-//  @Override
-//  public void setInput( final ISearchResult newSearch, final Object viewState ) {
-//    if (lastResults!=null){
-//      lastResults.removeListener( listener );
-//    }
-//    lastResults=null;
-//
-//    final UsageSearchResult results=(UsageSearchResult)newSearch;
-//    if (results!=null){
-//      getViewer().setInput( results.getResults() );
-//      lastResults=results;
-//      lastResults.addListener( listener );
-//    } else {
-//      getViewer().setInput(null);
-//    }
-//  }
 
   /* (non-Javadoc)
    * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#clear()

@@ -36,13 +36,27 @@ import org.eclipse.ui.IEditorPart;
  *
  */
 public class UsageSearchResult extends AbstractTextSearchResult {
+  /**
+   * the query with the criteria
+   */
   private final ISearchQuery query;
- // private final List<ISearchResultListener> ll=new ArrayList<ISearchResultListener>();
 
+  /**
+   * the actual result
+   */
   private UsageResults results=null;
+  /**
+   * all matches by file
+   */
   private final Map<IFile,Match[]> matchByFile=new HashMap<IFile, Match[]>();
 
+  /**
+   * search string
+   */
   private final String search;
+  /**
+   * project or null for all workspace
+   */
   private final IProject project;
 
   public UsageSearchResult(final ISearchQuery query,final String search,final IProject project) {
@@ -88,25 +102,6 @@ public class UsageSearchResult extends AbstractTextSearchResult {
     return query;
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.search.ui.ISearchResult#addListener(org.eclipse.search.ui.ISearchResultListener)
-   */
-//  @Override
-//  public void addListener( final ISearchResultListener paramISearchResultListener ) {
-//    ll.add( paramISearchResultListener );
-//
-//  }
-
-  /* (non-Javadoc)
-   * @see org.eclipse.search.ui.ISearchResult#removeListener(org.eclipse.search.ui.ISearchResultListener)
-   */
-//  @Override
-//  public void removeListener( final ISearchResultListener paramISearchResultListener ) {
-//    ll.remove( paramISearchResultListener );
-//
-//  }
-
-
   public UsageResults getResults() {
     return results;
   }
@@ -138,6 +133,11 @@ public class UsageSearchResult extends AbstractTextSearchResult {
       }
     }
     MatchEvent me=new MatchEvent( this ) {
+      /**
+       *
+       */
+      private static final long serialVersionUID = 3903042320389930952L;
+
       /* (non-Javadoc)
        * @see org.eclipse.search.ui.text.MatchEvent#getMatches()
        */
@@ -149,16 +149,6 @@ public class UsageSearchResult extends AbstractTextSearchResult {
 
     fireChange( me);
 
-//    for (ISearchResultListener l:ll){
-//      l.searchResultChanged( new SearchResultEvent(this){
-//
-//        /**
-//         *
-//         */
-//        private static final long serialVersionUID = 5711720505168515138L;
-//
-//      } );
-//    }
   }
 
   /* (non-Javadoc)

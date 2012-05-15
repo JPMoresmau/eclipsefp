@@ -18,14 +18,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
+ * Structure holding usage results
  * @author JP Moresmau
  *
  */
 public class UsageResults {
+	/**
+	 * results, keyed by IProject, then by IFile, then by section
+	 */
 	private Map<IProject,Map<IFile,Map<String,Collection<SearchResultLocation>>>> allResults=new HashMap<IProject, Map<IFile,Map<String,Collection<SearchResultLocation>>>>();
 	
 	private int size=0;
 	
+	/**
+	 * put the results for a given file
+	 * @param file
+	 * @param locs
+	 */
 	public void put(IFile file,Map<String,Collection<SearchResultLocation>> locs){
 		IProject p=file.getProject();
 		Map<IFile,Map<String,Collection<SearchResultLocation>>> m=allResults.get(p);
@@ -53,6 +62,10 @@ public class UsageResults {
 		}
 	}
 	
+	/**
+	 * add another result set
+	 * @param r
+	 */
 	public void add(UsageResults r){
 		if (r!=null){
 			for (IProject p:r.listProjects()){
@@ -64,13 +77,19 @@ public class UsageResults {
 		}
 	}
 	
+	/**
+	 * only keep result matching a given working set
+	 * @param workingSet
+	 */
 	public void filter(Set<IResource> workingSet){
 		for (Iterator<IProject> itP=allResults.keySet().iterator();itP.hasNext();){
 			IProject p=itP.next();
+			// if we have the project, ok, otherwise dig deeper
 			if (!workingSet.contains(p)){
 				Map<IFile,Map<String,Collection<SearchResultLocation>>> m=allResults.get(p);
 				for (Iterator<IFile> itF=m.keySet().iterator();itF.hasNext();){
 					IFile f=itF.next();
+					// if we have the file, ok, otherwise check parent folders
 					if (!workingSet.contains(f)){
 						IContainer pa=f.getParent();
 						boolean remove=true;
@@ -85,6 +104,7 @@ public class UsageResults {
 						}
 					}
 				}
+				// get rid of empty projects
 				if (m.isEmpty()){
 					itP.remove();
 				}
@@ -93,7 +113,7 @@ public class UsageResults {
 	}
 	
 	/**
-	 * @return the size
+	 * @return the global result size
 	 */
 	public int getSize() {
 		return size;
