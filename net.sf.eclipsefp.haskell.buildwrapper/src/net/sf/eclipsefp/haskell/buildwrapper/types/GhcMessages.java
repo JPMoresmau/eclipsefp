@@ -41,6 +41,14 @@ public interface GhcMessages {
   
   public static String DO_DISCARDED_START="a do-notation statement discarded a result";
   public static String DO_DISCARDED_FIX="by saying \"_ <- ";
+  
+  public static String NOT_ENABLED=" is not enabled";
+  public static String PERMITS_THIS=" permits this";
+  public static String YOU_NEED="you need -x";
+  public static String TRY="try -x";
+  
+  public static String CAST_FROM_CHAR="with actual type `[char]'";
+
   //-fno-warn-unused-do-bind
 
 

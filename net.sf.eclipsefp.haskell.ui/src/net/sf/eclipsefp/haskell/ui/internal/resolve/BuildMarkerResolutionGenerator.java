@@ -94,6 +94,27 @@ public class BuildMarkerResolutionGenerator implements
                String flag=msg.substring( ix2+1,end+1 ).trim();
                addPragma(res,flag);
              }
+          } else if ((ix=msgL.indexOf( GhcMessages.NOT_ENABLED ))>1){
+            String flag=msg.substring( 0,ix ).trim();
+            res.add( new AddLanguagePragmaResolution( flag ) );
+          } else if ((ix=msgL.indexOf( GhcMessages.PERMITS_THIS ))>1){
+            int ix2=msg.substring(0,ix).lastIndexOf("(-X");
+            String flag=msg.substring( ix2+1,ix ).trim();
+            addPragma(res,flag);
+          } else if ((ix=msgL.indexOf( GhcMessages.TRY ))>1){
+            int ix2=msg.indexOf(" ",ix+GhcMessages.TRY.length());
+            if (ix2>-1){
+              String flag=msg.substring( ix+GhcMessages.TRY.length()-2,ix2).trim();
+              addPragma(res,flag);
+            }
+          } else if ((ix=msgL.indexOf( GhcMessages.YOU_NEED ))>1){
+            int ix2=msg.indexOf(" ",ix+GhcMessages.YOU_NEED.length());
+            if (ix2>-1){
+              String flag=msg.substring( ix+GhcMessages.YOU_NEED.length()-2,ix2).trim();
+              addPragma(res,flag);
+            }
+          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR ))>1){
+            addPragma( res, "-XOverloadedStrings" );
           }
           // Import a package
           else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
