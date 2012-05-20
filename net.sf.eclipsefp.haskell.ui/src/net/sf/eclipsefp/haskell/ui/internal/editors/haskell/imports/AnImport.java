@@ -149,7 +149,7 @@ public class AnImport {
         if (or!=null){
           decls=getDeclarationsFromOutlineResult(file,or);
         } else {
-          decls = getDeclarationsFromFile( file, doc );
+          decls = getDeclarationsFromFile( file );
         }
       } else {
         decls = getDeclarationsFromFile( importDef.getModule(), project );
@@ -220,7 +220,7 @@ public class AnImport {
     }
   }
 
-  private List<FileDocumented> getDeclarationsFromFile( final String module, final IProject project ) {
+  private static List<FileDocumented> getDeclarationsFromFile( final String module, final IProject project ) {
     try {
       IFile file = ResourceUtil.findFileFromModule( project, module );
       // search in referenced projects
@@ -235,7 +235,7 @@ public class AnImport {
         }
       }
       if (file!=null){
-        return getDeclarationsFromFile( file, null );
+        return getDeclarationsFromFile( file );
       }
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
@@ -244,7 +244,7 @@ public class AnImport {
     return new ArrayList<FileDocumented>();
   }
 
-  private List<FileDocumented> getDeclarationsFromFile( final IFile file, final IDocument doc ) {
+  public static List<FileDocumented> getDeclarationsFromFile( final IFile file ) {
     try {
       if (file!=null){
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
@@ -262,11 +262,11 @@ public class AnImport {
   }
 
 
-  private List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or ) {
+  private static List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or ) {
     ArrayList<FileDocumented> decls = new ArrayList<FileDocumented>();
 
     for (OutlineDef def : or.getOutlineDefs()) {
-      outlineToBrowser( def,file,decls );
+      outlineToBrowser( def,null,file,decls );
     }
     for (ExportDef ed:or.getExportDefs()){
       if (ed.getType().equals( ImportExportType.IEModule )){
@@ -284,7 +284,7 @@ public class AnImport {
    * @param def
    * @return
    */
-  private static Documented outlineToBrowser( final OutlineDef def ) {
+  private static Documented outlineToBrowser( final OutlineDef def, final OutlineDef parent ) {
     switch (def.getTypes().iterator().next()) {
       case CLASS:
         return new TypeClass( def.getComment(), new String[0], def.getName(), new String[0], new String[0] );
@@ -297,19 +297,19 @@ public class AnImport {
       case SYN:
         return new TypeSynonym( def.getComment(), def.getName(), new String[0], "?" );
       case CONSTRUCTOR:
-        return new Constructor( def.getComment(), def.getName(), "?" );
+        return new Constructor( def.getComment(), def.getName(), def.getTypeSignature() ,parent.getName());
       default:
           return null;
     }
   }
 
-  public static void outlineToBrowser( final OutlineDef def , final IFile file,final List<FileDocumented> ret) {
-    Documented d=outlineToBrowser( def );
+  public static void outlineToBrowser( final OutlineDef def ,final OutlineDef parent , final IFile file,final List<FileDocumented> ret) {
+    Documented d=outlineToBrowser( def,parent );
     if (d!=null){
       ret.add( new FileDocumented( d, file ) );
     }
     for (OutlineDef c:def.getChildren()){
-      outlineToBrowser(c,file,ret);
+      outlineToBrowser(c,def,file,ret);
     }
   }
 

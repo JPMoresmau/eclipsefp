@@ -477,8 +477,13 @@ public class BWFacade {
 				}
 			}
 		}
-		outlines.put(path,or);
+		registerOutline(file,or);
 		return or;
+	}
+	
+	public void registerOutline(IFile file,OutlineResult or){
+		String path=file.getProjectRelativePath().toOSString();
+		outlines.put(path,or);
 	}
 	
 	public List<TokenDef> tokenTypes(IFile file){

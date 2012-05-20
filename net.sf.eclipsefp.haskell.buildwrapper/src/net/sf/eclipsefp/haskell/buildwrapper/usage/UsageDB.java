@@ -22,6 +22,7 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SymbolDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
@@ -111,7 +112,7 @@ public class UsageDB {
 			
 			s.execute("create table if not exists module_usages (moduleid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (fileid) references files(fileid) on delete cascade,foreign key (moduleid) references modules(moduleid) on delete cascade)");
 		
-			s.execute("create table if not exists symbols(symbolid INTEGER PRIMARY KEY ASC,symbol TEXT,type INTEGER,moduleid INTEGER not null,fileid INTEGER,section TEXT,location TEXT,foreign key (fileid) references files(fileid) on delete set null,foreign key (moduleid) references modules(moduleid) on delete set null)");
+			s.execute("create table if not exists symbols(symbolid INTEGER PRIMARY KEY ASC,symbol TEXT,type INTEGER,moduleid INTEGER not null,section TEXT,location TEXT,foreign key (moduleid) references modules(moduleid) on delete set null)");
 			s.execute("create index if not exists symbolnames on symbols (symbol,type,moduleid)");
 			
 			s.execute("create table if not exists symbol_usages(symbolid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (symbolid) references symbols(symbolid) on delete cascade,foreign key (fileid) references files(fileid) on delete cascade)");
@@ -209,7 +210,7 @@ public class UsageDB {
 		} finally {
 			ps.close();
 		}
-		ps=conn.prepareStatement("update symbols set fileid=null,section=null,location=null where fileid=?");
+		ps=conn.prepareStatement("update symbols set section=null,location=null where moduleid in (select m.moduleid from modules m where m.fileid=?)");
 		try {
 			ps.setLong(1, fileid);
 			ps.executeUpdate();
@@ -316,7 +317,7 @@ public class UsageDB {
 		return moduleID;
 	}
 	
-	public long getSymbolID(long moduleid,String symbol,int type,Long fileID,String section,String loc) throws SQLException {
+	public long getSymbolID(long moduleid,String symbol,int type,String section,String loc) throws SQLException {
 		checkConnection();
 		PreparedStatement ps=conn.prepareStatement("select symbolid from symbols where moduleid=? and symbol=? and type=?");
 		Long symbolID=null;
@@ -337,25 +338,20 @@ public class UsageDB {
 			ps.close();
 		}
 		if (symbolID==null){
-			 ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid,fileid,section,location) values(?,?,?,?,?,?)");
+			 ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid,section,location) values(?,?,?,?,?)");
 			 try {
 				ps.setString(1, symbol);
 				ps.setInt(2, type);
 				ps.setLong(3, moduleid);
-				if (fileID!=null){
-					ps.setLong(4, fileID);
+				if (section!=null  && section.trim().length()>0){
+					ps.setString(4, section);
 				} else {
-					ps.setNull(4, Types.NUMERIC);
+					ps.setNull(4, Types.VARCHAR);
 				}
-				if (section!=null){
-					ps.setString(5, section);
+				if (loc!=null && loc.trim().length()>0){
+					ps.setString(5, loc);
 				} else {
 					ps.setNull(5, Types.VARCHAR);
-				}
-				if (loc!=null){
-					ps.setString(6, loc);
-				} else {
-					ps.setNull(6, Types.VARCHAR);
 				}
 				ps.execute();
 				ResultSet rs=ps.getGeneratedKeys();
@@ -368,22 +364,22 @@ public class UsageDB {
 			 } finally {
 				ps.close();
 			}
-		} else if (fileID!=null){
-			 ps=conn.prepareStatement("update symbols set fileid=?,section=?,location=? where symbolid=?");
+		} else if (loc!=null){
+			 ps=conn.prepareStatement("update symbols set section=?,location=? where symbolid=?");
 			 try {
 				
-				ps.setLong(1, fileID);
 				if (section!=null){
-					ps.setString(2, section);
+					ps.setString(1, section);
 				} else {
-					ps.setNull(2, Types.VARCHAR);
+					ps.setNull(1, Types.VARCHAR);
 				}
 				if (loc!=null){
-					ps.setString(3, loc);
-				} else {
-					ps.setNull(3, Types.VARCHAR);
-				}
-				ps.setLong(4, symbolID);
+					ps.setString(2, loc);
+				} 
+//				else {
+//					ps.setNull(2, Types.VARCHAR);
+//				}
+				ps.setLong(3, symbolID);
 				ps.execute();
 			} finally {
 				ps.close();
@@ -526,7 +522,7 @@ public class UsageDB {
 	
 	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol,int type,IProject p,boolean exact) throws SQLException {
 		checkConnection();
-		StringBuilder sb=new StringBuilder("select s.fileid,s.section,s.location,1 from symbols s,modules m");
+		StringBuilder sb=new StringBuilder("select m.fileid,s.section,s.location,1 from symbols s,modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
@@ -539,7 +535,7 @@ public class UsageDB {
 			sb.append(" and m.package=?");
 		}
 		if (p!=null){
-			sb.append(" and f.fileid=s.fileid and f.project=?");
+			sb.append(" and f.fileid=m.fileid and f.project=?");
 		}
 		if (exact){
 			sb.append(" and s.symbol=?");
@@ -686,6 +682,43 @@ public class UsageDB {
 		for (Long fileid:m.keySet()){
 			IFile f=getFile(fileid);
 			ret.put(f, m.get(fileid));
+		}
+		return ret;
+	}
+	
+	/**
+	 * unused for the moment, we use cached outline results for auto completion
+	 * @param p
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<SymbolDef> listDefinedSymbols(IProject p) throws SQLException{
+		checkConnection();
+		StringBuilder sb=new StringBuilder();
+		sb.append("select m.module,s.symbol,s.type from modules m, symbols s, files f where ");
+		sb.append("f.project=? ");
+		sb.append("and m.moduleid=s.moduleid ");
+		sb.append("and f.fileid is not null ");
+		sb.append("and f.fileid=m.fileid ");
+		sb.append("and s.location is not null");
+		PreparedStatement ps=conn.prepareStatement(sb.toString());
+		List<SymbolDef> ret=new ArrayList<SymbolDef>();
+		try {
+			ps.setString(1, p.getName());
+			ResultSet rs=ps.executeQuery();
+			try {
+				while (rs.next()){
+					String mod=rs.getString(1);
+					String sym=rs.getString(2);
+					int type=rs.getInt(3);
+					SymbolDef sd=new SymbolDef(mod,sym, type);
+					ret.add(sd);
+				}
+			} finally {
+				rs.close();
+			}
+		} finally {
+			ps.close();
 		}
 		return ret;
 	}

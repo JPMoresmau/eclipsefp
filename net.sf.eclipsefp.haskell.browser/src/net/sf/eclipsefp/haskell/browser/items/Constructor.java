@@ -13,13 +13,16 @@ import org.json.JSONObject;
  * @author Alejandro Serrano
  */
 public class Constructor extends Documented {
-	String name;
-	String signature;
+	private String name;
+	private String signature;
+	private String typeName;
 	
-	public Constructor(String doc, String name, String signature) {
+	
+	public Constructor(String doc, String name, String signature,String typeName) {
 		this.setDoc(doc);
 		this.name = name;
 		this.signature = signature;
+		this.typeName = typeName;
 	}
 	
 	public Constructor(JSONObject o) throws JSONException {
@@ -45,5 +48,13 @@ public class Constructor extends Documented {
 	
 	public String getShownName() {
 		return this.name + " :: " + this.signature;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 }

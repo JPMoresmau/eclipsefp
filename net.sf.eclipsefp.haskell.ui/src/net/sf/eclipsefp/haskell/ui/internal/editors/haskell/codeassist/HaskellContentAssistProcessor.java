@@ -6,6 +6,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManag
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ProposalScope;
 import net.sf.eclipsefp.haskell.util.HaskellText;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -69,6 +71,7 @@ import org.eclipse.swt.graphics.Image;
  * @author Leif Frenzel (original author)
  * @author B. Scott Michel (bscottm@ieee.org)
  * @author Alejandro Serrano
+ * @author JP Moresmau
  */
 public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   /** The associated content assistant, used to add/remove listeners */
@@ -320,10 +323,54 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     Map<String,String> constructors=new HashMap<String, String>();
 
     ProposalScope ps=ProposalScope.valueOf( HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
+    Map<String,Documented> importeds=mgr.getDeclarations();
 
     if (prefix.length()>0 && Boolean.TRUE.equals(searchAll) && !ps.equals( ProposalScope.IMPORTED )){
       try {
         Set<String> pkgs=ResourceUtil.getImportPackages( new IFile[]{theFile});
+        for (IContainer src:ResourceUtil.getAllSourceContainers( theFile )){
+          Collection<IFile> fs=ResourceUtil.getSourceFiles(src);
+          for (IFile f:fs){
+            String module=ResourceUtil.getModuleName( f );
+            for (FileDocumented fd:AnImport.getDeclarationsFromFile( f )){
+              String name=fd.getDocumented().getName();
+              if (name.startsWith( prefix ) && !importeds.containsKey( name )){
+                name=name+" ("+module+")";
+                decls.put(name, fd.getDocumented() );
+                if (fd.getDocumented() instanceof Constructor){
+                  Constructor c=(Constructor)fd.getDocumented();
+                  if (c.getTypeName()!=null){
+                    constructors.put(name, c.getTypeName() );
+                  }
+                }
+              }
+            }
+          }
+
+        }
+//        List<SymbolDef> sds=BuildWrapperPlugin.getDefault().getUsageAPI().listDefinedSymbols( theFile.getProject() );
+//        for (SymbolDef sd:sds){
+//          String name=sd.getName();
+//          if (name.startsWith( prefix ) && !importeds.containsKey( name )){
+//            name=name+" ("+sd.getModule()+")";
+//            Documented d=null;
+//            String comm=sd.getComment();
+//            if (comm==null){
+//              comm="";
+//            }
+//            switch (sd.getType()){
+//              case UsageQueryFlags.TYPE_CONSTRUCTOR:
+//                d=new Constructor( comm, sd.getName(), "?",null );
+//                break;
+//              case UsageQueryFlags.TYPE_TYPE:
+//                d=new DataType( comm, new String[0], sd.getName(), new String[0], "", new Constructor[0] );
+//                break;
+//              case UsageQueryFlags.TYPE_VAR:
+//                d=new Function( comm, sd.getName(), "" );
+//            }
+//            decls.put(name, d );
+//          }
+//        }
 
         if (ps.equals( ProposalScope.ALL )){
           // search on everything
@@ -365,7 +412,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
         HaskellUIPlugin.log( e );
       }
     }
-    decls.putAll(mgr.getDeclarations());
+    decls.putAll(importeds);
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
       if ( s.getKey().startsWith( prefix ) ) {
         if (s.getValue() instanceof Constructor || s.getValue() instanceof Function) {

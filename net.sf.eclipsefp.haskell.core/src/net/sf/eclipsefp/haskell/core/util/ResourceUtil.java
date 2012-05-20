@@ -204,6 +204,24 @@ public class ResourceUtil {
     return Collections.emptyList();
 	}
 
+	public static Collection<IFile> getSourceFiles(final IContainer c){
+	  Collection<IFile> files=new HashSet<IFile>();
+	  try {
+  	  for (IResource r:c.members()){
+  	    if (r instanceof IFile){
+  	      if (FileUtil.hasHaskellExtension( r )){
+  	        files.add((IFile)r);
+  	      }
+  	    } else if (r instanceof IContainer){
+  	      files.addAll(getSourceFiles( (IContainer )r));
+  	    }
+  	  }
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "getSourceFiles:"+c.getProjectRelativePath(), ex ); //$NON-NLS-1$
+    }
+	  return files;
+	}
+
 	/**
 	 * <p>
 	 * reads an input stream and returns the contents as String.
@@ -358,6 +376,33 @@ public class ResourceUtil {
       HaskellCorePlugin.log( "getSourceContainer:"+resource, ex ); //$NON-NLS-1$
     }
     return null;
+  }
+
+  public static Collection<IContainer> getAllSourceContainers( final IResource resource ) {
+    IProject project = resource.getProject();
+    Collection<IContainer> ret=new HashSet<IContainer>();
+    try {
+      if(project.exists() && hasHaskellNature(project) ) {
+
+        IFile f=BuildWrapperPlugin.getCabalFile( project );
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        for (String src:pd.getStanzasBySourceDir().keySet()){
+          if (src!=null && src.equals( "." )) { //$NON-NLS-1$
+            ret.add(project);
+          } else {
+            IFolder fldr=project.getFolder( src );
+
+            if (resource.getProjectRelativePath().toOSString().startsWith( fldr.getProjectRelativePath().toOSString() )){
+              ret.add(fldr);
+            }
+          }
+        }
+      }
+
+    } catch( CoreException ex ) {
+      HaskellCorePlugin.log( "getSourceContainer:"+resource, ex ); //$NON-NLS-1$
+    }
+    return ret;
   }
 
   public static Set<String> getImportPackages(final IFile[] files){
