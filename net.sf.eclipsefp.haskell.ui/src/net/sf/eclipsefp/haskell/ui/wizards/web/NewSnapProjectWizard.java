@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.ui.wizards.web;
 import java.net.URI;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IProject;
@@ -63,7 +65,9 @@ public class NewSnapProjectWizard extends Wizard implements INewWizard {
       protected IStatus run( final IProgressMonitor arg0 ) {
         try {
           IProject project = CustomProjectSupport.createBaseProject(name, location);
-          String[] cmdLine = new String[] { "snap", "init" };
+          String serverExecutable =ScionManager.getExecutablePath( IPreferenceConstants.SNAP_EXECUTABLE, "snap",false );
+
+          String[] cmdLine = new String[] { serverExecutable, "init" };
           IPath path = project.getLocation();
           Process p = Runtime.getRuntime().exec(cmdLine, null, path.toFile());
           Thread[] ts=ProcessRunner.consume( p );

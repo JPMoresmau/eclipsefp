@@ -1,12 +1,12 @@
 package net.sf.eclipsefp.haskell.ui.wizards.web;
 
-import java.io.File;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -78,9 +78,9 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
         @Override
         protected IStatus run( final IProgressMonitor arg0 ) {
           try {
-            File f=FileUtil.findExecutableInPath( "yesod" );
+            String serverExecutable =ScionManager.getExecutablePath( IPreferenceConstants.YESOD_EXECUTABLE, "yesod",false );
 
-            String[] cmdLine = new String[] {f!=null?f.getAbsolutePath():"yesod", "init"};
+            String[] cmdLine = new String[] {serverExecutable, "init"};
             //new ProcessRunner().executeBlocking( parentPath.toFile(), new StringWriter(), new StringWriter(), "yesod", "init" );
             Process p = Runtime.getRuntime()
                 .exec( cmdLine, null, parentPath.toFile() );

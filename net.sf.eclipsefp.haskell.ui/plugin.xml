@@ -283,6 +283,24 @@
             category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>
       <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.HLintPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.HLintPP"
+            name="%hlintPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>
+      <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.YesodPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.YesodPP"
+            name="%yesodPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>
+      <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.SnapPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.SnapPP"
+            name="%snapPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>
+      <page
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             name="%debugPP_name"

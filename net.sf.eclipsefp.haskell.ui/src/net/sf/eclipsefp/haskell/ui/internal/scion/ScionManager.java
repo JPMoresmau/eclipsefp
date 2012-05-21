@@ -90,6 +90,24 @@ public class ScionManager implements IResourceChangeListener {
     hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
   }
 
+  public static String getExecutablePath(final String preference,final String exeName,final boolean strict){
+    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    String exe = preferenceStore.getString( preference );
+    if (exe!=null && exe.length()>0){
+      File f=new File(exe);
+      if(f.exists()){
+        return f.getAbsolutePath();
+      }
+    }
+    File exeF=FileUtil.findExecutableInPath( exeName );
+    if (exeF!=null){
+      HaskellUIPlugin.getDefault().getPreferenceStore().setValue(preference,exeF.getAbsolutePath());
+      return exeF.getAbsolutePath();
+    }
+
+    return strict?null:exeName;
+  }
+
   public void start() {
     IWorkspace workSpace = ResourcesPlugin.getWorkspace();
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
@@ -105,7 +123,7 @@ public class ScionManager implements IResourceChangeListener {
       hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
     }
 
-    final String serverExecutable = preferenceStore.getString( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE );
+    /*final String serverExecutable = preferenceStore.getString( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE );
     if (serverExecutable.length() > 0) {
       buildWrapperExecutablePath = new Path(serverExecutable);
       if (!buildWrapperExecutablePath.toFile().exists()){
@@ -120,24 +138,33 @@ public class ScionManager implements IResourceChangeListener {
         // set preference
         HaskellUIPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,f.getAbsolutePath());
       }
+    }*/
+    String serverExecutable =getExecutablePath( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE, "buildwrapper",true );
+    if (serverExecutable!=null){
+      buildWrapperExecutablePath = new Path(serverExecutable);
     }
 
-    final String browserExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
-    if (browserExecutable.length() > 0) {
-      browserExecutablePath = new Path(browserExecutable);
-      if (!browserExecutablePath.toFile().exists()){
-        browserExecutablePath=null;
-      }
+//    final String browserExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
+//    if (browserExecutable.length() > 0) {
+//      browserExecutablePath = new Path(browserExecutable);
+//      if (!browserExecutablePath.toFile().exists()){
+//        browserExecutablePath=null;
+//      }
+//
+//    }
+//    // look in path
+//    if (browserExecutablePath==null){
+//      File f=FileUtil.findExecutableInPath( "scion-browser" );
+//      if (f!=null){
+//        browserExecutablePath=new Path(f.getAbsolutePath());
+//        // set preference
+//        HaskellUIPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,f.getAbsolutePath());
+//      }
+//    }
 
-    }
-    // look in path
-    if (browserExecutablePath==null){
-      File f=FileUtil.findExecutableInPath( "scion-browser" );
-      if (f!=null){
-        browserExecutablePath=new Path(f.getAbsolutePath());
-        // set preference
-        HaskellUIPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,f.getAbsolutePath());
-      }
+    serverExecutable =getExecutablePath( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE, "scion-browser",true );
+    if (serverExecutable!=null){
+      browserExecutablePath = new Path(serverExecutable);
     }
 
     if (buildWrapperExecutablePath==null || browserExecutablePath==null){

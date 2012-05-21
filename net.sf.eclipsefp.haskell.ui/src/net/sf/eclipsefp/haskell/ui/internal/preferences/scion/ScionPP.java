@@ -42,7 +42,7 @@ public class ScionPP
 
   private AutodetectExecutableField hoogleExecutableField;
 
-  private AutodetectExecutableField hlintExecutableField;
+  //private AutodetectExecutableField hlintExecutableField;
 
 	private BooleanFieldEditor verboseInteractionField;
   private Composite verboseInteractionFieldC;
@@ -160,13 +160,13 @@ public class ScionPP
 
     hoogleExecutableField=new AutodetectExecutableField( this, sbComposite, "Hoogle", "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH,propertyListener );
 
-    Group hlintComposite = new Group(parentComposite, SWT.NONE);
-    hlintComposite.setLayout( new GridLayout( 2, false ) );
-    gridData = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-    gridData.horizontalSpan = nColumns;
-    hlintComposite.setLayoutData( gridData );
-    hlintComposite.setText( UITexts.hlint_preferences_label );
-    hlintExecutableField=new AutodetectExecutableField( this, hlintComposite, "HLint", "hlint", IPreferenceConstants.HLINT_EXECUTABLE,propertyListener );
+//    Group hlintComposite = new Group(parentComposite, SWT.NONE);
+//    hlintComposite.setLayout( new GridLayout( 2, false ) );
+//    gridData = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+//    gridData.horizontalSpan = nColumns;
+//    hlintComposite.setLayoutData( gridData );
+//    hlintComposite.setText( UITexts.hlint_preferences_label );
+//    hlintExecutableField=new AutodetectExecutableField( this, hlintComposite, "HLint", "hlint", IPreferenceConstants.HLINT_EXECUTABLE,propertyListener );
 
 
     ignoreMissing=new BooleanFieldEditor( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, UITexts.ignore_missing_button, parentComposite );
@@ -193,7 +193,7 @@ public class ScionPP
     buildWrapperExecutableField.setEnabled( true );
     browserExecutableField.setEnabled( true );
     hoogleExecutableField.setEnabled( true );
-    hlintExecutableField.setEnabled( true );
+  //  hlintExecutableField.setEnabled( true );
 	}
 
 
@@ -218,25 +218,14 @@ public class ScionPP
     verboseInteractionField.store();
     verboseBrowserInteractionField.store();
 
-    hlintExecutableField.store();
+ //   hlintExecutableField.store();
 
     IDialogSettings settings = HaskellUIPlugin.getDefault().getDialogSettings();
     cabalBlock.saveColumnSettings( settings, PAGE_ID );
 
-    if (super.performOk()) {
-      // Yuck. You'd think there'd be a way to do this via listening for preference
-      // changes, but nooooooh.
-      //HaskellUIPlugin.getDefault().getScionManager().handlePreferenceChanges();
-      return true;
-    } else {
-      return false;
-    }
+    return super.performOk();
   }
 
-  @Override
-  public boolean performCancel() {
-    return super.performCancel();
-  }
 
   @Override
   public boolean isValid() {
