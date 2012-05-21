@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
@@ -221,6 +223,22 @@ public class BuildMarkerResolutionGenerator implements
 //            if (fixIx>-1){
 //
 //            }
+          } else if ((ix=msgL.indexOf( CabalMessages.DEPENDENCIES_MISSING ))>-1){
+            int nlid=msg.indexOf( "\n",ix );
+            Set<String> all=new HashSet<String>();
+            for (String s:msg.substring( nlid ).split( "\\n" )){
+              s=s.trim();
+              if (s.length()>0){
+                if (s.endsWith( CabalMessages.ANY)){
+                  s=s.substring( 0,s.length()-CabalMessages.ANY.length() ).trim();
+                }
+                all.add(s);
+                res.add(new InstallMissingPackage( Collections.singleton( s ) ));
+              }
+            }
+            if (all.size()>1){
+              res.add(new InstallMissingPackage( all ));
+            }
           }
         }
       }

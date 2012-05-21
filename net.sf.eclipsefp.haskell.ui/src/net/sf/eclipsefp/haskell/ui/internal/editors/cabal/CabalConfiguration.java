@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text.CommentScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellTextHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DefaultTextHover;
@@ -26,6 +27,8 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -105,6 +108,13 @@ class CabalConfiguration extends SourceViewerConfiguration {
     result.setInformationControlCreator( getInformationControlCreator( sv ) );
     result.enableAutoInsert( true );
     return result;
+  }
+
+  @Override
+  public IQuickAssistAssistant getQuickAssistAssistant(final ISourceViewer sourceViewer ) {
+    QuickAssistAssistant qaa=new QuickAssistAssistant();
+    qaa.setQuickAssistProcessor( new QuickAssistProcessor() );
+    return qaa;
   }
 
   @Override

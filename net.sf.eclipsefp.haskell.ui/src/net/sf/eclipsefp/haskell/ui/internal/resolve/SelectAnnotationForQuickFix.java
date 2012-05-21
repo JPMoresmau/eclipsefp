@@ -4,7 +4,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -18,10 +18,10 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class SelectAnnotationForQuickFix extends TextEditorAction {
   private final MarkerAnnotation ann;
-  private final ProjectionViewer sourceViewer;
+  private final SourceViewer sourceViewer;
 
   public SelectAnnotationForQuickFix(
-      final ITextEditor editor,final ProjectionViewer sourceViewer,final MarkerAnnotation ann ) {
+      final ITextEditor editor,final SourceViewer sourceViewer,final MarkerAnnotation ann ) {
     super( HaskellUIPlugin.getDefault().getResourceBundle(), "QuickFix.", editor ); //$NON-NLS-1$
     this.ann=ann;
     this.sourceViewer=sourceViewer;

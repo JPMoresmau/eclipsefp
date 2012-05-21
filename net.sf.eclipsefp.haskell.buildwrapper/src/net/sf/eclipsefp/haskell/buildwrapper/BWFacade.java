@@ -11,12 +11,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
@@ -784,8 +786,9 @@ public class BWFacade {
 					goOn=false;
 
 				} else {
-					if (l.contains(" re-run the 'configure'") || l.contains("cannot satisfy -package-id")){
-						if (l.contains("The version of Cabal")){
+					String ll=l.toLowerCase(Locale.ENGLISH);
+					if (ll.contains(CabalMessages.RERUN_CONFIGURE) || ll.contains(CabalMessages.CANNOT_SATISFY)){
+						if (ll.contains(CabalMessages.VERSION)){
 							needDelete=true;
 						}
 						needConfigure=true;

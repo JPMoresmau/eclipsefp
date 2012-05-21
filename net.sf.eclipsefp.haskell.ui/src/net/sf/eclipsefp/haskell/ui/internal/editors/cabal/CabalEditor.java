@@ -2,26 +2,37 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
+import java.util.Iterator;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline.CabalOutlinePage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.QuickFixAction;
+import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /** <p>an editor for Cabal package description files.</p>
@@ -116,6 +127,38 @@ public class CabalEditor extends TextEditor {
                         IEditorActionDefinitionIds.COMMENT );
     HaskellEditor.createTextOpAction(this, HaskellEditor.LINE_UNCOMMENT_ACTION, HaskellEditor.uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
                         IEditorActionDefinitionIds.UNCOMMENT );
+
+    addRulerContextMenuListener( new IMenuListener() {
+
+      @Override
+      public void menuAboutToShow( final IMenuManager manager ) {
+       IVerticalRulerInfo service= (IVerticalRulerInfo)getAdapter(IVerticalRulerInfo.class);
+       if (service!=null){
+         int line=service.getLineOfLastMouseButtonActivity();
+
+         for (Iterator<?> it=getSourceViewer().getAnnotationModel().getAnnotationIterator();it.hasNext();){
+           Annotation ann = (Annotation) it.next();
+           if (ann instanceof MarkerAnnotation){
+             Position p=getSourceViewer().getAnnotationModel().getPosition( ann );
+             try {
+             if (p!=null && getDocument().getLineOfOffset(p.getOffset())==line){
+               if (((ProjectionViewer)getSourceViewer()).getQuickAssistAssistant().canFix( ann )){
+                 IAction action=new SelectAnnotationForQuickFix(  CabalEditor.this , (SourceViewer)getSourceViewer(), (MarkerAnnotation)ann );
+                 manager.add( action );
+                 //return;
+               }
+             }
+             } catch (BadLocationException ble){
+               // ignore
+             }
+           }
+         }
+       }
+      }
+    });
+    QuickFixAction action = new QuickFixAction(HaskellUIPlugin.getDefault().getResourceBundle(), "RulerQuickFixAction", this, getVerticalRuler()); //$NON-NLS-1$
+    setAction(ITextEditorActionConstants.RULER_CLICK, action);
+
   }
 
   @Override

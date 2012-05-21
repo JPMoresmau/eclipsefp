@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
@@ -58,6 +59,8 @@ public abstract class MarkerCompletion implements IMarkerResolution {
             IEditorPart editor = er.getEditor( true );
             if( editor instanceof HaskellEditor ) {
               doc = ( ( HaskellEditor )editor ).getDocument();
+            } else if (editor instanceof CabalFormEditor ) {
+              doc = ( ( CabalFormEditor )editor ).getModel();
             }
           }
         }
