@@ -46,22 +46,73 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
             break;
           } else if (Character.isLowerCase(  type.charAt( a ) )){
             int start=a;
+            // I don't remember why we search for :
             int end=type.indexOf( ":",a );
-            if (end>-1){
+            // but if we have :: inside, it's a kind signature, maybe?, so we don' truncate
+            if (end>-1 && type.indexOf( ":",end+1 )!=end+1){
               type=type.substring( 0,start )+type.substring( end+1,type.length() );
               break;
             }
           }
         }
+        // if we're in Main, symbol name gets prefixed with Main.
+        int lidx=type.substring(0,ixStartType).lastIndexOf( '.' );
+        if (lidx>-1){
+          type=type.substring(lidx+1);
+        }
       }
+
 
       int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
       try {
 
-        int offset=document.getLineOffset( line-1 );
-        String txt=type+PlatformUtil.NL;
-        return new CompletionProposal(getLineStartAddition(txt,marker.getResource()) , offset, 0, txt.length(),HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
-       // doc.replace( offset, 0, type+NL );
+        final int offset=document.getLineOffset( line-1 );
+        final String txt=type+PlatformUtil.NL;
+        final ICompletionProposal comp=new CompletionProposal(getLineStartAddition(txt,marker.getResource()) , offset, 0, txt.length(),HaskellUIImages.getImage( IImageNames.TYPE_SIGNATURE ),getLabel(),null,null );
+
+        // we ensure KindSignatures is enabled if we have type *?
+        // But it could be in Cabal file?
+//        if (type.contains( "*" )){
+//          return new ICompletionProposal() {
+//
+//            @Override
+//            public Point getSelection( final IDocument paramIDocument ) {
+//             return comp.getSelection( paramIDocument );
+//            }
+//
+//            @Override
+//            public Image getImage() {
+//              return comp.getImage();
+//            }
+//
+//            @Override
+//            public String getDisplayString() {
+//              return comp.getDisplayString();
+//            }
+//
+//            @Override
+//            public IContextInformation getContextInformation() {
+//              return null;
+//            }
+//
+//            @Override
+//            public String getAdditionalProposalInfo() {
+//              return null;
+//            }
+//
+//            @Override
+//            public void apply( final IDocument paramIDocument ) {
+//              comp.apply( paramIDocument );
+//              ICompletionProposal p=new AddLanguagePragmaResolution( "KindSignatures" ).getCompletionProposal( marker, document );
+//              if (p!=null){
+//                p.apply( paramIDocument );
+//              }
+//            }
+//          };
+//
+//
+//        }
+        return comp;
 
       } catch( BadLocationException ex ) {
         HaskellUIPlugin.log( ex );

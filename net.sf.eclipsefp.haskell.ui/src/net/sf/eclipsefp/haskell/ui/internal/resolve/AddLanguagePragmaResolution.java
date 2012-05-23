@@ -84,6 +84,9 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
         if (l.startsWith(getPragmaStart())){
           int ixEnd=l.indexOf( getPragmaEnd(),getPragmaStart().length());
           if (ixEnd>-1){
+            if (l.contains( pragma )){
+              return null;
+            }
             pragmaOffset=r.getOffset()+l.substring( 0,ixEnd ).trim().length();
             repl=getSeparator()+pragma;
           }
