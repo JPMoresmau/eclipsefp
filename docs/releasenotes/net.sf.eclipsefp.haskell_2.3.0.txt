@@ -13,12 +13,14 @@ Fixes:
 	- rebuild project correctly if a Happy, Alex or UUAGC file is modified
 	- Accept space only as separator for extensions field in cabal file
 	- Autocompletion shows symbols from other modules in same project, but not imported (adds import automatically)
+	- Type signature fixes truncated Kind signatures
 
 Features:
 	- Output (exe) generation on build can be disabled by adding output=true to the haskell builder command of the .project file
 	- Search for Haskell types/functions/constructors/modules (definitions + usage)
 	- Quick Fix for more missing pragmas
 		- see https://sourceforge.net/tracker/?func=detail&atid=1000719&aid=3516152&group_id=108233
+	- Quick Fix for missing package -> installs it via cabal with no specific options/flags
 
 Internal:
 
