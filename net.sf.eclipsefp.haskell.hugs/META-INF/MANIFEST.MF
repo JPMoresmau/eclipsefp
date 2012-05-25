@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.hugs;singleton:=true
-Bundle-Version: 2.2.4
+Bundle-Version: 2.3.0
 Bundle-Activator: net.sf.eclipsefp.haskell.hugs.HugsPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin

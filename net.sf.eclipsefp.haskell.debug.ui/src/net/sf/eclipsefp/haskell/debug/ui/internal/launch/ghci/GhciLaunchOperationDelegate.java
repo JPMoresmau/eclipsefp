@@ -29,7 +29,7 @@ public class GhciLaunchOperationDelegate
 
   @Override
   public String[] createArguments( final IProject hsProject,
-                                   final IFile[] selectedFiles ) {
+                                   final IFile[] selectedFiles,final String mode ) {
     List<String> cmdLine = new ArrayList<String>();
 
     cmdLine.add( "--interactive" ); //$NON-NLS-1$
@@ -38,7 +38,28 @@ public class GhciLaunchOperationDelegate
     if (bf!=null){
       BuildFlags flags=bf.getBuildFlags( selectedFiles[0] );
       if (flags!=null){
-        cmdLine.addAll(flags.getGhcFlags());
+        boolean debug="debug".equals(mode); //$NON-NLS-1$
+        boolean isDir=false;
+        for (String s:flags.getGhcFlags()){
+          boolean include=true;
+          if (debug){
+            // here we exclude dir folders pointing to built object code, so that we interpret everything
+            // it's better to get all flags and exclude what we don't want than adding stuff from the cabal file ourselves
+            boolean removeFromDebug=(s.startsWith( "-I" ) || s.startsWith( "-i" ))  //$NON-NLS-1$ //$NON-NLS-2$
+                 && s.contains( BWFacade.DIST_FOLDER );
+            if (isDir){
+              removeFromDebug=true;
+              isDir=false;
+            } else {
+              isDir=s.startsWith( "-" ) && s.contains( "dir" );  //$NON-NLS-1$//$NON-NLS-2$
+              removeFromDebug |= isDir;
+            }
+            include=!removeFromDebug;
+          }
+          if (include){
+            cmdLine.add(s);
+          }
+        }
       }
     }
 

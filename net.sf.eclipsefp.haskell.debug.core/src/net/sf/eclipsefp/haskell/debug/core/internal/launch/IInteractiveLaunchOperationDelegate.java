@@ -25,7 +25,7 @@ public interface IInteractiveLaunchOperationDelegate {
 
   /** <p>creates the command line arguments (list the modules to be loaded,
     * library paths etc.).</p> */
-  String[] createArguments( IProject hsProject, IFile[] files );
+  String[] createArguments( IProject hsProject, IFile[] files,String mode );
 
   /**
    * get the reload command or null if not supported

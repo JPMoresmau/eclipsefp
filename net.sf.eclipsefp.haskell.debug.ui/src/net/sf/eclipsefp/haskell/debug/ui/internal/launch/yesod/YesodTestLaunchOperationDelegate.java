@@ -21,7 +21,7 @@ public class YesodTestLaunchOperationDelegate extends
    * @see net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate#createArguments(org.eclipse.core.resources.IProject, org.eclipse.core.resources.IFile[])
    */
   @Override
-  public String[] createArguments( final IProject hsProject, final IFile[] files ) {
+  public String[] createArguments( final IProject hsProject, final IFile[] files,final String mode ) {
    return new String[]{"test"}; //$NON-NLS-1$
   }
 }

@@ -17,7 +17,7 @@ public abstract class ExecutableOrTestSuiteHaskellLaunchDelegate extends
   protected abstract String getExtraArguments();
 
   @Override
-  String[] determineArguments( final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate )
+  String[] determineArguments( final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate,final String mode )
       throws CoreException {
     String extra = config.getAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
         ILaunchAttributes.EMPTY );

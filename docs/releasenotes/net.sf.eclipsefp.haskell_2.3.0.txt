@@ -14,6 +14,7 @@ Fixes:
 	- Accept space only as separator for extensions field in cabal file
 	- Autocompletion shows symbols from other modules in same project, but not imported (adds import automatically)
 	- Type signature fixes truncated Kind signatures
+	- Do not load object code when running debug GHCi sessions
 
 Features:
 	- Output (exe) generation on build can be disabled by adding output=true to the haskell builder command of the .project file

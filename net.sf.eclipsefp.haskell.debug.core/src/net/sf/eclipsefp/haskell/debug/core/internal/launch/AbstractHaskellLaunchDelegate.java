@@ -75,7 +75,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         final IPath loc =delegate!=null?new Path(delegate.getExecutable()) :
           getExecutableLocation( configuration );
         checkCancellation( monitor );
-        String[] arguments = determineArguments( configuration,delegate );
+        String[] arguments = determineArguments( configuration,delegate,mode );
         checkCancellation( monitor );
         String[] cmdLine = createCmdLine( loc, arguments );
         checkCancellation( monitor );
@@ -223,7 +223,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return result;
   }
 
-  String[] determineArguments( final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate )
+  String[] determineArguments( final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate,final String mode )
       throws CoreException {
     String extra = config.getAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
         ILaunchAttributes.EMPTY );
@@ -231,7 +231,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         ILaunchAttributes.EMPTY );
     String[] fullArgs=CommandLineUtil.parse( extra + " " + args ); //$NON-NLS-1$
 
-    String[] delegateArgs=getDelegateArguments(config,delegate);
+    String[] delegateArgs=getDelegateArguments(config,delegate,mode);
     if (delegateArgs.length>0){
       String[] newArgs=new String[fullArgs.length+delegateArgs.length];
       System.arraycopy( fullArgs, 0, newArgs, 0, fullArgs.length );
@@ -242,7 +242,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return fullArgs;
   }
 
-  public static String[] getDelegateArguments(final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate)throws CoreException{
+  public static String[] getDelegateArguments(final ILaunchConfiguration config,final IInteractiveLaunchOperationDelegate delegate,final String mode)throws CoreException{
     if (delegate!=null){
       IProject p=getProject( config );
       List<String> fileNames=config.getAttribute( ILaunchAttributes.FILES, new ArrayList<String>() );
@@ -250,7 +250,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       for (int a=0;a<fileNames.size();a++){
         files[a]=p.getFile( fileNames.get(a) );
       }
-      return delegate.createArguments(p , files );
+      return delegate.createArguments(p , files,mode );
     }
     return new String[0];
   }

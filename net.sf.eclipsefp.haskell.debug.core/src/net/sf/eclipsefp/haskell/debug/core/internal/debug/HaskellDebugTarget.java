@@ -57,6 +57,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   private final Map<IBreakpoint,Integer> breakpointIds=new IdentityHashMap<IBreakpoint, Integer>();
   private final Map<String,HaskellBreakpoint> breakpointNames=new HashMap<String,HaskellBreakpoint>();
 
+
   private boolean connected=true;
   private boolean atEnd=false;
 
@@ -321,6 +322,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   }
 
   public void start() throws DebugException{
+
     //waitForPrompt();
     IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(HaskellDebugCore.ID_HASKELL_DEBUG_MODEL);
     for (int i = 0; i < breakpoints.length; i++) {

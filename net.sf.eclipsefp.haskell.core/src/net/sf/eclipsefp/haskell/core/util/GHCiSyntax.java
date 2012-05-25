@@ -44,6 +44,14 @@ public class GHCiSyntax {
   public static final String TYPEOF="::"; //$NON-NLS-1$
   public static final String UNIT="()"; //$NON-NLS-1$
 
+  public static String addModuleCommand(final String module){
+    return  ":add *" +module;  //$NON-NLS-1$
+   }
+
+  public static String loadModuleCommand(final String module){
+    return  ":load *" +module;  //$NON-NLS-1$
+   }
+
   public static String setBreakpointCommand(final String module, final int lineNumber){
    return  ":break " +module+" "+ lineNumber;  //$NON-NLS-1$//$NON-NLS-2$
   }

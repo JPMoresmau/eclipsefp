@@ -309,7 +309,7 @@ public class HaskellArgumentsTab extends AbstractLaunchConfigurationTab {
       arguments = configuration.getAttribute( att, ILaunchAttributes.EMPTY );
       IInteractiveLaunchOperationDelegate delegate=AbstractHaskellLaunchDelegate.getDelegate( configuration );
 
-      forcedArguments=InteractiveLaunchOperation.concatenate( AbstractHaskellLaunchDelegate.getDelegateArguments( configuration, delegate ));
+      forcedArguments=InteractiveLaunchOperation.concatenate( AbstractHaskellLaunchDelegate.getDelegateArguments( configuration, delegate,"run" )); //$NON-NLS-1$
         //configuration.getAttribute( ILaunchAttributes.ARGUMENTS, ILaunchAttributes.EMPTY );
       fullArguments=arguments+" "+forcedArguments; //$NON-NLS-1$
     } catch( CoreException ce ) {
