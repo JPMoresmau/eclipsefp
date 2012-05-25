@@ -156,6 +156,14 @@
             id="net.sf.eclipsefp.haskell.core.project.haskellNatureImage">
       </image>
    </extension>
+    <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/ovr16/yesod_ovr.gif"
+            natureId="net.sf.eclipsefp.haskell.core.project.YesodNature"
+            id="net.sf.eclipsefp.haskell.core.project.yesodNatureImage">
+      </image>
+   </extension>
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
@@ -756,6 +764,7 @@
 	
       </enablement>
     </objectContribution>
+     
     <!--objectContribution
           id="net.sf.eclipsefp.haskell.ui.contribution1"
           objectClass="org.eclipse.core.resources.IProject">

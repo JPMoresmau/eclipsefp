@@ -65,7 +65,7 @@ public class TestSuiteHaskellLaunchDelegate extends
   }
 
   @Override
-  protected void postProcessFinished() {
+  protected void postProcessFinished(final ILaunchConfiguration configuration) {
     // Get file and parse output
     final String fname = getFilename();
     final File file = new File( fname );

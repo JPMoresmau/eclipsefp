@@ -14,6 +14,22 @@
             sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodLaunchDelegate"
+            modes="run"
+            name="%yesodInteractiveLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+       <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodTestLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodTestLaunchDelegate"
+            modes="run"
+            name="%yesodTestInteractiveLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
             delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
             modes="run"

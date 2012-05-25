@@ -61,7 +61,7 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
   }
 
   @Override
-  protected void postProcessFinished() {
+  protected void postProcessFinished(final ILaunchConfiguration configuration) {
     // NOOP
   }
 

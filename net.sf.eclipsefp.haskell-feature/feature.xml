@@ -114,14 +114,14 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.2.4"
+         version="2.3.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="2.2.4"
+         version="2.3.0"
          unpack="false"/>
 
    <plugin

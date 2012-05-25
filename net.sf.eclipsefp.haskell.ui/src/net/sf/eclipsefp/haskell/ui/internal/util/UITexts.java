@@ -743,6 +743,9 @@ public final class UITexts extends NLS {
   public static String SearchPage_scope_references;
   public static String SearchPage_scope_all;
 
+  public static String yesod_devel;
+  public static String yesod_test;
+  public static String yesod_cabaldev;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$

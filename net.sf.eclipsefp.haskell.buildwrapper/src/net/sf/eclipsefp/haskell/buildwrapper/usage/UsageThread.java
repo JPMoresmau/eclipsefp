@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.buildwrapper.usage;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 
@@ -43,11 +44,14 @@ public class UsageThread extends Thread {
 					
 				while (p!=null){
 					boolean retAll=!BuildWrapperPlugin.getDefault().getUsageAPI().knowsProject(p);
-					List<Component> cs=BuildWrapperPlugin.getFacade(p).getComponents();
-					for (Component c:cs){
-						BuildWrapperPlugin.getFacade(p).generateUsage(c,retAll);
+					BWFacade f=BuildWrapperPlugin.getFacade(p);
+					if (f!=null){
+						List<Component> cs=f.getComponents();
+						for (Component c:cs){
+							f.generateUsage(c,retAll);
+						}
+						p=getNext();
 					}
-					p=getNext();
 				}
 			}
 			

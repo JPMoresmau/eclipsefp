@@ -19,6 +19,16 @@
       <builder id="net.sf.eclipsefp.haskell.core.hlint.HLintBuilder"/>  
    </extension>
    <extension
+         id="project.YesodNature"
+         name="%yesodNature_name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="net.sf.eclipsefp.haskell.core.project.YesodNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
          id="builder.HaskellBuilder"
          name="%haskellBuilder_name"
          point="org.eclipse.core.resources.builders">
@@ -164,7 +174,7 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder, hasProjectUuagcBuilder, needsProjectUuagcBuilder"
+            properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder, hasProjectUuagcBuilder, needsProjectUuagcBuilder, isProjectYesod"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.core.resources.IResource"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"

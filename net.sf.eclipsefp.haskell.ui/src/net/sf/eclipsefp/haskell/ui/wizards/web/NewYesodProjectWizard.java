@@ -4,6 +4,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.project.YesodNature;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -109,6 +110,7 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
                   IProject project = CustomProjectSupport
                       .createBaseProject( name, location );
                   CustomProjectSupport.addNature( project, HaskellNature.NATURE_ID );
+                  CustomProjectSupport.addNature( project, YesodNature.NATURE_ID );
                   project.refreshLocal( IResource.DEPTH_INFINITE, null );
 
               }

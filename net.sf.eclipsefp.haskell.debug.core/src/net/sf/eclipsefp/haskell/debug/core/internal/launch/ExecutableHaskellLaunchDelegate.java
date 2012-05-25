@@ -43,7 +43,7 @@ public class ExecutableHaskellLaunchDelegate extends
   }
 
   @Override
-  protected void postProcessFinished() {
+  protected void postProcessFinished(final ILaunchConfiguration configuration) {
     // NOOP
 
   }

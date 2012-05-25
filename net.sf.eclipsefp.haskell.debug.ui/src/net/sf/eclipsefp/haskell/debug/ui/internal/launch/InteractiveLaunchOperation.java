@@ -44,7 +44,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
 
   private final IInteractiveLaunchOperationDelegate delegate;
 
-  InteractiveLaunchOperation( final IInteractiveLaunchOperationDelegate del ) {
+  public InteractiveLaunchOperation( final IInteractiveLaunchOperationDelegate del ) {
     this.delegate = del;
   }
 
@@ -56,7 +56,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
   // methods called from outside
   //////////////////////////////
 
-  void launch( final IResource[] resources,final String mode,
+  public void launch( final IResource[] resources,final String mode,
                final IProgressMonitor monitor ) throws CoreException {
     IFile[] filesToLoad = SelectionAnalyzer.getSourcesToLoad( resources );
     if( resources.length > 0 && resources[ 0 ] != null ) {
@@ -75,10 +75,10 @@ public class InteractiveLaunchOperation extends LaunchOperation {
   // helping methods
   //////////////////
 
-  private ILaunchConfiguration getConfiguration( final IResource[] resources,
+  public ILaunchConfiguration getConfiguration( final IResource[] resources,
                                                  final IFile[] files )
                                                           throws CoreException {
-    List<ILaunchConfiguration> configurations = findConfig(delegate, resources );
+    List<ILaunchConfiguration> configurations = findConfig(delegate, resources,getConfigTypeName() );
     ILaunchConfiguration result = null;
     int count = configurations.size();
     if( count < 1 ) {
@@ -97,14 +97,30 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     return result;
   }
 
+  protected String getConfigurationId(final IResource[] resources){
+    IContainer src=ResourceUtil.getSourceContainer( resources[0] );
+    IPath path=ResourceUtil.getSourceFolderRelativeName( resources[0] );
+    path=path.removeFileExtension();
+    return NLS.bind( UITexts.configuration_name, new Object[]{path.toPortableString() ,resources[0].getProject().getName(),src!=null?src.getProjectRelativePath().toPortableString():""}); //$NON-NLS-1$
+
+  }
+
+  /**
+   * set extra arguments that we know from preferences etc
+   * subclasses can override
+   * @param wc
+   */
+  protected void setExtraArguments(final ILaunchConfigurationWorkingCopy wc){
+    // no extra arguments by default
+    wc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
+        ILaunchAttributes.EMPTY );
+  }
+
   private ILaunchConfiguration createConfiguration( final IResource[] resources,
                                                     final IFile[] files )
                                                           throws CoreException {
     ILaunchConfigurationType configType = getConfigType();
-    IContainer src=ResourceUtil.getSourceContainer( resources[0] );
-    IPath path=ResourceUtil.getSourceFolderRelativeName( resources[0] );
-    path=path.removeFileExtension();
-    String s=NLS.bind( UITexts.configuration_name, new Object[]{path.toPortableString() ,resources[0].getProject().getName(),src!=null?src.getProjectRelativePath().toPortableString():""}); //$NON-NLS-1$
+    String s=getConfigurationId(resources);
     String id = createConfigId(s);
     IProject project = resources[ 0 ].getProject();
 
@@ -116,8 +132,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, projectLocation );
     //wc.setAttribute( ILaunchAttributes.ARGUMENTS,
     //                 getArguments(delegate, project, files ) );
-    wc.setAttribute( ILaunchAttributes.EXTRA_ARGUMENTS,
-        ILaunchAttributes.EMPTY );
+    setExtraArguments(wc);
     wc.setAttribute( ILaunchAttributes.DELEGATE, delegate.getClass().getName() );
     List<String> fileNames=new ArrayList<String>(files.length);
     for (IFile f:files){
@@ -134,19 +149,20 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     return wc.doSave();
   }
 
-  public static List<ILaunchConfiguration> findConfig( final IInteractiveLaunchOperationDelegate delegate, final IResource[] resources )
+
+  public static List<ILaunchConfiguration> findConfig( final IInteractiveLaunchOperationDelegate delegate, final IResource[] resources,final String configType )
                                                           throws CoreException {
     List<ILaunchConfiguration> result = Collections.emptyList();
-    ILaunchConfiguration[] configurations = LaunchOperation.getConfigurations(LaunchOperation.getConfigType( INTERACTIVE_CONFIG_TYPE ));
+    ILaunchConfiguration[] configurations = LaunchOperation.getConfigurations(LaunchOperation.getConfigType( configType ));
     result = new ArrayList<ILaunchConfiguration>( configurations.length );
     String cls=delegate.getClass().getName();
+    String exePath = delegate.getExecutable();
+    String projectName = resources[ 0 ].getProject().getName();
+    String firstResName = resources[ 0 ].getName();
+
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
-
-      String exePath = delegate.getExecutable();
-      String projectName = resources[ 0 ].getProject().getName();
-      String firstResName = resources[ 0 ].getName();
-      if( (getDelegate( configuration )==null || getDelegate( configuration ).equals( cls ))
+            if( (getDelegate( configuration )==null || getDelegate( configuration ).equals( cls ))
           && getProjectName( configuration ).equals( projectName )
           && getFirstResName( configuration ).equals( firstResName ) ) {
         String cExePath=getExePath( configuration );

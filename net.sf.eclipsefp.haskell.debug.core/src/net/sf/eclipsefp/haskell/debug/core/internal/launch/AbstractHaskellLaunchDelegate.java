@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.File;
@@ -36,7 +41,11 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 
-
+/**
+ * abstract base class for our launch delegates
+ * @author JP Moresmau
+ *
+ */
 public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationDelegate{
 
   public static IInteractiveLaunchOperationDelegate getDelegate(final ILaunchConfiguration configuration) throws CoreException{
@@ -120,7 +129,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
                     // ignored
                   }
                 }
-                postProcessFinished();
+                postProcessFinished(configuration);
                 return Status.OK_STATUS;
               }
             };
@@ -137,7 +146,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
                 // ignored
               }
             }
-            postProcessFinished();
+            postProcessFinished(configuration);
           }
         }
       } catch( LaunchCancelledException lcex ) {
@@ -152,7 +161,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       final String mode,final ILaunch launch,Map<String, String> processAttribs) throws CoreException;
   protected abstract void preProcessDefinitionCreation(final ILaunchConfiguration configuration,
       final String mode,final ILaunch launch) throws CoreException;
-  protected abstract void postProcessFinished();
+  protected abstract void postProcessFinished(final ILaunchConfiguration configuration);
 
   private IProcess createProcess( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IPath location,
@@ -297,7 +306,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     return null;
   }
 
-  private boolean isEmpty( final String location ) {
+  protected boolean isEmpty( final String location ) {
     return location == null || location.trim().length() == 0;
   }
 

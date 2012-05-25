@@ -84,7 +84,7 @@ public class ExecutableProfilingHaskellLaunchDelegate extends
   }
 
   @Override
-  protected void postProcessFinished() {
+  protected void postProcessFinished(final ILaunchConfiguration configuration) {
     Calendar cal = Calendar.getInstance( );
     SimpleDateFormat sdf = new SimpleDateFormat( DATETIME_FORMAT );
     String datetime = sdf.format( cal.getTime( ) );

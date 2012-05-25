@@ -14,6 +14,14 @@
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci.GhciLaunchOperationDelegate"
             id="net.sf.eclipsefp.haskell.debug.ui.ghci">
       </delegate>
+      <delegate
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodDevelLaunchOperationDelegate"
+            id="net.sf.eclipsefp.haskell.debug.ui.yesod">
+      </delegate>
+      <delegate
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodTestLaunchOperationDelegate"
+            id="net.sf.eclipsefp.haskell.debug.ui.yesod">
+      </delegate>
    </extension>
       <extension
          point="org.eclipse.core.runtime.adapters">
@@ -139,6 +147,16 @@
             id="net.sf.eclipsefp.haskell.ui.launch.launchIcon">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
+            icon="icons/etool16/yesod16.gif"
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchYesodIcon">
+      </launchConfigurationTypeImage>
+       <launchConfigurationTypeImage
+            icon="icons/etool16/yesod16.gif"
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodTestLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchYesodIcon">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
             icon="icons/etool16/hsexe16.gif"
             configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableHaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.ui.launch.launchExecutableIcon">
@@ -175,6 +193,16 @@
              class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
              id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
              type="net.sf.eclipsefp.haskell.debug.core.internal.launch.ExecutableProfilingHaskellLaunchDelegate">
+       </launchConfigurationTabGroup>
+        <launchConfigurationTabGroup
+             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodLaunchTabGroup"
+             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.YesodLaunchTabGroup"
+             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodLaunchDelegate">
+       </launchConfigurationTabGroup>
+        <launchConfigurationTabGroup
+             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodLaunchTabGroup"
+             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.YesodLaunchTabGroup"
+             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.YesodTestLaunchDelegate">
        </launchConfigurationTabGroup>
    </extension>
    <extension
@@ -227,6 +255,52 @@
             </enablement>
             <contextLabel
                   label="%ghciContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+      <shortcut
+            label="%yesodDevelShortcut_label"
+            icon="icons/etool16/yesod16.gif"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodDevelLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodDevelLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                 <count value="1" />
+                 <iterate>
+                   <adapt type="org.eclipse.core.resources.IProject">
+                     <test property="net.sf.eclipsefp.haskell.core.isProjectYesod"/>
+                   </adapt>
+                 </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%yesodDevelContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+       <shortcut
+            label="%yesodTestShortcut_label"
+            icon="icons/etool16/yesod16.gif"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodTestLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod.YesodTestLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                 <count value="1" />
+                 <iterate>
+                   <adapt type="org.eclipse.core.resources.IProject">
+                     <test property="net.sf.eclipsefp.haskell.core.isProjectYesod"/>
+                   </adapt>
+                 </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%yesodTestContextLabel_label"
                   mode="run">
             </contextLabel>
          </contextualLaunch>

@@ -55,6 +55,7 @@ public final class UITexts extends NLS {
   public static String runExecutable;
   public static String runProfiling;
   public static String runTestSuite;
+  public static String yesod_devel_error;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

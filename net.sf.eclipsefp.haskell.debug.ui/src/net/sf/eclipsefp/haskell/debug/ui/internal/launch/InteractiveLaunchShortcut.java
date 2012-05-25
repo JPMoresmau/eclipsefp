@@ -71,7 +71,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
   // helping methods
   //////////////////
 
-  private void launch( final IResource[] resources,final String mode ) {
+  protected void launch( final IResource[] resources,final String mode ) {
     // TODO put this into a Job and use the progress monitor
     // also: need a public job family in core (with icon in ui)
     try {
@@ -99,12 +99,20 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
       final IEditorPart paramIEditorPart ) {
     IResource resource = ResourceUtil.findResource( paramIEditorPart.getEditorInput() );
     try {
-      List<ILaunchConfiguration> cs=InteractiveLaunchOperation.findConfig( getDelegate(),new IResource[]{ resource });
+      List<ILaunchConfiguration> cs=InteractiveLaunchOperation.findConfig( getDelegate(),new IResource[]{ resource },getConfigTypeName() );
       return cs.toArray( new ILaunchConfiguration[cs.size()] );
   } catch (CoreException cex){
     HaskellUIPlugin.log( cex );
   }
   return null;
+  }
+
+  /**
+   * configuration type name. Subclasess can override if they use a different type but want ot piggy back on this implementation
+   * @return
+   */
+  protected String getConfigTypeName() {
+    return InteractiveLaunchOperation.INTERACTIVE_CONFIG_TYPE;
   }
 
   /**
@@ -114,7 +122,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
   public ILaunchConfiguration[] getLaunchConfigurations(
       final ISelection paramISelection ) {
     try {
-        List<ILaunchConfiguration> cs=InteractiveLaunchOperation.findConfig( getDelegate(), ResourceUtil.getResourcesFromSelection( paramISelection ) );
+        List<ILaunchConfiguration> cs=InteractiveLaunchOperation.findConfig( getDelegate(), ResourceUtil.getResourcesFromSelection( paramISelection ),getConfigTypeName()  );
         return cs.toArray( new ILaunchConfiguration[cs.size()] );
     } catch (CoreException cex){
       HaskellUIPlugin.log( cex );
