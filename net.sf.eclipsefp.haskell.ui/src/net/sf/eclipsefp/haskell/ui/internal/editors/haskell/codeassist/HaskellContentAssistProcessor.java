@@ -163,7 +163,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     //ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
     String prf = getCompletionPrefix( doc, offset );
-    if (prf!=null && !prf.equals( prefix )){
+    if (prf!=null && (!prf.equals( prefix ) || prf.length()==0)){
       scope=ProposalScope.IMPORTED;
     }
     prefix=prf;
