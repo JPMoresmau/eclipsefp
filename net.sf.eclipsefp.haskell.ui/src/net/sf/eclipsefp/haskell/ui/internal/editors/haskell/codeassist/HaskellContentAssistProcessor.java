@@ -45,6 +45,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.Fil
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ProposalScope;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -61,7 +62,10 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * Computes the content assist completion proposals and context information. This class is fairly stateful, since
@@ -112,6 +116,15 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
   private Boolean searchAll;
 
   /**
+   * the currently showing scope of proposals
+   */
+  private ProposalScope scope=ProposalScope.IMPORTED;
+  /**
+   * the key binding for content assist
+   */
+  private String contentAssistBinding;
+
+  /**
    * The constructor.
    *
    * @param assistant The associated content assistant
@@ -128,6 +141,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
 	  // Add the listener, who modulates the completion context
 	  this.assistant.addCompletionListener( new CAListener() );
+
 	}
 
 	// =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
@@ -138,15 +152,21 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-  public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset)
-	{
+  public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset)	{
+	  // reset to default
+	  assistant.setStatusLineVisible( false );
+	  assistant.setShowEmptyList( false );
 	  //ScionTokenScanner sts=((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getScanner();
 	  IFile theFile = HaskellUIPlugin.getFile( viewer );
 	  IDocument doc = viewer.getDocument();
 	  // Figure out what we're doing...
     //ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
-    prefix = getCompletionPrefix( doc, offset );
+    String prf = getCompletionPrefix( doc, offset );
+    if (prf!=null && !prf.equals( prefix )){
+      scope=ProposalScope.IMPORTED;
+    }
+    prefix=prf;
     switch (context) {
       case NO_CONTEXT: {
         //if ( scion != null ) {
@@ -240,7 +260,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
   @Override
   public IContextInformation[] computeContextInformation(final ITextViewer viewer, final int documentOffset) {
-		// unused
+ // unused
 		return null;
 	}
 
@@ -275,6 +295,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  moduleGraphNames = null;
 	  exposedModules = null;
 	  moduleName = null;
+	  scope=ProposalScope.IMPORTED;
 	}
 
 	/** Get the completion prefix from the prefix offset, if non-zero, or reverse lex */
@@ -299,7 +320,23 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	private ICompletionProposal[] defaultCompletionContext( final ITextViewer viewer, final IFile theFile, final IDocument doc,
 	                                                        final int offset, final boolean typesHavePriority) {
+	  boolean needSearch=prefix.length()>0 && Boolean.TRUE.equals(searchAll) ;
+	  // we display the scope status bar if we can cycle
+	  if (needSearch){
+  	  assistant.setStatusLineVisible( true );
+  	  // this doesn't work in the constructor, for some reason, so use lazy init
+  	  if (contentAssistBinding==null){
+  	    IBindingService bsvc=(IBindingService)PlatformUI.getWorkbench().getService( IBindingService.class );
+  	    contentAssistBinding=bsvc.getBestActiveBindingFormattedFor( "org.eclipse.ui.edit.text.contentAssist.proposals" );
+  	  }
+  	  String msg=NLS.bind( UITexts.proposal_category_mode, contentAssistBinding, scope.next().getDescription());
+
+  	  assistant.setStatusMessage( msg);
+  	  // we need to show the list so the user sees the message to cycle through scopes
+  	  assistant.setShowEmptyList( true );
+	  }
 	  context = typesHavePriority ? CompletionContext.TYCON_CONTEXT : CompletionContext.DEFAULT_CONTEXT;
+
 
 	  HaskellCompletionContext haskellCompletions = new HaskellCompletionContext( doc.get(), offset );
 	  // ICompletionProposal[] haskellProposals = haskellCompletions.computeProposals();
@@ -322,32 +359,14 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     // constructor key to declaration name (if we use a constructor from a new module, we need to import to data type, not the constructor)
     Map<String,String> constructors=new HashMap<String, String>();
 
-    ProposalScope ps=ProposalScope.valueOf( HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
+    //ProposalScope ps=ProposalScope.valueOf( HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
+
     Map<String,Documented> importeds=mgr.getDeclarations();
 
-    if (prefix.length()>0 && Boolean.TRUE.equals(searchAll) && !ps.equals( ProposalScope.IMPORTED )){
+    if (needSearch && !scope.equals( ProposalScope.IMPORTED )){
       try {
         Set<String> pkgs=ResourceUtil.getImportPackages( new IFile[]{theFile});
-        for (IContainer src:ResourceUtil.getAllSourceContainers( theFile )){
-          Collection<IFile> fs=ResourceUtil.getSourceFiles(src);
-          for (IFile f:fs){
-            String module=ResourceUtil.getModuleName( f );
-            for (FileDocumented fd:AnImport.getDeclarationsFromFile( f )){
-              String name=fd.getDocumented().getName();
-              if (name.startsWith( prefix ) && !importeds.containsKey( name )){
-                name=name+" ("+module+")";
-                decls.put(name, fd.getDocumented() );
-                if (fd.getDocumented() instanceof Constructor){
-                  Constructor c=(Constructor)fd.getDocumented();
-                  if (c.getTypeName()!=null){
-                    constructors.put(name, c.getTypeName() );
-                  }
-                }
-              }
-            }
-          }
 
-        }
 //        List<SymbolDef> sds=BuildWrapperPlugin.getDefault().getUsageAPI().listDefinedSymbols( theFile.getProject() );
 //        for (SymbolDef sd:sds){
 //          String name=sd.getName();
@@ -372,7 +391,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 //          }
 //        }
 
-        if (ps.equals( ProposalScope.ALL )){
+        if (scope.equals( ProposalScope.ALL )){
           // search on everything
           Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
           if (browserDecls.length > 0) {
@@ -382,7 +401,29 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
               addBrowserDecl( browserDecl, decls, packages, constructors, newPackage );
             }
           }
-        } else if (ps.equals( ProposalScope.PROJECT )){
+        } else if (scope.equals( ProposalScope.PROJECT )){
+          // things in project
+          for (IContainer src:ResourceUtil.getAllSourceContainers( theFile )){
+            Collection<IFile> fs=ResourceUtil.getSourceFiles(src);
+            for (IFile f:fs){
+              String module=ResourceUtil.getModuleName( f );
+              for (FileDocumented fd:AnImport.getDeclarationsFromFile( f )){
+                String name=fd.getDocumented().getName();
+                if (name.startsWith( prefix ) && !importeds.containsKey( name )){
+                  name=name+" ("+module+")";
+                  decls.put(name, fd.getDocumented() );
+                  if (fd.getDocumented() instanceof Constructor){
+                    Constructor c=(Constructor)fd.getDocumented();
+                    if (c.getTypeName()!=null){
+                      constructors.put(name, c.getTypeName() );
+                    }
+                  }
+                }
+              }
+            }
+
+          }
+
           // search on dependent packages only
           BWFacade f=BuildWrapperPlugin.getFacade( theFile.getProject() );
           if (f!=null){
@@ -412,7 +453,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
         HaskellUIPlugin.log( e );
       }
     }
-    decls.putAll(importeds);
+    if (scope.equals( ProposalScope.IMPORTED )){
+      decls.putAll(importeds);
+    }
+
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
       if ( s.getKey().startsWith( prefix ) ) {
         if (s.getValue() instanceof Constructor || s.getValue() instanceof Function) {
@@ -491,7 +535,9 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       endIndex += typeElts.size();
     }
 
-    return (totalSize > 0 ? result : null);
+    scope=scope.next();
+    return result;
+   // return (totalSize > 0 ? result : null);
 	}
 
 	private static boolean isPointed(final String name){

@@ -6,13 +6,6 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,7 +47,7 @@ public class AppearancePP extends AbstractEditorPP {
     store.addIntKey( EDITOR_TAB_WIDTH );
     store.addIntKey( EDITOR_CABAL_TAB_WIDTH );
     store.addStringKey( CA_AUTOACTIVATION_TRIGGERS );
-    store.addStringKey( CA_PROPOSALS_SCOPE );
+  //  store.addStringKey( CA_PROPOSALS_SCOPE );
   }
 
 
@@ -193,41 +186,41 @@ public class AppearancePP extends AbstractEditorPP {
     String atKey = CA_AUTOACTIVATION_TRIGGERS;
     tab.addTextField( parent, atText, atKey, 4, 10 );
 
-    Label labelScope=new Label( parent, SWT.NONE );
-    labelScope.setText( UITexts.preferences_editor_contentass_scope );
-    gd = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
-    gd.horizontalIndent=10;
-    labelScope.setLayoutData( gd );
-
-    ComboViewer cv=new ComboViewer( parent,SWT.READ_ONLY );
-    cv.setContentProvider( new ArrayContentProvider() );
-    cv.setLabelProvider( new LabelProvider(){
-      @Override
-      public String getText(final Object element) {
-        ProposalScope ps=(ProposalScope)element;
-         switch (ps){
-            case ALL:
-              return UITexts.preferences_editor_contentass_scope_all;
-            case IMPORTED:
-              return UITexts.preferences_editor_contentass_scope_imported;
-            case PROJECT:
-              return UITexts.preferences_editor_contentass_scope_project;
-          }
-         return super.getText( element );
-      }
-    } );
-    cv.setInput( ProposalScope.values() );
-    cv.getCombo().setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING) );
-    cv.addSelectionChangedListener( new ISelectionChangedListener() {
-
-      @Override
-      public void selectionChanged( final SelectionChangedEvent arg0 ) {
-        ProposalScope ps=(ProposalScope)((IStructuredSelection)arg0.getSelection()).getFirstElement();
-        getPreferenceStore().setValue( CA_PROPOSALS_SCOPE, ps.toString() );
-      }
-    } );
-    ProposalScope ps=ProposalScope.valueOf(getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
-    cv.setSelection( new StructuredSelection( ps ) );
+//    Label labelScope=new Label( parent, SWT.NONE );
+//    labelScope.setText( UITexts.preferences_editor_contentass_scope );
+//    gd = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
+//    gd.horizontalIndent=10;
+//    labelScope.setLayoutData( gd );
+//
+//    ComboViewer cv=new ComboViewer( parent,SWT.READ_ONLY );
+//    cv.setContentProvider( new ArrayContentProvider() );
+//    cv.setLabelProvider( new LabelProvider(){
+//      @Override
+//      public String getText(final Object element) {
+//        ProposalScope ps=(ProposalScope)element;
+//         switch (ps){
+//            case ALL:
+//              return UITexts.preferences_editor_contentass_scope_all;
+//            case IMPORTED:
+//              return UITexts.preferences_editor_contentass_scope_imported;
+//            case PROJECT:
+//              return UITexts.preferences_editor_contentass_scope_project;
+//          }
+//         return super.getText( element );
+//      }
+//    } );
+//    cv.setInput( ProposalScope.values() );
+//    cv.getCombo().setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING) );
+//    cv.addSelectionChangedListener( new ISelectionChangedListener() {
+//
+//      @Override
+//      public void selectionChanged( final SelectionChangedEvent arg0 ) {
+//        ProposalScope ps=(ProposalScope)((IStructuredSelection)arg0.getSelection()).getFirstElement();
+//        getPreferenceStore().setValue( CA_PROPOSALS_SCOPE, ps.toString() );
+//      }
+//    } );
+//    ProposalScope ps=ProposalScope.valueOf(getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
+//    cv.setSelection( new StructuredSelection( ps ) );
 
     String mbKey = EDITOR_MATCHING_BRACKETS;
     createBooleanField( parent, UITexts.preferences_editor_appearance_matching_brackets, mbKey );

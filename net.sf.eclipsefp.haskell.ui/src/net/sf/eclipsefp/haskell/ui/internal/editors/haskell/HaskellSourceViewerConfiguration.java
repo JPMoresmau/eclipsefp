@@ -112,8 +112,9 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	@Override
   public IContentAssistant getContentAssistant(final ISourceViewer viewer) {
 
-		ContentAssistant ca = new ContentAssistant();
-		ca.setContentAssistProcessor(new HaskellContentAssistProcessor(ca), IDocument.DEFAULT_CONTENT_TYPE);
+		final ContentAssistant ca = new ContentAssistant();
+		HaskellContentAssistProcessor processor=new HaskellContentAssistProcessor(ca);
+		ca.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		ca.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 
 		ca.setInformationControlCreator( new IInformationControlCreator() {
@@ -124,15 +125,17 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
         return new DefaultInformationControl( parent, false );
       }
     } );
-
+		ca.setStatusLineVisible( true );
+		ca.setStatusMessage( "msg" );
 		ca.enablePrefixCompletion( true );
+
 		ca.setRepeatedInvocationMode( true );
 		ca.enableAutoActivation(true);
 		ca.enableAutoInsert(true);
 		ca.setAutoActivationDelay(500);
-
 		return ca;
 	}
+
 
 	/**
 	 * Get the scanner manager. If the preference store (prefStore) is set, then return a new {@link ScannerManager}

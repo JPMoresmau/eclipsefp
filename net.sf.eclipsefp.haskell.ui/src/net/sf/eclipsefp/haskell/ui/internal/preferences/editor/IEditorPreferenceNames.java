@@ -85,7 +85,7 @@ public interface IEditorPreferenceNames {
   //String CA_AUTOACTIVATION          = "contentAssistAutoActivation";  //$NON-NLS-1$
   //String CA_AUTOACTIVATION_DELAY    = "contentAssistAutoActivationDelay";  //$NON-NLS-1$
   String CA_AUTOACTIVATION_TRIGGERS       = "contentAssistAutoActivationTriggers";  //$NON-NLS-1$
-  String CA_PROPOSALS_SCOPE               = "contentAssistProposalsScope";  //$NON-NLS-1$
+  //String CA_PROPOSALS_SCOPE               = "contentAssistProposalsScope";  //$NON-NLS-1$
   //String CA_AUTOINSERT              = "contentAssistAutoInsert";  //$NON-NLS-1$
   //String CA_ORDER_PROPOSALS         = "contentAssistOrderProposals";  //$NON-NLS-1$
   //String CA_PROPOSALS_BACKGROUND    = "contentAssistProposalsBackground";  //$NON-NLS-1$

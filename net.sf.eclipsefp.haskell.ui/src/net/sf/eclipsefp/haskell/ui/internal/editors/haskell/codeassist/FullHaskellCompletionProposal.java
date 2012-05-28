@@ -71,6 +71,7 @@ public class FullHaskellCompletionProposal implements ICompletionProposal {
           }
           String imp=realImport!=null?realImport:fReplacementString;
           ed.getImportsManager().addImport( imp, module, null, imp ).apply( document );
+
         }
       }
 

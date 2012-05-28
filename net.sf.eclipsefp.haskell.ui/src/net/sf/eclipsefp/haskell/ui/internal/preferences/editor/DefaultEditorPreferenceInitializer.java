@@ -91,7 +91,7 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
 
   private static void initCA( final IPreferenceStore store ) {
       store.setDefault( CA_AUTOACTIVATION_TRIGGERS, "" ); //$NON-NLS-1$
-      store.setDefault( CA_PROPOSALS_SCOPE,ProposalScope.ALL.toString());
+     // store.setDefault( CA_PROPOSALS_SCOPE,ProposalScope.ALL.toString());
   }
 
   private static void initTyping( final IPreferenceStore store ) {

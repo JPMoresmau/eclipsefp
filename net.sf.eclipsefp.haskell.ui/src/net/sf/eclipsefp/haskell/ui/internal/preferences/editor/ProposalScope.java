@@ -5,6 +5,8 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+
 
 /**
  * Scope of the search for content assist proposal
@@ -25,4 +27,34 @@ public enum ProposalScope {
    */
   ALL;
 
+  /**
+   * get the next proposal when cycling in content assist popup
+   * @return the next scope
+   */
+  public ProposalScope next(){
+    switch( this ) {
+      case IMPORTED:
+        return PROJECT;
+      case PROJECT:
+        return ALL;
+      default:
+        return IMPORTED;
+    }
+  }
+
+  /**
+   * get the user visible description of the scope
+   * @return
+   */
+  public String getDescription(){
+    switch( this ) {
+      case IMPORTED:
+        return UITexts.preferences_editor_contentass_scope_imported;
+      case PROJECT:
+        return  UITexts.preferences_editor_contentass_scope_project;
+      case ALL:
+        return UITexts.preferences_editor_contentass_scope_all;
+    }
+    return "";
+  }
 }

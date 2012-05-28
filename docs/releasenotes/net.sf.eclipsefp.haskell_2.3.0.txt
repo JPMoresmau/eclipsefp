@@ -23,6 +23,7 @@ Features:
 		- see https://sourceforge.net/tracker/?func=detail&atid=1000719&aid=3516152&group_id=108233
 	- Quick Fix for missing package -> installs it via cabal with no specific options/flags
 	- Yesod devel and yesod test launch configuration (on existing yesod projects, you need to manually add the yesod nature)
+	- Auto complete proposals scope change: there is no preference anymore. Pressing again Ctrl-Space (or whatever key binding you have defined for content assist) allows you to cycle between proposals that comes from imported modules, all modules in the current project and dependent packages, and all packages.
 
 Internal:
 

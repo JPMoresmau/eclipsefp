@@ -747,6 +747,8 @@ public final class UITexts extends NLS {
   public static String yesod_test;
   public static String yesod_cabaldev;
 
+  public static String proposal_category_mode;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
 
