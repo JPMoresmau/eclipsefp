@@ -308,7 +308,6 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
     return null;
   }
 
-
   /**
    * Get the file object corresponding to the a document.
    *

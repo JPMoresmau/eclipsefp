@@ -50,6 +50,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * </p>
  *
  * @author Leif Frenzel
+ * @author JP Moresmau
  */
 public class ResourceUtil {
 
@@ -500,6 +501,7 @@ public class ResourceUtil {
 
   public static String getModuleName(final IFile file){
     IProject project = file.getProject();
+    Set<String> potential=new HashSet<String>();
     try {
       if( hasHaskellNature(project ) ) {
 
@@ -517,6 +519,8 @@ public class ResourceUtil {
                     return "Main"; //$NON-NLS-1$
                   } else if (!ModuleInclusionType.MISSING.equals(mit  )){
                    return module;
+                  } else {
+                    potential.add(module);
                   }
                 }
               }
@@ -526,6 +530,9 @@ public class ResourceUtil {
 
     } catch( CoreException ex ) {
       HaskellCorePlugin.log( "getModuleName:", ex ); //$NON-NLS-1$
+    }
+    if (potential.size()==1){
+      return potential.iterator().next();
     }
     return ""; //$NON-NLS-1$
   }

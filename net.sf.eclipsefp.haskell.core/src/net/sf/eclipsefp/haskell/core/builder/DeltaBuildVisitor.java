@@ -46,18 +46,21 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
     // && !file.isDerived() even if file is derived, it's been modified, hence we rebuild
     if( file.exists() && (FileUtil.hasHaskellExtension( file ) || FileUtil.hasCabalExtension( file )) ) {
       switch( delta.getKind() ) {
-        case IResourceDelta.ADDED:
+
         case IResourceDelta.CHANGED:
           setNeedBuild( true );
+          // cabal file changed, we need a synchronize
           if (FileUtil.hasCabalExtension( file )){
             setNeedSynchronize( true);
             BuildWrapperPlugin.deleteProblems( file );
           }
           result = true;
           break;
+          // file added or removed, we need a synchronize
+        case IResourceDelta.ADDED:
         case IResourceDelta.REMOVED:
           setNeedBuild( true );
-          setNeedSynchronize( FileUtil.hasCabalExtension( file ));
+          setNeedSynchronize( true); //FileUtil.hasCabalExtension( file )
           result = true;
           break;
       }

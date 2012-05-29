@@ -4,12 +4,17 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.participants;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
+import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -18,22 +23,23 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * Common methods for creating changes in participants, because
  * most of them are reused between file and folder operations.
  * @author Alejandro Serrano
- *
+ * @author JP Moresmau
  */
 public class ChangeCreator {
 
   public static TextFileChange createCopyChange(final IFile oldFile, final IFile newFile) {
-    String oldModule = Util.getModuleName( oldFile );
-    String newModule = Util.getModuleName( newFile );
+    String oldModule = ResourceUtil.getModuleName( oldFile );
+    String newModule = ResourceUtil.getModuleName( newFile );
 
     // Create changes in module
     TextFileChange change = new TextFileChange( UITexts.copyParticipant_title, newFile );
-    int moduleNamePos = Util.getModuleNameOffset( newFile );
+    int moduleNamePos = Util.getModuleNameOffset( newFile,oldModule  );
     if (moduleNamePos != -1) {
       change.setEdit( new ReplaceEdit( moduleNamePos, oldModule.length(), newModule ) );
     }
@@ -80,12 +86,12 @@ public class ChangeCreator {
 
   public static Change createRenameMoveChange(final IFile file, final IPath newPath,
       final boolean updateReferences, final String title) {
-    String oldModule = Util.getModuleName( file );
-    String newModule = Util.getModuleName( file.getProject(), newPath );
+    String oldModule = ResourceUtil.getModuleName( file );
+    String newModule = ResourceUtil.getModuleName(file.getProject().getFile( newPath ));
 
     // Create changes in module
     TextFileChange change = new TextFileChange( title, file );
-    int moduleNamePos = Util.getModuleNameOffset( file );
+    int moduleNamePos = Util.getModuleNameOffset( file,oldModule );
     if (moduleNamePos != -1) {
       change.setEdit( new ReplaceEdit( moduleNamePos, oldModule.length(), newModule ) );
     }
@@ -93,9 +99,38 @@ public class ChangeCreator {
     if( updateReferences ) {
 
       // Update references
-      boolean someChange = false;
+      UsageResults ur=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, oldModule, null, true );
+      boolean someChange = ur.getSize()>0;
       CompositeChange referencesChange = new CompositeChange( UITexts.updateReferences );
-      for (IResource resource : Util.getHaskellFiles( file.getProject(), file )) {
+      for (IProject refP:ur.listProjects()){
+        Map<IFile,Map<String,Collection<SearchResultLocation>>> um =ur.getUsageInProject( refP );
+        for (IFile f:um.keySet()){
+          TextFileChange importChanges = new TextFileChange( UITexts.updateReferences,f);
+
+          MultiTextEdit multiEdit = new MultiTextEdit();
+          IDocumentProvider prov=new TextFileDocumentProvider();
+          try {
+            prov.connect( f );
+            IDocument doc=prov.getDocument(  f );
+            try {
+              for (Collection<SearchResultLocation> csrl:um.get( f ).values()){
+                for (SearchResultLocation srl:csrl){
+                  int offset=srl.getStartOffset( doc );
+                  multiEdit.addChild( new ReplaceEdit( offset, oldModule.length(), newModule ));
+                }
+              }
+            } finally {
+              prov.disconnect( f );
+            }
+          } catch (Exception ce){
+            HaskellUIPlugin.log( ce );
+          }
+          importChanges.setEdit( multiEdit );
+          referencesChange.add( importChanges );
+        }
+      }
+
+      /*for (IResource resource : Util.getHaskellFiles( file.getProject(), file )) {
         List<Integer> offsets = Util.getImportModuleOffsets( resource, oldModule );
         if (offsets.size() > 0) {
           TextFileChange importChanges = new TextFileChange( UITexts.updateReferences, (IFile)resource);
@@ -107,7 +142,7 @@ public class ChangeCreator {
           referencesChange.add( importChanges );
           someChange = true;
         }
-      }
+      }*/
 
       // Cabal reference
       String newCabalFile = Util.newCabalFile( file.getProject(), file, newModule );
@@ -116,14 +151,17 @@ public class ChangeCreator {
       TextFileChange cabalChanges = null;
       try {
         provider.connect( cabalF );
-        IDocument doc = provider.getDocument( cabalF );
-        int length = doc.getLength();
-        if (!newCabalFile.equals( doc.get() )) {
-          cabalChanges = new TextFileChange( UITexts.updateCabalFile, cabalF);
-          cabalChanges.setEdit( new ReplaceEdit( 0, length, newCabalFile ) );
-          someChange = true;
+        try {
+          IDocument doc = provider.getDocument( cabalF );
+          int length = doc.getLength();
+          if (!newCabalFile.equals( doc.get() )) {
+            cabalChanges = new TextFileChange( UITexts.updateCabalFile, cabalF);
+            cabalChanges.setEdit( new ReplaceEdit( 0, length, newCabalFile ) );
+            someChange = true;
+          }
+        } finally {
+          provider.disconnect( cabalF );
         }
-        provider.disconnect( cabalF );
       } catch (Exception e) {
         // Do nothing
       }
@@ -140,12 +178,12 @@ public class ChangeCreator {
 
   public static Change createRenameMoveInOtherProjectChange(final IFile file, final IPath newPath,
       final boolean updateReferences, final String title) {
-    String oldModule = Util.getModuleName( file );
-    String newModule = Util.getModuleName( file.getProject(), newPath );
+    String oldModule = ResourceUtil.getModuleName( file );
+    String newModule = ResourceUtil.getModuleName( file.getProject().getFile( newPath));
 
     // Create changes in module
     TextFileChange change = new TextFileChange( title, file );
-    int moduleNamePos = Util.getModuleNameOffset( file );
+    int moduleNamePos = Util.getModuleNameOffset( file,oldModule  );
     if (moduleNamePos != -1) {
       change.setEdit( new ReplaceEdit( moduleNamePos, oldModule.length(), newModule ) );
     }

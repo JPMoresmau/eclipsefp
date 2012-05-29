@@ -5,7 +5,8 @@
  */
 package net.sf.eclipsefp.haskell.buildwrapper.usage;
 
-import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
@@ -23,7 +24,7 @@ import org.eclipse.core.resources.IProject;
 public class UsageThread extends Thread {
 	private boolean shouldStop=false;
 	
-	private LinkedList<IProject> ps=new LinkedList<IProject>();
+	private LinkedHashSet<IProject> ps=new LinkedHashSet<IProject>();
 	
 	public UsageThread() {
 		super("UsageThread");
@@ -42,7 +43,7 @@ public class UsageThread extends Thread {
 			if (!shouldStop){
 				IProject p=getNext();
 					
-				while (p!=null){
+				while (p!=null && !shouldStop){
 					boolean retAll=!BuildWrapperPlugin.getDefault().getUsageAPI().knowsProject(p);
 					BWFacade f=BuildWrapperPlugin.getFacade(p);
 					if (f!=null){
@@ -62,7 +63,10 @@ public class UsageThread extends Thread {
 	private IProject getNext(){
 		synchronized (ps) {
 			if (!ps.isEmpty()){
-				return ps.removeFirst();
+				Iterator<IProject> it=ps.iterator();
+				IProject p=it.next();
+				it.remove();
+				return p;
 			}
 		}
 		return null;
@@ -70,7 +74,7 @@ public class UsageThread extends Thread {
 	
 	public void addProject(IProject p){
 		synchronized (ps) {
-			ps.addLast(p);
+			ps.add(p);
 			ps.notifyAll();
 		}
 	}

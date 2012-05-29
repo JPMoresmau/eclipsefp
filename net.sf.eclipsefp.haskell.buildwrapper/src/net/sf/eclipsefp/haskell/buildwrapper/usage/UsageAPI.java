@@ -73,7 +73,8 @@ public class UsageAPI {
 		if (f!=null && f.exists()){
 			//BuildWrapperPlugin.log(IStatus.INFO, "Adding "+p.getName()+"/"+f.getProjectRelativePath().toPortableString(), null);
 			IFile uf=getUsageFile(p, relPath);
-			if (uf!=null){
+			// check usage file exists AND has been generated after the source file
+			if (uf!=null && uf.getLocation().toFile().lastModified()>f.getLocation().toFile().lastModified()){
 				//BuildWrapperPlugin.log(IStatus.INFO, "Adding "+p.getName()+"/"+f.getProjectRelativePath().toPortableString()+": usage file found", null);
 				JSONArray arr=parseUsageFile(uf);
 				if (arr!=null){

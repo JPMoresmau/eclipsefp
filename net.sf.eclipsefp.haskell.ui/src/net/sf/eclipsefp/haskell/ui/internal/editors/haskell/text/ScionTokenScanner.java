@@ -326,7 +326,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
    * mark task tags
    */
   public void markTaskTags(){
-    if (file!=null && tags!=null){
+    if (file!=null && tags!=null && file.exists()){
       try {
         file.deleteMarkers( IMarker.TASK , true, IResource.DEPTH_ZERO );
         for (TokenDef nextTokenDef:lTokenDefs){

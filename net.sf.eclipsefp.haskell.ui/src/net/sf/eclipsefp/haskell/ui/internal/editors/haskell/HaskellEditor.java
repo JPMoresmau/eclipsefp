@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -460,12 +459,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
           f.synchronize1( file,true );
         }
       }
-      Action aa=new Action(){
-
-      };
-      site.getActionBars().setGlobalActionHandler( "net.sf.eclipsefp.haskell.ui.actions.references.workspace", aa );
-
   }
+
 
 
   /**
@@ -490,50 +485,21 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     return moduleName;
   }
 
+  public void setModuleName(final String module){
+    moduleName=module;
+  }
+
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
-    // unload the previous file from Scion
-//    IFile file = findFile();
-//    if ( file != null && ResourceUtil.isInHaskellProject( file ) ) {
-//      ScionPlugin.getScionInstance( file ).unloadFile(file);
-//    }
-
-    // Disassociate the editor from the ScionInstance
-//    if (instance != null) {
-//      instance.removeListener( this );
-//      instance = null;
-//    }
 
     super.doSetInput( input );
 
     // Ensure we synchronize to the correct file, which ought to have been set by the call to super.
-    // It doesn't hurt to be cautious here.
-//    if ( input instanceof IFileEditorInput ) {
-//      file = ((IFileEditorInput) input).getFile();
-//      updateOutline( file );
-//    }
     synchronize();
+    // file may have been renamed
+    moduleName=null;
   }
 
-  /**
-   * Get the scion-server instance object.
-   *
-   * @param theFile
-   *          The file that identifies the project that identifies the
-   *          ScionInstance we're interested in using.
-   */
-//  private ScionInstance getInstance(final IFile theFile){
-//    if (instance == null) {
-//      // load the new file into Scion
-//      if (theFile != null && ResourceUtil.isInHaskellProject( theFile )) {
-//        instance = ScionPlugin.getScionInstance( theFile );
-//        Assert.isNotNull( instance );
-//        instance.addListener( this );
-//      }
-//    }
-//
-//    return instance;
-//  }
 
   // helping methods
   // ////////////////
