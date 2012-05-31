@@ -112,8 +112,10 @@ public class UsageDB {
 			
 			s.execute("create table if not exists module_usages (moduleid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (fileid) references files(fileid) on delete cascade,foreign key (moduleid) references modules(moduleid) on delete cascade)");
 		
-			s.execute("create table if not exists symbols(symbolid INTEGER PRIMARY KEY ASC,symbol TEXT,type INTEGER,moduleid INTEGER not null,section TEXT,location TEXT,foreign key (moduleid) references modules(moduleid) on delete set null)");
+			s.execute("create table if not exists symbols(symbolid INTEGER PRIMARY KEY ASC,symbol TEXT,type INTEGER,moduleid INTEGER not null,foreign key (moduleid) references modules(moduleid) on delete set null)");
 			s.execute("create index if not exists symbolnames on symbols (symbol,type,moduleid)");
+			
+			s.execute("create table if not exists symbol_defs(symbolid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (symbolid) references symbols(symbolid) on delete cascade,foreign key (fileid) references files(fileid) on delete cascade)");
 			
 			s.execute("create table if not exists symbol_usages(symbolid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (symbolid) references symbols(symbolid) on delete cascade,foreign key (fileid) references files(fileid) on delete cascade)");
 			
@@ -210,7 +212,7 @@ public class UsageDB {
 		} finally {
 			ps.close();
 		}
-		ps=conn.prepareStatement("update symbols set section=null,location=null where moduleid in (select m.moduleid from modules m where m.fileid=?)");
+		ps=conn.prepareStatement("delete from symbol_defs where fileid=?");
 		try {
 			ps.setLong(1, fileid);
 			ps.executeUpdate();
@@ -239,6 +241,23 @@ public class UsageDB {
 	public void setSymbolUsages(long fileid,Collection<ObjectUsage> usages) throws SQLException{
 		checkConnection();
 		PreparedStatement ps=conn.prepareStatement("insert into symbol_usages values(?,?,?,?)");
+		try {
+			for (ObjectUsage usg:usages){
+				ps.setLong(1, usg.getObjectID());
+				ps.setLong(2, fileid);
+				ps.setString(3, usg.getSection());
+				ps.setString(4, usg.getLocation());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		} finally {
+			ps.close();
+		}
+	}
+	
+	public void setSymbolDefinitions(long fileid,Collection<ObjectUsage> usages) throws SQLException{
+		checkConnection();
+		PreparedStatement ps=conn.prepareStatement("insert into symbol_defs values(?,?,?,?)");
 		try {
 			for (ObjectUsage usg:usages){
 				ps.setLong(1, usg.getObjectID());
@@ -317,7 +336,8 @@ public class UsageDB {
 		return moduleID;
 	}
 	
-	public long getSymbolID(long moduleid,String symbol,int type,String section,String loc) throws SQLException {
+	//,String section,String loc
+	public long getSymbolID(long moduleid,String symbol,int type) throws SQLException {
 		checkConnection();
 		PreparedStatement ps=conn.prepareStatement("select symbolid from symbols where moduleid=? and symbol=? and type=?");
 		Long symbolID=null;
@@ -338,21 +358,11 @@ public class UsageDB {
 			ps.close();
 		}
 		if (symbolID==null){
-			 ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid,section,location) values(?,?,?,?,?)");
+			 ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid) values(?,?,?)");
 			 try {
 				ps.setString(1, symbol);
 				ps.setInt(2, type);
 				ps.setLong(3, moduleid);
-				if (section!=null  && section.trim().length()>0){
-					ps.setString(4, section);
-				} else {
-					ps.setNull(4, Types.VARCHAR);
-				}
-				if (loc!=null && loc.trim().length()>0){
-					ps.setString(5, loc);
-				} else {
-					ps.setNull(5, Types.VARCHAR);
-				}
 				ps.execute();
 				ResultSet rs=ps.getGeneratedKeys();
 				try {
@@ -364,8 +374,9 @@ public class UsageDB {
 			 } finally {
 				ps.close();
 			}
-		} else if (loc!=null){
-			 ps=conn.prepareStatement("update symbols set section=?,location=? where symbolid=?");
+		} 
+		/*if (loc!=null){
+			 ps=conn.prepareStatement("insert into symbol_defs values(section=?,location=? where symbolid=?");
 			 try {
 				
 				if (section!=null){
@@ -384,7 +395,7 @@ public class UsageDB {
 			} finally {
 				ps.close();
 			}
-		}
+		}*/
 		return symbolID;
 	}
 	
@@ -521,32 +532,7 @@ public class UsageDB {
 	}
 	
 	public UsageResults getSymbolDefinitions(String pkg,String module,String symbol,int type,IProject p,boolean exact) throws SQLException {
-		checkConnection();
-		StringBuilder sb=new StringBuilder("select m.fileid,s.section,s.location,1 from symbols s,modules m");
-		if (p!=null){
-			sb.append(",files f");
-		}
-		sb.append(" where ");
-		if (module!=null){
-			sb.append("m.module=? and");
-		}
-		sb.append(" m.moduleid=s.moduleid");
-		if (pkg!=null){
-			sb.append(" and m.package=?");
-		}
-		if (p!=null){
-			sb.append(" and f.fileid=m.fileid and f.project=?");
-		}
-		if (exact){
-			sb.append(" and s.symbol=?");
-		} else {
-			sb.append(" and s.symbol LIKE ? ESCAPE '\\'");
-		}
-		if (type>0){
-			sb.append(" and s.type=?");
-		}
-		sb.append(" and s.location is not null");
-		return getUsageResults(pkg, module, p,symbol,type, sb.toString());
+		return getSymbols(pkg, module, symbol, type, p, exact, "symbol_defs");
 	}
 			
 	public UsageResults getModuleReferences(String pkg,String module,IProject p,boolean exact) throws SQLException {
@@ -571,8 +557,12 @@ public class UsageDB {
 	}
 	
 	public UsageResults getSymbolReferences(String pkg,String module,String symbol,int type,IProject p,boolean exact) throws SQLException {
+		return getSymbols(pkg, module, symbol, type, p, exact, "symbol_usages");
+	}
+	
+	private UsageResults getSymbols(String pkg,String module,String symbol,int type,IProject p,boolean exact,String table) throws SQLException {
 		checkConnection();
-		StringBuilder sb=new StringBuilder("select su.fileid,su.section,su.location,0 from symbol_usages su,symbols s, modules m");
+		StringBuilder sb=new StringBuilder("select su.fileid,su.section,su.location,0 from "+table+" su,symbols s, modules m");
 		if (p!=null){
 			sb.append(",files f");
 		}
@@ -695,12 +685,13 @@ public class UsageDB {
 	public List<SymbolDef> listDefinedSymbols(IProject p) throws SQLException{
 		checkConnection();
 		StringBuilder sb=new StringBuilder();
-		sb.append("select m.module,s.symbol,s.type from modules m, symbols s, files f where ");
+		sb.append("select m.module,s.symbol,s.type from modules m, symbols s,symbol_defs sd, files f where ");
 		sb.append("f.project=? ");
 		sb.append("and m.moduleid=s.moduleid ");
 		sb.append("and f.fileid is not null ");
 		sb.append("and f.fileid=m.fileid ");
-		sb.append("and s.location is not null");
+		sb.append("and s.symbolid=sd.symbolid ");
+		sb.append("and sd.location is not null");
 		PreparedStatement ps=conn.prepareStatement(sb.toString());
 		List<SymbolDef> ret=new ArrayList<SymbolDef>();
 		try {

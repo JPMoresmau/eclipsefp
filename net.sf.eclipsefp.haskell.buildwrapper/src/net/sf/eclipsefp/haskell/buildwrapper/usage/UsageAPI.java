@@ -90,8 +90,10 @@ public class UsageAPI {
 							db.getModuleID(pkg, module, fileID, loc);
 							List<ObjectUsage> modUsages=new ArrayList<ObjectUsage>();
 							List<ObjectUsage> objUsages=new ArrayList<ObjectUsage>();
-							buildUsage(fileID,arr,modUsages,objUsages);
+							List<ObjectUsage> objDefs=new ArrayList<ObjectUsage>();
+							buildUsage(fileID,arr,modUsages,objDefs,objUsages);
 							db.setModuleUsages(fileID, modUsages);
+							db.setSymbolDefinitions(fileID, objDefs);
 							db.setSymbolUsages(fileID, objUsages);
 							db.commit();
 							JSONObject outline=arr.optJSONObject(4);
@@ -110,7 +112,7 @@ public class UsageAPI {
 		}
 	}
 	
-	private void buildUsage(long fileID,JSONArray arr,List<ObjectUsage> modUsages,List<ObjectUsage> objUsages){
+	private void buildUsage(long fileID,JSONArray arr,List<ObjectUsage> modUsages,List<ObjectUsage> objDefs,List<ObjectUsage> objUsages){
 		JSONObject pkgs=arr.optJSONObject(3);
 		if (pkgs!=null){
 			for (Iterator<String> itPkg=pkgs.keys();itPkg.hasNext();){
@@ -118,13 +120,13 @@ public class UsageAPI {
 				JSONObject mods=pkgs.optJSONObject(pkgKey);
 				if (mods!=null){
 					String pkg=formatPackage(pkgKey);
-					buildUsageModule(fileID,pkg,mods,modUsages,objUsages);
+					buildUsageModule(fileID,pkg,mods,modUsages,objDefs,objUsages);
 				}
 			}
 		}
 	}
 	
-	private void buildUsageModule(long fileID,String pkg,JSONObject mods,List<ObjectUsage> modUsages,List<ObjectUsage> objUsages){
+	private void buildUsageModule(long fileID,String pkg,JSONObject mods,List<ObjectUsage> modUsages,List<ObjectUsage> objDefs,List<ObjectUsage> objUsages){
 		for (Iterator<String> itMod=mods.keys();itMod.hasNext();){
 			String modKey=itMod.next();
 			JSONObject types=mods.optJSONObject(modKey);
@@ -132,8 +134,8 @@ public class UsageAPI {
 				try {
 					long modID=db.getModuleID(pkg, modKey, null,null);
 				
-					buildUsage(fileID,modID,types.optJSONObject("vars"),false,modUsages,objUsages);
-					buildUsage(fileID,modID,types.optJSONObject("types"),true,modUsages,objUsages);
+					buildUsage(fileID,modID,types.optJSONObject("vars"),false,modUsages,objDefs,objUsages);
+					buildUsage(fileID,modID,types.optJSONObject("types"),true,modUsages,objDefs,objUsages);
 				} catch (SQLException sqle){
 					BuildWrapperPlugin.logError(BWText.error_db, sqle);
 				}
@@ -141,7 +143,7 @@ public class UsageAPI {
 		}
 	}
 	
-	private void buildUsage(long fileID,long modID,JSONObject symbols,boolean isType,List<ObjectUsage> modUsages,List<ObjectUsage> objUsages) throws SQLException{
+	private void buildUsage(long fileID,long modID,JSONObject symbols,boolean isType,List<ObjectUsage> modUsages,List<ObjectUsage> objDefs,List<ObjectUsage> objUsages) throws SQLException{
 		if (symbols!=null){
 			for (Iterator<String> itSym=symbols.keys();itSym.hasNext();){
 				String symKey=itSym.next();
@@ -165,10 +167,11 @@ public class UsageAPI {
 									} else if (Character.isUpperCase(symKey.charAt(0))){
 										type=UsageQueryFlags.TYPE_CONSTRUCTOR;
 									}
+									long symbolID=db.getSymbolID(modID, symKey, type);
 									if (def){
-										db.getSymbolID(modID, symKey, type, sec, sloc);
+										//, sec, sloc
+										objDefs.add(new ObjectUsage(symbolID, sec, sloc));
 									} else {
-										long symbolID=db.getSymbolID(modID, symKey, type, null, null);
 										objUsages.add(new ObjectUsage(symbolID, sec, sloc));
 									}
 								}
