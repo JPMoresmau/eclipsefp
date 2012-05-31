@@ -3,7 +3,16 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.handlers.ReferencesWorkspaceHandler;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.ChangeCreator;
+import net.sf.eclipsefp.haskell.ui.internal.search.UsageQuery;
+import net.sf.eclipsefp.haskell.ui.internal.search.UsageSearchResult;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -21,10 +30,20 @@ public class RenameDelegate extends RefDelegate {
 
   private Change change;
 
+  private String newName;
+  private IProject project;
+
   public RenameDelegate( final RefInfo info ) {
     super( info );
     info.setAllowEmptySelection( true );
+    ThingAtPoint tap=getThingAtPoint();
+    if (tap!=null){
+      newName=tap.getName();
+      project=info.getSourceFile().getProject();
+    }
   }
+
+
 
   @Override
   RefactoringStatus checkFinalConditions( final IProgressMonitor pm,
@@ -37,7 +56,7 @@ public class RenameDelegate extends RefDelegate {
         ValidateEditChecker editChecker = ( ValidateEditChecker )checker;
         editChecker.addFile( info.getSourceFile() );
       }
-      change = createRenameChange();
+      change = createRenameChange(pm);
       if( change == null ) {
         result.addFatalError( UITexts.mkPointFreeDelegate_notApplicable );
       }
@@ -65,8 +84,25 @@ public class RenameDelegate extends RefDelegate {
   // helping methods
   //////////////////
 
-  private Change createRenameChange() {
+  private Change createRenameChange(final IProgressMonitor pm) {
     TextFileChange result = null;
+    if (info.getTargetEditor() instanceof HaskellEditor){
+      final HaskellEditor haskellEditor= (HaskellEditor)info.getTargetEditor();
+      try {
+       ThingAtPoint tap=getThingAtPoint();
+        if (tap!=null){
+            UsageQuery uq=ReferencesWorkspaceHandler.getUsageQuery( haskellEditor, getProject(), tap );
+            uq.setScopeFlags( UsageQueryFlags.SCOPE_ALL );
+            uq.run( pm );
+            UsageSearchResult usr=(UsageSearchResult)uq.getSearchResult();
+            CompositeChange cc=ChangeCreator.getReferencesChange( usr.getResults(), tap.getName(), getNewName() );
+            return cc;
+        }
+      } catch (Exception e){
+        HaskellUIPlugin.log( e );
+      }
+
+    }
     // TODO TtC replace by something not Cohatoe-based
     /*
     CohatoeServer server = CohatoeServer.getInstance();
@@ -96,6 +132,34 @@ public class RenameDelegate extends RefDelegate {
     }
     */
     return result;
+  }
+
+
+
+
+  public String getNewName() {
+    return newName;
+  }
+
+
+
+
+  public void setNewName( final String newName ) {
+    this.newName = newName;
+  }
+
+
+
+
+  public IProject getProject() {
+    return project;
+  }
+
+
+
+
+  public void setProject( final IProject project ) {
+    this.project = project;
   }
 
   /*

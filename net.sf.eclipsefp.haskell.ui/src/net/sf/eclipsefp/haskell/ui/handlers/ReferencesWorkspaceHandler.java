@@ -5,6 +5,7 @@
  */
 package net.sf.eclipsefp.haskell.ui.handlers;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.search.UsageQuery;
@@ -50,44 +51,50 @@ public class ReferencesWorkspaceHandler extends AbstractHandler {
 
           @Override
           public void handle( final EditorThing thing ) {
-            String term=haskellEditor.getModuleName();
-            int typeFlags=UsageQueryFlags.TYPE_ALL;
-            if(thing!=null &&  thing.getThing()!=null && thing.getThing().getName()!=null  && thing.getThing().getName().length()>0) {
-              String shortName = thing.getThing().getName();
-              term=shortName;
-              if ("m".equals(thing.getThing().getHaddockType()) || term.equals( haskellEditor.getModuleName() )){
-                typeFlags=UsageQueryFlags.TYPE_MODULE;
-              } else {
-                  String module = thing.getThing().getModule();
-                  if (module!=null){
-                    term=module+"."+shortName;
-                  }
-                  if (shortName.length()>0 && Character.isUpperCase( shortName.charAt( 0 ) )){
-                    String ht=thing.getThing().getHaddockType();
+            if (thing!=null){
+              final UsageQuery uq=getUsageQuery( haskellEditor, project, thing.getThing() );
+              new UIJob( UITexts.openDefinition_select_job ) {
 
-                    typeFlags="t".equals( ht )?UsageQueryFlags.TYPE_TYPE : UsageQueryFlags.TYPE_CONSTRUCTOR;
-                  } else {
-                    typeFlags=UsageQueryFlags.TYPE_VAR;
-                  }
-              }
+                @Override
+                public IStatus runInUIThread( final IProgressMonitor monitor ) {
+
+                  NewSearchUI.runQueryInBackground( uq,p);
+                  return Status.OK_STATUS;
+                }
+              }.schedule();
             }
-
-            final UsageQuery uq=new UsageQuery(term,project);
-            uq.setTypeFlags( typeFlags );
-            uq.setScopeFlags( UsageQueryFlags.SCOPE_REFERENCES );
-            new UIJob( UITexts.openDefinition_select_job ) {
-
-              @Override
-              public IStatus runInUIThread( final IProgressMonitor monitor ) {
-
-                NewSearchUI.runQueryInBackground( uq,p);
-                return Status.OK_STATUS;
-              }
-            }.schedule();
-
           }
     }  );
     return null;
+  }
+
+  public static UsageQuery getUsageQuery(final HaskellEditor haskellEditor,final IProject project,final ThingAtPoint thing){
+    String term=haskellEditor.getModuleName();
+    int typeFlags=UsageQueryFlags.TYPE_ALL;
+    if(thing!=null && thing.getName()!=null  && thing.getName().length()>0) {
+      String shortName = thing.getName();
+      term=shortName;
+      if ("m".equals(thing.getHaddockType()) || term.equals( haskellEditor.getModuleName() )){
+        typeFlags=UsageQueryFlags.TYPE_MODULE;
+      } else {
+          String module = thing.getModule();
+          if (module!=null){
+            term=module+"."+shortName;
+          }
+          if (shortName.length()>0 && Character.isUpperCase( shortName.charAt( 0 ) )){
+            String ht=thing.getHaddockType();
+
+            typeFlags="t".equals( ht )?UsageQueryFlags.TYPE_TYPE : UsageQueryFlags.TYPE_CONSTRUCTOR;
+          } else {
+            typeFlags=UsageQueryFlags.TYPE_VAR;
+          }
+      }
+    }
+
+    final UsageQuery uq=new UsageQuery(term,project);
+    uq.setTypeFlags( typeFlags );
+    uq.setScopeFlags( UsageQueryFlags.SCOPE_REFERENCES );
+    return uq;
   }
 
   /* (non-Javadoc)

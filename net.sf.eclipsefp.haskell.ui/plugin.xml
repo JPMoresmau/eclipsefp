@@ -734,18 +734,18 @@
             path="group.edit">
          <separator name="codingGroup" />
       </menu>
-      <action label="%refPF_label"
+      <!--action label="%refPF_label"
               class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree" 
               menubarPath="refactor/codingGroup"
-              id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree"/>
+              id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree"/-->
       <action label="%refRename_label"
               class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.Rename" 
               menubarPath="refactor/codingGroup"
               id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.Rename"/>
-      <action label="%optimizeImports_name"
+      <!--action label="%optimizeImports_name"
               class="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports" 
               menubarPath="source/organize"
-              id="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports"/>
+              id="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports"/-->
     </viewerContribution>
     <objectContribution
           id="net.sf.eclipsefp.haskell.ui.contribution1"

@@ -3,13 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.Ref;
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.RenameDelegate;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.RenameWizard;
-import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ui.IEditorActionDelegate;
 
@@ -24,8 +19,8 @@ public class Rename extends RefAction implements IEditorActionDelegate {
 
   @Override
   void openWizard() {
-    RefactoringProcessor processor = new RenameProcessor( info );
-    RenameWizard wizard = new RenameWizard( new Ref( processor ) );
+
+    RenameWizard wizard = new RenameWizard( new RenameDelegate( info ));
     RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation( wizard );
     try {
       String titleForFailedChecks = ""; //$NON-NLS-1$
@@ -35,9 +30,5 @@ public class Rename extends RefAction implements IEditorActionDelegate {
     }
   }
 
-  private class RenameProcessor extends RefProcessor {
-    public RenameProcessor( final RefInfo info ) {
-      super( new RenameDelegate( info ), UITexts.renameProcessor_name );
-    }
-  }
+
 }

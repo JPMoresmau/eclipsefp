@@ -3,9 +3,16 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.Region;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
@@ -18,6 +25,7 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 abstract class RefDelegate {
 
   protected final RefInfo info;
+  private ThingAtPoint tap;
 
   RefDelegate( final RefInfo info ) {
     this.info = info;
@@ -34,6 +42,31 @@ abstract class RefDelegate {
       result.addFatalError( UITexts.refDelegate_noSelection );
     }
     return result;
+  }
+
+
+  /**
+   * @return the info
+   */
+  public RefInfo getInfo() {
+    return info;
+  }
+
+  public ThingAtPoint getThingAtPoint(){
+    if (tap==null){
+      if (info.getTargetEditor() instanceof HaskellEditor){
+        final HaskellEditor haskellEditor= (HaskellEditor)info.getTargetEditor();
+        try {
+          Location l = new Location( info.getSourceFile().getLocation().toOSString(),
+              haskellEditor.getDocument(), new Region( info.getOffset(), 0 ) );
+          BWFacade f=BuildWrapperPlugin.getFacade( info.getSourceFile().getProject() );
+          tap=f.getThingAtPoint( info.getSourceFile(), l );
+        } catch (Exception e){
+          HaskellUIPlugin.log( e );
+        }
+      }
+    }
+    return tap;
   }
 
   abstract RefactoringStatus checkFinalConditions(

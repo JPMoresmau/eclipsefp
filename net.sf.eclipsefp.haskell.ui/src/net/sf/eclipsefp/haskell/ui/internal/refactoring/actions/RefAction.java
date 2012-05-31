@@ -23,6 +23,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 abstract class RefAction {
@@ -43,6 +44,9 @@ abstract class RefAction {
     if( !haveFile ) {
       refuse();
     } else {
+      if (targetEditor instanceof AbstractTextEditor){
+        selection = ((AbstractTextEditor)targetEditor).getSelectionProvider().getSelection();
+      }
       if( selection != null && selection instanceof ITextSelection ) {
         applySelection( ( ITextSelection )selection );
         if( saveAll() ) {
@@ -75,6 +79,7 @@ abstract class RefAction {
     info.setColumn( computeColumn( start, textSelection.getOffset() ) );
     info.setText( textSelection.getText() );
     info.setSourceFile( getFile() );
+    info.setTargetEditor( targetEditor );
   }
 
   private int computeColumn( final int start, final int offset ) {

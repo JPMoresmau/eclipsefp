@@ -3,7 +3,10 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.Ref;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefProcessor;
+import net.sf.eclipsefp.haskell.ui.internal.refactoring.RenameDelegate;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 
@@ -16,9 +19,12 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
   * @author Leif Frenzel
   */
 public class RenameWizard extends RefactoringWizard {
+  private final RenameDelegate delegate;
 
-  public RenameWizard( final Refactoring refactoring ) {
-    super( refactoring, DIALOG_BASED_USER_INTERFACE );
+  public RenameWizard( final RenameDelegate delegate ) {
+   super( new Ref(new RefProcessor<RenameDelegate>(delegate , UITexts.renameProcessor_name )), DIALOG_BASED_USER_INTERFACE );
+   this.delegate=delegate;
+
   }
 
 
@@ -27,8 +33,13 @@ public class RenameWizard extends RefactoringWizard {
 
   @Override
   protected void addUserInputPages() {
+
     // TODO lf page for new name
     // no particular pages - just have the usual preview page
     setDefaultPageTitle( getRefactoring().getName() );
+
+    addPage( new RenamePage1( delegate ) );
   }
+
+
 }

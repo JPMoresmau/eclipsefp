@@ -14,17 +14,24 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
-public abstract class RefProcessor extends RefactoringProcessor {
+public class RefProcessor<T extends RefDelegate> extends RefactoringProcessor {
 
-  protected final RefDelegate delegate;
+  protected final T delegate;
   private final String name;
 
-  public RefProcessor( final RefDelegate delegate,
+  public RefProcessor( final T delegate,
                        final String name ) {
     this.delegate = delegate;
     this.name = name;
   }
 
+
+  /**
+   * @return the delegate
+   */
+  public T getDelegate() {
+    return delegate;
+  }
 
   // interface methods of RefactoringProcessor
   ////////////////////////////////////////////

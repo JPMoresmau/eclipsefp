@@ -4,6 +4,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.IEditorPart;
 
 
 /** <p>an info object that holds the information that is passed from
@@ -22,6 +23,7 @@ public class RefInfo {
   private int line;
   private int column;
   private boolean allowEmptySelection;
+  private IEditorPart targetEditor;
 
   public boolean isAllowEmptySelection() {
     return allowEmptySelection;
@@ -69,5 +71,15 @@ public class RefInfo {
 
   public void setText( final String text ) {
     this.text = text;
+  }
+
+
+  public IEditorPart getTargetEditor() {
+    return targetEditor;
+  }
+
+
+  public void setTargetEditor( final IEditorPart targetEditor ) {
+    this.targetEditor = targetEditor;
   }
 }

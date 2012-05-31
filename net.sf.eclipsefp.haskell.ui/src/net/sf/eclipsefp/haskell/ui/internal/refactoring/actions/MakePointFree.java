@@ -5,7 +5,6 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.MakePointFreeDelegate;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.Ref;
-import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.MakePointFreeWizard;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -24,7 +23,7 @@ public class MakePointFree extends RefAction implements IEditorActionDelegate {
 
   @Override
   void openWizard() {
-    RefactoringProcessor processor = new MakePointFreeProcessor( info );
+    RefactoringProcessor processor = new RefProcessor<MakePointFreeDelegate>( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
     Ref ref = new Ref( processor );
     MakePointFreeWizard wizard = new MakePointFreeWizard( ref );
     RefactoringWizardOpenOperation op
@@ -37,11 +36,11 @@ public class MakePointFree extends RefAction implements IEditorActionDelegate {
     }
   }
 
-  private class MakePointFreeProcessor extends RefProcessor {
-    public MakePointFreeProcessor( final RefInfo info ) {
-      super( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
-    }
-  }
+//  private class MakePointFreeProcessor extends RefProcessor {
+//    public MakePointFreeProcessor( final RefInfo info ) {
+//      super( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
+//    }
+//  }
 
 }
 

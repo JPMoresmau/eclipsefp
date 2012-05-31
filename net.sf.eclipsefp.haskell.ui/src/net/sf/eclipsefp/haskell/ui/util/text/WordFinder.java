@@ -72,65 +72,70 @@ public class WordFinder {
     //return result;
   }
 
-  public static EditorThing getEditorThing(final HaskellEditor haskellEditor,final EditorThingHandler handler){
+  public static void getEditorThing(final HaskellEditor haskellEditor,final EditorThingHandler handler){
     final IFile file = haskellEditor.findFile();
     final ISelection selection = haskellEditor.getSelectionProvider().getSelection();
 
     if( selection instanceof TextSelection && file!=null) {
-          //final ScionInstance instance = ScionPlugin.getScionInstance( file );
-         JobFacade f=BuildWrapperPlugin.getJobFacade( file.getProject() );
-          if (f!=null){
-            final TextSelection textSel = ( TextSelection )selection;
-            //final String fName = textSel.getText().trim();
-            try {
-              Location l = new Location( file.getLocation().toOSString(),
-                  haskellEditor.getDocument(), new Region( textSel.getOffset(), 0 ) );
-              f.getThingAtPoint(file, l, new ThingAtPointHandler() {
+      final TextSelection textSel = ( TextSelection )selection;
+      int offset=textSel.getOffset();
+      getEditorThing( haskellEditor,file, offset,handler );
+    }
+  }
 
-                @Override
-                public void handleThing( ThingAtPoint thing ) {
-                  String haddockType = null;
-                  /*String name=fName;
-                  if( thing != null && thing.length() > 0 && !"no info".equals(thing) ) {
-                    name = thing;
-                    if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
-                      name="";
-                    }
-                    if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
-                      haddockType = name.charAt( name.length() - 1 );
-                      name = name.substring( 0, name.length() - 2 );
-                    }
-                  }*/
+  public static void getEditorThing(final HaskellEditor haskellEditor,final IFile file,final int offset ,final EditorThingHandler handler){
+        //final ScionInstance instance = ScionPlugin.getScionInstance( file );
+       JobFacade f=BuildWrapperPlugin.getJobFacade( file.getProject() );
+        if (f!=null){
 
+          //final String fName = textSel.getText().trim();
+          try {
+            Location l = new Location( file.getLocation().toOSString(),
+                haskellEditor.getDocument(), new Region( offset, 0 ) );
+            f.getThingAtPoint(file, l, new ThingAtPointHandler() {
 
-                  if( thing==null) {
-                   // name = WordFinder.findWord( haskellEditor.getDocument(),
-                   //     textSel.getOffset() );
-                    try {
-                      IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( textSel.getOffset() );
-                      String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
-                      int off=textSel.getOffset()-r.getOffset();
-                      String name= ParserUtils.getHaskellWord(line,off);
-                      if (line.startsWith( "import" ) && name.contains( "." )){
-                        haddockType="m";
-                      }
-                      thing=new ThingAtPoint( name,haddockType );
-                    } catch( final BadLocationException badlox ) {
-                      badlox.printStackTrace();
-                    }
+              @Override
+              public void handleThing( ThingAtPoint thing ) {
+                String haddockType = null;
+                /*String name=fName;
+                if( thing != null && thing.length() > 0 && !"no info".equals(thing) ) {
+                  name = thing;
+                  if (name.startsWith("expr: ") || name.startsWith("bind:") || name.startsWith("stmt: ")){
+                    name="";
                   }
-                  if (thing!=null){
-                    handler.handle( new EditorThing(file, thing ));
+                  if( name.length() > 2 && name.charAt( name.length() - 2 ) == ' ' ) {
+                    haddockType = name.charAt( name.length() - 1 );
+                    name = name.substring( 0, name.length() - 2 );
+                  }
+                }*/
+
+
+                if( thing==null) {
+                 // name = WordFinder.findWord( haskellEditor.getDocument(),
+                 //     textSel.getOffset() );
+                  try {
+                    IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( offset);
+                    String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
+                    int off=offset-r.getOffset();
+                    String name= ParserUtils.getHaskellWord(line,off);
+                    if (line.startsWith( "import" ) && name.contains( "." )){
+                      haddockType="m";
+                    }
+                    thing=new ThingAtPoint( name,haddockType );
+                  } catch( final BadLocationException badlox ) {
+                    badlox.printStackTrace();
                   }
                 }
-              });
+                if (thing!=null){
+                  handler.handle( new EditorThing(file, thing ));
+                }
+              }
+            });
 
-            } catch( BadLocationException ble ) {
-              ble.printStackTrace();
-            }
+          } catch( BadLocationException ble ) {
+            ble.printStackTrace();
           }
-    }
-    return null;
+        }
   }
 
   /**

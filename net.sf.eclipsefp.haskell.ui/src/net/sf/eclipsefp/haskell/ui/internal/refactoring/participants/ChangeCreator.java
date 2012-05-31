@@ -84,6 +84,40 @@ public class ChangeCreator {
     return cabalChanges;
   }
 
+  public static CompositeChange getReferencesChange(final UsageResults ur,final String oldName,final String newName){
+    CompositeChange referencesChange = new CompositeChange( UITexts.updateReferences );
+
+    for (IProject refP:ur.listProjects()){
+      Map<IFile,Map<String,Collection<SearchResultLocation>>> um =ur.getUsageInProject( refP );
+      for (IFile f:um.keySet()){
+        TextFileChange importChanges = new TextFileChange( UITexts.updateReferences,f);
+
+        MultiTextEdit multiEdit = new MultiTextEdit();
+        IDocumentProvider prov=new TextFileDocumentProvider();
+        try {
+          prov.connect( f );
+          IDocument doc=prov.getDocument(  f );
+          try {
+            for (Collection<SearchResultLocation> csrl:um.get( f ).values()){
+              for (SearchResultLocation srl:csrl){
+                int offset=srl.getStartOffset( doc );
+                multiEdit.addChild( new ReplaceEdit( offset, oldName.length(), newName ));
+              }
+            }
+          } finally {
+            prov.disconnect( f );
+          }
+        } catch (Exception ce){
+          HaskellUIPlugin.log( ce );
+        }
+        importChanges.setEdit( multiEdit );
+        referencesChange.add( importChanges );
+      }
+    }
+    return referencesChange;
+
+  }
+
   public static Change createRenameMoveChange(final IFile file, final IPath newPath,
       final boolean updateReferences, final String title) {
     String oldModule = ResourceUtil.getModuleName( file );
@@ -101,34 +135,7 @@ public class ChangeCreator {
       // Update references
       UsageResults ur=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, oldModule, null, true );
       boolean someChange = ur.getSize()>0;
-      CompositeChange referencesChange = new CompositeChange( UITexts.updateReferences );
-      for (IProject refP:ur.listProjects()){
-        Map<IFile,Map<String,Collection<SearchResultLocation>>> um =ur.getUsageInProject( refP );
-        for (IFile f:um.keySet()){
-          TextFileChange importChanges = new TextFileChange( UITexts.updateReferences,f);
-
-          MultiTextEdit multiEdit = new MultiTextEdit();
-          IDocumentProvider prov=new TextFileDocumentProvider();
-          try {
-            prov.connect( f );
-            IDocument doc=prov.getDocument(  f );
-            try {
-              for (Collection<SearchResultLocation> csrl:um.get( f ).values()){
-                for (SearchResultLocation srl:csrl){
-                  int offset=srl.getStartOffset( doc );
-                  multiEdit.addChild( new ReplaceEdit( offset, oldModule.length(), newModule ));
-                }
-              }
-            } finally {
-              prov.disconnect( f );
-            }
-          } catch (Exception ce){
-            HaskellUIPlugin.log( ce );
-          }
-          importChanges.setEdit( multiEdit );
-          referencesChange.add( importChanges );
-        }
-      }
+      CompositeChange referencesChange=getReferencesChange( ur, oldModule,newModule);
 
       /*for (IResource resource : Util.getHaskellFiles( file.getProject(), file )) {
         List<Integer> offsets = Util.getImportModuleOffsets( resource, oldModule );
