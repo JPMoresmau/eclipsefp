@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
+import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 
@@ -117,9 +118,8 @@ public class NullBrowserServer extends BrowserServer {
 	}
 	
 	@Override
-	public boolean checkHoogle() {
-		// Do nothing
-		return true;
+	public HoogleStatus checkHoogle() {
+		return HoogleStatus.MISSING;
 	}
 
 	@Override

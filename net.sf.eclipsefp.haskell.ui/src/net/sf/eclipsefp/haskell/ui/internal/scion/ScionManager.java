@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
+import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
@@ -428,9 +429,9 @@ public class ScionManager implements IResourceChangeListener {
      if (extraHooglePath != null && extraHooglePath.length() > 0) {
         BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
       }
-      rebuild = !BrowserPlugin.getSharedInstance().checkHoogle();
+      rebuild = HoogleStatus.ERROR.equals(BrowserPlugin.getSharedInstance().checkHoogle());
     } catch( Exception e ) {
-      rebuild = true;
+      // ignore
     }
     if( rebuild ) {
       // There is no "fmap", we don't have a database

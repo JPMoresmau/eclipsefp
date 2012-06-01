@@ -24,9 +24,11 @@ import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
+import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
+import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.NullWriter;
 import net.sf.eclipsefp.haskell.util.StreamRedirect;
 
@@ -149,6 +151,29 @@ public class StreamBrowserServer extends BrowserServer {
 			} while (response!=null && !response.equals("true") && !response.equals("false"));
 			
 			return "true".equals(response);
+		}
+	}
+	
+	public synchronized HoogleStatus sendAndReceiveStatus(JSONObject input)
+			throws IOException {
+		synchronized(lock) {
+			String jsonInput = input.toString();
+			log(">> " + jsonInput);
+			in.write(jsonInput + "\n");
+			in.flush();
+			HoogleStatus st=null;
+			String response = null;
+			do {
+				response = getALine(); // out.readLine();
+				log(response);
+				try {
+					st=HoogleStatus.valueOf(LangUtil.unquote(response).toUpperCase());
+				} catch (IllegalArgumentException iae){
+					// NOOP
+				}
+			} while (st==null);
+			
+			return st;
 		}
 	}
 	
@@ -288,18 +313,18 @@ public class StreamBrowserServer extends BrowserServer {
 
 	@Override
 	public void downloadHoogleData() throws IOException, JSONException {
-		sendAndReceiveOk(Commands.createDownloadHoogleData());
+		sendAndReceiveStatus(Commands.createDownloadHoogleData());
 	}
 
 	@Override
-	public boolean checkHoogle() throws Exception {
-		boolean isPresent = sendAndReceiveBoolean(Commands.createCheckHoogleData());
+	public HoogleStatus checkHoogle() throws Exception {
+		HoogleStatus st = sendAndReceiveStatus(Commands.createCheckHoogleData());
 		// If is present, notify the views
-		if (isPresent) {
+		if (HoogleStatus.OK.equals(st)) {
 			hoogleLoaded = true;
 			notifyHoogleLoaded(new BrowserEvent(this));
 		}
-		return isPresent;
+		return st;
 	}
 
 	@Override

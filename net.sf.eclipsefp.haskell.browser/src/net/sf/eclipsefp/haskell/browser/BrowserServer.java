@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
+import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 
@@ -148,7 +149,7 @@ public abstract class BrowserServer {
 
 	public abstract void downloadHoogleData() throws IOException, JSONException;
 
-	public abstract boolean checkHoogle() throws Exception;
+	public abstract HoogleStatus checkHoogle() throws Exception;
 
 	public abstract void stop();
 }
