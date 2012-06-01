@@ -500,6 +500,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     moduleName=null;
   }
 
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.StatusTextEditor#handleElementContentReplaced()
+   */
+  @Override
+  protected void handleElementContentReplaced() {
+    super.handleElementContentReplaced();
+    synchronize();
+  }
 
   // helping methods
   // ////////////////

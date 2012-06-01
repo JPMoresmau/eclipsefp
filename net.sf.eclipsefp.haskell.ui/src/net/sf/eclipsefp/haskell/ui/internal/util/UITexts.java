@@ -263,6 +263,7 @@ public final class UITexts extends NLS {
   public static String renameProcessor_scope;
   public static String renameProcessor_scope_project;
   public static String renameProcessor_scope_workspace;
+  public static String renameProcessor_empty;
 
   public static String editor_textHover_error;
   public static String editor_actions_source;

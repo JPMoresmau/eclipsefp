@@ -164,7 +164,10 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
     DeltaBuildVisitor v=new DeltaBuildVisitor(mon ) ;
     delta.accept(v);
     if (v.isNeedBuild()){
-      fullBuild(v.isNeedSynchronize(),output, mon );
+      // we don't know if a save was done via the editor, which does the synchronize on the exact file for us
+      // or via a refactoring, which doesn't
+      // v.isNeedSynchronize()
+      fullBuild(true,output, mon );
     }
   }
 }

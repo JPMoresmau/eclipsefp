@@ -91,7 +91,6 @@ public class ChangeCreator {
       Map<IFile,Map<String,Collection<SearchResultLocation>>> um =ur.getUsageInProject( refP );
       for (IFile f:um.keySet()){
         TextFileChange importChanges = new TextFileChange( UITexts.updateReferences,f);
-
         MultiTextEdit multiEdit = new MultiTextEdit();
         IDocumentProvider prov=new TextFileDocumentProvider();
         try {

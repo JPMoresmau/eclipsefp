@@ -54,7 +54,14 @@ public class RenamePage1 extends UserInputWizardPage {
     GridData gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=2;
     t.setLayoutData( gd );
-    t.setText( this.delegate.getNewName() );
+    boolean valid=false;
+    // we found something to rename
+    if (this.delegate.getNewName()!=null){
+      t.setText( this.delegate.getNewName() );
+      valid=true;
+    } else {
+      setErrorMessage( UITexts.renameProcessor_empty );
+    }
 
     l=new Label(c,SWT.NONE);
     gd=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -78,20 +85,23 @@ public class RenamePage1 extends UserInputWizardPage {
     bWorkspace.setLayoutData( gd );
     bWorkspace.setText(UITexts.renameProcessor_scope_workspace);
 
-    t.addModifyListener( new ModifyListener() {
+    if (valid){
+      t.addModifyListener( new ModifyListener() {
 
-      @Override
-      public void modifyText( final ModifyEvent paramModifyEvent ) {
-        String s=t.getText();
-       delegate.setNewName( s );
-       if (s.length()>0){
-         setErrorMessage( null );
-       } else {
-         setErrorMessage( UITexts.renameProcessor_newname_empty );
-       }
-      }
-    } );
-
+        @Override
+        public void modifyText( final ModifyEvent paramModifyEvent ) {
+          String s=t.getText();
+         delegate.setNewName( s );
+         if (s.length()>0){
+           setErrorMessage( null );
+         } else {
+           setErrorMessage( UITexts.renameProcessor_newname_empty );
+         }
+        }
+      } );
+    } else {
+      t.setEditable( false );
+    }
     SelectionListener sl=new SelectionAdapter() {
       /* (non-Javadoc)
        * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)

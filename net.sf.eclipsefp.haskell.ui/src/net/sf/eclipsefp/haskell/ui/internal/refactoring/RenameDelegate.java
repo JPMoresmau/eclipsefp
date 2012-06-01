@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.IConditionChecker;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
@@ -28,7 +27,7 @@ import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
   */
 public class RenameDelegate extends RefDelegate {
 
-  private Change change;
+  private CompositeChange change;
 
   private String newName;
   private IProject project;
@@ -74,7 +73,12 @@ public class RenameDelegate extends RefDelegate {
       if( change == null ) {
         throw new IllegalStateException();
       }
-      rootChange.add( change );
+      // do not have the intermediate step
+      for (Change c:change.getChildren()){
+        change.remove( c );
+        rootChange.add( c );
+      }
+      //rootChange.add( change );
     } finally {
       pm.done();
     }
@@ -84,8 +88,8 @@ public class RenameDelegate extends RefDelegate {
   // helping methods
   //////////////////
 
-  private Change createRenameChange(final IProgressMonitor pm) {
-    TextFileChange result = null;
+  private CompositeChange createRenameChange(final IProgressMonitor pm) {
+    CompositeChange result = null;
     if (info.getTargetEditor() instanceof HaskellEditor){
       final HaskellEditor haskellEditor= (HaskellEditor)info.getTargetEditor();
       try {
