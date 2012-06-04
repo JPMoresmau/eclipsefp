@@ -2,11 +2,15 @@
 // Copyright (c) 2011 by Alejandro Serrano
 package net.sf.eclipsefp.haskell.core;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -45,6 +49,10 @@ public class HaskellCorePlugin extends Plugin {
 
 	private static HaskellCorePlugin plugin;
 
+	/**
+	 * maintains the set of files opened in editors, so that we know that the editor will manage a lot: triggering the synchronize, etc
+	 */
+	private static Set<IFile> modifiedByEditors=Collections.synchronizedSet( new HashSet<IFile>() );
 
 	public HaskellCorePlugin() {
 	  plugin = this;
@@ -68,6 +76,11 @@ public class HaskellCorePlugin extends Plugin {
 	public static HaskellCorePlugin getDefault() {
 		return plugin;
 	}
+
+
+  public static Set<IFile> getModifiedByEditors() {
+    return modifiedByEditors;
+  }
 
 	public static String getPluginId() {
 	  HaskellCorePlugin thePlugin = getDefault();

@@ -21,6 +21,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
@@ -405,6 +406,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
 //    }
     final IFile file=findFile();
     if (file!=null){
+      HaskellCorePlugin.getModifiedByEditors().remove( file );
       final BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
       if (f!=null){
         new Thread(new Runnable() {
@@ -493,7 +495,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   public void doSetInput( final IEditorInput input ) throws CoreException {
 
     super.doSetInput( input );
-
+    IFile f=findFile();
+    if (f!=null){
+      HaskellCorePlugin.getModifiedByEditors().add( f );
+    }
     // Ensure we synchronize to the correct file, which ought to have been set by the call to super.
     synchronize();
     // file may have been renamed

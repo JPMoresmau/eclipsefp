@@ -2,6 +2,7 @@
 package net.sf.eclipsefp.haskell.core.builder;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
@@ -43,8 +44,9 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
   private boolean handleFileVisit( final IResourceDelta delta,
                                    final IFile file ) {
     boolean result = false;
+
     // && !file.isDerived() even if file is derived, it's been modified, hence we rebuild
-    if( file.exists() && (FileUtil.hasHaskellExtension( file ) || FileUtil.hasCabalExtension( file )) ) {
+    if( file.exists() && (FileUtil.hasHaskellExtension( file ) || FileUtil.hasCabalExtension( file ) || ResourceUtil.getSourceContainer( file )!=null) ) {
       switch( delta.getKind() ) {
 
         case IResourceDelta.CHANGED:
@@ -53,6 +55,9 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
           if (FileUtil.hasCabalExtension( file )){
             setNeedSynchronize( true);
             BuildWrapperPlugin.deleteProblems( file );
+            // file not modified by our editor: let's synchronize
+          } else if (!HaskellCorePlugin.getModifiedByEditors().contains( file )){
+            setNeedSynchronize( true);
           }
           result = true;
           break;
