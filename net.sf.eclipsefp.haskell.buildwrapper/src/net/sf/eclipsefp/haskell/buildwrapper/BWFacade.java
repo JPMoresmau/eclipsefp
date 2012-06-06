@@ -1039,4 +1039,10 @@ public class BWFacade {
 		}
 	}
 
+	public boolean isInTempFolder(IResource r){
+		if (r.getProject().equals(getProject()) && getProject().getFolder(DIST_FOLDER).getFullPath().isPrefixOf(r.getFullPath())){
+			return true;
+		}
+		return false;
+	}
 }

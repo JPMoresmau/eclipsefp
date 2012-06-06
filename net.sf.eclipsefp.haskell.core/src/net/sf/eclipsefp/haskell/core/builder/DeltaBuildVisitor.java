@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -46,30 +47,41 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
     boolean result = false;
 
     // && !file.isDerived() even if file is derived, it's been modified, hence we rebuild
-    if( file.exists() && (FileUtil.hasHaskellExtension( file ) || FileUtil.hasCabalExtension( file ) || ResourceUtil.getSourceContainer( file )!=null) ) {
-      switch( delta.getKind() ) {
+    if( file.exists()){
+      if (FileUtil.hasHaskellExtension( file ) || FileUtil.hasCabalExtension( file ) || isExtraHaskellFile(file)) {
 
-        case IResourceDelta.CHANGED:
-          setNeedBuild( true );
-          // cabal file changed, we need a synchronize
-          if (FileUtil.hasCabalExtension( file )){
-            setNeedSynchronize( true);
-            BuildWrapperPlugin.deleteProblems( file );
-            // file not modified by our editor: let's synchronize
-          } else if (!HaskellCorePlugin.getModifiedByEditors().contains( file )){
-            setNeedSynchronize( true);
-          }
-          result = true;
-          break;
-          // file added or removed, we need a synchronize
-        case IResourceDelta.ADDED:
-        case IResourceDelta.REMOVED:
-          setNeedBuild( true );
-          setNeedSynchronize( true); //FileUtil.hasCabalExtension( file )
-          result = true;
-          break;
+        switch( delta.getKind() ) {
+
+          case IResourceDelta.CHANGED:
+            setNeedBuild( true );
+            // cabal file changed, we need a synchronize
+            if (FileUtil.hasCabalExtension( file )){
+              setNeedSynchronize( true);
+              BuildWrapperPlugin.deleteProblems( file );
+              // file not modified by our editor: let's synchronize
+            } else if (!HaskellCorePlugin.getModifiedByEditors().contains( file )){
+              setNeedSynchronize( true);
+            }
+            result = true;
+            break;
+            // file added or removed, we need a synchronize
+          case IResourceDelta.ADDED:
+          case IResourceDelta.REMOVED:
+            setNeedBuild( true );
+            setNeedSynchronize( true); //FileUtil.hasCabalExtension( file )
+            result = true;
+            break;
+        }
       }
     }
     return result;
+  }
+
+  private boolean isExtraHaskellFile(final IFile file){
+    BWFacade bf=BuildWrapperPlugin.getFacade( file.getProject() );
+    if (bf!=null){
+      return ResourceUtil.getSourceContainer( file )!=null && !bf.isInTempFolder( file );
+    }
+    return false;
   }
 }
