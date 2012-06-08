@@ -6,8 +6,6 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
