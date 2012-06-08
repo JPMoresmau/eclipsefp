@@ -49,7 +49,9 @@ public class UsageThread extends Thread {
 					if (f!=null){
 						List<Component> cs=f.getComponents();
 						for (Component c:cs){
-							f.generateUsage(c,retAll);
+							if (c.isBuildable()){
+								f.generateUsage(c,retAll);
+							}
 						}
 						p=getNext();
 					}
