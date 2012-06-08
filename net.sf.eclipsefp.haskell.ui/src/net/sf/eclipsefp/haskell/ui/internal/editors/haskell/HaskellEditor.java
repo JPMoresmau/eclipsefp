@@ -9,6 +9,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDefHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
@@ -87,7 +90,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  *
  * @author Leif Frenzel
  */
-public class HaskellEditor extends TextEditor implements IEditorPreferenceNames {
+public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, NameDefHandler {
   /** The Haskell editor's identifier. */
   public static final String ID = HaskellEditor.class.getName();
   /** Action string associated with a following Haddock documentation comment */
@@ -124,6 +127,11 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
   private ScionTokenScanner tokenScanner;
 
   private ImportsManager importsManager;
+
+  /**
+   * the names in scope as given by GHC
+   */
+  private final Collection<NameDef> names=new ArrayList<NameDef>();
 
   /**
    * The scion-server supporting this editor.
@@ -619,7 +627,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
         if (!needWrite && isDirty()){ // we need to write the docs if we're dirty
           needWrite=true;
         }
-        jf.updateFromEditor( file, needWrite?getDocument():null, outlineHandler );
+        jf.updateFromEditor( file, needWrite?getDocument():null, outlineHandler,this );
         if (!isDirty()){ // now we've written and not dirty
           needWrite=false;
         }
@@ -635,7 +643,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
    */
   public ImportsManager getImportsManager() {
     if(importsManager==null){
-      importsManager=new ImportsManager(findFile(),getDocument());
+      importsManager=new ImportsManager(findFile(),getDocument(),names);
     }
     return importsManager;
   }
@@ -754,6 +762,25 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames 
     this.tokenScanner = tokenScanner;
   }
 
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.buildwrapper.types.NameDefHandler#handleNameDefs(java.util.Collection)
+   */
+  @Override
+  public void handleNameDefs( final Collection<NameDef> names ) {
+    // we keep the old names if the build failed
+    if (names!=null){
+      this.names.clear();
+      this.names.addAll( names );
+    }
+
+  }
+
+  /**
+   * @return the names
+   */
+  public Collection<NameDef> getNames() {
+    return names;
+  }
 
   // Interface methods for IScionEventListener
 

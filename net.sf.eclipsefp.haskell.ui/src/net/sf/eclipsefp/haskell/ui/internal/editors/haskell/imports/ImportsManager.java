@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -40,9 +41,20 @@ public class ImportsManager {
   private Map<String, Documented> decls=null;
   private Map<String, Imported> importedDecls=null;
 
+  /**
+   * the names from GHC names in scope
+   */
+  private Collection<NameDef> names=null;
+
   public ImportsManager(final IFile file, final IDocument doc) {
     this.file = file;
     this.doc = doc;
+  }
+
+  public ImportsManager(final IFile file, final IDocument doc,final Collection<NameDef> names) {
+    this.file = file;
+    this.doc = doc;
+    this.names=names;
   }
 
   public void reset(){
@@ -88,7 +100,17 @@ public class ImportsManager {
       }
       decls=myDecls;
     }
-    return decls;
+    Map<String, Documented> ret=decls;
+    if (names!=null){
+      // add the names dynamically
+      ret=new HashMap<String, Documented>(decls);
+      for(NameDef n:names){
+        if (!ret.containsKey( n.getName() )){
+          ret.put( n.getName(), AnImport.nameToBrowser( n ) );
+        }
+      }
+    }
+    return ret;
   }
 
   public Map<String, Imported> getImportedDeclarations() {

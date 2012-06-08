@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
@@ -193,7 +195,12 @@ public class BWFacade {
 //		return flag;
 //	}
 	
-	public boolean build1(IFile file){
+	/**
+	 * build one file
+	 * @param file the file to build the temp contents
+	 * @return the names in scope or null if the build failed
+	 */
+	public Collection<NameDef> build1(IFile file){
 		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
@@ -210,9 +217,24 @@ public class BWFacade {
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			return parseNotes(notes,ress);
+			
+			parseNotes(notes,ress);
+			JSONArray names=arr.optJSONArray(0);
+			if(names!=null){
+				Collection<NameDef> ret=new ArrayList<NameDef>();
+				for (int a=0;a<names.length();a++){
+					try {
+						ret.add(new NameDef(names.getJSONObject(a)));
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
+					}
+				}
+				return ret;
+			}
+			
+			
 		}
-		return true;
+		return null;
 	}
 	
 //	public BuildFlagInfo getBuildFlags(IFile file){

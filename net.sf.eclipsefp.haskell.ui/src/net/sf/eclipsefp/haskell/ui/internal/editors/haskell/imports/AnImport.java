@@ -33,6 +33,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.ExportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportExportType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportSpecDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
@@ -278,6 +279,29 @@ public class AnImport {
 
   }
 
+  /**
+   * transform a NameDef into a Documented object
+   * @param def the name
+   * @return the Documented or null if not handled
+   */
+  public static Documented nameToBrowser( final NameDef def) {
+    switch (def.getTypes().iterator().next()) {
+      case CLASS:
+        return new TypeClass("", new String[0], def.getName(), new String[0], new String[0] );
+      case DATA:
+        return new DataType( "", new String[0], def.getName(), new String[0], "", new Constructor[0] );
+      case TYPE:
+        return new NewType( "", new String[0], def.getName(), new String[0], "", new Constructor[0] );
+      case FUNCTION:
+        return new Function( "", def.getName(), def.getTypeSignature() );
+      case SYN:
+        return new TypeSynonym( "", def.getName(), new String[0], "?" );
+      case CONSTRUCTOR:
+        return new Constructor( "", def.getName(), def.getTypeSignature() ,"");
+      default:
+          return null;
+    }
+  }
 
   /**
    * build a Documented structure from an outline definition

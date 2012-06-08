@@ -13,7 +13,7 @@ Fixes:
 	- rebuild project correctly if a Happy, Alex or UUAGC file is modified
 	- Accept space only as separator for extensions field in cabal file
 	- Autocompletion shows symbols from other modules in same project, but not imported (adds import automatically)
-	- Type signature fixes truncated Kind signatures
+	- Type signature quick fixes does not truncate Kind signatures any more
 	- Do not load object code when running debug GHCi sessions
 	- Do not offer to create hoogle database if hoogle is not found
 
@@ -24,7 +24,9 @@ Features:
 		- see https://sourceforge.net/tracker/?func=detail&atid=1000719&aid=3516152&group_id=108233
 	- Quick Fix for missing package -> installs it via cabal with no specific options/flags
 	- Yesod devel and yesod test launch configuration (on existing yesod projects, you need to manually add the yesod nature)
-	- Auto complete proposals scope change: there is no preference anymore. Pressing again Ctrl-Space (or whatever key binding you have defined for content assist) allows you to cycle between proposals that comes from imported modules, all modules in the current project and dependent packages, and all packages.
+	- Auto complete:
+		-proposals scope change: there is no preference anymore. Pressing again Ctrl-Space (or whatever key binding you have defined for content assist) allows you to cycle between proposals that comes from imported modules, all modules in the current project and dependent packages, and all packages.
+		-use GHC's namesInScope function to present all names in scopes. This for example means that names from TH generated functions are visible.
 	- Rename functions, types, constructors: renames all usages and definitions
 
 Internal:
@@ -32,7 +34,9 @@ Internal:
 
 Upgrade notes:
 
+
 Known issues:
+	- Searches and hover information may not work well for data constructors with GHC 7.4.1 because of a GHC bug (see http://hackage.haskell.org/trac/ghc/ticket/6145)
 
 
 Thanks to all bug reporters and users for their feedback.

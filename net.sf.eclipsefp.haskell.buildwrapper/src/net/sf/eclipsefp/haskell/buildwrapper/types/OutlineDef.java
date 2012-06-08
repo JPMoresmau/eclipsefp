@@ -99,7 +99,7 @@ public class OutlineDef {
 			children.add(new OutlineDef(f,arr.getJSONObject(a)));
 		}
 		typeSignature=obj.optString("s");
-		if (typeSignature==null || "null".equals(typeSignature)){
+		if (typeSignature==null || typeSignature.length()==0 || "null".equals(typeSignature)){
 			typeSignature="?";
 		}
 		comment=obj.optString("d");

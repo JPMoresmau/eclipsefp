@@ -5,8 +5,12 @@
  */
 package net.sf.eclipsefp.haskell.buildwrapper;
 
+import java.util.Collection;
+
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDefHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OccurrencesHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
@@ -184,7 +188,7 @@ public class JobFacade  {
 	      buildJob.schedule();
 	}
 	
-	public void updateFromEditor(final IFile file,final IDocument doc,final OutlineHandler handler){
+	public void updateFromEditor(final IFile file,final IDocument doc,final OutlineHandler handler,final NameDefHandler ndhandler){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
 	    Job buildJob = new Job (jobNamePrefix) {
@@ -210,8 +214,10 @@ public class JobFacade  {
 	          
 	          
 	          if (or.isBuildOK()){
-	        	  realFacade.build1(file);
-		          
+	        	  Collection<NameDef> ns=realFacade.build1(file);
+		          if (ndhandler!=null){
+		        	  ndhandler.handleNameDefs(ns);
+		          }
 	          }
 	          //long t4=System.currentTimeMillis();
 	          //,getBuildFlags:"+(t1-t0)
