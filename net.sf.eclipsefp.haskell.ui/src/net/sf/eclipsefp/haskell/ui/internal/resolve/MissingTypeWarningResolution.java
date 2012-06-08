@@ -31,38 +31,80 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
     return UITexts.resolve_missingtype;
   }
 
+  /**
+   * extract the proper type from the message
+   * @param prefix
+   * @param msg
+   * @return
+   */
+  public static String extractTypeFromMessage(final String prefix,final String msg){
+    int ix=msg.toLowerCase().indexOf(  prefix);
+    if (ix>-1){
+      String type=msg.substring(ix+prefix.length()).trim();
+
+      int ixStartType=type.indexOf( "::" );
+      if (ixStartType>-1){
+          StringBuilder sb=new StringBuilder();
+          String name= type.substring( 0,ixStartType );
+       // if we're in Main, symbol name gets prefixed with Main.
+          int lidx=name.lastIndexOf( '.' );
+          if (lidx>-1){
+            name=name.substring(lidx+1);
+          }
+          sb.append(name );
+          sb.append("::" );
+//        for (int a=ixStartType;a<type.length();a++){
+//          if (Character.isUpperCase( type.charAt( a ) )){
+//            break;
+//          } else if (Character.isLowerCase(  type.charAt( a ) )){
+            int start=ixStartType+2;
+            // package names can appear in signature
+            int end=type.indexOf( ":",start );
+            while (end>-1){
+            // but if we have :: inside, it's a kind signature, maybe?, so we don't truncate
+              if (type.indexOf( ":",end+1 )!=end+1){
+                int startPkg1=type.substring(start,end).lastIndexOf( ' ' );
+                int startPkg2=type.substring(start,end).lastIndexOf( '(' );
+                int startPkg=Math.max( startPkg1, startPkg2 );
+                if (startPkg==-1){
+                  startPkg=start;
+                } else {
+                  startPkg+=start+1;
+                }
+                sb.append(type.substring( start,startPkg ));
+                start=end+1;
+              } else {
+                sb.append(type.substring( start,end ));
+                sb.append("::");
+                start=end+2;
+              }
+
+              end=type.indexOf( ":",start );
+            }
+            sb.append(type.substring( start ));
+                //type=type.substring( 0,startPkg )+type.substring( end+1,type.length() );
+//              break;
+//            }
+//          }
+//        }
+        // if we're in Main, symbol name gets prefixed with Main.
+//        int lidx=type.substring(0,ixStartType).lastIndexOf( '.' );
+//        if (lidx>-1){
+//          type=type.substring(lidx+1);
+//        }
+            return sb.toString();
+      }
+      return type;
+    }
+    return null;
+  }
+
   @Override
   public ICompletionProposal getCompletionProposal( final IMarker marker,final IDocument document){
     String msg=marker.getAttribute(IMarker.MESSAGE,""); //$NON-NLS-1$
     //String toSearch=GhcMessages.WARNING_INFERREDTYPE_START;
-    int ix=msg.toLowerCase().indexOf(  toSearch);
-    if (ix>-1){
-      String type=msg.substring(ix+toSearch.length()).trim();
-
-      int ixStartType=type.indexOf( "::" );
-      if (ixStartType>-1){
-        for (int a=ixStartType;a<type.length();a++){
-          if (Character.isUpperCase( type.charAt( a ) )){
-            break;
-          } else if (Character.isLowerCase(  type.charAt( a ) )){
-            int start=a;
-            // I don't remember why we search for :
-            int end=type.indexOf( ":",a );
-            // but if we have :: inside, it's a kind signature, maybe?, so we don' truncate
-            if (end>-1 && type.indexOf( ":",end+1 )!=end+1){
-              type=type.substring( 0,start )+type.substring( end+1,type.length() );
-              break;
-            }
-          }
-        }
-        // if we're in Main, symbol name gets prefixed with Main.
-        int lidx=type.substring(0,ixStartType).lastIndexOf( '.' );
-        if (lidx>-1){
-          type=type.substring(lidx+1);
-        }
-      }
-
-
+    String type=extractTypeFromMessage( toSearch, msg );
+    if (type!=null){
       int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
       try {
 
