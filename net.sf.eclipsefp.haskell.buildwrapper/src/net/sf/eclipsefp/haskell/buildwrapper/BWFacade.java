@@ -86,6 +86,12 @@ public class BWFacade {
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
 	 */
 	private SingleJobQueue buildJobQueue=new SingleJobQueue();
+	
+	/**
+	 * where ever we come from, we only launch one synchronize operation per file at a time, and lose the intermediate operations
+	 */
+	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<IFile, SingleJobQueue>();
+	
 	/**
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
 	 */
@@ -121,6 +127,15 @@ public class BWFacade {
 			tapQueuesByFiles.put(f, sjq);
 		}
 		return sjq;
+	}
+	
+	public synchronized SingleJobQueue getEditorSynchronizeQueue(IFile f){
+		SingleJobQueue sjq=syncEditorJobQueue.get(f);
+	    if (sjq==null){
+	    	sjq=new SingleJobQueue();
+	    	syncEditorJobQueue.put(f,sjq);
+	    }
+	    return sjq;
 	}
 	
 	private void deleteCabalProblems(){

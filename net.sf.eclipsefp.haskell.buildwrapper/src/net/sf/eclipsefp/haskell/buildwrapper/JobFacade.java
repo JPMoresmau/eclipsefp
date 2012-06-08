@@ -6,6 +6,8 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
@@ -17,6 +19,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPointHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
+import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +42,6 @@ import org.json.JSONArray;
  */
 public class JobFacade  {
 	private BWFacade realFacade;
-	
 
 	
 	public JobFacade(BWFacade realF){
@@ -235,7 +237,9 @@ public class JobFacade  {
 	    IResource r=file.getProject().findMember(BWFacade.DIST_FOLDER+"/"+path);
 		buildJob.setRule( r );
 	    buildJob.setPriority(Job.SHORT);
-	    buildJob.schedule();
+	    SingleJobQueue sjq=realFacade.getEditorSynchronizeQueue(file);
+	    sjq.addJob(buildJob);
+	    //buildJob.schedule();
 	}
 	
 	public void getOccurrences(final IFile file,final String token,final OccurrencesHandler handler){
