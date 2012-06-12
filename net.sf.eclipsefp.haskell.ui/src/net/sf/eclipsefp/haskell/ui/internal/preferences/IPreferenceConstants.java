@@ -49,5 +49,7 @@ public interface IPreferenceConstants {
   public final static String YESOD_EXECUTABLE="YESOD_EXECUTABLE"; //$NON-NLS-1$
   public final static String SNAP_EXECUTABLE="SNAP_EXECUTABLE"; //$NON-NLS-1$
 
+  public final static String SOURCEGRAPH_EXECUTABLE="SOURCEGRAPH_EXECUTABLE"; //$NON-NLS-1$
+
   public final static String YESOD_CABALDEV="YESOD_CABALDEV"; //$NON-NLS-1$
 }

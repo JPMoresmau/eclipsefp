@@ -13,6 +13,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -54,14 +56,11 @@ public class RunActionDelegate implements IObjectActionDelegate {
       try {
         final IFile cabalFile = BuildWrapperPlugin.getCabalFile( project );
         // Run the command
-        //String[] cmdLine = new String[] { SOURCEGRAPH, cabalFile.getRawLocation().toOSString() };
-        //Process p = Runtime.getRuntime().exec(cmdLine);
-        //p.waitFor();
         final List<String> commands = new ArrayList<String>();
-        commands.add( SOURCEGRAPH );
+        commands.add( ScionManager.getExecutablePath( IPreferenceConstants.SOURCEGRAPH_EXECUTABLE,SOURCEGRAPH, false ) );
         commands.add(cabalFile.getRawLocation().toOSString());
 
-        AbstractHaskellLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), "SourceGraph", false,new Runnable(){
+        AbstractHaskellLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), SOURCEGRAPH, false,new Runnable(){
           @Override
           public void run() {
          // Get path name
@@ -86,7 +85,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
                     // Do something if the file does not exist
                   }
                 } catch( Exception e ) {
-                  // Do nothing
+                 HaskellUIPlugin.log( e );
                 }
               }
             } );

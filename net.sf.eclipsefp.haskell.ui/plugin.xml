@@ -309,6 +309,12 @@
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
       </page>
       <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.SourceGraphPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.SourceGraphPP"
+            name="%sourceGraphPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>
+      <page
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             name="%debugPP_name"
