@@ -22,6 +22,7 @@ import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -191,6 +192,13 @@ public class JobFacade  {
 	public void updateFromEditor(final IFile file,final IDocument doc,final OutlineHandler handler,final NameDefHandler ndhandler){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
+		/*
+		 *  we're not automatically building, and it's the first time we get a request from the editor
+		 *  we're going to call a full synchronize which in turn will request a configure
+		 *  so that we're ready to build our haskell files
+		 */
+		final boolean needSynchronize=!ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding() && !realFacade.hasEditorSynchronizeQueue(file);
+		
 	    Job buildJob = new Job (jobNamePrefix) {
 	      @Override
 	      protected IStatus run(IProgressMonitor monitor) {
@@ -202,7 +210,9 @@ public class JobFacade  {
 	          }*/
 	          //long t0=System.currentTimeMillis();
 	          //realFacade.getBuildFlags(file);
-	          
+	          if (needSynchronize){
+	        	  realFacade.synchronize(false);
+	          }
 	         // long t1=System.currentTimeMillis();
 	          OutlineResult or=realFacade.outline(file);
 	          //long t2=System.currentTimeMillis();
@@ -214,6 +224,7 @@ public class JobFacade  {
 	          
 	          
 	          if (or.isBuildOK()){
+	        	  
 	        	  Collection<NameDef> ns=realFacade.build1(file);
 		          if (ndhandler!=null){
 		        	  ndhandler.handleNameDefs(ns);

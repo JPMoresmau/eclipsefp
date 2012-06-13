@@ -129,6 +129,16 @@ public class BWFacade {
 		return sjq;
 	}
 	
+	/**
+	 * do we have a editor synchronize queue (ie have we synchronized with the editor during that session already)
+	 * @param f
+	 * @return
+	 */
+	public synchronized boolean hasEditorSynchronizeQueue(IFile f){
+		SingleJobQueue sjq=syncEditorJobQueue.get(f);
+	    return sjq!=null;
+	}
+	
 	public synchronized SingleJobQueue getEditorSynchronizeQueue(IFile f){
 		SingleJobQueue sjq=syncEditorJobQueue.get(f);
 	    if (sjq==null){
