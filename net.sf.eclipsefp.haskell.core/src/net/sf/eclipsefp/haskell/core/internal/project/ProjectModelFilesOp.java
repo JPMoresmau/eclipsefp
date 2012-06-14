@@ -43,7 +43,13 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     // we create nothing if no component selected, probably we're getting files from source control system or something
     if (isExecutable() || isLibrary()){
       String name = project.getName();
-      createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
+
+      // we create a normal setup, but it could be a literate file
+      IFile litSetup = project.getFile( "Setup.lhs" ); //$NON-NLS-1$
+      // file may exist if project is created from source version control
+      if (!litSetup.exists()){
+        createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
+      }
 
       if (isExecutable()){
         String mainPath="Main";//$NON-NLS-1$
