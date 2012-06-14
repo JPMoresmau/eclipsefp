@@ -243,6 +243,7 @@ public final class UITexts extends NLS {
   public static String newProjectWizardPage_Message_notOnWorkspaceRoot;
   public static String newProjectWizardPage_Message_notExistingProjectOnWorkspaceRoot;
   public static String newProjectWizardPage_Message_cannotCreateAtExternalLocation;
+  public static String newProjectWizardPage_Message_alreadyExists;
 
   public static String newProjectWizardPage_ComponentGroup_title;
   public static String newProjectWizardPage_ComponentGroup_executable;

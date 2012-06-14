@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -333,9 +334,7 @@ public class NewProjectWizardPage extends WizardPage {
 
       // check whether the project name field is empty
       if (name.length() == 0) {
-        setErrorMessage(null);
-        setMessage(UITexts.newProjectWizardPage_Message_enterProjectName);
-        setPageComplete(false);
+        setIncomplete(UITexts.newProjectWizardPage_Message_enterProjectName,IMessageProvider.INFORMATION);
         return;
       }
 
@@ -350,8 +349,7 @@ public class NewProjectWizardPage extends WizardPage {
       for (int a=0;a<name.length();a++){
         char c=name.charAt( a );
         if (!(Character.isDigit( c ) || Character.isLetter( c ) || c=='-')){
-          setErrorMessage(UITexts.newProjectWizardPage_Message_projectInvalidName);
-          setPageComplete(false);
+          setIncomplete(UITexts.newProjectWizardPage_Message_projectInvalidName);
           return;
         }
       }
@@ -359,28 +357,28 @@ public class NewProjectWizardPage extends WizardPage {
       // check whether project already exists
       final IProject handle= workspace.getRoot().getProject(name);
       if (handle.exists()) {
-        setErrorMessage(UITexts.newProjectWizardPage_Message_projectAlreadyExists);
-        setPageComplete(false);
+        setIncomplete(UITexts.newProjectWizardPage_Message_projectAlreadyExists);
         return;
       }
 
-      IPath projectLocation= ResourcesPlugin.getWorkspace().getRoot().getLocation().append(name);
-      if (projectLocation.toFile().exists()) {
-        try {
-          //correct casing
-          String canonicalPath= projectLocation.toFile().getCanonicalPath();
-          projectLocation= new Path(canonicalPath);
-        } catch (IOException e) {
-          HaskellUIPlugin.log(e);
-        }
+      if (fLocationGroup.isWorkspaceRadioSelected()){
+        IPath projectLocation= ResourcesPlugin.getWorkspace().getRoot().getLocation().append(name);
+        if (projectLocation.toFile().exists()) {
+          try {
+            //correct casing
+            String canonicalPath= projectLocation.toFile().getCanonicalPath();
+            projectLocation= new Path(canonicalPath);
+          } catch (IOException e) {
+            HaskellUIPlugin.log(e);
+          }
 
-        String existingName= projectLocation.lastSegment();
-        if (!existingName.equals(fNameGroup.getName())) {
-          setErrorMessage(NLS.bind(UITexts.newProjectWizardPageMessage_invalidProjectNameForWorkspaceRoot, existingName));
-          setPageComplete(false);
-          return;
-        }
+          String existingName= projectLocation.lastSegment();
+          if (!existingName.equals(fNameGroup.getName())) {
+            setIncomplete(NLS.bind(UITexts.newProjectWizardPageMessage_invalidProjectNameForWorkspaceRoot, existingName));
+            return;
+          }
 
+        }
       }
 
       final String location= fLocationGroup.getLocation().toOSString();
@@ -388,15 +386,13 @@ public class NewProjectWizardPage extends WizardPage {
       // check whether location is empty
       if (location.length() == 0) {
         setErrorMessage(null);
-        setMessage(UITexts.newProjectWizardPage_Message_enterLocation);
-        setPageComplete(false);
+        setIncomplete(UITexts.newProjectWizardPage_Message_enterLocation);
         return;
       }
 
       // check whether the location is a syntactically correct path
       if (!Path.EMPTY.isValidPath(location)) {
-        setErrorMessage(UITexts.newProjectWizardPage_Message_invalidDirectory);
-        setPageComplete(false);
+        setIncomplete(UITexts.newProjectWizardPage_Message_invalidDirectory);
         return;
       }
 
@@ -405,6 +401,7 @@ public class NewProjectWizardPage extends WizardPage {
       if (fLocationGroup.isWorkspaceRadioSelected()) {
         projectPath= projectPath.append(fNameGroup.getName());
       }
+
 
       if (projectPath.toFile().exists()) {//create from existing source
         if (Platform.getLocation().isPrefixOf(projectPath)) { //create from existing source in workspace
@@ -415,15 +412,16 @@ public class NewProjectWizardPage extends WizardPage {
           }
 
           if (!projectPath.toFile().exists()) {
-            setErrorMessage(UITexts.newProjectWizardPage_Message_notExistingProjectOnWorkspaceRoot);
-            setPageComplete(false);
+            setIncomplete(UITexts.newProjectWizardPage_Message_notExistingProjectOnWorkspaceRoot);
             return;
           }
         }
+       setWarningMessage( UITexts.newProjectWizardPage_Message_alreadyExists);
+       setPageComplete(true);
+       return;
       } else if (!fLocationGroup.isWorkspaceRadioSelected()) {//create at non existing external location
         if (!canCreate(projectPath.toFile())) {
-          setErrorMessage(UITexts.newProjectWizardPage_Message_cannotCreateAtExternalLocation);
-          setPageComplete(false);
+          setIncomplete(UITexts.newProjectWizardPage_Message_cannotCreateAtExternalLocation);
           return;
         }
 
@@ -431,15 +429,12 @@ public class NewProjectWizardPage extends WizardPage {
         // location.
         final IStatus locationStatus= workspace.validateProjectLocation(handle, projectPath);
         if (!locationStatus.isOK()) {
-          setErrorMessage(locationStatus.getMessage());
-          setPageComplete(false);
+          setIncomplete(locationStatus.getMessage());
           return;
         }
       }
 
       setPageComplete(true);
-
-      setErrorMessage(null);
       setMessage(null);
     }
 

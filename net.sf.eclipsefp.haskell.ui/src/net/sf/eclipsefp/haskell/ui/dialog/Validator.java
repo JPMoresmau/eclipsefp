@@ -1,15 +1,26 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.dialog;
 
 import java.util.Observable;
 import java.util.Observer;
+import org.eclipse.jface.dialogs.IMessageProvider;
 
+/**
+ * validation status
+ * @author JP Moresmau
+ *
+ */
 public abstract class Validator implements Observer {
 
   private ValidatorManager fManager;
 
   private String fMessage;
-  private String fErrorMessage;
-  private boolean fPageComplete;
+  private int status=IMessageProvider.NONE;
+  private boolean fPageComplete=false;
 
   public Validator() {
     fManager = null;
@@ -32,14 +43,21 @@ public abstract class Validator implements Observer {
 
   public void setMessage( final String message ) {
     fMessage = message;
+    status=IMessageProvider.NONE;
   }
 
-  public String getErrorMessage() {
-    return fErrorMessage;
+  public void setErrorMessage( final String message ) {
+    if (message!=null){
+      fMessage = message;
+      status=IMessageProvider.ERROR;
+    }
   }
 
-  public void setErrorMessage( final String errorMessage ) {
-    fErrorMessage = errorMessage;
+  public void setWarningMessage( final String message ) {
+    if (message!=null){
+      fMessage = message;
+      status=IMessageProvider.WARNING;
+    }
   }
 
   public boolean isPageComplete() {
@@ -52,18 +70,33 @@ public abstract class Validator implements Observer {
 
   public void setComplete() {
     setMessage( null );
-    setErrorMessage( null );
+    setStatus( IMessageProvider.NONE );
     setPageComplete( true );
   }
 
-  public void setIncomplete( final String message, final boolean error ) {
-    if( error ) {
-      setMessage( null );
-      setErrorMessage( message );
-    } else {
-      setMessage( message );
-      setErrorMessage( null );
-    }
+
+  /**
+   * @return the status
+   */
+  public int getStatus() {
+    return status;
+  }
+
+  /**
+   * @param status the status to set
+   */
+  public void setStatus( final int status ) {
+    this.status = status;
+  }
+
+  public void setIncomplete( final String message){
+    setIncomplete( message, IMessageProvider.ERROR );
+  }
+
+  public void setIncomplete( final String message, final int status ) {
+
+    setMessage( message );
+    setStatus( status );
     setPageComplete( false );
   }
 

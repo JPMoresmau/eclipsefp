@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.IStringButtonAdapter;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.LayoutUtil;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringButtonDialogField;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -93,13 +94,13 @@ class CabalPackageImportWP extends NewProjectWizardPage {
     protected void doUpdate() {
       String name = fPackageGroup.getSelectedArchiveName();
       if( name == null || name.trim().length() == 0 ) {
-        setIncomplete( "Please select a cabalized archive", false );
+        setIncomplete( "Please select a cabalized archive", IMessageProvider.INFORMATION );
         return;
       }
 
       File file = new File( name );
       if( !isValidArchiveFile( file ) ) {
-        setIncomplete( "Not a valid cabal package: " + name, true );
+        setIncomplete( "Not a valid cabal package: " + name, IMessageProvider.ERROR );
         return;
       }
     }

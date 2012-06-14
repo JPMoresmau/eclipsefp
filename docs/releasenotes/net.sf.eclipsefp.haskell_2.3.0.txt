@@ -28,6 +28,7 @@ Features:
 		-proposals scope change: there is no preference anymore. Pressing again Ctrl-Space (or whatever key binding you have defined for content assist) allows you to cycle between proposals that comes from imported modules, all modules in the current project and dependent packages, and all packages.
 		-use GHC's namesInScope function to present all names in scopes. This for example means that names from TH generated functions are visible.
 	- Rename functions, types, constructors: renames all usages and definitions
+	- Preference page for executables so that user can auto detect their locations or specify an arbitrary one: Yesod, Snap, SourceGraph, HLint
 
 Internal:
 
