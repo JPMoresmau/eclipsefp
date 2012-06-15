@@ -328,7 +328,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
     String moduleHTMLFile = module!=null?module.replace( '.', '-' ) + ".html":"";
     // String relFile=pkg+"/"+moduleHTMLFile;
-    String anchor = shortName!=null?type + ":" + shortName:"";
+    String anchor = shortName!=null?type + ":" + toAnchorName(shortName):"";
 
     IHsImplementation hsImpl = CompilerManager.getInstance()
         .getCurrentHsImplementation();
@@ -434,6 +434,29 @@ public class OpenDefinitionHandler extends AbstractHandler {
      */
 
     return false;
+  }
+
+  /**
+   * see Haddock.Utils makeAnchorId
+   * @param name
+   * @return
+   */
+  private static String toAnchorName(final String name){
+    if (name!=null){
+      StringBuilder sb=new StringBuilder();
+      for (int a=0;a<name.length();a++){
+        char c=name.charAt( a );
+        if (Character.isLetterOrDigit( c ) || c=='.' || c==':' || c=='_'){
+          sb.append( c );
+        } else {
+          sb.append( "-" );
+          sb.append(Integer.toString(c) );
+          sb.append( "-" );
+        }
+      }
+      return sb.toString();
+    }
+    return name;
   }
 
   private static boolean exists( final URL url ) {

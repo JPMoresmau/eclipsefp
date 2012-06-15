@@ -16,6 +16,10 @@ Fixes:
 	- Type signature quick fixes does not truncate Kind signatures any more
 	- Do not load object code when running debug GHCi sessions
 	- Do not offer to create hoogle database if hoogle is not found
+	- Opening definition of an operator goes to proper anchor in Haddock HTML
+	- If you create a new Haskell project on a location that already contains a valid project
+		- you get a warning message in the new project creation wizard, to make sure this is what you want
+		- a Setup.hs file is not created if a Setup.lhs file is already present
 
 Features:
 	- Output (exe) generation on build can be disabled by adding output=true to the haskell builder command of the .project file
