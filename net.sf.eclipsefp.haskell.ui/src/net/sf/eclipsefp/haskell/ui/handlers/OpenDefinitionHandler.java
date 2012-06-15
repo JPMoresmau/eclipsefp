@@ -446,9 +446,11 @@ public class OpenDefinitionHandler extends AbstractHandler {
       StringBuilder sb=new StringBuilder();
       for (int a=0;a<name.length();a++){
         char c=name.charAt( a );
-        if (Character.isLetterOrDigit( c ) || c=='.' || c==':' || c=='_'){
+        // ascii letter, digit, or . : _, ok
+        if ((Character.isLetterOrDigit( c ) && c<128) || c=='.' || c==':' || c=='_'){
           sb.append( c );
         } else {
+          // escape
           sb.append( "-" );
           sb.append(Integer.toString(c) );
           sb.append( "-" );
