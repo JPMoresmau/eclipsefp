@@ -3,8 +3,11 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.RenameDelegate;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.wizards.RenameWizard;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ui.IEditorActionDelegate;
 
@@ -24,7 +27,15 @@ public class Rename extends RefAction implements IEditorActionDelegate {
     RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation( wizard );
     try {
       String titleForFailedChecks = ""; //$NON-NLS-1$
-      op.run( getShell(), titleForFailedChecks );
+      int code=op.run( getShell(), titleForFailedChecks );
+      if (IDialogConstants.OK_ID==code){
+        if (info.getSourceFile()!=null && BuildWrapperPlugin.getDefault()!=null){
+          UsageThread ut=BuildWrapperPlugin.getDefault().getUsageThread();
+          if (ut!=null){
+            ut.addProject(info.getSourceFile().getProject());
+          }
+        }
+      }
     } catch( final InterruptedException irex ) {
       // operation was cancelled
     }
