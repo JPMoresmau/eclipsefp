@@ -229,22 +229,24 @@ public class ResourceUtil {
 	 * </p>
 	 */
 	public static String readStream(final InputStream is) throws IOException {
-		StringBuffer sbResult = new StringBuffer();
+		StringBuilder sbResult = new StringBuilder();
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String line = br.readLine();
-		while (line != null) {
-			sbResult.append(line);
-			// Note: this could in some cases obscure the positions of elements
-			// in
-			// the code. It is no problem as long as all source positions we get
-			// from the parser are in terms of line/column, but it would make a
-			// difference if we got them in terms of offset/length
-			sbResult.append("\n"); //$NON-NLS-1$
-			line = br.readLine();
+		try {
+  		String line = br.readLine();
+  		while (line != null) {
+  			sbResult.append(line);
+  			// Note: this could in some cases obscure the positions of elements
+  			// in
+  			// the code. It is no problem as long as all source positions we get
+  			// from the parser are in terms of line/column, but it would make a
+  			// difference if we got them in terms of offset/length
+  			sbResult.append("\n"); //$NON-NLS-1$
+  			line = br.readLine();
+  		}
+		} finally {
+		  br.close();
+		  is.close();
 		}
-		br.close();
-		is.close();
-
 		return sbResult.toString();
 	}
 

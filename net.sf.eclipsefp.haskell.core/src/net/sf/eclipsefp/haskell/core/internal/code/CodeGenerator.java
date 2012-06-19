@@ -17,7 +17,7 @@ public class CodeGenerator {
   public String createModuleContent( final String[] folderNames,
                                      final String name,
                                      final EHaskellCommentStyle style ) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append( PlatformUtil.NL );
     sb.append(getPrefixFor( style ));
     sb.append( "module " ); //$NON-NLS-1$

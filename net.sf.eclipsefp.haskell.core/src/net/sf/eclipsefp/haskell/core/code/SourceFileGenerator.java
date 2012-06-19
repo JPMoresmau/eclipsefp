@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.core.code;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import org.eclipse.core.resources.IContainer;
@@ -12,7 +14,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 
@@ -101,10 +105,14 @@ public class SourceFileGenerator {
         style );
     String fileName = createFileName( style, moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
-    InputStream isContent = new ByteArrayInputStream( fileContent.getBytes() );
-    SubProgressMonitor subMon = monitor==null?null:new SubProgressMonitor( monitor, 4 );
-    result.create( isContent, true, subMon );
-    return result;
+    try {
+      InputStream isContent = new ByteArrayInputStream( fileContent.getBytes(destFolder.getDefaultCharset( true )) );
+      SubProgressMonitor subMon = monitor==null?null:new SubProgressMonitor( monitor, 4 );
+      result.create( isContent, true, subMon );
+      return result;
+    } catch (UnsupportedEncodingException uee){
+      throw new CoreException( new Status(IStatus.ERROR,HaskellCorePlugin.getPluginId(),uee.getLocalizedMessage(),uee) );
+    }
   }
 
   private static String[] getPathSegments( final ModuleCreationInfo info ) {
