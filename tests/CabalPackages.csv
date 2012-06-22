@@ -1,0 +1,8 @@
+1;Cabal update;Cabal update in cabal package view
+;;Check no errors in console
+2;List of installed packages;Check list is present
+;;Check versions for package
+;;Check info is showing for selected version/package
+3;List of all packages;Check list and info appear
+4;Install package;Install something inocuous like AC-Angle
+;;Check no errors in console

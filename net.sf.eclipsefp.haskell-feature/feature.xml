@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="%bundleName"
-      version="2.3.0"
+      version="2.3.1"
       provider-name="%bundleVendor">
 
    <description>
@@ -93,7 +93,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.3.0"
+         version="2.3.1"
          unpack="false"/>
 
    <plugin
@@ -135,7 +135,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.util"
          download-size="0"
          install-size="0"
-         version="2.3.0"
+         version="2.3.1"
          unpack="false"/>
 
    <plugin
@@ -164,6 +164,13 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          download-size="0"
          install-size="0"
          version="2.3.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsefp.haskell.style"
+         download-size="0"
+         install-size="0"
+         version="2.3.1"
          unpack="false"/>
 
 </feature>

@@ -1,9 +1,11 @@
 package net.sf.eclipsefp.haskell.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -291,6 +293,24 @@ public class FileUtil {
 	  }
 	  return sb.toString();
   }
+  
+  public static String getContents(File f,String charSet) throws IOException{
+	  StringBuilder sb=new StringBuilder();
+	  if (f.exists()){
+		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		  InputStream is=new BufferedInputStream(new FileInputStream(f));
+		  byte[] buf=new byte[4096];
+		  int r=is.read(buf);
+		  while (r>-1){
+			  baos.write(buf,0,r);
+			  r=is.read(buf);
+		  }
+		  is.close();
+		  sb.append(new String(baos.toByteArray(),charSet));
+	  }
+	  return sb.toString();
+  }
+  
   
   public static void writeSharedFile(File tgt,String contents,int tries) throws IOException{
 	  try {

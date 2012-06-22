@@ -322,6 +322,10 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     this.length = length;
   }
 
+  public File getTarget(){
+    return tgt;
+  }
+
   /**
    * mark task tags
    */
