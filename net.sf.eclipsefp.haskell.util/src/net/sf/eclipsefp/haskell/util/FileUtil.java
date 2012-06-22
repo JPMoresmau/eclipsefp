@@ -64,7 +64,13 @@ public class FileUtil {
     // add all directories from the PATH environment variable
     String path = System.getenv("PATH"); //$NON-NLS-1$
     for (String dir : path.split(File.pathSeparator)) {
-      candidateLocations.add(new File(dir));
+      File f=new File(dir);
+      candidateLocations.add(f);
+      // the haskell platform doesn't always put these extra dirs in the path
+      if (f.getParentFile()!=null && dir.contains("Haskell Platform")){
+    	  candidateLocations.add(new File(f.getParentFile(),"lib/extralibs/bin"));
+    	  candidateLocations.add(new File(f.getParentFile(),"mingw/bin"));
+      }
     }
 
     // add common bin directories from the user's home directory
@@ -80,6 +86,8 @@ public class FileUtil {
     String[] userBins = new String[] { ".cabal/bin", //$NON-NLS-1$
       "usr/bin", //$NON-NLS-1$
       "bin", //$NON-NLS-1$
+      "AppData/Roaming/cabal/bin", // Windows 7 //$NON-NLS-1$
+      "Application Data/cabal/bin" // Windows XP
     };
 
     for (String home : homes) {
