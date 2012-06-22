@@ -20,6 +20,5 @@
 7;Autocomplete for unreferenced package;Search autocomplete for getStdRandom in all packages
 ;;Adding getStdRandom  should add import to System.Random
 ;;Dependency to random added in cabal file
-8;Autocomplete constructor;Remove dependencies on Data Maybe
-;;Search autocomplete for Just
-;;Check Data.Maybe(..) added in imports
+8;Autocomplete constructor;Search autocomplete for Node
+;;Check Data.Tree (Tree(..)) added in imports

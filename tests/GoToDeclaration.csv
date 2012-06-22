@@ -3,14 +3,19 @@
 ;;Back to Main.hs
 ;;Import M1
 ;;Use f1 in code
-;;Go to declaration on f1
+;;Open definition on f1
 ;;Check opens M1 on proper line
 2;Go to declaration local doc;Import System.Random
-;;Use getStdRandom
-;;Go to declaration on getStdRandom
+;;Use getStdGen
+;;Open definition on getStdRandom
 ;;Open local HTML page
 3;Go to declaration hackage;Import haskell-src-exts
-;;Use parse
-;;Go to declaration on parse
+;;Use  Language.Haskell.Exts.Annotated (parseFile)
+;;Open definition on parseFile
 ;;Open Hackage HTML file
-4;Go to operator declaration;TBD
+4;Go to operator declaration;import Database.Persist.Query
+;;import Database.Persist
+;;import Database.Persist.Query.Internal (Update)
+;;let op=(=.) :: EntityField String String -> String -> Update String
+;;Open definition on op
+;;Open HTML file at proper anchor

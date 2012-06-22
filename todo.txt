@@ -7,18 +7,14 @@
 - global action to remove all useless imports
 - global action to clean all imports: only import what's needed
 
-- open Module page (like open Type in Java)
-	search in all cabal files
-	but modules can not be referenced
-	list all haskell files in source folders-> probably slow, cache in each project?
-
 - format using haskell-src-exts
 	- doesn't support comments
 - format using scan
 	- very limited	
+- format using stylish-haskell
 
-- occurrences + search for Haskell objects in project/workspace
-	- refactor -> rename renames all occurrences
+- show packages in error in Cabal Packages view (error overlay on icon) + errors + enable install button
+	- list of packages in error
 
 - achievements!
 
