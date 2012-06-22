@@ -1,0 +1,35 @@
+1;Simple exe project;Create executable haskell project
+;;Open Main.hs
+;;Check syntax highlighting works
+;;Create new function
+;;Check outline works
+;;Fill in code
+;;Save
+;;Expand Cabal -> executable
+;;Right click Run
+;;Check console shows output
+;;Right click on project Run
+;;Check console shows output
+2;GHCi support;Right click Main.hs -> GHCi
+;;Check loads ok
+;;Check function runs
+;;Check :main runs
+;;Modify file and save
+;;Check reloaded
+;;Close GHCi
+3;Library project;Create library project
+;;Check no module created
+;;Create module
+;;Check syntax highlighting works
+;;Check outline works
+;;Check build works
+;;Check GHCi works
+4;Existing project;Put existing cabal project with Setup.hs in workspace folder
+;;Create project
+;;Check cabal file, Main.hs are not overwritten
+;;Check Setup.hs not overwritten
+5;Existing project with Setup.lhs;Put existing cabal project with Setup.lhs in workspace folder
+;;Create project
+;;Check cabal file, Main.hs are not overwritten
+;;Check Setup.lhs not overwritten
+;;Check Setup.hs not created

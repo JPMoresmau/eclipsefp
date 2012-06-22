@@ -1,0 +1,25 @@
+1;Clean install;Install current Haskell Platform
+;;Run cabal update
+;;Install current version of Eclipse for Java developers
+;;Start Eclipse, new workspace
+;;Install eclipsefp from updates site
+;;Restart Eclipse
+;;GHC should be detected from path
+;;Cabal should be detected from path
+;;Should prompt for buildwrapper and scion-browser installs
+;;Install both
+;;Create executable project
+;;Open Main.hs
+;;Check syntax highlighting works
+;;Check outline works
+;;Check browser works
+2;Upgrade install;Install previous version
+;;Update eclipsefp from updates site
+;;Restart Eclipse
+;;Should prompt for buildwrapper and scion-browser installs
+;;Install both
+;;Create executable project
+;;Open Main.hs
+;;Check syntax highlighting works
+;;Check outline works
+;;Check browser works

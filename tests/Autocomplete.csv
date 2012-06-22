@@ -1,0 +1,25 @@
+1;Autocomplete same module;In Main.hs, create new function
+;;In main function, check autocomplete gives new function before even saving
+;;Save
+;;Check autocomplete still gives new function
+2;Autocomplete another module name;Create a new module M1 with a function f1
+;;Save
+;;Back to Main.hs
+;;Import <ctrl-space> should offer the new module
+;;Add import
+3;Autocomplete another module name from unreferenced package;Import <ctrl-space> should offer the System.Random
+;;Add import
+;;Dependency to random added in cabal file
+4;Autocomplete another module function;In Main.hs, f1 should be part of autocomplete
+5;Autocomplete another module function not imported;Remove import of M1
+;;Save
+;;In Main.hs, f1 should be part of autocomplete (not imported context)
+;;Adding f1 should add import to M1
+6;Autcomplete another function package referenced module not referenced;Search autocomplete for catMaybes in not referenced
+;;Adding catMaybes should import Data.Maybe
+7;Autocomplete for unreferenced package;Search autocomplete for getStdRandom in all packages
+;;Adding getStdRandom  should add import to System.Random
+;;Dependency to random added in cabal file
+8;Autocomplete constructor;Remove dependencies on Data Maybe
+;;Search autocomplete for Just
+;;Check Data.Maybe(..) added in imports

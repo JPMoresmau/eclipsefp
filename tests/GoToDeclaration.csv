@@ -1,0 +1,16 @@
+1;Go to declaration same project;Create a new module M1 with a function f1
+;;Save, Close
+;;Back to Main.hs
+;;Import M1
+;;Use f1 in code
+;;Go to declaration on f1
+;;Check opens M1 on proper line
+2;Go to declaration local doc;Import System.Random
+;;Use getStdRandom
+;;Go to declaration on getStdRandom
+;;Open local HTML page
+3;Go to declaration hackage;Import haskell-src-exts
+;;Use parse
+;;Go to declaration on parse
+;;Open Hackage HTML file
+4;Go to operator declaration;TBD
