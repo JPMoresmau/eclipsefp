@@ -32,4 +32,5 @@ public interface IInteractiveLaunchOperationDelegate {
    * @return the reload command, or null
    */
   String getReloadCommand();
+
 }

@@ -21,6 +21,10 @@ public class HaskellDebugCore extends Plugin {
 
   public static final String ID_EXT_POINT_INTERACTIVE_DELEGATES = "interactiveDelegates"; //$NON-NLS-1$
 
+  /**
+   * constant for command history enablement on process
+   */
+  public static final String PROCESS_COMMAND_HISTORY ="net.sf.eclipse.haskell.debug.commandHistory" ; //$NON-NLS-1$
   // The shared instance
   private static HaskellDebugCore plugin;
 

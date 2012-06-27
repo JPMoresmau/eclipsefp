@@ -1105,6 +1105,10 @@
             id="net.sf.eclipsefp.haskell.browser"
             name="%haskellBrowserPerspective_category">
       </category>
+      <category
+            id="net.sf.eclipsefp.haskell"
+            name="%viewCategory_name">
+      </category>      
       <view
             category="net.sf.eclipsefp.haskell.browser"
             class="net.sf.eclipsefp.haskell.browser.views.packages.PackagesView"
@@ -1136,7 +1140,7 @@
             restorable="true">
       </view>
       <view
-            category="net.sf.eclipsefp.haskell.browser"
+            category="net.sf.eclipsefp.haskell"
             class="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
             icon="icons/obj16/lambda.gif"
             id="net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView"
@@ -1144,7 +1148,7 @@
             restorable="true">
       </view>
       <view
-            category="net.sf.eclipsefp.haskell.browser"
+            category="net.sf.eclipsefp.haskell"
             class="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"
             icon="icons/eview16/cabal.gif"
             id="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"

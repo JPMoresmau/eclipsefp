@@ -143,6 +143,8 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     String projectName = ILaunchAttributes.PROJECT_NAME;
     wc.setAttribute( projectName, project.getName() );
     wc.setAttribute( FIRST_SELECTED_RESOURCE, resources[ 0 ].getName() );
+    //wc.setAttribute( DebugPlugin.ATTR_PROCESS_FACTORY_ID,"net.sf.eclipsefp.haskell.debug.core.launch.REPLProcessFactory");
+
     //wc.setAttribute( ILaunchAttributes.RELOAD_COMMAND, delegate.getReloadCommand() );
     // by default, reload when saving, that's why interactive sessions are good
     wc.setAttribute( ILaunchAttributes.RELOAD,true);

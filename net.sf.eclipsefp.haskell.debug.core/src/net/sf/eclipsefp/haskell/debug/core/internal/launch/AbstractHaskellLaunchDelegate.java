@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
@@ -116,20 +117,27 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
 
               @Override
               protected IStatus run( final IProgressMonitor mon ) {
-                while( !theProcess.isTerminated() ) {
-                  try {
-                    if( mon.isCanceled()) {
-                      theProcess.terminate();
-                      return Status.CANCEL_STATUS;
+                try {
+                  while( !theProcess.isTerminated() ) {
+                    try {
+                      if( mon.isCanceled()) {
+                        theProcess.terminate();
+                        return Status.CANCEL_STATUS;
+                      }
+                      Thread.sleep( 50 );
+                    } catch( InterruptedException iex ) {
+                      // ignored
+                    } catch ( DebugException ex ) {
+                      // ignored
                     }
-                    Thread.sleep( 50 );
-                  } catch( InterruptedException iex ) {
-                    // ignored
-                  } catch ( DebugException ex ) {
-                    // ignored
+                  }
+                } finally {
+                  try {
+                    postProcessFinished(configuration);
+                  } catch(CoreException ce){
+                    HaskellCorePlugin.log( ce );
                   }
                 }
-                postProcessFinished(configuration);
                 return Status.OK_STATUS;
               }
             };
@@ -161,7 +169,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       final String mode,final ILaunch launch,Map<String, String> processAttribs) throws CoreException;
   protected abstract void preProcessDefinitionCreation(final ILaunchConfiguration configuration,
       final String mode,final ILaunch launch) throws CoreException;
-  protected abstract void postProcessFinished(final ILaunchConfiguration configuration);
+  protected abstract void postProcessFinished(final ILaunchConfiguration configuration) throws CoreException;
 
   private IProcess createProcess( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IPath location,
@@ -177,12 +185,13 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     }
     try {
       preProcessDefinitionCreation( configuration, mode, launch );
-      Process proc = pb.start();
+
       Map<String, String> processAttrs = new HashMap<String, String>();
       String programName = determineProgramName( location );
       processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
       preProcessCreation( configuration, mode, launch, processAttrs );
       IProcess process = null;
+      Process proc = pb.start();
       if( proc != null ) {
         //String loc = location.toOSString();
         process = DebugPlugin.newProcess( launch, proc, configuration.getName(), processAttrs );

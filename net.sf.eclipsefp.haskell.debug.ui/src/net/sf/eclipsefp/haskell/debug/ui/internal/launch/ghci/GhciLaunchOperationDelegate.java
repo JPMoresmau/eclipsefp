@@ -176,4 +176,6 @@ public class GhciLaunchOperationDelegate
   public String getReloadCommand() {
     return ":r"; //$NON-NLS-1$
   }
+
+
 }

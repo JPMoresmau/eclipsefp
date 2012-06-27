@@ -87,6 +87,13 @@
             id="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </sourcePathComputer>
    </extension>
+    <extension point="org.eclipse.debug.core.processFactories">
+  <processFactory
+       id="net.sf.eclipsefp.haskell.debug.core.launch.REPLProcessFactory"
+       class="net.sf.eclipsefp.haskell.debug.core.internal.launch.REPLProcessFactory">
+  </processFactory>
+ </extension>
+
 <!--   <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType

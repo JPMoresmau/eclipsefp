@@ -73,6 +73,7 @@
 	           menubarPath="debug">
 	     </action>
 	</viewerContribution>   
+
 	</extension>
       <extension
             point="org.eclipse.ui.editorActions">
@@ -425,17 +426,16 @@
             </enablement>
          </actionProvider>
       </extension>
-      <!--
-      <extension
-            point="org.eclipse.debug.core.launchConfigurationTypes">
-         <launchConfigurationType
-               delegate="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchDelegate"
-               id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.young.GhciInteractiveLaunchDelegate"
-               modes="run,debug"
-               name="%haskellInteractiveLaunchType_name"
-               sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
-               sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
-         </launchConfigurationType>
-      </extension>-->
       
+
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="net.sf.eclipsefp.haskell.debug.ui.repl.HistoryParticipant"
+            id="net.sf.eclipsefp.haskell.debug.ui.repl.HistoryParticipant">
+         <enablement>
+            <instanceof value="org.eclipse.debug.internal.ui.views.console.ProcessConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension> 
 </plugin>
