@@ -189,8 +189,8 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 //		        }
 		        //org.eclipse.core.resources.problemmarker
 		        r.deleteMarkers(PROBLEM_MARKER_ID, true, depth);
-		        r.deleteMarkers("net.sf.eclipsefp.haskell.scion.client.ScionPlugin.projectProblem", true, IResource.DEPTH_ZERO);
-		        r.deleteMarkers("net.sf.eclipsefp.haskell.core.scionProblem", true, IResource.DEPTH_ZERO);
+		        r.deleteMarkers("net.sf.eclipsefp.haskell.scion.client.ScionPlugin.projectProblem", true, depth);
+		        r.deleteMarkers("net.sf.eclipsefp.haskell.core.scionProblem", true,depth );
 		        r.deleteMarkers(IMarker.PROBLEM, false, depth); // delete problems but not subtypes (HLint, etc are not managed by us)
 		      } catch (CoreException ex) {
 		        BuildWrapperPlugin.logError(BWText.error_deleteMarkers, ex);
