@@ -1002,6 +1002,7 @@ public class BWFacade {
 				fldr.delete(IResource.FORCE, mon);
 			}
 			deleteCabalProblems();
+			BuildWrapperPlugin.deleteAllProblems(project);
 			cabalFileChanged();
 			outlines.clear();
 			synchronize(false);

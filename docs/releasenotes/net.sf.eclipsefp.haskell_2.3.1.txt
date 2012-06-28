@@ -10,7 +10,7 @@ Necessary Haskell packages:
  
 
 Fixes:
-
+	- Clean project removes all Haskell Problems markers in project
 
 Features:
 	- Format source with stylish-haskell
