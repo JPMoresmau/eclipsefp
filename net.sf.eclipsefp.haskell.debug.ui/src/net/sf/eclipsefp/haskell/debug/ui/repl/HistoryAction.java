@@ -17,11 +17,14 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.console.TextConsolePage;
+import org.eclipse.ui.console.TextConsoleViewer;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -40,7 +43,35 @@ public class HistoryAction extends Action {
 
   public HistoryAction(final TextConsolePage p){
     super(UITexts.command_history,AbstractUIPlugin.imageDescriptorFromPlugin( HaskellDebugUI.getDefault().getBundle().getSymbolicName(), "icons/etool16/history16.gif" )); //$NON-NLS-1$
-    final StyledText text=p.getViewer().getTextWidget();
+    final TextConsoleViewer viewer=p.getViewer();
+
+    final StyledText text=viewer.getTextWidget();
+
+    text.addVerifyListener( new VerifyListener() {
+
+      @Override
+      public void verifyText( final VerifyEvent paramVerifyEvent ) {
+        // more than one printable character: not a key press, append to current buffer
+        if (paramVerifyEvent.text!=null && paramVerifyEvent.text.trim().length()>1){
+          current.append(paramVerifyEvent.text.trim());
+          if (paramVerifyEvent.text.endsWith( "\r" ) || paramVerifyEvent.text.endsWith( "\n" )){ //$NON-NLS-1$ //$NON-NLS-2$
+
+            String s=current.toString().trim();
+
+            if (s.length()>0){
+              commands.remove(s);
+              commands.addFirst(s);
+              if (commands.size()>maxHistory){
+                commands.removeLast();
+              }
+              setEnabled( true );
+            }
+            insertIndex=-1;
+            current.setLength( 0 );
+          }
+        }
+      }
+    } );
 
     text.addKeyListener( new KeyAdapter() {
 
@@ -53,8 +84,8 @@ public class HistoryAction extends Action {
           if (current.length()==0){
             insertOffset=text.getCharCount();
           } else {
-            text.replaceTextRange( insertOffset, current.length(), "" );
-            current.setLength( 0);
+            text.replaceTextRange( insertOffset, current.length(), "" ); //$NON-NLS-1$
+            current.setLength( 0 );
           }
           if (e.keyCode==SWT.ARROW_DOWN ){
             insertIndex--;
@@ -73,7 +104,7 @@ public class HistoryAction extends Action {
             toInsert=it.next();
           }
 
-          current.append( toInsert);
+          //current.append(toInsert); // done by verify listener
           text.append(toInsert);
           text.setCaretOffset( text.getCharCount() );
         }
@@ -83,6 +114,7 @@ public class HistoryAction extends Action {
      public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
         char c=e.character;
         synchronized(current){
+          // new line
           if (c=='\r'){
             String s=current.toString().trim();
             if (s.length()>0){
@@ -91,14 +123,17 @@ public class HistoryAction extends Action {
               if (commands.size()>maxHistory){
                 commands.removeLast();
               }
+              setEnabled( true );
             }
             insertIndex=-1;
             current.setLength( 0 );
+           // printable character
           } else if (!Character.isISOControl( c )){
             if (current.length()==0){
               insertOffset=text.getCharCount();
             }
             current.append(c);
+            // backspace
           } else if (c=='\b' && current.length()>0){
             current.setLength( current.length()-1 );
           }
@@ -139,6 +174,7 @@ public class HistoryAction extends Action {
 
       }
     } );
+    setEnabled( false );
   }
 
   private class HistoryMenuSelectionListener extends SelectionAdapter {
