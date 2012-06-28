@@ -393,6 +393,7 @@ public final class UITexts extends NLS {
   public static String preferences_debug_break_on_error;
   public static String preferences_debug_break_on_exception;
   public static String preferences_debug_print_with_show;
+  public static String preferences_run_command_history_max;
 
   public static String preferences_search_haddock_description;
   public static String preferences_search_haddock_help;

@@ -58,7 +58,7 @@ public class HistoryParticipant implements IConsolePageParticipant {
    */
   @Override
   public void dispose() {
-
+    action.dispose();
   }
 
   /* (non-Javadoc)

@@ -7,8 +7,12 @@ package net.sf.eclipsefp.haskell.debug.ui.repl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.debug.ui.internal.HaskellDebugUI;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.SWT;
@@ -32,17 +36,19 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @author JP Moresmau
  *
  */
-public class HistoryAction extends Action {
+public class HistoryAction extends Action  {
   private final StringBuilder current=new StringBuilder();
   private final LinkedList<String> commands=new LinkedList<String>();
 
-  private final int maxHistory=20;
+  private int maxHistory=20;
 
   private int insertOffset=0;
   private int insertIndex=-1;
 
   public HistoryAction(final TextConsolePage p){
     super(UITexts.command_history,AbstractUIPlugin.imageDescriptorFromPlugin( HaskellDebugUI.getDefault().getBundle().getSymbolicName(), "icons/etool16/history16.gif" )); //$NON-NLS-1$
+    IPreferencesService service = Platform.getPreferencesService();
+    maxHistory=service.getInt(HaskellCorePlugin.getPluginId(), ICorePreferenceNames.RUN_COMMAND_HISTORY_MAX ,20,null);
     final TextConsoleViewer viewer=p.getViewer();
 
     final StyledText text=viewer.getTextWidget();
@@ -175,6 +181,12 @@ public class HistoryAction extends Action {
       }
     } );
     setEnabled( false );
+  }
+
+
+
+  public void dispose(){
+   //NOOP
   }
 
   private class HistoryMenuSelectionListener extends SelectionAdapter {

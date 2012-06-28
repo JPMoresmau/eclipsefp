@@ -28,5 +28,6 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
     coreNode.putBoolean( DEBUG_BREAK_ON_ERROR, false );
     coreNode.putBoolean( DEBUG_BREAK_ON_EXCEPTION, false );
     coreNode.putBoolean( DEBUG_PRINT_WITH_SHOW, true );
+    coreNode.putInt( RUN_COMMAND_HISTORY_MAX, 20 );
   }
 }

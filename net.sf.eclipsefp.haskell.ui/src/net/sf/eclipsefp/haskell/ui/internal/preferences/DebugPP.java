@@ -9,8 +9,10 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -31,9 +33,11 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
     store.setDefault( ICorePreferenceNames.DEBUG_BREAK_ON_ERROR, false );
     store.setDefault( ICorePreferenceNames.DEBUG_BREAK_ON_EXCEPTION, false );
     store.setDefault( ICorePreferenceNames.DEBUG_PRINT_WITH_SHOW, true );
+    store.setDefault( ICorePreferenceNames.RUN_COMMAND_HISTORY_MAX, 20 );
   }
 
   private final List<Button> buttons=new LinkedList<Button>();
+  private IntegerFieldEditor historyMax;
 
   public DebugPP() {
    super(UITexts.preferences_debug_title);
@@ -52,13 +56,21 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
     layout.verticalSpacing = convertVerticalDLUsToPixels( 10 );
     layout.horizontalSpacing =
       convertHorizontalDLUsToPixels( IDialogConstants.HORIZONTAL_SPACING );
-    layout.numColumns = 1;
+    layout.numColumns = 2;
     result.setLayout( layout );
 
     addButton(result,ICorePreferenceNames.DEBUG_PRINT_WITH_SHOW,UITexts.preferences_debug_print_with_show);
     addButton(result,ICorePreferenceNames.DEBUG_BREAK_ON_ERROR,UITexts.preferences_debug_break_on_error);
     addButton(result,ICorePreferenceNames.DEBUG_BREAK_ON_EXCEPTION,UITexts.preferences_debug_break_on_exception);
 
+    historyMax=new IntegerFieldEditor(ICorePreferenceNames.RUN_COMMAND_HISTORY_MAX,  UITexts.preferences_run_command_history_max, result );
+    historyMax.setPreferenceStore( getPreferenceStore() );
+    historyMax.setValidRange( 1, 100 );
+    historyMax.setPage( this );
+    historyMax.setTextLimit( 3 );
+    historyMax.fillIntoGrid( result, 2 );
+
+    historyMax.load();
     Dialog.applyDialogFont( result );
     return result;
   }
@@ -69,7 +81,9 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
     b.setText( text );
     b.setData( pref );
     b.setSelection( getPreferenceStore().getBoolean( pref ) );
-
+    GridData gd=new GridData(GridData.GRAB_HORIZONTAL);
+    gd.horizontalSpan=2;
+    b.setLayoutData(gd);
   }
 
   @Override
@@ -84,6 +98,7 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
       String pref=(String)b.getData();
       b.setSelection( store.getDefaultBoolean( pref ) );
     }
+    historyMax.loadDefault();
     super.performDefaults();
   }
 
@@ -94,6 +109,7 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
       String pref=(String)b.getData();
       store.setValue( pref, b.getSelection() );
     }
+    historyMax.store();
     /*try {
       new InstanceScope().getNode(HaskellCorePlugin.getPluginId()).flush();
     } catch( BackingStoreException ex ) {
