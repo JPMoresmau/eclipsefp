@@ -591,6 +591,9 @@ public class ScionManager implements IResourceChangeListener {
             if (event.getNewValue() instanceof String){
               HLintPlugin.setHlintPath( (String)event.getNewValue() );
             }
+          } else if (event.getProperty().equals(IPreferenceConstants.VERBOSE_INTERACTION)){
+            boolean verbose = ((Boolean)event.getNewValue()).booleanValue();
+            BuildWrapperPlugin.logAnswers=verbose;
           }
 
     }
