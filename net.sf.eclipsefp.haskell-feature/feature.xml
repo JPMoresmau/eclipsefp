@@ -11,6 +11,9 @@
 
    <copyright>
       Copyright (c) 2003-2011 by the EclipseFP contributors
+Contains SQLite, Public Domain
+Contains sqlite-jdbc from xerial.org (http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC) (http://www.apache.org/licenses/LICENSE-2.0)
+Contains SnakeYAML (http://code.google.com/p/snakeyaml/) (http://www.apache.org/licenses/LICENSE-2.0)
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
