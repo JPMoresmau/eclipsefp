@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.StylishHaskell;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
@@ -33,6 +34,8 @@ public class FormatAction extends TextEditorAction {
    */
   public FormatAction( final ResourceBundle bundle, final String prefix, final ITextEditor editor ) {
     super( bundle, prefix, editor );
+    setId( HaskellEditor.FORMAT_ACTION );
+    setActionDefinitionId( IEditorActionDefinitionIds.FORMAT );
   }
 
   /**
@@ -44,6 +47,8 @@ public class FormatAction extends TextEditorAction {
   public FormatAction( final ResourceBundle bundle, final String prefix,
       final ITextEditor editor, final int style ) {
     super( bundle, prefix, editor, style );
+    setId( HaskellEditor.FORMAT_ACTION );
+    setActionDefinitionId( IEditorActionDefinitionIds.FORMAT );
   }
 
 

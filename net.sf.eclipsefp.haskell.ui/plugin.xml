@@ -603,6 +603,11 @@
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D B"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following" />
+         <!-- format -->
+          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+F"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.format"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />    
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition"

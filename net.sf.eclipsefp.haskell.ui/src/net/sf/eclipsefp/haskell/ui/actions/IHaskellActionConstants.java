@@ -33,4 +33,7 @@ public interface IHaskellActionConstants {
 
   /** Source -> Haddock submenu: name of the "document following" action */
   public static final String HADDOCK_BLOCK_FOLLOWING = ActionPrefix.concat( "Haddock.Block.Following" );
+
+  /** Comment menu: name of Comment action */
+  public static final String FORMAT = ActionPrefix.concat( "Format" );
 }
