@@ -5,7 +5,10 @@
  */
 package net.sf.eclipsefp.haskell.style;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -16,14 +19,33 @@ import org.osgi.framework.BundleContext;
 public class StylePlugin extends AbstractUIPlugin {
 	private static StylePlugin plugin=null;
 
+	// The plug-in ID
+	public static final String PLUGIN_ID = "net.sf.eclipsefp.haskell.style";
+	
 	/**
 	 * @return the plugin
 	 */
 	public static StylePlugin getStylePlugin() {
 		return plugin;
 	}
-	
 
+	 public static void logError(Throwable cause) {
+	    log(Status.ERROR, cause.getLocalizedMessage(), cause);
+	  }
+	
+	 public static void logError(String message, Throwable cause) {
+	    log(Status.ERROR, message, cause);
+	  }
+
+	  public static void log(int severity, String message, Throwable cause) {
+	    Status status = new Status(severity, PLUGIN_ID, severity, message, cause);
+	    logStatus(status);
+	  }
+
+	  public static void logStatus(IStatus status) {
+	    StatusManager.getManager().handle(status);
+	  }
+	  
 
 	/*
 	 * (non-Javadoc)

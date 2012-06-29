@@ -10,9 +10,11 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -58,6 +60,7 @@ public abstract class ExecutablePP extends PreferencePage implements IWorkbenchP
       }
     };
     executableField=new AutodetectExecutableField( this, parentComposite, pgmName, exeName, pref,propertyListener );
+    new Label(parentComposite,SWT.NONE);
     setValid( isValid() );
     return parentComposite;
   }

@@ -7,10 +7,17 @@ Bundle-Activator: net.sf.eclipsefp.haskell.style.StylePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  net.sf.eclipsefp.haskell.util,
- org.eclipse.ui.workbench
+ org.eclipse.ui.workbench,
+ org.eclipse.swt,
+ org.eclipse.jface,
+ org.eclipse.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.style,
- net.sf.eclipsefp.haskell.style.stylishhaskell
+ net.sf.eclipsefp.haskell.style.stylishhaskell,
+ net.sf.eclipsefp.haskell.style.stylishhaskell.ui,
+ net.sf.eclipsefp.haskell.style.util
+Bundle-ClassPath: lib/snakeyaml-1.10.jar,
+ .

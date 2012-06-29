@@ -5,7 +5,16 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
+import java.io.IOException;
+import net.sf.eclipsefp.haskell.style.stylishhaskell.SHConfiguration;
+import net.sf.eclipsefp.haskell.style.stylishhaskell.StylishHaskell;
+import net.sf.eclipsefp.haskell.style.stylishhaskell.ui.SHConfigurationComposite;
+import net.sf.eclipsefp.haskell.style.util.StyleText;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 
 /**
@@ -14,9 +23,47 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
  *
  */
 public class StylishHaskellPP extends ExecutablePP {
+  private SHConfigurationComposite confComp;
 
   public StylishHaskellPP(){
     super("stylish-haskell","stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE);
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ExecutablePP#createContents(org.eclipse.swt.widgets.Composite)
+   */
+  @Override
+  protected Control createContents( final Composite parentComposite ) {
+    Control c=super.createContents( parentComposite );
+
+    confComp=new SHConfigurationComposite( parentComposite, SWT.NONE );
+    confComp.setConfiguration( StylishHaskell.getWorkspaceConfiguration() );
+
+    return c;
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ExecutablePP#performOk()
+   */
+  @Override
+  public boolean performOk() {
+    SHConfiguration conf=confComp.getConfiguration();
+    try {
+      StylishHaskell.setWorkspaceConfiguration( conf );
+      return super.performOk();
+    } catch (IOException ioe){
+      MessageDialog.openError( getShell(), StyleText.sh_save_error, ioe.getLocalizedMessage() );
+      return false;
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+   */
+  @Override
+  protected void performDefaults() {
+    confComp.setConfiguration(new SHConfiguration());
+    super.performDefaults();
   }
 }
 

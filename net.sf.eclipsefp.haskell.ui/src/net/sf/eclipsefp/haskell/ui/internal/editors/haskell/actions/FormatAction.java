@@ -76,7 +76,7 @@ public class FormatAction extends TextEditorAction {
         if (p!=null){
           try {
             // go!
-            StylishHaskell.runStylishHaskell( ScionManager.getExecutablePath( IPreferenceConstants.STYLISHHASKELL_EXECUTABLE, "stylish-haskell", false ), p, f );
+            StylishHaskell.runStylishHaskell( ScionManager.getExecutablePath( IPreferenceConstants.STYLISHHASKELL_EXECUTABLE, "stylish-haskell", false ), p, f,file.getCharset() );
             // re read the file on disk and tell the editor about it
             hEditor.getDocument().set( FileUtil.getContents( f,file.getCharset() ) );
           } catch (Exception ioe){
