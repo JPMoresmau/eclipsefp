@@ -689,7 +689,13 @@ public class BWFacade {
 					String f=ol.getString("f");
 					int line=ol.getInt("l");
 					int col=ol.getInt("c");
-					Location loc=new Location(f, line, col, line, col);
+					int endline=ol.getInt("el");
+					int endcol=ol.getInt("ec");
+					//ow.addMessage("\nParsed location: src="+f+" "+line+":"+col+" to "+endline+":"+endcol+" msg:"+o.getString("t"));
+					
+					Location loc=new Location(project, f, line, col, endline, endcol);
+					//ow.addMessage("\nCreated location: "+loc.getStartLine()+":"+loc.getStartColumn()+" to "+loc.getEndLine()+":"+loc.getEndColumn());
+					
 					Note n=new Note(k,loc,o.getString("t"),"");
 					IResource res=project.findMember(f);
 					// linker errors may have full path
@@ -720,7 +726,7 @@ public class BWFacade {
 		}
 		return buildOK;
 	}
-	
+
 	private Component parseComponent(JSONObject obj){
 		boolean buildable=false;
 		try {

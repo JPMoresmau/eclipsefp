@@ -1,12 +1,21 @@
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONArray;
@@ -15,7 +24,7 @@ import org.json.JSONObject;
 
 /**
  * A span of text within a file, in line:column format.
- * Lines and columns are zero-based.
+ * Lines are one-based, columns are zero-based.
  * The start is inclusive; the end is exclusive.
  * 
  * @author Thomas ten Cate
@@ -88,7 +97,6 @@ public class Location {
 		this.endLine = endLine;
 		this.endColumn = endColumn+mv;
 	}
-
 	
 	public Location(String fileName, IDocument document, IRegion region) throws BadLocationException {
 		this.fileName = fileName;
@@ -103,6 +111,80 @@ public class Location {
 	}
 	
 	
+		/**
+		 * Create a location from a buildwrapper location, expanding empty spans when possible.
+		 */
+		public Location(IProject project, String fileName, int startLin, int startCol, int endLin, int endCol) {
+			this.fileName = fileName;
+			startLine = startLin;
+			startColumn = startCol - 1; // Buildwrapper columns start at 1
+			endLine = endLin;
+			endColumn = endCol - 1;      // Buildwrapper columns start at 1
+			
+			if (endLine > startLine) { // IMarker does not support multi-line spans, so we reduce it to an empty span
+				endLine = startLine;
+				endColumn = startColumn;
+			}
+			
+			// If the span is empty, we try to extend it to extend it to a single character span.
+			ILineTracker lineTracker = getLineTracker(project.getLocation().toOSString() +"/"+ BWFacade.DIST_FOLDER+"/"+fileName);
+			if (lineTracker != null) {
+				try {
+					//System.err.println("Initial span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
+					int lineLength = lineTracker.getLineLength(startLine-1 /*LineTracker is 0 based*/ )
+							             - lineTracker.getLineDelimiter(startLine-1).length(); // subtract the delimiter length 
+					if (startLine==endLine && startColumn==endColumn) { // span is empty
+						if (startColumn < lineLength) { // not past the last character, so we can extend to the right.
+							endColumn += 1;
+						} else {
+							if (startColumn > 0) { // past last character, but there are characters to the left. 
+								startColumn -= 1;
+							} 
+							// else, we have startColumn == lineLength == 0, so the line is empty and we cannot extend the span.
+						}
+					}
+					//System.err.println("Fixed span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
+	
+				} catch (BadLocationException e){
+					BuildWrapperPlugin.logError(BWText.process_parse_note_error, e);
+				}
+			} else {
+				//System.err.println("LineTracker is null for file "+fileName);
+			}
+		}
+	
+		/**
+		 * Create a LineTracker for the file at filePath, for easy querying line lengths. 
+		 * If any exception occurs, we simply return null.
+		 * Note that line numbers are 0 based, and the returned length includes the separator.
+		 */
+		private static ILineTracker getLineTracker(String filePath) {
+			ILineTracker lineTracker;
+	    InputStream input = null;
+	    
+	    try {
+	      lineTracker = new DefaultLineTracker();
+	      input = new FileInputStream( filePath );
+	             
+	      byte[] contents = new byte[input.available()];
+	      input.read(contents);
+	      String stringContents = new String(contents);
+	      lineTracker.set(stringContents);
+	    }
+	    catch(Exception e) { // CoreException or IOException
+	      lineTracker = null;
+	    }
+	    finally {
+	      if (input != null)
+	        try {
+	          input.close();
+	        }
+	        catch (IOException e) {
+	         lineTracker = null; 
+	        }
+	    }
+	    return lineTracker;
+	  }
 
 	
 	/**
