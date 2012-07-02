@@ -68,3 +68,4 @@ public class StreamRedirect extends Thread {
 		this.output = output;
 	}
 }
+
