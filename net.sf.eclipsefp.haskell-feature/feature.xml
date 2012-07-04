@@ -62,7 +62,6 @@ available at http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.core.resources" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="net.sf.eclipsefp.haskell.ui"/>
-      <import plugin="net.sf.eclipsefp.haskell.haddock"/>
       <import plugin="net.sf.eclipsefp.haskell.core"/>
       <import plugin="net.sf.eclipsefp.haskell.util"/>
       <import plugin="net.sf.eclipsefp.haskell.debug.ui"/>
