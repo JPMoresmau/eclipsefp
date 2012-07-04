@@ -6,7 +6,6 @@ Bundle-Version: 2.2.4
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.cheatsheets;bundle-version="[3.2.0,4.0.0)",
- net.sf.eclipsefp.haskell.ui,
- net.sf.eclipsefp.haskell.haddock
+ net.sf.eclipsefp.haskell.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
