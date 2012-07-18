@@ -270,7 +270,11 @@ public class AnImport {
       outlineToBrowser( def,null,file,decls );
     }
     for (ExportDef ed:or.getExportDefs()){
-      if (ed.getType().equals( ImportExportType.IEModule )){
+      if (ed.getType().equals( ImportExportType.IEModule )
+          && !file.getName().equals(ed.getName()+".hs") // Hacky workaround for bug that causes a loop when the export list contains the module itself.
+                                                        // This hack can probably still fail in case of hi-boot import cycles,
+                                                        // so it's better to keep track of visited modules.
+         ){
         decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject() ) );
       }
     }
