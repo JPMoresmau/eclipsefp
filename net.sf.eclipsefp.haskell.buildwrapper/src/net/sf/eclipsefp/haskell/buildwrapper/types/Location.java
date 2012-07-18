@@ -131,8 +131,9 @@ public class Location {
 			if (lineTracker != null) {
 				try {
 					//System.err.println("Initial span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
+					String delimiter = lineTracker.getLineDelimiter(startLine-1); // apparently this can return null
 					int lineLength = lineTracker.getLineLength(startLine-1 /*LineTracker is 0 based*/ )
-							             - lineTracker.getLineDelimiter(startLine-1).length(); // subtract the delimiter length 
+							             - (delimiter == null ? 0 : delimiter.length()); // subtract the delimiter length 
 					if (startLine==endLine && startColumn==endColumn) { // span is empty
 						if (startColumn < lineLength) { // not past the last character, so we can extend to the right.
 							endColumn += 1;
