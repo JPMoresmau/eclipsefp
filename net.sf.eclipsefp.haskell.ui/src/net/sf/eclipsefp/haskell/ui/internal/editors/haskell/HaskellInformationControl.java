@@ -6,6 +6,8 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControl;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -20,8 +22,10 @@ import org.eclipse.swt.widgets.Shell;
  * @author Alejandro Serrano
  *
  */
-@Deprecated
 public class HaskellInformationControl extends AbstractInformationControl {
+
+  private static final int HOVER_WIDTH = 600; // size of the tooltip for
+  private static final int HOVER_HEIGHT = 80; // type info and errors/warnings
 
   private Browser doc;
   private boolean hasContents = false;
@@ -40,16 +44,16 @@ public class HaskellInformationControl extends AbstractInformationControl {
   protected void createContent( final Composite parent ) {
     doc = new Browser( parent, SWT.NONE );
 
-    //doc.setForeground( parent.getForeground() );
-    //doc.setBackground( parent.getBackground() );
+    // These have no effect, so we set the colors with css.
+    // Unfortunately, the background remains white, which is sometimes visible when scrolling
     doc.setForeground( parent.getDisplay().getSystemColor( SWT.COLOR_INFO_FOREGROUND ) );
-    doc.setBackground( parent.getDisplay().getSystemColor( SWT.COLOR_INFO_BACKGROUND ) );
-    doc.setFont( JFaceResources.getDialogFont() );
+    doc.setBackground( parent.getDisplay().getSystemColor( SWT.COLOR_YELLOW ) );
+    doc.setFont( JFaceResources.getTextFont() );
   }
 
   public void setDocumentation( final String content ) {
     hasContents = content.length() > 0;
-    doc.setText( content );
+    doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"<body></html>" );
   }
 
   /*
@@ -64,6 +68,7 @@ public class HaskellInformationControl extends AbstractInformationControl {
   /*
    * @see IInformationControl#computeSizeHint()
    */
+ /*
   @Override
   public Point computeSizeHint() {
     // see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
@@ -73,6 +78,18 @@ public class HaskellInformationControl extends AbstractInformationControl {
       widthHint = constraints.x;
     }
     return getShell().computeSize( widthHint, SWT.DEFAULT, true );
+  }
+
+For some reason, the method above causes a very large tooltip to be generated, which is
+briefly visible before it shrinks to its normal size. Unfortunately, this doesn't happen
+on test runs, but only when the plug-in is deployed, making it extremely difficult to debug.
+The problem doesn't seem to occur in Eclipse Juno.
+
+For some other reason, everything works fine if we specify the size with computeSizeConstraints.
+*/
+  @Override
+  public Point computeSizeConstraints(final int widthInChars, final int heightInChars) {
+    return new Point(HOVER_WIDTH,HOVER_HEIGHT);
   }
 
   /*
@@ -114,6 +131,24 @@ public class HaskellInformationControl extends AbstractInformationControl {
   public void setFocus() {
     // super.setFocus();
     doc.setFocus();
+  }
+
+  // Without this, the hover text disappears immediately on a mouse move.
+  /*
+   * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+   * @since 3.4
+   */
+  @Override
+  public IInformationControlCreator getInformationPresenterControlCreator() {
+    return new IInformationControlCreator() {
+      /*
+       * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
+       */
+      @Override
+      public IInformationControl createInformationControl(final Shell parent) {
+        return new HaskellInformationControl(parent);
+      }
+    };
   }
 
 }

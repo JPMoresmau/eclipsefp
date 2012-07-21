@@ -11,10 +11,10 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -51,11 +51,11 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
                               final IRegion hoverRegion ) {
     // TODO TtC this method does not get called when hovering over a string literal
     // which leads to potential problem annotation hovers not appearing
-	  String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess );
-	  if (hoverInfo != null) {
-	    return hoverInfo;
-	  }
-	  return computeThingAtPoint( textViewer, hoverRegion,false );
+    String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess);
+    if (hoverInfo != null) {
+      return hoverInfo;
+    }
+    return computeThingAtPoint( textViewer, hoverRegion,false );
   }
 
   /* (non-Javadoc)
@@ -64,7 +64,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   @Override
   public Object getHoverInfo2( final ITextViewer textViewer,
       final IRegion hoverRegion) {
-    String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess );
+    String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess);
     if (hoverInfo != null) {
       return hoverInfo;
     }
@@ -80,8 +80,8 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
 
       @Override
       public IInformationControl createInformationControl( final Shell parent ) {
-        //return new HaskellInformationControl(parent,editor.getFont());
-        return new DefaultInformationControl( parent, false );
+        return new HaskellInformationControl(parent);
+        //return new DefaultInformationControl( parent, false ); // for bold-only tooltips
       }
     } ;
   }
@@ -100,7 +100,9 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )) {
             Position p = annotationModel.getPosition( a );
             if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
-              return a.getText();
+              return "<div style='font-family: verdana; padding:2px'>" +
+                     a.getText() +
+                     "</div>";
             }
           }
         }
@@ -123,26 +125,36 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
             ThingAtPoint tap=f.getThingAtPoint(file,location);
             if (tap!=null){
               StringBuilder sb=new StringBuilder();
+
+
+              sb.append(html ? "<div style='font-family: monaco; padding:2px'>" : "");
               sb.append(tap.getName());
+              String moduleColor = HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.EDITOR_CON_COLOR );
+
               if (tap.getType()!=null){
                 sb.append(" :: ");
+                sb.append(html ? "<b>" : "");
                 sb.append(tap.getType());
+                sb.append(html ? "</b>" : "");
               }
-              if(html){
-                sb.insert( 0, "<b>" );
-                sb.append( "</b>" );
+              if (tap.getModule()!=null){
+                sb.append(html ? "<br/>" : "\n");
+                sb.append(html ? "<span style='color: grey'>module:</span> <span style='color:rgb("+moduleColor+"); font-weight: bold'>" : "");
+                sb.append(tap.getModule());
+                sb.append(html ? "</span>" : "");
               }
+              sb.append(html ? "</div>" : "");
 
               ImportsManager im=editor.getImportsManager();
               Documented d=im.getDeclarations().get( tap.getName() );
               if (d!=null && d.getDoc()!=null && d.getDoc().length()>0){
-                if(html){
-                  sb.append( "<br/>" );
-                } else {
-                  sb.append("\n");
-                }
+                sb.append(html ? "<hr/>" : "\n");
+                sb.append(html ? "<div style='font-family: verdana; padding:2px'>" : "");
                 sb.append(d.getDoc());
+                sb.append(html ? "</div>" : "");
+
               }
+
               return sb.toString();
             }
           //} finally {

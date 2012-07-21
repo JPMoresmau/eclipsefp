@@ -906,6 +906,10 @@
 		    </or>
       </enablement>
     </commonWizard>
+    <commonWizard type="new"
+                  wizardId="net.sf.eclipsefp.haskell.ui.wizards.NewHaskellProjectWizard">
+      <enablement></enablement>
+    </commonWizard>
   </extension>
   <extension
         point="org.eclipse.ui.ide.markerResolution">
