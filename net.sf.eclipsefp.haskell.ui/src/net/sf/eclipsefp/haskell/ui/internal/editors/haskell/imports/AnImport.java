@@ -144,16 +144,17 @@ public class AnImport {
     HashMap<String, FileDocumented> r = new HashMap<String, FileDocumented>();
     try {
       List<FileDocumented> decls;
+      Set<String> visited=new HashSet<String>();
       if (isMe) {
         HaskellEditor ed=HaskellUIPlugin.getHaskellEditor( doc );
         OutlineResult or=ed!=null?ed.getLastOutlineResult():null;
         if (or!=null){
-          decls=getDeclarationsFromOutlineResult(file,or);
+          decls=getDeclarationsFromOutlineResult(file,or,visited);
         } else {
-          decls = getDeclarationsFromFile( file );
+          decls = getDeclarationsFromFile( file,visited );
         }
       } else {
-        decls = getDeclarationsFromFile( importDef.getModule(), project );
+        decls = getDeclarationsFromFile( importDef.getModule(), project,visited );
         if (decls.size()==0){
           BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
           if (f!=null){
@@ -221,7 +222,8 @@ public class AnImport {
     }
   }
 
-  private static List<FileDocumented> getDeclarationsFromFile( final String module, final IProject project ) {
+  private static List<FileDocumented> getDeclarationsFromFile( final String module, final IProject project,final Set<String> visited ) {
+    visited.add(module);
     try {
       IFile file = ResourceUtil.findFileFromModule( project, module );
       // search in referenced projects
@@ -236,7 +238,7 @@ public class AnImport {
         }
       }
       if (file!=null){
-        return getDeclarationsFromFile( file );
+        return getDeclarationsFromFile( file, visited );
       }
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
@@ -246,12 +248,17 @@ public class AnImport {
   }
 
   public static List<FileDocumented> getDeclarationsFromFile( final IFile file ) {
+    Set<String> visited = new HashSet<String>();
+    return getDeclarationsFromFile( file, visited );
+  }
+
+  private static List<FileDocumented> getDeclarationsFromFile( final IFile file,final Set<String> visited ) {
     try {
       if (file!=null){
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f!=null){
           OutlineResult or=f.outline( file );
-          return getDeclarationsFromOutlineResult( file, or );
+          return getDeclarationsFromOutlineResult( file, or,visited );
         }
       }
     } catch (Exception e) {
@@ -263,7 +270,7 @@ public class AnImport {
   }
 
 
-  private static List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or ) {
+  private static List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or,final Set<String> visited ) {
     ArrayList<FileDocumented> decls = new ArrayList<FileDocumented>();
 
     for (OutlineDef def : or.getOutlineDefs()) {
@@ -271,11 +278,9 @@ public class AnImport {
     }
     for (ExportDef ed:or.getExportDefs()){
       if (ed.getType().equals( ImportExportType.IEModule )
-          && !file.getName().equals(ed.getName()+".hs") // Hacky workaround for bug that causes a loop when the export list contains the module itself.
-                                                        // This hack can probably still fail in case of hi-boot import cycles,
-                                                        // so it's better to keep track of visited modules.
-         ){
-        decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject() ) );
+         && !visited.contains(ed.getName())) // avoid recursion if a module re-export itself
+        {
+        decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject(),visited ) );
       }
     }
 
