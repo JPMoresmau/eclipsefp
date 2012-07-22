@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.util.CommandLineUtil;
 import net.sf.eclipsefp.haskell.util.NetworkUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

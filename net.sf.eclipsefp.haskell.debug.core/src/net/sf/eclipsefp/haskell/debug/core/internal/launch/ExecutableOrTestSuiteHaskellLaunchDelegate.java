@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
+import net.sf.eclipsefp.haskell.util.CommandLineUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;

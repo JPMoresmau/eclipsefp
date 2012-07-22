@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: UtilTest
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.util.test
+Bundle-Version: 2.3.1
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: net.sf.eclipsefp.haskell.util;bundle-version="2.3.1",
+ org.junit4
