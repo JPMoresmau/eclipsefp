@@ -291,7 +291,7 @@ public class ResourceUtil {
     return result;
   }
 
-	private static IContainer getContainer(final IProject p,final String src){
+	public static IContainer getContainer(final IProject p,final String src){
 	  return src.equals( "." )?p:p.getFolder( src ); //$NON-NLS-1$
 	}
 

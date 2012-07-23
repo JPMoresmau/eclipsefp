@@ -35,6 +35,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -46,9 +49,12 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManag
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ProposalScope;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -390,7 +396,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 //            decls.put(name, d );
 //          }
 //        }
-
+        IProject p=theFile.getProject();
         if (scope.equals( ProposalScope.ALL )){
           // search on everything
           Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
@@ -405,42 +411,65 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           // things in project
           for (IContainer src:ResourceUtil.getAllSourceContainers( theFile )){
             Collection<IFile> fs=ResourceUtil.getSourceFiles(src);
-            for (IFile f:fs){
-              String module=ResourceUtil.getModuleName( f );
-              for (FileDocumented fd:AnImport.getDeclarationsFromFile( f )){
-                String name=fd.getDocumented().getName();
-                if (name.startsWith( prefix ) && !importeds.containsKey( name )){
-                  name=name+" ("+module+")";
-                  decls.put(name, fd.getDocumented() );
-                  if (fd.getDocumented() instanceof Constructor){
-                    Constructor c=(Constructor)fd.getDocumented();
-                    if (c.getTypeName()!=null){
-                      constructors.put(name, c.getTypeName() );
+            addFileSymbols(prefix,fs,importeds,decls,constructors);
+          }
+          // we reference ourselves, more exactly the library stanza
+          // so we need to retrieve exposed modules from the library
+          if (pkgs.contains( p.getName() )){
+            IFile cf=BuildWrapperPlugin.getCabalFile( p );
+            PackageDescription pd=PackageDescriptionLoader.load(cf);
+            Map<String,List<PackageDescriptionStanza>> pds=pd.getStanzasBySourceDir();
+            // retrieve all possible source containers for the library
+            Set<IContainer> srcs=new HashSet<IContainer>();
+            PackageDescriptionStanza pdLibrary=null;
+            for (String src:pds.keySet()){
+              for (PackageDescriptionStanza pd1:pds.get( src )){
+                if (CabalSyntax.SECTION_LIBRARY.equals(pd1.getType())){
+                  srcs.add( ResourceUtil.getContainer(p,src) );
+                  pdLibrary=pd1;
+                  break;
+                }
+              }
+            }
+            if (pdLibrary!=null){
+                Collection<IFile> fs=new ArrayList<IFile>();
+                // find the file for all exposed modules
+                String ps=pdLibrary.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+                List<String> ls=PackageDescriptionLoader.parseList( ps );
+                for (String m:ls){
+                  String path=m.replace( '.', '/' );
+                  outer:for (String ext:FileUtil.haskellExtensions){
+                    for (IContainer fldr:srcs){
+                      IFile file=fldr.getFile( new Path( path+"."+ext ) ); //$NON-NLS-1$
+                      if (file.exists()){
+                        fs.add(file);
+                        break outer;
+                      }
                     }
                   }
                 }
-              }
+                addFileSymbols(prefix,fs,importeds,decls,constructors);
             }
 
           }
 
           // search on dependent packages only
-          BWFacade f=BuildWrapperPlugin.getFacade( theFile.getProject() );
+          BWFacade f=BuildWrapperPlugin.getFacade( p );
           if (f!=null){
-
             for (CabalPackage[] cps:f.getPackagesByDB().values()){
               for (CabalPackage cp:cps){
                 if (pkgs.contains( cp.getName() )){
+                  if (!f.getProject().getName().equals( cp.getName() )){
+                    Database pkg=Database.Package( new PackageIdentifier( cp.getName(), cp.getVersion() ) );
+                    Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(pkg, prefix);
+                    if (browserDecls.length > 0) {
+                      // If the browser found the module
+                      for (Packaged<Declaration> browserDecl : browserDecls) {
+                        addBrowserDecl( browserDecl, decls, packages, constructors, false );
 
-                  Database pkg=Database.Package( new PackageIdentifier( cp.getName(), cp.getVersion() ) );
-                  Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(pkg, prefix);
-                  if (browserDecls.length > 0) {
-                    // If the browser found the module
-                    for (Packaged<Declaration> browserDecl : browserDecls) {
-                      addBrowserDecl( browserDecl, decls, packages, constructors, false );
+                      }
 
                     }
-
                   }
                 }
               }
@@ -538,6 +567,25 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     scope=scope.next();
     return result;
    // return (totalSize > 0 ? result : null);
+	}
+
+	private static void addFileSymbols(final String prefix, final Collection<IFile> fs,final Map<String,Documented> importeds,final Map<String, Documented> decls,final Map<String,String> constructors){
+	  for (IFile f:fs){
+      String module=ResourceUtil.getModuleName( f );
+      for (FileDocumented fd:AnImport.getDeclarationsFromFile( f )){
+        String name=fd.getDocumented().getName();
+        if (name.startsWith( prefix ) && !importeds.containsKey( name )){
+          name=name+" ("+module+")";
+          decls.put(name, fd.getDocumented() );
+          if (fd.getDocumented() instanceof Constructor){
+            Constructor c=(Constructor)fd.getDocumented();
+            if (c.getTypeName()!=null){
+              constructors.put(name, c.getTypeName() );
+            }
+          }
+        }
+      }
+    }
 	}
 
 	private static boolean isPointed(final String name){
