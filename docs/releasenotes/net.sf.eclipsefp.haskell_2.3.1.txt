@@ -11,7 +11,9 @@ Necessary Haskell packages:
 
 Fixes:
 	- Clean project removes all Haskell Problems markers in project
-	- Autocomplete caused StackOverlflow if a module exported itself
+	- Autocomplete 
+		- StackOverlflow if a module exported itself fixed
+		- Now properly offers symbols from exposed modules from the library in the same project if there is an internal dependency
 	- Various defensive codes
 	- Escape paths with spaces properly (SourceGraph and other tools invocation)
 
