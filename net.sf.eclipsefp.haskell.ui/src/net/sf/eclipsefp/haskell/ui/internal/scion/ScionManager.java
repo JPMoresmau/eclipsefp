@@ -217,6 +217,8 @@ public class ScionManager implements IResourceChangeListener {
     cBrowser.setWaterMarks( hConLowWater, hConHighWater );
 
     if (doBrowserSetup){
+      // ensure class is loaded
+      BrowserLocalDatabaseRebuildJob.class.toString();
       browserSetup();
     }
 
@@ -282,6 +284,7 @@ public class ScionManager implements IResourceChangeListener {
 
     // And update...
     browserExecutablePath = newServerExecutablePath;
+
     browserSetup();
 
   }
