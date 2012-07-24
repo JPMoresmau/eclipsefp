@@ -81,7 +81,7 @@ public class ScionManager implements IResourceChangeListener {
   private int hConHighWater;
 
   private final static String MINIMUM_BUILDWRAPPER="0.6.0";
-  private final static String MINIMUM_SCIONBROWSER="0.2.9";
+  private final static String MINIMUM_SCIONBROWSER="0.2.10";
 
   public ScionManager() {
     // The interesting stuff is done in the start() method
