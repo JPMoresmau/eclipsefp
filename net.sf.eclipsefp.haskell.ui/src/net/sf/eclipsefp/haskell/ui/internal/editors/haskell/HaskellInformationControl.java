@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Control showing hover or autocomplete info
- * @author Alejandro Serrano
+ * @author Alejandro Serrano & Martijn Schrage
  *
  */
 public class HaskellInformationControl extends AbstractInformationControl {
@@ -33,7 +33,6 @@ public class HaskellInformationControl extends AbstractInformationControl {
   private Browser doc;
   private boolean hasContents = false;
 
-  // todo: check for horizontal overflow and add some space for a scrollbar
   public HaskellInformationControl( final Shell parent ) {
     super( parent, true );
     create();
@@ -41,8 +40,10 @@ public class HaskellInformationControl extends AbstractInformationControl {
 
   @Override
   public void setInformation( final String content ) {
-    // if we need more information than just a string, implement IInformationControlExtension2 and method setInput,
-    // which will be called with the object returned by getHoverInfo2 in HaskellTextHover
+    // If we need more information than just a string, implement IInformationControlExtension2 and method setInput,
+    // which will be called with the object returned by getHoverInfo2 in HaskellTextHover.
+    // TODO: with the method above, encode the type of the content (type info vs. error/warning)
+    //       and use a smaller width for errors/warnings.
     setDocumentation( content );
   }
 
@@ -56,31 +57,43 @@ public class HaskellInformationControl extends AbstractInformationControl {
     doc.setBackground( parent.getDisplay().getSystemColor( SWT.COLOR_YELLOW ) );
     doc.setFont( JFaceResources.getTextFont() );
 
+    // The only way to get the height of the browser to depend on the height of its
+    // rendered contents seems to be through javascript:
+    //   http://www.eclipse.org/forums/index.php/t/257935/
     doc.addProgressListener(new ProgressListener() {
       @Override
       public void completed(final ProgressEvent event) {
-          int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
-          int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
+        // wait for page to load before evaluating any javascript
 
-          if (contentWidth <= HOVER_WRAPWIDTH) {
-            HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight); // contentHeight is based on HOVER_MINWIDTH and not the actual contentWidth
-          } else {
-            HaskellInformationControl.this.setSize(contentWidth,0);
-            // first set width to 0, so a new height can be calculated
+        int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
+        int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
 
-            contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
-            HaskellInformationControl.this.setSize(contentWidth,contentHeight);
-          }
+        // contentWidth may exceed HOVER_WRAPWIDTH if there are wide lines that cannot
+        // be broken.
+
+        if (contentWidth <= HOVER_WRAPWIDTH) {
+          // for content within the width, simply set the content height and use
+          // HOVER_WRAPWIDTH for the width. (cannot use contentWidth, since it sometimes
+          // assumes an unnecessary vertical scrollbar and gets too small)
+          HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight);
+        } else {
+          // for content exceeding the width, we use the wider size and compute
+          // a new content height.
+
+          HaskellInformationControl.this.setSize(contentWidth,0);
+          contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
+          HaskellInformationControl.this.setSize(contentWidth,contentHeight);
+        }
+        // Unfortunately, once the width is set, it seems impossible to obtain
+        // the actual rendered width. Therefore, the tooltip always has at least a
+        // width of HOVER_WRAPWIDTH, even if the contents are not wrapped and less wide.
       }
+
       @Override
       public void changed(final ProgressEvent event) {
+        // no need for changed events since content is only set once
       }
     });
-  }
-
-  public void setDocumentation( final String content ) {
-    hasContents = content.length() > 0;
-    doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"</body></html>" );
   }
 
   /*
@@ -88,7 +101,13 @@ public class HaskellInformationControl extends AbstractInformationControl {
    */
   @Override
   public void setSize(final int width, final int height) {
+    // Clip according to max width and min and max height. (min width is not necessary)
     super.setSize(Math.min(width,HOVER_MAXWIDTH), Math.max(HOVER_MINHEIGHT, Math.min(height,HOVER_MAXHEIGHT)));
+  }
+
+  public void setDocumentation( final String content ) {
+    hasContents = content.length() > 0;
+    doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"</body></html>" );
   }
 
   /*
