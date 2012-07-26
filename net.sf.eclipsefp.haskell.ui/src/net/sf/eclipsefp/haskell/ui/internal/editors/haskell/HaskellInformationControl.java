@@ -43,9 +43,7 @@ public class HaskellInformationControl extends AbstractInformationControl {
   public void setInformation( final String content ) {
     // if we need more information than just a string, implement IInformationControlExtension2 and method setInput,
     // which will be called with the object returned by getHoverInfo2 in HaskellTextHover
-    System.err.println("setInformation");
     setDocumentation( content );
-    System.err.println("control "+ this.getShell()+" resizable "+ this.isResizable()+" size "+this.getShell().getSize());
   }
 
   @Override
@@ -61,41 +59,18 @@ public class HaskellInformationControl extends AbstractInformationControl {
     doc.addProgressListener(new ProgressListener() {
       @Override
       public void completed(final ProgressEvent event) {
-          System.out.println("Page loaded");
-          System.err.println("eval scrollHeight "+doc.evaluate("return document.body.scrollHeight"));
-          System.err.println("eval offsetWidth "+doc.evaluate("return document.body.offsetWidth"));
           int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
           int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
 
-          System.err.println("eval contentHeight "+contentHeight);
-          System.err.println("eval contentWidth "+contentWidth);
-
-          //System.err.println("\n\neval "+doc.evaluate("return document.body.clientWidth"));
-          System.err.println("eval scrollwidth "+doc.evaluate("return document.body.scrollWidth"));
-          //System.err.println("eval scrollheight "+doc.evaluate("return document.body.scrollHeight"));
-          //System.err.println("eval clientHeight "+doc.evaluate("return document.body.clientHeight"));
-          System.err.println("eval "+doc.evaluate("return document.body.offsetHeight"));
-
-
           if (contentWidth <= HOVER_WRAPWIDTH) {
-            System.err.println("We do not have width");
             HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight); // contentHeight is based on HOVER_MINWIDTH and not the actual contentWidth
           } else {
-            System.err.println("We have width");
-            HaskellInformationControl.this.setSize(contentWidth,0); // first set width to 0, so a new height can be calculated
-            System.err.println("eval scrollHeight "+doc.evaluate("return document.body.scrollHeight"));
-            System.err.println("eval offsetWidth "+doc.evaluate("return document.body.offsetWidth"));
-
-
-            System.err.println("eval "+doc.evaluate("return document.body.offsetHeight"));
+            HaskellInformationControl.this.setSize(contentWidth,0);
+            // first set width to 0, so a new height can be calculated
 
             contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
-            System.err.println("eval contentHeight "+contentHeight);
             HaskellInformationControl.this.setSize(contentWidth,contentHeight);
-
           }
-          System.err.println("eval offsetWidth "+contentWidth+" "+doc.getHorizontalBar());
-
       }
       @Override
       public void changed(final ProgressEvent event) {
