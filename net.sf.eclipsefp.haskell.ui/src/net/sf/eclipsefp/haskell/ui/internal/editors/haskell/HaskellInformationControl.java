@@ -11,6 +11,8 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -19,14 +21,15 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Control showing hover or autocomplete info
- * @author Alejandro Serrano
+ * @author Alejandro Serrano & Martijn Schrage
  *
  */
 public class HaskellInformationControl extends AbstractInformationControl {
 
-  private static final int HOVER_WIDTH = 600; // size of the tooltip for
-  private static final int HOVER_HEIGHT = 80; // type info and errors/warnings
-
+  private static final int HOVER_WRAPWIDTH = 600; // bounds for the tooltip with type info and errors/warnings
+  private static final int HOVER_MAXWIDTH = 1000;
+  private static final int HOVER_MINHEIGHT = 36;
+  private static final int HOVER_MAXHEIGHT = 700;
   private Browser doc;
   private boolean hasContents = false;
 
@@ -37,23 +40,74 @@ public class HaskellInformationControl extends AbstractInformationControl {
 
   @Override
   public void setInformation( final String content ) {
+    // If we need more information than just a string, implement IInformationControlExtension2 and method setInput,
+    // which will be called with the object returned by getHoverInfo2 in HaskellTextHover.
+    // TODO: with the method above, encode the type of the content (type info vs. error/warning)
+    //       and use a smaller width for errors/warnings.
     setDocumentation( content );
   }
 
   @Override
   protected void createContent( final Composite parent ) {
-    doc = new Browser( parent, SWT.NONE );
+    doc = new Browser( parent, SWT.TOP | SWT.RESIZE );
 
     // These have no effect, so we set the colors with css.
     // Unfortunately, the background remains white, which is sometimes visible when scrolling
     doc.setForeground( parent.getDisplay().getSystemColor( SWT.COLOR_INFO_FOREGROUND ) );
     doc.setBackground( parent.getDisplay().getSystemColor( SWT.COLOR_YELLOW ) );
     doc.setFont( JFaceResources.getTextFont() );
+
+    // The only way to get the height of the browser to depend on the height of its
+    // rendered contents seems to be through javascript:
+    //   http://www.eclipse.org/forums/index.php/t/257935/
+    doc.addProgressListener(new ProgressListener() {
+      @Override
+      public void completed(final ProgressEvent event) {
+        // wait for page to load before evaluating any javascript
+
+        int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
+        int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
+
+        // contentWidth may exceed HOVER_WRAPWIDTH if there are wide lines that cannot
+        // be broken.
+
+        if (contentWidth <= HOVER_WRAPWIDTH) {
+          // for content within the width, simply set the content height and use
+          // HOVER_WRAPWIDTH for the width. (cannot use contentWidth, since it sometimes
+          // assumes an unnecessary vertical scrollbar and gets too small)
+          HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight);
+        } else {
+          // for content exceeding the width, we use the wider size and compute
+          // a new content height.
+
+          HaskellInformationControl.this.setSize(contentWidth,0);
+          contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
+          HaskellInformationControl.this.setSize(contentWidth,contentHeight);
+        }
+        // Unfortunately, once the width is set, it seems impossible to obtain
+        // the actual rendered width. Therefore, the tooltip always has at least a
+        // width of HOVER_WRAPWIDTH, even if the contents are not wrapped and less wide.
+      }
+
+      @Override
+      public void changed(final ProgressEvent event) {
+        // no need for changed events since content is only set once
+      }
+    });
+  }
+
+  /*
+   * @see IInformationControl#setSize(int, int)
+   */
+  @Override
+  public void setSize(final int width, final int height) {
+    // Clip according to max width and min and max height. (min width is not necessary)
+    super.setSize(Math.min(width,HOVER_MAXWIDTH), Math.max(HOVER_MINHEIGHT, Math.min(height,HOVER_MAXHEIGHT)));
   }
 
   public void setDocumentation( final String content ) {
     hasContents = content.length() > 0;
-    doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"<body></html>" );
+    doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"</body></html>" );
   }
 
   /*
@@ -89,7 +143,7 @@ For some other reason, everything works fine if we specify the size with compute
 */
   @Override
   public Point computeSizeConstraints(final int widthInChars, final int heightInChars) {
-    return new Point(HOVER_WIDTH,HOVER_HEIGHT);
+    return new Point(HOVER_WRAPWIDTH,0); // final height is set by ProgressListener when page is loaded
   }
 
   /*
