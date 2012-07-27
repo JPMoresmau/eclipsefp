@@ -433,6 +433,7 @@ public final class UITexts extends NLS {
   public static String executablestoo_old_title;
   public static String executablestoo_old_message1;
   public static String executablestoo_old_message2;
+  public static String error_getVersion;
   public static String error_checkVersion;
 
   public static String executablesmissing_title;

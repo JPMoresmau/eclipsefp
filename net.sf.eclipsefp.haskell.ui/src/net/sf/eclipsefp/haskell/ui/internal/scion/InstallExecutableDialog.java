@@ -29,15 +29,21 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class InstallExecutableDialog extends Dialog {
-  private boolean buildWrapper=true;
-  private boolean scionBrowser=true;
+  protected boolean buildWrapper=true;
+  protected boolean scionBrowser=true;
+  protected String buildWrapperMinVersion="";
+  protected String scionBrowserMinVersion="";
+
   private Button bUser;
   private Button bIgnore;
 
-  public InstallExecutableDialog( final Shell parentShell,final boolean buildWrapper,final boolean scionBrowser ) {
+  public InstallExecutableDialog( final Shell parentShell,final boolean buildWrapper, final String buildWrapperMinVersion,
+                                                          final boolean scionBrowser, final String scionBrowserMinVersion) {
     super( parentShell );
     this.buildWrapper=buildWrapper;
     this.scionBrowser=scionBrowser;
+    this.buildWrapperMinVersion = buildWrapperMinVersion;
+    this.scionBrowserMinVersion = scionBrowserMinVersion;
   }
 
 
@@ -60,6 +66,18 @@ public class InstallExecutableDialog extends Dialog {
     return UITexts.executablesmissing_message2;
   }
 
+  protected String getMessageText(){
+    if (buildWrapper){
+      if (scionBrowser){
+        String[] bindings = {"buildwrapper", buildWrapperMinVersion, "scion-browser", scionBrowserMinVersion};
+        return NLS.bind( getMessage2(), bindings );
+      } else {
+        return NLS.bind( getMessage1(), "buildwrapper", buildWrapperMinVersion);
+      }
+    } else {
+      return NLS.bind( getMessage1(), "scion-browser", scionBrowserMinVersion);
+    }
+  }
 
   @Override
   protected void configureShell( final Shell newShell ) {
@@ -72,18 +90,9 @@ public class InstallExecutableDialog extends Dialog {
   protected Control createDialogArea( final Composite parent ) {
     Composite c=(Composite)super.createDialogArea( parent );
     ((GridLayout)c.getLayout()).numColumns=2;
-    String msg=null;
-    if (buildWrapper){
-      if (scionBrowser){
-        msg=NLS.bind( getMessage2(), "buildwrapper","scion-browser" );
-      } else {
-        msg=NLS.bind( getMessage1(), "buildwrapper");
-      }
-    } else {
-      msg=NLS.bind( getMessage1(), "scion-browser");
-    }
+
     Label l=new Label(c,SWT.NONE);
-    l.setText( msg );
+    l.setText( getMessageText() );
     GridData gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=2;
     l.setLayoutData( gd );

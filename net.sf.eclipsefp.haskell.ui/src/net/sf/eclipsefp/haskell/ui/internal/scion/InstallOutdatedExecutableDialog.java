@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -15,10 +16,19 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class InstallOutdatedExecutableDialog extends InstallExecutableDialog {
+  protected String buildWrapperActualVersion="";
+  protected String buildWrapperPath="";
+  protected String scionBrowserActualVersion="";
+  protected String scionBrowserPath="";
 
   public InstallOutdatedExecutableDialog( final Shell parentShell,
-      final boolean buildWrapper, final boolean scionBrowser ) {
-    super( parentShell, buildWrapper, scionBrowser );
+      final boolean buildWrapper, final String buildWrapperMinVersion, final String buildWrapperActualVersion, final String buildWrapperPath,
+      final boolean scionBrowser, final String scionBrowserMinVersion, final String scionBrowserActualVersion, final String scionBrowserPath ) {
+    super( parentShell, buildWrapper, buildWrapperMinVersion, scionBrowser, scionBrowserMinVersion );
+    this.buildWrapperActualVersion = buildWrapperActualVersion;
+    this.buildWrapperPath = buildWrapperPath;
+    this.scionBrowserActualVersion = scionBrowserActualVersion;
+    this.scionBrowserPath = scionBrowserPath;
   }
 
   @Override
@@ -29,6 +39,23 @@ public class InstallOutdatedExecutableDialog extends InstallExecutableDialog {
   @Override
   protected String getMessage2() {
     return UITexts.executablestoo_old_message2;
+  }
+
+  @Override
+  protected String getMessageText(){
+    if (this.buildWrapper){
+      if (this.scionBrowser){
+        String[] bindings = {"buildwrapper",buildWrapperMinVersion, buildWrapperActualVersion, buildWrapperPath,
+                             "scion-browser",scionBrowserMinVersion, scionBrowserActualVersion, scionBrowserPath};
+        return NLS.bind( getMessage2(), bindings);
+      } else {
+        String[] bindings = {"buildwrapper", buildWrapperMinVersion, buildWrapperActualVersion, buildWrapperPath};
+        return NLS.bind( getMessage1(), bindings);
+      }
+    } else {
+      String[] bindings = {"scion-browser", scionBrowserMinVersion, scionBrowserActualVersion, scionBrowserPath};
+      return NLS.bind( getMessage1(), bindings);
+    }
   }
 
   @Override
