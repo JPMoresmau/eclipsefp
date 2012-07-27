@@ -177,7 +177,7 @@ public class ScionManager implements IResourceChangeListener {
           public void run() {
             Shell parent = display.getActiveShell();
 
-            InstallExecutableDialog ied=new InstallExecutableDialog(parent , buildWrapperExecutablePath==null, browserExecutablePath==null );
+            InstallExecutableDialog ied=new InstallExecutableDialog(parent , buildWrapperExecutablePath==null, MINIMUM_BUILDWRAPPER, browserExecutablePath==null, MINIMUM_SCIONBROWSER );
             ied.open();
           }
         });
@@ -200,7 +200,10 @@ public class ScionManager implements IResourceChangeListener {
             public void run() {
               Shell parent = display.getActiveShell();
 
-              InstallOutdatedExecutableDialog ied=new InstallOutdatedExecutableDialog(parent , !buildwrapperVersionOK, !browserVersionOK );
+              InstallOutdatedExecutableDialog ied =
+                  new InstallOutdatedExecutableDialog(parent,
+                                                     !buildwrapperVersionOK, MINIMUM_BUILDWRAPPER, getVersion(buildWrapperExecutablePath,true), buildWrapperExecutablePath.toOSString(),
+                                                     !browserVersionOK, MINIMUM_SCIONBROWSER, getVersion(browserExecutablePath, false), browserExecutablePath.toOSString() );
               ied.open();
             }
           });
@@ -309,19 +312,24 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
-  public static boolean checkVersion(final IPath path,final String minimal,final boolean wait){
+  public static String getVersion(final IPath path,final boolean wait){
     if (path!=null){
       try {
-        String currentVersion=ProcessRunner.getExecutableVersion(path.toOSString(),wait);
-        if (currentVersion==null){
-          return false;
-        }
-        return CabalPackageVersion.compare( currentVersion, minimal )>=0;
+        return ProcessRunner.getExecutableVersion(path.toOSString(),wait);
       } catch (IOException ioe){
-        HaskellUIPlugin.log(UITexts.error_checkVersion, ioe);
+        HaskellUIPlugin.log(UITexts.error_getVersion, ioe);
       }
     }
-    return true;
+    return null;
+  }
+
+  public static boolean checkVersion(final IPath path,final String minimal,final boolean wait){
+    String currentVersion=getVersion(path, wait);
+    if (currentVersion==null) {
+      return false;
+    } else {
+      return CabalPackageVersion.compare( currentVersion, minimal )>=0;
+    }
   }
 
 
