@@ -64,8 +64,8 @@ public class HaskellInformationControl extends AbstractInformationControl {
       @Override
       public void completed(final ProgressEvent event) {
         // wait for page to load before evaluating any javascript
-
-        int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
+        int paddingHeight=10;
+        int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight;
         int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
 
         // contentWidth may exceed HOVER_WRAPWIDTH if there are wide lines that cannot
@@ -81,9 +81,13 @@ public class HaskellInformationControl extends AbstractInformationControl {
           // a new content height.
 
           HaskellInformationControl.this.setSize(contentWidth,0);
-          contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
+          contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight;
           HaskellInformationControl.this.setSize(contentWidth,contentHeight);
         }
+        if (contentHeight<HOVER_MAXHEIGHT){
+          doc.evaluate( "document.body.style.overflowY='hidden';" );
+        }
+
         // Unfortunately, once the width is set, it seems impossible to obtain
         // the actual rendered width. Therefore, the tooltip always has at least a
         // width of HOVER_WRAPWIDTH, even if the contents are not wrapped and less wide.
