@@ -3,6 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Iterator;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
@@ -14,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManag
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IInformationControl;
@@ -65,10 +68,14 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   public Object getHoverInfo2( final ITextViewer textViewer,
       final IRegion hoverRegion) {
     String hoverInfo = computeProblemInfo( textViewer, hoverRegion,fMarkerAnnotationAccess);
-    if (hoverInfo != null) {
+    String tap = computeThingAtPoint( textViewer, hoverRegion,true );
+    if (tap==null){
       return hoverInfo;
+    } else if (hoverInfo==null){
+      return tap;
     }
-    return computeThingAtPoint( textViewer, hoverRegion,true );
+    // combine markers and thing at point
+    return hoverInfo+"<hr>"+tap;
   }
 
   /* (non-Javadoc)
@@ -100,7 +107,16 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )) {
             Position p = annotationModel.getPosition( a );
             if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
-              return "<div style='font-family: verdana; padding:2px'>" +
+              // add a nice icon
+              String img="";
+              try {
+                URL url =FileLocator.toFileURL( HaskellUIPlugin.getDefault().getBundle().getResource(
+                    fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE )?"icons/obj16/error_obj.gif":"icons/obj16/warning_obj.gif"));
+                img="<img src=\"" + url.toString()+"\"/>";
+              } catch( IOException ioe){
+                HaskellUIPlugin.log( ioe );
+              }
+              return "<div style='font-family: verdana; padding:2px'>"+img+
                      a.getText() +
                      "</div>";
             }
