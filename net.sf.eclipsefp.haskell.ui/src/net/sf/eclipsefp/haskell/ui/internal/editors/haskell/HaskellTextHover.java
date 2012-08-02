@@ -112,7 +112,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               try {
                 URL url =FileLocator.toFileURL( HaskellUIPlugin.getDefault().getBundle().getResource(
                     fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE )?"icons/obj16/error_obj.gif":"icons/obj16/warning_obj.gif"));
-                img="<img src=\"" + url.toString()+"\"/>";
+                img="<img src=\"" + url.toString()+"\" style=\"vertical-align:-4\"/>";
               } catch( IOException ioe){
                 HaskellUIPlugin.log( ioe );
               }
