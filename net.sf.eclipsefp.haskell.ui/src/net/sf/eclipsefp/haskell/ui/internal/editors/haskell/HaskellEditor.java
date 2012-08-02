@@ -21,6 +21,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDefHandler;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
@@ -153,12 +154,20 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     @Override
     public void handleOutline( final OutlineResult or ) {
-      if (outlinePage!=null){
-        outlinePage.setInput( or.getOutlineDefs() );
-      }
-      lastOutlineResult=or;
-      if (foldingStructureProvider!=null){
-        foldingStructureProvider.updateFoldingRegions( or.getOutlineDefs() );
+      if (!or.getOutlineDefs().isEmpty() || or.isBuildOK()){// avoid removing all outline on error
+        if (outlinePage!=null){
+          outlinePage.setInput( or.getOutlineDefs() );
+        }
+        lastOutlineResult=or;
+        if (foldingStructureProvider!=null){
+          foldingStructureProvider.updateFoldingRegions( or.getOutlineDefs() );
+        }
+      } else if (!or.isBuildOK() && or.getNotes()!=null && or.getNotes().size()>0){
+        for (Note n:or.getNotes()){
+          if (n.getKind().equals( Note.Kind.ERROR )){
+            HaskellUIPlugin.log( n.toString(), IStatus.ERROR);
+          }
+        }
       }
     }
   };

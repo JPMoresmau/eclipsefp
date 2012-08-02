@@ -25,6 +25,11 @@ public class OutlineResult {
 	private List<ImportDef> importDefs=new ArrayList<ImportDef>();
 
 	/**
+	 * notes for errors
+	 */
+	private List<Note> notes=null;
+	
+	/**
 	 * was the build ok (no error in notes)
 	 */
 	private boolean buildOK=true;
@@ -75,6 +80,14 @@ public class OutlineResult {
 
 	public void setBuildOK(boolean buildOK) {
 		this.buildOK = buildOK;
+	}
+
+	public List<Note> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
 	}
 	
 	

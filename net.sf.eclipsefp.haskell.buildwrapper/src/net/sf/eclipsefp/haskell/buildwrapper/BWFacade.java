@@ -209,7 +209,7 @@ public class BWFacade {
 			}
 			
 			JSONArray notes=arr.optJSONArray(1);
-			return parseNotes(notes,ress);
+			return parseNotes(notes,ress,null);
 		}
 		return true;
 	}
@@ -243,7 +243,7 @@ public class BWFacade {
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
 			
-			parseNotes(notes,ress);
+			parseNotes(notes,ress,null);
 			JSONArray names=arr.optJSONArray(0);
 			if(names!=null){
 				Collection<NameDef> ret=new ArrayList<NameDef>();
@@ -501,12 +501,6 @@ public class BWFacade {
 		JSONArray arr=run(command,ARRAY);
 		or=new OutlineResult();
 		if (arr!=null){
-			if (arr.length()>1){
-				JSONArray notes=arr.optJSONArray(1);
-				//notes.putAll(i.getNotes());
-				boolean b=parseNotes(notes);
-				or.setBuildOK(b);
-			}
 			JSONObject obj=arr.optJSONObject(0);
 			if (obj!=null){
 				try {
@@ -525,6 +519,16 @@ public class BWFacade {
 					}
 				}
 			}
+			
+			List<Note> collect=new ArrayList<Note>();
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				//notes.putAll(i.getNotes());
+				boolean b=parseNotes(notes,null,collect);
+				or.setBuildOK(b);
+				or.setNotes(collect);
+			}
+			
 		}
 		registerOutline(file,or);
 		return or;
@@ -650,7 +654,7 @@ public class BWFacade {
 	}
 	
 	private boolean parseNotes(JSONArray notes){
-		return parseNotes(notes,null);
+		return parseNotes(notes,null,null);
 	}
 	
 	private boolean isOK(JSONArray notes){
@@ -671,7 +675,7 @@ public class BWFacade {
 		return true;
 	}
 	
-	private boolean parseNotes(JSONArray notes,Set<IResource> ress){
+	private boolean parseNotes(JSONArray notes,Set<IResource> ress,List<Note> collect){
 		boolean buildOK=true;
 		if (notes!=null){
 			try {
@@ -697,26 +701,30 @@ public class BWFacade {
 					//ow.addMessage("\nCreated location: "+loc.getStartLine()+":"+loc.getStartColumn()+" to "+loc.getEndLine()+":"+loc.getEndColumn());
 					
 					Note n=new Note(k,loc,o.getString("t"),"");
-					IResource res=project.findMember(f);
-					// linker errors may have full path
-					if (res==null){
-						f=f.replace("\\\\", "\\");
-						String pos=project.getLocation().toOSString();
-						if (f.startsWith(pos)){
-							res=project.findMember(f.substring(pos.length()));
+					if (collect!=null){
+						collect.add(n);
+					} else {
+						IResource res=project.findMember(f);
+						// linker errors may have full path
+						if (res==null){
+							f=f.replace("\\\\", "\\");
+							String pos=project.getLocation().toOSString();
+							if (f.startsWith(pos)){
+								res=project.findMember(f.substring(pos.length()));
+							}
 						}
-					}
-					if (res!=null){
-						if (ress.add(res)){
-							BuildWrapperPlugin.deleteProblems(res);
-						}
-						try {
-							n.applyAsMarker(res);
-						} catch (CoreException ce){
-							BuildWrapperPlugin.logError(BWText.process_apply_note_error, ce);
-						}
-						if (res.getLocation().toOSString().equals(getCabalFile())){
-							hasCabalProblems=true;
+						if (res!=null){
+							if (ress.add(res)){
+								BuildWrapperPlugin.deleteProblems(res);
+							}
+							try {
+								n.applyAsMarker(res);
+							} catch (CoreException ce){
+								BuildWrapperPlugin.logError(BWText.process_apply_note_error, ce);
+							}
+							if (res.getLocation().toOSString().equals(getCabalFile())){
+								hasCabalProblems=true;
+							}
 						}
 					}
 				}
