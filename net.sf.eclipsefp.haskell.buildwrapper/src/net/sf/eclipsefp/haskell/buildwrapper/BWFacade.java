@@ -22,15 +22,15 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
-import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
-import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note.Kind;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -520,13 +520,25 @@ public class BWFacade {
 				}
 			}
 			
-			List<Note> collect=new ArrayList<Note>();
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
 				//notes.putAll(i.getNotes());
-				boolean b=parseNotes(notes,null,collect);
+				boolean b=parseNotes(notes,null,new NoteFilter() {
+					
+					@Override
+					public boolean accept(Note n) {
+						return !n.getMessage().contains("not enabled");
+					}
+					
+					/* (non-Javadoc)
+					 * @see net.sf.eclipsefp.haskell.buildwrapper.BWFacade.NoteFilter#getLogPrefix()
+					 */
+					@Override
+					public String getLogPrefix() {
+						return "Outline: "; 
+					}
+				});
 				or.setBuildOK(b);
-				or.setNotes(collect);
 			}
 			
 		}
@@ -675,7 +687,7 @@ public class BWFacade {
 		return true;
 	}
 	
-	private boolean parseNotes(JSONArray notes,Set<IResource> ress,List<Note> collect){
+	private boolean parseNotes(JSONArray notes,Set<IResource> ress,NoteFilter filter){
 		boolean buildOK=true;
 		if (notes!=null){
 			try {
@@ -686,9 +698,7 @@ public class BWFacade {
 					JSONObject o=notes.getJSONObject(a);
 					String sk=o.getString("s");
 					Kind k="Error".equalsIgnoreCase(sk)?Kind.ERROR:Kind.WARNING;
-					if (k.equals(Kind.ERROR)){
-						buildOK=false;
-					}
+					
 					JSONObject ol=o.getJSONObject("l");
 					String f=ol.getString("f");
 					int line=ol.getInt("l");
@@ -701,9 +711,10 @@ public class BWFacade {
 					//ow.addMessage("\nCreated location: "+loc.getStartLine()+":"+loc.getStartColumn()+" to "+loc.getEndLine()+":"+loc.getEndColumn());
 					
 					Note n=new Note(k,loc,o.getString("t"),"");
-					if (collect!=null){
-						collect.add(n);
-					} else {
+					if (filter==null || filter.accept(n)){
+						if (k.equals(Kind.ERROR)){
+							buildOK=false;
+						}
 						IResource res=project.findMember(f);
 						// linker errors may have full path
 						if (res==null){
@@ -726,6 +737,8 @@ public class BWFacade {
 								hasCabalProblems=true;
 							}
 						}
+					} else if (k.equals(Kind.ERROR)){
+						BuildWrapperPlugin.logError(filter.getLogPrefix()+n.toString(), null);
 					}
 				}
 			} catch (JSONException je){
@@ -1106,5 +1119,10 @@ public class BWFacade {
 			return true;
 		}
 		return false;
+	}
+	
+	private interface NoteFilter{
+		boolean accept(Note n);
+		String getLogPrefix();
 	}
 }

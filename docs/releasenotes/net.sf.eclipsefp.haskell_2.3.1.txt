@@ -5,22 +5,24 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.6.0 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.6.1 of buildwrapper has been validated with this version of EclipseFP
 	- EclipseFP also uses scion-browser. Version 0.2.10 has been validated with this version of EclipseFP
  
 
 Fixes:
-	- Clean project removes all Haskell Problems markers in project
+	- Clean project removes all Haskell problems markers in project
 	- Autocomplete 
 		- StackOverflow if a module exported itself fixed
 		- Now properly offers symbols from exposed modules from the library in the same project if there is an internal dependency
-	- Various defensive codes
+	- Various defensive code
 	- Escape paths with spaces properly (SourceGraph and other tools invocation)
 
 Features:
 	- Format source with stylish-haskell
 	- Command history for GHCi sessions
 	- Tooltips now can use HTML rendering
+	- Markers have column information and not only line information (squiggly lines are back).
+	- Hover over a symbol and a marker display both information.
 
 Internal:
 

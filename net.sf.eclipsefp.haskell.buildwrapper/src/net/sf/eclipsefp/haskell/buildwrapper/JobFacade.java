@@ -216,9 +216,9 @@ public class JobFacade  {
 	         // long t1=System.currentTimeMillis();
 	          OutlineResult or=realFacade.outline(file);
 	          //long t2=System.currentTimeMillis();
-	          //if (!or.isEmpty() || or.isBuildOK()){
+	          if (!or.isEmpty() || or.isBuildOK()){
 	        	  handler.handleOutline(or); // avoid removing all outline on error
-	          //}
+	          }
 
 	          //long t3=System.currentTimeMillis();
 	          
