@@ -99,6 +99,7 @@ public class InstallExecutableDialog extends Dialog {
 
     bUser=new Button(c,SWT.CHECK);
     bUser.setText( UITexts.executablesmissing_user );
+    bUser.setSelection( true );
 
     bIgnore=new Button(c,SWT.CHECK);
     bIgnore.setText( UITexts.executablesmissing_ignore);
