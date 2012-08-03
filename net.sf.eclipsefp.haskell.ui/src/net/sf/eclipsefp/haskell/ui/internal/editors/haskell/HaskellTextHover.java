@@ -15,6 +15,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.text.BadLocationException;
@@ -103,8 +104,8 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
         while (i.hasNext()) {
           Annotation a = i.next();
           String type = a.getType();
-          if (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE ) ||
-              fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )) {
+          if (a.getText()!=null && (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE ) ||
+              fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE ))) {
             Position p = annotationModel.getPosition( a );
             if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
               // add a nice icon
@@ -116,8 +117,14 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               } catch( IOException ioe){
                 HaskellUIPlugin.log( ioe );
               }
+              String txt=a.getText();
+
+              txt=txt.replace( PlatformUtil.NL, "<br/>" );
+              txt=txt.replace( "\n", "<br/>" );
+              txt=txt.replace( "\r", "<br/>" );
+              txt=txt.replace( " ", "&nbsp;" );
               return "<div style='font-family: verdana; padding:2px'>"+img+
-                     a.getText() +
+                     txt +
                      "</div>";
             }
           }
