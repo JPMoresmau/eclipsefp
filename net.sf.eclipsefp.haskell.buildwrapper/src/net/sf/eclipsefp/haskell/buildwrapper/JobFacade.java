@@ -216,20 +216,20 @@ public class JobFacade  {
 	         // long t1=System.currentTimeMillis();
 	          OutlineResult or=realFacade.outline(file);
 	          //long t2=System.currentTimeMillis();
-	          if (!or.isEmpty() || or.isBuildOK()){
+	          //if (!or.isEmpty() || or.isBuildOK()){
 	        	  handler.handleOutline(or); // avoid removing all outline on error
-	          }
+	          //}
 
 	          //long t3=System.currentTimeMillis();
 	          
 	          
-	          if (or.isBuildOK()){
+	          //if (or.isBuildOK()){
 	        	  
 	        	  Collection<NameDef> ns=realFacade.build1(file);
 		          if (ndhandler!=null){
 		        	  ndhandler.handleNameDefs(ns);
 		          }
-	          }
+	          //}
 	          //long t4=System.currentTimeMillis();
 	          //,getBuildFlags:"+(t1-t0)
 

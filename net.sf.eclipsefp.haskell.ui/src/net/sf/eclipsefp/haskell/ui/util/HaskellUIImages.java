@@ -69,7 +69,7 @@ public class HaskellUIImages implements IImageNames {
     declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" ); //$NON-NLS-1$
     declare( ERROR_OVERLAY,        OVR + "error_co.gif"); //$NON-NLS-1$
     declare( WARNING_OVERLAY,      OVR + "warning_co.gif"); //$NON-NLS-1$
-
+    declare( ERROR_OBJECT,        OBJECT + "error_obj.gif"); //$NON-NLS-1$
     // views
     declare( DEP_VIEW_IMPORTS,     ACTION + "mdep_imports.gif" ); //$NON-NLS-1$
     declare( DEP_VIEW_IMPORTEDBY,  ACTION + "mdep_importedby.gif" ); //$NON-NLS-1$

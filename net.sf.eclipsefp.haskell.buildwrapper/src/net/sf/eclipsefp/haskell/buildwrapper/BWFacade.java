@@ -523,21 +523,9 @@ public class BWFacade {
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
 				//notes.putAll(i.getNotes());
-				boolean b=parseNotes(notes,null,new NoteFilter() {
-					
-					@Override
-					public boolean accept(Note n) {
-						return !n.getMessage().contains("not enabled");
-					}
-					
-					/* (non-Javadoc)
-					 * @see net.sf.eclipsefp.haskell.buildwrapper.BWFacade.NoteFilter#getLogPrefix()
-					 */
-					@Override
-					public String getLogPrefix() {
-						return "Outline: "; 
-					}
-				});
+				List<Note> ns=new ArrayList<Note>();
+				boolean b=parseNotes(notes,null,ns);
+				or.setNotes(ns);
 				or.setBuildOK(b);
 			}
 			
@@ -687,7 +675,7 @@ public class BWFacade {
 		return true;
 	}
 	
-	private boolean parseNotes(JSONArray notes,Set<IResource> ress,NoteFilter filter){
+	private boolean parseNotes(JSONArray notes,Set<IResource> ress,Collection<Note> collect){
 		boolean buildOK=true;
 		if (notes!=null){
 			try {
@@ -709,12 +697,13 @@ public class BWFacade {
 					
 					Location loc=new Location(project, f, line, col, endline, endcol);
 					//ow.addMessage("\nCreated location: "+loc.getStartLine()+":"+loc.getStartColumn()+" to "+loc.getEndLine()+":"+loc.getEndColumn());
-					
+					if (k.equals(Kind.ERROR)){
+						buildOK=false;
+					}					
 					Note n=new Note(k,loc,o.getString("t"),"");
-					if (filter==null || filter.accept(n)){
-						if (k.equals(Kind.ERROR)){
-							buildOK=false;
-						}
+					if (collect!=null){
+						collect.add(n);
+					} else {
 						IResource res=project.findMember(f);
 						// linker errors may have full path
 						if (res==null){
@@ -737,9 +726,7 @@ public class BWFacade {
 								hasCabalProblems=true;
 							}
 						}
-					} else if (k.equals(Kind.ERROR)){
-						BuildWrapperPlugin.logError(filter.getLogPrefix()+n.toString(), null);
-					}
+					} 
 				}
 			} catch (JSONException je){
 				BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
@@ -1121,8 +1108,5 @@ public class BWFacade {
 		return false;
 	}
 	
-	private interface NoteFilter{
-		boolean accept(Note n);
-		String getLogPrefix();
-	}
+
 }

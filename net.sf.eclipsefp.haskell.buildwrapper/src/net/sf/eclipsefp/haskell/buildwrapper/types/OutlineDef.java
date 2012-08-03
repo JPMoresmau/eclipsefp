@@ -31,7 +31,8 @@ public class OutlineDef {
 		INSTANCE,
 		FIELD,
 		CONSTRUCTOR,
-		SPLICE
+		SPLICE,
+		ERROR
 	}
 
 	public static OutlineDefType parseType(JSONObject obj){
@@ -79,8 +80,8 @@ public class OutlineDef {
 	 * the comment or "" if none
 	 */
 	private String comment;
-	
-	public OutlineDef(String name, OutlineDefType type, Location loc, Location block) {
+	//Location block
+	public OutlineDef(String name, OutlineDefType type, Location loc) {
 		super();
 		this.name = name;
 		this.types.add(type);
