@@ -3,6 +3,8 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.core.compiler;
 
+import org.eclipse.core.runtime.IStatus;
+
 
 /** <p>represents an installed Haskell implementation.</p>
   *
@@ -19,4 +21,6 @@ public interface IHsImplementation {
   String getName();
   String getBinDir();
   String getLibDir();
+
+  IStatus[] validate();
 }

@@ -47,6 +47,7 @@ public class HsImplementation implements IHsImplementation {
     this.binDir = binDir;
   }
 
+  @Override
   public IStatus[] validate() {
     if( statuss == null ) {
       internalValidate();

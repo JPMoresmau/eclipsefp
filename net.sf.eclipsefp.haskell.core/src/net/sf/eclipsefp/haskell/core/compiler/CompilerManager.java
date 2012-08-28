@@ -295,14 +295,26 @@ public class CompilerManager implements ICompilerManager {
     String currentImplName = prefSvc.getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.SELECTED_HS_IMPLEMENTATION, null, null );
     if( currentImplName != null ) {
       Map<String, IHsImplementation> impls = loadImpls();
-      this.currentHsImplementation = impls.get( currentImplName );
-    } else {
-      List<IHsImplementation> impls=autodetectGHCImpls();
       if (impls.size()>0){
-        setHsImplementations(impls,impls.get( 0 ));
-        initHsImplementation() ;
+        this.currentHsImplementation = impls.get( currentImplName );
+        return;
       }
     }
+    List<IHsImplementation> impls=autodetectGHCImpls();
+    if (impls.size()>0){
+      IHsImplementation def=impls.get( 0 );
+      if( currentImplName != null ) {
+        for (IHsImplementation imp:impls){
+          if (imp.getName().equals( currentImplName )){
+            def=imp;
+            break;
+          }
+        }
+      }
+      setHsImplementations(impls,def);
+      initHsImplementation() ;
+    }
+
   }
 
   public static void setHsImplementations(final List<IHsImplementation> impls,final IHsImplementation def){
@@ -322,7 +334,9 @@ public class CompilerManager implements ICompilerManager {
     HsImplementationPersister.fromXML( xml, impls );
     Map<String, IHsImplementation> result = new HashMap<String, IHsImplementation>();
     for( IHsImplementation impl: impls ) {
-      result.put( impl.getName(), impl );
+      if (isValid( impl )){
+        result.put( impl.getName(), impl );
+      }
     }
     return result;
   }
@@ -338,6 +352,18 @@ public class CompilerManager implements ICompilerManager {
         }
       }
     });
+  }
+
+  private static boolean isValid(final IHsImplementation impl){
+    IStatus[] statuss=impl.validate();
+    boolean err=false;
+    for( int i = 0; i < statuss.length; i++ ) {
+      IStatus curr = statuss[ i ];
+      if( curr.matches( IStatus.ERROR ) ) {
+        err=true;
+      }
+    }
+    return !err;
   }
 
   public static List<IHsImplementation> autodetectGHCImpls(){
@@ -365,15 +391,7 @@ public class CompilerManager implements ICompilerManager {
             index++;
           }
           impl.setName( nameFull );
-          IStatus[] statuss=impl.validate();
-          boolean err=false;
-          for( int i = 0; i < statuss.length; i++ ) {
-            IStatus curr = statuss[ i ];
-            if( curr.matches( IStatus.ERROR ) ) {
-              err=true;
-            }
-          }
-          if (!err){
+          if (isValid( impl )){
             impls.add( impl );
           }
         }
