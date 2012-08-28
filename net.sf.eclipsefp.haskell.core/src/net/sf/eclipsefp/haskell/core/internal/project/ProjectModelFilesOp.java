@@ -143,6 +143,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
         InputStream is = new ByteArrayInputStream( content.getBytes( ENC ) );
         IProgressMonitor monitor = new SubProgressMonitor( mo, 1 );
         file.create( is, true, monitor );
+        file.setCharset( ENC ,mo);
       }
     } catch( UnsupportedEncodingException uex ) {
       HaskellCorePlugin.log( uex );

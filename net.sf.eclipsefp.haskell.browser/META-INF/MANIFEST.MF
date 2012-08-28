@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.browser; singleton:=true
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.2
 Bundle-Localization: plugin
 Bundle-Activator: net.sf.eclipsefp.haskell.browser.BrowserPlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.2.0",
  org.eclipse.core.runtime;bundle-version="3.2.0",
- net.sf.eclipsefp.haskell.core;bundle-version="2.0.5",
- net.sf.eclipsefp.haskell.util;bundle-version="2.0.3",
+ net.sf.eclipsefp.haskell.core;bundle-version="2.3.2",
+ net.sf.eclipsefp.haskell.util;bundle-version="2.3.1",
  org.eclipse.jface.text;bundle-version="3.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
