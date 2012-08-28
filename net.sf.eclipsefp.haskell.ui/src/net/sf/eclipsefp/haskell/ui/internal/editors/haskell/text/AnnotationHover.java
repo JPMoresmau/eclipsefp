@@ -10,20 +10,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellInformationControl;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellTextHover;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.LineRange;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 /** <p>Determines all markers for the given line and collects, concatenates,
   * and formats their messages.</p>
   *
   * @author Leif Frenzel
   */
-public class AnnotationHover implements IAnnotationHover {
+public class AnnotationHover implements IAnnotationHover,IAnnotationHoverExtension {
+  private final DefaultMarkerAnnotationAccess fMarkerAnnotationAccess;
+
+  /**
+   *
+   */
+  public AnnotationHover() {
+    fMarkerAnnotationAccess = new DefaultMarkerAnnotationAccess();
+  }
 
   // interface methods of IAnnotationHover
   ////////////////////////////////////////
@@ -49,6 +68,52 @@ public class AnnotationHover implements IAnnotationHover {
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
+   */
+  @Override
+  public boolean canHandleMouseCursor() {
+    return true;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
+   */
+  @Override
+  public IInformationControlCreator getHoverControlCreator() {
+    return new IInformationControlCreator() {
+
+      @Override
+      public IInformationControl createInformationControl( final Shell parent ) {
+        return new HaskellInformationControl(parent);
+      }
+    } ;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
+   */
+  @Override
+  public Object getHoverInfo( final ISourceViewer paramISourceViewer,
+      final ILineRange paramILineRange, final int paramInt ) {
+    try {
+     int offset=paramISourceViewer.getDocument().getLineOffset( paramILineRange.getStartLine() );
+     int length=paramISourceViewer.getDocument().getLineLength( paramILineRange.getStartLine());
+     return HaskellTextHover.computeProblemInfo( paramISourceViewer, new Region( offset, length ), fMarkerAnnotationAccess );
+    } catch (BadLocationException ble){
+      HaskellUIPlugin.log( ble );
+      return null;
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer, int)
+   */
+  @Override
+  public ILineRange getHoverLineRange( final ISourceViewer paramISourceViewer,
+      final int paramInt ) {
+    return new LineRange( paramInt, 1 );
+  }
 
   // helping methods
   //////////////////

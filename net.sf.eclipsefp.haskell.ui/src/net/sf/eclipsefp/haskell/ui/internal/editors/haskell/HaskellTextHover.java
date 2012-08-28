@@ -94,6 +94,21 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
     } ;
   }
 
+  private static String toHTMLString(final String txt){
+    String txt2=txt.replace( PlatformUtil.NL, "<br/>" );
+    txt2=txt2.replace( "\n", "<br/>" );
+    txt2=txt2.replace( "\r", "<br/>" );
+    txt2=txt2.replace( " ", "&nbsp;" );
+    txt2="<nobr>"+txt2.replace("<br/>","</nobr><br/><nobr>")+"</nobr>";
+    return txt2;
+  }
+
+  private static String toHTMLString(final String txt,final boolean html){
+    if (html){
+      return toHTMLString( txt );
+    }
+    return txt;
+  }
 
   @SuppressWarnings ( "unchecked" )
   public static String computeProblemInfo( final ITextViewer textViewer, final IRegion hoverRegion,final IAnnotationAccessExtension  fMarkerAnnotationAccess) {
@@ -110,12 +125,8 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
             if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
               // add a nice icon
               String img="";
-              String txt=a.getText();
+              String txt=toHTMLString(a.getText());
 
-              txt=txt.replace( PlatformUtil.NL, "<br/>" );
-              txt=txt.replace( "\n", "<br/>" );
-              txt=txt.replace( "\r", "<br/>" );
-              txt=txt.replace( " ", "&nbsp;" );
               try {
                 URL url =FileLocator.toFileURL( HaskellUIPlugin.getDefault().getBundle().getResource(
                     fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE )?"icons/obj16/error_obj.gif":"icons/obj16/warning_obj.gif"));
@@ -151,7 +162,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               StringBuilder sb=new StringBuilder();
 
 
-              sb.append(html ? "<div style='font-family: monaco; padding:2px'>" : "");
+              sb.append(html ? "<div style='font-family: verdana; padding:2px'><nobr>" : "");
               sb.append(tap.getName());
               String moduleColor = HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.EDITOR_CON_COLOR );
 
@@ -161,11 +172,12 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
                 sb.append(tap.getType());
                 sb.append(html ? "</b>" : "");
               }
+              sb.append(html ? "</nobr>" : "");
               if (tap.getModule()!=null){
                 sb.append(html ? "<br/>" : "\n");
-                sb.append(html ? "<span style='color: grey'>module:</span> <span style='color:rgb("+moduleColor+"); font-weight: bold'>" : "");
+                sb.append(html ? "<span style='color: grey'>module:</span> <span style='color:rgb("+moduleColor+"); font-weight: bold'><nobr>" : "");
                 sb.append(tap.getModule());
-                sb.append(html ? "</span>" : "");
+                sb.append(html ? "</nobr></span>" : "");
               }
               sb.append(html ? "</div>" : "");
 
@@ -174,7 +186,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               if (d!=null && d.getDoc()!=null && d.getDoc().length()>0){
                 sb.append(html ? "<hr/>" : "\n");
                 sb.append(html ? "<div style='font-family: verdana; padding:2px'>" : "");
-                sb.append(d.getDoc());
+                sb.append(toHTMLString(d.getDoc(),html));
                 sb.append(html ? "</div>" : "");
 
               }

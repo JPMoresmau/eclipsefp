@@ -32,6 +32,7 @@ public class HaskellInformationControl extends AbstractInformationControl {
   private static final int HOVER_MAXHEIGHT = 700;
   private Browser doc;
   private boolean hasContents = false;
+  //private boolean hasHR = false;
 
   public HaskellInformationControl( final Shell parent ) {
     super( parent, true );
@@ -75,7 +76,8 @@ public class HaskellInformationControl extends AbstractInformationControl {
           // for content within the width, simply set the content height and use
           // HOVER_WRAPWIDTH for the width. (cannot use contentWidth, since it sometimes
           // assumes an unnecessary vertical scrollbar and gets too small)
-          HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight);
+          HaskellInformationControl.this.setSize(contentWidth+10,contentHeight);
+         // doc.evaluate( "document.body.style.overflowX='hidden';" );
         } else {
           // for content exceeding the width, we use the wider size and compute
           // a new content height.
@@ -111,6 +113,7 @@ public class HaskellInformationControl extends AbstractInformationControl {
 
   public void setDocumentation( final String content ) {
     hasContents = content.length() > 0;
+    //hasHR=content.contains("<hr>");
     doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"</body></html>" );
   }
 
@@ -147,9 +150,16 @@ For some other reason, everything works fine if we specify the size with compute
 */
   @Override
   public Point computeSizeConstraints(final int widthInChars, final int heightInChars) {
-    return new Point(HOVER_WRAPWIDTH,0); // final height is set by ProgressListener when page is loaded
+    return new Point(widthInChars*4,heightInChars*12); // final width/height is set by ProgressListener when page is loaded
   }
 
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
+   */
+  @Override
+  public Point computeSizeHint() {
+    return new Point(0,0);
+  }
   /*
    * @see org.eclipse.jface.text.AbstractInformationControl#computeTrim()
    */
