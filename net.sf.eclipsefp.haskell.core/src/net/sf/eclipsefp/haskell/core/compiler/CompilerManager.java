@@ -297,7 +297,9 @@ public class CompilerManager implements ICompilerManager {
       Map<String, IHsImplementation> impls = loadImpls();
       if (impls.size()>0){
         this.currentHsImplementation = impls.get( currentImplName );
-        return;
+        if (this.currentHsImplementation!=null){
+          return;
+        }
       }
     }
     List<IHsImplementation> impls=autodetectGHCImpls();
