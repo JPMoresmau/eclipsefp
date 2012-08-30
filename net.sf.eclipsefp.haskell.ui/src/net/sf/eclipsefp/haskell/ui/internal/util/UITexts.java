@@ -231,6 +231,7 @@ public final class UITexts extends NLS {
   public static String newProjectWizardPage_Message_enterProjectName;
   public static String newProjectWizardPage_Message_projectAlreadyExists;
   public static String newProjectWizardPage_Message_projectInvalidName;
+  public static String newProjectWizardPage_Message_projectNonAsciiName;
   public static String newProjectWizardPageMessage_invalidProjectNameForWorkspaceRoot;
   public static String newProjectWizardPage_LocationGroup_title;
   public static String newProjectWizardPage_LocationGroup_workspace_desc;

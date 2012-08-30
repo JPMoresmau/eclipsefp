@@ -13,6 +13,8 @@ package net.sf.eclipsefp.haskell.ui.internal.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.Observable;
 import java.util.Observer;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -352,6 +354,12 @@ public class NewProjectWizardPage extends WizardPage {
           setIncomplete(UITexts.newProjectWizardPage_Message_projectInvalidName);
           return;
         }
+      }
+      CharsetEncoder asciiEncoder =
+          Charset.forName("US-ASCII").newEncoder();
+      if (!asciiEncoder.canEncode( name )){
+        setIncomplete(UITexts.newProjectWizardPage_Message_projectNonAsciiName);
+        return;
       }
 
       // check whether project already exists
