@@ -202,6 +202,62 @@ public class CabalModelTest extends TestCase {
 
   }
 
+  public void testParseExample3Tab(){
+    String content3=getContent( "Example3.cabal" );
+    content3=content3.replace( "Executable program1", "Executable\tprogram1" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    assertNotNull(pdss);
+    assertEquals(4,pdss.size());
+    assertTrue(pdss.get(0) instanceof PackagePropertiesStanza);
+    assertEquals("TestPackage",pdss.get(0).getName());
+    assertEquals(0,pdss.get(0).getStartLine());
+    assertEquals(7,pdss.get(0).getEndLine());
+    assertNotNull(pdss.get(0).getProperties());
+    assertEquals(7,pdss.get(0).getProperties().size());
+    assertEquals("TestPackage",pdss.get(0).getProperties().get( "name"));
+    assertEquals("TestPackage",pdss.get(0).getProperties().get( "Name"));
+    assertEquals("TestPackage",pdss.get(0).getProperties().get( "NAME"));
+    assertEquals("TestPackage",pdss.get(0).getProperties().get( CabalSyntax.FIELD_NAME));
+    assertEquals("0.0",pdss.get(0).getProperties().get( "Version"));
+    assertEquals(">= 1.2",pdss.get(0).getProperties().get( "Cabal-Version"));
+    assertEquals("BSD3",pdss.get(0).getProperties().get( "License"));
+    assertEquals("Angela Author",pdss.get(0).getProperties().get( "Author"));
+    assertEquals("Package with library and two programs",pdss.get(0).getProperties().get( "Synopsis"));
+    assertEquals("Simple",pdss.get(0).getProperties().get( "Build-Type"));
+
+    assertEquals(CabalSyntax.SECTION_LIBRARY,pdss.get(1).getType());
+    assertNull(pdss.get(1).getName());
+    assertEquals(8,pdss.get(1).getStartLine());
+    assertEquals(11,pdss.get(1).getEndLine());
+    assertNotNull(pdss.get(1).getProperties());
+    assertEquals(2,pdss.get(1).getProperties().size());
+    assertEquals("HUnit",pdss.get(1).getProperties().get( "Build-Depends"));
+    assertEquals("A, B, C",pdss.get(1).getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES));
+
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss.get(2).getType());
+    assertEquals("program1",pdss.get(2).getName());
+    assertEquals(12,pdss.get(2).getStartLine());
+    assertEquals(16,pdss.get(2).getEndLine());
+    assertNotNull(pdss.get(2).getProperties());
+    assertEquals(3,pdss.get(2).getProperties().size());
+    assertEquals("Main.hs",pdss.get(2).getProperties().get( "Main-Is"));
+    assertEquals("prog1",pdss.get(2).getProperties().get( "Hs-Source-Dirs"));
+    assertEquals("A, B",pdss.get(2).getProperties().get( "Other-Modules"));
+
+
+    assertEquals(CabalSyntax.SECTION_EXECUTABLE,pdss.get(3).getType());
+    assertEquals("program2",pdss.get(3).getName());
+    assertEquals(17,pdss.get(3).getStartLine());
+    assertEquals(21,pdss.get(3).getEndLine());
+    assertNotNull(pdss.get(3).getProperties());
+    assertEquals(3,pdss.get(3).getProperties().size());
+    assertEquals("Main.hs",pdss.get(3).getProperties().get( "Main-Is"));
+    assertEquals("prog2",pdss.get(3).getProperties().get( "Hs-Source-Dirs"));
+    assertEquals("A, C, Utils",pdss.get(3).getProperties().get( "Other-Modules"));
+
+  }
+
   public void testParseSourceRep(){
     String content3=getContent( "SourceRep.cabal" );
     PackageDescription pd=PackageDescriptionLoader.load( content3 );

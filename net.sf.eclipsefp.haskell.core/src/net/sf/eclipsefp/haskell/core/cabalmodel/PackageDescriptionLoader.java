@@ -348,7 +348,12 @@ public class PackageDescriptionLoader {
       String section=line.trim();
       int ix=section.indexOf( ' ' );
       if (ix>-1){
-        section=section.substring( 0,ix );
+        section=section.substring( 0,ix ).trim();
+      } else {
+        ix=section.indexOf( '\t' );
+        if (ix>-1){
+          section=section.substring( 0,ix ).trim();
+        }
       }
       return section;
     }
