@@ -39,7 +39,7 @@ public class ModuleInclusionPP extends PropertyPage {
       IPath p=ResourceUtil.getSourceRelativePath( src, f );
       info.setFolders(p);
       info.setModuleName( f.getProjectRelativePath().removeFileExtension().lastSegment() );
-      mic.init( src, info.getQualifiedModuleName() ,false);
+      mic.init(f, src, info.getQualifiedModuleName() ,false);
     } else {
       mic.initNoSourceFolder();
     }
@@ -50,8 +50,7 @@ public class ModuleInclusionPP extends PropertyPage {
   @Override
   public boolean performOk() {
     if (info!=null){
-      info.setExposed( mic.getExposed() );
-      info.setIncluded( mic.getIncluded() );
+      mic.populateInfo( info );
       ModuleCreationOperation mco=new ModuleCreationOperation( info );
       mco.setGeneratedFile( (IFile)getElement() );
 

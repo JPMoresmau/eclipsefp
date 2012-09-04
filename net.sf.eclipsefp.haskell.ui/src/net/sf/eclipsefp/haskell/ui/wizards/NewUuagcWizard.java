@@ -63,8 +63,7 @@ public class NewUuagcWizard extends RevealAtEndWizard implements INewWizard {
     if( !page1.getModuleInclusionComposite().isInit() ) {
       page1.setPreviousPage( page0 );
     }
-    mci.setExposed( page1.getModuleInclusionComposite().getExposed() );
-    mci.setIncluded( page1.getModuleInclusionComposite().getIncluded() );
+    page1.getModuleInclusionComposite().populateInfo( mci );
     UuagcFileCreationOperator mco = new UuagcFileCreationOperator( mci,
         getInitialContents( page0.getUseHaskellSyntax() ), "ag",
         page0.getUseHaskellSyntax() );

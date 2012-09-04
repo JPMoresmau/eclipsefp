@@ -24,6 +24,7 @@ public class ModuleCreationInfo {
   private Set<PackageDescriptionStanza> included;
   private Set<PackageDescriptionStanza> exposed;
 
+  private PackageDescriptionStanza editorStanza;
   /**
    * are the source folders used to generate the qualified name
    */
@@ -123,6 +124,16 @@ public class ModuleCreationInfo {
 
   public void setFoldersQualify( final boolean foldersQualify ) {
     this.foldersQualify = foldersQualify;
+  }
+
+
+  public PackageDescriptionStanza getEditorStanza() {
+    return editorStanza;
+  }
+
+
+  public void setEditorStanza( final PackageDescriptionStanza editorStanza ) {
+    this.editorStanza = editorStanza;
   }
 
 

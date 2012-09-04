@@ -129,6 +129,14 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
       } finally {
         prov.disconnect( f );
       }
+      if (generatedFile!=null){
+        String esz=info.getEditorStanza()!=null?
+            info.getEditorStanza().getName()!=null?
+                info.getEditorStanza().getName()
+                  :""
+                    :null;
+        generatedFile.setPersistentProperty( BuildWrapperPlugin.EDITORSTANZA_PROPERTY, esz );
+      }
       // let the listener do its work
      // ScionPlugin.getScionInstance( generatedFile ).buildProjectForWorkspace( monitor, false , false);
     } catch( CoreException ex ) {

@@ -60,8 +60,7 @@ public class NewAlexWizard extends RevealAtEndWizard implements INewWizard {
     if( !page1.getModuleInclusionComposite().isInit() ) {
       page1.setPreviousPage( page0 );
     }
-    mci.setExposed( page1.getModuleInclusionComposite().getExposed() );
-    mci.setIncluded( page1.getModuleInclusionComposite().getIncluded() );
+    page1.getModuleInclusionComposite().populateInfo( mci );
     TemplateFileCreationOperation mco = new TemplateFileCreationOperation( mci, getInitialContents(), "x" );
 
     IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation( mco );

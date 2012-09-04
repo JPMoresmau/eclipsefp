@@ -37,6 +37,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 
 	public static QualifiedName 				 USERFLAGS_PROPERTY=new QualifiedName("EclipseFP", "UserFlags");
 	public static QualifiedName 				 EXTRAOPTS_PROPERTY=new QualifiedName("EclipseFP", "ExtraOpts");
+	public static QualifiedName 				 EDITORSTANZA_PROPERTY=new QualifiedName("EclipseFP", "EditorStanza");
 	
 	// The shared instance
 	private static BuildWrapperPlugin plugin;

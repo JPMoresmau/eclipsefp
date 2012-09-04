@@ -220,6 +220,17 @@ public class BWFacade {
 //		return flag;
 //	}
 	
+	private void addEditorStanza(IFile file,List<String> command){
+		try {
+			String editor=file.getPersistentProperty(BuildWrapperPlugin.EDITORSTANZA_PROPERTY);
+			if (editor!=null){
+				command.add("--component="+editor);
+			}
+		} catch (CoreException ce){
+			BuildWrapperPlugin.logError(ce.getLocalizedMessage(), ce);
+		}
+	}
+	
 	/**
 	 * build one file
 	 * @param file the file to build the temp contents
@@ -231,6 +242,7 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("build1");
 		command.add("--file="+path);
+		addEditorStanza(file,command);
 		//long t0=System.currentTimeMillis();
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
@@ -497,6 +509,7 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("outline");
 		command.add("--file="+path);
+		addEditorStanza(file,command);
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		or=new OutlineResult();
@@ -545,6 +558,7 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("tokentypes");
 		command.add("--file="+path);
+		addEditorStanza(file,command);
 		JSONArray arr=run(command,ARRAY);
 		//long t01=System.currentTimeMillis();
 		List<TokenDef> cps;
@@ -576,6 +590,7 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("getbuildflags");
 		command.add("--file="+path);
+		addEditorStanza(file,command);
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null){
 			if (arr.length()>1){
@@ -598,6 +613,7 @@ public class BWFacade {
 		command.add("occurrences");
 		command.add("--file="+path);
 		command.add("--token="+s);
+		addEditorStanza(file,command);
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		List<Occurrence> cps;
@@ -632,6 +648,7 @@ public class BWFacade {
 		command.add("--file="+path);
 		command.add("--line="+location.getStartLine());
 		command.add("--column="+(location.getStartColumn()+1));
+		addEditorStanza(file,command);
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
 		ThingAtPoint tap=null;

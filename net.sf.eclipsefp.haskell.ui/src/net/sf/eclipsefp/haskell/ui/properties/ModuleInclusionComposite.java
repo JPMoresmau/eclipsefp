@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.ui.properties;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -11,13 +13,16 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.ModuleInclusionType;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,6 +39,25 @@ import org.eclipse.swt.widgets.Label;
 public class ModuleInclusionComposite extends Composite {
   private final Set<PackageDescriptionStanza> included=new HashSet<PackageDescriptionStanza>();
   private final Set<PackageDescriptionStanza> exposed=new HashSet<PackageDescriptionStanza>();
+  private PackageDescriptionStanza editorStanza=null;
+
+  private final Collection<Button> editorStanzaButtons=new ArrayList<Button>();
+
+  private final SelectionListener editorButtonL=new SelectionAdapter() {
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+     */
+    @Override
+    public void widgetSelected( final SelectionEvent e ) {
+      if (((Button)e.widget).getSelection()){
+        for (Button b:editorStanzaButtons){
+          if (b!=e.widget){
+            b.setSelection( false );
+          }
+        }
+      }
+    }
+  };
 
   /**
    * have we init at all
@@ -63,14 +87,20 @@ public class ModuleInclusionComposite extends Composite {
    * @param module the module name
    * @param isNew is the module being created?
    */
-  public void init(final IResource srcPath, final String module,final boolean isNew){
+  public void init(final IFile file,final IResource srcPath, final String module,final boolean isNew){
     init=true;
     for (Control c:getChildren()){
       c.dispose();
     }
     included.clear();
     exposed.clear();
+    editorStanzaButtons.clear();
     try {
+      String editor=null;
+      if (file!=null){
+        editor=file.getPersistentProperty( BuildWrapperPlugin.EDITORSTANZA_PROPERTY );
+      }
+
       PackageDescription cabal=PackageDescriptionLoader.load( BuildWrapperPlugin.getCabalFile( srcPath.getProject() ));
       String path=srcPath.getProjectRelativePath().toOSString();
       if (path.length()==0){
@@ -78,11 +108,11 @@ public class ModuleInclusionComposite extends Composite {
       }
       List<PackageDescriptionStanza> l=cabal.getStanzasBySourceDir().get( path );
       if (l!=null && l.size()>0){
-        GridLayout gl=new GridLayout(3,false);
+        GridLayout gl=new GridLayout(4,false);
         setLayout( gl );
 
         GridData gdTitle=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-        gdTitle.horizontalSpan=3;
+        gdTitle.horizontalSpan=4;
         Label lTitle=new Label( this, SWT.NONE );
         lTitle.setText( UITexts.module_inclusion_title );
         lTitle.setLayoutData( gdTitle );
@@ -96,6 +126,8 @@ public class ModuleInclusionComposite extends Composite {
         Label lExpose=new Label( this, SWT.NONE );
         lExpose.setText( UITexts.module_inclusion_field_expose );
 
+        Label lEditor=new Label( this, SWT.NONE );
+        lEditor.setText( UITexts.module_inclusion_field_editor);
 
         Collections.sort( l,new Comparator<PackageDescriptionStanza>() {
           @Override
@@ -120,6 +152,20 @@ public class ModuleInclusionComposite extends Composite {
           final Button bExpose=new Button(this,SWT.CHECK);
           bExpose.setEnabled( CabalSyntax.SECTION_LIBRARY.equals( pd.getType() ) );
 
+          final Button bEditor=new Button(this,SWT.RADIO);
+          bEditor.setEnabled( true );
+          editorStanzaButtons.add( bEditor );
+          bEditor.addSelectionListener( editorButtonL );
+          bEditor.addSelectionListener( new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+              if (bEditor.getSelection()){
+                editorStanza=pd;
+              } else {
+                editorStanza=null;
+              }
+            }
+          } );
           if (bInclude.isEnabled()){
             bInclude.addSelectionListener( new SelectionAdapter() {
               @Override
@@ -170,6 +216,12 @@ public class ModuleInclusionComposite extends Composite {
             }
 
           }
+          if (editor!=null){
+            if (editor.equals( pd.getName() ) || (editor.equals( "" ) && pd.getName()==null)){
+              bEditor.setSelection( true );
+              editorStanza=pd;
+            }
+          }
         }
       }
 
@@ -188,5 +240,19 @@ public class ModuleInclusionComposite extends Composite {
 
   public Set<PackageDescriptionStanza> getIncluded() {
     return included;
+  }
+
+
+  /**
+   * @return the editorStanza
+   */
+  public PackageDescriptionStanza getEditorStanza() {
+    return editorStanza;
+  }
+
+  public void populateInfo(final ModuleCreationInfo info){
+    info.setExposed( getExposed() );
+    info.setIncluded( getIncluded() );
+    info.setEditorStanza( getEditorStanza() );
   }
 }

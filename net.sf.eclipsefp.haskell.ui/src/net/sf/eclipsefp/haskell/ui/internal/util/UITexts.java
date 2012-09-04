@@ -295,6 +295,7 @@ public final class UITexts extends NLS {
   public static String module_inclusion_field_section;
   public static String module_inclusion_field_include;
   public static String module_inclusion_field_expose;
+  public static String module_inclusion_field_editor;
   public static String module_inclusion_page_title;
   public static String module_inclusion_page_description;
   public static String module_inclusion_error;
