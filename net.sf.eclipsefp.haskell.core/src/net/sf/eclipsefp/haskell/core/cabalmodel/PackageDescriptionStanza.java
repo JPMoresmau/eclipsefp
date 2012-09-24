@@ -185,6 +185,7 @@ public class PackageDescriptionStanza {
     ValuePosition oldVP=getPositions().get( field );
     int indent=0;
     int subIndent=0;
+    int insertSub=0;
     StringBuilder sb=new StringBuilder();
     if (oldVP==null){
       oldVP=new ValuePosition(getEndLine(),getEndLine(),0);
@@ -204,15 +205,19 @@ public class PackageDescriptionStanza {
         spaces=indent-(key.length() +1+getIndent());
         if (needNL && eLast!=null){
           addLeadingNL(sb,oldVP,eLast);
+          //insertSub+=PlatformUtil.NL.length();
         }
       }
       spaces=Math.max( spaces, 1 );
       for (int a=0;a<spaces;a++){
         sb.append( ' ');
       }
+      insertSub=sb.length();
+
     } else {
       subIndent=oldVP.getSubsequentIndent();
       indent=oldVP.getInitialIndent();
+      insertSub=0;
     }
     if (realValue==null){
       getPositions().remove( key );
@@ -244,9 +249,9 @@ public class PackageDescriptionStanza {
       }
       if (count>1){ // when several line, start at next one
         for (int a=0;a<subIndent;a++){
-          sb.insert( 0, ' ');
+          sb.insert( insertSub, ' ');
         }
-        sb.insert( 0, PlatformUtil.NL );
+        sb.insert( insertSub, PlatformUtil.NL );
         count++;
       }
       ValuePosition newVP=new ValuePosition(oldVP.getStartLine(),oldVP.getStartLine()+count,indent);

@@ -397,7 +397,14 @@ public class CabalModelTest extends TestCase {
     assertEquals(17,rvp.getEndLine());
 
     String s=pd.dump();
+    System.out.println(s);
     assertTrue(s.contains( "  First line"+PlatformUtil.NL+"  ."+PlatformUtil.NL+"  Line2" ) );
+    pd=PackageDescriptionLoader.load( s );
+
+    String data="docs/doc1.txt, "+PlatformUtil.NL+"docs/doc2.txt";
+    rvp=pdss.get(0).update( CabalSyntax.FIELD_DATA_FILES, data );
+    assertEquals(PlatformUtil.NL+CabalSyntax.FIELD_DATA_FILES+":      "+PlatformUtil.NL+"                 docs/doc1.txt, "+PlatformUtil.NL+"                 docs/doc2.txt"+PlatformUtil.NL,rvp.getRealValue());
+
   }
 
   public void testList(){

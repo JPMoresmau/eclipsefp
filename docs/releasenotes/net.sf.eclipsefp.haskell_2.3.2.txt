@@ -13,6 +13,8 @@ Fixes:
 	- accept tab between section type and name in Cabal files
 	- treat filenames as default encoding, not utf8
 	- only accept ascii characters in project names, since accented characters do not work well with gcc and such
+	- adding a list to cabal (example: data-files) via the ui does not mess the cabal file
+	- synchronize operations do not block other operations
 
 Features:
 	- Specify the cabal stanza you want to use settings from when checking a file in the editor
