@@ -345,7 +345,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     ILaunchConfigurationType configType  = launchManager.getLaunchConfigurationType( configTypeId );
     final ILaunchConfigurationWorkingCopy wc=configType.newInstance( null,launchManager.generateLaunchConfigurationName(title) );//launchManager.generateUniqueLaunchConfigurationNameFrom( title));
 
-    // if private, we don't get the save dialog for unsave files in project
+    // if private, we don't get the save dialog for unsaved files in project
     wc.setAttribute( IDebugUIConstants.ATTR_PRIVATE, prj==null );
     wc.setAttribute( IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false );
     wc.setAttribute( IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true );
