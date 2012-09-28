@@ -44,6 +44,10 @@ public class InstallExecutableRunnable implements Runnable {
   @Override
   public void run(){
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
+    if (cabalExecutable==null){
+      HaskellUIPlugin.log( UITexts.noCabalImplementationForInstall_error, IStatus.ERROR );
+      return;
+    }
     final File folder=new File(cabalExecutable).getParentFile();
     final LinkedList<Command> commands=new LinkedList<Command>();
 

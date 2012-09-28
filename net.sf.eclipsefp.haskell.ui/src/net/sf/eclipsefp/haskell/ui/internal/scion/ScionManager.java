@@ -717,7 +717,7 @@ public class ScionManager implements IResourceChangeListener {
    * the instance to the instances map.
    */
   private synchronized void startInstance( final IProject project ) {
-    if (BuildWrapperPlugin.getFacade( project )==null){
+    if (BuildWrapperPlugin.getFacade( project )==null && CabalImplementationManager.getCabalExecutable()!=null){
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
 

@@ -95,6 +95,10 @@ public class InstallMissingPackage extends MarkerCompletion {
       @Override
       public void apply( final IDocument arg0 ) {
         final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
+        if (cabalExecutable==null){
+          HaskellUIPlugin.log( UITexts.noCabalImplementationForInstall_error, IStatus.ERROR );
+          return;
+        }
         final List<String> commands = new ArrayList<String>();
         commands.add( cabalExecutable );
         commands.add("install");

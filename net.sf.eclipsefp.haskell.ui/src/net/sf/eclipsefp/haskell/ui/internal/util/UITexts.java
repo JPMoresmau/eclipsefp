@@ -454,6 +454,7 @@ public final class UITexts extends NLS {
   public static String noCabalImplementation_title;
   public static String noCabalImplementation_message;
   public static String zerolenCabalExecutable_message;
+  public static String noCabalImplementationForInstall_error;
 
   public static String openDefinition_open_job;
   public static String openDefinition_select_job;
