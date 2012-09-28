@@ -167,8 +167,8 @@ public class ScionManager implements IResourceChangeListener {
     if (serverExecutable!=null){
       browserExecutablePath = new Path(serverExecutable);
     }
-
-    if (buildWrapperExecutablePath==null || browserExecutablePath==null){
+    // can't install if no cabal executable
+    if ((buildWrapperExecutablePath==null || browserExecutablePath==null) && CabalImplementationManager.getCabalExecutable()!=null){
       boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE );
       if (!ignore){
         final Display display = HaskellUIPlugin.getStandardDisplay();
