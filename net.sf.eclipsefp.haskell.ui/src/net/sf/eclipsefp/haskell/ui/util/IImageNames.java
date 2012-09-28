@@ -92,6 +92,7 @@ public interface IImageNames {
 
   String HACKAGE_UPDATE= ID+".HACKAGE_UPDATE"; //$NON-NLS-1$
   String HACKAGE_INSTALL= ID+".HACKAGE_INSTALL"; //$NON-NLS-1$
+  String AUTODETECT= ID+".AUTODETECT"; //$NON-NLS-1$
 
   String SEARCH_LINE=ID+".SEARCH_LINE"; //$NON-NLS-1$
 }

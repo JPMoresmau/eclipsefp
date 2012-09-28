@@ -18,6 +18,7 @@ Fixes:
 
 Features:
 	- Specify the cabal stanza you want to use settings from when checking a file in the editor
+	- In preferences for executables, you can install the executable from Haskage
 
 Internal:
 

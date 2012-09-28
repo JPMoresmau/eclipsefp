@@ -7,15 +7,17 @@ package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
@@ -31,21 +33,38 @@ import org.eclipse.osgi.util.NLS;
  */
 public class InstallExecutableRunnable implements Runnable {
   private boolean cabalUpdate=true;
-  private boolean buildWrapper=true;
-  private boolean scionBrowser=true;
-  private boolean global=true;
-
-
+  //private boolean buildWrapper=true;
+  //private boolean scionBrowser=true;
+  private boolean global=false;
+  private final List<Package> packages=new ArrayList<Package>();
+  private Runnable nextRunnable;
+  private final List<String> errors=new ArrayList<String>();
+  private final Map<String,File> files=new HashMap<String, File>();
 
   public InstallExecutableRunnable( ) {
     super( );
   }
 
+  private void logError(final String msg){
+    errors.add(msg);
+    HaskellUIPlugin.log( msg, IStatus.ERROR );
+  }
+
+  private void logError(final Throwable t){
+    errors.add(t.getLocalizedMessage());
+    HaskellUIPlugin.log( t);
+  }
+
   @Override
   public void run(){
+    errors.clear();
+    files.clear();
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable==null){
-      HaskellUIPlugin.log( UITexts.noCabalImplementationForInstall_error, IStatus.ERROR );
+      logError( UITexts.noCabalImplementationForInstall_error);
+      if (getNextRunnable()!=null){
+        getNextRunnable().run();
+      }
       return;
     }
     final File folder=new File(cabalExecutable).getParentFile();
@@ -67,7 +86,10 @@ public class InstallExecutableRunnable implements Runnable {
         }
         binDir=new File(s,"bin");
       } catch (Exception e){
-        HaskellUIPlugin.log( e );
+        logError( e );
+        if (getNextRunnable()!=null){
+          getNextRunnable().run();
+        }
         return;
       }
     }
@@ -75,11 +97,15 @@ public class InstallExecutableRunnable implements Runnable {
     if (cabalUpdate){
       commands.add(new Command(UITexts.cabalUpdateProgress,Arrays.asList( cabalExecutable , "update" )));
     }
+    /*
     if (buildWrapper){
       commands.add(new Command(UITexts.builWrapperInstallProgress,"buildwrapper",IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","buildwrapper", global?"--global": "--user" )));
     }
     if (scionBrowser){
       commands.add(new Command(UITexts.scionBrowserInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
+    }*/
+    for (Package p:packages){
+      commands.add(new Command(NLS.bind( UITexts.installExecutableProgress,p.name),p.name,p.getName(),Arrays.asList( cabalExecutable , "install",p.name, global?"--global": "--user" )));
     }
     final File fBinDir=binDir;
 
@@ -98,10 +124,13 @@ public class InstallExecutableRunnable implements Runnable {
                 File f=new File(fBinDir,FileUtil.makeExecutableName( c.exeName ));
                 if (f.exists()){
                   // set preference
-                  HaskellUIPlugin.getDefault().getPreferenceStore().setValue(c.prefName,f.getAbsolutePath());
+                  if (c.prefName!=null){
+                    HaskellUIPlugin.getDefault().getPreferenceStore().setValue(c.prefName,f.getAbsolutePath());
+                  }
+                  files.put( c.exeName, f);
                 } else {
                   // oops, write message
-                  HaskellUIPlugin.log( NLS.bind( UITexts.installExecutableMissing, f.getAbsolutePath() ), IStatus.ERROR );
+                  logError( NLS.bind( UITexts.installExecutableMissing, f.getAbsolutePath() ) );
                 }
                 orig.run();
               }
@@ -116,12 +145,16 @@ public class InstallExecutableRunnable implements Runnable {
               try {
                 AbstractHaskellLaunchDelegate.runInConsole( null, c.commands, folder, c.title, true,fNext );
               } catch (CoreException ce){
-                HaskellUIPlugin.log( ce );
+                logError( ce );
               }
 
             }
           });
 
+        } else {
+          if (nextRunnable!=null){
+            nextRunnable.run();
+          }
         }
       }
     };
@@ -137,21 +170,21 @@ public class InstallExecutableRunnable implements Runnable {
     this.cabalUpdate = cabalUpdate;
   }
 
-  public boolean isBuildWrapper() {
-    return buildWrapper;
-  }
-
-  public void setBuildWrapper( final boolean buildWrapper ) {
-    this.buildWrapper = buildWrapper;
-  }
-
-  public boolean isScionBrowser() {
-    return scionBrowser;
-  }
-
-  public void setScionBrowser( final boolean scionBrowser ) {
-    this.scionBrowser = scionBrowser;
-  }
+//  public boolean isBuildWrapper() {
+//    return buildWrapper;
+//  }
+//
+//  public void setBuildWrapper( final boolean buildWrapper ) {
+//    this.buildWrapper = buildWrapper;
+//  }
+//
+//  public boolean isScionBrowser() {
+//    return scionBrowser;
+//  }
+//
+//  public void setScionBrowser( final boolean scionBrowser ) {
+//    this.scionBrowser = scionBrowser;
+//  }
 
   public boolean isGlobal() {
     return global;
@@ -162,10 +195,44 @@ public class InstallExecutableRunnable implements Runnable {
   }
 
   /**
+   * @return the packages
+   */
+  public List<Package> getPackages() {
+    return packages;
+  }
+
+
+  public Runnable getNextRunnable() {
+    return nextRunnable;
+  }
+
+
+  public void setNextRunnable( final Runnable nextRunnable ) {
+    this.nextRunnable = nextRunnable;
+  }
+
+
+
+  /**
+   * @return the files
+   */
+  public Map<String, File> getFiles() {
+    return files;
+  }
+
+
+  /**
+   * @return the errors
+   */
+  public List<String> getErrors() {
+    return errors;
+  }
+
+  /**
    * internal structure for a command
    *
    */
-  private class Command {
+  private static class Command {
     /**
      * title to display on top of console
      */
@@ -198,5 +265,40 @@ public class InstallExecutableRunnable implements Runnable {
         this.prefName = prefName;
       }
   }
+
+  public static class Package {
+    private String name;
+    private String preference;
+
+
+
+    public Package( final String name, final String preference ) {
+      super();
+      this.name = name;
+      this.preference = preference;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName( final String name ) {
+      this.name = name;
+    }
+
+
+    public String getPreference() {
+      return preference;
+    }
+
+    public void setPreference( final String preference ) {
+      this.preference = preference;
+    }
+
+
+  }
+
+
+
 
 }

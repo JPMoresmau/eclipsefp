@@ -126,10 +126,17 @@ public class InstallExecutableDialog extends Dialog {
   @Override
   protected void okPressed() {
     final InstallExecutableRunnable j=new InstallExecutableRunnable();
-    j.setBuildWrapper( buildWrapper );
+    if (buildWrapper){
+      j.getPackages().add( new InstallExecutableRunnable.Package( "buildwrapper", IPreferenceConstants.BUILDWRAPPER_EXECUTABLE) );
+    }
+    if (scionBrowser){
+      j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
+
+    }
+    //j.setBuildWrapper( buildWrapper );
     j.setCabalUpdate( true );
     j.setGlobal( !bUser.getSelection() );
-    j.setScionBrowser( scionBrowser );
+    //j.setScionBrowser( scionBrowser );
     new Thread(j).start();
     super.okPressed();
   }

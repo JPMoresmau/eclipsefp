@@ -2,12 +2,16 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 
@@ -91,9 +95,23 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
         init(name, labelText);
         this.enforceAbsolute = enforceAbsolute;
         setErrorMessage(UITexts.executableFileFieldEditor_errorDoesNotExist);
-        setChangeButtonText(JFaceResources.getString("openBrowse"));//$NON-NLS-1$
+        setChangeButtonText(UITexts.dots);
         setValidateStrategy(validationStrategy);
         createControl(parent);
+    }
+
+    /* (non-Javadoc)
+    * @see org.eclipse.jface.preference.StringButtonFieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
+    */
+    @Override
+    protected void doFillIntoGrid( final Composite parent, final int numColumns ) {
+
+      super.doFillIntoGrid( parent, numColumns );
+      Button b=getChangeControl( parent );
+      b.setText( "" );
+      b.setImage( HaskellUIImages.getImage( IImageNames.FOLDER )  );
+      b.setToolTipText( JFaceResources.getString("openBrowse"));//$NON-NLS-1$
+      b.setLayoutData( new GridData() );
     }
 
     /* (non-Javadoc)

@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public final class UITexts extends NLS {
 
   // message fields
+  public static String dots;
+
   public static String cabalFormEditor_tabSource;
 
   public static String cabalHyperLinkDetector_errorTitle;
@@ -107,6 +109,9 @@ public final class UITexts extends NLS {
   public static String autodetectButton_text;
   public static String autodetectButton_errorTitle;
   public static String autodetectButton_errorMessage;
+  public static String installHackageButton_label;
+  public static String installHackageButton_text;
+  public static String installHackageButton_errorTitle;
   public static String executable_label;
 
   public static String ignore_missing_button;
@@ -426,8 +431,9 @@ public final class UITexts extends NLS {
   public static String scionServerProgress_subtask2;
   public static String cabalUpdateProgress;
   public static String installExecutablesProgress;
-  public static String builWrapperInstallProgress;
-  public static String scionBrowserInstallProgress;
+  //public static String builWrapperInstallProgress;
+  //public static String scionBrowserInstallProgress;
+  public static String installExecutableProgress;
   public static String installExecutableMissing;
   public static String executablesmissing_install;
   public static String executablesmissing_user;
