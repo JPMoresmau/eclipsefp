@@ -23,7 +23,9 @@
 		the top of the workbench. This step changes the perspective to
 		set up the Eclipse workbench for Haskell development. You can
 		click the "Click to Perform" button to have the Haskell
-		perspective opened automatically.
+		perspective opened automatically.<br/>
+		Note that if you've just install the EclipseFP plugins, you may be ask to install executables necessary for EclipseFP from Hackage.<br/>
+		Please install these executables unless you've installed the correct versions in a non-standard location, in which case you can use the Haskell preferences pages to indicate where the executables can be found.
 	</description>
 </item>
 
