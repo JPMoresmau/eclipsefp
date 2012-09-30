@@ -40,36 +40,18 @@
 		this step with the &quot;Click to Skip&quot; button.) Select File &gt; New &gt; 
 		Haskell Project. The 
 		&quot;New Haskell Project&quot; wizard is automatically displayed when you 
-		click the &quot;Click to Perform&quot; button.
+		click the &quot;Click to Perform&quot; button. Just enter the project name, leaving the "Executable" checkbox selected.
 	</description>
 </item>
 
 <item
 	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/wizards.html#newModule"
-	title="Create a Main module"
+	title="Write some code in the Main module"
 	skip="true">
-	<action
-		pluginId="net.sf.eclipsefp.haskell.ui"
-		class="net.sf.eclipsefp.haskell.ui.actions.OpenNewModuleWizard"/>
 	<description>
-		We create now a Main module in the Haskell project. You may do this by 
-		either clicking the "Click to Perform" button below to launch the
-		New Haskell Module wizard, or you may use the Eclipse tools to
-		do it, by using the File &gt; New &gt; Haskell module action. 
-		Enter "Main" as module name. If you do not use the "Click to Perform" 
-		button below, click the "Click to Skip" button to advance to the next 
-		step in building your application.
-	</description>
-</item>
-
-<item
-	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/gettingStarted.html#createSource"
-	title="Write some code">
-	<description>
-		In the source of the module, write the following line right below
-		the already generated code: <b>main = putStrLn &quot;Hello world!&quot;</b> Once you 
-		save the file, it is automatically compiled and linked. Click the 
-		&quot;Click to Complete&quot; button below when finished.
+		Open the src/Main.hs file under your project (it was created for you) and replace "undefined" by some code, for example <b>putStrLn &quot;Hello world!&quot;</b>.
+		Once you save the file, it is automatically compiled and linked if your workspace preferences are set to "Build automatically". If not, right click on your project and choose <b>Build Project</b>
+		To create a new module, use the File &gt; New &gt; Haskell module action.
 	</description>
 </item>
 
@@ -77,8 +59,7 @@
 	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/gettingStarted.html#run"
 	title="Launch the executable">
 	<description>
-	    The executable is located in the bin/ folder of the project.
-	    Select it, right-click it and choose Run As &gt; Haskell Application
+	    Right-click your project and choose Run As &gt; Haskell Application
 	    from the context menu. &apos;Hello world!&apos; should be printed in your 
 	    &quot;Console&quot; view.
 	</description>
