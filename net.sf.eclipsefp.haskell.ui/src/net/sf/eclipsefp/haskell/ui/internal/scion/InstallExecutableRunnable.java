@@ -105,7 +105,13 @@ public class InstallExecutableRunnable implements Runnable {
       commands.add(new Command(UITexts.scionBrowserInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
     }*/
     for (Package p:packages){
-      commands.add(new Command(NLS.bind( UITexts.installExecutableProgress,p.name),p.name,p.getName(),Arrays.asList( cabalExecutable , "install",p.name, global?"--global": "--user" )));
+      List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getName(), global?"--global": "--user" ));
+
+      File f=new File(binDir,FileUtil.makeExecutableName( p.getName() ));
+      if (!f.exists()){ // the exe does not exist, we force reinstall to make sure it wasn't deleted manually
+        args.add( "--reinstall" );
+      }
+      commands.add(new Command(NLS.bind( UITexts.installExecutableProgress,p.getName()),p.getName(),p.getPreference(),args));
     }
     final File fBinDir=binDir;
 

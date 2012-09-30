@@ -37,6 +37,8 @@ public class InstallExecutableDialog extends Dialog {
   private Button bUser;
   private Button bIgnore;
 
+  private Button bExtras;
+
   public InstallExecutableDialog( final Shell parentShell,final boolean buildWrapper, final String buildWrapperMinVersion,
                                                           final boolean scionBrowser, final String scionBrowserMinVersion) {
     super( parentShell );
@@ -97,12 +99,21 @@ public class InstallExecutableDialog extends Dialog {
     gd.horizontalSpan=2;
     l.setLayoutData( gd );
 
+    bExtras=new Button(c,SWT.CHECK);
+    bExtras.setText( UITexts.executables_extra );
+    bExtras.setSelection( true );
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    bExtras.setLayoutData( gd );
+
     bUser=new Button(c,SWT.CHECK);
     bUser.setText( UITexts.executablesmissing_user );
     bUser.setSelection( true );
 
     bIgnore=new Button(c,SWT.CHECK);
     bIgnore.setText( UITexts.executablesmissing_ignore);
+
+
 
     return c;
   }
@@ -131,7 +142,12 @@ public class InstallExecutableDialog extends Dialog {
     }
     if (scionBrowser){
       j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
-
+    }
+    if (bExtras.getSelection()){
+      j.getPackages().add( new InstallExecutableRunnable.Package( "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH) );
+      j.getPackages().add( new InstallExecutableRunnable.Package( "hlint", IPreferenceConstants.HLINT_EXECUTABLE) );
+      j.getPackages().add( new InstallExecutableRunnable.Package( "stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE) );
+      j.getPackages().add( new InstallExecutableRunnable.Package( "SourceGraph",IPreferenceConstants.SOURCEGRAPH_EXECUTABLE) );
     }
     //j.setBuildWrapper( buildWrapper );
     j.setCabalUpdate( true );
