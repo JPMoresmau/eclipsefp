@@ -80,45 +80,47 @@ public class ChartCanvas extends Canvas {
         try {
             PluginSettings ps = PluginSettings.instance();
             render = ps.getDevice("dv.SWT");
+            if (render!=null){
+		        addPaintListener(new PaintListener() {
+		
+		            public void paintControl(PaintEvent e) {
+		
+		                Composite co = (Composite) e.getSource();
+		                final Rectangle rect = co.getClientArea();
+		                
+		                render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, e.gc);
+		
+		                if (cachedImage == null) {
+		                    buildChart();
+		                    drawToCachedImage(rect);
+		                }
+		                e.gc.drawImage(cachedImage,
+		                        0,
+		                        0,
+		                        cachedImage.getBounds().width,
+		                        cachedImage.getBounds().height,
+		                        0,
+		                        0,
+		                        rect.width,
+		                        rect.height);
+		
+		            }
+		        });
+		
+		        addControlListener(new ControlAdapter() {
+		
+		            public void controlResized(ControlEvent e) {
+		            	
+		            	render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, new GC(ChartCanvas.this));
+		                buildChart();
+		                cachedImage = null;
+		            }
+		        });
+            }
         } catch (ChartException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
+        	ProfilerPlugin.log(IStatus.ERROR, ex.getLocalizedMessage(), ex);
         }
-
-        addPaintListener(new PaintListener() {
-
-            public void paintControl(PaintEvent e) {
-
-                Composite co = (Composite) e.getSource();
-                final Rectangle rect = co.getClientArea();
-                
-                render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, e.gc);
-
-                if (cachedImage == null) {
-                    buildChart();
-                    drawToCachedImage(rect);
-                }
-                e.gc.drawImage(cachedImage,
-                        0,
-                        0,
-                        cachedImage.getBounds().width,
-                        cachedImage.getBounds().height,
-                        0,
-                        0,
-                        rect.width,
-                        rect.height);
-
-            }
-        });
-
-        addControlListener(new ControlAdapter() {
-
-            public void controlResized(ControlEvent e) {
-            	
-            	render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, new GC(ChartCanvas.this));
-                buildChart();
-                cachedImage = null;
-            }
-        });
     }
 
     /**

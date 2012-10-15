@@ -25,6 +25,7 @@
             contributorClass="net.sf.eclipsefp.haskell.profiler.actions.ProfilerViewerActionContributor"
             extensions="hp"
             id="net.sf.eclipsefp.haskell.profiler.internal.editors.ProfilerViewer"
+            default="true"
             name="%profilerViewerName">
          <contentTypeBinding
                contentTypeId="net.sf.eclipsefp.haskell.contenttypes.profiler">

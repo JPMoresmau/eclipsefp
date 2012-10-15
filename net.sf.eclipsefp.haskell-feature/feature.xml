@@ -168,4 +168,11 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          version="2.3.1"
          unpack="false"/>
 
+   <plugin
+         id="net.sf.eclipsefp.haskell.profiler"
+         download-size="0"
+         install-size="0"
+         version="2.3.2"
+         unpack="false"/>
+
 </feature>

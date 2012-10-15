@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import net.sf.eclipsefp.haskell.profiler.ProfilerPlugin;
 import net.sf.eclipsefp.haskell.profiler.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.profiler.model.Job;
 import net.sf.eclipsefp.haskell.profiler.model.Sample;
@@ -39,6 +40,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
@@ -109,6 +111,7 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 				i++;
 			}
 		} catch (Exception e) {
+			ProfilerPlugin.log(IStatus.ERROR, e.getLocalizedMessage(), e);
 			throw new PartInitException(Status.CANCEL_STATUS);
 		}
 	}

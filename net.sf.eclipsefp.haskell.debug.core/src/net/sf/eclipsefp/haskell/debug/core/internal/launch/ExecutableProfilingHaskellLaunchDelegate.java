@@ -106,13 +106,12 @@ public class ExecutableProfilingHaskellLaunchDelegate extends
     }
 
     final File fileToOpen = new File( newFilename );
-
     Display.getDefault().syncExec( new Runnable() {
 
       @Override
       public void run() {
         try {
-          if( fileToOpen.exists() && fileToOpen.isFile() ) {
+          if( fileToOpen.exists() && fileToOpen.isFile() && fileToOpen.length()>0) {
             // Refresh workspace
             if ( projectName != null ) {
               IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );

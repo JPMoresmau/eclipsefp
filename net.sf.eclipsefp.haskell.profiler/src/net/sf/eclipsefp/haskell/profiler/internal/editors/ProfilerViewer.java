@@ -23,7 +23,6 @@ public class ProfilerViewer extends EditorPart {
 
 	public ProfilerViewer() {
 		super();
-		
 		try {
 			// class in birt model
 			this.getClass().getClassLoader().loadClass("org.eclipse.birt.chart.model.Chart");
