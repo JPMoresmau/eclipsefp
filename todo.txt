@@ -2,21 +2,29 @@
 	-> install package
 	-> event when installing packages
 		-> parse package name
-		-> clean and rebuild projects that are broken because of this missing package
+		-> clean and rebuild projects that are broken because of this missing package if automatic build is enabled
 
-- global action to remove all useless imports
+- global action to remove all useless imports (in file editor, on several files in navigator)
 - global action to clean all imports: only import what's needed
-
-- format using haskell-src-exts
-	- doesn't support comments
-- format using scan
-	- very limited	
-- format using stylish-haskell
+	-> from import Package.Module to import Package.Module(Type(Constructor), function)
 
 - show packages in error in Cabal Packages view (error overlay on icon) + errors + enable install button
 	- list of packages in error
 
+- code navigation like chris done? http://dl.dropbox.com/u/62227452/Screenshots/code-navigationz-moving.ogv
+	keep locations from ast? 
+	Does Eclipse provide easy way to do that in the editor?
+
+
+- latest version of haskell-src-exts exposes lexer, would that be better to use than GHC lexer?
+
 - achievements!
+	- causing a GHC panic "the impossible happened"
+	- big functions: more than n lines?
+	- more than N Language extensions
+	- haddock comment much longer than function
+	- more than N dependent packages in cabal file
+	
 
 - "visual programming"
 	- define expressions
@@ -36,8 +44,6 @@
 - files not haskell in source folders could go into data-files automatically
 
 
-
-
 - run Ghci with proper flags done partially
 	- ask which cabal component to take
 	- what about conditional in cabal (like scion: if ghc impl...)
@@ -46,6 +52,7 @@
 
 .ghci file parsing/editor?? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
 
+- integrate with hspec
 - integrate analysis tools like hpc, HaskaBelle
 - integrate runtime tools like criterion
 - integrate HaRe for refactoring?
@@ -58,10 +65,8 @@
 
 - add Haskell nature + related files to existing project
 
-- import management (order import, only import what's needed, add proper import for function?)
-
 - project rename
-- module rename (rename file + module name + imports ) (in cabal already done)
+- module rename (rename file + module name + imports ) (in cabal already done) -> done, to check
 
 - CAPRI http://www.haskell.org/haskellwiki/Capri to install scion
 	- built-in -> install global/local/project
