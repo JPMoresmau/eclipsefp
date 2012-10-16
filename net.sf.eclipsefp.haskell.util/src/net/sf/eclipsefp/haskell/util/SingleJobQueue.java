@@ -42,6 +42,19 @@ public class SingleJobQueue {
 	}
 	
 	/**
+	 * close the queue: cancel current job and remove next
+	 */
+	public void close(){
+		synchronized (lock){
+			next=null;
+			if (current!=null){
+				current.cancel();
+			}
+			current=null;
+		}
+	}
+	
+	/**
 	 * launch the current job with a listener that will launch the waiting job on completion
 	 */
 	private void launchCurrent(){

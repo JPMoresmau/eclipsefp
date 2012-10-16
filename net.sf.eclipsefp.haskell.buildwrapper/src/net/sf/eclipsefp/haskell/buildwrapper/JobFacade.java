@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -128,6 +129,22 @@ public class JobFacade  {
 		sj.schedule();
 	}
 	
+	/**
+	 * a simple rule only conflicting with itself
+	 */
+	private static final ISchedulingRule synchronizeRule=new ISchedulingRule() {
+		
+		@Override
+		public boolean isConflicting(ISchedulingRule arg0) {
+			return this==arg0;
+		}
+		
+		@Override
+		public boolean contains(ISchedulingRule arg0) {
+			return this==arg0;
+		}
+	};
+	
 	private Job getSynchronizeJob(final boolean force) {
 		final String jobNamePrefix = NLS.bind(BWText.job_synchronize, getProject().getName());
 
@@ -144,8 +161,11 @@ public class JobFacade  {
 	        }
 	        
 	      };
-	      //
-	      buildJob.setRule( getProject().getWorkspace().getRoot() );
+	      // why? 
+	      // build is a project only rule, but synchronize is hard on the disk, so we only want one synchronize at the same time
+	      // but we don't want buildJob.setRule( getProject().getWorkspace().getRoot() ); because then any other operation will wait for synchronize
+	      // so we only disallow concurrent synchronize, but don't influence with the rest (other operations)
+	      buildJob.setRule(synchronizeRule);
 	      buildJob.setPriority(Job.BUILD);
 	      buildJob.addJobChangeListener(new JobChangeAdapter(){
 	    	  /* (non-Javadoc)
@@ -165,7 +185,7 @@ public class JobFacade  {
 	}
 	
 	public void synchronize(final boolean force) {
-		getSynchronizeJob(force).schedule();
+		realFacade.getSynchronizeJobQueue().addJob(getSynchronizeJob(force));
 	}
 	
 	public void outline(final IFile f,final OutlineHandler handler){
@@ -177,7 +197,9 @@ public class JobFacade  {
 	          try {
 	            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	            OutlineResult or=realFacade.outline(f);
-	            handler.handleOutline(or);
+	            if(!monitor.isCanceled()){
+	            	 handler.handleOutline(or);
+	            }
 	          } finally {
 	            monitor.done();
 	          }

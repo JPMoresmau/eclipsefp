@@ -32,6 +32,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.LangUtil;
@@ -86,6 +87,11 @@ public class BWFacade {
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
 	 */
 	private SingleJobQueue buildJobQueue=new SingleJobQueue();
+
+	/**
+	 * where ever we come from, we only launch one synchronize operation at a time, and lose the intermediate operations
+	 */
+	private SingleJobQueue synchronizeJobQueue=new SingleJobQueue();
 	
 	/**
 	 * where ever we come from, we only launch one synchronize operation per file at a time, and lose the intermediate operations
@@ -120,6 +126,13 @@ public class BWFacade {
 		return buildJobQueue;
 	}
 	
+	/**
+	 * @return the synchronizeJobQueue
+	 */
+	public SingleJobQueue getSynchronizeJobQueue() {
+		return synchronizeJobQueue;
+	}
+	
 	public synchronized SingleJobQueue getThingAtPointJobQueue(IFile f){
 		SingleJobQueue sjq=tapQueuesByFiles.get(f);
 		if (sjq==null){
@@ -127,6 +140,10 @@ public class BWFacade {
 			tapQueuesByFiles.put(f, sjq);
 		}
 		return sjq;
+	}
+	
+	public synchronized Collection<SingleJobQueue> getThingAtPointJobQueues(){
+		return tapQueuesByFiles.values();
 	}
 	
 	/**
@@ -147,6 +164,11 @@ public class BWFacade {
 	    }
 	    return sjq;
 	}
+	
+	public synchronized Collection<SingleJobQueue> getEditorSynchronizeJobQueues(){
+		return syncEditorJobQueue.values();
+	}
+	
 	
 	private void deleteCabalProblems(){
 		String relCabal=getCabalFile().substring(getProject().getLocation().toOSString().length());
@@ -377,12 +399,18 @@ public class BWFacade {
 						}
 					}
 				}
-				for (int a=0;a<allPaths.length();a++){
-					try {
-						String p=allPaths.getString(a);
-						BuildWrapperPlugin.getDefault().getUsageAPI().addFile(getProject(),c, p);
-					} catch (JSONException je){
-						BuildWrapperPlugin.logError(BWText.error_parsing_usage_path, je);
+				BuildWrapperPlugin plugin=BuildWrapperPlugin.getDefault();
+				if (plugin!=null){
+					for (int a=0;a<allPaths.length();a++){
+						try {
+							String p=allPaths.getString(a);
+							UsageAPI api=plugin.getUsageAPI();
+							if (api!=null){
+								api.addFile(getProject(),c, p);
+							}
+						} catch (JSONException je){
+							BuildWrapperPlugin.logError(BWText.error_parsing_usage_path, je);
+						}
 					}
 				}
 			}

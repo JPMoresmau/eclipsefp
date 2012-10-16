@@ -8,7 +8,7 @@ Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- net.sf.eclipsefp.haskell.util;bundle-version="2.3.1";visibility:=reexport,
+ net.sf.eclipsefp.haskell.util;bundle-version="2.3.2";visibility:=reexport,
  org.eclipse.core.resources;bundle-version="3.5.2",
  org.eclipse.ui.ide;bundle-version="3.5.2",
  org.eclipse.jface.text;bundle-version="3.5.2",

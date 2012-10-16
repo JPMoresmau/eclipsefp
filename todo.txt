@@ -14,6 +14,10 @@
 - code navigation like chris done? http://dl.dropbox.com/u/62227452/Screenshots/code-navigationz-moving.ogv
 	keep locations from ast? 
 	Does Eclipse provide easy way to do that in the editor?
+	Yes, Eclipse does it for Java: http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Freference%2Fref-menu-edit.htm
+		So we need to:
+			- have buildwrapper build1 return the locations from the AST
+			- implement the navigation ourselves in the AST location tree
 
 
 - latest version of haskell-src-exts exposes lexer, would that be better to use than GHC lexer?

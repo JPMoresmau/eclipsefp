@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -74,6 +75,18 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		
+		for (BWFacade f:facades.values()){
+			f.getBuildJobQueue().close();
+			f.getSynchronizeJobQueue().close();
+			for (SingleJobQueue q:f.getThingAtPointJobQueues()){
+				q.close();
+			}
+			for (SingleJobQueue q:f.getEditorSynchronizeJobQueues()){
+				q.close();
+			}
+		}
+		
 		usageThread.setShouldStop();
 		// wait for all pending writes for 10 secs
 		usageThread.join(10000);
