@@ -468,32 +468,34 @@ public class CabalPackagesView extends ViewPart {
       if (options!=null && options.trim().length()>0){
         commands.addAll(Arrays.asList(CommandLineUtil.parse( options.trim() )));
       }
-      try {
-        AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_install_running,true, new Runnable() {
 
-          @Override
-          public void run() {
-            lInstall.getDisplay().asyncExec( new Runnable() {
+        try {
+          // this requires to be in the UI thread
+          AbstractHaskellLaunchDelegate.runInConsole(null, commands, new File(cabalExecutable).getParentFile(), UITexts.cabalPackagesView_action_install_running,true, new Runnable() {
 
-              @Override
-              public void run() {
-                lInstall.setText( UITexts.cabalPackagesView_info_installed );
-                helper.setInstalled( null );
-                if (!bAll.getSelection()){
-                  refreshJob.schedule();
+            @Override
+            public void run() {
+              lInstall.getDisplay().asyncExec( new Runnable() {
+
+                @Override
+                public void run() {
+                  lInstall.setText( UITexts.cabalPackagesView_info_installed );
+                  helper.setInstalled( null );
+                  if (!bAll.getSelection()){
+                    refreshJob.schedule();
+                  }
                 }
-              }
-            });
-            BrowserPlugin.loadLocalDatabase( true );
-          }
-        });
-      } catch (Exception ioe){
-        HaskellUIPlugin.log(ioe);
-        final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
-        ErrorDialog.openError(getSite().getShell(), UITexts.cabalPackagesView_action_install_error, UITexts.cabalPackagesView_action_install_error, st);
-      }
-     }
+              });
+              BrowserPlugin.loadLocalDatabase( true );
+            }
+          });
+        } catch (Exception ioe){
+          HaskellUIPlugin.log(ioe);
+          final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
+          ErrorDialog.openError(getSite().getShell(), UITexts.cabalPackagesView_action_install_error, UITexts.cabalPackagesView_action_install_error, st);
+        }
 
+    }
   }
 
   private void update(){
@@ -618,8 +620,11 @@ public class CabalPackagesView extends ViewPart {
 
     @Override
     protected void okPressed() {
-      install(global,options);
+      // install does things in the UI thread, so close the dialog first
       super.okPressed();
+
+      install(global,options);
+
     }
   }
 }

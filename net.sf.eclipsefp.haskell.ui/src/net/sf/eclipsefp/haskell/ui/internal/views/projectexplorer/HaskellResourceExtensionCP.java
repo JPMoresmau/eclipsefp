@@ -139,6 +139,8 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
       return false;
     } else if ( element instanceof CabalFolder ) {
       return true;
+    } else if (element instanceof GHCSystemLibrary){ // for performance, we know we always have children
+      return true;
     }
     Object[] children = getChildren( element );
     return children == null ? false : children.length > 0;
