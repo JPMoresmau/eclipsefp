@@ -777,6 +777,7 @@
              class="net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction"
              enablesFor="1"
              id="net.sf.eclipsefp.haskell.ui.cabalInstallAction"
+             icon="icons/eview16/cabal.png"
              label="%cabalInstallWizard.name">
        </action>
         <enablement>
@@ -1159,7 +1160,7 @@
       <view
             category="net.sf.eclipsefp.haskell"
             class="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"
-            icon="icons/eview16/cabal.gif"
+            icon="icons/eview16/cabal.png"
             id="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"
             name="%haskellBrowser_cabalPackagesView"
             restorable="true">
