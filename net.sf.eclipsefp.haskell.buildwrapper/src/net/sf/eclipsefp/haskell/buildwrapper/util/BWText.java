@@ -24,6 +24,7 @@ public class BWText extends NLS {
   public static String        project_cabal_duplicate;
   
   public static String        job_build;
+  public static String        job_clean;
   public static String        job_synchronize;
   public static String        job_components;
   public static String        job_dependencies;

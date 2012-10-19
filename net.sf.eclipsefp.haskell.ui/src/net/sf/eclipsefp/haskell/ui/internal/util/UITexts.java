@@ -480,6 +480,7 @@ public final class UITexts extends NLS {
   public static String exportSource_overwrite_warning;
 
   public static String install_job;
+  public static String install_dependencies_job;
   public static String install_options;
   public static String install_options_folder;
   public static String install_options_folder_choose;

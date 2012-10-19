@@ -20,9 +20,10 @@ Features:
 	- Specify the cabal stanza you want to use settings from when checking a file in the editor
 	- In preferences for executables, you can install the executable from Haskage
 	- Install all helper executables from one dialog
+	- Install all dependencies for one project from right click on project (performs a clean of the project afterwards). 
 
 Internal:
-
+	- Hopefully performance of some UI operations has been enhanced and the UI should be more responsive in places
 
 Upgrade notes:
 
