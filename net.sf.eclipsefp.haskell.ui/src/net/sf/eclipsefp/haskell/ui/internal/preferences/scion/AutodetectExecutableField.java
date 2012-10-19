@@ -158,6 +158,7 @@ public class AutodetectExecutableField {
                       String newVal=f.getAbsolutePath();
                       fieldEditor.setStringValue(newVal);
                       listener.propertyChange( new PropertyChangeEvent( this, "path", oldVal, newVal) ) ;
+                      fieldEditor.checkState();
                     }
                   }
                   installButton.setEnabled( true );

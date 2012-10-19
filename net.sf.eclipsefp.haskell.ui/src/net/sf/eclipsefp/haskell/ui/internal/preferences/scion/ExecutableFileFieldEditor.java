@@ -139,20 +139,20 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
      *   and <code>false</code> if invalid
      */
     @Override
-	protected boolean checkState() {
+    public boolean checkState() {
         if (getTextControl() == null) {
-			return false;
-		}
+    			return false;
+    		}
         String txt = getTextControl().getText();
 
         boolean result = isEmptyStringAllowed() || txt.length() > 0;
         result = result && doCheckState();
 
         if (result) {
-			clearErrorMessage();
-		} else {
-			showErrorMessage(getErrorMessage());
-		}
+    			clearErrorMessage();
+    		} else {
+    			showErrorMessage(getErrorMessage());
+    		}
 
         return result;
     }
