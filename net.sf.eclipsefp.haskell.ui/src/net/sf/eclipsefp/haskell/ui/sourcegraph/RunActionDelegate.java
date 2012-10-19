@@ -107,6 +107,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
     if (prjs.size() > 0){
       project = prjs.iterator().next();
     }
+    action.setEnabled( project!=null );
   }
 
   @Override
