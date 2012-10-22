@@ -21,11 +21,14 @@ Features:
 	- In preferences for executables, you can install the executable from Haskage
 	- Install all helper executables from one dialog
 	- Install all dependencies for one project from right click on project (performs a clean of the project afterwards). 
+	- BuildWrapper and scion-browser should build with GHC 7.6
+	- If you run a GHCi session in debug mode and launch a function with :trace, :hist output will show as a stack trace in the Debug perspective
 
 Internal:
 	- Hopefully performance of some UI operations has been enhanced and the UI should be more responsive in places
 
 Upgrade notes:
+	- Upgrade via the Eclipse install site http://eclipsefp.sf.net/updates. 
 
 
 Known issues:

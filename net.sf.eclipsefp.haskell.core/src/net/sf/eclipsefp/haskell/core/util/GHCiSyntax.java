@@ -32,7 +32,9 @@ public class GHCiSyntax {
   public static final String TYPE_LAST_RESULT_COMMAND=":t it"; //$NON-NLS-1$
   public static final String STEP_COMMAND=":step"; //$NON-NLS-1$
 
-
+  public static final String HIST_COMMAND=":hist"; //$NON-NLS-1$
+  public static final Pattern HIST_LOCATION_PATTERN=Pattern.compile( "\\-(\\d+)\\s+\\:\\s+(.+)\\s+\\((.+)\\:(\\d+)\\:(\\d+)\\-(\\d+)\\)"); //$NON-NLS-1$
+  public static final Pattern HIST_LOCATIONMULTILINE_PATTERN=Pattern.compile( "\\-(\\d+)\\s+\\:\\s+(.+)\\s+\\((.+)\\:\\((\\d+),(\\d+)\\)\\-\\((\\d+),(\\d+)\\)\\)");//$NON-NLS-1$
 
   public static final String SET_PRINT_WITH_SHOW_COMMAND=":set -fprint-evld-with-show"; //$NON-NLS-1$
 

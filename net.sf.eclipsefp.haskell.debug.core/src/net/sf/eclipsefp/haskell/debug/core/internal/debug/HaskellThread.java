@@ -1,5 +1,7 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import org.eclipse.debug.core.DebugEvent;
@@ -19,6 +21,8 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
   private String stopLocation;
   private final HaskellStrackFrame frame=new HaskellStrackFrame( this );
   private String name=CoreTexts.thread_default_name;
+
+  private final List<HaskellStrackFrame> historyFrames=new ArrayList<HaskellStrackFrame>();
 
   public HaskellThread(final HaskellDebugTarget target){
     super( target );
@@ -54,6 +58,16 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
   @Override
   public IStackFrame[] getStackFrames()  {
     if (isSuspended()){
+      synchronized( historyFrames ) {
+        if (historyFrames.size()>0){
+//          IStackFrame[] ret=new IStackFrame[historyFrames.size()+1];
+//          ret[0]=frame;
+//          System.arraycopy(historyFrames.toArray(), 0,ret, 1, historyFrames.size() );
+//          return ret;
+          return historyFrames.toArray( new IStackFrame[historyFrames.size()] );
+        }
+
+      }
       return new IStackFrame[]{frame};
     }
     return new IStackFrame[0];
@@ -160,6 +174,11 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
 
   public void setStopLocation( final String stopLocation ) {
     this.stopLocation = stopLocation;
+  }
+
+
+  public List<HaskellStrackFrame> getHistoryFrames() {
+    return historyFrames;
   }
 
 }

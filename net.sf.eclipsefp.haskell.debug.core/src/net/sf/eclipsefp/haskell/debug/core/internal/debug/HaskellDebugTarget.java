@@ -148,7 +148,11 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   @Override
   public boolean isTerminated() {
-   return fProcess.isTerminated();
+   boolean t=fProcess.isTerminated();
+   if (t && connected){
+     dispose();
+   }
+   return t;
   }
 
   protected synchronized void sendRequest(final String command,final boolean wait)throws DebugException{
@@ -157,13 +161,15 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
       atEnd=false;
     }
     try {
-
-      fProcess.getStreamsProxy().write(command);
-      fProcess.getStreamsProxy().write(PlatformUtil.NL);
-      if (wait){
-        waitForPrompt();
+      if (fProcess!=null && !fProcess.isTerminated()){
+        fProcess.getStreamsProxy().write(command);
+        fProcess.getStreamsProxy().write(PlatformUtil.NL);
+        if (wait){
+          waitForPrompt();
+        }
+      } else {
+       dispose();
       }
-
     } catch (IOException ioe){
       throw new DebugException(new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe));
     }
@@ -183,7 +189,9 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   @Override
   public void terminate() throws DebugException {
+
     sendRequest( GHCiSyntax.QUIT_COMMAND,false );
+    dispose();
   }
 
   @Override
@@ -295,7 +303,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   @Override
   public void disconnect() throws DebugException {
-    connected=false;
+    dispose();
     try {
    // TODO take out GHCi specific
       sendRequest(GHCiSyntax.DELETE_ALL_BREAKPOINTS_COMMAND,true);
@@ -304,6 +312,11 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
     }
 
+  }
+
+  public void dispose(){
+    connected=false;
+    DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
   }
 
   @Override
@@ -357,8 +370,20 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
            response.setLength( 0 );
            DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.CHANGE,DebugEvent.STATE )});
            notify();
+           Runnable r=new Runnable(){
+             /* (non-Javadoc)
+             * @see java.lang.Runnable#run()
+             */
+            @Override
+            public void run() {
+              getHistory();
+
+            }
+           };
+           new Thread(r).start();
            return;
          }
+
        }
        Matcher m=GHCiSyntax.BREAKPOINT_STOP_PATTERN.matcher( response.toString() );
        if (m.find()){
@@ -414,7 +439,40 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   }
 
+  public synchronized void getHistory() {
+    try {
+      sendRequest( GHCiSyntax.HIST_COMMAND, true );
+      String s=getResultWithoutPrompt();
+      BufferedReader br=new BufferedReader(new StringReader( s ));
+      try {
+        List<HaskellStrackFrame> l=thread.getHistoryFrames();
+        synchronized( l ) {
+          l.clear();
+          String line=br.readLine();
+          while (line!=null){
+            HaskellStrackFrame f2=new HaskellStrackFrame( thread );
+            f2.setHistoryLocation( line );
+            if (f2.getName()!=null){
+              l.add( f2 );
+            }
+            line=br.readLine();
+          }
+        }
+
+        DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.CHANGE,DebugEvent.STATE )});
+        notify();
+      } catch (IOException ioe){
+        HaskellCorePlugin.log( ioe );
+      }
+    } catch (DebugException de){
+      HaskellCorePlugin.log( de );
+    }
+  }
+
   public synchronized IVariable[] getVariables( final HaskellStrackFrame frame ) throws DebugException {
+    if (!frame.hasVariables()){
+      return new IVariable[0];
+    }
     sendRequest( GHCiSyntax.SHOW_BINDINGS_COMMAND, true );
     String s=getResultWithoutPrompt();
     BufferedReader br=new BufferedReader(new StringReader( s ));
@@ -442,6 +500,8 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
       throw new DebugException(new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe));
     }
   }
+
+
 
   public void forceVariable(final HaskellVariable var)throws DebugException{
     sendRequest( GHCiSyntax.forceVariableCommand( var.getName() ), true );

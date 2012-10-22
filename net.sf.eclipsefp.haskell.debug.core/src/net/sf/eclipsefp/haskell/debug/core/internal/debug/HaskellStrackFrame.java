@@ -38,6 +38,8 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
   private int charEnd=-1;
   private int charStart=-1;
 
+  private boolean hasVariables=false;
+
   public HaskellStrackFrame(final HaskellThread thread){
     super(thread.getDebugTarget());
     this.thread=thread;
@@ -101,6 +103,7 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
       charEnd = -1;
     } else {
       try {
+        hasVariables=true;
         // Get file name
         String fname=unprocessedFileName;
         IProject p = getProject();
@@ -135,6 +138,91 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
   }
 
+  public void setHistoryLocation( final String location ) {
+    name=null;
+    lineNumber=-1;
+    fileName=null;
+    unprocessedFileName=location;
+    int endLineNumber = -1, tmpCharStart = -1, tmpCharEnd = -1, idx=-1;
+
+    Matcher m=GHCiSyntax.HIST_LOCATION_PATTERN.matcher( location );
+    if (m.matches()){
+      //name= m.group(1) ;
+      idx=Integer.parseInt( m.group(1));
+      endLineNumber=lineNumber=Integer.parseInt( m.group(4)) ;
+      unprocessedFileName=m.group( 3 );
+
+      tmpCharStart=Integer.parseInt(m.group(5));
+      tmpCharEnd=Integer.parseInt(m.group(6));
+    } else {
+      m=GHCiSyntax.HIST_LOCATIONMULTILINE_PATTERN.matcher( location );
+      if (m.matches()){
+        idx=Integer.parseInt( m.group(1));
+        //name= m.group(1) ;
+        lineNumber=Integer.parseInt( m.group(4)) ;
+        endLineNumber=Integer.parseInt( m.group(6) );
+        unprocessedFileName=m.group( 3 );
+        tmpCharStart=Integer.parseInt(m.group(5));
+        tmpCharEnd=Integer.parseInt(m.group(6));
+      } else {
+        // It means there was an error
+        endLineNumber = -1;
+      }
+    }
+    // Compute real character positions
+    if (endLineNumber == -1) {
+      // If there was an error
+      lineNumber = -1;
+      charStart = -1;
+      charEnd = -1;
+    } else {
+      try {
+        hasVariables=idx==1;
+        name=location;
+        int ix=name.indexOf( ':' );
+        name=name.substring( ix+1 ).trim();
+        // Get file name
+        String fname=unprocessedFileName;
+        IProject p = getProject();
+        String projectLocation=p.getLocation().toOSString();
+        if (fname.startsWith( projectLocation )){
+          fname=fname.substring( projectLocation.length()+1 );
+        }
+        IFile f= p.getFile( fname );
+        IDocumentProvider prov=new TextFileDocumentProvider();
+        prov.connect( f );
+        try {
+          IDocument doc=prov.getDocument( f );
+
+          //InputStream st = p.getFile( fname ).getContents();
+          // Get document info
+          //IDocument d = new Document( ResourceUtil.readStream( st ) );
+          //st.close();
+          int initLineOffset = doc.getLineOffset( lineNumber - 1 );
+          int endLineOffset = doc.getLineOffset( endLineNumber - 1  );
+          charStart = initLineOffset + tmpCharStart - 1;
+          charEnd = endLineOffset + tmpCharEnd;
+        } finally {
+          prov.disconnect( f );
+        }
+      } catch (Exception e) {
+        lineNumber = -1;
+        charStart = -1;
+        charEnd = -1;
+      }
+    }
+
+    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
+  }
+
+
+  /**
+   * @return the hasVariables
+   */
+  @Override
+  public boolean hasVariables() {
+    return hasVariables;
+  }
 
   public String getFileName() throws CoreException{
     if (fileName==null){
@@ -188,11 +276,6 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
   @Override
   public boolean hasRegisterGroups() {
     return false;
-  }
-
-  @Override
-  public boolean hasVariables() {
-   return true;
   }
 
   @Override
