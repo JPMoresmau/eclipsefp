@@ -103,6 +103,7 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
       charEnd = -1;
     } else {
       try {
+        name=removeFilePrefix( location);
         hasVariables=true;
         // Get file name
         String fname=unprocessedFileName;
@@ -138,6 +139,19 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
   }
 
+  private String removeFilePrefix(final String fullLocation) throws CoreException{
+    String ret=fullLocation;
+    if (fullLocation!=null && fullLocation.length()>0){
+      IProject p=getProject();
+      String projectLocation=p.getLocation().toOSString();
+      int ix=fullLocation.indexOf( projectLocation );
+      if(ix>-1){
+        ret=fullLocation.substring( 0,ix )+fullLocation.substring( ix+projectLocation.length()-p.getName().length() );
+      }
+    }
+    return ret;
+  }
+
   public void setHistoryLocation( final String location ) {
     name=null;
     lineNumber=-1;
@@ -163,7 +177,7 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
         endLineNumber=Integer.parseInt( m.group(6) );
         unprocessedFileName=m.group( 3 );
         tmpCharStart=Integer.parseInt(m.group(5));
-        tmpCharEnd=Integer.parseInt(m.group(6));
+        tmpCharEnd=Integer.parseInt(m.group(7));
       } else {
         // It means there was an error
         endLineNumber = -1;
@@ -180,7 +194,7 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
         hasVariables=idx==1;
         name=location;
         int ix=name.indexOf( ':' );
-        name=name.substring( ix+1 ).trim();
+        name=removeFilePrefix( name.substring( ix+1 ).trim());
         // Get file name
         String fname=unprocessedFileName;
         IProject p = getProject();
@@ -212,7 +226,7 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
       }
     }
 
-    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
+    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.CHANGE, DebugEvent.CONTENT )});
   }
 
 
