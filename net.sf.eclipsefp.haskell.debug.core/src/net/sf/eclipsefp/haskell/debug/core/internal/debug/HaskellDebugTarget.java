@@ -59,6 +59,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
 
   private boolean connected=true;
+  private boolean disposed=false;
   private boolean atEnd=false;
 
   private final HaskellThread thread=new HaskellThread( this );
@@ -143,13 +144,13 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   @Override
   public boolean canTerminate() {
-   return fProcess.canTerminate();
+   return !disposed && (!connected || fProcess.canTerminate());
   }
 
   @Override
   public boolean isTerminated() {
-   boolean t=fProcess.isTerminated();
-   if (t && connected){
+   boolean t=fProcess.isTerminated() || disposed;
+   if (t && !disposed){
      dispose();
    }
    return t;
@@ -189,14 +190,22 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   @Override
   public void terminate() throws DebugException {
-
-    sendRequest( GHCiSyntax.QUIT_COMMAND,false );
+    if (isSuspended()){
+      thread.setBreakpoint( null );
+      thread.setStopLocation( null );
+      DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.RESUME )});
+    }
+    // if disconnected, leave GHCi running
+    if (connected){
+      sendRequest( GHCiSyntax.QUIT_COMMAND,false );
+    }
     dispose();
+    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.TERMINATE ),new DebugEvent( thread, DebugEvent.TERMINATE )});
   }
 
   @Override
   public boolean canResume() {
-   return isSuspended();
+   return connected && isSuspended();
   }
 
   @Override
@@ -303,7 +312,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   @Override
   public void disconnect() throws DebugException {
-    dispose();
+
     try {
    // TODO take out GHCi specific
       sendRequest(GHCiSyntax.DELETE_ALL_BREAKPOINTS_COMMAND,true);
@@ -311,11 +320,12 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
       throw new DebugException(new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),e.getLocalizedMessage(),e));
 
     }
-
+    dispose();
   }
 
   public void dispose(){
     connected=false;
+    disposed=true;
     DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
   }
 

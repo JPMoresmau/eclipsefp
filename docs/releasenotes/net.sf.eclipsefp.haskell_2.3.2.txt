@@ -15,6 +15,8 @@ Fixes:
 	- only accept ascii characters in project names, since accented characters do not work well with gcc and such
 	- adding a list to cabal (example: data-files) via the ui does not mess the cabal file
 	- synchronize operations do not block other operations
+	- Terminating a debugging session when stopped at a breakpoint removes correctly breakpoint marker in code
+	- Terminating a debugging session correctly forbids to resume execution (restart a new session)
 
 Features:
 	- Specify the cabal stanza you want to use settings from when checking a file in the editor
