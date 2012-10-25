@@ -481,6 +481,11 @@
             name="%watchExpressionCommand_name"
             id="net.sf.eclipsefp.ui.commands.run.watchExpression"/>            
       <command
+            description="%inspectExpressionCommand_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            name="%inspectExpressionCommand_name"
+            id="net.sf.eclipsefp.ui.commands.run.inspectExpression"/>   
+      <command
             description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%HaddockDocumentFollowing.name"
@@ -523,6 +528,14 @@
             <visibleWhen checkEnabled="true"/>
          </command>
       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.ui.run?after=emptyBreakpointGroup">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.run.inspectExpression"
+               icon="icons/etool16/insp_exp.gif">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
       <menuContribution
             locationURI="menu:navigate?after=open.ext">
          <command
@@ -542,6 +555,14 @@
          <command
                commandId="net.sf.eclipsefp.ui.commands.run.watchExpression"
                icon="icons/etool16/watch_exp.gif">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+            <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=additions">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.run.inspectExpression"
+               icon="icons/etool16/insp_exp.gif">
             <visibleWhen checkEnabled="true"/>
          </command>
       </menuContribution>
@@ -688,7 +709,7 @@
             </reference>
          </activeWhen>
       </handler>
-        <!-- handler for the Watch expression action when invoked from the HaskellEditor -->
+      <!-- handler for the Watch expression action when invoked from the HaskellEditor -->
       <handler
             class="net.sf.eclipsefp.haskell.ui.handlers.WatchExpressionHandler"
             commandId="net.sf.eclipsefp.ui.commands.run.watchExpression">
@@ -702,6 +723,24 @@
 	                <instanceof value="org.eclipse.jface.text.ITextSelection"/>
 	           </iterate>
 	       </with>
+            </and>
+         </activeWhen>
+      </handler>
+      <!-- handler for the Inspect expression action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.InspectExpressionHandler"
+            commandId="net.sf.eclipsefp.ui.commands.run.inspectExpression">
+         <activeWhen>
+         	<and>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+            <with variable="selection">
+	           <iterate operator="or">
+	                <instanceof value="org.eclipse.jface.text.ITextSelection"/>
+	           </iterate>
+	       </with>
+	       <systemTest property="haskell.debug" value="true"/>
             </and>
          </activeWhen>
       </handler>

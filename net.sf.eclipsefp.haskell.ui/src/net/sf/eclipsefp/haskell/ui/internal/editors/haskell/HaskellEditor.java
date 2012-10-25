@@ -71,6 +71,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -203,7 +204,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 //    getSourceViewer().revealRange( offset, length );
 //  }
 
+
+
   public IDocument getDocument() {
+
     IDocumentProvider docProvider = getDocumentProvider();
     if (docProvider!=null){
       return docProvider.getDocument( getEditorInput() );
@@ -286,6 +290,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       addAction( mmSource, "comments", HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION); //$NON-NLS-1$
       addAction( mmSource, "formatting", FORMAT_ACTION); //$NON-NLS-1$
     }
+  }
+
+  /**
+   * get the location in display coordinates of the current selection
+   * @return
+   */
+  public Point getSelectedPoint(){
+    Point p2=getSourceViewer().getTextWidget().getLocationAtOffset( getSourceViewer().getTextWidget().getSelectionRange().x );
+    return getSourceViewer().getTextWidget().toDisplay(p2 );
   }
 
   @Override

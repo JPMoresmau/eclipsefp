@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
 import java.io.BufferedReader;
@@ -44,6 +49,19 @@ import org.eclipse.debug.core.model.IVariable;
  *
  */
 public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTarget,IStreamListener {
+  /**
+   * lock
+   */
+  private static Object instanceLock=new Object();
+  /**
+   * number of target currently suspended at a breakpoint
+   */
+  private static int instances=0;
+  /**
+   * system property to write globally if we can handle inspect
+   */
+  private static final String SYSTEM_PROPERTY="haskell.debug"; //$NON-NLS-1$
+
   // associated system process (VM)
   private final IProcess fProcess;
 
@@ -64,6 +82,22 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
   private final HaskellThread thread=new HaskellThread( this );
 
+  /**
+   * manages the number of instances
+   * @param delta the number to move the count by
+   */
+  private static void instances(final int delta){
+    synchronized( instanceLock ) {
+      instances+=delta;
+      if(instances>0){
+        System.setProperty( SYSTEM_PROPERTY, "true" ); //$NON-NLS-1$
+      } else {
+        instances=0;
+        System.clearProperty( SYSTEM_PROPERTY );
+      }
+    }
+  }
+
   public HaskellDebugTarget(final ILaunch launch, final IProcess process){
     setTarget( this );
     this.fLaunch=launch;
@@ -71,6 +105,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     this.fProcess.getStreamsProxy().getOutputStreamMonitor().addListener( this );
     DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 
+    instances(1);
   }
 
   @Override
@@ -191,6 +226,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   @Override
   public void terminate() throws DebugException {
     if (isSuspended()){
+      instances(-1);
       thread.setBreakpoint( null );
       thread.setStopLocation( null );
       DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.RESUME )});
@@ -224,7 +260,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     thread.setStopLocation( null );
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.RESUME )});
     sendRequest( GHCiSyntax.CONTINUE_COMMAND, false );
-
+    instances(-1);
   }
 
   @Override
@@ -327,6 +363,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     connected=false;
     disposed=true;
     DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
+
   }
 
   @Override
@@ -422,7 +459,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
          }
 
          DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,hb!=null?DebugEvent.BREAKPOINT:DebugEvent.UNSPECIFIED )});
-
+         instances(1);
 
        } else {
          m=GHCiSyntax.BREAKPOINT_NOT.matcher( response.toString() );

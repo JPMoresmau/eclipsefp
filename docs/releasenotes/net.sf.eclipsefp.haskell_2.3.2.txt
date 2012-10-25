@@ -25,6 +25,8 @@ Features:
 	- Install all dependencies for one project from right click on project (performs a clean of the project afterwards). 
 	- BuildWrapper and scion-browser should build with GHC 7.6
 	- If you run a GHCi session in debug mode and launch a function with :trace, :hist output will show as a stack trace in the Debug perspective
+	- Watch action on editor adds the selected text as a debug expression
+	- Inspect action on editor evaluates the expression in current GHCi session (only visible if stopped at a breakpoint in debug GHCi session)
 
 Internal:
 	- Hopefully performance of some UI operations has been enhanced and the UI should be more responsive in places

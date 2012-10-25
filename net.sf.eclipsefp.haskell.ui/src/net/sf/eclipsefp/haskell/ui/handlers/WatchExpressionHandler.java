@@ -39,8 +39,10 @@ public class WatchExpressionHandler extends AbstractHandler {
       return null;
     }
     final HaskellEditor hEditor=(HaskellEditor)editor;
+
     // cast is safe because we have a guard in plugin.xml
     final ITextSelection sel=(ITextSelection)HandlerUtil.getActiveMenuSelection( event );
+
     String s=sel.getText();
     // find word at location
     if (s.length()==0){
@@ -50,23 +52,23 @@ public class WatchExpressionHandler extends AbstractHandler {
         public void handle( final EditorThing thing ) {
           if (thing!=null && thing.getThing()!=null){
             String name = thing.getThing().getName();
-            addExpression( name );
+            addExpression(hEditor, name );
           } else {
             String s=WordFinder.findWord( hEditor.getDocument(), sel.getOffset() );
             if (s.length()>0){
-              addExpression( s );
+              addExpression(hEditor, s );
             }
           }
         }
       });
     } else {
-      addExpression( s );
+      addExpression(hEditor, s );
     }
 
     return null;
   }
 
-  protected void addExpression(final String s){
+  protected void addExpression(final HaskellEditor hEditor,final String s){
     if (s.length()>0){
       IWatchExpression expression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression(s);
       DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
