@@ -1076,17 +1076,23 @@ public class BWFacade {
 			IFolder fldr=project.getFolder(DIST_FOLDER);
 			if (fldr.exists()){
 				if (!fldr.isDerived()){
-					try {
-						fldr.setDerived(true,new NullProgressMonitor());
-					} catch (CoreException ce){
-						// log error and leave flag to false, let's hope it'll be better at next run
-						BuildWrapperPlugin.logError(BWText.error_derived, ce);
+					if (!project.getWorkspace().isTreeLocked()){
+						try {
+							fldr.setDerived(true,new NullProgressMonitor());
+							needSetDerivedOnDistDir=false; // ok
+						} catch (CoreException ce){
+							// log error and leave flag to false, let's hope it'll be better at next run
+							BuildWrapperPlugin.logError(BWText.error_derived, ce);
+							needSetDerivedOnDistDir=false; // let's not cause errors again
+						}
+					} else {
+						needSetDerivedOnDistDir=true; // tree is locked, le's try again when it's not
 					}
+				} else {
+					needSetDerivedOnDistDir=false; // folder is already marked
 				}
-				needSetDerivedOnDistDir=false;
-				
 			} else {
-				needSetDerivedOnDistDir=true;
+				needSetDerivedOnDistDir=true; // folder doesn't exist, let's try again when it does
 			}
 		}
 	}
