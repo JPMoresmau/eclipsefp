@@ -476,6 +476,11 @@
             name="%references_project_label"
             id="net.sf.eclipsefp.ui.commands.references.project"/>
       <command
+            description="%watchExpressionCommand_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            name="%watchExpressionCommand_name"
+            id="net.sf.eclipsefp.ui.commands.run.watchExpression"/>            
+      <command
             description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%HaddockDocumentFollowing.name"
@@ -511,6 +516,14 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="menu:org.eclipse.ui.run?after=emptyBreakpointGroup">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.run.watchExpression"
+               icon="icons/etool16/watch_exp.gif">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="menu:navigate?after=open.ext">
          <command
                commandId="net.sf.eclipsefp.ui.commands.navigate.searchHoogle">
@@ -521,6 +534,14 @@
             locationURI="popup:#HaskellEditorContext?after=group.open">
          <command
                commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=additions">
+         <command
+               commandId="net.sf.eclipsefp.ui.commands.run.watchExpression"
+               icon="icons/etool16/watch_exp.gif">
             <visibleWhen checkEnabled="true"/>
          </command>
       </menuContribution>
@@ -657,6 +678,7 @@
             </reference>
          </activeWhen>
       </handler>
+      <!-- handler for the references in project action when invoked from the HaskellEditor -->
       <handler
             class="net.sf.eclipsefp.haskell.ui.handlers.ReferencesProjectHandler"
             commandId="net.sf.eclipsefp.ui.commands.references.project">
@@ -664,6 +686,23 @@
             <reference
                   definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
             </reference>
+         </activeWhen>
+      </handler>
+        <!-- handler for the Watch expression action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.handlers.WatchExpressionHandler"
+            commandId="net.sf.eclipsefp.ui.commands.run.watchExpression">
+         <activeWhen>
+         	<and>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+            <with variable="selection">
+	           <iterate operator="or">
+	                <instanceof value="org.eclipse.jface.text.ITextSelection"/>
+	           </iterate>
+	       </with>
+            </and>
          </activeWhen>
       </handler>
    </extension>
