@@ -239,14 +239,15 @@ public class ScionPP
       //}
     }
 
-    if (retval) {
-      //if (!browserBuiltInField.getBooleanValue()) {
-        if (!browserExecutableField.isValid()) {
-          retval = false;
-          setErrorMessage( UITexts.cabalImplsBlock_needBrowserExecutablePath );
-        }
-      //}
-    }
+    /** do not force scion-browser to be present **/
+//    if (retval) {
+//      //if (!browserBuiltInField.getBooleanValue()) {
+//        if (!browserExecutableField.isValid()) {
+//          retval = false;
+//          setErrorMessage( UITexts.cabalImplsBlock_needBrowserExecutablePath );
+//        }
+//      //}
+//    }
 
     if (retval) {
       // Clear the message
