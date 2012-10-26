@@ -25,7 +25,18 @@ background in the code editor. You can step or continue using the buttons availa
 the <i>Debug</i> view.</p>
 
 <p>You can also inspect the value of the variables in the <i>Variables</i> view. As withing GHCi,
-variables that aren't yet evaluated are shown as <code>_</code>.</p>
+variables that aren't yet evaluated are shown as <code>_</code>. Typing something in the variable value field causes 
+evaluation of the variable, which may modify the performance or behavior of your program.</p>
+
+<p>You can also add Expressions in the Expressions view. You can create new expressions by typing the full code, and you can also  
+select expressions in your code, right click and choose <b>Watch</b>. If you only want to see the value of an expression at 
+one point in time you can just select the expression in the code, right click and choose <b>Display</b>. A popup will appear with the 
+current value.</p>
+
+<p>GHCi does not have the concept of stack traces (which are not always relevant in a lazy language). However it can keep the 
+history of expressions it has evaluated. EclipseFP translates this history in stack frames in the <i>Debug</i> view. Just 
+launch your function with :trace to get reliable history information (For example, if you want to launch your main function in GHCi, 
+type in <code>:trace main</code>);</p>
 
 <h3>Debugging an executable</h3>
 
