@@ -17,6 +17,7 @@ Fixes:
 	- synchronize operations do not block other operations
 	- Terminating a debugging session when stopped at a breakpoint removes correctly breakpoint marker in code
 	- Terminating a debugging session correctly forbids to resume execution (restart a new session)
+	- Do not try to parse hlint output if the process returned in error
 
 Features:
 	- Specify the cabal stanza you want to use settings from when checking a file in the editor
