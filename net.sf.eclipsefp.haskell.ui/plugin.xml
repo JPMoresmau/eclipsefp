@@ -481,10 +481,10 @@
             name="%watchExpressionCommand_name"
             id="net.sf.eclipsefp.ui.commands.run.watchExpression"/>            
       <command
-            description="%inspectExpressionCommand_desc"
+            description="%displayExpressionCommand_desc"
             categoryId="org.eclipse.debug.ui.category.run"
-            name="%inspectExpressionCommand_name"
-            id="net.sf.eclipsefp.ui.commands.run.inspectExpression"/>   
+            name="%displayExpressionCommand_name"
+            id="net.sf.eclipsefp.ui.commands.run.displayExpression"/>   
       <command
             description="%HaddockDocumentFollowing.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
@@ -531,7 +531,7 @@
        <menuContribution
             locationURI="menu:org.eclipse.ui.run?after=emptyBreakpointGroup">
          <command
-               commandId="net.sf.eclipsefp.ui.commands.run.inspectExpression"
+               commandId="net.sf.eclipsefp.ui.commands.run.displayExpression"
                icon="icons/etool16/insp_exp.gif">
             <visibleWhen checkEnabled="true"/>
          </command>
@@ -561,7 +561,7 @@
             <menuContribution
             locationURI="popup:#HaskellEditorContext?after=additions">
          <command
-               commandId="net.sf.eclipsefp.ui.commands.run.inspectExpression"
+               commandId="net.sf.eclipsefp.ui.commands.run.displayExpression"
                icon="icons/etool16/insp_exp.gif">
             <visibleWhen checkEnabled="true"/>
          </command>
@@ -728,8 +728,8 @@
       </handler>
       <!-- handler for the Inspect expression action when invoked from the HaskellEditor -->
       <handler
-            class="net.sf.eclipsefp.haskell.ui.handlers.InspectExpressionHandler"
-            commandId="net.sf.eclipsefp.ui.commands.run.inspectExpression">
+            class="net.sf.eclipsefp.haskell.ui.handlers.DisplayExpressionHandler"
+            commandId="net.sf.eclipsefp.ui.commands.run.displayExpression">
          <activeWhen>
          	<and>
             <reference

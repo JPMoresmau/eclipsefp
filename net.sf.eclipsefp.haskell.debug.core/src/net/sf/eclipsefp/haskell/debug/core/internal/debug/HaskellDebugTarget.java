@@ -105,7 +105,6 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     this.fProcess.getStreamsProxy().getOutputStreamMonitor().addListener( this );
     DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 
-    instances(1);
   }
 
   @Override
