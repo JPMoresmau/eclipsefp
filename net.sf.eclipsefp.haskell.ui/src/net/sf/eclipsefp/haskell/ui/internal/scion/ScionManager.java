@@ -80,8 +80,8 @@ public class ScionManager implements IResourceChangeListener {
   /** Haskell console high water mark */
   private int hConHighWater;
 
-  private final static String MINIMUM_BUILDWRAPPER="0.6.1";
-  private final static String MINIMUM_SCIONBROWSER="0.2.10";
+  private final static String MINIMUM_BUILDWRAPPER="0.6.2";
+  private final static String MINIMUM_SCIONBROWSER="0.2.12";
 
   public ScionManager() {
     // The interesting stuff is done in the start() method
