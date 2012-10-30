@@ -4,6 +4,8 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.debug.HaskellDebugTarget;
@@ -45,8 +47,11 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
 
     process.setAttribute( HaskellDebugCore.PROCESS_COMMAND_HISTORY, Boolean.TRUE.toString() );
 
+    List<String> fileNames=configuration.getAttribute( ILaunchAttributes.FILES, new ArrayList<String>() );
+
     if (mode.equals( ILaunchManager.DEBUG_MODE )){
-      HaskellDebugTarget hdt=new HaskellDebugTarget( launch, process );
+      HaskellDebugTarget hdt=new HaskellDebugTarget( launch, process,fileNames );
+
       launch.addDebugTarget(hdt);
       hdt.start();
     }

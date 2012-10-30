@@ -2,10 +2,8 @@ package net.sf.eclipsefp.haskell.debug.core.internal.debug;
 
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
-import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -40,9 +38,12 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
 
   private boolean hasVariables=false;
 
-  public HaskellStrackFrame(final HaskellThread thread){
+  private final IProject project;
+
+  public HaskellStrackFrame(final HaskellThread thread,final IProject p){
     super(thread.getDebugTarget());
     this.thread=thread;
+    this.project=p;
   }
 
   @Override
@@ -139,7 +140,7 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( this, DebugEvent.CHANGE, DebugEvent.CONTENT )});
   }
 
-  private String removeFilePrefix(final String fullLocation) throws CoreException{
+  private String removeFilePrefix(final String fullLocation) {
     String ret=fullLocation;
     if (fullLocation!=null && fullLocation.length()>0){
       IProject p=getProject();
@@ -263,13 +264,13 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
     return fileName;
   }
 
-  public IProject getProject() throws CoreException {
-    String projectName=getLaunch().getLaunchConfiguration().getAttribute( ILaunchAttributes.PROJECT_NAME ,(String)null);
+  public IProject getProject()  {
+    /*String projectName=getLaunch().getLaunchConfiguration().getAttribute( ILaunchAttributes.PROJECT_NAME ,(String)null);
     if (projectName!=null){
       IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
       return p;
-    }
-    return null;
+    }*/
+    return project;
   }
 
   @Override
@@ -369,6 +370,17 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
   public void terminate() throws DebugException {
     thread.terminate();
 
+  }
+
+
+  public void setName( final String name ) {
+    this.name = name;
+  }
+
+
+  public void setUnprocessedFileName( final String unprocessedFileName ) {
+    this.unprocessedFileName = unprocessedFileName;
+    this.name=removeFilePrefix( unprocessedFileName );
   }
 
 }

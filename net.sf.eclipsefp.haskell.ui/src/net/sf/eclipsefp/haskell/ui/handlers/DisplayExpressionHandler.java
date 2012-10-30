@@ -40,7 +40,7 @@ public class DisplayExpressionHandler extends WatchExpressionHandler {
       final HaskellDebugElement hde=(HaskellDebugElement)context;
       if ((hde instanceof ISuspendResume &&  ((ISuspendResume)hde).isSuspended()) || hde.getDebugTarget().isSuspended()){
          try {
-          final HaskellValue val=hde.getDebugTarget().evaluate( s );
+          final HaskellValue val=hde.getDebugTarget().evaluate( s,true );
           hEditor.getEditorSite().getShell().getDisplay().asyncExec( new Runnable(){
             @Override
             public void run() {

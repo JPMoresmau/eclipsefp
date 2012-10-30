@@ -22,9 +22,16 @@ public class HaskellWatchExpressionDelegate implements IWatchExpressionDelegate 
   public void evaluateExpression( final String expression, final IDebugElement context,
       final IWatchExpressionListener listener ) {
       HaskellDebugElement hde=(HaskellDebugElement)context;
-      if ((hde instanceof ISuspendResume &&  ((ISuspendResume)hde).isSuspended()) || hde.getDebugTarget().isSuspended()){
+      /** this code allows expressions that are valid in the scope of the module to be evaluated
+       * however, it gets problematic when we also have breakpoints: the top level expression may also reach the breakpoint
+       * so when we reach the breakpoint once, we stop, try to reevaluate the top level expression which in turn reaches the breakpoint...
+       * the solution is to always :force the evals if we're not considered suspended
+       */
+      boolean isSuspended=(hde instanceof ISuspendResume &&  ((ISuspendResume)hde).isSuspended()) || hde.getDebugTarget().isSuspended();
+      if  (isSuspended|| hde.getDebugTarget().isAtEnd()){
         try {
-          HaskellValue val=hde.getDebugTarget().evaluate( expression );
+          boolean force=!isSuspended;
+          HaskellValue val=hde.getDebugTarget().evaluate( expression,force );
           listener.watchEvaluationFinished( new WatchExpressionResult( expression, val, null ));
 
         } catch (DebugException de){

@@ -9,10 +9,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
@@ -24,6 +28,7 @@ import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -80,7 +85,21 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   private boolean disposed=false;
   private boolean atEnd=false;
 
-  private final HaskellThread thread=new HaskellThread( this );
+  private final HaskellThread thread;
+  /**
+   * the project on which we've laucnhed the debug session
+   */
+  private final IProject project;
+
+
+  /**
+   * keep a unique ID for the variables we create for :force
+   */
+  private final AtomicLong expCounter=new AtomicLong(System.currentTimeMillis());
+  /**
+   * keep all the :forced variables so that we don't show them in the variables view
+   */
+  private final Set<String> myVars=Collections.synchronizedSet( new HashSet<String>());
 
   /**
    * manages the number of instances
@@ -98,8 +117,25 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }
   }
 
-  public HaskellDebugTarget(final ILaunch launch, final IProcess process){
+  public HaskellDebugTarget(final ILaunch launch, final IProcess process,final List<String> files) throws CoreException{
     setTarget( this );
+  //  try {
+      String projectName=launch.getLaunchConfiguration().getAttribute( ILaunchAttributes.PROJECT_NAME ,(String)null);
+      if (projectName!=null){
+        project=ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+      } else {
+        project=null;
+      }
+      thread=new HaskellThread( this, project);
+      if (files.size()>0){
+        String fn=files.get( 0 );
+
+          thread.getDefaultFrame().setUnprocessedFileName( fn );
+
+      }
+//    } catch (CoreException ce){
+//      HaskellDebugCore.log( ce.getLocalizedMessage(), ce );
+//    }
     this.fLaunch=launch;
     this.fProcess=process;
     this.fProcess.getStreamsProxy().getOutputStreamMonitor().addListener( this );
@@ -138,13 +174,13 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
         IMarker marker = breakpoint.getMarker();
         if (marker != null) {
           try {
-            String project = getLaunch().getLaunchConfiguration().getAttribute(ILaunchAttributes.PROJECT_NAME, (String)null);
-            IProject launchProject=marker.getResource().getProject().getWorkspace().getRoot().getProject( project );
-            if (launchProject!=null){
-              if (launchProject.equals(marker.getResource().getProject())){
+            //String project = getLaunch().getLaunchConfiguration().getAttribute(ILaunchAttributes.PROJECT_NAME, (String)null);
+            //IProject launchProject=marker.getResource().getProject().getWorkspace().getRoot().getProject( project );
+            if (project!=null){
+              if (project.equals(marker.getResource().getProject())){
                 return true;
               }
-              for( IProject p: launchProject.getReferencedProjects() ) {
+              for( IProject p: project.getReferencedProjects() ) {
                 if (p.equals(marker.getResource().getProject())){
                   return true;
                 }
@@ -399,11 +435,20 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     }
   }
 
+
+  /**
+   * @return the atEnd
+   */
+  public boolean isAtEnd() {
+    return atEnd;
+  }
+
   //boolean runContext=true;
   @Override
-  public synchronized void streamAppended( final String text, final IStreamMonitor monitor ) {
+  public void streamAppended( final String text, final IStreamMonitor monitor ) {
     //boolean needContext=false;
     synchronized( response ) {
+     //boolean oldAtEnd=atEnd;
      atEnd=false;
      response.append(text);
      /**
@@ -411,6 +456,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
       * the only explanation I could find is that the PROMPT_END string we look for got actually cut in two
       * and so the text parameter never contained it. So if text is smaller than PROMPT_END, we check the whole response
       */
+
      atEnd=text.length()>=GHCiSyntax.PROMPT_END.length()?text.endsWith( GHCiSyntax.PROMPT_END):response.toString().endsWith( GHCiSyntax.PROMPT_END);
      if (atEnd){
        if (thread.isSuspended()){
@@ -471,7 +517,11 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
            thread.setBreakpoint(null);
            DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.RESUME )});
            response.setLength( 0 );
-         }
+         } /*else if (!oldAtEnd){
+           response.setLength( 0 );
+           DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.SUSPEND,DebugEvent.UNSPECIFIED )});
+           instances(1);
+         }*/
        }
      }
      notify();
@@ -501,7 +551,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
           l.clear();
           String line=br.readLine();
           while (line!=null){
-            HaskellStrackFrame f2=new HaskellStrackFrame( thread );
+            HaskellStrackFrame f2=new HaskellStrackFrame( thread,project );
             f2.setHistoryLocation( line );
             if (f2.getName()!=null){
               l.add( f2 );
@@ -534,7 +584,10 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
       while (line!=null){
 
         if (line.indexOf( GHCiSyntax.TYPEOF )>-1 && sb.length()>0){
-          ret.add( new HaskellVariable( sb.toString(), frame ) );
+          HaskellVariable var=new HaskellVariable( sb.toString(), frame );
+          if (!myVars.contains( var.getName() )){
+            ret.add( var );
+          }
           sb.setLength( 0 );
         }
         if (sb.length()>0){
@@ -544,7 +597,10 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
         line=br.readLine();
       }
       if (sb.length()>0){
-        ret.add( new HaskellVariable( sb.toString(), frame ) );
+        HaskellVariable var=new HaskellVariable( sb.toString(), frame );
+        if (!myVars.contains( var.getName() )){
+          ret.add( var );
+        }
       }
       return ret.toArray( new IVariable[ret.size()] );
     } catch (IOException ioe){
@@ -555,7 +611,8 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
 
 
   public void forceVariable(final HaskellVariable var)throws DebugException{
-    sendRequest( GHCiSyntax.forceVariableCommand( var.getName() ), true );
+    //sendRequest( GHCiSyntax.forceVariableCommand( var.getName() ), true );
+    sendExpression( var.getName(), true );
     DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( var.getFrame(), DebugEvent.CHANGE,DebugEvent.CONTENT)});
 
     /*String s=response.toString();
@@ -575,16 +632,47 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   }
 
   /**
+   * since :force only takes an identifier, we need to create an identifier for the expression, and force that
+   * @param expression
+   * @param force
+   * @return
+   * @throws DebugException
+   */
+  private String sendExpression(final String expression,final boolean force) throws DebugException{
+    if (force){
+      String fp="fp"+expCounter.getAndIncrement(); //$NON-NLS-1$
+      myVars.add( fp );
+      String exp=force?"let "+fp+"="+expression:expression; //$NON-NLS-1$ //$NON-NLS-2$
+        //GHCiSyntax.forceVariableCommand(expression):expression;
+      sendRequest(exp,true);
+      String val1=getResultWithoutPrompt();
+      sendRequest( GHCiSyntax.forceVariableCommand(fp), true );
+      String val2=getResultWithoutPrompt();
+      if (val2.startsWith( GHCiSyntax.IGNORING_BREAKPOINT )){ /** :force may give this message **/
+        val2=val2.substring( GHCiSyntax.IGNORING_BREAKPOINT.length() );
+      }
+      if (val2.startsWith( fp +" = ") ){//$NON-NLS-1$
+        val2=val2.substring( fp.length()+3 );
+      } else { /** this is an error, then, so we give the result of the initial expression **/
+        val2=val1;
+      }
+      return val2;
+    }
+    sendRequest(expression,true);
+    return getResultWithoutPrompt();
+
+  }
+  /**
    * evaluate an arbitrary expression
    * @param expression the expression
    * @return the value and its type
    * @throws DebugException
    */
-  public synchronized HaskellValue evaluate(final String expression)throws DebugException{
+  public synchronized HaskellValue evaluate(final String expression,final boolean force)throws DebugException{
     // get rid of any previous "it" in case of evaluation error
     sendRequest(GHCiSyntax.UNIT,true);
-    sendRequest(expression,true);
-    String val=getResultWithoutPrompt();
+    String val=sendExpression( expression, force );
+    //getResultWithoutPrompt();
     sendRequest(GHCiSyntax.TYPE_LAST_RESULT_COMMAND,true);
     String type=getResultWithoutPrompt();
     int ix=type.indexOf( GHCiSyntax.TYPEOF );

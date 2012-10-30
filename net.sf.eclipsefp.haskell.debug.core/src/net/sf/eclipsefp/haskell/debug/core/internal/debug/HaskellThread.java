@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.util.GHCiSyntax;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -19,13 +20,22 @@ import org.eclipse.debug.core.model.IThread;
 public class HaskellThread extends HaskellDebugElement implements IThread {
   private HaskellBreakpoint breakpoint;
   private String stopLocation;
-  private final HaskellStrackFrame frame=new HaskellStrackFrame( this );
+  private final HaskellStrackFrame frame;
   private String name=CoreTexts.thread_default_name;
 
   private final List<HaskellStrackFrame> historyFrames=new ArrayList<HaskellStrackFrame>();
 
-  public HaskellThread(final HaskellDebugTarget target){
+  public HaskellThread(final HaskellDebugTarget target,final IProject p){
     super( target );
+    frame=new HaskellStrackFrame( this,p );
+  }
+
+
+  /**
+   * @return the frame
+   */
+  public HaskellStrackFrame getDefaultFrame() {
+    return frame;
   }
 
   @Override

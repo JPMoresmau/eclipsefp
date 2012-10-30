@@ -46,6 +46,8 @@ public class GHCiSyntax {
   public static final String TYPEOF="::"; //$NON-NLS-1$
   public static final String UNIT="()"; //$NON-NLS-1$
 
+  public static final String IGNORING_BREAKPOINT="*** Ignoring breakpoint"+PlatformUtil.NL;//$NON-NLS-1$
+
   public static String addModuleCommand(final String module){
     return  ":add *" +module;  //$NON-NLS-1$
    }
