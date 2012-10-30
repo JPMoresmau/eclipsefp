@@ -406,7 +406,12 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     synchronized( response ) {
      atEnd=false;
      response.append(text);
-     atEnd=text.endsWith( GHCiSyntax.PROMPT_END);
+     /**
+      * what do we do here? We got users complaining that sometimes we didn't realize GHCi was at the prompt
+      * the only explanation I could find is that the PROMPT_END string we look for got actually cut in two
+      * and so the text parameter never contained it. So if text is smaller than PROMPT_END, we check the whole response
+      */
+     atEnd=text.length()>=GHCiSyntax.PROMPT_END.length()?text.endsWith( GHCiSyntax.PROMPT_END):response.toString().endsWith( GHCiSyntax.PROMPT_END);
      if (atEnd){
        if (thread.isSuspended()){
          Matcher m2=GHCiSyntax.CONTEXT_PATTERN.matcher( response.toString() );
