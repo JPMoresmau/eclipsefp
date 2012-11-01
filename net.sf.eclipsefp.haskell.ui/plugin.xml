@@ -320,7 +320,25 @@
             name="%stylishHaskellPP_name"
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
       </page>      
-     
+      <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.AlexPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.AlexPP"
+            name="%alexPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>      
+      <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.HappyPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.HappyPP"
+            name="%happyPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>    
+      <page
+            class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.UuagcPP"
+            id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.UuagcPP"
+            name="%uuagcPP_name"
+            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+      </page>    
+      
       <page
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.DebugPP"

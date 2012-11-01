@@ -8,9 +8,17 @@ import java.io.StringWriter;
  * @author Alejandro Serrano
  */
 public class HappyRunner extends PartitionedRunner {
+  private static String fullPath;
 
-	@Override
-	public String getExecutableName() {
+  public static void setFullPath( final String path ) {
+   fullPath = path;
+ }
+
+ @Override
+ public String getExecutableName() {
+   if (fullPath!=null && fullPath.length()>0){
+     return fullPath;
+   }
 		return "happy"; //$NON-NLS-1$
 	}
 

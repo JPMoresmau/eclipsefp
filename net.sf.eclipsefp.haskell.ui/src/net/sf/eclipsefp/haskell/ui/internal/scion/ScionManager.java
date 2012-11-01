@@ -21,6 +21,9 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.hlint.HLintPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -225,10 +228,10 @@ public class ScionManager implements IResourceChangeListener {
       browserSetup();
     }
 
-    String hlint=preferenceStore.getString( IPreferenceConstants.HLINT_EXECUTABLE );
-    if (hlint!=null){
-      HLintPlugin.setHlintPath( hlint );
-    }
+    HLintPlugin.setHlintPath( preferenceStore.getString( IPreferenceConstants.HLINT_EXECUTABLE ));
+    AlexRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.ALEX_EXECUTABLE ) );
+    HappyRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.HAPPY_EXECUTABLE ) );
+    UuagcRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.UUAGC_EXECUTABLE ) );
 
     // Sit and listen to the preference store changes
     preferenceStore.addPropertyChangeListener( new ExecutablesPropertiesListener() );
@@ -599,8 +602,20 @@ public class ScionManager implements IResourceChangeListener {
               checkHoogleDataIsPresent((String)event.getNewValue());
             }
           } else if (event.getProperty().equals(IPreferenceConstants.HLINT_EXECUTABLE)){
-            if (event.getNewValue() instanceof String){
+            if (event.getNewValue() instanceof String || event.getNewValue()==null){
               HLintPlugin.setHlintPath( (String)event.getNewValue() );
+            }
+          } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
+            if (event.getNewValue() instanceof String || event.getNewValue()==null){
+              AlexRunner.setFullPath( (String)event.getNewValue() );
+            }
+          } else if (event.getProperty().equals(IPreferenceConstants.HAPPY_EXECUTABLE)){
+            if (event.getNewValue() instanceof String || event.getNewValue()==null){
+              HappyRunner.setFullPath( (String)event.getNewValue() );
+            }
+          } else if (event.getProperty().equals(IPreferenceConstants.UUAGC_EXECUTABLE)){
+            if (event.getNewValue() instanceof String || event.getNewValue()==null){
+              UuagcRunner.setFullPath( (String)event.getNewValue() );
             }
           } else if (event.getProperty().equals(IPreferenceConstants.VERBOSE_INTERACTION)){
             boolean verbose = ((Boolean)event.getNewValue()).booleanValue();

@@ -19,6 +19,19 @@ public class UuagcRunner {
 
   private final IProject project;
 
+  private static String fullPath;
+
+  public static void setFullPath( final String path ) {
+   fullPath = path;
+ }
+
+ public String getExecutableName() {
+   if (fullPath!=null && fullPath.length()>0){
+     return fullPath;
+   }
+   return  "uuagc"; //$NON-NLS-1$
+ }
+
   public UuagcRunner( final IProject project ) {
     this.project = project;
   }
@@ -54,7 +67,7 @@ public class UuagcRunner {
       return r.toArray( new String[ r.size() ] );
     }
     // If no special information is found
-    return new String[] { "uuagc", "--all", resource.getLocation().toOSString() }; //$NON-NLS-1$//$NON-NLS-2$
+    return new String[] { getExecutableName(), "--all", resource.getLocation().toOSString() }; //$NON-NLS-1$
   }
 
   public List<ProcessorError> run( final IResource resource ) {
