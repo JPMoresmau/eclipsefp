@@ -51,9 +51,10 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
         createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
       }
 
+      String src=HaskellProjectCreationOperation.getSourceDir();
       if (isExecutable()){
         String mainPath="Main";//$NON-NLS-1$
-        String src=HaskellProjectCreationOperation.getSourceDir();
+
         if (src!=null){
           mainPath=src+"/"+mainPath;//$NON-NLS-1$
         }
@@ -64,7 +65,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
 
       IPath cabalFile = new Path( name ).addFileExtension( FileUtil.EXTENSION_CABAL );
-      createFile( project, cabalFile, getCabalFileContent( name ), mo  );
+      createFile( project, cabalFile, getCabalFileContent( name,src ), mo  );
     }
   }
 
@@ -78,11 +79,11 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
 
 
-  private String getCabalFileContent( final String name ) {
-    return getCabalFile( name ).dump();
+  private String getCabalFileContent( final String name,final String src ) {
+    return getCabalFile( name ,src).dump();
   }
 
-  protected PackageDescription getCabalFile(final String name){
+  protected PackageDescription getCabalFile(final String name,final String src){
 
     /*String s=CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
            + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL + NL //$NON-NLS-1$
@@ -112,14 +113,14 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
     if (isLibrary()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_LIBRARY, null );
-      pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
+      pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, src );
       pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" ); //$NON-NLS-1$
       pds.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" ); //$NON-NLS-1$
     }
 
     if (isExecutable()){
       PackageDescriptionStanza pds=pd.addStanza( CabalSyntax.SECTION_EXECUTABLE, name );
-      pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, FileUtil.DEFAULT_FOLDER_SRC );
+      pds.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, src );
       pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" ); //$NON-NLS-1$
       pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" ); //$NON-NLS-1$
       pds.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" ); //$NON-NLS-1$
