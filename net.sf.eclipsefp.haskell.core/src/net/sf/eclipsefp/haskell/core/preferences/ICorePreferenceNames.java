@@ -19,7 +19,7 @@ public interface ICorePreferenceNames {
 
   // new Haskell project
   String FOLDERS_SRC = "FOLDERS_SRC"; //$NON-NLS-1$
-  String FOLDERS_DOC = "FOLDERS_DOC"; //$NON-NLS-1$
+//  String FOLDERS_DOC = "FOLDERS_DOC"; //$NON-NLS-1$
   String FOLDERS_IN_NEW_PROJECT = "FOLDERS_IN_NEW_PROJECT"; //$NON-NLS-1$
 
   String DEBUG_BREAK_ON_ERROR="DEBUG_BREAK_ON_ERROR"; //$NON-NLS-1$

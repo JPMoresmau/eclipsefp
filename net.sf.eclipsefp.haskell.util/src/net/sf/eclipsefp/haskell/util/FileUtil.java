@@ -45,7 +45,7 @@ public class FileUtil {
   /** Default project source directory */
   public static final String   DEFAULT_FOLDER_SRC = "src";
   /** Default project documentation directory */
-  public static final String   DEFAULT_FOLDER_DOC = "doc";
+  //public static final String   DEFAULT_FOLDER_DOC = "doc";
   
   /**  Haskell for Alex lexers. */
   public static final String   EXTENSION_ALEX     = "x";                  //$NON-NLS-1$
