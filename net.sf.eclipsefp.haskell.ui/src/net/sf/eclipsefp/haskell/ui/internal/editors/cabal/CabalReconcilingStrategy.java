@@ -65,12 +65,14 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
   private void reconcile() {
     String content = document.get();
     final PackageDescription pd = PackageDescriptionLoader.load( content );
-    Display.getDefault().asyncExec( new Runnable() {
-      @Override
-      public void run() {
-        editor.setPackageDescription( pd );
-      }
-    } );
-    foldingStructureProvider.updateFoldingRegions( pd );
+    if (editor!=null){
+      Display.getDefault().asyncExec( new Runnable() {
+        @Override
+        public void run() {
+          editor.setPackageDescription( pd );
+        }
+      } );
+      foldingStructureProvider.updateFoldingRegions( pd );
+    }
   }
 }

@@ -30,6 +30,9 @@ class CabalFoldingStructureProvider {
 	}
 
 	void updateFoldingRegions( final PackageDescription pd ) {
+	  if (editor==null){
+	    return;
+	  }
 		try {
 			Class<ProjectionAnnotationModel> ad = ProjectionAnnotationModel.class;
       ProjectionAnnotationModel model

@@ -15,6 +15,7 @@ Fixes:
 Features:
 	- Evaluate GHCi expressions in debug mode even when not stopped at a breakpoint
 	- Can specify paths of executables in preferences for Alex, Happy and UUAGC
+	- File templates for cabal file, setup.hs, new modules... (under Preferences -> Haskell -> New Project)
 
 Internal:
 

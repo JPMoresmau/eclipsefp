@@ -19,7 +19,7 @@ public class MockCodeGenerator extends CodeGenerator {
 	}
 
 	@Override
-  public String createModuleContent(
+  public String createModuleContent(final String projectName,
 			final String[] folderNames,
             final String name,
             final EHaskellCommentStyle style)

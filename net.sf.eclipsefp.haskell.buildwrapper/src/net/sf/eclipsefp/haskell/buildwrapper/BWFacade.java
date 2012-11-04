@@ -613,6 +613,36 @@ public class BWFacade {
 		return cps;
 	}
 	
+	public List<TokenDef> tokenTypes(String fn){
+		//long t0=System.currentTimeMillis();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("tokentypes");
+		command.add("--file="+fn);
+		JSONArray arr=run(command,ARRAY);
+		//long t01=System.currentTimeMillis();
+		List<TokenDef> cps;
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				parseNotes(notes);
+			}
+			JSONArray objs=arr.optJSONArray(0);
+			cps=new ArrayList<TokenDef>(objs.length());
+			for (int a=0;a<objs.length();a++){
+				try {
+					cps.add(new TokenDef(fn,objs.getJSONObject(a)));
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_outline_error, je);
+				}
+			}
+		} else {
+			cps=new ArrayList<TokenDef>();
+		}
+		//long t1=System.currentTimeMillis();
+		//BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
+		return cps;
+	}
+	
 	public BuildFlags getBuildFlags(IFile file){
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();

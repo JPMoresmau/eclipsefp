@@ -6,8 +6,8 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellSourceViewerConfiguration;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -16,6 +16,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -34,26 +35,33 @@ import org.eclipse.swt.widgets.Display;
 public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNames {
 
   private IPreferenceStore store;
-  private final HaskellSourceViewerConfiguration config;
+  private final SourceViewerConfiguration config;
   private IPropertyChangeListener propertyChangeListener;
   private Color bgColor;
 
-  SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
+  public SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
+    this(parent,store,new HaskellSourceViewerConfiguration( null ), loadTextFromResource( "preview.hs" ));
+  }
+
+  public SyntaxPreviewer( final Composite parent, final IPreferenceStore store,final SourceViewerConfiguration config,final String content ) {
     super( parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     this.store = store;
 
-    config=new HaskellSourceViewerConfiguration( null );
-    config.setPreferenceStore( store );
+    this.config=config;
+    if (config instanceof HaskellSourceViewerConfiguration){
+     ((HaskellSourceViewerConfiguration)config).setPreferenceStore( store );
+    }
     configure( config );
     //done after configure so that the text invalidation is done after the scanner manager being notified
     initializePropertyListener();
     setEditable( false );
     getTextWidget().setFont( JFaceResources.getTextFont() );
 
-    IDocument document = new Document( loadTextFromResource( "preview.hs" ) ); //$NON-NLS-1$
+    IDocument document = new Document( content);
     setupDocument( document, IDocumentExtension3.DEFAULT_PARTITIONING );
     setDocument( document );
   }
+
 
   @Override
   protected void handleDispose() {
@@ -62,7 +70,9 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
         store.removePropertyChangeListener( this.propertyChangeListener );
         propertyChangeListener = null;
       }
-      config.getScannerManager().dispose();
+      if (config instanceof HaskellSourceViewerConfiguration){
+        ((HaskellSourceViewerConfiguration)config).getScannerManager().dispose();
+      }
       store = null;
     }
     if( ( this.bgColor != null )
@@ -108,10 +118,10 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
     return color;
   }
 
-  private String loadTextFromResource( final String name ) {
+  private static String loadTextFromResource( final String name ) {
     String result = ""; //$NON-NLS-1$
     try {
-      InputStream stream = getClass().getResourceAsStream( name );
+      InputStream stream = SyntaxPreviewer.class.getResourceAsStream( name );
       result = ResourceUtil.readStream( stream );
     } catch( Exception ex ) {
       HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$

@@ -100,7 +100,8 @@ public class SourceFileGenerator {
     final String[] segments = getPathSegments( info );
     final String moduleName = info.getModuleName();
     final EHaskellCommentStyle style = info.getCommentStyle();
-    String fileContent = fCodeGenerator.createModuleContent( segments,
+    String pName=info.getProject()!=null?info.getProject().getName():"";
+    String fileContent = fCodeGenerator.createModuleContent( pName,segments,
         moduleName,
         style );
     String fileName = createFileName( style, moduleName );

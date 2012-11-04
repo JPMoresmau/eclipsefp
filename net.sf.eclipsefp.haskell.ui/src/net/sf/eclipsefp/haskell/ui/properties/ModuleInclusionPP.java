@@ -35,6 +35,7 @@ public class ModuleInclusionPP extends PropertyPage {
     IContainer src=ResourceUtil.getSourceContainer( f );
     if (src!=null){
       info=new ModuleCreationInfo();
+      info.setProject( f.getProject() );
       info.setSourceContainer( src );
       IPath p=ResourceUtil.getSourceRelativePath( src, f );
       info.setFolders(p);

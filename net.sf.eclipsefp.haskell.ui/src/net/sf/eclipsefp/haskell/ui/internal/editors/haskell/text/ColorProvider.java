@@ -74,6 +74,7 @@ public class ColorProvider implements IEditorPreferenceNames {
     Iterator<Color> it = colors.values().iterator();
     while( it.hasNext() ) {
       it.next().dispose();
+      it.remove();
     }
   }
 
@@ -109,7 +110,7 @@ public class ColorProvider implements IEditorPreferenceNames {
 
   private Color getColor( final RGB rgb ) {
     Color color = colors.get( rgb );
-    if( color == null ) {
+    if( color == null || color.isDisposed()) {
       color = new Color( Display.getCurrent(), rgb );
       colors.put( rgb, color );
     }

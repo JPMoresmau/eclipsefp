@@ -67,6 +67,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     if (colorProvider!=null){
       colorProvider.dispose();
     }
+    tokens.clear();
   }
 
   public ScannerManager(final IPreferenceStore prefStore){

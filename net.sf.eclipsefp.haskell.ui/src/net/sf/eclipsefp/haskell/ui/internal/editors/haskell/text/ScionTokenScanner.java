@@ -1,7 +1,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,10 +18,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
-import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -33,7 +34,6 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-import org.json.JSONArray;
 
 /**
  * Uses Scion tokenTypesArbitrary function to get tokens for a haskell source
@@ -278,7 +278,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     } else {
       this.doc = document;
       contents=doc.get();
-      try {
+      /*try {
         InputStream stream = SyntaxPreviewer.class.getResourceAsStream( "preview.json" );
         // preview file
         JSONArray result = new JSONArray( ResourceUtil.readStream( stream ) );
@@ -289,6 +289,24 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         }
       } catch( Exception ex ) {
         HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
+      }*/
+      BWFacade f=new BWFacade();
+      f.setBwPath( BuildWrapperPlugin.getBwPath() );
+      try {
+
+        File file=File.createTempFile( "temp", ".hs" );
+        try {
+          Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), "UTF8" ) );
+          fw.write( contents );
+          fw.close();
+          f.setCabalFile( new File(file.getParentFile(),"temp.cabal") .getAbsolutePath());
+          file.renameTo(new File( new File(file.getParentFile(),BWFacade.DIST_FOLDER),file.getName()));
+          lTokenDefs =  f.tokenTypes( file.getName() );
+        } finally {
+          file.delete();
+        }
+      } catch( Exception ex ) {
+        HaskellUIPlugin.log( ex.getLocalizedMessage(), ex );
       }
     }
     if( lTokenDefs != null && lTokenDefs.size() > 0 ) {

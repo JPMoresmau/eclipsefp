@@ -338,6 +338,16 @@ public final class UITexts extends NLS {
   public static String preferences_project_invalid_documentation;
   public static String preferences_project_invalid_project;
   public static String preferences_project_output_note;
+  public static String preferences_project_file_templates;
+  public static String preferences_project_file_templates_cabal;
+  public static String preferences_project_file_templates_haskell;
+  public static String preferences_project_file_TEMPLATE_CABAL_LIBRARY;
+  public static String preferences_project_file_TEMPLATE_CABAL_EXE;
+  public static String preferences_project_file_TEMPLATE_CABAL;
+  public static String preferences_project_file_TEMPLATE_CABAL_SETUP;
+  public static String preferences_project_file_TEMPLATE_MODULE;
+  public static String preferences_project_file_TEMPLATE_MAIN;
+  public static String preferences_project_file_TEMPLATE_GTK;
 
   public static String preferences_editor_description;
   public static String preferences_editor_description_hover;

@@ -42,14 +42,14 @@ import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
   *
   * @author Leif Frenzel
   */
-class CabalConfiguration extends SourceViewerConfiguration {
+public class CabalConfiguration extends SourceViewerConfiguration {
 
   private final CabalFormEditor editor;
 
   private ITokenScanner defaultScanner;
   private ITokenScanner commentScanner;
 
-  CabalConfiguration( final CabalFormEditor editor ) {
+  public CabalConfiguration( final CabalFormEditor editor ) {
     this.editor = editor;
   }
 

@@ -10,11 +10,12 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.text;bundle-version="3.5.0",
- net.sf.eclipsefp.haskell.util;bundle-version="2.3.2",
- net.sf.eclipsefp.haskell.hlint;bundle-version="2.3.2",
+ net.sf.eclipsefp.haskell.util,
+ net.sf.eclipsefp.haskell.hlint,
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.2",
- net.sf.eclipsefp.haskell.buildwrapper;bundle-version="2.3.2"
+ net.sf.eclipsefp.haskell.buildwrapper,
+ org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

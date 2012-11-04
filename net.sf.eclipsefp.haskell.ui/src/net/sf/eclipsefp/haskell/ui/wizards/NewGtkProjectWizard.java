@@ -5,13 +5,16 @@
  */
 package net.sf.eclipsefp.haskell.ui.wizards;
 
+import java.util.Map;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.core.preferences.TemplateVariables;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.wizards.NewProjectWizardPage;
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 
@@ -84,8 +87,8 @@ public class NewGtkProjectWizard extends NewHaskellProjectWizard implements INew
      * @see net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp#getCabalFile(java.lang.String)
      */
     @Override
-    protected PackageDescription getCabalFile( final String name , final String src) {
-      PackageDescription pd=super.getCabalFile( name, src );
+    protected PackageDescription getCabalFile( final Map<String,String> vars) {
+      PackageDescription pd=super.getCabalFile( vars );
       PackageDescriptionStanza pds=pd.getStanzas().get( 1 );
       pds.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "gtk" ); //$NON-NLS-1$
 
@@ -96,21 +99,25 @@ public class NewGtkProjectWizard extends NewHaskellProjectWizard implements INew
      * @see net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp#getMainFileContent()
      */
     @Override
-    protected String getMainFileContent() {
-      return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+
-        "import Graphics.UI.Gtk"+PlatformUtil.NL+PlatformUtil.NL+
-        "main :: IO ()"+PlatformUtil.NL+
-        "main = do"+PlatformUtil.NL+
-        "  initGUI"+PlatformUtil.NL+
-        "  window <- windowNew"+PlatformUtil.NL+
-        "  button <- buttonNew"+PlatformUtil.NL+
-        "  set window [ containerBorderWidth := 10,"+PlatformUtil.NL+
-        "               containerChild := button ]"+PlatformUtil.NL+
-        "  set button [ buttonLabel := \"Hello World\" ]"+PlatformUtil.NL+
-        "  onClicked button (putStrLn \"Hello World\")"+PlatformUtil.NL+
-        "  onDestroy window mainQuit"+PlatformUtil.NL+
-        "  widgetShowAll window"+PlatformUtil.NL+
-        "  mainGUI"+PlatformUtil.NL;
+    protected String getMainFileContent(final Map<String,String> vars) {
+      vars.put( TemplateVariables.MODULE_NAME, "Main" );//$NON-NLS-1$
+      String mod=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE, vars );
+      vars.put( TemplateVariables.MODULE, mod );
+      return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_GTK, vars );
+//      return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+
+//        "import Graphics.UI.Gtk"+PlatformUtil.NL+PlatformUtil.NL+
+//        "main :: IO ()"+PlatformUtil.NL+
+//        "main = do"+PlatformUtil.NL+
+//        "  initGUI"+PlatformUtil.NL+
+//        "  window <- windowNew"+PlatformUtil.NL+
+//        "  button <- buttonNew"+PlatformUtil.NL+
+//        "  set window [ containerBorderWidth := 10,"+PlatformUtil.NL+
+//        "               containerChild := button ]"+PlatformUtil.NL+
+//        "  set button [ buttonLabel := \"Hello World\" ]"+PlatformUtil.NL+
+//        "  onClicked button (putStrLn \"Hello World\")"+PlatformUtil.NL+
+//        "  onDestroy window mainQuit"+PlatformUtil.NL+
+//        "  widgetShowAll window"+PlatformUtil.NL+
+//        "  mainGUI"+PlatformUtil.NL;
     }
   }
 }

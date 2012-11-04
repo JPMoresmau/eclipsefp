@@ -6,12 +6,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -20,6 +22,9 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.IValueVariable;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -175,5 +180,33 @@ public class HaskellCorePlugin extends Plugin {
 	/** Get an instance-scoped preference store for the plug-in */
 	public static final IEclipsePreferences instanceScopedPreferences() {
 	  return InstanceScope.INSTANCE.getNode( getPluginId() );
+	}
+
+	public static String populateTemplate(final String pref,final Map<String,String> extraVars){
+	  IStringVariableManager mgr=VariablesPlugin.getDefault().getStringVariableManager();
+    IEclipsePreferences coreNode = instanceScopedPreferences();
+    String template=coreNode.get( pref, "" ); //$NON-NLS-1$
+
+    try {
+      IValueVariable[] vars = new IValueVariable[0];
+      if (extraVars!=null){
+        vars = new IValueVariable[extraVars.size()];
+        int a=0;
+        for (String key:extraVars.keySet()){
+          String val=extraVars.get( key );
+          vars[a++]=mgr.newValueVariable( key, "",true,val );//$NON-NLS-1$
+
+        }
+        mgr.addVariables( vars );
+      }
+      try {
+        return mgr.performStringSubstitution( template );
+      } finally {
+        mgr.removeVariables( vars );
+      }
+    } catch (CoreException ce){
+      HaskellCorePlugin.log( ce );
+    }
+    return "";//$NON-NLS-1$
 	}
 }

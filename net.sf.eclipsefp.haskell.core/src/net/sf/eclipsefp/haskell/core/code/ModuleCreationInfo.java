@@ -6,6 +6,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -30,6 +31,7 @@ public class ModuleCreationInfo {
    */
   private boolean foldersQualify=true;
 
+  private IProject project;
 
   // attribute setters and getters
   ////////////////////////////////
@@ -40,6 +42,7 @@ public class ModuleCreationInfo {
 
   public ModuleCreationInfo(final IFile f) {
     super();
+    this.project=f.getProject();
     IContainer src=ResourceUtil.getSourceContainer( f );
     setSourceContainer( src );
     if (src!=null){
@@ -86,6 +89,9 @@ public class ModuleCreationInfo {
 
   public void setSourceContainer( final IContainer sourceContainer ) {
     this.sourceContainer = sourceContainer;
+    if (this.sourceContainer!=null){
+      this.project=this.sourceContainer.getProject();
+    }
   }
 
   public EHaskellCommentStyle getCommentStyle() {
@@ -134,6 +140,16 @@ public class ModuleCreationInfo {
 
   public void setEditorStanza( final PackageDescriptionStanza editorStanza ) {
     this.editorStanza = editorStanza;
+  }
+
+
+  public IProject getProject() {
+    return project;
+  }
+
+
+  public void setProject( final IProject project ) {
+    this.project = project;
   }
 
 

@@ -6,12 +6,15 @@ package net.sf.eclipsefp.haskell.core.internal.project;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalContributorManager;
-import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.ICabalContributor;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
-import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.core.preferences.TemplateVariables;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -43,15 +46,20 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     // we create nothing if no component selected, probably we're getting files from source control system or something
     if (isExecutable() || isLibrary()){
       String name = project.getName();
+      String src=HaskellProjectCreationOperation.getSourceDir();
+      Map<String,String> vars=new HashMap<String, String>();
+      vars.put( TemplateVariables.PROJECT_NAME, name );
+      vars.put( TemplateVariables.SRC, src );
+      vars.put( TemplateVariables.USER_NAME, PlatformUtil.getCurrentUser() );
 
       // we create a normal setup, but it could be a literate file
       IFile litSetup = project.getFile( "Setup.lhs" ); //$NON-NLS-1$
       // file may exist if project is created from source version control
       if (!litSetup.exists()){
-        createFile( project, new Path( SETUP_HS ), getSetupFileContent(), mo );
+        createFile( project, new Path( SETUP_HS ), getSetupFileContent(vars), mo );
       }
 
-      String src=HaskellProjectCreationOperation.getSourceDir();
+
       if (isExecutable()){
         String mainPath="Main";//$NON-NLS-1$
 
@@ -60,12 +68,12 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
         }
 
         IPath mainFile = new Path( mainPath ).addFileExtension( FileUtil.EXTENSION_HS );
-        createFile( project, mainFile, getMainFileContent( ), mo  );
+        createFile( project, mainFile, getMainFileContent(vars ), mo  );
       }
 
 
       IPath cabalFile = new Path( name ).addFileExtension( FileUtil.EXTENSION_CABAL );
-      createFile( project, cabalFile, getCabalFileContent( name,src ), mo  );
+      createFile( project, cabalFile, getCabalFileContent( vars ), mo  );
     }
   }
 
@@ -73,17 +81,21 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   // helping methods
   //////////////////
 
-  protected String getMainFileContent() {
-   return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+"main::IO()"+PlatformUtil.NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  protected String getMainFileContent(final Map<String,String> vars ) {
+    vars.put( TemplateVariables.MODULE_NAME, "Main" );//$NON-NLS-1$
+    String mod=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE, vars );
+    vars.put( TemplateVariables.MODULE, mod );
+    return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MAIN, vars );
+   //return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+"main::IO()"+PlatformUtil.NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 
 
 
-  private String getCabalFileContent( final String name,final String src ) {
-    return getCabalFile( name ,src).dump();
+  private String getCabalFileContent( final Map<String,String> vars ) {
+    return getCabalFile( vars).dump();
   }
 
-  protected PackageDescription getCabalFile(final String name,final String src){
+  protected PackageDescription getCabalFile(final Map<String,String> vars){
 
     /*String s=CabalSyntax.FIELD_NAME.getCabalName()+":           " + name + NL //$NON-NLS-1$
            + CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1 "+ NL + NL //$NON-NLS-1$
@@ -102,7 +114,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
 
     return s;*/
-    PackageDescription pd=new PackageDescription( name );
+    /*PackageDescription pd=new PackageDescription( name );
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_VERSION, "0.1" ); //$NON-NLS-1$
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_CABAL_VERSION, ">= 1.2" ); //$NON-NLS-1$
     pd.getStanzas().get( 0 ).update( CabalSyntax.FIELD_BUILD_TYPE, "Simple" ); //$NON-NLS-1$
@@ -124,7 +136,23 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
       pds.update( CabalSyntax.FIELD_MAIN_IS, "Main.hs" ); //$NON-NLS-1$
       pds.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" ); //$NON-NLS-1$
       pds.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" ); //$NON-NLS-1$
+    }*/
+
+    String library=""; //$NON-NLS-1$
+
+    if (isLibrary()){
+      library=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL_LIBRARY, vars );
     }
+    vars.put( TemplateVariables.LIBRARY, library );
+
+    String exe="";//$NON-NLS-1$
+    if (isExecutable()){
+      exe=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL_EXE, vars );
+    }
+    vars.put( TemplateVariables.EXECUTABLE, exe );
+
+    String content=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL, vars);
+    PackageDescription pd=PackageDescriptionLoader.load( content );
 
     for (ICabalContributor c:CabalContributorManager.getContributors()){
       c.contributeOnNewProject( pd );
@@ -151,8 +179,10 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     }
   }
 
-  private String getSetupFileContent() {
-    return "import Distribution.Simple"+PlatformUtil.NL+"main = defaultMain"+PlatformUtil.NL; //$NON-NLS-1$ //$NON-NLS-2$
+
+  private String getSetupFileContent(final Map<String,String> vars) {
+    //return "import Distribution.Simple"+PlatformUtil.NL+"main = defaultMain"+PlatformUtil.NL; //$NON-NLS-1$ //$NON-NLS-2$
+    return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL_SETUP, vars );
   }
 
 
