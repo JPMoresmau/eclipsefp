@@ -39,10 +39,22 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
   private IPropertyChangeListener propertyChangeListener;
   private Color bgColor;
 
-  public SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
+  /**
+   * show the preview content
+   * @param parent the UI parent
+   * @param store the preferences store to get color preferences from
+   */
+  SyntaxPreviewer( final Composite parent, final IPreferenceStore store ) {
     this(parent,store,new HaskellSourceViewerConfiguration( null ), loadTextFromResource( "preview.hs" ));
   }
 
+  /**
+   * show arbitrary content
+   * @param parent the UI parent
+   * @param store the preferences store to get color preferences from
+   * @param config the source viewer configuration
+   * @param content the document contents
+   */
   public SyntaxPreviewer( final Composite parent, final IPreferenceStore store,final SourceViewerConfiguration config,final String content ) {
     super( parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     this.store = store;

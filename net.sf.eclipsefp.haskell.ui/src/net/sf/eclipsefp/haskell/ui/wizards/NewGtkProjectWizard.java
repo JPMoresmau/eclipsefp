@@ -100,8 +100,10 @@ public class NewGtkProjectWizard extends NewHaskellProjectWizard implements INew
      */
     @Override
     protected String getMainFileContent(final Map<String,String> vars) {
+      /** get module header **/
       vars.put( TemplateVariables.MODULE_NAME, "Main" );//$NON-NLS-1$
       String mod=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE, vars );
+      /** get content  **/
       vars.put( TemplateVariables.MODULE, mod );
       return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_GTK, vars );
 //      return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+

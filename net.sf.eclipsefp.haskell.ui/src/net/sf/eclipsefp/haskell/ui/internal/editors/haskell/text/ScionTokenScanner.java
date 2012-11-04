@@ -290,23 +290,27 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       } catch( Exception ex ) {
         HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
       }*/
-      BWFacade f=new BWFacade();
-      f.setBwPath( BuildWrapperPlugin.getBwPath() );
-      try {
-
-        File file=File.createTempFile( "temp", ".hs" );
+      if (contents.length()>0){
+        BWFacade f=new BWFacade();
+        f.setBwPath( BuildWrapperPlugin.getBwPath() );
         try {
-          Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), "UTF8" ) );
-          fw.write( contents );
-          fw.close();
-          f.setCabalFile( new File(file.getParentFile(),"temp.cabal") .getAbsolutePath());
-          file.renameTo(new File( new File(file.getParentFile(),BWFacade.DIST_FOLDER),file.getName()));
-          lTokenDefs =  f.tokenTypes( file.getName() );
-        } finally {
-          file.delete();
+
+          File file=File.createTempFile( "temp", ".hs" );
+          try {
+            Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), "UTF8" ) );
+            fw.write( contents );
+            fw.close();
+            f.setCabalFile( new File(file.getParentFile(),"temp.cabal") .getAbsolutePath());
+            file.renameTo(new File( new File(file.getParentFile(),BWFacade.DIST_FOLDER),file.getName()));
+            lTokenDefs =  f.tokenTypes( file.getName() );
+          } finally {
+            file.delete();
+          }
+        } catch( Exception ex ) {
+          HaskellUIPlugin.log( ex.getLocalizedMessage(), ex );
         }
-      } catch( Exception ex ) {
-        HaskellUIPlugin.log( ex.getLocalizedMessage(), ex );
+      } else {
+        lTokenDefs=new ArrayList<TokenDef>();
       }
     }
     if( lTokenDefs != null && lTokenDefs.size() > 0 ) {

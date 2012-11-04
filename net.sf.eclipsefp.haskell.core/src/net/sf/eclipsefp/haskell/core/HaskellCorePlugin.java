@@ -182,13 +182,21 @@ public class HaskellCorePlugin extends Plugin {
 	  return InstanceScope.INSTANCE.getNode( getPluginId() );
 	}
 
+	/**
+	 * populate a template with variables
+	 * @param pref the preference to use to get the template
+	 * @param extraVars the extra variables
+	 * @return
+	 */
 	public static String populateTemplate(final String pref,final Map<String,String> extraVars){
 	  IStringVariableManager mgr=VariablesPlugin.getDefault().getStringVariableManager();
     IEclipsePreferences coreNode = instanceScopedPreferences();
+    // get template
     String template=coreNode.get( pref, "" ); //$NON-NLS-1$
 
     try {
       IValueVariable[] vars = new IValueVariable[0];
+      // add extra vars
       if (extraVars!=null){
         vars = new IValueVariable[extraVars.size()];
         int a=0;
@@ -200,8 +208,10 @@ public class HaskellCorePlugin extends Plugin {
         mgr.addVariables( vars );
       }
       try {
+        // perform the substitution
         return mgr.performStringSubstitution( template );
       } finally {
+        // remove variables because otherwise we can't reset them
         mgr.removeVariables( vars );
       }
     } catch (CoreException ce){

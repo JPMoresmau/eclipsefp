@@ -1,0 +1,13 @@
+- add test suite with test-framework
+	checkboxes: hunit, quickcheck
+		only references necessary packages
+	choose source folder
+		warning if already present
+	create test modules for
+		list existing modules
+		if inside library, reference library in build-depends of test suite
+		otherwise other-modules
+	hunit: each module defines one empty test failing on "not implemented" and a test list
+	quickcheck 2: define an always failing property
+	Main references all modules as groups
+

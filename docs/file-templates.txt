@@ -1,0 +1,13 @@
+- have templates in preferences for the content of files we create automatically
+
+Cabal
+	- library section
+	- executable section
+	- main cabal file referencing library and executable
+	- setup file
+
+Haskell	
+	- module
+	- Literate module
+	- Tex module
+	- Main file referencing module

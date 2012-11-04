@@ -38,13 +38,17 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
@@ -203,8 +207,11 @@ public class NewHaskellProjectPP extends PreferencePage
     gd.horizontalSpan = 2;
     templateGroup.setLayoutData( gd );
 
+
+
     final TreeViewer tv=new TreeViewer( templateGroup,SWT.SINGLE );
-    tv.getTree().setLayoutData( new GridData( GridData.GRAB_HORIZONTAL |  GridData.GRAB_VERTICAL | GridData.FILL_BOTH ) );
+    final GridData dataTv= new GridData( GridData.GRAB_HORIZONTAL |  GridData.GRAB_VERTICAL | GridData.FILL_BOTH ) ;
+    tv.getTree().setLayoutData(dataTv);
     tv.setComparator( new WorkbenchViewerComparator() );
     tv.setContentProvider( new TemplateDefCP() );
 
@@ -226,8 +233,33 @@ public class NewHaskellProjectPP extends PreferencePage
 
     tv.setInput( templateDefs );
 
-    SyntaxPreviewer sv=new SyntaxPreviewer( templateGroup,  HaskellUIPlugin.getDefault() .getPreferenceStore()   );
-    sv.getTextWidget().setLayoutData( new GridData( GridData.GRAB_HORIZONTAL |  GridData.GRAB_VERTICAL | GridData.FILL_BOTH ) );
+    final Sash sash = new Sash(templateGroup, SWT.HORIZONTAL);
+    final GridData dataS= new GridData( GridData.GRAB_HORIZONTAL |  GridData.FILL_HORIZONTAL );
+    //dataS.heightHint=6;
+    sash.setLayoutData( dataS);
+
+
+    final GridData dataSv= new GridData( GridData.GRAB_HORIZONTAL |  GridData.GRAB_VERTICAL | GridData.FILL_BOTH );
+
+    sash.addListener( SWT.Selection, new Listener() {
+
+      @Override
+      public void handleEvent( final Event event ) {
+        Rectangle clientArea = templateGroup.getClientArea();
+        int newHeight = event.y;
+            //clientArea.height - event.y - sash.getSize().y;
+        if (newHeight != dataTv.heightHint) {
+          dataTv.heightHint = newHeight- sash.getBounds().height;
+          dataSv.heightHint = clientArea.height - event.y + 20;
+          templateGroup.layout();
+        }
+
+      }
+    });
+
+
+    SyntaxPreviewer sv=new SyntaxPreviewer( templateGroup,  HaskellUIPlugin.getDefault() .getPreferenceStore(), new HaskellSourceViewerConfiguration( null ),""  );
+    sv.getTextWidget().setLayoutData(dataSv );
     //final StyledText st=new StyledText( templateGroup,  SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
     //st.setLayoutData( new GridData( GridData.GRAB_HORIZONTAL |  GridData.GRAB_VERTICAL | GridData.FILL_BOTH ) );
     sv.getDocument().set( "" );
@@ -250,7 +282,7 @@ public class NewHaskellProjectPP extends PreferencePage
           sv.getTextWidget().dispose();
           svs.clear();
           final SyntaxPreviewer sv2=new SyntaxPreviewer( templateGroup,  HaskellUIPlugin.getDefault() .getPreferenceStore(), td.getConfiguration() , td.getContent()   );
-          sv2.getTextWidget().setLayoutData( new GridData( GridData.GRAB_HORIZONTAL |  GridData.GRAB_VERTICAL | GridData.FILL_BOTH ) );
+          sv2.getTextWidget().setLayoutData(dataSv);
           sv2.setEditable( true );
           sv2.getTextWidget().addModifyListener( new ModifyListener() {
 
@@ -471,8 +503,8 @@ public class NewHaskellProjectPP extends PreferencePage
   }
 
   private class TemplateDef{
-    private String preference;
-    private String displayName;
+    private final String preference;
+    private final String displayName;
     private String content;
     private final SourceViewerConfiguration configuration;
 
@@ -496,17 +528,10 @@ public class NewHaskellProjectPP extends PreferencePage
       return preference;
     }
 
-    public void setPreference( final String preference ) {
-      this.preference = preference;
-    }
-
     public String getDisplayName() {
       return displayName;
     }
 
-    public void setDisplayName( final String displayName ) {
-      this.displayName = displayName;
-    }
 
     public String getContent() {
       return content;
@@ -531,7 +556,7 @@ public class NewHaskellProjectPP extends PreferencePage
      */
     @Override
     public void dispose() {
-
+      // NOOP
     }
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -572,7 +597,7 @@ public class NewHaskellProjectPP extends PreferencePage
      */
     @Override
     public void inputChanged( final Viewer arg0, final Object arg1, final Object arg2 ) {
-
+      // NOOP
 
     }
 

@@ -32,6 +32,9 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
     coreNode.putBoolean( DEBUG_PRINT_WITH_SHOW, true );
     coreNode.putInt( RUN_COMMAND_HISTORY_MAX, 20 );
 
+    /**
+     * default code templates
+     */
     coreNode.put( TEMPLATE_CABAL,
         CabalSyntax.FIELD_NAME.getCabalName()+":           ${"+TemplateVariables.PROJECT_NAME+"}"+PlatformUtil.NL+  //$NON-NLS-1$ //$NON-NLS-2$
         CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1"+PlatformUtil.NL+  //$NON-NLS-1$
