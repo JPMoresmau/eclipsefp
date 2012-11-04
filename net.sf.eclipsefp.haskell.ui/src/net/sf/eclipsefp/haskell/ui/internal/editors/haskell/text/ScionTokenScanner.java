@@ -164,7 +164,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   }
 
-  private void addTokenOccurence(final String s,final int offset,final int end,final TokenDef td){
+  private void addTokenOccurence(final String s,final int offset,int end,final TokenDef td){
     String name=td.getName();
     if (name.equals( IScionTokens.KEYWORD )
         || name.equals( IScionTokens.GHC_EXTENSION_KEYWORD )
@@ -175,6 +175,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
       List<String> key=new LinkedList<String>();
       key.add(td.getName());
+      if (end>s.length()){
+        end=s.length();
+      }
       key.add( s.substring(offset,end) );
 
       while (tokenLocations.size()<offset){
@@ -273,6 +276,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         //HaskellUIPlugin.log( "bw:"+(t1-t0)+"ms ("+lTokenDefs.size()+",write: "+(t01-t0)+"ms ), scion:"+(t2-t1)+"ms ("+l+")", IStatus.INFO );
       }
     } else {
+      this.doc = document;
+      contents=doc.get();
       try {
         InputStream stream = SyntaxPreviewer.class.getResourceAsStream( "preview.json" );
         // preview file
@@ -286,11 +291,10 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$
       }
     }
-    this.doc = document;
     if( lTokenDefs != null && lTokenDefs.size() > 0 ) {
       tokenDefs = lTokenDefs.listIterator();
     }
-    String s=doc.get();
+    //String s=doc.get();
     //long previousOffset=-1;
     //long previousEnd=-1;
     for (TokenDef nextTokenDef:lTokenDefs){
@@ -310,7 +314,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 //          HaskellUIPlugin.log( "extent error: "+nextEnd+">"+previousOffset, IStatus.ERROR );
 //        }
         //HaskellUIPlugin.log(nextOffset+"->"+nextEnd, IStatus.INFO);
-        addTokenOccurence( s,nextOffset, nextEnd, nextTokenDef );
+        addTokenOccurence( contents,nextOffset, nextEnd, nextTokenDef );
 
 //        previousOffset=nextOffset;
 //        previousEnd=nextEnd;
