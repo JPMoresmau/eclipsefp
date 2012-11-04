@@ -84,8 +84,8 @@ public class NewGtkProjectWizard extends NewHaskellProjectWizard implements INew
      * @see net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp#getCabalFile(java.lang.String)
      */
     @Override
-    protected PackageDescription getCabalFile( final String name ) {
-      PackageDescription pd=super.getCabalFile( name );
+    protected PackageDescription getCabalFile( final String name , final String src) {
+      PackageDescription pd=super.getCabalFile( name, src );
       PackageDescriptionStanza pds=pd.getStanzas().get( 1 );
       pds.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, "gtk" ); //$NON-NLS-1$
 
