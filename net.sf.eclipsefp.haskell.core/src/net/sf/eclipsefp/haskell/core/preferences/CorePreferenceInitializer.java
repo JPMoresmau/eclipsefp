@@ -6,7 +6,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 
@@ -19,7 +18,7 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
                                        implements ICorePreferenceNames {
   @Override
   public void initializeDefaultPreferences() {
-    IEclipsePreferences coreNode = DefaultScope.INSTANCE.getNode( HaskellCorePlugin.getPluginId() );
+    IEclipsePreferences coreNode = HaskellCorePlugin.instanceScopedPreferences();
     coreNode.put( SELECTED_COMPILER, "ghcCompiler" ); //$NON-NLS-1$
     coreNode.put( FOLDERS_SRC, FileUtil.DEFAULT_FOLDER_SRC );
    // coreNode.put( FOLDERS_DOC, FileUtil.DEFAULT_FOLDER_DOC );

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -131,7 +132,10 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			f.setOutStream(outStream);
 			facades.put(p, f);
 			// why? build will do that for us
-			//new JobFacade(f).synchronize(false);
+			// well if we don't build automatically we DO need it!
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()){
+				new JobFacade(f).synchronize(false);
+			}
 			return f;
 		}
 		return null;
