@@ -119,6 +119,7 @@ public class HaskellUIImages implements IImageNames {
     declare(HACKAGE_INSTALL,VIEW+"hackage_install.png");
     declare(SEARCH_LINE,OBJECT+"search_ref_obj.gif");
     declare(AUTODETECT,OBJECT+"autodetect.png");
+    declare(CORRECTION,OBJECT+"correction.gif");
   }
 
   private final static void declare( final String key,

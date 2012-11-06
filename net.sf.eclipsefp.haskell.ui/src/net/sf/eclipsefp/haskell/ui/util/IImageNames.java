@@ -95,4 +95,5 @@ public interface IImageNames {
   String AUTODETECT= ID+".AUTODETECT"; //$NON-NLS-1$
 
   String SEARCH_LINE=ID+".SEARCH_LINE"; //$NON-NLS-1$
+  String CORRECTION          = ID + ".CORRECTION"; //$NON-NLS-1$
 }

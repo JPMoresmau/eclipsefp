@@ -135,6 +135,19 @@ public class BuildMarkerResolutionGenerator implements
           // Not in scope
           else if (msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START )>-1){
             int start = msgL.indexOf( '`',msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START ));
+            int l=msgL.indexOf( "\n",start+1 );
+            String suggestion=null;
+            if (l>-1){
+              String sug=msg.substring( l );
+              int startSug = sug.indexOf( '`');
+              if(startSug>-1){
+                int endSug=sug.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
+                if (endSug>-1){
+                  suggestion=sug.substring(startSug+1,endSug);
+                }
+              }
+              msgL=msgL.substring( 0,l );
+            }
             int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
             String notInScope = msg.substring( start + 1, end );
             String name, qualified;
@@ -145,6 +158,9 @@ public class BuildMarkerResolutionGenerator implements
             } else {
               name = notInScope;
               qualified = null;
+            }
+            if (suggestion!=null){
+              res.add( new ReplaceTextResolution( notInScope, suggestion ) );
             }
             try {
               if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {

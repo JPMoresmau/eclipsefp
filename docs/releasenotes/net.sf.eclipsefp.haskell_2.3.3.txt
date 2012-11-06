@@ -10,12 +10,14 @@ Necessary Haskell packages:
  
 
 Fixes:
-
+	- Synchronizes new projects correctly if not in auto build mode
+	- Adds proper import even if GHC suggested alternative
 
 Features:
 	- Evaluate GHCi expressions in debug mode even when not stopped at a breakpoint
 	- Can specify paths of executables in preferences for Alex, Happy and UUAGC
 	- File templates for cabal file, setup.hs, new modules... (under Preferences -> Haskell -> New Project)
+	- Offers GHC suggested alternative on unresolved symbol
 
 Internal:
 
