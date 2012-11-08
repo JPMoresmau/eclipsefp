@@ -466,7 +466,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
            thread.setName( name );
            response.setLength( 0 );
            DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.CHANGE,DebugEvent.STATE )});
-           notify();
+           //notify();
            Runnable r=new Runnable(){
              /* (non-Javadoc)
              * @see java.lang.Runnable#run()
@@ -524,7 +524,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
          }*/
        }
      }
-     notify();
+     //notify();
    }
     /*if (needContext)  {
       try {
@@ -561,7 +561,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
         }
 
         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent( thread, DebugEvent.CHANGE,DebugEvent.STATE )});
-        notify();
+        //notify();
       } catch (IOException ioe){
         HaskellCorePlugin.log( ioe );
       }
