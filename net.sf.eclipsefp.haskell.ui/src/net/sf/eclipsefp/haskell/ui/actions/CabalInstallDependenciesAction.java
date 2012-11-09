@@ -41,6 +41,8 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
   @Override
   protected void addExtraParameters( final List<String> commands ) {
     commands.add("--only-dependencies");
+    /** ensure test libraries are downloaded too **/
+    commands.add("--enable-tests");
   }
 
   /* (non-Javadoc)
