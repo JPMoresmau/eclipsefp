@@ -19,6 +19,7 @@ Features:
 	- Can specify paths of executables in preferences for Alex, Happy and UUAGC
 	- File templates for cabal file, setup.hs, new modules... (under Preferences -> Haskell -> New Project)
 	- Offers GHC suggested alternative on unresolved symbol
+	- Allow running executables from test suites without test-framework specific options, as normal executables
 
 Internal:
 

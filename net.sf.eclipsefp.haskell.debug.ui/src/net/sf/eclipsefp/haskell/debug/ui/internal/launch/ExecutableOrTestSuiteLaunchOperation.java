@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,7 +38,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
   if( resource != null ) {
     IProject project = resource.getProject();
     if( project.hasNature( HaskellNature.NATURE_ID ) ) {
-      Map<String,IFile> executables=ResourceUtil.getProjectExecutables( project );
+      Map<String,IFile> executables=getExecutables(project);
       ILaunchConfiguration configuration = getConfiguration( project,executables,stanza );
       if( configuration != null ) {
         configuration.launch( ILaunchManager.RUN_MODE, monitor );
@@ -45,6 +46,14 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     }
   }
 }
+
+  protected Map<String,IFile> getExecutables(final IProject project){
+    /** offer the option to run a test executable without any special options and processing **/
+    Map<String,IFile> m=new HashMap<String, IFile>();
+    m.putAll(ResourceUtil.getProjectExecutables( project ));
+    m.putAll(ResourceUtil.getProjectTestSuites( project ));
+    return m;
+  }
 
   protected ILaunchConfiguration getConfiguration( final IProject project,
       final Map<String,IFile> executables ,final PackageDescriptionStanza stanza) throws CoreException {

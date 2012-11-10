@@ -18,6 +18,7 @@ public class RunActionProvider extends CommonActionProvider {
   private RunExecutableAction execAction;
   private RunProfilingAction profAction;
   private RunTestSuiteAction testAction;
+  private RunTestExecutableAction testExecAction;
 
   @Override
   public void init( final ICommonActionExtensionSite aSite ) {
@@ -28,6 +29,7 @@ public class RunActionProvider extends CommonActionProvider {
       execAction = new RunExecutableAction( wSite.getSelectionProvider() );
       profAction = new RunProfilingAction( wSite.getSelectionProvider() );
       testAction = new RunTestSuiteAction( wSite.getSelectionProvider() );
+      testExecAction = new RunTestExecutableAction( wSite.getSelectionProvider() );
     }
   }
 
@@ -41,6 +43,9 @@ public class RunActionProvider extends CommonActionProvider {
     }
     if( testAction != null && testAction.isEnabled() ) {
       menu.appendToGroup( ICommonMenuConstants.GROUP_OPEN, testAction );
+    }
+    if( testExecAction != null && testExecAction.isEnabled() ) {
+      menu.appendToGroup( ICommonMenuConstants.GROUP_OPEN, testExecAction );
     }
   }
 
@@ -132,7 +137,7 @@ public class RunActionProvider extends CommonActionProvider {
   private static class RunTestSuiteAction extends AbstractRunAction {
 
     private RunTestSuiteAction( final ISelectionProvider selProvider ) {
-      super( UITexts.runTestSuite, selProvider );
+      super( UITexts.runTestFramework, selProvider );
     }
 
     @Override
@@ -171,4 +176,45 @@ public class RunActionProvider extends CommonActionProvider {
     }
   }
 
+  private static class RunTestExecutableAction extends AbstractRunAction {
+
+    private RunTestExecutableAction( final ISelectionProvider selProvider ) {
+      super( UITexts.runTestSuite, selProvider );
+    }
+
+    @Override
+    protected CabalSyntax getTargetSection() {
+      return CabalSyntax.SECTION_TESTSUITE;
+    }
+
+    @Override
+    protected ILaunchShortcut2 getShortcut() {
+      return new TestExecutableLaunchShortcut();
+    }
+
+//    @Override
+//    protected String getLaunchConfigName() {
+//      return TestSuiteLaunchDelegate.class.getName();
+//    }
+//
+//    @Override
+//    protected ILaunchConfigurationWorkingCopy createLaunchConfig() throws CoreException {
+//      ILaunchConfigurationType type = LaunchOperation
+//          .getConfigType( getLaunchConfigName() );
+//      String id = LaunchOperation.createConfigId( project.getName()
+//          + "/" + stanza.getStanza().getName() ); //$NON-NLS-1$
+//      ILaunchConfigurationWorkingCopy wc = type.newInstance( null, id );
+//      wc.setAttribute( ILaunchAttributes.PROJECT_NAME, project.getName() );
+//      wc.setAttribute( ILaunchAttributes.STANZA, stanza.getStanza().getName() );
+//      wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, project
+//          .getLocation().toOSString() );
+//      wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
+//      return wc;
+//    }
+
+    @Override
+    protected String getLaunchMode() {
+      return ILaunchManager.RUN_MODE;
+    }
+  }
 }
