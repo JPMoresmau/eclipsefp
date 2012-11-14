@@ -3,10 +3,10 @@
 <schema targetNamespace="net.sf.eclipsefp.haskell.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="net.sf.eclipsefp.haskell.debug.core" id="interactiveDelegates" name="Interactive Delegates"/>
+         <meta.schema plugin="net.sf.eclipsefp.haskell.debug.core" id="testListeners" name="Test Listeners"/>
       </appInfo>
       <documentation>
-         Delegates for interactive launch operations: find the execution info at runtime
+         Delegates for test listener
       </documentation>
    </annotation>
 
@@ -62,7 +62,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate"/>
+                  <meta.attribute kind="java" basedOn=":net.sf.eclipsefp.haskell.debug.core.test.ITestListener"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -74,7 +74,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         1.109
+         2.3.3
       </documentation>
    </annotation>
 

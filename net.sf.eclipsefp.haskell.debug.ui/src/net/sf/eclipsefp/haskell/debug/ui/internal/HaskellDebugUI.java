@@ -14,6 +14,8 @@ public class HaskellDebugUI extends AbstractUIPlugin {
 
   private static HaskellDebugUI plugin;
 
+  public static final String TEST_RESULTS_VIEW_ID="net.sf.eclipsefp.haskell.debug.ui.test.TestResultView"; //$NON-NLS-1$
+
   public static HaskellDebugUI getDefault() {
     return plugin;
   }

@@ -20,7 +20,7 @@ public class HaskellDebugCore extends Plugin {
   public static final String ID_HASKELL_DEBUG_MODEL = "net.sf.eclipsefp.haskell.debug"; //$NON-NLS-1$
 
   public static final String ID_EXT_POINT_INTERACTIVE_DELEGATES = "interactiveDelegates"; //$NON-NLS-1$
-
+  public static final String ID_EXT_POINT_TEST_LISTENERS = "testListeners"; //$NON-NLS-1$
   /**
    * constant for command history enablement on process
    */

@@ -3,8 +3,14 @@ package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 import java.io.File;
 import java.util.Map;
 import java.util.Random;
+import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.debug.core.test.ITestListener;
+import net.sf.eclipsefp.haskell.debug.core.test.TestListenerManager;
+import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
+import net.sf.eclipsefp.haskell.debug.core.test.TestStatus;
+import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -14,11 +20,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * launch delegate for test-framework test suites
  *
  * @author Alejandro Serrano
+ * @author JP Moresmau
  *
  */
 public class TestSuiteHaskellLaunchDelegate extends
@@ -50,11 +60,10 @@ public class TestSuiteHaskellLaunchDelegate extends
     // NOOP
 
   }
-
   @Override
   protected void postProcessCreation( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IProcess process ) {
-    // NOOP
+   // NOOP
   }
 
   @Override
@@ -64,11 +73,62 @@ public class TestSuiteHaskellLaunchDelegate extends
 
   }
 
+  /**
+   * Parse JUnit compatible XML element into a test result
+   * @param et
+   * @return
+   */
+  private TestResult parseTestResult(final Element et){
+    String name=et.getAttribute( "name" ); //$NON-NLS-1$
+    if (name!=null){
+      TestResult ts=new TestResult(name);
+      NodeList nl=et.getChildNodes();
+
+      for (int a=0;a<nl.getLength();a++){
+        if (nl.item( a ) instanceof Element){
+          Element e=(Element)nl.item(a);
+          if (e.getTagName().equals( "failure" )){//$NON-NLS-1$
+            ts.setStatus( TestStatus.FAILURE );
+            ts.setText( e.getTextContent() );
+          } else if (e.getTagName().equals( "error" )){//$NON-NLS-1$
+            ts.setStatus( TestStatus.ERROR );
+            ts.setText( e.getTextContent() );
+          } else {
+            TestResult ctr=parseTestResult(e);
+            if (ctr!=null){
+              ts.getChildren().add( ctr );
+            }
+          }
+        }
+      }
+      if (nl.getLength()==0){
+        ts.setStatus( TestStatus.OK );
+      }
+      return ts;
+    }
+    return null;
+  }
+
   @Override
   protected void postProcessFinished(final ILaunchConfiguration configuration) {
     // Get file and parse output
     final String fname = getFilename();
     final File file = new File( fname );
+
+    try {
+      Document d=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( file );
+
+      TestResult root=parseTestResult( d.getDocumentElement() );
+      TestSuite ts=new TestSuite( root );
+
+      for (ITestListener l:TestListenerManager.getContributors().values()){
+        l.start(ts);
+        l.end( ts);
+      }
+    } catch (Throwable t){
+      HaskellDebugCore.log( t.getLocalizedMessage(), t );
+    }
+
     // final TestSuiteAndSession session = TestSuiteAndSession.parseFile( file );
 
     if (canShowJUnit()) {

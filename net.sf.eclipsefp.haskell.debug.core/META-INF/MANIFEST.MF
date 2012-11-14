@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core;resolution:=optional,
  org.eclipse.jdt.junit;bundle-version="3.5.0";resolution:=optional,
  org.eclipse.ui.workbench.texteditor,
- org.eclipse.ui.editors
+ org.eclipse.ui.editors,
+ net.sf.eclipsefp.haskell.buildwrapper
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
@@ -28,6 +29,7 @@ Export-Package: net.sf.eclipsefp.haskell.debug.core.internal,
   x-friends:="net.sf.eclipsefp.haskell.haddock,
    net.sf.eclipsefp.haskell.ui,
    net.sf.eclipsefp.haskell.debug.ui,
-   net.sf.eclipsefp.haskell.hugs"
+   net.sf.eclipsefp.haskell.hugs",
+ net.sf.eclipsefp.haskell.debug.core.test
 Bundle-ClassPath: .,
  lib/jdom.jar

@@ -68,6 +68,7 @@ public class HaskellUIImages implements IImageNames {
     // decorators
     declare( SRC_FOLDER_DECORATOR, OVR + "sourceFolder.gif" ); //$NON-NLS-1$
     declare( ERROR_OVERLAY,        OVR + "error_co.gif"); //$NON-NLS-1$
+    declare( FAILURE_OVERLAY,      OVR + "failed_ovr.gif"); //$NON-NLS-1$
     declare( WARNING_OVERLAY,      OVR + "warning_co.gif"); //$NON-NLS-1$
     declare( ERROR_OBJECT,        OBJECT + "error_obj.gif"); //$NON-NLS-1$
     // views
@@ -120,6 +121,13 @@ public class HaskellUIImages implements IImageNames {
     declare(SEARCH_LINE,OBJECT+"search_ref_obj.gif");
     declare(AUTODETECT,OBJECT+"autodetect.png");
     declare(CORRECTION,OBJECT+"correction.gif");
+
+    declare(TERMINATE,OBJECT+"terminatedlaunch_obj.gif");
+    declare(TEST,OBJECT+"test.gif");
+    declare(TEST_ERR,OBJECT+"testerr.gif");
+    declare(TEST_FAIL,OBJECT+"testfail.gif");
+    declare(TEST_OK,OBJECT+"testok.gif");
+    declare(TEST_RUN,OBJECT+"testrun.gif");
   }
 
   private final static void declare( final String key,

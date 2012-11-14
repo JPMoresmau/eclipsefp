@@ -46,6 +46,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     layout.addShowViewShortcut( IPageLayout.ID_OUTLINE );
     layout.addShowViewShortcut( IConsoleConstants.ID_CONSOLE_VIEW );
     layout.addShowViewShortcut( CabalPackagesView.ID );
+    layout.addShowViewShortcut( "net.sf.eclipsefp.haskell.debug.ui.test.TestResultView" );
     // Add toolbar and menu actions
     layout.addActionSet( IDebugUIConstants.LAUNCH_ACTION_SET );
     // Add to "Open Perspective" menu
@@ -74,10 +75,12 @@ public class HaskellPerspective implements IPerspectiveFactory {
                                                editorArea );
     right.addView( IPageLayout.ID_OUTLINE );
     right.addView( HoogleView.ID );
+    right.addView( CabalPackagesView.ID);
   }
 
   private void addLeftViews( final IFolderLayout left ) {
     left.addView( "org.eclipse.ui.navigator.ProjectExplorer" ); //$NON-NLS-1$
+    left.addView( "net.sf.eclipsefp.haskell.debug.ui.test.TestResultView" );
   }
 
   private void addBottomViews( final IFolderLayout bottom ) {
@@ -85,7 +88,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     bottom.addView( IPageLayout.ID_PROBLEM_VIEW );
     bottom.addView( IConsoleConstants.ID_CONSOLE_VIEW );
     bottom.addView( IProgressConstants.PROGRESS_VIEW_ID);
-    bottom.addView( CabalPackagesView.ID);
+
   }
 
   private void addNewShortcuts( final IPageLayout layout ) {

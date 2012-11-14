@@ -169,7 +169,7 @@
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
             configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate"
-            icon="icons/etool16/hsexe16.gif"
+            icon="icons/eview16/haskell_test.png"
             id="net.sf.eclipsefp.haskell.ui.launch.launchTestSuiteIcon">
       </launchConfigurationTypeImage>
    </extension>
@@ -308,7 +308,7 @@
       </shortcut>
       <shortcut
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut"
-            icon="icons/etool16/hsexe16.gif"
+            icon="icons/eview16/haskell_test.png"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut"
             label="%testSuiteLaunchShortcut_label"
             modes="run">
@@ -438,4 +438,29 @@
          </enablement>
       </consolePageParticipant>
    </extension> 
+   
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="net.sf.eclipsefp.haskell"
+            class="net.sf.eclipsefp.haskell.debug.ui.test.TestResultView"
+            icon="icons/eview16/haskell_test.png"
+            id="net.sf.eclipsefp.haskell.debug.ui.test.TestResultView"
+            name="%test_result_view"
+            restorable="true">
+      </view>
+   </extension>
+   
+    <extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="net.sf.eclipsefp.haskell.ui.HaskellPerspective">
+			<viewShortcut id="net.sf.eclipsefp.haskell.debug.ui.test.TestResultView"/>
+		</perspectiveExtension>
+	</extension>
+    <extension
+          point="net.sf.eclipsefp.haskell.debug.core.testListeners">
+       <delegate
+             class="net.sf.eclipsefp.haskell.debug.ui.test.ViewTestListener"
+             id="net.sf.eclipsefp.haskell.debug.ui.test.ViewTestListener">
+       </delegate>
+    </extension>
 </plugin>

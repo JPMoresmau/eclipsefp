@@ -195,9 +195,17 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       Process proc = pb.start();
       if( proc != null ) {
         //String loc = location.toOSString();
-        process = DebugPlugin.newProcess( launch, proc, configuration.getName(), processAttrs );
-        process.setAttribute( IProcess.ATTR_CMDLINE, CommandLineUtil
-            .renderCommandLine( cmdLine ) );
+//        process = new RuntimeProcess( launch, proc, configuration.getName(), processAttrs){
+//          @Override
+//          protected org.eclipse.debug.core.model.IStreamsProxy createStreamsProxy() {
+//
+//              String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
+//              return new DelayedStreamsProxy(getSystemProcess(), encoding);
+//          }
+//        };
+          process=DebugPlugin.newProcess( launch, proc, configuration.getName(), processAttrs );
+          process.setAttribute( IProcess.ATTR_CMDLINE, CommandLineUtil
+                .renderCommandLine( cmdLine ) );
       }
       return process;
     } catch( IOException e ) {

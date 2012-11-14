@@ -82,6 +82,7 @@ public interface IImageNames {
   String ERROR_OVERLAY        = ID + ".ERROR_OVERLAY"; //$NON-NLS-1$
   String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY"; //$NON-NLS-1$
   String ERROR_OBJECT        = ID + ".ERROR_OBJECT"; //$NON-NLS-1$
+  String FAILURE_OVERLAY        = ID + ".FAILURE_OVERLAY"; //$NON-NLS-1$
   String ACTION_SORT          = ID + ".ACTION_SORT"; //$NON-NLS-1$
 
   String IMPORT_REMOVE        = ID+".IMPORT_REMOVE"; //$NON-NLS-1$
@@ -96,4 +97,11 @@ public interface IImageNames {
 
   String SEARCH_LINE=ID+".SEARCH_LINE"; //$NON-NLS-1$
   String CORRECTION          = ID + ".CORRECTION"; //$NON-NLS-1$
+
+  String TERMINATE = ID+".TERMINATE"; //$NON-NLS-1$
+  String TEST = ID+".TEST"; //$NON-NLS-1$
+  String TEST_ERR = ID+".TEST_ERR"; //$NON-NLS-1$
+  String TEST_FAIL = ID+".TEST_FAIL"; //$NON-NLS-1$
+  String TEST_OK = ID+".TEST_OK"; //$NON-NLS-1$
+  String TEST_RUN = ID+".TEST_RUN"; //$NON-NLS-1$
 }

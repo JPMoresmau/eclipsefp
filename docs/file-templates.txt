@@ -8,6 +8,6 @@ Cabal
 
 Haskell	
 	- module
-	- Literate module
-	- Tex module
+	- Literate module NO, done via code
+	- Tex module NO, done via code
 	- Main file referencing module

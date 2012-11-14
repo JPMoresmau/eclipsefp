@@ -512,6 +512,19 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
   }
 
+  public static void openInEditor(
+      final Location location, final IProject p ) throws PartInitException {
+      IFile file=location.getIFile( p );
+
+
+      IEditorPart editor = IDE.openEditor( HaskellUIPlugin.getActivePage(), file, true );
+      ITextEditor textEditor = ( ITextEditor )editor;
+      IDocument document = textEditor.getDocumentProvider().getDocument(
+          editor.getEditorInput() );
+      selectAndReveal( textEditor, document, location );
+
+  }
+
   protected static void selectAndReveal( final ITextEditor textEditor,
       final IDocument document, final Location location ) {
     if( document == null ) {

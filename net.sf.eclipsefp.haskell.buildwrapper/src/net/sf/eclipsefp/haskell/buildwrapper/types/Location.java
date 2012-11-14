@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -265,6 +266,8 @@ public class Location {
 		String loc=getFileName();
 		if (loc!=null && loc.startsWith(pl)){
 			return (IFile)p.getFile(loc.substring(pl.length()));
+		} else if (!new File(loc).isAbsolute()) {
+			return p.getFile(loc);
 		}
 		return null;
 	}
