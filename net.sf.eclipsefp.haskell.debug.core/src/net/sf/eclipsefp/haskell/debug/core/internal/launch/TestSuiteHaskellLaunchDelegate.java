@@ -5,21 +5,14 @@ import java.util.Map;
 import java.util.Random;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
-import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.debug.core.test.ITestListener;
 import net.sf.eclipsefp.haskell.debug.core.test.TestListenerManager;
 import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
 import net.sf.eclipsefp.haskell.debug.core.test.TestStatus;
 import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.internal.junit.model.JUnitModel;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -127,39 +120,39 @@ public class TestSuiteHaskellLaunchDelegate extends
       }
     } catch (Throwable t){
       HaskellDebugCore.log( t.getLocalizedMessage(), t );
+    } finally {
+      // Always delete the file at the end
+      file.delete();
     }
 
-    // final TestSuiteAndSession session = TestSuiteAndSession.parseFile( file );
+//    if (canShowJUnit()) {
+//      Display.getDefault().syncExec( new Runnable() {
+//
+//        @Override
+//        public void run() {
+//          try {
+//            IWorkbenchPage page = PlatformUI.getWorkbench()
+//                .getActiveWorkbenchWindow().getActivePage();
+//            page.showView( JUNIT_VIEW );
+//            // JUnitCorePlugin.getModel().addTestRunSession( session );
+//            JUnitModel.importTestRunSession( file );
+//          } catch( CoreException e ) {
+//            // Do nothing
+//          }
+//        }
+//      } );
+//    } else {
+//      Display.getCurrent().syncExec( new Runnable() {
+//
+//        @Override
+//        public void run() {
+//          MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+//              CoreTexts.jdt_notFound_title, CoreTexts.jdt_notFound_message );
+//        }
+//      } );
+//    }
 
-    if (canShowJUnit()) {
-      Display.getDefault().syncExec( new Runnable() {
 
-        @Override
-        public void run() {
-          try {
-            IWorkbenchPage page = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getActivePage();
-            page.showView( JUNIT_VIEW );
-            // JUnitCorePlugin.getModel().addTestRunSession( session );
-            JUnitModel.importTestRunSession( file );
-          } catch( CoreException e ) {
-            // Do nothing
-          }
-        }
-      } );
-    } else {
-      Display.getCurrent().syncExec( new Runnable() {
-
-        @Override
-        public void run() {
-          MessageDialog.openError( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-              CoreTexts.jdt_notFound_title, CoreTexts.jdt_notFound_message );
-        }
-      } );
-    }
-
-    // Always delete the file at the end
-    new File( getFilename() ).delete();
   }
 
   /* (non-Javadoc)
