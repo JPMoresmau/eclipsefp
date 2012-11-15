@@ -103,6 +103,14 @@ public class TestSuite implements Serializable {
     return failures;
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return getName();
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;

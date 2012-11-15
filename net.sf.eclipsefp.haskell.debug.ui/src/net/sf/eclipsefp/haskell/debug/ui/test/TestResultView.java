@@ -5,14 +5,21 @@
  */
 package net.sf.eclipsefp.haskell.debug.ui.test;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
+import net.sf.eclipsefp.haskell.debug.core.test.TestStatus;
 import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -22,6 +29,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -32,6 +41,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
@@ -49,6 +60,9 @@ public class TestResultView extends ViewPart {
   private Text tRuns;
   private Text tErrors;
   private Text tFailures;
+
+  private final List<TestSuite> history=new ArrayList<TestSuite>();
+  private int historyIndex=-1;
 
 //  private final List<Resource> resources=new ArrayList<Resource>();
 
@@ -175,9 +189,27 @@ public class TestResultView extends ViewPart {
       }
     });
 
+
+    IToolBarManager tmgr=getViewSite().getActionBars().getToolBarManager();
+    HistoryAction act=new HistoryAction();
+
+    tmgr.add( act );
   }
 
-  public void setInput(final TestSuite ts){
+  public void clear(){
+    testTree.setInput( Collections.emptySet() );
+    tRuns.setText( String.valueOf( 0 ) );
+    tErrors.setText( String.valueOf( 0 ) );
+    tFailures.setText( String.valueOf( 0 ) );
+    tRuns.getParent().layout( new Control[]{tRuns,tErrors,tFailures} );
+  }
+
+  /**
+   * set the given test suite as input
+   * @param ts the test suite
+   * @param add add to history?
+   */
+  public void setInput(final TestSuite ts,final boolean add){
     testTree.setInput( Collections.singleton( ts.getRoot() ));
     testTree.expandToLevel( 2 );
 
@@ -185,6 +217,10 @@ public class TestResultView extends ViewPart {
     tErrors.setText( String.valueOf( ts.getErrors() ) );
     tFailures.setText( String.valueOf( ts.getFailures() ) );
     tRuns.getParent().layout( new Control[]{tRuns,tErrors,tFailures} );
+    if (add){
+      history.add( ts );
+      historyIndex=history.size()-1;
+    }
   }
 
   /* (non-Javadoc)
@@ -198,4 +234,119 @@ public class TestResultView extends ViewPart {
 
   }
 
+  /**
+   * dynamic history menu
+   * @author JP Moresmau
+   *
+   */
+  private class HistoryMenuCreator  implements IMenuCreator{
+    private Menu menu;
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+     */
+    @Override
+    public Menu getMenu( final Control paramControl ) {
+      dispose();
+      menu=new Menu(paramControl);
+      fillMenu(menu);
+      return menu;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+     */
+    @Override
+    public Menu getMenu( final Menu paramMenu ) {
+      dispose();
+      menu=new Menu(paramMenu);
+      fillMenu(menu);
+      return menu;
+    }
+
+    private void fillMenu(final Menu m){
+      if(history.size()>0){
+        TestResultLP lp=new TestResultLP();
+        for (int a=history.size()-1;a>=0;a--){
+          final TestSuite ts=history.get( a );
+          MenuItem mi=new MenuItem(m,SWT.RADIO);
+          mi.setText( lp.getText( ts ) );
+          mi.setImage( lp.getImage( ts ) );
+          if (historyIndex!=a){
+            final int idx=a;
+
+            mi.addSelectionListener( new SelectionAdapter() {
+              @Override
+              public void widgetSelected(final SelectionEvent e) {
+                historyIndex=idx;
+                setInput( ts,false );
+              }
+            } );
+          } else {
+            mi.setSelection( true );
+          }
+        }
+        new MenuItem(m,SWT.SEPARATOR);
+        /** clear all terminated **/
+        MenuItem mi=new MenuItem(m,SWT.PUSH);
+        mi.setText( UITexts.test_history_clear);
+        mi.setImage( HaskellUIImages.getImage( IImageNames.REMOVE_ALL ) );
+        mi.addSelectionListener( new SelectionAdapter() {
+          @Override
+          public void widgetSelected(final SelectionEvent e) {
+            int a=0;
+            for (Iterator<TestSuite> it=history.iterator();it.hasNext();){
+              final TestSuite ts=it.next();
+              /** terminated= !PENDING **/
+              if (!ts.getRoot().getStatus().equals( TestStatus.PENDING )){
+                it.remove();
+                /** history index moves too **/
+                if (historyIndex>=a){
+                  historyIndex--;
+                }
+              }
+            }
+            /** defensive **/
+            if (historyIndex<0){
+              historyIndex=history.size()-1;
+            }
+            if (historyIndex>=0){
+              setInput( history.get( historyIndex ), false );
+            } else {
+              clear(); /** remove **/
+            }
+          }
+        } );
+      } else {
+        /** nothing to show **/
+        MenuItem mi=new MenuItem(m,SWT.PUSH);
+        mi.setText( UITexts.test_history_none);
+        mi.setEnabled( false );
+      }
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IMenuCreator#dispose()
+     */
+    @Override
+    public void dispose() {
+      if (menu!=null){
+        menu.dispose();
+      }
+
+    }
+  }
+
+  /**
+   * simple action for test run history, delegates to menu creator
+   * @author JP Moresmau
+   *
+   */
+  private class HistoryAction extends Action {
+    private HistoryAction(){
+      super(UITexts.test_history, SWT.DROP_DOWN);
+      this.setImageDescriptor( HaskellUIImages.getImageDescriptor( IImageNames.HISTORY_LIST ) );
+      setMenuCreator( new HistoryMenuCreator() );
+    }
+  }
 }

@@ -64,6 +64,9 @@ public final class UITexts extends NLS {
   public static String test_view_errors;
   public static String test_view_failures;
   public static String test_view_text;
+  public static String test_history;
+  public static String test_history_clear;
+  public static String test_history_none;
 
   private static final String BUNDLE_NAME
     = UITexts.class.getPackage().getName() + ".uitexts"; //$NON-NLS-1$

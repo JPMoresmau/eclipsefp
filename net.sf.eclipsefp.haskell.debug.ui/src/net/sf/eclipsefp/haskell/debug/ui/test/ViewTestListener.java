@@ -46,7 +46,7 @@ public class ViewTestListener implements ITestListener {
       public void run() {
         TestResultView view=getView();
         if (view!=null){
-          view.setInput( ts );
+          view.setInput( ts,true );
         }
       }
     } );
@@ -64,7 +64,7 @@ public class ViewTestListener implements ITestListener {
       public void run() {
         TestResultView view=getView();
         if (view!=null){
-          view.setInput( ts );
+          view.setInput( ts,false );
         }
       }
     } );
@@ -81,7 +81,7 @@ public class ViewTestListener implements ITestListener {
       public void run() {
         TestResultView view=getView();
         if (view!=null){
-          view.setInput( ts );
+          view.setInput( ts,false );
         }
       }
     } );

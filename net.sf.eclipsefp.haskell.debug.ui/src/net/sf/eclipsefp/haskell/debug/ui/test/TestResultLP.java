@@ -6,6 +6,7 @@
 package net.sf.eclipsefp.haskell.debug.ui.test;
 
 import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
+import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -44,6 +45,8 @@ public class TestResultLP extends LabelProvider {
       if (key!=null){
         return HaskellUIImages.getImage( key );
       }
+    } else if (element instanceof TestSuite){
+      return getImage(( (TestSuite )element).getRoot());
     }
     return super.getImage( element );
   }

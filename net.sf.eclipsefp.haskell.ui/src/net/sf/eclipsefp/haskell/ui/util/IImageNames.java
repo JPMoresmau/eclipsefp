@@ -104,4 +104,6 @@ public interface IImageNames {
   String TEST_FAIL = ID+".TEST_FAIL"; //$NON-NLS-1$
   String TEST_OK = ID+".TEST_OK"; //$NON-NLS-1$
   String TEST_RUN = ID+".TEST_RUN"; //$NON-NLS-1$
+  String HISTORY_LIST = ID+".HISTORY_LIST"; //$NON-NLS-1$
+  String REMOVE_ALL= ID+".REMOVE_ALL"; //$NON-NLS-1$
 }
