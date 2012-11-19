@@ -54,6 +54,11 @@ public class FileUtil {
   /**  Haskell for UU Attribute Grammars. */
   public static final String   EXTENSION_UUAGC    = "ag";                  //$NON-NLS-1$
 
+  /**
+   * UTF8 encoding
+   */
+  public static final String UTF8="UTF8"; //$NON-NLS-1$
+  
   /** Candidate locations to search for files on a path */
   static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
 
@@ -314,7 +319,7 @@ public class FileUtil {
   
   public static void writeSharedFile(File tgt,String contents,int tries) throws IOException{
 	  try {
-			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),"UTF8");
+			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),UTF8);
 			w.write(contents);
 			w.close();
 	  } catch (FileNotFoundException e){

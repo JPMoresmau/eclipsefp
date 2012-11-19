@@ -6,6 +6,7 @@ import java.io.Writer;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -27,7 +28,7 @@ public class HaskellConsole extends IOConsole {
    * Construct and register the console with the console manager.
    */
   public HaskellConsole(final String name) {
-    super(name, HaskellConsole.class.getName(),HaskellUIImages.getImageDescriptor( IImageNames.HASKELL_MISC ),"UTF8",true);
+    super(name, HaskellConsole.class.getName(),HaskellUIImages.getImageDescriptor( IImageNames.HASKELL_MISC ),FileUtil.UTF8,true);
 
     // Register console with the console manager.
     IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
@@ -48,7 +49,7 @@ public class HaskellConsole extends IOConsole {
       }
     });
     try {
-      return new OutputStreamWriter(outputStream,"UTF8");
+      return new OutputStreamWriter(outputStream,FileUtil.UTF8);
     } catch (UnsupportedEncodingException ioo){
       return new OutputStreamWriter(outputStream);
     }

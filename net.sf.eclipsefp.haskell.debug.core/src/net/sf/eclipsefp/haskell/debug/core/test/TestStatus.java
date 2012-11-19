@@ -14,6 +14,7 @@ package net.sf.eclipsefp.haskell.debug.core.test;
 public enum TestStatus {
   OK,
   PENDING,
+  RUNNING,
   ERROR,
   FAILURE
 }

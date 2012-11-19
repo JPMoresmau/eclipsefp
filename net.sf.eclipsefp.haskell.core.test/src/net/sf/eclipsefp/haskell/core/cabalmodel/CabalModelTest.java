@@ -44,7 +44,7 @@ public class CabalModelTest extends TestCase {
         baos.write(c);
       }
       is.close();
-      return new String(baos.toByteArray(),"UTF8");
+      return new String(baos.toByteArray(),FileUtil.UTF8);
     } catch (Exception e){
       e.printStackTrace();
       fail(e.getLocalizedMessage());

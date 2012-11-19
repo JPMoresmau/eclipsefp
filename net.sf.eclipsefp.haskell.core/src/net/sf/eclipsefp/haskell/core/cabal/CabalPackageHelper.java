@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.core.cabal;
 
 import java.io.BufferedReader;
@@ -130,7 +135,7 @@ public class CabalPackageHelper {
     pb.command(opts);
 
     Process p=pb.start();
-    return new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF8")); //$NON-NLS-1$
+    return new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8)); //$NON-NLS-1$
      */
   }
 

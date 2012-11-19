@@ -962,4 +962,8 @@ public class JSONArray {
     public void putAll(JSONArray arr){
     	 this.myArrayList.addAll(arr.myArrayList);
     }
+    
+    public JSONArray removeLast(){
+    	return new JSONArray(myArrayList.subList(0, myArrayList.size()-1));
+    }
 }

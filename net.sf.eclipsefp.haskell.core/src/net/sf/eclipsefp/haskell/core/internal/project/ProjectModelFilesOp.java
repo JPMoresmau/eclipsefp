@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
 
-  private static final String ENC = "UTF-8"; //$NON-NLS-1$
   private static final String SETUP_HS = "Setup.hs"; //$NON-NLS-1$
 
   private boolean library;
@@ -174,10 +173,10 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
       IFile file = project.getFile( fileName );
       // file may exist if project is created from source version control
       if (!file.exists()){
-        InputStream is = new ByteArrayInputStream( content.getBytes( ENC ) );
+        InputStream is = new ByteArrayInputStream( content.getBytes( FileUtil.UTF8 ) );
         IProgressMonitor monitor = new SubProgressMonitor( mo, 1 );
         file.create( is, true, monitor );
-        file.setCharset( ENC ,mo);
+        file.setCharset( FileUtil.UTF8 ,mo);
       }
     } catch( UnsupportedEncodingException uex ) {
       HaskellCorePlugin.log( uex );

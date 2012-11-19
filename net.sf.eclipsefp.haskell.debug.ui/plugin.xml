@@ -172,6 +172,11 @@
             icon="icons/eview16/haskell_test.png"
             id="net.sf.eclipsefp.haskell.ui.launch.launchTestSuiteIcon">
       </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.HTFLaunchDelegate"
+            icon="icons/eview16/haskell_test.png"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchHTFIcon">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -189,6 +194,11 @@
              class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
              id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
              type="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate">
+       </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
+             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
+             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.HTFLaunchDelegate">
        </launchConfigurationTabGroup>
        <launchConfigurationTabGroup
              class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
@@ -332,6 +342,32 @@
             </contextLabel>
          </contextualLaunch>
       </shortcut>
+            <shortcut
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HTFLaunchShortcut"
+            icon="icons/eview16/haskell_test.png"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HTFLaunchShortcut"
+            label="%htfLaunchShortcut_label"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="net.sf.eclipsefp.haskell.core.isProjectTestSuite">
+                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%htfLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
       <shortcut
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableProfilingLaunchShortcut"
             icon="icons/etool16/hsexe16.gif"
@@ -380,6 +416,12 @@
       </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
+            description="%runHTFShortcut_desc"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HTFLaunchShortcut.run"
+            name="%runHTFShortcut_name">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%runHaskellProfilingShortcut_desc"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableProfilingLaunchShortcut.run"
             name="%runHaskellProfilingShortcut_name">
@@ -393,7 +435,7 @@
            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.TestSuiteLaunchShortcut.run"
+            commandId="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HTFLaunchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+M2+X F">
       </key>

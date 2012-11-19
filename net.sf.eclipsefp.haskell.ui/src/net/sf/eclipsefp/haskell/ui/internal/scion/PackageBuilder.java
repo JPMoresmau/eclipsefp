@@ -128,7 +128,7 @@ public abstract class PackageBuilder {
 
    try {
      Process p = pb.start();
-     BufferedReader is = new BufferedReader( new InputStreamReader( p.getInputStream(), "UTF8" ) );
+     BufferedReader is = new BufferedReader( new InputStreamReader( p.getInputStream(), FileUtil.UTF8 ) );
      OutputWriter pbWriter = new OutputWriter( jobPrefix + "-OutputWriter", conout );
      InputReceiver  pbReader = new InputReceiver( jobPrefix + "-InputReader", is, pbWriter);
 
@@ -194,7 +194,7 @@ public abstract class PackageBuilder {
 
    try {
      Process p = pb.start();
-     BufferedReader is = new BufferedReader( new InputStreamReader( p.getInputStream(), "UTF8" ) );
+     BufferedReader is = new BufferedReader( new InputStreamReader( p.getInputStream(), FileUtil.UTF8 ) );
      OutputWriter pbWriter = new OutputWriter( jobPrefix + "-OutputWriter", conout );
      InputReceiver  pbReader = new InputReceiver( jobPrefix + "-InputReader", is, pbWriter);
 
@@ -244,7 +244,7 @@ public abstract class PackageBuilder {
      terminateFlag = false;
      this.outStream = null;
      try {
-       this.outStream = new BufferedWriter( new OutputStreamWriter(outStream, "UTF8") );
+       this.outStream = new BufferedWriter( new OutputStreamWriter(outStream, FileUtil.UTF8) );
      } catch (UnsupportedEncodingException exc) {
        // Keep Java happy
      }

@@ -39,6 +39,9 @@ public class TestResultLP extends LabelProvider {
           key=IImageNames.TEST_OK;
           break;
         case PENDING:
+          key=IImageNames.TEST;
+          break;
+        case RUNNING:
           key=IImageNames.TEST_RUN;
           break;
       }

@@ -6,8 +6,9 @@
 package net.sf.eclipsefp.haskell.debug.core.test;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import org.eclipse.core.resources.IProject;
 
@@ -47,7 +48,7 @@ public class TestResult implements Serializable {
   /**
    * the children
    */
-  private final List<TestResult> children=new LinkedList<TestResult>();
+  private final Map<String,TestResult> children=new LinkedHashMap<String,TestResult>();
 
   public TestResult( final String name ) {
     super();
@@ -62,7 +63,7 @@ public class TestResult implements Serializable {
    */
   public TestStatus getStatus() {
     TestStatus stat=children.size()>0?TestStatus.OK:status;
-    for (TestResult child:children){
+    for (TestResult child:children.values()){
       if (child.getStatus()!=null && stat==null || child.getStatus().ordinal()>stat.ordinal()){
         stat=child.getStatus();
       }
@@ -118,7 +119,42 @@ public class TestResult implements Serializable {
   /**
    * @return the children
    */
-  public List<TestResult> getChildren() {
-    return children;
+  public Collection<TestResult> getChildren() {
+    return children.values();
+  }
+
+  public void addChild(final TestResult tr){
+    children.put( tr.getName(), tr );
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ( ( name == null ) ? 0 : name.hashCode() );
+    return result;
+  }
+
+
+  @Override
+  public boolean equals( final Object obj ) {
+    if( this == obj ) {
+      return true;
+    }
+    if( obj == null ) {
+      return false;
+    }
+    if( getClass() != obj.getClass() ) {
+      return false;
+    }
+    TestResult other = ( TestResult )obj;
+    if( name == null ) {
+      if( other.name != null ) {
+        return false;
+      }
+    } else if( !name.equals( other.name ) ) {
+      return false;
+    }
+    return true;
   }
 }

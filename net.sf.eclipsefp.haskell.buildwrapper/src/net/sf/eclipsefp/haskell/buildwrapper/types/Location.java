@@ -289,4 +289,20 @@ public class Location {
 		return attributes;
 	}
 
+	public void setStartLine(int startLine) {
+		this.startLine = startLine;
+	}
+
+	public void setStartColumn(int startColumn) {
+		this.startColumn = startColumn;
+	}
+
+	public void setEndLine(int endLine) {
+		this.endLine = endLine;
+	}
+
+	public void setEndColumn(int endColumn) {
+		this.endColumn = endColumn;
+	}
+
 }

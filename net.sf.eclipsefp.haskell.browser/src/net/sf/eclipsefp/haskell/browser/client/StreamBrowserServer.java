@@ -28,6 +28,7 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.NullWriter;
 import net.sf.eclipsefp.haskell.util.StreamRedirect;
@@ -89,14 +90,14 @@ public class StreamBrowserServer extends BrowserServer {
 			process = builder.start();
 			out = process.getInputStream();
 			Writer errorWriter=logError && logStream!=null?logStream:new NullWriter();
-			errorRedirect=new StreamRedirect(new InputStreamReader(process.getErrorStream(),"UTF8"), errorWriter);
+			errorRedirect=new StreamRedirect(new InputStreamReader(process.getErrorStream(),FileUtil.UTF8), errorWriter);
 			errorRedirect.start();
 			/*out = new BufferedReader(new InputStreamReader(
-					process.getInputStream(), "UTF8"));*/
+					process.getInputStream(), FileUtil.UTF8));*/
 			/*err = new BufferedReader(new InputStreamReader(
-					process.getErrorStream(), "UTF8")); */
+					process.getErrorStream(), FileUtil.UTF8)); */
 			in  = new BufferedWriter(new OutputStreamWriter(
-					process.getOutputStream(), "UTF8"));
+					process.getOutputStream(),FileUtil.UTF8));
 		} catch (Throwable ex) {
 			throw new Exception("Could not load");
 		}
@@ -181,7 +182,7 @@ public class StreamBrowserServer extends BrowserServer {
 		try {			
 			InflaterInputStream gzip = new InflaterInputStream(out);
 			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(gzip, "UTF8"));
+					new InputStreamReader(gzip, FileUtil.UTF8));
 			
 			return reader.readLine();
 		} catch (IOException e) {

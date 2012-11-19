@@ -89,7 +89,7 @@ public class TestSuiteHaskellLaunchDelegate extends
           } else {
             TestResult ctr=parseTestResult(e);
             if (ctr!=null){
-              ts.getChildren().add( ctr );
+              ts.addChild ( ctr );
             }
           }
         }

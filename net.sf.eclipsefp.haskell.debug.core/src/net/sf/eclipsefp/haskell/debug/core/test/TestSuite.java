@@ -6,7 +6,7 @@
 package net.sf.eclipsefp.haskell.debug.core.test;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -44,7 +44,7 @@ public class TestSuite implements Serializable {
    * @param tr
    */
   private void count(final TestResult tr){
-    List<TestResult> cs=tr.getChildren();
+    Collection<TestResult> cs=tr.getChildren();
     if (cs.isEmpty()){
       switch (tr.getStatus()){
         case ERROR:
@@ -59,6 +59,7 @@ public class TestSuite implements Serializable {
             runs++;
             break;
         case PENDING:
+        case RUNNING:
           break;
       }
 

@@ -896,7 +896,7 @@ public class BWFacade {
 		T obj=null;
 		try {
 			Process p=pb.start();
-			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF8"));
+			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
 			//long t0=System.currentTimeMillis();
 			String l=br.readLine();
 			boolean goOn=true;

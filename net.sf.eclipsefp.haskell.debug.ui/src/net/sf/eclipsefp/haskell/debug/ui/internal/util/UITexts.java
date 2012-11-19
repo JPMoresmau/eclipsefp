@@ -56,6 +56,7 @@ public final class UITexts extends NLS {
   public static String runProfiling;
   public static String runTestSuite;
   public static String runTestFramework;
+  public static String runHTF;
   public static String yesod_devel_error;
 
   public static String command_history;

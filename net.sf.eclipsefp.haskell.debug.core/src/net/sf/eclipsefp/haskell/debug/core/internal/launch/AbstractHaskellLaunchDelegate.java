@@ -172,7 +172,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       final String mode,final ILaunch launch) throws CoreException;
   protected abstract void postProcessFinished(final ILaunchConfiguration configuration) throws CoreException;
 
-  private IProcess createProcess( final ILaunchConfiguration configuration,
+  protected IProcess createProcess( final ILaunchConfiguration configuration,
       final String mode, final ILaunch launch, final IPath location,
       final String[] cmdLine, final File workingDir ) throws CoreException {
     // Process proc = DebugPlugin.exec( cmdLine, workingDir );
