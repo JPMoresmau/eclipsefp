@@ -21,6 +21,7 @@ import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -178,6 +179,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       if (end>s.length()){
         end=s.length();
       }
+      if (offset>end){
+        return;
+      }
       key.add( s.substring(offset,end) );
 
       while (tokenLocations.size()<offset){
@@ -297,7 +301,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
           File file=File.createTempFile( "temp", ".hs" );
           try {
-            Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), "UTF8" ) );
+            Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), FileUtil.UTF8 ) );
             fw.write( contents );
             fw.close();
             f.setCabalFile( new File(file.getParentFile(),"temp.cabal") .getAbsolutePath());
