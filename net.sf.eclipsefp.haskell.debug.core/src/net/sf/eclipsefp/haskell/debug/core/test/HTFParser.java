@@ -36,6 +36,8 @@ public class HTFParser {
   private static final String RESULT_PASS="pass"; //$NON-NLS-1$
   private static final String MESSAGE="message"; //$NON-NLS-1$
   private static final String TEST="test"; //$NON-NLS-1$
+  private static final String WALL_TIME="wallTime"; //$NON-NLS-1$
+  private static final String TEST_RESULTS="test-results"; //$NON-NLS-1$
 
 
   private static final String SEP="\n;;\n"; //$NON-NLS-1$
@@ -177,9 +179,10 @@ public class HTFParser {
           last.setStatus( TestStatus.ERROR );
         }
         last.setText( rObj.optString(MESSAGE) );
-        // TODO parse location of failure
-        JSONObject tcObj=rObj.getJSONObject( TEST );
-        parseLocation( last, tcObj );
+        if (!TestStatus.OK.equals(last.getStatus())){
+          parseLocation( last, rObj );
+        }
+        last.setWallTime( rObj.optLong( WALL_TIME, 0 ) );
         // TODO time
         return last;
       }
@@ -188,25 +191,28 @@ public class HTFParser {
       TestResult tr=newTestResult( tcObj, parents, p );
       tr.setStatus( TestStatus.RUNNING ); // running until we get the corresponding test-end
       return tr;
+    } else if (tp.equals( TEST_RESULTS )){
+      TestResult root=parents.get( new JSONArray().toString() );
+      root.setWallTime( rObj.optLong( WALL_TIME, 0 ) );
     }
     return null;
   }
 
   /*
 
-   {"test":{"flatName":"Main:nonEmpty","location":{"file":"test\\Main.hs","line":12},"path":["Main","nonEmpty"],"sort":"unit-test"},"type":"test-start"}
+{"test":{"flatName":"Main:nonEmpty","location":{"file":"test\\Main.hs","line":12},"path":["Main","nonEmpty"],"sort":"unit-test"},"type":"test-start"}
 ;;
-{"result":"fail","message":"assertEqual failed at test\\\\Main.hs:13\n* expected: [3, 2, 1]\n* but got:  [3]\n* diff:     \nC [3\nF , 2, 1\nC ]","test":{"flatName":"Main:nonEmpty","location":{"file":"test\\Main.hs","line":12},"path":["Main","nonEmpty"],"sort":"unit-test"},"wallTime":1,"type":"test-end"}
+{"result":"fail","message":"assertEqual failed at test\\\\Main.hs:13\n* expected: [3, 2, 1]\n* but got:  [3]\n* diff:     \nC [3\nF , 2, 1\nC ]","test":{"flatName":"Main:nonEmpty","location":{"file":"test\\Main.hs","line":12},"path":["Main","nonEmpty"],"sort":"unit-test"},"wallTime":1,"type":"test-end","location":{"file":"test\\\\Main.hs","line":13}}
 ;;
 {"test":{"flatName":"Main:empty","location":{"file":"test\\Main.hs","line":15},"path":["Main","empty"],"sort":"unit-test"},"type":"test-start"}
 ;;
-{"result":"pass","message":"","test":{"flatName":"Main:empty","location":{"file":"test\\Main.hs","line":15},"path":["Main","empty"],"sort":"unit-test"},"wallTime":0,"type":"test-end"}
+{"result":"pass","message":"","test":{"flatName":"Main:empty","location":{"file":"test\\Main.hs","line":15},"path":["Main","empty"],"sort":"unit-test"},"wallTime":0,"type":"test-end","location":null}
 ;;
 {"test":{"flatName":"Main:reverse","location":{"file":"test\\Main.hs","line":18},"path":["Main","reverse"],"sort":"quickcheck-property"},"type":"test-start"}
 ;;
-{"result":"fail","message":"Falsifiable (after 4 tests and 4 shrinks): \n[0,0]\nReplay argument: \"Just (828711776 2147483395,3)\"","test":{"flatName":"Main:reverse","location":{"file":"test\\Main.hs","line":18},"path":["Main","reverse"],"sort":"quickcheck-property"},"wallTime":1,"type":"test-end"}
+{"result":"fail","message":"Falsifiable (after 3 tests and 1 shrink): \n[0,0]\nReplay argument: \"Just (275851486 2147483396,2)\"","test":{"flatName":"Main:reverse","location":{"file":"test\\Main.hs","line":18},"path":["Main","reverse"],"sort":"quickcheck-property"},"wallTime":0,"type":"test-end","location":null}
 ;;
-{"failures":2,"passed":1,"pending":0,"wallTime":10,"errors":0,"type":"test-results"}
+{"failures":2,"passed":1,"pending":0,"wallTime":4,"errors":0,"type":"test-results"}
 ;;
 */
 

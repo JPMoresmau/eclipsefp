@@ -46,6 +46,11 @@ public class TestResult implements Serializable {
   private IProject project;
 
   /**
+   * wall time in milliseconds
+   */
+  private long wallTime=-1;
+
+  /**
    * the children
    */
   private final Map<String,TestResult> children=new LinkedHashMap<String,TestResult>();
@@ -156,5 +161,24 @@ public class TestResult implements Serializable {
       return false;
     }
     return true;
+  }
+
+
+
+  public long getWallTime() {
+    if (wallTime==-1){
+      long wt=0;
+      for (TestResult child:children.values()){
+        wt+=child.getWallTime();
+      }
+      return wt;
+    }
+    return wallTime;
+  }
+
+
+
+  public void setWallTime( final long wallTime ) {
+    this.wallTime = wallTime;
   }
 }

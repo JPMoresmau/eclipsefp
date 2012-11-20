@@ -5,11 +5,14 @@
  */
 package net.sf.eclipsefp.haskell.debug.ui.test;
 
+import java.text.NumberFormat;
 import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
 import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
+import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -52,6 +55,21 @@ public class TestResultLP extends LabelProvider {
       return getImage(( (TestSuite )element).getRoot());
     }
     return super.getImage( element );
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+   */
+  @Override
+  public String getText( final Object element ) {
+    if (element instanceof TestResult){
+      TestResult tr=(TestResult)element;
+      /** wall time in milliseconds **/
+      double t=((double)tr.getWallTime())/(double)1000;
+
+      return NLS.bind( UITexts.test_label,tr.getName(), NumberFormat.getNumberInstance().format( t ));
+    }
+    return super.getText( element );
   }
 
 }
