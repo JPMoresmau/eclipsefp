@@ -184,4 +184,13 @@ ${cursor}
 >{- ^ ${cursor}
 -}
 </template>
+<template
+  name="{-#"
+  description="%CodeTemplates.pragma.description"
+  id="net.sf.eclipsefp.haskell.templates.pragma"
+  context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
+  enabled="true"
+  autoinsert="false"
+>{-# ${cursor} -#}
+</template>
 </templates>
