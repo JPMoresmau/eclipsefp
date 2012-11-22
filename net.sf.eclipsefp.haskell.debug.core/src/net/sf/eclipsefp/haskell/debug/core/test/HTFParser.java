@@ -142,7 +142,7 @@ public class HTFParser {
   public static void parseTestOutput(final TestResult root,final File f,final IProject p) throws IOException, JSONException{
     String s=FileUtil.getContents( f,FileUtil.UTF8 );
     Map<String,TestResult> parents=new HashMap<String, TestResult>();
-    parents.put( new JSONArray().toString(), root );
+    fillParents(root, new JSONArray(),parents );
     int ix=s.indexOf(SEP);
     int start=0;
     TestResult last=null;
@@ -152,6 +152,16 @@ public class HTFParser {
       start=ix+SEP.length();
       ix=s.indexOf(SEP,start);
 
+    }
+  }
+
+  private static void fillParents(final TestResult tr,final JSONArray arr,final Map<String,TestResult> parents){
+    parents.put( arr.toString(), tr );
+    for (TestResult c:tr.getChildren()){
+      JSONArray ca=new JSONArray();
+      ca.putAll( arr );
+      ca.put( c.getName() );
+      fillParents( c, ca, parents );
     }
   }
 
