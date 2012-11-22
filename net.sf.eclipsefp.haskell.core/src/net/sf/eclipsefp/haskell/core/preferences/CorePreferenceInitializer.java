@@ -38,6 +38,7 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
         CabalSyntax.FIELD_NAME.getCabalName()+":           ${"+TemplateVariables.PROJECT_NAME+"}"+PlatformUtil.NL+  //$NON-NLS-1$ //$NON-NLS-2$
         CabalSyntax.FIELD_VERSION.getCabalName()+":        0.1"+PlatformUtil.NL+  //$NON-NLS-1$
         CabalSyntax.FIELD_CABAL_VERSION.getCabalName()+":  >=1.2"+PlatformUtil.NL+  //$NON-NLS-1$
+        CabalSyntax.FIELD_BUILD_TYPE.getCabalName()+":     Simple"+PlatformUtil.NL+  //$NON-NLS-1$
         CabalSyntax.FIELD_AUTHOR.getCabalName()+":         ${"+TemplateVariables.USER_NAME+"}"+PlatformUtil.NL+  //$NON-NLS-1$ //$NON-NLS-2$
          ""+PlatformUtil.NL+  //$NON-NLS-1$
          "${"+TemplateVariables.LIBRARY+"}"+PlatformUtil.NL+  //$NON-NLS-1$ //$NON-NLS-2$
