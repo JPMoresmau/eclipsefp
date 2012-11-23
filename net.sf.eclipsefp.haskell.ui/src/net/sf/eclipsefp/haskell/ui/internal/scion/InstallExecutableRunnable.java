@@ -19,6 +19,7 @@ import net.sf.eclipsefp.haskell.core.util.GHCSyntax;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.views.CabalPackagesView;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.runtime.CoreException;
@@ -127,6 +128,9 @@ public class InstallExecutableRunnable implements Runnable {
 
               @Override
               public void run() {
+                /** refresh the cabal packages view **/
+                CabalPackagesView.refresh();
+
                 File f=new File(fBinDir,FileUtil.makeExecutableName( c.exeName ));
                 if (f.exists()){
                   // set preference

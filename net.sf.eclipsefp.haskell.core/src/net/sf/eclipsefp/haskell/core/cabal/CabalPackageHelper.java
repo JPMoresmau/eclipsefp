@@ -28,12 +28,29 @@ public class CabalPackageHelper {
   private List<CabalPackageRef> installed=null;
   private List<CabalPackageRef> all=null;
 
+  /** singleton **/
+  private static CabalPackageHelper instance;
+  public static synchronized CabalPackageHelper getInstance(){
+    if (instance==null || instance.getCabalPath()==null || !instance.getCabalPath().equals( CabalImplementationManager.getCabalExecutable() )){
+      instance=new CabalPackageHelper( CabalImplementationManager.getCabalExecutable() );
+    }
+    return instance;
+  }
 
-  public CabalPackageHelper( final String cabalPath ) {
+  private CabalPackageHelper( final String cabalPath ) {
     super();
     this.cabalPath = cabalPath;
   }
 
+  public void clear(){
+    installed=null;
+    all=null;
+  }
+
+
+  public String getCabalPath() {
+    return cabalPath;
+  }
 
   public boolean hasInstalledVersion(final String name,final String version) throws IOException{
     String s=getLastInstalledVersion(name);

@@ -50,10 +50,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.ViewPart;
 
@@ -64,6 +66,26 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class CabalPackagesView extends ViewPart {
   public static final String ID="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView";
+
+  public static void refresh(){
+    /** clear cache **/
+    CabalPackageHelper.getInstance().clear();
+    Display.getDefault().asyncExec( new Runnable(){
+      @Override
+      public void run() {
+
+        IWorkbenchPage p=HaskellUIPlugin.getActivePage();
+        IViewPart part=p.findView( ID );
+        if (part instanceof CabalPackagesView){
+          CabalPackagesView v=((CabalPackagesView)part);
+          /** only if we show the installed packages **/
+          if (v.onlyInstalled){
+            v.refreshJob.schedule();
+          }
+        }
+      }
+    });
+  }
 
   private CabalPackageHelper helper;
   private Button bAll;
@@ -243,9 +265,7 @@ public class CabalPackagesView extends ViewPart {
     lMore.setText("<a>"+ UITexts.cabalPackagesView_info_more +"</a>");
     lMore.setEnabled( false );
 
-
-
-    helper=new CabalPackageHelper( CabalImplementationManager.getCabalExecutable() );
+    helper=CabalPackageHelper.getInstance();
 
     refreshJob.schedule();
 
