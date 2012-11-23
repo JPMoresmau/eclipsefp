@@ -260,12 +260,12 @@
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TypingPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.TypingPP">
       </page--> 
-      <page
+      <!--page
             name="%editorPP_annotation_name"
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP">
-      </page>      
+      </page-->      
       <page
             name="%editorPP_tasktags_name"
             category="net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP"
@@ -810,7 +810,9 @@
             isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
             isGoToNextNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
-            isGoToPreviousNavigationTarget="false">
+            isGoToPreviousNavigationTarget="false"
+            textStylePreferenceKey="occurrenceTextStyle"
+            textStylePreferenceValue="NONE">
       </specification>
    </extension>   
    

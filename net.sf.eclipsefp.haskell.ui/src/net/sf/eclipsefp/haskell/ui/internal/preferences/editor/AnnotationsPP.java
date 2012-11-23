@@ -26,6 +26,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
  * <p>Annotation preferences page</p>
   *
   * @author JP Moresmau
+  * @deprecated we use the Text Editors preferences
  */
 public class AnnotationsPP extends AbstractEditorPP {
   private List colorList;

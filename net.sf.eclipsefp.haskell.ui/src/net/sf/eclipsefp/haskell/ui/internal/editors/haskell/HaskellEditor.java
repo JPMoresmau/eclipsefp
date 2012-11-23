@@ -82,6 +82,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.GotoAnnotationAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -256,7 +257,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   protected String[] collectContextMenuPreferencePages() {
     List<String> ls=new ArrayList<String>(Arrays.asList( super.collectContextMenuPreferencePages()));
     ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP" );
-    ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
+    //ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
     ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP");
     ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.templates.HSCodeTemplatePreferences");
     return ls.toArray( new String[ls.size()] );
@@ -267,7 +268,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   protected String[] collectOverviewRulerMenuPreferencePages() {
     List<String> ls=new ArrayList<String>(Arrays.asList( super.collectOverviewRulerMenuPreferencePages()));
     ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP" );
-    ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
+    //ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
     return ls.toArray( new String[ls.size()] );
   }
 
@@ -361,6 +362,21 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     QuickFixAction action = new QuickFixAction(HaskellUIPlugin.getDefault().getResourceBundle(), "RulerQuickFixAction", this, getVerticalRuler()); //$NON-NLS-1$
     setAction(ITextEditorActionConstants.RULER_CLICK, action);
+
+    /**navigation actions
+     * http://sourceforge.net/projects/eclipsefp/forums/forum/371922/topic/6192123
+     * **/
+    GotoAnnotationAction gf=new GotoAnnotationAction( this, true );
+    gf.setActionDefinitionId( ITextEditorActionConstants.NEXT );
+    setAction( ITextEditorActionConstants.NEXT, gf);
+    markAsStateDependentAction( ITextEditorActionConstants.NEXT, true );
+    getEditorSite().getActionBars().setGlobalActionHandler( ITextEditorActionConstants.NEXT, gf );
+
+    GotoAnnotationAction gb=new GotoAnnotationAction( this, false );
+    gb.setActionDefinitionId( ITextEditorActionConstants.PREVIOUS );
+    setAction( ITextEditorActionConstants.PREVIOUS, gb);
+    markAsStateDependentAction( ITextEditorActionConstants.PREVIOUS, true );
+    getEditorSite().getActionBars().setGlobalActionHandler( ITextEditorActionConstants.PREVIOUS, gb );
 
 
   }
