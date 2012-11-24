@@ -7,7 +7,6 @@ package net.sf.eclipsefp.haskell.debug.ui.test;
 
 import java.text.NumberFormat;
 import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
-import net.sf.eclipsefp.haskell.debug.core.test.TestStatus;
 import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -65,7 +64,7 @@ public class TestResultLP extends LabelProvider {
   public String getText( final Object element ) {
     if (element instanceof TestResult){
       TestResult tr=(TestResult)element;
-      if (!tr.getStatus().equals( TestStatus.PENDING ) && !tr.getStatus().equals( TestStatus.RUNNING )){
+      if (tr.isFinished()){
         /** wall time in milliseconds **/
         double t=((double)tr.getWallTime())/(double)1000;
 

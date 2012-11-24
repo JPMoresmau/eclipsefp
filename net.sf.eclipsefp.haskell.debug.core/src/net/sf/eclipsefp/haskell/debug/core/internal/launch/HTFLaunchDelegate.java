@@ -59,8 +59,8 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
      * launch the same process, but with the list parameter, to get the list of tests without running them
      */
 
-    String [] cmd2=new String[cmdLine.length+1];
-    System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length-1 );
+    String [] cmd2=new String[cmdLine.length];
+    System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length-1 ); /** remove --split **/
     cmd2[cmd2.length-1]="--list"; //$NON-NLS-1$
     StringWriter sw=new StringWriter();
     final String fname = getFilename();
@@ -88,7 +88,7 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     /**
      * create the parse thread
      */
-    parseThread=new ParseThread( file, p );
+    parseThread=new ParseThread( fname, p );
     /**
      * super class will create the proper process
      */
@@ -113,16 +113,17 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     /**
      * last modification date of the file we've checked
      */
-    private long lastCheck=0;
+   // private final long lastCheck=0;
 
-    private final File file;
+    private final String fname;
     private final IProject project;
+    private int idx=0;
     /**
      *
      */
-    public ParseThread(final File f,final IProject p) {
+    public ParseThread(final String f,final IProject p) {
      setDaemon( true );
-     this.file=f;
+     this.fname=f;
      this.project=p;
     }
 
@@ -132,15 +133,25 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     @Override
     public void run() {
       while(goOn){
-        try {
-          long lm=file.lastModified();
+
+          /*long lm=file.lastModified();
           if (lm>lastCheck){
             lastCheck=lm;
             parseOutfile( file, project );
+          }*/
+          File f=new File(fname+idx);
+          while (f.exists()){
+            try {
+              parseOutfile( f, project );
+            } catch (Exception e){
+              HaskellDebugCore.log( e.getLocalizedMessage(), e );
+            } finally {
+              f.delete();
+            }
+            idx++;
+            f=new File(fname+idx);
           }
-        } catch (Exception e){
-          HaskellDebugCore.log( e.getLocalizedMessage(), e );
-        }
+
         try {
           Thread.sleep( DELAY );
         } catch (InterruptedException ie){
@@ -192,26 +203,40 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     /**
      * close the parse thread and checks if we need to reparse the file
      */
-    long lastCheck=0;
+    int idx=0;
     if (parseThread!=null){
       parseThread.goOn=false;
       parseThread.interrupt();
-      lastCheck=parseThread.lastCheck;
+      idx=parseThread.idx;
       parseThread=null;
     }
 
     final String fname = getFilename();
-    final File file = new File( fname );
-    if (file.lastModified()>lastCheck){
-      IProject p=getProject( configuration );
+    File f = new File( fname+idx );
+    IProject p=getProject( configuration );
+    while (f.exists()){
       try {
-        parseOutfile( file, p );
+        parseOutfile( f, p );
       } catch (Exception ioe){
-        throw new CoreException( new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe) );
+      throw new CoreException( new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe) );
       } finally {
-        file.delete();
+        f.delete();
       }
+      idx++;
+      f=new File(fname+idx);
     }
+    new File(fname).delete();
+//
+//    if (file.lastModified()>lastCheck){
+//
+//      try {
+//        parseOutfile( file, p );
+//      } catch (Exception ioe){
+//        throw new CoreException( new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe) );
+//      } finally {
+//        file.delete();
+//      }
+//    }
 
   }
 
@@ -224,8 +249,9 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
   private void parseOutfile(final File f,final IProject p) throws Exception{
     if (f.exists()){
       HTFParser.parseTestOutput( root, f , p);
+      suite.reset();
       for (ITestListener tl:TestListenerManager.getContributors().values()){
-        tl.start(suite );
+        tl.update(suite );
       }
     }
   }
@@ -235,7 +261,7 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
    */
   @Override
   protected String getExtraArguments() {
-    return "--json --output-file=\""+getFilename()+"\" --colors=NO"; //$NON-NLS-1$ //$NON-NLS-2$
+    return "--json --output-file=\""+getFilename()+"\" --colors=NO --split"; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 }

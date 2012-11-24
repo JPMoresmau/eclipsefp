@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.debug.core.test.TestResult;
-import net.sf.eclipsefp.haskell.debug.core.test.TestStatus;
 import net.sf.eclipsefp.haskell.debug.core.test.TestSuite;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
@@ -210,16 +209,22 @@ public class TestResultView extends ViewPart {
    * @param add add to history?
    */
   public void setInput(final TestSuite ts,final boolean add){
+    Object[] expanded=testTree.getExpandedElements();
+
     testTree.setInput( Collections.singleton( ts.getRoot() ));
-    testTree.expandToLevel( 2 );
+
 
     tRuns.setText( String.valueOf( ts.getRuns() ) );
     tErrors.setText( String.valueOf( ts.getErrors() ) );
     tFailures.setText( String.valueOf( ts.getFailures() ) );
     tRuns.getParent().layout( new Control[]{tRuns,tErrors,tFailures} );
     if (add){
+      testText.setText( "" ); //$NON-NLS-1$
       history.add( ts );
       historyIndex=history.size()-1;
+      testTree.expandToLevel( 2 );
+    } else {
+      testTree.setExpandedElements( expanded );
     }
   }
 
@@ -297,7 +302,7 @@ public class TestResultView extends ViewPart {
             for (Iterator<TestSuite> it=history.iterator();it.hasNext();){
               final TestSuite ts=it.next();
               /** terminated= !PENDING **/
-              if (!ts.getRoot().getStatus().equals( TestStatus.PENDING )){
+              if (ts.getRoot().isFinished()){
                 it.remove();
                 /** history index moves too **/
                 if (historyIndex>=a){

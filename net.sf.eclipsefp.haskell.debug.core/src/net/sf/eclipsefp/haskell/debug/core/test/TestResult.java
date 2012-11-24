@@ -76,6 +76,15 @@ public class TestResult implements Serializable {
     return stat;
   }
 
+  /**
+   * is the test finished?
+   * @return
+   */
+  public boolean isFinished(){
+    TestStatus st=getStatus();
+    return st!=null && (!st.equals( TestStatus.PENDING ) && !st.equals( TestStatus.RUNNING ));
+  }
+
   public void setStatus( final TestStatus status ) {
     this.status = status;
   }

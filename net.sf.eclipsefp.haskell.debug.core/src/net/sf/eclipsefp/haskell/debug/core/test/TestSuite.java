@@ -39,6 +39,13 @@ public class TestSuite implements Serializable {
     count(root);
   }
 
+  public void reset(){
+    runs=0;
+    errors=0;
+    failures=0;
+    count(this.root);
+  }
+
   /**
    * calculate stats
    * @param tr

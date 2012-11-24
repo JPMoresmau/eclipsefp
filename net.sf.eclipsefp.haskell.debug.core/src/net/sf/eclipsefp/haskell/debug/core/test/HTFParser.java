@@ -143,16 +143,16 @@ public class HTFParser {
     String s=FileUtil.getContents( f,FileUtil.UTF8 );
     Map<String,TestResult> parents=new HashMap<String, TestResult>();
     fillParents(root, new JSONArray(),parents );
-    int ix=s.indexOf(SEP);
-    int start=0;
-    TestResult last=null;
-    while (ix>-1){
-      String obj=s.substring( start,ix ).trim();
-      last=parse1TestOutput( obj, parents, p, last );
-      start=ix+SEP.length();
-      ix=s.indexOf(SEP,start);
+    //int ix=s.indexOf(SEP);
+    //int start=0;
+    //TestResult last=null;
+    //while (ix>-1){
+      //String obj=s.substring( start,ix ).trim();
+     parse1TestOutput( s, parents, p );
+     // start=ix+SEP.length();
+     // ix=s.indexOf(SEP,start);
 
-    }
+    //}
   }
 
   private static void fillParents(final TestResult tr,final JSONArray arr,final Map<String,TestResult> parents){
@@ -174,11 +174,13 @@ public class HTFParser {
    * @return the parsed test result or none
    * @throws JSONException
    */
-  private static TestResult parse1TestOutput(final String sobj,final Map<String,TestResult> parents,final IProject p,final TestResult last) throws JSONException{
+  private static void parse1TestOutput(final String sobj,final Map<String,TestResult> parents,final IProject p) throws JSONException{
     JSONObject rObj=new JSONObject(sobj);
     String tp=rObj.getString( TYPE );
 
     if (tp.equals( TEST_END )){
+      JSONObject tcObj=rObj.getJSONObject( TEST );
+      TestResult last=newTestResult( tcObj, parents, p );
       if (last!=null){
         String r=rObj.getString( RESULT );
         if (RESULT_PASS.equals(r)){
@@ -193,19 +195,17 @@ public class HTFParser {
           parseLocation( last, rObj );
         }
         last.setWallTime( rObj.optLong( WALL_TIME, 0 ) );
-        // TODO time
-        return last;
       }
     } else if (tp.equals( TEST_START )){
       JSONObject tcObj=rObj.getJSONObject( TEST );
       TestResult tr=newTestResult( tcObj, parents, p );
       tr.setStatus( TestStatus.RUNNING ); // running until we get the corresponding test-end
-      return tr;
+      //return tr;
     } else if (tp.equals( TEST_RESULTS )){
       TestResult root=parents.get( new JSONArray().toString() );
       root.setWallTime( rObj.optLong( WALL_TIME, 0 ) );
     }
-    return null;
+ //   return null;
   }
 
   /*
