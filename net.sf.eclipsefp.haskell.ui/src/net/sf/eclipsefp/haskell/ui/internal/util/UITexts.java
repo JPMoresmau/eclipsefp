@@ -344,11 +344,18 @@ public final class UITexts extends NLS {
   public static String preferences_project_file_templates_haskell;
   public static String preferences_project_file_TEMPLATE_CABAL_LIBRARY;
   public static String preferences_project_file_TEMPLATE_CABAL_EXE;
+  public static String preferences_project_file_TEMPLATE_CABAL_HTF;
   public static String preferences_project_file_TEMPLATE_CABAL;
   public static String preferences_project_file_TEMPLATE_CABAL_SETUP;
   public static String preferences_project_file_TEMPLATE_MODULE;
   public static String preferences_project_file_TEMPLATE_MAIN;
   public static String preferences_project_file_TEMPLATE_GTK;
+  public static String preferences_project_file_TEMPLATE_MODULE_HTF;
+  public static String preferences_project_file_TEMPLATE_MAIN_HTF;
+  public static String preferences_project_file_TEMPLATE_IMPORT_HTF;
+  public static String preferences_project_file_TEMPLATE_CABAL_TF;
+  public static String preferences_project_file_TEMPLATE_CABAL_STDIO;
+  public static String preferences_project_file_TEMPLATE_CABAL_DETAILED;
 
   public static String preferences_editor_description;
   public static String preferences_editor_description_hover;
@@ -589,6 +596,11 @@ public final class UITexts extends NLS {
   public static String cabalEditor_newTestSuiteBlankError;
   public static String cabalEditor_newTestSuiteAlreadyExistsError;
   public static String cabalEditor_testType;
+  public static String cabalEditor_newTestSuite_src;
+  public static String cabalEditor_newTestSuite_src_blank;
+  public static String cabalEditor_newTestSuite_modules;
+  public static String cabalEditor_newTestSuite_modules_col_test;
+  public static String cabalEditor_newTestSuite_modules_col_mod;
 
   public static String cabalEditor_modules;
   public static String cabalEditor_module;
@@ -601,6 +613,7 @@ public final class UITexts extends NLS {
   public static String cabalEditor_stdioTestSuite;
   public static String cabalEditor_testFrameworkTestSuite;
   public static String cabalEditor_isTestFrameworkTestSuite;
+  public static String cabalEditor_HTFTestSuite;
 
   public static String renameParticipant_title;
   public static String moveParticipant_title;
@@ -710,6 +723,7 @@ public final class UITexts extends NLS {
 
   public static String NewModuleWizardPage_9;
   public static String NewModuleWizardPage_FolderIsParent;
+  public static String NewModuleWizardPage_template;
 
   public static String scionBrowser_hooglePath;
 
@@ -779,6 +793,18 @@ public final class UITexts extends NLS {
   public static String yesod_cabaldev;
 
   public static String proposal_category_mode;
+
+  public static String source_folder_title;
+  public static String source_folder_msg;
+
+
+  public static String folder_title;
+  public static String folder_message;
+  public static String folder_empty;
+  public static String folder_add;
+  public static String folder_add_title;
+  public static String folder_add_duplicate;
+  public static String folder_add_empty;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$

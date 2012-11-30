@@ -1,24 +1,42 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
+import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator;
+import net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
+import net.sf.eclipsefp.haskell.core.preferences.TemplateVariables;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.LangUtil;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -61,40 +79,197 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     super( editor, TestSuitesPage.class.getName(), UITexts.cabalEditor_testSuites, project );
   }
 
-  public PackageDescriptionStanza createNewStdioStanza(final PackageDescription desc, final String name) {
-    PackageDescriptionStanza stanza = desc.addStanza(
-        CabalSyntax.SECTION_TESTSUITE, name );
-    stanza.setIndent( 2 );
-    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
-    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
-    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
-    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );
-    return stanza;
+  public void addStanza(final PackageDescription desc,final String pref,final TestSuiteDialog.TestSuiteDef def){
+    Map<String,String> vars=new HashMap<String, String>();
+    vars.put( TemplateVariables.PROJECT_NAME, getPackageDescription().getPackageStanza().getName() );
+    vars.put( TemplateVariables.SRC, def.getSrc().getProjectRelativePath().toPortableString() );
+    vars.put( TemplateVariables.USER_NAME, PlatformUtil.getCurrentUser() );
+    vars.put( TemplateVariables.SECTION_NAME,def.getName());
+    String t=HaskellCorePlugin.populateTemplate( pref, vars );
+    PackageDescriptionStanza pd=PackageDescriptionLoader.loadStanza( t );
+    if (pd!=null){
+
+      Set<String> srcs=new HashSet<String>();
+      boolean needLibrary=false;
+      StringBuilder imports=new StringBuilder();
+
+      boolean isHTF= ICorePreferenceNames.TEMPLATE_CABAL_HTF.equals( pref );
+      /**
+       * for each testes module, reference the module directly or just the library
+       */
+      for (TestSuiteDialog.ModuleDef md:def.getModules()){
+        if (md.isLibrary()){
+          needLibrary=true;
+        } else{
+          pd.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES, md.getModule() );
+          srcs.add( md.getSrcPath() );
+        }
+        /**
+         * create test moduke
+         */
+        String m=createTestModule( pd, def, md.getModule(), isHTF?ICorePreferenceNames.TEMPLATE_MODULE_HTF:ICorePreferenceNames.TEMPLATE_MODULE );
+        /**
+         * generate import directive
+         */
+        if (isHTF){
+          vars.put( TemplateVariables.MODULE_NAME,m);
+          String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_IMPORT_HTF, vars );
+          imports.append(mod1);
+        } else {
+          imports.append("import "+m+PlatformUtil.NL);
+        }
+      }
+      srcs.add( def.getSrc().getProjectRelativePath().toPortableString());
+      /**
+       * sources
+       */
+      for (String src:srcs){
+        pd.addToPropertyList( CabalSyntax.FIELD_HS_SOURCE_DIRS,  src);
+      }
+      /**
+       * dependency on library
+       */
+      if (needLibrary){
+        pd.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, desc.getPackageStanza().getName() );
+      }
+
+      /**
+       * create main
+       */
+      if (! ICorePreferenceNames.TEMPLATE_CABAL_DETAILED.equals( pref )){
+        createMain( pd, def ,isHTF,imports.toString());
+      }
+
+      desc.addStanza( pd );
+    }
   }
 
-  public PackageDescriptionStanza createNewDetailedStanza(final PackageDescription desc, final String name) {
-    PackageDescriptionStanza stanza = desc.addStanza(
-        CabalSyntax.SECTION_TESTSUITE, name );
-    stanza.setIndent( 2 );
-    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_DETAILED_0_9.getCabalName() );
-    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
-    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
-    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall" );
-    return stanza;
+  /**
+   * create test Main module
+   * @param pd
+   * @param def
+   * @param isHTF
+   * @param imports
+   */
+  private void createMain( final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final boolean isHTF,final String imports){
+    final String mainName=def.getName() + "." + EHaskellCommentStyle.USUAL.getFileExtension(); //$NON-NLS-1$
+
+    pd.update( CabalSyntax.FIELD_MAIN_IS, mainName );
+
+    ModuleCreationInfo mci=new ModuleCreationInfo();
+    mci.setCommentStyle( EHaskellCommentStyle.USUAL );
+    mci.setModuleName( "Main" );
+    mci.setSourceContainer( def.getSrc() );
+    mci.setProject( sourceDirsSection.getProject() );
+    mci.setTemplatePreferenceName(isHTF?ICorePreferenceNames.TEMPLATE_MAIN_HTF: ICorePreferenceNames.TEMPLATE_MAIN);
+    CodeGenerator cg=new CodeGenerator(){
+      /* (non-Javadoc)
+       * @see net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator#addVariables(java.util.Map)
+       */
+      @Override
+      protected void addVariables( final Map<String, String> vars ) {
+        /**
+         * imports
+         */
+        vars.put( isHTF?TemplateVariables.IMPORTS_HTF:TemplateVariables.IMPORTS, imports );
+        /**
+         * generate HTF module header
+         */
+        if (isHTF && vars.containsKey( TemplateVariables.MODULE )){
+          String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE_HTF, vars );
+          vars.put( TemplateVariables.MODULE_HTF, mod1 );
+        }
+      }
+    };
+    SourceFileGenerator gen=new SourceFileGenerator(cg){
+      /* (non-Javadoc)
+       * @see net.sf.eclipsefp.haskell.core.code.SourceFileGenerator#createFileName(net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle, java.lang.String)
+       */
+      @Override
+      protected String createFileName( final EHaskellCommentStyle style,
+          final String moduleName ) {
+        return mainName;
+      }
+    };
+    try {
+      IFile f=gen.createFile( new NullProgressMonitor(), mci );
+      f.setPersistentProperty( BuildWrapperPlugin.EDITORSTANZA_PROPERTY, def.getName() );
+    } catch(CoreException ce){
+      HaskellUIPlugin.log( ce );
+    }
   }
 
-  public PackageDescriptionStanza createNewTestFrameworkStanza(final PackageDescription desc, final String name) {
-    PackageDescriptionStanza stanza = desc.addStanza(
-        CabalSyntax.SECTION_TESTSUITE, name );
-    stanza.setIndent( 2 );
-    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
-    stanza.update( CabalSyntax.FIELD_X_USES_TEST_FRAMEWORK, "true" );
-    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4, HUnit >= 1.2 && < 2, QuickCheck >= 2.4, test-framework >= 0.4.1, test-framework-quickcheck2, test-framework-hunit" );
-    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
-    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );
-    return stanza;
+  /**
+   * create test module
+   * @param pd
+   * @param def
+   * @param module the module to test
+   * @param pref
+   * @return
+   */
+  private String createTestModule(final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final String module,final String pref){
+    String testModule=module+"Test";
+    pd.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES,testModule );
+
+    String[] mods=testModule.split( "\\." );
+
+    ModuleCreationInfo mci=new ModuleCreationInfo();
+    mci.setCommentStyle( EHaskellCommentStyle.USUAL );
+    /**
+     * module name and parent folders
+     */
+    mci.setModuleName( mods[mods.length-1] );
+    if (mods.length>1){
+      mci.setFolders( new Path(LangUtil.join( Arrays.asList( mods ).subList( 0, mods.length-2 ), "/" )));
+    }
+    mci.setSourceContainer( def.getSrc() );
+    mci.setProject( sourceDirsSection.getProject() );
+    mci.setTemplatePreferenceName( pref);
+    CodeGenerator cg=new CodeGenerator(){
+      /* (non-Javadoc)
+       * @see net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator#addVariables(java.util.Map)
+       */
+      @Override
+      protected void addVariables( final Map<String, String> vars ) {
+        /**
+         * import tested module
+         */
+        vars.put(TemplateVariables.IMPORTS, "import "+module+PlatformUtil.NL );
+
+      }
+    };
+    SourceFileGenerator gen=new SourceFileGenerator(cg);
+    try {
+      IFile f=gen.createFile( new NullProgressMonitor(), mci );
+      f.setPersistentProperty( BuildWrapperPlugin.EDITORSTANZA_PROPERTY, def.getName() );
+    } catch(CoreException ce){
+      HaskellUIPlugin.log( ce );
+    }
+    return testModule;
   }
 
+  /*public String createNewStdioStanza(final String name,final Map<String,String> extraVars) {
+
+    return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL_STDIO, extraVars );
+
+//    PackageDescriptionStanza stanza = desc.addStanza(
+//        CabalSyntax.SECTION_TESTSUITE, name );
+//    stanza.setIndent( 2 );
+//    stanza.update( CabalSyntax.FIELD_TYPE, CabalSyntax.VALUE_EXITCODE_STDIO_1_0.getCabalName() );
+//    stanza.update( CabalSyntax.FIELD_BUILD_DEPENDS, "base >= 4" );
+//    stanza.update( CabalSyntax.FIELD_HS_SOURCE_DIRS, "src" );
+//    stanza.update( CabalSyntax.FIELD_GHC_OPTIONS, "-Wall -rtsopts" );
+//    return stanza;
+  }
+
+  public String createNewDetailedStanza(final String name,final Map<String,String> extraVars) {
+    return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL_DETAILED, extraVars );
+  }
+
+  public String createNewTestFrameworkStanza(final String name,final Map<String,String> extraVars) {
+    return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_CABAL_TF, extraVars );
+  }
+*/
   public java.util.List<PackageDescriptionStanza> getStanzas(
       final PackageDescription description ) {
     return description.getTestSuiteStanzas();
@@ -141,102 +316,12 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     addAction.setImageDescriptor( PlatformUI.getWorkbench().getSharedImages()
         .getImageDescriptor( ISharedImages.IMG_OBJ_ADD ) );
 
-    final Action addStdioAction = new Action( UITexts.cabalEditor_stdioTestSuite, IAction.AS_PUSH_BUTTON ) {
+    final Action addHTFAction = new NewTestSuiteAction( UITexts.cabalEditor_HTFTestSuite, ICorePreferenceNames.TEMPLATE_CABAL_HTF ) ;
 
-      @Override
-      public void run() {
-        InputDialog dialog = new InputDialog( execsList.getShell(),
-            UITexts.cabalEditor_newTestSuiteString,
-            UITexts.cabalEditor_newTestSuiteString,
-            "", new IInputValidator() {
+    final Action addTestFrameworkAction = new NewTestSuiteAction( UITexts.cabalEditor_testFrameworkTestSuite, ICorePreferenceNames.TEMPLATE_CABAL_TF ) ;
 
-              @Override
-              public String isValid( final String newText ) {
-                String value = newText.trim();
-                if (value.length()==0) {
-                  return UITexts.cabalEditor_newTestSuiteBlankError;
-                }
-                for (String s : execsList.getItems()) {
-                  if (s.equals( value )) {
-                    return UITexts.cabalEditor_newTestSuiteAlreadyExistsError;
-                  }
-                }
-                return null;
-              }
-            } );
-        if (dialog.open() == Window.OK) {
-          PackageDescription lastDescription = formEditor.getPackageDescription();
-          String execName = dialog.getValue().trim();
-          createNewStdioStanza( lastDescription, execName );
-          nextSelected = execName;
-          formEditor.getModel().set( lastDescription.dump() );
-        }
-      }
-    };
-    final Action addDetailedAction = new Action( UITexts.cabalEditor_detailedTestSuite, IAction.AS_PUSH_BUTTON ) {
-
-      @Override
-      public void run() {
-        InputDialog dialog = new InputDialog( execsList.getShell(),
-            UITexts.cabalEditor_newTestSuiteString,
-            UITexts.cabalEditor_newTestSuiteString,
-            "", new IInputValidator() {
-
-              @Override
-              public String isValid( final String newText ) {
-                String value = newText.trim();
-                if (value.length()==0) {
-                  return UITexts.cabalEditor_newTestSuiteBlankError;
-                }
-                for (String s : execsList.getItems()) {
-                  if (s.equals( value )) {
-                    return UITexts.cabalEditor_newTestSuiteAlreadyExistsError;
-                  }
-                }
-                return null;
-              }
-            } );
-        if (dialog.open() == Window.OK) {
-          PackageDescription lastDescription = formEditor.getPackageDescription();
-          String execName = dialog.getValue().trim();
-          createNewDetailedStanza( lastDescription, execName );
-          nextSelected = execName;
-          formEditor.getModel().set( lastDescription.dump() );
-        }
-      }
-    };
-    final Action addTestFrameworkAction = new Action( UITexts.cabalEditor_testFrameworkTestSuite, IAction.AS_PUSH_BUTTON ) {
-
-      @Override
-      public void run() {
-        InputDialog dialog = new InputDialog( execsList.getShell(),
-            UITexts.cabalEditor_newTestSuiteString,
-            UITexts.cabalEditor_newTestSuiteString,
-            "", new IInputValidator() {
-
-              @Override
-              public String isValid( final String newText ) {
-                String value = newText.trim();
-                if (value.length()==0) {
-                  return UITexts.cabalEditor_newTestSuiteBlankError;
-                }
-                for (String s : execsList.getItems()) {
-                  if (s.equals( value )) {
-                    return UITexts.cabalEditor_newTestSuiteAlreadyExistsError;
-                  }
-                }
-                return null;
-              }
-            } );
-        if (dialog.open() == Window.OK) {
-          PackageDescription lastDescription = formEditor.getPackageDescription();
-          String execName = dialog.getValue().trim();
-          createNewTestFrameworkStanza( lastDescription, execName );
-          nextSelected = execName;
-          formEditor.getModel().set( lastDescription.dump() );
-        }
-      }
-    };
+    final Action addStdioAction = new NewTestSuiteAction( UITexts.cabalEditor_stdioTestSuite,ICorePreferenceNames.TEMPLATE_CABAL_STDIO );
+    final Action addDetailedAction = new NewTestSuiteAction( UITexts.cabalEditor_detailedTestSuite, ICorePreferenceNames.TEMPLATE_CABAL_DETAILED ) ;
 
     addAction.setMenuCreator( new IMenuCreator() {
 
@@ -254,6 +339,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         menuManager = new MenuManager();
         menu = menuManager.createContextMenu( parent );
 
+        menuManager.add( addHTFAction );
         menuManager.add( addTestFrameworkAction );
         menuManager.add( addStdioAction );
         menuManager.add( addDetailedAction );
@@ -393,4 +479,28 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     // Do nothing
   }
 
+  private class NewTestSuiteAction extends Action {
+    private final String pref;
+
+    public NewTestSuiteAction( final String text,final String pref) {
+      super( text, IAction.AS_PUSH_BUTTON  );
+      this.pref=pref;
+    }
+
+    @Override
+    public void run() {
+      PackageDescription lastDescription = formEditor.getPackageDescription();
+      IProject p=sourceDirsSection.getProject();
+      Set<String> names=new HashSet<String>(Arrays.asList(execsList.getItems()));
+      TestSuiteDialog dialog = new TestSuiteDialog( execsList.getShell(),p,lastDescription,names);
+      if (dialog.open() == Window.OK) {
+
+        TestSuiteDialog.TestSuiteDef def = dialog.getDefinition();
+        //createNewTestFrameworkStanza( lastDescription, execName );
+        addStanza( lastDescription, this.pref, def );
+        nextSelected = def.getName();
+        formEditor.getModel().set( lastDescription.dump() );
+      }
+    }
+  }
 }

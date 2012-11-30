@@ -217,16 +217,23 @@ public class NewHaskellProjectPP extends PreferencePage
 
     SourceViewerConfiguration cabalConf=new CabalConfiguration(null);
     SourceViewerConfiguration haskellConf=new HaskellSourceViewerConfiguration( null );
-    TemplateDef[] cabals=new TemplateDef[4];
+    TemplateDef[] cabals=new TemplateDef[8];
     cabals[0]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL, UITexts.preferences_project_file_TEMPLATE_CABAL,cabalConf );
     cabals[1]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_EXE, UITexts.preferences_project_file_TEMPLATE_CABAL_EXE,cabalConf );
     cabals[2]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_LIBRARY, UITexts.preferences_project_file_TEMPLATE_CABAL_LIBRARY,cabalConf );
     cabals[3]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_SETUP, UITexts.preferences_project_file_TEMPLATE_CABAL_SETUP ,haskellConf);
+    cabals[4]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_HTF, UITexts.preferences_project_file_TEMPLATE_CABAL_HTF ,cabalConf);
+    cabals[5]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_TF, UITexts.preferences_project_file_TEMPLATE_CABAL_TF ,cabalConf);
+    cabals[6]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_STDIO, UITexts.preferences_project_file_TEMPLATE_CABAL_STDIO ,cabalConf);
+    cabals[7]=new TemplateDef( ICorePreferenceNames.TEMPLATE_CABAL_DETAILED, UITexts.preferences_project_file_TEMPLATE_CABAL_DETAILED ,cabalConf);
 
-    TemplateDef[] haskells=new TemplateDef[3];
+    TemplateDef[] haskells=new TemplateDef[6];
     haskells[0]=new TemplateDef( ICorePreferenceNames.TEMPLATE_GTK, UITexts.preferences_project_file_TEMPLATE_GTK,haskellConf);
     haskells[1]=new TemplateDef( ICorePreferenceNames.TEMPLATE_MAIN, UITexts.preferences_project_file_TEMPLATE_MAIN ,haskellConf);
     haskells[2]=new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE, UITexts.preferences_project_file_TEMPLATE_MODULE ,haskellConf);
+    haskells[3]=new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE_HTF, UITexts.preferences_project_file_TEMPLATE_MODULE_HTF ,haskellConf);
+    haskells[4]=new TemplateDef( ICorePreferenceNames.TEMPLATE_MAIN_HTF, UITexts.preferences_project_file_TEMPLATE_MAIN_HTF ,haskellConf);
+    haskells[5]=new TemplateDef( ICorePreferenceNames.TEMPLATE_IMPORT_HTF, UITexts.preferences_project_file_TEMPLATE_IMPORT_HTF ,haskellConf);
 
     templateDefs.put(UITexts.preferences_project_file_templates_cabal,cabals);
     templateDefs.put(UITexts.preferences_project_file_templates_haskell,haskells);

@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.code;
 
 import java.util.Set;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -30,6 +31,11 @@ public class ModuleCreationInfo {
    * are the source folders used to generate the qualified name
    */
   private boolean foldersQualify=true;
+
+  /**
+   * the name of the preference defining the module template
+   */
+  private String templatePreferenceName=ICorePreferenceNames.TEMPLATE_MODULE;
 
   private IProject project;
 
@@ -150,6 +156,16 @@ public class ModuleCreationInfo {
 
   public void setProject( final IProject project ) {
     this.project = project;
+  }
+
+
+  public String getTemplatePreferenceName() {
+    return templatePreferenceName;
+  }
+
+
+  public void setTemplatePreferenceName( final String templatePreferenceName ) {
+    this.templatePreferenceName = templatePreferenceName;
   }
 
 

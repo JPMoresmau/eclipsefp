@@ -1,7 +1,16 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.core.cabalmodel;
 
-
-public class ValuePosition {
+/**
+ * Position of a value in a cabal file
+ * @author JP Moresmau
+ *
+ */
+public class ValuePosition implements Cloneable{
     private int startLine=-1;
     private int endLine=-1;
     private int initialIndent=-1;
@@ -17,6 +26,13 @@ public class ValuePosition {
       this.startLine = startLine;
       this.endLine = endLine;
       this.initialIndent = indent;
+    }
+
+    @Override
+    protected ValuePosition clone()  {
+      ValuePosition vp= new ValuePosition( startLine, endLine, initialIndent );
+      vp.subsequentIndent=subsequentIndent;
+      return vp;
     }
 
     public int getStartLine() {

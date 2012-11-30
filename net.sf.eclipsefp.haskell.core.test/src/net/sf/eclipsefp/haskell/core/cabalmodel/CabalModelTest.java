@@ -762,6 +762,19 @@ public class CabalModelTest extends TestCase {
     assertEquals("exitcode-stdio-1.0",ts.getProperties().get( CabalSyntax.FIELD_TYPE ));
   }
 
+  public void testTestSuitePartial(){
+    String content3=getContent( "TestSuiteOnly.cabal" );
+    PackageDescription pd=PackageDescriptionLoader.load( content3 );
+    List<PackageDescriptionStanza> pdss=pd.getStanzas();
+    PackageDescriptionStanza ts=pdss.get( 1 );
+    assertEquals(CabalSyntax.SECTION_TESTSUITE,ts.getType());
+    assertEquals("exitcode-stdio-1.0",ts.getProperties().get( CabalSyntax.FIELD_TYPE ));
+    ts=PackageDescriptionLoader.loadStanza( content3 );
+    assertEquals(CabalSyntax.SECTION_TESTSUITE,ts.getType());
+    assertEquals("exitcode-stdio-1.0",ts.getProperties().get( CabalSyntax.FIELD_TYPE ));
+
+  }
+
   public void testIfElse(){
     String content3=getContent( "IfElse.cabal" );
     PackageDescription pd=PackageDescriptionLoader.load( content3 );

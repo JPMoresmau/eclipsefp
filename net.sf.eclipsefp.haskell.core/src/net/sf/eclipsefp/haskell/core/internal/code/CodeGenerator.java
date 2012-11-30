@@ -19,11 +19,24 @@ import net.sf.eclipsefp.haskell.util.PlatformUtil;
 public class CodeGenerator {
 
   public String createModuleContent( final String projectName,
+      final String[] folderNames,
+      final String name,
+      final EHaskellCommentStyle style ) {
+    return createModuleContent( projectName, folderNames, name, style, ICorePreferenceNames.TEMPLATE_MODULE );
+  }
+
+  protected void addVariables(final Map<String,String> vars){
+    // NOOP
+  }
+
+  public String createModuleContent( final String projectName,
                                      final String[] folderNames,
                                      final String name,
-                                     final EHaskellCommentStyle style ) {
+                                     final EHaskellCommentStyle style,
+                                     String pref) {
     StringBuilder sb = new StringBuilder();
-    sb.append( PlatformUtil.NL );
+    // why start with a new line?
+    //sb.append( PlatformUtil.NL );
     sb.append(getPrefixFor( style ));
     StringBuilder module=new StringBuilder();
     StringBuilder src=new StringBuilder();
@@ -41,9 +54,19 @@ public class CodeGenerator {
     vars.put( TemplateVariables.PROJECT_NAME, projectName );
     vars.put( TemplateVariables.SRC, src.toString() );
     vars.put( TemplateVariables.USER_NAME, PlatformUtil.getCurrentUser() );
+    addVariables(vars);
+    if (pref==null){
+      pref=ICorePreferenceNames.TEMPLATE_MODULE;
+    }
+    if(!pref.equals( ICorePreferenceNames.TEMPLATE_MODULE )){
+      String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE, vars );
+      vars.put( TemplateVariables.MODULE, mod1 );
+      addVariables(vars);
+    }
 
-    String mod=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE, vars );
+    String mod=HaskellCorePlugin.populateTemplate( pref, vars );
     sb.append(mod);
+
 //    sb.append( "module " ); //$NON-NLS-1$
 //    for( int i = 0; i < folderNames.length; i++ ) {
 //      sb.append( folderNames[ i ] );

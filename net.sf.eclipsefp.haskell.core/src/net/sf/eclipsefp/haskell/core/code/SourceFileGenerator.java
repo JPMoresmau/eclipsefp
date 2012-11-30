@@ -100,16 +100,21 @@ public class SourceFileGenerator {
     final String[] segments = getPathSegments( info );
     final String moduleName = info.getModuleName();
     final EHaskellCommentStyle style = info.getCommentStyle();
-    String pName=info.getProject()!=null?info.getProject().getName():"";
+    String pName=info.getProject()!=null?info.getProject().getName():""; //$NON-NLS-1$
+    String pref=info.getTemplatePreferenceName();
     String fileContent = fCodeGenerator.createModuleContent( pName,segments,
         moduleName,
-        style );
+        style,pref );
     String fileName = createFileName( style, moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
     try {
       InputStream isContent = new ByteArrayInputStream( fileContent.getBytes(destFolder.getDefaultCharset( true )) );
       SubProgressMonitor subMon = monitor==null?null:new SubProgressMonitor( monitor, 4 );
-      result.create( isContent, true, subMon );
+      if (!result.exists()){
+        result.create( isContent, true, subMon );
+      } else {
+        result.setContents( isContent,true,true,subMon);
+      }
       return result;
     } catch (UnsupportedEncodingException uee){
       throw new CoreException( new Status(IStatus.ERROR,HaskellCorePlugin.getPluginId(),uee.getLocalizedMessage(),uee) );
@@ -121,7 +126,7 @@ public class SourceFileGenerator {
     return ( path == null || !info.isFoldersQualify() ) ? new String[ 0 ] : path.segments();
   }
 
-  private static String createFileName(final EHaskellCommentStyle style, final String moduleName ) {
+  protected String createFileName(final EHaskellCommentStyle style, final String moduleName ) {
     return moduleName + "." + style.getFileExtension(); //$NON-NLS-1$
   }
 }

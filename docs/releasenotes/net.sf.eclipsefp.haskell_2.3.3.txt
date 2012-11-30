@@ -20,6 +20,8 @@ Features:
 	- File templates for cabal file, setup.hs, new modules... (under Preferences -> Haskell -> New Project)
 	- Offers GHC suggested alternative on unresolved symbol
 	- Allow running executables from test suites without test-framework specific options, as normal executables
+	- Specific Haskell Test Results view: no more dependency on JDT
+	- Navigate Next Previous now works in Haskell Editor
 
 Internal:
 

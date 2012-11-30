@@ -83,12 +83,50 @@ public class PackageDescriptionStanza {
     return this.pd;
   }
 
+  /**
+   * clone and add the stanza to the given description
+   * @param desc
+   * @return
+   */
+  public PackageDescriptionStanza move(final PackageDescription desc){
+    int startLine=desc.getStanzas().get(desc.getStanzas().size()-1).getEndLine()+1;
+    int diff=startLine-getStartLine();
+    PackageDescriptionStanza npds= move(diff,this,desc);
+    desc.getStanzas().add( npds );
+    return npds;
+  }
+
+  private static PackageDescriptionStanza move(final int diff,final PackageDescriptionStanza me,final PackageDescription desc){
+    PackageDescriptionStanza pds=new PackageDescriptionStanza(desc,me.getType(),me.getName(),me.getStartLine()+diff);
+    pds.endLine=me.endLine+diff;
+    pds.indent=me.indent;
+    pds.realTypeName=me.realTypeName;
+    pds.needNL=me.needNL;
+    pds.properties.putAll( me.properties );
+    pds.realNames.putAll( me.realNames );
+
+    for (String entry : me.positions.keySet()) {
+      ValuePosition vp = me.positions.get( entry ).clone();
+      vp.diffLine( diff );
+      pds.positions.put( entry, vp);
+    }
+
+    for (PackageDescriptionStanza cpds:me.stanzas){
+      PackageDescriptionStanza ncpds=move(diff,cpds,desc);
+      pds.stanzas.add(ncpds);
+    }
+    return pds;
+  }
+
   public void diffLine ( final int diff ) {
     this.startLine += diff;
     this.endLine += diff;
     for (String entry : positions.keySet()) {
       ValuePosition vp = positions.get( entry );
       vp.diffLine( diff );
+    }
+    for (PackageDescriptionStanza pds:stanzas){
+      pds.diffLine( diff );
     }
   }
 
@@ -508,19 +546,27 @@ public class PackageDescriptionStanza {
       try {
         String line=br.readLine();
         while (line!=null){
+          String line2=br.readLine();
           if (!first){
             for (int a=0;a<vp.getSubsequentIndent();a++){
               w.write(" "); //$NON-NLS-1$
             }
           } else {
             first=false;
+            // multiple lines: start on next line
+            if (line2!=null){
+              w.write(PlatformUtil.NL);
+              for (int a=0;a<vp.getSubsequentIndent();a++){
+                w.write(" "); //$NON-NLS-1$
+              }
+            }
           }
           if (line.trim().length()==0){
             line= "."+line ; //$NON-NLS-1$
           }
             w.write(line);
             w.write(PlatformUtil.NL);
-            line=br.readLine();
+            line=line2;
           }
 
       } catch (IOException ignore){

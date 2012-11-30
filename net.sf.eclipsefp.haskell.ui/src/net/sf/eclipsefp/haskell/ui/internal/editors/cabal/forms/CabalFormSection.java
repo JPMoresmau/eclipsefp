@@ -61,14 +61,14 @@ public abstract class CabalFormSection extends SectionPart {
 
       @Override
       public void documentChanged( final DocumentEvent event ) {
-        fillInValues( false );
+        fillInValues( true ); // document's been changed, we don't want to trigger a change when we're just reacting to it
       }
     } );
   }
 
   protected abstract void createClient( FormToolkit toolkit );
 
-  protected IProject getProject() {
+  public IProject getProject() {
     return project;
   }
 

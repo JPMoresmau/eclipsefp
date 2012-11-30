@@ -1,8 +1,11 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.core.code.EHaskellCommentStyle;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.dialog.FolderSelectionDialog;
 import net.sf.eclipsefp.haskell.ui.dialog.SourceFolderSelectionDialog;
@@ -23,7 +26,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,9 +42,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 
 /** <p>The single page for the 'New Module' wizard.</p>
@@ -60,6 +71,8 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   private Group grpLiterate;
   private Button rdoLiterate;
   private Button rdoTex;
+  private ComboViewer cvTemplates;
+  private TemplateDef defTemplate;
 
 
   public NewModuleWizardPage() {
@@ -176,11 +189,125 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     createNameControls( composite, cols );
     createLiterateControls( composite );
 
+    createTemplateControls(composite);
+
     setControl( composite );
 
     Dialog.applyDialogFont( composite );
   }
 
+
+  /**
+   * @param composite
+   */
+  private void createTemplateControls( final Composite composite ) {
+    Label l=new Label(composite,SWT.NONE);
+    GridData gd = new GridData();
+    gd.horizontalAlignment = GridData.FILL;
+    gd.grabExcessHorizontalSpace = false;
+    gd.horizontalSpan = 2;
+    l.setLayoutData( gd );
+    l.setText( UITexts.NewModuleWizardPage_template );
+
+    cvTemplates = new ComboViewer( composite,SWT.READ_ONLY );
+    gd = new GridData();
+    gd.horizontalAlignment = GridData.FILL;
+    gd.grabExcessHorizontalSpace = false;
+    gd.horizontalSpan = 2;
+    cvTemplates.getCombo().setLayoutData( gd );
+
+    cvTemplates.setContentProvider( new ArrayContentProvider() );
+    cvTemplates.setComparator( new WorkbenchViewerComparator() );
+
+    List<TemplateDef> ltds=new ArrayList<NewModuleWizardPage.TemplateDef>();
+    defTemplate = new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE, UITexts.preferences_project_file_TEMPLATE_MODULE );
+    ltds.add(defTemplate );
+    ltds.add( new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE_HTF, UITexts.preferences_project_file_TEMPLATE_MODULE_HTF ) );
+
+    cvTemplates.setInput( ltds );
+    cvTemplates.setSelection( new StructuredSelection( defTemplate) );
+    cvTemplates.addSelectionChangedListener( new ISelectionChangedListener() {
+
+      @Override
+      public void selectionChanged( final SelectionChangedEvent evt ) {
+        IStructuredSelection sel=(IStructuredSelection)evt.getSelection();
+        Object o=sel.getFirstElement();
+        if (o instanceof TemplateDef){
+          currentInfo.setTemplatePreferenceName(( (TemplateDef )o).getPreference());
+        }
+      }
+    } );
+
+  }
+
+  private class TemplateDef{
+    private final String preference;
+    private final String displayName;
+    public TemplateDef( final String preference, final String displayName ) {
+      super();
+      this.preference = preference;
+      this.displayName = displayName;
+    }
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+      return this.displayName;
+    }
+
+
+    /**
+     * @return the preference
+     */
+    public String getPreference() {
+      return preference;
+    }
+
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + getOuterType().hashCode();
+      result = prime * result
+          + ( ( preference == null ) ? 0 : preference.hashCode() );
+      return result;
+    }
+
+
+    @Override
+    public boolean equals( final Object obj ) {
+      if( this == obj ) {
+        return true;
+      }
+      if( obj == null ) {
+        return false;
+      }
+      if( getClass() != obj.getClass() ) {
+        return false;
+      }
+      TemplateDef other = ( TemplateDef )obj;
+      if( !getOuterType().equals( other.getOuterType() ) ) {
+        return false;
+      }
+      if( preference == null ) {
+        if( other.preference != null ) {
+          return false;
+        }
+      } else if( !preference.equals( other.preference ) ) {
+        return false;
+      }
+      return true;
+    }
+
+
+    private NewModuleWizardPage getOuterType() {
+      return NewModuleWizardPage.this;
+    }
+  }
 
   private void createLiterateControls( final Composite composite ) {
     createUseLiterateCheckBox( composite );
@@ -443,10 +570,17 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
   ////////////////
 
   private void enableLiterateGroup(final boolean enabled) {
+    if (enabled){
+      cvTemplates.setSelection( new StructuredSelection(defTemplate) );
+      cvTemplates.getCombo().notifyListeners( SWT.Selection, new Event());
+    }
     grpLiterate.setEnabled(enabled);
     for(Control child : grpLiterate.getChildren()) {
       child.setEnabled( enabled );
     }
+
+    cvTemplates.getCombo().setEnabled( !enabled );
+
   }
 
   private class FieldsAdapter implements IStringButtonAdapter,

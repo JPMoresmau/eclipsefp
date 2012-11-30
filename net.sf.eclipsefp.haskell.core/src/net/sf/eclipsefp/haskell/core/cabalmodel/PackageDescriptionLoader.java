@@ -48,7 +48,6 @@ public class PackageDescriptionLoader {
     return result;
   }
 
-  // TODO lf also used in folding -> eliminate
   public static PackageDescription load( final String content ) {
     PackageDescription result = new PackageDescription();
     if( content != null && content.trim().length() > 0 ) {
@@ -62,6 +61,14 @@ public class PackageDescriptionLoader {
       }
     }
     return result;
+  }
+
+  public static PackageDescriptionStanza loadStanza( final String content ) {
+    PackageDescription pd=load( content );
+    if (pd!=null && pd.getStanzas().size()>1){
+      return pd.getStanzas().get(1);
+    }
+    return null;
   }
 
   public static List<String> parseList(final String value,final String seps){

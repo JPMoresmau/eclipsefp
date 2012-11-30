@@ -81,6 +81,15 @@ public class PackageDescription {
     return pds;
   }
 
+  /**
+   * add the existing stanza from another description to this description
+   * @param pds
+   */
+  public void addStanza(final PackageDescriptionStanza pds){
+    pds.move( this );
+
+  }
+
   public void removeStanza(final PackageDescriptionStanza stanza) {
     boolean found = false;
     int diff = 0;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Vector;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -136,7 +137,7 @@ public class FormEntryModules extends FormEntry {
       try {
         root.getProject().accept( visitor );
       } catch( CoreException e ) {
-        modules.clear();
+        HaskellUIPlugin.log( e );
       }
 
       PackageDescriptionStanza pkg = root.getDescription().getPackageStanza();
@@ -383,12 +384,12 @@ public class FormEntryModules extends FormEntry {
   }
 
 
-  public class ModulesVisitor implements IResourceVisitor {
+  public static class ModulesVisitor implements IResourceVisitor {
 
-    public ArrayList<String> elts;
+    public Collection<String> elts;
     public Vector<String> possiblePrefixes;
 
-    public ModulesVisitor( final ArrayList<String> whereAdd,
+    public ModulesVisitor( final Collection<String> whereAdd,
         final Collection<String> dirs ) {
       this.elts = whereAdd;
       this.possiblePrefixes = new Vector<String>();
@@ -419,5 +420,6 @@ public class FormEntryModules extends FormEntry {
       return true;
     }
   }
+
 
 }
