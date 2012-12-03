@@ -214,9 +214,11 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     final String fname = getFilename();
     File f = new File( fname+idx );
     IProject p=getProject( configuration );
+    /** parse all output, notify listeners at the end to avoid flicker **/
     while (f.exists()){
       try {
-        parseOutfile( f, p );
+        //parseOutfile( f, p );
+        HTFParser.parseTestOutput( root, f , p);
       } catch (Exception ioe){
       throw new CoreException( new Status(IStatus.ERROR,HaskellDebugCore.getPluginId(),ioe.getLocalizedMessage(),ioe) );
       } finally {
@@ -225,6 +227,11 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
       idx++;
       f=new File(fname+idx);
     }
+    suite.reset();
+    for (ITestListener tl:TestListenerManager.getContributors().values()){
+      tl.update(suite );
+    }
+
     new File(fname).delete();
 //
 //    if (file.lastModified()>lastCheck){
