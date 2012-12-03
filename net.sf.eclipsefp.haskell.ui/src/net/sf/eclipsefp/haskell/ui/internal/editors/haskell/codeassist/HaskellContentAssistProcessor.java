@@ -54,7 +54,6 @@ import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -166,21 +165,27 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  //ScionTokenScanner sts=((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getScanner();
 	  IFile theFile = HaskellUIPlugin.getFile( viewer );
 	  IDocument doc = viewer.getDocument();
+
 	  // Figure out what we're doing...
     //ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
     String prf = getCompletionPrefix( doc, offset );
-    HaskellUIPlugin.log( "prefix:"+prefix+", prf:"+prf+",scope:"+scope, IStatus.INFO );
-    if (prf!=null){ // && (!prf.startsWith( prefix ) || prf.length()==0)){
-      if (prf.length()>0){
-        if (prf.equals( prefix )){
-          scope=scope.next();
+    if (!isHaskell( theFile )){
+      scope=ProposalScope.ALL;
+    } else {
+      if (prf!=null){ // && (!prf.startsWith( prefix ) || prf.length()==0)){
+        if (prf.length()>0){
+          if (prf.equals( prefix )){
+            scope=scope.next();
+          }
+        }
+        // || !prf.startsWith( prefix )
+        if (prf.length()==0){
+          scope=ProposalScope.IMPORTED;
         }
       }
-      if (prf.length()==0 || !prf.startsWith( prefix )){
-        scope=ProposalScope.IMPORTED;
-      }
     }
+   // HaskellUIPlugin.log( "prefix:"+prefix+", prf:"+prf+",scope:"+scope,IStatus.INFO );
     prefix=prf;
     switch (context) {
       case NO_CONTEXT: {
@@ -330,6 +335,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     return retval;
 }
 
+	private boolean isHaskell(final IFile theFile){
+	  return theFile!=null && BuildWrapperPlugin.getFacade( theFile.getProject() )!=null;
+	}
+
 	/**
 	 * Default completion context, if no other context can be determined.
 	 */
@@ -338,15 +347,19 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  boolean needSearch=prefix.length()>0 && Boolean.TRUE.equals(searchAll) ;
 	  // we display the scope status bar if we can cycle
 	  if (needSearch){
-  	  assistant.setStatusLineVisible( true );
-  	  // this doesn't work in the constructor, for some reason, so use lazy init
-  	  if (contentAssistBinding==null){
-  	    IBindingService bsvc=(IBindingService)PlatformUI.getWorkbench().getService( IBindingService.class );
-  	    contentAssistBinding=bsvc.getBestActiveBindingFormattedFor( "org.eclipse.ui.edit.text.contentAssist.proposals" );
-  	  }
-  	  String msg=NLS.bind( UITexts.proposal_category_mode, contentAssistBinding, scope.next().getDescription());
+	    if (isHaskell( theFile )){
+    	  assistant.setStatusLineVisible( true );
+    	  // this doesn't work in the constructor, for some reason, so use lazy init
+    	  if (contentAssistBinding==null){
+    	    IBindingService bsvc=(IBindingService)PlatformUI.getWorkbench().getService( IBindingService.class );
+    	    contentAssistBinding=bsvc.getBestActiveBindingFormattedFor( "org.eclipse.ui.edit.text.contentAssist.proposals" );
+    	  }
+    	  String msg=NLS.bind( UITexts.proposal_category_mode, contentAssistBinding, scope.next().getDescription());
 
-  	  assistant.setStatusMessage( msg);
+    	  assistant.setStatusMessage( msg);
+	    } else {
+	      assistant.setStatusLineVisible( false );
+	    }
   	  // we need to show the list so the user sees the message to cycle through scopes
   	  assistant.setShowEmptyList( true );
 	  }
