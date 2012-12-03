@@ -1,11 +1,17 @@
 package net.sf.eclipsefp.haskell.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProcessRunner implements IProcessRunner {
 
@@ -14,6 +20,8 @@ public class ProcessRunner implements IProcessRunner {
   private final static String STDOUT_REDIRECT = "output_redirect";
   private final static String STDERR_REDIRECT = "error_redirect";
 
+  public static final String LIBRARY_VERSION="using version ((\\d|\\.)*) of the Cabal library";
+	
   public ProcessRunner() {
     //this( new ProcessFactory() );
   }
@@ -78,7 +86,29 @@ public class ProcessRunner implements IProcessRunner {
 	  return new Thread[]{t1,t2};
   }
 
+  /**
+   * get both the version of the executabl
+   * @param path the path
+   * @param wait should we wait for the executable or do we NOT trust it to return and shut down (older versions of scion-browser did not return on the --version flag
+   * @return the version of the executable or null if we could not get it
+   * @throws IOException
+   */  
   public static String getExecutableVersion(String path,boolean wait) throws IOException{
+	  List<String> ls=getExecutableAndCabalVersion(path, wait);
+	  if (ls!=null && ls.size()>0){
+		  return ls.get(0);
+	  }
+	  return null;
+  }
+  
+  /**
+   * get both the version of the executable and the version of the Cabal library used to build it
+   * @param path the path
+   * @param wait should we wait for the executable or do we NOT trust it to return and shut down (older versions of scion-browser did not return on the --version flag
+   * @return a list, potentially null or empty, containing first the version of the executable, then the version of Cabal
+   * @throws IOException
+   */
+  public static List<String> getExecutableAndCabalVersion(String path,boolean wait) throws IOException{
 	  File f=new File(path);
 	  if (f.exists()){
 		  StringWriter sw=new StringWriter();
@@ -122,16 +152,28 @@ public class ProcessRunner implements IProcessRunner {
 		  } catch (InterruptedException ignore){
 			  // noop
 		  }
+		  List<String> ret=new ArrayList<String>();
 		  // now we should have the proper result
-		  String line=sw.toString().trim();
-		  int ix=line.lastIndexOf(' ');
-		  if (ix>-1 && ix<line.length()){
-			  line=line.substring(ix+1);
-			  if (Character.isDigit(line.charAt(0))){
-				  return line;
+		  BufferedReader br=new BufferedReader(new StringReader(sw.toString().trim()));
+		  String line=br.readLine();
+		  if (line!=null){
+			  int ix=line.lastIndexOf(' ');
+			  if (ix>-1 && ix<line.length()){
+				  line=line.substring(ix+1);
+				  if (Character.isDigit(line.charAt(0))){
+					  ret.add(line);
+				  }
 			  }
 		  }
-
+		  // we read the second line to see if we have the cabal version
+		  line=br.readLine();
+		  if (line!=null){
+			  Matcher m=Pattern.compile(LIBRARY_VERSION).matcher(line);
+			  if (m.matches()){
+				  ret.add(m.group(1));
+			  }
+		  }
+		  return ret;
 	  }
 	  return null;
   }

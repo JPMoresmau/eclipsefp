@@ -18,4 +18,6 @@ public class CabalMessages {
 	public static final String DEPENDENCIES_MISSING="the following dependencies are missing";
 	
 	public static final String ANY="-any"; 
+	
+
 }

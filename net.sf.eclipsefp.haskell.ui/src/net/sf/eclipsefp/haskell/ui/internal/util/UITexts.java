@@ -166,6 +166,7 @@ public final class UITexts extends NLS {
   public static String buildwrapper_preferences_label;
   public static String buildwrapperDoesntExist_title;
   public static String buildwrapperDoesntExist_message;
+  public static String buildWrapperCabalVersionMismatch;
 
   public static String hlint_preferences_label;
 
