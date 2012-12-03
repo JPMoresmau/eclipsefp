@@ -54,6 +54,7 @@ import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -169,8 +170,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     //ScionInstance scion = HaskellUIPlugin.getScionInstance( viewer );
 
     String prf = getCompletionPrefix( doc, offset );
-    if (prf!=null && (!prf.equals( prefix ) || prf.length()==0)){
-      scope=ProposalScope.IMPORTED;
+    HaskellUIPlugin.log( "prefix:"+prefix+", prf:"+prf+",scope:"+scope, IStatus.INFO );
+    if (prf!=null){ // && (!prf.startsWith( prefix ) || prf.length()==0)){
+      if (prf.length()>0){
+        if (prf.equals( prefix )){
+          scope=scope.next();
+        }
+      }
+      if (prf.length()==0 || !prf.startsWith( prefix )){
+        scope=ProposalScope.IMPORTED;
+      }
     }
     prefix=prf;
     switch (context) {
@@ -564,7 +573,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       endIndex += typeElts.size();
     }
 
-    scope=scope.next();
+    //scope=scope.next();
+    //HaskellUIPlugin.log( "scope:"+scope,IStatus.INFO);
     return result;
    // return (totalSize > 0 ? result : null);
 	}
