@@ -54,6 +54,8 @@ public class CodeGenerator {
     vars.put( TemplateVariables.PROJECT_NAME, projectName );
     vars.put( TemplateVariables.SRC, src.toString() );
     vars.put( TemplateVariables.USER_NAME, PlatformUtil.getCurrentUser() );
+    vars.put( TemplateVariables.IMPORTS,""); //$NON-NLS-1$
+    vars.put( TemplateVariables.IMPORTS_HTF,""); //$NON-NLS-1$
     addVariables(vars);
     if (pref==null){
       pref=ICorePreferenceNames.TEMPLATE_MODULE;

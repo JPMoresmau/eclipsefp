@@ -24,6 +24,7 @@ Features:
 	- Allow running executables from test suites without test-framework specific options, as normal executables
 	- Specific Haskell Test Results view: no more dependency on JDT
 	- Navigate Next Previous now works in Haskell Editor
+	- Verification of the Cabal library version (buildwrapper vs cabal)
 
 
 Internal:
