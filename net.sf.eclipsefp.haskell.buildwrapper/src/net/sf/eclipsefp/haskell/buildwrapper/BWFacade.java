@@ -197,6 +197,7 @@ public class BWFacade {
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY,false);
+		refreshDist();
 		if (arrC!=null){
 			for (int a=0;a<arrC.length();a++){
 				try {
@@ -375,6 +376,17 @@ public class BWFacade {
 		}
 	}
 	
+	private void refreshDist(){
+		IFolder fldr=getProject().getFolder(BWFacade.DIST_FOLDER);
+		if (fldr!=null && fldr.exists()){
+			try {
+				fldr.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			} catch (CoreException ce){
+				BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
+			}
+		}
+	}
+	
 	public void generateUsage(Component c,boolean returnAll){
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("generateusage");
@@ -390,14 +402,7 @@ public class BWFacade {
 			JSONArray allPaths=arr.optJSONArray(0);
 			if (allPaths!=null){
 				if (allPaths.length()>0){
-					IFolder fldr=getProject().getFolder(BWFacade.DIST_FOLDER);
-					if (fldr!=null && fldr.exists()){
-						try {
-							fldr.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-						} catch (CoreException ce){
-							BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
-						}
-					}
+					refreshDist();
 				}
 				BuildWrapperPlugin plugin=BuildWrapperPlugin.getDefault();
 				if (plugin!=null){
