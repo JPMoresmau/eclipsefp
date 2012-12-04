@@ -29,8 +29,8 @@ public class MinimalVersionFormEntryCombo<T> extends FormEntryCombo<T> {
     if (value == null) {
       super.setValue( null, blockNotification );
     } else {
-      if (value.startsWith( ">= " )) {
-        super.setValue( value.substring( 3 ), blockNotification );
+      if (value.startsWith( ">=" )) {
+        super.setValue( value.substring( 2 ).trim(), blockNotification );
       } else {
         super.setValue( value, blockNotification );
       }
