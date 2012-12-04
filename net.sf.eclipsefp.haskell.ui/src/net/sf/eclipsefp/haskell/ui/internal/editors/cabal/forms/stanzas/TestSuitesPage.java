@@ -131,6 +131,24 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
        */
       if (needLibrary){
         pd.addToPropertyList( CabalSyntax.FIELD_BUILD_DEPENDS, desc.getPackageStanza().getName() );
+        String value=desc.getPackageStanza().getProperties().get(CabalSyntax.FIELD_CABAL_VERSION);
+        if (value!=null){
+          if (value.startsWith( ">=" )) {
+            value=value.substring( 2 ).trim();
+          }
+          if (value.length()>0 ){
+            try {
+              double d=Double.parseDouble( value );
+              if (d<1.8){
+                desc.getPackageStanza().update( CabalSyntax.FIELD_CABAL_VERSION, ">=1.8" );
+              }
+            } catch (NumberFormatException nfe){
+              HaskellUIPlugin.log( nfe );
+            }
+          }
+        } else {
+          desc.getPackageStanza().update( CabalSyntax.FIELD_CABAL_VERSION, ">=1.8" );
+        }
       }
 
       /**
@@ -220,7 +238,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
      */
     mci.setModuleName( mods[mods.length-1] );
     if (mods.length>1){
-      mci.setFolders( new Path(LangUtil.join( Arrays.asList( mods ).subList( 0, mods.length-2 ), "/" )));
+      mci.setFolders( new Path(LangUtil.join( Arrays.asList( mods ).subList( 0, mods.length-1 ), "/" )));
     }
     mci.setSourceContainer( def.getSrc() );
     mci.setProject( sourceDirsSection.getProject() );
