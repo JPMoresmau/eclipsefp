@@ -79,7 +79,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     super( editor, TestSuitesPage.class.getName(), UITexts.cabalEditor_testSuites, project );
   }
 
-  public void addStanza(final PackageDescription desc,final String pref,final TestSuiteDialog.TestSuiteDef def){
+  public void addStanza(final PackageDescription desc,final String pref,final TestSuiteDialog.TestSuiteDef def,final boolean overwrite){
     Map<String,String> vars=new HashMap<String, String>();
     vars.put( TemplateVariables.PROJECT_NAME, getPackageDescription().getPackageStanza().getName() );
     vars.put( TemplateVariables.SRC, def.getSrc().getProjectRelativePath().toPortableString() );
@@ -107,7 +107,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         /**
          * create test moduke
          */
-        String m=createTestModule( pd, def, md.getModule(), isHTF?ICorePreferenceNames.TEMPLATE_MODULE_HTF:ICorePreferenceNames.TEMPLATE_MODULE );
+        String m=createTestModule( pd, def, md.getModule(), isHTF?ICorePreferenceNames.TEMPLATE_MODULE_HTF:ICorePreferenceNames.TEMPLATE_MODULE,overwrite );
         /**
          * generate import directive
          */
@@ -155,7 +155,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
        * create main
        */
       if (! ICorePreferenceNames.TEMPLATE_CABAL_DETAILED.equals( pref )){
-        createMain( pd, def ,isHTF,imports.toString());
+        createMain( pd, def ,isHTF,imports.toString(),overwrite);
       }
 
       desc.addStanza( pd );
@@ -168,8 +168,9 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
    * @param def
    * @param isHTF
    * @param imports
+   * @param overwrite should we overwrite existing files?
    */
-  private void createMain( final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final boolean isHTF,final String imports){
+  private void createMain( final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final boolean isHTF,final String imports,final boolean overwrite){
     final String mainName=def.getName() + "." + EHaskellCommentStyle.USUAL.getFileExtension(); //$NON-NLS-1$
 
     pd.update( CabalSyntax.FIELD_MAIN_IS, mainName );
@@ -209,6 +210,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         return mainName;
       }
     };
+    gen.setOverwrite( overwrite );
     try {
       IFile f=gen.createFile( new NullProgressMonitor(), mci );
       f.setPersistentProperty( BuildWrapperPlugin.EDITORSTANZA_PROPERTY, def.getName() );
@@ -223,9 +225,10 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
    * @param def
    * @param module the module to test
    * @param pref
+   * @param overwrite should we overwrite existing files?
    * @return
    */
-  private String createTestModule(final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final String module,final String pref){
+  private String createTestModule(final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final String module,final String pref,final boolean overwrite){
     String testModule=module+"Test";
     pd.addToPropertyList( CabalSyntax.FIELD_OTHER_MODULES,testModule );
 
@@ -257,6 +260,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
       }
     };
     SourceFileGenerator gen=new SourceFileGenerator(cg);
+    gen.setOverwrite( overwrite );
     try {
       IFile f=gen.createFile( new NullProgressMonitor(), mci );
       f.setPersistentProperty( BuildWrapperPlugin.EDITORSTANZA_PROPERTY, def.getName() );
@@ -515,7 +519,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
 
         TestSuiteDialog.TestSuiteDef def = dialog.getDefinition();
         //createNewTestFrameworkStanza( lastDescription, execName );
-        addStanza( lastDescription, this.pref, def );
+        addStanza( lastDescription, this.pref, def ,dialog.isOverwrite());
         nextSelected = def.getName();
         formEditor.getModel().set( lastDescription.dump() );
       }

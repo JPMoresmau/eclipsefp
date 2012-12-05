@@ -28,6 +28,11 @@ public class SourceFileGenerator {
 
   private final CodeGenerator fCodeGenerator;
 
+  /**
+   * should we overwrite existing files?
+   */
+  private boolean overwrite=true;
+
   public SourceFileGenerator( final CodeGenerator codeGenerator ) {
     fCodeGenerator = codeGenerator;
   }
@@ -112,7 +117,7 @@ public class SourceFileGenerator {
       SubProgressMonitor subMon = monitor==null?null:new SubProgressMonitor( monitor, 4 );
       if (!result.exists()){
         result.create( isContent, true, subMon );
-      } else {
+      } else if (overwrite){
         result.setContents( isContent,true,true,subMon);
       }
       return result;
@@ -128,5 +133,17 @@ public class SourceFileGenerator {
 
   protected String createFileName(final EHaskellCommentStyle style, final String moduleName ) {
     return moduleName + "." + style.getFileExtension(); //$NON-NLS-1$
+  }
+
+
+
+  public boolean isOverwrite() {
+    return overwrite;
+  }
+
+
+
+  public void setOverwrite( final boolean overwrite ) {
+    this.overwrite = overwrite;
   }
 }

@@ -126,6 +126,10 @@ public class TestSuiteDialog extends StatusDialog {
   private final TestSuiteDef def=new TestSuiteDef();
 
   private final PackageDescription pkgDesc;
+  /**
+   * should we overwrite existing files?
+   */
+  private boolean overwrite=true;
 
   public TestSuiteDialog(final Shell shell,final IProject project,final PackageDescription desc, final Set<String> names){
     super(shell);
@@ -219,6 +223,17 @@ public class TestSuiteDialog extends StatusDialog {
         }
       }
     } );
+
+    final Button bOverwrite=new Button(composite,SWT.CHECK);
+    bOverwrite.setText( UITexts.option_overwrite );
+    bOverwrite.setSelection( true );
+    bOverwrite.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected(final SelectionEvent e) {
+        overwrite=bOverwrite.getSelection();
+      }
+    } );
+
     Label lMods=new Label(composite,SWT.WRAP);
     lMods.setText( UITexts.cabalEditor_newTestSuite_modules);
 
@@ -415,5 +430,10 @@ public class TestSuiteDialog extends StatusDialog {
 
 
 
+  }
+
+
+  public boolean isOverwrite() {
+    return overwrite;
   }
 }
