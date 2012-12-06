@@ -76,6 +76,12 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         monitor.beginTask( configuration.getName(), 3 );
         final IPath loc =delegate!=null?new Path(delegate.getExecutable()) :
           getExecutableLocation( configuration );
+        if (loc==null){
+          String msg = CoreTexts.haskellLaunchDelegate_noExe;
+          String pluginId = HaskellDebugCore.getPluginId();
+          IStatus status = new Status( IStatus.ERROR, pluginId, 0, msg, null );
+          throw new CoreException( status );
+        }
         checkCancellation( monitor );
         String[] arguments = determineArguments( configuration,delegate,mode );
         checkCancellation( monitor );
@@ -146,7 +152,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
           } else {
             while( !process.isTerminated() ) {
               try {
-                if(monitor!=null && monitor.isCanceled() ) {
+                if(monitor.isCanceled() ) {
                   process.terminate();
                   break;
                 }
