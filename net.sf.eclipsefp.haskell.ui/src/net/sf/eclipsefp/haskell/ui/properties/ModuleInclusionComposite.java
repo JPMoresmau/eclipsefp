@@ -108,6 +108,13 @@ public class ModuleInclusionComposite extends Composite {
       }
       List<PackageDescriptionStanza> l=cabal.getStanzasBySourceDir().get( path );
       if (l!=null && l.size()>0){
+        /** defaults to the only one **/
+        if (l.size()==1 && editor==null ){
+          editor=l.get( 0 ).getName();
+          if (editor==null){ // library
+            editor="";
+          }
+        }
         GridLayout gl=new GridLayout(4,false);
         setLayout( gl );
 
