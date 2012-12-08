@@ -444,35 +444,50 @@ public class AnImport {
     return removeItem( doc, Collections.singleton( item ),label);
   }
 
+  /**
+   * is a character a boundary before items?
+   * @param c
+   * @return
+   */
+  private boolean isItemBoundary(final char c){
+    return Character.isWhitespace( c ) || c==',' || c=='(' || c==')';
+  }
+
   public CompletionProposal removeItem(final IDocument doc, final Collection<String> items, final String label) {
     try {
       String contents = importDef.getLocation().getContents( doc );
       String newContents=contents;
       int ixP=contents.indexOf( "(" );
       for (String item:items){
-        int ix=newContents.indexOf( item,ixP );
-        if (ix>-1){
+        int thisItemIx=ixP;
+        int ix=newContents.indexOf( item,thisItemIx );
+        while (ix>-1){
           int end=ix+item.length();
-          int[] trimmed=trimRemovedImport( newContents, ixP, ix, end );
-          ix=trimmed[0];
-          end=trimmed[1];
-          if (newContents.charAt( end )==')'){
-            if (newContents.charAt( ix-1 )=='('){
-              if (ix-1>ixP){
-                // we're in between (): remove them
-                end++;
-                ix--;
-                trimmed=trimRemovedImport( newContents, ixP, ix, end );
-                ix=trimmed[0];
-                end=trimmed[1];
+          char s=newContents.charAt( ix- 1);
+          char e=newContents.charAt( end );
+          if (isItemBoundary( s ) && isItemBoundary( e )){
+            int[] trimmed=trimRemovedImport( newContents, thisItemIx, ix, end );
+            ix=trimmed[0];
+            end=trimmed[1];
+            if (newContents.charAt( end )==')'){
+              if (newContents.charAt( ix-1 )=='('){
+                if (ix-1>thisItemIx){
+                  // we're in between (): remove them
+                  end++;
+                  ix--;
+                  trimmed=trimRemovedImport( newContents, thisItemIx, ix, end );
+                  ix=trimmed[0];
+                  end=trimmed[1];
+                }
+              } else {
+                ix--; // remove preceding comma if we're at end
               }
-            } else {
-              ix--; // remove preceding comma if we're at end
             }
+
+            newContents=newContents.substring( 0,ix )+newContents.substring( end );
           }
-
-          newContents=newContents.substring( 0,ix )+newContents.substring( end );
-
+          thisItemIx=end;
+          ix=newContents.indexOf( item,thisItemIx );
         }
       }
       int st=importDef.getLocation().getStartOffset( doc );
