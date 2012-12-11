@@ -287,8 +287,13 @@ public class BuildMarkerResolutionGenerator implements
           s=s.substring( s.length()-3 );
         }
         int start=ix+1+s.length();
-        int ix2=msg.indexOf( ' ',start);
-        if (ix2>-1){
+        int ix2=start;
+        for (;ix2<msg.length();ix2++){
+          if (Character.isWhitespace( msg.charAt( ix2 ) )){
+            break;
+          }
+        }
+         if (ix2<msg.length()){
           String flag=msg.substring( start,ix2 ).trim();
           addPragma(res,flag);
         } else {
