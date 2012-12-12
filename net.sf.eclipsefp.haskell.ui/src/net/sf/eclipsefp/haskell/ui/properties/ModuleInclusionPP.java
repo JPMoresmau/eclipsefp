@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
@@ -27,10 +28,18 @@ public class ModuleInclusionPP extends PropertyPage {
     // NOOP
   }
 
+  protected IFile getFile(){
+    Object o=getElement();
+    if (o instanceof IFileEditorInput){
+      return ((IFileEditorInput)o).getFile();
+    }
+    return (IFile)o;
+  }
+
   @Override
   protected Control createContents( final Composite parent ) {
     mic=new ModuleInclusionComposite( parent, SWT.NONE );
-    IFile f=(IFile)getElement();
+    IFile f=getFile();
 
     IContainer src=ResourceUtil.getSourceContainer( f );
     if (src!=null){
@@ -53,7 +62,7 @@ public class ModuleInclusionPP extends PropertyPage {
     if (info!=null){
       mic.populateInfo( info );
       ModuleCreationOperation mco=new ModuleCreationOperation( info );
-      mco.setGeneratedFile( (IFile)getElement() );
+      mco.setGeneratedFile( getFile() );
 
       try {
         mco.run( new NullProgressMonitor() );
