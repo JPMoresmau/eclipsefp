@@ -126,32 +126,40 @@ public class Location {
 				endLine = startLine;
 				endColumn = startColumn;
 			}
-			
-			// If the span is empty, we try to extend it to extend it to a single character span.
-			ILineTracker lineTracker = getLineTracker(project.getLocation().toOSString() +"/"+ BWFacade.DIST_FOLDER+"/"+fileName);
-			if (lineTracker != null) {
-				try {
-					//System.err.println("Initial span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
-					String delimiter = lineTracker.getLineDelimiter(startLine-1); // apparently this can return null
-					int lineLength = lineTracker.getLineLength(startLine-1 /*LineTracker is 0 based*/ )
-							             - (delimiter == null ? 0 : delimiter.length()); // subtract the delimiter length 
-					if (startLine==endLine && startColumn==endColumn) { // span is empty
-						if (startColumn < lineLength) { // not past the last character, so we can extend to the right.
-							endColumn += 1;
-						} else {
-							if (startColumn > 0) { // past last character, but there are characters to the left. 
-								startColumn -= 1;
-							} 
-							// else, we have startColumn == lineLength == 0, so the line is empty and we cannot extend the span.
+			if (startLine==endLine && startColumn==endColumn) { // span is empty
+				// If the span is empty, we try to extend it to extend it to a single character span.
+				ILineTracker lineTracker = getLineTracker(project.getLocation().toOSString() +"/"+ BWFacade.DIST_FOLDER+"/"+fileName);
+				if (lineTracker != null) {
+					try {
+						if (startLine>lineTracker.getNumberOfLines()){
+							startLine=lineTracker.getNumberOfLines();
 						}
+						if (endLine>lineTracker.getNumberOfLines()){
+							endLine=lineTracker.getNumberOfLines();
+						}
+						
+						//System.err.println("Initial span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
+						String delimiter = lineTracker.getLineDelimiter(startLine-1); // apparently this can return null
+						int lineLength = lineTracker.getLineLength(startLine-1 /*LineTracker is 0 based*/ )
+								             - (delimiter == null ? 0 : delimiter.length()); // subtract the delimiter length 
+						
+							if (startColumn < lineLength) { // not past the last character, so we can extend to the right.
+								endColumn += 1;
+							} else {
+								if (startColumn > 0) { // past last character, but there are characters to the left. 
+									startColumn -= 1;
+								} 
+								// else, we have startColumn == lineLength == 0, so the line is empty and we cannot extend the span.
+							}
+						
+						//System.err.println("Fixed span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
+		
+					} catch (BadLocationException e){
+						BuildWrapperPlugin.logError(BWText.process_parse_note_error, e);
 					}
-					//System.err.println("Fixed span: "+startLine+":"+startColumn+" to "+endLine+":"+endColumn);
-	
-				} catch (BadLocationException e){
-					BuildWrapperPlugin.logError(BWText.process_parse_note_error, e);
+				} else {
+					//System.err.println("LineTracker is null for file "+fileName);
 				}
-			} else {
-				//System.err.println("LineTracker is null for file "+fileName);
 			}
 		}
 	
