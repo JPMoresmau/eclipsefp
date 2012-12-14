@@ -86,10 +86,10 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
   protected String getMainFileContent(final Map<String,String> vars ) {
     /** get module header **/
     vars.put( TemplateVariables.MODULE_NAME, "Main" );//$NON-NLS-1$
+    vars.put( TemplateVariables.IMPORTS, "" ); //$NON-NLS-1$
     String mod=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE, vars );
     /** get content **/
     vars.put( TemplateVariables.MODULE, mod );
-    vars.put( TemplateVariables.IMPORTS, "" );
     return HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MAIN, vars );
    //return "module Main where"+PlatformUtil.NL+PlatformUtil.NL+"main::IO()"+PlatformUtil.NL+"main = undefined"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
