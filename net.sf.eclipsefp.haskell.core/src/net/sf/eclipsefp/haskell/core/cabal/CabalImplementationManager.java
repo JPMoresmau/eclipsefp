@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
@@ -232,6 +234,7 @@ public class CabalImplementationManager {
   public static List<CabalImplementation> autoDetectCabalImpls() {
     ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
     List<CabalImplementation> impls=new ArrayList<CabalImplementation>();
+    Set<String> paths=new HashSet<String>();
     for (File loc : candidateLocs) {
       File[] files = loc.listFiles( new FilenameFilter() {
         @Override
@@ -245,22 +248,25 @@ public class CabalImplementationManager {
       if (files != null && files.length > 0) {
         for (File file : files) {
           try {
-            CabalImplementation impl = new CabalImplementation("foo", new Path(file.getCanonicalPath())); //$NON-NLS-1$
-            // if we can't get a version, it's not a valid Cabal install
-            if (impl.getInstallVersion()!=null && impl.getInstallVersion().length()>0){
-              int seqno = 1;
-              String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion()); //$NON-NLS-1$
-              if (!isUniqueUserIdentifier( ident, impls )) {
-                String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
-                while (!isUniqueUserIdentifier(uniqIdent, impls)) {
-                  seqno++;
-                  uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+            String path=file.getCanonicalPath();
+            if( paths.add( path )){
+              CabalImplementation impl = new CabalImplementation("foo", new Path(path)); //$NON-NLS-1$
+              // if we can't get a version, it's not a valid Cabal install
+              if (impl.getInstallVersion()!=null && impl.getInstallVersion().length()>0){
+                int seqno = 1;
+                String ident = CabalImplementation.CABAL_BASENAME.concat( "-" ).concat(impl.getInstallVersion()); //$NON-NLS-1$
+                if (!isUniqueUserIdentifier( ident, impls )) {
+                  String uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+                  while (!isUniqueUserIdentifier(uniqIdent, impls)) {
+                    seqno++;
+                    uniqIdent = ident.concat( "-" ).concat( String.valueOf( seqno ) ); //$NON-NLS-1$
+                  }
+                  ident = uniqIdent;
                 }
-                ident = uniqIdent;
-              }
 
-              impl.setUserIdentifier( ident );
-              impls.add( impl );
+                impl.setUserIdentifier( ident );
+                impls.add( impl );
+              }
             }
           } catch (IOException e) {
             // Ignore?
