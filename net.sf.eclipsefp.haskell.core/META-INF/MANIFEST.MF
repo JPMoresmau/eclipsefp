@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core;singleton:=true
-Bundle-Version: 2.3.3
+Bundle-Version: 2.4.0
 Bundle-Activator: net.sf.eclipsefp.haskell.core.HaskellCorePlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin

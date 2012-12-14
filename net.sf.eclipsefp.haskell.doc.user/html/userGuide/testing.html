@@ -7,13 +7,23 @@
 
 <h1>Testing</h1>
 
-<p>The plug-in can execute Test-framework tests directly from the developer environment. 
+<p>The recommended Haskell framework for tests is HTF. 
+For documentation about how to use HTF, please refer to the
+<a href="http://hackage.haskell.org/package/HTF">official documentation</a>.</p>
+
+<p>To start a test right-click the project root, and select <b>Run As > HTF test</b>.
+The list of available test suites is shown, select the one you would like to run. The results are shown as they progress in the <i>Haskell Test Results</i> view.</p>
+
+<p>There is also a HTF wizard in the Cabal editor. In the test suites section, you can create a new HTF test suite by indicating the source folder and the modules to test. 
+A HTF module is created for each module tested, and a main module importing all of these is also created. A video of HTF integration can be found one <a href="http://www.youtube.com/watch?v=VP9PgGFZYxM">YouTube</a></p>
+
+<p>The plug-in can also execute Test-framework tests directly from the developer environment. 
 For documentation about how to use Test-framework, please refer to the
 <a href="http://batterseapower.github.com/test-framework/">official documentation</a>.</p>
 
 <p>To start a test right-click the project root, and select <b>Run As > Test-framework test</b>.
 The list of available test suites is shown, select the one you would like to run. Once it
-is finished, the results are shown in a <i>JUnit</i> view.</p>
+is finished, the results are shown in the <i>Haskell Test Results</i> view.</p>
 
 </body>
 </html>

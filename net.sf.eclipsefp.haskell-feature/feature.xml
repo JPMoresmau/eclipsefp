@@ -74,28 +74,28 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell"
          download-size="0"
          install-size="0"
-         version="2.3.2"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.core"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="2.3.2"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
@@ -116,14 +116,14 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
@@ -137,14 +137,14 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.util"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.browser"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
@@ -158,7 +158,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.buildwrapper"
          download-size="0"
          install-size="0"
-         version="2.3.3"
+         version="2.4.0"
          unpack="false"/>
 
    <plugin
