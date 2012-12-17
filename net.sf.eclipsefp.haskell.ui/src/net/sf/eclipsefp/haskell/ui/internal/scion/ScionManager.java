@@ -296,23 +296,10 @@ public class ScionManager implements IResourceChangeListener {
   }
 
   /**
-   * Server factory setup. This is common code used by both start() and handlePreferenceChanges() for setting
-   * and starting scion server factories.
+   * setup buildwrapper
    */
   private synchronized void buildWrapperFactorySetup(){
-    try {
-      /** we get the dreaded message about mismatch cabal versions if the buildwrapper cabal library is not the same as the cabal library used to build the cabal executable **/
-      List<String> ls=ProcessRunner.getExecutableAndCabalVersion( buildWrapperExecutablePath.toOSString(),true);
-      if (ls!=null && ls.size()>1){
-        String cabalVersion=ls.get( 1 );
-        if (CabalImplementationManager.getCabalLibraryVersion()!=null && !CabalImplementationManager.getCabalLibraryVersion().toString().equals( cabalVersion )){
-          String msg=NLS.bind( UITexts.buildWrapperCabalVersionMismatch, new Object[]{CabalImplementationManager.getCabalLibraryVersion().toString(),cabalVersion,CabalImplementationManager.getCabalExecutable()} );
-          HaskellUIPlugin.log( msg, IStatus.ERROR );
-        }
-      }
-    } catch (IOException ioe){
-      HaskellUIPlugin.log(UITexts.error_getVersion, ioe);
-    }
+
 
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
 
@@ -321,6 +308,20 @@ public class ScionManager implements IResourceChangeListener {
 
 
     if ( buildWrapperExecutablePath != null && buildWrapperExecutablePath.toFile().exists() ) {
+      try {
+        /** we get the dreaded message about mismatch cabal versions if the buildwrapper cabal library is not the same as the cabal library used to build the cabal executable **/
+        List<String> ls=ProcessRunner.getExecutableAndCabalVersion( buildWrapperExecutablePath.toOSString(),true);
+        if (ls!=null && ls.size()>1){
+          String cabalVersion=ls.get( 1 );
+          if (CabalImplementationManager.getCabalLibraryVersion()!=null && !CabalImplementationManager.getCabalLibraryVersion().toString().equals( cabalVersion )){
+            String msg=NLS.bind( UITexts.buildWrapperCabalVersionMismatch, new Object[]{CabalImplementationManager.getCabalLibraryVersion().toString(),cabalVersion,CabalImplementationManager.getCabalExecutable()} );
+            HaskellUIPlugin.log( msg, IStatus.ERROR );
+          }
+        }
+      } catch (IOException ioe){
+        HaskellUIPlugin.log(UITexts.error_getVersion, ioe);
+      }
+
       BuildWrapperPlugin.setBwPath( buildWrapperExecutablePath.toOSString() );
     } else {
       BuildWrapperPlugin.setBwPath(null);
