@@ -1,5 +1,7 @@
+- show installed packages/version via an overlay on the global cabal package list
+
 - quick fix on missing package 
-	-> install package
+	-> install package -> Done
 	-> event when installing packages
 		-> parse package name
 		-> clean and rebuild projects that are broken because of this missing package if automatic build is enabled
@@ -56,6 +58,7 @@
 
 .ghci file parsing/editor?? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
 
+- integrate with packagedeps
 - integrate with hspec
 - integrate analysis tools like hpc, HaskaBelle
 - integrate runtime tools like criterion
@@ -63,7 +66,6 @@
 
 - debugging 
 	- column on breakpoint??
-	- try to use :hist to display full stack (can we intercept write to add :trace in front?)
 	- better system to force evaluation? Done with custom value setter calling :force what about calling seq ... ()?
 	- reloading modules when stopped seems to cause breakpoints to disappear in GHCi, to check
 
