@@ -483,7 +483,8 @@ public class ScionManager implements IResourceChangeListener {
               public void run() {
                 Job builder = new HoogleDownloadDataJob(
                     UITexts.hoogle_downloadingData );
-                builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+                // no need to stop all other operations
+                //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
                 builder.setPriority( Job.DECORATE );
                 builder.schedule();
               }
