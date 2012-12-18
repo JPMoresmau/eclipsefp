@@ -47,6 +47,7 @@ public interface IImageNames {
   String PACKAGE_FOLDER        = ID + ".PACKAGE_FOLDER"; //$NON-NLS-1$
   String HIDDEN_PACKAGE        = ID + ".HIDDEN_PACKAGE"; //$NON-NLS-1$
   String FUNCTION_BINDING      = ID + ".FUNCTION_BINDING"; //$NON-NLS-1$
+  String LOCAL_BINDING         = ID + ".LOCAL_BINDING"; //$NON-NLS-1$
   String PATTERN_BINDING       = ID + ".PATTERN_BINDING"; //$NON-NLS-1$
   String DATA_DECL             = ID + ".DATA_DECL"; //$NON-NLS-1$
   String CONSTRUCTOR_DECL      = ID + ".CONSTRUCTOR_DECL"; //$NON-NLS-1$

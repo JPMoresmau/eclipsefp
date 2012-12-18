@@ -313,4 +313,20 @@ public class Location {
 		this.endColumn = endColumn;
 	}
 
+	public boolean contains(int line,int column){
+		if( startLine<=line && endLine>=line){
+			if (startLine==line){
+				if (startColumn>column){
+					return false;
+				}
+			}
+			if (endLine==line){
+				if (endColumn<column){
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

@@ -33,4 +33,12 @@ public class Module extends Documented {
 	public String getCompleteDefinition() {
 		return "module " + name;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.items.Documented#isType()
+	 */
+	@Override
+	public boolean isType() {
+		return false;
+	}
 }

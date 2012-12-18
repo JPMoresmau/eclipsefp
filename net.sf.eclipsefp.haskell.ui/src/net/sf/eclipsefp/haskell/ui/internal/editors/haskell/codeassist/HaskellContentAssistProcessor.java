@@ -20,14 +20,13 @@ import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
-import net.sf.eclipsefp.haskell.browser.items.Function;
 import net.sf.eclipsefp.haskell.browser.items.Gadt;
 import net.sf.eclipsefp.haskell.browser.items.Instance;
+import net.sf.eclipsefp.haskell.browser.items.Local;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
-import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
@@ -35,6 +34,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
+import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -373,7 +375,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
     // Get rest of proposals
     String prefix = haskellCompletions.getPointedQualifier();
-    ImportsManager mgr =((HaskellEditor)HaskellUIPlugin.getTextEditor( viewer )).getImportsManager();
+    HaskellEditor editor=(HaskellEditor)HaskellUIPlugin.getTextEditor( viewer );
+    ImportsManager mgr =editor!=null?editor.getImportsManager():null;
         //new ImportsManager( theFile, doc );
     //long t0=System.currentTimeMillis();
     Map<String, Documented> decls = new HashMap<String, Documented>();
@@ -389,8 +392,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
     //ProposalScope ps=ProposalScope.valueOf( HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
 
-    Map<String,Documented> importeds=mgr.getDeclarations();
-
+    Map<String,Documented> importeds=mgr!=null?mgr.getDeclarations():new HashMap<String, Documented>();
+    IProject project=theFile.getProject();
     if (needSearch && !scope.equals( ProposalScope.IMPORTED )){
       try {
         Set<String> pkgs=ResourceUtil.getImportPackages( new IFile[]{theFile});
@@ -418,7 +421,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 //            decls.put(name, d );
 //          }
 //        }
-        IProject p=theFile.getProject();
+
         if (scope.equals( ProposalScope.ALL )){
           // search on everything
           Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
@@ -437,8 +440,8 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           }
           // we reference ourselves, more exactly the library stanza
           // so we need to retrieve exposed modules from the library
-          if (pkgs.contains( p.getName() )){
-            IFile cf=BuildWrapperPlugin.getCabalFile( p );
+          if (pkgs.contains( project.getName() )){
+            IFile cf=BuildWrapperPlugin.getCabalFile( project );
             PackageDescription pd=PackageDescriptionLoader.load(cf);
             Map<String,List<PackageDescriptionStanza>> pds=pd.getStanzasBySourceDir();
             // retrieve all possible source containers for the library
@@ -447,7 +450,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
             for (String src:pds.keySet()){
               for (PackageDescriptionStanza pd1:pds.get( src )){
                 if (CabalSyntax.SECTION_LIBRARY.equals(pd1.getType())){
-                  srcs.add( ResourceUtil.getContainer(p,src) );
+                  srcs.add( ResourceUtil.getContainer(project,src) );
                   pdLibrary=pd1;
                   break;
                 }
@@ -476,7 +479,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
           }
 
           // search on dependent packages only
-          BWFacade f=BuildWrapperPlugin.getFacade( p );
+          BWFacade f=BuildWrapperPlugin.getFacade( project );
           if (f!=null){
             for (CabalPackage[] cps:f.getPackagesByDB().values()){
               for (CabalPackage cp:cps){
@@ -505,16 +508,17 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
       }
     }
     if (scope.equals( ProposalScope.IMPORTED )){
+      addLocals( editor, project, theFile, doc, offset, importeds );
+
       decls.putAll(importeds);
     }
 
     for ( Map.Entry<String, Documented> s : decls.entrySet() ) {
-      if ( s.getKey().startsWith( prefix ) ) {
-        if (s.getValue() instanceof Constructor || s.getValue() instanceof Function) {
-          elts.add( s.getKey() );
-        } else if ( s.getValue() instanceof Gadt || s.getValue() instanceof TypeClass ||
-            s.getValue() instanceof TypeSynonym ) {
+      if ( s.getKey().startsWith( prefix ) && s.getValue()!=null) {
+        if (s.getValue().isType()) {
           typeElts.add( s.getKey() );
+        } else {
+          elts.add( s.getKey() );
         }
       }
     }
@@ -611,6 +615,56 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 	}
 
+	/**
+	 * add local definition from the method
+	 * @param editor
+	 * @param project
+	 * @param theFile
+	 * @param doc
+	 * @param offset
+	 * @param importeds
+	 */
+	private static void addLocals(final HaskellEditor editor,final IProject project,final IFile theFile,final IDocument doc,final int offset,final Map<String,Documented> importeds){
+	  if (editor!=null){
+  	  BWFacade f=BuildWrapperPlugin.getFacade(project) ;
+      if (f!=null){
+        try {
+        int line=doc.getLineOfOffset( offset );
+        int col=offset-doc.getLineOffset( line );
+        OutlineResult or=editor.getLastOutlineResult();
+        if (or!=null){
+          Location odL=null;
+          for (OutlineDef od:or.getOutlineDefs()){
+            Location l=od.getLocation();
+            if (l.contains( line, col )){
+              odL=l;
+              for (OutlineDef odc:od.getChildren()){
+                Location lc=odc.getLocation();
+                if (lc.contains( line, col )){
+                  odL=lc;
+                  break;
+                }
+              }
+              break;
+            }
+          }
+          if (odL!=null){
+            List<ThingAtPoint> taps=f.getLocals( theFile,odL);
+            for (ThingAtPoint t:taps){
+              Local func=new Local("",t.getName(),t.getType());
+              if (!importeds.containsKey( t.getName() )){
+                importeds.put(t.getName(),func);
+              }
+            }
+          }
+        }
+        } catch (BadLocationException ble){
+          HaskellUIPlugin.log( ble );
+        }
+       }
+	  }
+	}
+
 	private static boolean isPointed(final String name){
 	  int ix=name.indexOf( " (" );
 	  if (ix>-1){
@@ -646,10 +700,12 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     }
 	}
 
+
+
 	private ICompletionProposal getCompletionProposal(final String s,final Documented d,final int offset,final int length,final boolean isType,final String pkg,final String realImport){
 	  Image i=isType?
 	      ImageCache.getImageForDeclaration( ((Declaration)d).getType() ):
-	      d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.FUNCTION;
+        ImageCache.getImageForBinding( d ) ;
 
 	  // new modules are shown after the declaration name
 	  String repl=s;

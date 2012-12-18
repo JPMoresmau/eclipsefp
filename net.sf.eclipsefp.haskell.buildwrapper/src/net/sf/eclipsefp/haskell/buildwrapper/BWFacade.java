@@ -733,6 +733,45 @@ public class BWFacade {
 		return tap;
 	}
 	
+	/**
+	 * get locals from location
+	 * @param file
+	 * @param location
+	 * @return
+	 */
+	public List<ThingAtPoint> getLocals(IFile file,Location location){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("locals");
+		command.add("--file="+path);
+		command.add("--sline="+location.getStartLine());
+		command.add("--scolumn="+(location.getStartColumn()+1));
+		command.add("--eline="+location.getEndLine());
+		command.add("--ecolumn="+(location.getEndColumn()+1));
+		addEditorStanza(file,command);
+		JSONArray arr=run(command,ARRAY);
+		List<ThingAtPoint> taps=new ArrayList<ThingAtPoint>();
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+			//	notes.putAll(i.getNotes());
+				parseNotes(notes);
+			}
+			JSONArray locs=arr.optJSONArray(0);
+			if (locs!=null){
+				for (int a=0;a<locs.length();a++){
+					try {
+						JSONObject o=locs.getJSONObject(a);
+						taps.add(new ThingAtPoint(o));
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_thingatpoint_error, je);
+					}
+				}
+			}
+		}
+		return taps;
+	}
+	
 	private boolean parseNotes(JSONArray notes){
 		return parseNotes(notes,null,null);
 	}

@@ -38,4 +38,12 @@ public class HaskellPackage extends Documented {
 	public String getName() {
 		return id.toString();
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.items.Documented#isType()
+	 */
+	@Override
+	public boolean isType() {
+		return false;
+	}
 }

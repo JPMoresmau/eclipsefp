@@ -4,7 +4,10 @@
  */
 package net.sf.eclipsefp.haskell.browser.util;
 
+import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
+import net.sf.eclipsefp.haskell.browser.items.Documented;
+import net.sf.eclipsefp.haskell.browser.items.Local;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.swt.graphics.Image;
@@ -27,7 +30,7 @@ public class ImageCache {
   public static Image FUNCTION = HaskellUIImages.getImage( IImageNames.FUNCTION_BINDING );
   public static Image TYPE = HaskellUIImages.getImage( IImageNames.TYPE_DECL );
   public static Image KEYWORD = HaskellUIImages.getImage( IImageNames.PATTERN_BINDING );
-
+  public static Image LOCAL = HaskellUIImages.getImage( IImageNames.LOCAL_BINDING );
   /**
    * Get the image corresponding to a declaration.
    * @param type The type of the declaration to show.
@@ -49,5 +52,14 @@ public class ImageCache {
       default:
         return null;
     }
+  }
+
+  public static Image getImageForBinding( final Documented d){
+      if (d instanceof Constructor){
+        return CONSTRUCTOR;
+      } else if (d instanceof Local){
+        return LOCAL;
+      }
+      return FUNCTION;
   }
 }

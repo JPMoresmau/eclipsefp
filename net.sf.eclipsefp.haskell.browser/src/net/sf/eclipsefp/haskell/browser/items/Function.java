@@ -45,4 +45,12 @@ public class Function extends Declaration {
 	public String getShownName() {
 		return this.name + " :: " + this.signature;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.items.Documented#isType()
+	 */
+	@Override
+	public boolean isType() {
+		return false;
+	}
 }

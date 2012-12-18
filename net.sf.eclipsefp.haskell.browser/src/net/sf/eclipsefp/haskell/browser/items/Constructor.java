@@ -57,4 +57,12 @@ public class Constructor extends Documented {
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.items.Documented#isType()
+	 */
+	@Override
+	public boolean isType() {
+		return false;
+	}
 }

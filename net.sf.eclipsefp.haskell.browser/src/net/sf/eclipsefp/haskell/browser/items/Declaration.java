@@ -105,4 +105,12 @@ public abstract class Declaration extends Documented {
 	public void setModule(Module module) {
 		this.module = module;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.items.Documented#isType()
+	 */
+	@Override
+	public boolean isType() {
+		return true;
+	}
 }

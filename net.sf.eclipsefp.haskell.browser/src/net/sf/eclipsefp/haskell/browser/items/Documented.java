@@ -30,4 +30,10 @@ public abstract class Documented {
 		if (this.doc.equals("null"))
 			this.doc = "";
 	}
+	
+	/**
+	 * do we represent a type?
+	 * @return
+	 */
+	public abstract boolean isType();
 }
