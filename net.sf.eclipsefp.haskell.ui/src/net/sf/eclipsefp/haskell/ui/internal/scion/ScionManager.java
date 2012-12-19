@@ -69,7 +69,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 /**
  * Manages helper executables
  *
- * This class manages buildwrappers, scion-browser, etc. It gets the path from the preferences and does the initalization
+ * This class manages buildwrapper, scion-browser, etc. It gets the path from the preferences and does the initialization
  *
  * This works by listening for resource changes.
  */
@@ -83,7 +83,7 @@ public class ScionManager implements IResourceChangeListener {
   /** Haskell console high water mark */
   private int hConHighWater;
 
-  private final static String MINIMUM_BUILDWRAPPER="0.6.3";
+  private final static String MINIMUM_BUILDWRAPPER="0.6.4";
   private final static String MINIMUM_SCIONBROWSER="0.2.12";
 
   public ScionManager() {
