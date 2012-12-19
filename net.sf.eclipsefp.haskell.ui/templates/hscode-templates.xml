@@ -22,7 +22,7 @@
   enabled="true"
   autoinsert="false"
 >data ${typename} where
-  ${constructor} :: ${typename}
+        ${constructor} :: ${typename}
 </template>
 
 <template
@@ -33,7 +33,7 @@
   enabled="true"
   autoinsert="false"
 >data ${typename} where
-  ${constructor} :: ${typename}
+        ${constructor} :: ${typename}
 </template>
 
 <!-- 'case' expression -->
@@ -67,8 +67,8 @@
   enabled="true"
   autoinsert="false"
 >do
-  -- %CodeTemplates.do.text
-  ${cursor}return undefined
+        -- %CodeTemplates.do.text
+        ${cursor}return undefined
 </template>
 
 <!-- 'let' expression -->
@@ -80,7 +80,7 @@
   enabled="true"
   autoinsert="false"
 >let ${var} = ${value}
-in  ${expression}
+        in  ${expression}
 </template>
 
 <!-- 'newtype' expression -->
@@ -103,8 +103,8 @@ in  ${expression}
   enabled="true"
   autoinsert="false"
 >class ${name} where
-  -- %CodeTemplates.class.text
-  ${function} :: ${signature}
+        -- %CodeTemplates.class.text
+        ${function} :: ${signature}
 </template>
 
 <!-- Type context expression -->
