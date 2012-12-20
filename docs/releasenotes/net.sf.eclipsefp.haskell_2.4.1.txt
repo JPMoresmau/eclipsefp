@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- Getting hoogle data doesn't get a lock on the full workspace
+	- Preferences page NPE if no buildwrapper configured fixed
 
 Features:
 	- Locals bindings in autocomplete
