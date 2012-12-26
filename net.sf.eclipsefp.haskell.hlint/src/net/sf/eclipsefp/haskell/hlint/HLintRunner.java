@@ -35,11 +35,18 @@ public class HLintRunner {
 			if (exe==null || exe.length()==0){
 				exe="hlint"; // hope it's in the path
 			}
+			// code is 1 if we have errors!
 			int code=new ProcessRunner().executeBlocking(path.toFile().getParentFile(), out, err,  exe, path.toOSString());
-			if (code==0){
-				OutputParser parser = new OutputParser(new StringReader(out.toString()));
-				return parser.suggestions();
+			
+			OutputParser parser = new OutputParser(new StringReader(out.toString()));
+			List<Suggestion> sugs= parser.suggestions();
+			if(err.toString().length()>0){
+				HLintPlugin.logError(NLS.bind(HLintText.error_run,err.toString()),null);
+			} else if (code!=0 && sugs.size()==0){
+				HLintPlugin.logError(NLS.bind(HLintText.error_run,out.toString()),null);
 			}
+			return sugs;
+			
 		} catch (Throwable ex) {
 			String msg=err.toString().length()>0?err.toString():out.toString();
 			HLintPlugin.logError(NLS.bind(HLintText.error_run,msg), ex);
