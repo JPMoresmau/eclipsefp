@@ -1,7 +1,9 @@
 package net.sf.eclipsefp.haskell.core.cabal;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -11,7 +13,14 @@ import java.util.List;
  */
 public class CabalPackageRef {
   private String name;
+  /**
+   * all versions
+   */
   private final ArrayList<String> versions=new ArrayList<String>();
+  /**
+   * versions installed
+   */
+  private final Set<String> installed=new HashSet<String>();
 
   public String getName() {
     return name;
@@ -28,7 +37,7 @@ public class CabalPackageRef {
   public List<CabalPackageVersion> getCabalPackageVersions(){
     List<CabalPackageVersion> ret=new ArrayList<CabalPackageVersion>();
     for (int a=0;a<versions.size();a++){
-      ret.add(new CabalPackageVersion( this, a));
+      ret.add(new CabalPackageVersion( this, a,installed.contains( versions.get(a) )));
     }
     return ret;
   }
@@ -36,6 +45,15 @@ public class CabalPackageRef {
   @Override
   public String toString() {
     return name;
+  }
+
+
+  public Set<String> getInstalled() {
+    return installed;
+  }
+
+  public boolean isInstalled(){
+    return installed.size()>0; // we're installed if at least one version is installed
   }
 
 

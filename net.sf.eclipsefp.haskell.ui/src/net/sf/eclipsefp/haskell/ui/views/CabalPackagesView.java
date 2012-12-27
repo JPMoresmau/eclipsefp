@@ -94,6 +94,8 @@ public class CabalPackagesView extends ViewPart {
 
   private TreeViewer packageViewer;
 
+  private final ImportLibrariesLabelProvider labelProvider=new ImportLibrariesLabelProvider();
+
   private Label lUpdate;
 
   /**
@@ -121,6 +123,7 @@ public class CabalPackagesView extends ViewPart {
     @Override
     protected IStatus run( final IProgressMonitor arg0 ) {
       try {
+        labelProvider.setShowInstalled(!onlyInstalled );
         final List<CabalPackageRef> l=onlyInstalled?helper.getInstalled():helper.getAll();
         CabalPackagesView.this.getSite().getShell().getDisplay().asyncExec( new Runnable(){
           @Override
@@ -221,7 +224,7 @@ public class CabalPackagesView extends ViewPart {
     packageViewer.getTree().setLayoutData( new GridData(GridData.FILL_BOTH) );
     packageViewer.setContentProvider( new CabalPackageContentProvider() );
     //packageViewer.setComparator( new WorkbenchViewerComparator() ); // cabal already sorts the data
-    packageViewer.setLabelProvider( new ImportLibrariesLabelProvider() );
+    packageViewer.setLabelProvider(labelProvider );
 
     packageViewer.addFilter( new ViewerFilter() {
 
@@ -250,7 +253,7 @@ public class CabalPackagesView extends ViewPart {
 
     Composite cMore=new Composite(parent,SWT.NONE);
     cMore.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    cMore.setLayout( new GridLayout(2,true) );
+    cMore.setLayout( new GridLayout(1,true) );
 
 
     lBrowser=new Link(cMore,SWT.NONE);
@@ -260,7 +263,7 @@ public class CabalPackagesView extends ViewPart {
     lBrowser.setEnabled( false );
 
     lMore=new Link(cMore,SWT.NONE);
-    GridData gdMore=new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+    GridData gdMore=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     lMore.setLayoutData( gdMore );
     lMore.setText("<a>"+ UITexts.cabalPackagesView_info_more +"</a>");
     lMore.setEnabled( false );
@@ -311,23 +314,26 @@ public class CabalPackagesView extends ViewPart {
           currentName=null;
           currentNameWithVersion=null;
           Object o=sel.getFirstElement();
+          boolean installed=false;
           if (o instanceof CabalPackageRef){
             currentName=((CabalPackageRef)o).getName();
             for (CabalPackageVersion v:((CabalPackageRef)o).getCabalPackageVersions()){
               if (v.isLast()){
                 currentNameWithVersion=currentName+"-"+v.toString();
+                installed=v.isInstalled();
                 break;
               }
             }
           } else if (o instanceof CabalPackageVersion){
             CabalPackageVersion v=(CabalPackageVersion)o;
+            installed=v.isInstalled();
             currentName=v.getRef().getName()+"-"+v.toString();
-            if (v.isLast()){
+            //if (v.isLast()){
               currentNameWithVersion=currentName;
-            }
+            //}
           }
           lMore.setEnabled( currentName!=null );
-          lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection() && BrowserPlugin.getDefault().isAnyDatabaseLoaded());
+          lBrowser.setEnabled( currentNameWithVersion!=null && installed && BrowserPlugin.getDefault().isAnyDatabaseLoaded());
           if (currentName!=null){
             showInfo();
           }

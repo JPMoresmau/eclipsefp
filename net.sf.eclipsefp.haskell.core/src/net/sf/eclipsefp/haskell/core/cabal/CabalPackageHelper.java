@@ -10,8 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
@@ -71,6 +73,9 @@ public class CabalPackageHelper {
   public List<CabalPackageRef> getInstalled()throws IOException {
     if (installed==null){
       installed=list("","--installed"); //$NON-NLS-1$ //$NON-NLS-2$
+      for (CabalPackageRef r:installed){
+        r.getInstalled().addAll( r.getVersions() ); // all versions are installed
+      }
     }
     return installed;
   }
@@ -78,6 +83,18 @@ public class CabalPackageHelper {
   public List<CabalPackageRef> getAll()throws IOException {
     if (all==null){
       all=list("",""); //$NON-NLS-1$ //$NON-NLS-2$
+      // check which versions are installed
+      List<CabalPackageRef> installed=getInstalled();
+      Map<String,CabalPackageRef> pkgByName=new HashMap<String, CabalPackageRef>();
+      for (CabalPackageRef r:installed){
+        pkgByName.put( r.getName(),r );
+      }
+      for (CabalPackageRef r:all){
+        CabalPackageRef inst=pkgByName.get( r.getName() );
+        if (inst!=null){
+          r.getInstalled().addAll( inst.getInstalled() );
+        }
+      }
     }
     return all;
   }

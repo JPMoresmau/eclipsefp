@@ -13,11 +13,16 @@ package net.sf.eclipsefp.haskell.core.cabal;
 public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
   private final CabalPackageRef ref;
   private final int index;
+  /**
+   * are we installed?
+   */
+  private final boolean installed;
 
-  public CabalPackageVersion( final CabalPackageRef ref, final int index ) {
+  public CabalPackageVersion( final CabalPackageRef ref, final int index , final boolean installed) {
     super();
     this.ref = ref;
     this.index = index;
+    this.installed=installed;
   }
 
 
@@ -61,5 +66,10 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
       return -1;
     }
     return 0;
+  }
+
+
+  public boolean isInstalled() {
+    return installed;
   }
 }
