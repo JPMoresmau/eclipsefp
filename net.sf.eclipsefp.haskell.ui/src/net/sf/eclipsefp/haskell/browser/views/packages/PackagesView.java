@@ -48,6 +48,8 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
   Browser doc;
   IContentProvider provider;
 
+  private String delayedSelect=null;
+
   @Override
   public void createPartControl( final Composite parent ) {
     SashForm form = new SashForm( parent, SWT.VERTICAL );
@@ -94,6 +96,12 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
         // Use the new provider
         daProvider.uncache();
         viewer.refresh();
+        if (delayedSelect!=null){
+          String sel=delayedSelect;
+          delayedSelect=null;
+          select( sel );
+
+        }
       }
     } );
   }
@@ -104,6 +112,7 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 
       @Override
       public void run() {
+        delayedSelect=null;
         if (!BrowserPlugin.getDefault().isAnyDatabaseLoaded()) {
           // Put the "no database" content and label
           viewer.setLabelProvider( new NoDatabaseLabelProvider( false ) );
@@ -163,10 +172,12 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 
   public boolean has(final String name) {
     PackagesContentProvider pcp=(PackagesContentProvider)viewer.getContentProvider();
-    for (PackagesItem[] items : new PackagesItem[][]{ pcp.getLocalCache(), pcp.getHackageCache() }) {
-      for (PackagesItem pi : items){
-        if (pi.getPackage().getIdentifier().toString().equals( name )){
-          return true;
+    if (pcp!=null){
+      for (PackagesItem[] items : new PackagesItem[][]{ pcp.getLocalCache(), pcp.getHackageCache() }) {
+        for (PackagesItem pi : items){
+          if (pi.getPackage().getIdentifier().toString().equals( name )){
+            return true;
+          }
         }
       }
     }
@@ -175,6 +186,11 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
 
   public void select(final String name){
     PackagesContentProvider pcp=(PackagesContentProvider)viewer.getContentProvider();
+    if (pcp==null){
+      delayedSelect=name;
+      return;
+    }
+    delayedSelect=null;
     for (PackagesItem[] items : new PackagesItem[][]{ pcp.getLocalCache(), pcp.getHackageCache() }) {
       for (PackagesItem pi : items){
         if (pi.getPackage().getIdentifier().toString().equals( name )){

@@ -402,9 +402,7 @@ public class CabalPackagesView extends ViewPart {
         try {
           IWorkbenchPage page=getViewSite().getWorkbenchWindow().getWorkbench().showPerspective( BrowserPerspective.class.getName(), getViewSite().getWorkbenchWindow() );
           PackagesView view=(PackagesView)page.showView( PackagesView.ID );
-          if (view.has( currentNameWithVersion )) {
-            view.select(currentNameWithVersion);
-          }
+          view.select(currentNameWithVersion);
         } catch (Throwable t){
           HaskellUIPlugin.log( t );
         }
