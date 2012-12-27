@@ -1,4 +1,4 @@
-EclipseFP Haskell 2.4.1
+EclipseFP Haskell 2.4.2
 
 Release Notes
 
