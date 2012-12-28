@@ -225,6 +225,7 @@ public class ScionManager implements IResourceChangeListener {
     if (doBrowserSetup){
       // ensure class is loaded
       BrowserLocalDatabaseRebuildJob.class.toString();
+      BrowserLocalDatabaseRebuildJobListener.class.toString();
       browserSetup();
     }
 
@@ -807,7 +808,25 @@ public class ScionManager implements IResourceChangeListener {
     return hCon;
   }
 
+  private class BrowserLocalDatabaseRebuildJobListener extends JobChangeAdapter{
+    @Override
+    public void done( final IJobChangeEvent event ) {
+      if (event.getResult().isOK()) {
+        loadHackageDatabase();
+      } else {
+        Display.getDefault().syncExec( new Runnable() {
+          @Override
+          public void run() {
+            MessageDialog.openError( Display.getDefault().getActiveShell(),
+                                     UITexts.scionBrowserRebuildingDatabaseError_title,
+                                     UITexts.scionBrowserRebuildingDatabaseError_message );
+          }
+        } );
+      }
 
+      super.done( event );
+    }
+  }
 
   /** Specialized Job class that manages rebuilding the Browser database.
    *  Based in the work of B. Scott Michel.
@@ -821,25 +840,7 @@ public class ScionManager implements IResourceChangeListener {
       super(jobTitle);
 
       // If the build failed, there will be some indication of why it failed.
-      addJobChangeListener( new JobChangeAdapter() {
-        @Override
-        public void done( final IJobChangeEvent event ) {
-          if (event.getResult().isOK()) {
-            loadHackageDatabase();
-          } else {
-            Display.getDefault().syncExec( new Runnable() {
-              @Override
-              public void run() {
-                MessageDialog.openError( Display.getDefault().getActiveShell(),
-                                         UITexts.scionBrowserRebuildingDatabaseError_title,
-                                         UITexts.scionBrowserRebuildingDatabaseError_message );
-              }
-            } );
-          }
-
-          super.done( event );
-        }
-      });
+      addJobChangeListener( new BrowserLocalDatabaseRebuildJobListener());
     }
 
     @Override
