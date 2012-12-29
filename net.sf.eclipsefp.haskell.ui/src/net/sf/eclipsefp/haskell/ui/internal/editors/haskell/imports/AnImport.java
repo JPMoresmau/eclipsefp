@@ -482,6 +482,16 @@ public class AnImport {
               } else {
                 ix--; // remove preceding comma if we're at end
               }
+            } else if (newContents.charAt( end )=='('){ // remove constructor list
+              while (end<newContents.length() && newContents.charAt( end )!=')'){
+                end++;
+              }
+              if (newContents.charAt( end )==')'){
+                end++;
+              }
+              trimmed=trimRemovedImport( newContents, thisItemIx, ix, end );
+              ix=trimmed[0];
+              end=trimmed[1];
             }
 
             newContents=newContents.substring( 0,ix )+newContents.substring( end );

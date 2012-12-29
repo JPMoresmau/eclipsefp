@@ -50,6 +50,19 @@ public class AnImportTest {
   }
 
   @Test
+  public void testRemoveConstructor(){
+    TestDocument td=new TestDocument( "module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (Seq(..), singleton, empty)"+PlatformUtil.NL );
+    Location loc=new Location( "TestSimpleRemove.hs",2,0,2,44);
+    ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
+    AnImport ai=new AnImport( def, false );
+    CompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
+    assertNotNull( cp );
+    cp.apply( td );
+    assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty)"+PlatformUtil.NL,td.get());
+
+  }
+
+  @Test
   public void testRemoveLast(){
     TestDocument td=new TestDocument( "module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (Seq)"+PlatformUtil.NL );
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,26);
