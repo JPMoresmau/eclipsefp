@@ -5,7 +5,7 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.6.4 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.6.5 of buildwrapper has been validated with this version of EclipseFP
 	- EclipseFP also uses scion-browser. Version 0.2.13 has been validated with this version of EclipseFP
  
 
@@ -14,6 +14,7 @@ Fixes:
 
 Features:
 	- Cabal Packages view shows a green tick on installed packages and versions when you display the list of all hackage packages.
+	- Distinguish comments/haddock/pragmas in syntax highlighting (https://github.com/JPMoresmau/eclipsefp/issues/44)
 
 Internal:
 

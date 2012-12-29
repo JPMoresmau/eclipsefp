@@ -83,9 +83,13 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
         put( IScionTokens.LITERAL_CHAR,
             man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
         put( IScionTokens.DOCUMENTATION_ANNOTATION,
+            man.createToken( EDITOR_DOC_COLOR, EDITOR_DOC_BOLD ) );
+        put( IScionTokens.COMMENT,
             man.createToken( EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ) );
         put( IScionTokens.LITERATE_COMMENT, man.createToken(
             EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD ) );
+        put( IScionTokens.PRAGMA,
+            man.createToken( EDITOR_PRAGMA_COLOR, EDITOR_PRAGMA_BOLD ) );
         put( IScionTokens.KEYWORD,
             man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ) );
         put( IScionTokens.GHC_EXTENSION_KEYWORD,

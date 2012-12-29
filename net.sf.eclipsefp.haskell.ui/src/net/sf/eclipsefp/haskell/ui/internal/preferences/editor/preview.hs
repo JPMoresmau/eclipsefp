@@ -2,7 +2,7 @@
 -- a comment
 module Main where 
 
-main :: IO (Int)
+main :: IO (Int) -- ^ haddock
 main = do 
         putStr ('h':"ello Prefs!")
         return (2 + 2)

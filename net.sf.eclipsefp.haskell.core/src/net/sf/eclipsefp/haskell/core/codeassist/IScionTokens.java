@@ -10,7 +10,9 @@ public interface IScionTokens {
   // !!These strings need to be synchronized with changes to the scion source!! (See lib/Scion/Inspect.hs)
   public final static String LITERAL_STRING = "LS"; //$NON-NLS-1$
   public final static String LITERAL_CHAR = "LC"; //$NON-NLS-1$
+  public final static String PRAGMA = "P"; //$NON-NLS-1$
   public final static String DOCUMENTATION_ANNOTATION = "D"; //$NON-NLS-1$
+  public final static String COMMENT = "C"; //$NON-NLS-1$
   public final static String LITERATE_COMMENT = "DL"; //$NON-NLS-1$
   public final static String KEYWORD = "K"; //$NON-NLS-1$
   public final static String GHC_EXTENSION_KEYWORD = "EK"; //$NON-NLS-1$

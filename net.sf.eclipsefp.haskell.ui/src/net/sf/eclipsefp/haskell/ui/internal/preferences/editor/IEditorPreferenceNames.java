@@ -43,6 +43,10 @@ public interface IEditorPreferenceNames {
   String EDITOR_MATCHING_BRACKETS_COLOR    = "matchingBracketsColor";  //$NON-NLS-1$
   String EDITOR_COMMENT_COLOR              = "commentColor";  //$NON-NLS-1$
   String EDITOR_COMMENT_BOLD               = "commentBold";  //$NON-NLS-1$
+  String EDITOR_DOC_COLOR                  = "docColor";  //$NON-NLS-1$
+  String EDITOR_DOC_BOLD                   = "docBold";  //$NON-NLS-1$
+  String EDITOR_PRAGMA_COLOR               = "pragmaColor";  //$NON-NLS-1$
+  String EDITOR_PRAGMA_BOLD                = "pragmaBold";  //$NON-NLS-1$
   String EDITOR_LITERATE_COMMENT_COLOR     = "literateCommentColor";  //$NON-NLS-1$
   String EDITOR_LITERATE_COMMENT_BOLD      = "literateCommentBold";  //$NON-NLS-1$
   String EDITOR_FUNCTION_COLOR             = "functionColor";  //$NON-NLS-1$

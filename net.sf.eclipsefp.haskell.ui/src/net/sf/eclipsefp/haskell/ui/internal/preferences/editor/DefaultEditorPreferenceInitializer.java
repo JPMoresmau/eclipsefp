@@ -65,6 +65,12 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
           ColorProvider.DEFAULT_LITERATE_COMMENT );
     store.setDefault( EDITOR_LITERATE_COMMENT_BOLD, false );
 
+    conv( store, EDITOR_DOC_COLOR, ColorProvider.DEFAULT_DOC );
+    store.setDefault( EDITOR_DOC_BOLD, false );
+    conv( store, EDITOR_PRAGMA_COLOR, ColorProvider.DEFAULT_PRAGMA );
+    store.setDefault( EDITOR_PRAGMA_BOLD, true );
+
+
     conv( store, EDITOR_FUNCTION_COLOR, ColorProvider.DEFAULT_FUNCTION );
     store.setDefault( EDITOR_FUNCTION_BOLD, true );
     conv( store, EDITOR_KEYWORD_COLOR, ColorProvider.DEFAULT_KEYWORD );

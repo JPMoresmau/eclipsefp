@@ -56,7 +56,11 @@ public class PartitionSourceViewerConfiguration extends
             getScannerManager().createToken( EDITOR_CHAR_COLOR,
                 EDITOR_CHAR_BOLD ) );
         put( IScionTokens.DOCUMENTATION_ANNOTATION, getScannerManager()
+            .createToken( EDITOR_DOC_COLOR, EDITOR_DOC_BOLD ) );
+        put( IScionTokens.COMMENT, getScannerManager()
             .createToken( EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ) );
+        put( IScionTokens.PRAGMA, getScannerManager()
+            .createToken( EDITOR_PRAGMA_COLOR, EDITOR_PRAGMA_BOLD ) );
         put(
             IScionTokens.LITERATE_COMMENT,
             getScannerManager().createToken( EDITOR_LITERATE_COMMENT_COLOR,

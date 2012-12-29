@@ -46,6 +46,8 @@ public class SyntaxPP extends AbstractEditorPP {
     new ColorListEntry( UITexts.preferences_editor_syntax_literatecomments,
                         EDITOR_LITERATE_COMMENT_COLOR,
                         EDITOR_LITERATE_COMMENT_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_doc, EDITOR_DOC_COLOR, EDITOR_DOC_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_pragmas, EDITOR_PRAGMA_COLOR, EDITOR_PRAGMA_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_strings, EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_characters, EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_numbers,
@@ -77,6 +79,10 @@ public class SyntaxPP extends AbstractEditorPP {
     store.addBooleanKey( EDITOR_COMMENT_BOLD );
     store.addStringKey( EDITOR_LITERATE_COMMENT_COLOR );
     store.addBooleanKey( EDITOR_LITERATE_COMMENT_BOLD );
+    store.addStringKey( EDITOR_DOC_COLOR );
+    store.addBooleanKey( EDITOR_DOC_BOLD );
+    store.addStringKey( EDITOR_PRAGMA_COLOR );
+    store.addBooleanKey( EDITOR_PRAGMA_BOLD );
     store.addStringKey( EDITOR_STRING_COLOR );
     store.addBooleanKey( EDITOR_STRING_BOLD );
     store.addStringKey( EDITOR_CHAR_COLOR );

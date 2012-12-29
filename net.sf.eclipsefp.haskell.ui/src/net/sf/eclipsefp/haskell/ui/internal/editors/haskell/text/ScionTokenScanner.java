@@ -87,7 +87,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       {
         put( IScionTokens.LITERAL_STRING, man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
         put( IScionTokens.LITERAL_CHAR, man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
-        put( IScionTokens.DOCUMENTATION_ANNOTATION, man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
+        put( IScionTokens.DOCUMENTATION_ANNOTATION, man.createToken( EDITOR_DOC_COLOR,EDITOR_DOC_BOLD  ) );
+        put( IScionTokens.COMMENT, man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
+        put( IScionTokens.PRAGMA, man.createToken( EDITOR_PRAGMA_COLOR,EDITOR_PRAGMA_BOLD  ) );
         put( IScionTokens.LITERATE_COMMENT, man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
         put( IScionTokens.KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
         put( IScionTokens.GHC_EXTENSION_KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
@@ -364,7 +366,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       try {
         file.deleteMarkers( IMarker.TASK , true, IResource.DEPTH_ZERO );
         for (TokenDef nextTokenDef:lTokenDefs){
-          if (nextTokenDef.getName().equals(IScionTokens.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(IScionTokens.LITERATE_COMMENT)){
+          if (nextTokenDef.getName().equals(IScionTokens.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(IScionTokens.COMMENT) || nextTokenDef.getName().equals(IScionTokens.LITERATE_COMMENT)){
             String s=nextTokenDef.getLocation().getContents( doc );
             outer:for (int a=0;a<s.length();a++){
               if (Character.isLetter( s.charAt( a ) )){

@@ -587,6 +587,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private boolean isAffectingProperty( final String property ) {
     return property.equals( EDITOR_COMMENT_COLOR )
         || property.equals( EDITOR_COMMENT_BOLD )
+        || property.equals( EDITOR_DOC_COLOR )
+        || property.equals( EDITOR_DOC_BOLD )
+        || property.equals( EDITOR_PRAGMA_COLOR )
+        || property.equals( EDITOR_PRAGMA_BOLD )
         || property.equals( EDITOR_LITERATE_COMMENT_COLOR )
         || property.equals( EDITOR_LITERATE_COMMENT_BOLD )
         || property.equals( EDITOR_DEFAULT_COLOR )

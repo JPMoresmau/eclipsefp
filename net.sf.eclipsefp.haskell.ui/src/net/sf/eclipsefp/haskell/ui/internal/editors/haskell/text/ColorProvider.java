@@ -26,8 +26,10 @@ import org.eclipse.swt.widgets.Display;
   */
 public class ColorProvider implements IEditorPreferenceNames {
 
-  public static final RGB DEFAULT_COMMENT           = new RGB( 128, 128, 192 );
-  public static final RGB DEFAULT_LITERATE_COMMENT  = new RGB( 128, 128, 192 );
+  public static final RGB DEFAULT_COMMENT           = new RGB( 63, 127, 95 );
+  public static final RGB DEFAULT_LITERATE_COMMENT  = new RGB( 63, 95, 191 );
+  public static final RGB DEFAULT_DOC               = new RGB( 63, 95, 191 );
+  public static final RGB DEFAULT_PRAGMA            = new RGB( 63, 95, 191 );
   public static final RGB DEFAULT_KEYWORD           = new RGB( 0, 0, 196 );
   public static final RGB DEFAULT_FUNCTION          = new RGB( 64, 192, 192 );
   public static final RGB DEFAULT_STRING            = new RGB( 128, 64, 64 );
@@ -35,7 +37,7 @@ public class ColorProvider implements IEditorPreferenceNames {
   public static final RGB DEFAULT_NUMBER            = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_VAR               = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_CON               = new RGB( 200, 0, 0 );
-  public static final RGB DEFAULT_CPP               = new RGB( 128, 128, 192 );
+  public static final RGB DEFAULT_CPP               = new RGB( 63, 95, 191 );
   public static final RGB DEFAULT_TH                = new RGB( 0, 0, 0 );
   public static final RGB DEFAULT_SYMBOL            = new RGB( 128, 128, 0 );
   public static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
@@ -119,6 +121,8 @@ public class ColorProvider implements IEditorPreferenceNames {
 
   private void initializeRgbs() {
     putRgb( EDITOR_COMMENT_COLOR, DEFAULT_COMMENT );
+    putRgb( EDITOR_DOC_COLOR, DEFAULT_DOC);
+    putRgb( EDITOR_PRAGMA_COLOR, DEFAULT_PRAGMA );
     putRgb( EDITOR_LITERATE_COMMENT_COLOR, DEFAULT_LITERATE_COMMENT );
     putRgb( EDITOR_FUNCTION_COLOR, DEFAULT_FUNCTION );
     putRgb( EDITOR_KEYWORD_COLOR, DEFAULT_KEYWORD );
