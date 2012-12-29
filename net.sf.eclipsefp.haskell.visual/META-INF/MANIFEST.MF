@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-SymbolicName: net.sf.eclipsefp.haskell.visual
+Bundle-Version: 2.4.2
+Bundle-Activator: net.sf.eclipsefp.haskell.visual.Activator
+Bundle-Vendor: %bundleVendor
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
