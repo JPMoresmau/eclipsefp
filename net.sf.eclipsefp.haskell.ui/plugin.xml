@@ -473,6 +473,11 @@
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%FormatAction.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.format"/>
+       <command
+            description="%ImportsAction.description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%ImportsAction.name"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.imports"/>
       <command
             description="%openDefinitionCommand_desc"
             categoryId="org.eclipse.ui.category.navigate"
@@ -667,6 +672,11 @@
           <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+F"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.format"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />    
+          <!-- organize imports -->
+          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M1+M2+O"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.imports"
               contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />    
          <!-- keys for navigation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -1187,6 +1197,12 @@
                retarget="true"
                menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
                id="net.sf.eclipsefp.haskell.ui.actions.Format"/>
+         <action
+               definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.imports"
+               label="%ImportsAction.label"
+               retarget="true"
+               menubarPath="net.sf.eclipsefp.haskell.ui.sourceMenu/commentGroup"
+               id="net.sf.eclipsefp.haskell.ui.actions.Imports"/>
 <!-- Source menu: editGroup -->         
          <action
                definitionId="org.eclipse.ui.edit.text.shiftLeft"

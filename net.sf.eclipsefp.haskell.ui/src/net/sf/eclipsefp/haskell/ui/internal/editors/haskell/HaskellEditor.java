@@ -35,6 +35,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.FormatAction
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockBlockDocumentFollowingAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentFollowingAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocumentPreviousAction;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.OrganizeImportAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.PragmaCommentAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
@@ -114,6 +115,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   /** Action string associated with formatting */
   public static final String FORMAT_ACTION = "Format"; //$NON-NLS-1$
 
+  /** Action string associated with formatting */
+  public static final String IMPORTS_ACTION = "Imports"; //$NON-NLS-1$
+
   /** Resource prefix used to query properties for line comments (see plugin.properties) */
   public static final String commentResourcePrefix = "CommentAction"; //$NON-NLS-1$
   /** Resource prefix used to query properties for line commenting */
@@ -122,6 +126,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private static final String commentPragmaResourcePrefix = "CommentPragmaAction"; //$NON-NLS-1$
   /** Resource prefix used to query properties for format */
   private static final String formatResourcePrefix = "FormatAction"; //$NON-NLS-1$
+  /** Resource prefix used to query properties for format */
+  private static final String importsResourcePrefix = "ImportsAction"; //$NON-NLS-1$
 
   /** The key binding context active while the Haskell editor is active */
   private static final String CONTEXT_ID = HaskellEditor.class.getName() + ".context";  //$NON-NLS-1$
@@ -290,6 +296,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       addAction( mmSource, "comments", HADDOCK_DOCUMENT_PREVIOUS_ACTION); //$NON-NLS-1$
       addAction( mmSource, "comments", HADDOCK_BLOCK_DOCUMENT_FOLLOWING_ACTION); //$NON-NLS-1$
       addAction( mmSource, "formatting", FORMAT_ACTION); //$NON-NLS-1$
+      addAction( mmSource, "formatting", IMPORTS_ACTION); //$NON-NLS-1$
     }
   }
 
@@ -322,6 +329,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
     setAction(FORMAT_ACTION,
         new FormatAction( bundle, formatResourcePrefix + ".", this ));
+    setAction(IMPORTS_ACTION,
+        new OrganizeImportAction( bundle, importsResourcePrefix + ".", this ));
     setAction(COMMENT_PRAGMA_ACTION,
               new PragmaCommentAction( bundle, commentPragmaResourcePrefix + ".", this ));
     setAction( HADDOCK_DOCUMENT_FOLLOWING_ACTION,

@@ -21,4 +21,5 @@ public interface IEditorActionDefinitionIds {
   public final static String HADDOCK_PREVIOUS  = ActionPrefix.concat( "haddock_previous" ); //$NON-NLS-1$
   public final static String HADDOCK_BLOCK_FOLLOWING = ActionPrefix.concat( "haddock_block_following" ); //$NON-NLS-1$
   public final static String FORMAT           = ActionPrefix.concat( "format" ); //$NON-NLS-1$
+  public final static String IMPORTS           = ActionPrefix.concat( "imports" ); //$NON-NLS-1$
 }

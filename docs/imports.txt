@@ -1,0 +1,26 @@
+organize imports
+	- on current source
+	- on file(s)/folders
+
+- get module from file
+- get all references in module from usage tables
+- get current imports lines and qualifiers from outline or usage tables too!
+- do not touch preprocessor directives
+
+- check Prelude is explicitely imported or not
+- if there is import Module(), leave it (for instances) -> make it a preference?
+- order: 
+	- modules from same component
+	- modules from dependent components
+	- modules for dependent projects
+	- other libraries
+	- base
+  and alphabetical in each section? -> see GHC guidelines
+
+
+- module imported, no details
+	-> only import what's used
+	-> nothing -> remove
+- module imported, details
+	-> remove what's not used
+	-> nothing left -> remove

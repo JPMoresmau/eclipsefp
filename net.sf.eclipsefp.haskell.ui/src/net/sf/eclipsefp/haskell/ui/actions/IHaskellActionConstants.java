@@ -36,4 +36,7 @@ public interface IHaskellActionConstants {
 
   /** Comment menu: name of Comment action */
   public static final String FORMAT = ActionPrefix.concat( "Format" );
+
+  /** Comment menu: name of Comment action */
+  public static final String IMPORTS = ActionPrefix.concat( "Imports" );
 }

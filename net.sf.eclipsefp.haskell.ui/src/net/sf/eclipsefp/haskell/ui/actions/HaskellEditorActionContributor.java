@@ -45,6 +45,8 @@ public class HaskellEditorActionContributor extends BasicTextEditorActionContrib
                                       getAction(textEditor, HaskellEditor.COMMENT_PRAGMA_ACTION));
     actionBars.setGlobalActionHandler( IHaskellActionConstants.FORMAT,
         getAction(textEditor, HaskellEditor.FORMAT_ACTION));
+    actionBars.setGlobalActionHandler( IHaskellActionConstants.IMPORTS,
+        getAction(textEditor, HaskellEditor.IMPORTS_ACTION));
 
     actionBars.setGlobalActionHandler(IHaskellActionConstants.SHIFT_RIGHT, getAction(textEditor, "ShiftRight")); //$NON-NLS-1$
     actionBars.setGlobalActionHandler(IHaskellActionConstants.SHIFT_LEFT, getAction(textEditor, "ShiftLeft")); //$NON-NLS-1$

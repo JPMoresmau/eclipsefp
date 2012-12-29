@@ -21,6 +21,7 @@ import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ReferenceLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SymbolDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
@@ -220,6 +221,8 @@ public class UsageDB {
 			ps.close();
 		}
 	}
+	
+	
 	
 	public void setModuleUsages(long fileid,Collection<ObjectUsage> usages) throws SQLException{
 		checkConnection();
@@ -712,5 +715,52 @@ public class UsageDB {
 			ps.close();
 		}
 		return ret;
+	}
+	
+	public Map<String,List<ReferenceLocation>> listReferencesInFile(IFile f)throws SQLException,JSONException{
+		checkConnection();
+		long fileid=getFileID(f);
+		Map<String,List<ReferenceLocation>> ret=new HashMap<String, List<ReferenceLocation>>();
+		PreparedStatement ps=conn.prepareStatement("select mu.section,m.module,mu.location from module_usages mu,modules m where mu.fileid=? and mu.moduleid=m.moduleid");
+		try {
+			ps.setLong(1, fileid);
+			ResultSet rs=ps.executeQuery();
+			try {
+				while(rs.next()){
+					addReference(f,ret, rs.getString(1), rs.getString(2), rs.getString(3),true);
+				}
+			} finally {
+				rs.close();
+			}
+		} finally {
+			ps.close();
+		}
+		ps=conn.prepareStatement("select su.section,m.module,s.symbol,su.location from symbol_usages su,modules m,symbols s where su.fileid=? and s.symbolid=su.symbolid and s.moduleid=m.moduleid");
+		try {
+			ps.setLong(1, fileid);
+			ResultSet rs=ps.executeQuery();
+			try {
+				while(rs.next()){
+					addReference(f,ret, rs.getString(1), rs.getString(2)+"."+rs.getString(3), rs.getString(4),false);
+				}
+			} finally {
+				rs.close();
+			}
+		} finally {
+			ps.close();
+		}
+		return ret;
+	}
+	
+	private void addReference(IFile f,Map<String,List<ReferenceLocation>> m,String section,String name,String loc,boolean mod) throws JSONException{
+		List<ReferenceLocation> s=m.get(section);
+		if (s==null){
+			s=new ArrayList<ReferenceLocation>();
+			m.put(section, s);
+		}
+		ReferenceLocation rl=new ReferenceLocation(name, f, new JSONArray(loc));
+		s.add(rl);
+		rl.setModule(mod);
+		
 	}
 }

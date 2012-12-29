@@ -11,14 +11,17 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
 import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ReferenceLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SymbolDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
@@ -110,6 +113,17 @@ public class UsageAPI {
 				}
 			}
 		}
+	}
+	
+	public Map<String,List<ReferenceLocation>> listReferencesInFile(IFile f){
+		try {
+			return db.listReferencesInFile(f);
+		} catch (SQLException sqle){
+			BuildWrapperPlugin.logError(BWText.error_db, sqle);
+		} catch (JSONException je){
+			BuildWrapperPlugin.logError(BWText.error_parsing_usage_file, je);
+		}
+		return new HashMap<String, List<ReferenceLocation>>();
 	}
 	
 	private void buildUsage(long fileID,JSONArray arr,List<ObjectUsage> modUsages,List<ObjectUsage> objDefs,List<ObjectUsage> objUsages){
