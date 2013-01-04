@@ -814,14 +814,15 @@ public class ScionManager implements IResourceChangeListener {
       if (event.getResult().isOK()) {
         loadHackageDatabase();
       } else {
-        Display.getDefault().syncExec( new Runnable() {
-          @Override
-          public void run() {
-            MessageDialog.openError( Display.getDefault().getActiveShell(),
-                                     UITexts.scionBrowserRebuildingDatabaseError_title,
-                                     UITexts.scionBrowserRebuildingDatabaseError_message );
-          }
-        } );
+     // done by handling the job status
+//        Display.getDefault().syncExec( new Runnable() {
+//          @Override
+//          public void run() {
+//            MessageDialog.openError( Display.getDefault().getActiveShell(),
+//                                     UITexts.scionBrowserRebuildingDatabaseError_title,
+//                                     UITexts.scionBrowserRebuildingDatabaseError_message );
+//          }
+//        } );
       }
 
       super.done( event );
@@ -874,14 +875,15 @@ public class ScionManager implements IResourceChangeListener {
             preloadPrelude();
             checkHoogleDataIsPresent();
           } else {
-            Display.getDefault().syncExec( new Runnable() {
+            // done by handling the job status
+            /*Display.getDefault().syncExec( new Runnable() {
               @Override
               public void run() {
                 MessageDialog.openError( Display.getDefault().getActiveShell(),
                                          UITexts.scionBrowserRebuildingDatabaseError_title,
                                          UITexts.scionBrowserRebuildingDatabaseError_message );
               }
-            } );
+            } );*/
           }
 
           super.done( event );

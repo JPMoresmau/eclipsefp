@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.zip.InflaterInputStream;
@@ -28,9 +29,9 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
+import net.sf.eclipsefp.haskell.util.DispatchWriter;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.LangUtil;
-import net.sf.eclipsefp.haskell.util.NullWriter;
 import net.sf.eclipsefp.haskell.util.StreamRedirect;
 
 import org.eclipse.core.runtime.IPath;
@@ -61,6 +62,9 @@ public class StreamBrowserServer extends BrowserServer {
 
 	private boolean logError;
 	
+	private StringWriter lastErrW=new StringWriter();
+	private DispatchWriter allErrWs=new DispatchWriter();
+	
 	public StreamBrowserServer(IPath serverExecutable,boolean logError) throws Exception {
 		this.serverExecutable = serverExecutable;
 		this.declCache = new HashMap<String, Packaged<Declaration>[]>();
@@ -73,7 +77,11 @@ public class StreamBrowserServer extends BrowserServer {
 	public void setLogStream(Writer logStream) {
 		super.setLogStream(logStream);
 		if (logError){
-			errorRedirect.setOutput(logStream);
+			allErrWs.getWriters().clear();
+			allErrWs.getWriters().add(lastErrW);
+			if (logError && logStream!=null){
+				allErrWs.getWriters().add(logStream);
+			}
 		}
 	}
 	
@@ -89,8 +97,12 @@ public class StreamBrowserServer extends BrowserServer {
 		try {
 			process = builder.start();
 			out = process.getInputStream();
-			Writer errorWriter=logError && logStream!=null?logStream:new NullWriter();
-			errorRedirect=new StreamRedirect(new InputStreamReader(process.getErrorStream(),FileUtil.UTF8), errorWriter);
+			allErrWs.getWriters().clear();
+			allErrWs.getWriters().add(lastErrW);
+			if (logError && logStream!=null){
+				allErrWs.getWriters().add(logStream);
+			}
+			errorRedirect=new StreamRedirect(new InputStreamReader(process.getErrorStream(),FileUtil.UTF8), allErrWs);
 			errorRedirect.start();
 			/*out = new BufferedReader(new InputStreamReader(
 					process.getInputStream(), FileUtil.UTF8));*/
@@ -107,9 +119,7 @@ public class StreamBrowserServer extends BrowserServer {
 			throws IOException {
 		synchronized(lock) {
 			String jsonInput = input.toString();
-			log(">> " + jsonInput);
-			in.write(jsonInput + "\n");
-			in.flush();
+			sendCommand(jsonInput);
 			String response=getALine();
 			// String response = out.readLine();
 			//log(response);
@@ -124,9 +134,7 @@ public class StreamBrowserServer extends BrowserServer {
 			throws IOException {
 		synchronized(lock) {
 			String jsonInput = input.toString();
-			log(">> " + jsonInput);
-			in.write(jsonInput + "\n");
-			in.flush();
+			sendCommand(jsonInput);
 	
 			String response = null;
 			do {
@@ -141,9 +149,7 @@ public class StreamBrowserServer extends BrowserServer {
 			throws IOException {
 		synchronized(lock) {
 			String jsonInput = input.toString();
-			log(">> " + jsonInput);
-			in.write(jsonInput + "\n");
-			in.flush();
+			sendCommand(jsonInput);
 	
 			String response = null;
 			do {
@@ -155,13 +161,18 @@ public class StreamBrowserServer extends BrowserServer {
 		}
 	}
 	
+	private void sendCommand(String command) throws IOException{
+		log(">> " + command);
+		lastErrW.getBuffer().setLength(0);
+		in.write(command + "\n");
+		in.flush();
+	}
+	
 	public synchronized HoogleStatus sendAndReceiveStatus(JSONObject input)
 			throws IOException {
 		synchronized(lock) {
 			String jsonInput = input.toString();
-			log(">> " + jsonInput);
-			in.write(jsonInput + "\n");
-			in.flush();
+			sendCommand(jsonInput);
 			HoogleStatus st=null;
 			String response = null;
 			do {
@@ -187,6 +198,10 @@ public class StreamBrowserServer extends BrowserServer {
 			return reader.readLine();
 		} catch (IOException e) {
 			BrowserPlugin.logError(BrowserText.error_read, e);
+			String lastErr=lastErrW.toString().trim();
+			if (lastErr!=null && lastErr.length()>0){
+				throw new IOException(lastErr);
+			}
 			throw e;
 		}
 	}
