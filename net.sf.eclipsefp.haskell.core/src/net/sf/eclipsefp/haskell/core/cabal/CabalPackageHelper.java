@@ -154,6 +154,12 @@ public class CabalPackageHelper {
     return null;
   }
 
+  /**
+   * run the command and log any errors, returning a reader to the output
+   * @param opts
+   * @return
+   * @throws IOException
+   */
   private BufferedReader run(final String... opts) throws IOException{
     ProcessRunner pr=new ProcessRunner();
     StringWriter swOut=new StringWriter();
@@ -161,16 +167,15 @@ public class CabalPackageHelper {
     pr.executeBlocking( new File("."), swOut, swErr, opts ); //$NON-NLS-1$
     String err=swErr.toString();
     if (err.length()>0){
-      HaskellCorePlugin.log( err, IStatus.ERROR );
+      String warn="warning:";//$NON-NLS-1$
+      // clearly, a warning
+      if (err.toLowerCase().startsWith( warn )){
+        HaskellCorePlugin.log( err.substring( warn.length() ).trim(), IStatus.WARNING );
+      } else {
+        HaskellCorePlugin.log( err, IStatus.ERROR );
+      }
     }
     return new BufferedReader( new StringReader(swOut.toString()) );
-    /*ProcessBuilder pb=new ProcessBuilder();
-    pb.redirectErrorStream(false);
-    pb.command(opts);
-
-    Process p=pb.start();
-    return new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8)); //$NON-NLS-1$
-     */
   }
 
 
