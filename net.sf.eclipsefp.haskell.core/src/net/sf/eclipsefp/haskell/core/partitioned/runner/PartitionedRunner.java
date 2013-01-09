@@ -27,7 +27,9 @@ public abstract class PartitionedRunner {
 	 * @param err Represents stderr stream.
 	 * @return The stream to parse.
 	 */
-	public abstract StringWriter selectStream(StringWriter out, StringWriter err);
+  public StringWriter selectStream( final StringWriter out, final StringWriter err ) {
+    return err.toString().length() > 0 ? err : out;
+  }
 
 	public List<ProcessorError> run(final IPath path) {
 		try {

@@ -12,10 +12,12 @@ Necessary Haskell packages:
 Fixes:
 	- Viewing a package in the browser from the Cabal Packages view the first time could cause a NullPointerException
 	- Removing via quick fix an unused type in import list did not remove constructors
+	- Report errors from alex and happy building
 
 Features:
 	- Cabal Packages view shows a green tick on installed packages and versions when you display the list of all hackage packages.
 	- Distinguish comments/haddock/pragmas in syntax highlighting (https://github.com/JPMoresmau/eclipsefp/issues/44)
+	- Use project root as HLint working folder
 
 Internal:
 
@@ -26,5 +28,6 @@ Upgrade notes:
 
 Known issues:
 
+Thank you Yiding Jia for your contributions
 Thanks to all bug reporters and users for their feedback.
 Thanks to all the people that expressed interest in EclipseFP and want to see it stay alive and improve!

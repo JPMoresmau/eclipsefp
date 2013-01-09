@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
-import java.io.StringWriter;
 
 /**
  * Runner for Alex lexer tool.
@@ -21,10 +20,5 @@ public class AlexRunner extends PartitionedRunner {
 	  }
 		return "alex"; //$NON-NLS-1$
 	}
-
-  @Override
-  public StringWriter selectStream( final StringWriter out, final StringWriter err ) {
-    return err.toString().length() > 0 ? err : out;
-  }
 
 }

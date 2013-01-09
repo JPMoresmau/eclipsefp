@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
-import java.io.StringWriter;
 
 /**
  * Runner for Happy parser tool.
@@ -22,8 +21,5 @@ public class HappyRunner extends PartitionedRunner {
 		return "happy"; //$NON-NLS-1$
 	}
 
-  @Override
-  public StringWriter selectStream( final StringWriter out, final StringWriter err ) {
-    return err.toString().length() > 0 ? err : out;
-  }
+
 }

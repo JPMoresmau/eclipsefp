@@ -151,7 +151,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.hlint"
          download-size="0"
          install-size="0"
-         version="2.4.2"
+         version="2.4.3"
          unpack="false"/>
 
    <plugin
