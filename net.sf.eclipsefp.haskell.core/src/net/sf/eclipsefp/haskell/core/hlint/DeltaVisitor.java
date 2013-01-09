@@ -25,7 +25,7 @@ public class DeltaVisitor implements IResourceDeltaVisitor {
       // And add the new ones
       if( delta.getKind() == IResourceDelta.ADDED
           || delta.getKind() == IResourceDelta.CHANGED ) {
-        for( Suggestion s: HLintRunner.runHLintOn( resource.getLocation() ) ) {
+        for (Suggestion s: HLintRunner.runHLintOn(resource.getProject().getLocation(), resource.getLocation())) {
           HLintBuilder.createMarker( resource, s );
         }
       }

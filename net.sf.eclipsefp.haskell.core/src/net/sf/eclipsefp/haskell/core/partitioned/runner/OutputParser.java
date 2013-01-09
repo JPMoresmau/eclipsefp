@@ -2,6 +2,8 @@ package net.sf.eclipsefp.haskell.core.partitioned.runner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses the output returned by Alex, Happy or UUAGC.
@@ -9,51 +11,43 @@ import java.util.List;
  * @author Alejandro Serrano
  */
 public class OutputParser {
+  // capture groups: 1:file 2:line 3:col 4:msg
+  static Pattern msg = Pattern.compile("^(.*?):([0-9]+)(?::([0-9]+))?:\\s*(.*)$"); //$NON-NLS-1$
 
-	public static List<ProcessorError> errors(final String s) {
-		ArrayList<ProcessorError> r = new ArrayList<ProcessorError>();
+  public static List<ProcessorError> errors( final String s ) {
+    ArrayList<ProcessorError> r = new ArrayList<ProcessorError>();
 
-		String[] lines = s.split("[\r\n]+"); //$NON-NLS-1$
-		for (String line : lines) {
-		  String[] fileParts = line.split(":"); //$NON-NLS-1$
+    String[] lines = s.split( "[\r\n]+" ); //$NON-NLS-1$
+    for( String line: lines ) {
+      if (line.isEmpty()) {
+        continue;
+      }
 
-		  int current;
-		  String fname = fileParts[0];
-		  int lno, cno;
-		  try {
-		    // Try to find a line number
-		    lno = Integer.parseInt( fileParts[1].trim() );
-		    current = 1;
-		  } catch (NumberFormatException e) {
-		    // If not, it is a Windows path
-		    fname = fname + ":" + fileParts[1]; //$NON-NLS-1$
-		    current = 2;
-		  }
+      Matcher matcher = msg.matcher( line );
+      if( matcher.matches() ) {
+        String fname = matcher.group( 1 );
+        int lno = 1;
+        int cno = 1;
+        String msg = matcher.group( 4 );
 
-		  // Parse line number
-		  lno = Integer.parseInt( fileParts[current].trim() );
-		  current++;
+        try {
+          lno = Integer.parseInt(matcher.group(2));
+        } catch (NumberFormatException e) {
+          // empty
+        }
 
-		  // Try to parse a column
-		  try {
-		    cno = Integer.parseInt( fileParts[current].trim() );
-		    current++;
-		  } catch (NumberFormatException e) {
-		    cno = 0;
-		  }
+        try {
+          cno = Integer.parseInt(matcher.group(3));
+        } catch (NumberFormatException e) {
+          // empty
+        }
 
-		  // The rest is the message
-		  String msg = ""; //$NON-NLS-1$
-		  for (int j = current; j < fileParts.length; j++) {
-		    if (msg.length() > 0) {
-		      msg += ":"; //$NON-NLS-1$
-		    }
-		    msg += fileParts[j];
-		  }
+        r.add( new ProcessorError( fname, lno, cno, msg ) );
+      } else {
+        r.add( new ProcessorError( "", 1, 1, line ) ); //$NON-NLS-1$
+      }
+    }
 
-			r.add(new ProcessorError(fname, lno, cno, msg));
-		}
-
-		return r;
-	}
+    return r;
+  }
 }

@@ -16,7 +16,7 @@ public class FullBuildVisitor implements IResourceVisitor {
   @Override
   public boolean visit( final IResource resource ) throws CoreException {
     if( HLintBuilder.mustBeVisited( resource ) ) {
-      for( Suggestion s: HLintRunner.runHLintOn( resource.getLocation() ) ) {
+      for( Suggestion s: HLintRunner.runHLintOn( resource.getProject().getLocation(), resource.getLocation() ) ) {
         HLintBuilder.createMarker( resource, s );
       }
     }

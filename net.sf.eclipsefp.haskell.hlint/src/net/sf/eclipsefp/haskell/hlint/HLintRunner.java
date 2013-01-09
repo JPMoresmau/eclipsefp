@@ -20,14 +20,14 @@ import org.eclipse.osgi.util.NLS;
  * Class the encapsulates the logic of calling hlint and
  * sending the output to the parser to generate a list
  * of suggestions.
- * 
+ *
  * @author Alejandro Serrano
  * @author JP Moresmau
- * 
+ *
  */
 public class HLintRunner {
-	
-	public List<Suggestion> run(IPath path) {
+
+	public static List<Suggestion> runHLintOn(IPath workingDir, IPath path) {
 		StringWriter err=new StringWriter();
 		StringWriter out=new StringWriter();
 		try {
@@ -36,8 +36,9 @@ public class HLintRunner {
 				exe="hlint"; // hope it's in the path
 			}
 			// code is 1 if we have errors!
-			int code=new ProcessRunner().executeBlocking(path.toFile().getParentFile(), out, err,  exe, path.toOSString());
-			
+			int code=new ProcessRunner().executeBlocking(
+			    workingDir.toFile(), out, err, exe, path.toOSString());
+
 			OutputParser parser = new OutputParser(new StringReader(out.toString()));
 			List<Suggestion> sugs= parser.suggestions();
 			if(err.toString().length()>0){
@@ -46,16 +47,11 @@ public class HLintRunner {
 				HLintPlugin.logError(NLS.bind(HLintText.error_run,out.toString()),null);
 			}
 			return sugs;
-			
+
 		} catch (Throwable ex) {
 			String msg=err.toString().length()>0?err.toString():out.toString();
 			HLintPlugin.logError(NLS.bind(HLintText.error_run,msg), ex);
 		}
 		return new ArrayList<Suggestion>();
-	}
-	
-	public static List<Suggestion> runHLintOn(IPath path) {
-		HLintRunner runner = new HLintRunner();
-		return runner.run(path);
 	}
 }
