@@ -63,7 +63,8 @@ public class HaskellPresentationReconciler extends PresentationReconciler{
     @Override
     protected IStatus run( final IProgressMonitor arg0 ) {
       final TextPresentation p=HaskellPresentationReconciler.super.createPresentation( damage, document );
-      if (p!=null && viewer!=null && viewer.getTextWidget()!=null && !viewer.getTextWidget().isDisposed()){
+      if (p!=null && viewer!=null && viewer.getTextWidget()!=null && !viewer.getTextWidget().isDisposed() &&
+          !queue.hasPendingJob()){
         viewer.getTextWidget().getDisplay().syncExec( new Runnable(){
           /* (non-Javadoc)
            * @see java.lang.Runnable#run()

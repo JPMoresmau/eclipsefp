@@ -11,11 +11,6 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
  */
 public class SingleJobQueue {
 	/**
-	 * lock to ensure concurrency
-	 */
-	private Object lock=new Object();
-	
-	/**
 	 * the currently running job
 	 */
 	private Job current;
@@ -23,37 +18,37 @@ public class SingleJobQueue {
 	 * the next job to run
 	 */
 	private Job next;
-	
+
 	/**
 	 * add a job to the queue
 	 * if the queue is empty, schedule the job straight away
 	 * otherwise queue the job (losing the previously waiting job if any)
 	 * @param j
 	 */
-	public void addJob(Job j){
-		synchronized (lock){
-			if (current==null){
-				current=j;
-				launchCurrent();
-			} else {
-				next=j;
-			}
+	public synchronized void addJob(Job j) {
+		if (current==null){
+			current=j;
+			launchCurrent();
+		} else {
+			next=j;
 		}
 	}
-	
+
 	/**
 	 * close the queue: cancel current job and remove next
 	 */
-	public void close(){
-		synchronized (lock){
-			next=null;
-			if (current!=null){
-				current.cancel();
-			}
-			current=null;
+	public synchronized void close(){
+		next=null;
+		if (current!=null){
+			current.cancel();
 		}
+		current=null;
 	}
-	
+
+	public synchronized boolean hasPendingJob() {
+	  return next != null;
+	}
+
 	/**
 	 * launch the current job with a listener that will launch the waiting job on completion
 	 */
@@ -63,11 +58,11 @@ public class SingleJobQueue {
 			current.schedule();
 		}
 	}
-	
+
 	private class ScheduleNextListener extends JobChangeAdapter {
 		@Override
 		public void done(IJobChangeEvent event) {
-			synchronized (lock) {
+			synchronized (SingleJobQueue.this) {
 				// we're not running
 				current=null;
 				// we have a job waiting, let's run it
@@ -79,5 +74,5 @@ public class SingleJobQueue {
 			}
 		}
 	}
-	
+
 }
