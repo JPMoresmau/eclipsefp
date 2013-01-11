@@ -19,6 +19,7 @@ public class BWText extends NLS {
   public static String        process_parse_path_error;
   public static String		  process_parse_outline_error;
   public static String 		  process_parse_thingatpoint_error;
+  public static String		  process_parse_import_clean_error;
   
   public static String        project_members_list_error;
   public static String        project_cabal_duplicate;
@@ -28,6 +29,7 @@ public class BWText extends NLS {
   public static String        job_synchronize;
   public static String        job_components;
   public static String        job_dependencies;
+  public static String        job_import_clean;
   
   public static String        error_deleteMarkers;
   public static String        error_gettingFlags;

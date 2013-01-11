@@ -23,6 +23,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
+import net.sf.eclipsefp.haskell.buildwrapper.types.ImportClean;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Note;
@@ -667,6 +668,35 @@ public class BWFacade {
 			}
 		}
 		return null;
+	}
+	
+	public List<ImportClean> cleanImports(IFile file){
+		String path=file.getProjectRelativePath().toOSString();
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("cleanimports");
+		command.add("--file="+path);
+		addEditorStanza(file,command);
+		JSONArray arr=run(command,ARRAY);
+		List<ImportClean> ret=new ArrayList<ImportClean>();
+		if (arr!=null){
+			if (arr.length()>1){
+				JSONArray notes=arr.optJSONArray(1);
+				//notes.putAll(i.getNotes());
+				parseNotes(notes);
+			}
+			JSONArray locs=arr.optJSONArray(0);
+			if (locs!=null){
+				for (int a=0;a<locs.length();a++){
+					try {
+						JSONObject o=locs.getJSONObject(a);
+						ret.add(new ImportClean(file,o));
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_import_clean_error, je);
+					}
+				}
+			}
+		}
+		return ret;
 	}
 	
 	public List<Occurrence> getOccurrences(IFile file,String s){
