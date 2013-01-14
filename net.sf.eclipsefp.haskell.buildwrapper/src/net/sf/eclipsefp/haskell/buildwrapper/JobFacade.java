@@ -325,7 +325,7 @@ public class JobFacade  {
 		return realFacade.getProject();
 	}
 
-	public void cleanImport(final IFile file, final ImportCleanHandler handler){
+	public void cleanImport(final IFile file,final boolean format, final ImportCleanHandler handler){
 		final String jobNamePrefix = NLS.bind(BWText.job_import_clean, file.getName());
 		
 	    Job buildJob = new Job (jobNamePrefix) {
@@ -334,7 +334,7 @@ public class JobFacade  {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	          //long t0=System.currentTimeMillis();
-	          handler.handleImportCleans(realFacade.cleanImports(file));
+	          handler.handleImportCleans(realFacade.cleanImports(file,format));
 	          //long t1=System.currentTimeMillis();
 	          //BuildWrapperPlugin.logInfo("thingAtPoint:"+(t1-t0)+"ms");
 	        } finally {

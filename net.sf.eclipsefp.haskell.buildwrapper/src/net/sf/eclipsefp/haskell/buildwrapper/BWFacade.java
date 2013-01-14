@@ -670,11 +670,12 @@ public class BWFacade {
 		return null;
 	}
 	
-	public List<ImportClean> cleanImports(IFile file){
+	public List<ImportClean> cleanImports(IFile file,boolean format){
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("cleanimports");
 		command.add("--file="+path);
+		command.add("--format="+format);
 		addEditorStanza(file,command);
 		JSONArray arr=run(command,ARRAY);
 		List<ImportClean> ret=new ArrayList<ImportClean>();

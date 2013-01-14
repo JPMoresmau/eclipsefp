@@ -13,6 +13,7 @@ Fixes:
 	- Viewing a package in the browser from the Cabal Packages view the first time could cause a NullPointerException
 	- Removing via quick fix an unused type in import list did not remove constructors
 	- Report errors from alex and happy building
+	- Syntax highlighting more stable on big files
 
 Features:
 	- Cabal Packages view shows a green tick on installed packages and versions when you display the list of all hackage packages.

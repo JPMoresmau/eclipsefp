@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012 by JP Moresmau
+ * Copyright (c) 2013 by JP Moresmau
  * This code is made available under the terms of the Eclipse Public License,
  * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
  */
@@ -22,10 +22,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 
 /**
+ * Process the imports cleaning instructions from buildwrapper
  * @author JP Moresmau
  *
  */
 public class ImportCleaner {
+
+  public boolean doFormat(){
+    return true;
+  }
 
   public void cleanFile(final ITextEditor editor){
     if (editor instanceof HaskellEditor) {
@@ -36,11 +41,14 @@ public class ImportCleaner {
         if (bwf!=null){
           final IDocument d= ( ( HaskellEditor )editor ).getDocument();
           final Display display=Display.findDisplay( Thread.currentThread() );
-          bwf.cleanImport( f, new ImportCleanHandler() {
+          bwf.cleanImport( f,doFormat(), new ImportCleanHandler() {
 
             @Override
             public void handleImportCleans( final List<ImportClean> cleans ) {
               if (cleans!=null){
+                /**
+                 * order in reverse order to keep lines always valid even when document changes
+                 */
                 Collections.sort( cleans,new Comparator<ImportClean>() {
                   /* (non-Javadoc)
                    * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
@@ -57,10 +65,11 @@ public class ImportCleaner {
                   @Override
                   public void run() {
                     for (ImportClean cl:cleans){
+                      //replaceWithFormatting(d,cl);
                       try {
                         int start=cl.getLocation().getStartOffset( d );
                         int length=cl.getLocation().getLength( d );
-                        d.replace( start , length, cl.getText() );
+                        d.replace( start , length, cl.getText());
                       } catch (BadLocationException ble){
                         HaskellUIPlugin.log( ble );
                       }
@@ -79,6 +88,48 @@ public class ImportCleaner {
     }
   }
 
-
-
+//  private static void replaceWithFormatting(final IDocument d,final ImportClean cl){
+//    try {
+//      int start=cl.getLocation().getStartOffset( d );
+//      int length=cl.getLocation().getLength( d );
+//      String s=d.get( start , length );
+//      int sp=getExtraSpacesAfterImport( s );
+//      String rep=cl.getText();
+//      if (sp>0){
+//        rep=setExtraSpacesAfterImport( rep, sp );
+//      }
+//
+//      d.replace( start , length, rep);
+//    } catch (BadLocationException ble){
+//      HaskellUIPlugin.log( ble );
+//    }
+//  }
+//
+//  private static int getExtraSpacesAfterImport(final String s){
+//    int ix=s.indexOf( "import" );
+//    if (ix>-1){
+//      int sp=0;
+//      ix+="import".length();
+//      for (;ix<s.length() && Character.isWhitespace( s.charAt( ix ));ix++){
+//        sp++;
+//      }
+//      return sp-1;
+//    }
+//    return 0;
+//  }
+//
+//  private static String setExtraSpacesAfterImport(final String s,final int spaces){
+//    int ix=s.indexOf( "import" );
+//    if (ix>-1){
+//      StringBuilder sb=new StringBuilder();
+//      ix+="import".length();
+//      sb.append(s.substring( 0,ix ));
+//      for (int a=0;a<spaces;a++){
+//        sb.append(' ');
+//      }
+//      sb.append(s.substring( ix ));
+//      return sb.toString();
+//    }
+//    return s;
+//  }
 }
