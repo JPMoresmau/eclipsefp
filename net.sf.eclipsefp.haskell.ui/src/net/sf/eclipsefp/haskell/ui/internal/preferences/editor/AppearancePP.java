@@ -47,6 +47,7 @@ public class AppearancePP extends AbstractEditorPP {
     store.addIntKey( EDITOR_TAB_WIDTH );
     store.addIntKey( EDITOR_CABAL_TAB_WIDTH );
     store.addStringKey( CA_AUTOACTIVATION_TRIGGERS );
+    store.addBooleanKey( IMPORT_CLEAN_FORMAT );
   //  store.addStringKey( CA_PROPOSALS_SCOPE );
   }
 
@@ -224,6 +225,8 @@ public class AppearancePP extends AbstractEditorPP {
 
     String mbKey = EDITOR_MATCHING_BRACKETS;
     createBooleanField( parent, UITexts.preferences_editor_appearance_matching_brackets, mbKey );
+
+    createBooleanField( parent, UITexts.preferences_editor_appearance_import_clean_format, IMPORT_CLEAN_FORMAT );
 
   }
 

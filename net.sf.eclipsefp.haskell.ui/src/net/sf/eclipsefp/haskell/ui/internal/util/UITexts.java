@@ -379,6 +379,7 @@ public final class UITexts extends NLS {
   public static String preferences_editor_appearance_matching_brackets;
   public static String preferences_editor_appearance_current_line;
   public static String preferences_editor_appearance_print_margin;
+  public static String preferences_editor_appearance_import_clean_format;
 
   public static String preferences_editor_contentass;
   public static String preferences_editor_contentass_scope;

@@ -125,6 +125,8 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     store.setDefault( EDITOR_MATCHING_BRACKETS, true );
     store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE );
     store.setToDefault( AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN );
+
+    store.setDefault( IMPORT_CLEAN_FORMAT ,true);
 //    store.setDefault( EDITOR_CURRENT_LINE, true );
 //    store.setDefault( EDITOR_PRINT_MARGIN, true );
 

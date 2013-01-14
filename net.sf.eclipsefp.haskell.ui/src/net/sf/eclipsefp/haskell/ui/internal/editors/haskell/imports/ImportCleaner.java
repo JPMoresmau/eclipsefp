@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.ImportClean;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportCleanHandler;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -29,7 +30,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class ImportCleaner {
 
   public boolean doFormat(){
-    return true;
+    return HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IEditorPreferenceNames.IMPORT_CLEAN_FORMAT );
   }
 
   public void cleanFile(final ITextEditor editor){
