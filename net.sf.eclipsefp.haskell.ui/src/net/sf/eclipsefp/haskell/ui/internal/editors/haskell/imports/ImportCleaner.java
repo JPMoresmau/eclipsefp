@@ -56,7 +56,7 @@ public class ImportCleaner {
                    */
                   @Override
                   public int compare( final ImportClean o1, final ImportClean o2 ) {
-                   return Integer.valueOf(o1.getLocation().getStartLine()).compareTo(Integer.valueOf(o2.getLocation().getStartLine()));
+                   return Integer.valueOf(o2.getLocation().getStartLine()).compareTo(Integer.valueOf(o1.getLocation().getStartLine()));
                   }
                 } );
                 display.asyncExec( new Runnable(){
@@ -71,6 +71,15 @@ public class ImportCleaner {
                         int start=cl.getLocation().getStartOffset( d );
                         int length=cl.getLocation().getLength( d );
                         d.replace( start , length, cl.getText());
+                        // remove empty lines
+                        if (cl.getText().length()==0){
+                          int line=d.getLineOfOffset( start );
+                          int len=d.getLineLength(line  );
+                          String del=d.getLineDelimiter( line );
+                          if (del!=null && del.length()==len){
+                            d.replace( start, len,"" );
+                          }
+                        }
                       } catch (BadLocationException ble){
                         HaskellUIPlugin.log( ble );
                       }
