@@ -22,12 +22,13 @@ import org.eclipse.ui.PartInitException;
  */
 public class ViewTestListener implements ITestListener {
 
-  public TestResultView getView(){
+  public TestResultView getView(final boolean activate){
     IWorkbenchPage p=HaskellUIPlugin.getActivePage();
     //TestResultView view=(TestResultView)p.findView( HaskellDebugUI.TEST_RESULTS_VIEW_ID );
     //p.activate( view );
     try {
-      TestResultView view=(TestResultView)p.showView( HaskellDebugUI.TEST_RESULTS_VIEW_ID );
+      /** do not activate on update **/
+      TestResultView view=(TestResultView)p.showView( HaskellDebugUI.TEST_RESULTS_VIEW_ID,null,activate?IWorkbenchPage.VIEW_ACTIVATE:IWorkbenchPage.VIEW_CREATE );
       return view;
     } catch (PartInitException pie){
       HaskellCorePlugin.log( pie );
@@ -44,7 +45,7 @@ public class ViewTestListener implements ITestListener {
     Display.getDefault().asyncExec( new Runnable(){
       @Override
       public void run() {
-        TestResultView view=getView();
+        TestResultView view=getView(true);
         if (view!=null){
           view.setInput( ts,true );
         }
@@ -62,7 +63,7 @@ public class ViewTestListener implements ITestListener {
     Display.getDefault().asyncExec( new Runnable(){
       @Override
       public void run() {
-        TestResultView view=getView();
+        TestResultView view=getView(false);
         if (view!=null){
           view.setInput( ts,false );
         }
@@ -79,7 +80,7 @@ public class ViewTestListener implements ITestListener {
     Display.getDefault().asyncExec( new Runnable(){
       @Override
       public void run() {
-        TestResultView view=getView();
+        TestResultView view=getView(true); // activate on end
         if (view!=null){
           view.setInput( ts,false );
         }

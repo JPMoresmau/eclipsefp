@@ -229,7 +229,7 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     }
     suite.reset();
     for (ITestListener tl:TestListenerManager.getContributors().values()){
-      tl.update(suite );
+      tl.end(suite );
     }
 
     new File(fname).delete();

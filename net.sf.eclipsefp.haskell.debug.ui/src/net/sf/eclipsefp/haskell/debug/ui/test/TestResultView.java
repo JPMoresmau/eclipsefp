@@ -6,6 +6,7 @@
 package net.sf.eclipsefp.haskell.debug.ui.test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -211,8 +212,21 @@ public class TestResultView extends ViewPart {
   public void setInput(final TestSuite ts,final boolean add){
     Object[] expanded=testTree.getExpandedElements();
 
-    testTree.setInput( Collections.singleton( ts.getRoot() ));
-
+    /** avoid flicker by only refreshing if we have the proper input already **/
+    boolean needInput=true;
+    if (!add){
+      Object i=testTree.getInput();
+      if (i!=null && i instanceof Collection<?>){
+        Collection<?> c=(Collection<?>)i;
+        if (c.size()==1 && ts.getRoot()==c.iterator().next() ){
+          testTree.refresh();
+          needInput=false;
+        }
+      }
+    }
+    if (needInput){
+      testTree.setInput( Collections.singleton( ts.getRoot() ));
+    }
 
     tRuns.setText( String.valueOf( ts.getRuns() ) );
     tErrors.setText( String.valueOf( ts.getErrors() ) );
