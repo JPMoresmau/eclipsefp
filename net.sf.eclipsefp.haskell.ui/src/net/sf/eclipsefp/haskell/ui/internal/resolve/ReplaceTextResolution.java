@@ -5,6 +5,10 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -59,5 +63,47 @@ public class ReplaceTextResolution extends MarkerCompletion {
       HaskellUIPlugin.log( ex );
     }
     return null;
+  }
+
+  public static List<String> getSuggestionsFromGHCMessage(final String msg){
+    return getSuggestionsFromGHCMessage( msg ,msg.toLowerCase( Locale.ENGLISH ));
+  }
+
+  public static List<String> getSuggestionsFromGHCMessage(String msg,final String msgL){
+    List<String> suggestions=new ArrayList<String>();
+    int start=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_SUGGESTION_MULTIPLE );
+    if (start==-1){
+      start=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_SUGGESTION );
+      if (start>-1){
+        start+=GhcMessages.NOT_IN_SCOPE_SUGGESTION.length();
+      }
+    } else {
+      start+=GhcMessages.NOT_IN_SCOPE_SUGGESTION_MULTIPLE.length();
+    }
+    if (start==-1){
+      return suggestions;
+    }
+    msg=msg.substring( start);
+    int openParensIx=msg.indexOf( '(' );
+    while (openParensIx>-1){
+      String sug=msg.substring( 0,openParensIx );
+      if (sug.startsWith( "," )){
+        sug=sug.substring( 1 );
+      }
+      sug=sug.trim();
+      if (sug.startsWith( "`") && sug.endsWith( "'" )){
+        sug=sug.substring( 1,sug.length()-1 );
+      }
+      suggestions.add(sug);
+      int closeParensIx=msg.indexOf( ')',openParensIx );
+      if (closeParensIx>-1){
+        msg=msg.substring( closeParensIx+1 );
+        openParensIx=msg.indexOf( '(' );
+      } else {
+        openParensIx=-1;
+      }
+    }
+
+    return suggestions;
   }
 }

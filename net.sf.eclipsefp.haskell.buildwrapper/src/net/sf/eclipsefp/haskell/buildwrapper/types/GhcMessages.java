@@ -37,6 +37,7 @@ public interface GhcMessages {
   public static String NOT_IN_SCOPE_START="not in scope: "; //$NON-NLS-1$
   public static String NOT_IN_SCOPE_END="'"; //$NON-NLS-1$
   public static String NOT_IN_SCOPE_SUGGESTION="perhaps you meant"; //$NON-NLS-1$
+  public static String NOT_IN_SCOPE_SUGGESTION_MULTIPLE="perhaps you meant one of these:"; //$NON-NLS-1$
   
   public static String IS_A_DATA_CONSTRUCTOR="is a data constructor"; //$NON-NLS-1$
   

@@ -15,6 +15,7 @@ Fixes:
 	- Report errors from alex and happy building
 	- Syntax highlighting more stable on big files
 	- Haskell test results does not reclaim focus on each refresh, less flicker on update
+	- Quick fix on multiple GHC suggestions
 
 Features:
 	- Cabal Packages view shows a green tick on installed packages and versions when you display the list of all hackage packages.
