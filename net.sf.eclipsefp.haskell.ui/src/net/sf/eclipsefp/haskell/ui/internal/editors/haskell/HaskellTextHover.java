@@ -175,7 +175,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               sb.append(html ? "</nobr>" : "");
               if (tap.getModule()!=null){
                 sb.append(html ? "<br/>" : "\n");
-                sb.append(html ? "<span style='color: grey'>module:</span> <span style='color:rgb("+moduleColor+"); font-weight: bold'><nobr>" : "");
+                sb.append(html ? "<span style='color: grey'>"+UITexts.editor_textHover_module+"</span>&nbsp;<span style='color:rgb("+moduleColor+"); font-weight: bold'><nobr>" : "");
                 sb.append(tap.getModule());
                 sb.append(html ? "</nobr></span>" : "");
               }

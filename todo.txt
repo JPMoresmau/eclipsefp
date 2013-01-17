@@ -1,4 +1,3 @@
-- show installed packages/version via an overlay on the global cabal package list
 
 - quick fix on missing package 
 	-> install package -> Done
