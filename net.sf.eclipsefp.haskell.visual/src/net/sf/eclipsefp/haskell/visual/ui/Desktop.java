@@ -5,14 +5,21 @@
  */
 package net.sf.eclipsefp.haskell.visual.ui;
 
+import net.sf.eclipsefp.haskell.visual.ui.text.VisualTexts;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -20,7 +27,8 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class Desktop extends Composite {
-
+	private Point mouseDownPoint;
+	
 	/**
 	 * @param parent
 	 * @param style
@@ -30,6 +38,32 @@ public class Desktop extends Composite {
 		setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		setLayout(null);
 		Bubble b=new Bubble(this,SWT.NONE);
+		Menu ctxMenu=new Menu(this);
+		
+		addMouseListener(new MouseAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
+			 */
+			@Override
+			public void mouseDown(MouseEvent e) {
+				mouseDownPoint=new Point(e.x, e.y);
+			}
+		});
+		
+		MenuItem ctxAdd=new MenuItem(ctxMenu, SWT.PUSH);
+		ctxAdd.setText(VisualTexts.desktop_bubble_new);
+		ctxAdd.addSelectionListener(new SelectionAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Bubble nb=new Bubble(Desktop.this,SWT.NONE);
+				
+				Desktop.this.setBounds(mouseDownPoint!=null?mouseDownPoint.x:e.x, mouseDownPoint!=null?mouseDownPoint.y:e.y, nb);
+			}
+		});
+		setMenu(ctxMenu);
 		
 		setBounds(0, 0, b);
 	}

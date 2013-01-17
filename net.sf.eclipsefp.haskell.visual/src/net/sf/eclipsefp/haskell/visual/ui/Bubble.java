@@ -11,10 +11,13 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
@@ -64,8 +67,8 @@ public class Bubble extends Composite {
 				Rectangle r=getBounds();
 				int x=paramMouseEvent.x;
 				int y=paramMouseEvent.y;
-				System.out.println(r.x+"->"+x);
-				System.out.println(r.y+"->"+y);
+				//System.out.println(r.x+"->"+x);
+				//System.out.println(r.y+"->"+y);
 				if (isSizing){
 					if (x>MIN_WIDTH && y>MIN_HEIGHT){
 						setSize(x, y);
@@ -97,6 +100,7 @@ public class Bubble extends Composite {
 			
 			@Override
 			public void mouseDown(MouseEvent paramMouseEvent) {
+				Bubble.this.moveAbove(null);
 				Rectangle r=getBounds();
 				int x=paramMouseEvent.x;
 				int y=paramMouseEvent.y;
@@ -121,6 +125,19 @@ public class Bubble extends Composite {
 			public void mouseDoubleClick(MouseEvent paramMouseEvent) {
 				// TODO Auto-generated method stub
 				
+			}
+		});
+		
+		st.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				Point computedSize=Bubble.this.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point currentsize=Bubble.this.getSize();
+				Point maxSize=new Point(Math.max(currentsize.x, computedSize.x), Math.max(currentsize.y, computedSize.y));
+				if (maxSize.x>currentsize.x || maxSize.y>currentsize.y){
+					Bubble.this.setSize(maxSize);
+				}
 			}
 		});
 	}
