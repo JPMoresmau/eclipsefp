@@ -59,11 +59,38 @@ abstract class RefDelegate {
         try {
           Location l = new Location( info.getSourceFile().getLocation().toOSString(),
               haskellEditor.getDocument(), new Region( info.getOffset(), 0 ) );
-          BWFacade f=BuildWrapperPlugin.getFacade( info.getSourceFile().getProject() );
-          tap=f.getThingAtPoint( info.getSourceFile(), l );
+          return getThingAtPoint( l );
         } catch (Exception e){
           HaskellUIPlugin.log( e );
         }
+      }
+    }
+    return tap;
+  }
+
+  /**
+   * get the location of the rename
+   * @return
+   */
+  public Location getLocation(){
+    if (info.getTargetEditor() instanceof HaskellEditor){
+      final HaskellEditor haskellEditor= (HaskellEditor)info.getTargetEditor();
+      try {
+        Location l = new Location( info.getSourceFile().getLocation().toOSString(),
+            haskellEditor.getDocument(), new Region( info.getOffset(), 0 ) );
+        return l;
+      } catch (Exception e){
+        HaskellUIPlugin.log( e );
+      }
+    }
+    return null;
+  }
+
+  public ThingAtPoint getThingAtPoint(final Location l){
+    if (tap==null){
+      if (info.getTargetEditor() instanceof HaskellEditor){
+          BWFacade f=BuildWrapperPlugin.getFacade( info.getSourceFile().getProject() );
+          tap=f.getThingAtPoint( info.getSourceFile(), l );
       }
     }
     return tap;

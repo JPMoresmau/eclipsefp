@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
@@ -113,6 +115,45 @@ public class ChangeCreator {
         referencesChange.add( importChanges );
       }
     }
+    return referencesChange;
+
+  }
+
+  /**
+   * change occurrence locally
+   * @param f the file
+   * @param filter the location of the outline span, only occurrences within this location are used
+   * @param occs the occurences
+   * @param oldName the old name
+   * @param newName the new name
+   * @return the change
+   */
+  public static CompositeChange getLocalReferencesChange(final IFile f,final Location filter,final List<Occurrence> occs,final String oldName,final String newName){
+    CompositeChange referencesChange = new CompositeChange( UITexts.updateReferences );
+
+
+        TextFileChange importChanges = new TextFileChange( UITexts.updateReferences,f);
+        MultiTextEdit multiEdit = new MultiTextEdit();
+        IDocumentProvider prov=new TextFileDocumentProvider();
+        try {
+          prov.connect( f );
+          IDocument doc=prov.getDocument(  f );
+          try {
+            for (Occurrence occ: occs){
+              if (filter.contains( occ.getLine() , occ.getColumn())){
+                int offset=doc.getLineOffset( occ.getLine()-1 )+occ.getColumn();
+                multiEdit.addChild( new ReplaceEdit( offset, oldName.length(), newName ));
+              }
+            }
+          } finally {
+            prov.disconnect( f );
+          }
+        } catch (Exception ce){
+          HaskellUIPlugin.log( ce );
+        }
+        importChanges.setEdit( multiEdit );
+        referencesChange.add( importChanges );
+
     return referencesChange;
 
   }

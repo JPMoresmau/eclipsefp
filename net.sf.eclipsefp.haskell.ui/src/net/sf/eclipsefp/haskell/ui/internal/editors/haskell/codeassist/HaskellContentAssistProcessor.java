@@ -34,8 +34,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
-import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
-import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
@@ -628,40 +626,17 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  if (editor!=null){
   	  BWFacade f=BuildWrapperPlugin.getFacade(project) ;
       if (f!=null){
-        try {
-        int line=doc.getLineOfOffset( offset );
-        int col=offset-doc.getLineOffset( line );
-        OutlineResult or=editor.getLastOutlineResult();
-        if (or!=null){
-          Location odL=null;
-          for (OutlineDef od:or.getOutlineDefs()){
-            Location l=od.getLocation();
-            if (l.contains( line, col )){
-              odL=l;
-              for (OutlineDef odc:od.getChildren()){
-                Location lc=odc.getLocation();
-                if (lc.contains( line, col )){
-                  odL=lc;
-                  break;
-                }
-              }
-              break;
-            }
-          }
-          if (odL!=null){
-            List<ThingAtPoint> taps=f.getLocals( theFile,odL);
-            for (ThingAtPoint t:taps){
-              Local func=new Local("",t.getName(),t.getType());
-              if (!importeds.containsKey( t.getName() )){
-                importeds.put(t.getName(),func);
-              }
+        Location odL=editor.getOutlineSpan( offset );
+        if (odL!=null){
+          List<ThingAtPoint> taps=f.getLocals( theFile,odL);
+          for (ThingAtPoint t:taps){
+            Local func=new Local("",t.getName(),t.getType());
+            if (!importeds.containsKey( t.getName() )){
+              importeds.put(t.getName(),func);
             }
           }
         }
-        } catch (BadLocationException ble){
-          HaskellUIPlugin.log( ble );
-        }
-       }
+      }
 	  }
 	}
 

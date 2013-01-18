@@ -854,6 +854,39 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return names;
   }
 
+  public Location getOutlineSpan(final int offset){
+    Location odL=null;
+
+    IDocument doc=getDocument();
+    if (doc!=null){
+      try {
+        int line=doc.getLineOfOffset( offset );
+        int col=offset-doc.getLineOffset( line );
+        OutlineResult or=getLastOutlineResult();
+        if (or!=null){
+
+          for (OutlineDef od:or.getOutlineDefs()){
+            Location l=od.getLocation();
+            if (l.contains( line, col )){
+              odL=l;
+              for (OutlineDef odc:od.getChildren()){
+                Location lc=odc.getLocation();
+                if (lc.contains( line, col )){
+                  odL=lc;
+                  break;
+                }
+              }
+              break;
+            }
+          }
+        }
+      } catch (BadLocationException ble){
+        HaskellUIPlugin.log( ble );
+      }
+    }
+    return odL;
+  }
+
   // Interface methods for IScionEventListener
 
 //  /**

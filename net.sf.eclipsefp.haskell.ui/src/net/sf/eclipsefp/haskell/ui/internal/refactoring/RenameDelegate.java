@@ -3,6 +3,9 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.ui.internal.refactoring;
 
+import java.util.List;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ThingAtPoint;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
@@ -41,8 +44,6 @@ public class RenameDelegate extends RefDelegate {
       project=info.getSourceFile().getProject();
     }
   }
-
-
 
   @Override
   RefactoringStatus checkFinalConditions( final IProgressMonitor pm,
@@ -93,14 +94,25 @@ public class RenameDelegate extends RefDelegate {
     if (info.getTargetEditor() instanceof HaskellEditor){
       final HaskellEditor haskellEditor= (HaskellEditor)info.getTargetEditor();
       try {
-       ThingAtPoint tap=getThingAtPoint();
-        if (tap!=null){
-            UsageQuery uq=ReferencesWorkspaceHandler.getUsageQuery( haskellEditor, getProject(), tap );
-            uq.setScopeFlags( UsageQueryFlags.SCOPE_ALL );
-            uq.run( pm );
-            UsageSearchResult usr=(UsageSearchResult)uq.getSearchResult();
-            CompositeChange cc=ChangeCreator.getReferencesChange( usr.getResults(), tap.getName(), getNewName() );
-            return cc;
+        Location l=getLocation();
+        if (l!=null){
+          ThingAtPoint tap=getThingAtPoint(l);
+          if (tap!=null){
+              UsageQuery uq=ReferencesWorkspaceHandler.getUsageQuery( haskellEditor, getProject(), tap );
+              uq.setScopeFlags( UsageQueryFlags.SCOPE_ALL );
+              uq.run( pm );
+              UsageSearchResult usr=(UsageSearchResult)uq.getSearchResult();
+              if (usr.getResults().getSize()>0){
+                CompositeChange cc=ChangeCreator.getReferencesChange( usr.getResults(), tap.getName(), getNewName() );
+                return cc;
+              } else {
+                // nothing found: change locally
+                List<Occurrence> occs=haskellEditor.getTokenScanner().getOccurrences( l.getStartOffset( haskellEditor.getDocument() ) );
+                Location spanLocation=haskellEditor.getOutlineSpan( getLocation().getStartOffset( haskellEditor.getDocument() ) );
+                CompositeChange cc=ChangeCreator.getLocalReferencesChange(haskellEditor.findFile(),spanLocation, occs, tap.getName(), getNewName() );
+                return cc;
+              }
+          }
         }
       } catch (Exception e){
         HaskellUIPlugin.log( e );
