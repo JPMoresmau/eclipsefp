@@ -46,5 +46,16 @@ public class ResolveFromMessageTests {
     assertEquals("List.foldl'",sugs.get( 0 ));
   }
 
+  @Test
+  public void testQuoteSuggestion(){
+    // https://github.com/JPMoresmau/eclipsefp/issues/85
+    String msg="Perhaps you meant execStateT' (imported from Control.Monad.Trans.State.Lazy)";
+    List<String> sugs=ReplaceTextResolution.getSuggestionsFromGHCMessage( msg );
+    assertNotNull( sugs );
+    assertEquals( 1, sugs.size() );
+    assertEquals("execStateT'",sugs.get( 0 ));
+  }
+
+
 
 }
