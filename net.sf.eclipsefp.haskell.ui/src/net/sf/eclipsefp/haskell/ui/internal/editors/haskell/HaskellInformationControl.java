@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class HaskellInformationControl extends AbstractInformationControl {
 
-  private static final int HOVER_WRAPWIDTH = 600; // bounds for the tooltip with type info and errors/warnings
+  //private static final int HOVER_WRAPWIDTH = 600; // bounds for the tooltip with type info and errors/warnings
   private static final int HOVER_MAXWIDTH = 1000;
   private static final int HOVER_MINHEIGHT = 36;
   private static final int HOVER_MAXHEIGHT = 700;
@@ -69,23 +69,33 @@ public class HaskellInformationControl extends AbstractInformationControl {
         int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight;
         int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
 
+        // JP: I don't understand that code...
+        // so I just keep setting the hover to the best size
+        // if somebody write all documentation in one big line, they'll get a big hover
+        // but so what? Long lines are hard to read in code anyway
         // contentWidth may exceed HOVER_WRAPWIDTH if there are wide lines that cannot
         // be broken.
 
-        if (contentWidth <= HOVER_WRAPWIDTH) {
+ //      if (contentWidth <= HOVER_WRAPWIDTH) {
           // for content within the width, simply set the content height and use
           // HOVER_WRAPWIDTH for the width. (cannot use contentWidth, since it sometimes
           // assumes an unnecessary vertical scrollbar and gets too small)
-          HaskellInformationControl.this.setSize(contentWidth+10,contentHeight);
-         // doc.evaluate( "document.body.style.overflowX='hidden';" );
-        } else {
-          // for content exceeding the width, we use the wider size and compute
-          // a new content height.
 
-          HaskellInformationControl.this.setSize(contentWidth,0);
-          contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight;
-          HaskellInformationControl.this.setSize(contentWidth,contentHeight);
+        // reserve space for scroll bar
+        if (contentWidth>HOVER_MAXWIDTH){
+          contentHeight+=25;
         }
+        HaskellInformationControl.this.setSize(contentWidth+10,contentHeight);
+
+       // doc.evaluate( "document.body.style.overflowX='hidden';" );
+ //       } else {
+//          // for content exceeding the width, we use the wider size and compute
+//          // a new content height.
+//
+ //         HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,0);
+ //         contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight+30;
+ //         HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight);
+ //       }
         if (contentHeight<HOVER_MAXHEIGHT){
           doc.evaluate( "document.body.style.overflowY='hidden';" );
         }
