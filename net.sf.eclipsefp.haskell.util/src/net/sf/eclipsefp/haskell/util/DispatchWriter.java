@@ -17,7 +17,8 @@ import java.util.List;
  *
  */
 public class DispatchWriter extends Writer {
-	List<Writer> writers=Collections.synchronizedList(new ArrayList<Writer>());
+	private final List<Writer> writers=Collections.synchronizedList(new ArrayList<Writer>());
+	private final List<Writer> fClosedOutputs = new ArrayList<Writer>();
 	
 	/**
 	 * @return the writers
@@ -25,36 +26,63 @@ public class DispatchWriter extends Writer {
 	public List<Writer> getWriters() {
 		return writers;
 	}
+
+	private void outputClosed(final Writer output) {
+		  fClosedOutputs.add(output);
+		}
+
+	private void removeClosedOutputs() {
+	  for (Writer output : fClosedOutputs) {
+	    writers.remove( output );
+	  }
+	  fClosedOutputs.clear();
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see java.io.Writer#write(char[], int, int)
 	 */
 	@Override
-	public void write(char[] cbuf, int off, int len) throws IOException {
+	public void write(char[] cbuf, int off, int len) {
 		for (Writer w:writers){
-			w.write(cbuf,off,len);
+			try {
+				w.write(cbuf,off,len);
+			} catch (IOException ex) {
+				outputClosed(w);
+			}
 		}
-
+		removeClosedOutputs();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.io.Writer#flush()
 	 */
 	@Override
-	public void flush() throws IOException {
+	public void flush()  {
 		for (Writer w:writers){
-			w.flush();
+			try {
+				w.flush();
+			} catch (IOException ex) {
+				outputClosed(w);
+			}	
 		}
+		
+		removeClosedOutputs();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.io.Writer#close()
 	 */
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		for (Writer w:writers){
-			w.close();
+			try {
+				w.close();
+			} catch (IOException ex) {
+				outputClosed(w);
+			}	
 		}
+		removeClosedOutputs();
 	}
 
 }

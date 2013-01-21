@@ -8,16 +8,6 @@
       </initializer>
    </extension>
    <extension
-         point="net.sf.eclipsefp.haskell.core.haskellCompilers">
-      <compiler
-            name="%ghc_name"
-            description="%ghc_desc"
-            class="net.sf.eclipsefp.haskell.ghccompiler.core.GhcCompiler"
-            mode="make"
-            id="ghcCompiler">
-      </compiler>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             name="%compilerPP_name"

@@ -22,7 +22,7 @@ import org.junit.Test;
  * @author JP Moresmau
  *
  */
-public class AnImportTest {
+public class AnImport_PDETest {
 
   @Test
   public void testRemoveSimple(){

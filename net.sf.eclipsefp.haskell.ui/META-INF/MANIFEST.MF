@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ui;singleton:=true
-Bundle-Version: 2.4.3
+Bundle-Version: 2.5.0
 Bundle-Activator: net.sf.eclipsefp.haskell.ui.HaskellUIPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
@@ -74,7 +74,6 @@ Export-Package: net.sf.eclipsefp.common.ui.dialog;uses:="org.eclipse.swt.widgets
  net.sf.eclipsefp.haskell.ui.internal.scion,
  net.sf.eclipsefp.haskell.ui.internal.util;uses:="org.eclipse.osgi.util",
  net.sf.eclipsefp.haskell.ui.internal.views.common;x-friends:="net.sf.eclipsefp.haskell.ui.test",
- net.sf.eclipsefp.haskell.ui.internal.views.outline.provisionary;x-friends:="net.sf.eclipsefp.haskell.ui.test",
  net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
   uses:="org.eclipse.jface.action,
    org.eclipse.ui.navigator,

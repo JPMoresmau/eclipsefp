@@ -10,6 +10,9 @@ public class AllTests_Suite {
 		suite.addTest(net.sf.eclipsefp.haskell.core.test.AllTests_Suite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ghccompiler.test.AllTests_Suite.suite());
 		suite.addTest(net.sf.eclipsefp.haskell.ui.test.AllTests_Suite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.util.AllTests_Suite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.style.AllTests_Suite.suite());
+		suite.addTest(net.sf.eclipsefp.haskell.hlint.AllTests_Suite.suite());
 		//suite.addTest(net.sf.eclipsefp.haskell.scion.client.test.AllTests_Suite.suite());
 		return suite;
 	}

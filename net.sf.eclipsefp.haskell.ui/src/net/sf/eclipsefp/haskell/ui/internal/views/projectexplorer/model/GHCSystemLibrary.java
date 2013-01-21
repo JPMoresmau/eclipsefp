@@ -10,7 +10,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
-import net.sf.eclipsefp.haskell.core.compiler.ICompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
@@ -77,8 +76,7 @@ public class GHCSystemLibrary implements ITreeElement {
 
   @Override
   public String getText() {
-    ICompilerManager man = CompilerManager.getInstance();
-    IHsImplementation impl = man.getCurrentHsImplementation();
+    IHsImplementation impl = CompilerManager.getCurrentHsImplementation();
     String name = UITexts.explorer_libraries_noimpl;
     if( impl != null ) {
       name = impl.getName();

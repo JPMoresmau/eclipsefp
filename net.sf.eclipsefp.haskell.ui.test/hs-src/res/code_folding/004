@@ -1,7 +1,0 @@
-
-import Bla.Blubb
-
-import X
-import Y
-
-main = putStrLn ""

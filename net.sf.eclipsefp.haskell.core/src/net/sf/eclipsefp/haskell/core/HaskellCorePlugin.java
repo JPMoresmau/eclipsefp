@@ -8,9 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester;
-import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -49,7 +47,7 @@ public class HaskellCorePlugin extends Plugin {
 
 	public static final String ATT_HLINT_SUGGESTION = "suggestion"; //$NON-NLS-1$
 
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	//private static final String ATT_ID = "id"; //$NON-NLS-1$
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
 	private static HaskellCorePlugin plugin;
@@ -67,8 +65,6 @@ public class HaskellCorePlugin extends Plugin {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
-
-		collectCompilerInfo();
 
 		Platform.getAdapterManager().registerAdapters(new HaskellPropertyTester(), IResource.class);
 	}
@@ -149,28 +145,6 @@ public class HaskellCorePlugin extends Plugin {
 	// helping methods
 	// ////////////////
 
-	/**
-	 * reads compiler infos out of the extensions declared in the manifest and
-	 * registers them with the compiler manager.
-	 *
-	 * All compiler management is delegated to the CompilerManager singleton.
-	 */
-	private void collectCompilerInfo() {
-    IConfigurationElement[] elements = getExtensions( ID_EXT_POINT_COMPILERS );
-    for( int i = 0; i < elements.length; i++ ) {
-      String compilerId = elements[ i ].getAttribute( ATT_ID );
-      CompilerManager.getInstance()
-          .registerCompiler( compilerId, elements[ i ] );
-    }
-    String pref = ""; //$NON-NLS-1$
-    try {
-      pref = Platform.getPreferencesService().getString( getPluginId(), ICorePreferenceNames.SELECTED_COMPILER, "null", null ); //$NON-NLS-1$
-      CompilerManager.getInstance().selectCompiler( pref );
-    } catch( Exception ex ) {
-      String msg = "Problem when selecting compiler '" + pref + "'."; //$NON-NLS-1$ //$NON-NLS-2$
-      HaskellCorePlugin.log( msg, ex );
-    }
-  }
 
 	public IConfigurationElement[] getExtensions(final String key) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();

@@ -48,7 +48,7 @@ public abstract class GhcCompilerTab extends Tab {
   DialogField createBooleanField( final Composite parent, final GhcParameter p ) {
     final String name=p.getName();
     String displayName=name;
-    IHsImplementation impl=CompilerManager.getInstance().getCurrentHsImplementation();
+    IHsImplementation impl=CompilerManager.getCurrentHsImplementation();
     if (impl!=null && impl.getType().equals( HsImplementationType.GHC )){
       displayName=p.getName( impl.getVersion() );
     }

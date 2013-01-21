@@ -18,7 +18,7 @@ public class GhcCabalContributor implements ICabalContributor {
 
   @Override
   public void contributeOnNewProject( final PackageDescription pd ) {
-    IHsImplementation impl=CompilerManager.getInstance().getCurrentHsImplementation();
+    IHsImplementation impl=CompilerManager.getCurrentHsImplementation();
     if (impl!=null && impl.getType().equals( HsImplementationType.GHC )){
       List<String> ls=new CompilerParams().construct(impl.getVersion());
       StringBuilder sbOptions=new StringBuilder();

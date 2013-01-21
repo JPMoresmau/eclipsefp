@@ -330,8 +330,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     // String relFile=pkg+"/"+moduleHTMLFile;
     String anchor = shortName!=null?type + ":" + toAnchorName(shortName):"";
 
-    IHsImplementation hsImpl = CompilerManager.getInstance()
-        .getCurrentHsImplementation();
+    IHsImplementation hsImpl = CompilerManager.getCurrentHsImplementation();
 
     IStringVariableManager mgr = VariablesPlugin.getDefault()
         .getStringVariableManager();

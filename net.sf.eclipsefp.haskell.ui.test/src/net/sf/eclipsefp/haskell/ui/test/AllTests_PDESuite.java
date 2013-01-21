@@ -11,15 +11,14 @@
  *******************************************************************************/
 package net.sf.eclipsefp.haskell.ui.test;
 
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.eclipsefp.haskell.ui.console.ConsoleCompilingReporter_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellDocumentProvider_PDETest;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.Partitioning_PDETest;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.SyntaxColoring_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.CompletionContext_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.WorkbenchHaskellCompletionContext_PDETest;
-import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceManager_PDETest;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport_PDETest;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.HaskellPreferenceProvider_PDETest;
 
 public class AllTests_PDESuite {
@@ -30,12 +29,10 @@ public class AllTests_PDESuite {
 
 		suite.addTestSuite( ConsoleCompilingReporter_PDETest.class );
 		suite.addTestSuite( HaskellPreferenceProvider_PDETest.class );
-    suite.addTestSuite( HaskellPreferenceManager_PDETest.class );
     suite.addTestSuite( HaskellDocumentProvider_PDETest.class );
 
-    // coloring
-    suite.addTestSuite( Partitioning_PDETest.class );
-    suite.addTestSuite( SyntaxColoring_PDETest.class );
+    suite.addTest( new JUnit4TestAdapter( AnImport_PDETest.class ) );
+
 
     // code assist
     suite.addTestSuite( WorkbenchHaskellCompletionContext_PDETest.class );

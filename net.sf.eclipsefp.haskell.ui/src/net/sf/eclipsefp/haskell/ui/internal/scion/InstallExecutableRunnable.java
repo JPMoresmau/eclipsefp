@@ -71,7 +71,7 @@ public class InstallExecutableRunnable implements Runnable {
     final File folder=new File(cabalExecutable).getParentFile();
     final LinkedList<Command> commands=new LinkedList<Command>();
 
-    File binDir=new File(CompilerManager.getInstance().getCurrentHsImplementation().getBinDir());
+    File binDir=new File(CompilerManager.getCurrentHsImplementation().getBinDir());
     if (!global){
       File exe=new File(binDir,GHCSyntax.GHC);
       StringWriter sw=new StringWriter();
