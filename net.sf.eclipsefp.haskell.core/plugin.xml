@@ -2,8 +2,6 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension-point id="haskellCompilers" name="%extPtCompilers_name" schema="schema/haskellCompilers.exsd"/>
-   <extension-point id="haskellParsers" name="%extPtParsers_name" schema="schema/haskellParsers.exsd"/>
    <extension-point id="cabalContributors" name="%extPtCabal_name" schema="schema/cabalContributors.exsd"/>
 
    <extension
