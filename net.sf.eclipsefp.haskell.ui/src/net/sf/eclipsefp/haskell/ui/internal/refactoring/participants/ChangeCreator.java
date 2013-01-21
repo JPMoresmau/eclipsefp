@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -173,7 +174,11 @@ public class ChangeCreator {
     if( updateReferences ) {
 
       // Update references
-      UsageResults ur=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleReferences( null, oldModule, null, true );
+      UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
+      if (api==null){
+        return change;
+      }
+      UsageResults ur=api.getModuleReferences( null, oldModule, null, true );
       boolean someChange = ur.getSize()>0;
       CompositeChange referencesChange=getReferencesChange( ur, oldModule,newModule);
 

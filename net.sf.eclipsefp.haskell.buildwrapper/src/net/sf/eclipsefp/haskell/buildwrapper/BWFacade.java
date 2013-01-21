@@ -364,12 +364,15 @@ public class BWFacade {
 				}
 				JSONArray dels=allPaths.optJSONArray(1);
 				if (dels!=null){
-					for (int a=0;a<dels.length();a++){
-						try {
-							String p=dels.getString(a);
-							BuildWrapperPlugin.getDefault().getUsageAPI().removeFile(getProject(), p);
-						} catch (JSONException je){
-							BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
+					UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
+					if (api!=null){
+						for (int a=0;a<dels.length();a++){
+							try {
+								String p=dels.getString(a);
+								api.removeFile(getProject(), p);
+							} catch (JSONException je){
+								BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);
+							}
 						}
 					}
 				}

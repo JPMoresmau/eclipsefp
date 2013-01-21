@@ -13,6 +13,7 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -183,16 +184,19 @@ public class Util {
           break;
         }
       }*/
-      UsageResults ur=BuildWrapperPlugin.getDefault().getUsageAPI().getModuleDefinitions( null, module, resource.getProject(), true );
-      Map<IFile,Map<String,Collection<SearchResultLocation>>> m1=ur.getUsageInProject( resource.getProject() );
-      if (m1!=null){
-        Map<String,Collection<SearchResultLocation>> m=m1.get( resource );
-        if (m!=null){
-          Collection<SearchResultLocation> srls=m.get( "module "+module );
-          if (srls!=null){
-            for (SearchResultLocation srl:srls){
-              offset=srl.getStartOffset( doc );
-              return offset;
+      UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
+      if (api!=null){
+        UsageResults ur=api.getModuleDefinitions( null, module, resource.getProject(), true );
+        Map<IFile,Map<String,Collection<SearchResultLocation>>> m1=ur.getUsageInProject( resource.getProject() );
+        if (m1!=null){
+          Map<String,Collection<SearchResultLocation>> m=m1.get( resource );
+          if (m!=null){
+            Collection<SearchResultLocation> srls=m.get( "module "+module );
+            if (srls!=null){
+              for (SearchResultLocation srl:srls){
+                offset=srl.getStartOffset( doc );
+                return offset;
+              }
             }
           }
         }

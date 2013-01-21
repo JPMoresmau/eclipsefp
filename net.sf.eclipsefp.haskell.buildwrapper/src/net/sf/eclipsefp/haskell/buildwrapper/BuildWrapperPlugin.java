@@ -66,10 +66,16 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		usageAPI=new UsageAPI();
 		usageThread.start();
 	}
 
+	/**
+	 * @param usageAPI the usageAPI to set
+	 */
+	public void setUsageAPI(UsageAPI usageAPI) {
+		this.usageAPI = usageAPI;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)

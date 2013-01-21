@@ -89,17 +89,19 @@ public class UsageQuery implements ISearchQuery {
     resultsRefs.add(resultsDefs);*/
     UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
     UsageResults results=new UsageResults();
-    for (IProject p:projects){
-      // search for each project
-      UsageResults res=exact?
-             api.exactSearch( null, term, p, typeFlags, scopeFlags )
-             :api.likeSearch( null, term, p, typeFlags, scopeFlags );
-      // restrict if needed
-      if (restrictedResources!=null){
-        res.filter( restrictedResources );
+    if (api!=null){
+      for (IProject p:projects){
+        // search for each project
+        UsageResults res=exact?
+               api.exactSearch( null, term, p, typeFlags, scopeFlags )
+               :api.likeSearch( null, term, p, typeFlags, scopeFlags );
+        // restrict if needed
+        if (restrictedResources!=null){
+          res.filter( restrictedResources );
+        }
+        // add to global
+        results.add(res);
       }
-      // add to global
-      results.add(res);
     }
 
     sr.setResults( results);

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Module;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -60,26 +61,29 @@ public class OpenModuleAction extends Action implements
   @Override
   public void run( final IAction arg0 ) {
 
-    ModuleListSelectionDialog elsd=new ModuleListSelectionDialog( shell);
 
     //elsd.setFilter( filter )
-    List<Module> mods=BuildWrapperPlugin.getDefault().getUsageAPI().listLocalModules();
+    UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
+    if (api!=null){
+      ModuleListSelectionDialog elsd=new ModuleListSelectionDialog( shell);
+      List<Module> mods=api.listLocalModules();
 
-    elsd.setElements( mods.toArray( new Module[mods.size()] ) );
-    int code=elsd.open();
-    if (Window.OK==code){
-      Object[] res=elsd.getResult();
-      for (Object o:res){
-        if (o instanceof Module){
-          Module mod=(Module)o;
-          Long fileid=mod.getFileID();
-          if (fileid!=null){
-            IFile efile=BuildWrapperPlugin.getDefault().getUsageAPI().getFile( fileid );
-            if (efile!=null){
-              try {
-                IDE.openEditor( page, efile);
-              } catch (PartInitException pie){
-                HaskellUIPlugin.log( pie );
+      elsd.setElements( mods.toArray( new Module[mods.size()] ) );
+      int code=elsd.open();
+      if (Window.OK==code){
+        Object[] res=elsd.getResult();
+        for (Object o:res){
+          if (o instanceof Module){
+            Module mod=(Module)o;
+            Long fileid=mod.getFileID();
+            if (fileid!=null){
+              IFile efile=api.getFile( fileid );
+              if (efile!=null){
+                try {
+                  IDE.openEditor( page, efile);
+                } catch (PartInitException pie){
+                  HaskellUIPlugin.log( pie );
+                }
               }
             }
           }

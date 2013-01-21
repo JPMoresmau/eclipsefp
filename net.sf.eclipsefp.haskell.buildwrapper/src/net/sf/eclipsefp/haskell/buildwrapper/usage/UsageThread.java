@@ -32,6 +32,13 @@ public class UsageThread extends Thread {
 	}
 
 	public void run(){
+		/**
+		 * create the API in a thread, since new UsageAPI does a new UsageDB, which loads the SQLite library, etc
+		 * This can hang on MacOS, so let's no hand the UI thread
+		 */
+		final UsageAPI api=new UsageAPI();
+
+		BuildWrapperPlugin.getDefault().setUsageAPI(api);
 		while (!shouldStop){
 			synchronized (ps) {
 				try{ 
@@ -44,7 +51,7 @@ public class UsageThread extends Thread {
 				IProject p=getNext();
 					
 				while (p!=null && !shouldStop){
-					boolean retAll=!BuildWrapperPlugin.getDefault().getUsageAPI().knowsProject(p);
+					boolean retAll=!api.knowsProject(p);
 					BWFacade f=BuildWrapperPlugin.getFacade(p);
 					if (f!=null){
 						List<Component> cs=f.getComponents();
