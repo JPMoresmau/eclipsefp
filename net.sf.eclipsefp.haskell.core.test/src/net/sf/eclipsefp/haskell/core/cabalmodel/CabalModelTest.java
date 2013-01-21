@@ -397,7 +397,7 @@ public class CabalModelTest extends TestCase {
     assertEquals(17,rvp.getEndLine());
 
     String s=pd.dump();
-    System.out.println(s);
+    //System.out.println(s);
     assertTrue(s.contains( "  First line"+PlatformUtil.NL+"  ."+PlatformUtil.NL+"  Line2" ) );
     pd=PackageDescriptionLoader.load( s );
 
@@ -859,7 +859,7 @@ public class CabalModelTest extends TestCase {
     RealValuePosition rvp2=pds.update( CabalSyntax.FIELD_BUILD_DEPENDS,"array,"+PlatformUtil.NL+"random");
     rvp2.updateDocument( doc );
     String s=doc.get();
-    System.out.println(s);
+    //System.out.println(s);
     pd=PackageDescriptionLoader.load( s );
     pdss=pd.getStanzas();
     assertEquals(4,pdss.size());
