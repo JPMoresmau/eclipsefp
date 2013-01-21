@@ -1,5 +1,0 @@
-Chasing modules from: Main.hs
-Compiling Main             ( Main.hs, C:\programas\eclipse\platform\3.2\eclipse\tmp\runtime-workspace\qsort\out/Main.o )
-
-Main.hs:4:28-30: Not in scope: `fac'
-
