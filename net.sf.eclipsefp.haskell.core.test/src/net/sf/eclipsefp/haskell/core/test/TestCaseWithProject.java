@@ -22,6 +22,7 @@ import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation;
 import net.sf.eclipsefp.haskell.core.internal.project.ProjectModelFilesOp;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.wizards.ModuleCreationOperation;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
@@ -163,6 +164,8 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     if (!new File(ghc).exists()){
       fail( "GHC_TEST system property does not exist (must point to GHC bin folder)" );
     }
+    HaskellUIPlugin.getDefault();
+
    // "D:\\dev\\haskell\\HaskellPlatform\\2010.1.0.0\\bin"
     HsImplementation impl=new HsImplementation();
     impl.setName("GHC Test");
@@ -204,7 +207,9 @@ public class TestCaseWithProject extends TestCaseWithPreferences {
     try {
       //waitForScion(project);
       //ScionInstance si=ScionPlugin.getScionInstance( project );
-      project.close( new NullProgressMonitor() );
+      if (project.exists()){
+        project.close( new NullProgressMonitor() );
+      }
       //waitForScion(project);
       /*synchronized(this){
         while (!si.isStopped()){

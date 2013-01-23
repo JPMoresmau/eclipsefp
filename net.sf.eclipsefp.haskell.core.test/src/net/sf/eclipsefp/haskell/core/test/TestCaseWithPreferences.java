@@ -3,6 +3,8 @@ package net.sf.eclipsefp.haskell.core.test;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -69,6 +71,8 @@ public class TestCaseWithPreferences extends TestCase {
       for (String qualifier : fQualifiers) {
         prefSvc.setDefaultLookupOrder( qualifier, null, lookupOrder );
       }
+      getPrefsScope().getNode( HaskellUIPlugin.getPluginId() ).putBoolean( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE, false );
+      getPrefsScope().getNode( HaskellUIPlugin.getPluginId() ).putBoolean( IPreferenceConstants.SCION_BROWSER_HACKAGE_QUESTION_ANSWERED, true );
     }
   }
 

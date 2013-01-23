@@ -22,8 +22,8 @@ public class MockCodeGenerator extends CodeGenerator {
   public String createModuleContent(final String projectName,
 			final String[] folderNames,
             final String name,
-            final EHaskellCommentStyle style)
-	{
+            final EHaskellCommentStyle style,
+            final String pref)	{
 		if (style != fExpectedStyle) {
 			Assert.fail("Expecting style " + fExpectedStyle +
 					    ", but received " + style + " instead");

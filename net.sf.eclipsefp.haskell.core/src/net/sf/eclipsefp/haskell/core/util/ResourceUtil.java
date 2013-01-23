@@ -614,9 +614,9 @@ public class ResourceUtil {
 
 	/** <p>returns the path of the specified workspace file relative to the
 	  * source folder in the Haskell project.</p>
+	  * If not found, return the full path name
 	  *
 	  * @param file  a workspace file, must not be <code>null</code>
-	  * @param hp    a haskell project, must not be <code>null</code>
 	  */
 	public static IPath getSourceFolderRelativeName( final IResource file ) {
     if( file == null  ) {

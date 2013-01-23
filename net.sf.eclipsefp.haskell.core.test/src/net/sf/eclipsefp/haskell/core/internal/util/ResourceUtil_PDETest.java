@@ -17,14 +17,11 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
   public void testGetSourceDirRelativeName() throws Exception {
 
     IFile file = null;
-    try {
-      file = project.getFile( "A.hs" );
-      ResourceUtil.getSourceFolderRelativeName( file );
-      fail();
-    } catch( final IllegalArgumentException illarex ) {
-      // expected
 
-    }
+      file = project.getFile( "A.hs" );
+      assertEquals(file.getFullPath(),ResourceUtil.getSourceFolderRelativeName( file ));
+
+
     file = project.getFile( "src/A.hs" );
     assertEquals( "A.hs", ResourceUtil.getSourceFolderRelativeName( file).toPortableString() );
 
@@ -36,16 +33,8 @@ public class ResourceUtil_PDETest extends TestCaseWithProject {
     assertEquals( "Some/Long/Path/A.hs",
                   ResourceUtil.getSourceFolderRelativeName( file ).toPortableString() );
 
-    try {
-      file = project.getFile( "test/Some/Path/A.hs" );
-      ResourceUtil.getSourceFolderRelativeName( file );
-      fail();
-    } catch( final IllegalArgumentException illarex ) {
-      // expected
-    }
+     file = project.getFile( "test/Some/Path/A.hs" );
+     assertEquals(file.getFullPath(),ResourceUtil.getSourceFolderRelativeName( file ));
 
-    file = project.getFile( "test/Path/A.hs" );
-    assertEquals( "Path/A.hs",
-                  ResourceUtil.getSourceFolderRelativeName( file ).toPortableString() );
   }
 }

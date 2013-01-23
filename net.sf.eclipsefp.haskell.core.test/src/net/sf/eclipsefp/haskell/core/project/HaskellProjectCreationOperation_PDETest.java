@@ -80,17 +80,13 @@ public class HaskellProjectCreationOperation_PDETest extends
     runOperation();
 
     IProject prj = getWorkspaceRoot().getProject( PROJECT_NAME );
-    // should only contain the project descriptors (.project)
-    // and the generated Setup.hs and cabal file
-    assertEquals( 4, prj.members().length );
+
 
     assertValid( prj.getFile( prj.getName() + ".cabal" ) );
     assertValid( prj.getFile( "Setup.hs" ) );
     assertValid( prj.getFile( "Main.hs" ) );
+    assertNotValid( prj.getFolder( "src" ) );
 
-//    IFile f = prj.getFile( HaskellProjectManager.HASKELL_PROJECT_DESCRIPTOR );
-//    assertValid( f );
-//    assertEquals( "", readContents( f ) );
   }
 
 
@@ -114,5 +110,8 @@ public class HaskellProjectCreationOperation_PDETest extends
     assertNotNull( res );
     assertTrue( "Resource does not exist", res.exists() );
   }
-
+  private void assertNotValid( final IResource res ) {
+    assertNotNull( res );
+    assertFalse( "Resource does exist", res.exists() );
+  }
 }
