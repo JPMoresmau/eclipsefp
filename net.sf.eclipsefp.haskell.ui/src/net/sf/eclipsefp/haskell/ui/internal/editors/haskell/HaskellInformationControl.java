@@ -112,6 +112,18 @@ public class HaskellInformationControl extends AbstractInformationControl {
     });
   }
 
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.AbstractInformationControl#dispose()
+   */
+  @Override
+  public void dispose() {
+    if (doc!=null){
+      doc.dispose();
+      doc=null;
+    }
+    super.dispose();
+  }
+
   /*
    * @see IInformationControl#setSize(int, int)
    */
