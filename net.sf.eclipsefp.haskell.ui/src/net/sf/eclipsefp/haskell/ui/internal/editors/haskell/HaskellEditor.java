@@ -491,7 +491,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
           public void run() {
             // synchronize and rebuild to be sure that we're in sync if we close a dirty editor
             f.synchronize1( file,true );
-            f.build1( file );
+            f.build1LongRunning( file,true );
 
           }
         }).start();
@@ -683,7 +683,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 //    updateOutline(findFile());
 //  }
 
-  private boolean needWrite=false;
+  //private boolean needWrite=false;
   public void synchronize(){
     IFile file=findFile();
     if(importsManager!=null){
@@ -696,13 +696,14 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if (file!=null && ResourceUtil.isInHaskellProject( file )){
       JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
       if (jf!=null){
-        if (!needWrite && isDirty()){ // we need to write the docs if we're dirty
+        /*if (!needWrite && isDirty()){ // we need to write the docs if we're dirty
           needWrite=true;
-        }
-        jf.updateFromEditor( file, needWrite?getDocument():null, outlineHandler,this );
-        if (!isDirty()){ // now we've written and not dirty
+        }*/
+        //needWrite?getDocument():null
+        jf.updateFromEditor( file, outlineHandler,this );
+        /*if (!isDirty()){ // now we've written and not dirty
           needWrite=false;
-        }
+        }*/
       } else {
         outlineHandler.handleOutline( new OutlineResult());
       }

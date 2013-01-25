@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONArray;
 
@@ -212,7 +211,14 @@ public class JobFacade  {
 	      buildJob.schedule();
 	}
 	
-	public void updateFromEditor(final IFile file,final IDocument doc,final OutlineHandler handler,final NameDefHandler ndhandler){
+	//final IDocument doc,
+	/**
+	 * update the info the editor needs
+	 * @param file
+	 * @param handler
+	 * @param ndhandler
+	 */
+	public void updateFromEditor(final IFile file,final OutlineHandler handler,final NameDefHandler ndhandler){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
 		/*
@@ -220,44 +226,34 @@ public class JobFacade  {
 		 *  we're going to call a full synchronize which in turn will request a configure
 		 *  so that we're ready to build our haskell files
 		 */
-		final boolean needSynchronize=!ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding() && !realFacade.hasEditorSynchronizeQueue(file);
+		final boolean needSynchronize=!realFacade.hasEditorSynchronizeQueue(file) && !ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		
 	    Job buildJob = new Job (jobNamePrefix) {
 	      @Override
 	      protected IStatus run(IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	         ///long t0=System.currentTimeMillis();
-	          /*if (doc!=null){
-	        	  realFacade.write(f, doc.get()); // the write is done by ScionTokenScanner
-	          }*/
-	          //long t0=System.currentTimeMillis();
-	          //realFacade.getBuildFlags(file);
+	          long t0=System.currentTimeMillis();
 	          if (needSynchronize){
 	        	  realFacade.synchronize(false);
 	          }
-	         // long t1=System.currentTimeMillis();
+	          long t1=System.currentTimeMillis();
 	          OutlineResult or=realFacade.outline(file);
-	          //long t2=System.currentTimeMillis();
-	          //if (!or.isEmpty() || or.isBuildOK()){
-	        	  handler.handleOutline(or); // avoid removing all outline on error
-	          //}
-
-	          //long t3=System.currentTimeMillis();
+	          long t2=System.currentTimeMillis();
+	           handler.handleOutline(or); // avoid removing all outline on error
+	         
+	          long t3=System.currentTimeMillis();
 	          
 	          
-	          //if (or.isBuildOK()){
-	        	  
-	        	  Collection<NameDef> ns=realFacade.build1(file);
-		          if (ndhandler!=null){
-		        	  ndhandler.handleNameDefs(ns);
-		          }
-	          //}
-	          //long t4=System.currentTimeMillis();
-	          //,getBuildFlags:"+(t1-t0)
-
-	          
-	          //BuildWrapperPlugin.logInfo("outline:"+(t2-t1)+"ms,handleroutline:"+(t3-t2)+"ms,build:"+(t4-t3)+"ms");
+         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,false);
+        	  long t35=System.currentTimeMillis();
+	          if (ndhandler!=null){
+	        	  ndhandler.handleNameDefs(ns);
+	          }
+	          if (BWFacade.logBuildTimes){
+		    	 long t4=System.currentTimeMillis();
+	             BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+",outline:"+(t2-t1)+"ms,handleroutline:"+(t3-t2)+"ms,build:"+(t35-t3)+"ms,handleNameDefs:"+(t4-t35)+"ms");
+		      }
 	        } finally {
 	          monitor.done();
 	        }

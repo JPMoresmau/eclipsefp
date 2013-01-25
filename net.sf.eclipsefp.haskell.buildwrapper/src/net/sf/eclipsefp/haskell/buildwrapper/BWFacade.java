@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
+import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import net.sf.eclipsefp.haskell.util.SingleJobQueue;
 
 import org.eclipse.core.resources.IFile;
@@ -84,6 +86,8 @@ public class BWFacade {
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
 	
+	public static final boolean logBuildTimes=true;
+	
 	/**
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
 	 */
@@ -98,6 +102,7 @@ public class BWFacade {
 	 * where ever we come from, we only launch one synchronize operation per file at a time, and lose the intermediate operations
 	 */
 	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<IFile, SingleJobQueue>();
+	private Map<IFile,Process> buildProcesses=new HashMap<IFile, Process>();
 	
 	/**
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
@@ -153,8 +158,7 @@ public class BWFacade {
 	 * @return
 	 */
 	public synchronized boolean hasEditorSynchronizeQueue(IFile f){
-		SingleJobQueue sjq=syncEditorJobQueue.get(f);
-	    return sjq!=null;
+		return syncEditorJobQueue.containsKey(f);
 	}
 	
 	public synchronized SingleJobQueue getEditorSynchronizeQueue(IFile f){
@@ -267,11 +271,13 @@ public class BWFacade {
 		command.add("build1");
 		command.add("--file="+path);
 		addEditorStanza(file,command);
-		//long t0=System.currentTimeMillis();
+		long t0=System.currentTimeMillis();
 		//command.add("--buildflags="+escapeFlags(i.getFlags()));
 		JSONArray arr=run(command,ARRAY);
-		//long t1=System.currentTimeMillis();
-		//BuildWrapperPlugin.logInfo("build:"+(t1-t0)+"ms");
+		if (logBuildTimes){
+			long t1=System.currentTimeMillis();
+			BuildWrapperPlugin.logInfo("build:"+(t1-t0)+"ms");
+		}
 		if (arr!=null && arr.length()>1){
 			Set<IResource> ress=new HashSet<IResource>();
 			ress.add(file);
@@ -297,6 +303,123 @@ public class BWFacade {
 		}
 		return null;
 	}
+	
+	private static byte[] contCommand;
+	private static byte[] endCommand;
+	
+	static {
+		try {
+			contCommand=("r"+PlatformUtil.NL).getBytes(FileUtil.UTF8);
+			endCommand=("q"+PlatformUtil.NL).getBytes(FileUtil.UTF8);
+		} catch (UnsupportedEncodingException uee){
+			
+		}
+	}
+	
+	public Collection<NameDef> build1LongRunning(IFile file,boolean end){
+		//BuildFlagInfo i=getBuildFlags(file);
+		try {
+			Process p=buildProcesses.get(file);
+			if (p==null){
+			
+				String path=file.getProjectRelativePath().toOSString();
+				LinkedList<String> command=new LinkedList<String>();
+				command.add(bwPath);
+				command.add("build1");
+				command.add("--file="+path);
+				command.add("--longrunning=true");
+				command.add("--tempfolder="+DIST_FOLDER);
+				command.add("--cabalpath="+cabalPath);
+				command.add("--cabalfile="+cabalFile);
+				command.add("--cabalflags="+flags);
+				for (String s:extraOpts){
+					command.add("--cabaloption="+s);
+				}
+
+				addEditorStanza(file,command);
+				ProcessBuilder pb=new ProcessBuilder();
+				pb.directory(workingDir);
+				pb.redirectErrorStream(true);
+				pb.command(command);
+				if (ow!=null && BuildWrapperPlugin.logAnswers) {
+					ow.addMessage(LangUtil.join(command, " "));
+				}				
+				p=pb.start();
+				buildProcesses.put(file,p);
+			} else {
+				p.getOutputStream().write(contCommand);
+				p.getOutputStream().flush();
+			}
+			long t0=System.currentTimeMillis();
+			JSONArray arr=null;
+
+				
+			//command.add("--buildflags="+escapeFlags(i.getFlags()));
+			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
+			//long t0=System.currentTimeMillis();
+			String l=br.readLine();
+			boolean goOn=true;
+
+			while (goOn && l!=null){
+				if (l.startsWith(prefix)){
+					if (ow!=null && BuildWrapperPlugin.logAnswers) {
+						ow.addMessage(l);
+					}					
+					String jsons=l.substring(prefix.length()).trim();
+					try {
+						arr=ARRAY.fromJSON(jsons);
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
+					}
+					goOn=false;
+				} else {
+					if (ow!=null) {
+						ow.addMessage(l);
+					}
+
+					l=br.readLine();
+				}
+			}
+
+			if (end){
+				p.getOutputStream().write(endCommand);
+				p.getOutputStream().flush();
+				buildProcesses.remove(file);
+			}
+			if (logBuildTimes){
+				long t1=System.currentTimeMillis();
+				BuildWrapperPlugin.logInfo("build:"+(t1-t0)+"ms");
+			}
+			if (arr!=null && arr.length()>1){
+				Set<IResource> ress=new HashSet<IResource>();
+				ress.add(file);
+				BuildWrapperPlugin.deleteProblems(file);
+				JSONArray notes=arr.optJSONArray(1);
+				//notes.putAll(i.getNotes());
+				
+				parseNotes(notes,ress,null);
+				JSONArray names=arr.optJSONArray(0);
+				if(names!=null){
+					Collection<NameDef> ret=new ArrayList<NameDef>();
+					for (int a=0;a<names.length();a++){
+						try {
+							ret.add(new NameDef(names.getJSONObject(a)));
+						} catch (JSONException je){
+							BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
+						}
+					}
+					return ret;
+				}
+				
+				
+			}
+		} catch (IOException ioe){
+			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			buildProcesses.remove(file);
+		}
+		return null;
+	}
+	
 	
 //	public BuildFlagInfo getBuildFlags(IFile file){
 //		BuildFlagInfo i=flagInfos.get(file);
