@@ -383,7 +383,11 @@ public class BWFacade {
 
 			if (end){
 				p.getOutputStream().write(endCommand);
-				p.getOutputStream().flush();
+				try {
+					p.getOutputStream().flush();
+				} catch (IOException ignore){
+					// noop: flush fails if the process closed properly because write flush
+				}
 				buildProcesses.remove(file);
 			}
 			if (logBuildTimes){

@@ -483,7 +483,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     final IFile file=findFile();
     if (file!=null){
       HaskellCorePlugin.getModifiedByEditors().remove( file );
-      final BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
+      /*final BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
       if (f!=null){
         new Thread(new Runnable() {
 
@@ -496,6 +496,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
           }
         }).start();
 
+      }*/
+      JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
+      if (jf!=null){
+        jf.updateFromEditor( file, null, null, true, true );
       }
     }
 
@@ -700,7 +704,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
           needWrite=true;
         }*/
         //needWrite?getDocument():null
-        jf.updateFromEditor( file, outlineHandler,this );
+        jf.updateFromEditor( file, outlineHandler,this,false,false );
         /*if (!isDirty()){ // now we've written and not dirty
           needWrite=false;
         }*/

@@ -218,7 +218,7 @@ public class JobFacade  {
 	 * @param handler
 	 * @param ndhandler
 	 */
-	public void updateFromEditor(final IFile file,final OutlineHandler handler,final NameDefHandler ndhandler){
+	public void updateFromEditor(final IFile file,final OutlineHandler handler,final NameDefHandler ndhandler,final boolean sync1,final boolean end){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
 		/*
@@ -236,23 +236,25 @@ public class JobFacade  {
 	          long t0=System.currentTimeMillis();
 	          if (needSynchronize){
 	        	  realFacade.synchronize(false);
+	          } else if (sync1){
+	        	  realFacade.synchronize1(file, true);
 	          }
 	          long t1=System.currentTimeMillis();
-	          OutlineResult or=realFacade.outline(file);
-	          long t2=System.currentTimeMillis();
-	           handler.handleOutline(or); // avoid removing all outline on error
-	         
+	          if (handler!=null){
+	        	  OutlineResult or=realFacade.outline(file);
+	        	  handler.handleOutline(or); // avoid removing all outline on error
+	          }
 	          long t3=System.currentTimeMillis();
 	          
 	          
-         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,false);
+         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,end);
         	  long t35=System.currentTimeMillis();
 	          if (ndhandler!=null){
 	        	  ndhandler.handleNameDefs(ns);
 	          }
 	          if (BWFacade.logBuildTimes){
 		    	 long t4=System.currentTimeMillis();
-	             BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+",outline:"+(t2-t1)+"ms,handleroutline:"+(t3-t2)+"ms,build:"+(t35-t3)+"ms,handleNameDefs:"+(t4-t35)+"ms");
+	             BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+"ms,outline:"+(t3-t1)+"ms,build:"+(t35-t3)+"ms,handleNameDefs:"+(t4-t35)+"ms");
 		      }
 	        } finally {
 	          monitor.done();
