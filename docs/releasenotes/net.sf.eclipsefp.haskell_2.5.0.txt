@@ -17,15 +17,17 @@ Fixes:
 	- Haskell test results does not reclaim focus on each refresh, less flicker on update
 	- Quick fix on multiple GHC suggestions
 
+
 Features:
 	- Cabal Packages view shows a green tick on installed packages and versions when you display the list of all hackage packages.
 	- Distinguish comments/haddock/pragmas in syntax highlighting (https://github.com/JPMoresmau/eclipsefp/issues/44)
 	- Use project root as HLint working folder
 	- Organize imports on single file: only keep actually used imports
 	- Refactor->rename can rename local bindings
+	- Synchronize from editor use a long running buildwrapper instance, should enhance performance. Closing the editor for a file closes the long running process, so no memory hog.
 
 Internal:
-
+	- Start SQLite in a thread to avoid native locking (maybe)
 
 Upgrade notes:
 	- Upgrade via the Eclipse install site http://eclipsefp.sf.net/updates. 

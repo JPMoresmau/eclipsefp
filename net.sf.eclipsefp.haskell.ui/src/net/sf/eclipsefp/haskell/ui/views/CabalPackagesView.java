@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -223,7 +224,7 @@ public class CabalPackagesView extends ViewPart {
     packageViewer=new TreeViewer(parent,SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
     packageViewer.getTree().setLayoutData( new GridData(GridData.FILL_BOTH) );
     packageViewer.setContentProvider( new CabalPackageContentProvider() );
-    //packageViewer.setComparator( new WorkbenchViewerComparator() ); // cabal already sorts the data
+    packageViewer.setComparator( new WorkbenchViewerComparator() ); // cabal already sorts the data, but takes case into account...
     packageViewer.setLabelProvider(labelProvider );
 
     packageViewer.addFilter( new ViewerFilter() {
