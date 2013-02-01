@@ -147,6 +147,9 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   }
 
   protected String computeThingAtPoint( final ITextViewer textViewer, final IRegion hoverRegion,final boolean html  ) {
+    if (editor==null){
+      return null;
+    }
     IFile file = editor.findFile();
     if (file != null) {
       try {
