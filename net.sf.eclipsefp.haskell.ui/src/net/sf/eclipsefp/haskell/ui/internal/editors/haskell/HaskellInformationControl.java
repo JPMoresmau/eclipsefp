@@ -65,8 +65,7 @@ public class HaskellInformationControl extends AbstractInformationControl {
       @Override
       public void completed(final ProgressEvent event) {
         // wait for page to load before evaluating any javascript
-        int paddingHeight=10;
-        int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight;
+        int contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue();
         int contentWidth = ((Double)doc.evaluate("return document.body.scrollWidth")).intValue();
 
         // JP: I don't understand that code...
@@ -85,17 +84,9 @@ public class HaskellInformationControl extends AbstractInformationControl {
         if (contentWidth>HOVER_MAXWIDTH){
           contentHeight+=25;
         }
-        HaskellInformationControl.this.setSize(contentWidth+10,contentHeight);
+        Rectangle r=getShell().computeTrim( 0, 0, contentWidth, contentHeight );
+        HaskellInformationControl.this.setSize(r.width ,r.height);
 
-       // doc.evaluate( "document.body.style.overflowX='hidden';" );
- //       } else {
-//          // for content exceeding the width, we use the wider size and compute
-//          // a new content height.
-//
- //         HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,0);
- //         contentHeight = ((Double)doc.evaluate("return document.body.scrollHeight")).intValue()+paddingHeight+30;
- //         HaskellInformationControl.this.setSize(HOVER_WRAPWIDTH,contentHeight);
- //       }
         if (contentHeight<HOVER_MAXHEIGHT){
           doc.evaluate( "document.body.style.overflowY='hidden';" );
         }
