@@ -25,6 +25,7 @@ Features:
 	- Organize imports on single file: only keep actually used imports
 	- Refactor->rename can rename local bindings
 	- Synchronize from editor use a long running buildwrapper instance, should enhance performance. Closing the editor for a file closes the long running process, so no memory hog.
+	- https://github.com/JPMoresmau/eclipsefp/issues/86: symbols like $ and + are a different colors than alphanumeric identifiers
 
 Internal:
 	- Start SQLite in a thread to avoid native locking (maybe)

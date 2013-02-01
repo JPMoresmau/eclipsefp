@@ -83,6 +83,8 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     store.setDefault( EDITOR_NUMBER_BOLD, false );
     conv( store, EDITOR_VAR_COLOR, ColorProvider.DEFAULT_VAR );
     store.setDefault( EDITOR_VAR_BOLD, false );
+    conv( store, EDITOR_VARSYM_COLOR, ColorProvider.DEFAULT_VARSYM);
+    store.setDefault( EDITOR_VARSYM_BOLD, false );
     conv( store, EDITOR_CON_COLOR, ColorProvider.DEFAULT_CON );
     store.setDefault( EDITOR_CON_BOLD, true );
     conv( store, EDITOR_SYMBOL_COLOR, ColorProvider.DEFAULT_SYMBOL );

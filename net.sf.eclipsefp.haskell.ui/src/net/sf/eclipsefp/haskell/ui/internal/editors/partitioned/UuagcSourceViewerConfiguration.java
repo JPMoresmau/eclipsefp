@@ -5,7 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import java.util.ArrayList;
-import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -76,11 +76,11 @@ public class UuagcSourceViewerConfiguration extends
     // Patterns
     WordPatternRule vars = new WordPatternRule(
         KeywordDetector.NO_DIGIT_AT_START_DETECTOR, "@", "",
-        tokenByTypes.get( IScionTokens.PREPROCESSOR_TEXT ) );
+        tokenByTypes.get( ITokenTypes.PREPROCESSOR_TEXT ) );
     PatternRule string = new PatternRule( "\"", "\"",
-        tokenByTypes.get( IScionTokens.LITERAL_STRING ), '\\', true );
+        tokenByTypes.get( ITokenTypes.LITERAL_STRING ), '\\', true );
     EndOfLineRule comment = new EndOfLineRule( "-- ",
-        tokenByTypes.get( IScionTokens.LITERATE_COMMENT ) );
+        tokenByTypes.get( ITokenTypes.LITERATE_COMMENT ) );
 
 
     ArrayList<IRule> rules = new ArrayList<IRule>();
@@ -89,24 +89,24 @@ public class UuagcSourceViewerConfiguration extends
     rules.add( comment );
 
     for( String symbol: symbols ) {
-      rules.add( createRuleForToken( symbol, IScionTokens.SYMBOL_RESERVED ) );
+      rules.add( createRuleForToken( symbol, ITokenTypes.SYMBOL_RESERVED ) );
     }
     for( String keyword: keywords ) {
-      rules.add( createRuleForToken( keyword, IScionTokens.KEYWORD ) );
+      rules.add( createRuleForToken( keyword, ITokenTypes.KEYWORD ) );
       rules.add( createRuleForToken( keyword.toUpperCase(),
-          IScionTokens.KEYWORD ) );
+          ITokenTypes.KEYWORD ) );
     }
     for( String keyword: onlySmallKeywords ) {
-      rules.add( createRuleForToken( keyword, IScionTokens.KEYWORD ) );
+      rules.add( createRuleForToken( keyword, ITokenTypes.KEYWORD ) );
     }
     for( String var: specialVariables ) {
-      rules.add( createRuleForToken( var, IScionTokens.PREPROCESSOR_TEXT ) );
+      rules.add( createRuleForToken( var, ITokenTypes.PREPROCESSOR_TEXT ) );
     }
     for( String type: types ) {
       rules
-          .add( createRuleForToken( type, IScionTokens.IDENTIFIER_CONSTRUCTOR ) );
+          .add( createRuleForToken( type, ITokenTypes.IDENTIFIER_CONSTRUCTOR ) );
       rules.add( createRuleForToken( type.toUpperCase(),
-          IScionTokens.IDENTIFIER_CONSTRUCTOR ) );
+          ITokenTypes.IDENTIFIER_CONSTRUCTOR ) );
     }
 
     IRule names = new IRule() {
@@ -125,7 +125,7 @@ public class UuagcSourceViewerConfiguration extends
           int nextLetter = scanner.read();
           if (!Character.isJavaIdentifierPart( nextLetter )) {
             scanner.unread();
-            return tokenByTypes.get( IScionTokens.IDENTIFIER_CONSTRUCTOR );
+            return tokenByTypes.get( ITokenTypes.IDENTIFIER_CONSTRUCTOR );
           }
         }
       }

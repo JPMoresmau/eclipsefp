@@ -58,6 +58,7 @@ public class SyntaxPP extends AbstractEditorPP {
 //                        EDITOR_FUNCTION_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_keywords, EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_vars, EDITOR_VAR_COLOR, EDITOR_VAR_BOLD ),
+    new ColorListEntry( UITexts.preferences_editor_syntax_varsyms, EDITOR_VARSYM_COLOR, EDITOR_VARSYM_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_cons, EDITOR_CON_COLOR, EDITOR_CON_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_symbols, EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD ),
     new ColorListEntry( UITexts.preferences_editor_syntax_others, EDITOR_DEFAULT_COLOR, EDITOR_DEFAULT_BOLD ),
@@ -93,6 +94,8 @@ public class SyntaxPP extends AbstractEditorPP {
     store.addBooleanKey( EDITOR_NUMBER_BOLD );
     store.addStringKey( EDITOR_VAR_COLOR );
     store.addBooleanKey( EDITOR_VAR_BOLD );
+    store.addStringKey( EDITOR_VARSYM_COLOR );
+    store.addBooleanKey( EDITOR_VARSYM_BOLD );
     store.addStringKey( EDITOR_CON_COLOR );
     store.addBooleanKey( EDITOR_CON_BOLD );
     store.addStringKey( EDITOR_KEYWORD_COLOR );

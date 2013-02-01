@@ -61,6 +61,8 @@ public interface IEditorPreferenceNames {
   String EDITOR_NUMBER_BOLD                = "numberBold";  //$NON-NLS-1$
   String EDITOR_VAR_COLOR                  = "varColor";  //$NON-NLS-1$
   String EDITOR_VAR_BOLD                   = "varBold";  //$NON-NLS-1$
+  String EDITOR_VARSYM_COLOR               = "varSymColor";  //$NON-NLS-1$
+  String EDITOR_VARSYM_BOLD                = "varSymBold";  //$NON-NLS-1$
   String EDITOR_CON_COLOR                  = "conColor";  //$NON-NLS-1$
   String EDITOR_CON_BOLD                   = "conBold";  //$NON-NLS-1$
   String EDITOR_SYMBOL_COLOR               = "symbolColor";  //$NON-NLS-1$

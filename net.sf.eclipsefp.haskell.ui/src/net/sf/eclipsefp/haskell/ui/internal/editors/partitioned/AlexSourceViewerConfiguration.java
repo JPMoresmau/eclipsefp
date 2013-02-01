@@ -4,7 +4,7 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
-import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -64,28 +64,28 @@ public class AlexSourceViewerConfiguration extends
     // Patterns
     WordPatternRule dollarVars = new WordPatternRule(
         KeywordDetector.NO_DIGIT_AT_START_DETECTOR, "$", "",
-        tokenByTypes.get( IScionTokens.PREPROCESSOR_TEXT ) );
+        tokenByTypes.get( ITokenTypes.PREPROCESSOR_TEXT ) );
     WordPatternRule atVars = new WordPatternRule(
         KeywordDetector.NO_DIGIT_AT_START_DETECTOR, "@", "",
-        tokenByTypes.get( IScionTokens.PREPROCESSOR_TEXT ) );
+        tokenByTypes.get( ITokenTypes.PREPROCESSOR_TEXT ) );
     PatternRule startCodes = new PatternRule( "<", ">",
-        tokenByTypes.get( IScionTokens.IDENTIFIER_CONSTRUCTOR ), '\\', true );
+        tokenByTypes.get( ITokenTypes.IDENTIFIER_CONSTRUCTOR ), '\\', true );
     PatternRule regexSet = new PatternRule( "[", "]",
-        tokenByTypes.get( IScionTokens.LITERAL_CHAR ), '\\', true );
+        tokenByTypes.get( ITokenTypes.LITERAL_CHAR ), '\\', true );
     PatternRule string = new PatternRule( "\"", "\"",
-        tokenByTypes.get( IScionTokens.LITERAL_STRING ), '\\', true );
+        tokenByTypes.get( ITokenTypes.LITERAL_STRING ), '\\', true );
     EndOfLineRule comment = new EndOfLineRule( "-- ",
-        tokenByTypes.get( IScionTokens.LITERATE_COMMENT ) );
+        tokenByTypes.get( ITokenTypes.LITERATE_COMMENT ) );
     // Single words
-    WordRule colon = createRuleForToken( ";", IScionTokens.SYMBOL_RESERVED );
-    WordRule pre = createRuleForToken( "^", IScionTokens.SYMBOL_RESERVED );
-    WordRule post = createRuleForToken( "/", IScionTokens.SYMBOL_RESERVED );
-    WordRule empty = createRuleForToken( "$", IScionTokens.SYMBOL_RESERVED );
+    WordRule colon = createRuleForToken( ";", ITokenTypes.SYMBOL_RESERVED );
+    WordRule pre = createRuleForToken( "^", ITokenTypes.SYMBOL_RESERVED );
+    WordRule post = createRuleForToken( "/", ITokenTypes.SYMBOL_RESERVED );
+    WordRule empty = createRuleForToken( "$", ITokenTypes.SYMBOL_RESERVED );
     WordRule startRules = createRuleForToken( ":-",
-        IScionTokens.SYMBOL_RESERVED );
-    WordRule equals = createRuleForToken( "=", IScionTokens.SYMBOL_RESERVED );
-    WordRule pipe = createRuleForToken( "|", IScionTokens.SYMBOL_RESERVED );
-    WordRule wrapper = createRuleForToken( "%wrapper", IScionTokens.KEYWORD );
+        ITokenTypes.SYMBOL_RESERVED );
+    WordRule equals = createRuleForToken( "=", ITokenTypes.SYMBOL_RESERVED );
+    WordRule pipe = createRuleForToken( "|", ITokenTypes.SYMBOL_RESERVED );
+    WordRule wrapper = createRuleForToken( "%wrapper", ITokenTypes.KEYWORD );
 
     scanner.setRules( new IRule[] { dollarVars, atVars, startCodes, regexSet,
         string, comment, colon, pre, post, empty, startRules, equals, pipe,

@@ -7,7 +7,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
@@ -48,60 +48,63 @@ public class PartitionSourceViewerConfiguration extends
       private static final long serialVersionUID = 3579246300065591883L;
       {
         put(
-            IScionTokens.LITERAL_STRING,
+            ITokenTypes.LITERAL_STRING,
             getScannerManager().createToken( EDITOR_STRING_COLOR,
                 EDITOR_STRING_BOLD ) );
         put(
-            IScionTokens.LITERAL_CHAR,
+            ITokenTypes.LITERAL_CHAR,
             getScannerManager().createToken( EDITOR_CHAR_COLOR,
                 EDITOR_CHAR_BOLD ) );
-        put( IScionTokens.DOCUMENTATION_ANNOTATION, getScannerManager()
+        put( ITokenTypes.DOCUMENTATION_ANNOTATION, getScannerManager()
             .createToken( EDITOR_DOC_COLOR, EDITOR_DOC_BOLD ) );
-        put( IScionTokens.COMMENT, getScannerManager()
+        put( ITokenTypes.COMMENT, getScannerManager()
             .createToken( EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ) );
-        put( IScionTokens.PRAGMA, getScannerManager()
+        put( ITokenTypes.PRAGMA, getScannerManager()
             .createToken( EDITOR_PRAGMA_COLOR, EDITOR_PRAGMA_BOLD ) );
         put(
-            IScionTokens.LITERATE_COMMENT,
+            ITokenTypes.LITERATE_COMMENT,
             getScannerManager().createToken( EDITOR_LITERATE_COMMENT_COLOR,
                 EDITOR_LITERATE_COMMENT_BOLD ) );
         put(
-            IScionTokens.KEYWORD,
+            ITokenTypes.KEYWORD,
             getScannerManager().createToken( EDITOR_KEYWORD_COLOR,
                 EDITOR_KEYWORD_BOLD ) );
-        put( IScionTokens.GHC_EXTENSION_KEYWORD, getScannerManager()
+        put( ITokenTypes.GHC_EXTENSION_KEYWORD, getScannerManager()
             .createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ) );
         put(
-            IScionTokens.LITERAL_INTEGER,
+            ITokenTypes.LITERAL_INTEGER,
             getScannerManager().createToken( EDITOR_NUMBER_COLOR,
                 EDITOR_NUMBER_BOLD ) );
         put(
-            IScionTokens.LITERAL_RATIONAL,
+            ITokenTypes.LITERAL_RATIONAL,
             getScannerManager().createToken( EDITOR_NUMBER_COLOR,
                 EDITOR_NUMBER_BOLD ) );
         put(
-            IScionTokens.LITERAL_WORD,
+            ITokenTypes.LITERAL_WORD,
             getScannerManager().createToken( EDITOR_NUMBER_COLOR,
                 EDITOR_NUMBER_BOLD ) );
         put(
-            IScionTokens.LITERAL_FLOAT,
+            ITokenTypes.LITERAL_FLOAT,
             getScannerManager().createToken( EDITOR_NUMBER_COLOR,
                 EDITOR_NUMBER_BOLD ) );
-        put( IScionTokens.IDENTIFIER_CONSTRUCTOR, getScannerManager()
+        put( ITokenTypes.IDENTIFIER_CONSTRUCTOR, getScannerManager()
             .createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD ) );
-        put( IScionTokens.IDENTIFIER_VARIABLE,
+        put( ITokenTypes.IDENTIFIER_VARIABLE,
             getScannerManager().createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD ) );
+        put( ITokenTypes.SYMBOL_VARIABLE,
+            getScannerManager().createToken( EDITOR_VARSYM_COLOR, EDITOR_VARSYM_BOLD ) );
+
         put(
-            IScionTokens.SYMBOL_RESERVED,
+            ITokenTypes.SYMBOL_RESERVED,
             getScannerManager().createToken( EDITOR_SYMBOL_COLOR,
                 EDITOR_SYMBOL_BOLD ) );
         put(
-            IScionTokens.SYMBOL_SPECIAL,
+            ITokenTypes.SYMBOL_SPECIAL,
             getScannerManager().createToken( EDITOR_SYMBOL_COLOR,
                 EDITOR_SYMBOL_BOLD ) );
-        put( IScionTokens.PREPROCESSOR_TEXT,
+        put( ITokenTypes.PREPROCESSOR_TEXT,
             getScannerManager().createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD ) );
-        put( IScionTokens.TEMPLATE_HASKELL,
+        put( ITokenTypes.TEMPLATE_HASKELL,
             getScannerManager().createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD ) );
       }
     };

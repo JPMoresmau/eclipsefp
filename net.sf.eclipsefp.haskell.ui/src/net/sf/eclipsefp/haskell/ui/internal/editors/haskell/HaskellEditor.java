@@ -620,6 +620,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         || property.equals( EDITOR_NUMBER_BOLD )
         || property.equals( EDITOR_VAR_COLOR )
         || property.equals( EDITOR_VAR_BOLD )
+        || property.equals( EDITOR_VARSYM_COLOR )
+        || property.equals( EDITOR_VARSYM_BOLD )
         || property.equals( EDITOR_CON_COLOR )
         || property.equals( EDITOR_CON_BOLD )
         || property.equals( EDITOR_SYMBOL_COLOR )

@@ -9,7 +9,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
-import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.resources.IFile;
@@ -78,41 +78,43 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
       // get serialized...
       private static final long serialVersionUID = 3579246300065591883L;
       {
-        put( IScionTokens.LITERAL_STRING,
+        put( ITokenTypes.LITERAL_STRING,
             man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
-        put( IScionTokens.LITERAL_CHAR,
+        put( ITokenTypes.LITERAL_CHAR,
             man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
-        put( IScionTokens.DOCUMENTATION_ANNOTATION,
+        put( ITokenTypes.DOCUMENTATION_ANNOTATION,
             man.createToken( EDITOR_DOC_COLOR, EDITOR_DOC_BOLD ) );
-        put( IScionTokens.COMMENT,
+        put( ITokenTypes.COMMENT,
             man.createToken( EDITOR_COMMENT_COLOR, EDITOR_COMMENT_BOLD ) );
-        put( IScionTokens.LITERATE_COMMENT, man.createToken(
+        put( ITokenTypes.LITERATE_COMMENT, man.createToken(
             EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD ) );
-        put( IScionTokens.PRAGMA,
+        put( ITokenTypes.PRAGMA,
             man.createToken( EDITOR_PRAGMA_COLOR, EDITOR_PRAGMA_BOLD ) );
-        put( IScionTokens.KEYWORD,
+        put( ITokenTypes.KEYWORD,
             man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ) );
-        put( IScionTokens.GHC_EXTENSION_KEYWORD,
+        put( ITokenTypes.GHC_EXTENSION_KEYWORD,
             man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD ) );
-        put( IScionTokens.LITERAL_INTEGER,
+        put( ITokenTypes.LITERAL_INTEGER,
             man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD ) );
-        put( IScionTokens.LITERAL_RATIONAL,
+        put( ITokenTypes.LITERAL_RATIONAL,
             man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD ) );
-        put( IScionTokens.LITERAL_WORD,
+        put( ITokenTypes.LITERAL_WORD,
             man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD ) );
-        put( IScionTokens.LITERAL_FLOAT,
+        put( ITokenTypes.LITERAL_FLOAT,
             man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD ) );
-        put( IScionTokens.IDENTIFIER_CONSTRUCTOR,
+        put( ITokenTypes.IDENTIFIER_CONSTRUCTOR,
             man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD ) );
-        put( IScionTokens.IDENTIFIER_VARIABLE,
+        put( ITokenTypes.IDENTIFIER_VARIABLE,
             man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD ) );
-        put( IScionTokens.SYMBOL_RESERVED,
+        put( ITokenTypes.SYMBOL_VARIABLE,
+            man.createToken( EDITOR_VARSYM_COLOR, EDITOR_VARSYM_BOLD ) );
+        put( ITokenTypes.SYMBOL_RESERVED,
             man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD ) );
-        put( IScionTokens.SYMBOL_SPECIAL,
+        put( ITokenTypes.SYMBOL_SPECIAL,
             man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD ) );
-        put( IScionTokens.PREPROCESSOR_TEXT,
+        put( ITokenTypes.PREPROCESSOR_TEXT,
             man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD ) );
-        put( IScionTokens.TEMPLATE_HASKELL,
+        put( ITokenTypes.TEMPLATE_HASKELL,
             man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD ) );
       }
     };
@@ -205,7 +207,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
         doc = document;
         contents = prevContents;
 
-        TokenDef def = new TokenDef( IScionTokens.LITERATE_COMMENT,
+        TokenDef def = new TokenDef( ITokenTypes.LITERATE_COMMENT,
             new Location( "", document, new Region( realOffset, realLength ) ) );
         lTokenDefs = new ArrayList<TokenDef>();
         lTokenDefs.add( def );

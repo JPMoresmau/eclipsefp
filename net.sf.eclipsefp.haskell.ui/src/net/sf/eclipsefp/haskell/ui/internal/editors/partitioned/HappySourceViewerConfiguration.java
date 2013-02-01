@@ -4,7 +4,7 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
-import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
@@ -67,36 +67,36 @@ public class HappySourceViewerConfiguration extends
     RuleBasedScanner scanner = new RuleBasedScanner();
     // Patterns
     PatternRule chars = new PatternRule( "'", "'",
-        tokenByTypes.get( IScionTokens.LITERAL_STRING ), '\\', true );
+        tokenByTypes.get( ITokenTypes.LITERAL_STRING ), '\\', true );
     PatternRule string = new PatternRule( "\"", "\"",
-        tokenByTypes.get( IScionTokens.LITERAL_STRING ), '\\', true );
+        tokenByTypes.get( ITokenTypes.LITERAL_STRING ), '\\', true );
     EndOfLineRule comment = new EndOfLineRule( "-- ",
-        tokenByTypes.get( IScionTokens.LITERATE_COMMENT ) );
+        tokenByTypes.get( ITokenTypes.LITERATE_COMMENT ) );
     // Single words
     WordRule semicolon = createRuleForToken( ":",
-        IScionTokens.SYMBOL_RESERVED );
+        ITokenTypes.SYMBOL_RESERVED );
     WordRule pipe = createRuleForToken( "|",
-        IScionTokens.SYMBOL_RESERVED );
+        ITokenTypes.SYMBOL_RESERVED );
     WordRule doublecolon = createRuleForToken( "::",
-        IScionTokens.SYMBOL_RESERVED );
+        ITokenTypes.SYMBOL_RESERVED );
     WordRule doublepercent = createRuleForToken( "%%",
-        IScionTokens.SYMBOL_RESERVED );
+        ITokenTypes.SYMBOL_RESERVED );
     // Keywords
-    WordRule name = createRuleForToken( "%name", IScionTokens.KEYWORD );
-    WordRule error = createRuleForToken( "%error", IScionTokens.KEYWORD );
-    WordRule token = createRuleForToken( "%token", IScionTokens.KEYWORD );
-    WordRule tokentype = createRuleForToken( "%tokentype", IScionTokens.KEYWORD );
-    WordRule right = createRuleForToken( "%right", IScionTokens.KEYWORD );
-    WordRule left = createRuleForToken( "%left", IScionTokens.KEYWORD );
-    WordRule nonassoc = createRuleForToken( "%nonassoc", IScionTokens.KEYWORD );
-    WordRule prec = createRuleForToken( "%prec", IScionTokens.KEYWORD );
-    WordRule monad = createRuleForToken( "%monad", IScionTokens.KEYWORD );
-    WordRule lexer = createRuleForToken( "%lexer", IScionTokens.KEYWORD );
-    WordRule attribute = createRuleForToken( "%attribute", IScionTokens.KEYWORD );
+    WordRule name = createRuleForToken( "%name", ITokenTypes.KEYWORD );
+    WordRule error = createRuleForToken( "%error", ITokenTypes.KEYWORD );
+    WordRule token = createRuleForToken( "%token", ITokenTypes.KEYWORD );
+    WordRule tokentype = createRuleForToken( "%tokentype", ITokenTypes.KEYWORD );
+    WordRule right = createRuleForToken( "%right", ITokenTypes.KEYWORD );
+    WordRule left = createRuleForToken( "%left", ITokenTypes.KEYWORD );
+    WordRule nonassoc = createRuleForToken( "%nonassoc", ITokenTypes.KEYWORD );
+    WordRule prec = createRuleForToken( "%prec", ITokenTypes.KEYWORD );
+    WordRule monad = createRuleForToken( "%monad", ITokenTypes.KEYWORD );
+    WordRule lexer = createRuleForToken( "%lexer", ITokenTypes.KEYWORD );
+    WordRule attribute = createRuleForToken( "%attribute", ITokenTypes.KEYWORD );
     WordRule attributetype = createRuleForToken( "%attributetype",
-        IScionTokens.KEYWORD );
-    WordRule partial = createRuleForToken( "%partial", IScionTokens.KEYWORD );
-    WordRule expect = createRuleForToken( "%expect", IScionTokens.KEYWORD );
+        ITokenTypes.KEYWORD );
+    WordRule partial = createRuleForToken( "%partial", ITokenTypes.KEYWORD );
+    WordRule expect = createRuleForToken( "%expect", ITokenTypes.KEYWORD );
 
     scanner
         .setRules( new IRule[] { chars, string, comment, semicolon, pipe,

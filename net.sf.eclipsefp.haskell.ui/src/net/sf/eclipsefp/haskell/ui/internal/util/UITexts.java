@@ -400,6 +400,7 @@ public final class UITexts extends NLS {
   public static String preferences_editor_syntax_numbers;
   public static String preferences_editor_syntax_vars;
   public static String preferences_editor_syntax_cons;
+  public static String preferences_editor_syntax_varsyms;
   public static String preferences_editor_syntax_keywords;
   public static String preferences_editor_syntax_symbols;
   public static String preferences_editor_syntax_cpp;

@@ -17,7 +17,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
-import net.sf.eclipsefp.haskell.core.codeassist.IScionTokens;
+import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -85,24 +85,25 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       // get serialized...
       private static final long serialVersionUID = 3579246300065591883L;
       {
-        put( IScionTokens.LITERAL_STRING, man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
-        put( IScionTokens.LITERAL_CHAR, man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
-        put( IScionTokens.DOCUMENTATION_ANNOTATION, man.createToken( EDITOR_DOC_COLOR,EDITOR_DOC_BOLD  ) );
-        put( IScionTokens.COMMENT, man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
-        put( IScionTokens.PRAGMA, man.createToken( EDITOR_PRAGMA_COLOR,EDITOR_PRAGMA_BOLD  ) );
-        put( IScionTokens.LITERATE_COMMENT, man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
-        put( IScionTokens.KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
-        put( IScionTokens.GHC_EXTENSION_KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
-        put( IScionTokens.LITERAL_INTEGER, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( IScionTokens.LITERAL_RATIONAL, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( IScionTokens.LITERAL_WORD, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( IScionTokens.LITERAL_FLOAT, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( IScionTokens.IDENTIFIER_CONSTRUCTOR, man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) );
-        put( IScionTokens.IDENTIFIER_VARIABLE, man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) );
-        put( IScionTokens.SYMBOL_RESERVED, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
-        put( IScionTokens.SYMBOL_SPECIAL, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
-        put( IScionTokens.PREPROCESSOR_TEXT, man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) );
-        put( IScionTokens.TEMPLATE_HASKELL, man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
+        put( ITokenTypes.LITERAL_STRING, man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
+        put( ITokenTypes.LITERAL_CHAR, man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
+        put( ITokenTypes.DOCUMENTATION_ANNOTATION, man.createToken( EDITOR_DOC_COLOR,EDITOR_DOC_BOLD  ) );
+        put( ITokenTypes.COMMENT, man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
+        put( ITokenTypes.PRAGMA, man.createToken( EDITOR_PRAGMA_COLOR,EDITOR_PRAGMA_BOLD  ) );
+        put( ITokenTypes.LITERATE_COMMENT, man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
+        put( ITokenTypes.KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
+        put( ITokenTypes.GHC_EXTENSION_KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
+        put( ITokenTypes.LITERAL_INTEGER, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( ITokenTypes.LITERAL_RATIONAL, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( ITokenTypes.LITERAL_WORD, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( ITokenTypes.LITERAL_FLOAT, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
+        put( ITokenTypes.IDENTIFIER_CONSTRUCTOR, man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) );
+        put( ITokenTypes.IDENTIFIER_VARIABLE, man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) );
+        put( ITokenTypes.SYMBOL_VARIABLE, man.createToken( EDITOR_VARSYM_COLOR, EDITOR_VARSYM_BOLD   ) );
+        put( ITokenTypes.SYMBOL_RESERVED, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
+        put( ITokenTypes.SYMBOL_SPECIAL, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
+        put( ITokenTypes.PREPROCESSOR_TEXT, man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) );
+        put( ITokenTypes.TEMPLATE_HASKELL, man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
       }
     };
     getCaseS();
@@ -169,11 +170,11 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   private void addTokenOccurence(final String s,final int offset,int end,final TokenDef td){
     String name=td.getName();
-    if (name.equals( IScionTokens.KEYWORD )
-        || name.equals( IScionTokens.GHC_EXTENSION_KEYWORD )
-        || name.equals( IScionTokens.IDENTIFIER_CONSTRUCTOR )
-        || name.equals( IScionTokens.IDENTIFIER_VARIABLE )
-        || name.equals( IScionTokens.SYMBOL_RESERVED )
+    if (name.equals( ITokenTypes.KEYWORD )
+        || name.equals( ITokenTypes.GHC_EXTENSION_KEYWORD )
+        || name.equals( ITokenTypes.IDENTIFIER_CONSTRUCTOR )
+        || name.equals( ITokenTypes.IDENTIFIER_VARIABLE )
+        || name.equals( ITokenTypes.SYMBOL_RESERVED )
         ){  //|| name.equals( IScionTokens.SYMBOL_SPECIAL )
 
       List<String> key=new LinkedList<String>();
@@ -366,7 +367,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       try {
         file.deleteMarkers( IMarker.TASK , true, IResource.DEPTH_ZERO );
         for (TokenDef nextTokenDef:lTokenDefs){
-          if (nextTokenDef.getName().equals(IScionTokens.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(IScionTokens.COMMENT) || nextTokenDef.getName().equals(IScionTokens.LITERATE_COMMENT)){
+          if (nextTokenDef.getName().equals(ITokenTypes.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(ITokenTypes.COMMENT) || nextTokenDef.getName().equals(ITokenTypes.LITERATE_COMMENT)){
             String s=nextTokenDef.getLocation().getContents( doc );
             outer:for (int a=0;a<s.length();a++){
               if (Character.isLetter( s.charAt( a ) )){
