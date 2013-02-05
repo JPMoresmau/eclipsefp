@@ -109,8 +109,10 @@ public class RenameDelegate extends RefDelegate {
                 // nothing found: change locally
                 List<Occurrence> occs=haskellEditor.getTokenScanner().getOccurrences( l.getStartOffset( haskellEditor.getDocument() ) );
                 Location spanLocation=haskellEditor.getOutlineSpan( getLocation().getStartOffset( haskellEditor.getDocument() ) );
-                CompositeChange cc=ChangeCreator.getLocalReferencesChange(haskellEditor.findFile(),spanLocation, occs, tap.getName(), getNewName() );
-                return cc;
+                if (spanLocation!=null){
+                  CompositeChange cc=ChangeCreator.getLocalReferencesChange(haskellEditor.findFile(),spanLocation, occs, tap.getName(), getNewName() );
+                  return cc;
+                }
               }
           }
         }

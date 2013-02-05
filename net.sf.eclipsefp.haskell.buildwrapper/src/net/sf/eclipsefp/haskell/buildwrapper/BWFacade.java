@@ -424,6 +424,28 @@ public class BWFacade {
 		return null;
 	}
 	
+	/**
+	 * end long running build process if present
+	 * @param file
+	 */
+	public void endLongRunning(IFile file){
+		Process p=buildProcesses.get(file);
+		if (p!=null){
+			try {
+				p.getOutputStream().write(endCommand);
+				try {
+					p.getOutputStream().flush();
+				} catch (IOException ignore){
+					// noop: flush fails if the process closed properly because write flush
+				}
+			} catch (IOException ioe){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			} finally {
+				buildProcesses.remove(file);
+			}
+		}
+		
+	}
 	
 //	public BuildFlagInfo getBuildFlags(IFile file){
 //		BuildFlagInfo i=flagInfos.get(file);

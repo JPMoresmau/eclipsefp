@@ -44,8 +44,10 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScann
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
+import net.sf.eclipsefp.haskell.ui.internal.scion.CabalFileChangeListenerManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
+import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -97,7 +99,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  *
  * @author Leif Frenzel
  */
-public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, NameDefHandler {
+public class HaskellEditor extends TextEditor implements IEditorPreferenceNames, NameDefHandler,CabalFileChangeListener {
   /** The Haskell editor's identifier. */
   public static final String ID = HaskellEditor.class.getName();
   /** Action string associated with a following Haddock documentation comment */
@@ -471,6 +473,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   @Override
   public void dispose() {
+    CabalFileChangeListenerManager.removeDynamicListener( this );
     if( outlinePage != null ) {
       outlinePage.setInput( null );
     }
@@ -530,6 +533,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public void init( final IEditorSite site, final IEditorInput input )
       throws PartInitException {
       super.init( site, input );
+      CabalFileChangeListenerManager.addDynamicListener( this );
       outlinePage = new HaskellOutlinePage( this );
       if (lastOutlineResult!=null){
         outlinePage.setInput( lastOutlineResult.getOutlineDefs() );
@@ -716,6 +720,21 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     }
   }
 
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener#cabalFileChanged(org.eclipse.core.resources.IFile)
+   */
+  @Override
+  public void cabalFileChanged( final IFile cabalF ) {
+    IFile file=findFile();
+    if (file!=null){
+      BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+      if (f!=null){
+        // cabal has changed: restart long running job to take new packages, flags, etc
+        f.endLongRunning( file );
+        synchronize();
+      }
+    }
+  }
 
   /**
    * @return the importsManager

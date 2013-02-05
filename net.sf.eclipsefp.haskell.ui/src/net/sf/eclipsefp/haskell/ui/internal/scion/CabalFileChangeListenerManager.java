@@ -2,6 +2,7 @@ package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
@@ -19,7 +20,7 @@ public class CabalFileChangeListenerManager {
   public static Collection<CabalFileChangeListener> getListeners(){
     if (listeners==null){
       IConfigurationElement[] elts=HaskellUIPlugin.getDefault().getExtensions( HaskellUIPlugin.ID_EXT_CabalChangeListener );
-      listeners=new ArrayList<CabalFileChangeListener>(elts.length);
+      listeners=Collections.synchronizedList( new ArrayList<CabalFileChangeListener>());
       for (IConfigurationElement elem:elts){
         try {
           Object o = elem.createExecutableExtension(HaskellCorePlugin.ATT_CLASS);
@@ -30,5 +31,13 @@ public class CabalFileChangeListenerManager {
       }
     }
     return listeners;
+  }
+
+  public static void addDynamicListener(final CabalFileChangeListener listener){
+    getListeners().add( listener );
+  }
+
+  public static void removeDynamicListener(final CabalFileChangeListener listener){
+    getListeners().remove( listener );
   }
 }
