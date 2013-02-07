@@ -14,6 +14,7 @@ import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOpe
 import net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 /** <p>implements a delegate for launching GHCi.</p>
   *
@@ -166,9 +167,14 @@ public class GhciLaunchOperationDelegate
 
   private void addAll( final List<String> cmdLine, final IFile[] selectedFiles ) {
     for( int i = 0; i < selectedFiles.length; i++ ) {
-      String path = selectedFiles[ i ].getLocation().toOSString();
-      // AbstractHaskellLaunchDelegate uses ProcessBuilder, which will do the proper escaping, so no need to wrap in quotes here
-      cmdLine.add( path );
+      if (selectedFiles[ i ]!=null){
+        IPath p=selectedFiles[ i ].getLocation();
+        if (p!=null){ // file could be non existent
+          String path = p.toOSString();
+          // AbstractHaskellLaunchDelegate uses ProcessBuilder, which will do the proper escaping, so no need to wrap in quotes here
+          cmdLine.add( path );
+        }
+      }
     }
   }
 
