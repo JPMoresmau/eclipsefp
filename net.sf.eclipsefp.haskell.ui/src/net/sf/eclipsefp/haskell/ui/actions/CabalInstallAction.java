@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.views.CabalPackagesView;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -86,7 +87,14 @@ public class CabalInstallAction implements IObjectActionDelegate {
   }
 
   protected Runnable getAfter(final IProject p){
-    return null;
+    return new Runnable() {
+
+      @Override
+      public void run() {
+        /** refresh the cabal packages view **/
+        CabalPackagesView.refresh();
+      }
+    };
   }
 
   protected String getJobName(){
