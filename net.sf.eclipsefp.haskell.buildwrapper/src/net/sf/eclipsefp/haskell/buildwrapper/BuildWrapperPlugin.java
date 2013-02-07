@@ -92,6 +92,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			for (SingleJobQueue q:f.getEditorSynchronizeJobQueues()){
 				q.close();
 			}
+			f.closeAllProcesses();
 		}
 		
 		usageThread.setShouldStop();

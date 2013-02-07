@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -102,7 +103,7 @@ public class BWFacade {
 	 * where ever we come from, we only launch one synchronize operation per file at a time, and lose the intermediate operations
 	 */
 	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<IFile, SingleJobQueue>();
-	private Map<IFile,Process> buildProcesses=new HashMap<IFile, Process>();
+	private Map<IFile,Process> buildProcesses=Collections.synchronizedMap(new HashMap<IFile, Process>());
 	
 	/**
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
@@ -1313,6 +1314,11 @@ public class BWFacade {
 	 */
 	public void clean(IProgressMonitor mon) throws CoreException{
 		if (project!=null){
+			/**
+			 * closes processes so they don't have locks on resources we'd like to delete
+			 * and they can then be restarted with the newly generated files
+			 */
+			closeAllProcesses();
 			IFolder fldr=project.getFolder(DIST_FOLDER);
 			if (fldr.exists()){
 				fldr.delete(IResource.FORCE, mon);
@@ -1323,6 +1329,18 @@ public class BWFacade {
 			outlines.clear();
 			synchronize(false);
 		}
+	}
+	
+	/**
+	 * close all long running processes
+	 */
+	public void closeAllProcesses(){
+		// copy since endLongRunning removes from the map
+		IFile[] fs=buildProcesses.keySet().toArray(new IFile[buildProcesses.size()]);
+		for (IFile f:fs){
+			endLongRunning(f);
+		}
+		buildProcesses.clear();
 	}
 	
 	/**
