@@ -1105,8 +1105,12 @@ public class BWFacade {
 			if (path!=null){
 				Map<String,String> env=pb.environment();
 				String pathValue=env.get("PATH");
-				if (Boolean.TRUE.equals(needPath) || !pathValue.contains(path)){
-					pathValue+=File.pathSeparator+path;
+				if (Boolean.TRUE.equals(needPath) || pathValue==null || pathValue.length()==0 || !pathValue.contains(path)){
+					if (pathValue==null || pathValue.length()==0){
+						pathValue=path;
+					} else {
+						pathValue+=File.pathSeparator+path;
+					}
 					env.put("PATH",pathValue);
 					needPath=true;
 				} 
