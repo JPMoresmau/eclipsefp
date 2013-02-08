@@ -342,6 +342,7 @@ public class BWFacade {
 				pb.directory(workingDir);
 				pb.redirectErrorStream(true);
 				pb.command(command);
+				addBuildWrapperPath(pb);
 				if (ow!=null && BuildWrapperPlugin.logAnswers) {
 					ow.addMessage(LangUtil.join(command, " "));
 				}				
@@ -1089,7 +1090,29 @@ public class BWFacade {
 		return null;
 	}
 	
-
+	/**
+	 * flag caching if we need to add the path
+	 */
+    private Boolean needPath=null;
+    /**
+     * add the buildwrapper location to the path so that other executables can be found
+     * @param pb
+     */
+	private synchronized void addBuildWrapperPath(ProcessBuilder pb){
+		if (needPath==null || needPath.booleanValue()){
+			needPath=false;
+			String path=new File(bwPath).getParent();
+			if (path!=null){
+				Map<String,String> env=pb.environment();
+				String pathValue=env.get("PATH");
+				if (Boolean.TRUE.equals(needPath) || !pathValue.contains(path)){
+					pathValue+=File.pathSeparator+path;
+					env.put("PATH",pathValue);
+					needPath=true;
+				} 
+			}
+		}
+	}
 	
 	private <T> T run(LinkedList<String> args,JSONFactory<T> f){
 		return run(args,f,true);
@@ -1118,6 +1141,7 @@ public class BWFacade {
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);
 		pb.command(args);
+		addBuildWrapperPath(pb);
 		if (ow!=null && BuildWrapperPlugin.logAnswers) {
 			ow.addMessage(LangUtil.join(args, " "));
 		}					
@@ -1272,6 +1296,7 @@ public class BWFacade {
 
 	public void setBwPath(String bwPath) {
 		this.bwPath = bwPath;
+		needPath=null;
 	}
 	
 	private static interface JSONFactory<T>{
