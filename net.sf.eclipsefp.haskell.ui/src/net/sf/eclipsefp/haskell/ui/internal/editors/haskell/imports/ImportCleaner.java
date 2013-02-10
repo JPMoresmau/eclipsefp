@@ -16,9 +16,14 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ltk.core.refactoring.DocumentChange;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -59,31 +64,60 @@ public class ImportCleaner {
                    return Integer.valueOf(o2.getLocation().getStartLine()).compareTo(Integer.valueOf(o1.getLocation().getStartLine()));
                   }
                 } );
+                final DocumentChange dc=new DocumentChange("import",d);
+                MultiTextEdit mte=new MultiTextEdit();
+                dc.setEdit( mte );
+                //dc.addEdit( edit )
+                for (ImportClean cl:cleans){
+                  try {
+                    int offset=cl.getLocation().getStartOffset( d );
+                    int length=cl.getLocation().getLength( d );
+                    if (cl.getText().length()==0){ // nothing more on deleted line: delete the whole line
+                      int line=d.getLineOfOffset( offset );
+                      int len=d.getLineLength(line);
+                      String del=d.getLineDelimiter( line );
+                      int lenDel=del!=null?del.length():0;
+                      if (length==len-lenDel){
+                        length+=lenDel;
+                      }
+                    }
+                    ReplaceEdit re=new ReplaceEdit( offset, length, cl.getText() );
+                    mte.addChild( re );
+                  } catch (BadLocationException ble){
+                    HaskellUIPlugin.log( ble );
+                  }
+                }
+
                 display.asyncExec( new Runnable(){
                   /* (non-Javadoc)
                    * @see java.lang.Runnable#run()
                    */
                   @Override
                   public void run() {
-                    for (ImportClean cl:cleans){
-                      //replaceWithFormatting(d,cl);
-                      try {
-                        int start=cl.getLocation().getStartOffset( d );
-                        int length=cl.getLocation().getLength( d );
-                        d.replace( start , length, cl.getText());
-                        // remove empty lines
-                        if (cl.getText().length()==0){
-                          int line=d.getLineOfOffset( start );
-                          int len=d.getLineLength(line  );
-                          String del=d.getLineDelimiter( line );
-                          if (del!=null && del.length()==len){
-                            d.replace( start, len,"" );
-                          }
-                        }
-                      } catch (BadLocationException ble){
-                        HaskellUIPlugin.log( ble );
-                      }
+                    try {
+                      dc.perform( new NullProgressMonitor() );
+                    } catch (CoreException ce){
+                      HaskellUIPlugin.log( ce );
                     }
+//                    for (ImportClean cl:cleans){
+//                      //replaceWithFormatting(d,cl);
+//                      try {
+//                        int start=cl.getLocation().getStartOffset( d );
+//                        int length=cl.getLocation().getLength( d );
+//                        d.replace( start , length, cl.getText());
+//                        // remove empty lines
+//                        if (cl.getText().length()==0){
+//                          int line=d.getLineOfOffset( start );
+//                          int len=d.getLineLength(line  );
+//                          String del=d.getLineDelimiter( line );
+//                          if (del!=null && del.length()==len){
+//                            d.replace( start, len,"" );
+//                          }
+//                        }
+//                      } catch (BadLocationException ble){
+//                        HaskellUIPlugin.log( ble );
+//                      }
+//                    }
 
                   }
                 } );
