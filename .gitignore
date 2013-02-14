@@ -4,5 +4,10 @@ CompilationThroughScion_files
 /scion-browser/
 /diffs
 /buildwrapper
+/diff
+/GHCTest
+/HTF
+/HTTP
+/cabal-dev
 ast.txt
 .metadata
