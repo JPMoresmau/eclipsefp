@@ -99,7 +99,24 @@ public class JobFacade  {
 	    		if (event.getResult().isOK()){
 	    			Job parseJob = new Job (jobNamePrefix) {
 	    				protected IStatus run(IProgressMonitor arg0) {
-	    					realFacade.parseBuildResult(buildJob.getNotes());
+	    					boolean ok=realFacade.parseBuildResult(buildJob.getNotes());
+	    					if (ok){
+	    						String name=NLS.bind(BWText.job_sandbox_deps, realFacade.getProject().getName());
+	    						Job installJob=new Job(name) {
+	    							
+	    							@Override
+	    							protected IStatus run(IProgressMonitor arg0) {
+			    						try {
+			    							SandboxHelper.updateUsing(realFacade);
+			    						} catch (CoreException ce){
+			    							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+			    						}
+			    						return Status.OK_STATUS;
+	    							}
+	    						};
+	    						installJob.setPriority(Job.BUILD);
+	    						installJob.schedule();
+	    					}
 	    					return Status.OK_STATUS;
 	    				};
 	    			};

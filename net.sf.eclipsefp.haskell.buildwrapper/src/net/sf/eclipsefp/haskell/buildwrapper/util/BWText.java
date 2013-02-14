@@ -30,6 +30,7 @@ public class BWText extends NLS {
   public static String        job_components;
   public static String        job_dependencies;
   public static String        job_import_clean;
+  public static String 		  job_sandbox_deps;
   
   public static String        error_deleteMarkers;
   public static String        error_gettingFlags;
@@ -39,9 +40,11 @@ public class BWText extends NLS {
   public static String 		  error_clean;
   public static String 		  error_parsing_usage_path;
   public static String 		  error_parsing_usage_file;
+  public static String 		  error_sandbox;
   public static String 		  error_setup_db;
   public static String 		  error_db;
   public static String 		  error_no_db;
+  
   
   public static String 		  outline_job_name;
   public static String 		  editor_job_name;

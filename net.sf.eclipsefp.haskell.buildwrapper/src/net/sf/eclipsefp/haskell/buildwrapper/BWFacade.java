@@ -18,9 +18,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.eclipsefp.haskell.buildwrapper.types.BWTarget;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
@@ -62,6 +62,7 @@ import org.json.JSONObject;
 public class BWFacade {
 	public static final String DIST_FOLDER=".dist-buildwrapper";
 	public static final String DIST_FOLDER_CABAL=DIST_FOLDER+"/dist";
+	public static final String DIST_FOLDER_CABALDEV=DIST_FOLDER+"/cabal-dev";
 	
 	private static final String prefix="build-wrapper-json:";
 	
@@ -69,8 +70,11 @@ public class BWFacade {
 	
 	private String bwPath;
 	//private String tempFolder=".dist-buildwrapper";
-	private String cabalPath;
+	
+	private CabalImplDetails cabalImplDetails;
+	
 	private String cabalFile;
+	
 	private String cabalShortName;
 	
 	private String flags;
@@ -330,13 +334,15 @@ public class BWFacade {
 				command.add("--file="+path);
 				command.add("--longrunning=true");
 				command.add("--tempfolder="+DIST_FOLDER);
-				command.add("--cabalpath="+cabalPath);
+				command.add("--cabalpath="+cabalImplDetails.getExecutable());
 				command.add("--cabalfile="+cabalFile);
 				command.add("--cabalflags="+flags);
 				for (String s:extraOpts){
 					command.add("--cabaloption="+s);
 				}
-
+				for (String s:cabalImplDetails.getOptions()){
+					command.add("--cabaloption="+s);
+				}
 				addEditorStanza(file,command);
 				ProcessBuilder pb=new ProcessBuilder();
 				pb.directory(workingDir);
@@ -490,11 +496,12 @@ public class BWFacade {
 		command.add("synchronize");
 		command.add("--force="+force);
 		JSONArray arr=run(command,ARRAY);
+		boolean ok=true;
 		if (arr!=null){
 			if(arr.length()>1){
 		
 				JSONArray notes=arr.optJSONArray(1);
-				parseNotes(notes);
+				ok=parseNotes(notes);
 			}
 			JSONArray allPaths=arr.optJSONArray(0);
 			if (allPaths!=null){
@@ -526,6 +533,15 @@ public class BWFacade {
 							}
 						}
 					}
+				}
+			}
+		}
+		if (ok){
+			if (SandboxHelper.isSandboxed(this) && !SandboxHelper.sandboxExists(this)){
+				try {
+					SandboxHelper.installDeps(this);
+				} catch (CoreException ce){
+					BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
 				}
 			}
 		}
@@ -957,6 +973,13 @@ public class BWFacade {
 		return taps;
 	}
 	
+	public void clean(boolean everything){
+		LinkedList<String> command=new LinkedList<String>();
+		command.add("clean");
+		command.add("--everything="+everything);
+		run(command,ARRAY);
+	}
+	
 	private boolean parseNotes(JSONArray notes){
 		return parseNotes(notes,null,null);
 	}
@@ -1135,10 +1158,13 @@ public class BWFacade {
 		
 		args.addFirst(bwPath);
 		args.add("--tempfolder="+DIST_FOLDER);
-		args.add("--cabalpath="+cabalPath);
+		args.add("--cabalpath="+cabalImplDetails.getExecutable());
 		args.add("--cabalfile="+cabalFile);
 		args.add("--cabalflags="+flags);
 		for (String s:extraOpts){
+			args.add("--cabaloption="+s);
+		}
+		for (String s:cabalImplDetails.getOptions()){
 			args.add("--cabaloption="+s);
 		}
 		ProcessBuilder pb=new ProcessBuilder();
@@ -1204,7 +1230,7 @@ public class BWFacade {
 						BuildWrapperPlugin.logError(BWText.process_launch_error, ce);
 					}
 				}
-				configure(new BuildOptions().setTarget(BWTarget.Target));
+				configure(new BuildOptions());
 				return run(new LinkedList<String>(args.subList(1, args.size()-4)),f,false);
 			}
 			// maybe now the folder exists...
@@ -1219,6 +1245,46 @@ public class BWFacade {
 		return obj;
 	}
 
+	public void runCabal(LinkedList<String> args){
+		args.addFirst(cabalImplDetails.getExecutable());
+		if (flags!=null && flags.length()>0){
+			args.add("--flags="+flags);
+		}
+		for (String s:extraOpts){
+			args.add(s);
+		}
+		for (String s:cabalImplDetails.getOptions()){
+			args.add(s);
+		}
+		ProcessBuilder pb=new ProcessBuilder();
+		pb.directory(workingDir);
+		pb.redirectErrorStream(true);
+		pb.command(args);
+		addBuildWrapperPath(pb);
+		if (ow!=null && BuildWrapperPlugin.logAnswers) {
+			ow.addMessage(LangUtil.join(args, " "));
+		}					
+		try {
+			Process p=pb.start();
+			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
+			//long t0=System.currentTimeMillis();
+			String l=br.readLine();
+			while (l!=null){
+				if (ow!=null) {
+					ow.addMessage(l);
+				}
+				l=br.readLine();
+			}
+			// maybe now the folder exists...
+			if (needSetDerivedOnDistDir){
+				setDerived();
+			}
+			//long t1=System.currentTimeMillis();
+			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
+		} catch (IOException ioe){
+			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+		}
+	}
 
 //	public String getTempFolder() {
 //		return tempFolder;
@@ -1229,15 +1295,6 @@ public class BWFacade {
 //		this.tempFolder = tempFolder;
 //	}
 
-
-	public String getCabalPath() {
-		return cabalPath;
-	}
-
-
-	public void setCabalPath(String cabalPath) {
-		this.cabalPath = cabalPath;
-	}
 
 
 	public String getCabalFile() {
@@ -1348,10 +1405,8 @@ public class BWFacade {
 			 * and they can then be restarted with the newly generated files
 			 */
 			closeAllProcesses();
-			IFolder fldr=project.getFolder(DIST_FOLDER);
-			if (fldr.exists()){
-				fldr.delete(IResource.FORCE, mon);
-			}
+			clean(true);
+			project.refreshLocal(IResource.DEPTH_ONE, mon);
 			deleteCabalProblems();
 			BuildWrapperPlugin.deleteAllProblems(project);
 			cabalFileChanged();
@@ -1370,6 +1425,10 @@ public class BWFacade {
 			endLongRunning(f);
 		}
 		buildProcesses.clear();
+	}
+	
+	public void cleanGenerated(){
+		clean(false);
 	}
 	
 	/**
@@ -1461,6 +1520,15 @@ public class BWFacade {
 			return true;
 		}
 		return false;
+	}
+
+
+	public CabalImplDetails getCabalImplDetails() {
+		return cabalImplDetails;
+	}
+
+	public void setCabalImplDetails(CabalImplDetails cabalImplDetails) {
+		this.cabalImplDetails = cabalImplDetails;
 	}
 	
 

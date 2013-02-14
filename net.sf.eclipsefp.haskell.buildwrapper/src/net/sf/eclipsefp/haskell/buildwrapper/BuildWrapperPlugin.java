@@ -3,8 +3,10 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 import java.io.File;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
@@ -15,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -126,18 +129,19 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		return usageThread;
 	}
 	
-	public static BWFacade createFacade(IProject p,String cabalPath,Writer outStream){
+	public static BWFacade createFacade(IProject p,CabalImplDetails impl,Writer outStream){
 
 		IFile cf=getCabalFile(p);
 		if (cf!=null){
 			BWFacade f=new BWFacade();
 			f.setBwPath(bwPath);
-			f.setCabalPath(cabalPath);
+			f.setCabalImplDetails(impl);
 			f.setCabalFile(cf.getLocation().toOSString());
 			f.setWorkingDir(new File(p.getLocation().toOSString()));
 			f.setProject(p);
 			f.setOutStream(outStream);
 			facades.put(p, f);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(new SandboxHelper.ProjectReferencesChangeListener(),IResourceChangeEvent.POST_CHANGE);
 			// why? build will do that for us
 			// well if we don't build automatically we DO need it!
 			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()){

@@ -51,7 +51,7 @@ public interface IPreferenceConstants {
   public final static String ALEX_EXECUTABLE="ALEX_EXECUTABLE"; //$NON-NLS-1$
   public final static String HAPPY_EXECUTABLE="HAPPY_EXECUTABLE"; //$NON-NLS-1$
   public final static String UUAGC_EXECUTABLE="UUAGC_EXECUTABLE"; //$NON-NLS-1$
-
+  public final static String CABALDEV_EXECUTABLE="CABALDEV_EXECUTABLE"; //$NON-NLS-1$
   /**
    * Source-graph
    */

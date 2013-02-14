@@ -157,7 +157,7 @@ public class AnImport {
         decls = getDeclarationsFromFile( importDef.getModule(), project,visited );
         if (decls.size()==0){
           BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
-          if (f!=null){
+          if (f!=null && BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()){
             // reducing the scope of the query
             for (CabalPackage[] cps:f.getPackagesByDB().values()){
               for (CabalPackage cp:cps){

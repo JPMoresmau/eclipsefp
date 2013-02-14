@@ -13,6 +13,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails.SandboxType;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -752,11 +754,27 @@ public class ScionManager implements IResourceChangeListener {
     if (BuildWrapperPlugin.getFacade( project )==null && CabalImplementationManager.getCabalExecutable()!=null){
       HaskellConsole cbw=getBWHaskellConsole( project );
       Writer outStreamBw = cbw.createOutputWriter();
-
-      BuildWrapperPlugin.createFacade(project, CabalImplementationManager.getCabalExecutable(), outStreamBw );
+      CabalImplDetails cid=getCabalImplDetails();
+      BuildWrapperPlugin.createFacade(project,cid, outStreamBw );
     }
   }
 
+  public static CabalImplDetails getCabalImplDetails(){
+    CabalImplDetails details=new CabalImplDetails();
+    String cabal=CabalImplementationManager.getCabalExecutable();
+    String cabalDev=ScionManager.getExecutablePath( IPreferenceConstants.CABALDEV_EXECUTABLE, "cabal-dev", false );
+    if (cabalDev!=null && cabalDev.length()>0){
+        details.setExecutable( cabalDev);
+        details.getOptions().add("--sandbox="+BWFacade.DIST_FOLDER_CABALDEV);
+        details.getOptions().add("--with-cabal-install="+cabal);
+        details.setType( SandboxType.CABAL_DEV );
+    } else { // standard cabal
+      details.setExecutable(cabal);
+      details.setType( SandboxType.NONE );
+    }
+    //HaskellUIPlugin.getDefault().getPreferenceStore().getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
+    return details;
+  }
 
 
   /**
