@@ -674,6 +674,9 @@ public class BWFacade {
 		}
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("dependencies");
+		if (SandboxHelper.isSandboxed(this)){
+			command.add("--sandbox="+DIST_FOLDER_CABALDEV);
+		}
 		JSONArray arr=run(command,ARRAY);
 		if (arr==null){
 			return new HashMap<String, CabalPackage[]>();

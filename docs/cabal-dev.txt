@@ -1,0 +1,9 @@
+- dependencies from bw should have sandbox package
+	- showing in libraries in package explorer
+
+- package list in dependencies (cabal editor) -> include all projects if we have sandbox
+	- choosing a package matching a project name should add the project reference
+
+- imports auto completion need exposed modules from reference projects
+	- and all symbols in these modules
+	- use usage database? or component list (exposed modules are in it)

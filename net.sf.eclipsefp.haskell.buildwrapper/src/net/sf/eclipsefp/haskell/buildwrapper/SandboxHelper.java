@@ -195,7 +195,9 @@ public class SandboxHelper {
 						@Override
 						protected IStatus run(IProgressMonitor arg0) {
 							try {
-								installDeps(BuildWrapperPlugin.getFacade(p));
+								BWFacade f=BuildWrapperPlugin.getFacade(p);
+								f.cabalFileChanged();
+								installDeps(f);
 							} catch (CoreException ce){
 								BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
 							}
