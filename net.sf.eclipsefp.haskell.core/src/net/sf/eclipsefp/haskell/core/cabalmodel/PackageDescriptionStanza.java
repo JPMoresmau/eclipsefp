@@ -621,6 +621,15 @@ public class PackageDescriptionStanza {
     return ret;
   }
 
+  public Set<String> listExposedModules(){
+    Set<String> ret=new HashSet<String>();
+    String s=getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
+    ret.addAll(PackageDescriptionLoader.parseList( s ));
+    for (PackageDescriptionStanza pds:getStanzas()){
+      ret.addAll( pds.listExposedModules() );
+    }
+    return ret;
+  }
 
   public Map<String, String> getRealNames() {
     return realNames;

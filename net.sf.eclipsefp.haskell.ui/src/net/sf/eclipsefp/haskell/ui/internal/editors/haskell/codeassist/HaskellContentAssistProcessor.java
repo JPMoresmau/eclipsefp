@@ -48,12 +48,14 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.Fil
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.ProposalScope;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -769,6 +771,25 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	    moduleGraphNames.addAll(pds.listAllModules());
 	  }
 	  exposedModules = new ArrayList<String>();
+
+	  if (ScionManager.getCabalImplDetails().isSandboxed()){
+	    try {
+  	    for (IProject p:file.getProject().getReferencedProjects()){
+  	      if (ResourceUtil.hasHaskellNature( p )){
+  	        IFile f=BuildWrapperPlugin.getCabalFile( p );
+  	        if (f!=null){
+    	        PackageDescription pd=PackageDescriptionLoader.load(f);
+    	        PackageDescriptionStanza pds=pd.getLibraryStanza();
+    	        if (pds!=null){
+    	          exposedModules.addAll(pds.listExposedModules());
+    	        }
+  	        }
+  	      }
+  	    }
+	    } catch (CoreException ce){
+	      HaskellUIPlugin.log( ce );
+	    }
+	  }
 	  return filterModuleNames( offset );
 	}
 	/**

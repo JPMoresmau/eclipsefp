@@ -5,5 +5,7 @@
 	- choosing a package matching a project name should add the project reference
 
 - imports auto completion need exposed modules from reference projects
-	- and all symbols in these modules
+	- and all symbols in these modules (names in scope does it at least for a little bit)
 	- use usage database? or component list (exposed modules are in it)
+
+- ghci could use source folders instead of package database and changes in other project files could be reflected straight away
