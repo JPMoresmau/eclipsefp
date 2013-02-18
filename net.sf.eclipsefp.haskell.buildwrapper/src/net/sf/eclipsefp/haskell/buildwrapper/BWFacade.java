@@ -980,7 +980,7 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("clean");
 		command.add("--everything="+everything);
-		run(command,ARRAY);
+		run(command,BOOL);
 	}
 	
 	private boolean parseNotes(JSONArray notes){
@@ -1386,6 +1386,12 @@ public class BWFacade {
 	};
 
 	
+	private static JSONFactory<Boolean> BOOL=new JSONFactory<Boolean>() {
+		public Boolean fromJSON(String json)throws JSONException {
+			return Boolean.valueOf(json);
+		}
+	};
+	
 	public IProject getProject() {
 		return project;
 	}
@@ -1414,6 +1420,13 @@ public class BWFacade {
 			BuildWrapperPlugin.deleteAllProblems(project);
 			cabalFileChanged();
 			outlines.clear();
+			if (SandboxHelper.isSandboxed(this)){
+				try {
+					SandboxHelper.installDeps(this);
+				} catch (CoreException ce){
+					BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+				}
+			}
 			synchronize(false);
 		}
 	}
