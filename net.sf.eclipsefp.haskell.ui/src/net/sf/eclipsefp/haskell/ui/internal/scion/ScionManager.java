@@ -762,8 +762,11 @@ public class ScionManager implements IResourceChangeListener {
   public static CabalImplDetails getCabalImplDetails(){
     CabalImplDetails details=new CabalImplDetails();
     String cabal=CabalImplementationManager.getCabalExecutable();
-    String cabalDev=ScionManager.getExecutablePath( IPreferenceConstants.CABALDEV_EXECUTABLE, "cabal-dev", false );
-    if (cabalDev!=null && cabalDev.length()>0){
+    IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+    String cabalDev = preferenceStore.getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
+
+    //String cabalDev=ScionManager.getExecutablePath( IPreferenceConstants.CABALDEV_EXECUTABLE, "cabal-dev", false );
+    if (cabalDev!=null && cabalDev.length()>0 && new File(cabalDev).exists()){
         details.setExecutable( cabalDev);
         details.getOptions().add("--sandbox="+BWFacade.DIST_FOLDER_CABALDEV);
         details.getOptions().add("--with-cabal-install="+cabal);

@@ -12,6 +12,8 @@
 - show packages in error in Cabal Packages view (error overlay on icon) + errors + enable install button
 	- list of packages in error
 
+- fix all hlint suggestions on project?
+
 - code navigation like chris done? http://dl.dropbox.com/u/62227452/Screenshots/code-navigationz-moving.ogv
 	keep locations from ast? 
 	Does Eclipse provide easy way to do that in the editor?
