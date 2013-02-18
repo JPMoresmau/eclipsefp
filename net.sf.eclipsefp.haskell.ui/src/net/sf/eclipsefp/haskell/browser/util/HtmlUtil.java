@@ -28,11 +28,13 @@ public class HtmlUtil {
   }
 
   private static void addDocs( final String docs, final StringBuilder builder ) {
-    String[] paragraphs = docs.split( "\n\n" );
-    for( String paragraph: paragraphs ) {
-      builder.append( "<p>" );
-      builder.append( paragraph );
-      builder.append( "</p>" );
+    if (docs!=null){
+      String[] paragraphs = docs.split( "\n\n" );
+      for( String paragraph: paragraphs ) {
+        builder.append( "<p>" );
+        builder.append( paragraph );
+        builder.append( "</p>" );
+      }
     }
   }
 

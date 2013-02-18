@@ -447,4 +447,6 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	public static void logStatus(IStatus status) {
 		StatusManager.getManager().handle(status);
 	}
+	
+	
 }

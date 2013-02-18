@@ -43,15 +43,18 @@ public class CabalImplDetails {
     this.executable = executable;
   }
 
+  public boolean isSandboxed(){
+	  return !getType().equals(SandboxType.NONE);
+  }
 
-public SandboxType getType() {
-	return type;
-}
-
-
-public void setType(SandboxType type) {
-	this.type = type;
-}
+  public SandboxType getType() {
+		return type;
+	}
+	
+	
+	public void setType(SandboxType type) {
+		this.type = type;
+	}
 
 
 }

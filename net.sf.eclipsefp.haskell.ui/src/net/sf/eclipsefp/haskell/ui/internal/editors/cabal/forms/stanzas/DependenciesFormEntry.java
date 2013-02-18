@@ -84,6 +84,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         for( DependencyItem item: items ) {
           alreadySelected.add( item.getPackage() );
         }
+        alreadySelected.add( project.getName() );
         DependenciesDialog dialog = new DependenciesDialog( tableField
             .getTable().getShell(), alreadySelected );
         if( dialog.open() == Window.OK && dialog.getValue() != null ) {
@@ -95,6 +96,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
           }
           tableField.setInput( items );
           DependenciesFormEntry.this.notifyTextValueChanged();
+
         }
       }
     };

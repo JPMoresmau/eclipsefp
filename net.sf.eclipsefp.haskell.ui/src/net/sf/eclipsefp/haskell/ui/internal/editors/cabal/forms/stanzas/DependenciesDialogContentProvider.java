@@ -5,10 +5,13 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -25,12 +28,20 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
     super();
 
     try {
+      Set<String> names=new HashSet<String>(alreadySelected);
       //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL,
        //   null );
       ArrayList<HaskellPackage> pkgs = new ArrayList<HaskellPackage>();
       for( HaskellPackage pkg: BrowserPlugin.getSharedInstance().getPackages(Database.ALL) ) {
-        if( alreadySelected.indexOf( pkg.getIdentifier().getName() ) == -1 ) {
+        if(! names.contains( pkg.getIdentifier().getName() ) ) {
           pkgs.add( pkg );
+        }
+      }
+      if (ScionManager.getCabalImplDetails().isSandboxed()){
+        for (HaskellPackage pkg:ScionManager.listProjectPackages()){
+          if(! names.contains( pkg.getIdentifier().getName() ) ) {
+            pkgs.add( pkg );
+          }
         }
       }
       this.elements = pkgs.toArray( new HaskellPackage[ pkgs.size() ] );
@@ -61,13 +72,13 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
 
   @Override
   public Object getParent( final Object element ) {
-    // TODO Auto-generated method stub
+    // one level
     return null;
   }
 
   @Override
   public boolean hasChildren( final Object element ) {
-    // TODO Auto-generated method stub
+    // one level
     return false;
   }
 

@@ -3,18 +3,27 @@ package net.sf.eclipsefp.haskell.ui.internal.scion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
+import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
+import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails.SandboxType;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -27,6 +36,7 @@ import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.HLintPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
@@ -37,6 +47,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -44,11 +55,13 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -664,16 +677,46 @@ public class ScionManager implements IResourceChangeListener {
             if( delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0) {
               if( delta.getResource() instanceof IFile ) {
                 IFile f = ( IFile )delta.getResource();
-                IFile cabalF = BuildWrapperPlugin.getCabalFile( f.getProject() );
+                IProject prj=f.getProject();
+                IFile cabalF = BuildWrapperPlugin.getCabalFile( prj );
                 if( f.equals( cabalF ) ) {
-                  BWFacade bwf=BuildWrapperPlugin.getFacade( f.getProject() );
+                  BWFacade bwf=BuildWrapperPlugin.getFacade( prj );
                   if (bwf!=null){
                     bwf.cabalFileChanged();
                   }
                   for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
                     l.cabalFileChanged( f );
                   }
+                  if (bwf!=null && getCabalImplDetails().isSandboxed()){
+                    IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
+                    Map<String,CabalPackage[]> m=bwf.getPackagesByDB();
+                    for (String s:m.keySet()){
+                      if (new File(s).getAbsolutePath().startsWith( prj.getLocation().toOSString() )){
+                        Set<IProject> deps=new HashSet<IProject>();
+                        for (CabalPackage cp:m.get( s )){
+                          if (cp.getComponents().length>0){
+                            IProject p=root.getProject( cp.getName() );
+                            if (ResourceUtil.hasHaskellNature( p )){
+                              deps.add(p);
+                            }
+                          }
+                        }
+                        if (deps.size()>0){
+                          try {
+                            IProjectDescription desc=prj.getDescription();
+                            IProject[] oldDeps=desc.getReferencedProjects();
+                            deps.addAll( Arrays.asList( oldDeps ) );
+                            IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
+                            desc.setReferencedProjects( newDeps );
+                            prj.setDescription( desc, new NullProgressMonitor() );
+                          } catch(CoreException ce){
+                            HaskellUIPlugin.log( ce );
+                          }
 
+                        }
+                      }
+                    }
+                  }
                 }
                 return false;
               }
@@ -946,5 +989,26 @@ public class ScionManager implements IResourceChangeListener {
 
       return Status.OK_STATUS;
     }
+  }
+
+  public static List<HaskellPackage> listProjectPackages(){
+    List<IProject> prjs=ResourceUtil.listHaskellProjects();
+    List<HaskellPackage> hps=new ArrayList<HaskellPackage>(prjs.size());
+    for (IProject p:prjs){
+      IFile f=BuildWrapperPlugin.getCabalFile( p );
+      try {
+        PackageDescription pd=PackageDescriptionLoader.load(f);
+        PackageDescriptionStanza pds=pd.getPackageStanza();
+        if (pds!=null){
+          String version=pds.getProperties().get( CabalSyntax.FIELD_VERSION );
+          String doc=pds.getProperties().get( CabalSyntax.FIELD_SYNOPSIS );
+          HaskellPackage hp=new HaskellPackage( doc, new PackageIdentifier( pds.getName(), version ) );
+          hps.add(hp);
+        }
+      } catch( CoreException ex ) {
+        HaskellCorePlugin.log( "listProjectPackages:", ex ); //$NON-NLS-1$
+      }
+    }
+    return hps;
   }
 }

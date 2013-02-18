@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -56,7 +57,7 @@ public class ResourceUtil {
 
   public static boolean hasHaskellNature(final IProject p){
     try {
-      return p.isAccessible() && p.hasNature( HaskellNature.NATURE_ID );
+      return p!=null && p.isAccessible() && p.hasNature( HaskellNature.NATURE_ID );
     } catch (CoreException ce){
       HaskellCorePlugin.log( ce );
     }
@@ -702,4 +703,19 @@ public class ResourceUtil {
     list.toArray( result );
     return result;
   }
+
+  public static List<IProject> listHaskellProjects(  ) {
+    IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
+    List<IProject> list = new ArrayList<IProject>();
+    for( IProject project:root.getProjects() ) {
+       if(project.isOpen()
+             && hasHaskellNature( project )) {
+          list.add( project );
+        }
+    }
+
+    return list;
+  }
+
+
 }
