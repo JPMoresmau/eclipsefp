@@ -37,7 +37,7 @@ public class CommandOnChangeListener implements IResourceChangeListener {
         public boolean visit( final IResourceDelta delta )
             throws CoreException {
           if (delta.getResource().getProject()==null || delta.getResource().getProject().getName().equals(projectName)){
-            if( delta.getKind() == IResourceDelta.REMOVED || (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0)) {
+            if( delta.getKind() == IResourceDelta.REMOVED || (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0  && (delta.getFlags() & IResourceDelta.MARKERS)>0)) {
               if( delta.getResource() instanceof IFile
                   && FileUtil.hasHaskellExtension( delta.getResource() ) ) {
                 runCommand();

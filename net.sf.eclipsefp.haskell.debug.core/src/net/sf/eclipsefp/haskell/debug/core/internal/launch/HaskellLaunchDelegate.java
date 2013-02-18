@@ -104,7 +104,7 @@ public class HaskellLaunchDelegate extends AbstractHaskellLaunchDelegate {
           commandOnReload?command:null);
 
       ResourcesPlugin.getWorkspace().addResourceChangeListener(
-         cocl, IResourceChangeEvent.PRE_BUILD );
+         cocl, IResourceChangeEvent.POST_CHANGE );
 
       ILaunchesListener2 ll=new ILaunchesListener2() {
 

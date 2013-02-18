@@ -16,7 +16,7 @@ Fixes:
 	- Syntax highlighting more stable on big files
 	- Haskell test results does not reclaim focus on each refresh, less flicker on update
 	- Quick fix on multiple GHC suggestions
-
+	- Avoid reloading changes files multiple times in GHCi (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/6125472d/?limit=50)
 
 Features:
 	- Cabal Packages view shows a green tick on installed packages and versions when you display the list of all hackage packages.
