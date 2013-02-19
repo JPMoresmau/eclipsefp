@@ -1,8 +1,12 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.core.builder;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.WorkspaceFacade;
@@ -10,15 +14,21 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /** <p>The incremental builder for Haskell projects.</p>
@@ -126,6 +136,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
         cleanNonHaskellSources();
         BuildOptions bo=new BuildOptions().setOutput(output).setRecompile(false);
         if (synchronize){
+          addProjectDependencies( f.getRealFacade(), getProject() );
           f.synchronizeAndBuild( false, bo );
         } else {
           f.build( bo );
@@ -138,6 +149,39 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
     }
   }
 
+  public static void addProjectDependencies(final BWFacade f,final IProject prj){
+    if (f!=null && f.getCabalImplDetails().isSandboxed()){
+      IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
+      try {
+        PackageDescription pd=PackageDescriptionLoader.load( BuildWrapperPlugin.getCabalFile( prj ) );
+        Set<String> pkgs=new HashSet<String>();
+        for (PackageDescriptionStanza pds:pd.getStanzas()){
+          pkgs.addAll( pds.getDependentPackages() );
+        }
+        Set<IProject> deps=new HashSet<IProject>();
+        for (String pkg:pkgs){
+              IProject p=root.getProject( pkg );
+              if (ResourceUtil.hasHaskellNature( p )){
+                deps.add(p);
+              }
+        }
+
+        if (deps.size()>0){
+
+            IProjectDescription desc=prj.getDescription();
+            IProject[] oldDeps=desc.getReferencedProjects();
+            deps.addAll( Arrays.asList( oldDeps ) );
+            IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
+            desc.setReferencedProjects( newDeps );
+            prj.setDescription( desc, new NullProgressMonitor() );
+
+        }
+
+      } catch(CoreException ce){
+        HaskellCorePlugin.log( ce );
+      }
+    }
+  }
 
   private void cleanNonHaskellSources(){
     IFile cabal=BuildWrapperPlugin.getCabalFile( getProject() );

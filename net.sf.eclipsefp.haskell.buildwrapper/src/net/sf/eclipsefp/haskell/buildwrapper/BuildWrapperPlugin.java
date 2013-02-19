@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,6 +57,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	private UsageAPI usageAPI;
 	private UsageThread usageThread=new UsageThread();
 	
+	private IResourceChangeListener sandboxListener=new SandboxHelper.ProjectReferencesChangeListener();
 	/**
 	 * The constructor
 	 */
@@ -70,6 +72,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		usageThread.start();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(sandboxListener,IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -85,7 +88,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(sandboxListener);
 		for (BWFacade f:facades.values()){
 			f.getBuildJobQueue().close();
 			f.getSynchronizeJobQueue().close();
@@ -141,7 +144,6 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			f.setProject(p);
 			f.setOutStream(outStream);
 			facades.put(p, f);
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(new SandboxHelper.ProjectReferencesChangeListener(),IResourceChangeEvent.POST_CHANGE);
 			// why? build will do that for us
 			// well if we don't build automatically we DO need it!
 			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()){

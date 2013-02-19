@@ -147,6 +147,13 @@ public class JobFacade  {
 	}
 	
 	/**
+	 * @return the realFacade
+	 */
+	public BWFacade getRealFacade() {
+		return realFacade;
+	}
+	
+	/**
 	 * a simple rule only conflicting with itself
 	 */
 	private static final ISchedulingRule synchronizeRule=new ISchedulingRule() {
@@ -199,6 +206,13 @@ public class JobFacade  {
 	    	}
 	      });
 	      return buildJob;
+	}
+	
+	/**
+	 * @return the synchronizerule
+	 */
+	public static ISchedulingRule getSynchronizeRule() {
+		return synchronizeRule;
 	}
 	
 	public void synchronize(final boolean force) {

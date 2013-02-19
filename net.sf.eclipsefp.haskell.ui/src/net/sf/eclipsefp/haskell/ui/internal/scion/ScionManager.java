@@ -4,12 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
@@ -22,8 +18,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails.SandboxType;
-import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.builder.HaskellBuilder;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -47,7 +43,6 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -55,13 +50,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -687,35 +680,8 @@ public class ScionManager implements IResourceChangeListener {
                   for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
                     l.cabalFileChanged( f );
                   }
-                  if (bwf!=null && getCabalImplDetails().isSandboxed()){
-                    IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
-                    Map<String,CabalPackage[]> m=bwf.getPackagesByDB();
-                    for (String s:m.keySet()){
-                      if (new File(s).getAbsolutePath().startsWith( prj.getLocation().toOSString() )){
-                        Set<IProject> deps=new HashSet<IProject>();
-                        for (CabalPackage cp:m.get( s )){
-                          if (cp.getComponents().length>0){
-                            IProject p=root.getProject( cp.getName() );
-                            if (ResourceUtil.hasHaskellNature( p )){
-                              deps.add(p);
-                            }
-                          }
-                        }
-                        if (deps.size()>0){
-                          try {
-                            IProjectDescription desc=prj.getDescription();
-                            IProject[] oldDeps=desc.getReferencedProjects();
-                            deps.addAll( Arrays.asList( oldDeps ) );
-                            IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
-                            desc.setReferencedProjects( newDeps );
-                            prj.setDescription( desc, new NullProgressMonitor() );
-                          } catch(CoreException ce){
-                            HaskellUIPlugin.log( ce );
-                          }
-
-                        }
-                      }
-                    }
+                  if (!ResourcesPlugin.getWorkspace().isAutoBuilding()){
+                    HaskellBuilder.addProjectDependencies( bwf, prj );
                   }
                 }
                 return false;

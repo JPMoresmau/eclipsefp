@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Helper for sandbox operations
@@ -185,28 +186,38 @@ public class SandboxHelper {
 				}
 				return false;
 			} else if (delta.getResource() instanceof IFile){
-				final IFile f=(IFile)delta.getResource();
-				final IProject p=f.getProject();
+				final IFile fi=(IFile)delta.getResource();
+				final IProject p=fi.getProject();
 				// description was changed
-				if (f.getProjectRelativePath().toPortableString().equals(IProjectDescription.DESCRIPTION_FILE_NAME)){
-					String name=NLS.bind(BWText.job_sandbox_deps, p.getName());
-					Job installJob=new Job(name) {
-						
-						@Override
-						protected IStatus run(IProgressMonitor arg0) {
-							try {
-								BWFacade f=BuildWrapperPlugin.getFacade(p);
-								f.cabalFileChanged();
-								installDeps(f);
-							} catch (CoreException ce){
-								BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+				if (fi.getProjectRelativePath().toPortableString().equals(IProjectDescription.DESCRIPTION_FILE_NAME)){
+					if (Display.findDisplay(Thread.currentThread())!=null){
+						String name=NLS.bind(BWText.job_sandbox_deps, p.getName());
+						Job installJob=new Job(name) {
+							
+							@Override
+							protected IStatus run(IProgressMonitor arg0) {
+								try {
+									BWFacade f=BuildWrapperPlugin.getFacade(p);
+									f.cabalFileChanged();
+									installDeps(f);
+								} catch (CoreException ce){
+									BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+								}
+								return Status.OK_STATUS;
 							}
-							return Status.OK_STATUS;
+						};
+						installJob.setRule(p);
+						installJob.setPriority(Job.BUILD);
+						installJob.schedule();
+					} else {
+						try {
+							BWFacade f=BuildWrapperPlugin.getFacade(p);
+							f.cabalFileChanged();
+							installDeps(f);
+						} catch (CoreException ce){
+							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
 						}
-					};
-					installJob.setRule(p );
-					installJob.setPriority(Job.BUILD);
-					installJob.schedule();
+					}
 				}
 				return false;
 			}

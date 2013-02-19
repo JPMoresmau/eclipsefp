@@ -473,6 +473,9 @@ public class PackageDescriptionStanza {
         ret.add( s);
       }
     }
+    for (PackageDescriptionStanza st:getStanzas()){
+      ret.addAll(st.getDependentPackages());
+    }
     return ret;
   }
 

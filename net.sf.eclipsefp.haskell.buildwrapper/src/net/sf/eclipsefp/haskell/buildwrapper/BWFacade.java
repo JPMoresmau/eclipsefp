@@ -91,7 +91,7 @@ public class BWFacade {
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
 	
-	public static final boolean logBuildTimes=true;
+	public static final boolean logBuildTimes=false;
 	
 	/**
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
@@ -1269,7 +1269,7 @@ public class BWFacade {
 		}					
 		try {
 			Process p=pb.start();
-			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
+			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));
 			//long t0=System.currentTimeMillis();
 			String l=br.readLine();
 			while (l!=null){
