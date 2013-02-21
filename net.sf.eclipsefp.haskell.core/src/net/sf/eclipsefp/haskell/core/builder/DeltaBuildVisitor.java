@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
@@ -72,7 +73,15 @@ class DeltaBuildVisitor extends Visitor implements IResourceDeltaVisitor {
             result = true;
             break;
         }
+        /** project file has changed, maybe dependencies, etc, resynchronize **/
+      } else if (file.getProjectRelativePath().toPortableString().equals(IProjectDescription.DESCRIPTION_FILE_NAME)){
+        if (delta.getKind()==IResourceDelta.CHANGED){
+          setNeedBuild( true );
+          setNeedSynchronize( true);
+          result = true;
+        }
       }
+
     }
     return result;
   }

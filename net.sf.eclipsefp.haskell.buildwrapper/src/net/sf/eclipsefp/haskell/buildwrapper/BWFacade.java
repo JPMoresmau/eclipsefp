@@ -1148,6 +1148,13 @@ public class BWFacade {
 		return run(args,f,true);
 	}
 	
+	/**
+	 * synchronized to avoid concurrent executions of stuff
+	 * @param args
+	 * @param f
+	 * @param canRerun
+	 * @return
+	 */
 	private <T> T run(LinkedList<String> args,JSONFactory<T> f,boolean canRerun){
 	
 		if (bwPath==null){

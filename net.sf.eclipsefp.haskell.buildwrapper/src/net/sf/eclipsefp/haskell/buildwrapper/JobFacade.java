@@ -88,7 +88,7 @@ public class JobFacade  {
 		}
 	}
 	
-	public void build(final BuildOptions buildOptions) {
+	public BuildJob getBuildJob(final BuildOptions buildOptions){
 		final String jobNamePrefix = NLS.bind(BWText.job_build, getProject().getName());
 		
 	    final BuildJob buildJob=new BuildJob(jobNamePrefix,realFacade,buildOptions);
@@ -130,16 +130,23 @@ public class JobFacade  {
 	      // except if both synchronized and build are run concurrently
 	      //buildJob.setRule( getProject() );
 	      buildJob.setPriority(Job.BUILD);
-	      realFacade.getBuildJobQueue().addJob(buildJob);
+	      return buildJob;
+	}
+	
+	public void build(final BuildOptions buildOptions) {
+		  realFacade.getBuildJobQueue().addJob(getBuildJob(buildOptions));
 	}
 
 	public void synchronizeAndBuild(final boolean force,final BuildOptions buildOptions){
-		Job sj=getSynchronizeJob(force);
+		Job sj=getSynchronizeJob(force,false);
 		sj.addJobChangeListener(new JobChangeAdapter(){
 	    	  @Override
 	    	public void done(IJobChangeEvent event) {
 	    		if (event.getResult().isOK()){
-	    			build(buildOptions);
+	    			BuildJob j=getBuildJob(buildOptions);
+	    			addUsage(j);
+	    			realFacade.getBuildJobQueue().addJob(j);
+	    			
 	    		}
 	    	  }
 		});
@@ -169,7 +176,7 @@ public class JobFacade  {
 		}
 	};
 	
-	private Job getSynchronizeJob(final boolean force) {
+	private Job getSynchronizeJob(final boolean force, final boolean usage) {
 		final String jobNamePrefix = NLS.bind(BWText.job_synchronize, getProject().getName());
 
 	      Job buildJob = new Job (jobNamePrefix) {
@@ -191,7 +198,14 @@ public class JobFacade  {
 	      // so we only disallow concurrent synchronize, but don't influence with the rest (other operations)
 	      buildJob.setRule(synchronizeRule);
 	      buildJob.setPriority(Job.BUILD);
-	      buildJob.addJobChangeListener(new JobChangeAdapter(){
+	      if (usage){
+	    	  addUsage(buildJob);
+	      }
+	      return buildJob;
+	}
+	
+	private void addUsage(Job j){
+		 j.addJobChangeListener(new JobChangeAdapter(){
 	    	  /* (non-Javadoc)
 	    	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	    	 */
@@ -205,7 +219,6 @@ public class JobFacade  {
 	    		}
 	    	}
 	      });
-	      return buildJob;
 	}
 	
 	/**
@@ -216,7 +229,7 @@ public class JobFacade  {
 	}
 	
 	public void synchronize(final boolean force) {
-		realFacade.getSynchronizeJobQueue().addJob(getSynchronizeJob(force));
+		realFacade.getSynchronizeJobQueue().addJob(getSynchronizeJob(force,true));
 	}
 	
 	public void outline(final IFile f,final OutlineHandler handler){

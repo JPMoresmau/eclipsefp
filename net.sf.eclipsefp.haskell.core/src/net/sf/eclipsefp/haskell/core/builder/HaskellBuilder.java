@@ -9,6 +9,7 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.SandboxHelper;
 import net.sf.eclipsefp.haskell.buildwrapper.WorkspaceFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
@@ -174,7 +175,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
             IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
             desc.setReferencedProjects( newDeps );
             prj.setDescription( desc, new NullProgressMonitor() );
-
+            /**
+             * we need to make sure dependencencies are added before the synchronize
+             */
+            f.cabalFileChanged();
+            SandboxHelper.installDeps(f);
         }
 
       } catch(CoreException ce){

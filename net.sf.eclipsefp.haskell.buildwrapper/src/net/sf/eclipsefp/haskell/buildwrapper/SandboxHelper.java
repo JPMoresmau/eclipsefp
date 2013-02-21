@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -159,10 +160,15 @@ public class SandboxHelper {
 		 */
 		@Override
 		public void resourceChanged( final IResourceChangeEvent event) {
-			try {
-				event.getDelta().accept(new ProjectReferencesChangeVisitor());
-			} catch (CoreException ce){
-				BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+			/**
+			 * if auto building, the building will see the project file has been changed and trigger installDeps accordingly
+			 */
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()){
+				try {
+					event.getDelta().accept(new ProjectReferencesChangeVisitor());
+				} catch (CoreException ce){
+					BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+				}
 			}
 		}
 	}
