@@ -430,6 +430,7 @@ public final class UITexts extends NLS {
   public static String preferences_search_haddock_help;
   public static String preferences_search_haddock_new;
   public static String preferences_search_haddock_new_empty;
+  public static String preferences_cabaldev_note;
 
   public static String explorer_libraries;
   public static String explorer_libraries_noimpl;
