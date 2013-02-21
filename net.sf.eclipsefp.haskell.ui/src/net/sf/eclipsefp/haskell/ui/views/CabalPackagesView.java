@@ -80,9 +80,10 @@ public class CabalPackagesView extends ViewPart {
         if (part instanceof CabalPackagesView){
           CabalPackagesView v=((CabalPackagesView)part);
           /** only if we show the installed packages **/
-          if (v.onlyInstalled){
+          /** nope, now we show ticks for installed packages on list of all packages */
+          //if (v.onlyInstalled){
             v.refreshJob.schedule();
-          }
+          //}
         }
       }
     });

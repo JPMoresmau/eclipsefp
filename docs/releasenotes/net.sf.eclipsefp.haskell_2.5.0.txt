@@ -1,4 +1,4 @@
-EclipseFP Haskell 2.4.3
+EclipseFP Haskell 2.5.0
 
 Release Notes
 
@@ -27,6 +27,7 @@ Features:
 	- Synchronize from editor use a long running buildwrapper instance, should enhance performance. Closing the editor for a file closes the long running process, so no memory hog.
 	- https://github.com/JPMoresmau/eclipsefp/issues/86: symbols like $ and + are a different colors than alphanumeric identifiers
 	- The folder where the buildwrapper executable is is always passed as the path to buildwrapper calls (so that for examples preprocessors in the same folder are found)
+	- cabal-dev sandboxing support
 
 Internal:
 	- Start SQLite in a thread to avoid native locking (maybe)
