@@ -50,10 +50,14 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
    */
   @Override
   protected Runnable getAfter(final IProject p ) {
+    final Runnable rs=super.getAfter( p );
     // once we've downloaded the dependencies, we clean the project and rebuild if we're in auto build mode
     Runnable r=new Runnable(){
       @Override
       public void run() {
+       if (rs!=null){
+         rs.run();
+       }
         final String jobName = NLS.bind(BWText.job_clean, p.getName());
         Job j=new Job(jobName) {
 
