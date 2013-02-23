@@ -11,6 +11,9 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
+import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageHelper;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -35,8 +38,19 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
       for( HaskellPackage pkg: BrowserPlugin.getSharedInstance().getPackages(Database.ALL) ) {
         if(! names.contains( pkg.getIdentifier().getName() ) ) {
           pkgs.add( pkg );
+          names.add( pkg.getIdentifier().getName() );
         }
       }
+      /**
+       * we may have installed packages not from hackage!
+       */
+      for (CabalPackageRef r:CabalPackageHelper.getInstance().getInstalled()){
+        if (!names.contains( r.getName() )) {
+          pkgs.add( new HaskellPackage( "", new PackageIdentifier( r.getName(), r.getInstalled().iterator().next() ) ) );
+          names.add( r.getName() );
+        }
+      }
+
       if (ScionManager.getCabalImplDetails().isSandboxed()){
         for (HaskellPackage pkg:ScionManager.listProjectPackages()){
           if(! names.contains( pkg.getIdentifier().getName() ) ) {
