@@ -10,12 +10,11 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * Happy builder: calls Happy, parses the results and shows
@@ -41,35 +40,18 @@ public class HappyBuilder extends IncrementalProjectBuilder {
       if( delta == null ) {
         return null;
       }
-      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        @Override
-        public void run( final IProgressMonitor monitor ) {
-          try {
-            delta.accept( new DeltaVisitor() );
-          } catch (CoreException e) {
-            // Do nothing
-          }
-        }
-      }, monitor );
+
+      delta.accept( new DeltaVisitor() );
+
     } else if( kind == CLEAN_BUILD ) {
-      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        @Override
-        public void run( final IProgressMonitor monitor ) throws CoreException {
-          clean( monitor );
-        }
-      }, monitor );
+
+         clean( monitor );
+
     } else if( kind == FULL_BUILD ) {
-      ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable() {
-        @Override
-        public void run( final IProgressMonitor monitor ) throws CoreException {
+
           clean( monitor );
-          try {
-            getProject().accept( new FullBuildVisitor() );
-          } catch (CoreException e) {
-            // Do nothing
-          }
-        }
-      }, monitor );
+          getProject().accept( new FullBuildVisitor() );
+
     }
     // Complete code here
     return null;
@@ -85,6 +67,11 @@ public class HappyBuilder extends IncrementalProjectBuilder {
         && hasCorrectExtension( resource.getProjectRelativePath() ) && ResourceUtil.isInSourceFolder( ( IFile )resource ) );
   }
 
+  @Override
+  public ISchedulingRule getRule( final int kind, final Map<String, String> args ) {
+    // prevent other project operations, but operations elsewhere in the workspace are fine
+    return getProject();
+  }
 
   static boolean hasCorrectExtension( final IPath path ) {
     if( path == null ) {
