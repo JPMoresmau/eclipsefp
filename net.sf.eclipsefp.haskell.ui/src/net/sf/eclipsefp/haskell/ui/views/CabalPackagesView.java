@@ -152,10 +152,12 @@ public class CabalPackagesView extends ViewPart {
     bInstalled.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
     bInstalled.setText( UITexts.cabalPackagesView_installed );
     bInstalled.setSelection( true );
+    bInstalled.setBackground( buttons.getBackground() );
 
     bAll=new Button( buttons, SWT.RADIO );
     bAll.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
     bAll.setText( UITexts.cabalPackagesView_all );
+    bAll.setBackground( buttons.getBackground() );
 
     lSelected=new Label(parent,SWT.NONE);
     GridData gd=new GridData(GridData.FILL_HORIZONTAL);

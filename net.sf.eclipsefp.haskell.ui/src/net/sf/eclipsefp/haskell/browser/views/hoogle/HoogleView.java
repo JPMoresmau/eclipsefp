@@ -164,11 +164,13 @@ public class HoogleView extends ViewPart implements SelectionListener,
     localDb.setText( UITexts.browser_localDatabase );
     localDb.setSelection( true );
     localDb.setEnabled( BrowserPlugin.getDefault().isLocalDatabaseLoaded() );
+    localDb.setBackground( dbSelection.getBackground() );
 
     hackageDb = new Button( dbSelection, SWT.CHECK );
     hackageDb.setText( UITexts.browser_hackageDatabase );
     hackageDb.setSelection( false );
     hackageDb.setEnabled( BrowserPlugin.getDefault().isHackageDatabaseLoaded() );
+    hackageDb.setBackground( dbSelection.getBackground() );
 
     text = new Text( parent, SWT.SINGLE | SWT.SEARCH | SWT.ICON_SEARCH
         | SWT.ICON_CANCEL );
