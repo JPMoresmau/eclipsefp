@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsefp.haskell"
       label="%bundleName"
-      version="2.5.0"
+      version="2.5.1"
       provider-name="%bundleVendor">
 
    <description>
@@ -158,7 +158,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.buildwrapper"
          download-size="0"
          install-size="0"
-         version="2.5.0"
+         version="2.5.1"
          unpack="false"/>
 
    <plugin

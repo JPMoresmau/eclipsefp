@@ -323,6 +323,14 @@ public class BWFacade {
 	
 	public Collection<NameDef> build1LongRunning(IFile file,boolean end){
 		//BuildFlagInfo i=getBuildFlags(file);
+		if (bwPath==null){
+			if (!showedNoExeError){
+				BuildWrapperPlugin.logError(BWText.error_noexe, null);
+				showedNoExeError=true;
+			}
+			return new ArrayList<NameDef>();
+		}
+		showedNoExeError=false;
 		try {
 			Process p=buildProcesses.get(file);
 			if (p==null){
@@ -1125,7 +1133,7 @@ public class BWFacade {
      * @param pb
      */
 	private synchronized void addBuildWrapperPath(ProcessBuilder pb){
-		if (needPath==null || needPath.booleanValue()){
+		if (needPath==null || needPath.booleanValue() && bwPath!=null){
 			needPath=false;
 			String path=new File(bwPath).getParent();
 			if (path!=null){
