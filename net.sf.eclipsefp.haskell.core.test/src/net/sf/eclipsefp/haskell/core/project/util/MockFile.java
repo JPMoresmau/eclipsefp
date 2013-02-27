@@ -205,6 +205,10 @@ public class MockFile implements IFile {
 	  // unused
 	}
 
+ public void accept(final IResourceProxyVisitor visitor, final int depth, final int memberFlags) {
+	    // unused
+  }
+
 	public void clearHistory(final IProgressMonitor monitor) {
 	  // unused
 	}
