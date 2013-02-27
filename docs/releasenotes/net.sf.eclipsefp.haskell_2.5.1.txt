@@ -13,7 +13,7 @@ Fixes:
 	- radio buttons in views have proper background in Juno
 
 Features:
-
+	- The font and colors of the tooltip can be changed in Preferences -> General -> Appearance -> Colors and Fonts. https://github.com/JPMoresmau/eclipsefp/issues/88
 
 Internal:
 
