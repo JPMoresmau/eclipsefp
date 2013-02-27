@@ -1176,14 +1176,18 @@ public class BWFacade {
 		
 		args.addFirst(bwPath);
 		args.add("--tempfolder="+DIST_FOLDER);
-		args.add("--cabalpath="+cabalImplDetails.getExecutable());
+		if (cabalImplDetails!=null){
+			args.add("--cabalpath="+cabalImplDetails.getExecutable());
+		}
 		args.add("--cabalfile="+cabalFile);
 		args.add("--cabalflags="+flags);
 		for (String s:extraOpts){
 			args.add("--cabaloption="+s);
 		}
-		for (String s:cabalImplDetails.getOptions()){
-			args.add("--cabaloption="+s);
+		if (cabalImplDetails!=null){
+			for (String s:cabalImplDetails.getOptions()){
+				args.add("--cabaloption="+s);
+			}
 		}
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
