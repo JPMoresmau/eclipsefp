@@ -4,20 +4,27 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
+import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * Control showing hover or autocomplete info
@@ -124,10 +131,69 @@ public class HaskellInformationControl extends AbstractInformationControl {
     super.setSize(Math.min(width,HOVER_MAXWIDTH), Math.max(HOVER_MINHEIGHT, Math.min(height,HOVER_MAXHEIGHT)));
   }
 
+  /**
+   * cached style
+   */
+  private static String style;
+
+  static {
+    /**
+     * reset cached style on change
+     */
+    PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().addPropertyChangeListener( new IPropertyChangeListener() {
+
+      @Override
+      public void propertyChange( final PropertyChangeEvent arg0 ) {
+        style=null;
+
+      }
+    } );
+    PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener( new IPropertyChangeListener() {
+
+      @Override
+      public void propertyChange( final PropertyChangeEvent arg0 ) {
+        style=null;
+
+      }
+    } );
+  }
+
+  /**
+   * get the style for tooltip
+   * @return the style
+   */
+  public static String getStyle(){
+    if (style==null){
+      ITheme t=PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+
+      Color fgcd=t.getColorRegistry().get( "net.sf.eclipsefp.haskell.themeElementCategory.tooltip.fgColor" );
+      Color bgcd=t.getColorRegistry().get( "net.sf.eclipsefp.haskell.themeElementCategory.tooltip.bgColor" );
+      String bg="background-color: "+SWTUtil.colorToHTML( bgcd )+"; ";
+      String fg="color: "+SWTUtil.colorToHTML( fgcd )+"; ";
+
+      Font f=t.getFontRegistry().get( "net.sf.eclipsefp.haskell.themeElementCategory.tooltip.font" );
+      FontData fd=f.getFontData()[0];
+      String n=fd.getName();
+      int h=fd.getHeight();
+      String fstyle="";
+      String weight="";
+      if ((fd.getStyle() & SWT.ITALIC)>0){
+        fstyle= "font-style:italic; ";
+      }
+      if ((fd.getStyle() & SWT.BOLD)>0){
+        weight="font-weight:bold; ";
+      }
+      style=bg+fg+"margin:0; padding:0; font-family: "+n+"; font-size: "+h+"pt;"+fstyle+weight;
+
+    }
+    return style;
+  }
+
   public void setDocumentation( final String content ) {
     hasContents = content.length() > 0;
     //hasHR=content.contains("<hr>");
-    doc.setText( "<html><body style=\"background-color: #fafbc5; margin:0; padding:0; font-size: 8pt\">"+content+"</body></html>" );
+
+    doc.setText( "<html><body style=\""+getStyle()+"\">"+content+"</body></html>" );
   }
 
   /*

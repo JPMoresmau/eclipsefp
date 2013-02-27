@@ -1,3 +1,4 @@
+types of parameters?
 
 - quick fix on missing package 
 	-> install package -> Done

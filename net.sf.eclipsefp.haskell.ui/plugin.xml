@@ -1624,4 +1624,31 @@
 			class="net.sf.eclipsefp.haskell.ui.internal.search.HaskellSearchPage">
 		</page>
 </extension>
+ <extension
+       point="org.eclipse.ui.themes">
+       <themeElementCategory
+		id="net.sf.eclipsefp.haskell.themeElementCategory" label="%theme.category">
+		<description>%theme.category.description</description>
+	</themeElementCategory>
+
+	<colorDefinition
+		categoryId="net.sf.eclipsefp.haskell.themeElementCategory"
+		id="net.sf.eclipsefp.haskell.themeElementCategory.tooltip.fgColor" label="%theme.tooltip.fgcolor"
+		value="COLOR_BLACK">
+		<description>%theme.tooltip.fgcolor.description</description>
+	</colorDefinition>
+	<colorDefinition
+		categoryId="net.sf.eclipsefp.haskell.themeElementCategory"
+		id="net.sf.eclipsefp.haskell.themeElementCategory.tooltip.bgColor" label="%theme.tooltip.bgcolor"
+		value="250,251,197">
+		<description>%theme.tooltip.bgcolor.description</description>
+	</colorDefinition>
+
+	<fontDefinition
+		categoryId="net.sf.eclipsefp.haskell.themeElementCategory"
+		id="net.sf.eclipsefp.haskell.themeElementCategory.tooltip.font" label="%theme.tooltip.font"
+		value="Verdana-regular-8">
+		<description>%theme.tooltip.font.description</description>
+	</fontDefinition>
+ </extension>
 </plugin>

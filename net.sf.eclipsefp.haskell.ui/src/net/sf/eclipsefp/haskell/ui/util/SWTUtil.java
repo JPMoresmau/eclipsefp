@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -143,5 +144,27 @@ public class SWTUtil {
     gd.horizontalSpan = hspan;
     result.setLayoutData( gd );
     return result;
+  }
+
+  /**
+   * generate the HTML code for a color
+   * @param c the color
+   * @return the HTML code (#rrggbb)
+   */
+  public static String colorToHTML(final Color c){
+    StringBuilder sb=new StringBuilder();
+    sb.append( "#" );
+    addColor( c.getRed(), sb );
+    addColor( c.getGreen(), sb );
+    addColor( c.getBlue(), sb );
+    return sb.toString();
+  }
+
+  private static void addColor(final int val,final StringBuilder sb){
+    String s=Integer.toHexString( val);
+    if (s.length()==1){
+      sb.append("0");
+    }
+    sb.append(s);
   }
 }
