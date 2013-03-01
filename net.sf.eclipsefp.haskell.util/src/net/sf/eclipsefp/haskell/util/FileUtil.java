@@ -93,6 +93,7 @@ public class FileUtil {
     String[] userBins = new String[] { ".cabal/bin", //$NON-NLS-1$
       "usr/bin", //$NON-NLS-1$
       "bin", //$NON-NLS-1$
+      "Library/Haskell/bin", // MacOS? (http://www.blogger.com/comment.g?blogID=37404288&postID=4199565322584497096) //$NON-NLS-1$
       "AppData/Roaming/cabal/bin", // Windows 7 //$NON-NLS-1$
       "Application Data/cabal/bin" // Windows XP
     };
