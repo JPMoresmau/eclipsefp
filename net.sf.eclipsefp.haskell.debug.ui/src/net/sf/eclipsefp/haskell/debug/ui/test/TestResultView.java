@@ -79,14 +79,17 @@ public class TestResultView extends ViewPart {
     tRuns=new Text(parent,SWT.NONE);
     tRuns.setText( "0" ); //$NON-NLS-1$
     tRuns.setEditable( false );
+    tRuns.setBackground( parent.getBackground() );
 
     CLabel clErrors=new CLabel(  parent, SWT.LEFT );
     clErrors.setText( UITexts.test_view_errors );
     clErrors.setImage( HaskellUIImages.getImage( IImageNames.ERROR_OVERLAY) );
 
+
     tErrors=new Text(parent,SWT.NONE);
     tErrors.setText( "0" ); //$NON-NLS-1$
     tErrors.setEditable( false );
+    tErrors.setBackground( parent.getBackground() );
 
     CLabel clFailures=new CLabel(  parent, SWT.LEFT );
     clFailures.setText( UITexts.test_view_failures );
@@ -95,6 +98,7 @@ public class TestResultView extends ViewPart {
     tFailures=new Text(parent,SWT.NONE);
     tFailures.setText( "0" ); //$NON-NLS-1$
     tFailures.setEditable( false );
+    tFailures.setBackground( parent.getBackground() );
 
     final Composite mainComposite=new Composite(parent,SWT.NONE);
     final GridData gd=new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
