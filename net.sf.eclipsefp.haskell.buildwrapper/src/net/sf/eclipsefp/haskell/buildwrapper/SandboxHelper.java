@@ -118,8 +118,14 @@ public class SandboxHelper {
 				args.add("--force-reinstalls");
 				f.runCabal(args); // install the changed project 
 				f.cleanGenerated(); // all generated files are wrong
-				f.configure(new BuildOptions().setConfigure(true));
 				f.closeAllProcesses(); // GHC needs to reload the changes
+				// rebuild if that's what the workspace wants
+				if (ResourcesPlugin.getWorkspace().isAutoBuilding()){
+					new JobFacade(f).build(new BuildOptions().setConfigure(true).setOutput(true).setRecompile(false));
+				} else {
+					// just configure
+					f.configure(new BuildOptions().setConfigure(true));
+				}
 				//f.clean(new NullProgressMonitor());
 			}
 			for (IProject pR:p.getReferencingProjects()){

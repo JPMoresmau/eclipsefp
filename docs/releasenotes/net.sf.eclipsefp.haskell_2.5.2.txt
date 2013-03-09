@@ -14,7 +14,7 @@ Fixes:
 	- Stack Overflow when using a project with a dependency from an executable to a library with cabal-dev fixed (https://github.com/JPMoresmau/eclipsefp/issues/92)
 
 Features:
-
+	- Rebuild executables if workspace is autobuilding when dependent project is rebuilt (https://github.com/JPMoresmau/eclipsefp/issues/94)
 
 Internal:
 
