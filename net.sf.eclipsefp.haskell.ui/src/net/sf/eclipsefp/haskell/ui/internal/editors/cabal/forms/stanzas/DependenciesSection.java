@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalFormEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -29,6 +30,8 @@ public class DependenciesSection extends CabalFormSection {
   ActionContributionItem addAction;
   ActionContributionItem removeAction;
 
+  protected DependenciesFormEntry entry;
+
   DependenciesSection( final IFormPage page, final Composite parent,
       final CabalFormEditor editor, final IProject project ) {
     super( page, parent, editor, UITexts.cabalEditor_dependencies, project );
@@ -41,13 +44,15 @@ public class DependenciesSection extends CabalFormSection {
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    DependenciesFormEntry entry = new DependenciesFormEntry();
+    entry = new DependenciesFormEntry();
     setCustomFormEntry( entry, CabalSyntax.FIELD_BUILD_DEPENDS, toolkit,
         container );
     GridData entryGD = new GridData( GridData.FILL_BOTH );
     entryGD.heightHint = 120;
     entry.getControl().setLayoutData( entryGD );
-
+    if (getStanza()!=null){
+      entry.setDenySelfRef( getStanza().getName()==null );
+    }
     // Create toolbar
     ToolBarManager toolBarManager = new ToolBarManager( SWT.FLAT
         | SWT.HORIZONTAL );
@@ -62,6 +67,20 @@ public class DependenciesSection extends CabalFormSection {
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
   }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection#setStanza(net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza, boolean)
+   */
+  @Override
+  public void setStanza( final PackageDescriptionStanza stanza, final boolean first ) {
+    super.setStanza( stanza, first );
+    if (entry!=null){
+      if (getStanza()!=null){
+        entry.setDenySelfRef( getStanza().getName()==null );
+      }
+    }
+  }
+
 
   @Override
   public void setAllEditable( final boolean editable ) {

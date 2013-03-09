@@ -44,6 +44,8 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
   private List<DependencyItem> items;
   private boolean isCellEditing = false;
 
+  private boolean denySelfRef=true;
+
   @Override
   public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
@@ -80,11 +82,13 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
       @Override
       public void run() {
-        Vector<String> alreadySelected = new Vector<String>();
+        List<String> alreadySelected = new ArrayList<String>();
         for( DependencyItem item: items ) {
           alreadySelected.add( item.getPackage() );
         }
-        alreadySelected.add( project.getName() );
+        if (DependenciesFormEntry.this.denySelfRef){
+          alreadySelected.add( project.getName() );
+        }
         DependenciesDialog dialog = new DependenciesDialog( tableField
             .getTable().getShell(), alreadySelected );
         if( dialog.open() == Window.OK && dialog.getValue() != null ) {
@@ -227,6 +231,16 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
   public Action getRemoveAction() {
     return removeAction;
+  }
+
+
+  public boolean isDenySelfRef() {
+    return denySelfRef;
+  }
+
+
+  public void setDenySelfRef( final boolean denySelfRef ) {
+    this.denySelfRef = denySelfRef;
   }
 
 }
