@@ -29,6 +29,7 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -46,6 +47,9 @@ public class CabalEditor extends TextEditor {
   private CabalOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
   private final CabalFormEditor formEditor;
+
+  /** The key binding context active while the Cabal editor is active */
+  private static final String CONTEXT_ID = CabalEditor.class.getName() + ".context";  //$NON-NLS-1$
 
   public CabalEditor(final CabalFormEditor formEditor) {
     this.formEditor=formEditor;
@@ -114,7 +118,14 @@ public class CabalEditor extends TextEditor {
     projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
     projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
     pv.doOperation( ProjectionViewer.TOGGLE );
+    activateContext();
   }
+
+  private void activateContext() {
+    IContextService contextService = ( IContextService )getSite().getService( IContextService.class );
+    contextService.activateContext( CONTEXT_ID );
+  }
+
 
   @Override
   protected void createActions() {

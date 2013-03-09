@@ -527,7 +527,7 @@
       <command
             description="%HaddockDocumentBlockFollow.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
-            name="%HaddocDocumentBlockFollow.name"
+            name="%HaddockDocumentBlockFollow.name"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following"/>
       <category
             description="%haskellNavigateCategory_desc"
@@ -641,39 +641,52 @@
             description="%haskellEditorContext_desc"
             id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
             parentId="org.eclipse.ui.contexts.window"/>
+       <context
+            name="%cabalEditorContext_name"
+            description="%cabalEditorContext_desc"
+            id="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"
+            parentId="org.eclipse.ui.contexts.window"/>      
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
          <!-- keys for Line Comment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+7"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"/>
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               platform="carbon"
               sequence="M1+/"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"/>
          <!-- keys for Line Uncomment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+7"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"/>
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               platform="carbon"
               sequence="M1+M2+/"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"/>
          <!-- keys for Comment Pragma -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+C P"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment_pragma" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />
          <!-- keys for Haddock documentation -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D F"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_following" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D P"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_previous" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+D B"
-              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following" />
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.haddock_block_following" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context" />
          <!-- format -->
           <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+M2+F"
@@ -696,10 +709,37 @@
          <!-- other keys -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
               sequence="Home"/>
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.OpenModuleActionCommand"
-              sequence="Ctrl+Shift+M"/>              
+              sequence="Ctrl+Shift+M"/>      
+         <!-- cabal editor keys -->
+	         <!-- keys for Line Comment -->
+	         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	              sequence="M1+7"
+	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" 
+	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"/>
+	         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	              platform="carbon"
+	              sequence="M1+/"
+	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.comment" 
+	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"/>
+	         <!-- keys for Line Uncomment -->
+	         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	              sequence="M1+M2+7"
+	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" 
+	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"/>
+	         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	              platform="carbon"
+	              sequence="M1+M2+/"
+	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" 
+	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"/>     
+	          <!-- other keys -->
+	         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
+	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"
+	              sequence="Home"/>                
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

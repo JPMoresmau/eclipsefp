@@ -12,9 +12,11 @@ Necessary Haskell packages:
 Fixes:
 	- Cabal editor allows a dependency from an executable or a test class to a library via the add dependency UI
 	- Stack Overflow when using a project with a dependency from an executable to a library with cabal-dev fixed (https://github.com/JPMoresmau/eclipsefp/issues/92)
+	- Key bindings for actions are specific to Haskell/Cabal editors and do not pollute other editors (https://github.com/JPMoresmau/eclipsefp/issues/93)
 
 Features:
 	- Rebuild executables if workspace is autobuilding when dependent project is rebuilt (https://github.com/JPMoresmau/eclipsefp/issues/94)
+
 
 Internal:
 
