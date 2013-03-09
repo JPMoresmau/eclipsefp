@@ -161,10 +161,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
         }
         Set<IProject> deps=new HashSet<IProject>();
         for (String pkg:pkgs){
-              IProject p=root.getProject( pkg );
-              if (ResourceUtil.hasHaskellNature( p )){
-                deps.add(p);
-              }
+            IProject p=root.getProject( pkg );
+            // avoid reference to itself
+            if (ResourceUtil.hasHaskellNature( p ) && p!=prj){
+              deps.add(p);
+            }
         }
 
         if (deps.size()>0){

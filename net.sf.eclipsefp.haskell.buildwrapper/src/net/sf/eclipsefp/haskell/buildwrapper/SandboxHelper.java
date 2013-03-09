@@ -5,7 +5,9 @@
  */
 package net.sf.eclipsefp.haskell.buildwrapper;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails.SandboxType;
@@ -45,8 +47,10 @@ public class SandboxHelper {
 			switch (st){
 			case CABAL_DEV:
 				IProject p=f.getProject();
+				Set<IProject> processed=new HashSet<IProject>();
+				processed.add(p);
 				for (IProject pR:p.getReferencedProjects()){
-					installDeps(f,pR);
+					installDeps(f,pR,processed);
 				}
 				LinkedList<String> args=new LinkedList<String>();
 				args.add("install-deps");
@@ -60,17 +64,20 @@ public class SandboxHelper {
 	 * install given project as a dependency on the given facade
 	 * @param sandboxFacade the facade
 	 * @param p the project
+	 * @param processed the set of already processed projects, in case of loops
 	 * @throws CoreException
 	 */
-	private static void installDeps(BWFacade sandboxFacade,IProject p) throws CoreException{
-		for (IProject pR:p.getReferencedProjects()){
-			installDeps(sandboxFacade,pR);
+	private static void installDeps(BWFacade sandboxFacade,IProject p,Set<IProject> processed) throws CoreException{
+		if (processed.add(p)){
+			for (IProject pR:p.getReferencedProjects()){
+				installDeps(sandboxFacade,pR,processed);
+			}
+			LinkedList<String> args=new LinkedList<String>();
+			args.add("install");
+			args.add(p.getLocation().toOSString());
+			args.add("--force-reinstalls");
+			sandboxFacade.runCabal(args);
 		}
-		LinkedList<String> args=new LinkedList<String>();
-		args.add("install");
-		args.add(p.getLocation().toOSString());
-		args.add("--force-reinstalls");
-		sandboxFacade.runCabal(args);
 	}
 	
 	/**
@@ -84,8 +91,10 @@ public class SandboxHelper {
 			switch (st){
 			case CABAL_DEV:
 				IProject p=f.getProject();
+				Set<IProject> processed=new HashSet<IProject>();
+				processed.add(p);
 				for (IProject pR:p.getReferencingProjects()){
-					updateUsing(p,pR);
+					updateUsing(p,pR,processed);
 				}
 				break;
 			}
@@ -96,23 +105,26 @@ public class SandboxHelper {
 	 * update a given project using a changed project
 	 * @param changedProject the changed project
 	 * @param p the project to update with the new version of the changed project
+	 * @param processed the set of already processed projects, in case of loops
 	 * @throws CoreException
 	 */
-	private static void updateUsing(IProject changedProject,IProject p) throws CoreException{
-		BWFacade f=BuildWrapperPlugin.getFacade(p);
-		if (f!=null && isSandboxed(f)){
-			LinkedList<String> args=new LinkedList<String>();
-			args.add("install");
-			args.add(changedProject.getLocation().toOSString());
-			args.add("--force-reinstalls");
-			f.runCabal(args); // install the changed project 
-			f.cleanGenerated(); // all generated files are wrong
-			f.configure(new BuildOptions().setConfigure(true));
-			f.closeAllProcesses(); // GHC needs to reload the changes
-			//f.clean(new NullProgressMonitor());
-		}
-		for (IProject pR:p.getReferencingProjects()){
-			updateUsing(changedProject,pR);
+	private static void updateUsing(IProject changedProject,IProject p,Set<IProject> processed) throws CoreException{
+		if (processed.add(p)){
+			BWFacade f=BuildWrapperPlugin.getFacade(p);
+			if (f!=null && isSandboxed(f)){
+				LinkedList<String> args=new LinkedList<String>();
+				args.add("install");
+				args.add(changedProject.getLocation().toOSString());
+				args.add("--force-reinstalls");
+				f.runCabal(args); // install the changed project 
+				f.cleanGenerated(); // all generated files are wrong
+				f.configure(new BuildOptions().setConfigure(true));
+				f.closeAllProcesses(); // GHC needs to reload the changes
+				//f.clean(new NullProgressMonitor());
+			}
+			for (IProject pR:p.getReferencingProjects()){
+				updateUsing(changedProject,pR,processed);
+			}
 		}
 
 	}
