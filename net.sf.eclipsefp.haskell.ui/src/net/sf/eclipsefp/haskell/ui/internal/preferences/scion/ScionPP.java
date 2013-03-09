@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.ui.util.SWTUtil;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -47,10 +48,14 @@ public class ScionPP
 	private BooleanFieldEditor verboseInteractionField;
   private Composite verboseInteractionFieldC;
 
+  private IntegerFieldEditor maxConfigureFailuresField;
+  private Composite maxConfigureFailuresFieldC;
+
   private BooleanFieldEditor verboseBrowserInteractionField;
   private Composite verboseBrowserInteractionFieldC;
 
-	private CabalImplsBlock cabalBlock;
+
+  private CabalImplsBlock cabalBlock;
 
   private BooleanFieldEditor ignoreMissing;
   private BooleanFieldEditor ignoreTooOld;
@@ -130,6 +135,18 @@ public class ScionPP
     verboseInteractionField.setPreferenceStore( prefStore );
     verboseInteractionField.load();
 
+    maxConfigureFailuresFieldC = new Composite(bwComposite, SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    maxConfigureFailuresFieldC.setLayoutData( gd);
+    maxConfigureFailuresField = new IntegerFieldEditor( IPreferenceConstants.MAX_CONFIGURE_FAILURES,
+        UITexts.maxConfigureFailures_title,
+        maxConfigureFailuresFieldC );
+    maxConfigureFailuresField.setValidRange( -1, Integer.MAX_VALUE );
+    maxConfigureFailuresField.setPage(this);
+    maxConfigureFailuresField.setPreferenceStore( prefStore );
+    maxConfigureFailuresField.load();
+
     // scion-browser
 
 		Group sbComposite = new Group(parentComposite, SWT.NONE);
@@ -204,6 +221,7 @@ public class ScionPP
 	  store.setDefault( VERBOSE_INTERACTION, false );
 	  store.setDefault( BROWSER_VERBOSE_INTERACTION, false );
 	  store.setDefault( SCION_BROWSER_EXTRA_HOOGLE_PATH, "" );
+	  store.setDefault( MAX_CONFIGURE_FAILURES, 10 );
 	}
 
   @Override
@@ -216,6 +234,7 @@ public class ScionPP
     ignoreMissing.store();
     ignoreTooOld.store();
     verboseInteractionField.store();
+    maxConfigureFailuresField.store();
     verboseBrowserInteractionField.store();
 
  //   hlintExecutableField.store();

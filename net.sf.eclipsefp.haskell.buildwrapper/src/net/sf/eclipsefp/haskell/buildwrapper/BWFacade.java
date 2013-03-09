@@ -68,6 +68,7 @@ public class BWFacade {
 	
 	private static boolean showedNoExeError=false; 
 	
+	private int configureFailures=0;
 	private String bwPath;
 	//private String tempFolder=".dist-buildwrapper";
 	
@@ -208,7 +209,7 @@ public class BWFacade {
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY,false);
 		refreshDist();
-		if (arrC!=null){
+		if (arr!=null && arrC!=null){
 			for (int a=0;a<arrC.length();a++){
 				try {
 					arr.put(a, arrC.get(a));
@@ -1173,7 +1174,7 @@ public class BWFacade {
 			return null;
 		}
 		showedNoExeError=false;
-		
+		boolean isConfigureAction=args.size()>0 && ("synchronize".equals(args.get(0)) || "configure".equals(args.get(0)) || "build".equals(args.get(0)));
 		args.addFirst(bwPath);
 		args.add("--tempfolder="+DIST_FOLDER);
 		if (cabalImplDetails!=null){
@@ -1254,6 +1255,15 @@ public class BWFacade {
 				}
 				configure(new BuildOptions());
 				return run(new LinkedList<String>(args.subList(1, args.size()-4)),f,false);
+			} else if (needDelete){
+				configureFailures++;
+				if (BuildWrapperPlugin.getMaxConfigureFailures()>=0 && configureFailures>=BuildWrapperPlugin.getMaxConfigureFailures()){
+					BuildWrapperPlugin.logError(BWText.error_toomanyfailures, null);
+					showedNoExeError=true;
+					bwPath=null;
+				}
+			} else if (isConfigureAction){
+				configureFailures=0;
 			}
 			// maybe now the folder exists...
 			if (needSetDerivedOnDistDir){

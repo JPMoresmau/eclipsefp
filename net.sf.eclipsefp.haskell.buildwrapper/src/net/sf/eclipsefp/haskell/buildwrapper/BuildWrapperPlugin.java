@@ -3,7 +3,6 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 import java.io.File;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
@@ -51,6 +50,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	private static Map<IProject, BWFacade> facades=new HashMap<IProject, BWFacade>();
 	
 	private static String bwPath;
+	private static int maxConfigureFailures=10;
 	
 	public static boolean logAnswers=false;
 	
@@ -290,6 +290,14 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 				f.setBwPath(bwPath);
 			}
 		}
+	}
+
+	public static int getMaxConfigureFailures() {
+		return maxConfigureFailures;
+	}
+
+	public static void setMaxConfigureFailures(int maxConfigureFailures) {
+		BuildWrapperPlugin.maxConfigureFailures = maxConfigureFailures;
 	}
 	
 

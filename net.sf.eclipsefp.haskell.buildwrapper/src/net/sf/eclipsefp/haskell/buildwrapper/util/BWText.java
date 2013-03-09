@@ -35,6 +35,7 @@ public class BWText extends NLS {
   public static String        error_deleteMarkers;
   public static String        error_gettingFlags;
   public static String		  error_noexe;
+  public static String		  error_toomanyfailures;
   public static String		  error_derived;
   public static String        error_refreshLocal;
   public static String 		  error_clean;

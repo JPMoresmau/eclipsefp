@@ -815,6 +815,8 @@ public final class UITexts extends NLS {
 
   public static String option_overwrite;
 
+  public static String maxConfigureFailures_title;
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
 

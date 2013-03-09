@@ -315,6 +315,8 @@ public class ScionManager implements IResourceChangeListener {
     boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.VERBOSE_INTERACTION );
     BuildWrapperPlugin.logAnswers=verbose;
 
+    int maxConfigureFailures=preferenceStore.getInt( IPreferenceConstants.MAX_CONFIGURE_FAILURES );
+    BuildWrapperPlugin.setMaxConfigureFailures( maxConfigureFailures );
 
     if ( buildWrapperExecutablePath != null && buildWrapperExecutablePath.toFile().exists() ) {
       try {
@@ -645,6 +647,9 @@ public class ScionManager implements IResourceChangeListener {
           } else if (event.getProperty().equals(IPreferenceConstants.VERBOSE_INTERACTION)){
             boolean verbose = ((Boolean)event.getNewValue()).booleanValue();
             BuildWrapperPlugin.logAnswers=verbose;
+          } else if (event.getProperty().equals(IPreferenceConstants.MAX_CONFIGURE_FAILURES)){
+            int max = ((Integer)event.getNewValue()).intValue();
+            BuildWrapperPlugin.setMaxConfigureFailures( max );
           }
 
     }
