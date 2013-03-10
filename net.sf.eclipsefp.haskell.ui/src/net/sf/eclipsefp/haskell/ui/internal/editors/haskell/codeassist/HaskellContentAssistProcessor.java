@@ -424,12 +424,14 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
         if (scope.equals( ProposalScope.ALL )){
           // search on everything
-          Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
-          if (browserDecls.length > 0) {
-            // If the browser found the module
-            for (Packaged<Declaration> browserDecl : browserDecls) {
-              boolean newPackage=!pkgs.contains( browserDecl.getPackage().getName() );
-              addBrowserDecl( browserDecl, decls, packages, constructors, newPackage );
+          if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()){
+            Packaged<Declaration>[] browserDecls=BrowserPlugin.getSharedInstance().getDeclarationsFromPrefix(Database.LOCAL, prefix);
+            if (browserDecls.length > 0) {
+              // If the browser found the module
+              for (Packaged<Declaration> browserDecl : browserDecls) {
+                boolean newPackage=!pkgs.contains( browserDecl.getPackage().getName() );
+                addBrowserDecl( browserDecl, decls, packages, constructors, newPackage );
+              }
             }
           }
         } else if (scope.equals( ProposalScope.PROJECT )){
@@ -480,7 +482,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
           // search on dependent packages only
           BWFacade f=BuildWrapperPlugin.getFacade( project );
-          if (f!=null){
+          if (f!=null && BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()){
             for (CabalPackage[] cps:f.getPackagesByDB().values()){
               for (CabalPackage cp:cps){
                 if (pkgs.contains( cp.getName() )){

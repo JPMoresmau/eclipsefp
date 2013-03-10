@@ -159,7 +159,7 @@ public class BuildMarkerResolutionGenerator implements
               }
             }
             try {
-              if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded()) {
+              if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()) {
                 //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
                 DeclarationId[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
                 /*ArrayList<String> places = new ArrayList<String>();

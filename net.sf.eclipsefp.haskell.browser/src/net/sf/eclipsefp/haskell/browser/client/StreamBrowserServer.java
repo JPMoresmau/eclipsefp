@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.InflaterInputStream;
 
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
@@ -55,10 +56,10 @@ public class StreamBrowserServer extends BrowserServer {
 	private boolean hackageDbLoaded = false;
 	private boolean hoogleLoaded = false;
 	private StreamRedirect errorRedirect;
-	public Object lock;
+	public LockObject lock= new LockObject();
 	
 	//private DatabaseType currentDatabase;
-	private HashMap<String, Packaged<Declaration>[]> declCache;
+	private HashMap<String, Packaged<Declaration>[]> declCache = new HashMap<String, Packaged<Declaration>[]>();
 
 	private boolean logError;
 	
@@ -67,8 +68,6 @@ public class StreamBrowserServer extends BrowserServer {
 	
 	public StreamBrowserServer(IPath serverExecutable,boolean logError) throws Exception {
 		this.serverExecutable = serverExecutable;
-		this.declCache = new HashMap<String, Packaged<Declaration>[]>();
-		lock = new Object();
 		this.logError=logError;
 		startServer(logError);
 	}
@@ -118,46 +117,62 @@ public class StreamBrowserServer extends BrowserServer {
 	public String sendAndReceive(JSONObject input)
 			throws IOException {
 		synchronized(lock) {
-			String jsonInput = input.toString();
-			sendCommand(jsonInput);
-			String response=getALine();
-			// String response = out.readLine();
-			//log(response);
-			if (response==null){
-				response=new JSONArray().toString();
+			lock.setRunning(true);
+			try {
+				String jsonInput = input.toString();
+				sendCommand(jsonInput);
+				String response=getALine();
+				// String response = out.readLine();
+				//log(response);
+				if (response==null){
+					response=new JSONArray().toString();
+				}
+				return response;
+			} finally {
+				lock.setRunning(false);
 			}
-			return response;
 		}
 	}
 
 	public boolean sendAndReceiveOk(JSONObject input)
 			throws IOException {
 		synchronized(lock) {
-			String jsonInput = input.toString();
-			sendCommand(jsonInput);
-	
-			String response = null;
-			do {
-				response = getALine(); // out.readLine();
-				log(response);
-			} while (response!=null && !response.equals("\"ok\""));
-			return "\"ok\"".equals(response);
+			lock.setRunning(true);
+			try {
+				String jsonInput = input.toString();
+				sendCommand(jsonInput);
+		
+				String response = null;
+				do {
+					response = getALine(); // out.readLine();
+					log(response);
+				} while (response!=null && !response.equals("\"ok\""));
+				return "\"ok\"".equals(response);
+			} finally {
+				lock.setRunning(false);
+			}
 		}
 	}
 	
-	public synchronized boolean sendAndReceiveBoolean(JSONObject input)
+	public boolean sendAndReceiveBoolean(JSONObject input)
 			throws IOException {
 		synchronized(lock) {
-			String jsonInput = input.toString();
-			sendCommand(jsonInput);
-	
-			String response = null;
-			do {
-				response = getALine(); // out.readLine();
-				log(response);
-			} while (response!=null && !response.equals("true") && !response.equals("false"));
-			
-			return "true".equals(response);
+			lock.setRunning(true);
+			try {
+		
+				String jsonInput = input.toString();
+				sendCommand(jsonInput);
+		
+				String response = null;
+				do {
+					response = getALine(); // out.readLine();
+					log(response);
+				} while (response!=null && !response.equals("true") && !response.equals("false"));
+				
+				return "true".equals(response);
+			} finally {
+				lock.setRunning(false);
+			}
 		}
 	}
 	
@@ -168,24 +183,29 @@ public class StreamBrowserServer extends BrowserServer {
 		in.flush();
 	}
 	
-	public synchronized HoogleStatus sendAndReceiveStatus(JSONObject input)
+	public HoogleStatus sendAndReceiveStatus(JSONObject input)
 			throws IOException {
 		synchronized(lock) {
-			String jsonInput = input.toString();
-			sendCommand(jsonInput);
-			HoogleStatus st=null;
-			String response = null;
-			do {
-				response = getALine(); // out.readLine();
-				log(response);
-				try {
-					st=HoogleStatus.valueOf(LangUtil.unquote(response).toUpperCase());
-				} catch (IllegalArgumentException iae){
-					// NOOP
-				}
-			} while (st==null);
-			
-			return st;
+			lock.setRunning(true);
+			try {
+				String jsonInput = input.toString();
+				sendCommand(jsonInput);
+				HoogleStatus st=null;
+				String response = null;
+				do {
+					response = getALine(); // out.readLine();
+					log(response);
+					try {
+						st=HoogleStatus.valueOf(LangUtil.unquote(response).toUpperCase());
+					} catch (IllegalArgumentException iae){
+						// NOOP
+					}
+				} while (st==null);
+				
+				return st;
+			} finally {
+				lock.setRunning(false);
+			}
 		}
 	}
 	
@@ -378,5 +398,23 @@ public class StreamBrowserServer extends BrowserServer {
 			}
 		}
 		process = null;
+	}
+	
+	public boolean isRunning(){
+		return lock.isRunning();
+	}
+	
+	private static class LockObject{
+		AtomicBoolean running=new AtomicBoolean(false);
+
+		public boolean isRunning() {
+			return running.get();
+		}
+
+		public void setRunning(boolean running) {
+			this.running.set(running);
+		}
+		
+		
 	}
 }

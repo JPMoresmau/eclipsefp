@@ -152,4 +152,8 @@ public abstract class BrowserServer {
 	public abstract HoogleStatus checkHoogle() throws Exception;
 
 	public abstract void stop();
+	
+	public boolean isRunning(){
+		return false;
+	}
 }
