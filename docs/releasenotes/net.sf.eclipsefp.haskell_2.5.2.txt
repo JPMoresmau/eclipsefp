@@ -18,6 +18,7 @@ Fixes:
 Features:
 	- Rebuild executables if workspace is autobuilding when dependent project is rebuilt (https://github.com/JPMoresmau/eclipsefp/issues/94)
 	- Limit on failures due to configure issues on mismatched cabal (https://github.com/JPMoresmau/eclipsefp/issues/91)
+	- Alex/Happy/UUagc editors use spaces for tabs
 
 Internal:
 

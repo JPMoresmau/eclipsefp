@@ -10,9 +10,13 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -150,6 +154,17 @@ public class PartitionSourceViewerConfiguration extends
   @Override
   public IAnnotationHover getAnnotationHover( final ISourceViewer sourceViewer ) {
     return new AnnotationHover();
+  }
+
+  @Override
+  public IAutoEditStrategy[] getAutoEditStrategies( final ISourceViewer sv, final String contentType ) {
+    final TabsToSpacesConverter tabConverter = new TabsToSpacesConverter();
+    tabConverter.setLineTracker( new DefaultLineTracker() );
+    tabConverter.setNumberOfSpacesPerTab( getTabWidth( sv ) );
+    return new IAutoEditStrategy[] {
+        new HaskellAutoIndentStrategy(), // is Haskell strategy ok? Probably...
+        tabConverter // convert tabs to spaces too!
+    };
   }
 
 }
