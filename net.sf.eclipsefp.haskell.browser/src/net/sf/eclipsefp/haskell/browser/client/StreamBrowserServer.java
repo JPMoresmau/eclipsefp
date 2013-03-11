@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,6 +29,7 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.Module;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
+import net.sf.eclipsefp.haskell.util.CappedStringWriter;
 import net.sf.eclipsefp.haskell.util.DispatchWriter;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.LangUtil;
@@ -63,7 +63,7 @@ public class StreamBrowserServer extends BrowserServer {
 
 	private boolean logError;
 	
-	private StringWriter lastErrW=new StringWriter();
+	private CappedStringWriter lastErrW=new CappedStringWriter(10000);
 	private DispatchWriter allErrWs=new DispatchWriter();
 	
 	public StreamBrowserServer(IPath serverExecutable,boolean logError) throws Exception {
@@ -178,7 +178,7 @@ public class StreamBrowserServer extends BrowserServer {
 	
 	private void sendCommand(String command) throws IOException{
 		log(">> " + command);
-		lastErrW.getBuffer().setLength(0);
+		lastErrW.clear();
 		in.write(command + "\n");
 		in.flush();
 	}

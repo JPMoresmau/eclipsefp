@@ -21,6 +21,7 @@ public class AllTests_Suite {
 
 		suite.addTest( new JUnit4TestAdapter(CommandLineUtilTest.class ));
 		suite.addTestSuite( FileUtilTest.class );
+		suite.addTest( new JUnit4TestAdapter(CappedStringWriterTest.class ));
 		return suite;
 	}
 }
