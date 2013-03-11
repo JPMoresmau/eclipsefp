@@ -41,16 +41,20 @@ public class DependenciesDialog extends Dialog implements
   String value = null;
   List<String> alreadySelected;
 
+  private final String projectName;
+
   protected DependenciesDialog( final IShellProvider provider,
-      final List<String> alreadySelected ) {
+      final List<String> alreadySelected,final String projectName ) {
     super( provider );
     this.alreadySelected = alreadySelected;
+    this.projectName=projectName;
   }
 
   protected DependenciesDialog( final Shell parentShell,
-      final List<String> alreadySelected ) {
+      final List<String> alreadySelected, final String projectName ) {
     super( parentShell );
     this.alreadySelected = alreadySelected;
+    this.projectName=projectName;
   }
 
   public String getValue() {
@@ -84,7 +88,7 @@ public class DependenciesDialog extends Dialog implements
     packageTree.setLabelProvider( new DependenciesDialogLabelProvider() );
     packageTree.setComparator( new ViewerComparator() );
     packageTree.setContentProvider( new DependenciesDialogContentProvider(
-        alreadySelected ) );
+        alreadySelected, projectName ) );
     packageTree.setInput( new Object() );
 
     // Hook for changes in selection

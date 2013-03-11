@@ -90,7 +90,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
           alreadySelected.add( project.getName() );
         }
         DependenciesDialog dialog = new DependenciesDialog( tableField
-            .getTable().getShell(), alreadySelected );
+            .getTable().getShell(), alreadySelected,project.getName() );
         if( dialog.open() == Window.OK && dialog.getValue() != null ) {
           String s=dialog.getValue();
           String[] ss=s.split( "," );

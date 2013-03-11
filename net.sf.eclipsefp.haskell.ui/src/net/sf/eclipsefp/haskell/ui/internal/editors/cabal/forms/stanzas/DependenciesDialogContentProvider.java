@@ -27,7 +27,7 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
 
   private HaskellPackage[] elements;
 
-  public DependenciesDialogContentProvider( final List<String> alreadySelected ) {
+  public DependenciesDialogContentProvider( final List<String> alreadySelected,final String projectName ) {
     super();
 
     try {
@@ -51,13 +51,16 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
         }
       }
 
-      if (ScionManager.getCabalImplDetails().isSandboxed()){
-        for (HaskellPackage pkg:ScionManager.listProjectPackages()){
+      for (HaskellPackage pkg:ScionManager.listProjectPackages()){
+        // we can reference ourselves, or reference other projects if we're sandboxed
+        if (ScionManager.getCabalImplDetails().isSandboxed() || pkg.getIdentifier().getName().equals( projectName ) ){
           if(! names.contains( pkg.getIdentifier().getName() ) ) {
             pkgs.add( pkg );
           }
         }
       }
+
+
       this.elements = pkgs.toArray( new HaskellPackage[ pkgs.size() ] );
     } catch( Throwable ex ) {
       this.elements = new HaskellPackage[ 0 ];

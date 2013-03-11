@@ -962,6 +962,10 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
+  /**
+   * list haskell projects that have a library as packages
+   * @return the list of HaskellPackages corresponding to library projects
+   */
   public static List<HaskellPackage> listProjectPackages(){
     List<IProject> prjs=ResourceUtil.listHaskellProjects();
     List<HaskellPackage> hps=new ArrayList<HaskellPackage>(prjs.size());
@@ -970,12 +974,13 @@ public class ScionManager implements IResourceChangeListener {
       try {
         PackageDescription pd=PackageDescriptionLoader.load(f);
         PackageDescriptionStanza pds=pd.getPackageStanza();
-        if (pds!=null){
+        if (pds!=null && pd.getLibraryStanza()!=null){
           String version=pds.getProperties().get( CabalSyntax.FIELD_VERSION );
           String doc=pds.getProperties().get( CabalSyntax.FIELD_SYNOPSIS );
           HaskellPackage hp=new HaskellPackage( doc, new PackageIdentifier( pds.getName(), version ) );
           hps.add(hp);
         }
+
       } catch( CoreException ex ) {
         HaskellCorePlugin.log( "listProjectPackages:", ex ); //$NON-NLS-1$
       }
