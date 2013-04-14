@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.views.CabalPackagesView;
 import org.eclipse.core.resources.IProject;
@@ -18,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -41,6 +44,17 @@ public class CabalInstallAction implements IObjectActionDelegate {
 
   @Override
   public void run( final IAction arg0 ) {
+    // this action and its subclasses use cabal executable directly
+    // so ask for confirmation that we're getting out of the sandbox
+    // (dependencies and installation in dependent projects being handled automatically)
+    CabalImplDetails cid=ScionManager.getCabalImplDetails();
+    if (cid.isSandboxed()){
+      boolean confirm=MessageDialog.openConfirm( currentShell, UITexts.install_sandbox_title, getSandboxWarningMessage() );
+      if (!confirm){
+        return;
+      }
+    }
+
     // do not ask for options, use our own dist folder and default cabal options
    //WizardDialog wd=new WizardDialog( currentShell, new CabalInstallWizard( projects ) );
    //wd.open();
@@ -99,6 +113,10 @@ public class CabalInstallAction implements IObjectActionDelegate {
 
   protected String getJobName(){
     return UITexts.install_job;
+  }
+
+  protected String getSandboxWarningMessage(){
+    return UITexts.install_sandbox_install_text;
   }
 
   protected void addExtraParameters(final List<String> commands){

@@ -45,6 +45,12 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
     commands.add("--enable-tests");
   }
 
+  @Override
+  protected String getSandboxWarningMessage() {
+    return UITexts.install_sandbox_dependencies_text;
+  }
+
+
   /* (non-Javadoc)
    * @see net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction#getAfter(org.eclipse.core.resources.IProject)
    */
