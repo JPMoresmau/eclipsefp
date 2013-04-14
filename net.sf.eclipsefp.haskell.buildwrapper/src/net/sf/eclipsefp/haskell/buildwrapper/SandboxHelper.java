@@ -54,6 +54,8 @@ public class SandboxHelper {
 				}
 				LinkedList<String> args=new LinkedList<String>();
 				args.add("install-deps");
+				// enable tests
+				args.add("--enable-tests");
 				f.runCabal(args);
 				break;
 			}
