@@ -130,18 +130,27 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   public void fullBuild(final boolean synchronize,final boolean output, final IProgressMonitor mon )  {
     mon.beginTask( CoreTexts.haskellBuilder_full, 100 );
     try {
-      JobFacade f=BuildWrapperPlugin.getJobFacade( getProject());
+      final JobFacade f=BuildWrapperPlugin.getJobFacade( getProject());
       if (f!=null){
 
         BuildWrapperPlugin.deleteProblems( getProject() );
         cleanNonHaskellSources();
-        BuildOptions bo=new BuildOptions().setOutput(output).setRecompile(false);
-        if (synchronize){
-          addProjectDependencies( f.getRealFacade(), getProject() );
-          f.synchronizeAndBuild( false, bo );
-        } else {
-          f.build( bo );
+        if (mon.isCanceled()){
+          return;
         }
+        final BuildOptions bo=new BuildOptions().setOutput(output).setRecompile(false);
+        Runnable r=new Runnable(){
+          @Override
+          public void run() {
+            if (synchronize){
+              addProjectDependencies( f.getRealFacade(), getProject() );
+              f.synchronizeAndBuild( false, bo );
+            } else {
+              f.build( bo );
+            }
+          }
+        };
+        f.getRealFacade().waitForThread( r, mon );
       } else {
         new Exception("JobFacade == null").printStackTrace(); //$NON-NLS-1$
       }

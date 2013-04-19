@@ -95,6 +95,11 @@ public class BWFacade {
 	public static final boolean logBuildTimes=false;
 	
 	/**
+	 * the processes running, by thread, so we can kill them when cancelling
+	 */
+	private Map<Thread,Process> runningProcesses=Collections.synchronizedMap(new HashMap<Thread,Process>());
+	
+	/**
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
 	 */
 	private SingleJobQueue buildJobQueue=new SingleJobQueue();
@@ -1202,6 +1207,8 @@ public class BWFacade {
 		T obj=null;
 		try {
 			Process p=pb.start();
+			registerProcess(p);
+			
 			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
 			//long t0=System.currentTimeMillis();
 			String l=br.readLine();
@@ -1243,6 +1250,7 @@ public class BWFacade {
 					l=br.readLine();
 				}
 			}
+			unregisterProcess();
 			if (needConfigure && canRerun && !isConfigureAction){
 				if (needDelete){
 					try {
@@ -1274,6 +1282,7 @@ public class BWFacade {
 			//long t1=System.currentTimeMillis();
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
 		} catch (IOException ioe){
+			unregisterProcess();
 			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 		}
 		return obj;
@@ -1300,18 +1309,23 @@ public class BWFacade {
 		}					
 		try {
 			Process p=pb.start();
-			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));
-			//long t0=System.currentTimeMillis();
-			String l=br.readLine();
-			while (l!=null){
-				if (ow!=null) {
-					ow.addMessage(l);
+			registerProcess(p);
+			try {
+				BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));
+				//long t0=System.currentTimeMillis();
+				String l=br.readLine();
+				while (l!=null){
+					if (ow!=null) {
+						ow.addMessage(l);
+					}
+					l=br.readLine();
 				}
-				l=br.readLine();
-			}
-			// maybe now the folder exists...
-			if (needSetDerivedOnDistDir){
-				setDerived();
+				// maybe now the folder exists...
+				if (needSetDerivedOnDistDir){
+					setDerived();
+				}
+			} finally {
+				unregisterProcess();
 			}
 			//long t1=System.currentTimeMillis();
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
@@ -1434,31 +1448,91 @@ public class BWFacade {
 	}
 	
 	/**
+	 * wait for a thread running the runnable to finish, or the monitor to be cancelled
+	 * @param r the runnable
+	 * @param mon the monitor, maybe null
+	 */
+	public void waitForThread(Runnable r,IProgressMonitor mon){
+		if (mon==null){
+			r.run();
+		} else {
+			Thread t=new Thread(r);
+			t.start();
+			
+			while (t.isAlive()){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ie){
+					
+				}
+				if (mon.isCanceled()){
+					Process p=runningProcesses.remove(t);
+					if (p!=null){
+						p.destroy(); // destroy the process
+					}
+					return;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * clean: delete the .dist-buildwrapper folder, and synchronize the full content
 	 * @param mon the progress monitor
 	 * @throws CoreException
 	 */
-	public void clean(IProgressMonitor mon) throws CoreException{
+	public void clean(final IProgressMonitor mon) throws CoreException{
 		if (project!=null){
+			closeAllProcesses();
+			if (mon!=null && mon.isCanceled()){
+				return;
+			}
 			/**
 			 * closes processes so they don't have locks on resources we'd like to delete
 			 * and they can then be restarted with the newly generated files
 			 */
-			closeAllProcesses();
-			clean(true);
+			Runnable r1=new Runnable(){
+				@Override
+				public void run() {
+					clean(true);
+				}
+			};
+			waitForThread(r1, mon);
 			project.refreshLocal(IResource.DEPTH_ONE, mon);
+			if (mon!=null && mon.isCanceled()){
+				return;
+			}
 			deleteCabalProblems();
 			BuildWrapperPlugin.deleteAllProblems(project);
 			cabalFileChanged();
-			outlines.clear();
-			if (SandboxHelper.isSandboxed(this)){
-				try {
-					SandboxHelper.installDeps(this);
-				} catch (CoreException ce){
-					BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
-				}
+			if (mon!=null && mon.isCanceled()){
+				return;
 			}
-			synchronize(false);
+			outlines.clear();
+			
+			Runnable r2=new Runnable(){
+				@Override
+				public void run() {
+
+					if (SandboxHelper.isSandboxed(BWFacade.this)){
+						try {
+							SandboxHelper.installDeps(BWFacade.this);
+						} catch (CoreException ce){
+							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+						}
+					}
+					
+				}
+			};
+			waitForThread(r2, mon);
+			Runnable r3=new Runnable(){
+				@Override
+				public void run() {
+					synchronize(false);
+				}
+			};
+			waitForThread(r3, mon);
+
 		}
 	}
 	
@@ -1578,5 +1652,11 @@ public class BWFacade {
 		this.cabalImplDetails = cabalImplDetails;
 	}
 	
-
+	private void registerProcess(Process p){
+		runningProcesses.put(Thread.currentThread(), p);
+	}
+	
+	private void unregisterProcess(){
+		runningProcesses.remove(Thread.currentThread());
+	}
 }
