@@ -101,6 +101,7 @@ public class JobFacade  {
 	    				protected IStatus run(IProgressMonitor arg0) {
 	    					boolean ok=realFacade.parseBuildResult(buildJob.getNotes());
 	    					if (ok){
+	    						realFacade.closeAllProcesses(); // GHC needs to reload the changes. It can do it for source files, but not across components
 	    						String name=NLS.bind(BWText.job_sandbox_deps, realFacade.getProject().getName());
 	    						Job installJob=new Job(name) {
 	    							
