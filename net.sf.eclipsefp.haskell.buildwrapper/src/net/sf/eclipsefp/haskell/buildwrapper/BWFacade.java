@@ -213,7 +213,7 @@ public class BWFacade {
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY,false);
-		refreshDist();
+		refreshDist(true);
 		if (arr!=null && arrC!=null){
 			for (int a=0;a<arrC.length();a++){
 				try {
@@ -561,14 +561,26 @@ public class BWFacade {
 		}
 	}
 	
-	private void refreshDist(){
-		IFolder fldr=getProject().getFolder(BWFacade.DIST_FOLDER);
-		if (fldr!=null && fldr.exists()){
-			try {
-				fldr.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-			} catch (CoreException ce){
-				BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
+	private void refreshDist(boolean async){
+		Runnable r=new Runnable(){
+			@Override
+			public void run() {
+				IFolder fldr=getProject().getFolder(BWFacade.DIST_FOLDER);
+				if (fldr!=null && fldr.exists()){
+					try {
+						fldr.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+					} catch (CoreException ce){
+						BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
+					}
+				}
+				
 			}
+		};
+		if (async){
+			new Thread(r).start();
+		
+		} else {
+			r.run();
 		}
 	}
 	
@@ -588,7 +600,7 @@ public class BWFacade {
 			JSONArray allPaths=arr.optJSONArray(0);
 			if (allPaths!=null){
 				if (allPaths.length()>0){
-					refreshDist();
+					refreshDist(false);
 				}
 				BuildWrapperPlugin plugin=BuildWrapperPlugin.getDefault();
 				if (plugin!=null){

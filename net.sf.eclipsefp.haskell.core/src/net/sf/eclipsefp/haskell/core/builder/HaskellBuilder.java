@@ -144,9 +144,9 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
           public void run() {
             if (synchronize){
               addProjectDependencies( f.getRealFacade(), getProject() );
-              f.synchronizeAndBuild( false, bo );
+              f.synchronizeAndBuild( false, bo, mon );
             } else {
-              f.build( bo );
+              f.build( bo,mon );
             }
           }
         };

@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -65,18 +66,44 @@ public class JobFacade  {
           try {
            notes=realFacade.build(buildOptions);
 	       if (buildOptions.isOutput()){
-	   			try {
-	   				IResource res=realFacade.getProject().findMember(BWFacade.DIST_FOLDER);
-	   				if (res!=null){
-	   					res.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-	   				} else {
-	   					realFacade.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-	   				}
-	   			} catch (CoreException ce){
-	   				BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
-	   				ce.printStackTrace();
-	   			}
+	    	   new Thread(new Runnable(){public void run() {
+	    		   try {
+	    			   	IProgressMonitor monitor=new NullProgressMonitor();
+		   				IResource res=realFacade.getProject().findMember(BWFacade.DIST_FOLDER);
+		   				if (res!=null){
+		   					res.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		   				} else {
+		   					realFacade.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		   				}
+		   			} catch (CoreException ce){
+		   				BuildWrapperPlugin.logError(BWText.error_refreshLocal, ce);
+		   				ce.printStackTrace();
+		   			}
+	    		   
+	    	   };}).start();
+	    	   
+	   			
 	   		}
+	        // do all that as build job otherwise launch start too early
+	       	boolean ok=realFacade.parseBuildResult(notes);
+			if (ok){
+				realFacade.closeAllProcesses(); // GHC needs to reload the changes. It can do it for source files, but not across components
+				String name=NLS.bind(BWText.job_sandbox_deps, realFacade.getProject().getName());
+				Job installJob=new Job(name) {
+					
+					@Override
+					protected IStatus run(IProgressMonitor arg0) {
+						try {
+							SandboxHelper.updateUsing(realFacade);
+						} catch (CoreException ce){
+							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				installJob.setPriority(Job.BUILD);
+				installJob.schedule();
+			}
           } finally {
             monitor.done();
           }
@@ -93,40 +120,40 @@ public class JobFacade  {
 		
 	    final BuildJob buildJob=new BuildJob(jobNamePrefix,realFacade,buildOptions);
 	    
-	     buildJob.addJobChangeListener(new JobChangeAdapter(){
-	    	  @Override
-	    	public void done(IJobChangeEvent event) {
-	    		if (event.getResult().isOK()){
-	    			Job parseJob = new Job (jobNamePrefix) {
-	    				protected IStatus run(IProgressMonitor arg0) {
-	    					boolean ok=realFacade.parseBuildResult(buildJob.getNotes());
-	    					if (ok){
-	    						realFacade.closeAllProcesses(); // GHC needs to reload the changes. It can do it for source files, but not across components
-	    						String name=NLS.bind(BWText.job_sandbox_deps, realFacade.getProject().getName());
-	    						Job installJob=new Job(name) {
-	    							
-	    							@Override
-	    							protected IStatus run(IProgressMonitor arg0) {
-			    						try {
-			    							SandboxHelper.updateUsing(realFacade);
-			    						} catch (CoreException ce){
-			    							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
-			    						}
-			    						return Status.OK_STATUS;
-	    							}
-	    						};
-	    						installJob.setPriority(Job.BUILD);
-	    						installJob.schedule();
-	    					}
-	    					return Status.OK_STATUS;
-	    				};
-	    			};
-	    			parseJob.setRule( getProject() );
-	    			parseJob.setPriority(Job.BUILD);
-	    			parseJob.schedule();
-	    		}
-	    	}
-	      });
+//	     buildJob.addJobChangeListener(new JobChangeAdapter(){
+//	    	  @Override
+//	    	public void done(IJobChangeEvent event) {
+//	    		if (event.getResult().isOK()){
+//	    			Job parseJob = new Job (jobNamePrefix) {
+//	    				protected IStatus run(IProgressMonitor arg0) {
+//	    					boolean ok=realFacade.parseBuildResult(buildJob.getNotes());
+//	    					if (ok){
+//	    						realFacade.closeAllProcesses(); // GHC needs to reload the changes. It can do it for source files, but not across components
+//	    						String name=NLS.bind(BWText.job_sandbox_deps, realFacade.getProject().getName());
+//	    						Job installJob=new Job(name) {
+//	    							
+//	    							@Override
+//	    							protected IStatus run(IProgressMonitor arg0) {
+//			    						try {
+//			    							SandboxHelper.updateUsing(realFacade);
+//			    						} catch (CoreException ce){
+//			    							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+//			    						}
+//			    						return Status.OK_STATUS;
+//	    							}
+//	    						};
+//	    						installJob.setPriority(Job.BUILD);
+//	    						installJob.schedule();
+//	    					}
+//	    					return Status.OK_STATUS;
+//	    				};
+//	    			};
+//	    			parseJob.setRule( getProject() );
+//	    			parseJob.setPriority(Job.BUILD);
+//	    			parseJob.schedule();
+//	    		}
+//	    	}
+//	      });
 	      // not needed since we put the job in a queue ourselves
 	      // except if both synchronized and build are run concurrently
 	      //buildJob.setRule( getProject() );
@@ -137,10 +164,20 @@ public class JobFacade  {
 	public void build(final BuildOptions buildOptions) {
 		  realFacade.getBuildJobQueue().addJob(getBuildJob(buildOptions));
 	}
+	
+	/**
+	 * build without starting a new job
+	 * @param buildOptions
+	 * @param monitor
+	 */
+	public void build(final BuildOptions buildOptions,final IProgressMonitor monitor) {
+		BuildJob bj=getBuildJob(buildOptions);
+		bj.run(monitor);
+	}
 
-	public void synchronizeAndBuild(final boolean force,final BuildOptions buildOptions){
-		Job sj=getSynchronizeJob(force,false);
-		sj.addJobChangeListener(new JobChangeAdapter(){
+	public void synchronizeAndBuild(final boolean force,final BuildOptions buildOptions,final IProgressMonitor monitor){
+		/*Job sj=getSynchronizeJob(force,false);
+		/*sj.addJobChangeListener(new JobChangeAdapter(){
 	    	  @Override
 	    	public void done(IJobChangeEvent event) {
 	    		if (event.getResult().isOK()){
@@ -151,7 +188,19 @@ public class JobFacade  {
 	    		}
 	    	  }
 		});
-		sj.schedule();
+		sj.schedule();*/
+		realFacade.synchronize(force);
+		if (monitor!=null && monitor.isCanceled()){
+			return;
+		}
+		BuildJob bj=getBuildJob(buildOptions);
+		IStatus st=bj.run(monitor);
+		if (st.isOK()){
+			UsageThread ut=BuildWrapperPlugin.getDefault().getUsageThread();
+			if (ut!=null){
+				ut.addProject(getProject());
+			}
+		}
 	}
 	
 	/**

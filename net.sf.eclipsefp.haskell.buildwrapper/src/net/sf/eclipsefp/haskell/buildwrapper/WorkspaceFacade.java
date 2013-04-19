@@ -29,54 +29,54 @@ public class WorkspaceFacade {
 		this.monitor=monitor;
 	}
 	
-	public void build(final BuildOptions buildOptions) {
-		/*WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
-	    	@Override
-	    	protected void execute(IProgressMonitor arg0) throws CoreException,
-	    			InvocationTargetException, InterruptedException {
-	    		 realFacade.build(buildOptions);
-	    	}
-	    };
-		try {
-			wmo.run(monitor);
-		} catch (InterruptedException ie){
-			// noop
-		}catch (InvocationTargetException ie){
-			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
-		}*/
-
-		JobFacade jf=BuildWrapperPlugin.getJobFacade(getProject());
-		if (jf!=null){
-			final String jobNamePrefix = NLS.bind(BWText.job_build, getProject().getName());
-			
-		    final BuildJob buildJob=new BuildJob(jobNamePrefix,realFacade,buildOptions);
-		    
-		     buildJob.addJobChangeListener(new JobChangeAdapter(){
-		    	  @Override
-		    	public void done(IJobChangeEvent event) {
-		    		if (event.getResult().isOK()){
-		    			WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
-		    				@Override
-		    		    	protected void execute(IProgressMonitor arg0) throws CoreException,
-		    		    			InvocationTargetException, InterruptedException {
-		    					realFacade.parseBuildResult(buildJob.getNotes());
-		    				};
-		    			};
-		    			try {
-		    				wmo.run(monitor);
-		    			} catch (InterruptedException ie){
-		    				// noop
-		    			}catch (InvocationTargetException ie){
-		    				BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
-		    			}
-		    		}
-		    	}
-		      });
-		      //buildJob.setRule( getProject() );
-		      buildJob.setPriority(Job.BUILD);
-		      realFacade.getBuildJobQueue().addJob(buildJob);
-		}
-	}
+//	public void build(final BuildOptions buildOptions) {
+//		/*WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
+//	    	@Override
+//	    	protected void execute(IProgressMonitor arg0) throws CoreException,
+//	    			InvocationTargetException, InterruptedException {
+//	    		 realFacade.build(buildOptions);
+//	    	}
+//	    };
+//		try {
+//			wmo.run(monitor);
+//		} catch (InterruptedException ie){
+//			// noop
+//		}catch (InvocationTargetException ie){
+//			BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+//		}*/
+//
+//		JobFacade jf=BuildWrapperPlugin.getJobFacade(getProject());
+//		if (jf!=null){
+//			final String jobNamePrefix = NLS.bind(BWText.job_build, getProject().getName());
+//			
+//		    final BuildJob buildJob=new BuildJob(jobNamePrefix,realFacade,buildOptions);
+//		    
+//		     buildJob.addJobChangeListener(new JobChangeAdapter(){
+//		    	  @Override
+//		    	public void done(IJobChangeEvent event) {
+//		    		if (event.getResult().isOK()){
+//		    			WorkspaceModifyOperation wmo=new WorkspaceModifyOperation(getProject()){
+//		    				@Override
+//		    		    	protected void execute(IProgressMonitor arg0) throws CoreException,
+//		    		    			InvocationTargetException, InterruptedException {
+//		    					realFacade.parseBuildResult(buildJob.getNotes());
+//		    				};
+//		    			};
+//		    			try {
+//		    				wmo.run(monitor);
+//		    			} catch (InterruptedException ie){
+//		    				// noop
+//		    			}catch (InvocationTargetException ie){
+//		    				BuildWrapperPlugin.logError(ie.getLocalizedMessage(), ie.getCause());
+//		    			}
+//		    		}
+//		    	}
+//		      });
+//		      //buildJob.setRule( getProject() );
+//		      buildJob.setPriority(Job.BUILD);
+//		      realFacade.getBuildJobQueue().addJob(buildJob);
+//		}
+//	}
 
 	public IProject getProject() {
 		return realFacade.getProject();
