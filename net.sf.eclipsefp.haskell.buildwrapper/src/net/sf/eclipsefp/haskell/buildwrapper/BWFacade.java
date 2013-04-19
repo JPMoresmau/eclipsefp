@@ -1242,7 +1242,7 @@ public class BWFacade {
 					l=br.readLine();
 				}
 			}
-			if (needConfigure && canRerun){
+			if (needConfigure && canRerun && !isConfigureAction){
 				if (needDelete){
 					try {
 						IFolder fldr=project.getFolder(DIST_FOLDER);
@@ -1262,7 +1262,8 @@ public class BWFacade {
 					showedNoExeError=true;
 					bwPath=null;
 				}
-			} else if (isConfigureAction){
+			// we reran and we don't need to configure after that call, we reset the count
+			} else if (!canRerun && !needConfigure){
 				configureFailures=0;
 			}
 			// maybe now the folder exists...
