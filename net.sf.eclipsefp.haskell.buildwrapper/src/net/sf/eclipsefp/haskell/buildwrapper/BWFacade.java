@@ -574,11 +574,12 @@ public class BWFacade {
 		command.add("--returnall="+returnAll);
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null){
-			if(arr.length()>1){
+			// usage is a background process, we don't want to generate markers for it
+			/**if(arr.length()>1){
 		
 				JSONArray notes=arr.optJSONArray(1);
 				parseNotes(notes);
-			}
+			}**/
 			JSONArray allPaths=arr.optJSONArray(0);
 			if (allPaths!=null){
 				if (allPaths.length()>0){
