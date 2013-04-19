@@ -124,8 +124,10 @@ public class MarkOccurrenceComputer {
     IAnnotationModel result = null;
     if( editor != null ) {
       IDocumentProvider documentProvider = editor.getDocumentProvider();
-      IEditorInput input = editor.getEditorInput();
-      result = documentProvider.getAnnotationModel( input );
+      if (documentProvider!=null){
+        IEditorInput input = editor.getEditorInput();
+        result = documentProvider.getAnnotationModel( input );
+      }
     }
     return result;
   }
