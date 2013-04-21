@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
@@ -54,13 +55,19 @@ public class ProblemsLabelDecorator implements ILightweightLabelDecorator {
       return 0;
     }
     try {
+      // haskell files: source or cabal
       if( obj instanceof IFile
-          && FileUtil.hasHaskellExtension( ( IResource )obj ) ) {
+          && (FileUtil.hasHaskellExtension( ( IResource )obj ) || FileUtil.hasCabalExtension( ( IResource )obj ) )) {
         return ( ( IResource )obj ).findMaxProblemSeverity( BuildWrapperPlugin.PROBLEM_MARKER_ID
             ,
             true, IResource.DEPTH_ZERO );
+      // source folders
       } else if( obj instanceof IFolder
           && ResourceUtil.isSourceFolder( ( IFolder )obj ) ) {
+        return ( ( IResource )obj ).findMaxProblemSeverity( BuildWrapperPlugin.PROBLEM_MARKER_ID,
+            true, IResource.DEPTH_INFINITE );
+      // haskell projects
+      } else if (obj instanceof IProject && ResourceUtil.hasHaskellNature( ((IProject) obj ))){
         return ( ( IResource )obj ).findMaxProblemSeverity( BuildWrapperPlugin.PROBLEM_MARKER_ID,
             true, IResource.DEPTH_INFINITE );
       }

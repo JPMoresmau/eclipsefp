@@ -180,7 +180,7 @@
          </description>
       </decorator>
       <decorator
-            label="%haskellDecorator_name"
+            label="%problemDecorator_name"
             lightweight="true"
             class="net.sf.eclipsefp.haskell.ui.decorators.ProblemsLabelDecorator"
             state="true"
@@ -189,7 +189,7 @@
               <objectClass name="org.eclipse.core.resources.IResource"/> 
             </enablement>
          <description>
-            %haskellDecorator_desc
+            %problemDecorator_desc
          </description>
       </decorator>
    </extension>
