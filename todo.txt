@@ -1,3 +1,22 @@
+- hlint parameters/options
+	- per project
+	- per worskpace
+	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/b68eb615/?limit=25#3056
+
+	- scan hlint data directory and get all files different than HLint.hs?
+	- encoding -> automatically find file encoding and use it!
+	- allow global parameters
+
+- turn off scion browser in workspace
+	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/88c58cc0/?limit=25#d6d1
+
+- display warnings + quick fix on unused dependencies in cabal
+	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/063caf95/?limit=25#f901
+	use usage
+
+- cabal-db and packdeps integration
+	http://tab.snarc.org/posts/haskell/2013-03-13-cabal-db.html
+
 types of parameters?
 
 - quick fix on missing package 
@@ -9,6 +28,8 @@ types of parameters?
 - global action to remove all useless imports (in file editor, on several files in navigator)
 - global action to clean all imports: only import what's needed
 	-> from import Package.Module to import Package.Module(Type(Constructor), function)
+
+
 
 - show packages in error in Cabal Packages view (error overlay on icon) + errors + enable install button
 	- list of packages in error
