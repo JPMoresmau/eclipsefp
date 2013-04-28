@@ -7,6 +7,8 @@ package net.sf.eclipsefp.haskell.ui.internal.refactoring.actions;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.refactoring.RefInfo;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -22,11 +24,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-abstract class RefAction {
+abstract class RefAction extends AbstractHandler {
 
   final RefInfo info = new RefInfo();
 
@@ -36,6 +39,14 @@ abstract class RefAction {
 
   abstract void openWizard();
 
+
+  @Override
+  public Object execute( final ExecutionEvent event )  {
+    IEditorPart editor = HandlerUtil.getActiveEditor( event );
+    setActiveEditor(null,editor);
+    run(null);
+    return null;
+  }
 
   // interface methods of IEditorActionDelegate
   /////////////////////////////////////////////
@@ -97,7 +108,6 @@ abstract class RefAction {
   }
 
   private void refuse() {
-    // TODO lf gen
     String title = UITexts.mkPointFree_refuseDlg_title;
     String message = UITexts.mkPointFree_refuseDlg_message;
     MessageDialog.openInformation( getShell(), title, message );

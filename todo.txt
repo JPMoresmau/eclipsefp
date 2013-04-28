@@ -17,6 +17,9 @@
 - cabal-db and packdeps integration
 	http://tab.snarc.org/posts/haskell/2013-03-13-cabal-db.html
 
+- comment action should toggle comment/uncomment
+	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/7ea2e1eb/?limit=25#3100
+
 types of parameters?
 
 - quick fix on missing package 

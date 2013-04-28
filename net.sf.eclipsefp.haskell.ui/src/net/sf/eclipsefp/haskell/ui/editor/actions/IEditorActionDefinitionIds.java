@@ -22,4 +22,5 @@ public interface IEditorActionDefinitionIds {
   public final static String HADDOCK_BLOCK_FOLLOWING = ActionPrefix.concat( "haddock_block_following" ); //$NON-NLS-1$
   public final static String FORMAT           = ActionPrefix.concat( "format" ); //$NON-NLS-1$
   public final static String IMPORTS           = ActionPrefix.concat( "imports" ); //$NON-NLS-1$
+  public final static String RENAME           = ActionPrefix.concat( "rename" ); //$NON-NLS-1$
 }

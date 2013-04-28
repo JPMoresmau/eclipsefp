@@ -455,6 +455,11 @@
             name="%references_label"
             id="org.eclipse.ui.category.references"/>
       <command
+            description="%refRename_description"
+            categoryId="net.sf.eclipsefp.haskell.ui.category.source"
+            name="%refRename_label"
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.rename"/>  
+      <command
             description="%firstCharCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%firstCharCommand_name"
@@ -606,7 +611,6 @@
             locationURI="menu:navigate?after=open.ext">
             <menu
                id="net.sf.eclipsefp.haskell.ui.refsMenu"
-               path="edit"
                label="%references_label">
 		         <command
 		               commandId="net.sf.eclipsefp.ui.commands.references.workspace">
@@ -620,7 +624,6 @@
             locationURI="popup:#HaskellEditorContext?after=group.open">
              <menu
                id="net.sf.eclipsefp.haskell.ui.refsMenu.popup"
-               path="edit"
                label="%references_label">
 		         <command
 		               commandId="net.sf.eclipsefp.ui.commands.references.workspace">
@@ -631,6 +634,26 @@
 		               commandId="net.sf.eclipsefp.ui.commands.references.project">
 		            <visibleWhen checkEnabled="true"/>
 		         </command>
+         </menu>
+      </menuContribution>
+              <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=edit">
+            <menu
+               id="net.sf.eclipsefp.haskell.ui.refactorMenu"
+               label="%ctxMenu_refactor_label">
+		         <command
+		               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.rename" mnemonic="%refRename_mnemonic">
+		          </command>
+         </menu>
+   	   </menuContribution> 
+       <menuContribution
+            locationURI="popup:#HaskellEditorContext?after=source">
+            <menu
+               id="net.sf.eclipsefp.haskell.ui.refactorMenu"
+               label="%ctxMenu_refactor_label">
+		         <command
+		               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.rename">
+		          </command>
          </menu>
       </menuContribution>
    </extension>
@@ -649,6 +672,10 @@
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
+         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+              sequence="M2+M3+R"
+              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.rename" 
+              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"/>
          <!-- keys for Line Comment -->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               sequence="M1+7"
@@ -747,6 +774,16 @@
       <handler
             class="net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler"
             commandId="net.sf.eclipsefp.ui.commands.navigate.openDefinition">
+         <activeWhen>
+            <reference
+                  definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
+            </reference>
+         </activeWhen>
+      </handler>
+      <!-- handler for the Rename action when invoked from the HaskellEditor -->
+      <handler
+            class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.Rename"
+            commandId="net.sf.eclipsefp.haskell.ui.editor.actions.rename">
          <activeWhen>
             <reference
                   definitionId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.active">
@@ -915,10 +952,12 @@
               class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree" 
               menubarPath="refactor/codingGroup"
               id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.MakePointFree"/-->
-      <action label="%refRename_label"
+      <!--<action label="%refRename_label"
               class="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.Rename" 
               menubarPath="refactor/codingGroup"
+              definitionId="net.sf.eclipsefp.haskell.ui.editor.actions.rename"
               id="net.sf.eclipsefp.haskell.ui.internal.refactoring.actions.Rename"/>
+                -->
       <!--action label="%optimizeImports_name"
               class="net.sf.eclipsefp.haskell.ui.internal.actions.OptimizeImports" 
               menubarPath="source/organize"
@@ -1183,7 +1222,11 @@
             menubarPath="org.eclipse.search.menu/net.sf.eclipsefp.haskell.ui.refsMenu/main"
           	/--> 
              
-
+		<!--<menu
+               id="net.sf.eclipsefp.haskell.ui.refactorMenu"
+               path="refactor"
+               label="%ctxMenu_refactor_label">
+         </menu>-->
  <!-- Source menu -->         
          <menu
                id="net.sf.eclipsefp.haskell.ui.sourceMenu"
@@ -1379,7 +1422,7 @@
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameParticipant"
-            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.RenameParticipant"
+            id="net.sf.eclipsefp.haskell.ui.internal.refactoring.participants.Participant"
             name="Rename Haskell module">
          <enablement>
             <with

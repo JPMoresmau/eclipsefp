@@ -116,6 +116,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   public static final String COMMENT_PRAGMA_ACTION = "Comment.Pragma"; //$NON-NLS-1$
   /** Action string associated with formatting */
   public static final String FORMAT_ACTION = "Format"; //$NON-NLS-1$
+  /** Action string associated with renaming */
+  public static final String RENAME_ACTION = "Rename"; //$NON-NLS-1$
 
   /** Action string associated with formatting */
   public static final String IMPORTS_ACTION = "Imports"; //$NON-NLS-1$
