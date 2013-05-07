@@ -41,6 +41,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManag
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.text.HaskellViewer;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
@@ -61,7 +62,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -91,7 +91,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -320,13 +319,13 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // content assist
     String defId = ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
     setAction("ContentAssistProposal",
-              createTextOpAction(this, "ContentAssistProposal", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId )); //$NON-NLS-1$
+              HaskellViewer.createTextOpAction(this, "ContentAssistProposal", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS, defId )); //$NON-NLS-1$
 
     // comment/uncomment
-    createTextOpAction(this, LINE_COMMENT_ACTION, commentResourcePrefix, ITextOperationTarget.PREFIX,
+    HaskellViewer.createTextOpAction(this, LINE_COMMENT_ACTION, commentResourcePrefix,HaskellViewer.TOGGLE_COMMENT,
                         IEditorActionDefinitionIds.COMMENT );
-    createTextOpAction(this, LINE_UNCOMMENT_ACTION, uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
-                        IEditorActionDefinitionIds.UNCOMMENT );
+//    createTextOpAction(this, LINE_UNCOMMENT_ACTION, uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
+//                        IEditorActionDefinitionIds.UNCOMMENT );
 
     // New actions that we contribute:
     ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
@@ -401,8 +400,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // projection viewer
     fAnnotationAccess = createAnnotationAccess();
     fOverviewRuler = createOverviewRuler( getSharedColors() );
-    ProjectionViewer viewer = new ProjectionViewer( parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles );
-
+    ProjectionViewer viewer = new HaskellViewer( parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles );
     // ensure decoration support has been created and configured.
     getSourceViewerDecorationSupport( viewer );
     return viewer;
@@ -638,19 +636,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         || property.equals( EDITOR_TH_BOLD );
   }
 
-  /**
-   * Create a standard text operation action
-   */
-  public static TextOperationAction createTextOpAction( final TextEditor ed,final String actionIdName, final String resourcePrefix, final int targetId,
-                                                  final String actionDefinitionId ) {
-    ResourceBundle bundle = HaskellUIPlugin.getDefault().getResourceBundle();
-    TextOperationAction action = new TextOperationAction( bundle, resourcePrefix + ".", ed, targetId );  //$NON-NLS-1$
-    action.setActionDefinitionId( actionDefinitionId );
-    ed.setAction( actionIdName, action );
-    ed.markAsStateDependentAction( actionIdName, true );
 
-    return action;
-  }
 
   @Override
   public void setFocus() {

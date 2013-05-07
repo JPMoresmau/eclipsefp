@@ -10,6 +10,7 @@ import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline.CabalOutlinePage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.QuickFixAction;
+import net.sf.eclipsefp.haskell.ui.internal.editors.text.HaskellViewer;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.action.IAction;
@@ -19,7 +20,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -100,7 +100,7 @@ public class CabalEditor extends TextEditor {
                                               final int styles ) {
     fOverviewRuler = createOverviewRuler( getSharedColors() );
     ISourceViewer viewer
-      = new ProjectionViewer( parent, ruler, fOverviewRuler, true, styles );
+      = new HaskellViewer( parent, ruler, fOverviewRuler, true, styles );
     // ensure decoration support has been created and configured:
     getSourceViewerDecorationSupport( viewer );
     return viewer;
@@ -130,14 +130,14 @@ public class CabalEditor extends TextEditor {
   @Override
   protected void createActions() {
     super.createActions();
-    HaskellEditor.createTextOpAction(this,  "ContentAssist.", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS,
+    HaskellViewer.createTextOpAction(this,  "ContentAssist.", "ContentAssistProposal", ISourceViewer.CONTENTASSIST_PROPOSALS,
         ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS );
 
     // comment/uncomment
-    HaskellEditor.createTextOpAction(this, HaskellEditor.LINE_COMMENT_ACTION, HaskellEditor.commentResourcePrefix, ITextOperationTarget.PREFIX,
+    HaskellViewer.createTextOpAction(this, HaskellEditor.LINE_COMMENT_ACTION, HaskellEditor.commentResourcePrefix, HaskellViewer.TOGGLE_COMMENT,
                         IEditorActionDefinitionIds.COMMENT );
-    HaskellEditor.createTextOpAction(this, HaskellEditor.LINE_UNCOMMENT_ACTION, HaskellEditor.uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
-                        IEditorActionDefinitionIds.UNCOMMENT );
+//    HaskellEditor.createTextOpAction(this, HaskellEditor.LINE_UNCOMMENT_ACTION, HaskellEditor.uncommentResourcePrefix, ITextOperationTarget.STRIP_PREFIX,
+//                        IEditorActionDefinitionIds.UNCOMMENT );
 
     addRulerContextMenuListener( new IMenuListener() {
 
