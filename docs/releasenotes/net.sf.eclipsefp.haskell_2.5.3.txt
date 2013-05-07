@@ -15,6 +15,7 @@ Fixes:
 	- cancelling on build and clean actually kills the underlying cabal or buildwrapper process
 	- cabal errors show error decorator on project
 	- shortcut key and mnemonic for rename action (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/b5fd0a28/?limit=25#725b)
+	- hlint uses proper encoding of the file it analyses
 
 Features:
 	- warning when launching cabal install on a sandboxed project

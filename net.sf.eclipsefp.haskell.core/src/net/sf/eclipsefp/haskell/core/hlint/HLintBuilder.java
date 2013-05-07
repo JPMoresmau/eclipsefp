@@ -64,11 +64,23 @@ public class HLintBuilder extends IncrementalProjectBuilder {
     return getProject();
   }
 
-  static boolean mustBeVisited( final IResource resource ) {
-    return ( resource instanceof IFile
+  /**
+   * return a IFile representing the resource if needed, or null if not needed
+   * @param resource the resource
+   * @return the IFile object to analyze, or null if nothing to do
+   */
+  static IFile getFileToVisit( final IResource resource ) {
+    if  ( resource instanceof IFile
         && hasCorrectExtension( resource.getProjectRelativePath() )
         && ResourceUtil.isInSourceFolder( ( IFile )resource )
-        && !resource.isDerived() );
+        && !resource.isDerived() ){
+      return (IFile)resource;
+    }
+    return null;
+  }
+
+  static boolean mustBeVisited( final IResource resource ) {
+    return getFileToVisit( resource )!=null;
   }
 
 

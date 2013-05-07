@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.hlint.parser.OutputParser;
 import net.sf.eclipsefp.haskell.hlint.util.HLintText;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 
@@ -27,17 +28,19 @@ import org.eclipse.osgi.util.NLS;
  */
 public class HLintRunner {
 
-	public static List<Suggestion> runHLintOn(IPath workingDir, IPath path) {
+	public static List<Suggestion> runHLintOn(IPath workingDir, IFile file) {
 		StringWriter err=new StringWriter();
 		StringWriter out=new StringWriter();
 		try {
+			
 			String exe=HLintPlugin.getHlintPath();
 			if (exe==null || exe.length()==0){
 				exe="hlint"; // hope it's in the path
 			}
+			String encoding=file.getCharset(true);
 			// code is 1 if we have errors!
 			int code=new ProcessRunner().executeBlocking(
-			    workingDir.toFile(), out, err, exe, path.toOSString());
+			    workingDir.toFile(), out, err, exe,"--encoding="+encoding, file.getLocation().toOSString());
 
 			OutputParser parser = new OutputParser(new StringReader(out.toString()));
 			List<Suggestion> sugs= parser.suggestions();
