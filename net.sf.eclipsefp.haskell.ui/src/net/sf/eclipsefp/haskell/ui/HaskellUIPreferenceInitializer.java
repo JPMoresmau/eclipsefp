@@ -36,6 +36,7 @@ public class HaskellUIPreferenceInitializer extends
 		SearchPathsPP.initializeDefaults( prefs );
 
 		prefs.setDefault( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, false );
+		prefs.setDefault( IPreferenceConstants.HLINT_ALWAYS_SHOW_FULL_TEXT, false );
 	}
 
 }

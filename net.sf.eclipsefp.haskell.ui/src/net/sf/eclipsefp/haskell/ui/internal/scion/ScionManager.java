@@ -28,6 +28,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
@@ -238,6 +239,7 @@ public class ScionManager implements IResourceChangeListener {
     }
 
     HLintPlugin.setHlintPath( preferenceStore.getString( IPreferenceConstants.HLINT_EXECUTABLE ));
+    HLintBuilder.setAlwaysFull( preferenceStore.getBoolean( IPreferenceConstants.HLINT_ALWAYS_SHOW_FULL_TEXT ) );
     AlexRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.ALEX_EXECUTABLE ) );
     HappyRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.HAPPY_EXECUTABLE ) );
     UuagcRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.UUAGC_EXECUTABLE ) );
@@ -631,6 +633,10 @@ public class ScionManager implements IResourceChangeListener {
           } else if (event.getProperty().equals(IPreferenceConstants.HLINT_EXECUTABLE)){
             if (event.getNewValue() instanceof String || event.getNewValue()==null){
               HLintPlugin.setHlintPath( (String)event.getNewValue() );
+            }
+          }  else if (event.getProperty().equals(IPreferenceConstants.HLINT_ALWAYS_SHOW_FULL_TEXT)){
+            if (event.getNewValue() instanceof Boolean || event.getNewValue()==null){
+              HLintBuilder.setAlwaysFull( (Boolean )event.getNewValue() );
             }
           } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
             if (event.getNewValue() instanceof String || event.getNewValue()==null){

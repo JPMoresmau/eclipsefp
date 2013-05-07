@@ -169,6 +169,7 @@ public final class UITexts extends NLS {
   public static String buildWrapperCabalVersionMismatch;
 
   public static String hlint_preferences_label;
+  public static String hlint_preferences_full;
 
   public static String scionBrowserDoesntExist_title;
   public static String scionBrowserDoesntExist_message;

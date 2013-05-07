@@ -32,7 +32,7 @@ public class HLintBuilder extends IncrementalProjectBuilder {
   }
 
   @Override
-  protected IProject[] build( final int kind, final Map args,
+  protected IProject[] build( final int kind, final Map<String,String> args,
       final IProgressMonitor monitor ) throws CoreException {
     if( kind == INCREMENTAL_BUILD || kind == AUTO_BUILD ) {
       // Get delta
@@ -83,12 +83,23 @@ public class HLintBuilder extends IncrementalProjectBuilder {
     return extension.equals( FileUtil.EXTENSION_HS );
   }
 
+  /**
+   * show always the full text?
+   */
+  private static boolean alwaysFull=false;
+
+  public static void setAlwaysFull( final boolean alwaysFull ) {
+    HLintBuilder.alwaysFull = alwaysFull;
+  }
+
   static void createMarker( final IResource resource, final Suggestion s )
       throws CoreException {
     if( s.getSeverity() != Severity.IGNORE ) {
       IMarker marker = resource
           .createMarker( HaskellCorePlugin.ID_HLINT_MARKER );
-      marker.setAttribute( IMarker.MESSAGE, s.getMarkerText() );
+
+
+      marker.setAttribute( IMarker.MESSAGE, s.getMarkerText(alwaysFull) );
       marker.setAttribute( IMarker.SEVERITY,getMarkerSeverity(s.getSeverity()) );
       marker.setAttribute( IMarker.LINE_NUMBER, s.getLocation().getLine() );
       marker.setAttribute( HaskellCorePlugin.ATT_HLINT_SUGGESTION, s.toString() );

@@ -18,6 +18,10 @@ import org.json.JSONObject;
  *
  */
 public class Suggestion implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1068207338373141685L;
 	private SourceLocation location;
 	private Severity severity;
 	private String message;
@@ -80,11 +84,12 @@ public class Suggestion implements Serializable {
 	
 	/**
 	 * get the text suitable for the marker description
+	 * @param alwaysFull always show the suggestions even if we can apply them automatically?
 	 * @return
 	 */
-	public String getMarkerText(){
+	public String getMarkerText(boolean alwaysFull){
 		// we can't fix automatically, let's give as much info as we can
-		if (!HLintFixer.canFix(this)){
+		if (alwaysFull || !HLintFixer.canFix(this)){
 			String pre=getPreText();
 			String post=getPostText();
 			if (pre!=null && post!=null){

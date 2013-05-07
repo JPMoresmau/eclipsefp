@@ -144,5 +144,6 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
     coreNode.put( TEMPLATE_IMPORT_HTF,
         "import {-@ HTF_TESTS @-} ${"+TemplateVariables.MODULE_NAME+"}"  +PlatformUtil.NL //$NON-NLS-1$" //$NON-NLS-2$"
     );
+
   }
 }

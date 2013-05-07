@@ -6,6 +6,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 
 /**
@@ -14,7 +18,10 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
  *
  */
 public class HLintPP extends ExecutablePP {
-
+  /**
+   * always display suggestion?
+   */
+  private BooleanFieldEditor alwaysFullField;
   /**
    * @param pgmName
    * @param exeName
@@ -25,4 +32,28 @@ public class HLintPP extends ExecutablePP {
   }
 
 
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ExecutablePP#createContents(org.eclipse.swt.widgets.Composite)
+   */
+  @Override
+  protected Control createContents( final Composite parentComposite ) {
+    super.createContents( parentComposite );
+    alwaysFullField = new BooleanFieldEditor( IPreferenceConstants.HLINT_ALWAYS_SHOW_FULL_TEXT,
+        UITexts.hlint_preferences_full,
+        parentComposite );
+    alwaysFullField.setPage(this);
+    alwaysFullField.setPreferenceStore( getPreferenceStore() );
+    alwaysFullField.load();
+
+    return parentComposite;
+  }
+
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ExecutablePP#performOk()
+   */
+  @Override
+  public boolean performOk() {
+    alwaysFullField.store();
+    return super.performOk();
+  }
 }

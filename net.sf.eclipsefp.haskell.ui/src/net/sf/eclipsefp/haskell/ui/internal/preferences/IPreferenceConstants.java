@@ -64,4 +64,6 @@ public interface IPreferenceConstants {
   public final static String STYLISHHASKELL_EXECUTABLE="STYLISHHASKELL_EXECUTABLE"; //$NON-NLS-1$
 
   public final static String YESOD_CABALDEV="YESOD_CABALDEV"; //$NON-NLS-1$
+
+  public final static String HLINT_ALWAYS_SHOW_FULL_TEXT="HLINT_ALWAYS_SHOW_FULL_TEXT"; //$NON-NLS-1$
 }
