@@ -14,7 +14,7 @@ Fixes:
 	- builds are now done inside the build job, which allows better scheduling (running wait for build to complete)
 	- cancelling on build and clean actually kills the underlying cabal or buildwrapper process
 	- cabal errors show error decorator on project
-	- shortcut key and mnemonic for rename action
+	- shortcut key and mnemonic for rename action (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/b5fd0a28/?limit=25#725b)
 
 Features:
 	- warning when launching cabal install on a sandboxed project
