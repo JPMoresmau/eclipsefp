@@ -132,6 +132,13 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		return usageThread;
 	}
 	
+	/**
+	 * create a facade
+	 * @param p the project
+	 * @param impl the cabal invocations details
+	 * @param outStream the writer to log to
+	 * @return the created facade if the project has a cabal file, null otherwise
+	 */
 	public static BWFacade createFacade(IProject p,CabalImplDetails impl,Writer outStream){
 
 		IFile cf=getCabalFile(p);
@@ -152,6 +159,16 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 			return f;
 		}
 		return null;
+	}
+	
+	/**
+	 * set cabal impl details on all known facades
+	 * @param impl
+	 */
+	public static void setCabalImplDetails(CabalImplDetails impl){
+		for (BWFacade f:facades.values()){
+			f.setCabalImplDetails(impl);
+		}
 	}
 	
 	public static BWFacade getFacade(IProject p){

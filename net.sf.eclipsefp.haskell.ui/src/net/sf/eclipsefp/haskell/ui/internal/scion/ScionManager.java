@@ -638,6 +638,11 @@ public class ScionManager implements IResourceChangeListener {
             if (event.getNewValue() instanceof Boolean || event.getNewValue()==null){
               HLintBuilder.setAlwaysFull( (Boolean )event.getNewValue() );
             }
+          }  else if (event.getProperty().equals(IPreferenceConstants.CABALDEV_EXECUTABLE)){
+              if (event.getNewValue() instanceof String || event.getNewValue()==null){
+                BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
+              }
+
           } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
             if (event.getNewValue() instanceof String || event.getNewValue()==null){
               AlexRunner.setFullPath( (String)event.getNewValue() );
