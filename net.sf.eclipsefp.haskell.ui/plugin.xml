@@ -459,11 +459,11 @@
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%refRename_label"
             id="net.sf.eclipsefp.haskell.ui.editor.actions.rename"/>  
-      <command
+      <!--command
             description="%firstCharCommand_desc"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
             name="%firstCharCommand_name"
-            id="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"/>
+            id="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"/-->
       <command
             description="%CommentAction.description"
             categoryId="net.sf.eclipsefp.haskell.ui.category.source"
@@ -734,10 +734,10 @@
               contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
               sequence="F4"/>
          <!-- other keys -->
-         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         <!--key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
               contextId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor.context"
-              sequence="Home"/>
+              sequence="Home"/-->
          <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
               commandId="net.sf.eclipsefp.haskell.ui.OpenModuleActionCommand"
               sequence="Ctrl+Shift+M"/>      
@@ -763,10 +763,10 @@
 	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.uncomment" 
 	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"/-->     
 	          <!-- other keys -->
-	         <key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	         <!--key schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	              commandId="net.sf.eclipsefp.haskell.ui.editor.actions.firstChar"
 	              contextId="net.sf.eclipsefp.haskell.ui.internal.editors.cabal.CabalEditor.context"
-	              sequence="Home"/>                
+	              sequence="Home"/-->                
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -866,7 +866,7 @@
          </with>
       </definition>
    </extension>
-   <extension
+   <!--extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
             targetID="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor"
@@ -877,7 +877,7 @@
                class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.FirstCharAction"
                id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.FirstCharAction"/>
       </editorContribution>
-   </extension>
+   </extension-->
    <extension point="org.eclipse.ui.editors.annotationTypes">
       <type name="net.sf.eclipsefp.haskell.ui.occurrences" />
    </extension>

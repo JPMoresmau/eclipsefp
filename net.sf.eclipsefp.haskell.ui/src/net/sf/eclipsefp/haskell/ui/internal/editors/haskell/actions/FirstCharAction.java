@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.ISelection;
  * @author Andriy Palamarchuk
  *
  * @author Leif Frenzel (changed formatting and minor refactorings)
+ * @deprecated provided by default in text editor by Eclipse
  */
 public class FirstCharAction extends AbstractAction {
     @Override
