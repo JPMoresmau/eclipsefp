@@ -42,7 +42,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
   @Override
   protected IProject[] build( final int kind,
-                              final Map args,
+                              final Map<String,String> args,
                               final IProgressMonitor monitor )
                                                           throws CoreException {
     //checkOutFolders( new SubProgressMonitor( monitor, 5 ) );
@@ -181,16 +181,18 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
             IProjectDescription desc=prj.getDescription();
             IProject[] oldDeps=desc.getReferencedProjects();
-            deps.addAll( Arrays.asList( oldDeps ) );
-            IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
-            desc.setReferencedProjects( newDeps );
-            prj.setDescription( desc, new NullProgressMonitor() );
-            /**
-             * we need to make sure dependencencies are added before the synchronize
-             */
-            f.cabalFileChanged();
-            SandboxHelper.installDeps(f);
+            if (deps.addAll( Arrays.asList( oldDeps ) )){
+              IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
+              desc.setReferencedProjects( newDeps );
+              prj.setDescription( desc, new NullProgressMonitor() );
+              /**
+               * we need to make sure dependencies are added before the synchronize
+               */
+              f.cabalFileChanged();
+
+            }
         }
+        SandboxHelper.installDeps(f);
 
       } catch(CoreException ce){
         HaskellCorePlugin.log( ce );

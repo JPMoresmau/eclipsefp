@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
@@ -98,6 +99,10 @@ public class BWFacade {
 	 * the processes running, by thread, so we can kill them when cancelling
 	 */
 	private Map<Thread,Process> runningProcesses=Collections.synchronizedMap(new HashMap<Thread,Process>());
+	/**
+	 * the progress monitor for the current thread, so we don't need to pass it everywhere
+	 */
+	 private static ThreadLocal<IProgressMonitor> monitor=new ThreadLocal<IProgressMonitor>();
 	
 	/**
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
@@ -1191,6 +1196,9 @@ public class BWFacade {
 			}
 			return null;
 		}
+		if (isCanceled()){
+			return null;
+		}
 		showedNoExeError=false;
 		boolean isConfigureAction=args.size()>0 && ("synchronize".equals(args.get(0)) || "configure".equals(args.get(0)) || "build".equals(args.get(0)));
 		args.addFirst(bwPath);
@@ -1213,10 +1221,16 @@ public class BWFacade {
 		pb.redirectErrorStream(true);
 		pb.command(args);
 		addBuildWrapperPath(pb);
+		if (isCanceled()){
+			return null;
+		}
 		if (ow!=null && BuildWrapperPlugin.logAnswers) {
 			ow.addMessage(LangUtil.join(args, " "));
 		}					
 		T obj=null;
+		if (isCanceled()){
+			return obj;
+		}
 		try {
 			Process p=pb.start();
 			registerProcess(p);
@@ -1263,6 +1277,9 @@ public class BWFacade {
 				}
 			}
 			unregisterProcess();
+			if (isCanceled()){
+				return obj;
+			}
 			if (needConfigure && canRerun && !isConfigureAction){
 				if (needDelete){
 					try {
@@ -1295,12 +1312,17 @@ public class BWFacade {
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
 		} catch (IOException ioe){
 			unregisterProcess();
-			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			if (!isCanceled()){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			}
 		}
 		return obj;
 	}
 
 	public void runCabal(LinkedList<String> args){
+		if (isCanceled()){
+			return;
+		}
 		args.addFirst(cabalImplDetails.getExecutable());
 		if (flags!=null && flags.length()>0){
 			args.add("--flags="+flags);
@@ -1319,6 +1341,9 @@ public class BWFacade {
 		if (ow!=null && BuildWrapperPlugin.logAnswers) {
 			ow.addMessage(LangUtil.join(args, " "));
 		}					
+		if (isCanceled()){
+			return;
+		}
 		try {
 			Process p=pb.start();
 			registerProcess(p);
@@ -1339,10 +1364,13 @@ public class BWFacade {
 			} finally {
 				unregisterProcess();
 			}
+			
 			//long t1=System.currentTimeMillis();
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
 		} catch (IOException ioe){
-			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			if (!isCanceled()){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			}
 		}
 	}
 
@@ -1460,30 +1488,55 @@ public class BWFacade {
 	}
 	
 	/**
-	 * wait for a thread running the runnable to finish, or the monitor to be cancelled
+	 * wait in a thread for the runnable to finish, or the monitor to be cancelled
 	 * @param r the runnable
 	 * @param mon the monitor, maybe null
 	 */
-	public void waitForThread(Runnable r,IProgressMonitor mon){
+	public void waitForThread(Runnable r,final IProgressMonitor mon){
+		// no monitor, nothing to do
 		if (mon==null){
 			r.run();
 		} else {
-			Thread t=new Thread(r);
-			t.start();
-			
-			while (t.isAlive()){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ie){
-					
-				}
-				if (mon.isCanceled()){
-					Process p=runningProcesses.remove(t);
-					if (p!=null){
-						p.destroy(); // destroy the process
+			// register the monitor for the current thread
+			final Thread jobThread=Thread.currentThread();
+			monitor.set(mon);
+			//  should the polling thread continue?
+			final AtomicBoolean doPoll=new AtomicBoolean(true);
+			try {
+				// the runnable checking if the monitor has been canceled
+				Runnable check=new Runnable(){
+					@Override
+					public void run() {
+						while (doPoll.get()){
+							try {
+								Thread.sleep(1000); // wait a second
+							} catch (InterruptedException ie){
+								
+							}
+							// canceled!
+							if (mon.isCanceled()){
+								// do we have a process?
+								Process p=runningProcesses.remove(jobThread);
+								if (p!=null){
+									p.destroy(); // destroy the process
+								}
+								return;
+							}
+						}
+						
 					}
-					return;
-				}
+				};
+				// start polling thread
+				Thread t=new Thread(check);
+				t.setDaemon(true);
+				t.start();
+				// run the runnable in the current thread, otherwise we get into deadlock (the job waits for the thread, the thread does something that requires a lock on the object tat the job is on)
+				r.run();
+			} finally {
+				// stop polling
+				doPoll.set(false);
+				// remove monitor
+				monitor.set(null);
 			}
 		}
 	}
@@ -1670,5 +1723,13 @@ public class BWFacade {
 	
 	private void unregisterProcess(){
 		runningProcesses.remove(Thread.currentThread());
+	}
+	
+	public boolean isCanceled(){
+		IProgressMonitor mon=monitor.get();
+		if (mon!=null && mon.isCanceled()){
+			return true;
+		}
+		return false;
 	}
 }

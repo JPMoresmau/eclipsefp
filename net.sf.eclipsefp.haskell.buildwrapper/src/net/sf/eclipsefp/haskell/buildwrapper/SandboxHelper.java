@@ -47,11 +47,13 @@ public class SandboxHelper {
 			switch (st){
 			case CABAL_DEV:
 				IProject p=f.getProject();
+	
 				Set<IProject> processed=new HashSet<IProject>();
 				processed.add(p);
 				for (IProject pR:p.getReferencedProjects()){
 					installDeps(f,pR,processed);
 				}
+				
 				LinkedList<String> args=new LinkedList<String>();
 				args.add("install-deps");
 				// enable tests
@@ -70,9 +72,15 @@ public class SandboxHelper {
 	 * @throws CoreException
 	 */
 	private static void installDeps(BWFacade sandboxFacade,IProject p,Set<IProject> processed) throws CoreException{
+		if (sandboxFacade.isCanceled()){
+			return;
+		}
 		if (processed.add(p)){
 			for (IProject pR:p.getReferencedProjects()){
 				installDeps(sandboxFacade,pR,processed);
+			}
+			if (sandboxFacade.isCanceled()){
+				return;
 			}
 			LinkedList<String> args=new LinkedList<String>();
 			args.add("install");
@@ -113,15 +121,25 @@ public class SandboxHelper {
 	private static void updateUsing(IProject changedProject,IProject p,Set<IProject> processed) throws CoreException{
 		if (processed.add(p)){
 			BWFacade f=BuildWrapperPlugin.getFacade(p);
+			
 			if (f!=null && isSandboxed(f)){
+				if (f.isCanceled()){
+					return;
+				}
 				LinkedList<String> args=new LinkedList<String>();
 				args.add("install");
 				args.add(changedProject.getLocation().toOSString());
 				args.add("--force-reinstalls");
 				f.runCabal(args); // install the changed project 
+				if (f.isCanceled()){
+					return;
+				}
 				f.cleanGenerated(); // all generated files are wrong
 				f.closeAllProcesses(); // GHC needs to reload the changes
 				// rebuild if that's what the workspace wants
+				if (f.isCanceled()){
+					return;
+				}
 				if (ResourcesPlugin.getWorkspace().isAutoBuilding()){
 					new JobFacade(f).build(new BuildOptions().setConfigure(true).setOutput(true).setRecompile(false));
 				} else {
