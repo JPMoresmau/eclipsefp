@@ -58,6 +58,8 @@ public class SandboxHelper {
 				args.add("install-deps");
 				// enable tests
 				args.add("--enable-tests");
+				// force reinstalls since we won't break anything outside of the sandbox
+				args.add("--force-reinstalls");
 				f.runCabal(args);
 				break;
 			}
