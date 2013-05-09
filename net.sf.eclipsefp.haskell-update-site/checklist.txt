@@ -1,0 +1,34 @@
+- update dependant packages to make sure we build with current versions
+	AttoJSON...
+- build feature from Eclipse, in this folder: generates features and plugins jars after removing content.jar, artifacts.jar, plugins and features
+	- check local update in Eclipse
+- build zip file, checking folders are correct, with ant -f build.xml -Dversion=...
+- copy plugins and features to eclipsefp-web updates
+- upload to sourceforge using sourceforge FileManager
+	- full zip and release notes in release folder
+		- release notes in README.txt file
+	- plugins/features in updates folder
+- buildwrapper/scion-browser to hackage
+	cabal sdist
+	add tests manually if forgotten by Cabal
+		extract to root of /d
+		tar -cvf buildwrapper-0.2.tar buildwrapper-0.2
+		gzip buildwrapper-0.2.tar 
+	check and upload to hackage
+	git tag  -a v1.4 -m 'version 1.4'
+	git push --tags 
+- modify and upload site.xml
+	sftp jpmoresmau,eclipsefp@web.sourceforge.net (in git bash)
+	put site.xml with correct url attribute: url="http://downloads.sourceforge.net/project/eclipsefp/updates"
+
+- update new site (install.md)
+- update feature list and dev status in sourceforge if needed
+
+- check links from download/index.php
+- check remote update in Eclipse
+
+- tag version in git
+
+- write blog entry!
+
+- update plugin and feature version numbers when changing

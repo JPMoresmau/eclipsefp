@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eclipsefp" default="main">
+<target name="main">
+	<property name="version" value="2.5.3"/>
+	<mkdir dir="features/net.sf.eclipsefp.haskell_${version}"/>
+	<unjar src="features/net.sf.eclipsefp.haskell_${version}.jar" dest="features/net.sf.eclipsefp.haskell_${version}"/> 
+	<zip destfile="net.sf.eclipsefp.haskell_${version}.zip" basedir="." includes="features//net.sf.eclipsefp.haskell_${version}/*.* plugins/*.jar"/>
+</target>
+</project>
