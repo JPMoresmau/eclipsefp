@@ -32,8 +32,7 @@ public class HaskellPropertyTester extends PropertyTester
 
 	@Override
   public boolean test(final Object receiver, final String property,
-			final Object[] args, final Object expectedValue)
-	{
+			final Object[] args, final Object expectedValue)	{
 		Object resource = Platform.getAdapterManager()
 			.getAdapter(receiver, HaskellResource.class);
 
@@ -51,8 +50,7 @@ public class HaskellPropertyTester extends PropertyTester
 	@Override
   public Object getAdapter(final Object adaptable, final Class adapter) {
 		if ( adaptable instanceof IResource &&
-		     adapter.equals(HaskellResource.class))
-		{
+		     adapter.equals(HaskellResource.class))	{
 			return new HaskellResource((IResource) adaptable);
 		}
 		return null;
