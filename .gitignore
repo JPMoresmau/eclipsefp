@@ -1,7 +1,7 @@
 CompilationThroughScion.htm
 CompilationThroughScion_files
-/scion/
-/scion-browser/
+/scion
+/scion-browser
 /diffs
 /buildwrapper
 /diff
