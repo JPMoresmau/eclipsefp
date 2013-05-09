@@ -24,6 +24,7 @@ Features:
 	- Preference page for helper executables refactored with an Advanced section
 	- Expose preference for maximum number of characters in Haskell Console
 	- Expose preference to activate Haskell Console on write (https://github.com/JPMoresmau/eclipsefp/issues/97)
+	- Preference to only start Browser when in a Haskell perpective (defaults to true) (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/88c58cc0/?limit=25#d441)
 
 Internal:
 

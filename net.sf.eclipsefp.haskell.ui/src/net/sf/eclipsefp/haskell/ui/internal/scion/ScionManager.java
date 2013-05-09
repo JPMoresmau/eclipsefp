@@ -69,6 +69,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPageService;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -91,6 +95,8 @@ public class ScionManager implements IResourceChangeListener {
   private int hConLowWater=-1;
   /** Haskell console high water mark */
   private int hConHighWater=-1;
+
+  private boolean browserStarted=false;
 
   private final static String MINIMUM_BUILDWRAPPER="0.7.0";
   private final static String MINIMUM_SCIONBROWSER="0.2.12";
@@ -290,6 +296,10 @@ public class ScionManager implements IResourceChangeListener {
     //boolean newUseBuiltIn = preferenceStore.getBoolean( IPreferenceConstants.SCION_BROWSER_SERVER_BUILTIN );
     final String newServerExecutable = preferenceStore.getString( IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE );
     IPath newServerExecutablePath = new Path(newServerExecutable);
+    // we may not have started the browser if we're not in the perspective, in this case do nothing
+    if (!browserStarted){
+      return;
+    }
 
     // Did something change?
     if (newServerExecutablePath.equals( browserExecutablePath )) {
@@ -366,29 +376,60 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
+  private synchronized void startBrowser(){
+    browserStarted=true;
+    if ( browserExecutablePath != null && browserExecutablePath.toFile().exists() ) {
+      IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
+      boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION );
+      BrowserPlugin.changeSharedInstance( browserExecutablePath ,verbose );
 
+      final Display display = Display.getDefault();
+      display.asyncExec( new Runnable() {
+        @Override
+        public void run() {
+          Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+          //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+          builder.setPriority( Job.DECORATE );
+          builder.schedule();
+        }
+      } );
+    } else {
+      browserExecutablePath = null;
+      BrowserPlugin.useNullSharedInstance();
+    }
+  }
 
   private synchronized void browserSetup() {
-    final Display display = Display.getDefault();
+    boolean onPerspective=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.BROWSER_START_ONLY_PERSPECTIVE );
+     if (onPerspective){
 
-      if ( browserExecutablePath != null && browserExecutablePath.toFile().exists() ) {
-        IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
-        boolean verbose = preferenceStore.getBoolean( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION );
-        BrowserPlugin.changeSharedInstance( browserExecutablePath ,verbose );
+        final IPageService svc=(IPageService)HaskellUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getService( IPageService.class );
 
-        display.asyncExec( new Runnable() {
+        // register the listener who's going to start browser when a Haskell perspective opens
+        svc.addPerspectiveListener( new IPerspectiveListener() {
+
           @Override
-          public void run() {
-            Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-            //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-            builder.setPriority( Job.DECORATE );
-            builder.schedule();
+          public void perspectiveChanged( final IWorkbenchPage page,
+              final IPerspectiveDescriptor perspective, final String changeId ) {
+            // NOOP
+          }
+
+          @Override
+          public void perspectiveActivated( final IWorkbenchPage page,
+              final IPerspectiveDescriptor perspective ) {
+           String pid=perspective.getId();
+           if (pid.contains( "haskell" )){
+             startBrowser();
+             // work done, let's get out!
+             svc.removePerspectiveListener( this );
+           }
+
           }
         } );
-      } else {
-        browserExecutablePath = null;
-        BrowserPlugin.useNullSharedInstance();
-      }
+     } else {
+       startBrowser();
+     }
+
   }
 
   void loadHackageDatabase() {
@@ -666,6 +707,7 @@ public class ScionManager implements IResourceChangeListener {
             BuildWrapperPlugin.setMaxConfigureFailures( max );
           } else if (event.getProperty().equals( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK )){
             setConsoleMax(((Integer)event.getNewValue()).intValue());
+            // update all existing consoles
             for (IConsole c:ConsolePlugin.getDefault().getConsoleManager().getConsoles()){
               if (c instanceof HaskellConsole){
                 ( ( HaskellConsole )c ).setWaterMarks( hConLowWater, hConHighWater );
@@ -673,9 +715,20 @@ public class ScionManager implements IResourceChangeListener {
             }
           } else if (event.getProperty().equals( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE )){
             boolean activate=((Boolean)event.getNewValue()).booleanValue();
+            // update all existing consoles
             for (IConsole c:ConsolePlugin.getDefault().getConsoleManager().getConsoles()){
               if (c instanceof HaskellConsole){
                 ( ( HaskellConsole )c ).setActivate( activate );
+              }
+            }
+          } else if (event.getProperty().equals( IPreferenceConstants.BROWSER_START_ONLY_PERSPECTIVE )){
+            // we haven't started
+            if (!browserStarted){
+              boolean startPerspective=((Boolean)event.getNewValue()).booleanValue();
+              // but now we want to start whatever the perspective
+              if (!startPerspective){
+                // so start explicitly
+                startBrowser();
               }
             }
           }

@@ -56,7 +56,7 @@ public class ScionPP
 
   private BooleanFieldEditor verboseBrowserInteractionField;
 
-
+  private BooleanFieldEditor browserStartPerspectiveField;
 
   private CabalImplsBlock cabalBlock;
 
@@ -199,6 +199,13 @@ public class ScionPP
     verboseBrowserInteractionField.setPreferenceStore( prefStore );
     verboseBrowserInteractionField.load();
 
+    browserStartPerspectiveField= new BooleanFieldEditor( IPreferenceConstants.BROWSER_START_ONLY_PERSPECTIVE,
+        UITexts.executables_preferences_browser_perspective,
+        advancedC );
+    browserStartPerspectiveField.setPage(this);
+    browserStartPerspectiveField.setPreferenceStore( prefStore );
+    browserStartPerspectiveField.load();
+
     ignoreMissing=new BooleanFieldEditor( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, UITexts.ignore_missing_button, advancedC );
     ignoreMissing.setPage( this );
     ignoreMissing.setPreferenceStore( prefStore );
@@ -246,6 +253,7 @@ public class ScionPP
 	  store.setDefault( VERBOSE_INTERACTION, false );
 	  store.setDefault( BROWSER_VERBOSE_INTERACTION, false );
 	  store.setDefault( SCION_BROWSER_EXTRA_HOOGLE_PATH, "" );
+	  store.setDefault( BROWSER_START_ONLY_PERSPECTIVE, true );
 	  store.setDefault( MAX_CONFIGURE_FAILURES, 10 );
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK, 32 * 1024);// 32K
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE,false);
@@ -263,7 +271,7 @@ public class ScionPP
     verboseInteractionField.store();
     maxConfigureFailuresField.store();
     verboseBrowserInteractionField.store();
-
+    browserStartPerspectiveField.store();
     consoleActivateField.store();
     consoleMaxField.store();
 
