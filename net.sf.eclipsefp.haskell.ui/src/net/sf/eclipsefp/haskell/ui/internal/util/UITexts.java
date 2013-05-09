@@ -821,6 +821,9 @@ public final class UITexts extends NLS {
 
   public static String maxConfigureFailures_title;
 
+  public static String executables_preferences_advanced;
+
+
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
 

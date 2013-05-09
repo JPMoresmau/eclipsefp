@@ -14,6 +14,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -21,6 +22,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 /**
  * The Scion preferences page in the Preferences dialog.
@@ -122,21 +126,8 @@ public class ScionPP
 
     buildWrapperExecutableField=new AutodetectExecutableField( this, bwComposite, "BuildWrapper", "buildwrapper", IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,propertyListener );
 
-
-
-    verboseInteractionFieldC = new Composite(bwComposite, SWT.NONE);
-    GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-    gd.horizontalSpan=2;
-    verboseInteractionFieldC.setLayoutData( gd);
-    verboseInteractionField = new BooleanFieldEditor( IPreferenceConstants.VERBOSE_INTERACTION,
-        UITexts.scionVerboseInteraction_title,
-        verboseInteractionFieldC );
-    verboseInteractionField.setPage(this);
-    verboseInteractionField.setPreferenceStore( prefStore );
-    verboseInteractionField.load();
-
     maxConfigureFailuresFieldC = new Composite(bwComposite, SWT.NONE);
-    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
     gd.horizontalSpan=2;
     maxConfigureFailuresFieldC.setLayoutData( gd);
     maxConfigureFailuresField = new IntegerFieldEditor( IPreferenceConstants.MAX_CONFIGURE_FAILURES,
@@ -156,7 +147,7 @@ public class ScionPP
     sbComposite.setLayoutData( gridData );
     sbComposite.setText( UITexts.scionBrowser_preferences_label );
 
-    browserExecutableField=new AutodetectExecutableField( this, sbComposite, "Scion-Browser", "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,propertyListener );
+    browserExecutableField=new AutodetectExecutableField( this, sbComposite, "Browser", "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,propertyListener );
 
 
     browserUseHackage = new BooleanFieldEditor( IPreferenceConstants.SCION_BROWSER_USE_HACKAGE, UITexts.scionBrowserUseHackage_label, sbComposite );
@@ -164,16 +155,7 @@ public class ScionPP
     browserUseHackage.setPreferenceStore( prefStore );
     browserUseHackage.load();
 
-    verboseBrowserInteractionFieldC = new Composite(sbComposite, SWT.NONE);
-    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-    gd.horizontalSpan=2;
-    verboseBrowserInteractionFieldC.setLayoutData( gd);
-    verboseBrowserInteractionField = new BooleanFieldEditor( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION,
-        UITexts.browserVerboseInteraction_title,
-        verboseBrowserInteractionFieldC );
-    verboseBrowserInteractionField.setPage(this);
-    verboseBrowserInteractionField.setPreferenceStore( prefStore );
-    verboseBrowserInteractionField.load();
+
 
     hoogleExecutableField=new AutodetectExecutableField( this, sbComposite, "Hoogle", "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH,propertyListener );
 
@@ -185,13 +167,44 @@ public class ScionPP
 //    hlintComposite.setText( UITexts.hlint_preferences_label );
 //    hlintExecutableField=new AutodetectExecutableField( this, hlintComposite, "HLint", "hlint", IPreferenceConstants.HLINT_EXECUTABLE,propertyListener );
 
+    ExpandableComposite advancedExpC=new ExpandableComposite( parentComposite, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT );
+    advancedExpC.setText( UITexts.executables_preferences_advanced );
 
-    ignoreMissing=new BooleanFieldEditor( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, UITexts.ignore_missing_button, parentComposite );
+    Composite advancedC=new Composite(advancedExpC,SWT.NONE);
+    advancedC.setLayout( new GridLayout(1,false) );
+    advancedExpC.setClient( advancedC );
+    advancedExpC.addExpansionListener(new ExpansionAdapter() {
+      @Override
+      public void expansionStateChanged(final ExpansionEvent e) {
+        parentComposite.layout( true );
+        ((ScrolledComposite)parentComposite.getParent().getParent()).setMinHeight( parentComposite.getParent().computeSize( SWT.DEFAULT, SWT.DEFAULT ).y );
+      }
+    });
+
+    verboseInteractionFieldC = new Composite(advancedC, SWT.NONE);
+    verboseInteractionField = new BooleanFieldEditor( IPreferenceConstants.VERBOSE_INTERACTION,
+        UITexts.scionVerboseInteraction_title,
+        verboseInteractionFieldC );
+    verboseInteractionField.setPage(this);
+    verboseInteractionField.setPreferenceStore( prefStore );
+    verboseInteractionField.load();
+
+
+    verboseBrowserInteractionFieldC = new Composite(advancedC, SWT.NONE);
+    verboseBrowserInteractionField = new BooleanFieldEditor( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION,
+        UITexts.browserVerboseInteraction_title,
+        verboseBrowserInteractionFieldC );
+    verboseBrowserInteractionField.setPage(this);
+    verboseBrowserInteractionField.setPreferenceStore( prefStore );
+    verboseBrowserInteractionField.load();
+
+
+    ignoreMissing=new BooleanFieldEditor( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, UITexts.ignore_missing_button, advancedC );
     ignoreMissing.setPage( this );
     ignoreMissing.setPreferenceStore( prefStore );
     ignoreMissing.load();
 
-    ignoreTooOld=new BooleanFieldEditor( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE, UITexts.ignore_tooold_button, parentComposite );
+    ignoreTooOld=new BooleanFieldEditor( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE, UITexts.ignore_tooold_button, advancedC );
     ignoreTooOld.setPage( this );
     ignoreTooOld.setPreferenceStore( prefStore );
     ignoreTooOld.load();
