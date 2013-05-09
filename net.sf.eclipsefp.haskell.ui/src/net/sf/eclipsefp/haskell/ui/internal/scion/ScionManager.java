@@ -88,9 +88,9 @@ public class ScionManager implements IResourceChangeListener {
   /** Current browser executable path string */
   private IPath browserExecutablePath;
   /** Haskell console low water mark */
-  private int hConLowWater;
+  private int hConLowWater=-1;
   /** Haskell console high water mark */
-  private int hConHighWater;
+  private int hConHighWater=-1;
 
   private final static String MINIMUM_BUILDWRAPPER="0.7.0";
   private final static String MINIMUM_SCIONBROWSER="0.2.12";
@@ -99,8 +99,8 @@ public class ScionManager implements IResourceChangeListener {
     // The interesting stuff is done in the start() method
     buildWrapperExecutablePath = null;
     browserExecutablePath = null;
-    hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
-    hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
+   // hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
+   // hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
   }
 
   public static String getExecutablePath(final String preference,final String exeName,final boolean strict){
@@ -121,20 +121,23 @@ public class ScionManager implements IResourceChangeListener {
     return strict?null:exeName;
   }
 
+  private void setConsoleMax(final int max){
+    hConHighWater=max;
+    //hConLowWater = preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_LOW_WATER_MARK );
+    //if (hConLowWater == 0) {
+     hConLowWater = hConHighWater/4;
+    //}
+  }
+
   public void start() {
     IWorkspace workSpace = ResourcesPlugin.getWorkspace();
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
 
     // Capture preferences as currently stored:
+    setConsoleMax(preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK ));
 
-    hConLowWater = preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_LOW_WATER_MARK );
-    if (hConLowWater == 0) {
-      hConLowWater = HaskellConsole.HASKELL_CONSOLE_LOW_WATER_MARK;
-    }
-    hConHighWater = preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK );
-    if (hConHighWater == 0) {
-      hConHighWater = HaskellConsole.HASKELL_CONSOLE_HIGH_WATER_MARK;
-    }
+
+
 
     /*final String serverExecutable = preferenceStore.getString( IPreferenceConstants.BUILDWRAPPER_EXECUTABLE );
     if (serverExecutable.length() > 0) {
@@ -661,6 +664,20 @@ public class ScionManager implements IResourceChangeListener {
           } else if (event.getProperty().equals(IPreferenceConstants.MAX_CONFIGURE_FAILURES)){
             int max = ((Integer)event.getNewValue()).intValue();
             BuildWrapperPlugin.setMaxConfigureFailures( max );
+          } else if (event.getProperty().equals( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK )){
+            setConsoleMax(((Integer)event.getNewValue()).intValue());
+            for (IConsole c:ConsolePlugin.getDefault().getConsoleManager().getConsoles()){
+              if (c instanceof HaskellConsole){
+                ( ( HaskellConsole )c ).setWaterMarks( hConLowWater, hConHighWater );
+              }
+            }
+          } else if (event.getProperty().equals( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE )){
+            boolean activate=((Boolean)event.getNewValue()).booleanValue();
+            for (IConsole c:ConsolePlugin.getDefault().getConsoleManager().getConsoles()){
+              if (c instanceof HaskellConsole){
+                ( ( HaskellConsole )c ).setActivate( activate );
+              }
+            }
           }
 
     }

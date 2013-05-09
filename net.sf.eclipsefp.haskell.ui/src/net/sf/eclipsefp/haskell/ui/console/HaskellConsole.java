@@ -3,7 +3,10 @@ package net.sf.eclipsefp.haskell.ui.console;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -19,11 +22,8 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  * Haskell-specific IOConsole class.
  */
 public class HaskellConsole extends IOConsole {
-  /** Preference value for Haskell console high water mark */
-  public final static int HASKELL_CONSOLE_HIGH_WATER_MARK = 32 * 1024; // 32K
-  /** Preference value for Haskell console low water mark */
-  public final static int HASKELL_CONSOLE_LOW_WATER_MARK = HASKELL_CONSOLE_HIGH_WATER_MARK / 4;
 
+  public List<IOConsoleOutputStream> streams=new LinkedList<IOConsoleOutputStream>();
   /**
    * Construct and register the console with the console manager.
    */
@@ -40,6 +40,9 @@ public class HaskellConsole extends IOConsole {
    */
   public Writer createOutputWriter() {
     final IOConsoleOutputStream outputStream = newOutputStream();
+    // using internals
+    outputStream.setActivateOnWrite( HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE ) );
+    streams.add(outputStream);
     final Display stdDisplay = HaskellUIPlugin.getStandardDisplay();
     stdDisplay.syncExec( new Runnable() {
       @Override
@@ -52,6 +55,12 @@ public class HaskellConsole extends IOConsole {
       return new OutputStreamWriter(outputStream,FileUtil.UTF8);
     } catch (UnsupportedEncodingException ioo){
       return new OutputStreamWriter(outputStream);
+    }
+  }
+
+  public void setActivate(final boolean activate){
+    for (IOConsoleOutputStream str:streams){
+      str.setActivateOnWrite( activate );
     }
   }
 }

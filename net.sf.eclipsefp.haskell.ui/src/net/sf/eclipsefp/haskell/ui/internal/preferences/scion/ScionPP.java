@@ -50,19 +50,21 @@ public class ScionPP
   //private AutodetectExecutableField hlintExecutableField;
 
 	private BooleanFieldEditor verboseInteractionField;
-  private Composite verboseInteractionFieldC;
 
   private IntegerFieldEditor maxConfigureFailuresField;
   private Composite maxConfigureFailuresFieldC;
 
   private BooleanFieldEditor verboseBrowserInteractionField;
-  private Composite verboseBrowserInteractionFieldC;
+
 
 
   private CabalImplsBlock cabalBlock;
 
   private BooleanFieldEditor ignoreMissing;
   private BooleanFieldEditor ignoreTooOld;
+
+  private IntegerFieldEditor consoleMaxField;
+  private BooleanFieldEditor consoleActivateField;
 
 	public ScionPP() {
 	  super();
@@ -169,6 +171,7 @@ public class ScionPP
 
     ExpandableComposite advancedExpC=new ExpandableComposite( parentComposite, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT );
     advancedExpC.setText( UITexts.executables_preferences_advanced );
+    advancedExpC.setLayoutData( new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER) );
 
     Composite advancedC=new Composite(advancedExpC,SWT.NONE);
     advancedC.setLayout( new GridLayout(1,false) );
@@ -181,23 +184,20 @@ public class ScionPP
       }
     });
 
-    verboseInteractionFieldC = new Composite(advancedC, SWT.NONE);
     verboseInteractionField = new BooleanFieldEditor( IPreferenceConstants.VERBOSE_INTERACTION,
         UITexts.scionVerboseInteraction_title,
-        verboseInteractionFieldC );
+        advancedC );
     verboseInteractionField.setPage(this);
     verboseInteractionField.setPreferenceStore( prefStore );
     verboseInteractionField.load();
 
 
-    verboseBrowserInteractionFieldC = new Composite(advancedC, SWT.NONE);
     verboseBrowserInteractionField = new BooleanFieldEditor( IPreferenceConstants.BROWSER_VERBOSE_INTERACTION,
         UITexts.browserVerboseInteraction_title,
-        verboseBrowserInteractionFieldC );
+        advancedC );
     verboseBrowserInteractionField.setPage(this);
     verboseBrowserInteractionField.setPreferenceStore( prefStore );
     verboseBrowserInteractionField.load();
-
 
     ignoreMissing=new BooleanFieldEditor( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE, UITexts.ignore_missing_button, advancedC );
     ignoreMissing.setPage( this );
@@ -208,6 +208,18 @@ public class ScionPP
     ignoreTooOld.setPage( this );
     ignoreTooOld.setPreferenceStore( prefStore );
     ignoreTooOld.load();
+
+    Composite consoleMaxFieldC=new Composite(advancedC,SWT.NONE);
+    consoleMaxFieldC.setLayoutData( new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER) );
+    consoleMaxField=new IntegerFieldEditor( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK, UITexts.executables_preferences_console_high, consoleMaxFieldC );
+    consoleMaxField.setPage( this );
+    consoleMaxField.setPreferenceStore( prefStore );
+    consoleMaxField.load();
+
+    consoleActivateField=new BooleanFieldEditor( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE, UITexts.executables_preferences_console_activateonwrite, advancedC );
+    consoleActivateField.setPage( this );
+    consoleActivateField.setPreferenceStore( prefStore );
+    consoleActivateField.load();
 
 		// Update the dialog's state and validity:
 		updateButtonState();
@@ -235,6 +247,8 @@ public class ScionPP
 	  store.setDefault( BROWSER_VERBOSE_INTERACTION, false );
 	  store.setDefault( SCION_BROWSER_EXTRA_HOOGLE_PATH, "" );
 	  store.setDefault( MAX_CONFIGURE_FAILURES, 10 );
+	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK, 32 * 1024);// 32K
+	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE,false);
 	}
 
   @Override
@@ -249,6 +263,9 @@ public class ScionPP
     verboseInteractionField.store();
     maxConfigureFailuresField.store();
     verboseBrowserInteractionField.store();
+
+    consoleActivateField.store();
+    consoleMaxField.store();
 
  //   hlintExecutableField.store();
 

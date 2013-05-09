@@ -21,6 +21,9 @@ Features:
 	- warning when launching cabal install on a sandboxed project
 	- toggle comment action instead of comment/uncomment (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/7ea2e1eb/#3100)
 	- HLint suggestions: a preference can be set to see the suggestion text even if it can be applied automatically (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/79aaff24/#816f)
+	- Preference page for helper executables refactored with an Advanced section
+	- Expose preference for maximum number of characters in Haskell Console
+	- Expose preference to activate Haskell Console on write (https://github.com/JPMoresmau/eclipsefp/issues/97)
 
 Internal:
 

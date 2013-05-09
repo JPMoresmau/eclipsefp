@@ -20,8 +20,12 @@ public interface IPreferenceConstants {
   public final static String CLEAR_BUILD_CONSOLE    = "CLEAR_BUILD_CONSOLE";  //$NON-NLS-1$
 
   // Console high and low water marks
+  // this is not exposed
   public final static String HASKELL_CONSOLE_LOW_WATER_MARK = "haskellConsoleLowWaterMark"; //$NON-NLS-1$
+  // max number of characters
   public final static String HASKELL_CONSOLE_HIGH_WATER_MARK = "haskellConsoleHighWaterMark"; //$NON-NLS-1$
+  // activate on write
+  public final static String HASKELL_CONSOLE_ACTIVATE_ON_WRITE = "haskellConsoleActivateOnWrite"; //$NON-NLS-1$
 
   // Scion
  // public final static String SCION_SERVER_FLAVOR  = "scionServerFlavor"; //$NON-NLS-1$
