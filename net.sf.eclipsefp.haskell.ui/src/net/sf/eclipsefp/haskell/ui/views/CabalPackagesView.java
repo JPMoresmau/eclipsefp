@@ -366,6 +366,9 @@ public class CabalPackagesView extends ViewPart {
 
       @Override
       public void databaseLoaded( final DatabaseLoadedEvent e ) {
+        if (getSite()==null){
+          return;
+        }
         getSite().getShell().getDisplay().syncExec( new Runnable() {
 
           @Override

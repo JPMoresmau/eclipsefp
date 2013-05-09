@@ -72,7 +72,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -399,33 +402,65 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
+  private void registerPerspectiveListener(final IWorkbenchWindow w){
+    final IPageService svc=(IPageService)w.getService( IPageService.class );
+
+    // register the listener who's going to start browser when a Haskell perspective opens
+    svc.addPerspectiveListener( new IPerspectiveListener() {
+
+      @Override
+      public void perspectiveChanged( final IWorkbenchPage page,
+          final IPerspectiveDescriptor perspective, final String changeId ) {
+        // NOOP
+      }
+
+      @Override
+      public void perspectiveActivated( final IWorkbenchPage page,
+          final IPerspectiveDescriptor perspective ) {
+       String pid=perspective.getId();
+       if (pid.contains( "haskell" )){
+         startBrowser();
+         // work done, let's get out!
+         svc.removePerspectiveListener( this );
+       }
+
+      }
+    } );
+  }
+
   private synchronized void browserSetup() {
     boolean onPerspective=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.BROWSER_START_ONLY_PERSPECTIVE );
      if (onPerspective){
+        IWorkbenchWindow w=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (w==null){
+          PlatformUI.getWorkbench().addWindowListener( new IWindowListener() {
 
-        final IPageService svc=(IPageService)HaskellUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getService( IPageService.class );
+            @Override
+            public void windowOpened( final IWorkbenchWindow window ) {
+              // NOOP
 
-        // register the listener who's going to start browser when a Haskell perspective opens
-        svc.addPerspectiveListener( new IPerspectiveListener() {
+            }
 
-          @Override
-          public void perspectiveChanged( final IWorkbenchPage page,
-              final IPerspectiveDescriptor perspective, final String changeId ) {
-            // NOOP
-          }
+            @Override
+            public void windowDeactivated( final IWorkbenchWindow window ) {
+              // NOOP
 
-          @Override
-          public void perspectiveActivated( final IWorkbenchPage page,
-              final IPerspectiveDescriptor perspective ) {
-           String pid=perspective.getId();
-           if (pid.contains( "haskell" )){
-             startBrowser();
-             // work done, let's get out!
-             svc.removePerspectiveListener( this );
-           }
+            }
 
-          }
-        } );
+            @Override
+            public void windowClosed( final IWorkbenchWindow window ) {
+              // NOOP
+
+            }
+
+            @Override
+            public void windowActivated( final IWorkbenchWindow window ) {
+              registerPerspectiveListener( window );
+              PlatformUI.getWorkbench().removeWindowListener( this );
+            }
+          } );
+        }
+        registerPerspectiveListener( w );
      } else {
        startBrowser();
      }
@@ -802,6 +837,10 @@ public class ScionManager implements IResourceChangeListener {
 
   public void stop() {
     ResourcesPlugin.getWorkspace().removeResourceChangeListener( this );
+    for (IProject p:ResourceUtil.listHaskellProjects()){
+      stopInstance( p );
+    }
+
  //   ScionPlugin.stopAllInstances();
   }
 
@@ -842,8 +881,7 @@ public class ScionManager implements IResourceChangeListener {
   }
 
   /**
-   * Starts and returns a new Scion instance for the given project. Does not add
-   * the instance to the instances map.
+   * Creates a new BuildWrapper Facade instance for the given project.
    */
   private synchronized void startInstance( final IProject project ) {
     if (BuildWrapperPlugin.getFacade( project )==null && CabalImplementationManager.getCabalExecutable()!=null){

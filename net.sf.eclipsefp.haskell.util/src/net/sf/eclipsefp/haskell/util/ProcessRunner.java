@@ -118,12 +118,12 @@ public class ProcessRunner implements IProcessRunner {
 		  Thread t1= redirect( new InputStreamReader( p.getInputStream() ), sw, STDOUT_REDIRECT );
 		  // ignore error
     	  redirect( new InputStreamReader( p.getErrorStream() ), new StringWriter(), STDERR_REDIRECT );
-
-		  try {
+    	  try {
 			  // we trust the process to be short lived
 			  if (wait){
 				  try {
 					  p.waitFor();
+					  p=null;
 				  } catch (InterruptedException ie){
 					  //
 				  }
@@ -132,6 +132,7 @@ public class ProcessRunner implements IProcessRunner {
 				  for (int a=0;a<200;a++){ // 200 * 100 -> 20 seconds maxi
 					  try {
 						  p.exitValue();
+						  p=null;
 						  break;
 					  } catch (IllegalThreadStateException ise){
 						  // still running
@@ -144,7 +145,9 @@ public class ProcessRunner implements IProcessRunner {
 				  }
 			  }
 		  } finally {
-			  p.destroy();
+			  if (p!=null){
+				  p.destroy();
+			  }
 		  }		  
 		  // we wait for the redirect thread to finish reading/writing
 		  try {

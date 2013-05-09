@@ -540,7 +540,7 @@ public class BWFacade {
 					}
 				}
 				JSONArray dels=allPaths.optJSONArray(1);
-				if (dels!=null){
+				if (dels!=null && BuildWrapperPlugin.getDefault()!=null){
 					UsageAPI api=BuildWrapperPlugin.getDefault().getUsageAPI();
 					if (api!=null){
 						for (int a=0;a<dels.length();a++){
