@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site>
+<site url="http://downloads.sourceforge.net/project/eclipsefp/updates">
    <feature url="features/net.sf.eclipsefp.haskell_2.2.3.jar" id="net.sf.eclipsefp.haskell" version="2.2.3">
       <category name="FP"/>
    </feature>
