@@ -148,7 +148,7 @@ public class ProcessRunner implements IProcessRunner {
 		  }		  
 		  // we wait for the redirect thread to finish reading/writing
 		  try {
-			  t1.join(10*1000); // 10 seconds max waiting for write
+			  t1.join(); // wait for thread to finish correctly, old code was: 10*1000 10 seconds max waiting for write
 		  } catch (InterruptedException ignore){
 			  // noop
 		  }
