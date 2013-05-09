@@ -4,11 +4,10 @@
 	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/b68eb615/?limit=25#3056
 
 	- scan hlint data directory and get all files different than HLint.hs?
-	- encoding -> automatically find file encoding and use it!
 	- allow global parameters
 
-- turn off scion browser in workspace
-	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/88c58cc0/?limit=25#d6d1
+- offer to use cabal-dev to install buildwrapper and other executables
+	- use a folder inside the plugin?
 
 - display warnings + quick fix on unused dependencies in cabal
 	https://sourceforge.net/p/eclipsefp/discussion/371922/thread/063caf95/?limit=25#f901
