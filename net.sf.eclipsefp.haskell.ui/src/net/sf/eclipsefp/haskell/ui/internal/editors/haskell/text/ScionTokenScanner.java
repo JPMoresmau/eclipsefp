@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
@@ -141,21 +142,32 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
            //addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
 
            IToken nextToken=getTokenFromTokenDef( nextTokenDef);
-           if (currentToken!=null && currentToken.getData().equals( nextToken.getData() ) &&
-               currentOffset+currentLength<nextOffset){
-             nextOffset= currentOffset+currentLength;
-           }
+
+           // Eclipse doesn't like two tokens with the same data and space in between, so make the next token starting from the end of the previous one
+           // done in mergeTokens now, simpler
+           //           boolean notEOF=false;
+//           if (nextOffset>=offset && currentToken!=null && currentToken.getData().equals( nextToken.getData() ) &&
+//               currentOffset+currentLength<nextOffset
+//               ){
+//             nextOffset= currentOffset+currentLength;
+//             nextOffset=Math.max( offset, nextOffset );
+//             notEOF=true;
+//           }
+//!notEOF &&
 
            int nextLength=end-nextOffset;
            currentLength=nextLength;
            currentOffset=nextOffset;
            currentTokenDef=nextTokenDef;
            currentToken=nextToken;
-
-           if (currentOffset>offset+length)  {
+//           HaskellUIPlugin.log( currentOffset+"->"+currentLength, IStatus.INFO );
+//
+//           if (!notEOF && currentOffset>offset+length)  {
+//             return Token.EOF;
+//           }
+           if ( nextOffset>offset+length)  {
              return Token.EOF;
            }
-
 
          } catch (BadLocationException ble){
            HaskellUIPlugin.log( ble );
@@ -163,11 +175,18 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
        } else {
          return Token.EOF;
        }
-    } while(currentOffset<offset);
+    } while(currentOffset+currentLength<offset);
     return currentToken;
 
   }
 
+  /**
+   * add an occurrence for a given token
+   * @param s
+   * @param offset
+   * @param end
+   * @param td
+   */
   private void addTokenOccurence(final String s,final int offset,int end,final TokenDef td){
     String name=td.getName();
     if (name.equals( ITokenTypes.KEYWORD )
@@ -203,6 +222,11 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     }
   }
 
+  /**
+   * get occurrences for the toekn situated at the given offset
+   * @param offset
+   * @return
+   */
   public List<Occurrence> getOccurrences(final int offset){
     LinkedList<Occurrence> ret=new LinkedList<Occurrence>();
     if (offset>0 && offset<tokenLocations.size()){
@@ -212,12 +236,47 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         if (l!=null){
 
           for (TokenDef td:l){
-            ret.add(new Occurrence( td ));
+            try {
+              Occurrence occ=new Occurrence( td );
+              if (td.getLocation().getStartLine()!=td.getLocation().getEndLine()){
+                occ=new Occurrence( td,doc );
+              }
+              if (occ.getLength()>0){
+                ret.add(occ);
+              }
+            } catch (BadLocationException ble){
+              // ignore
+            }
           }
           return ret;
         }
       }
     }
+    return ret;
+  }
+
+  /**
+   * the default damage repairer does not like spaces between token with the same data, so let's merge them
+   * @param tds
+   * @return
+   */
+  private List<TokenDef> mergeTokens(final List<TokenDef> tds){
+    LinkedList<TokenDef> ret=new LinkedList<TokenDef>();
+    TokenDef last=null;
+    for (TokenDef td:tds){
+      if (last!=null && td.getName().equals( last.getName() )){
+        ret.removeLast();
+        // clone otherwise occurrences become wrong
+        last=new TokenDef( last.getName(), new Location(last.getLocation()) );
+        ret.add(last);
+        last.getLocation().setEndColumn( td.getLocation().getEndColumn() );
+        last.getLocation().setEndLine( td.getLocation().getEndLine() );
+      } else {
+        ret.add(td);
+        last=td;
+      }
+    }
+
     return ret;
   }
 
@@ -320,9 +379,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         lTokenDefs=new ArrayList<TokenDef>();
       }
     }
-    if( lTokenDefs != null && lTokenDefs.size() > 0 ) {
-      tokenDefs = lTokenDefs.listIterator();
-    }
+
     //String s=doc.get();
     //long previousOffset=-1;
     //long previousEnd=-1;
@@ -351,8 +408,12 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         HaskellUIPlugin.log( ble );
       }
     }
+    if( lTokenDefs != null && lTokenDefs.size() > 0 ) {
+      tokenDefs = mergeTokens( lTokenDefs).listIterator();
+    }
     this.offset = offset;
     this.length = length;
+    //HaskellUIPlugin.log( offset+"+"+length,IStatus.INFO );
   }
 
   public File getTarget(){

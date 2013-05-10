@@ -171,8 +171,8 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 		if (editor!=null){
 		  editor.setTokenScanner( codeScanner );
 		}
-    DefaultDamagerRepairer dr = new DefaultDamagerRepairer( codeScanner );
-    reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
+		DefaultDamagerRepairer dr=new DefaultDamagerRepairer( codeScanner );
+		reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
 
     // comments

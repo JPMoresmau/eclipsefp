@@ -86,6 +86,19 @@ public class Location {
 		}
 	}
 	
+	/**
+	 * clone
+	 * @param l
+	 */
+	public Location(Location l) {
+		this.fileName = l.getFileName();
+		this.startLine = l.getStartLine();
+		this.startColumn = l.getStartColumn();
+		
+		this.endLine = l.getEndLine();
+		this.endColumn = l.getEndColumn();
+	}
+	
 	public Location(String fileName, int startLine, int startColumn, int endLine, int endColumn) {
 		this.fileName = fileName;
 		this.startLine = startLine;

@@ -1,6 +1,9 @@
 // Copyright (c) 2007 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+
 public class Occurrence {
 
   private final int line;
@@ -17,6 +20,18 @@ public class Occurrence {
 	  this.line=td.getLocation().getStartLine();
 	  this.column=td.getLocation().getStartColumn();
 	  this.length=td.getLocation().getEndColumn()-td.getLocation().getStartColumn();
+  }
+  
+  /**
+   * build an occurrence with a guaranteed length calculated from the doc
+   * @param td
+   * @param doc
+   * @throws BadLocationException
+   */
+  public Occurrence(TokenDef td,IDocument doc) throws BadLocationException{
+	  this.line=td.getLocation().getStartLine();
+	  this.column=td.getLocation().getStartColumn();
+	  this.length=td.getLocation().getLength(doc);
   }
 
   // attribute getters
