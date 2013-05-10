@@ -35,7 +35,10 @@
                <with variable="selection">
                  <count value="1" />
                  <iterate>
-                   <test property="net.sf.eclipsefp.haskell.core.isHaskellFile"/>
+                 	<and>
+                  	 	<instanceof value="org.eclipse.core.resources.IResource"/>
+                   		<test property="net.sf.eclipsefp.haskell.core.isHaskellFile"/>
+                   </and>
                  </iterate>
                </with>
             </enablement>

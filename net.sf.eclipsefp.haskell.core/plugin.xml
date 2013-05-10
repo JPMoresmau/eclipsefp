@@ -178,13 +178,13 @@
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
             id="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester">
       </propertyTester>
-      <propertyTester
+      <!--propertyTester
             properties="isProjectExecutable, isSourceFolder, isHaskellFile, isProjectTestSuite, hasProjectHLintBuilder, needsProjectHLintBuilder, hasProjectAlexBuilder, needsProjectAlexBuilder, hasProjectHappyBuilder, needsProjectHappyBuilder, hasProjectUuagcBuilder, needsProjectUuagcBuilder, isProjectYesod"
             namespace="net.sf.eclipsefp.haskell.core"
             type="org.eclipse.ui.IEditorInput"
             class="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester"
             id="net.sf.eclipsefp.haskell.core.expressions.HaskellPropertyTester">
-      </propertyTester>
+      </propertyTester-->
    </extension>
    <extension
          id="problem"

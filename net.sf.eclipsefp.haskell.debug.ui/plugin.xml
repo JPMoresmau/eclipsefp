@@ -233,9 +233,12 @@
                   </count>
                   <iterate>
                   	<or>
-                  	 <test
-                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
-                     </test>
+                  	 <and>
+                  	 	<instanceof value="org.eclipse.core.resources.IResource"/>
+	                  	 <test
+	                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
+	                     </test>
+                     </and>
                      <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerStanza"/>
                      </or>
                   </iterate>
@@ -330,9 +333,11 @@
                         value="1">
                   </count>
                   <iterate>
+                   	<adapt type="org.eclipse.core.resources.IProject">
                      <test
                            property="net.sf.eclipsefp.haskell.core.isProjectTestSuite">
                      </test>
+                     </adapt>
                   </iterate>
                </with>
             </enablement>
@@ -356,9 +361,11 @@
                         value="1">
                   </count>
                   <iterate>
+                   <adapt type="org.eclipse.core.resources.IProject">
                      <test
                            property="net.sf.eclipsefp.haskell.core.isProjectTestSuite">
                      </test>
+                     </adapt>
                   </iterate>
                </with>
             </enablement>
@@ -382,9 +389,11 @@
                         value="1">
                   </count>
                   <iterate>
-                     <test
-                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
-                     </test>
+                     <adapt type="org.eclipse.core.resources.IProject">
+	                  	 <test
+	                           property="net.sf.eclipsefp.haskell.core.isProjectExecutable">
+	                     </test>
+                     </adapt>
                   </iterate>
                </with>
             </enablement>
