@@ -212,8 +212,11 @@ public class ScionManager implements IResourceChangeListener {
     boolean doBrowserSetup=true;
     boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE );
     if (!ignore){
-      final boolean buildwrapperVersionOK=buildWrapperExecutablePath==null || checkVersion( buildWrapperExecutablePath, MINIMUM_BUILDWRAPPER ,true);
-      final boolean browserVersionOK=browserExecutablePath==null || checkVersion( browserExecutablePath, MINIMUM_SCIONBROWSER,false );
+      final String buildwrapperVersion=buildWrapperExecutablePath!=null?getVersion( buildWrapperExecutablePath, true ):null;
+      final String browserVersion=browserExecutablePath!=null?getVersion( browserExecutablePath, false ):null;
+
+      final boolean buildwrapperVersionOK=checkVersion( buildwrapperVersion, MINIMUM_BUILDWRAPPER );
+      final boolean browserVersionOK=checkVersion( browserVersion, MINIMUM_SCIONBROWSER );
 
       doBuildWrapperSetup=buildwrapperVersionOK; // do not launch if too old
       doBrowserSetup=browserVersionOK;// do not launch if too old
@@ -226,8 +229,8 @@ public class ScionManager implements IResourceChangeListener {
 
               InstallOutdatedExecutableDialog ied =
                   new InstallOutdatedExecutableDialog(parent,
-                                                     !buildwrapperVersionOK, MINIMUM_BUILDWRAPPER, getVersion(buildWrapperExecutablePath,true), buildWrapperExecutablePath.toOSString(),
-                                                     !browserVersionOK, MINIMUM_SCIONBROWSER, getVersion(browserExecutablePath, false), browserExecutablePath.toOSString() );
+                                                     !buildwrapperVersionOK, MINIMUM_BUILDWRAPPER, buildwrapperVersion, buildWrapperExecutablePath.toOSString(),
+                                                     !browserVersionOK, MINIMUM_SCIONBROWSER, browserVersion, browserExecutablePath.toOSString() );
               ied.open();
             }
           });
@@ -359,6 +362,12 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
+  /**
+   * get version from the executable
+   * @param path the executable path
+   * @param wait wait for the executable to return?
+   * @return
+   */
   public static String getVersion(final IPath path,final boolean wait){
     if (path!=null){
       try {
@@ -370,8 +379,25 @@ public class ScionManager implements IResourceChangeListener {
     return null;
   }
 
+  /**
+   * check executable version meets minimal version
+   * @param path the path of the executable
+   * @param minimal the minimal version
+   * @param wait wait for the executable to return?
+   * @return
+   */
   public static boolean checkVersion(final IPath path,final String minimal,final boolean wait){
     String currentVersion=getVersion(path, wait);
+    return checkVersion( currentVersion, minimal );
+  }
+
+  /**
+   * check executable version meets minimal version
+   * @param currentVersion the current version
+   * @param minimal the minimal version
+   * @return
+   */
+  private static boolean checkVersion(final String currentVersion,final String minimal){
     if (currentVersion==null) {
       return false;
     } else {

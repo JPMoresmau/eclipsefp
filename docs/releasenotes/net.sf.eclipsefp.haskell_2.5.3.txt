@@ -6,7 +6,7 @@ Release Notes
 Necessary Haskell packages:
 
 	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.7.1 of buildwrapper has been validated with this version of EclipseFP
-	- EclipseFP also uses scion-browser. Version 0.2.13 has been validated with this version of EclipseFP
+	- EclipseFP also uses scion-browser. Version 0.2.16 has been validated with this version of EclipseFP
  
 
 Fixes:
@@ -16,6 +16,8 @@ Fixes:
 	- cabal errors show error decorator on project
 	- shortcut key and mnemonic for rename action (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/b5fd0a28/?limit=25#725b)
 	- hlint uses proper encoding of the file it analyses
+	- Run as on something else that a resource caused Haskell run actions to disappear
+	- Executable version checking could fail randomly and give confusing error message
 
 Features:
 	- warning when launching cabal install on a sandboxed project

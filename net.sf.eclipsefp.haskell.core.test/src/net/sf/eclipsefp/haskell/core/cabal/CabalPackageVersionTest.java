@@ -25,5 +25,7 @@ public class CabalPackageVersionTest {
     Assert.assertEquals( 1, CabalPackageVersion.compare( "1.1.1",  "1.1" ) );
     Assert.assertEquals( -1, CabalPackageVersion.compare( "1.0",  "2.0" ) );
     Assert.assertEquals( 1, CabalPackageVersion.compare( "2.0",  "1.0" ) );
+    Assert.assertEquals( 1, CabalPackageVersion.compare( "0.2.16",  "0.2.12" ) );
+    Assert.assertEquals( -1, CabalPackageVersion.compare( "0.2.12",  "0.2.16" ) );
   }
 }
