@@ -78,7 +78,8 @@ public class InstallExecutableRunnable implements Runnable {
       try {
         // we run ghc in execution mode to find the directory cabal is going to use
         // no quotes around last arguments, as it breaks unixes (returns the command, as I suppose ghc evaluates the argument as a string value)
-        new ProcessRunner().executeBlocking( binDir, sw, null, exe.getAbsolutePath(),"-e","System.Directory.getAppUserDataDirectory \"cabal\"" );
+        // windows: use old version!
+        new ProcessRunner().executeBlocking( binDir, sw, null, exe.getAbsolutePath(),"-e",ProcessRunner.getGHCArgument( "System.Directory.getAppUserDataDirectory \"cabal\"" ));
         String s=sw.toString().trim(); // line return at end
         if (s.startsWith( "\"" )){ // quotes
           s=s.substring( 1 );

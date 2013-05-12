@@ -180,4 +180,12 @@ public class ProcessRunner implements IProcessRunner {
 	  }
 	  return null;
   }
+  
+  public static String getGHCArgument(String s){
+	  if (PlatformUtil.runningOnWindows()){
+		  String escaped=s.replace("\"", "\\\"");
+		  return "\""+escaped+"\"";
+	  }
+	  return s;
+  }
 }
