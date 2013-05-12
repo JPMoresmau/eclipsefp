@@ -230,6 +230,13 @@ public final class UITexts extends NLS {
   public static String newYesodProjectWizard_error_message;
   public static String newYesodProjectWizard_job;
 
+  public static String newYesodProjectWizard_db_sqlite;
+  public static String newYesodProjectWizard_db_postgresql;
+  public static String newYesodProjectWizard_db_postgresqlfay;
+  public static String newYesodProjectWizard_db_mysql;
+  public static String newYesodProjectWizard_db_mongodb;
+  public static String newYesodProjectWizard_db_simple;
+
   public static String newGtkProjectWizard_pageDesc;
   public static String newGtkProjectWizard_pageTitle;
   public static String newGtkProjectWizard_windowTitle;

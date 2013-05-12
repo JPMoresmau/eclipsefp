@@ -31,12 +31,17 @@ public abstract class ExecutablePP extends PreferencePage implements IWorkbenchP
   private final String pgmName;
   private final String exeName;
   private final String pref;
-
+  private final String pkgName;
 
   public ExecutablePP( final String pgmName, final String exeName, final String pref ) {
+    this(pgmName,exeName,exeName,pref);
+  }
+
+  public ExecutablePP( final String pgmName, final String exeName,final String pkgName, final String pref ) {
     super();
     this.pgmName = pgmName;
     this.exeName = exeName;
+    this.pkgName = pkgName;
     this.pref = pref;
   }
 
@@ -59,7 +64,7 @@ public abstract class ExecutablePP extends PreferencePage implements IWorkbenchP
         setValid( isValid() );
       }
     };
-    executableField=new AutodetectExecutableField( this, parentComposite, pgmName, exeName, pref,propertyListener );
+    executableField=new AutodetectExecutableField( this, parentComposite, pgmName, exeName, pkgName, pref,propertyListener );
     new Label(parentComposite,SWT.NONE);
     setValid( isValid() );
     return parentComposite;

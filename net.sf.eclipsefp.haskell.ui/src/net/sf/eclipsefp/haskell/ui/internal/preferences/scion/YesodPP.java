@@ -24,7 +24,10 @@ public class YesodPP extends ExecutablePP {
   private BooleanFieldEditor cabalDevField;
 
   public YesodPP(){
-    super("Yesod","yesod",IPreferenceConstants.YESOD_EXECUTABLE);
+    /**
+     * from yesod 1.2, the executable is still yesod but the project is yesod-bin
+     */
+    super("Yesod","yesod","yesod-bin",IPreferenceConstants.YESOD_EXECUTABLE);
   }
 
   /* (non-Javadoc)

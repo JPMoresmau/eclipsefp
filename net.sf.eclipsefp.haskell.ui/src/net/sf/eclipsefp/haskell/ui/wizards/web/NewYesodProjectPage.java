@@ -1,26 +1,36 @@
 package net.sf.eclipsefp.haskell.ui.wizards.web;
 
-import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 /**
 *
 * @author Alejandro Serrano
-*
+* @author JP Moresmau
 */
 public class NewYesodProjectPage extends WizardNewProjectCreationPage {
+  private static Map<String,String> dbs=new HashMap<String,String>();
+  static {
+    dbs.put( UITexts.newYesodProjectWizard_db_sqlite , "s");
+    dbs.put( UITexts.newYesodProjectWizard_db_postgresql ,"p");
+    dbs.put( UITexts.newYesodProjectWizard_db_postgresqlfay, "pf");
+    dbs.put( UITexts.newYesodProjectWizard_db_mysql,"mysql");
+    dbs.put( UITexts.newYesodProjectWizard_db_mongodb , "mongo");
+    dbs.put( UITexts.newYesodProjectWizard_db_simple , "simple");
+  }
 
-  Text authorName;
-  Text foundation;
+
+  //Text authorName;
+  //Text foundation;
   Combo dbType;
 
   public NewYesodProjectPage( final String pageName ) {
@@ -41,77 +51,79 @@ public class NewYesodProjectPage extends WizardNewProjectCreationPage {
     GridLayout innerGl = new GridLayout( 2, false );
     inner.setLayout( innerGl );
     // Author name
-    Label authorNameL = new Label( inner, SWT.NULL );
-    authorNameL.setText( "Author" );
-    authorName = new Text( inner, SWT.BORDER );
-    authorName.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    String userName=PlatformUtil.getCurrentUser();
-    if (userName==null){
-      userName="user";
-    }
-    authorName.setText( userName );
-    authorName.addModifyListener( new ModifyListener() {
-
-      @Override
-      public void modifyText( final ModifyEvent e ) {
-        verify();
-      }
-    } );
+//    Label authorNameL = new Label( inner, SWT.NULL );
+//    authorNameL.setText( "Author" );
+//    authorName = new Text( inner, SWT.BORDER );
+//    authorName.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+//    String userName=PlatformUtil.getCurrentUser();
+//    if (userName==null){
+//      userName="user";
+//    }
+//    authorName.setText( userName );
+//    authorName.addModifyListener( new ModifyListener() {
+//
+//      @Override
+//      public void modifyText( final ModifyEvent e ) {
+//        verify();
+//      }
+//    } );
     // Foundation datatype
-    Label foundationL = new Label( inner, SWT.NULL );
-    foundationL.setText( "Foundation datatype" );
-    foundation = new Text( inner, SWT.BORDER );
-    foundation.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    foundation.setText( "Foundation" );
-    foundation.addModifyListener( new ModifyListener() {
-
-      @Override
-      public void modifyText( final ModifyEvent e ) {
-        verify();
-      }
-    } );
+  //    Label foundationL = new Label( inner, SWT.NULL );
+  //    foundationL.setText( "Foundation datatype" );
+  //    foundation = new Text( inner, SWT.BORDER );
+  //    foundation.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+  //    foundation.setText( "Foundation" );
+  //    foundation.addModifyListener( new ModifyListener() {
+  //
+  //      @Override
+  //      public void modifyText( final ModifyEvent e ) {
+  //        verify();
+  //      }
+  //    } );
     // Type of database
     Label comboL = new Label( inner, SWT.NULL );
     comboL.setText( "Database" );
     dbType = new Combo( inner, SWT.BORDER | SWT.READ_ONLY );
-    dbType.setItems( new String[] { "SQLite", "PostgreSQL", "Minimal" } );
+    String[] items=dbs.keySet().toArray( new String[dbs.size()] );
+    Arrays.sort( items,String.CASE_INSENSITIVE_ORDER );
+    dbType.setItems(items);
     dbType.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-    dbType.setText( "SQLite" );
+    dbType.setText(UITexts.newYesodProjectWizard_db_sqlite);
   }
 
-  boolean verify() {
-    this.setErrorMessage( null );
-    if( authorName.getText().length() == 0 ) {
-      this.setErrorMessage( "Author name cannot be empty" );
-      return false;
-    } else if( foundation.getText().length() == 0 ) {
-      this.setErrorMessage( "Foundation datatype cannot be empty" );
-      return false;
-    } else if( !Character.isUpperCase( foundation.getText().charAt( 0 ) ) ) {
-      this.setErrorMessage( "Foundation datatype must start with uppercase letter" );
-      return false;
-    }
-    return true;
-  }
+//  boolean verify() {
+//    this.setErrorMessage( null );
+//    if( authorName.getText().length() == 0 ) {
+//      this.setErrorMessage( "Author name cannot be empty" );
+//      return false;
+//    } else if( foundation.getText().length() == 0 ) {
+//      this.setErrorMessage( "Foundation datatype cannot be empty" );
+//      return false;
+//    } else if( !Character.isUpperCase( foundation.getText().charAt( 0 ) ) ) {
+//      this.setErrorMessage( "Foundation datatype must start with uppercase letter" );
+//      return false;
+//    }
+//    return true;
+//  }
+//
+//  @Override
+//  public boolean isPageComplete() {
+//    if( !super.isPageComplete() ) {
+//      return false;
+//    }
+//
+//    return verify();
+//  }
+//
+//  public String getAuthor() {
+//    return authorName.getText();
+//  }
+//
+//  public String getFoundation() {
+//    return foundation.getText();
+//  }
 
-  @Override
-  public boolean isPageComplete() {
-    if( !super.isPageComplete() ) {
-      return false;
-    }
-
-    return verify();
-  }
-
-  public String getAuthor() {
-    return authorName.getText();
-  }
-
-  public String getFoundation() {
-    return foundation.getText();
-  }
-
-  public char getDatabase() {
-    return Character.toLowerCase( dbType.getText().charAt( 0 ) );
+  public String getDatabase() {
+    return dbs.get( dbType.getText());
   }
 }

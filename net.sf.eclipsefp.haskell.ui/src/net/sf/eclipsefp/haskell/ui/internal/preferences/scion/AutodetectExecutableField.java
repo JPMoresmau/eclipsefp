@@ -52,9 +52,13 @@ public class AutodetectExecutableField {
   private final Button installButton;
   private final Shell shell;
 
-
   public AutodetectExecutableField(final PreferencePage page, final Composite parent,
       final String pgmName,final String exeName,final String prefName,final IPropertyChangeListener listener){
+    this(page,parent,pgmName,exeName,exeName,prefName,listener);
+  }
+
+  public AutodetectExecutableField(final PreferencePage page, final Composite parent,
+      final String pgmName,final String exeName,final String pkgName,final String prefName,final IPropertyChangeListener listener){
     this.shell=parent.getShell();
     this.pgmName=pgmName;
     fullExeName=FileUtil.makeExecutableName(exeName);
@@ -137,7 +141,7 @@ public class AutodetectExecutableField {
         final InstallExecutableRunnable r=new InstallExecutableRunnable();
         r.setCabalUpdate( false );
         r.setGlobal( false );
-        r.getPackages().add( new InstallExecutableRunnable.Package( exeName, null ) );
+        r.getPackages().add( new InstallExecutableRunnable.Package( exeName, pkgName, null ) );
         r.setNextRunnable( new Runnable(){
           @Override
           public void run() {

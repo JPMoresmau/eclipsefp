@@ -108,13 +108,13 @@ public class InstallExecutableRunnable implements Runnable {
       commands.add(new Command(UITexts.scionBrowserInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
     }*/
     for (Package p:packages){
-      List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getName(), global?"--global": "--user" ));
+      List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getPkgName(), global?"--global": "--user" ));
 
-      File f=new File(binDir,FileUtil.makeExecutableName( p.getName() ));
+      File f=new File(binDir,FileUtil.makeExecutableName( p.getExeName() ));
       if (!f.exists()){ // the exe does not exist, we force reinstall to make sure it wasn't deleted manually
         args.add( "--reinstall" );
       }
-      commands.add(new Command(NLS.bind( UITexts.installExecutableProgress,p.getName()),p.getName(),p.getPreference(),args));
+      commands.add(new Command(NLS.bind( UITexts.installExecutableProgress,p.getExeName()),p.getExeName(),p.getPreference(),args));
     }
     final File fBinDir=binDir;
 
@@ -279,23 +279,50 @@ public class InstallExecutableRunnable implements Runnable {
   }
 
   public static class Package {
-    private String name;
+    private String exeName;
+    /**
+     * the package name may be different than the exe name
+     * example: yesod-bin is the package, installs the yesod exe
+     */
+    private String pkgName;
     private String preference;
 
 
+    public Package( final String exeName, final String preference ) {
+      this(exeName,exeName,preference);
+    }
 
-    public Package( final String name, final String preference ) {
+    public Package( final String exeName,final String pkgName, final String preference ) {
       super();
-      this.name = name;
+      this.exeName = exeName;
+      this.pkgName = pkgName;
       this.preference = preference;
     }
 
-    public String getName() {
-      return name;
+
+    public String getExeName() {
+      return exeName;
     }
 
-    public void setName( final String name ) {
-      this.name = name;
+
+
+
+    public void setExeName( final String exeName ) {
+      this.exeName = exeName;
+    }
+
+
+
+
+    public String getPkgName() {
+      return pkgName;
+    }
+
+
+
+
+    public void setPkgName( final String pkgName ) {
+      this.pkgName = pkgName;
     }
 
 

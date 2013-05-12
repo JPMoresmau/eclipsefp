@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
 *
 * @author Alejandro Serrano
-*
+* @author JP Moresmau
 */
 public class NewYesodProjectWizard extends Wizard implements INewWizard {
 
@@ -67,9 +67,9 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
         ?  mainPage.getLocationURI()
           :null;
 
-     final String author=   mainPage.getAuthor();
-     final String foundation= mainPage.getFoundation();
-     final char database= mainPage.getDatabase();
+    // final String author=   mainPage.getAuthor();
+    // final String foundation= mainPage.getFoundation();
+     final String database= mainPage.getDatabase();
         // IPath parentPath = path.removeLastSegments( 1 );
         // Run "yesod init"
       // Get parent path
@@ -89,14 +89,14 @@ public class NewYesodProjectWizard extends Wizard implements INewWizard {
 
             // Get the things to write
             OutputStreamWriter inS = new OutputStreamWriter( p.getOutputStream() );
-            inS.write(author  + "\n" );
-            inS.flush();
+            //inS.write(author  + "\n" );
+            //inS.flush();
             inS.write( name + "\n" );
             inS.flush();
-            inS.write( "\n" ); // directory empty use project name
-            inS.flush();
-            inS.write(foundation + "\n" );
-            inS.flush();
+            //inS.write( "\n" ); // directory empty use project name
+            //inS.flush();
+            //inS.write(foundation + "\n" );
+            //inS.flush();
             inS.write(database  + "\n" );
             inS.flush();
             p.waitFor();
