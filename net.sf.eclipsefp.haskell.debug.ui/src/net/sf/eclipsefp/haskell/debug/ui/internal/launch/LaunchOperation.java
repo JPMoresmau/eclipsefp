@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.debug.ui.internal.util.UITexts;
@@ -50,7 +51,7 @@ public abstract class LaunchOperation {
     ILaunchConfiguration[] configs=getLaunchManager().getLaunchConfigurations( configType );
     List<ILaunchConfiguration> ret=new ArrayList<ILaunchConfiguration>();
     for (ILaunchConfiguration config:configs){
-      if (projectName.equals(getProjectName(config))){
+      if (projectName.equals(HaskellDebugCore.getProjectName(config))){
         ret.add(config);
       }
     }
@@ -78,11 +79,7 @@ public abstract class LaunchOperation {
 
   protected abstract String getConfigTypeName();
 
-  public static String getProjectName( final ILaunchConfiguration configuration )
-                                                          throws CoreException {
-    String att = ILaunchAttributes.PROJECT_NAME;
-    return configuration.getAttribute( att, ILaunchAttributes.EMPTY );
-  }
+
 
   public static String getExePath( final ILaunchConfiguration config ) throws CoreException {
     String att = ILaunchAttributes.EXECUTABLE;

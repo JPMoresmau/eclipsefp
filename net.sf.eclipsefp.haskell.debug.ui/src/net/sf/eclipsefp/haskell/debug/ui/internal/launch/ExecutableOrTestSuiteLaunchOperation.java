@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -149,7 +150,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
           } else {
             if( getExePath( configuration ).startsWith(
                 project.getLocation().toOSString() )
-                && getProjectName( configuration ).equals( projectName ) ) {
+                && HaskellDebugCore.getProjectName( configuration ).equals( projectName ) ) {
               result.add( configuration );
             }
           }

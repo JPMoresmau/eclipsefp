@@ -34,6 +34,7 @@ import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.hlint.HLintPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.console.HaskellConsole;
@@ -61,6 +62,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -713,6 +715,14 @@ public class ScionManager implements IResourceChangeListener {
     public void resourceChanged( final IResourceChangeEvent event ) {
       if (event.getResource() instanceof IProject){
         stopInstance( event.getResource() );
+        try {
+          List<ILaunchConfiguration> confs=HaskellDebugCore.getDefault().listHaskellLaunchConfigurations( (IProject )event.getResource());
+          for (ILaunchConfiguration c:confs){
+            c.delete();
+          }
+        } catch (CoreException ce){
+          HaskellUIPlugin.log( ce );
+        }
       }
     }
   }

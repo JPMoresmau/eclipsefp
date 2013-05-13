@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
+import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
@@ -165,7 +166,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
             if( (getDelegate( configuration )==null || getDelegate( configuration ).equals( cls ))
-          && getProjectName( configuration ).equals( projectName )
+          && HaskellDebugCore.getProjectName( configuration ).equals( projectName )
           && getFirstResName( configuration ).equals( firstResName ) ) {
         String cExePath=getExePath( configuration );
        // ensure exe path is current

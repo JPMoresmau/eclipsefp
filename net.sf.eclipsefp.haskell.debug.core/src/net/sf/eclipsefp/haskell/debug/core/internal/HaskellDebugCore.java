@@ -3,12 +3,19 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.core.internal;
 
+import java.util.LinkedList;
+import java.util.List;
+import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
 /** <p>The main plugin class for the Haskell Debug Core.</p>
@@ -60,5 +67,24 @@ public class HaskellDebugCore extends Plugin {
     String id = getPluginId();
     Status status = new Status( IStatus.ERROR, id, IStatus.OK, message, thr );
     getDefault().getLog().log( status );
+  }
+
+  public static String getProjectName( final ILaunchConfiguration configuration )
+      throws CoreException {
+    String att = ILaunchAttributes.PROJECT_NAME;
+    return configuration.getAttribute( att, ILaunchAttributes.EMPTY );
+  }
+
+
+  public List<ILaunchConfiguration> listHaskellLaunchConfigurations(final IProject p) throws CoreException{
+    List<ILaunchConfiguration> confs=new LinkedList<ILaunchConfiguration>();
+    for (ILaunchConfiguration c:DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations()){
+      if (c.getType().getContributorName().equals( getPluginId())){
+        if (p.getName().equals(getProjectName( c ))){
+          confs.add( c );
+        }
+      }
+    }
+    return confs;
   }
 }

@@ -28,6 +28,7 @@ Features:
 	- Expose preference to activate Haskell Console on write (https://github.com/JPMoresmau/eclipsefp/issues/97)
 	- Preference to only start Browser when in a Haskell perpective (defaults to true) (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/88c58cc0/?limit=25#d441)
 	- Supports Yesod 1.2
+	- Haskell launch configurations are deleted when a project is deleted
 
 Internal:
 

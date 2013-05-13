@@ -36,4 +36,5 @@ public class HaskellDebugUI extends AbstractUIPlugin {
     plugin = null;
     super.stop( context );
   }
+
 }
