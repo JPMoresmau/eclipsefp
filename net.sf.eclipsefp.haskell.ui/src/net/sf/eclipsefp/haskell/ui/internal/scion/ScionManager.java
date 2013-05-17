@@ -136,7 +136,11 @@ public class ScionManager implements IResourceChangeListener {
     hConHighWater=max;
     //hConLowWater = preferenceStore.getInt( IPreferenceConstants.HASKELL_CONSOLE_LOW_WATER_MARK );
     //if (hConLowWater == 0) {
+    if (hConHighWater>-1){
      hConLowWater = hConHighWater/4;
+    } else {
+      hConLowWater=-1;
+    }
     //}
   }
 
