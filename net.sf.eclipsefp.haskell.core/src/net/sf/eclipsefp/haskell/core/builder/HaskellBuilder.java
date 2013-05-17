@@ -181,7 +181,8 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
 
             IProjectDescription desc=prj.getDescription();
             IProject[] oldDeps=desc.getReferencedProjects();
-            if (deps.addAll( Arrays.asList( oldDeps ) )){
+            deps.addAll( Arrays.asList( oldDeps ) );
+            if (deps.size()>oldDeps.length){
               IProject[] newDeps=deps.toArray( new IProject[deps.size()] );
               desc.setReferencedProjects( newDeps );
               prj.setDescription( desc, new NullProgressMonitor() );
