@@ -132,7 +132,12 @@ public class SandboxHelper {
 				args.add("install");
 				args.add(changedProject.getLocation().toOSString());
 				args.add("--force-reinstalls");
-				f.runCabal(args); // install the changed project 
+				String expFlags=null;
+				BWFacade changedF=BuildWrapperPlugin.getFacade(changedProject);
+				if (changedF!=null){
+					expFlags=changedF.getFlags();
+				}
+				f.runCabal(args,expFlags); // install the changed project with its own flags
 				if (f.isCanceled()){
 					return;
 				}

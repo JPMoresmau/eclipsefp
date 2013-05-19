@@ -1319,13 +1319,27 @@ public class BWFacade {
 		return obj;
 	}
 
+	/**
+	 * run cabal with the given argument, using the flags defined on the project
+	 * @param args
+	 */
 	public void runCabal(LinkedList<String> args){
+		runCabal(args,flags);
+	}
+	
+	/**
+	 * run cabal with the given argument, using the provided flags
+	 * @param args 
+	 * @param explicitFlags
+	 */
+	public void runCabal(LinkedList<String> args,String explicitFlags){
 		if (isCanceled()){
 			return;
 		}
 		args.addFirst(cabalImplDetails.getExecutable());
-		if (flags!=null && flags.length()>0){
-			args.add("--flags="+flags);
+		
+		if (explicitFlags!=null && explicitFlags.length()>0){
+			args.add("--flags="+explicitFlags);
 		}
 		for (String s:extraOpts){
 			args.add(s);
