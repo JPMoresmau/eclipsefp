@@ -1216,6 +1216,9 @@ public class BWFacade {
 				args.add("--cabaloption="+s);
 			}
 		}
+		if (ow!=null && BuildWrapperPlugin.logAnswers) {
+			args.add("--logcabal=true");
+		}
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);

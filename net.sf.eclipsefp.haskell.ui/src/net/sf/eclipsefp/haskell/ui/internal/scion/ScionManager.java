@@ -103,7 +103,7 @@ public class ScionManager implements IResourceChangeListener {
 
   private boolean browserStarted=false;
 
-  private final static String MINIMUM_BUILDWRAPPER="0.7.0";
+  private final static String MINIMUM_BUILDWRAPPER="0.7.2";
   private final static String MINIMUM_SCIONBROWSER="0.2.12";
 
   public ScionManager() {
