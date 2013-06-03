@@ -3,6 +3,7 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
@@ -65,7 +66,11 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       Set<PackageDescriptionStanza> apps=ResourceUtil.getApplicableStanzas( new IFile[]{res} );
       Set<String> appNames=new HashSet<String>();
       for (PackageDescriptionStanza pds:apps){
-        appNames.add(pds.toTypeName());
+        Collection<String> pkgs=pds.getDependentPackages();
+        // some stanzas may already have the dependency
+        if(!pkgs.contains( getValue() )){
+          appNames.add(pds.toTypeName());
+        }
       }
       int length=pd.getStanzas().size();
       for (int a=0;a<length;a++){
