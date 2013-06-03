@@ -48,10 +48,12 @@ public class HaskellResource {
   public boolean isProjectYesod(){
     if (fResource instanceof IProject){
       IProject project=(IProject)fResource;
-      try {
-        return project.hasNature( YesodNature.NATURE_ID );
-      } catch (CoreException ce){
-        HaskellCorePlugin.log( ce );
+      if (project.isAccessible()){
+        try {
+          return project.hasNature( YesodNature.NATURE_ID );
+        } catch (CoreException ce){
+          HaskellCorePlugin.log( ce );
+        }
       }
     }
     return false;

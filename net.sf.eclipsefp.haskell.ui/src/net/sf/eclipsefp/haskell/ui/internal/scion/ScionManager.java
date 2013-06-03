@@ -32,7 +32,6 @@ import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.hlint.HLintPlugin;
@@ -814,7 +813,7 @@ public class ScionManager implements IResourceChangeListener {
   /** */
   public class UpdateResourceVisitor implements IResourceVisitor {
     @Override
-    public boolean visit( final IResource resource ) throws CoreException {
+    public boolean visit( final IResource resource ) {
       return updateForResource( resource );
     }
   }
@@ -893,7 +892,7 @@ public class ScionManager implements IResourceChangeListener {
     try {
       event.getDelta().accept( new IResourceDeltaVisitor() {
         @Override
-        public boolean visit( final IResourceDelta delta ) throws CoreException {
+        public boolean visit( final IResourceDelta delta )  {
           return updateForResource( delta.getResource() );
         }
       } );
@@ -902,12 +901,10 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
-  private boolean updateForResource( final IResource resource )
-      throws CoreException {
+  private boolean updateForResource( final IResource resource ) {
     if( resource instanceof IProject ) {
       IProject project = ( IProject ) resource;
-      if(    project.isOpen()
-          && project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if(  ResourceUtil.hasHaskellNature( project )) {
           startInstance( project );
       }
       if( !project.isOpen() ) {

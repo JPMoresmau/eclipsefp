@@ -14,7 +14,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.compiler.IHsImplementation;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
@@ -287,8 +286,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
         if (project!=null){
         // String moduleHSFile=module.replace( '.', '/' );
           for( IProject p: project.getReferencedProjects() ) {
-            if( p.hasNature( HaskellNature.NATURE_ID )
-                 ) {
+            if( ResourceUtil.hasHaskellNature( p )) {
               IFile cf=BuildWrapperPlugin.getCabalFile( p );
               if (cf!=null){
                 PackageDescription pd=PackageDescriptionLoader.load(cf);

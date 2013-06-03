@@ -1,13 +1,10 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.wizards;
 
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,11 +45,7 @@ class SelectionAnalyzer {
     IResource resource = getResource( selection );
     if( resource != null ) {
       IProject project = resource.getProject();
-      try {
-        result = project.hasNature( HaskellNature.NATURE_ID );
-      } catch( CoreException ex ) {
-        logProblem( project, ex );
-      }
+       result = ResourceUtil.hasHaskellNature(project);
     }
     return result;
   }
@@ -66,11 +59,6 @@ class SelectionAnalyzer {
   //////////////////
 
 
-  private static void logProblem( final IProject project,
-                                  final CoreException ex ) {
-    String msg = "Problem with project '" + project.getName() + "'.";
-    HaskellUIPlugin.log( msg, ex );
-  }
 
   private static IResource getResource( final ISelection selection ) {
     IResource result = null;

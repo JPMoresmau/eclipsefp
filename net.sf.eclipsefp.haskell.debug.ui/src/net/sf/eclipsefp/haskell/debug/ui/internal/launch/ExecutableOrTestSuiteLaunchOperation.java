@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.compat.ILaunchManagerCompat;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.ILaunchAttributes;
@@ -38,7 +37,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
   throws CoreException {
   if( resource != null ) {
     IProject project = resource.getProject();
-    if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+    if(ResourceUtil.hasHaskellNature (project) ) {
       Map<String,IFile> executables=getExecutables(project);
       ILaunchConfiguration configuration = getConfiguration( project,executables,stanza );
       if( configuration != null ) {

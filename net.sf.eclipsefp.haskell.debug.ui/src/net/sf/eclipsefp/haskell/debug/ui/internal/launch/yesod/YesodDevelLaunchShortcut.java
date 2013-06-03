@@ -88,7 +88,7 @@ public class YesodDevelLaunchShortcut extends InteractiveLaunchShortcut {
       };
       if( resources.length > 0 && resources[ 0 ] != null ) {
         IProject project = resources[ 0 ].getProject();
-        if( project.hasNature( YesodNature.NATURE_ID ) ) {
+        if( project.isAccessible() && project.hasNature( YesodNature.NATURE_ID ) ) {
           ILaunchConfiguration config = ilo.getConfiguration( resources,
                                                           new IFile[0] );
           if( config != null ) {

@@ -15,7 +15,6 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.preferences.ICorePreferenceNames;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.views.common.ITreeElement;
@@ -52,8 +51,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
     final List<Object> result = new ArrayList<Object>();
     try {
       if( parentElement instanceof IProject
-          && ( ( IProject )parentElement ).isOpen()
-          && ( ( IProject )parentElement ).hasNature( HaskellNature.NATURE_ID ) ) {
+          && ResourceUtil.hasHaskellNature( ( IProject )parentElement ) ){
         IProject p = ( IProject )parentElement;
         result.add( new GHCSystemLibrary( p ));
         IFile f = BuildWrapperPlugin.getCabalFile( p );

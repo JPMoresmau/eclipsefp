@@ -6,7 +6,6 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.HaskellLaunchDelegate;
@@ -62,7 +61,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     IFile[] filesToLoad = SelectionAnalyzer.getSourcesToLoad( resources );
     if( resources.length > 0 && resources[ 0 ] != null ) {
       IProject project = resources[ 0 ].getProject();
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if(ResourceUtil.hasHaskellNature (project) ) {
         ILaunchConfiguration config = getConfiguration( resources,
                                                         filesToLoad );
         if( config != null ) {

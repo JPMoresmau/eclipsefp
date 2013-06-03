@@ -5,7 +5,6 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IContainer;
@@ -30,7 +29,7 @@ class SelectionAnalyzer {
       // check the special cases
       IResource resource = resources[ 0 ];
       IProject project = resource.getProject();
-      if( project.hasNature( HaskellNature.NATURE_ID ) ) {
+      if(ResourceUtil.hasHaskellNature (project) ) {
         // if source folder or a source subfolder, use exactly the source
         // files in that folder
         if( containsSources( resource ) ) {
@@ -79,8 +78,7 @@ class SelectionAnalyzer {
     return filterHsFiles( ress );
   }
 
-  private static IFile[] filterHsFiles( final IResource[] resources )
-                                                          throws CoreException {
+  private static IFile[] filterHsFiles( final IResource[] resources ) {
     ArrayList<IResource> list = new ArrayList<IResource>();
     for (int i = 0; i < resources.length; i++) {
       IResource res = resources[ i ];
@@ -91,17 +89,16 @@ class SelectionAnalyzer {
     return toArray( list );
   }
 
-  private static boolean isHsFile( final IResource res ) throws CoreException {
+  private static boolean isHsFile( final IResource res )  {
     return    res != null
            && res instanceof IFile
            && isInHsProject( res )
            && FileUtil.hasHaskellExtension( res );
   }
 
-  private static boolean isInHsProject( final IResource res )
-                                                          throws CoreException {
+  private static boolean isInHsProject( final IResource res ){
     IProject project = res.getProject();
-    return project.hasNature( HaskellNature.NATURE_ID );
+    return ResourceUtil.hasHaskellNature (project);
   }
 
   /** returns true iff the passed resource is either the source folder or

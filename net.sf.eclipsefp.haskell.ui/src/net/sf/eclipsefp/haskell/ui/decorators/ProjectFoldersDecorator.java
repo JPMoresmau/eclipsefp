@@ -1,14 +1,11 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.decorators;
 
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -33,16 +30,10 @@ public class ProjectFoldersDecorator extends LabelProvider
     Image result = null;
     IFolder folder = getFolder( element );
     if( folder != null ) {
-      try {
         IProject project = folder.getProject();
-        if(    project.isOpen()
-            && project.hasNature( HaskellNature.NATURE_ID ) ) {
+        if(   ResourceUtil.hasHaskellNature( project )) {
           result = decorate( folder,baseImage );
         }
-      } catch( CoreException cex ) {
-        HaskellUIPlugin.log( "Could not decorate Haskell project folders.",
-                             cex );
-      }
     }
     return result;
   }

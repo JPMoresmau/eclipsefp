@@ -5,10 +5,8 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
-import net.sf.eclipsefp.haskell.core.project.HaskellNature;
 import net.sf.eclipsefp.haskell.core.project.IImportLibrary;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.outline.CabalOutlineLP;
 import net.sf.eclipsefp.haskell.ui.internal.search.SectionSearchResult;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -21,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
 /** <p>the label provider for elements in a Haskell project. Functionality
@@ -114,41 +111,36 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
 
   private Image getFileImage( final IFile file ) {
     Image result = null;
-    try {
-      if( file.getProject().hasNature( HaskellNature.NATURE_ID ) ) {
-        //if( ResourceUtil.isProjectExecutable( file ) ) {
-        //  result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
-        //} else {
-          String ext = file.getFileExtension();
-          if( FileUtil.EXTENSION_HS.equals( ext ) ) {
-            result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
-          } else if( FileUtil.EXTENSION_LHS.equals( ext ) ) {
-            result = HaskellUIImages.getImage( IImageNames.LITERATE_SOURCE_FILE );
-          }
-        //}
-      }
-    } catch( final CoreException cex ) {
-      HaskellUIPlugin.log( cex );
+
+    if(ResourceUtil.hasHaskellNature( file.getProject()) ) {
+      //if( ResourceUtil.isProjectExecutable( file ) ) {
+      //  result = HaskellUIImages.getImage( IImageNames.PROJECT_EXECUTABLE );
+      //} else {
+        String ext = file.getFileExtension();
+        if( FileUtil.EXTENSION_HS.equals( ext ) ) {
+          result = HaskellUIImages.getImage( IImageNames.SOURCE_FILE );
+        } else if( FileUtil.EXTENSION_LHS.equals( ext ) ) {
+          result = HaskellUIImages.getImage( IImageNames.LITERATE_SOURCE_FILE );
+        }
+      //}
     }
+
     return result;
   }
 
   private Image getFolderImage( final IFolder folder ) {
     Image result = null;
-    try {
-      if(    folder.getProject().hasNature( HaskellNature.NATURE_ID )
-          && ResourceUtil.isSourceFolder( folder ) ) {
-        String id = IImageNames.SOURCE_FOLDER;
-        result = HaskellUIImages.getImage( id );
-      } else {
-        result=super.getImage( folder );
-        if (result==null){
-            return HaskellUIImages.getImage( IImageNames.FOLDER);
-        }
+    if(ResourceUtil.hasHaskellNature(    folder.getProject())
+        && ResourceUtil.isSourceFolder( folder ) ) {
+      String id = IImageNames.SOURCE_FOLDER;
+      result = HaskellUIImages.getImage( id );
+    } else {
+      result=super.getImage( folder );
+      if (result==null){
+          return HaskellUIImages.getImage( IImageNames.FOLDER);
       }
-    } catch( final CoreException cex ) {
-      HaskellUIPlugin.log(  cex );
     }
+
     return result;
   }
 }
