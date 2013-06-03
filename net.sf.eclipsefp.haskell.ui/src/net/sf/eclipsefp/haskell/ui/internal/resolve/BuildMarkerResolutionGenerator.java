@@ -122,11 +122,15 @@ public class BuildMarkerResolutionGenerator implements
           else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
             int start=GhcMessages.MISSING_MODULE.length();
             ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,start );
+            Set<String> pkgs=new HashSet<String>();
             while (ix>-1){
               int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
               if (ix2>-1){
                 String pkg=msg.substring( ix+GhcMessages.MISSING_MODULE_ADD_START.length(),ix2 );
-                res.add(new AddPackageDependency( pkg ));
+                // if the dependency can be found in several versions, we'll get several messages
+                if (pkgs.add( pkg )){
+                  res.add(new AddPackageDependency( pkg ));
+                }
                 ix=ix2;
               }
               ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,ix+1 );
