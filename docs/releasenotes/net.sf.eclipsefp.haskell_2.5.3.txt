@@ -21,7 +21,8 @@ Fixes:
 	- Partial fix for https://github.com/JPMoresmau/eclipsefp/issues/104 : when a project changes in a cabal-dev workspace, it is rebuilt in the sandbox of the projects that depend on it with the proper flags defined. However, this does not fix the fact that when EclipseFP calls install-deps on the projects it depend on, the flags won't be passed.
 	- Missing package dependency quick fix could offer several times the same package (if several versions of the package were used). Only display one (installing with no version bounds)
 	- Missing package dependency quick fix would add the dependency to all stanzas containing the current module, even if they already depended on it
-
+	- Coloring in syntax preference page may not always work
+	
 Features:
 	- warning when launching cabal install on a sandboxed project
 	- toggle comment action instead of comment/uncomment (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/7ea2e1eb/#3100)

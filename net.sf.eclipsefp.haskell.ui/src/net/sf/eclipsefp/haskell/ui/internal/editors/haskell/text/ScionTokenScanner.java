@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -367,10 +368,16 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
             fw.write( contents );
             fw.close();
             f.setCabalFile( new File(file.getParentFile(),"temp.cabal") .getAbsolutePath());
-            file.renameTo(new File( new File(file.getParentFile(),BWFacade.DIST_FOLDER),file.getName()));
-            lTokenDefs =  f.tokenTypes( file.getName() );
+            File newP= new File(file.getParentFile(),BWFacade.DIST_FOLDER);
+            newP.mkdirs();
+            File newF=new File(newP,file.getName());
+            file.renameTo(newF);
+            file=newF;
+            lTokenDefs =  f.tokenTypes( newF.getName() );
           } finally {
-            file.delete();
+            //file.delete();
+            Files.delete( file.toPath() );
+            file.getParentFile().delete();
           }
         } catch( Exception ex ) {
           HaskellUIPlugin.log( ex.getLocalizedMessage(), ex );
