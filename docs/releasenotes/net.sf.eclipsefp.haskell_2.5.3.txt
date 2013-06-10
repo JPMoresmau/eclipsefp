@@ -22,6 +22,7 @@ Fixes:
 	- Missing package dependency quick fix could offer several times the same package (if several versions of the package were used). Only display one (installing with no version bounds)
 	- Missing package dependency quick fix would add the dependency to all stanzas containing the current module, even if they already depended on it
 	- Coloring in syntax preference page may not always work
+	- Test Result View: bottom pane is read-only
 	
 Features:
 	- warning when launching cabal install on a sandboxed project

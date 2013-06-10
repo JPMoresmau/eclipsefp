@@ -1290,7 +1290,7 @@ public class BWFacade {
 						if (fldr.exists()){
 							fldr.delete(IResource.FORCE, new NullProgressMonitor());
 						}
-					} catch (CoreException ce){
+					} catch (Throwable ce){
 						BuildWrapperPlugin.logError(BWText.process_launch_error, ce);
 					}
 				}
