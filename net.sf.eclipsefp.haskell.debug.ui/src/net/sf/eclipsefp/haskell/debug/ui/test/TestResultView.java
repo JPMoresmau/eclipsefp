@@ -136,7 +136,7 @@ public class TestResultView extends ViewPart {
     clOutput.setLayoutData( fd );
 
     testText=new StyledText( mainComposite, SWT.H_SCROLL | SWT.V_SCROLL  | SWT.BORDER);
-
+    testText.setEditable( false );
     fd=new FormData();
     fd.top=new FormAttachment( clOutput, 0 );
     fd.left=new FormAttachment(0,0);
