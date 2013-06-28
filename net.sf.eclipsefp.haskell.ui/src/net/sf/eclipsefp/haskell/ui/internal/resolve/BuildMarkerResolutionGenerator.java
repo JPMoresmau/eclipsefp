@@ -14,10 +14,14 @@ import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
 import net.sf.eclipsefp.haskell.hlint.Suggestion;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
@@ -163,8 +167,10 @@ public class BuildMarkerResolutionGenerator implements
               }
             }
             try {
+
               if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()) {
                 //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
+                // need to have the package
                 DeclarationId[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
                 /*ArrayList<String> places = new ArrayList<String>();
                 for (DeclarationId avMod : availableMods) {
@@ -173,13 +179,18 @@ public class BuildMarkerResolutionGenerator implements
                   }
                 }
                 Collections.sort( places );*/
+                Set<String> refs=getReferencedPackages(marker);
+
                 Arrays.sort(availableMods,new Comparator<DeclarationId>() {
                   /* (non-Javadoc)
                    * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
                    */
                   @Override
                   public int compare( final DeclarationId o1, final DeclarationId o2 ) {
-                    int c=o1.getModule().getName().compareToIgnoreCase( o2.getModule().getName() );
+                    String m1=o1.getModule().getName();
+                    String m2=o2.getModule().getName();
+
+                    int c=m1.compareToIgnoreCase( m2 );
                     if (c==0){
                       c=o1.getName().compareTo( o2.getName() );
                     }
@@ -240,20 +251,24 @@ public class BuildMarkerResolutionGenerator implements
 //
 //            }
           } else if ((ix=msgL.indexOf( CabalMessages.DEPENDENCIES_MISSING ))>-1){
-            int nlid=msg.indexOf( "\n",ix );
-            Set<String> all=new HashSet<String>();
-            for (String s:msg.substring( nlid ).split( "\\n" )){
-              s=s.trim();
-              if (s.length()>0){
-                if (s.endsWith( CabalMessages.ANY)){
-                  s=s.substring( 0,s.length()-CabalMessages.ANY.length() ).trim();
+            // sandbox does the download for us, so if we're missing a dependency and sandbox,
+            // either it's badly spelt or we don't have internet connnection...
+            if (!ScionManager.getCabalImplDetails().isSandboxed()){
+              int nlid=msg.indexOf( "\n",ix );
+              Set<String> all=new HashSet<String>();
+              for (String s:msg.substring( nlid ).split( "\\n" )){
+                s=s.trim();
+                if (s.length()>0){
+                  if (s.endsWith( CabalMessages.ANY)){
+                    s=s.substring( 0,s.length()-CabalMessages.ANY.length() ).trim();
+                  }
+                  all.add(s);
+                  res.add(new InstallMissingPackage( Collections.singleton( s ) ));
                 }
-                all.add(s);
-                res.add(new InstallMissingPackage( Collections.singleton( s ) ));
               }
-            }
-            if (all.size()>1){
-              res.add(new InstallMissingPackage( all ));
+              if (all.size()>1){
+                res.add(new InstallMissingPackage( all ));
+              }
             }
           }
         }
@@ -310,5 +325,14 @@ public class BuildMarkerResolutionGenerator implements
     if (flag!=null && flag.length()>2 && flag.startsWith( "-X" )){ //$NON-NLS-1$
       res.add( new AddLanguagePragmaResolution( flag.substring( 2 ) ) );
     }
+  }
+
+  private static Set<String> getReferencedPackages(final IMarker marker){
+    IResource res=marker.getResource();
+    Set<String> ret=new HashSet<String>();
+    if (res instanceof IFile){
+      return ResourceUtil.getImportPackages( new IFile[]{(IFile)res} );
+    }
+    return ret;
   }
 }
