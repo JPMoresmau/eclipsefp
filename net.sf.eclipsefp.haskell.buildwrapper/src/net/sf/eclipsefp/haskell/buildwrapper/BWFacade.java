@@ -119,7 +119,7 @@ public class BWFacade {
 	 */
 	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<IFile, SingleJobQueue>();
 	private Map<IFile,Process> buildProcesses=Collections.synchronizedMap(new HashMap<IFile, Process>());
-	
+	private Set<IFile> runningFiles=Collections.synchronizedSet(new HashSet<IFile>());
 	/**
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
 	 */
@@ -321,11 +321,13 @@ public class BWFacade {
 	}
 	
 	private static byte[] contCommand;
+	private static byte[] tokenTypesCommand;
 	private static byte[] endCommand;
 	
 	static {
 		try {
 			contCommand=("r"+PlatformUtil.NL).getBytes(FileUtil.UTF8);
+			tokenTypesCommand=("t"+PlatformUtil.NL).getBytes(FileUtil.UTF8);
 			endCommand=("q"+PlatformUtil.NL).getBytes(FileUtil.UTF8);
 		} catch (UnsupportedEncodingException uee){
 			
@@ -334,6 +336,8 @@ public class BWFacade {
 	
 	public Collection<NameDef> build1LongRunning(IFile file,boolean end){
 		//BuildFlagInfo i=getBuildFlags(file);
+		//BuildWrapperPlugin.logInfo("build1LongRunning");
+
 		if (bwPath==null){
 			if (!showedNoExeError){
 				BuildWrapperPlugin.logError(BWText.error_noexe, null);
@@ -342,6 +346,15 @@ public class BWFacade {
 			return new ArrayList<NameDef>();
 		}
 		showedNoExeError=false;
+		while (!runningFiles.add(file)){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ignore){
+				// noop
+			}
+		}
+		JSONArray arr=null;
+		//BuildWrapperPlugin.logInfo("build1 longrunning start");
 		try {
 			Process p=buildProcesses.get(file);
 			if (p==null){
@@ -378,35 +391,7 @@ public class BWFacade {
 				p.getOutputStream().flush();
 			}
 			long t0=System.currentTimeMillis();
-			JSONArray arr=null;
-
-				
-			//command.add("--buildflags="+escapeFlags(i.getFlags()));
-			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
-			//long t0=System.currentTimeMillis();
-			String l=br.readLine();
-			boolean goOn=true;
-
-			while (goOn && l!=null){
-				if (l.startsWith(prefix)){
-					if (ow!=null && BuildWrapperPlugin.logAnswers) {
-						ow.addMessage(l);
-					}					
-					String jsons=l.substring(prefix.length()).trim();
-					try {
-						arr=ARRAY.fromJSON(jsons);
-					} catch (JSONException je){
-						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
-					}
-					goOn=false;
-				} else {
-					if (ow!=null) {
-						ow.addMessage(l);
-					}
-
-					l=br.readLine();
-				}
-			}
+			arr=readArrayBW(p);
 
 			if (end){
 				p.getOutputStream().write(endCommand);
@@ -421,34 +406,70 @@ public class BWFacade {
 				long t1=System.currentTimeMillis();
 				BuildWrapperPlugin.logInfo("build:"+(t1-t0)+"ms");
 			}
-			if (arr!=null && arr.length()>1){
-				Set<IResource> ress=new HashSet<IResource>();
-				ress.add(file);
-				BuildWrapperPlugin.deleteProblems(file);
-				JSONArray notes=arr.optJSONArray(1);
-				//notes.putAll(i.getNotes());
-				
-				parseNotes(notes,ress,null);
-				JSONArray names=arr.optJSONArray(0);
-				if(names!=null){
-					Collection<NameDef> ret=new ArrayList<NameDef>();
-					for (int a=0;a<names.length();a++){
-						try {
-							ret.add(new NameDef(names.getJSONObject(a)));
-						} catch (JSONException je){
-							BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
-						}
-					}
-					return ret;
-				}
-				
-				
-			}
 		} catch (IOException ioe){
 			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 			buildProcesses.remove(file);
+		} finally {
+			runningFiles.remove(file);
+			//BuildWrapperPlugin.logInfo("build1 longrunning end");
 		}
+
+			
+		if (arr!=null && arr.length()>1){
+			Set<IResource> ress=new HashSet<IResource>();
+			ress.add(file);
+			BuildWrapperPlugin.deleteProblems(file);
+			JSONArray notes=arr.optJSONArray(1);
+			//notes.putAll(i.getNotes());
+			
+			parseNotes(notes,ress,null);
+			JSONArray names=arr.optJSONArray(0);
+			if(names!=null){
+				Collection<NameDef> ret=new ArrayList<NameDef>();
+				for (int a=0;a<names.length();a++){
+					try {
+						ret.add(new NameDef(names.getJSONObject(a)));
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_note_error, je);
+					}
+				}
+				return ret;
+			}
+			
+			 
+		}
+
 		return null;
+	}
+	
+	private JSONArray readArrayBW(Process p) throws IOException{
+		JSONArray arr=null;
+		BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
+		//long t0=System.currentTimeMillis();
+		String l=br.readLine();
+		boolean goOn=true;
+
+		while (goOn && l!=null){
+			if (l.startsWith(prefix)){
+				if (ow!=null && BuildWrapperPlugin.logAnswers) {
+					ow.addMessage(l);
+				}					
+				String jsons=l.substring(prefix.length()).trim();
+				try {
+					arr=ARRAY.fromJSON(jsons);
+				} catch (JSONException je){
+					BuildWrapperPlugin.logError(BWText.process_parse_error, je);
+				}
+				goOn=false;
+			} else {
+				if (ow!=null) {
+					ow.addMessage(l);
+				}
+
+				l=br.readLine();
+			}
+		}
+		return arr;
 	}
 	
 	/**
@@ -456,7 +477,7 @@ public class BWFacade {
 	 * @param file
 	 */
 	public void endLongRunning(IFile file){
-		Process p=buildProcesses.get(file);
+		Process p=buildProcesses.remove(file);
 		if (p!=null){
 			try {
 				p.getOutputStream().write(endCommand);
@@ -467,9 +488,7 @@ public class BWFacade {
 				}
 			} catch (IOException ioe){
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
-			} finally {
-				buildProcesses.remove(file);
-			}
+			} 
 		}
 		
 	}
@@ -793,12 +812,33 @@ public class BWFacade {
 	
 	public List<TokenDef> tokenTypes(IFile file){
 		//long t0=System.currentTimeMillis();
-		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
-		command.add("tokentypes");
-		command.add("--file="+path);
-		addEditorStanza(file,command);
-		JSONArray arr=run(command,ARRAY);
+		
+		JSONArray arr=null;
+		if (runningFiles.add(file)){
+			Process p=buildProcesses.get(file);
+			try {
+				if (p!=null){
+					//BuildWrapperPlugin.logInfo("tokenTypes longrunning start");
+					p.getOutputStream().write(tokenTypesCommand);
+					p.getOutputStream().flush();
+					arr=readArrayBW(p);
+				}
+				//BuildWrapperPlugin.logInfo("tokenTypes longrunning");
+			} catch (IOException ioe){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			} finally {
+				//BuildWrapperPlugin.logInfo("tokenTypes longrunning end");
+				runningFiles.remove(file);
+			}
+		} 
+		if (arr==null){
+			String path=file.getProjectRelativePath().toOSString();
+			LinkedList<String> command=new LinkedList<String>();
+			command.add("tokentypes");
+			command.add("--file="+path);
+			addEditorStanza(file,command);
+			arr=run(command,ARRAY);
+		}
 		//long t01=System.currentTimeMillis();
 		List<TokenDef> cps;
 		if (arr!=null){
@@ -941,15 +981,37 @@ public class BWFacade {
 	
 	public ThingAtPoint getThingAtPoint(IFile file,Location location){
 		//BuildFlagInfo i=getBuildFlags(file);
-		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
-		command.add("thingatpoint");
-		command.add("--file="+path);
-		command.add("--line="+location.getStartLine());
-		command.add("--column="+(location.getStartColumn()+1));
-		addEditorStanza(file,command);
-		//command.add("--buildflags="+escapeFlags(i.getFlags()));
-		JSONArray arr=run(command,ARRAY);
+		//long t0=System.currentTimeMillis();
+		
+		JSONArray arr=null;
+		if (runningFiles.add(file)){
+			try {
+				Process p=buildProcesses.get(file);
+				if (p!=null){
+					//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning start");
+					String command="p("+location.getStartLine()+","+(location.getStartColumn()+1)+")";
+					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
+					p.getOutputStream().flush();
+					arr=readArrayBW(p);
+				}
+			} catch (IOException ioe){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			} finally {
+				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
+				runningFiles.remove(file);
+			}
+		} 
+		if (arr==null){
+			String path=file.getProjectRelativePath().toOSString();
+			LinkedList<String> command=new LinkedList<String>();
+			command.add("thingatpoint");
+			command.add("--file="+path);
+			command.add("--line="+location.getStartLine());
+			command.add("--column="+(location.getStartColumn()+1));
+			addEditorStanza(file,command);
+			//command.add("--buildflags="+escapeFlags(i.getFlags()));
+			arr=run(command,ARRAY);
+		}
 		ThingAtPoint tap=null;
 		if (arr!=null){
 			if (arr.length()>1){
@@ -966,6 +1028,8 @@ public class BWFacade {
 				}
 			}
 		}
+		//long t1=System.currentTimeMillis();
+		//BuildWrapperPlugin.logInfo("getThingAtPoint:"+(t1-t0)+"ms");
 		return tap;
 	}
 	

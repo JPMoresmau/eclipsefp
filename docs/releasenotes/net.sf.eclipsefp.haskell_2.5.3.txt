@@ -5,8 +5,8 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.7.1 of buildwrapper has been validated with this version of EclipseFP
-	- EclipseFP also uses scion-browser. Version 0.2.16 has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.7.2 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP also uses scion-browser. Version 0.2.17 has been validated with this version of EclipseFP
  
 
 Fixes:
@@ -23,6 +23,7 @@ Fixes:
 	- Missing package dependency quick fix would add the dependency to all stanzas containing the current module, even if they already depended on it
 	- Coloring in syntax preference page may not always work
 	- Test Result View: bottom pane is read-only
+	- Pragmas on several lines are correctly colored
 	
 Features:
 	- warning when launching cabal install on a sandboxed project
@@ -35,6 +36,7 @@ Features:
 	- Supports Yesod 1.2
 	- Haskell launch configurations are deleted when a project is deleted
 	- If debug mode is enabled for buildwrapper, the cabal invocations arguments are dumped in the console (https://github.com/JPMoresmau/eclipsefp/issues/103)
+	- syntax highlighting and thing at point use same long running process than build, for performance
 
 Internal:
 
