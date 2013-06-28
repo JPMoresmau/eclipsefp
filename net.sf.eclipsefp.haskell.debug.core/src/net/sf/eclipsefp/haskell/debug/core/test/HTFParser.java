@@ -52,7 +52,9 @@ public class HTFParser {
    */
   public static void parseTestList(final TestResult root,final File f,final IProject p) throws IOException, JSONException{
     String s=FileUtil.getContents( f,FileUtil.UTF8 );
-
+    if (s.length()==0){
+      return;
+    }
     Map<String,TestResult> parents=new HashMap<String, TestResult>();
     parents.put( new JSONArray().toString(), root );
     int ix=s.indexOf(SEP);
@@ -141,6 +143,9 @@ public class HTFParser {
    */
   public static void parseTestOutput(final TestResult root,final File f,final IProject p) throws IOException, JSONException{
     String s=FileUtil.getContents( f,FileUtil.UTF8 );
+    if (s.length()==0){
+      return;
+    }
     Map<String,TestResult> parents=new HashMap<String, TestResult>();
     fillParents(root, new JSONArray(),parents );
     //int ix=s.indexOf(SEP);
