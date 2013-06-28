@@ -283,8 +283,14 @@ public class FileUtil {
     return candidateLocations;
   }
   
+  /**
+   * read contents of an Eclipse file
+   * @param f the file
+   * @return a string, maybe empty, but not null
+   * @throws Exception
+   */
   public static String getContents(IFile f) throws Exception{
-	  StringBuilder sb=new StringBuilder();
+	  String ret="";
 	  if (f.exists()){
 		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
 		  InputStream is=f.getContents(true);
@@ -295,13 +301,20 @@ public class FileUtil {
 			  r=is.read(buf);
 		  }
 		  is.close();
-		  sb.append(new String(baos.toByteArray(),f.getCharset()));
+		  ret=new String(baos.toByteArray(),f.getCharset());
 	  }
-	  return sb.toString();
+	  return ret;
   }
   
+  /**
+   * read contents of an file
+   * @param f the file
+   * @param charSet the character set
+   * @return a string, maybe empty, but not null
+   * @throws Exception
+   */
   public static String getContents(File f,String charSet) throws IOException{
-	  StringBuilder sb=new StringBuilder();
+	  String ret="";
 	  if (f.exists()){
 		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
 		  InputStream is=new BufferedInputStream(new FileInputStream(f));
@@ -312,9 +325,9 @@ public class FileUtil {
 			  r=is.read(buf);
 		  }
 		  is.close();
-		  sb.append(new String(baos.toByteArray(),charSet));
+		  ret=new String(baos.toByteArray(),charSet);
 	  }
-	  return sb.toString();
+	  return ret;
   }
   
   
