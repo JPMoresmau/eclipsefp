@@ -63,6 +63,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
       final List<String> commands = new ArrayList<String>();
       commands.add( cabalExecutable );
       commands.add("install");
+      ScionManager.addCabalInstallOptions( commands );
    // options
       commands.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
       // commands.add( "--user" ); // use cabal default, which is now user

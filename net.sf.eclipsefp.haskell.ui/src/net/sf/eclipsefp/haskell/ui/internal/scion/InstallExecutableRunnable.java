@@ -109,7 +109,7 @@ public class InstallExecutableRunnable implements Runnable {
     }*/
     for (Package p:packages){
       List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getPkgName(), global?"--global": "--user" ));
-
+      ScionManager.addCabalInstallOptions( args );
       File f=new File(binDir,FileUtil.makeExecutableName( p.getExeName() ));
       if (!f.exists()){ // the exe does not exist, we force reinstall to make sure it wasn't deleted manually
         args.add( "--reinstall" );

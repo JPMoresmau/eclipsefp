@@ -82,6 +82,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.osgi.framework.Version;
 
 /**
  * Manages helper executables
@@ -945,10 +946,26 @@ public class ScionManager implements IResourceChangeListener {
       details.setExecutable(cabal);
       details.setType( SandboxType.NONE );
     }
+    if (CabalImplementationManager.getCabalLibraryVersion().compareTo( new Version(1,16,0) )>=0){
+      details.getOptions().add( "-j" );
+    }
+    addCabalInstallOptions(details.getOptions());
+
     //HaskellUIPlugin.getDefault().getPreferenceStore().getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
     return details;
   }
 
+  /**
+   * add options for cabal install
+   * @param options
+   */
+  public static void addCabalInstallOptions(final List<String> options){
+    //https://github.com/JPMoresmau/eclipsefp/issues/107
+    if (CabalImplementationManager.getCabalLibraryVersion().compareTo( new Version(1,16,0) )>=0){
+      options.add( "-j" );
+    }
+
+  }
 
   /**
    * Stops the Scion instance for the given project. Does not remove the

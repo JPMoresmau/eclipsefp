@@ -9,6 +9,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
@@ -54,6 +55,7 @@ public class CabalInstallWizard extends Wizard {
       } else {
         commands.add( "--user" );
       }
+      ScionManager.addCabalInstallOptions( commands );
       // force reinstall since we're probably reinstalling our development version
       commands.add( "--reinstall" );
       for (final IProject p:projects){
