@@ -946,10 +946,7 @@ public class ScionManager implements IResourceChangeListener {
       details.setExecutable(cabal);
       details.setType( SandboxType.NONE );
     }
-    if (CabalImplementationManager.getCabalLibraryVersion().compareTo( new Version(1,16,0) )>=0){
-      details.getOptions().add( "-j" );
-    }
-    addCabalInstallOptions(details.getOptions());
+    addCabalInstallOptions( details.getInstallOptions() );
 
     //HaskellUIPlugin.getDefault().getPreferenceStore().getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
     return details;

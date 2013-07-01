@@ -60,6 +60,7 @@ public class SandboxHelper {
 				args.add("--enable-tests");
 				// force reinstalls since we won't break anything outside of the sandbox
 				args.add("--force-reinstalls");
+				args.addAll(f.getCabalImplDetails().getInstallOptions());
 				f.runCabal(args);
 				break;
 			}
@@ -88,6 +89,7 @@ public class SandboxHelper {
 			args.add("install");
 			args.add(p.getLocation().toOSString());
 			args.add("--force-reinstalls");
+			args.addAll(sandboxFacade.getCabalImplDetails().getInstallOptions());
 			sandboxFacade.runCabal(args);
 		}
 	}

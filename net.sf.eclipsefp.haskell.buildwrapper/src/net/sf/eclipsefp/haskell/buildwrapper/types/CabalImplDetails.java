@@ -21,7 +21,9 @@ public class CabalImplDetails {
   
   private String executable;
   private final List<String> options=new ArrayList<String>();
-  private SandboxType type=SandboxType.NONE;
+  private final List<String> installOptions=new ArrayList<String>();
+
+private SandboxType type=SandboxType.NONE;
 
   public CabalImplDetails() {
     super();
@@ -54,6 +56,10 @@ public class CabalImplDetails {
 	
 	public void setType(SandboxType type) {
 		this.type = type;
+	}
+
+	public List<String> getInstallOptions() {
+		return installOptions;
 	}
 
 
