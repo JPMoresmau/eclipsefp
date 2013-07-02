@@ -90,8 +90,9 @@ public class WordFinder {
 
           //final String fName = textSel.getText().trim();
           try {
+            final IDocument doc=haskellEditor.getDocument();
             Location l = new Location( file.getLocation().toOSString(),
-                haskellEditor.getDocument(), new Region( offset, 0 ) );
+                doc, new Region( offset, 0 ) );
             f.getThingAtPoint(file, l, new ThingAtPointHandler() {
 
               @Override
@@ -110,12 +111,12 @@ public class WordFinder {
                 }*/
 
 
-                if( thing==null) {
+                if( thing==null && doc!=null) {
                  // name = WordFinder.findWord( haskellEditor.getDocument(),
                  //     textSel.getOffset() );
                   try {
-                    IRegion r=haskellEditor.getDocument().getLineInformationOfOffset( offset);
-                    String line=haskellEditor.getDocument().get( r.getOffset(), r.getLength() );
+                    IRegion r=doc.getLineInformationOfOffset( offset);
+                    String line=doc.get( r.getOffset(), r.getLength() );
                     int off=offset-r.getOffset();
                     String name= ParserUtils.getHaskellWord(line,off);
                     if (line.startsWith( "import" ) && name.contains( "." )){
