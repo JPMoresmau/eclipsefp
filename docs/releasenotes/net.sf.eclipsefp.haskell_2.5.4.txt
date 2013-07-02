@@ -13,6 +13,7 @@ Fixes:
 
 Features:
 	- pass -j to cabal install (https://github.com/JPMoresmau/eclipsefp/issues/107)
+	- allow installing dependencies on sandbox projects if dependencies are not found
 
 Internal:
 

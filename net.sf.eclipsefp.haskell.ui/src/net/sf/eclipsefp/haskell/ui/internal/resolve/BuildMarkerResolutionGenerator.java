@@ -269,6 +269,9 @@ public class BuildMarkerResolutionGenerator implements
               if (all.size()>1){
                 res.add(new InstallMissingPackage( all ));
               }
+              // ... well it can happen that the configure has failed, so still give the option
+            } else {
+              res.add( new InstallDeps() );
             }
           }
         }

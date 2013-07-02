@@ -333,6 +333,7 @@ public final class UITexts extends NLS {
   public static String resolve_install_one;
   public static String resolve_install_all;
   public static String resolve_text_replace;
+  public static String resolve_install_sandbox;
 
   public static String preferences_title;
 
