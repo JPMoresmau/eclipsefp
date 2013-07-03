@@ -968,7 +968,7 @@
           objectClass="org.eclipse.core.resources.IProject">
        <action
              class="net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction"
-             enablesFor="1"
+             enablesFor="+"
              id="net.sf.eclipsefp.haskell.ui.cabalInstallAction"
              icon="icons/eview16/cabal.png"
              label="%cabalInstallWizard.name">
@@ -986,7 +986,7 @@
           objectClass="org.eclipse.core.resources.IProject">
        <action
              class="net.sf.eclipsefp.haskell.ui.actions.CabalInstallDependenciesAction"
-             enablesFor="1"
+             enablesFor="+"
              id="net.sf.eclipsefp.haskell.ui.cabalInstallDependenciesAction"
              icon="icons/eview16/hackage_install.png"
              label="%cabalInstallDependenciesWizard.name">

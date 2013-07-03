@@ -1414,6 +1414,7 @@ public class BWFacade {
 		for (String s:cabalImplDetails.getOptions()){
 			args.add(s);
 		}
+		args.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);

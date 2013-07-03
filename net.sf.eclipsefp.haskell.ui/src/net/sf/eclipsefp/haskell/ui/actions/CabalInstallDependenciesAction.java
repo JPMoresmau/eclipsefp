@@ -46,6 +46,11 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
   }
 
   @Override
+  protected String getCabalDevCommand() {
+    return "install-deps";
+  }
+
+  @Override
   protected String getSandboxWarningMessage() {
     return UITexts.install_sandbox_dependencies_text;
   }
