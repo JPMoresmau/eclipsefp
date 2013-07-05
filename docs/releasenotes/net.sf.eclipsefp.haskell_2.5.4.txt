@@ -10,6 +10,7 @@ Necessary Haskell packages:
  
 
 Fixes:
+	- Close all long running processes properly when project is deleted
 
 Features:
 	- pass -j to cabal install (https://github.com/JPMoresmau/eclipsefp/issues/107)
