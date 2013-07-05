@@ -58,6 +58,16 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	private UsageThread usageThread=new UsageThread();
 	
 	private IResourceChangeListener sandboxListener=new SandboxHelper.ProjectReferencesChangeListener();
+	
+	private IResourceChangeListener preDeleteListener = new IResourceChangeListener() {
+		@Override
+		public void resourceChanged(IResourceChangeEvent event) {
+			IProject project = (IProject) event.getResource();
+			// close all processes to prevent file-locking issues
+			getFacade(project).closeAllProcesses();
+		}
+	};
+	
 	/**
 	 * The constructor
 	 */
@@ -73,6 +83,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		plugin = this;
 		usageThread.start();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(sandboxListener,IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(preDeleteListener, IResourceChangeEvent.PRE_DELETE);
 	}
 
 	/**
@@ -89,6 +100,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(sandboxListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(preDeleteListener);
 		for (BWFacade f:facades.values()){
 			f.getBuildJobQueue().close();
 			f.getSynchronizeJobQueue().close();
