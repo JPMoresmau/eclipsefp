@@ -483,8 +483,13 @@ public class BWFacade {
 				p.getOutputStream().write(endCommand);
 				try {
 					p.getOutputStream().flush();
-				} catch (IOException ignore){
-					// noop: flush fails if the process closed properly because write flush
+				} catch (IOException ignore) {
+					// noop: flush fails if the process already exited due to write
+				}
+				try {
+					// wait for exit to prevent subsequent file locking issues
+					p.waitFor();
+				} catch (InterruptedException ignore){
 				}
 			} catch (IOException ioe){
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
