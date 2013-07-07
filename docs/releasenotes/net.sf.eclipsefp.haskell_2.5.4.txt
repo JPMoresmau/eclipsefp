@@ -17,6 +17,7 @@ Features:
 	- pass -j to cabal install (https://github.com/JPMoresmau/eclipsefp/issues/107)
 	- allow installing dependencies on sandbox projects if dependencies are not found
 	- cabal install action can install into arbitrary sandbox if cabal-dev is used
+	- add Haskell and Yesod natures to other projects (https://github.com/JPMoresmau/eclipsefp/issues/102)
 
 Internal:
 

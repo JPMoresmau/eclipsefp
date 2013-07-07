@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.core;singleton:=true
-Bundle-Version: 2.5.3.qualifier
+Bundle-Version: 2.5.4.qualifier
 Bundle-Activator: net.sf.eclipsefp.haskell.core.HaskellCorePlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
@@ -32,7 +32,7 @@ Export-Package: net.sf.eclipsefp.haskell.core;uses:="org.osgi.framework,org.ecli
  net.sf.eclipsefp.haskell.core.internal.contenttypes;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.internal.project;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui,net.sf.eclipsefp.haskell.debug.ui.test",
  net.sf.eclipsefp.haskell.core.internal.project.provisionary;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ui",
- net.sf.eclipsefp.haskell.core.internal.util;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ghccompiler",
+ net.sf.eclipsefp.haskell.core.internal.util;x-friends:="net.sf.eclipsefp.haskell.core.test,net.sf.eclipsefp.haskell.ghccompiler,net.sf.eclipsefp.haskell.ui",
  net.sf.eclipsefp.haskell.core.parser,
  net.sf.eclipsefp.haskell.core.partitioned.runner,
  net.sf.eclipsefp.haskell.core.preferences;uses:="org.eclipse.core.runtime.preferences",
