@@ -28,6 +28,7 @@ import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.SelectionButtonDialogFiel
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringButtonDialogField;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringDialogField;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -285,7 +286,7 @@ public class NewProjectWizardPage extends WizardPage {
 
     }
 
-    public Control createControl(final Composite composite) {
+    public Composite createControl(final Composite composite) {
       final int numColumns= 1;
 
       final Group group= new Group(composite, SWT.NONE);
@@ -424,6 +425,9 @@ public class NewProjectWizardPage extends WizardPage {
             return;
           }
         }
+       IPath cabalFile =projectPath.append(name).addFileExtension( FileUtil.EXTENSION_CABAL );
+       // cabal file exists: disable component choice
+       enableComponentControl(!cabalFile.toFile().exists() );
        setWarningMessage( UITexts.newProjectWizardPage_Message_alreadyExists);
        setPageComplete(true);
        return;
@@ -441,7 +445,7 @@ public class NewProjectWizardPage extends WizardPage {
           return;
         }
       }
-
+      enableComponentControl( true );
       setPageComplete(true);
       setMessage(null);
     }
@@ -466,6 +470,7 @@ public class NewProjectWizardPage extends WizardPage {
   private final NameGroup fNameGroup;
   private final LocationGroup fLocationGroup;
   private final ComponentGroup fComponentGroup;
+  private Composite componentControl;
 
   public NewProjectWizardPage() {
     this(PAGE_NAME);
@@ -534,7 +539,7 @@ public class NewProjectWizardPage extends WizardPage {
   protected void createControls(final Composite composite) {
     createNameControl(composite);
     createLocationControl(composite);
-    createComponentControl(composite);
+    componentControl=createComponentControl(composite);
   }
 
   /**
@@ -567,10 +572,23 @@ public class NewProjectWizardPage extends WizardPage {
    * @param composite the parent composite
    * @return the created control
    */
-  protected Control createComponentControl(final Composite composite) {
-    Control componentControl = fComponentGroup.createControl(composite);
+  protected Composite createComponentControl(final Composite composite) {
+    Composite componentControl = fComponentGroup.createControl(composite);
     componentControl.setLayoutData(horizontalFillGridData());
     return componentControl;
+  }
+
+  /**
+   * enable or disable the component group
+   * @param enabled
+   */
+  protected void enableComponentControl(final boolean enabled){
+    if (componentControl!=null){
+      componentControl.setEnabled( enabled );
+      for (Control c:componentControl.getChildren()){
+        c.setEnabled( enabled );
+      }
+    }
   }
 
   public boolean isLibrary(){

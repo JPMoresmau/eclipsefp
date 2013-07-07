@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- Close all long running processes properly when project is deleted
+	- Disable component group on new project creation if cabal file already exists (since existing file will be reused)
 
 Features:
 	- pass -j to cabal install (https://github.com/JPMoresmau/eclipsefp/issues/107)
