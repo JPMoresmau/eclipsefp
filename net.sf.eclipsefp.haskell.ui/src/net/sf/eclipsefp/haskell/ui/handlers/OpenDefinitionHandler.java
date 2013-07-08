@@ -216,7 +216,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
   }
 
-  public static void openFile(final IWorkbenchPage page,final IFile file,final String shortName){
+  private static void openFile(final IWorkbenchPage page,final IFile file,final String shortName){
     new UIJob( UITexts.openDefinition_select_job ) {
 
       @Override
