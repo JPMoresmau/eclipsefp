@@ -585,8 +585,11 @@ public class NewProjectWizardPage extends WizardPage {
   protected void enableComponentControl(final boolean enabled){
     if (componentControl!=null){
       componentControl.setEnabled( enabled );
-      for (Control c:componentControl.getChildren()){
-        c.setEnabled( enabled );
+      fComponentGroup.fExecutable.setEnabled( enabled );
+      fComponentGroup.fLibrary.setEnabled( enabled );
+      if (!enabled){
+        fComponentGroup.fExecutable.setSelection( false );
+        fComponentGroup.fLibrary.setSelection( false );
       }
     }
   }
