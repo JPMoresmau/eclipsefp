@@ -29,47 +29,31 @@ public class WordFinder {
 
   //private final DocumentCharacterIterator docIter = new DocumentCharacterIterator();
 
-  public static String findWord( final IDocument document, final int position ) {
-    //IRegion result = null;
+  public static IRegion findWordRegion( final IDocument document, final int position ) {
     if(document!=null && position >= 0 ) {
       try {
         IRegion r=document.getLineInformationOfOffset( position );
         String line=document.get( r.getOffset(), r.getLength() );
         int off=position-r.getOffset();
-        return ParserUtils.getHaskellWord(line,off);
-
-        /*IRegion line = document.getLineInformationOfOffset( position );
-
-        int lineEnd = line.getOffset() + line.getLength();
-        if( position != lineEnd ) {
-          BreakIterator breakIter = BreakIterator.getWordInstance();
-          docIter.setDocument( document, line );
-          breakIter.setText( docIter );
-          int start = breakIter.preceding( position );
-          if( start == BreakIterator.DONE ) {
-            start = line.getOffset();
-          }
-          int end = breakIter.following( position );
-          if( end == BreakIterator.DONE ) {
-            end = lineEnd;
-          }
-          if( breakIter.isBoundary( position ) ) {
-            if( end - position > position - start ) {
-              start = position;
-            } else {
-              end = position;
-            }
-          }
-          if( start != end ) {
-            result = new Region( start, end - start );
-          }
-        }*/
+        IRegion lineRegion = ParserUtils.getHaskellWordRegion(line,off);
+        if (lineRegion != null) {
+          return new Region( r.getOffset()+lineRegion.getOffset(), lineRegion.getLength() );
+        }
       } catch( final BadLocationException badlox ) {
         badlox.printStackTrace();
       }
     }
     return null;
-    //return result;
+  }
+
+  public static String findWord( final IDocument document, final int position ) {
+    IRegion r = findWordRegion( document, position );
+    try {
+      return document.get(r.getOffset(), r.getLength());
+    } catch( BadLocationException ex ) {
+      ex.printStackTrace();
+    }
+    return null;
   }
 
   public static void getEditorThing(final HaskellEditor haskellEditor,final EditorThingHandler handler){
