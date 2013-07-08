@@ -1763,15 +1763,4 @@
 		<description>%theme.tooltip.font.description</description>
 	</fontDefinition>
  </extension>
- <extension
-       point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
-    <hyperlinkDetector
-          activate="true"
-          class="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellHyperlinkDetector"
-          description="%openDefinitionCommand_desc"
-          id="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellHyperlinkDetector"
-          name="%openDefinitionCommand_name"
-          targetId="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor">
-    </hyperlinkDetector>
- </extension>
 </plugin>
