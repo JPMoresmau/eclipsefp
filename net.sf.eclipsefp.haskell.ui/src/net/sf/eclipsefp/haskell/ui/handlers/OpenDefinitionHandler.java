@@ -81,136 +81,139 @@ public class OpenDefinitionHandler extends AbstractHandler {
             //char haddockType = thing.getHaddockType();
             // final ScionInstance instance=thing.getInstance();
 
-            if(thing!=null &&  thing.getThing()!=null) {
-              final IFile file = thing.getFile();
-              String haddockType=thing.getThing().getHaddockType();
-              /*
-               * Location location = instance.firstDefinitionLocation( name );
-               *
-               * if( location != null ) { final Location theLocation = location;
-               * new UIJob(UITexts.openDefinition_open_job) {
-               *
-               * @Override public IStatus runInUIThread( final IProgressMonitor
-               * monitor ) { try { openInEditor(
-               * haskellEditor.getEditorSite().getPage(), theLocation,
-               * file.getProject() ); } catch( PartInitException ex ) {
-               * ex.printStackTrace(); // too bad }
-               *
-               * return Status.OK_STATUS; } }.schedule(); } else {
-               */
-              String module = null;
-              String shortName = thing.getThing().getName();
-              String fullName=shortName;
-              if ("m".equals(thing.getThing().getHaddockType())){
-                shortName=null;
-                module=thing.getThing().getName();
-              } else {
-                  module = thing.getThing().getModule();
-                  if (module!=null){
-                    fullName=module+"."+shortName;
-                  }
-              }
-              final IProject p = file.getProject();
-              final BWFacade f = BuildWrapperPlugin.getFacade( p );
-
-              // we try to find an id for an object not exported, that scion
-              // doesn't
-              // know
-              // but that we have in the outline
-              // short name of course in the outline
-              String myModule = haskellEditor.getModuleName();
-              if( ( module != null && module.equals( myModule ) )
-                  || ( module == null && ( myModule == null || myModule
-                      .length() == 0 ) ) ) {
-                Location location = haskellEditor
-                    .getOutlineLocation( shortName );
-                if( location != null ) {
-                  final Location theLocation = location;
-                  // Ensure that this happens in the UI thread
-                  new UIJob( UITexts.openDefinition_select_job ) {
-
-                    @Override
-                    public IStatus runInUIThread( final IProgressMonitor monitor ) {
-                      selectAndReveal( haskellEditor, haskellEditor
-                          .getDocument(), theLocation );
-                      return Status.OK_STATUS;
-                    }
-                  }.schedule();
-                  return;
-                }
-              }
-
-              if (module==null){
-                ImportsManager mgr = haskellEditor.getImportsManager();
-                Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
-                for ( String s : decls.keySet() ) {
-                  ImportsManager.Imported i=decls.get(s);
-                  if (i.getDocumented().getDocumented().getName().equals( fullName ) || i.getAnimport().getImportDef().getModule().equals( fullName )){
-                    //
-                    IFile fi=i.getDocumented().getFile();
-                    if (fi!=null){
-                      openFile( haskellEditor
-                          .getEditorSite().getPage(), fi, shortName );
-                      return;
-                    }
-                    module=i.getAnimport().getImportDef().getModule();
-                    if (haddockType==null){
-                      haddockType="t"; // assume types since not resolved
-                    }
-                    //break;
-                  }
-                }
-              }
-
-              if( module != null ) {
-                IFile fi = ResourceUtil.findFileFromModule( p, module );
-                if (fi!=null){
-                  openFile( haskellEditor
-                                  .getEditorSite().getPage(), fi, shortName );
-                  return;
-                }
-
-                final String moduleF = module;
-                final String shortNameF = shortName;
-                final String haddockTypeF = haddockType;
-
-                new Thread( new Runnable() {
-
-                  @Override
-                  public void run() {
-                    // find in outside location...
-                    outer: for( CabalPackage[] pkgs: f.getPackagesByDB()
-                        .values() ) {
-                      for( CabalPackage cp: pkgs ) {
-                        if( cp.getModules() != null
-                            && cp.getModules().contains( moduleF ) ) {
-                          final String pkg = cp.toString();
-                          //new UIJob( UITexts.openDefinition_select_job ) {
-
-                          //  @Override
-                          //  public IStatus runInUIThread(
-                          //      final IProgressMonitor monitor ) {
-                              openExternalDefinition( haskellEditor
-                                  .getEditorSite().getPage(), p, pkg, moduleF,
-                                  shortNameF, haddockTypeF );
-                          //    return Status.OK_STATUS;
-                          //  }
-                          //}.schedule();
-                          break outer;
-                        }
-                      }
-                    }
-                  }
-                } ).start();
-              }
-
-              // }
-            }
-
+            openDefinition( haskellEditor, thing );
           }
         } );
 
     return null;
+  }
+
+  public static void openDefinition(final HaskellEditor haskellEditor, final EditorThing thing) {
+    if(thing==null ||  thing.getThing()==null) {
+      return;
+    }
+
+    final IFile file = thing.getFile();
+    String haddockType=thing.getThing().getHaddockType();
+    /*
+     * Location location = instance.firstDefinitionLocation( name );
+     *
+     * if( location != null ) { final Location theLocation = location;
+     * new UIJob(UITexts.openDefinition_open_job) {
+     *
+     * @Override public IStatus runInUIThread( final IProgressMonitor
+     * monitor ) { try { openInEditor(
+     * haskellEditor.getEditorSite().getPage(), theLocation,
+     * file.getProject() ); } catch( PartInitException ex ) {
+     * ex.printStackTrace(); // too bad }
+     *
+     * return Status.OK_STATUS; } }.schedule(); } else {
+     */
+    String module = null;
+    String shortName = thing.getThing().getName();
+    String fullName=shortName;
+    if ("m".equals(thing.getThing().getHaddockType())){
+      shortName=null;
+      module=thing.getThing().getName();
+    } else {
+        module = thing.getThing().getModule();
+        if (module!=null){
+          fullName=module+"."+shortName;
+        }
+    }
+    final IProject p = file.getProject();
+    final BWFacade f = BuildWrapperPlugin.getFacade( p );
+
+    // we try to find an id for an object not exported, that scion
+    // doesn't
+    // know
+    // but that we have in the outline
+    // short name of course in the outline
+    String myModule = haskellEditor.getModuleName();
+    if( ( module != null && module.equals( myModule ) )
+        || ( module == null && ( myModule == null || myModule
+            .length() == 0 ) ) ) {
+      Location location = haskellEditor
+          .getOutlineLocation( shortName );
+      if( location != null ) {
+        final Location theLocation = location;
+        // Ensure that this happens in the UI thread
+        new UIJob( UITexts.openDefinition_select_job ) {
+
+          @Override
+          public IStatus runInUIThread( final IProgressMonitor monitor ) {
+            selectAndReveal( haskellEditor, haskellEditor
+                .getDocument(), theLocation );
+            return Status.OK_STATUS;
+          }
+        }.schedule();
+        return;
+      }
+    }
+
+    if (module==null){
+      ImportsManager mgr = haskellEditor.getImportsManager();
+      Map<String, ImportsManager.Imported> decls = mgr.getImportedDeclarations();
+      for ( String s : decls.keySet() ) {
+        ImportsManager.Imported i=decls.get(s);
+        if (i.getDocumented().getDocumented().getName().equals( fullName ) || i.getAnimport().getImportDef().getModule().equals( fullName )){
+          //
+          IFile fi=i.getDocumented().getFile();
+          if (fi!=null){
+            openFile( haskellEditor
+                .getEditorSite().getPage(), fi, shortName );
+            return;
+          }
+          module=i.getAnimport().getImportDef().getModule();
+          if (haddockType==null){
+            haddockType="t"; // assume types since not resolved
+          }
+          //break;
+        }
+      }
+    }
+
+    if( module != null ) {
+      IFile fi = ResourceUtil.findFileFromModule( p, module );
+      if (fi!=null){
+        openFile( haskellEditor
+                        .getEditorSite().getPage(), fi, shortName );
+        return;
+      }
+
+      final String moduleF = module;
+      final String shortNameF = shortName;
+      final String haddockTypeF = haddockType;
+
+      new Thread( new Runnable() {
+
+        @Override
+        public void run() {
+          // find in outside location...
+          outer: for( CabalPackage[] pkgs: f.getPackagesByDB()
+              .values() ) {
+            for( CabalPackage cp: pkgs ) {
+              if( cp.getModules() != null
+                  && cp.getModules().contains( moduleF ) ) {
+                final String pkg = cp.toString();
+                //new UIJob( UITexts.openDefinition_select_job ) {
+
+                //  @Override
+                //  public IStatus runInUIThread(
+                //      final IProgressMonitor monitor ) {
+                    openExternalDefinition( haskellEditor
+                        .getEditorSite().getPage(), p, pkg, moduleF,
+                        shortNameF, haddockTypeF );
+                //    return Status.OK_STATUS;
+                //  }
+                //}.schedule();
+                break outer;
+              }
+            }
+          }
+        }
+      } ).start();
+    }
   }
 
   private static void openFile(final IWorkbenchPage page,final IFile file,final String shortName){
