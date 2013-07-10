@@ -41,6 +41,11 @@ public class CabalInstallAction implements IObjectActionDelegate {
   private final Set<IProject> projects=new LinkedHashSet<IProject>();
   private Shell currentShell;
 
+  /**
+   * remember last sandbox path
+   */
+  private static String lastSandbox=null;
+
   @Override
   public void setActivePart( final IAction arg0, final IWorkbenchPart arg1 ) {
     currentShell=arg1.getSite().getShell();
@@ -123,8 +128,11 @@ public class CabalInstallAction implements IObjectActionDelegate {
         } else if (ret==2){
           DirectoryDialog dd=new DirectoryDialog( currentShell );
           dd.setText( UITexts.install_sandbox_install_dest );
+          dd.setFilterPath( lastSandbox );
           String fileName=dd.open();
+
           if (fileName!=null){
+            lastSandbox=fileName;
             runCabalDev(fileName);
           }
           return;
