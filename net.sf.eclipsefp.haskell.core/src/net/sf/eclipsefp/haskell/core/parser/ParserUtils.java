@@ -55,7 +55,7 @@ public class ParserUtils {
     if (region == null) {
       return null;
     }
-    return line.substring( region.getOffset(), region.getLength()-region.getOffset() );
+    return line.substring( region.getOffset(), region.getLength()+region.getOffset() );
   }
 
   private static boolean isHaskellWordChar(final char c){
