@@ -191,6 +191,6 @@ ${cursor}
   context="net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.hscodetemplates"
   enabled="true"
   autoinsert="false"
->{-# ${cursor} -#}
+>{-# ${cursor} #-}
 </template>
 </templates>
