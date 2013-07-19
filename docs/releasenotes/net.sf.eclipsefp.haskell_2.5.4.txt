@@ -12,6 +12,9 @@ Necessary Haskell packages:
 Fixes:
 	- Close all long running processes properly when project is deleted
 	- Disable component group on new project creation if cabal file already exists (since existing file will be reused)
+	- Haskell UI Plugin would randomly fail on startup, causing all kind of grief. A bug in the initialization of the plugin has been found and fixed.
+	- Closing Eclipse polluted the log with spurious "stream is closed" messages from the console
+	- Build errors with cabal-dev enabled were caused by cabal-dev getting confusing build dir info from EclipseFP
 
 Features:
 	- pass -j to cabal install (https://github.com/JPMoresmau/eclipsefp/issues/107)

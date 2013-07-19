@@ -393,6 +393,15 @@ public class BWFacade {
 			long t0=System.currentTimeMillis();
 			arr=readArrayBW(p);
 
+			// check if process has ended because of some uncaught error in buildwrapper
+			try {
+				p.exitValue();
+				buildProcesses.remove(file);
+				end=false; // process already dead
+			} catch (IllegalThreadStateException itse){
+				// noop
+			}
+			
 			if (end){
 				p.getOutputStream().write(endCommand);
 				try {
@@ -479,6 +488,13 @@ public class BWFacade {
 	public void endLongRunning(IFile file){
 		Process p=buildProcesses.remove(file);
 		if (p!=null){
+			while (runningFiles.contains(file)){
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignore){
+					// noop
+				}
+			}
 			try {
 				p.getOutputStream().write(endCommand);
 				try {
@@ -1419,7 +1435,9 @@ public class BWFacade {
 		for (String s:cabalImplDetails.getOptions()){
 			args.add(s);
 		}
-		args.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
+		// we pass the build dir as an absolute path otherwise there's confusion, I think cabal-dev launches cabal in the project directory...
+		File bd=new File (workingDir,BWFacade.DIST_FOLDER_CABAL);
+		args.add("--builddir="+bd.getAbsolutePath());
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);
@@ -1461,6 +1479,10 @@ public class BWFacade {
 		}
 	}
 
+	
+	public OutputWriter getOutputWriter() {
+		return ow;
+	}
 //	public String getTempFolder() {
 //		return tempFolder;
 //	}
