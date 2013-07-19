@@ -434,9 +434,14 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
-  private void registerPerspectiveListener(final IWorkbenchWindow w){
+  private boolean registerPerspectiveListener(final IWorkbenchWindow w){
+    if (w==null){
+      return false;
+    }
     final IPageService svc=(IPageService)w.getService( IPageService.class );
-
+    if (svc==null){
+      return false;
+    }
     // register the listener who's going to start browser when a Haskell perspective opens
     svc.addPerspectiveListener( new IPerspectiveListener() {
 
@@ -458,13 +463,14 @@ public class ScionManager implements IResourceChangeListener {
 
       }
     } );
+    return true;
   }
 
   private synchronized void browserSetup() {
     boolean onPerspective=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.BROWSER_START_ONLY_PERSPECTIVE );
      if (onPerspective){
         IWorkbenchWindow w=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (w==null){
+        if (!registerPerspectiveListener( w )){
           PlatformUI.getWorkbench().addWindowListener( new IWindowListener() {
 
             @Override
@@ -487,12 +493,13 @@ public class ScionManager implements IResourceChangeListener {
 
             @Override
             public void windowActivated( final IWorkbenchWindow window ) {
-              registerPerspectiveListener( window );
-              PlatformUI.getWorkbench().removeWindowListener( this );
+              if (registerPerspectiveListener( window )){
+                PlatformUI.getWorkbench().removeWindowListener( this );
+              }
             }
           } );
         }
-        registerPerspectiveListener( w );
+
      } else {
        startBrowser();
      }
@@ -970,16 +977,18 @@ public class ScionManager implements IResourceChangeListener {
    */
   private void stopInstance( final IProject project ) {
     if( project != null) {
+
+
       BuildWrapperPlugin.removeFacade( project );
       //if ( ScionPlugin.terminateScionInstance( project ) ) {
-        IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
-        String name = bwconsoleName( project);
-        for( IConsole c: mgr.getConsoles() ) {
-          if( c.getName().equals( name ) ) {
-            mgr.removeConsoles( new IConsole[] { c } );
-            break;
-          }
+      IConsoleManager mgr = ConsolePlugin.getDefault().getConsoleManager();
+      String name = bwconsoleName( project);
+      for( IConsole c: mgr.getConsoles() ) {
+        if( c.getName().equals( name ) ) {
+          mgr.removeConsoles( new IConsole[] { c } );
+          break;
         }
+      }
       //}
     }
   }
