@@ -1435,9 +1435,11 @@ public class BWFacade {
 		for (String s:cabalImplDetails.getOptions()){
 			args.add(s);
 		}
+		// no we can't build one project in the directory of another
+		// because 
 		// we pass the build dir as an absolute path otherwise there's confusion, I think cabal-dev launches cabal in the project directory...
-		File bd=new File (workingDir,BWFacade.DIST_FOLDER_CABAL);
-		args.add("--builddir="+bd.getAbsolutePath());
+		//File bd=new File (workingDir,BWFacade.DIST_FOLDER_CABAL);
+		//args.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
 		ProcessBuilder pb=new ProcessBuilder();
 		pb.directory(workingDir);
 		pb.redirectErrorStream(true);
