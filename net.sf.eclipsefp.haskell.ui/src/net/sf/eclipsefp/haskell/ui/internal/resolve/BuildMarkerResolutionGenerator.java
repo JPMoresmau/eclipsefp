@@ -301,13 +301,18 @@ public class BuildMarkerResolutionGenerator implements
 
     for (String s:toSearch){
       if ((ix=msgL.indexOf( s ))>-1){
+        // start getting the pragma name from after the -x
+        int ix2=ix+1+s.length();
+        // we actually rely on -X to begin the pragma name later on
         if (s.endsWith( " -x" )){
           s=s.substring( s.length()-3 );
         }
+        // we'll cut from start, but we'll look at the name from ix2...
         int start=ix+1+s.length();
-        int ix2=start;
+
         for (;ix2<msg.length();ix2++){
-          if (Character.isWhitespace( msg.charAt( ix2 ) )){
+          // flags are letters and sometimes numbers (Rank2Types)
+          if (!Character.isLetterOrDigit( msg.charAt( ix2 ) )){
             break;
           }
         }
