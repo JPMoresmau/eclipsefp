@@ -5,7 +5,7 @@ Release Notes
 
 Necessary Haskell packages:
 
-	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.7.3 of buildwrapper has been validated with this version of EclipseFP
+	- EclipseFP relies on BuildWrapper, a Haskell IDE library, for a lot of its functionality. See https://github.com/JPMoresmau/BuildWrapper for more information. Version 0.7.4 of buildwrapper has been validated with this version of EclipseFP
 	- EclipseFP also uses scion-browser. Version 0.2.17 has been validated with this version of EclipseFP
  
 
@@ -15,6 +15,7 @@ Fixes:
 	- Haskell UI Plugin would randomly fail on startup, causing all kind of grief. A bug in the initialization of the plugin has been found and fixed.
 	- Closing Eclipse polluted the log with spurious "stream is closed" messages from the console
 	- Errors suggesting language flag could sometimes be badly parsed
+	- Better handling of some GHC errors
 
 Features:
 	- pass -j to cabal install (https://github.com/JPMoresmau/eclipsefp/issues/107)

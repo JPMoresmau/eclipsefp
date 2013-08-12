@@ -30,7 +30,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 
   @Override
   public Control createControl( final Composite parent ) {
-    String labelText = "HUGS executable";
+    String labelText = UITexts.prefs_name;
     dlgField = new ExecutableDialogField( parent,
                                                                 labelText ){
 
@@ -39,7 +39,9 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
     	  try {
     		  	File f=new File(info);
     		  	if (f.exists() && f.canRead()){
-			        Process p=Runtime.getRuntime().exec(info);
+    		  	  ProcessBuilder pb=new ProcessBuilder( info );
+			        Process p=pb.start();
+			            //Runtime.getRuntime().exec(info);
 
 			        InputStream is=p.getInputStream();
 			        // read all text given by the console till the Hugs> prompt
@@ -77,7 +79,7 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 			        }
 			        return version;
     		  	}
-    		  	return "Not found";
+    		  	return UITexts.prefs_notfound;
     	  } catch (IOException ioe){
     		  ioe.printStackTrace();
     		  return ioe.getMessage();
