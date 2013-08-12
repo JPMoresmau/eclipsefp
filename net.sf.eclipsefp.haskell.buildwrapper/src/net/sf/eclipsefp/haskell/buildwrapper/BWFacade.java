@@ -388,7 +388,13 @@ public class BWFacade {
 				buildProcesses.put(file,p);
 			} else {
 				p.getOutputStream().write(contCommand);
-				p.getOutputStream().flush();
+				try {
+					p.getOutputStream().flush();
+				} catch (IOException ignore){
+					// process has died
+					buildProcesses.remove(file);
+					end=false; // process already dead
+				}
 			}
 			long t0=System.currentTimeMillis();
 			arr=readArrayBW(p);
