@@ -42,8 +42,12 @@ public class HLintRunner {
 			int code=new ProcessRunner().executeBlocking(
 			    workingDir.toFile(), out, err, exe,"--encoding="+encoding, file.getLocation().toOSString());
 
-			OutputParser parser = new OutputParser(new StringReader(out.toString()));
-			List<Suggestion> sugs= parser.suggestions();
+			String s=out.toString();
+			List<Suggestion> sugs=new ArrayList<Suggestion>();
+			if (s.length()>0){
+				OutputParser parser = new OutputParser(new StringReader(s));
+				sugs= parser.suggestions();
+			}
 			if(err.toString().length()>0){
 				HLintPlugin.logError(NLS.bind(HLintText.error_run,err.toString()),null);
 			} else if (code!=0 && sugs.size()==0){
