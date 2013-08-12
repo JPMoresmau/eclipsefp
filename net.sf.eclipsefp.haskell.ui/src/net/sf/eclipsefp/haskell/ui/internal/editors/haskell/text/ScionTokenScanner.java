@@ -137,8 +137,15 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
          TokenDef nextTokenDef=tokenDefs.next();
          try {
            int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
+           nextOffset=Math.max( nextOffset, offset );
            int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
            int end=Math.min( offset+length,nextEnd);
+
+           if (currentOffset+currentLength>nextOffset){
+             currentTokenDef=null;
+          //   HaskellUIPlugin.log( currentOffset+"->"+currentLength+">"+nextOffset, IStatus.INFO );
+             return Token.EOF;
+           }
 
            //addTokenOccurence( nextOffset, nextEnd, nextTokenDef );
 
@@ -161,12 +168,13 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
            currentOffset=nextOffset;
            currentTokenDef=nextTokenDef;
            currentToken=nextToken;
-//           HaskellUIPlugin.log( currentOffset+"->"+currentLength, IStatus.INFO );
+//           HaskellUIPlugin.log( currentOffset+currentLength+" / "+offset+"/"+length, IStatus.INFO );
 //
 //           if (!notEOF && currentOffset>offset+length)  {
 //             return Token.EOF;
 //           }
-           if ( nextOffset>offset+length)  {
+           if ( nextOffset>offset+length || currentLength<0)  {
+             currentTokenDef=null;
              return Token.EOF;
            }
 
@@ -177,6 +185,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
          return Token.EOF;
        }
     } while(currentOffset+currentLength<offset);
+//    HaskellUIPlugin.log( currentOffset+"/"+currentLength+" / "+offset+"/"+length, IStatus.INFO );
+//     HaskellUIPlugin.log(String.valueOf(currentOffset>=offset && currentOffset+currentLength<=offset+length),IStatus.INFO);
     return currentToken;
 
   }
@@ -286,6 +296,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     currentTokenDef = null;
     // currentToken=null;
     tokenDefs = null;
+    currentLength=0;
+    currentOffset=0;
 
     occurrences.clear();
     tokenLocations.clear();
@@ -388,8 +400,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     }
 
     //String s=doc.get();
-    //long previousOffset=-1;
-    //long previousEnd=-1;
+//    long previousOffset=-1;
+//    long previousEnd=-1;
     for (TokenDef nextTokenDef:lTokenDefs){
       try {
         int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );

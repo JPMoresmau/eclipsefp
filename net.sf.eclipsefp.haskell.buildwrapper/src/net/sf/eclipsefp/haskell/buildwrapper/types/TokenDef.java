@@ -52,4 +52,9 @@ public class TokenDef {
 		this.location = new Location("", location.getStartLine() + line, location.getStartColumn() + column,
 				location.getEndLine() + line, location.getEndColumn() + (allInSameLine ? column : 0));
 	}
+	
+	@Override
+	public String toString() {
+		return name+"("+String.valueOf(location)+")";
+	}
 }
