@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- Spaces in Hugs executable path accepted in preference page 
+	- Show UUAGC errors correctly (https://github.com/JPMoresmau/eclipsefp/issues/125)
 
 Features:
 

@@ -74,12 +74,12 @@ public class UuagcRunner {
     try {
       // Run the command
       StringWriter out = new StringWriter();
-      StringWriter err = new StringWriter();
+      //StringWriter err = new StringWriter();
       IPath path = resource.getLocation();
       new ProcessRunner().executeBlocking( path.toFile().getParentFile(), out,
-          err, getExecutableAndArgs( resource ) );
+          null, getExecutableAndArgs( resource ) );
       // Parse the output
-      return OutputParser.errors( selectStream( out, err ).toString() );
+      return OutputParser.errors( out.toString() );
     } catch( Throwable ex ) {
       return new ArrayList<ProcessorError>();
     }

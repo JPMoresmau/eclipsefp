@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.partitioned.uuagc;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.ProcessorError;
+import net.sf.eclipsefp.haskell.core.partitioned.runner.UuagcRunner;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
@@ -14,6 +15,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
@@ -32,7 +34,7 @@ public class UuagcBuilder extends IncrementalProjectBuilder {
   }
 
   @Override
-  protected IProject[] build( final int kind, final Map args,
+  protected IProject[] build( final int kind, final Map<String,String> args,
       final IProgressMonitor monitor ) throws CoreException {
     if( kind == INCREMENTAL_BUILD || kind == AUTO_BUILD ) {
       // Get delta
@@ -97,6 +99,27 @@ public class UuagcBuilder extends IncrementalProjectBuilder {
     marker.setAttribute( IMarker.SEVERITY,
             severityMsg.equals( "error" ) ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING); //$NON-NLS-1$
     marker.setAttribute( IMarker.LINE_NUMBER, e.getLine() );
+  }
+
+  /**
+   * launch the build on the given resource
+   * @param resource
+   * @throws CoreException
+   */
+  static void build(final IResource resource) throws CoreException{
+    UuagcRunner runner = new UuagcRunner( resource.getProject() );
+    for( ProcessorError s: runner.run( resource ) ) {
+      UuagcBuilder.createMarker( resource, s );
+    }
+    // Set derived file as derived
+    resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
+    IPath derivedPath = resource.getProjectRelativePath()
+        .removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
+    IFile f=resource.getProject().getFile( derivedPath );
+    // file may not be created if they were errors
+    if (f.isAccessible()){
+      f.setDerived( true,new NullProgressMonitor() );
+    }
   }
 
 }
