@@ -14,6 +14,7 @@ Fixes:
 	- Show UUAGC errors correctly (https://github.com/JPMoresmau/eclipsefp/issues/125)
 	- Do not try to parse HLint output if empty
 	- Bug in styles range handling (https://github.com/JPMoresmau/eclipsefp/issues/129)
+	- Code defensively to avoid https://github.com/JPMoresmau/eclipsefp/issues/130
 
 Features:
 
