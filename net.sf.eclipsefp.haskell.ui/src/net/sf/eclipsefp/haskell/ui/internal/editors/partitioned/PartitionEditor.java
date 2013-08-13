@@ -4,10 +4,14 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.TabChecker;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * Base editor for Alex, Happy and UUAGC text editors.
@@ -32,5 +36,22 @@ public class PartitionEditor extends TextEditor {
     }
     return null;
   }
+
+  public IDocument getDocument() {
+
+    IDocumentProvider docProvider = getDocumentProvider();
+    if (docProvider!=null){
+      return docProvider.getDocument( getEditorInput() );
+    }
+    return null;
+  }
+
+  @Override
+  protected void doSetInput( final IEditorInput input ) throws CoreException {
+    super.doSetInput( input );
+    new TabChecker(this);
+  }
+
+
 
 }

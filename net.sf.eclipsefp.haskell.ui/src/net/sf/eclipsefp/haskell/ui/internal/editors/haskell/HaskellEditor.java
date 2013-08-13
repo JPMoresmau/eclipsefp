@@ -575,6 +575,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     moduleName=module;
   }
 
+
+
   @Override
   public void doSetInput( final IEditorInput input ) throws CoreException {
 
@@ -587,6 +589,9 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     synchronize();
     // file may have been renamed
     moduleName=null;
+
+    new TabChecker( this );
+
   }
 
   /* (non-Javadoc)

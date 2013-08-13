@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
@@ -66,7 +65,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   private File tgt;
 
-  private boolean checkedTabs=false;
+  //private boolean checkedTabs=false;
 
   protected Map<String,IToken> tokenByTypes;
 
@@ -307,32 +306,10 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       if( !document.equals( doc ) || !newContents.equals( contents ) || lTokenDefs == null ) {
         doc = document;
         contents = newContents;
-        if (!checkedTabs){
-            checkedTabs=true;
-            if (contents.contains( "\t" )){
-              // we may be in a job
-              display.syncExec( new Runnable(){
-                @Override
-                public void run() {
-                  if (MessageDialog.openConfirm( display.getActiveShell() , UITexts.error_tabs  , UITexts.error_tabs_message )){
-                    /*IDocumentProvider prov=new TextFileDocumentProvider();
-                    prov.connect(file);
-                    IDocument doc2=prov.getDocument( file );*/
-                    int tw=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( EDITOR_TAB_WIDTH );
-                    StringBuilder sb=new StringBuilder();
-                    for (int a=0;a<tw;a++){
-                      sb.append(" ");
-                    }
-                    contents=contents.replace( "\t",sb.toString() );
-                    // doc2.set(contents);
-                    document.set(contents);
-                    // prov.saveDocument( new NullProgressMonitor(), file, doc2, true );
-                  }
-                }
-              } );
-
-            }
-        }
+//        if (!checkedTabs){
+//            checkedTabs=true;
+//
+//        }
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f==null){
           f=new BWFacade();
