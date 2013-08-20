@@ -17,7 +17,7 @@ Fixes:
 	- Code defensively to avoid https://github.com/JPMoresmau/eclipsefp/issues/130
 
 Features:
-
+	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
 
 Internal:
 

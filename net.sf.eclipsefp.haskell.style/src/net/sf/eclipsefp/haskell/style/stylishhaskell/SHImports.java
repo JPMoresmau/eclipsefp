@@ -19,7 +19,8 @@ public class SHImports {
 	public static enum SHImportAlign {
 		GLOBAL,
 		GROUP,
-		NONE;
+		NONE,
+		FILE; // https://github.com/jaspervdj/stylish-haskell/pull/20
 	}
 	
 	private SHImportAlign align=SHImportAlign.GLOBAL;
