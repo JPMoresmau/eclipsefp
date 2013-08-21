@@ -1,18 +1,18 @@
+/**
+ *  Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.lang.reflect.InvocationTargetException;
 
-import net.sf.eclipsefp.haskell.buildwrapper.JobFacade.BuildJob;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
