@@ -15,6 +15,7 @@ Fixes:
 	- Do not try to parse HLint output if empty
 	- Bug in styles range handling (https://github.com/JPMoresmau/eclipsefp/issues/129)
 	- Code defensively to avoid https://github.com/JPMoresmau/eclipsefp/issues/130
+	- Cabal packages views sorts properly versions
 
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
