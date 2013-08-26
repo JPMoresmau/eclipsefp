@@ -21,6 +21,7 @@ Fixes:
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
 	- Quick fix for "naked expression at top level": add TemplateHaskell language pragma
+	- Quick fix for "parse error on input `case'": add LambdaCase language pragma
 
 Internal:
 

@@ -141,8 +141,8 @@ public class BuildMarkerResolutionGenerator implements
             }
           }
           // Not in scope
-          else if (msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START )>-1){
-            int start = msgL.indexOf( '`',msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START ));
+          else if ((ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START) )>-1){
+            int start = msgL.indexOf( '`',ix);
             int l=msgL.indexOf( "\n",start+1 );
             List<String> suggestions=null;
             if (l>-1){
@@ -179,7 +179,7 @@ public class BuildMarkerResolutionGenerator implements
                   }
                 }
                 Collections.sort( places );*/
-                Set<String> refs=getReferencedPackages(marker);
+                //Set<String> refs=getReferencedPackages(marker);
 
                 Arrays.sort(availableMods,new Comparator<DeclarationId>() {
                   /* (non-Javadoc)
@@ -275,6 +275,8 @@ public class BuildMarkerResolutionGenerator implements
             }
           } else if (msgL.indexOf( GhcMessages.NAKED )>-1){
             res.add( new AddLanguagePragmaResolution( "TemplateHaskell" ) );
+          } else if (msgL.indexOf( GhcMessages.INPUT_CASE )>-1){
+            res.add( new AddLanguagePragmaResolution( "LambdaCase" ) );
           }
         }
       }
