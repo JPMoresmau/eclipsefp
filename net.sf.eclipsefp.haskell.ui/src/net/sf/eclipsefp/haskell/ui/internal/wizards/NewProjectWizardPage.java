@@ -17,6 +17,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Observable;
 import java.util.Observer;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.dialog.Validator;
 import net.sf.eclipsefp.haskell.ui.dialog.ValidatorManager;
@@ -28,7 +29,6 @@ import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.SelectionButtonDialogFiel
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringButtonDialogField;
 import net.sf.eclipsefp.haskell.ui.dialog.dialogfields.StringDialogField;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
-import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -425,9 +425,10 @@ public class NewProjectWizardPage extends WizardPage {
             return;
           }
         }
-       IPath cabalFile =projectPath.append(name).addFileExtension( FileUtil.EXTENSION_CABAL );
+       IPath cabalFile = BuildWrapperPlugin.getCabalFile( projectPath, name );
+           //projectPath.append(name).addFileExtension( FileUtil.EXTENSION_CABAL );
        // cabal file exists: disable component choice
-       enableComponentControl(!cabalFile.toFile().exists() );
+       enableComponentControl(cabalFile==null );
        setWarningMessage( UITexts.newProjectWizardPage_Message_alreadyExists);
        setPageComplete(true);
        return;

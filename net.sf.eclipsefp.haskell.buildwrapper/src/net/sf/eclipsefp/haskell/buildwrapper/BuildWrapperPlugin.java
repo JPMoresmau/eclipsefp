@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -282,6 +283,40 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	   * cache project cabal file if cabal file doesn't have same name than project
 	   */
 	  private static Map<IProject,IFile> m=new HashMap<IProject,IFile>();
+	  
+	  /**
+	   * get the cabal file path
+	   * this is similar to getCabalFile below but does not cache the result and works with Path
+	   * @param projectPath
+	   * @param name
+	   * @return
+	   */
+	  public static IPath getCabalFile(final IPath projectPath, final String name) {
+		  IPath f=projectPath.append(name).addFileExtension( FileUtil.EXTENSION_CABAL) ;
+		    if (f==null || !f.toFile().exists()){ // oh oh
+
+    			// find a cabal file
+	    		File[] children=projectPath.toFile().listFiles();
+	    		int cnt=0;
+	    		for (File child:children){
+	    			if (child.isFile() && !child.isHidden()){
+	    				 IPath pchild=projectPath.append(child.getName());
+	    				 if ( pchild.getFileExtension() != null &&
+	    						 pchild.getFileExtension().equalsIgnoreCase(FileUtil.EXTENSION_CABAL)){
+	    					 f=pchild;
+	    					 cnt++;
+	    				 }
+	    			}
+	    		}
+	    		// cnt=1 would mean only one file, we can live with that
+	    		if (cnt>1){
+	    			f=null;
+	    		}
+		    		
+		    }
+		    return f;
+	  }
+	  
 	  /**
 	   * Generate the Cabal project file's name from the Eclipse project's name.
 	   * 
