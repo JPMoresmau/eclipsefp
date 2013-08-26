@@ -273,6 +273,8 @@ public class BuildMarkerResolutionGenerator implements
             } else {
               res.add( new InstallDeps() );
             }
+          } else if (msgL.indexOf( GhcMessages.NAKED )>-1){
+            res.add( new AddLanguagePragmaResolution( "TemplateHaskell" ) );
           }
         }
       }

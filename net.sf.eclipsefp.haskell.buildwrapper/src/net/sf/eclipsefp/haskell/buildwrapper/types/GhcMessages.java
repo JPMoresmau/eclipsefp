@@ -51,6 +51,8 @@ public interface GhcMessages {
   
   public static String CAST_FROM_CHAR="with actual type `[char]'";
 
+  public static String NAKED="naked expression at top level";
+  
   //-fno-warn-unused-do-bind
 
 
