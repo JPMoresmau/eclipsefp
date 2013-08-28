@@ -297,15 +297,17 @@ public class Location {
 		int line= Math.min(getStartLine(),maxLines);
 		final Map<Object,Object> attributes=new HashMap<Object,Object>();
 		MarkerUtilities.setLineNumber(attributes, line);
-		int start=getStartColumn();
-	    int end=getEndColumn();
-		// if we have startColumn==endColumn we could take end+1
-		// BUT if end goes over the document size, or start is zero, or if Eclipse feels like it, the marker is not shown on the document
-		// so it's better to just show the line without more info 
-		if (end>start){
-			MarkerUtilities.setCharStart(attributes, start);
-			// exclusive
-			MarkerUtilities.setCharEnd(attributes, end-1);
+		if (getStartLine()==getEndLine()){
+			int start=getStartColumn();
+		    int end=getEndColumn();
+			// if we have startColumn==endColumn we could take end+1
+			// BUT if end goes over the document size, or start is zero, or if Eclipse feels like it, the marker is not shown on the document
+			// so it's better to just show the line without more info 
+			if (end>start){
+				MarkerUtilities.setCharStart(attributes, start);
+				// exclusive
+				MarkerUtilities.setCharEnd(attributes, end-1);
+			}
 		}
 		return attributes;
 	}

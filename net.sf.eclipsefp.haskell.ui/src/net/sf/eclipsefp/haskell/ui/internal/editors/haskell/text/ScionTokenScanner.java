@@ -136,8 +136,11 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
          TokenDef nextTokenDef=tokenDefs.next();
          try {
            int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
-           nextOffset=Math.max( nextOffset, offset );
+           //nextOffset=Math.max( nextOffset, offset );
            int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
+           if (nextEnd>offset){
+             nextOffset=Math.max( nextOffset, offset );
+           }
            int end=Math.min( offset+length,nextEnd);
 
            if (currentOffset+currentLength>nextOffset){
@@ -423,6 +426,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     if (file!=null && tags!=null && file.exists()){
       try {
         file.deleteMarkers( IMarker.TASK , true, IResource.DEPTH_ZERO );
+        setRange( doc, 0, doc.getLength() );
         for (TokenDef nextTokenDef:lTokenDefs){
           if (nextTokenDef.getName().equals(ITokenTypes.DOCUMENTATION_ANNOTATION) || nextTokenDef.getName().equals(ITokenTypes.COMMENT) || nextTokenDef.getName().equals(ITokenTypes.LITERATE_COMMENT)){
             String s=nextTokenDef.getLocation().getContents( doc );
