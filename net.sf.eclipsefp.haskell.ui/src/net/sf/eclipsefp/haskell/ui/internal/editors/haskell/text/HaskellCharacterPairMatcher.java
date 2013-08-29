@@ -13,7 +13,9 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 /** <p>The pair matcher implementation used for matching parentheses etc.</p>
   *
   * @author Leif Frenzel
+  * @deprecated JP Moresmau August 29th, 2013. Why not use Eclipse's default implementation?
   */
+@Deprecated
 public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
 
   private static final int FORWARD = +1;
@@ -163,7 +165,7 @@ public class HaskellCharacterPairMatcher implements ICharacterPairMatcher {
     }
 
     public boolean eof() {
-      return (fIncrement < 0) ? fLastOffset < 0 : fLastOffset >= fSourceDoc.getLength();
+      return (fIncrement < 0) ? fLastOffset < 0 : fLastOffset+fIncrement >= fSourceDoc.getLength();
     }
   }
 }

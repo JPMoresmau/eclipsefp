@@ -38,7 +38,6 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.HaddockDocum
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.OrganizeImportAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions.PragmaCommentAction;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManager;
-import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellCharacterPairMatcher;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingStructureProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.HaskellViewer;
@@ -65,6 +64,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
@@ -255,7 +255,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   @Override
   protected void configureSourceViewerDecorationSupport( final SourceViewerDecorationSupport support ) {
     super.configureSourceViewerDecorationSupport( support );
-    support.setCharacterPairMatcher( new HaskellCharacterPairMatcher() );
+    //support.setCharacterPairMatcher( new HaskellCharacterPairMatcher() );
+    support.setCharacterPairMatcher( new DefaultCharacterPairMatcher( new char[]{ '{', '}', '(', ')', '[', ']' } ) );
     String bracketsKey = EDITOR_MATCHING_BRACKETS;
     String colorKey = EDITOR_MATCHING_BRACKETS_COLOR;
     support.setMatchingCharacterPainterPreferenceKeys( bracketsKey, colorKey );
