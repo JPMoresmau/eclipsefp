@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.InflaterInputStream;
 
@@ -57,6 +58,11 @@ public class StreamBrowserServer extends BrowserServer {
 	private boolean hoogleLoaded = false;
 	private StreamRedirect errorRedirect;
 	public LockObject lock= new LockObject();
+	
+	/**
+	 * cache packages by database
+	 */
+	private Map<Database,HaskellPackage[]> packageCache=new HashMap<Database,HaskellPackage[]>();
 	
 	//private DatabaseType currentDatabase;
 	private HashMap<String, Packaged<Declaration>[]> declCache = new HashMap<String, Packaged<Declaration>[]>();
@@ -245,6 +251,8 @@ public class StreamBrowserServer extends BrowserServer {
 	protected void loadLocalDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
 		if (sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild))){
+			packageCache.remove(Database.LOCAL);
+			packageCache.remove(Database.ALL);
 			// Notify listeners
 			DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
 					DatabaseType.LOCAL);
@@ -257,6 +265,8 @@ public class StreamBrowserServer extends BrowserServer {
 	protected void loadHackageDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
 		if (sendAndReceiveOk(Commands.createLoadHackageDatabase(path, rebuild))){
+			packageCache.remove(Database.HACKAGE);
+			packageCache.remove(Database.ALL);
 			// Notify listeners
 			DatabaseLoadedEvent e = new DatabaseLoadedEvent(this, path,
 					DatabaseType.HACKAGE);
@@ -274,10 +284,17 @@ public class StreamBrowserServer extends BrowserServer {
 //		}
 //	}
 
+
+	
 	@Override
 	public HaskellPackage[] getPackages(Database db) throws IOException, JSONException {
-		String response = sendAndReceive(Commands.createGetPackages(db));
-		return Commands.responseGetPackages(response);
+		HaskellPackage[] ret=packageCache.get(db);
+		if (ret==null){
+			String response = sendAndReceive(Commands.createGetPackages(db));
+			ret= Commands.responseGetPackages(response);
+			packageCache.put(db, ret);
+		}
+		return ret;
 	}
 
 	@Override
