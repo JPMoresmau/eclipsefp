@@ -5,7 +5,7 @@
  */
 package net.sf.eclipsefp.haskell.core.cabal;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
@@ -17,15 +17,34 @@ public class CabalPackageVersionTest {
 
   @Test
   public void testCompare(){
-    Assert.assertEquals( 0, CabalPackageVersion.compare( "1",  "1" ) );
-    Assert.assertEquals( 0, CabalPackageVersion.compare( "1.0",  "1.0" ) );
-    Assert.assertEquals( -1, CabalPackageVersion.compare( "1.0",  "1.1" ) );
-    Assert.assertEquals( 1, CabalPackageVersion.compare( "1.1",  "1.0" ) );
-    Assert.assertEquals( -1, CabalPackageVersion.compare( "1.1",  "1.1.1" ) );
-    Assert.assertEquals( 1, CabalPackageVersion.compare( "1.1.1",  "1.1" ) );
-    Assert.assertEquals( -1, CabalPackageVersion.compare( "1.0",  "2.0" ) );
-    Assert.assertEquals( 1, CabalPackageVersion.compare( "2.0",  "1.0" ) );
-    Assert.assertEquals( 1, CabalPackageVersion.compare( "0.2.16",  "0.2.12" ) );
-    Assert.assertEquals( -1, CabalPackageVersion.compare( "0.2.12",  "0.2.16" ) );
+    assertEquals( 0, CabalPackageVersion.compare( "1",  "1" ) );
+    assertEquals( 0, CabalPackageVersion.compare( "1.0",  "1.0" ) );
+    assertEquals( -1, CabalPackageVersion.compare( "1.0",  "1.1" ) );
+    assertEquals( 1, CabalPackageVersion.compare( "1.1",  "1.0" ) );
+    assertEquals( -1, CabalPackageVersion.compare( "1.1",  "1.1.1" ) );
+    assertEquals( 1, CabalPackageVersion.compare( "1.1.1",  "1.1" ) );
+    assertEquals( -1, CabalPackageVersion.compare( "1.0",  "2.0" ) );
+    assertEquals( 1, CabalPackageVersion.compare( "2.0",  "1.0" ) );
+    assertEquals( 1, CabalPackageVersion.compare( "0.2.16",  "0.2.12" ) );
+    assertEquals( -1, CabalPackageVersion.compare( "0.2.12",  "0.2.16" ) );
+  }
+
+  @Test
+  public void testRanges(){
+    assertEquals(">=2.4 && <2.5",CabalPackageVersion.getMajorRange( "2.4" ));
+    assertEquals(">=2.4 && <2.5",CabalPackageVersion.getMajorRange( "2.4.1" ));
+    assertEquals(">=2.4 && <2.5",CabalPackageVersion.getMajorRange( "2.4.2" ));
+    assertEquals(">=2.4 && <2.5",CabalPackageVersion.getMajorRange( "2.4.2.10" ));
+
+    assertEquals(">=2.4 && <2.5",CabalPackageVersion.getMajorRangeFromMinor( "2.4" ));
+    assertEquals(">=2.4.1 && <2.5",CabalPackageVersion.getMajorRangeFromMinor( "2.4.1" ));
+    assertEquals(">=2.4.2 && <2.5",CabalPackageVersion.getMajorRangeFromMinor( "2.4.2" ));
+    assertEquals(">=2.4.2 && <2.5",CabalPackageVersion.getMajorRangeFromMinor( "2.4.2.10" ));
+
+    assertEquals(">=2.4 && <2.4.1",CabalPackageVersion.getMinorRange( "2.4" ));
+    assertEquals(">=2.4.1 && <2.4.2",CabalPackageVersion.getMinorRange( "2.4.1" ));
+    assertEquals(">=2.4.2 && <2.4.3",CabalPackageVersion.getMinorRange( "2.4.2" ));
+    assertEquals(">=2.4.2 && <2.4.3",CabalPackageVersion.getMinorRange( "2.4.2.1O" ));
+
   }
 }

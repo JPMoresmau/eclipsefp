@@ -100,8 +100,12 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
       } catch (NumberFormatException nfe){
         HaskellCorePlugin.log( nfe );
       }
-    } else {
-      return getMajorRange( s1 );
+    } else if(ss1.length>1){
+      try {
+        return ">="+ ss1[0]+"."+ss1[1]+" && <"+ss1[0]+"."+ss1[1]+".1";
+      } catch (NumberFormatException nfe){
+        HaskellCorePlugin.log( nfe );
+      }
     }
     return "";
   }
