@@ -31,7 +31,7 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
     super();
 
     try {
-      Set<String> names=new HashSet<String>(alreadySelected);
+       Set<String> names=new HashSet<String>(alreadySelected);
       //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL,
        //   null );
       ArrayList<HaskellPackage> pkgs = new ArrayList<HaskellPackage>();
@@ -40,15 +40,18 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
           pkgs.add( pkg );
           names.add( pkg.getIdentifier().getName() );
         }
+
       }
       /**
        * we may have installed packages not from hackage!
        */
       for (CabalPackageRef r:CabalPackageHelper.getInstance().getInstalled()){
         if (!names.contains( r.getName() )) {
-          pkgs.add( new HaskellPackage( "", new PackageIdentifier( r.getName(), r.getInstalled().iterator().next() ) ) );
+          HaskellPackage pkg=new HaskellPackage( "", new PackageIdentifier( r.getName(), r.getInstalled().iterator().next() ) ) ;
+          pkgs.add(pkg );
           names.add( r.getName() );
         }
+
       }
 
       for (HaskellPackage pkg:ScionManager.listProjectPackages()){

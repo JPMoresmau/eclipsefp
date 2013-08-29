@@ -5,6 +5,8 @@
  */
 package net.sf.eclipsefp.haskell.core.cabal;
 
+import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+
 /**
  * A precise version of a cabal package
  * @author JP Moresmau
@@ -68,6 +70,60 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
     return 0;
   }
 
+  /**
+   * get the range including all the versions that have the same major components
+   * @param s1 the precise version we want to get the full range for
+   * @return the range ins Cabal syntax
+   */
+  public static String getMajorRange(final String s1){
+    String[] ss1=s1.split( "\\." ); //$NON-NLS-1$
+    if (ss1.length>1){
+      try {
+        return ">="+ ss1[0]+"."+ss1[1]+" && <"+ss1[0]+"."+(Integer.parseInt( ss1[1])+1);
+      } catch (NumberFormatException nfe){
+        HaskellCorePlugin.log( nfe );
+      }
+    }
+    return "";
+  }
+
+  /**
+   * get the range including all the versions that have the same minor components
+   * @param s1 the precise version we want to get the full range for
+   * @return the range ins Cabal syntax
+   */
+  public static String getMinorRange(final String s1){
+    String[] ss1=s1.split( "\\." ); //$NON-NLS-1$
+    if (ss1.length>2){
+      try {
+        return ">="+ ss1[0]+"."+ss1[1]+"."+ss1[2]+" && <"+ss1[0]+"."+ss1[1]+"."+(Integer.parseInt( ss1[2])+1);
+      } catch (NumberFormatException nfe){
+        HaskellCorePlugin.log( nfe );
+      }
+    } else {
+      return getMajorRange( s1 );
+    }
+    return "";
+  }
+
+  /**
+   * get the range including all the versions that have the same major components but start from the provided minor versin
+   * @param s1 the precise version we want to get the full range for
+   * @return the range ins Cabal syntax
+   */
+  public static String getMajorRangeFromMinor(final String s1){
+    String[] ss1=s1.split( "\\." ); //$NON-NLS-1$
+    if (ss1.length>2){
+      try {
+        return ">="+ ss1[0]+"."+ss1[1]+"."+ss1[2]+" && <"+ss1[0]+"."+(Integer.parseInt( ss1[1])+1);
+      } catch (NumberFormatException nfe){
+        HaskellCorePlugin.log( nfe );
+      }
+    } else {
+      return getMajorRange( s1 );
+    }
+    return "";
+  }
 
   public boolean isInstalled() {
     return installed;

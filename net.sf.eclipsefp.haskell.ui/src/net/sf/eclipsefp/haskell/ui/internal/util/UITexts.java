@@ -597,6 +597,11 @@ public final class UITexts extends NLS {
   public static String cabalEditor_dependencies;
   public static String cabalEditor_dependenciesPackage;
   public static String cabalEditor_dependenciesVersion;
+  public static String cabalEditor_dependencyVersion;
+  public static String cabalEditor_dependencyVersionNone;
+  public static String cabalEditor_dependencyVersionMajor;
+  public static String cabalEditor_dependencyVersionCurrent;
+  public static String cabalEditor_dependencyVersionMinor;
   public static String cabalEditor_sourceDirectories;
   public static String cabalEditor_exposedModules;
   public static String cabalEditor_auxiliaryModules;

@@ -91,13 +91,8 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
         }
         DependenciesDialog dialog = new DependenciesDialog( tableField
             .getTable().getShell(), alreadySelected,project.getName() );
-        if( dialog.open() == Window.OK && dialog.getValue() != null ) {
-          String s=dialog.getValue();
-          String[] ss=s.split( "," );
-          for (String s2:ss){
-            DependencyItem item = new DependencyItem( s2.trim(), "" );
-            items.add( item );
-          }
+        if( dialog.open() == Window.OK && dialog.getItems().size()>0 ) {
+          items.addAll( dialog.getItems() );
           tableField.setInput( items );
           DependenciesFormEntry.this.notifyTextValueChanged();
 

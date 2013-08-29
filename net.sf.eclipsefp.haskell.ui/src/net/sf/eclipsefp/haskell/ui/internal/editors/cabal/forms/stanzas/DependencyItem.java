@@ -43,4 +43,8 @@ public class DependencyItem {
       return new DependencyItem(trimmed.substring( 0, spacePos ), trimmed.substring( spacePos + 1 ).trim());
     }
   }
+  @Override
+  public String toString() {
+    return pkg+(version!=null && version.length()>0?" "+version:"");
+  }
 }
