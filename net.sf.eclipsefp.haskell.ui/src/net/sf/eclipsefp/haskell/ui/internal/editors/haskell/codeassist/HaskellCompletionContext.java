@@ -1,38 +1,25 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist;
 
-
+/**
+ * helper class for completion
+ *
+ * @author ??
+ *
+ */
 public class HaskellCompletionContext  {
-//  private IFile file;
+
   private String source;
   private int fOffset;
-//  private HaskellEditor editor;
 
 	protected HaskellCompletionContext() {
 		//placeholder constructor
 	}
 
   public HaskellCompletionContext( final String source, final int offset ) {
-   // this.file = file;
     this.source = source;
     setOffset( offset );
-   // this.editor=editor;
   }
 
-//	public IHaskellModel getLanguageModel() {
-//		return fLanguageModel;
-//	}
-//
-//	public ICompilationUnit getCompilationUnit() {
-//		return fCompilationUnit;
-//	}
-//
-//	protected void setLanguageModel(final IHaskellModel model) {
-//		this.fLanguageModel = model;
-//	}
-//
-//	protected void setCompilationUnit(final ICompilationUnit unit) {
-//		this.fCompilationUnit = unit;
-//	}
 
 	protected void setOffset(final int fOffset) {
 		this.fOffset = fOffset;
@@ -42,147 +29,14 @@ public class HaskellCompletionContext  {
 		return fOffset;
 	}
 
-//	public ICompletionProposal[] computeProposals() {
-//		String completedToken;
-//		try {
-//			completedToken = getQualifier(source,getOffset());
-//
-//			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
-//
-//			searchDefinedNames(completedToken, result);
-//			// searchKeywords(completedToken, result);
-//			return result.toArray(new ICompletionProposal[result.size()]);
-//		} catch (Exception ex) {
-//			// ignore the error and just return an empty result
-//		}
-//		return new ICompletionProposal[0];
-//	}
 
-	/*private void searchKeywords(final String prefix,
-		final List<ICompletionProposal> result)
-	{
-		searchStringList(prefix, HaskellSyntax.getKeywords(), result);
-	}*/
-
-//  private void searchDefinedNames( final String prefix, final List<ICompletionProposal> result ) {
-//    if( file != null
-//        && FileUtil.hasHaskellExtension( file )
-//        && ResourceUtil.isInHaskellProject( file ) ) {
-//      final ScionInstance si = ScionPlugin.getScionInstance( file );
-//      // sync access
-//      if( si != null ) {
-//        List<String> names = si.definedNames( );
-//        if (editor!=null){
-//          Set<String> uNames=new HashSet<String>(names);
-//          uNames.addAll(editor.getLocalNames());
-//          names=new ArrayList<String>(uNames);
-//         }
-//        searchStringList( prefix, names, result );
-//
-//      }
-//    }
-//  }
-
-  /* DELETE ME AFTER NEXT RELEASE!
-  private void searchModulesNames( final String prefix, final List<ICompletionProposal> result ) {
-    if( file != null
-        && FileUtil.hasHaskellExtension( file )
-        && ResourceUtil.isInHaskellProject( file ) ) {
-      final ScionInstance si = ScionPlugin.getScionInstance( file );
-      // sync access
-      if( si != null ) {
-        searchStringList( prefix, si.moduleGraph( ), result );
-        searchStringList( prefix, si.listExposedModules( ), result);
-      }
-    }
-  }
-  */
-
-	/*private void searchStringList(final String prefix, final String[] names, final List<ICompletionProposal> result)
-	{
-		final int offset = getOffset();
-		final int plength = prefix.length();
-
-		for(String name : names) {
-			if (name.startsWith(prefix)) {
-				result.add(new CompletionProposal(name, offset - plength, plength, name.length()));
-			}
-		}
-	}*/
-
-//	 private void searchStringList(final String prefix, final Iterable<String> names, final List<ICompletionProposal> result)
-//	   {
-//	     final int offset = getOffset();
-//	     final int plength = prefix.length();
-//
-//	     for(String name : names) {
-//	       if (name.startsWith(prefix)) {
-//	         result.add(new CompletionProposal(name, offset - plength, plength, name.length(), ImageCache.FUNCTION, name, null, ""));
-//	       }
-//	     }
-//	   }
-
-//	private void searchImportableModules(final String prefix,
-//		final List<ICompletionProposal> result)
-//	{
-//		final int offset = getOffset();
-//		final int plength = prefix.length();
-//
-//		/*for(IModule m : getLanguageModel().getModules()) {
-//			final String moduleName = m.getName();
-//			if (moduleName.startsWith(prefix)) {
-//				result.add(new CompletionProposal(moduleName, offset - plength,
-//				                                  plength,
-//				                                  moduleName.length()));
-//			}
-//		}*/
-//	}
-//
-//	private void searchScope(final String prefix, final List<ICompletionProposal> result) {
-//		if (prefix.length() == 0) {
-//			return;
-//		}
-//
-//		/*final IModule module = getCompilationUnit().getModules()[0];
-//		Scope scope = getLanguageModel().getScopeFor(module);
-//
-//		searchDeclarations(prefix, result, module);
-//
-//		List<IModule> modules = scope.getAvailableModules();
-//		for(IModule m : modules) {
-//			searchDeclarations(prefix, result, m);
-//		}*/
-//	}
-
-//	private void searchDeclarations(final String prefix,
-//		final List<ICompletionProposal> result,
-//		final IModule module)
-//	{
-//		final String moduleName = module.getName();
-//		final int offset = getOffset();
-//		final int plength = prefix.length();
-//		final IDeclaration[] decls = module.getDeclarations();
-//
-//		for(IDeclaration decl : decls) {
-//			final String declName = decl.getName();
-//			if (!(decl instanceof ITypeSignature) &&
-//				declName.startsWith(prefix))
-//			{
-//				final CompletionProposal proposal = new CompletionProposal(
-//				    declName, offset - plength, plength, declName.length(), null,
-//				    declName + " - " + moduleName, null, null); //$NON-NLS-1$
-//				result.add(proposal);
-//			}
-//		}
-//	}
 
 	public String getQualifier( ) {
 	  return getQualifier( this.source, this.getOffset() );
 	}
 
-	public String getQualifier( final String source, final int offset )
-	{
-		StringBuffer contents = readSourceTillOffset(source, offset);
+	public String getQualifier( final String source, final int offset )	{
+		StringBuilder contents = readSourceTillOffset(source, offset);
 
 		int index = offset;
 		StringBuilder sb = new StringBuilder();
@@ -214,9 +68,8 @@ public class HaskellCompletionContext  {
     return getPointedQualifier( this.source, this.getOffset() );
   }
 
-	public String getPointedQualifier( final String source, final int offset )
-  {
-    StringBuffer contents = readSourceTillOffset(source, offset);
+	public String getPointedQualifier( final String source, final int offset )  {
+	  StringBuilder contents = readSourceTillOffset(source, offset);
 
     int index = offset;
     StringBuilder sb = new StringBuilder();
@@ -248,9 +101,8 @@ public class HaskellCompletionContext  {
 		return Character.isLetterOrDigit(ch) || "_'".indexOf(ch) > -1; //$NON-NLS-1$
 	}
 
-	private StringBuffer readSourceTillOffset(final String source, final int offset)
-	{
-		return new StringBuffer(source.substring(0, offset));
+	private StringBuilder readSourceTillOffset(final String source, final int offset)	{
+		return new StringBuilder(source.substring(0, offset));
 	}
 
 }

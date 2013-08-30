@@ -322,7 +322,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 
 	/** Get the completion prefix from the prefix offset, if non-zero, or reverse lex */
 	private String getCompletionPrefix( final IDocument doc, final int offset ) {
-	  if (prefixOffsetAnchor > 0) {
+	  if (prefixOffsetAnchor > 0 && offset >= prefixOffsetAnchor ) {
 	    try {
         return doc.get( prefixOffsetAnchor, offset - prefixOffsetAnchor );
       } catch( BadLocationException ex ) {
