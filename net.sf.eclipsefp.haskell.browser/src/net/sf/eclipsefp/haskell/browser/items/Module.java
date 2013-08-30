@@ -41,4 +41,9 @@ public class Module extends Documented {
 	public boolean isType() {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

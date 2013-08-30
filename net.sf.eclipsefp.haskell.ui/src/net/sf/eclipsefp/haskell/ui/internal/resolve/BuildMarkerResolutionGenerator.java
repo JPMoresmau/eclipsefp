@@ -166,54 +166,8 @@ public class BuildMarkerResolutionGenerator implements
                 res.add( new ReplaceTextResolution( notInScope, suggestion ) );
               }
             }
-            try {
+            addBrowserSuggestions( marker,name, qualified,res );
 
-              if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()) {
-                //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-                // need to have the package
-                DeclarationId[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
-                /*ArrayList<String> places = new ArrayList<String>();
-                for (DeclarationId avMod : availableMods) {
-                  if (!places.contains( avMod.getName() )) {
-                    places.add( avMod.getName() );
-                  }
-                }
-                Collections.sort( places );*/
-                //Set<String> refs=getReferencedPackages(marker);
-
-                Arrays.sort(availableMods,new Comparator<DeclarationId>() {
-                  /* (non-Javadoc)
-                   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-                   */
-                  @Override
-                  public int compare( final DeclarationId o1, final DeclarationId o2 ) {
-                    String m1=o1.getModule().getName();
-                    String m2=o2.getModule().getName();
-
-                    int c=m1.compareToIgnoreCase( m2 );
-                    if (c==0){
-                      c=o1.getName().compareTo( o2.getName() );
-                    }
-                    return c;
-                  }
-                });
-                Set<String> modules=new HashSet<String>();
-                for (DeclarationId place : availableMods) {
-                  String module=place.getModule().getName();
-                  if (!modules.contains(module  )){
-                    modules.add(module);
-                    if (place.getName().length()>0){
-                      res.add( new AddImportResolution( place.getName()+"(..)", module, qualified ) );
-                      res.add( new AddImportResolution( place.getName()+"("+name+")", module, qualified ) );
-                    } else {
-                      res.add( new AddImportResolution( name, module, qualified ) );
-                    }
-                  }
-                }
-              }
-            } catch (Exception e) {
-              // Do nothing
-            }
           } else if (msgL.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
             int btix=msg.indexOf('`');
             int sqix=msg.indexOf('\'',btix);
@@ -283,6 +237,70 @@ public class BuildMarkerResolutionGenerator implements
     }
 
     return res.toArray( new IMarkerResolution[res.size()] );
+  }
+
+  /**
+   * add suggestions from Browser
+   * @param marker the current marked to fix
+   * @param name the name
+   * @param qualified the qualifier if any
+   * @param res the suggestions
+   */
+  private void addBrowserSuggestions(final IMarker marker,final String name,final String qualified,final List<IMarkerResolution> res){
+    try {
+
+      if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()) {
+
+        DeclarationId[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
+
+        /**
+         * get the packages we know, we'll show declarations from these first
+         */
+        final Set<String> refs=getReferencedPackages(marker);
+
+        Arrays.sort(availableMods,new Comparator<DeclarationId>() {
+          /* (non-Javadoc)
+           * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+           */
+          @Override
+          public int compare( final DeclarationId o1, final DeclarationId o2 ) {
+            String m1=o1.getModule().getName();
+            String m2=o2.getModule().getName();
+            // known packages go first
+            boolean isPkg1=refs.contains( o1.getPackageName() );
+            boolean isPkg2=refs.contains( o2.getPackageName() );
+            if (isPkg1){
+              if (!isPkg2){
+                return -1;
+              }
+            } else if (isPkg2){
+              return 1;
+            }
+
+            int c=m1.compareToIgnoreCase( m2 );
+            if (c==0){
+              c=o1.getName().compareTo( o2.getName() );
+            }
+            return c;
+          }
+        });
+        Set<String> modules=new HashSet<String>();
+        for (DeclarationId place : availableMods) {
+          String module=place.getModule().getName();
+          if (!modules.contains(module  )){
+            modules.add(module);
+            if (place.getName().length()>0){
+              res.add( new AddImportResolution( place.getName()+"(..)", module, qualified ) );
+              res.add( new AddImportResolution( place.getName()+"("+name+")", module, qualified ) );
+            } else {
+              res.add( new AddImportResolution( name, module, qualified ) );
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      // Do nothing
+    }
   }
 
   private IMarkerResolution getHLintResolution(final IMarker marker) {

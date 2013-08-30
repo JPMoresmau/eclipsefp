@@ -14,13 +14,23 @@ import org.json.JSONException;
  *
  */
 public class DeclarationId {
+	/**
+	 * the declaration name
+	 */
 	private String name;
+	/**
+	 * the module name
+	 */
 	private Module module;
-		
+	/**
+	 * the package name
+	 */
+	private String packageName;	
 	
 	public DeclarationId(JSONArray obj)throws JSONException {
 		module=new Module(obj.getJSONObject(0));
 		name=obj.optString(1);
+		packageName=obj.optString(2);
 	}
 	
 	public String getName() {
@@ -29,6 +39,13 @@ public class DeclarationId {
 	public Module getModule() {
 		return module;
 	}
+	public String getPackageName() {
+		return packageName;
+	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
 	
 }

@@ -23,6 +23,7 @@ Features:
 	- Quick fix for "naked expression at top level": add TemplateHaskell language pragma
 	- Quick fix for "parse error on input `case'": add LambdaCase language pragma
 	- Version range options when adding dependencies through Cabal editor
+	- Quick fix suggestions for missing imports start with modules from packages already marked as dependencies
 
 Internal:
 
