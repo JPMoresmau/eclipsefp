@@ -257,6 +257,7 @@ public class ScionPP
 	  store.setDefault( MAX_CONFIGURE_FAILURES, 10 );
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK, 32 * 1024);// 32K
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE,false);
+	  store.setDefault( UNIQUE_SANDBOX, false );
 	}
 
   @Override

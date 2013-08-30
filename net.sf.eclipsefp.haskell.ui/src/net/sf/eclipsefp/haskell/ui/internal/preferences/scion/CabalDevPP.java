@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -14,10 +15,13 @@ import org.eclipse.swt.widgets.Label;
 
 
 /**
+ * Preference page for cabal-dev
  * @author JP Moresmau
  *
  */
 public class CabalDevPP extends ExecutablePP {
+  private BooleanFieldEditor uniqueSandboxField;
+
   public CabalDevPP(){
     super("cabal-dev","cabal-dev",IPreferenceConstants.CABALDEV_EXECUTABLE);
   }
@@ -32,6 +36,20 @@ public class CabalDevPP extends ExecutablePP {
     Label l=new Label(parentComposite,SWT.NONE);
     l.setText( UITexts.preferences_cabaldev_note);
 
+    uniqueSandboxField= new BooleanFieldEditor( IPreferenceConstants.UNIQUE_SANDBOX,
+        UITexts.executables_preferences_unique_sandbox,
+        parentComposite );
+    uniqueSandboxField.setPage(this);
+    uniqueSandboxField.setPreferenceStore( getPreferenceStore() );
+    uniqueSandboxField.load();
+
     return c;
   }
+
+  @Override
+  public boolean performOk() {
+    uniqueSandboxField.store();
+    return super.performOk();
+  }
+
 }

@@ -8,52 +8,51 @@ package net.sf.eclipsefp.haskell.buildwrapper.types;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
+ * Structure holding implementation of cabal with options especially for sandboxing
  * @author JP Moresmau
- *
+ * 
  */
 public class CabalImplDetails {
-  public enum SandboxType {
-    NONE,
-    CABAL_DEV;
-  }
-  
-  private String executable;
-  private final List<String> options=new ArrayList<String>();
-  private final List<String> installOptions=new ArrayList<String>();
+	public enum SandboxType {
+		NONE, CABAL_DEV;
+	}
 
-private SandboxType type=SandboxType.NONE;
+	private String executable;
+	private final List<String> options = new ArrayList<String>();
+	private final List<String> installOptions = new ArrayList<String>();
 
-  public CabalImplDetails() {
-    super();
-  }
+	private SandboxType type = SandboxType.NONE;
 
+	/**
+	 * do we have a unique sandbox?
+	 */
+	private boolean uniqueSandbox = false;
 
-  public String getExecutable() {
-    return executable;
-  }
+	public CabalImplDetails() {
+		super();
+	}
 
+	public String getExecutable() {
+		return executable;
+	}
 
-  public List<String> getOptions() {
-    return options;
-  }
+	public List<String> getOptions() {
+		return options;
+	}
 
+	public void setExecutable(final String executable) {
+		this.executable = executable;
+	}
 
+	public boolean isSandboxed() {
+		return !getType().equals(SandboxType.NONE);
+	}
 
-  public void setExecutable( final String executable ) {
-    this.executable = executable;
-  }
-
-  public boolean isSandboxed(){
-	  return !getType().equals(SandboxType.NONE);
-  }
-
-  public SandboxType getType() {
+	public SandboxType getType() {
 		return type;
 	}
-	
-	
+
 	public void setType(SandboxType type) {
 		this.type = type;
 	}
@@ -62,5 +61,12 @@ private SandboxType type=SandboxType.NONE;
 		return installOptions;
 	}
 
+	public boolean isUniqueSandbox() {
+		return uniqueSandbox;
+	}
+
+	public void setUniqueSandbox(boolean uniqueSandbox) {
+		this.uniqueSandbox = uniqueSandbox;
+	}
 
 }

@@ -48,10 +48,12 @@ public class SandboxHelper {
 			case CABAL_DEV:
 				IProject p=f.getProject();
 	
-				Set<IProject> processed=new HashSet<IProject>();
-				processed.add(p);
-				for (IProject pR:p.getReferencedProjects()){
-					installDeps(f,pR,processed);
+				if (!f.getCabalImplDetails().isUniqueSandbox()){
+					Set<IProject> processed=new HashSet<IProject>();
+					processed.add(p);
+					for (IProject pR:p.getReferencedProjects()){
+						installDeps(f,pR,processed);
+					}
 				}
 				
 				LinkedList<String> args=new LinkedList<String>();
@@ -104,11 +106,13 @@ public class SandboxHelper {
 			SandboxType st=f.getCabalImplDetails().getType();
 			switch (st){
 			case CABAL_DEV:
-				IProject p=f.getProject();
-				Set<IProject> processed=new HashSet<IProject>();
-				processed.add(p);
-				for (IProject pR:p.getReferencingProjects()){
-					updateUsing(p,pR,processed);
+				if (!f.getCabalImplDetails().isUniqueSandbox()){
+					IProject p=f.getProject();
+					Set<IProject> processed=new HashSet<IProject>();
+					processed.add(p);
+					for (IProject pR:p.getReferencingProjects()){
+						updateUsing(p,pR,processed);
+					}
 				}
 				break;
 			}

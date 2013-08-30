@@ -768,6 +768,8 @@ public class ScionManager implements IResourceChangeListener {
               if (event.getNewValue() instanceof String || event.getNewValue()==null){
                 BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
               }
+          }  else if (event.getProperty().equals(IPreferenceConstants.UNIQUE_SANDBOX)){
+             BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
 
           } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
             if (event.getNewValue() instanceof String || event.getNewValue()==null){
@@ -937,6 +939,10 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
+  private static IPath getUniqueSandboxLocation(){
+    return HaskellUIPlugin.getDefault().getStateLocation().append( ".cabal-dev" );
+  }
+
   public static CabalImplDetails getCabalImplDetails(){
     CabalImplDetails details=new CabalImplDetails();
     String cabal=CabalImplementationManager.getCabalExecutable();
@@ -946,9 +952,15 @@ public class ScionManager implements IResourceChangeListener {
     //String cabalDev=ScionManager.getExecutablePath( IPreferenceConstants.CABALDEV_EXECUTABLE, "cabal-dev", false );
     if (cabalDev!=null && cabalDev.length()>0 && new File(cabalDev).exists()){
         details.setExecutable( cabalDev);
-        details.getOptions().add("--sandbox="+BWFacade.DIST_FOLDER_CABALDEV);
+        details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
+        if (details.isUniqueSandbox()){
+          details.getOptions().add("--sandbox="+getUniqueSandboxLocation().toOSString());
+        } else {
+          details.getOptions().add("--sandbox="+BWFacade.DIST_FOLDER_CABALDEV);
+        }
         details.getOptions().add("--with-cabal-install="+cabal);
         details.setType( SandboxType.CABAL_DEV );
+
     } else { // standard cabal
       details.setExecutable(cabal);
       details.setType( SandboxType.NONE );
