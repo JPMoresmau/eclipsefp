@@ -100,9 +100,13 @@ public class UsageAPI {
 							db.setSymbolUsages(fileID, objUsages);
 							db.commit();
 							JSONObject outline=arr.optJSONObject(4);
+							
 							if (outline!=null){
 								OutlineResult or=new OutlineResult(f, outline);
-								BuildWrapperPlugin.getFacade(p).registerOutline(f, or);
+								BWFacade bf=BuildWrapperPlugin.getFacade(p);
+								if(bf!=null){
+									bf.registerOutline(f, or);
+								}
 							}
 						}
 					} catch (SQLException sqle){
