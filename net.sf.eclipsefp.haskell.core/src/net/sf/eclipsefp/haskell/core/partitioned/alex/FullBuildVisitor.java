@@ -3,6 +3,7 @@ package net.sf.eclipsefp.haskell.core.partitioned.alex;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.ProcessorError;
 import net.sf.eclipsefp.haskell.util.FileUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +27,10 @@ public class FullBuildVisitor implements IResourceVisitor {
       // Set derived file as derived
       resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
       IPath derivedPath = resource.getProjectRelativePath().removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
-      resource.getProject().getFile( derivedPath ).setDerived( true,new NullProgressMonitor() );
+      IFile f=resource.getProject().getFile( derivedPath );
+      if (f.isAccessible()){
+        f.setDerived( true,new NullProgressMonitor() );
+      }
     }
     return true;
   }
