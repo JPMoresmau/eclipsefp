@@ -2,17 +2,23 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationId;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
+import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
+import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
+import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
@@ -21,6 +27,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IMarkerResolution;
@@ -166,8 +173,8 @@ public class BuildMarkerResolutionGenerator implements
                 res.add( new ReplaceTextResolution( notInScope, suggestion ) );
               }
             }
-            addBrowserSuggestions( marker,name, qualified,res );
-
+            addBrowserSuggestions( marker, name, qualified, res);
+            addUsageSuggestions( marker, name, qualified, res);
           } else if (msgL.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
             int btix=msg.indexOf('`');
             int sqix=msg.indexOf('\'',btix);
@@ -300,6 +307,59 @@ public class BuildMarkerResolutionGenerator implements
       }
     } catch (Exception e) {
       // Do nothing
+    }
+  }
+
+  /**
+   * add suggestions from the Usage db
+   * @param marker the current marked to fix
+   * @param name the name
+   * @param qualified the qualifier if any
+   * @param res the suggestions
+   */
+  private void addUsageSuggestions(final IMarker marker,final String name,final String qualified,final List<IMarkerResolution> res){
+    if (name.length()>0 ){
+      if (Character.isLowerCase( name.charAt( 0 ))){
+
+        UsageResults ur=BuildWrapperPlugin.getDefault().getUsageAPI().likeSearch( null, name, null,UsageQueryFlags.TYPE_VAR, UsageQueryFlags.SCOPE_DEFINITIONS);
+        for (IProject p:ur.listProjects()){
+          for (IFile f:ur.getUsageInProject( p ).keySet()){
+            String module=ResourceUtil.getModuleName( f );
+            if (module!=null){
+              res.add( new AddImportResolution( name, module, qualified ) );
+            }
+          }
+        }
+      } else {
+        UsageResults ur=BuildWrapperPlugin.getDefault().getUsageAPI().likeSearch( null, name, null, UsageQueryFlags.TYPE_TYPE, UsageQueryFlags.SCOPE_DEFINITIONS);
+        boolean found=false;
+        for (IProject p:ur.listProjects()){
+          for (IFile f:ur.getUsageInProject( p ).keySet()){
+            String module=ResourceUtil.getModuleName( f );
+            if (module!=null){
+              res.add( new AddImportResolution( name, module, qualified ) );
+              res.add( new AddImportResolution( name+"(..)", module, qualified ) );
+              found=true;
+            }
+          }
+        }
+        if (!found){
+          ur=BuildWrapperPlugin.getDefault().getUsageAPI().likeSearch( null, name, null, UsageQueryFlags.TYPE_CONSTRUCTOR, UsageQueryFlags.SCOPE_DEFINITIONS);
+          for (IProject p:ur.listProjects()){
+            Map<IFile,Map<String,Collection<SearchResultLocation>>> m=ur.getUsageInProject( p );
+            for (IFile f:m.keySet()){
+              String module=ResourceUtil.getModuleName( f );
+              if (module!=null){
+                for (String s:m.get(f).keySet()){
+                  res.add( new AddImportResolution( s+"("+name+")", module, qualified ) );
+                  res.add( new AddImportResolution( s+"(..)", module, qualified ) );
+                  found=true;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 
