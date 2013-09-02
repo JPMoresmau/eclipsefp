@@ -19,5 +19,7 @@ public class CabalMessages {
 	
 	public static final String ANY="-any"; 
 	
+	public static final String CABAL_VERSION="'cabal-version: ";
+
 
 }

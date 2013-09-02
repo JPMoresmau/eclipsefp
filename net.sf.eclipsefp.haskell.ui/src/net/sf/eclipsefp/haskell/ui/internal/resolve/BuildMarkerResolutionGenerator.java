@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.ArrayList;
@@ -20,6 +25,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.SearchResultLocation;
 import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
 import net.sf.eclipsefp.haskell.hlint.Suggestion;
@@ -240,6 +246,15 @@ public class BuildMarkerResolutionGenerator implements
             res.add( new AddLanguagePragmaResolution( "TemplateHaskell" ) );
           } else if (msgL.indexOf( GhcMessages.INPUT_CASE )>-1){
             res.add( new AddLanguagePragmaResolution( "LambdaCase" ) );
+          } else if ((ix=msgL.indexOf( CabalMessages.CABAL_VERSION  ))>-1){
+            ix+=CabalMessages.CABAL_VERSION.length();
+            int ix2=msgL.indexOf( '\'', ix );
+            if (ix2>-1){
+              String value=msg.substring( ix,ix2 ).trim();
+              if (value.length()>0){
+                res.add(new CabalFieldSetter( CabalSyntax.FIELD_CABAL_VERSION, value ));
+              }
+            }
           }
         }
       }
