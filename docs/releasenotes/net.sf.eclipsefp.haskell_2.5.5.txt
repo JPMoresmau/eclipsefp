@@ -25,6 +25,8 @@ Features:
 	- Version range options when adding dependencies through Cabal editor
 	- Quick fix suggestions for missing imports start with modules from packages already marked as dependencies
 	- cabal-dev: preference to use only one sandbox for the whole workspace (in .metadata/.plugins/net.sf.eclipsefp.haskell.ui/.cabal-dev)
+	- use Usage DB for suggestions (more suggestions for out of scope errors)
+	- More cases with OverloadedString quick fix can be selected
 
 Internal:
 
