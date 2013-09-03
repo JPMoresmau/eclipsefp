@@ -28,6 +28,7 @@ Features:
 	- use Usage DB for suggestions (more suggestions for out of scope errors)
 	- More cases with OverloadedString quick fix can be selected
 	- Quick fix on cabal-version to low for library reference
+	- Multiline comments can be folded
 
 Internal:
 

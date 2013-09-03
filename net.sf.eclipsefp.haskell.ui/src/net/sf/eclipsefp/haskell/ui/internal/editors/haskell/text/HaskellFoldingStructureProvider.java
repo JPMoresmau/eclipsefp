@@ -15,7 +15,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineDef;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
@@ -49,6 +51,19 @@ public class HaskellFoldingStructureProvider {
           // only blocks that are more than one line long can be folded
           if (def.getLocation()!=null && def.getLocation().getEndLine()>def.getLocation().getStartLine()){
             blocks.add( def.getLocation() );
+            if (def.getCommentStartLine()!=null && def.getCommentStartLine()<def.getLocation().getStartLine()-1){
+              try {
+                  IRegion r1=document.getLineInformation( def.getCommentStartLine()-1 );
+                  int end=def.getLocation().getStartOffset( document );
+                  String del=document.getLineDelimiter( def.getLocation().getStartLine()-1 );
+                  r1=new Region(r1.getOffset(),end-r1.getOffset()-del.length());
+
+                  blocks.add( new Location( editor.getTitle(), document, r1 ) );
+
+              } catch (BadLocationException ignore){
+                //noop
+              }
+            }
           }
 
         }

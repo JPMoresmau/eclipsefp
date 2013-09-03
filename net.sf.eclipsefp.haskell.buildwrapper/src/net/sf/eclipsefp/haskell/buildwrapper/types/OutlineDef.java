@@ -80,6 +80,11 @@ public class OutlineDef {
 	 * the comment or "" if none
 	 */
 	private String comment;
+	/**
+	 * the start line of the comment if any
+	 */
+	private Integer commentStartLine;
+	
 	//Location block
 	public OutlineDef(String name, OutlineDefType type, Location loc) {
 		super();
@@ -106,6 +111,9 @@ public class OutlineDef {
 		comment=obj.optString("d");
 		if (comment==null || "null".equals(comment)){
 			comment="";
+		}
+		if (obj.has("sl") && !obj.isNull("sl")){
+			commentStartLine=obj.getInt("sl");
 		}
 	}
 
@@ -143,5 +151,8 @@ public class OutlineDef {
 		return comment;
 	}
 
+	public Integer getCommentStartLine() {
+		return commentStartLine;
+	}
 	
 }
