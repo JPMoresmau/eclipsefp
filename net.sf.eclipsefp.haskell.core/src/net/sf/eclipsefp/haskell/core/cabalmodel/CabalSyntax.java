@@ -41,6 +41,7 @@ public enum CabalSyntax {
   FIELD_DATA_FILES("data-files"),//$NON-NLS-1$
   FIELD_EXTRA_SOURCE_FILES("extra-source-files"),//$NON-NLS-1$
   FIELD_EXTRA_TMP_FILES("extra-tmp-files"),//$NON-NLS-1$
+  FIELD_EXTRA_DOC_FILES("extra-doc-files"),//$NON-NLS-1$
   FIELD_MAIN_IS("main-is"),//$NON-NLS-1$
   FIELD_BUILDABLE("buildable"),//$NON-NLS-1$
   FIELD_OTHER_MODULES("other-modules"),//$NON-NLS-1$
