@@ -30,12 +30,15 @@ public class SelectAnnotationForQuickFix extends TextEditorAction {
   @Override
   public String getText() {
     String s=ann.getText();
-    int ix=s.indexOf( '\n' );
-    if (ix>-1){
-      s=s.substring( 0,ix ).trim();
+    if (s!=null){
+      int ix=s.indexOf( '\n' );
+      if (ix>-1){
+        s=s.substring( 0,ix ).trim();
+      }
+      return NLS.bind( UITexts.quickfix_marker_annotation_name, super.getText(), s);
     }
-    return NLS.bind( UITexts.quickfix_marker_annotation_name, super.getText(), s);
-    //return super.getText()+" ("+ann.getText()+" )";
+
+    return super.getText();
   }
 
   @Override
