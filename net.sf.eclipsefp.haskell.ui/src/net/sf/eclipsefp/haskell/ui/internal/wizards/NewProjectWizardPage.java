@@ -414,11 +414,12 @@ public class NewProjectWizardPage extends WizardPage {
 
       if (projectPath.toFile().exists()) {//create from existing source
         if (Platform.getLocation().isPrefixOf(projectPath)) { //create from existing source in workspace
-          if (!Platform.getLocation().equals(projectPath.removeLastSegments(1))) {
-            setErrorMessage(UITexts.newProjectWizardPage_Message_notOnWorkspaceRoot);
-            setPageComplete(false);
-            return;
-          }
+          // why?
+//          if (!Platform.getLocation().equals(projectPath.removeLastSegments(1))) {
+//            setErrorMessage(UITexts.newProjectWizardPage_Message_notOnWorkspaceRoot);
+//            setPageComplete(false);
+//            return;
+//          }
 
           if (!projectPath.toFile().exists()) {
             setIncomplete(UITexts.newProjectWizardPage_Message_notExistingProjectOnWorkspaceRoot);
