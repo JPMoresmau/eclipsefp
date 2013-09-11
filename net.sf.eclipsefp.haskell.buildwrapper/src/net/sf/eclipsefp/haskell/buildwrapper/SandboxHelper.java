@@ -106,12 +106,19 @@ public class SandboxHelper {
 			SandboxType st=f.getCabalImplDetails().getType();
 			switch (st){
 			case CABAL_DEV:
+				Set<IProject> processed=new HashSet<IProject>();
 				if (!f.getCabalImplDetails().isUniqueSandbox()){
 					IProject p=f.getProject();
-					Set<IProject> processed=new HashSet<IProject>();
 					processed.add(p);
 					for (IProject pR:p.getReferencingProjects()){
 						updateUsing(p,pR,processed);
+					}
+				} else {
+					IProject p=f.getProject();
+					if (install(p,p,processed)){
+						for (IProject pR:p.getReferencingProjects()){
+							build(p,pR,processed);
+						}
 					}
 				}
 				break;
@@ -120,19 +127,19 @@ public class SandboxHelper {
 	}
 	
 	/**
-	 * update a given project using a changed project
+	 * install the changedProject in p's sandbox
 	 * @param changedProject the changed project
 	 * @param p the project to update with the new version of the changed project
 	 * @param processed the set of already processed projects, in case of loops
-	 * @throws CoreException
+	 * @return true if the install in a sandbox happened
 	 */
-	private static void updateUsing(IProject changedProject,IProject p,Set<IProject> processed) throws CoreException{
+	private static boolean install(IProject changedProject,IProject p,Set<IProject> processed){
 		if (processed.add(p)){
 			BWFacade f=BuildWrapperPlugin.getFacade(p);
 			
 			if (f!=null && isSandboxed(f)){
 				if (f.isCanceled()){
-					return;
+					return false;
 				}
 				LinkedList<String> args=new LinkedList<String>();
 				args.add("install");
@@ -145,27 +152,71 @@ public class SandboxHelper {
 				}
 				f.runCabal(args,expFlags); // install the changed project with its own flags
 				if (f.isCanceled()){
-					return;
+					return false;
 				}
 				f.cleanGenerated(); // all generated files are wrong
 				f.closeAllProcesses(); // GHC needs to reload the changes
 				// rebuild if that's what the workspace wants
 				if (f.isCanceled()){
-					return;
+					return false;
 				}
-				if (ResourcesPlugin.getWorkspace().isAutoBuilding()){
-					new JobFacade(f).build(new BuildOptions().setConfigure(true).setOutput(true).setRecompile(false));
-				} else {
-					// just configure
-					f.configure(new BuildOptions().setConfigure(true));
-				}
+				return true;
 				//f.clean(new NullProgressMonitor());
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * build or configure a given project
+	 * @param p
+	 */
+	private static void build(IProject p){
+		
+		BWFacade f=BuildWrapperPlugin.getFacade(p);
+		if (f.isCanceled()){
+			return;
+		}
+		if (ResourcesPlugin.getWorkspace().isAutoBuilding()){
+			new JobFacade(f).build(new BuildOptions().setConfigure(true).setOutput(true).setRecompile(false));
+		} else {
+			// just configure
+			f.configure(new BuildOptions().setConfigure(true));
+		}
+	}
+	
+	/**
+	 * update a given project using a changed project
+	 * @param changedProject the changed project
+	 * @param p the project to update with the new version of the changed project
+	 * @param processed the set of already processed projects, in case of loops
+	 * @throws CoreException
+	 */
+	private static void updateUsing(IProject changedProject,IProject p,Set<IProject> processed) throws CoreException{
+		if (install(changedProject,p,processed)){
+			build(p);
 			for (IProject pR:p.getReferencingProjects()){
 				updateUsing(changedProject,pR,processed);
 			}
+			
 		}
-
+	}
+	
+	/**
+	 * build a project and the referencing projects
+	 * @param changedProject
+	 * @param p
+	 * @param processed
+	 * @throws CoreException
+	 */
+	private static void build(IProject changedProject,IProject p,Set<IProject> processed) throws CoreException{
+		if (processed.add(p)){
+			build(p);
+			for (IProject pR:p.getReferencingProjects()){
+				build(changedProject,pR,processed);
+			}
+			
+		}
 	}
 	
 	/**
