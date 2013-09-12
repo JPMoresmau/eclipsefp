@@ -42,6 +42,18 @@ public abstract class BrowserServer {
 	public void setLogStream(Writer logStream) {
 		this.logStream = logStream;
 	}
+	
+	public void setLogError(boolean logError){
+		// noop
+	}
+	
+	/**
+	 * get the log stream
+	 * @return
+	 */
+	public Writer getLogStream() {
+		return logStream;
+	}
 
 	/**
 	 * Logs a message, usually into an Eclipse console

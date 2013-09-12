@@ -752,6 +752,10 @@ public class ScionManager implements IResourceChangeListener {
                 browserExecutablePath = new Path((String)event.getNewValue());
                 browserSetup();
               }
+          }  else if (event.getProperty().equals(IPreferenceConstants.BROWSER_VERBOSE_INTERACTION)){
+            if (event.getNewValue() instanceof Boolean){
+              BrowserPlugin.setSharedLogError((Boolean )event.getNewValue() );
+            }
           } else if (event.getProperty().equals( IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH)) {
             if (event.getNewValue() instanceof String) {
               checkHoogleDataIsPresent((String)event.getNewValue());

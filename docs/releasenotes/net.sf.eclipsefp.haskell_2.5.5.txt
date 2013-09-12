@@ -29,6 +29,7 @@ Features:
 	- More cases with OverloadedString quick fix can be selected
 	- Quick fix on cabal-version to low for library reference
 	- Multiline comments can be folded
+	- Scion-browser debug mode enablement does not require a restart
 
 Internal:
 

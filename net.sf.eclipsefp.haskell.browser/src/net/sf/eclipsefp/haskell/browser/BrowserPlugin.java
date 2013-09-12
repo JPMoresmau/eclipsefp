@@ -166,6 +166,17 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	public static void setSharedLogStream(Writer logStream) {
 		getDefault().setLogStream(logStream);
 	}
+	
+	/**
+	 * log errors?
+	 * @param logError
+	 */
+	public static void setSharedLogError(boolean logError){
+		BrowserServer bs=getDefault().server;
+		if (bs!=null){
+			bs.setLogError(logError);
+		}
+	}
 
 	/**
 	 * Changes the scion-browser used to get information about packages

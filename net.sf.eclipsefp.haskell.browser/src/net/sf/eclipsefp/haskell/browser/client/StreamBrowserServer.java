@@ -90,8 +90,20 @@ public class StreamBrowserServer extends BrowserServer {
 		}
 	}
 	
+	@Override
 	public void setLogError(boolean logError) {
+		if (logError!=this.logError && allErrWs!=null){
+			Writer logStream=getLogStream();
+			if (logStream!=null){
+				if (logError){
+					allErrWs.getWriters().add(logStream);
+				} else {
+					allErrWs.getWriters().remove(logStream);
+				}
+			}
+		}
 		this.logError = logError;
+		
 	}
 	
 	public void startServer(boolean logError) throws Exception {
