@@ -5,6 +5,9 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -19,35 +22,24 @@ import org.eclipse.swt.widgets.Display;
   */
 public class ColorProvider {
 
-  static final String COMMENT = "COMMENT"; //$NON-NLS-1$
-  static final String KEYWORD = "KEYWORD"; //$NON-NLS-1$
-  static final String SECTION = "SECTION"; //$NON-NLS-1$
-  static final String OTHER   = "OTHER"; //$NON-NLS-1$
 
   private static final RGB DEFAULT_COMMENT           = new RGB( 128, 128, 192 );
   private static final RGB DEFAULT_KEYWORD           = new RGB( 128, 0, 86 );
   private static final RGB DEFAULT_SECTION           = new RGB( 0,   128, 86 );
   private static final RGB DEFAULT_OTHER             = new RGB( 0, 0, 0 );
 
-  /** The internal singleton reference to ColorProvider. */
-  private static class SingletonHolder {
-    private static final ColorProvider theInstance = new ColorProvider();
-  }
-
   private final Map<RGB, Color> colors;
   private final Map<String, RGB> rgbs;
 
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */
-  private ColorProvider() {
+  public ColorProvider(final IPreferenceStore store) {
     colors = new HashMap<RGB, Color>( 10 );
     rgbs = new HashMap<String, RGB>( 10 );
-    initRgbs();
+    initRgbs(store);
   }
 
-  public static final ColorProvider getInstance() {
-    return SingletonHolder.theInstance;
-  }
+
 
   /** <p>releases all of the color resources held by this ColorProvider.</p> */
   public void dispose() {
@@ -79,10 +71,18 @@ public class ColorProvider {
     return color;
   }
 
-  private void initRgbs() {
-    rgbs.put( COMMENT, DEFAULT_COMMENT );
-    rgbs.put( KEYWORD, DEFAULT_KEYWORD );
-    rgbs.put( SECTION, DEFAULT_SECTION );
-    rgbs.put( OTHER, DEFAULT_OTHER );
+  private void initRgbs(final IPreferenceStore store) {
+    putRgb( IEditorPreferenceNames.EDITOR_COMMENT_COLOR, DEFAULT_COMMENT ,store);
+    putRgb( IEditorPreferenceNames.EDITOR_KEYWORD_COLOR, DEFAULT_KEYWORD ,store);
+    putRgb( IEditorPreferenceNames.EDITOR_CON_COLOR, DEFAULT_SECTION ,store);
+    putRgb( IEditorPreferenceNames.EDITOR_SYMBOL_COLOR, DEFAULT_OTHER ,store);
+  }
+
+  private void putRgb( final String key, final RGB defaultRgb ,final IPreferenceStore store) {
+    RGB rgb = PreferenceConverter.getColor( store, key );
+    if( rgb == null ) {
+      rgb = defaultRgb;
+    }
+    rgbs.put( key, rgb );
   }
 }

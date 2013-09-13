@@ -3,6 +3,8 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.text;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -34,9 +36,10 @@ public class CabalScanner extends RuleBasedScanner {
   //////////////////
 
   private IRule createKeywordRule() {
-    Color keyColor = ColorProvider.getInstance().getColor( ColorProvider.KEYWORD );
+    ColorProvider cp=new ColorProvider( HaskellUIPlugin.getDefault().getPreferenceStore() );
+    Color keyColor = cp.getColor( IEditorPreferenceNames.EDITOR_KEYWORD_COLOR );
     IToken token= new Token( new TextAttribute( keyColor, null, SWT.BOLD ) );
-    Color sectionColor = ColorProvider.getInstance().getColor( ColorProvider.SECTION );
+    Color sectionColor = cp.getColor( IEditorPreferenceNames.EDITOR_CON_COLOR);
     IToken sectionToken= new Token( new TextAttribute( sectionColor, null, SWT.BOLD ) );
     WordRule wordRule= new CaseInsensitiveWordRule( new SimpleWordDetector() );
     for( CabalSyntax keyword: CabalSyntax.values() ) {

@@ -31,6 +31,7 @@ Features:
 	- Quick fix on cabal-version to low for library reference
 	- Multiline comments can be folded
 	- Scion-browser debug mode enablement does not require a restart
+	- Cabal editor uses similar colors than Haskell editor, driven by the same properties
 
 Internal:
 
