@@ -30,7 +30,7 @@ public class CaseInsensitiveWordRule extends WordRule {
     // took the superclass functionality and accept now also words that have not the
     // exact same case as those in the map
     int c= scanner.read();
-    if (c != ICharacterScanner.EOF && fDetector.isWordStart((char) c)) {
+    if (c != ICharacterScanner.EOF) {
       if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
         while (c != ICharacterScanner.EOF && Character.isWhitespace( (char )c)){
           c= scanner.read();
