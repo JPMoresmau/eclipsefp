@@ -17,6 +17,7 @@ Fixes:
 	- Code defensively to avoid https://github.com/JPMoresmau/eclipsefp/issues/130
 	- Cabal packages views sorts properly versions
 	- Disable component choice on new project if one cabal file exists, even if it has another name than the project name (https://github.com/JPMoresmau/eclipsefp/issues/114)
+	- Scion-browser wouldn't start on Eclipse Juno/Kepler if "start only when Haskell perspective is activated" preference is checked and Haskell perspective opened on startup
 	
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)

@@ -442,6 +442,10 @@ public class ScionManager implements IResourceChangeListener {
     if (svc==null){
       return false;
     }
+    if (svc.getActivePage()!=null && svc.getActivePage().getPerspective()!=null && svc.getActivePage().getPerspective().getId().contains( "haskell" )){
+      startBrowser();
+      return true;
+    }
     // register the listener who's going to start browser when a Haskell perspective opens
     svc.addPerspectiveListener( new IPerspectiveListener() {
 
@@ -455,6 +459,7 @@ public class ScionManager implements IResourceChangeListener {
       public void perspectiveActivated( final IWorkbenchPage page,
           final IPerspectiveDescriptor perspective ) {
        String pid=perspective.getId();
+
        if (pid.contains( "haskell" )){
          startBrowser();
          // work done, let's get out!
@@ -463,6 +468,7 @@ public class ScionManager implements IResourceChangeListener {
 
       }
     } );
+
     return true;
   }
 
