@@ -50,7 +50,7 @@ public class HappySourceViewerConfiguration extends
 //            "{" }, new String[] { "}" }, new String[] { "{-" },
 //        new String[] { "-}" } );
     ITokenScanner codeScanner = new ScionTokenScanner(
-        getScannerManager(), file,viewer.getTextWidget().getDisplay() );
+        getScannerManager(), file );
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
     reconciler.setRepairer( haskellDr, PartitionDocumentSetup.HASKELL );

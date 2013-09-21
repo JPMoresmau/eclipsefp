@@ -2,24 +2,37 @@
 // All rights reserved.
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
-import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
-import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
+import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 
-class CabalReconcilingStrategy implements IReconcilingStrategy,
-                                                 IReconcilingStrategyExtension {
+/**
+ * reconciler for Cabal
+ *
+ * @author JP Moresmau
+ * @author Leif Frenzel
+ */
+class CabalReconcilingStrategy extends SpellingReconcileStrategy {
 
   private final CabalFormEditor editor;
-  private IDocument document;
   private final CabalFoldingStructureProvider foldingStructureProvider;
 
-  CabalReconcilingStrategy( final CabalFormEditor editor ) {
+  CabalReconcilingStrategy( final CabalFormEditor editor,final ISourceViewer sourceViewer ) {
+    super(sourceViewer,EditorsUI.getSpellingService());
     this.editor = editor;
     foldingStructureProvider = new CabalFoldingStructureProvider( editor );
   }
@@ -29,18 +42,50 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
   ////////////////////////////////////////////
 
   @Override
-  public void reconcile( final IRegion partition ) {
+  public void reconcile( final IRegion region ) {
+    AbstractDocument document = (AbstractDocument) getDocument();
+   IAnnotationModel model = getAnnotationModel();
+    if (region.getOffset() == 0 && region.getLength() == document.getLength()) {
+      //reconciling whole document
+      super.reconcile(region);
+    } else {
+     //partial reconciliation
+     //preserve spelling annotations first
+     Iterator iter = model.getAnnotationIterator();
+     Map<Annotation,Position> spellingErrors = new HashMap<Annotation,Position>();
+     while (iter.hasNext()) {
+      Annotation annotation = (Annotation) iter.next();
+      if (annotation instanceof SpellingAnnotation) {
+       SpellingAnnotation spellingAnnotation = (SpellingAnnotation) annotation;
+       Position position = model.getPosition(spellingAnnotation);
+
+       spellingErrors.put(spellingAnnotation, position);
+      }
+     }
+
+     //reconcile
+     super.reconcile(region);
+
+     //restore annotations
+     model = getAnnotationModel();
+     iter = spellingErrors.keySet().iterator();
+     while (iter.hasNext()) {
+      Annotation annotation = (Annotation) iter.next();
+      model.addAnnotation(annotation, spellingErrors.get(annotation));
+     }
+    }
     reconcile();
   }
 
   @Override
   public void reconcile( final DirtyRegion dirtyRegion, final IRegion subRegion ) {
+    super.reconcile( dirtyRegion, subRegion );
     reconcile();
   }
 
   @Override
   public void setDocument( final IDocument document ) {
-    this.document = document;
+    super.setDocument( document );
     foldingStructureProvider.setDocument( document );
   }
 
@@ -53,17 +98,13 @@ class CabalReconcilingStrategy implements IReconcilingStrategy,
     reconcile();
   }
 
-  @Override
-  public void setProgressMonitor( final IProgressMonitor monitor ) {
-    // unused
-  }
-
 
   // helping methods
   //////////////////
 
   private void reconcile() {
-    String content = document.get();
+
+    String content = getDocument().get();
     final PackageDescription pd = PackageDescriptionLoader.load( content );
     if (editor!=null){
       Display.getDefault().asyncExec( new Runnable() {

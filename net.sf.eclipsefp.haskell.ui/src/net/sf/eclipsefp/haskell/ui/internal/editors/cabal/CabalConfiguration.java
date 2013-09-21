@@ -13,12 +13,9 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultLineTracker;
-import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -36,7 +33,6 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 /** <p>the configuration for the cabal editor's source viewer.</p>
   *
@@ -59,16 +55,19 @@ public class CabalConfiguration extends SourceViewerConfiguration {
 
   @Override
   public ITextHover getTextHover( final ISourceViewer sourceViewer, final String contentType ) {
-    ITextHover result = null;
-    if( IDocument.DEFAULT_CONTENT_TYPE.equals( contentType ) ) {
-      result = new DefaultTextHover( sourceViewer ){
-        @Override
-        public String getHoverInfo( final ITextViewer textViewer, final IRegion hoverRegion ) {
-          return HaskellTextHover.computeProblemInfo( textViewer, hoverRegion, new DefaultMarkerAnnotationAccess() );
-        }
-      };
-    }
-    return result;
+//    ITextHover result = null;
+//    if( IDocument.DEFAULT_CONTENT_TYPE.equals( contentType ) ) {
+//      result = new DefaultTextHover( sourceViewer ){
+//        @Override
+//        public String getHoverInfo( final ITextViewer textViewer, final IRegion hoverRegion ) {
+//          return HaskellTextHover.computeProblemInfo( textViewer, hoverRegion, new DefaultMarkerAnnotationAccess() );
+//        }
+//
+//
+//      };
+//    }
+//    return result;
+    return new HaskellTextHover(null,sourceViewer);
   }
 
   @Override
@@ -93,7 +92,7 @@ public class CabalConfiguration extends SourceViewerConfiguration {
 
   @Override
   public IReconciler getReconciler( final ISourceViewer sourceViewer ) {
-    CabalReconcilingStrategy strategy = new CabalReconcilingStrategy( editor );
+    CabalReconcilingStrategy strategy = new CabalReconcilingStrategy( editor,sourceViewer );
     MonoReconciler result = new MonoReconciler( strategy, false );
     result.setDelay( 500 );
     return result;

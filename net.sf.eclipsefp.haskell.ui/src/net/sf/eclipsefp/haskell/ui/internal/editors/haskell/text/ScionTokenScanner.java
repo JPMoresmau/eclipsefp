@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2013 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text;
 
 import java.io.BufferedWriter;
@@ -21,6 +26,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.buildwrapper.types.TokenDef;
 import net.sf.eclipsefp.haskell.core.codeassist.ITokenTypes;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -34,11 +40,10 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 /**
- * Uses Scion tokenTypesArbitrary function to get tokens for a haskell source
+ * Uses BuildWrapper getTokenTypes function to get tokens for a Haskell source
   *
   * @author JP Moresmau
  */
@@ -51,6 +56,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   private TokenDef currentTokenDef;
   private List<TokenDef> lTokenDefs;
+  private List<TokenDef> lMergedTokenDefs;
   private ListIterator<TokenDef> tokenDefs;
 
   private final Map<List<String>,List<TokenDef>> occurrences=new HashMap<List<String>,List<TokenDef>>();
@@ -67,49 +73,53 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   //private boolean checkedTabs=false;
 
-  protected Map<String,IToken> tokenByTypes;
+  protected Map<String,ContentTypeToken> tokenByTypes;
 
   private Set<TaskTag> tags;
   private boolean caseS;
 
+
   /**
    * since we may run in a job for big files, we need a handle to the GUI display
    */
-  private final Display display;
+  //private final Display display;
 
-  public ScionTokenScanner(final ScannerManager man,final IFile file,final Display display){
+  public ScionTokenScanner(final ScannerManager man,final IFile file){
     this.man=man;
     this.file=file;
-    this.display=display;
-    this.tokenByTypes = new HashMap<String, IToken>() {
+    //,final Display display
+    //this.display=display;
+    this.tokenByTypes = new HashMap<String, ContentTypeToken>() {
       // Eclipse insists on a serial version identifier, not that this hash map will ever
       // get serialized...
       private static final long serialVersionUID = 3579246300065591883L;
       {
-        put( ITokenTypes.LITERAL_STRING, man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) );
-        put( ITokenTypes.LITERAL_CHAR, man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) );
-        put( ITokenTypes.DOCUMENTATION_ANNOTATION, man.createToken( EDITOR_DOC_COLOR,EDITOR_DOC_BOLD  ) );
-        put( ITokenTypes.COMMENT, man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) );
-        put( ITokenTypes.PRAGMA, man.createToken( EDITOR_PRAGMA_COLOR,EDITOR_PRAGMA_BOLD  ) );
-        put( ITokenTypes.LITERATE_COMMENT, man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) );
-        put( ITokenTypes.KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
-        put( ITokenTypes.GHC_EXTENSION_KEYWORD, man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) );
-        put( ITokenTypes.LITERAL_INTEGER, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( ITokenTypes.LITERAL_RATIONAL, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( ITokenTypes.LITERAL_WORD, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( ITokenTypes.LITERAL_FLOAT, man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) );
-        put( ITokenTypes.IDENTIFIER_CONSTRUCTOR, man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) );
-        put( ITokenTypes.IDENTIFIER_VARIABLE, man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) );
-        put( ITokenTypes.SYMBOL_VARIABLE, man.createToken( EDITOR_VARSYM_COLOR, EDITOR_VARSYM_BOLD   ) );
-        put( ITokenTypes.SYMBOL_RESERVED, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
-        put( ITokenTypes.SYMBOL_SPECIAL, man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) );
-        put( ITokenTypes.PREPROCESSOR_TEXT, man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) );
-        put( ITokenTypes.TEMPLATE_HASKELL, man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) );
+        put( ITokenTypes.LITERAL_STRING, new ContentTypeToken( HaskellEditor.TEXT_CONTENTTYPE,man.createToken( EDITOR_STRING_COLOR, EDITOR_STRING_BOLD ) ));
+        put( ITokenTypes.LITERAL_CHAR, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_CHAR_COLOR, EDITOR_CHAR_BOLD ) ));
+        put( ITokenTypes.DOCUMENTATION_ANNOTATION, new ContentTypeToken( HaskellEditor.TEXT_CONTENTTYPE,man.createToken( EDITOR_DOC_COLOR,EDITOR_DOC_BOLD  ) ));
+        put( ITokenTypes.COMMENT, new ContentTypeToken( HaskellEditor.TEXT_CONTENTTYPE,man.createToken( EDITOR_COMMENT_COLOR,EDITOR_COMMENT_BOLD  ) ));
+        put( ITokenTypes.PRAGMA, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_PRAGMA_COLOR,EDITOR_PRAGMA_BOLD  ) ));
+        put( ITokenTypes.LITERATE_COMMENT, new ContentTypeToken( HaskellEditor.TEXT_CONTENTTYPE,man.createToken( EDITOR_LITERATE_COMMENT_COLOR, EDITOR_LITERATE_COMMENT_BOLD  ) ));
+        put( ITokenTypes.KEYWORD, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) ));
+        put( ITokenTypes.GHC_EXTENSION_KEYWORD, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_KEYWORD_COLOR, EDITOR_KEYWORD_BOLD   ) ));
+        put( ITokenTypes.LITERAL_INTEGER, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) ));
+        put( ITokenTypes.LITERAL_RATIONAL, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) ));
+        put( ITokenTypes.LITERAL_WORD, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) ));
+        put( ITokenTypes.LITERAL_FLOAT, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_NUMBER_COLOR, EDITOR_NUMBER_BOLD   ) ));
+        put( ITokenTypes.IDENTIFIER_CONSTRUCTOR, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_CON_COLOR, EDITOR_CON_BOLD  ) ));
+        put( ITokenTypes.IDENTIFIER_VARIABLE, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_VAR_COLOR, EDITOR_VAR_BOLD   ) ));
+        put( ITokenTypes.SYMBOL_VARIABLE, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_VARSYM_COLOR, EDITOR_VARSYM_BOLD   ) ));
+        put( ITokenTypes.SYMBOL_RESERVED, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) ));
+        put( ITokenTypes.SYMBOL_SPECIAL, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_SYMBOL_COLOR, EDITOR_SYMBOL_BOLD   ) ));
+        put( ITokenTypes.PREPROCESSOR_TEXT, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_CPP_COLOR, EDITOR_CPP_BOLD   ) ));
+        put( ITokenTypes.TEMPLATE_HASKELL, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) ));
       }
     };
+
     getCaseS();
     HaskellUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
   }
+
 
   @Override
   public int getTokenLength() {
@@ -164,6 +174,10 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 //             notEOF=true;
 //           }
 //!notEOF &&
+//           if (currentOffset>0 && nextOffset<=currentOffset+currentLength){
+//             HaskellUIPlugin.log( (currentOffset+currentLength)+">"+nextOffset, IStatus.ERROR );
+//           }
+
 
            int nextLength=end-nextOffset;
            currentLength=nextLength;
@@ -172,7 +186,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
            currentToken=nextToken;
 //           HaskellUIPlugin.log( currentOffset+currentLength+" / "+offset+"/"+length, IStatus.INFO );
 //
-//           if (!notEOF && currentOffset>offset+length)  {
+//           if (currentOffset+currentLength>=offset+length)  {
 //             return Token.EOF;
 //           }
            if ( nextOffset>offset+length || currentLength<0)  {
@@ -186,7 +200,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
        } else {
          return Token.EOF;
        }
-    } while(currentOffset+currentLength<offset);
+    } while(currentOffset+currentLength<=offset);
 //    HaskellUIPlugin.log( currentOffset+"/"+currentLength+" / "+offset+"/"+length, IStatus.INFO );
 //     HaskellUIPlugin.log(String.valueOf(currentOffset>=offset && currentOffset+currentLength<=offset+length),IStatus.INFO);
     return currentToken;
@@ -297,13 +311,13 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   public void setRange( final IDocument document, final int offset, final int length ) {
     currentTokenDef = null;
     // currentToken=null;
-    tokenDefs = null;
+
     currentLength=0;
     currentOffset=0;
 
-    occurrences.clear();
-    tokenLocations.clear();
+    tokenDefs = null;
 
+    boolean changed=false;
     if( file != null ) {
       String newContents = document.get();
       if( !document.equals( doc ) || !newContents.equals( contents ) || lTokenDefs == null ) {
@@ -329,6 +343,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         }
         //long t01=System.currentTimeMillis();
         lTokenDefs = f.tokenTypes( file);
+        changed=true;
         //long t1=System.currentTimeMillis();
         //int l=ScionPlugin.getSharedScionInstance().tokenTypes( file, contents ).size();
         //long t2=System.currentTimeMillis();
@@ -337,6 +352,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     } else {
       this.doc = document;
       contents=doc.get();
+      changed=true;
       /*try {
         InputStream stream = SyntaxPreviewer.class.getResourceAsStream( "preview.json" );
         // preview file
@@ -379,37 +395,43 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       }
     }
 
-    //String s=doc.get();
-//    long previousOffset=-1;
-//    long previousEnd=-1;
-    for (TokenDef nextTokenDef:lTokenDefs){
-      try {
-        int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
-//        if (nextOffset<previousOffset){
-//          HaskellUIPlugin.log( "offset error: "+nextOffset+"<"+previousOffset, IStatus.ERROR );
-//        }
-//        if (nextOffset<previousEnd){
-//          HaskellUIPlugin.log( "offset error at line "+nextTokenDef.getLocation().getStartLine()+": "+nextOffset+"<"+previousEnd, IStatus.ERROR );
-//        }
-        int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
-//        if (nextOffset>nextEnd){
-//          HaskellUIPlugin.log( "extent error: "+nextOffset+">"+nextEnd, IStatus.ERROR );
-//        }
-//        if (previousOffset>nextEnd){
-//          HaskellUIPlugin.log( "extent error: "+nextEnd+">"+previousOffset, IStatus.ERROR );
-//        }
-        //HaskellUIPlugin.log(nextOffset+"->"+nextEnd, IStatus.INFO);
-        addTokenOccurence( contents,nextOffset, nextEnd, nextTokenDef );
+    if (changed){
 
-//        previousOffset=nextOffset;
-//        previousEnd=nextEnd;
-      } catch (BadLocationException ble){
-        HaskellUIPlugin.log( ble );
+      occurrences.clear();
+      tokenLocations.clear();
+      //String s=doc.get();
+  //    long previousOffset=-1;
+  //    long previousEnd=-1;
+      for (TokenDef nextTokenDef:lTokenDefs){
+        try {
+          int nextOffset=nextTokenDef.getLocation().getStartOffset( doc );
+  //        if (nextOffset<previousOffset){
+  //          HaskellUIPlugin.log( "offset error: "+nextOffset+"<"+previousOffset, IStatus.ERROR );
+  //        }
+  //        if (nextOffset<previousEnd){
+  //          HaskellUIPlugin.log( "offset error at line "+nextTokenDef.getLocation().getStartLine()+": "+nextOffset+"<"+previousEnd, IStatus.ERROR );
+  //        }
+          int nextEnd=nextTokenDef.getLocation().getEndOffset( doc );
+  //        if (nextOffset>nextEnd){
+  //          HaskellUIPlugin.log( "extent error: "+nextOffset+">"+nextEnd, IStatus.ERROR );
+  //        }
+  //        if (previousOffset>nextEnd){
+  //          HaskellUIPlugin.log( "extent error: "+nextEnd+">"+previousOffset, IStatus.ERROR );
+  //        }
+          //HaskellUIPlugin.log(nextOffset+"->"+nextEnd, IStatus.INFO);
+          addTokenOccurence( contents,nextOffset, nextEnd, nextTokenDef );
+
+  //        previousOffset=nextOffset;
+  //        previousEnd=nextEnd;
+        } catch (BadLocationException ble){
+          HaskellUIPlugin.log( ble );
+        }
+      }
+      if( lTokenDefs != null) {
+        lMergedTokenDefs=mergeTokens( lTokenDefs);
       }
     }
-    if( lTokenDefs != null && lTokenDefs.size() > 0 ) {
-      tokenDefs = mergeTokens( lTokenDefs).listIterator();
-    }
+    tokenDefs =lMergedTokenDefs.listIterator();
     this.offset = offset;
     this.length = length;
     //HaskellUIPlugin.log( offset+"+"+length,IStatus.INFO );
@@ -489,7 +511,17 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   @Override
   public void setPartialRange( final IDocument document, final int offset, final int length,
       final String contentType, final int partitionOffset ) {
-    setRange( document, offset, length );
+    //fContentType= contentType;
+    //fPartitionOffset= partitionOffset;
+    if (partitionOffset > -1) {
+      int delta= offset - partitionOffset;
+      if (delta > 0) {
+        setRange(document, partitionOffset, length + delta);
+        this.offset= offset;
+        return;
+      }
+    }
+    setRange(document, offset, length);
   }
 
   public void dispose(){

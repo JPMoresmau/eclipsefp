@@ -4,6 +4,9 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.DefaultPartitionScanner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellDocumentPartitioner;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -13,6 +16,7 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.part.FileEditorInput;
 
 /** <p>The HaskellDocumentProvides knows how to create a Haskell document
   * (a model for the editor) from a file resource.</p>
@@ -21,20 +25,9 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
   */
 public class HaskellDocumentProvider extends FileDocumentProvider {
 
-//  private static final String[] TOKEN_TYPES = new String[] {
-//    IDocument.DEFAULT_CONTENT_TYPE,
-//    IPartitionTypes.HS_COMMENT,
-//    IPartitionTypes.HS_CHARACTER,
-//    IPartitionTypes.HS_STRING,
-//    IPartitionTypes.HS_LITERATE_COMMENT
-//  };
 
   public static IDocumentPartitioner createDocumentPartitioner() {
     return new FastPartitioner( new DefaultPartitionScanner(), new String[]{IDocument.DEFAULT_CONTENT_TYPE });
-//    IFile f=(IFile)super.getConnectedElements().next();
-//
-//    IPartitionTokenScanner partitionScanner = new ScionTokenScanner(HaskellUIPlugin.getDefault().getScionInstanceManager( f ),f,true);
-//    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
   }
 
   public static void connectToPartitioner( final Object element,
@@ -84,26 +77,11 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
   // helping methods
   //////////////////
 
-  private static IDocumentPartitioner getPartitioner( final Object elem )
-                                                           {
-    return new FastPartitioner( new DefaultPartitionScanner(), new String[]{IDocument.DEFAULT_CONTENT_TYPE });
-//    IFile file=((FileEditorInput)elem).getFile();
-//
-//    IPartitionTokenScanner partitionScanner = new ScionTokenScanner( HaskellUIPlugin.getDefault().getScionInstanceManager( file ), file, true );
-//      //new HaskellPartitionScanner();
-//
-//    if( elem instanceof IFileEditorInput ) {
-//      IFile input = ( ( IFileEditorInput )elem ).getFile();
-//      IContentDescription contentDesc = input.getContentDescription();
-//      if( contentDesc != null ) {
-//        Object sty = contentDesc.getProperty( LiterateContentDescriber.STYLE );
-//        if( LiterateContentDescriber.LATEX.equals( sty ) ) {
-//          partitionScanner = new LiterateHaskellPartitionScanner( true );
-//        } else if( LiterateContentDescriber.BIRD.equals( sty ) ) {
-//          partitionScanner = new LiterateHaskellPartitionScanner( false );
-//        }
-//      }
-//    }
-//    return new FastPartitioner( partitionScanner, TOKEN_TYPES );
+  private static IDocumentPartitioner getPartitioner( final Object elem ){
+
+    IFile file=((FileEditorInput)elem).getFile();
+
+    ScionTokenScanner partitionScanner = new ScionTokenScanner( ScannerManager.getInstance(), file );
+    return new HaskellDocumentPartitioner( partitionScanner, new String[]{IDocument.DEFAULT_CONTENT_TYPE,HaskellEditor.TEXT_CONTENTTYPE} );
   }
 }

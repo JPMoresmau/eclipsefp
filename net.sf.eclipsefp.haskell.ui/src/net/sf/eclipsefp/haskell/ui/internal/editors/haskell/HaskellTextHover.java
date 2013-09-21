@@ -40,10 +40,11 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
 
   private static final String ERROR_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.error"; //$NON-NLS-1$
   private static final String WARNING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.warning"; //$NON-NLS-1$
+  private static final String SPELLING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.spelling"; //$NON-NLS-1$
 
   private final DefaultMarkerAnnotationAccess fMarkerAnnotationAccess;
 
-  HaskellTextHover( final HaskellEditor editor,
+  public HaskellTextHover( final HaskellEditor editor,
                     final ISourceViewer sourceViewer ) {
     super( sourceViewer );
     this.editor = editor;
@@ -59,6 +60,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
     if (hoverInfo != null) {
       return hoverInfo;
     }
+
     return computeThingAtPoint( textViewer, hoverRegion,false );
   }
 
@@ -120,7 +122,8 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
           Annotation a = i.next();
           String type = a.getType();
           if (a.getText()!=null && (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE ) ||
-              fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE ))) {
+              fMarkerAnnotationAccess.isSubtype( type, WARNING_ANNOTATION_TYPE )||
+              fMarkerAnnotationAccess.isSubtype( type, SPELLING_ANNOTATION_TYPE ))) {
             Position p = annotationModel.getPosition( a );
             if (p.overlapsWith( hoverRegion.getOffset(), hoverRegion.getLength() )) {
               // add a nice icon

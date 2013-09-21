@@ -1,14 +1,19 @@
+/**
+ *  Copyright (c) 2013 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
@@ -17,11 +22,11 @@ import org.eclipse.ui.texteditor.TextEditorAction;
   * @author JP Moresmau
  */
 public class SelectAnnotationForQuickFix extends TextEditorAction {
-  private final MarkerAnnotation ann;
+  private final Annotation ann;
   private final SourceViewer sourceViewer;
 
   public SelectAnnotationForQuickFix(
-      final ITextEditor editor,final SourceViewer sourceViewer,final MarkerAnnotation ann ) {
+      final ITextEditor editor,final SourceViewer sourceViewer,final Annotation ann ) {
     super( HaskellUIPlugin.getDefault().getResourceBundle(), "QuickFix.", editor ); //$NON-NLS-1$
     this.ann=ann;
     this.sourceViewer=sourceViewer;

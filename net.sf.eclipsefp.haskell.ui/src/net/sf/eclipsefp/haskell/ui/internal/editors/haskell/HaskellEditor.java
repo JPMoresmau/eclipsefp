@@ -89,7 +89,6 @@ import org.eclipse.ui.texteditor.GotoAnnotationAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -135,6 +134,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   /** The key binding context active while the Haskell editor is active */
   private static final String CONTEXT_ID = HaskellEditor.class.getName() + ".context";  //$NON-NLS-1$
   private static final String SIMPLE_CONTEXT_ID = HaskellEditor.class.getSimpleName() + "Context";
+
+  public static final String TEXT_CONTENTTYPE="__haskell_text_content_type";
 
   private HaskellOutlinePage outlinePage;
   private ProjectionSupport projectionSupport;
@@ -354,12 +355,12 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
          for (Iterator<?> it=getSourceViewer().getAnnotationModel().getAnnotationIterator();it.hasNext();){
            Annotation ann = (Annotation) it.next();
-           if (ann instanceof MarkerAnnotation){
+           //if (ann instanceof MarkerAnnotation){
              Position p=getSourceViewer().getAnnotationModel().getPosition( ann );
              try {
              if (p!=null && getDocument().getLineOfOffset(p.getOffset())==line){
                if (((ProjectionViewer)getSourceViewer()).getQuickAssistAssistant().canFix( ann )){
-                 IAction action=new SelectAnnotationForQuickFix(  HaskellEditor.this , (ProjectionViewer)getSourceViewer(), (MarkerAnnotation)ann );
+                 IAction action=new SelectAnnotationForQuickFix(  HaskellEditor.this , (ProjectionViewer)getSourceViewer(), ann );
                  manager.add( action );
                  //return;
                }
@@ -367,7 +368,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
              } catch (BadLocationException ble){
                // ignore
              }
-           }
+          // }
          }
        }
       }

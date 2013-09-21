@@ -46,7 +46,7 @@ public class AlexSourceViewerConfiguration extends
 
     IFile file = ( editor != null ? editor.findFile() : null );
     ITokenScanner codeScanner = new ScionTokenScanner(
-        getScannerManager(), file,viewer.getTextWidget().getDisplay() );
+        getScannerManager(), file);
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
     reconciler.setRepairer( haskellDr, PartitionDocumentSetup.HASKELL );

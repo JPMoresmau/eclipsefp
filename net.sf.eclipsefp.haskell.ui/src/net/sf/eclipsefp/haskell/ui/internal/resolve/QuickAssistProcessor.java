@@ -1,6 +1,12 @@
+/**
+ *  Copyright (c) 2013 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.IMarker;
@@ -11,6 +17,7 @@ import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 
 /**
  * <p>Compute quick assist based on the Marker resolution generator</p>
@@ -21,13 +28,19 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 public class QuickAssistProcessor implements IQuickAssistProcessor {
   private final BuildMarkerResolutionGenerator generator=new BuildMarkerResolutionGenerator();
 
+  private final SpellingCorrectionProcessor spelling=new SpellingCorrectionProcessor();
+
   @Override
   public boolean canAssist( final IQuickAssistInvocationContext invocationContext ) {
-    return false;
+    return spelling.canAssist( invocationContext );
   }
 
   @Override
   public boolean canFix( final Annotation annotation ) {
+    boolean can=spelling.canFix( annotation );
+    if (can){
+      return true;
+    }
     if (annotation instanceof MarkerAnnotation){
       return generator.getResolutions( ((MarkerAnnotation)annotation ).getMarker()).length>0;
     }
@@ -58,6 +71,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
         }
       }
     }
+    res.addAll(Arrays.asList( spelling.computeQuickAssistProposals( invocationContext ) ));
 
     return res.toArray( new ICompletionProposal[res.size()] );
   }

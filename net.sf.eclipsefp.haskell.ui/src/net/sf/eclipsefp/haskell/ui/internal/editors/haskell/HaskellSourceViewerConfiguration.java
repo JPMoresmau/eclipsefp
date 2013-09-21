@@ -7,6 +7,7 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HaskellContentAssistProcessor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.AnnotationHover;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellAutoIndentStrategy;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellDocumentPartitioner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcilingStrategy;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
@@ -14,12 +15,12 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreference
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
@@ -34,7 +35,7 @@ import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
-import org.eclipse.jface.text.reconciler.MonoReconciler;
+import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -79,9 +80,9 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
   @Override
   public ITextHover getTextHover( final ISourceViewer sourceViewer, final String contentType ) {
     ITextHover result = null;
-    if( IDocument.DEFAULT_CONTENT_TYPE.equals( contentType ) ) {
+    //if( IDocument.DEFAULT_CONTENT_TYPE.equals( contentType ) ) {
       result = new HaskellTextHover( editor, sourceViewer );
-    }
+    //}
     return result;
   }
 
@@ -107,12 +108,14 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 
 	@Override
   public String[] getConfiguredContentTypes( final ISourceViewer sv ) {
-    return new String[] { IDocument.DEFAULT_CONTENT_TYPE // plain text
+	     return new String[] { IDocument.DEFAULT_CONTENT_TYPE // plain text
+	         ,HaskellEditor.TEXT_CONTENTTYPE
+	     };
 //      IPartitionTypes.HS_LITERATE_COMMENT,
 //      IPartitionTypes.HS_COMMENT,
 //      IPartitionTypes.HS_CHARACTER,
 //      IPartitionTypes.HS_STRING
-    };
+//    };
   }
 
 	@Override
@@ -178,34 +181,30 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 	  PresentationReconciler reconciler = colorInThread?new HaskellPresentationReconciler():new PresentationReconciler();
 		IFile file = (editor != null ? editor.findFile() : null);
 
-		ScionTokenScanner codeScanner=new ScionTokenScanner(getScannerManager(), file,sv.getTextWidget().getDisplay());
+		// get token scanner from partitioner to avoid duplicates
+		IDocumentPartitioner dp=null;
+		if (editor!=null && editor.getDocument()!=null){
+		  dp=editor.getDocument().getDocumentPartitioner();
+		}
+		ScionTokenScanner codeScanner=null;
+		if (dp instanceof HaskellDocumentPartitioner){
+		  codeScanner=((HaskellDocumentPartitioner)dp).getScanner();
+		}
+
+		if (codeScanner==null){
+		  codeScanner=new ScionTokenScanner(getScannerManager(), file);
+		}
 		if (editor!=null){
 		  editor.setTokenScanner( codeScanner );
 		}
 		DefaultDamagerRepairer dr=new DefaultDamagerRepairer( codeScanner );
 		reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
+    DefaultDamagerRepairer dr2=new DefaultDamagerRepairer( codeScanner );
+    reconciler.setDamager( dr2, HaskellEditor.TEXT_CONTENTTYPE );
+    reconciler.setRepairer( dr2, HaskellEditor.TEXT_CONTENTTYPE );
 
-    // comments
-    //HaskellCommentScanner commentScanner = man.getCommentScanner();
-    //DefaultDamagerRepairer cndr = new DefaultDamagerRepairer( codeScanner );
-//    reconciler.setDamager( dr, IPartitionTypes.HS_COMMENT );
-//    reconciler.setRepairer( dr, IPartitionTypes.HS_COMMENT );
-//    // string literals
-//    //HaskellStringScanner stringScanner = man.getStringScanner();
-//    //DefaultDamagerRepairer sndr = new DefaultDamagerRepairer( codeScanner );
-//    reconciler.setDamager( dr, IPartitionTypes.HS_STRING );
-//   reconciler.setRepairer( dr, IPartitionTypes.HS_STRING );
-//    // character literals
-//    //HaskellCharacterScanner charScanner = man.getCharacterScanner();
-//    //DefaultDamagerRepairer chndr = new DefaultDamagerRepairer( codeScanner );
-//    reconciler.setDamager( dr, IPartitionTypes.HS_CHARACTER );
-//    reconciler.setRepairer( dr, IPartitionTypes.HS_CHARACTER );
-//    // literate comments
-//    //HaskellCommentScanner litScanner = man.getLiterateCommentScanner();
-//    //DefaultDamagerRepairer lcndr = new DefaultDamagerRepairer( codeScanner );
-//    reconciler.setDamager( dr, IPartitionTypes.HS_LITERATE_COMMENT );
-//    reconciler.setRepairer( dr, IPartitionTypes.HS_LITERATE_COMMENT );
+
 
 		return reconciler;
 	}
@@ -261,14 +260,20 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 
 	@Override
   public IReconciler getReconciler( final ISourceViewer sourceViewer ) {
-    MonoReconciler result = null;
+	  IReconciler result = null;
     // the editor may be null if this configuration is used in a preview
     // (source viewer without editor)
     if( editor != null ) {
-      IReconcilingStrategy strategy = new HaskellReconcilingStrategy( editor );
-      result = new MonoReconciler( strategy, false );
-      result.setProgressMonitor( new NullProgressMonitor() );
-      result.setDelay( 500 );
+      IReconcilingStrategy strategySpell = new HaskellReconcilingStrategy( editor , sourceViewer,true);
+      IReconcilingStrategy strategyNoSpell = new HaskellReconcilingStrategy( editor , sourceViewer,false);
+      //MonoReconciler mr = new MonoReconciler( strategy, false );
+      //mr.setProgressMonitor( new NullProgressMonitor() );
+      //mr.setDelay( 500 );
+      Reconciler r=new Reconciler();
+      r.setReconcilingStrategy( strategyNoSpell, IDocument.DEFAULT_CONTENT_TYPE );
+      r.setReconcilingStrategy( strategySpell, HaskellEditor.TEXT_CONTENTTYPE );
+
+      result=r;
     }
     return result;
   }
