@@ -301,6 +301,7 @@ public class AnImport {
       case TYPE:
         return new NewType( "", new String[0], def.getName(), new String[0], "", new Constructor[0] );
       case FUNCTION:
+      case FIELD:
         return new Function( "", def.getName(), def.getTypeSignature() );
       case SYN:
         return new TypeSynonym( "", def.getName(), new String[0], "?" );
@@ -325,6 +326,7 @@ public class AnImport {
       case TYPE:
         return new NewType( def.getComment(), new String[0], def.getName(), new String[0], "", new Constructor[0] );
       case FUNCTION:
+      case FIELD:
         return new Function( def.getComment(), def.getName(), def.getTypeSignature() );
       case SYN:
         return new TypeSynonym( def.getComment(), def.getName(), new String[0], "?" );

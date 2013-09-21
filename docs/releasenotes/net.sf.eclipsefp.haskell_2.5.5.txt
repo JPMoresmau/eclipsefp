@@ -19,7 +19,8 @@ Fixes:
 	- Disable component choice on new project if one cabal file exists, even if it has another name than the project name (https://github.com/JPMoresmau/eclipsefp/issues/114)
 	- Scion-browser wouldn't start on Eclipse Juno/Kepler if "start only when Haskell perspective is activated" preference is checked and Haskell perspective opened on startup
 	- Enable spell checker on Haskell comments and string literals, and on the whole Cabal file (https://github.com/JPMoresmau/eclipsefp/issues/141)
-	
+	- Better comment handling (https://github.com/JPMoresmau/eclipsefp/issues/141)	
+
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
 	- Quick fix for "naked expression at top level": add TemplateHaskell language pragma
