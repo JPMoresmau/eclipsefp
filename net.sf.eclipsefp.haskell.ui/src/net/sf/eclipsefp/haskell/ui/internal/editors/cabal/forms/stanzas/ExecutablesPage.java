@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2011 by Alejandro Serrano
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.Arrays;
@@ -110,10 +115,15 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
 
       @Override
       public void run() {
+        String initial="";
+        // Default to project name if first executable created
+        if (execsList.getItemCount()==0){
+          initial=getPackageDescription().getPackageStanza().getName();
+        }
         InputDialog dialog = new InputDialog( execsList.getShell(),
             UITexts.cabalEditor_newExecutableString,
             UITexts.cabalEditor_newExecutableString,
-            "", new IInputValidator() {
+            initial, new IInputValidator() {
 
               @Override
               public String isValid( final String newText ) {
