@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.ImportsManag
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.text.BadLocationException;
@@ -97,7 +98,8 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   }
 
   private static String toHTMLString(final String txt){
-    String txt2=txt.replace( PlatformUtil.NL, "<br/>" );
+    String txt2=StringEscapeUtils.escapeHtml4( txt );
+    txt2=txt2.replace( PlatformUtil.NL, "<br/>" );
     txt2=txt2.replace( "\n", "<br/>" );
     txt2=txt2.replace( "\r", "<br/>" );
     txt2=txt2.replace( " ", "&nbsp;" );

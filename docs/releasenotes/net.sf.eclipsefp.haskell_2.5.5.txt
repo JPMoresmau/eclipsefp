@@ -20,6 +20,7 @@ Fixes:
 	- Scion-browser wouldn't start on Eclipse Juno/Kepler if "start only when Haskell perspective is activated" preference is checked and Haskell perspective opened on startup
 	- Enable spell checker on Haskell comments and string literals, and on the whole Cabal file (https://github.com/JPMoresmau/eclipsefp/issues/141)
 	- Better comment handling (https://github.com/JPMoresmau/eclipsefp/issues/141)	
+	- Show proper error messages when names contain HTML reserved characters
 
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
@@ -36,8 +37,8 @@ Features:
 	- Cabal editor uses similar colors than Haskell editor, driven by the same properties
 
 Internal:
-
-
+	- Apache common-lang bundled
+ 
 Upgrade notes:
 	- Upgrade via the Eclipse install site http://eclipsefp.sf.net/updates. 
 
