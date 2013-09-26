@@ -28,7 +28,7 @@ public class FullBuildVisitor implements IResourceVisitor {
       resource.getProject().refreshLocal( IResource.DEPTH_INFINITE, null );
       IPath derivedPath = resource.getProjectRelativePath().removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
       IFile f=resource.getProject().getFile( derivedPath );
-      if (f.isAccessible()){
+      if (f.isAccessible() && !f.isDerived()){
         f.setDerived( true,new NullProgressMonitor() );
       }
     }

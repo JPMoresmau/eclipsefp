@@ -116,8 +116,7 @@ public class UuagcBuilder extends IncrementalProjectBuilder {
     IPath derivedPath = resource.getProjectRelativePath()
         .removeFileExtension().addFileExtension( FileUtil.EXTENSION_HS );
     IFile f=resource.getProject().getFile( derivedPath );
-    // file may not be created if they were errors
-    if (f.isAccessible()){
+    if (f.isAccessible() && !f.isDerived()){
       f.setDerived( true,new NullProgressMonitor() );
     }
   }
