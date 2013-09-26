@@ -31,6 +31,7 @@ import net.sf.eclipsefp.haskell.hlint.HLintFixer;
 import net.sf.eclipsefp.haskell.hlint.Suggestion;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -285,11 +286,17 @@ public class BuildMarkerResolutionGenerator implements
    * @param qualified the qualifier if any
    * @param res the suggestions
    */
-  private void addBrowserSuggestions(final IMarker marker,final String name,final String qualified,final List<IMarkerResolution> res){
+  private void addBrowserSuggestions(final IMarker marker,String name,final String qualified,final List<IMarkerResolution> res){
     try {
 
       if (BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() && !BrowserPlugin.getSharedInstance().isRunning()) {
-
+     // symbols are wrapped in (), so we want to make sure this is true
+        if (name!=null && name.length()>0){
+          char ch=name.charAt(0);
+          if (!HaskellText.isHaskellIdentifierPart(ch) && ch!='('){
+            name="("+name+")";
+          }
+        }
         DeclarationId[] availableMods = BrowserPlugin.getSharedInstance().findModulesForDeclaration(Database.ALL, name );
 
         /**

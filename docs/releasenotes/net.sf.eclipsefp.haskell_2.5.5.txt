@@ -22,7 +22,8 @@ Fixes:
 	- Better comment handling (https://github.com/JPMoresmau/eclipsefp/issues/141)	
 	- Show proper error messages when names contain HTML reserved characters
 	- Display properly in Browser views functions containg HTML characters like </>
-
+	- Suggest properly module imports on unresolved symbols like </>
+	
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
 	- Quick fix for "naked expression at top level": add TemplateHaskell language pragma
