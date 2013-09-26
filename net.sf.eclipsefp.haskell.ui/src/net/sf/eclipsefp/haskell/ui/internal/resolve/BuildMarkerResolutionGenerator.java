@@ -141,18 +141,33 @@ public class BuildMarkerResolutionGenerator implements
           else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
             int start=GhcMessages.MISSING_MODULE.length();
             ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,start );
-            Set<String> pkgs=new HashSet<String>();
-            while (ix>-1){
-              int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
-              if (ix2>-1){
-                String pkg=msg.substring( ix+GhcMessages.MISSING_MODULE_ADD_START.length(),ix2 );
-                // if the dependency can be found in several versions, we'll get several messages
-                if (pkgs.add( pkg )){
-                  res.add(new AddPackageDependency( pkg ));
+            if (ix>-1){
+              Set<String> pkgs=new HashSet<String>();
+              while (ix>-1){
+                int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
+                if (ix2>-1){
+                  String pkg=msg.substring( ix+GhcMessages.MISSING_MODULE_ADD_START.length(),ix2 );
+                  // if the dependency can be found in several versions, we'll get several messages
+                  if (pkgs.add( pkg )){
+                    res.add(new AddPackageDependency( pkg ));
+                  }
+                  ix=ix2;
                 }
-                ix=ix2;
+                ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,ix+1 );
               }
-              ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,ix+1 );
+
+            }
+            int l=msgL.indexOf( "\n",start+1 );
+            if (l>-1){
+              String sug=msg.substring( l );
+              List<String> suggestions=ReplaceTextResolution.getSuggestionsFromGHCMessage( sug,msgL.substring( l ) );
+              msgL=msgL.substring( 0,l );
+              int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
+              String notInScope = msg.substring( start + 2, end );
+
+              for (String suggestion:suggestions){
+                res.add( new ReplaceTextResolution( notInScope, suggestion ) );
+              }
             }
           }
           // Not in scope

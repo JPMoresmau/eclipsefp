@@ -35,6 +35,7 @@ Features:
 	- Multiline comments can be folded
 	- Scion-browser debug mode enablement does not require a restart
 	- Cabal editor uses similar colors than Haskell editor, driven by the same properties
+	- Quick fix: take suggestions on misspelled packages
 
 Internal:
 	- Apache common-lang bundled
