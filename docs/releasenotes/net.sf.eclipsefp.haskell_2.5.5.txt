@@ -21,6 +21,7 @@ Fixes:
 	- Enable spell checker on Haskell comments and string literals, and on the whole Cabal file (https://github.com/JPMoresmau/eclipsefp/issues/141)
 	- Better comment handling (https://github.com/JPMoresmau/eclipsefp/issues/141)	
 	- Show proper error messages when names contain HTML reserved characters
+	- Display properly in Browser views functions containg HTML characters like </>
 
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)

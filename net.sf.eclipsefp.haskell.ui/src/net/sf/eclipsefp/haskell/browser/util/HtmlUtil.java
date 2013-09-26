@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.browser.util;
 import java.util.ArrayList;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * Generates Html for showing documentation in several places.
@@ -93,7 +94,7 @@ public class HtmlUtil {
 
     if( definition != null ) {
       builder.append( "<p style=\"font-family: monospace\">" );
-      builder.append( definition );
+      builder.append( StringEscapeUtils.escapeHtml4( definition) );
       builder.append( "</p>" );
     }
 
