@@ -119,6 +119,9 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
     if (textViewer instanceof ISourceViewer) {
       IAnnotationModel annotationModel = ((ISourceViewer)textViewer).getAnnotationModel();
       if (annotationModel!=null){
+        // collect all messages
+        StringBuilder sb=new StringBuilder();
+
         Iterator<Annotation> i = annotationModel.getAnnotationIterator();
         while (i.hasNext()) {
           Annotation a = i.next();
@@ -139,12 +142,26 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               } catch( IOException ioe){
                 HaskellUIPlugin.log( ioe );
               }
-
-              return "<div style=\"font-family: verdana;padding:2px\">"+img+
-                     txt +
-                     "</div>";
+              String div="<div style=\"font-family: verdana;padding:2px\">"+img+
+                  txt +
+                  "</div>";
+              // put errors first
+              if (fMarkerAnnotationAccess.isSubtype( type, ERROR_ANNOTATION_TYPE )){
+                if (sb.length()>0){
+                  sb.insert(0,"<hr/>");
+                }
+                sb.insert(0, div );
+              } else {
+                if (sb.length()>0){
+                  sb.append("<hr/>");
+                }
+                sb.append( div );
+              }
             }
           }
+        }
+        if (sb.length()>0){
+          return sb.toString();
         }
       }
     }
