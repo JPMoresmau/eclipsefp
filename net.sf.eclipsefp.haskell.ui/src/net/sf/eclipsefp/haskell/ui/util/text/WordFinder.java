@@ -103,10 +103,12 @@ public class WordFinder {
                     String line=doc.get( r.getOffset(), r.getLength() );
                     int off=offset-r.getOffset();
                     String name= ParserUtils.getHaskellWord(line,off);
-                    if (line.startsWith( "import" ) && name.contains( "." )){
-                      haddockType="m";
+                    if (name!=null){
+                      if (line.startsWith( "import" ) && name.contains( "." )){
+                        haddockType="m";
+                      }
+                      thing=new ThingAtPoint( name,haddockType );
                     }
-                    thing=new ThingAtPoint( name,haddockType );
                   } catch( final BadLocationException badlox ) {
                     badlox.printStackTrace();
                   }
