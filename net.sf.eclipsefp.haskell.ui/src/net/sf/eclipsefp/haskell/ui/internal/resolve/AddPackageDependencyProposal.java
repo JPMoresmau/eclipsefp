@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageHelper;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -18,7 +20,6 @@ import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -36,7 +37,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  */
 public class AddPackageDependencyProposal implements ICompletionProposal {
 
-  private final String value;
+  private String value;
   private final IMarker marker;
 
   public AddPackageDependencyProposal(final String value, final IMarker marker) {
@@ -62,6 +63,12 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       prov.connect( f );
       IDocument doc=prov.getDocument( f );
       PackageDescription pd=PackageDescriptionLoader.load( f );
+      String fullVersion=getValue();
+      String v=CabalPackageHelper.getInstance().getLastInstalledVersion( getValue());
+      if (v!=null){
+        fullVersion=getValue()+ " "+ CabalPackageVersion.getMajorRangeFromMinor( v );
+      }
+
       // find applicable stanzas if any, to not modify all of the cabal stanzas
       Set<PackageDescriptionStanza> apps=ResourceUtil.getApplicableStanzas( new IFile[]{res} );
       Set<String> appNames=new HashSet<String>();
@@ -69,9 +76,15 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
         Collection<String> pkgs=pds.getDependentPackages();
         // some stanzas may already have the dependency
         if(!pkgs.contains( getValue() )){
+          for (String s:pkgs){
+            if (s.startsWith( getValue()+" " )){
+              continue;
+            }
+          }
           appNames.add(pds.toTypeName());
         }
       }
+      value=fullVersion;
       int length=pd.getStanzas().size();
       for (int a=0;a<length;a++){
         PackageDescriptionStanza pds=pd.getStanzas().get(a);
@@ -87,7 +100,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
         }
       }
       prov.saveDocument( new NullProgressMonitor(), f, doc, true );
-    } catch (CoreException ce){
+    } catch (Exception ce){
       HaskellUIPlugin.log( ce );
 
     }

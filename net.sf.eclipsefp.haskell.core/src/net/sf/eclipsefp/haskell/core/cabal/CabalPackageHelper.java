@@ -62,10 +62,22 @@ public class CabalPackageHelper {
     return false;
   }
 
+  /**
+   * return the version string of the last installed version
+   * @param name the package name
+   * @return
+   * @throws IOException
+   */
   public String getLastInstalledVersion(final String name)throws IOException{
     List<CabalPackageRef> r=list(name,"--installed");//$NON-NLS-1$
     if (r.size()>0){
-      return r.get( r.size()-1 ).toString();
+      for (CabalPackageRef ref:r){
+        if (ref.getName().equals( name )){
+          if (ref.getVersions().size()>0){
+            return ref.getVersions().get( ref.getVersions().size()-1 );
+          }
+        }
+      }
     }
     return null;
   }

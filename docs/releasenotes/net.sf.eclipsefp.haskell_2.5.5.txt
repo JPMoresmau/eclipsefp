@@ -29,11 +29,12 @@ Features:
 	- Quick fix for "naked expression at top level": add TemplateHaskell language pragma
 	- Quick fix for "parse error on input `case'": add LambdaCase language pragma
 	- Version range options when adding dependencies through Cabal editor
+	- Adding a package via a quick fix use bound range checking
 	- Quick fix suggestions for missing imports start with modules from packages already marked as dependencies
 	- cabal-dev: preference to use only one sandbox for the whole workspace (in .metadata/.plugins/net.sf.eclipsefp.haskell.ui/.cabal-dev)
 	- use Usage DB for suggestions (more suggestions for out of scope errors)
-	- More cases with OverloadedString quick fix can be selected
-	- Quick fix on cabal-version to low for library reference
+	- More cases where OverloadedString quick fix can be selected
+	- Quick fix on cabal-version too low for library reference
 	- Multiline comments can be folded
 	- Scion-browser debug mode enablement does not require a restart
 	- Cabal editor uses similar colors than Haskell editor, driven by the same properties
