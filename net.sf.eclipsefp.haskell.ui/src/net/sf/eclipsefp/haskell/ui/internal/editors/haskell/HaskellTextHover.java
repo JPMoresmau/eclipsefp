@@ -188,7 +188,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
 
 
               sb.append(html ? "<div style='padding:2px'><nobr>" : "");
-              sb.append(tap.getName());
+              sb.append(toHTMLString( tap.getName(),html));
               String moduleColor = HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.EDITOR_CON_COLOR );
 
               if (tap.getType()!=null){
@@ -211,7 +211,7 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               if (d!=null && d.getDoc()!=null && d.getDoc().length()>0){
                 sb.append(html ? "<hr/>" : "\n");
                 sb.append(html ? "<div style='padding:2px'>" : "");
-                sb.append(toHTMLString(d.getDoc(),html));
+                sb.append(d.getDoc());
                 sb.append(html ? "</div>" : "");
 
               }
