@@ -396,6 +396,13 @@ public class AnImport {
     }
     if (contents.charAt( tend )==','){ // remove comma after me
       tend++;
+    } else if (contents.charAt( tend )==')'){ // I'm at end
+      while (tstart>0 && contents.charAt( tstart )==' '){ // remove spaces before me
+        tstart--;
+      }
+      /*if (contents.charAt( tstart-1 )==','){ // remove comma before me
+        tstart--;
+      }*/
     }
     while (tstart>1 && contents.charAt( tstart-1 )==' '){ // remove spaces before me
       tstart--;
@@ -487,7 +494,7 @@ public class AnImport {
               while (end<newContents.length() && newContents.charAt( end )!=')'){
                 end++;
               }
-              if (newContents.charAt( end )==')'){
+              if (end<newContents.length() && newContents.charAt( end )==')'){
                 end++;
               }
               trimmed=trimRemovedImport( newContents, thisItemIx, ix, end );

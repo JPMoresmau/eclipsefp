@@ -83,17 +83,25 @@ public class BuildMarkerResolutionGenerator implements
               res.add( new ReplaceImportResolution( newImport ) );
             }
           } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS2 )>-1){
-            if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_ELEMENT2 ) > -1) {
+            int ixe2=-1;
+            if ((ixe2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_ELEMENT2 )) > -1) {
               // Redundant element
               // 1. Find redundant element
-              int backQuote1 = msg.indexOf( '`' );
-              int endQuote1 = msg.indexOf( '\'' );
-              String redundantElement = msg.substring( backQuote1 + 1, endQuote1 );
-              /*String rest = msg.substring( endQuote1 + 1 );
-              int backQuote2 = rest.indexOf( '`' );
-              int endQuote2 = rest.indexOf( '\'' );
-              String inImport = rest.substring( backQuote2 + 1, endQuote2 );*/
-              res.add( new RemoveRedundantElementInImportResolution( redundantElement ) );
+              int start=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS_START );
+              if (start>-1){
+                String redundantElement=msg.substring( start+GhcMessages.WARNING_IMPORT_USELESS_CONTAINS_START.length(), ixe2 ).trim();
+                if (redundantElement.startsWith( "`" )){
+                  redundantElement=redundantElement.substring( 1,redundantElement.length()-1);
+                }
+                //int backQuote1 = msg.indexOf( '`' );
+                //int endQuote1 = msg.indexOf( '\'',backQuote1 );
+                //String redundantElement = msg.substring( backQuote1 + 1, endQuote1 );
+                /*String rest = msg.substring( endQuote1 + 1 );
+                int backQuote2 = rest.indexOf( '`' );
+                int endQuote2 = rest.indexOf( '\'' );
+                String inImport = rest.substring( backQuote2 + 1, endQuote2 );*/
+                res.add( new RemoveRedundantElementInImportResolution( redundantElement ) );
+              }
             } else {
               // Redundant entire import
               res.add(new RemoveImportResolution());

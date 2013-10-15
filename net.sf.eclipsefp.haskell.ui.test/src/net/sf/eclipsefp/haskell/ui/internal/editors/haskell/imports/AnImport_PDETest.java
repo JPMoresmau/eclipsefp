@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportExportType;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportSpecDef;
@@ -52,13 +53,39 @@ public class AnImport_PDETest {
   @Test
   public void testRemoveConstructor(){
     TestDocument td=new TestDocument( "module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (Seq(..), singleton, empty)"+PlatformUtil.NL );
-    Location loc=new Location( "TestSimpleRemove.hs",2,0,2,44);
+    Location loc=new Location( "TestSimpleRemove.hs",2,0,2,48);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
     CompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty)"+PlatformUtil.NL,td.get());
+
+  }
+
+  @Test
+  public void testRemoveConstructorAtEnd(){
+    TestDocument td=new TestDocument( "module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty, Seq(..))"+PlatformUtil.NL );
+    Location loc=new Location( "TestSimpleRemove.hs",2,0,2,48);
+    ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
+    AnImport ai=new AnImport( def, false );
+    CompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
+    assertNotNull( cp );
+    cp.apply( td );
+    assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty)"+PlatformUtil.NL,td.get());
+
+  }
+
+  @Test
+  public void testRemoveMultipleAtEnd(){
+    TestDocument td=new TestDocument( "module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty, Seq(..))"+PlatformUtil.NL );
+    Location loc=new Location( "TestSimpleRemove.hs",2,0,2,48);
+    ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
+    AnImport ai=new AnImport( def, false );
+    CompletionProposal cp=ai.removeItem( td, Arrays.asList("Seq","singleton") , "remove" );
+    assertNotNull( cp );
+    cp.apply( td );
+    assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (empty)"+PlatformUtil.NL,td.get());
 
   }
 

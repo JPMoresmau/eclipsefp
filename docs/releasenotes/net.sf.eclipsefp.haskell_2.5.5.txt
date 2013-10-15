@@ -23,6 +23,7 @@ Fixes:
 	- Show proper error messages when names contain HTML reserved characters
 	- Display properly in Browser views functions containg HTML characters like </>
 	- Suggest properly module imports on unresolved symbols like </>
+	- Issues with import warning quick fixes: https://github.com/JPMoresmau/eclipsefp/issues/146
 	
 Features:
 	- Supports FILE import mode for stylish-haskell (https://github.com/JPMoresmau/eclipsefp/issues/118)
